@@ -106,7 +106,7 @@ Return JSON with practiceAreas (array of slugs), industries (array of slugs), an
                 .from(newsTeamMembers)
                 .where(eq(newsTeamMembers.newsId, articleId));
               
-              if (!existing.find(e => e.teamMemberId === member.id)) {
+              if (!existing.find((e: typeof newsTeamMembers.$inferSelect) => e.teamMemberId === member.id)) {
                 await db.insert(newsTeamMembers).values({
                   newsId: articleId,
                   teamMemberId: member.id,

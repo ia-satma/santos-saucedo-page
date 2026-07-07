@@ -201,7 +201,7 @@ export class PCloudStorage {
 
   async saveKnowledge(): Promise<boolean> {
     await this.ensureFolder('knowledge');
-    const data = JSON.stringify(knowledgeStore.toJSON(), null, 2);
+    const data = JSON.stringify(await knowledgeStore.toJSON(), null, 2);
     return this.uploadFile('knowledge/knowledge.json', data);
   }
 
@@ -211,7 +211,7 @@ export class PCloudStorage {
 
     try {
       const parsed = JSON.parse(data);
-      knowledgeStore.fromJSON(parsed);
+      await knowledgeStore.fromJSON(parsed);
       console.log('[PCloud] Knowledge loaded successfully');
       return true;
     } catch (error) {
@@ -222,7 +222,7 @@ export class PCloudStorage {
 
   async saveEvolution(): Promise<boolean> {
     await this.ensureFolder('evolution');
-    const data = JSON.stringify(evolutionTracker.toJSON(), null, 2);
+    const data = JSON.stringify(await evolutionTracker.toJSON(), null, 2);
     return this.uploadFile('evolution/evolution.json', data);
   }
 
@@ -232,7 +232,7 @@ export class PCloudStorage {
 
     try {
       const parsed = JSON.parse(data);
-      evolutionTracker.fromJSON(parsed);
+      await evolutionTracker.fromJSON(parsed);
       console.log('[PCloud] Evolution data loaded successfully');
       return true;
     } catch (error) {

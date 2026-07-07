@@ -1,5 +1,5 @@
-# Von Wobeser y Sierra - Robots.txt
-# https://www.vonwobeser.com
+# Santos & Saucedo Abogados - Robots.txt
+# https://www.santossaucedo.com
 
 User-agent: *
 Allow: /
@@ -10,14 +10,13 @@ Disallow: /api/admin/
 
 # Allow search engines to crawl all public content
 Allow: /practice-groups/
-Allow: /industry-groups/
 Allow: /team/
 Allow: /news/
-Allow: /events/
 Allow: /articles/
+Allow: /contact/
 
 # Sitemap location
-Sitemap: https://www.vonwobeser.com/sitemap.xml
+Sitemap: https://www.santossaucedo.com/sitemap.xml
 
 # Crawl-delay for politeness (optional)
 Crawl-delay: 1

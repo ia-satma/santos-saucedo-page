@@ -60,7 +60,7 @@ export default function Experience() {
     en: {
       title: "Experience",
       subtitle: "A proven track record of excellence across every practice area",
-      heroDescription: "For over three decades, Von Wobeser y Sierra has represented leading national and multinational companies in their most complex and high-stakes legal matters. Our experience spans landmark transactions, groundbreaking disputes, and strategic advisory mandates.",
+      heroDescription: "For over three decades, Santos & Saucedo has represented leading national and multinational companies in their most complex and high-stakes legal matters. Our experience spans landmark transactions, groundbreaking disputes, and strategic advisory mandates.",
       featuredTitle: "Featured Matters",
       featuredSubtitle: "High-profile cases that showcase our expertise",
       allMattersTitle: "Representative Matters",
@@ -79,7 +79,7 @@ export default function Experience() {
     es: {
       title: "Experiencia",
       subtitle: "Una trayectoria comprobada de excelencia en todas las áreas de práctica",
-      heroDescription: "Durante más de tres décadas, Von Wobeser y Sierra ha representado a empresas nacionales y multinacionales líderes en sus asuntos legales más complejos y de alto perfil. Nuestra experiencia abarca transacciones históricas, disputas pioneras y mandatos de asesoría estratégica.",
+      heroDescription: "Durante más de tres décadas, Santos & Saucedo ha representado a empresas nacionales y multinacionales líderes en sus asuntos legales más complejos y de alto perfil. Nuestra experiencia abarca transacciones históricas, disputas pioneras y mandatos de asesoría estratégica.",
       featuredTitle: "Asuntos Destacados",
       featuredSubtitle: "Casos de alto perfil que demuestran nuestra experiencia",
       allMattersTitle: "Asuntos Representativos",
@@ -98,7 +98,7 @@ export default function Experience() {
     de: {
       title: "Erfahrung",
       subtitle: "Unsere Erfolgsbilanz",
-      heroDescription: "Seit über drei Jahrzehnten vertritt Von Wobeser y Sierra führende nationale und multinationale Unternehmen in ihren komplexesten und wichtigsten Rechtsangelegenheiten. Unsere Erfahrung umfasst wegweisende Transaktionen, bahnbrechende Streitigkeiten und strategische Beratungsmandate.",
+      heroDescription: "Seit über drei Jahrzehnten vertritt Santos & Saucedo führende nationale und multinationale Unternehmen in ihren komplexesten und wichtigsten Rechtsangelegenheiten. Unsere Erfahrung umfasst wegweisende Transaktionen, bahnbrechende Streitigkeiten und strategische Beratungsmandate.",
       featuredTitle: "Ausgewählte Mandate",
       featuredSubtitle: "Hochkarätige Fälle, die unsere Expertise zeigen",
       allMattersTitle: "Repräsentative Mandate",
@@ -117,7 +117,7 @@ export default function Experience() {
     zh: {
       title: "经验",
       subtitle: "我们的业绩记录",
-      heroDescription: "三十多年来，Von Wobeser y Sierra一直代表领先的国内和跨国公司处理其最复杂和最重要的法律事务。我们的经验涵盖里程碑式的交易、开创性的争议和战略咨询任务。",
+      heroDescription: "三十多年来，Santos & Saucedo一直代表领先的国内和跨国公司处理其最复杂和最重要的法律事务。我们的经验涵盖里程碑式的交易、开创性的争议和战略咨询任务。",
       featuredTitle: "精选案例",
       featuredSubtitle: "展示我们专业知识的高端案例",
       allMattersTitle: "代表性案例",
@@ -136,7 +136,7 @@ export default function Experience() {
     ko: {
       title: "경험",
       subtitle: "모든 업무 분야에서 입증된 우수성",
-      heroDescription: "30년 이상 Von Wobeser y Sierra는 국내외 선도 기업들의 가장 복잡하고 중요한 법률 문제를 대리해 왔습니다. 우리의 경험은 획기적인 거래, 선구적인 분쟁 및 전략적 자문 업무를 포함합니다.",
+      heroDescription: "30년 이상 Santos & Saucedo는 국내외 선도 기업들의 가장 복잡하고 중요한 법률 문제를 대리해 왔습니다. 우리의 경험은 획기적인 거래, 선구적인 분쟁 및 전략적 자문 업무를 포함합니다.",
       featuredTitle: "주요 사건",
       featuredSubtitle: "우리의 전문성을 보여주는 고급 사건들",
       allMattersTitle: "대표 사건",
@@ -155,7 +155,7 @@ export default function Experience() {
     ja: {
       title: "実績",
       subtitle: "すべての業務分野における卓越性の実績",
-      heroDescription: "30年以上にわたり、Von Wobeser y Sierraは、国内外の大手企業の最も複雑で重要な法的問題を代理してきました。私たちの経験は、画期的な取引、先駆的な紛争、戦略的アドバイザリー業務を網羅しています。",
+      heroDescription: "30年以上にわたり、Santos & Saucedoは、国内外の大手企業の最も複雑で重要な法的問題を代理してきました。私たちの経験は、画期的な取引、先駆的な紛争、戦略的アドバイザリー業務を網羅しています。",
       featuredTitle: "注目の案件",
       featuredSubtitle: "私たちの専門知識を示す重要な案件",
       allMattersTitle: "代表的な案件",
@@ -174,7 +174,7 @@ export default function Experience() {
     ar: {
       title: "الخبرة",
       subtitle: "سجل حافل بالتميز في جميع مجالات الممارسة",
-      heroDescription: "على مدى أكثر من ثلاثة عقود، مثّلت Von Wobeser y Sierra الشركات الوطنية والدولية الرائدة في أكثر قضاياها القانونية تعقيدًا وأهمية. تشمل خبرتنا معاملات بارزة ونزاعات رائدة ومهام استشارية استراتيجية.",
+      heroDescription: "على مدى أكثر من ثلاثة عقود، مثّلت Santos & Saucedo الشركات الوطنية والدولية الرائدة في أكثر قضاياها القانونية تعقيدًا وأهمية. تشمل خبرتنا معاملات بارزة ونزاعات رائدة ومهام استشارية استراتيجية.",
       featuredTitle: "القضايا المميزة",
       featuredSubtitle: "قضايا بارزة تعرض خبرتنا",
       allMattersTitle: "القضايا التمثيلية",
@@ -193,7 +193,7 @@ export default function Experience() {
     ru: {
       title: "Опыт",
       subtitle: "Наши достижения",
-      heroDescription: "Более трех десятилетий Von Wobeser y Sierra представляет ведущие национальные и международные компании в их наиболее сложных и важных юридических вопросах. Наш опыт охватывает знаковые сделки, прорывные споры и стратегические консультационные мандаты.",
+      heroDescription: "Более трех десятилетий Santos & Saucedo представляет ведущие национальные и международные компании в их наиболее сложных и важных юридических вопросах. Наш опыт охватывает знаковые сделки, прорывные споры и стратегические консультационные мандаты.",
       featuredTitle: "Избранные дела",
       featuredSubtitle: "Громкие дела, демонстрирующие нашу экспертизу",
       allMattersTitle: "Типичные дела",
@@ -212,7 +212,7 @@ export default function Experience() {
     fr: {
       title: "Expérience",
       subtitle: "Un bilan d'excellence dans tous les domaines de pratique",
-      heroDescription: "Depuis plus de trois décennies, Von Wobeser y Sierra représente des entreprises nationales et multinationales de premier plan dans leurs affaires juridiques les plus complexes et les plus importantes. Notre expérience couvre des transactions historiques, des litiges novateurs et des mandats de conseil stratégique.",
+      heroDescription: "Depuis plus de trois décennies, Santos & Saucedo représente des entreprises nationales et multinationales de premier plan dans leurs affaires juridiques les plus complexes et les plus importantes. Notre expérience couvre des transactions historiques, des litiges novateurs et des mandats de conseil stratégique.",
       featuredTitle: "Affaires en vedette",
       featuredSubtitle: "Des affaires de haut niveau qui démontrent notre expertise",
       allMattersTitle: "Affaires représentatives",
@@ -231,7 +231,7 @@ export default function Experience() {
     it: {
       title: "Esperienza",
       subtitle: "Il nostro track record",
-      heroDescription: "Da oltre tre decenni, Von Wobeser y Sierra rappresenta aziende nazionali e multinazionali leader nelle loro questioni legali più complesse e importanti. La nostra esperienza comprende transazioni storiche, controversie pionieristiche e mandati di consulenza strategica.",
+      heroDescription: "Da oltre tre decenni, Santos & Saucedo rappresenta aziende nazionali e multinazionali leader nelle loro questioni legali più complesse e importanti. La nostra esperienza comprende transazioni storiche, controversie pionieristiche e mandati di consulenza strategica.",
       featuredTitle: "Casi in evidenza",
       featuredSubtitle: "Casi di alto profilo che dimostrano la nostra competenza",
       allMattersTitle: "Casi rappresentativi",

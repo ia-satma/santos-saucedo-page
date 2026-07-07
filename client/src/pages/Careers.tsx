@@ -35,10 +35,10 @@ export default function Careers() {
     en: {
       heroTitle: "Build Your Career With Us",
       heroSubtitle: "Join one of Mexico's leading law firms and be part of a team that values excellence, integrity, and professional growth.",
-      whyJoinTitle: "Why Join Von Wobeser y Sierra",
+      whyJoinTitle: "Why Join Santos & Saucedo",
       whyJoinSubtitle: "Discover what makes us a great place to work",
       cultureTitle: "Our Culture",
-      cultureText: "At Von Wobeser y Sierra, we foster a collaborative and inclusive environment where every team member can thrive. With over 70 years of excellence, we combine tradition with innovation to deliver exceptional legal services. Our culture emphasizes teamwork, mutual respect, and a commitment to the highest ethical standards.",
+      cultureText: "At Santos & Saucedo, we foster a collaborative and inclusive environment where every team member can thrive. With over 70 years of excellence, we combine tradition with innovation to deliver exceptional legal services. Our culture emphasizes teamwork, mutual respect, and a commitment to the highest ethical standards.",
       valuesTitle: "Our Core Values",
       values: [
         { icon: Scale, title: "Excellence", text: "We strive for the highest quality in everything we do" },
@@ -122,10 +122,10 @@ export default function Careers() {
       applyTitle: "How to Apply",
       applySubtitle: "Take the first step towards your future with us",
       applyInstructions: "To apply for any position or our internship program, please send your CV, cover letter, and academic transcripts to:",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "Please include the position title in your email subject line. We review all applications carefully and will contact qualified candidates for interviews.",
       contactCardTitle: "Careers Contact",
-      contactCardText: "Have questions about opportunities at Von Wobeser y Sierra?",
+      contactCardText: "Have questions about opportunities at Santos & Saucedo?",
       sendApplication: "Send Application",
       viewDetails: "View Details",
       apply: "Apply Now",
@@ -133,10 +133,10 @@ export default function Careers() {
     es: {
       heroTitle: "Construye Tu Carrera Con Nosotros",
       heroSubtitle: "Únete a una de las firmas de abogados líderes en México y sé parte de un equipo que valora la excelencia, la integridad y el crecimiento profesional.",
-      whyJoinTitle: "Por Qué Trabajar en Von Wobeser y Sierra",
+      whyJoinTitle: "Por Qué Trabajar en Santos & Saucedo",
       whyJoinSubtitle: "Descubre lo que nos hace un excelente lugar para trabajar",
       cultureTitle: "Nuestra Cultura",
-      cultureText: "En Von Wobeser y Sierra, fomentamos un ambiente colaborativo e inclusivo donde cada miembro del equipo puede prosperar. Con más de 70 años de excelencia, combinamos tradición con innovación para brindar servicios legales excepcionales. Nuestra cultura enfatiza el trabajo en equipo, el respeto mutuo y el compromiso con los más altos estándares éticos.",
+      cultureText: "En Santos & Saucedo, fomentamos un ambiente colaborativo e inclusivo donde cada miembro del equipo puede prosperar. Con más de 70 años de excelencia, combinamos tradición con innovación para brindar servicios legales excepcionales. Nuestra cultura enfatiza el trabajo en equipo, el respeto mutuo y el compromiso con los más altos estándares éticos.",
       valuesTitle: "Nuestros Valores Fundamentales",
       values: [
         { icon: Scale, title: "Excelencia", text: "Nos esforzamos por la más alta calidad en todo lo que hacemos" },
@@ -220,10 +220,10 @@ export default function Careers() {
       applyTitle: "Cómo Aplicar",
       applySubtitle: "Da el primer paso hacia tu futuro con nosotros",
       applyInstructions: "Para aplicar a cualquier posición o a nuestro programa de pasantías, por favor envía tu CV, carta de presentación y expediente académico a:",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "Por favor incluye el título del puesto en el asunto de tu correo electrónico. Revisamos todas las aplicaciones cuidadosamente y contactaremos a los candidatos calificados para entrevistas.",
       contactCardTitle: "Contacto de Carreras",
-      contactCardText: "¿Tienes preguntas sobre oportunidades en Von Wobeser y Sierra?",
+      contactCardText: "¿Tienes preguntas sobre oportunidades en Santos & Saucedo?",
       sendApplication: "Enviar Solicitud",
       viewDetails: "Ver Detalles",
       apply: "Aplicar Ahora",
@@ -234,7 +234,7 @@ export default function Careers() {
       whyJoinTitle: "Warum bei uns arbeiten?",
       whyJoinSubtitle: "Entdecken Sie, was uns zu einem großartigen Arbeitsplatz macht",
       cultureTitle: "Unsere Kultur",
-      cultureText: "Bei Von Wobeser y Sierra fördern wir ein kollaboratives und inklusives Umfeld, in dem jedes Teammitglied gedeihen kann. Mit über 70 Jahren Exzellenz verbinden wir Tradition mit Innovation, um außergewöhnliche Rechtsdienstleistungen zu erbringen. Unsere Kultur betont Teamarbeit, gegenseitigen Respekt und das Engagement für höchste ethische Standards.",
+      cultureText: "Bei Santos & Saucedo fördern wir ein kollaboratives und inklusives Umfeld, in dem jedes Teammitglied gedeihen kann. Mit über 70 Jahren Exzellenz verbinden wir Tradition mit Innovation, um außergewöhnliche Rechtsdienstleistungen zu erbringen. Unsere Kultur betont Teamarbeit, gegenseitigen Respekt und das Engagement für höchste ethische Standards.",
       valuesTitle: "Unsere Grundwerte",
       values: [
         { icon: Scale, title: "Exzellenz", text: "Wir streben nach höchster Qualität in allem, was wir tun" },
@@ -318,10 +318,10 @@ export default function Careers() {
       applyTitle: "So bewerben Sie sich",
       applySubtitle: "Machen Sie den ersten Schritt in Ihre Zukunft bei uns",
       applyInstructions: "Um sich für eine Position oder unser Praktikumsprogramm zu bewerben, senden Sie bitte Ihren Lebenslauf, Ihr Anschreiben und Ihre akademischen Zeugnisse an:",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "Bitte geben Sie den Stellentitel in der Betreffzeile Ihrer E-Mail an. Wir prüfen alle Bewerbungen sorgfältig und kontaktieren qualifizierte Kandidaten für Vorstellungsgespräche.",
       contactCardTitle: "Karriere-Kontakt",
-      contactCardText: "Haben Sie Fragen zu Möglichkeiten bei Von Wobeser y Sierra?",
+      contactCardText: "Haben Sie Fragen zu Möglichkeiten bei Santos & Saucedo?",
       sendApplication: "Bewerbung senden",
       viewDetails: "Details anzeigen",
       apply: "Jetzt bewerben",
@@ -332,7 +332,7 @@ export default function Careers() {
       whyJoinTitle: "为什么加入我们?",
       whyJoinSubtitle: "了解是什么让我们成为一个理想的工作场所",
       cultureTitle: "我们的文化",
-      cultureText: "在Von Wobeser y Sierra，我们营造一个协作和包容的环境，让每位团队成员都能茁壮成长。凭借70多年的卓越历史，我们将传统与创新相结合，提供卓越的法律服务。我们的文化强调团队合作、相互尊重和对最高道德标准的承诺。",
+      cultureText: "在Santos & Saucedo，我们营造一个协作和包容的环境，让每位团队成员都能茁壮成长。凭借70多年的卓越历史，我们将传统与创新相结合，提供卓越的法律服务。我们的文化强调团队合作、相互尊重和对最高道德标准的承诺。",
       valuesTitle: "我们的核心价值观",
       values: [
         { icon: Scale, title: "卓越", text: "我们在所做的一切中追求最高质量" },
@@ -416,10 +416,10 @@ export default function Careers() {
       applyTitle: "如何申请",
       applySubtitle: "迈出与我们共创未来的第一步",
       applyInstructions: "如需申请任何职位或我们的实习项目，请将您的简历、求职信和成绩单发送至：",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "请在电子邮件主题行中注明职位名称。我们会仔细审核所有申请，并联系符合条件的候选人进行面试。",
       contactCardTitle: "招聘联系人",
-      contactCardText: "对Von Wobeser y Sierra的机会有疑问吗？",
+      contactCardText: "对Santos & Saucedo的机会有疑问吗？",
       sendApplication: "发送申请",
       viewDetails: "查看详情",
       apply: "立即申请",
@@ -430,7 +430,7 @@ export default function Careers() {
       whyJoinTitle: "왜 우리와 함께해야 할까요?",
       whyJoinSubtitle: "우리가 훌륭한 직장인 이유를 알아보세요",
       cultureTitle: "우리의 문화",
-      cultureText: "Von Wobeser y Sierra에서는 모든 팀원이 성장할 수 있는 협력적이고 포용적인 환경을 조성합니다. 70년 이상의 우수성을 바탕으로 전통과 혁신을 결합하여 탁월한 법률 서비스를 제공합니다. 우리의 문화는 팀워크, 상호 존중, 최고의 윤리적 기준에 대한 헌신을 강조합니다.",
+      cultureText: "Santos & Saucedo에서는 모든 팀원이 성장할 수 있는 협력적이고 포용적인 환경을 조성합니다. 70년 이상의 우수성을 바탕으로 전통과 혁신을 결합하여 탁월한 법률 서비스를 제공합니다. 우리의 문화는 팀워크, 상호 존중, 최고의 윤리적 기준에 대한 헌신을 강조합니다.",
       valuesTitle: "핵심 가치",
       values: [
         { icon: Scale, title: "탁월함", text: "우리는 모든 일에서 최고의 품질을 추구합니다" },
@@ -514,10 +514,10 @@ export default function Careers() {
       applyTitle: "지원 방법",
       applySubtitle: "우리와 함께하는 미래를 향한 첫 걸음을 내딛으세요",
       applyInstructions: "모든 직위 또는 인턴십 프로그램에 지원하려면 이력서, 자기소개서 및 성적증명서를 다음 주소로 보내주세요:",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "이메일 제목에 직위명을 포함해 주세요. 모든 지원서를 신중하게 검토하고 자격을 갖춘 후보자에게 면접을 위해 연락드리겠습니다.",
       contactCardTitle: "채용 문의",
-      contactCardText: "Von Wobeser y Sierra의 기회에 대해 궁금한 점이 있으신가요?",
+      contactCardText: "Santos & Saucedo의 기회에 대해 궁금한 점이 있으신가요?",
       sendApplication: "지원서 보내기",
       viewDetails: "상세 보기",
       apply: "지금 지원하기",
@@ -528,7 +528,7 @@ export default function Careers() {
       whyJoinTitle: "なぜ私たちと働くべきか",
       whyJoinSubtitle: "私たちが素晴らしい職場である理由をご覧ください",
       cultureTitle: "私たちの文化",
-      cultureText: "Von Wobeser y Sierraでは、すべてのチームメンバーが成長できる協力的で包括的な環境を育んでいます。70年以上の卓越した実績を持ち、伝統と革新を組み合わせて卓越した法律サービスを提供しています。私たちの文化は、チームワーク、相互尊重、そして最高の倫理基準へのコミットメントを強調しています。",
+      cultureText: "Santos & Saucedoでは、すべてのチームメンバーが成長できる協力的で包括的な環境を育んでいます。70年以上の卓越した実績を持ち、伝統と革新を組み合わせて卓越した法律サービスを提供しています。私たちの文化は、チームワーク、相互尊重、そして最高の倫理基準へのコミットメントを強調しています。",
       valuesTitle: "コアバリュー",
       values: [
         { icon: Scale, title: "卓越性", text: "私たちは行うすべてのことにおいて最高の品質を追求します" },
@@ -612,10 +612,10 @@ export default function Careers() {
       applyTitle: "応募方法",
       applySubtitle: "私たちと共に歩む未来への第一歩を踏み出しましょう",
       applyInstructions: "いずれかの職種またはインターンシッププログラムに応募するには、履歴書、カバーレター、成績証明書を以下のメールアドレスにお送りください：",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "メールの件名に職種名を記載してください。すべての応募書類を慎重に審査し、資格のある候補者には面接のご連絡をいたします。",
       contactCardTitle: "採用担当連絡先",
-      contactCardText: "Von Wobeser y Sierraでの機会についてご質問がありますか？",
+      contactCardText: "Santos & Saucedoでの機会についてご質問がありますか？",
       sendApplication: "応募書類を送信",
       viewDetails: "詳細を見る",
       apply: "今すぐ応募",
@@ -626,7 +626,7 @@ export default function Careers() {
       whyJoinTitle: "لماذا تعمل معنا؟",
       whyJoinSubtitle: "اكتشف ما يجعلنا مكان عمل رائع",
       cultureTitle: "ثقافتنا",
-      cultureText: "في Von Wobeser y Sierra، نعزز بيئة تعاونية وشاملة حيث يمكن لكل عضو في الفريق أن يزدهر. مع أكثر من 70 عامًا من التميز، نجمع بين التقاليد والابتكار لتقديم خدمات قانونية استثنائية. تؤكد ثقافتنا على العمل الجماعي والاحترام المتبادل والالتزام بأعلى المعايير الأخلاقية.",
+      cultureText: "في Santos & Saucedo، نعزز بيئة تعاونية وشاملة حيث يمكن لكل عضو في الفريق أن يزدهر. مع أكثر من 70 عامًا من التميز، نجمع بين التقاليد والابتكار لتقديم خدمات قانونية استثنائية. تؤكد ثقافتنا على العمل الجماعي والاحترام المتبادل والالتزام بأعلى المعايير الأخلاقية.",
       valuesTitle: "قيمنا الأساسية",
       values: [
         { icon: Scale, title: "التميز", text: "نسعى لتحقيق أعلى جودة في كل ما نقوم به" },
@@ -710,10 +710,10 @@ export default function Careers() {
       applyTitle: "كيفية التقديم",
       applySubtitle: "اتخذ الخطوة الأولى نحو مستقبلك معنا",
       applyInstructions: "للتقدم لأي وظيفة أو برنامج التدريب لدينا، يرجى إرسال سيرتك الذاتية ورسالة التغطية والنصوص الأكاديمية إلى:",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "يرجى تضمين عنوان الوظيفة في سطر موضوع بريدك الإلكتروني. نراجع جميع الطلبات بعناية وسنتواصل مع المرشحين المؤهلين للمقابلات.",
       contactCardTitle: "جهة اتصال التوظيف",
-      contactCardText: "هل لديك أسئلة حول الفرص في Von Wobeser y Sierra؟",
+      contactCardText: "هل لديك أسئلة حول الفرص في Santos & Saucedo؟",
       sendApplication: "إرسال الطلب",
       viewDetails: "عرض التفاصيل",
       apply: "قدم الآن",
@@ -724,7 +724,7 @@ export default function Careers() {
       whyJoinTitle: "Почему стоит работать у нас?",
       whyJoinSubtitle: "Узнайте, что делает нас отличным местом для работы",
       cultureTitle: "Наша культура",
-      cultureText: "В Von Wobeser y Sierra мы создаём совместную и инклюзивную среду, где каждый член команды может развиваться. С более чем 70-летней историей превосходства мы сочетаем традиции с инновациями для предоставления исключительных юридических услуг. Наша культура подчёркивает командную работу, взаимное уважение и приверженность высочайшим этическим стандартам.",
+      cultureText: "В Santos & Saucedo мы создаём совместную и инклюзивную среду, где каждый член команды может развиваться. С более чем 70-летней историей превосходства мы сочетаем традиции с инновациями для предоставления исключительных юридических услуг. Наша культура подчёркивает командную работу, взаимное уважение и приверженность высочайшим этическим стандартам.",
       valuesTitle: "Наши основные ценности",
       values: [
         { icon: Scale, title: "Совершенство", text: "Мы стремимся к высочайшему качеству во всём, что делаем" },
@@ -808,10 +808,10 @@ export default function Careers() {
       applyTitle: "Как подать заявку",
       applySubtitle: "Сделайте первый шаг к своему будущему с нами",
       applyInstructions: "Чтобы подать заявку на любую должность или нашу программу стажировки, пожалуйста, отправьте ваше резюме, сопроводительное письмо и академические справки на:",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "Пожалуйста, укажите название должности в теме письма. Мы внимательно рассматриваем все заявки и свяжемся с квалифицированными кандидатами для собеседования.",
       contactCardTitle: "Контакт отдела кадров",
-      contactCardText: "Есть вопросы о возможностях в Von Wobeser y Sierra?",
+      contactCardText: "Есть вопросы о возможностях в Santos & Saucedo?",
       sendApplication: "Отправить заявку",
       viewDetails: "Подробнее",
       apply: "Подать заявку",
@@ -822,7 +822,7 @@ export default function Careers() {
       whyJoinTitle: "Pourquoi nous rejoindre?",
       whyJoinSubtitle: "Découvrez ce qui fait de nous un excellent lieu de travail",
       cultureTitle: "Notre Culture",
-      cultureText: "Chez Von Wobeser y Sierra, nous favorisons un environnement collaboratif et inclusif où chaque membre de l'équipe peut s'épanouir. Avec plus de 70 ans d'excellence, nous combinons tradition et innovation pour fournir des services juridiques exceptionnels. Notre culture met l'accent sur le travail d'équipe, le respect mutuel et l'engagement envers les normes éthiques les plus élevées.",
+      cultureText: "Chez Santos & Saucedo, nous favorisons un environnement collaboratif et inclusif où chaque membre de l'équipe peut s'épanouir. Avec plus de 70 ans d'excellence, nous combinons tradition et innovation pour fournir des services juridiques exceptionnels. Notre culture met l'accent sur le travail d'équipe, le respect mutuel et l'engagement envers les normes éthiques les plus élevées.",
       valuesTitle: "Nos Valeurs Fondamentales",
       values: [
         { icon: Scale, title: "Excellence", text: "Nous visons la plus haute qualité dans tout ce que nous faisons" },
@@ -906,10 +906,10 @@ export default function Careers() {
       applyTitle: "Comment Postuler",
       applySubtitle: "Faites le premier pas vers votre avenir avec nous",
       applyInstructions: "Pour postuler à tout poste ou à notre programme de stage, veuillez envoyer votre CV, lettre de motivation et relevés de notes à :",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "Veuillez inclure le titre du poste dans l'objet de votre email. Nous examinons attentivement toutes les candidatures et contacterons les candidats qualifiés pour des entretiens.",
       contactCardTitle: "Contact Carrières",
-      contactCardText: "Des questions sur les opportunités chez Von Wobeser y Sierra ?",
+      contactCardText: "Des questions sur les opportunités chez Santos & Saucedo ?",
       sendApplication: "Envoyer la Candidature",
       viewDetails: "Voir les Détails",
       apply: "Postuler Maintenant",
@@ -920,7 +920,7 @@ export default function Careers() {
       whyJoinTitle: "Perché lavorare con noi?",
       whyJoinSubtitle: "Scopri cosa ci rende un ottimo posto di lavoro",
       cultureTitle: "La Nostra Cultura",
-      cultureText: "In Von Wobeser y Sierra, promuoviamo un ambiente collaborativo e inclusivo in cui ogni membro del team può prosperare. Con oltre 70 anni di eccellenza, combiniamo tradizione e innovazione per fornire servizi legali eccezionali. La nostra cultura enfatizza il lavoro di squadra, il rispetto reciproco e l'impegno verso i più alti standard etici.",
+      cultureText: "In Santos & Saucedo, promuoviamo un ambiente collaborativo e inclusivo in cui ogni membro del team può prosperare. Con oltre 70 anni di eccellenza, combiniamo tradizione e innovazione per fornire servizi legali eccezionali. La nostra cultura enfatizza il lavoro di squadra, il rispetto reciproco e l'impegno verso i più alti standard etici.",
       valuesTitle: "I Nostri Valori Fondamentali",
       values: [
         { icon: Scale, title: "Eccellenza", text: "Puntiamo alla massima qualità in tutto ciò che facciamo" },
@@ -1004,10 +1004,10 @@ export default function Careers() {
       applyTitle: "Come Candidarsi",
       applySubtitle: "Fai il primo passo verso il tuo futuro con noi",
       applyInstructions: "Per candidarsi a qualsiasi posizione o al nostro programma di tirocinio, invia il tuo CV, lettera di presentazione e certificati accademici a:",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "Includi il titolo della posizione nell'oggetto della tua email. Esaminiamo attentamente tutte le candidature e contatteremo i candidati qualificati per i colloqui.",
       contactCardTitle: "Contatto Carriere",
-      contactCardText: "Hai domande sulle opportunità in Von Wobeser y Sierra?",
+      contactCardText: "Hai domande sulle opportunità in Santos & Saucedo?",
       sendApplication: "Invia Candidatura",
       viewDetails: "Vedi Dettagli",
       apply: "Candidati Ora",
@@ -1269,7 +1269,7 @@ export default function Careers() {
                             asChild
                             data-testid={`button-apply-position-${index}`}
                           >
-                            <a href={`mailto:reclutamiento@vonwobeser.com?subject=${encodeURIComponent(language === "es" ? position.titleEs : position.title)}`}>
+                            <a href={`mailto:reclutamiento@santossaucedo.com?subject=${encodeURIComponent(language === "es" ? position.titleEs : position.title)}`}>
                               {t.apply}
                               <ArrowRight className="w-4 h-4 ml-2" />
                             </a>
@@ -1380,7 +1380,7 @@ export default function Careers() {
                     asChild
                     data-testid="button-internship-apply"
                   >
-                    <a href={`mailto:reclutamiento@vonwobeser.com?subject=${encodeURIComponent(language === "es" ? "Programa de Pasantías" : "Internship Program")}`}>
+                    <a href={`mailto:reclutamiento@santossaucedo.com?subject=${encodeURIComponent(language === "es" ? "Programa de Pasantías" : "Internship Program")}`}>
                       {t.apply}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </a>

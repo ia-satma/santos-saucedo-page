@@ -1,6 +1,6 @@
 /**
  * ╔══════════════════════════════════════════════════════════════════════════════╗
- * ║  SYSTEM MANIFEST - PLATAFORMA LEGAL INTELIGENTE VON WOBESER Y SIERRA        ║
+ * ║  SYSTEM MANIFEST - PLATAFORMA LEGAL INTELIGENTE SANTOS & SAUCEDO        ║
  * ║  "El Portal Jurídico más Avanzado de México" - Powered by AI Agents         ║
  * ╠══════════════════════════════════════════════════════════════════════════════╣
  * ║  Este documento contiene el inventario técnico completo del ecosistema       ║
@@ -280,7 +280,7 @@ export const AI_HANDS_AGENTS: SystemFeature[] = [
     category: 'ai_hands',
     name: 'Formateador de Contenido Jurídico',
     technicalName: 'FormatterAgent',
-    technicalDetail: 'GPT-4o con temperatura 0.2, eliminación de artefactos PDF (marcadores de página, pies, boilerplate), pre-limpieza regex (dirección Von Wobeser, números de página), lógica de merge/split de párrafos, extracción de excerpt (primeras 2-3 oraciones).',
+    technicalDetail: 'GPT-4o con temperatura 0.2, eliminación de artefactos PDF (marcadores de página, pies, boilerplate), pre-limpieza regex (dirección Santos & Saucedo, números de página), lógica de merge/split de párrafos, extracción de excerpt (primeras 2-3 oraciones).',
     userBenefit: 'Transforma extractos crudos de PDF en contenido listo para publicación, elimina trabajo manual de formateo, y preserva precisión legal mientras mejora legibilidad.',
     status: 'production',
     keyCapabilities: [
@@ -1200,7 +1200,7 @@ export const MANIFEST_TRANSLATIONS: Record<string, SystemManifestTranslations> =
       generatedOn: 'Generado el',
       systemOverview: 'Panorama del Sistema',
       reportTitle: 'Manifest del Sistema',
-      reportSubtitle: 'Plataforma Legal Inteligente Von Wobeser y Sierra',
+      reportSubtitle: 'Plataforma Legal Inteligente Santos & Saucedo',
     },
   },
   en: {
@@ -1234,7 +1234,7 @@ export const MANIFEST_TRANSLATIONS: Record<string, SystemManifestTranslations> =
       generatedOn: 'Generated on',
       systemOverview: 'System Overview',
       reportTitle: 'System Manifest',
-      reportSubtitle: 'Von Wobeser y Sierra Intelligent Legal Platform',
+      reportSubtitle: 'Santos & Saucedo Intelligent Legal Platform',
     },
   },
   de: {
@@ -1268,7 +1268,7 @@ export const MANIFEST_TRANSLATIONS: Record<string, SystemManifestTranslations> =
       generatedOn: 'Generiert am',
       systemOverview: 'Systemübersicht',
       reportTitle: 'Systemmanifest',
-      reportSubtitle: 'Von Wobeser y Sierra Intelligente Rechtsplattform',
+      reportSubtitle: 'Santos & Saucedo Intelligente Rechtsplattform',
     },
   },
   zh: {
@@ -1302,7 +1302,7 @@ export const MANIFEST_TRANSLATIONS: Record<string, SystemManifestTranslations> =
       generatedOn: '生成于',
       systemOverview: '系统概览',
       reportTitle: '系统清单',
-      reportSubtitle: 'Von Wobeser y Sierra 智能法律平台',
+      reportSubtitle: 'Santos & Saucedo 智能法律平台',
     },
   },
   ko: {
@@ -1336,7 +1336,7 @@ export const MANIFEST_TRANSLATIONS: Record<string, SystemManifestTranslations> =
       generatedOn: '생성일',
       systemOverview: '시스템 개요',
       reportTitle: '시스템 매니페스트',
-      reportSubtitle: 'Von Wobeser y Sierra 지능형 법률 플랫폼',
+      reportSubtitle: 'Santos & Saucedo 지능형 법률 플랫폼',
     },
   },
   ja: {
@@ -1370,7 +1370,7 @@ export const MANIFEST_TRANSLATIONS: Record<string, SystemManifestTranslations> =
       generatedOn: '生成日',
       systemOverview: 'システム概要',
       reportTitle: 'システムマニフェスト',
-      reportSubtitle: 'Von Wobeser y Sierra インテリジェント法律プラットフォーム',
+      reportSubtitle: 'Santos & Saucedo インテリジェント法律プラットフォーム',
     },
   },
   ar: {
@@ -1438,7 +1438,7 @@ export const MANIFEST_TRANSLATIONS: Record<string, SystemManifestTranslations> =
       generatedOn: 'Создано',
       systemOverview: 'Обзор системы',
       reportTitle: 'Манифест системы',
-      reportSubtitle: 'Интеллектуальная юридическая платформа Von Wobeser y Sierra',
+      reportSubtitle: 'Интеллектуальная юридическая платформа Santos & Saucedo',
     },
   },
   fr: {
@@ -1472,7 +1472,7 @@ export const MANIFEST_TRANSLATIONS: Record<string, SystemManifestTranslations> =
       generatedOn: 'Généré le',
       systemOverview: 'Aperçu du système',
       reportTitle: 'Manifeste du système',
-      reportSubtitle: 'Plateforme juridique intelligente Von Wobeser y Sierra',
+      reportSubtitle: 'Plateforme juridique intelligente Santos & Saucedo',
     },
   },
   it: {
@@ -1506,7 +1506,7 @@ export const MANIFEST_TRANSLATIONS: Record<string, SystemManifestTranslations> =
       generatedOn: 'Generato il',
       systemOverview: 'Panoramica del sistema',
       reportTitle: 'Manifesto del sistema',
-      reportSubtitle: 'Piattaforma legale intelligente Von Wobeser y Sierra',
+      reportSubtitle: 'Piattaforma legale intelligente Santos & Saucedo',
     },
   },
 };

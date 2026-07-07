@@ -104,13 +104,13 @@ CONTENT (first 3000 chars):
 ${content.substring(0, 3000)}
 
 Available Practice Groups in database:
-${existingPracticeGroups.map(pg => `- ${pg.nameEs || pg.name}`).join('\n')}
+${existingPracticeGroups.map((pg: typeof practiceGroups.$inferSelect) => `- ${pg.nameEs || pg.name}`).join('\n')}
 
 Available Industry Groups in database:
-${existingIndustryGroups.map(ig => `- ${ig.nameEs || ig.name}`).join('\n')}
+${existingIndustryGroups.map((ig: typeof industryGroups.$inferSelect) => `- ${ig.nameEs || ig.name}`).join('\n')}
 
 Existing Categories:
-${existingCategories.map(c => `- ${c.name} (${c.slug})`).join('\n') || 'None yet'}
+${existingCategories.map((c: typeof blogCategories.$inferSelect) => `- ${c.name} (${c.slug})`).join('\n') || 'None yet'}
 
 Categorize this article and return JSON with primaryCategory, categorySlug, practiceAreas, industrySectors, tags, confidence, and reasoning.`;
 
@@ -123,7 +123,7 @@ Categorize this article and return JSON with primaryCategory, categorySlug, prac
 
       let categoryId: string | null = null;
       const existingCategory = existingCategories.find(
-        c => c.slug === categorization.categorySlug || 
+        (c: typeof blogCategories.$inferSelect) => c.slug === categorization.categorySlug || 
              c.name.toLowerCase() === categorization.primaryCategory.toLowerCase()
       );
 
@@ -141,7 +141,7 @@ Categorize this article and return JSON with primaryCategory, categorySlug, prac
       const matchedPracticeGroups: string[] = [];
       for (const practiceArea of categorization.practiceAreas || []) {
         const match = existingPracticeGroups.find(
-          pg => (pg.nameEs || pg.name || '').toLowerCase().includes(practiceArea.toLowerCase()) ||
+          (pg: typeof practiceGroups.$inferSelect) => (pg.nameEs || pg.name || '').toLowerCase().includes(practiceArea.toLowerCase()) ||
                 practiceArea.toLowerCase().includes((pg.nameEs || pg.name || '').toLowerCase())
         );
         if (match) {
@@ -152,7 +152,7 @@ Categorize this article and return JSON with primaryCategory, categorySlug, prac
       const matchedIndustryGroups: string[] = [];
       for (const industry of categorization.industrySectors || []) {
         const match = existingIndustryGroups.find(
-          ig => (ig.nameEs || ig.name || '').toLowerCase().includes(industry.toLowerCase()) ||
+          (ig: typeof industryGroups.$inferSelect) => (ig.nameEs || ig.name || '').toLowerCase().includes(industry.toLowerCase()) ||
                 industry.toLowerCase().includes((ig.nameEs || ig.name || '').toLowerCase())
         );
         if (match) {

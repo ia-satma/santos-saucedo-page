@@ -32,7 +32,7 @@ export default function DiversityInclusion() {
       title: "Diversity & Inclusion",
       subtitle: "Building a more inclusive legal profession since 1986",
       foundingTitle: "Our Founding Commitment",
-      foundingText1: "Since its founding in 1986, Von Wobeser y Sierra has been committed to creating an inclusive environment where talent thrives regardless of background, gender, or personal circumstances. This commitment was embedded in our firm's DNA from day one and continues to guide our practices today.",
+      foundingText1: "Since its founding in 1986, Santos & Saucedo has been committed to creating an inclusive environment where talent thrives regardless of background, gender, or personal circumstances. This commitment was embedded in our firm's DNA from day one and continues to guide our practices today.",
       foundingText2: "We believe that diverse perspectives lead to better legal solutions. Our firm has consistently championed equality and inclusion, long before these became industry standards, recognizing that a diverse team is our greatest strength in serving clients with complex legal needs.",
       statsTitle: "Our Progress in Numbers",
       stats: [
@@ -69,7 +69,7 @@ export default function DiversityInclusion() {
       proBonoText: "Our commitment to diversity extends beyond our firm walls. Through our pro bono practice, we provide legal services to underrepresented communities, support organizations fighting for equality, and contribute to access to justice initiatives that help level the playing field for all.",
       proBonoButton: "Learn About Our Pro Bono Work",
       commitmentTitle: "Our Ongoing Commitment",
-      commitmentText: "Diversity and inclusion are not just policies at Von Wobeser y Sierra—they are core values that shape how we work, grow, and serve our clients. We continuously evaluate and improve our practices to ensure we remain at the forefront of creating a more equitable legal profession.",
+      commitmentText: "Diversity and inclusion are not just policies at Santos & Saucedo—they are core values that shape how we work, grow, and serve our clients. We continuously evaluate and improve our practices to ensure we remain at the forefront of creating a more equitable legal profession.",
       valuesTitle: "Inclusion Values",
       values: [
         { icon: Scale, title: "Equity", text: "Fair treatment and equal access to opportunities for all" },
@@ -85,7 +85,7 @@ export default function DiversityInclusion() {
       title: "Diversidad e Inclusión",
       subtitle: "Construyendo una profesión legal más inclusiva desde 1986",
       foundingTitle: "Nuestro Compromiso Fundacional",
-      foundingText1: "Desde su fundación en 1986, Von Wobeser y Sierra ha estado comprometido con crear un ambiente inclusivo donde el talento prospere sin importar antecedentes, género o circunstancias personales. Este compromiso fue incorporado en el ADN de nuestra firma desde el primer día y continúa guiando nuestras prácticas hoy.",
+      foundingText1: "Desde su fundación en 1986, Santos & Saucedo ha estado comprometido con crear un ambiente inclusivo donde el talento prospere sin importar antecedentes, género o circunstancias personales. Este compromiso fue incorporado en el ADN de nuestra firma desde el primer día y continúa guiando nuestras prácticas hoy.",
       foundingText2: "Creemos que las perspectivas diversas conducen a mejores soluciones legales. Nuestra firma ha defendido consistentemente la igualdad y la inclusión, mucho antes de que estos se convirtieran en estándares de la industria, reconociendo que un equipo diverso es nuestra mayor fortaleza para servir a clientes con necesidades legales complejas.",
       statsTitle: "Nuestro Progreso en Números",
       stats: [
@@ -122,7 +122,7 @@ export default function DiversityInclusion() {
       proBonoText: "Nuestro compromiso con la diversidad se extiende más allá de las paredes de nuestra firma. A través de nuestra práctica pro bono, brindamos servicios legales a comunidades subrepresentadas, apoyamos organizaciones que luchan por la igualdad y contribuimos a iniciativas de acceso a la justicia que ayudan a nivelar el campo de juego para todos.",
       proBonoButton: "Conoce Nuestro Trabajo Pro Bono",
       commitmentTitle: "Nuestro Compromiso Continuo",
-      commitmentText: "La diversidad e inclusión no son solo políticas en Von Wobeser y Sierra—son valores fundamentales que moldean cómo trabajamos, crecemos y servimos a nuestros clientes. Continuamente evaluamos y mejoramos nuestras prácticas para asegurar que estemos a la vanguardia en la creación de una profesión legal más equitativa.",
+      commitmentText: "La diversidad e inclusión no son solo políticas en Santos & Saucedo—son valores fundamentales que moldean cómo trabajamos, crecemos y servimos a nuestros clientes. Continuamente evaluamos y mejoramos nuestras prácticas para asegurar que estemos a la vanguardia en la creación de una profesión legal más equitativa.",
       valuesTitle: "Valores de Inclusión",
       values: [
         { icon: Scale, title: "Equidad", text: "Trato justo e igual acceso a oportunidades para todos" },
@@ -138,7 +138,7 @@ export default function DiversityInclusion() {
       title: "Vielfalt & Inklusion",
       subtitle: "Für einen inklusiveren Rechtsberuf seit 1986",
       foundingTitle: "Unser Gründungsversprechen",
-      foundingText1: "Seit seiner Gründung im Jahr 1986 hat sich Von Wobeser y Sierra der Schaffung eines inklusiven Umfelds verschrieben, in dem Talent unabhängig von Hintergrund, Geschlecht oder persönlichen Umständen gedeihen kann. Dieses Engagement war von Anfang an in der DNA unserer Kanzlei verankert und leitet unsere Praktiken bis heute.",
+      foundingText1: "Seit seiner Gründung im Jahr 1986 hat sich Santos & Saucedo der Schaffung eines inklusiven Umfelds verschrieben, in dem Talent unabhängig von Hintergrund, Geschlecht oder persönlichen Umständen gedeihen kann. Dieses Engagement war von Anfang an in der DNA unserer Kanzlei verankert und leitet unsere Praktiken bis heute.",
       foundingText2: "Wir glauben, dass unterschiedliche Perspektiven zu besseren rechtlichen Lösungen führen. Unsere Kanzlei hat sich konsequent für Gleichberechtigung und Inklusion eingesetzt, lange bevor diese zu Branchenstandards wurden, in der Erkenntnis, dass ein vielfältiges Team unsere größte Stärke bei der Betreuung von Mandanten mit komplexen rechtlichen Anforderungen ist.",
       statsTitle: "Unsere Fortschritte in Zahlen",
       stats: [
@@ -175,7 +175,7 @@ export default function DiversityInclusion() {
       proBonoText: "Unser Engagement für Vielfalt geht über die Grenzen unserer Kanzlei hinaus. Durch unsere Pro-Bono-Praxis bieten wir Rechtsdienstleistungen für unterrepräsentierte Gemeinschaften, unterstützen Organisationen, die für Gleichberechtigung kämpfen, und tragen zu Initiativen für den Zugang zur Justiz bei, die allen gleiche Chancen ermöglichen.",
       proBonoButton: "Erfahren Sie mehr über unsere Pro-Bono-Arbeit",
       commitmentTitle: "Unser fortlaufendes Engagement",
-      commitmentText: "Vielfalt und Inklusion sind bei Von Wobeser y Sierra nicht nur Richtlinien – sie sind Grundwerte, die unsere Arbeitsweise, unser Wachstum und unseren Dienst an unseren Mandanten prägen. Wir evaluieren und verbessern unsere Praktiken kontinuierlich, um sicherzustellen, dass wir an der Spitze der Schaffung eines gerechteren Rechtsberufs bleiben.",
+      commitmentText: "Vielfalt und Inklusion sind bei Santos & Saucedo nicht nur Richtlinien – sie sind Grundwerte, die unsere Arbeitsweise, unser Wachstum und unseren Dienst an unseren Mandanten prägen. Wir evaluieren und verbessern unsere Praktiken kontinuierlich, um sicherzustellen, dass wir an der Spitze der Schaffung eines gerechteren Rechtsberufs bleiben.",
       valuesTitle: "Werte der Inklusion",
       values: [
         { icon: Scale, title: "Gerechtigkeit", text: "Faire Behandlung und gleicher Zugang zu Möglichkeiten für alle" },
@@ -191,7 +191,7 @@ export default function DiversityInclusion() {
       title: "多元与包容",
       subtitle: "自1986年以来，致力于建设更加包容的法律行业",
       foundingTitle: "我们的创立承诺",
-      foundingText1: "自1986年成立以来，Von Wobeser y Sierra一直致力于创造一个包容的环境，让人才无论背景、性别或个人情况如何都能蓬勃发展。这一承诺从第一天起就融入了我们事务所的基因，并继续指导着我们今天的实践。",
+      foundingText1: "自1986年成立以来，Santos & Saucedo一直致力于创造一个包容的环境，让人才无论背景、性别或个人情况如何都能蓬勃发展。这一承诺从第一天起就融入了我们事务所的基因，并继续指导着我们今天的实践。",
       foundingText2: "我们相信多元化的视角能带来更好的法律解决方案。我们的事务所一直倡导平等和包容，早在这些成为行业标准之前就已如此，因为我们认识到多元化的团队是我们为具有复杂法律需求的客户服务的最大优势。",
       statsTitle: "我们的进展数据",
       stats: [
@@ -228,7 +228,7 @@ export default function DiversityInclusion() {
       proBonoText: "我们对多元化的承诺超越了事务所的围墙。通过我们的公益实践，我们为代表性不足的社区提供法律服务，支持为平等而奋斗的组织，并为帮助所有人获得公平竞争环境的司法援助倡议做出贡献。",
       proBonoButton: "了解我们的公益工作",
       commitmentTitle: "我们持续的承诺",
-      commitmentText: "在Von Wobeser y Sierra，多元化和包容性不仅仅是政策——它们是塑造我们工作方式、成长方式和服务客户方式的核心价值观。我们不断评估和改进我们的实践，以确保我们始终走在创建更公平法律行业的前沿。",
+      commitmentText: "在Santos & Saucedo，多元化和包容性不仅仅是政策——它们是塑造我们工作方式、成长方式和服务客户方式的核心价值观。我们不断评估和改进我们的实践，以确保我们始终走在创建更公平法律行业的前沿。",
       valuesTitle: "包容价值观",
       values: [
         { icon: Scale, title: "公平", text: "对所有人公平对待和平等获得机会" },
@@ -244,7 +244,7 @@ export default function DiversityInclusion() {
       title: "다양성과 포용성",
       subtitle: "1986년부터 더 포용적인 법조계를 만들어 가고 있습니다",
       foundingTitle: "창립 정신",
-      foundingText1: "1986년 설립 이래로 Von Wobeser y Sierra는 배경, 성별, 개인적 상황에 관계없이 재능이 꽃필 수 있는 포용적인 환경을 조성하기 위해 헌신해 왔습니다. 이러한 헌신은 첫날부터 우리 회사의 DNA에 새겨져 있으며 오늘날까지 우리의 관행을 이끌고 있습니다.",
+      foundingText1: "1986년 설립 이래로 Santos & Saucedo는 배경, 성별, 개인적 상황에 관계없이 재능이 꽃필 수 있는 포용적인 환경을 조성하기 위해 헌신해 왔습니다. 이러한 헌신은 첫날부터 우리 회사의 DNA에 새겨져 있으며 오늘날까지 우리의 관행을 이끌고 있습니다.",
       foundingText2: "우리는 다양한 관점이 더 나은 법률 솔루션으로 이어진다고 믿습니다. 우리 회사는 이러한 것들이 업계 표준이 되기 훨씬 전부터 평등과 포용을 일관되게 옹호해 왔으며, 다양한 팀이 복잡한 법적 요구를 가진 고객에게 서비스를 제공하는 데 있어 가장 큰 강점임을 인식하고 있습니다.",
       statsTitle: "수치로 보는 우리의 진전",
       stats: [
@@ -281,7 +281,7 @@ export default function DiversityInclusion() {
       proBonoText: "다양성에 대한 우리의 헌신은 회사 밖으로 확장됩니다. 프로보노 활동을 통해 소외된 커뮤니티에 법률 서비스를 제공하고, 평등을 위해 싸우는 단체를 지원하며, 모든 사람에게 공정한 경쟁의 장을 마련하는 법률 접근성 이니셔티브에 기여합니다.",
       proBonoButton: "프로보노 활동 알아보기",
       commitmentTitle: "지속적인 헌신",
-      commitmentText: "Von Wobeser y Sierra에서 다양성과 포용성은 단순한 정책이 아닙니다. 이는 우리가 일하고, 성장하고, 고객에게 서비스를 제공하는 방식을 형성하는 핵심 가치입니다. 우리는 더 공정한 법조계를 만드는 데 선두에 서기 위해 지속적으로 관행을 평가하고 개선합니다.",
+      commitmentText: "Santos & Saucedo에서 다양성과 포용성은 단순한 정책이 아닙니다. 이는 우리가 일하고, 성장하고, 고객에게 서비스를 제공하는 방식을 형성하는 핵심 가치입니다. 우리는 더 공정한 법조계를 만드는 데 선두에 서기 위해 지속적으로 관행을 평가하고 개선합니다.",
       valuesTitle: "포용 가치",
       values: [
         { icon: Scale, title: "공정성", text: "모든 사람에게 공정한 대우와 동등한 기회 접근" },
@@ -297,7 +297,7 @@ export default function DiversityInclusion() {
       title: "ダイバーシティ＆インクルージョン",
       subtitle: "1986年以来、より包括的な法律専門職の構築に取り組んでいます",
       foundingTitle: "創業時からの約束",
-      foundingText1: "1986年の創業以来、Von Wobeser y Sierraは、背景、性別、個人的な状況に関係なく、才能が花開くことができる包括的な環境の創造に取り組んできました。この約束は創業初日から当事務所のDNAに組み込まれ、今日も私たちの実践を導いています。",
+      foundingText1: "1986年の創業以来、Santos & Saucedoは、背景、性別、個人的な状況に関係なく、才能が花開くことができる包括的な環境の創造に取り組んできました。この約束は創業初日から当事務所のDNAに組み込まれ、今日も私たちの実践を導いています。",
       foundingText2: "私たちは、多様な視点がより良い法的ソリューションにつながると信じています。当事務所は、これらが業界標準になるずっと前から一貫して平等と包括性を擁護してきました。多様なチームが複雑な法的ニーズを持つクライアントにサービスを提供する上での最大の強みであることを認識しています。",
       statsTitle: "数字で見る私たちの進歩",
       stats: [
@@ -334,7 +334,7 @@ export default function DiversityInclusion() {
       proBonoText: "多様性への私たちのコミットメントは、事務所の壁を超えて広がっています。プロボノ活動を通じて、代表性の低いコミュニティに法的サービスを提供し、平等のために闘う組織を支援し、すべての人が公平な競争の場を得られるよう司法へのアクセスに貢献しています。",
       proBonoButton: "プロボノ活動について詳しく",
       commitmentTitle: "継続的なコミットメント",
-      commitmentText: "Von Wobeser y Sierraにおいて、ダイバーシティとインクルージョンは単なる方針ではありません。それらは、私たちがどのように働き、成長し、クライアントにサービスを提供するかを形作る核心的な価値観です。私たちは、より公平な法律専門職の創造の最前線にいるために、継続的に実践を評価し改善しています。",
+      commitmentText: "Santos & Saucedoにおいて、ダイバーシティとインクルージョンは単なる方針ではありません。それらは、私たちがどのように働き、成長し、クライアントにサービスを提供するかを形作る核心的な価値観です。私たちは、より公平な法律専門職の創造の最前線にいるために、継続的に実践を評価し改善しています。",
       valuesTitle: "インクルージョンの価値観",
       values: [
         { icon: Scale, title: "公平性", text: "すべての人への公平な扱いと機会への平等なアクセス" },
@@ -350,7 +350,7 @@ export default function DiversityInclusion() {
       title: "التنوع والشمول",
       subtitle: "بناء مهنة قانونية أكثر شمولاً منذ عام 1986",
       foundingTitle: "التزامنا التأسيسي",
-      foundingText1: "منذ تأسيسها في عام 1986، التزمت Von Wobeser y Sierra بخلق بيئة شاملة حيث يمكن للمواهب أن تزدهر بغض النظر عن الخلفية أو الجنس أو الظروف الشخصية. تم تضمين هذا الالتزام في الحمض النووي لشركتنا منذ اليوم الأول ويستمر في توجيه ممارساتنا اليوم.",
+      foundingText1: "منذ تأسيسها في عام 1986، التزمت Santos & Saucedo بخلق بيئة شاملة حيث يمكن للمواهب أن تزدهر بغض النظر عن الخلفية أو الجنس أو الظروف الشخصية. تم تضمين هذا الالتزام في الحمض النووي لشركتنا منذ اليوم الأول ويستمر في توجيه ممارساتنا اليوم.",
       foundingText2: "نؤمن بأن وجهات النظر المتنوعة تؤدي إلى حلول قانونية أفضل. دافعت شركتنا باستمرار عن المساواة والشمول، قبل أن تصبح هذه معايير صناعية بوقت طويل، مدركين أن الفريق المتنوع هو أعظم قوتنا في خدمة العملاء ذوي الاحتياجات القانونية المعقدة.",
       statsTitle: "تقدمنا بالأرقام",
       stats: [
@@ -387,7 +387,7 @@ export default function DiversityInclusion() {
       proBonoText: "يمتد التزامنا بالتنوع إلى ما وراء جدران شركتنا. من خلال ممارستنا للعمل المجاني، نقدم خدمات قانونية للمجتمعات الممثلة تمثيلاً ناقصاً، وندعم المنظمات التي تناضل من أجل المساواة، ونساهم في مبادرات الوصول إلى العدالة التي تساعد في تحقيق تكافؤ الفرص للجميع.",
       proBonoButton: "تعرف على عملنا المجاني",
       commitmentTitle: "التزامنا المستمر",
-      commitmentText: "التنوع والشمول ليسا مجرد سياسات في Von Wobeser y Sierra - إنهما قيم أساسية تشكل كيفية عملنا ونمونا وخدمة عملائنا. نقوم باستمرار بتقييم وتحسين ممارساتنا لضمان بقائنا في طليعة إنشاء مهنة قانونية أكثر إنصافاً.",
+      commitmentText: "التنوع والشمول ليسا مجرد سياسات في Santos & Saucedo - إنهما قيم أساسية تشكل كيفية عملنا ونمونا وخدمة عملائنا. نقوم باستمرار بتقييم وتحسين ممارساتنا لضمان بقائنا في طليعة إنشاء مهنة قانونية أكثر إنصافاً.",
       valuesTitle: "قيم الشمول",
       values: [
         { icon: Scale, title: "الإنصاف", text: "معاملة عادلة ووصول متساوٍ للفرص للجميع" },
@@ -403,7 +403,7 @@ export default function DiversityInclusion() {
       title: "Разнообразие и инклюзивность",
       subtitle: "Строим более инклюзивную юридическую профессию с 1986 года",
       foundingTitle: "Наше основополагающее обязательство",
-      foundingText1: "С момента основания в 1986 году Von Wobeser y Sierra стремится создать инклюзивную среду, где таланты могут процветать независимо от происхождения, пола или личных обстоятельств. Это обязательство было заложено в ДНК нашей фирмы с первого дня и продолжает направлять нашу практику сегодня.",
+      foundingText1: "С момента основания в 1986 году Santos & Saucedo стремится создать инклюзивную среду, где таланты могут процветать независимо от происхождения, пола или личных обстоятельств. Это обязательство было заложено в ДНК нашей фирмы с первого дня и продолжает направлять нашу практику сегодня.",
       foundingText2: "Мы верим, что разнообразие точек зрения ведёт к лучшим юридическим решениям. Наша фирма неизменно отстаивала равенство и инклюзивность задолго до того, как это стало отраслевыми стандартами, признавая, что разнообразная команда — наша главная сила в обслуживании клиентов со сложными юридическими потребностями.",
       statsTitle: "Наш прогресс в цифрах",
       stats: [
@@ -440,7 +440,7 @@ export default function DiversityInclusion() {
       proBonoText: "Наша приверженность разнообразию выходит за стены нашей фирмы. Через нашу практику pro bono мы предоставляем юридические услуги недостаточно представленным сообществам, поддерживаем организации, борющиеся за равенство, и вносим вклад в инициативы по обеспечению доступа к правосудию.",
       proBonoButton: "Узнайте о нашей Pro Bono работе",
       commitmentTitle: "Наше постоянное обязательство",
-      commitmentText: "Разнообразие и инклюзивность — это не просто политика в Von Wobeser y Sierra, это основные ценности, которые формируют то, как мы работаем, растём и обслуживаем клиентов. Мы постоянно оцениваем и совершенствуем нашу практику, чтобы оставаться в авангарде создания более справедливой юридической профессии.",
+      commitmentText: "Разнообразие и инклюзивность — это не просто политика в Santos & Saucedo, это основные ценности, которые формируют то, как мы работаем, растём и обслуживаем клиентов. Мы постоянно оцениваем и совершенствуем нашу практику, чтобы оставаться в авангарде создания более справедливой юридической профессии.",
       valuesTitle: "Ценности инклюзивности",
       values: [
         { icon: Scale, title: "Справедливость", text: "Справедливое отношение и равный доступ к возможностям для всех" },
@@ -456,7 +456,7 @@ export default function DiversityInclusion() {
       title: "Diversité et Inclusion",
       subtitle: "Construire une profession juridique plus inclusive depuis 1986",
       foundingTitle: "Notre Engagement Fondateur",
-      foundingText1: "Depuis sa fondation en 1986, Von Wobeser y Sierra s'est engagé à créer un environnement inclusif où les talents peuvent s'épanouir indépendamment de leur origine, de leur genre ou de leurs circonstances personnelles. Cet engagement fait partie de l'ADN de notre cabinet depuis le premier jour et continue de guider nos pratiques aujourd'hui.",
+      foundingText1: "Depuis sa fondation en 1986, Santos & Saucedo s'est engagé à créer un environnement inclusif où les talents peuvent s'épanouir indépendamment de leur origine, de leur genre ou de leurs circonstances personnelles. Cet engagement fait partie de l'ADN de notre cabinet depuis le premier jour et continue de guider nos pratiques aujourd'hui.",
       foundingText2: "Nous croyons que les perspectives diverses mènent à de meilleures solutions juridiques. Notre cabinet a constamment défendu l'égalité et l'inclusion, bien avant que cela ne devienne des normes de l'industrie, reconnaissant qu'une équipe diversifiée est notre plus grande force pour servir des clients aux besoins juridiques complexes.",
       statsTitle: "Notre Progression en Chiffres",
       stats: [
@@ -493,7 +493,7 @@ export default function DiversityInclusion() {
       proBonoText: "Notre engagement envers la diversité s'étend au-delà des murs de notre cabinet. À travers notre pratique pro bono, nous fournissons des services juridiques aux communautés sous-représentées, soutenons les organisations luttant pour l'égalité et contribuons aux initiatives d'accès à la justice.",
       proBonoButton: "Découvrez notre Travail Pro Bono",
       commitmentTitle: "Notre Engagement Continu",
-      commitmentText: "La diversité et l'inclusion ne sont pas de simples politiques chez Von Wobeser y Sierra — ce sont des valeurs fondamentales qui façonnent notre façon de travailler, de grandir et de servir nos clients. Nous évaluons et améliorons continuellement nos pratiques pour rester à l'avant-garde de la création d'une profession juridique plus équitable.",
+      commitmentText: "La diversité et l'inclusion ne sont pas de simples politiques chez Santos & Saucedo — ce sont des valeurs fondamentales qui façonnent notre façon de travailler, de grandir et de servir nos clients. Nous évaluons et améliorons continuellement nos pratiques pour rester à l'avant-garde de la création d'une profession juridique plus équitable.",
       valuesTitle: "Valeurs d'Inclusion",
       values: [
         { icon: Scale, title: "Équité", text: "Traitement équitable et accès égal aux opportunités pour tous" },
@@ -509,7 +509,7 @@ export default function DiversityInclusion() {
       title: "Diversità e Inclusione",
       subtitle: "Costruire una professione legale più inclusiva dal 1986",
       foundingTitle: "Il Nostro Impegno Fondatore",
-      foundingText1: "Dalla sua fondazione nel 1986, Von Wobeser y Sierra si è impegnata a creare un ambiente inclusivo in cui il talento possa prosperare indipendentemente dal background, dal genere o dalle circostanze personali. Questo impegno è stato incorporato nel DNA del nostro studio fin dal primo giorno e continua a guidare le nostre pratiche oggi.",
+      foundingText1: "Dalla sua fondazione nel 1986, Santos & Saucedo si è impegnata a creare un ambiente inclusivo in cui il talento possa prosperare indipendentemente dal background, dal genere o dalle circostanze personali. Questo impegno è stato incorporato nel DNA del nostro studio fin dal primo giorno e continua a guidare le nostre pratiche oggi.",
       foundingText2: "Crediamo che le prospettive diverse portino a soluzioni legali migliori. Il nostro studio ha costantemente sostenuto l'uguaglianza e l'inclusione, molto prima che diventassero standard di settore, riconoscendo che un team diversificato è la nostra più grande forza nel servire clienti con esigenze legali complesse.",
       statsTitle: "I Nostri Progressi in Numeri",
       stats: [
@@ -546,7 +546,7 @@ export default function DiversityInclusion() {
       proBonoText: "Il nostro impegno per la diversità si estende oltre le mura del nostro studio. Attraverso la nostra pratica pro bono, forniamo servizi legali a comunità sottorappresentate, supportiamo organizzazioni che lottano per l'uguaglianza e contribuiamo a iniziative di accesso alla giustizia.",
       proBonoButton: "Scopri il Nostro Lavoro Pro Bono",
       commitmentTitle: "Il Nostro Impegno Continuo",
-      commitmentText: "Diversità e inclusione non sono solo politiche presso Von Wobeser y Sierra — sono valori fondamentali che plasmano il modo in cui lavoriamo, cresciamo e serviamo i nostri clienti. Valutiamo e miglioriamo continuamente le nostre pratiche per rimanere all'avanguardia nella creazione di una professione legale più equa.",
+      commitmentText: "Diversità e inclusione non sono solo politiche presso Santos & Saucedo — sono valori fondamentali che plasmano il modo in cui lavoriamo, cresciamo e serviamo i nostri clienti. Valutiamo e miglioriamo continuamente le nostre pratiche per rimanere all'avanguardia nella creazione di una professione legale più equa.",
       valuesTitle: "Valori di Inclusione",
       values: [
         { icon: Scale, title: "Equità", text: "Trattamento equo e pari accesso alle opportunità per tutti" },

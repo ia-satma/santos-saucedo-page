@@ -160,7 +160,7 @@ export default function ArticlesPage() {
   const content = {
     en: {
       title: "Articles",
-      subtitle: "Legal insights and publications from Von Wobeser y Sierra",
+      subtitle: "Legal insights and publications from Santos & Saucedo",
       errorMessage: "Failed to load articles",
       searchPlaceholder: "Search articles...",
       readMore: "Read More",
@@ -171,7 +171,7 @@ export default function ArticlesPage() {
     },
     es: {
       title: "Artículos",
-      subtitle: "Insights legales y publicaciones de Von Wobeser y Sierra",
+      subtitle: "Insights legales y publicaciones de Santos & Saucedo",
       errorMessage: "Error al cargar los artículos",
       searchPlaceholder: "Buscar artículos...",
       readMore: "Leer Más",

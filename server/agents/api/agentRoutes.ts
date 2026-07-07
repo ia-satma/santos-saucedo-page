@@ -171,7 +171,9 @@ router.post('/pipeline/process-all', async (req: Request, res: Response) => {
     const { stages, limit } = req.body;
     
     const allNews = await db.select({ id: news.id, title: news.title }).from(news);
-    const articleIds = limit ? allNews.slice(0, limit).map(n => n.id) : allNews.map(n => n.id);
+    const articleIds = limit
+      ? allNews.slice(0, limit).map((n: { id: string }) => n.id)
+      : allNews.map((n: { id: string }) => n.id);
     
     console.log(`[Pipeline] Processing ${articleIds.length} articles...`);
     

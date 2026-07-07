@@ -184,6 +184,19 @@ export class AgentKnowledgeStore {
       })),
     };
   }
+
+  async fromJSON(data: { documents?: KnowledgeDocument[] }): Promise<void> {
+    const documents = data.documents || [];
+    for (const doc of documents) {
+      await this.addDocument({
+        agentType: doc.agentType,
+        category: doc.category,
+        title: doc.title,
+        content: doc.content,
+        metadata: doc.metadata,
+      });
+    }
+  }
 }
 
 export const knowledgeStore = new AgentKnowledgeStore();

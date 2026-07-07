@@ -222,7 +222,7 @@ export default function AboutUsSection() {
 
   const getValueName = (v: ValueItem) => v[language] || v.en;
   const getValueDesc = (v: ValueItem) =>
-    (v as Record<string, string>)[`desc_${language}`] || v.desc_en;
+    (v as unknown as Record<string, string>)[`desc_${language}`] || v.desc_en;
 
   const featureCards = [
     { icon: Eye, title: t.visionTitle, text: t.visionText, testId: "subsection-vision" },

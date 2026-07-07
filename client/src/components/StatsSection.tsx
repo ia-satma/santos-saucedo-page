@@ -21,12 +21,12 @@ interface StatsSectionProps {
 }
 
 const galleryImages: { id: string; src: string; alt: string; altEs: string }[] = [
-  { id: "office-01", src: collage01, alt: "Reception area at the new Von Wobeser y Sierra offices", altEs: "Área de recepción de las nuevas oficinas de Von Wobeser y Sierra" },
+  { id: "office-01", src: collage01, alt: "Reception area at the new Santos & Saucedo offices", altEs: "Área de recepción de las nuevas oficinas de Santos & Saucedo" },
   { id: "office-02", src: collage02, alt: "Collaborative workspace at the new offices", altEs: "Espacio de trabajo colaborativo en las nuevas oficinas" },
   { id: "office-03", src: collage03, alt: "Meeting room at the new offices", altEs: "Sala de juntas en las nuevas oficinas" },
   { id: "office-04", src: collage04, alt: "Open lounge area at the new offices", altEs: "Área lounge abierta en las nuevas oficinas" },
   { id: "office-05", src: collage05, alt: "Private office at the new offices", altEs: "Oficina privada en las nuevas oficinas" },
-  { id: "office-hero", src: heroOffice, alt: "Panoramic view of the new Von Wobeser y Sierra offices", altEs: "Vista panorámica de las nuevas oficinas de Von Wobeser y Sierra" },
+  { id: "office-hero", src: heroOffice, alt: "Panoramic view of the new Santos & Saucedo offices", altEs: "Vista panorámica de las nuevas oficinas de Santos & Saucedo" },
   { id: "office-06", src: collage06, alt: "Conference room at the new offices", altEs: "Sala de conferencias en las nuevas oficinas" },
   { id: "office-07", src: collage07, alt: "Lobby detail at the new offices", altEs: "Detalle del lobby en las nuevas oficinas" },
   { id: "office-08", src: collage08, alt: "Panoramic terrace at the new offices", altEs: "Terraza panorámica en las nuevas oficinas" },

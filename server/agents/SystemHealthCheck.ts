@@ -315,7 +315,7 @@ export class SystemHealthCheck {
       
       const usedUrls = new Set(
         allArticles
-          .map(a => a.imageUrl)
+          .map((a: { imageUrl: string | null }) => a.imageUrl)
           .filter(Boolean)
       );
       

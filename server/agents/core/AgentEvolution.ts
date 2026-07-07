@@ -311,6 +311,14 @@ export class AgentEvolutionTracker {
       history: this.learningCycleHistory,
     };
   }
+
+  async fromJSON(data: { stats?: AgentStats[]; history?: LearningCycleEntry[] }): Promise<void> {
+    this.agentStats = new Map((data.stats || []).map((stats) => [stats.agentType, stats]));
+    this.learningCycleHistory = (data.history || []).map((entry) => ({
+      ...entry,
+      timestamp: new Date(entry.timestamp),
+    }));
+  }
 }
 
 export const evolutionTracker = new AgentEvolutionTracker();

@@ -600,7 +600,7 @@ interface CMSStats {
 export default function AdminDashboard() {
   const { language } = useLanguage();
   const { isAuthenticated, isLoading: authLoading, logout, requireAuth } = useAdminAuth();
-  const t = translations[language as keyof typeof translations] || translations.en;
+  const t = (translations[language as keyof typeof translations] || translations.en) as typeof translations.en;
 
   useEffect(() => {
     if (!authLoading) {

@@ -124,9 +124,9 @@ export class ContentAnalyzerAgent extends BaseAgent {
     const allPracticeGroups = await db.select().from(practiceGroups);
     const allIndustryGroups = await db.select().from(industryGroups);
 
-    const lawyerNames = allLawyers.map(l => l.name);
-    const practiceNames = allPracticeGroups.map(p => ({ en: p.name, es: p.nameEs }));
-    const industryNames = allIndustryGroups.map(i => ({ en: i.name, es: i.nameEs }));
+    const lawyerNames = allLawyers.map((l: typeof teamMembers.$inferSelect) => l.name);
+    const practiceNames = allPracticeGroups.map((p: typeof practiceGroups.$inferSelect) => ({ en: p.name, es: p.nameEs }));
+    const industryNames = allIndustryGroups.map((i: typeof industryGroups.$inferSelect) => ({ en: i.name, es: i.nameEs }));
 
     const articleContent = `
 TITLE: ${article.title || ''}

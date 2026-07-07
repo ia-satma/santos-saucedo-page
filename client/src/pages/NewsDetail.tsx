@@ -526,16 +526,16 @@ export default function NewsDetail() {
             datePublished={newsArticle.date}
             dateModified={newsArticle.date}
             authorName={primaryAuthor?.name}
-            authorUrl={primaryAuthor ? `https://www.vonwobeser.com/team/${primaryAuthor.slug}` : undefined}
+            authorUrl={primaryAuthor ? `https://www.santossaucedo.com/team/${primaryAuthor.slug}` : undefined}
             imageUrl={newsArticle.imageUrl}
-            url={`https://www.vonwobeser.com/news/${newsArticle.slug}`}
+            url={`https://www.santossaucedo.com/news/${newsArticle.slug}`}
             language={language}
           />
           <BreadcrumbJsonLd
             items={[
-              { name: language === "es" ? "Inicio" : "Home", url: "https://www.vonwobeser.com" },
-              { name: language === "es" ? "Noticias" : "News", url: "https://www.vonwobeser.com/#news" },
-              { name: language === "es" ? newsArticle.titleEs : newsArticle.title, url: `https://www.vonwobeser.com/news/${newsArticle.slug}` }
+              { name: language === "es" ? "Inicio" : "Home", url: "https://www.santossaucedo.com" },
+              { name: language === "es" ? "Noticias" : "News", url: "https://www.santossaucedo.com/#news" },
+              { name: language === "es" ? newsArticle.titleEs : newsArticle.title, url: `https://www.santossaucedo.com/news/${newsArticle.slug}` }
             ]}
             language={language}
           />

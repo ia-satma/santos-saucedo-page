@@ -31,7 +31,7 @@ export default function PrivacyPolicy() {
           id: "introduction",
           icon: Shield,
           title: "1. Introduction",
-          content: `Von Wobeser y Sierra, S.C. ("VWS," "we," "us," or "our") is committed to protecting your privacy and ensuring the security of your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website www.vonwobeser.com (the "Website") or interact with our services.
+          content: `Santos & Saucedo Abogados ("VWS," "we," "us," or "our") is committed to protecting your privacy and ensuring the security of your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website www.santossaucedo.com (the "Website") or interact with our services.
 
 This Privacy Policy complies with the Federal Law on Protection of Personal Data Held by Private Parties (Ley Federal de Protección de Datos Personales en Posesión de los Particulares, "LFPDPPP") and its Regulations, as well as other applicable Mexican data protection laws and international best practices.
 
@@ -43,13 +43,13 @@ By accessing or using our Website, you acknowledge that you have read, understoo
           title: "2. Data Controller",
           content: `The data controller responsible for your personal data is:
 
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 Torre SOMA Chapultepec, Floor 18
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, Mexico City, Mexico
 
 For privacy-related inquiries:
-Email: privacidad@vonwobeser.com
+Email: privacidad@santossaucedo.com
 Phone: +52 55 5258 1000
 
 Our Data Protection Officer can be contacted at the above address for any questions regarding this Privacy Policy or the exercise of your data protection rights.`
@@ -112,7 +112,7 @@ Under applicable law, we process your data based on:
 • Our legitimate interests (where not overridden by your rights)
 • Your explicit consent (where required)
 
-You may opt out of secondary purposes at any time by contacting us at privacidad@vonwobeser.com.`
+You may opt out of secondary purposes at any time by contacting us at privacidad@santossaucedo.com.`
         },
         {
           id: "data-retention",
@@ -176,7 +176,7 @@ You may object to the processing of your personal data for specific purposes, pa
 
 To Exercise Your Rights:
 Submit a written request to:
-Email: privacidad@vonwobeser.com
+Email: privacidad@santossaucedo.com
 Address: Torre SOMA Chapultepec, Floor 18
 Campos Elíseos 204, Polanco
 C.P. 11560, Mexico City, Mexico
@@ -264,7 +264,7 @@ Physical Measures:
 • Secure document storage and destruction
 • Clean desk policies
 
-Despite our best efforts, no method of transmission over the Internet or electronic storage is 100% secure. If you have reason to believe your personal data has been compromised, please contact us immediately at privacidad@vonwobeser.com.`
+Despite our best efforts, no method of transmission over the Internet or electronic storage is 100% secure. If you have reason to believe your personal data has been compromised, please contact us immediately at privacidad@santossaucedo.com.`
         },
         {
           id: "changes",
@@ -288,21 +288,21 @@ This Privacy Policy was last updated in December 2024 and supersedes all previou
           content: `For any questions, concerns, or requests related to this Privacy Policy or our data protection practices, please contact:
 
 Data Protection Officer
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 
 Address:
 Torre SOMA Chapultepec, Floor 18
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, Mexico City, Mexico
 
-Email: privacidad@vonwobeser.com
+Email: privacidad@santossaucedo.com
 Phone: +52 55 5258 1000
 
 Office Hours: Monday to Friday, 9:00 AM to 6:00 PM (Mexico City time)
 
 For general inquiries about our legal services:
-Email: info@vonwobeser.com
-Website: www.vonwobeser.com`
+Email: info@santossaucedo.com
+Website: www.santossaucedo.com`
         }
       ]
     },
@@ -315,7 +315,7 @@ Website: www.vonwobeser.com`
           id: "introduction",
           icon: Shield,
           title: "1. Introducción",
-          content: `Von Wobeser y Sierra, S.C. ("VWS", "nosotros" o "nuestro") se compromete a proteger su privacidad y garantizar la seguridad de sus datos personales. Este Aviso de Privacidad explica cómo recopilamos, utilizamos, divulgamos y protegemos su información cuando visita nuestro sitio web www.vonwobeser.com (el "Sitio Web") o interactúa con nuestros servicios.
+          content: `Santos & Saucedo Abogados ("VWS", "nosotros" o "nuestro") se compromete a proteger su privacidad y garantizar la seguridad de sus datos personales. Este Aviso de Privacidad explica cómo recopilamos, utilizamos, divulgamos y protegemos su información cuando visita nuestro sitio web www.santossaucedo.com (el "Sitio Web") o interactúa con nuestros servicios.
 
 Este Aviso de Privacidad cumple con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares ("LFPDPPP") y su Reglamento, así como con otras leyes mexicanas de protección de datos aplicables y las mejores prácticas internacionales.
 
@@ -327,13 +327,13 @@ Al acceder o utilizar nuestro Sitio Web, usted reconoce que ha leído, comprendi
           title: "2. Responsable del Tratamiento",
           content: `El responsable del tratamiento de sus datos personales es:
 
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 Torre SOMA Chapultepec, Piso 18
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, Ciudad de México, México
 
 Para consultas relacionadas con privacidad:
-Correo electrónico: privacidad@vonwobeser.com
+Correo electrónico: privacidad@santossaucedo.com
 Teléfono: +52 55 5258 1000`
         },
         {
@@ -377,7 +377,7 @@ Finalidades Secundarias (pueden requerir consentimiento):
 • Para realizar encuestas y recopilar comentarios sobre nuestros servicios
 • Para enviar comunicaciones de marketing sobre nuestras áreas de práctica
 
-Puede optar por no recibir comunicaciones para finalidades secundarias contactándonos en privacidad@vonwobeser.com.`
+Puede optar por no recibir comunicaciones para finalidades secundarias contactándonos en privacidad@santossaucedo.com.`
         },
         {
           id: "data-retention",
@@ -425,7 +425,7 @@ Oposición: Puede oponerse al tratamiento de sus datos personales para fines esp
 
 Para Ejercer sus Derechos:
 Envíe una solicitud por escrito a:
-Correo electrónico: privacidad@vonwobeser.com
+Correo electrónico: privacidad@santossaucedo.com
 Dirección: Torre SOMA Chapultepec, Piso 18
 Campos Elíseos 204, Polanco
 C.P. 11560, Ciudad de México, México`
@@ -505,14 +505,14 @@ Le recomendamos revisar periódicamente este Aviso de Privacidad.`
           content: `Para cualquier pregunta relacionada con este Aviso de Privacidad, contacte a:
 
 Oficial de Protección de Datos
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 
 Dirección:
 Torre SOMA Chapultepec, Piso 18
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, Ciudad de México, México
 
-Correo electrónico: privacidad@vonwobeser.com
+Correo electrónico: privacidad@santossaucedo.com
 Teléfono: +52 55 5258 1000
 
 Horario de atención: Lunes a viernes, 9:00 AM a 6:00 PM (hora de la Ciudad de México)`
@@ -528,7 +528,7 @@ Horario de atención: Lunes a viernes, 9:00 AM a 6:00 PM (hora de la Ciudad de M
           id: "introduction",
           icon: Shield,
           title: "1. Einleitung",
-          content: `Von Wobeser y Sierra, S.C. („VWS", „wir", „uns" oder „unser") verpflichtet sich, Ihre Privatsphäre zu schützen und die Sicherheit Ihrer personenbezogenen Daten zu gewährleisten. Diese Datenschutzrichtlinie erläutert, wie wir Ihre Informationen erfassen, verwenden, offenlegen und schützen, wenn Sie unsere Website www.vonwobeser.com (die „Website") besuchen oder mit unseren Diensten interagieren.
+          content: `Santos & Saucedo Abogados („VWS", „wir", „uns" oder „unser") verpflichtet sich, Ihre Privatsphäre zu schützen und die Sicherheit Ihrer personenbezogenen Daten zu gewährleisten. Diese Datenschutzrichtlinie erläutert, wie wir Ihre Informationen erfassen, verwenden, offenlegen und schützen, wenn Sie unsere Website www.santossaucedo.com (die „Website") besuchen oder mit unseren Diensten interagieren.
 
 Diese Datenschutzrichtlinie entspricht dem Bundesgesetz zum Schutz personenbezogener Daten in Privatbesitz (LFPDPPP) und seinen Vorschriften sowie anderen anwendbaren mexikanischen Datenschutzgesetzen und internationalen Best Practices.
 
@@ -540,13 +540,13 @@ Durch den Zugriff auf oder die Nutzung unserer Website erkennen Sie an, dass Sie
           title: "2. Verantwortlicher",
           content: `Der für Ihre personenbezogenen Daten verantwortliche Datenverantwortliche ist:
 
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 Torre SOMA Chapultepec, 18. Stock
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, Mexiko-Stadt, Mexiko
 
 Für datenschutzbezogene Anfragen:
-E-Mail: privacidad@vonwobeser.com
+E-Mail: privacidad@santossaucedo.com
 Telefon: +52 55 5258 1000
 
 Unser Datenschutzbeauftragter kann unter der oben genannten Adresse für Fragen zu dieser Datenschutzrichtlinie kontaktiert werden.`
@@ -591,7 +591,7 @@ Sekundäre Zwecke (können Einwilligung erfordern):
 • Zur Durchführung von Umfragen und Sammlung von Feedback
 • Zum Versenden von Marketingkommunikation über unsere Praxisbereiche
 
-Sie können der Verarbeitung für sekundäre Zwecke jederzeit widersprechen, indem Sie uns unter privacidad@vonwobeser.com kontaktieren.`
+Sie können der Verarbeitung für sekundäre Zwecke jederzeit widersprechen, indem Sie uns unter privacidad@santossaucedo.com kontaktieren.`
         },
         {
           id: "data-retention",
@@ -647,7 +647,7 @@ Widerspruch (Oposición):
 Sie können der Verarbeitung Ihrer personenbezogenen Daten für bestimmte Zwecke widersprechen.
 
 Zur Ausübung Ihrer Rechte:
-E-Mail: privacidad@vonwobeser.com
+E-Mail: privacidad@santossaucedo.com
 Adresse: Torre SOMA Chapultepec, 18. Stock, Mexiko-Stadt`
         },
         {
@@ -731,21 +731,21 @@ Diese Datenschutzrichtlinie wurde zuletzt im Dezember 2024 aktualisiert.`
           content: `Bei Fragen, Bedenken oder Anfragen zu dieser Datenschutzrichtlinie kontaktieren Sie bitte:
 
 Datenschutzbeauftragter
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 
 Adresse:
 Torre SOMA Chapultepec, 18. Stock
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, Mexiko-Stadt, Mexiko
 
-E-Mail: privacidad@vonwobeser.com
+E-Mail: privacidad@santossaucedo.com
 Telefon: +52 55 5258 1000
 
 Öffnungszeiten: Montag bis Freitag, 9:00 bis 18:00 Uhr (Ortszeit Mexiko-Stadt)
 
 Für allgemeine Anfragen zu unseren Rechtsdienstleistungen:
-E-Mail: info@vonwobeser.com
-Website: www.vonwobeser.com`
+E-Mail: info@santossaucedo.com
+Website: www.santossaucedo.com`
         }
       ]
     },
@@ -758,7 +758,7 @@ Website: www.vonwobeser.com`
           id: "introduction",
           icon: Shield,
           title: "1. 简介",
-          content: `Von Wobeser y Sierra, S.C.（"VWS"、"我们"或"我们的"）致力于保护您的隐私并确保您个人数据的安全。本隐私政策解释了当您访问我们的网站www.vonwobeser.com（"网站"）或与我们的服务互动时，我们如何收集、使用、披露和保护您的信息。
+          content: `Santos & Saucedo Abogados（"VWS"、"我们"或"我们的"）致力于保护您的隐私并确保您个人数据的安全。本隐私政策解释了当您访问我们的网站www.santossaucedo.com（"网站"）或与我们的服务互动时，我们如何收集、使用、披露和保护您的信息。
 
 本隐私政策符合《私人持有个人数据保护联邦法》（LFPDPPP）及其条例，以及其他适用的墨西哥数据保护法律和国际最佳实践。
 
@@ -770,13 +770,13 @@ Website: www.vonwobeser.com`
           title: "2. 数据控制者",
           content: `负责您个人数据的数据控制者是：
 
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 Torre SOMA Chapultepec, 18楼
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, 墨西哥城, 墨西哥
 
 隐私相关咨询：
-电子邮件：privacidad@vonwobeser.com
+电子邮件：privacidad@santossaucedo.com
 电话：+52 55 5258 1000
 
 如对本隐私政策或行使您的数据保护权利有任何疑问，可通过上述地址联系我们的数据保护官。`
@@ -825,7 +825,7 @@ C.P. 11560, 墨西哥城, 墨西哥
 • 进行调查并收集对我们服务的反馈
 • 发送关于我们业务领域的营销通信
 
-您可以随时通过联系privacidad@vonwobeser.com选择退出次要目的。`
+您可以随时通过联系privacidad@santossaucedo.com选择退出次要目的。`
         },
         {
           id: "data-retention",
@@ -883,7 +883,7 @@ C.P. 11560, 墨西哥城, 墨西哥
 
 行使您的权利：
 请将书面请求提交至：
-电子邮件：privacidad@vonwobeser.com
+电子邮件：privacidad@santossaucedo.com
 地址：Torre SOMA Chapultepec, 18楼，墨西哥城
 
 如果您对我们的回复不满意，可以向国家透明度、信息获取和个人数据保护研究所（INAI）提出投诉：www.inai.org.mx`
@@ -973,21 +973,21 @@ C.P. 11560, 墨西哥城, 墨西哥
           content: `如对本隐私政策或我们的数据保护做法有任何问题、疑虑或请求，请联系：
 
 数据保护官
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 
 地址：
 Torre SOMA Chapultepec, 18楼
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, 墨西哥城, 墨西哥
 
-电子邮件：privacidad@vonwobeser.com
+电子邮件：privacidad@santossaucedo.com
 电话：+52 55 5258 1000
 
 办公时间：周一至周五，上午9:00至下午6:00（墨西哥城时间）
 
 如需了解我们的法律服务：
-电子邮件：info@vonwobeser.com
-网站：www.vonwobeser.com`
+电子邮件：info@santossaucedo.com
+网站：www.santossaucedo.com`
         }
       ]
     },
@@ -1000,7 +1000,7 @@ C.P. 11560, 墨西哥城, 墨西哥
           id: "introduction",
           icon: Shield,
           title: "1. 소개",
-          content: `Von Wobeser y Sierra, S.C.("VWS", "당사", "저희" 또는 "우리의")는 귀하의 개인정보를 보호하고 개인 데이터의 보안을 보장하기 위해 노력합니다. 이 개인정보 처리방침은 귀하가 당사 웹사이트 www.vonwobeser.com("웹사이트")을 방문하거나 당사 서비스와 상호작용할 때 귀하의 정보를 수집, 사용, 공개 및 보호하는 방법을 설명합니다.
+          content: `Santos & Saucedo Abogados("VWS", "당사", "저희" 또는 "우리의")는 귀하의 개인정보를 보호하고 개인 데이터의 보안을 보장하기 위해 노력합니다. 이 개인정보 처리방침은 귀하가 당사 웹사이트 www.santossaucedo.com("웹사이트")을 방문하거나 당사 서비스와 상호작용할 때 귀하의 정보를 수집, 사용, 공개 및 보호하는 방법을 설명합니다.
 
 이 개인정보 처리방침은 개인정보 보호에 관한 연방법(LFPDPPP) 및 그 규정, 기타 적용 가능한 멕시코 데이터 보호법 및 국제 모범 사례를 준수합니다.
 
@@ -1012,13 +1012,13 @@ C.P. 11560, 墨西哥城, 墨西哥
           title: "2. 데이터 관리자",
           content: `귀하의 개인 데이터를 책임지는 데이터 관리자는:
 
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 Torre SOMA Chapultepec, 18층
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, 멕시코시티, 멕시코
 
 개인정보 관련 문의:
-이메일: privacidad@vonwobeser.com
+이메일: privacidad@santossaucedo.com
 전화: +52 55 5258 1000
 
 이 개인정보 처리방침 또는 데이터 보호 권리 행사에 관한 질문이 있으시면 위 주소로 당사 데이터 보호 책임자에게 연락하실 수 있습니다.`
@@ -1067,7 +1067,7 @@ C.P. 11560, 멕시코시티, 멕시코
 • 서비스에 대한 설문조사 및 피드백 수집
 • 업무 분야에 관한 마케팅 커뮤니케이션 발송
 
-privacidad@vonwobeser.com으로 연락하여 언제든지 부수적 목적에서 제외될 수 있습니다.`
+privacidad@santossaucedo.com으로 연락하여 언제든지 부수적 목적에서 제외될 수 있습니다.`
         },
         {
           id: "data-retention",
@@ -1125,7 +1125,7 @@ VWS 내부:
 
 권리 행사:
 서면 요청을 제출하세요:
-이메일: privacidad@vonwobeser.com
+이메일: privacidad@santossaucedo.com
 주소: Torre SOMA Chapultepec, 18층, 멕시코시티
 
 당사의 응답에 만족하지 못하시면 국가 투명성, 정보 접근 및 개인 데이터 보호 연구소(INAI)에 불만을 제기할 수 있습니다: www.inai.org.mx`
@@ -1215,21 +1215,21 @@ VWS 내부:
           content: `이 개인정보 처리방침 또는 데이터 보호 관행에 관한 질문, 우려 사항 또는 요청이 있으시면 연락해 주세요:
 
 데이터 보호 책임자
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 
 주소:
 Torre SOMA Chapultepec, 18층
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, 멕시코시티, 멕시코
 
-이메일: privacidad@vonwobeser.com
+이메일: privacidad@santossaucedo.com
 전화: +52 55 5258 1000
 
 영업 시간: 월요일~금요일, 오전 9:00 ~ 오후 6:00 (멕시코시티 시간)
 
 법률 서비스에 관한 일반 문의:
-이메일: info@vonwobeser.com
-웹사이트: www.vonwobeser.com`
+이메일: info@santossaucedo.com
+웹사이트: www.santossaucedo.com`
         }
       ]
     },
@@ -1242,7 +1242,7 @@ C.P. 11560, 멕시코시티, 멕시코
           id: "introduction",
           icon: Shield,
           title: "1. はじめに",
-          content: `Von Wobeser y Sierra, S.C.（「VWS」、「当事務所」、「当社」または「私たち」）は、お客様のプライバシーを保護し、個人データのセキュリティを確保することに努めています。このプライバシーポリシーは、お客様が当社のウェブサイトwww.vonwobeser.com（「ウェブサイト」）を訪問したり、当社のサービスとやり取りする際に、お客様の情報をどのように収集、使用、開示、保護するかを説明するものです。
+          content: `Santos & Saucedo Abogados（「VWS」、「当事務所」、「当社」または「私たち」）は、お客様のプライバシーを保護し、個人データのセキュリティを確保することに努めています。このプライバシーポリシーは、お客様が当社のウェブサイトwww.santossaucedo.com（「ウェブサイト」）を訪問したり、当社のサービスとやり取りする際に、お客様の情報をどのように収集、使用、開示、保護するかを説明するものです。
 
 このプライバシーポリシーは、民間個人データ保護連邦法（LFPDPPP）およびその規則、その他の適用されるメキシコのデータ保護法、国際的なベストプラクティスに準拠しています。
 
@@ -1254,13 +1254,13 @@ C.P. 11560, 멕시코시티, 멕시코
           title: "2. データ管理者",
           content: `お客様の個人データを管理するデータ管理者は：
 
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 Torre SOMA Chapultepec, 18階
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, メキシコシティ, メキシコ
 
 プライバシーに関するお問い合わせ：
-メール：privacidad@vonwobeser.com
+メール：privacidad@santossaucedo.com
 電話：+52 55 5258 1000
 
 このプライバシーポリシーまたはデータ保護権の行使に関するご質問は、上記住所にある当社のデータ保護責任者にお問い合わせください。`
@@ -1309,7 +1309,7 @@ C.P. 11560, メキシコシティ, メキシコ
 • サービスに関する調査およびフィードバックの収集
 • 業務分野に関するマーケティングコミュニケーションの送信
 
-privacidad@vonwobeser.comにご連絡いただくことで、いつでも副次的目的からオプトアウトできます。`
+privacidad@santossaucedo.comにご連絡いただくことで、いつでも副次的目的からオプトアウトできます。`
         },
         {
           id: "data-retention",
@@ -1367,7 +1367,7 @@ VWS内：
 
 権利の行使：
 書面による要求を以下に提出してください：
-メール：privacidad@vonwobeser.com
+メール：privacidad@santossaucedo.com
 住所：Torre SOMA Chapultepec, 18階、メキシコシティ
 
 当社の対応にご満足いただけない場合は、国立透明性・情報アクセス・個人データ保護研究所（INAI）に苦情を申し立てることができます：www.inai.org.mx`
@@ -1457,21 +1457,21 @@ Cookieの管理：
           content: `このプライバシーポリシーまたは当社のデータ保護慣行に関するご質問、ご懸念、またはご要望がございましたら、以下にお問い合わせください：
 
 データ保護責任者
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 
 住所：
 Torre SOMA Chapultepec, 18階
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, メキシコシティ, メキシコ
 
-メール：privacidad@vonwobeser.com
+メール：privacidad@santossaucedo.com
 電話：+52 55 5258 1000
 
 営業時間：月曜日〜金曜日、午前9:00〜午後6:00（メキシコシティ時間）
 
 当社の法律サービスに関する一般的なお問い合わせ：
-メール：info@vonwobeser.com
-ウェブサイト：www.vonwobeser.com`
+メール：info@santossaucedo.com
+ウェブサイト：www.santossaucedo.com`
         }
       ]
     },
@@ -1484,7 +1484,7 @@ C.P. 11560, メキシコシティ, メキシコ
           id: "introduction",
           icon: Shield,
           title: "1. مقدمة",
-          content: `تلتزم Von Wobeser y Sierra, S.C. ("VWS" أو "نحن" أو "لنا") بحماية خصوصيتك وضمان أمان بياناتك الشخصية. توضح سياسة الخصوصية هذه كيف نجمع ونستخدم ونفصح ونحمي معلوماتك عند زيارة موقعنا الإلكتروني www.vonwobeser.com ("الموقع الإلكتروني") أو التفاعل مع خدماتنا.
+          content: `تلتزم Santos & Saucedo Abogados ("VWS" أو "نحن" أو "لنا") بحماية خصوصيتك وضمان أمان بياناتك الشخصية. توضح سياسة الخصوصية هذه كيف نجمع ونستخدم ونفصح ونحمي معلوماتك عند زيارة موقعنا الإلكتروني www.santossaucedo.com ("الموقع الإلكتروني") أو التفاعل مع خدماتنا.
 
 تتوافق سياسة الخصوصية هذه مع القانون الفيدرالي لحماية البيانات الشخصية المملوكة للجهات الخاصة (LFPDPPP) ولوائحه، بالإضافة إلى قوانين حماية البيانات المكسيكية الأخرى المعمول بها وأفضل الممارسات الدولية.
 
@@ -1496,13 +1496,13 @@ C.P. 11560, メキシコシティ, メキシコ
           title: "2. المسؤول عن البيانات",
           content: `المسؤول عن بياناتك الشخصية هو:
 
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 Torre SOMA Chapultepec، الطابق 18
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560، مدينة مكسيكو، المكسيك
 
 للاستفسارات المتعلقة بالخصوصية:
-البريد الإلكتروني: privacidad@vonwobeser.com
+البريد الإلكتروني: privacidad@santossaucedo.com
 الهاتف: +52 55 5258 1000
 
 يمكن الاتصال بمسؤول حماية البيانات لدينا على العنوان أعلاه لأي أسئلة تتعلق بسياسة الخصوصية هذه أو ممارسة حقوق حماية البيانات الخاصة بك.`
@@ -1551,7 +1551,7 @@ C.P. 11560، مدينة مكسيكو، المكسيك
 • لإجراء استطلاعات وجمع التعليقات على خدماتنا
 • لإرسال اتصالات تسويقية حول مجالات ممارستنا
 
-يمكنك الانسحاب من الأغراض الثانوية في أي وقت عن طريق الاتصال بنا على privacidad@vonwobeser.com.`
+يمكنك الانسحاب من الأغراض الثانوية في أي وقت عن طريق الاتصال بنا على privacidad@santossaucedo.com.`
         },
         {
           id: "data-retention",
@@ -1609,7 +1609,7 @@ C.P. 11560، مدينة مكسيكو، المكسيك
 
 لممارسة حقوقك:
 قدم طلباً كتابياً إلى:
-البريد الإلكتروني: privacidad@vonwobeser.com
+البريد الإلكتروني: privacidad@santossaucedo.com
 العنوان: Torre SOMA Chapultepec، الطابق 18، مدينة مكسيكو
 
 إذا لم تكن راضياً عن ردنا، يمكنك تقديم شكوى إلى المعهد الوطني للشفافية والوصول إلى المعلومات وحماية البيانات الشخصية (INAI) على www.inai.org.mx`
@@ -1699,21 +1699,21 @@ C.P. 11560، مدينة مكسيكو، المكسيك
           content: `لأي أسئلة أو مخاوف أو طلبات تتعلق بسياسة الخصوصية هذه أو ممارسات حماية البيانات لدينا، يرجى الاتصال بـ:
 
 مسؤول حماية البيانات
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 
 العنوان:
 Torre SOMA Chapultepec، الطابق 18
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560، مدينة مكسيكو، المكسيك
 
-البريد الإلكتروني: privacidad@vonwobeser.com
+البريد الإلكتروني: privacidad@santossaucedo.com
 الهاتف: +52 55 5258 1000
 
 ساعات العمل: الاثنين إلى الجمعة، 9:00 صباحاً إلى 6:00 مساءً (بتوقيت مدينة مكسيكو)
 
 للاستفسارات العامة حول خدماتنا القانونية:
-البريد الإلكتروني: info@vonwobeser.com
-الموقع الإلكتروني: www.vonwobeser.com`
+البريد الإلكتروني: info@santossaucedo.com
+الموقع الإلكتروني: www.santossaucedo.com`
         }
       ]
     },
@@ -1726,7 +1726,7 @@ C.P. 11560، مدينة مكسيكو، المكسيك
           id: "introduction",
           icon: Shield,
           title: "1. Введение",
-          content: `Von Wobeser y Sierra, S.C. («VWS», «мы», «нас» или «наш») обязуется защищать вашу конфиденциальность и обеспечивать безопасность ваших персональных данных. Настоящая Политика конфиденциальности объясняет, как мы собираем, используем, раскрываем и защищаем вашу информацию, когда вы посещаете наш веб-сайт www.vonwobeser.com («Веб-сайт») или взаимодействуете с нашими услугами.
+          content: `Santos & Saucedo Abogados («VWS», «мы», «нас» или «наш») обязуется защищать вашу конфиденциальность и обеспечивать безопасность ваших персональных данных. Настоящая Политика конфиденциальности объясняет, как мы собираем, используем, раскрываем и защищаем вашу информацию, когда вы посещаете наш веб-сайт www.santossaucedo.com («Веб-сайт») или взаимодействуете с нашими услугами.
 
 Настоящая Политика конфиденциальности соответствует Федеральному закону о защите персональных данных (LFPDPPP) и его нормативным актам, а также другим применимым мексиканским законам о защите данных и международным лучшим практикам.
 
@@ -1738,13 +1738,13 @@ C.P. 11560، مدينة مكسيكو، المكسيك
           title: "2. Контролёр данных",
           content: `Контролёром ваших персональных данных является:
 
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 Torre SOMA Chapultepec, 18 этаж
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, Мехико, Мексика
 
 По вопросам конфиденциальности:
-Электронная почта: privacidad@vonwobeser.com
+Электронная почта: privacidad@santossaucedo.com
 Телефон: +52 55 5258 1000
 
 С нашим Сотрудником по защите данных можно связаться по указанному выше адресу для решения любых вопросов, касающихся настоящей Политики конфиденциальности или осуществления ваших прав на защиту данных.`
@@ -1793,7 +1793,7 @@ C.P. 11560, Мехико, Мексика
 • Для проведения опросов и сбора отзывов о наших услугах
 • Для отправки маркетинговых сообщений о наших практических областях
 
-Вы можете отказаться от второстепенных целей в любое время, связавшись с нами по адресу privacidad@vonwobeser.com.`
+Вы можете отказаться от второстепенных целей в любое время, связавшись с нами по адресу privacidad@santossaucedo.com.`
         },
         {
           id: "data-retention",
@@ -1851,7 +1851,7 @@ C.P. 11560, Мехико, Мексика
 
 Для осуществления своих прав:
 Отправьте письменный запрос по адресу:
-Электронная почта: privacidad@vonwobeser.com
+Электронная почта: privacidad@santossaucedo.com
 Адрес: Torre SOMA Chapultepec, 18 этаж, Мехико
 
 Если вы не удовлетворены нашим ответом, вы можете подать жалобу в Национальный институт прозрачности, доступа к информации и защиты персональных данных (INAI): www.inai.org.mx`
@@ -1941,21 +1941,21 @@ C.P. 11560, Мехико, Мексика
           content: `По любым вопросам, замечаниям или запросам, связанным с настоящей Политикой конфиденциальности или нашими практиками защиты данных, обращайтесь:
 
 Сотрудник по защите данных
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 
 Адрес:
 Torre SOMA Chapultepec, 18 этаж
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, Мехико, Мексика
 
-Электронная почта: privacidad@vonwobeser.com
+Электронная почта: privacidad@santossaucedo.com
 Телефон: +52 55 5258 1000
 
 Часы работы: Понедельник – пятница, 9:00 – 18:00 (по времени Мехико)
 
 По общим вопросам о наших юридических услугах:
-Электронная почта: info@vonwobeser.com
-Веб-сайт: www.vonwobeser.com`
+Электронная почта: info@santossaucedo.com
+Веб-сайт: www.santossaucedo.com`
         }
       ]
     },
@@ -1968,7 +1968,7 @@ C.P. 11560, Мехико, Мексика
           id: "introduction",
           icon: Shield,
           title: "1. Introduction",
-          content: `Von Wobeser y Sierra, S.C. (« VWS », « nous », « notre » ou « nos ») s'engage à protéger votre vie privée et à assurer la sécurité de vos données personnelles. Cette Politique de confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous visitez notre site web www.vonwobeser.com (le « Site Web ») ou interagissez avec nos services.
+          content: `Santos & Saucedo Abogados (« VWS », « nous », « notre » ou « nos ») s'engage à protéger votre vie privée et à assurer la sécurité de vos données personnelles. Cette Politique de confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous visitez notre site web www.santossaucedo.com (le « Site Web ») ou interagissez avec nos services.
 
 Cette Politique de confidentialité est conforme à la Loi fédérale sur la protection des données personnelles (LFPDPPP) et à ses règlements, ainsi qu'aux autres lois mexicaines applicables en matière de protection des données et aux meilleures pratiques internationales.
 
@@ -1980,13 +1980,13 @@ En accédant à notre Site Web ou en l'utilisant, vous reconnaissez avoir lu, co
           title: "2. Responsable du traitement",
           content: `Le responsable du traitement de vos données personnelles est :
 
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 Torre SOMA Chapultepec, 18e étage
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, Mexico, Mexique
 
 Pour les demandes liées à la confidentialité :
-E-mail : privacidad@vonwobeser.com
+E-mail : privacidad@santossaucedo.com
 Téléphone : +52 55 5258 1000
 
 Notre Délégué à la protection des données peut être contacté à l'adresse ci-dessus pour toute question concernant cette Politique de confidentialité ou l'exercice de vos droits en matière de protection des données.`
@@ -2035,7 +2035,7 @@ Finalités secondaires (peuvent nécessiter un consentement) :
 • Pour mener des enquêtes et recueillir des commentaires sur nos services
 • Pour envoyer des communications marketing sur nos domaines de pratique
 
-Vous pouvez vous désinscrire des finalités secondaires à tout moment en nous contactant à privacidad@vonwobeser.com.`
+Vous pouvez vous désinscrire des finalités secondaires à tout moment en nous contactant à privacidad@santossaucedo.com.`
         },
         {
           id: "data-retention",
@@ -2093,7 +2093,7 @@ Vous pouvez vous opposer au traitement de vos données personnelles pour des fin
 
 Pour exercer vos droits :
 Soumettez une demande écrite à :
-E-mail : privacidad@vonwobeser.com
+E-mail : privacidad@santossaucedo.com
 Adresse : Torre SOMA Chapultepec, 18e étage, Mexico
 
 Si vous n'êtes pas satisfait de notre réponse, vous pouvez déposer une plainte auprès de l'Institut national de transparence, d'accès à l'information et de protection des données personnelles (INAI) : www.inai.org.mx`
@@ -2183,21 +2183,21 @@ Cette Politique de confidentialité a été mise à jour pour la dernière fois 
           content: `Pour toute question, préoccupation ou demande relative à cette Politique de confidentialité ou à nos pratiques de protection des données, veuillez contacter :
 
 Délégué à la protection des données
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 
 Adresse :
 Torre SOMA Chapultepec, 18e étage
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, Mexico, Mexique
 
-E-mail : privacidad@vonwobeser.com
+E-mail : privacidad@santossaucedo.com
 Téléphone : +52 55 5258 1000
 
 Heures d'ouverture : Lundi au vendredi, 9h00 à 18h00 (heure de Mexico)
 
 Pour les demandes générales concernant nos services juridiques :
-E-mail : info@vonwobeser.com
-Site web : www.vonwobeser.com`
+E-mail : info@santossaucedo.com
+Site web : www.santossaucedo.com`
         }
       ]
     },
@@ -2210,7 +2210,7 @@ Site web : www.vonwobeser.com`
           id: "introduction",
           icon: Shield,
           title: "1. Introduzione",
-          content: `Von Wobeser y Sierra, S.C. ("VWS", "noi", "ci" o "nostro") si impegna a proteggere la tua privacy e a garantire la sicurezza dei tuoi dati personali. Questa Informativa sulla privacy spiega come raccogliamo, utilizziamo, divulghiamo e proteggiamo le tue informazioni quando visiti il nostro sito web www.vonwobeser.com (il "Sito Web") o interagisci con i nostri servizi.
+          content: `Santos & Saucedo Abogados ("VWS", "noi", "ci" o "nostro") si impegna a proteggere la tua privacy e a garantire la sicurezza dei tuoi dati personali. Questa Informativa sulla privacy spiega come raccogliamo, utilizziamo, divulghiamo e proteggiamo le tue informazioni quando visiti il nostro sito web www.santossaucedo.com (il "Sito Web") o interagisci con i nostri servizi.
 
 Questa Informativa sulla privacy è conforme alla Legge federale sulla protezione dei dati personali (LFPDPPP) e ai suoi regolamenti, nonché ad altre leggi messicane applicabili in materia di protezione dei dati e alle migliori pratiche internazionali.
 
@@ -2222,13 +2222,13 @@ Accedendo o utilizzando il nostro Sito Web, riconosci di aver letto, compreso e 
           title: "2. Titolare del trattamento",
           content: `Il titolare del trattamento dei tuoi dati personali è:
 
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 Torre SOMA Chapultepec, 18° piano
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, Città del Messico, Messico
 
 Per richieste relative alla privacy:
-E-mail: privacidad@vonwobeser.com
+E-mail: privacidad@santossaucedo.com
 Telefono: +52 55 5258 1000
 
 Il nostro Responsabile della protezione dei dati può essere contattato all'indirizzo sopra indicato per qualsiasi domanda riguardante questa Informativa sulla privacy o l'esercizio dei tuoi diritti in materia di protezione dei dati.`
@@ -2277,7 +2277,7 @@ Finalità secondarie (potrebbero richiedere consenso):
 • Per condurre sondaggi e raccogliere feedback sui nostri servizi
 • Per inviare comunicazioni di marketing sulle nostre aree di pratica
 
-Puoi rinunciare alle finalità secondarie in qualsiasi momento contattandoci a privacidad@vonwobeser.com.`
+Puoi rinunciare alle finalità secondarie in qualsiasi momento contattandoci a privacidad@santossaucedo.com.`
         },
         {
           id: "data-retention",
@@ -2335,7 +2335,7 @@ Puoi opporti al trattamento dei tuoi dati personali per finalità specifiche, in
 
 Per esercitare i tuoi diritti:
 Invia una richiesta scritta a:
-E-mail: privacidad@vonwobeser.com
+E-mail: privacidad@santossaucedo.com
 Indirizzo: Torre SOMA Chapultepec, 18° piano, Città del Messico
 
 Se non sei soddisfatto della nostra risposta, puoi presentare un reclamo all'Istituto nazionale per la trasparenza, l'accesso alle informazioni e la protezione dei dati personali (INAI): www.inai.org.mx`
@@ -2425,21 +2425,21 @@ Questa Informativa sulla privacy è stata aggiornata l'ultima volta a dicembre 2
           content: `Per qualsiasi domanda, dubbio o richiesta relativa a questa Informativa sulla privacy o alle nostre pratiche di protezione dei dati, contattaci:
 
 Responsabile della protezione dei dati
-Von Wobeser y Sierra, S.C.
+Santos & Saucedo Abogados
 
 Indirizzo:
 Torre SOMA Chapultepec, 18° piano
 Campos Elíseos 204, Colonia Polanco
 C.P. 11560, Città del Messico, Messico
 
-E-mail: privacidad@vonwobeser.com
+E-mail: privacidad@santossaucedo.com
 Telefono: +52 55 5258 1000
 
 Orari di ufficio: Lunedì a venerdì, 9:00 - 18:00 (ora di Città del Messico)
 
 Per richieste generali sui nostri servizi legali:
-E-mail: info@vonwobeser.com
-Sito web: www.vonwobeser.com`
+E-mail: info@santossaucedo.com
+Sito web: www.santossaucedo.com`
         }
       ]
     }
@@ -2576,12 +2576,12 @@ Sito web: www.vonwobeser.com`
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                   <a 
-                    href="mailto:privacidad@vonwobeser.com"
+                    href="mailto:privacidad@santossaucedo.com"
                     className="flex items-center gap-2 text-primary hover:underline"
                     data-testid="link-privacy-email"
                   >
                     <Mail className="w-4 h-4" />
-                    privacidad@vonwobeser.com
+                    privacidad@santossaucedo.com
                   </a>
                   <span className="hidden sm:inline text-gray-400">|</span>
                   <a 

@@ -114,7 +114,7 @@ export class ContentAuditorAgent extends BaseAgent {
       .from(translationCache)
       .where(eq(translationCache.entityId, article.id));
 
-    const cachedLanguages = new Set(cached.map(c => c.targetLanguage));
+    const cachedLanguages = new Set(cached.map((c: typeof translationCache.$inferSelect) => c.targetLanguage));
 
     for (const lang of LANGUAGES) {
       if (lang === 'en' || lang === 'es') continue;

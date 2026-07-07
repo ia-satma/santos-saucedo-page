@@ -31,7 +31,7 @@ export default function ProBono() {
       title: "Pro Bono",
       subtitle: "Committed to making justice accessible to all",
       commitmentTitle: "35+ Years of Pro Bono Commitment",
-      commitmentText1: "Since 1989, Von Wobeser y Sierra has been at the forefront of pro bono legal services in Mexico. Our firm was among the first in the country to establish a formal pro bono program, reflecting our deep commitment to social responsibility and access to justice.",
+      commitmentText1: "Since 1989, Santos & Saucedo has been at the forefront of pro bono legal services in Mexico. Our firm was among the first in the country to establish a formal pro bono program, reflecting our deep commitment to social responsibility and access to justice.",
       commitmentText2: "Our attorneys dedicate thousands of hours annually to pro bono matters, providing high-quality legal representation to individuals and organizations that could not otherwise afford it. This commitment is not just a program—it is a core value embedded in our firm's culture.",
       areasTitle: "Areas of Pro Bono Practice",
       areasSubtitle: "We focus our efforts where we can make the greatest impact",
@@ -75,7 +75,7 @@ export default function ProBono() {
         { value: "50+", label: "Attorneys Participating" },
       ],
       participationTitle: "How Our Lawyers Participate",
-      participationSubtitle: "Every attorney at Von Wobeser y Sierra is encouraged to contribute",
+      participationSubtitle: "Every attorney at Santos & Saucedo is encouraged to contribute",
       participationIntro: "Pro bono work is an integral part of professional development at our firm. We believe that giving back not only serves our community but also enriches our attorneys' skills and perspectives.",
       participationAspects: [
         { 
@@ -108,7 +108,7 @@ export default function ProBono() {
       title: "Pro Bono",
       subtitle: "Comprometidos con hacer la justicia accesible para todos",
       commitmentTitle: "Más de 35 Años de Compromiso Pro Bono",
-      commitmentText1: "Desde 1989, Von Wobeser y Sierra ha estado a la vanguardia de los servicios legales pro bono en México. Nuestra firma fue una de las primeras en el país en establecer un programa pro bono formal, reflejando nuestro profundo compromiso con la responsabilidad social y el acceso a la justicia.",
+      commitmentText1: "Desde 1989, Santos & Saucedo ha estado a la vanguardia de los servicios legales pro bono en México. Nuestra firma fue una de las primeras en el país en establecer un programa pro bono formal, reflejando nuestro profundo compromiso con la responsabilidad social y el acceso a la justicia.",
       commitmentText2: "Nuestros abogados dedican miles de horas anualmente a asuntos pro bono, brindando representación legal de alta calidad a individuos y organizaciones que de otro modo no podrían pagarla. Este compromiso no es solo un programa—es un valor fundamental arraigado en la cultura de nuestra firma.",
       areasTitle: "Áreas de Práctica Pro Bono",
       areasSubtitle: "Enfocamos nuestros esfuerzos donde podemos generar el mayor impacto",
@@ -152,7 +152,7 @@ export default function ProBono() {
         { value: "50+", label: "Abogados Participantes" },
       ],
       participationTitle: "Cómo Participan Nuestros Abogados",
-      participationSubtitle: "Cada abogado en Von Wobeser y Sierra está invitado a contribuir",
+      participationSubtitle: "Cada abogado en Santos & Saucedo está invitado a contribuir",
       participationIntro: "El trabajo pro bono es parte integral del desarrollo profesional en nuestra firma. Creemos que retribuir no solo sirve a nuestra comunidad sino que también enriquece las habilidades y perspectivas de nuestros abogados.",
       participationAspects: [
         { 
@@ -185,7 +185,7 @@ export default function ProBono() {
       title: "Pro Bono",
       subtitle: "Engagiert für Gerechtigkeit und Zugang zum Recht für alle",
       commitmentTitle: "Über 35 Jahre Pro-Bono-Engagement",
-      commitmentText1: "Seit 1989 steht Von Wobeser y Sierra an der Spitze der Pro-Bono-Rechtsdienstleistungen in Mexiko. Unsere Kanzlei war eine der ersten im Land, die ein formelles Pro-Bono-Programm einrichtete, was unser tiefes Engagement für soziale Verantwortung und Zugang zur Justiz widerspiegelt.",
+      commitmentText1: "Seit 1989 steht Santos & Saucedo an der Spitze der Pro-Bono-Rechtsdienstleistungen in Mexiko. Unsere Kanzlei war eine der ersten im Land, die ein formelles Pro-Bono-Programm einrichtete, was unser tiefes Engagement für soziale Verantwortung und Zugang zur Justiz widerspiegelt.",
       commitmentText2: "Unsere Anwälte widmen jährlich Tausende von Stunden Pro-Bono-Angelegenheiten und bieten hochwertige rechtliche Vertretung für Einzelpersonen und Organisationen, die sich dies sonst nicht leisten könnten. Dieses Engagement ist nicht nur ein Programm – es ist ein Grundwert, der in der Kultur unserer Kanzlei verankert ist.",
       areasTitle: "Bereiche der Pro-Bono-Praxis",
       areasSubtitle: "Wir konzentrieren unsere Bemühungen dort, wo wir die größte Wirkung erzielen können",
@@ -229,7 +229,7 @@ export default function ProBono() {
         { value: "50+", label: "Teilnehmende Anwälte" },
       ],
       participationTitle: "Wie unsere Anwälte teilnehmen",
-      participationSubtitle: "Jeder Anwalt bei Von Wobeser y Sierra ist eingeladen, sich zu engagieren",
+      participationSubtitle: "Jeder Anwalt bei Santos & Saucedo ist eingeladen, sich zu engagieren",
       participationIntro: "Pro-Bono-Arbeit ist ein integraler Bestandteil der beruflichen Entwicklung in unserer Kanzlei. Wir glauben, dass Zurückgeben nicht nur unserer Gemeinschaft dient, sondern auch die Fähigkeiten und Perspektiven unserer Anwälte bereichert.",
       participationAspects: [
         { 
@@ -262,7 +262,7 @@ export default function ProBono() {
       title: "公益服务",
       subtitle: "致力于让所有人都能获得司法公正",
       commitmentTitle: "超过35年的公益法律服务承诺",
-      commitmentText1: "自1989年以来，Von Wobeser y Sierra一直走在墨西哥公益法律服务的前沿。我们的事务所是该国最早建立正式公益项目的事务所之一，这反映了我们对社会责任和司法公正的深刻承诺。",
+      commitmentText1: "自1989年以来，Santos & Saucedo一直走在墨西哥公益法律服务的前沿。我们的事务所是该国最早建立正式公益项目的事务所之一，这反映了我们对社会责任和司法公正的深刻承诺。",
       commitmentText2: "我们的律师每年投入数千小时从事公益工作，为那些原本无法负担法律服务的个人和组织提供高质量的法律代理。这种承诺不仅仅是一个项目——它是植根于我们事务所文化的核心价值观。",
       areasTitle: "公益实践领域",
       areasSubtitle: "我们将努力集中在能够产生最大影响的领域",
@@ -306,7 +306,7 @@ export default function ProBono() {
         { value: "50+", label: "参与的律师人数" },
       ],
       participationTitle: "律师如何参与",
-      participationSubtitle: "Von Wobeser y Sierra的每位律师都被鼓励参与贡献",
+      participationSubtitle: "Santos & Saucedo的每位律师都被鼓励参与贡献",
       participationIntro: "公益工作是我们事务所专业发展不可或缺的一部分。我们相信，回馈社会不仅服务于我们的社区，也丰富了我们律师的技能和视野。",
       participationAspects: [
         { 
@@ -339,7 +339,7 @@ export default function ProBono() {
       title: "프로보노",
       subtitle: "모든 사람이 정의에 접근할 수 있도록 헌신합니다",
       commitmentTitle: "35년 이상의 프로보노 헌신",
-      commitmentText1: "1989년부터 Von Wobeser y Sierra는 멕시코에서 프로보노 법률 서비스의 선두에 서 왔습니다. 우리 회사는 국내 최초로 공식 프로보노 프로그램을 설립한 회사 중 하나로, 사회적 책임과 정의에 대한 접근에 대한 깊은 헌신을 반영합니다.",
+      commitmentText1: "1989년부터 Santos & Saucedo는 멕시코에서 프로보노 법률 서비스의 선두에 서 왔습니다. 우리 회사는 국내 최초로 공식 프로보노 프로그램을 설립한 회사 중 하나로, 사회적 책임과 정의에 대한 접근에 대한 깊은 헌신을 반영합니다.",
       commitmentText2: "우리 변호사들은 매년 수천 시간을 프로보노 업무에 헌신하여, 그렇지 않으면 비용을 감당할 수 없는 개인과 단체에 고품질 법률 대리를 제공합니다. 이 헌신은 단순한 프로그램이 아니라 우리 회사 문화에 뿌리 내린 핵심 가치입니다.",
       areasTitle: "프로보노 실무 분야",
       areasSubtitle: "가장 큰 영향을 미칠 수 있는 곳에 노력을 집중합니다",
@@ -383,7 +383,7 @@ export default function ProBono() {
         { value: "50+", label: "참여 변호사" },
       ],
       participationTitle: "변호사 참여 방법",
-      participationSubtitle: "Von Wobeser y Sierra의 모든 변호사가 기여하도록 권장됩니다",
+      participationSubtitle: "Santos & Saucedo의 모든 변호사가 기여하도록 권장됩니다",
       participationIntro: "프로보노 활동은 우리 회사에서 전문적 발전의 필수적인 부분입니다. 우리는 사회 환원이 지역 사회에 봉사할 뿐만 아니라 변호사들의 기술과 관점을 풍부하게 한다고 믿습니다.",
       participationAspects: [
         { 
@@ -416,7 +416,7 @@ export default function ProBono() {
       title: "プロボノ",
       subtitle: "すべての人に正義へのアクセスを提供することに尽力しています",
       commitmentTitle: "35年以上のプロボノへの取り組み",
-      commitmentText1: "1989年以来、Von Wobeser y Sierraはメキシコにおけるプロボノ法律サービスの最前線に立ってきました。当事務所は国内で初めて正式なプロボノプログラムを設立した事務所の一つであり、社会的責任と司法へのアクセスへの深いコミットメントを反映しています。",
+      commitmentText1: "1989年以来、Santos & Saucedoはメキシコにおけるプロボノ法律サービスの最前線に立ってきました。当事務所は国内で初めて正式なプロボノプログラムを設立した事務所の一つであり、社会的責任と司法へのアクセスへの深いコミットメントを反映しています。",
       commitmentText2: "当事務所の弁護士は毎年数千時間をプロボノ案件に捧げ、そうでなければ費用を負担できない個人や組織に質の高い法的代理を提供しています。このコミットメントは単なるプログラムではなく、当事務所の文化に根ざした核心的な価値観です。",
       areasTitle: "プロボノ実務分野",
       areasSubtitle: "最も大きなインパクトを与えられる分野に注力しています",
@@ -460,7 +460,7 @@ export default function ProBono() {
         { value: "50+", label: "参加弁護士" },
       ],
       participationTitle: "弁護士の参加方法",
-      participationSubtitle: "Von Wobeser y Sierraのすべての弁護士が貢献することを奨励されています",
+      participationSubtitle: "Santos & Saucedoのすべての弁護士が貢献することを奨励されています",
       participationIntro: "プロボノ活動は当事務所における専門的発展の不可欠な部分です。社会貢献はコミュニティに奉仕するだけでなく、弁護士のスキルと視野を豊かにすると信じています。",
       participationAspects: [
         { 
@@ -493,7 +493,7 @@ export default function ProBono() {
       title: "العمل التطوعي",
       subtitle: "ملتزمون بجعل العدالة في متناول الجميع",
       commitmentTitle: "أكثر من 35 عاماً من الالتزام بالعمل التطوعي",
-      commitmentText1: "منذ عام 1989، كانت Von Wobeser y Sierra في طليعة الخدمات القانونية التطوعية في المكسيك. كانت شركتنا من أوائل الشركات في البلاد التي أنشأت برنامجاً رسمياً للعمل التطوعي، مما يعكس التزامنا العميق بالمسؤولية الاجتماعية والوصول إلى العدالة.",
+      commitmentText1: "منذ عام 1989، كانت Santos & Saucedo في طليعة الخدمات القانونية التطوعية في المكسيك. كانت شركتنا من أوائل الشركات في البلاد التي أنشأت برنامجاً رسمياً للعمل التطوعي، مما يعكس التزامنا العميق بالمسؤولية الاجتماعية والوصول إلى العدالة.",
       commitmentText2: "يكرس محامونا آلاف الساعات سنوياً للقضايا التطوعية، ويقدمون تمثيلاً قانونياً عالي الجودة للأفراد والمنظمات الذين لا يستطيعون تحمل تكاليفها. هذا الالتزام ليس مجرد برنامج - إنه قيمة أساسية متجذرة في ثقافة شركتنا.",
       areasTitle: "مجالات الممارسة التطوعية",
       areasSubtitle: "نركز جهودنا حيث يمكننا تحقيق أكبر تأثير",
@@ -537,7 +537,7 @@ export default function ProBono() {
         { value: "+50", label: "محامي مشارك" },
       ],
       participationTitle: "كيف يشارك محامونا",
-      participationSubtitle: "كل محامٍ في Von Wobeser y Sierra مدعو للمساهمة",
+      participationSubtitle: "كل محامٍ في Santos & Saucedo مدعو للمساهمة",
       participationIntro: "العمل التطوعي جزء لا يتجزأ من التطوير المهني في شركتنا. نعتقد أن العطاء لا يخدم مجتمعنا فحسب، بل يثري أيضاً مهارات محامينا ووجهات نظرهم.",
       participationAspects: [
         { 
@@ -570,7 +570,7 @@ export default function ProBono() {
       title: "Pro Bono",
       subtitle: "Приверженность доступности правосудия для всех",
       commitmentTitle: "Более 35 лет Pro Bono деятельности",
-      commitmentText1: "С 1989 года Von Wobeser y Sierra находится в авангарде pro bono юридических услуг в Мексике. Наша фирма была одной из первых в стране, кто создал официальную программу pro bono, что отражает нашу глубокую приверженность социальной ответственности и доступу к правосудию.",
+      commitmentText1: "С 1989 года Santos & Saucedo находится в авангарде pro bono юридических услуг в Мексике. Наша фирма была одной из первых в стране, кто создал официальную программу pro bono, что отражает нашу глубокую приверженность социальной ответственности и доступу к правосудию.",
       commitmentText2: "Наши юристы ежегодно посвящают тысячи часов pro bono делам, обеспечивая качественное юридическое представительство для физических лиц и организаций, которые иначе не могли бы себе это позволить. Это обязательство — не просто программа, это основная ценность, укоренённая в культуре нашей фирмы.",
       areasTitle: "Области Pro Bono практики",
       areasSubtitle: "Мы концентрируем усилия там, где можем оказать наибольшее влияние",
@@ -614,7 +614,7 @@ export default function ProBono() {
         { value: "50+", label: "Участвующих юристов" },
       ],
       participationTitle: "Как участвуют наши юристы",
-      participationSubtitle: "Каждый юрист Von Wobeser y Sierra приглашён к участию",
+      participationSubtitle: "Каждый юрист Santos & Saucedo приглашён к участию",
       participationIntro: "Pro bono работа является неотъемлемой частью профессионального развития в нашей фирме. Мы верим, что отдача обществу не только служит нашему сообществу, но и обогащает навыки и перспективы наших юристов.",
       participationAspects: [
         { 
@@ -647,7 +647,7 @@ export default function ProBono() {
       title: "Pro Bono",
       subtitle: "Engagés à rendre la justice accessible à tous",
       commitmentTitle: "Plus de 35 ans d'engagement Pro Bono",
-      commitmentText1: "Depuis 1989, Von Wobeser y Sierra est à l'avant-garde des services juridiques pro bono au Mexique. Notre cabinet a été parmi les premiers du pays à établir un programme pro bono formel, reflétant notre profond engagement envers la responsabilité sociale et l'accès à la justice.",
+      commitmentText1: "Depuis 1989, Santos & Saucedo est à l'avant-garde des services juridiques pro bono au Mexique. Notre cabinet a été parmi les premiers du pays à établir un programme pro bono formel, reflétant notre profond engagement envers la responsabilité sociale et l'accès à la justice.",
       commitmentText2: "Nos avocats consacrent des milliers d'heures par an aux affaires pro bono, fournissant une représentation juridique de haute qualité aux individus et organisations qui ne pourraient pas se le permettre autrement. Cet engagement n'est pas qu'un programme — c'est une valeur fondamentale ancrée dans la culture de notre cabinet.",
       areasTitle: "Domaines de Pratique Pro Bono",
       areasSubtitle: "Nous concentrons nos efforts là où nous pouvons avoir le plus d'impact",
@@ -691,7 +691,7 @@ export default function ProBono() {
         { value: "50+", label: "Avocats Participants" },
       ],
       participationTitle: "Comment nos avocats participent",
-      participationSubtitle: "Chaque avocat chez Von Wobeser y Sierra est encouragé à contribuer",
+      participationSubtitle: "Chaque avocat chez Santos & Saucedo est encouragé à contribuer",
       participationIntro: "Le travail pro bono fait partie intégrante du développement professionnel dans notre cabinet. Nous croyons que redonner sert non seulement notre communauté mais enrichit également les compétences et perspectives de nos avocats.",
       participationAspects: [
         { 
@@ -724,7 +724,7 @@ export default function ProBono() {
       title: "Pro Bono",
       subtitle: "Impegnati a rendere la giustizia accessibile a tutti",
       commitmentTitle: "Oltre 35 anni di impegno Pro Bono",
-      commitmentText1: "Dal 1989, Von Wobeser y Sierra è all'avanguardia dei servizi legali pro bono in Messico. Il nostro studio è stato tra i primi nel paese a istituire un programma pro bono formale, riflettendo il nostro profondo impegno verso la responsabilità sociale e l'accesso alla giustizia.",
+      commitmentText1: "Dal 1989, Santos & Saucedo è all'avanguardia dei servizi legali pro bono in Messico. Il nostro studio è stato tra i primi nel paese a istituire un programma pro bono formale, riflettendo il nostro profondo impegno verso la responsabilità sociale e l'accesso alla giustizia.",
       commitmentText2: "I nostri avvocati dedicano migliaia di ore ogni anno a questioni pro bono, fornendo rappresentanza legale di alta qualità a individui e organizzazioni che altrimenti non potrebbero permettersela. Questo impegno non è solo un programma — è un valore fondamentale radicato nella cultura del nostro studio.",
       areasTitle: "Aree di Pratica Pro Bono",
       areasSubtitle: "Concentriamo i nostri sforzi dove possiamo avere il maggior impatto",
@@ -768,7 +768,7 @@ export default function ProBono() {
         { value: "50+", label: "Avvocati Partecipanti" },
       ],
       participationTitle: "Come partecipano i nostri avvocati",
-      participationSubtitle: "Ogni avvocato di Von Wobeser y Sierra è incoraggiato a contribuire",
+      participationSubtitle: "Ogni avvocato di Santos & Saucedo è incoraggiato a contribuire",
       participationIntro: "Il lavoro pro bono è parte integrante dello sviluppo professionale nel nostro studio. Crediamo che restituire non solo serva la nostra comunità ma arricchisca anche le competenze e le prospettive dei nostri avvocati.",
       participationAspects: [
         { 

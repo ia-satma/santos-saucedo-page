@@ -55,12 +55,12 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
   en: {
     sectionTitle: "GERMAN DESK",
     title: "Global Reach",
-    subtitle: "Von Wobeser y Sierra's German Desk provides specialized legal services for German-speaking clients investing in Mexico and Latin America.",
+    subtitle: "Santos & Saucedo's German Desk provides specialized legal services for German-speaking clients investing in Mexico and Latin America.",
     mexicoLabel: "MEXICO CITY",
     mexicoSubtitle: "Torre SOMA Chapultepec",
     germanyLabel: "GERMANY",
     germanySubtitle: "German Desk",
-    historicalText: "For more than 34 years, Von Wobeser y Sierra has maintained a dedicated German Desk to serve German-speaking clients investing in Mexico and Latin America. Our German Desk attorneys are fluent in German, English, and Spanish, and have extensive experience working with German and Austrian companies on their investments in the region. We understand the German business culture and legal requirements, enabling us to provide seamless service that bridges both legal systems.",
+    historicalText: "For more than 34 years, Santos & Saucedo has maintained a dedicated German Desk to serve German-speaking clients investing in Mexico and Latin America. Our German Desk attorneys are fluent in German, English, and Spanish, and have extensive experience working with German and Austrian companies on their investments in the region. We understand the German business culture and legal requirements, enabling us to provide seamless service that bridges both legal systems.",
     partnersTitle: "Partners of the German Desk",
     ofCounselTitle: "Of Counsel",
     associatesTitle: "Associates",
@@ -80,12 +80,12 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
   es: {
     sectionTitle: "GERMAN DESK",
     title: "Alcance Global",
-    subtitle: "El German Desk de Von Wobeser y Sierra proporciona servicios legales especializados para clientes de habla alemana que invierten en México y América Latina.",
+    subtitle: "El German Desk de Santos & Saucedo proporciona servicios legales especializados para clientes de habla alemana que invierten en México y América Latina.",
     mexicoLabel: "CIUDAD DE MÉXICO",
     mexicoSubtitle: "Torre SOMA Chapultepec",
     germanyLabel: "ALEMANIA",
     germanySubtitle: "German Desk",
-    historicalText: "Durante más de 34 años, Von Wobeser y Sierra ha mantenido un German Desk dedicado a atender a clientes de habla alemana que invierten en México y América Latina. Los abogados de nuestro German Desk hablan alemán, inglés y español con fluidez, y tienen amplia experiencia trabajando con empresas alemanas y austriacas en sus inversiones en la región. Comprendemos la cultura empresarial y los requisitos legales alemanes, lo que nos permite brindar un servicio integrado que conecta ambos sistemas legales.",
+    historicalText: "Durante más de 34 años, Santos & Saucedo ha mantenido un German Desk dedicado a atender a clientes de habla alemana que invierten en México y América Latina. Los abogados de nuestro German Desk hablan alemán, inglés y español con fluidez, y tienen amplia experiencia trabajando con empresas alemanas y austriacas en sus inversiones en la región. Comprendemos la cultura empresarial y los requisitos legales alemanes, lo que nos permite brindar un servicio integrado que conecta ambos sistemas legales.",
     partnersTitle: "Socios del German Desk",
     ofCounselTitle: "Of Counsel",
     associatesTitle: "Asociados",
@@ -110,7 +110,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     mexicoSubtitle: "Torre SOMA Chapultepec",
     germanyLabel: "DEUTSCHLAND",
     germanySubtitle: "German Desk",
-    historicalText: "Seit mehr als 34 Jahren arbeiten wir mit deutschen Unternehmen zusammen. Von Wobeser y Sierra unterhält einen eigenen German Desk für deutschsprachige Mandanten, die in Mexiko und Lateinamerika investieren. Unsere Anwälte des German Desk sprechen fließend Deutsch, Englisch und Spanisch und verfügen über umfangreiche Erfahrung in der Zusammenarbeit mit deutschen und österreichischen Unternehmen bei ihren Investitionen in der Region. Wir verstehen die deutsche Geschäftskultur und rechtlichen Anforderungen und können so einen nahtlosen Service bieten, der beide Rechtssysteme verbindet.",
+    historicalText: "Seit mehr als 34 Jahren arbeiten wir mit deutschen Unternehmen zusammen. Santos & Saucedo unterhält einen eigenen German Desk für deutschsprachige Mandanten, die in Mexiko und Lateinamerika investieren. Unsere Anwälte des German Desk sprechen fließend Deutsch, Englisch und Spanisch und verfügen über umfangreiche Erfahrung in der Zusammenarbeit mit deutschen und österreichischen Unternehmen bei ihren Investitionen in der Region. Wir verstehen die deutsche Geschäftskultur und rechtlichen Anforderungen und können so einen nahtlosen Service bieten, der beide Rechtssysteme verbindet.",
     partnersTitle: "Partner des German Desk",
     ofCounselTitle: "Of Counsel",
     associatesTitle: "Associates",
@@ -135,7 +135,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     mexicoSubtitle: "Torre SOMA Chapultepec",
     germanyLabel: "德国",
     germanySubtitle: "德国业务部",
-    historicalText: "34年来我们一直与德国企业合作。Von Wobeser y Sierra设有专门的德国业务部,为在墨西哥和拉丁美洲投资的德语客户提供服务。我们德国业务部的律师精通德语、英语和西班牙语,在与德国和奥地利公司合作投资该地区方面拥有丰富的经验。我们了解德国的商业文化和法律要求,能够提供连接两个法律体系的无缝服务。",
+    historicalText: "34年来我们一直与德国企业合作。Santos & Saucedo设有专门的德国业务部,为在墨西哥和拉丁美洲投资的德语客户提供服务。我们德国业务部的律师精通德语、英语和西班牙语,在与德国和奥地利公司合作投资该地区方面拥有丰富的经验。我们了解德国的商业文化和法律要求,能够提供连接两个法律体系的无缝服务。",
     partnersTitle: "德国业务部合伙人",
     ofCounselTitle: "顾问律师",
     associatesTitle: "律师",
@@ -160,7 +160,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     mexicoSubtitle: "Torre SOMA Chapultepec",
     germanyLabel: "독일",
     germanySubtitle: "German Desk",
-    historicalText: "34년 이상 독일 기업과 협력해 왔습니다. Von Wobeser y Sierra는 멕시코와 라틴 아메리카에 투자하는 독일어권 고객을 위한 전담 German Desk를 운영하고 있습니다. 저희 German Desk 변호사들은 독일어, 영어, 스페인어에 능통하며, 독일 및 오스트리아 기업의 지역 투자에 대한 풍부한 경험을 보유하고 있습니다. 저희는 독일의 비즈니스 문화와 법적 요건을 이해하여 두 법률 시스템을 연결하는 원활한 서비스를 제공합니다.",
+    historicalText: "34년 이상 독일 기업과 협력해 왔습니다. Santos & Saucedo는 멕시코와 라틴 아메리카에 투자하는 독일어권 고객을 위한 전담 German Desk를 운영하고 있습니다. 저희 German Desk 변호사들은 독일어, 영어, 스페인어에 능통하며, 독일 및 오스트리아 기업의 지역 투자에 대한 풍부한 경험을 보유하고 있습니다. 저희는 독일의 비즈니스 문화와 법적 요건을 이해하여 두 법률 시스템을 연결하는 원활한 서비스를 제공합니다.",
     partnersTitle: "German Desk 파트너",
     ofCounselTitle: "고문 변호사",
     associatesTitle: "어소시에이트",
@@ -185,7 +185,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     mexicoSubtitle: "Torre SOMA Chapultepec",
     germanyLabel: "ドイツ",
     germanySubtitle: "German Desk",
-    historicalText: "34年以上にわたりドイツ企業と協力してきました。Von Wobeser y Sierraは、メキシコおよびラテンアメリカへの投資を行うドイツ語圏のクライアントにサービスを提供する専用のGerman Deskを維持しています。当事務所のGerman Deskの弁護士は、ドイツ語、英語、スペイン語に堪能であり、ドイツおよびオーストリア企業の当地域への投資に関する豊富な経験を持っています。私たちはドイツのビジネス文化と法的要件を理解しており、両法制度を橋渡しするシームレスなサービスを提供することができます。",
+    historicalText: "34年以上にわたりドイツ企業と協力してきました。Santos & Saucedoは、メキシコおよびラテンアメリカへの投資を行うドイツ語圏のクライアントにサービスを提供する専用のGerman Deskを維持しています。当事務所のGerman Deskの弁護士は、ドイツ語、英語、スペイン語に堪能であり、ドイツおよびオーストリア企業の当地域への投資に関する豊富な経験を持っています。私たちはドイツのビジネス文化と法的要件を理解しており、両法制度を橋渡しするシームレスなサービスを提供することができます。",
     partnersTitle: "German Desk パートナー",
     ofCounselTitle: "オブ・カウンセル",
     associatesTitle: "アソシエイト",
@@ -210,7 +210,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     mexicoSubtitle: "Torre SOMA Chapultepec",
     germanyLabel: "ألمانيا",
     germanySubtitle: "المكتب الألماني",
-    historicalText: "منذ أكثر من 34 عامًا نعمل مع الشركات الألمانية. تحتفظ Von Wobeser y Sierra بمكتب ألماني مخصص لخدمة العملاء الناطقين بالألمانية الذين يستثمرون في المكسيك وأمريكا اللاتينية. يجيد محامو المكتب الألماني لدينا اللغات الألمانية والإنجليزية والإسبانية، ولديهم خبرة واسعة في العمل مع الشركات الألمانية والنمساوية في استثماراتها في المنطقة. نحن نفهم ثقافة الأعمال الألمانية والمتطلبات القانونية، مما يمكننا من تقديم خدمة سلسة تربط بين النظامين القانونيين.",
+    historicalText: "منذ أكثر من 34 عامًا نعمل مع الشركات الألمانية. تحتفظ Santos & Saucedo بمكتب ألماني مخصص لخدمة العملاء الناطقين بالألمانية الذين يستثمرون في المكسيك وأمريكا اللاتينية. يجيد محامو المكتب الألماني لدينا اللغات الألمانية والإنجليزية والإسبانية، ولديهم خبرة واسعة في العمل مع الشركات الألمانية والنمساوية في استثماراتها في المنطقة. نحن نفهم ثقافة الأعمال الألمانية والمتطلبات القانونية، مما يمكننا من تقديم خدمة سلسة تربط بين النظامين القانونيين.",
     partnersTitle: "شركاء المكتب الألماني",
     ofCounselTitle: "مستشار قانوني",
     associatesTitle: "محامون مشاركون",
@@ -235,7 +235,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     mexicoSubtitle: "Torre SOMA Chapultepec",
     germanyLabel: "ГЕРМАНИЯ",
     germanySubtitle: "Немецкий отдел",
-    historicalText: "Более 34 лет мы работаем с немецкими компаниями. Von Wobeser y Sierra имеет специализированный German Desk для обслуживания немецкоязычных клиентов, инвестирующих в Мексику и Латинскую Америку. Наши адвокаты German Desk свободно владеют немецким, английским и испанским языками и имеют большой опыт работы с немецкими и австрийскими компаниями по их инвестициям в регионе. Мы понимаем немецкую деловую культуру и правовые требования, что позволяет нам предоставлять бесперебойный сервис, связывающий обе правовые системы.",
+    historicalText: "Более 34 лет мы работаем с немецкими компаниями. Santos & Saucedo имеет специализированный German Desk для обслуживания немецкоязычных клиентов, инвестирующих в Мексику и Латинскую Америку. Наши адвокаты German Desk свободно владеют немецким, английским и испанским языками и имеют большой опыт работы с немецкими и австрийскими компаниями по их инвестициям в регионе. Мы понимаем немецкую деловую культуру и правовые требования, что позволяет нам предоставлять бесперебойный сервис, связывающий обе правовые системы.",
     partnersTitle: "Партнёры German Desk",
     ofCounselTitle: "Советник",
     associatesTitle: "Юристы",
@@ -260,7 +260,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     mexicoSubtitle: "Torre SOMA Chapultepec",
     germanyLabel: "ALLEMAGNE",
     germanySubtitle: "Bureau Allemand",
-    historicalText: "Depuis plus de 34 ans, nous travaillons avec des entreprises allemandes. Von Wobeser y Sierra dispose d'un German Desk dédié pour servir les clients germanophones investissant au Mexique et en Amérique latine. Les avocats de notre German Desk parlent couramment l'allemand, l'anglais et l'espagnol, et possèdent une vaste expérience de travail avec des entreprises allemandes et autrichiennes sur leurs investissements dans la région. Nous comprenons la culture d'entreprise allemande et les exigences juridiques, ce qui nous permet de fournir un service fluide qui relie les deux systèmes juridiques.",
+    historicalText: "Depuis plus de 34 ans, nous travaillons avec des entreprises allemandes. Santos & Saucedo dispose d'un German Desk dédié pour servir les clients germanophones investissant au Mexique et en Amérique latine. Les avocats de notre German Desk parlent couramment l'allemand, l'anglais et l'espagnol, et possèdent une vaste expérience de travail avec des entreprises allemandes et autrichiennes sur leurs investissements dans la région. Nous comprenons la culture d'entreprise allemande et les exigences juridiques, ce qui nous permet de fournir un service fluide qui relie les deux systèmes juridiques.",
     partnersTitle: "Associés du German Desk",
     ofCounselTitle: "Avocat Conseil",
     associatesTitle: "Collaborateurs",
@@ -285,7 +285,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     mexicoSubtitle: "Torre SOMA Chapultepec",
     germanyLabel: "GERMANIA",
     germanySubtitle: "German Desk",
-    historicalText: "Da oltre 34 anni collaboriamo con aziende tedesche. Von Wobeser y Sierra mantiene un German Desk dedicato per servire i clienti di lingua tedesca che investono in Messico e in America Latina. I nostri avvocati del German Desk parlano fluentemente tedesco, inglese e spagnolo e hanno una vasta esperienza nel lavorare con aziende tedesche e austriache sui loro investimenti nella regione. Comprendiamo la cultura aziendale tedesca e i requisiti legali, il che ci consente di fornire un servizio senza soluzione di continuità che collega entrambi i sistemi giuridici.",
+    historicalText: "Da oltre 34 anni collaboriamo con aziende tedesche. Santos & Saucedo mantiene un German Desk dedicato per servire i clienti di lingua tedesca che investono in Messico e in America Latina. I nostri avvocati del German Desk parlano fluentemente tedesco, inglese e spagnolo e hanno una vasta esperienza nel lavorare con aziende tedesche e austriache sui loro investimenti nella regione. Comprendiamo la cultura aziendale tedesca e i requisiti legali, il che ci consente di fornire un servizio senza soluzione di continuità che collega entrambi i sistemi giuridici.",
     partnersTitle: "Partner del German Desk",
     ofCounselTitle: "Of Counsel",
     associatesTitle: "Associati",
@@ -604,7 +604,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                 className="w-full uppercase tracking-[0.12em] text-xs rounded-none mt-2"
                 data-testid="button-contact-mexico"
               >
-                <a href="mailto:info@vonwobeser.com">
+                <a href="mailto:info@santossaucedo.com">
                   <Mail className="w-4 h-4 mr-2" />
                   {t.contactButton}
                 </a>
@@ -650,7 +650,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                 className="w-full uppercase tracking-[0.12em] text-xs rounded-none mt-2"
                 data-testid="button-contact-germany"
               >
-                <a href="mailto:info@vonwobeser.com">
+                <a href="mailto:info@santossaucedo.com">
                   <Mail className="w-4 h-4 mr-2" />
                   {t.contactButton}
                 </a>

@@ -176,7 +176,11 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  await seed();
+  try {
+    await seed();
+  } catch (err) {
+    console.error("[seed] Seeding failed, continuing without seed data:", err);
+  }
 
   // Setup WebSocket server for pipeline progress updates
   const wss = new WebSocketServer({ server: httpServer, path: '/ws/pipeline' });

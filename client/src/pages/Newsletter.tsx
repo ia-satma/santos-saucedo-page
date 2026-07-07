@@ -815,7 +815,7 @@ export default function Newsletter() {
                         {archive.description}
                       </p>
                       <a 
-                        href={`mailto:info@vonwobeser.com?subject=${encodeURIComponent(language === 'es' ? `Solicitud de Newsletter: ${archive.title}` : `Newsletter Request: ${archive.title}`)}`}
+                        href={`mailto:info@santossaucedo.com?subject=${encodeURIComponent(language === 'es' ? `Solicitud de Newsletter: ${archive.title}` : `Newsletter Request: ${archive.title}`)}`}
                         className="inline-flex items-center gap-2 text-sm text-primary hover:text-[#181848] transition-colors"
                         data-testid={`button-archive-view-${index}`}
                       >

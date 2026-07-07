@@ -21,24 +21,12 @@ interface PracticeArea {
 }
 
 const practiceAreas: PracticeArea[] = [
-  { id: 1, nameEn: "Corporate, Mergers & Acquisitions", nameEs: "Corporativo, Fusiones y Adquisiciones", nameDe: "Gesellschaftsrecht, Fusionen & Übernahmen", nameZh: "公司、并购", nameKo: "기업, 인수합병", nameJa: "企業、M&A", nameAr: "الشركات والاندماج والاستحواذ", nameRu: "Корпоративное право, слияния и поглощения", nameFr: "Droit des sociétés, Fusions & Acquisitions", nameIt: "Societario, Fusioni e Acquisizioni", slug: "corporate-ma" },
-  { id: 2, nameEn: "Antitrust & Competition", nameEs: "Competencia Económica", nameDe: "Kartell- & Wettbewerbsrecht", nameZh: "反垄断与竞争", nameKo: "독점금지 및 경쟁", nameJa: "独占禁止法・競争法", nameAr: "مكافحة الاحتكار والمنافسة", nameRu: "Антимонопольное и конкурентное право", nameFr: "Droit de la concurrence", nameIt: "Antitrust e Concorrenza", slug: "antitrust-competition" },
-  { id: 3, nameEn: "Arbitration", nameEs: "Arbitraje", nameDe: "Schiedsverfahren", nameZh: "仲裁", nameKo: "중재", nameJa: "仲裁", nameAr: "التحكيم", nameRu: "Арбитраж", nameFr: "Arbitrage", nameIt: "Arbitrato", slug: "arbitration" },
-  { id: 4, nameEn: "Litigation", nameEs: "Litigio", nameDe: "Prozessführung", nameZh: "诉讼", nameKo: "소송", nameJa: "訴訟", nameAr: "التقاضي", nameRu: "Судебные споры", nameFr: "Contentieux", nameIt: "Contenzioso", slug: "litigation" },
-  { id: 5, nameEn: "Investigations, Anti-corruption & Compliance", nameEs: "Investigaciones, Anticorrupción y Compliance", nameDe: "Ermittlungen, Korruptionsbekämpfung & Compliance", nameZh: "调查、反腐败与合规", nameKo: "조사, 반부패 및 컴플라이언스", nameJa: "調査、腐敗防止・コンプライアンス", nameAr: "التحقيقات ومكافحة الفساد والامتثال", nameRu: "Расследования, противодействие коррупции и комплаенс", nameFr: "Enquêtes, Anti-corruption et Conformité", nameIt: "Indagini, Anticorruzione e Compliance", slug: "investigations-anticorruption" },
-  { id: 6, nameEn: "Bankruptcy & Restructuring", nameEs: "Concursos Mercantiles y Reestructuración", nameDe: "Insolvenz & Restrukturierung", nameZh: "破产与重组", nameKo: "파산 및 구조조정", nameJa: "倒産・事業再生", nameAr: "الإفلاس وإعادة الهيكلة", nameRu: "Банкротство и реструктуризация", nameFr: "Faillite et Restructuration", nameIt: "Fallimento e Ristrutturazione", slug: "bankruptcy-restructuring" },
-  { id: 7, nameEn: "Banking & Finance", nameEs: "Bancario y Financiero", nameDe: "Bank- & Finanzrecht", nameZh: "银行与金融", nameKo: "은행 및 금융", nameJa: "銀行・金融", nameAr: "الخدمات المصرفية والمالية", nameRu: "Банковское дело и финансы", nameFr: "Banque et Finance", nameIt: "Bancario e Finanziario", slug: "banking-finance" },
-  { id: 8, nameEn: "Energy & Natural Resources", nameEs: "Energía y Recursos Naturales", nameDe: "Energie & Natürliche Ressourcen", nameZh: "能源与自然资源", nameKo: "에너지 및 천연자원", nameJa: "エネルギー・天然資源", nameAr: "الطاقة والموارد الطبيعية", nameRu: "Энергетика и природные ресурсы", nameFr: "Énergie et Ressources Naturelles", nameIt: "Energia e Risorse Naturali", slug: "energy-natural-resources" },
-  { id: 9, nameEn: "ESG (Environmental, Social & Corporate Governance)", nameEs: "ESG (Ambiental, Social y Gobierno Corporativo)", nameDe: "ESG (Umwelt, Soziales & Unternehmensführung)", nameZh: "ESG（环境、社会与公司治理）", nameKo: "ESG (환경, 사회, 기업지배구조)", nameJa: "ESG（環境・社会・ガバナンス）", nameAr: "الحوكمة البيئية والاجتماعية والمؤسسية", nameRu: "ESG (Экология, социальная ответственность, корпоративное управление)", nameFr: "ESG (Environnement, Social et Gouvernance)", nameIt: "ESG (Ambiente, Sociale e Governance)", slug: "esg" },
-  { id: 10, nameEn: "Real Estate", nameEs: "Inmobiliario", nameDe: "Immobilienrecht", nameZh: "房地产", nameKo: "부동산", nameJa: "不動産", nameAr: "العقارات", nameRu: "Недвижимость", nameFr: "Immobilier", nameIt: "Immobiliare", slug: "real-estate" },
-  { id: 11, nameEn: "Intellectual Property", nameEs: "Propiedad Intelectual", nameDe: "Geistiges Eigentum", nameZh: "知识产权", nameKo: "지적재산권", nameJa: "知的財産", nameAr: "الملكية الفكرية", nameRu: "Интеллектуальная собственность", nameFr: "Propriété Intellectuelle", nameIt: "Proprietà Intellettuale", slug: "intellectual-property" },
-  { id: 12, nameEn: "Labor & Employment", nameEs: "Laboral", nameDe: "Arbeitsrecht", nameZh: "劳动与就业", nameKo: "노동 및 고용", nameJa: "労働・雇用", nameAr: "العمل والتوظيف", nameRu: "Трудовое право", nameFr: "Droit du Travail", nameIt: "Diritto del Lavoro", slug: "labor-employment" },
-  { id: 13, nameEn: "Tax", nameEs: "Fiscal", nameDe: "Steuerrecht", nameZh: "税务", nameKo: "세무", nameJa: "税務", nameAr: "الضرائب", nameRu: "Налоговое право", nameFr: "Droit Fiscal", nameIt: "Fiscale", slug: "tax" },
-  { id: 14, nameEn: "International Trade", nameEs: "Comercio Exterior", nameDe: "Internationaler Handel", nameZh: "国际贸易", nameKo: "국제무역", nameJa: "国際貿易", nameAr: "التجارة الدولية", nameRu: "Международная торговля", nameFr: "Commerce International", nameIt: "Commercio Internazionale", slug: "international-trade" },
-  { id: 15, nameEn: "Telecommunications, Media & Technology", nameEs: "Telecomunicaciones, Medios y Tecnología", nameDe: "Telekommunikation, Medien & Technologie", nameZh: "电信、媒体与技术", nameKo: "통신, 미디어 및 기술", nameJa: "通信・メディア・テクノロジー", nameAr: "الاتصالات والإعلام والتكنولوجيا", nameRu: "Телекоммуникации, медиа и технологии", nameFr: "Télécommunications, Médias et Technologie", nameIt: "Telecomunicazioni, Media e Tecnologia", slug: "telecommunications-media-technology" },
-  { id: 16, nameEn: "Environmental", nameEs: "Ambiental", nameDe: "Umweltrecht", nameZh: "环境", nameKo: "환경", nameJa: "環境", nameAr: "البيئة", nameRu: "Экологическое право", nameFr: "Droit de l'Environnement", nameIt: "Ambientale", slug: "environmental" },
-  { id: 17, nameEn: "Administrative Law", nameEs: "Derecho Administrativo", nameDe: "Verwaltungsrecht", nameZh: "行政法", nameKo: "행정법", nameJa: "行政法", nameAr: "القانون الإداري", nameRu: "Административное право", nameFr: "Droit Administratif", nameIt: "Diritto Amministrativo", slug: "administrative-law" },
-  { id: 18, nameEn: "German Desk", nameEs: "Desk Alemán", nameDe: "German Desk", nameZh: "德国服务部", nameKo: "독일 데스크", nameJa: "ジャーマンデスク", nameAr: "المكتب الألماني", nameRu: "Немецкий отдел", nameFr: "German Desk", nameIt: "German Desk", slug: "german-desk" },
+  { id: 1, nameEn: "Individual & Collective Labor Conflicts", nameEs: "Conflictos Individuales y Colectivos de Trabajo", nameDe: "Individual & Collective Labor Conflicts", nameZh: "Individual & Collective Labor Conflicts", nameKo: "Individual & Collective Labor Conflicts", nameJa: "Individual & Collective Labor Conflicts", nameAr: "Individual & Collective Labor Conflicts", nameRu: "Individual & Collective Labor Conflicts", nameFr: "Individual & Collective Labor Conflicts", nameIt: "Individual & Collective Labor Conflicts", slug: "conflictos-individuales-colectivos" },
+  { id: 2, nameEn: "Labor Administration Review", nameEs: "Revisión de la Función de Administración Laboral", nameDe: "Labor Administration Review", nameZh: "Labor Administration Review", nameKo: "Labor Administration Review", nameJa: "Labor Administration Review", nameAr: "Labor Administration Review", nameRu: "Labor Administration Review", nameFr: "Labor Administration Review", nameIt: "Labor Administration Review", slug: "administracion-laboral" },
+  { id: 3, nameEn: "Labor Relations Diagnostics", nameEs: "Diagnóstico de Relaciones Laborales", nameDe: "Labor Relations Diagnostics", nameZh: "Labor Relations Diagnostics", nameKo: "Labor Relations Diagnostics", nameJa: "Labor Relations Diagnostics", nameAr: "Labor Relations Diagnostics", nameRu: "Labor Relations Diagnostics", nameFr: "Labor Relations Diagnostics", nameIt: "Labor Relations Diagnostics", slug: "diagnostico-relaciones-laborales" },
+  { id: 4, nameEn: "Improvement Plans", nameEs: "Planes de Mejora", nameDe: "Improvement Plans", nameZh: "Improvement Plans", nameKo: "Improvement Plans", nameJa: "Improvement Plans", nameAr: "Improvement Plans", nameRu: "Improvement Plans", nameFr: "Improvement Plans", nameIt: "Improvement Plans", slug: "planes-mejora" },
+  { id: 5, nameEn: "Legal-Labor Auditing", nameEs: "Auditoría Jurídico-Laboral", nameDe: "Legal-Labor Auditing", nameZh: "Legal-Labor Auditing", nameKo: "Legal-Labor Auditing", nameJa: "Legal-Labor Auditing", nameAr: "Legal-Labor Auditing", nameRu: "Legal-Labor Auditing", nameFr: "Legal-Labor Auditing", nameIt: "Legal-Labor Auditing", slug: "auditoria-juridico-laboral" },
+  { id: 6, nameEn: "Strategic Planning & Training", nameEs: "Planeación Estratégica y Capacitación", nameDe: "Strategic Planning & Training", nameZh: "Strategic Planning & Training", nameKo: "Strategic Planning & Training", nameJa: "Strategic Planning & Training", nameAr: "Strategic Planning & Training", nameRu: "Strategic Planning & Training", nameFr: "Strategic Planning & Training", nameIt: "Strategic Planning & Training", slug: "planeacion-estrategica-capacitacion" },
 ];
 
 interface PracticesContent {
@@ -51,17 +39,17 @@ interface PracticesContent {
 
 const content: Record<LanguageCode, PracticesContent> = {
   en: {
-    title: "PRACTICE AREAS",
-    subtitle: "18 SPECIALIZED DISCIPLINES",
-    intro: "Comprehensive legal services across 18 specialized disciplines.",
-    seeMore: "SEE ALL PRACTICES",
+    title: "LABOR PRACTICE AREAS",
+    subtitle: "6 SPECIALIZED AREAS",
+    intro: "Comprehensive labor law advisory across 6 specialized areas.",
+    seeMore: "SEE ALL AREAS",
     ctaText: "Get Legal Advice",
   },
   es: {
-    title: "ÁREAS DE PRÁCTICA",
-    subtitle: "18 DISCIPLINAS ESPECIALIZADAS",
-    intro: "Asesoría legal integral en 18 disciplinas especializadas.",
-    seeMore: "VER TODAS LAS PRÁCTICAS",
+    title: "ÁREAS LABORALES",
+    subtitle: "6 ÁREAS ESPECIALIZADAS",
+    intro: "Asesoría legal laboral integral en 6 áreas especializadas.",
+    seeMore: "VER TODAS LAS ÁREAS",
     ctaText: "Obtener Asesoría Legal",
   },
   de: {
@@ -193,7 +181,7 @@ export default function PracticesSection() {
               {/* Decorative large number */}
               <div className="relative mb-6 select-none pointer-events-none">
                 <span className="text-[9rem] leading-none font-heading font-light text-white/[0.10]">
-                  18
+                  6
                 </span>
               </div>
 

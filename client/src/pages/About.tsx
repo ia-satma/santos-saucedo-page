@@ -31,7 +31,7 @@ import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { NumberedCard } from "@/components/editorial";
 import type { TeamMember, PracticeGroup, IndustryGroup, LanguageCode } from "@shared/schema";
-import logoHD from "@assets/vonwobeser_logo_2025_full.png";
+import logoHD from "@assets/logo-ss-color.png";
 
 export default function About() {
   const { language } = useLanguage();
@@ -83,7 +83,7 @@ export default function About() {
       title: "About the Firm",
       subtitle: "Over 70 years of excellence in legal services in Mexico",
       historyTitle: "Our History",
-      historyText1: "Founded in 1952, Von Wobeser y Sierra is one of Mexico's most prestigious and recognized law firms. For more than seven decades, we have provided top-tier legal services to national and international clients across a wide range of industries.",
+      historyText1: "Founded in 1952, Santos & Saucedo is one of Mexico's most prestigious and recognized law firms. For more than seven decades, we have provided top-tier legal services to national and international clients across a wide range of industries.",
       historyText2: "Our firm has grown to become a leader in the Mexican legal market, consistently ranked among the top law firms in the country by Chambers and Partners, Legal 500, and Latin Lawyer 250.",
       valuesTitle: "Our Values",
       values: [
@@ -94,7 +94,7 @@ export default function About() {
       ],
       cultureTitle: "Our Culture",
       cultureSubtitle: "A workplace where talent thrives and excellence is the standard",
-      cultureIntro: "At Von Wobeser y Sierra, we have cultivated a unique culture that blends professional rigor with a supportive and collaborative environment. Our attorneys work alongside some of the most talented legal professionals in Mexico, fostering an atmosphere of continuous learning and mutual respect.",
+      cultureIntro: "At Santos & Saucedo, we have cultivated a unique culture that blends professional rigor with a supportive and collaborative environment. Our attorneys work alongside some of the most talented legal professionals in Mexico, fostering an atmosphere of continuous learning and mutual respect.",
       cultureAspects: [
         { 
           icon: Building2, 
@@ -129,7 +129,7 @@ export default function About() {
       ],
       diversityTitle: "Diversity & Inclusion",
       diversitySubtitle: "Building a more inclusive legal profession",
-      diversityIntro: "Von Wobeser y Sierra is committed to fostering a diverse and inclusive workplace where every individual is valued, respected, and empowered to succeed. We believe that diversity of thought, background, and experience strengthens our firm and enhances the quality of service we provide to our clients.",
+      diversityIntro: "Santos & Saucedo is committed to fostering a diverse and inclusive workplace where every individual is valued, respected, and empowered to succeed. We believe that diversity of thought, background, and experience strengthens our firm and enhances the quality of service we provide to our clients.",
       diversityStats: [
         { value: "45%", label: "Women in the Firm", icon: UsersRound },
         { value: "35%", label: "Women Partners", icon: TrendingUp },
@@ -167,7 +167,7 @@ export default function About() {
         { value: String(industryGroups?.length || 7), label: "Industry Groups" },
       ],
       rankingsTitle: "Rankings & Recognition",
-      rankingsText: "Von Wobeser y Sierra is consistently recognized as one of the leading law firms in Mexico by the most prestigious legal directories worldwide.",
+      rankingsText: "Santos & Saucedo is consistently recognized as one of the leading law firms in Mexico by the most prestigious legal directories worldwide.",
       rankings: [
         "Chambers and Partners Global - Band 1",
         "Chambers and Partners Latin America - Band 1",
@@ -188,7 +188,7 @@ export default function About() {
       title: "Acerca de la Firma",
       subtitle: "Más de 70 años de excelencia en servicios legales en México",
       historyTitle: "Nuestra Historia",
-      historyText1: "Fundado en 1952, Von Wobeser y Sierra es uno de los despachos de abogados más prestigiosos y reconocidos de México. Durante más de siete décadas, hemos brindado servicios legales de primer nivel a clientes nacionales e internacionales en una amplia gama de industrias.",
+      historyText1: "Fundado en 1952, Santos & Saucedo es uno de los despachos de abogados más prestigiosos y reconocidos de México. Durante más de siete décadas, hemos brindado servicios legales de primer nivel a clientes nacionales e internacionales en una amplia gama de industrias.",
       historyText2: "Nuestra firma ha crecido hasta convertirse en líder en el mercado legal mexicano, consistentemente clasificada entre los principales despachos de abogados del país por Chambers and Partners, Legal 500 y Latin Lawyer 250.",
       valuesTitle: "Nuestros Valores",
       values: [
@@ -199,7 +199,7 @@ export default function About() {
       ],
       cultureTitle: "Nuestra Cultura",
       cultureSubtitle: "Un lugar de trabajo donde el talento prospera y la excelencia es el estándar",
-      cultureIntro: "En Von Wobeser y Sierra, hemos cultivado una cultura única que combina el rigor profesional con un ambiente de apoyo y colaboración. Nuestros abogados trabajan junto a algunos de los profesionales legales más talentosos de México, fomentando una atmósfera de aprendizaje continuo y respeto mutuo.",
+      cultureIntro: "En Santos & Saucedo, hemos cultivado una cultura única que combina el rigor profesional con un ambiente de apoyo y colaboración. Nuestros abogados trabajan junto a algunos de los profesionales legales más talentosos de México, fomentando una atmósfera de aprendizaje continuo y respeto mutuo.",
       cultureAspects: [
         { 
           icon: Building2, 
@@ -234,7 +234,7 @@ export default function About() {
       ],
       diversityTitle: "Diversidad e Inclusión",
       diversitySubtitle: "Construyendo una profesión legal más inclusiva",
-      diversityIntro: "Von Wobeser y Sierra está comprometido con fomentar un lugar de trabajo diverso e inclusivo donde cada individuo sea valorado, respetado y empoderado para triunfar. Creemos que la diversidad de pensamiento, antecedentes y experiencia fortalece nuestra firma y mejora la calidad del servicio que brindamos a nuestros clientes.",
+      diversityIntro: "Santos & Saucedo está comprometido con fomentar un lugar de trabajo diverso e inclusivo donde cada individuo sea valorado, respetado y empoderado para triunfar. Creemos que la diversidad de pensamiento, antecedentes y experiencia fortalece nuestra firma y mejora la calidad del servicio que brindamos a nuestros clientes.",
       diversityStats: [
         { value: "45%", label: "Mujeres en la Firma", icon: UsersRound },
         { value: "35%", label: "Mujeres Socias", icon: TrendingUp },
@@ -272,7 +272,7 @@ export default function About() {
         { value: String(industryGroups?.length || 7), label: "Grupos Industriales" },
       ],
       rankingsTitle: "Rankings y Reconocimientos",
-      rankingsText: "Von Wobeser y Sierra es consistentemente reconocido como uno de los principales despachos de abogados en México por los directorios legales más prestigiosos del mundo.",
+      rankingsText: "Santos & Saucedo es consistentemente reconocido como uno de los principales despachos de abogados en México por los directorios legales más prestigiosos del mundo.",
       rankings: [
         "Chambers and Partners Global - Banda 1",
         "Chambers and Partners Latin America - Banda 1",
@@ -293,7 +293,7 @@ export default function About() {
       title: "Über die Kanzlei",
       subtitle: "Über 70 Jahre Exzellenz in juristischen Dienstleistungen in Mexiko",
       historyTitle: "Unsere Geschichte",
-      historyText1: "Von Wobeser y Sierra wurde 1952 gegründet und ist eine der renommiertesten und anerkanntesten Anwaltskanzleien Mexikos. Seit mehr als sieben Jahrzehnten bieten wir erstklassige Rechtsdienstleistungen für nationale und internationale Mandanten in einer Vielzahl von Branchen.",
+      historyText1: "Santos & Saucedo wurde 1952 gegründet und ist eine der renommiertesten und anerkanntesten Anwaltskanzleien Mexikos. Seit mehr als sieben Jahrzehnten bieten wir erstklassige Rechtsdienstleistungen für nationale und internationale Mandanten in einer Vielzahl von Branchen.",
       historyText2: "Unsere Kanzlei ist zu einem führenden Unternehmen auf dem mexikanischen Rechtsmarkt geworden und wird von Chambers and Partners, Legal 500 und Latin Lawyer 250 durchgehend unter den Top-Kanzleien des Landes geführt.",
       valuesTitle: "Unsere Werte",
       values: [
@@ -304,7 +304,7 @@ export default function About() {
       ],
       cultureTitle: "Unsere Kultur",
       cultureSubtitle: "Ein Arbeitsplatz, an dem Talente gedeihen und Exzellenz der Standard ist",
-      cultureIntro: "Bei Von Wobeser y Sierra haben wir eine einzigartige Kultur entwickelt, die professionelle Strenge mit einer unterstützenden und kollegialen Umgebung verbindet. Unsere Anwälte arbeiten mit einigen der talentiertesten Juristen Mexikos zusammen und fördern eine Atmosphäre des kontinuierlichen Lernens und gegenseitigen Respekts.",
+      cultureIntro: "Bei Santos & Saucedo haben wir eine einzigartige Kultur entwickelt, die professionelle Strenge mit einer unterstützenden und kollegialen Umgebung verbindet. Unsere Anwälte arbeiten mit einigen der talentiertesten Juristen Mexikos zusammen und fördern eine Atmosphäre des kontinuierlichen Lernens und gegenseitigen Respekts.",
       cultureAspects: [
         { 
           icon: Building2, 
@@ -339,7 +339,7 @@ export default function About() {
       ],
       diversityTitle: "Vielfalt und Inklusion",
       diversitySubtitle: "Aufbau einer inklusiveren Rechtsbranche",
-      diversityIntro: "Von Wobeser y Sierra setzt sich für die Förderung eines vielfältigen und inklusiven Arbeitsplatzes ein, an dem jeder Einzelne geschätzt, respektiert und zum Erfolg befähigt wird. Wir glauben, dass Vielfalt in Gedanken, Hintergründen und Erfahrungen unsere Kanzlei stärkt und die Qualität der Dienstleistungen, die wir unseren Mandanten bieten, verbessert.",
+      diversityIntro: "Santos & Saucedo setzt sich für die Förderung eines vielfältigen und inklusiven Arbeitsplatzes ein, an dem jeder Einzelne geschätzt, respektiert und zum Erfolg befähigt wird. Wir glauben, dass Vielfalt in Gedanken, Hintergründen und Erfahrungen unsere Kanzlei stärkt und die Qualität der Dienstleistungen, die wir unseren Mandanten bieten, verbessert.",
       diversityStats: [
         { value: "45%", label: "Frauen in der Kanzlei", icon: UsersRound },
         { value: "35%", label: "Partnerinnen", icon: TrendingUp },
@@ -377,7 +377,7 @@ export default function About() {
         { value: String(industryGroups?.length || 7), label: "Branchengruppen" },
       ],
       rankingsTitle: "Rankings und Auszeichnungen",
-      rankingsText: "Von Wobeser y Sierra wird von den renommiertesten Rechtsverzeichnissen weltweit durchgehend als eine der führenden Anwaltskanzleien in Mexiko anerkannt.",
+      rankingsText: "Santos & Saucedo wird von den renommiertesten Rechtsverzeichnissen weltweit durchgehend als eine der führenden Anwaltskanzleien in Mexiko anerkannt.",
       rankings: [
         "Chambers and Partners Global - Band 1",
         "Chambers and Partners Latin America - Band 1",
@@ -398,7 +398,7 @@ export default function About() {
       title: "关于律所",
       subtitle: "70多年来在墨西哥提供卓越的法律服务",
       historyTitle: "我们的历史",
-      historyText1: "Von Wobeser y Sierra成立于1952年，是墨西哥最负盛名和最受认可的律师事务所之一。七十多年来，我们为各行各业的国内外客户提供一流的法律服务。",
+      historyText1: "Santos & Saucedo成立于1952年，是墨西哥最负盛名和最受认可的律师事务所之一。七十多年来，我们为各行各业的国内外客户提供一流的法律服务。",
       historyText2: "我们的事务所已发展成为墨西哥法律市场的领导者，被Chambers and Partners、Legal 500和Latin Lawyer 250持续评为该国顶级律师事务所之一。",
       valuesTitle: "我们的价值观",
       values: [
@@ -409,7 +409,7 @@ export default function About() {
       ],
       cultureTitle: "我们的文化",
       cultureSubtitle: "人才蓬勃发展、卓越为标准的工作场所",
-      cultureIntro: "在Von Wobeser y Sierra，我们培养了一种独特的文化，将专业严谨与支持性和协作性的环境相结合。我们的律师与墨西哥一些最有才华的法律专业人士一起工作，营造持续学习和相互尊重的氛围。",
+      cultureIntro: "在Santos & Saucedo，我们培养了一种独特的文化，将专业严谨与支持性和协作性的环境相结合。我们的律师与墨西哥一些最有才华的法律专业人士一起工作，营造持续学习和相互尊重的氛围。",
       cultureAspects: [
         { 
           icon: Building2, 
@@ -444,7 +444,7 @@ export default function About() {
       ],
       diversityTitle: "多元化与包容性",
       diversitySubtitle: "建设更具包容性的法律行业",
-      diversityIntro: "Von Wobeser y Sierra致力于营造多元化和包容性的工作场所，让每个人都受到重视、尊重并获得成功的能力。我们相信，思想、背景和经验的多样性增强了我们事务所的实力，提高了我们为客户提供的服务质量。",
+      diversityIntro: "Santos & Saucedo致力于营造多元化和包容性的工作场所，让每个人都受到重视、尊重并获得成功的能力。我们相信，思想、背景和经验的多样性增强了我们事务所的实力，提高了我们为客户提供的服务质量。",
       diversityStats: [
         { value: "45%", label: "事务所女性比例", icon: UsersRound },
         { value: "35%", label: "女性合伙人", icon: TrendingUp },
@@ -482,7 +482,7 @@ export default function About() {
         { value: String(industryGroups?.length || 7), label: "行业组" },
       ],
       rankingsTitle: "排名与认可",
-      rankingsText: "Von Wobeser y Sierra被全球最负盛名的法律目录持续评为墨西哥领先的律师事务所之一。",
+      rankingsText: "Santos & Saucedo被全球最负盛名的法律目录持续评为墨西哥领先的律师事务所之一。",
       rankings: [
         "Chambers and Partners Global - 第一级",
         "Chambers and Partners Latin America - 第一级",
@@ -503,7 +503,7 @@ export default function About() {
       title: "회사 소개",
       subtitle: "멕시코에서 70년 이상의 법률 서비스 우수성",
       historyTitle: "우리의 역사",
-      historyText1: "1952년에 설립된 Von Wobeser y Sierra는 멕시코에서 가장 권위 있고 인정받는 로펌 중 하나입니다. 70년 이상 동안 우리는 다양한 산업 분야의 국내외 고객에게 최고 수준의 법률 서비스를 제공해 왔습니다.",
+      historyText1: "1952년에 설립된 Santos & Saucedo는 멕시코에서 가장 권위 있고 인정받는 로펌 중 하나입니다. 70년 이상 동안 우리는 다양한 산업 분야의 국내외 고객에게 최고 수준의 법률 서비스를 제공해 왔습니다.",
       historyText2: "우리 법인은 멕시코 법률 시장의 리더로 성장했으며, Chambers and Partners, Legal 500, Latin Lawyer 250에 의해 지속적으로 국내 최고의 로펌으로 선정되고 있습니다.",
       valuesTitle: "우리의 가치",
       values: [
@@ -514,7 +514,7 @@ export default function About() {
       ],
       cultureTitle: "우리의 문화",
       cultureSubtitle: "재능이 번창하고 탁월함이 표준인 직장",
-      cultureIntro: "Von Wobeser y Sierra에서 우리는 전문적인 엄격함과 지원적이고 협력적인 환경을 조화시킨 독특한 문화를 발전시켜 왔습니다. 우리 변호사들은 멕시코에서 가장 재능 있는 법률 전문가들과 함께 일하며, 지속적인 학습과 상호 존중의 분위기를 조성합니다.",
+      cultureIntro: "Santos & Saucedo에서 우리는 전문적인 엄격함과 지원적이고 협력적인 환경을 조화시킨 독특한 문화를 발전시켜 왔습니다. 우리 변호사들은 멕시코에서 가장 재능 있는 법률 전문가들과 함께 일하며, 지속적인 학습과 상호 존중의 분위기를 조성합니다.",
       cultureAspects: [
         { 
           icon: Building2, 
@@ -549,7 +549,7 @@ export default function About() {
       ],
       diversityTitle: "다양성 및 포용성",
       diversitySubtitle: "보다 포용적인 법률 전문직 구축",
-      diversityIntro: "Von Wobeser y Sierra는 모든 개인이 가치 있게 여겨지고, 존중받으며, 성공할 수 있는 힘을 부여받는 다양하고 포용적인 직장을 조성하기 위해 노력합니다. 우리는 생각, 배경 및 경험의 다양성이 우리 법인을 강화하고 고객에게 제공하는 서비스의 품질을 향상시킨다고 믿습니다.",
+      diversityIntro: "Santos & Saucedo는 모든 개인이 가치 있게 여겨지고, 존중받으며, 성공할 수 있는 힘을 부여받는 다양하고 포용적인 직장을 조성하기 위해 노력합니다. 우리는 생각, 배경 및 경험의 다양성이 우리 법인을 강화하고 고객에게 제공하는 서비스의 품질을 향상시킨다고 믿습니다.",
       diversityStats: [
         { value: "45%", label: "법인 내 여성 비율", icon: UsersRound },
         { value: "35%", label: "여성 파트너", icon: TrendingUp },
@@ -587,7 +587,7 @@ export default function About() {
         { value: String(industryGroups?.length || 7), label: "산업 그룹" },
       ],
       rankingsTitle: "순위 및 인정",
-      rankingsText: "Von Wobeser y Sierra는 전 세계에서 가장 권위 있는 법률 디렉토리에 의해 멕시코의 선도적인 로펌 중 하나로 지속적으로 인정받고 있습니다.",
+      rankingsText: "Santos & Saucedo는 전 세계에서 가장 권위 있는 법률 디렉토리에 의해 멕시코의 선도적인 로펌 중 하나로 지속적으로 인정받고 있습니다.",
       rankings: [
         "Chambers and Partners Global - Band 1",
         "Chambers and Partners Latin America - Band 1",
@@ -608,7 +608,7 @@ export default function About() {
       title: "事務所について",
       subtitle: "メキシコで70年以上にわたる法律サービスの卓越性",
       historyTitle: "私たちの歴史",
-      historyText1: "1952年に設立されたVon Wobeser y Sierraは、メキシコで最も権威があり認められた法律事務所の一つです。70年以上にわたり、幅広い業界の国内外のクライアントに最高レベルの法的サービスを提供してきました。",
+      historyText1: "1952年に設立されたSantos & Saucedoは、メキシコで最も権威があり認められた法律事務所の一つです。70年以上にわたり、幅広い業界の国内外のクライアントに最高レベルの法的サービスを提供してきました。",
       historyText2: "当事務所はメキシコの法律市場のリーダーへと成長し、Chambers and Partners、Legal 500、Latin Lawyer 250によって一貫して国内トップの法律事務所として評価されています。",
       valuesTitle: "私たちの価値観",
       values: [
@@ -619,7 +619,7 @@ export default function About() {
       ],
       cultureTitle: "私たちの文化",
       cultureSubtitle: "才能が開花し、卓越が基準となる職場",
-      cultureIntro: "Von Wobeser y Sierraでは、プロフェッショナルな厳格さと支援的で協力的な環境を融合させた独自の文化を育んできました。当事務所の弁護士たちはメキシコで最も才能ある法律専門家と共に働き、継続的な学習と相互尊重の雰囲気を醸成しています。",
+      cultureIntro: "Santos & Saucedoでは、プロフェッショナルな厳格さと支援的で協力的な環境を融合させた独自の文化を育んできました。当事務所の弁護士たちはメキシコで最も才能ある法律専門家と共に働き、継続的な学習と相互尊重の雰囲気を醸成しています。",
       cultureAspects: [
         { 
           icon: Building2, 
@@ -654,7 +654,7 @@ export default function About() {
       ],
       diversityTitle: "ダイバーシティ＆インクルージョン",
       diversitySubtitle: "より包括的な法律専門職の構築",
-      diversityIntro: "Von Wobeser y Sierraは、すべての個人が尊重され、価値を認められ、成功するための力を与えられる多様で包括的な職場環境の促進に取り組んでいます。思考、背景、経験の多様性が当事務所を強化し、クライアントに提供するサービスの質を高めると信じています。",
+      diversityIntro: "Santos & Saucedoは、すべての個人が尊重され、価値を認められ、成功するための力を与えられる多様で包括的な職場環境の促進に取り組んでいます。思考、背景、経験の多様性が当事務所を強化し、クライアントに提供するサービスの質を高めると信じています。",
       diversityStats: [
         { value: "45%", label: "事務所の女性比率", icon: UsersRound },
         { value: "35%", label: "女性パートナー", icon: TrendingUp },
@@ -692,7 +692,7 @@ export default function About() {
         { value: String(industryGroups?.length || 7), label: "インダストリーグループ" },
       ],
       rankingsTitle: "ランキングと評価",
-      rankingsText: "Von Wobeser y Sierraは、世界で最も権威ある法律ディレクトリによってメキシコの主要な法律事務所の一つとして一貫して認められています。",
+      rankingsText: "Santos & Saucedoは、世界で最も権威ある法律ディレクトリによってメキシコの主要な法律事務所の一つとして一貫して認められています。",
       rankings: [
         "Chambers and Partners Global - Band 1",
         "Chambers and Partners Latin America - Band 1",
@@ -713,7 +713,7 @@ export default function About() {
       title: "عن الشركة",
       subtitle: "أكثر من 70 عامًا من التميز في الخدمات القانونية في المكسيك",
       historyTitle: "تاريخنا",
-      historyText1: "تأسست Von Wobeser y Sierra في عام 1952، وهي واحدة من أكثر مكاتب المحاماة شهرة واعترافًا في المكسيك. لأكثر من سبعة عقود، قدمنا خدمات قانونية من الدرجة الأولى للعملاء المحليين والدوليين عبر مجموعة واسعة من الصناعات.",
+      historyText1: "تأسست Santos & Saucedo في عام 1952، وهي واحدة من أكثر مكاتب المحاماة شهرة واعترافًا في المكسيك. لأكثر من سبعة عقود، قدمنا خدمات قانونية من الدرجة الأولى للعملاء المحليين والدوليين عبر مجموعة واسعة من الصناعات.",
       historyText2: "نمت شركتنا لتصبح رائدة في السوق القانوني المكسيكي، حيث يتم تصنيفها باستمرار بين أفضل مكاتب المحاماة في البلاد من قبل Chambers and Partners و Legal 500 و Latin Lawyer 250.",
       valuesTitle: "قيمنا",
       values: [
@@ -724,7 +724,7 @@ export default function About() {
       ],
       cultureTitle: "ثقافتنا",
       cultureSubtitle: "مكان عمل يزدهر فيه الموهوبون والتميز هو المعيار",
-      cultureIntro: "في Von Wobeser y Sierra، قمنا بتنمية ثقافة فريدة تمزج بين الصرامة المهنية والبيئة الداعمة والتعاونية. يعمل محامونا جنبًا إلى جنب مع بعض أكثر المهنيين القانونيين موهبة في المكسيك، مما يعزز جوًا من التعلم المستمر والاحترام المتبادل.",
+      cultureIntro: "في Santos & Saucedo، قمنا بتنمية ثقافة فريدة تمزج بين الصرامة المهنية والبيئة الداعمة والتعاونية. يعمل محامونا جنبًا إلى جنب مع بعض أكثر المهنيين القانونيين موهبة في المكسيك، مما يعزز جوًا من التعلم المستمر والاحترام المتبادل.",
       cultureAspects: [
         { 
           icon: Building2, 
@@ -759,7 +759,7 @@ export default function About() {
       ],
       diversityTitle: "التنوع والشمول",
       diversitySubtitle: "بناء مهنة قانونية أكثر شمولاً",
-      diversityIntro: "تلتزم Von Wobeser y Sierra بتعزيز مكان عمل متنوع وشامل حيث يتم تقدير كل فرد واحترامه وتمكينه من النجاح. نؤمن بأن تنوع الفكر والخلفية والخبرة يعزز شركتنا ويحسن جودة الخدمة التي نقدمها لعملائنا.",
+      diversityIntro: "تلتزم Santos & Saucedo بتعزيز مكان عمل متنوع وشامل حيث يتم تقدير كل فرد واحترامه وتمكينه من النجاح. نؤمن بأن تنوع الفكر والخلفية والخبرة يعزز شركتنا ويحسن جودة الخدمة التي نقدمها لعملائنا.",
       diversityStats: [
         { value: "45%", label: "نساء في الشركة", icon: UsersRound },
         { value: "35%", label: "شريكات", icon: TrendingUp },
@@ -797,7 +797,7 @@ export default function About() {
         { value: String(industryGroups?.length || 7), label: "مجموعات صناعية" },
       ],
       rankingsTitle: "التصنيفات والتقدير",
-      rankingsText: "يتم الاعتراف بـ Von Wobeser y Sierra باستمرار كواحدة من مكاتب المحاماة الرائدة في المكسيك من قبل أعرق الأدلة القانونية في العالم.",
+      rankingsText: "يتم الاعتراف بـ Santos & Saucedo باستمرار كواحدة من مكاتب المحاماة الرائدة في المكسيك من قبل أعرق الأدلة القانونية في العالم.",
       rankings: [
         "Chambers and Partners Global - الفئة 1",
         "Chambers and Partners Latin America - الفئة 1",
@@ -818,7 +818,7 @@ export default function About() {
       title: "О фирме",
       subtitle: "Более 70 лет превосходства в юридических услугах в Мексике",
       historyTitle: "Наша история",
-      historyText1: "Основанная в 1952 году, Von Wobeser y Sierra является одной из самых престижных и признанных юридических фирм Мексики. Более семи десятилетий мы предоставляем первоклассные юридические услуги национальным и международным клиентам в широком спектре отраслей.",
+      historyText1: "Основанная в 1952 году, Santos & Saucedo является одной из самых престижных и признанных юридических фирм Мексики. Более семи десятилетий мы предоставляем первоклассные юридические услуги национальным и международным клиентам в широком спектре отраслей.",
       historyText2: "Наша фирма выросла и стала лидером на мексиканском юридическом рынке, неизменно занимая место среди ведущих юридических фирм страны по версии Chambers and Partners, Legal 500 и Latin Lawyer 250.",
       valuesTitle: "Наши ценности",
       values: [
@@ -829,7 +829,7 @@ export default function About() {
       ],
       cultureTitle: "Наша культура",
       cultureSubtitle: "Рабочее место, где процветают таланты и превосходство является стандартом",
-      cultureIntro: "В Von Wobeser y Sierra мы развили уникальную культуру, сочетающую профессиональную строгость с поддерживающей и коллаборативной средой. Наши юристы работают вместе с одними из самых талантливых юридических специалистов Мексики, создавая атмосферу непрерывного обучения и взаимного уважения.",
+      cultureIntro: "В Santos & Saucedo мы развили уникальную культуру, сочетающую профессиональную строгость с поддерживающей и коллаборативной средой. Наши юристы работают вместе с одними из самых талантливых юридических специалистов Мексики, создавая атмосферу непрерывного обучения и взаимного уважения.",
       cultureAspects: [
         { 
           icon: Building2, 
@@ -864,7 +864,7 @@ export default function About() {
       ],
       diversityTitle: "Разнообразие и инклюзивность",
       diversitySubtitle: "Создание более инклюзивной юридической профессии",
-      diversityIntro: "Von Wobeser y Sierra стремится развивать разнообразное и инклюзивное рабочее место, где каждый человек ценится, уважается и получает возможности для успеха. Мы верим, что разнообразие мыслей, происхождения и опыта укрепляет нашу фирму и повышает качество услуг, которые мы предоставляем клиентам.",
+      diversityIntro: "Santos & Saucedo стремится развивать разнообразное и инклюзивное рабочее место, где каждый человек ценится, уважается и получает возможности для успеха. Мы верим, что разнообразие мыслей, происхождения и опыта укрепляет нашу фирму и повышает качество услуг, которые мы предоставляем клиентам.",
       diversityStats: [
         { value: "45%", label: "Женщины в фирме", icon: UsersRound },
         { value: "35%", label: "Женщины-партнеры", icon: TrendingUp },
@@ -902,7 +902,7 @@ export default function About() {
         { value: String(industryGroups?.length || 7), label: "Отраслевых групп" },
       ],
       rankingsTitle: "Рейтинги и признание",
-      rankingsText: "Von Wobeser y Sierra неизменно признается одной из ведущих юридических фирм Мексики самыми престижными юридическими справочниками мира.",
+      rankingsText: "Santos & Saucedo неизменно признается одной из ведущих юридических фирм Мексики самыми престижными юридическими справочниками мира.",
       rankings: [
         "Chambers and Partners Global - Band 1",
         "Chambers and Partners Latin America - Band 1",
@@ -923,7 +923,7 @@ export default function About() {
       title: "À propos du cabinet",
       subtitle: "Plus de 70 ans d'excellence dans les services juridiques au Mexique",
       historyTitle: "Notre histoire",
-      historyText1: "Fondé en 1952, Von Wobeser y Sierra est l'un des cabinets d'avocats les plus prestigieux et reconnus du Mexique. Depuis plus de sept décennies, nous fournissons des services juridiques de premier plan à des clients nationaux et internationaux dans un large éventail de secteurs.",
+      historyText1: "Fondé en 1952, Santos & Saucedo est l'un des cabinets d'avocats les plus prestigieux et reconnus du Mexique. Depuis plus de sept décennies, nous fournissons des services juridiques de premier plan à des clients nationaux et internationaux dans un large éventail de secteurs.",
       historyText2: "Notre cabinet est devenu un leader du marché juridique mexicain, constamment classé parmi les meilleurs cabinets d'avocats du pays par Chambers and Partners, Legal 500 et Latin Lawyer 250.",
       valuesTitle: "Nos valeurs",
       values: [
@@ -934,7 +934,7 @@ export default function About() {
       ],
       cultureTitle: "Notre culture",
       cultureSubtitle: "Un lieu de travail où les talents s'épanouissent et l'excellence est la norme",
-      cultureIntro: "Chez Von Wobeser y Sierra, nous avons cultivé une culture unique qui allie rigueur professionnelle et environnement de soutien et de collaboration. Nos avocats travaillent aux côtés de certains des professionnels juridiques les plus talentueux du Mexique, favorisant une atmosphère d'apprentissage continu et de respect mutuel.",
+      cultureIntro: "Chez Santos & Saucedo, nous avons cultivé une culture unique qui allie rigueur professionnelle et environnement de soutien et de collaboration. Nos avocats travaillent aux côtés de certains des professionnels juridiques les plus talentueux du Mexique, favorisant une atmosphère d'apprentissage continu et de respect mutuel.",
       cultureAspects: [
         { 
           icon: Building2, 
@@ -969,7 +969,7 @@ export default function About() {
       ],
       diversityTitle: "Diversité et inclusion",
       diversitySubtitle: "Construire une profession juridique plus inclusive",
-      diversityIntro: "Von Wobeser y Sierra s'engage à favoriser un lieu de travail diversifié et inclusif où chaque individu est valorisé, respecté et habilité à réussir. Nous croyons que la diversité de pensée, d'origine et d'expérience renforce notre cabinet et améliore la qualité du service que nous fournissons à nos clients.",
+      diversityIntro: "Santos & Saucedo s'engage à favoriser un lieu de travail diversifié et inclusif où chaque individu est valorisé, respecté et habilité à réussir. Nous croyons que la diversité de pensée, d'origine et d'expérience renforce notre cabinet et améliore la qualité du service que nous fournissons à nos clients.",
       diversityStats: [
         { value: "45%", label: "Femmes dans le cabinet", icon: UsersRound },
         { value: "35%", label: "Femmes associées", icon: TrendingUp },
@@ -1007,7 +1007,7 @@ export default function About() {
         { value: String(industryGroups?.length || 7), label: "Groupes industriels" },
       ],
       rankingsTitle: "Classements et reconnaissance",
-      rankingsText: "Von Wobeser y Sierra est constamment reconnu comme l'un des principaux cabinets d'avocats au Mexique par les annuaires juridiques les plus prestigieux du monde.",
+      rankingsText: "Santos & Saucedo est constamment reconnu comme l'un des principaux cabinets d'avocats au Mexique par les annuaires juridiques les plus prestigieux du monde.",
       rankings: [
         "Chambers and Partners Global - Band 1",
         "Chambers and Partners Latin America - Band 1",
@@ -1028,7 +1028,7 @@ export default function About() {
       title: "Chi siamo",
       subtitle: "Oltre 70 anni di eccellenza nei servizi legali in Messico",
       historyTitle: "La nostra storia",
-      historyText1: "Fondato nel 1952, Von Wobeser y Sierra è uno degli studi legali più prestigiosi e riconosciuti del Messico. Da oltre sette decenni, forniamo servizi legali di primo livello a clienti nazionali e internazionali in un'ampia gamma di settori.",
+      historyText1: "Fondato nel 1952, Santos & Saucedo è uno degli studi legali più prestigiosi e riconosciuti del Messico. Da oltre sette decenni, forniamo servizi legali di primo livello a clienti nazionali e internazionali in un'ampia gamma di settori.",
       historyText2: "Il nostro studio è cresciuto fino a diventare un leader nel mercato legale messicano, costantemente classificato tra i principali studi legali del paese da Chambers and Partners, Legal 500 e Latin Lawyer 250.",
       valuesTitle: "I nostri valori",
       values: [
@@ -1039,7 +1039,7 @@ export default function About() {
       ],
       cultureTitle: "La nostra cultura",
       cultureSubtitle: "Un ambiente di lavoro dove i talenti prosperano e l'eccellenza è lo standard",
-      cultureIntro: "In Von Wobeser y Sierra, abbiamo coltivato una cultura unica che unisce rigore professionale e un ambiente di supporto e collaborazione. I nostri avvocati lavorano insieme ad alcuni dei professionisti legali più talentuosi del Messico, promuovendo un'atmosfera di apprendimento continuo e rispetto reciproco.",
+      cultureIntro: "In Santos & Saucedo, abbiamo coltivato una cultura unica che unisce rigore professionale e un ambiente di supporto e collaborazione. I nostri avvocati lavorano insieme ad alcuni dei professionisti legali più talentuosi del Messico, promuovendo un'atmosfera di apprendimento continuo e rispetto reciproco.",
       cultureAspects: [
         { 
           icon: Building2, 
@@ -1074,7 +1074,7 @@ export default function About() {
       ],
       diversityTitle: "Diversità e inclusione",
       diversitySubtitle: "Costruire una professione legale più inclusiva",
-      diversityIntro: "Von Wobeser y Sierra si impegna a promuovere un ambiente di lavoro diversificato e inclusivo dove ogni individuo è valorizzato, rispettato e messo nelle condizioni di avere successo. Crediamo che la diversità di pensiero, background ed esperienza rafforzi il nostro studio e migliori la qualità del servizio che forniamo ai nostri clienti.",
+      diversityIntro: "Santos & Saucedo si impegna a promuovere un ambiente di lavoro diversificato e inclusivo dove ogni individuo è valorizzato, rispettato e messo nelle condizioni di avere successo. Crediamo che la diversità di pensiero, background ed esperienza rafforzi il nostro studio e migliori la qualità del servizio che forniamo ai nostri clienti.",
       diversityStats: [
         { value: "45%", label: "Donne nello studio", icon: UsersRound },
         { value: "35%", label: "Donne partner", icon: TrendingUp },
@@ -1112,7 +1112,7 @@ export default function About() {
         { value: String(industryGroups?.length || 7), label: "Gruppi industriali" },
       ],
       rankingsTitle: "Classifiche e riconoscimenti",
-      rankingsText: "Von Wobeser y Sierra è costantemente riconosciuto come uno dei principali studi legali in Messico dalle directory legali più prestigiose del mondo.",
+      rankingsText: "Santos & Saucedo è costantemente riconosciuto come uno dei principali studi legali in Messico dalle directory legali più prestigiose del mondo.",
       rankings: [
         "Chambers and Partners Global - Band 1",
         "Chambers and Partners Latin America - Band 1",
@@ -1398,7 +1398,7 @@ export default function About() {
               <div className="flex justify-center">
                 <img
                   src={logoHD}
-                  alt="Von Wobeser y Sierra"
+                  alt="Santos & Saucedo"
                   width={318}
                   height={70}
                   className="max-w-full h-auto"
@@ -1456,7 +1456,7 @@ export default function About() {
                     asChild
                     data-testid="button-careers"
                   >
-                    <a href="mailto:carreras@vonwobeser.com">
+                    <a href="mailto:carreras@santossaucedo.com">
                       {t.learnMore}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </a>

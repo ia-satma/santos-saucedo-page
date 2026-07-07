@@ -1243,7 +1243,7 @@ export default function TeamMemberDetail() {
             email={member.email}
             telephone={member.phone}
             imageUrl={member.imageUrl}
-            url={`https://www.vonwobeser.com/team/${member.slug}`}
+            url={`https://www.santossaucedo.com/team/${member.slug}`}
             linkedinUrl={member.linkedinUrl}
             education={getMemberEducation()}
             languages={member.languages as string[] | undefined}
@@ -1252,9 +1252,9 @@ export default function TeamMemberDetail() {
           />
           <BreadcrumbJsonLd
             items={[
-              { name: language === "es" ? "Inicio" : "Home", url: "https://www.vonwobeser.com" },
-              { name: language === "es" ? "Equipo" : "Team", url: "https://www.vonwobeser.com/team" },
-              { name: member.name, url: `https://www.vonwobeser.com/team/${member.slug}` }
+              { name: language === "es" ? "Inicio" : "Home", url: "https://www.santossaucedo.com" },
+              { name: language === "es" ? "Equipo" : "Team", url: "https://www.santossaucedo.com/team" },
+              { name: member.name, url: `https://www.santossaucedo.com/team/${member.slug}` }
             ]}
             language={language}
           />

@@ -7,15 +7,15 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { OfficeImage, LanguageCode } from "@shared/schema";
 
 const fallbackImages: OfficeImage[] = [
-  { id: "1", imageUrl: "https://vonwobeser.com/img/Collage/collage_01.jpg", alt: "Von Wobeser new office space with modern open floor plan", altEs: "Nuevo espacio de oficinas Von Wobeser con planta abierta moderna", order: 1 },
-  { id: "2", imageUrl: "https://vonwobeser.com/img/Collage/collage_02.jpg", alt: "Modern collaborative workspace with natural lighting", altEs: "Espacio de trabajo colaborativo moderno con iluminación natural", order: 2 },
-  { id: "3", imageUrl: "https://vonwobeser.com/img/Collage/collage_05.jpg", alt: "Professional office interior design with contemporary furniture", altEs: "Diseño interior de oficinas profesional con mobiliario contemporáneo", order: 3 },
-  { id: "4", imageUrl: "https://vonwobeser.com/img/Collage/collage_04.jpg", alt: "Executive meeting room with panoramic city views", altEs: "Sala de juntas ejecutiva con vistas panorámicas a la ciudad", order: 4 },
-  { id: "5", imageUrl: "https://vonwobeser.com/img/Collage/collage_07.jpg", alt: "Executive work areas with ergonomic design", altEs: "Áreas de trabajo ejecutivas con diseño ergonómico", order: 5 },
-  { id: "6", imageUrl: "https://vonwobeser.com/img/Collage/05.jpg", alt: "Panoramic terrace view overlooking Mexico City skyline", altEs: "Vista de terraza panorámica con horizonte de Ciudad de México", order: 6 },
-  { id: "7", imageUrl: "https://vonwobeser.com/img/Collage/collage_09.jpg", alt: "Contemporary lounge area for informal meetings", altEs: "Área de descanso contemporánea para reuniones informales", order: 7 },
-  { id: "8", imageUrl: "https://vonwobeser.com/img/Collage/collage_08.jpg", alt: "State-of-the-art conference facilities", altEs: "Instalaciones de conferencias de última generación", order: 8 },
-  { id: "9", imageUrl: "https://vonwobeser.com/img/Collage/collage_03.jpg", alt: "Modern workspace design promoting productivity", altEs: "Diseño moderno del espacio de trabajo que promueve la productividad", order: 9 },
+  { id: "1", imageUrl: "https://santossaucedo.com/img/Collage/collage_01.jpg", alt: "Santos & Saucedo new office space with modern open floor plan", altEs: "Nuevo espacio de oficinas Santos & Saucedo con planta abierta moderna", order: 1 },
+  { id: "2", imageUrl: "https://santossaucedo.com/img/Collage/collage_02.jpg", alt: "Modern collaborative workspace with natural lighting", altEs: "Espacio de trabajo colaborativo moderno con iluminación natural", order: 2 },
+  { id: "3", imageUrl: "https://santossaucedo.com/img/Collage/collage_05.jpg", alt: "Professional office interior design with contemporary furniture", altEs: "Diseño interior de oficinas profesional con mobiliario contemporáneo", order: 3 },
+  { id: "4", imageUrl: "https://santossaucedo.com/img/Collage/collage_04.jpg", alt: "Executive meeting room with panoramic city views", altEs: "Sala de juntas ejecutiva con vistas panorámicas a la ciudad", order: 4 },
+  { id: "5", imageUrl: "https://santossaucedo.com/img/Collage/collage_07.jpg", alt: "Executive work areas with ergonomic design", altEs: "Áreas de trabajo ejecutivas con diseño ergonómico", order: 5 },
+  { id: "6", imageUrl: "https://santossaucedo.com/img/Collage/05.jpg", alt: "Panoramic terrace view overlooking Mexico City skyline", altEs: "Vista de terraza panorámica con horizonte de Ciudad de México", order: 6 },
+  { id: "7", imageUrl: "https://santossaucedo.com/img/Collage/collage_09.jpg", alt: "Contemporary lounge area for informal meetings", altEs: "Área de descanso contemporánea para reuniones informales", order: 7 },
+  { id: "8", imageUrl: "https://santossaucedo.com/img/Collage/collage_08.jpg", alt: "State-of-the-art conference facilities", altEs: "Instalaciones de conferencias de última generación", order: 8 },
+  { id: "9", imageUrl: "https://santossaucedo.com/img/Collage/collage_03.jpg", alt: "Modern workspace design promoting productivity", altEs: "Diseño moderno del espacio de trabajo que promueve la productividad", order: 9 },
 ];
 
 const getSpanClass = (index: number): string => {
@@ -27,7 +27,7 @@ const generateSrcSet = (imageUrl: string): string => {
   const baseWidth = 400;
   const sizes = [baseWidth, baseWidth * 1.5, baseWidth * 2];
   
-  if (imageUrl.includes('vonwobeser.com')) {
+  if (imageUrl.includes('santossaucedo.com')) {
     return sizes
       .map(size => `${imageUrl} ${size}w`)
       .join(', ');
@@ -56,7 +56,7 @@ type LabelContent = {
 const labels: Record<LanguageCode, LabelContent> = {
   en: {
     errorMessage: "Failed to load gallery",
-    galleryLabel: "Office image gallery showcasing Von Wobeser y Sierra facilities",
+    galleryLabel: "Office image gallery showcasing Santos & Saucedo facilities",
     viewFullSize: "View full size image",
     closeModal: "Close image viewer",
     loadingGallery: "Loading gallery",
@@ -64,7 +64,7 @@ const labels: Record<LanguageCode, LabelContent> = {
   },
   es: {
     errorMessage: "Error al cargar galería",
-    galleryLabel: "Galería de imágenes de las instalaciones de Von Wobeser y Sierra",
+    galleryLabel: "Galería de imágenes de las instalaciones de Santos & Saucedo",
     viewFullSize: "Ver imagen en tamaño completo",
     closeModal: "Cerrar visor de imágenes",
     loadingGallery: "Cargando galería",
@@ -72,7 +72,7 @@ const labels: Record<LanguageCode, LabelContent> = {
   },
   de: {
     errorMessage: "Galerie konnte nicht geladen werden",
-    galleryLabel: "Bildergalerie der Einrichtungen von Von Wobeser y Sierra",
+    galleryLabel: "Bildergalerie der Einrichtungen von Santos & Saucedo",
     viewFullSize: "Bild in voller Größe anzeigen",
     closeModal: "Bildansicht schließen",
     loadingGallery: "Galerie wird geladen",
@@ -80,7 +80,7 @@ const labels: Record<LanguageCode, LabelContent> = {
   },
   zh: {
     errorMessage: "无法加载图库",
-    galleryLabel: "Von Wobeser y Sierra 办公设施图库",
+    galleryLabel: "Santos & Saucedo 办公设施图库",
     viewFullSize: "查看完整尺寸图片",
     closeModal: "关闭图片查看器",
     loadingGallery: "正在加载图库",
@@ -88,7 +88,7 @@ const labels: Record<LanguageCode, LabelContent> = {
   },
   ko: {
     errorMessage: "갤러리를 불러올 수 없습니다",
-    galleryLabel: "Von Wobeser y Sierra 시설 이미지 갤러리",
+    galleryLabel: "Santos & Saucedo 시설 이미지 갤러리",
     viewFullSize: "전체 크기 이미지 보기",
     closeModal: "이미지 뷰어 닫기",
     loadingGallery: "갤러리 로딩 중",
@@ -96,7 +96,7 @@ const labels: Record<LanguageCode, LabelContent> = {
   },
   ja: {
     errorMessage: "ギャラリーを読み込めませんでした",
-    galleryLabel: "Von Wobeser y Sierra 施設のイメージギャラリー",
+    galleryLabel: "Santos & Saucedo 施設のイメージギャラリー",
     viewFullSize: "フルサイズの画像を表示",
     closeModal: "画像ビューアを閉じる",
     loadingGallery: "ギャラリーを読み込み中",
@@ -104,7 +104,7 @@ const labels: Record<LanguageCode, LabelContent> = {
   },
   ar: {
     errorMessage: "فشل في تحميل المعرض",
-    galleryLabel: "معرض صور مرافق Von Wobeser y Sierra",
+    galleryLabel: "معرض صور مرافق Santos & Saucedo",
     viewFullSize: "عرض الصورة بالحجم الكامل",
     closeModal: "إغلاق عارض الصور",
     loadingGallery: "جاري تحميل المعرض",
@@ -112,7 +112,7 @@ const labels: Record<LanguageCode, LabelContent> = {
   },
   ru: {
     errorMessage: "Не удалось загрузить галерею",
-    galleryLabel: "Фотогалерея офисных помещений Von Wobeser y Sierra",
+    galleryLabel: "Фотогалерея офисных помещений Santos & Saucedo",
     viewFullSize: "Просмотреть изображение в полном размере",
     closeModal: "Закрыть просмотр изображения",
     loadingGallery: "Загрузка галереи",
@@ -120,7 +120,7 @@ const labels: Record<LanguageCode, LabelContent> = {
   },
   fr: {
     errorMessage: "Échec du chargement de la galerie",
-    galleryLabel: "Galerie d'images des installations de Von Wobeser y Sierra",
+    galleryLabel: "Galerie d'images des installations de Santos & Saucedo",
     viewFullSize: "Voir l'image en taille réelle",
     closeModal: "Fermer la visionneuse d'images",
     loadingGallery: "Chargement de la galerie",
@@ -128,7 +128,7 @@ const labels: Record<LanguageCode, LabelContent> = {
   },
   it: {
     errorMessage: "Impossibile caricare la galleria",
-    galleryLabel: "Galleria immagini delle strutture Von Wobeser y Sierra",
+    galleryLabel: "Galleria immagini delle strutture Santos & Saucedo",
     viewFullSize: "Visualizza immagine a dimensione intera",
     closeModal: "Chiudi visualizzatore immagini",
     loadingGallery: "Caricamento galleria",

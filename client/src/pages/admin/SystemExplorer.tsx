@@ -269,7 +269,7 @@ export default function SystemExplorer() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `vonwobeser-technical-report-${new Date().toISOString().split('T')[0]}.md`;
+    a.download = `santossaucedo-technical-report-${new Date().toISOString().split('T')[0]}.md`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -277,7 +277,7 @@ export default function SystemExplorer() {
     
     toast({
       title: t.ui.exportSuccess,
-      description: `vonwobeser-technical-report-${new Date().toISOString().split('T')[0]}.md`,
+      description: `santossaucedo-technical-report-${new Date().toISOString().split('T')[0]}.md`,
     });
   };
 

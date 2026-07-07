@@ -19,7 +19,7 @@ const content: Record<LanguageCode, ContentItem> = {
   en: {
     eyebrow: "OUR COMMITMENT",
     title: "DIVERSITY & INCLUSION",
-    text: "At Von Wobeser y Sierra, we believe that diversity is a source of strength and innovation. We are committed to creating an inclusive environment where all individuals can thrive and contribute their unique perspectives to our practice.",
+    text: "At Santos & Saucedo, we believe that diversity is a source of strength and innovation. We are committed to creating an inclusive environment where all individuals can thrive and contribute their unique perspectives to our practice.",
     buttonText: "SEE MORE",
     pillars: [
       { label: "Gender Parity", desc: "Equal opportunities for all talent, at every level of the firm." },
@@ -30,7 +30,7 @@ const content: Record<LanguageCode, ContentItem> = {
   es: {
     eyebrow: "NUESTRO COMPROMISO",
     title: "DIVERSIDAD E INCLUSIÓN",
-    text: "En Von Wobeser y Sierra, creemos que la diversidad es fuente de fortaleza e innovación. Estamos comprometidos a crear un entorno inclusivo donde todos los individuos puedan prosperar y contribuir con sus perspectivas únicas a nuestra práctica.",
+    text: "En Santos & Saucedo, creemos que la diversidad es fuente de fortaleza e innovación. Estamos comprometidos a crear un entorno inclusivo donde todos los individuos puedan prosperar y contribuir con sus perspectivas únicas a nuestra práctica.",
     buttonText: "VER MÁS",
     pillars: [
       { label: "Paridad de Género", desc: "Igualdad de oportunidades para todo el talento, en todos los niveles." },
@@ -41,7 +41,7 @@ const content: Record<LanguageCode, ContentItem> = {
   de: {
     eyebrow: "UNSER ENGAGEMENT",
     title: "VIELFALT & INKLUSION",
-    text: "Bei Von Wobeser y Sierra glauben wir, dass Vielfalt eine Quelle von Stärke und Innovation ist. Wir sind bestrebt, ein inklusives Umfeld zu schaffen, in dem alle Menschen gedeihen und ihre einzigartigen Perspektiven in unsere Praxis einbringen können.",
+    text: "Bei Santos & Saucedo glauben wir, dass Vielfalt eine Quelle von Stärke und Innovation ist. Wir sind bestrebt, ein inklusives Umfeld zu schaffen, in dem alle Menschen gedeihen und ihre einzigartigen Perspektiven in unsere Praxis einbringen können.",
     buttonText: "MEHR ERFAHREN",
     pillars: [
       { label: "Geschlechterparität", desc: "Gleiche Chancen für alle Talente auf jeder Ebene der Kanzlei." },
@@ -52,7 +52,7 @@ const content: Record<LanguageCode, ContentItem> = {
   zh: {
     eyebrow: "我们的承诺",
     title: "多元化与包容性",
-    text: "在Von Wobeser y Sierra，我们相信多元化是力量和创新的源泉。我们致力于创造一个包容的环境，让所有人都能蓬勃发展，并将其独特的观点贡献给我们的实践。",
+    text: "在Santos & Saucedo，我们相信多元化是力量和创新的源泉。我们致力于创造一个包容的环境，让所有人都能蓬勃发展，并将其独特的观点贡献给我们的实践。",
     buttonText: "了解更多",
     pillars: [
       { label: "性别平等", desc: "在各级别为所有人才提供平等机会。" },
@@ -63,7 +63,7 @@ const content: Record<LanguageCode, ContentItem> = {
   ko: {
     eyebrow: "우리의 약속",
     title: "다양성 및 포용성",
-    text: "Von Wobeser y Sierra에서 우리는 다양성이 힘과 혁신의 원천이라고 믿습니다. 모든 개인이 번영하고 고유한 관점을 우리의 업무에 기여할 수 있는 포용적인 환경을 조성하기 위해 최선을 다하고 있습니다.",
+    text: "Santos & Saucedo에서 우리는 다양성이 힘과 혁신의 원천이라고 믿습니다. 모든 개인이 번영하고 고유한 관점을 우리의 업무에 기여할 수 있는 포용적인 환경을 조성하기 위해 최선을 다하고 있습니다.",
     buttonText: "자세히 보기",
     pillars: [
       { label: "성별 평등", desc: "모든 직급에서 모든 인재에게 동등한 기회를 제공합니다." },
@@ -74,7 +74,7 @@ const content: Record<LanguageCode, ContentItem> = {
   ja: {
     eyebrow: "私たちの取り組み",
     title: "ダイバーシティとインクルージョン",
-    text: "Von Wobeser y Sierraでは、多様性が強さとイノベーションの源であると信じています。すべての個人が成長し、独自の視点を私たちの実践に貢献できるインクルーシブな環境の創造に取り組んでいます。",
+    text: "Santos & Saucedoでは、多様性が強さとイノベーションの源であると信じています。すべての個人が成長し、独自の視点を私たちの実践に貢献できるインクルーシブな環境の創造に取り組んでいます。",
     buttonText: "詳細を見る",
     pillars: [
       { label: "ジェンダー平等", desc: "あらゆるレベルですべての人材に平等な機会を。" },
@@ -85,7 +85,7 @@ const content: Record<LanguageCode, ContentItem> = {
   ar: {
     eyebrow: "التزامنا",
     title: "التنوع والشمول",
-    text: "في Von Wobeser y Sierra، نؤمن بأن التنوع هو مصدر للقوة والابتكار. نحن ملتزمون بخلق بيئة شاملة حيث يمكن لجميع الأفراد الازدهار والمساهمة بوجهات نظرهم الفريدة في ممارستنا.",
+    text: "في Santos & Saucedo، نؤمن بأن التنوع هو مصدر للقوة والابتكار. نحن ملتزمون بخلق بيئة شاملة حيث يمكن لجميع الأفراد الازدهار والمساهمة بوجهات نظرهم الفريدة في ممارستنا.",
     buttonText: "اعرف المزيد",
     pillars: [
       { label: "المساواة بين الجنسين", desc: "فرص متكافئة لجميع المواهب في كل المستويات." },
@@ -96,7 +96,7 @@ const content: Record<LanguageCode, ContentItem> = {
   ru: {
     eyebrow: "НАШЕ ОБЯЗАТЕЛЬСТВО",
     title: "РАЗНООБРАЗИЕ И ИНКЛЮЗИВНОСТЬ",
-    text: "В Von Wobeser y Sierra мы верим, что разнообразие является источником силы и инноваций. Мы стремимся создать инклюзивную среду, где все люди могут процветать и вносить свои уникальные перспективы в нашу практику.",
+    text: "В Santos & Saucedo мы верим, что разнообразие является источником силы и инноваций. Мы стремимся создать инклюзивную среду, где все люди могут процветать и вносить свои уникальные перспективы в нашу практику.",
     buttonText: "ПОДРОБНЕЕ",
     pillars: [
       { label: "Гендерное Равенство", desc: "Равные возможности для всех талантов на каждом уровне." },
@@ -107,7 +107,7 @@ const content: Record<LanguageCode, ContentItem> = {
   fr: {
     eyebrow: "NOTRE ENGAGEMENT",
     title: "DIVERSITÉ ET INCLUSION",
-    text: "Chez Von Wobeser y Sierra, nous croyons que la diversité est une source de force et d'innovation. Nous nous engageons à créer un environnement inclusif où tous les individus peuvent s'épanouir et apporter leurs perspectives uniques à notre pratique.",
+    text: "Chez Santos & Saucedo, nous croyons que la diversité est une source de force et d'innovation. Nous nous engageons à créer un environnement inclusif où tous les individus peuvent s'épanouir et apporter leurs perspectives uniques à notre pratique.",
     buttonText: "EN SAVOIR PLUS",
     pillars: [
       { label: "Parité de Genre", desc: "L'égalité des chances pour tous les talents, à chaque niveau." },
@@ -118,7 +118,7 @@ const content: Record<LanguageCode, ContentItem> = {
   it: {
     eyebrow: "IL NOSTRO IMPEGNO",
     title: "DIVERSITÀ E INCLUSIONE",
-    text: "In Von Wobeser y Sierra, crediamo che la diversità sia una fonte di forza e innovazione. Ci impegniamo a creare un ambiente inclusivo dove tutti gli individui possano prosperare e contribuire con le loro prospettive uniche alla nostra pratica.",
+    text: "In Santos & Saucedo, crediamo che la diversità sia una fonte di forza e innovazione. Ci impegniamo a creare un ambiente inclusivo dove tutti gli individui possano prosperare e contribuire con le loro prospettive uniche alla nostra pratica.",
     buttonText: "SCOPRI DI PIÙ",
     pillars: [
       { label: "Parità di Genere", desc: "Pari opportunità per tutti i talenti, a ogni livello." },

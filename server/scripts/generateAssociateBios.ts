@@ -57,7 +57,7 @@ async function main() {
     );
 
   const associatesWithoutBio = associates.filter(
-    a => !a.bioEs || a.bioEs.trim() === ''
+    (a: typeof teamMembers.$inferSelect) => !a.bioEs || a.bioEs.trim() === ''
   );
 
   console.log(`Found ${associatesWithoutBio.length} associates without bios`);

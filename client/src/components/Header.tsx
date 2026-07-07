@@ -225,30 +225,16 @@ export default function Header() {
       labelKey: "nav.ourFirm",
       href: "/about",
       id: "our-firm",
-      subItems: [
-        { labelKey: "nav.probono", href: "/pro-bono", id: "pro-bono" },
-        { labelKey: "nav.diversity", href: "/diversity-inclusion", id: "diversity-inclusion" },
-      ],
-    },
-    {
-      labelKey: "nav.attorneys",
-      href: "/team",
-      id: "attorneys",
-      subItems: [
-        { labelKey: "nav.partners", href: "/team?type=partners", id: "partners" },
-        { labelKey: "nav.ofCounsel", href: "/team?type=of-counsel", id: "of-counsel" },
-        { labelKey: "nav.associates", href: "/team?type=associates", id: "associates" },
-      ],
     },
     {
       labelKey: "nav.capabilities",
       href: "/practice-groups",
       id: "capabilities",
-      subItems: [
-        { labelKey: "nav.practices", href: "/practice-groups", id: "practices" },
-        { labelKey: "nav.industryGroups", href: "/industry-groups", id: "industry-groups" },
-        { labelKey: "nav.desk", href: "/german-desk", id: "german-desk" },
-      ],
+    },
+    {
+      labelKey: "nav.attorneys",
+      href: "/team",
+      id: "attorneys",
     },
     {
       labelKey: "nav.publications",
@@ -257,15 +243,6 @@ export default function Header() {
       subItems: [
         { labelKey: "nav.news", href: "/news", id: "news" },
         { labelKey: "nav.articles", href: "/articles", id: "articles" },
-        { labelKey: "nav.newsletter", href: "/newsletter", id: "newsletter" },
-      ],
-    },
-    {
-      labelKey: "nav.career",
-      href: "/careers",
-      id: "careers",
-      subItems: [
-        { labelKey: "nav.interns", href: "/careers/interns", id: "interns" },
       ],
     },
     {

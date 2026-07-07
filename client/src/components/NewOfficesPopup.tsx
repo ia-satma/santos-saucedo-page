@@ -15,7 +15,7 @@ import collage07 from "@assets/collage_07.jpg";
 import collage08 from "@assets/collage_08.jpg";
 import collage09 from "@assets/collage_09.jpg";
 import heroOffice from "@assets/hero_office.jpg";
-import logoHD from "@assets/vonwobeser_logo_2025_full.png";
+import logoHD from "@assets/logo-ss-color.png";
 
 interface NewOfficesPopupProps {
   language: "en" | "es" | "de" | "zh" | "ko" | "ja" | "ar" | "ru" | "fr" | "it";
@@ -49,10 +49,10 @@ const content: Record<string, {
 }> = {
   en: {
     heroTitle: "WE GO WHERE CLIENTS NEED US",
-    heroSubtitle: "New offices of Von Wobeser y Sierra",
+    heroSubtitle: "New offices of Santos & Saucedo",
     scroll: "scroll",
     visionTitle: "A vision of the future, collaboration, and excellence",
-    visionText: "Von Wobeser y Sierra has completed the transition to its new offices in the dynamic Campos Elíseos area in Polanco. This relocation marks a stage of growth, evolution, and consolidation, and represents a key investment in the firm's future. The new facilities are designed to maximize collaboration across all areas for the benefit of clients, ensuring the continued delivery of high-quality and integrated services, reaffirming the firm's commitment and philosophy of being where clients need them.",
+    visionText: "Santos & Saucedo has completed the transition to its new offices in the dynamic Campos Elíseos area in Polanco. This relocation marks a stage of growth, evolution, and consolidation, and represents a key investment in the firm's future. The new facilities are designed to maximize collaboration across all areas for the benefit of clients, ensuring the continued delivery of high-quality and integrated services, reaffirming the firm's commitment and philosophy of being where clients need them.",
     centerTitle: "At the center of business and closer to our clients",
     centerText: "Our new offices are located in Mexico's most dynamic business hub and one of the most important in Latin America. Strategically positioned in the vibrant Polanco district, just steps away from the iconic Paseo de la Reforma, we ensure the proximity our clients need for agile and personalized support.",
     collabTitle: "Collaboration, technology and well-being",
@@ -73,10 +73,10 @@ const content: Record<string, {
   },
   es: {
     heroTitle: "VAMOS A DONDE NOS NECESITAN NUESTROS CLIENTES",
-    heroSubtitle: "Nuevas oficinas de Von Wobeser y Sierra",
+    heroSubtitle: "Nuevas oficinas de Santos & Saucedo",
     scroll: "scroll",
     visionTitle: "Una visión del futuro, colaboración y excelencia",
-    visionText: "Von Wobeser y Sierra ha completado la transición a sus nuevas oficinas en la dinámica zona de Campos Elíseos en Polanco. Esta reubicación marca una etapa de crecimiento, evolución y consolidación, y representa una inversión clave en el futuro de la firma. Las nuevas instalaciones están diseñadas para maximizar la colaboración en todas las áreas en beneficio de los clientes, asegurando la entrega continua de servicios de alta calidad e integrados, reafirmando el compromiso y filosofía de la firma de estar donde los clientes los necesitan.",
+    visionText: "Santos & Saucedo ha completado la transición a sus nuevas oficinas en la dinámica zona de Campos Elíseos en Polanco. Esta reubicación marca una etapa de crecimiento, evolución y consolidación, y representa una inversión clave en el futuro de la firma. Las nuevas instalaciones están diseñadas para maximizar la colaboración en todas las áreas en beneficio de los clientes, asegurando la entrega continua de servicios de alta calidad e integrados, reafirmando el compromiso y filosofía de la firma de estar donde los clientes los necesitan.",
     centerTitle: "En el centro de los negocios y más cerca de nuestros clientes",
     centerText: "Nuestras nuevas oficinas se encuentran en el centro de negocios más dinámico de México y uno de los más importantes de América Latina. Estratégicamente ubicadas en el vibrante distrito de Polanco, a solo pasos de la icónica Avenida Paseo de la Reforma, aseguramos la cercanía que nuestros clientes necesitan para un apoyo ágil y personalizado.",
     collabTitle: "Colaboración, tecnología y bienestar",
@@ -97,10 +97,10 @@ const content: Record<string, {
   },
   de: {
     heroTitle: "WIR GEHEN DORTHIN, WO UNSERE MANDANTEN UNS BRAUCHEN",
-    heroSubtitle: "Neue Büros von Von Wobeser y Sierra",
+    heroSubtitle: "Neue Büros von Santos & Saucedo",
     scroll: "scrollen",
     visionTitle: "Eine Vision der Zukunft, Zusammenarbeit und Exzellenz",
-    visionText: "Von Wobeser y Sierra hat den Umzug in seine neuen Büros im dynamischen Viertel Campos Elíseos in Polanco abgeschlossen. Dieser Umzug markiert eine Phase des Wachstums, der Entwicklung und Konsolidierung und stellt eine wichtige Investition in die Zukunft der Kanzlei dar. Die neuen Räumlichkeiten sind darauf ausgelegt, die Zusammenarbeit in allen Bereichen zum Wohle der Mandanten zu maximieren und die kontinuierliche Erbringung hochwertiger und integrierter Dienstleistungen sicherzustellen, was das Engagement und die Philosophie der Kanzlei unterstreicht, dort zu sein, wo die Mandanten sie brauchen.",
+    visionText: "Santos & Saucedo hat den Umzug in seine neuen Büros im dynamischen Viertel Campos Elíseos in Polanco abgeschlossen. Dieser Umzug markiert eine Phase des Wachstums, der Entwicklung und Konsolidierung und stellt eine wichtige Investition in die Zukunft der Kanzlei dar. Die neuen Räumlichkeiten sind darauf ausgelegt, die Zusammenarbeit in allen Bereichen zum Wohle der Mandanten zu maximieren und die kontinuierliche Erbringung hochwertiger und integrierter Dienstleistungen sicherzustellen, was das Engagement und die Philosophie der Kanzlei unterstreicht, dort zu sein, wo die Mandanten sie brauchen.",
     centerTitle: "Im Zentrum des Geschäftslebens und näher bei unseren Mandanten",
     centerText: "Unsere neuen Büros befinden sich im dynamischsten Geschäftszentrum Mexikos und einem der wichtigsten in Lateinamerika. Strategisch günstig im lebhaften Stadtteil Polanco gelegen, nur wenige Schritte vom legendären Paseo de la Reforma entfernt, gewährleisten wir die Nähe, die unsere Mandanten für eine agile und persönliche Betreuung benötigen.",
     collabTitle: "Zusammenarbeit, Technologie und Wohlbefinden",
@@ -121,10 +121,10 @@ const content: Record<string, {
   },
   zh: {
     heroTitle: "我们到客户需要我们的地方去",
-    heroSubtitle: "Von Wobeser y Sierra 新办公室",
+    heroSubtitle: "Santos & Saucedo 新办公室",
     scroll: "滚动",
     visionTitle: "未来、协作与卓越的愿景",
-    visionText: "Von Wobeser y Sierra 已完成向波兰科 Campos Elíseos 动态区域新办公室的搬迁。此次搬迁标志着增长、发展和巩固的新阶段，代表着对公司未来的重要投资。新设施旨在最大限度地促进各领域的协作，以造福客户，确保持续提供高质量和综合服务，重申公司在客户需要时随时到场的承诺和理念。",
+    visionText: "Santos & Saucedo 已完成向波兰科 Campos Elíseos 动态区域新办公室的搬迁。此次搬迁标志着增长、发展和巩固的新阶段，代表着对公司未来的重要投资。新设施旨在最大限度地促进各领域的协作，以造福客户，确保持续提供高质量和综合服务，重申公司在客户需要时随时到场的承诺和理念。",
     centerTitle: "位于商业中心，更贴近我们的客户",
     centerText: "我们的新办公室位于墨西哥最具活力的商业中心，也是拉丁美洲最重要的商业中心之一。我们位于充满活力的波兰科区，距离标志性的改革大道仅几步之遥，确保为客户提供敏捷和个性化支持所需的便利性。",
     collabTitle: "协作、技术与福祉",
@@ -145,10 +145,10 @@ const content: Record<string, {
   },
   ko: {
     heroTitle: "고객이 필요로 하는 곳으로 갑니다",
-    heroSubtitle: "Von Wobeser y Sierra 새 사무소",
+    heroSubtitle: "Santos & Saucedo 새 사무소",
     scroll: "스크롤",
     visionTitle: "미래, 협업 및 우수성의 비전",
-    visionText: "Von Wobeser y Sierra는 폴랑코의 역동적인 Campos Elíseos 지역에 새 사무소로의 이전을 완료했습니다. 이번 이전은 성장, 발전 및 통합의 단계를 나타내며, 회사 미래에 대한 핵심 투자를 의미합니다. 새 시설은 고객의 이익을 위해 모든 영역에서 협업을 극대화하고, 고품질의 통합 서비스를 지속적으로 제공하며, 고객이 필요로 할 때 함께하겠다는 회사의 약속과 철학을 재확인합니다.",
+    visionText: "Santos & Saucedo는 폴랑코의 역동적인 Campos Elíseos 지역에 새 사무소로의 이전을 완료했습니다. 이번 이전은 성장, 발전 및 통합의 단계를 나타내며, 회사 미래에 대한 핵심 투자를 의미합니다. 새 시설은 고객의 이익을 위해 모든 영역에서 협업을 극대화하고, 고품질의 통합 서비스를 지속적으로 제공하며, 고객이 필요로 할 때 함께하겠다는 회사의 약속과 철학을 재확인합니다.",
     centerTitle: "비즈니스의 중심에서 고객과 더 가깝게",
     centerText: "새 사무소는 멕시코에서 가장 역동적인 비즈니스 허브이자 라틴 아메리카에서 가장 중요한 곳 중 하나에 위치해 있습니다. 상징적인 레포르마 대로에서 불과 몇 걸음 떨어진 활기찬 폴랑코 지구에 전략적으로 위치하여 민첩하고 개인화된 지원을 위해 고객이 필요로 하는 근접성을 보장합니다.",
     collabTitle: "협업, 기술 및 웰빙",
@@ -169,10 +169,10 @@ const content: Record<string, {
   },
   ja: {
     heroTitle: "クライアントが必要とする場所へ",
-    heroSubtitle: "Von Wobeser y Sierra 新オフィス",
+    heroSubtitle: "Santos & Saucedo 新オフィス",
     scroll: "スクロール",
     visionTitle: "未来、協力、卓越性のビジョン",
-    visionText: "Von Wobeser y Sierraは、ポランコの活気あるCampos Elíseos地区にある新オフィスへの移転を完了しました。この移転は成長、進化、統合の段階を示し、事務所の将来への重要な投資を表しています。新施設は、クライアントの利益のためにすべての分野での協力を最大化し、高品質で統合されたサービスの継続的な提供を確保し、クライアントが必要とする場所にいるという事務所のコミットメントと哲学を再確認するよう設計されています。",
+    visionText: "Santos & Saucedoは、ポランコの活気あるCampos Elíseos地区にある新オフィスへの移転を完了しました。この移転は成長、進化、統合の段階を示し、事務所の将来への重要な投資を表しています。新施設は、クライアントの利益のためにすべての分野での協力を最大化し、高品質で統合されたサービスの継続的な提供を確保し、クライアントが必要とする場所にいるという事務所のコミットメントと哲学を再確認するよう設計されています。",
     centerTitle: "ビジネスの中心で、クライアントにより近く",
     centerText: "新オフィスは、メキシコで最もダイナミックなビジネスハブであり、ラテンアメリカで最も重要な場所の1つに位置しています。象徴的なレフォルマ通りからわずか数歩の活気あるポランコ地区に戦略的に位置し、俊敏でパーソナライズされたサポートに必要な近接性を確保しています。",
     collabTitle: "協力、テクノロジー、ウェルビーイング",
@@ -193,10 +193,10 @@ const content: Record<string, {
   },
   ar: {
     heroTitle: "نذهب حيث يحتاجنا عملاؤنا",
-    heroSubtitle: "المكاتب الجديدة لـ Von Wobeser y Sierra",
+    heroSubtitle: "المكاتب الجديدة لـ Santos & Saucedo",
     scroll: "تمرير",
     visionTitle: "رؤية للمستقبل والتعاون والتميز",
-    visionText: "أكملت Von Wobeser y Sierra الانتقال إلى مكاتبها الجديدة في منطقة Campos Elíseos الديناميكية في بولانكو. يمثل هذا الانتقال مرحلة من النمو والتطور والتوحيد، ويمثل استثماراً رئيسياً في مستقبل الشركة. تم تصميم المرافق الجديدة لتحقيق أقصى قدر من التعاون في جميع المجالات لصالح العملاء، وضمان استمرار تقديم خدمات عالية الجودة ومتكاملة، مما يؤكد التزام الشركة وفلسفتها في التواجد حيث يحتاجها العملاء.",
+    visionText: "أكملت Santos & Saucedo الانتقال إلى مكاتبها الجديدة في منطقة Campos Elíseos الديناميكية في بولانكو. يمثل هذا الانتقال مرحلة من النمو والتطور والتوحيد، ويمثل استثماراً رئيسياً في مستقبل الشركة. تم تصميم المرافق الجديدة لتحقيق أقصى قدر من التعاون في جميع المجالات لصالح العملاء، وضمان استمرار تقديم خدمات عالية الجودة ومتكاملة، مما يؤكد التزام الشركة وفلسفتها في التواجد حيث يحتاجها العملاء.",
     centerTitle: "في قلب الأعمال وأقرب إلى عملائنا",
     centerText: "تقع مكاتبنا الجديدة في أكثر مراكز الأعمال ديناميكية في المكسيك وواحدة من أهم المراكز في أمريكا اللاتينية. تقع استراتيجياً في حي بولانكو النابض بالحياة، على بعد خطوات قليلة من شارع باسيو دي لا ريفورما الشهير، نضمن القرب الذي يحتاجه عملاؤنا للحصول على دعم سريع وشخصي.",
     collabTitle: "التعاون والتكنولوجيا والرفاهية",
@@ -217,10 +217,10 @@ const content: Record<string, {
   },
   ru: {
     heroTitle: "МЫ ИДЁМ ТУДА, ГДЕ НУЖНЫ НАШИМ КЛИЕНТАМ",
-    heroSubtitle: "Новые офисы Von Wobeser y Sierra",
+    heroSubtitle: "Новые офисы Santos & Saucedo",
     scroll: "прокрутить",
     visionTitle: "Видение будущего, сотрудничества и совершенства",
-    visionText: "Von Wobeser y Sierra завершила переезд в новые офисы в динамичном районе Campos Elíseos в Поланко. Этот переезд знаменует этап роста, развития и консолидации и представляет собой ключевые инвестиции в будущее фирмы. Новые помещения спроектированы для максимизации сотрудничества во всех областях на благо клиентов, обеспечивая непрерывное предоставление высококачественных и интегрированных услуг, подтверждая приверженность и философию фирмы быть там, где клиенты нуждаются в ней.",
+    visionText: "Santos & Saucedo завершила переезд в новые офисы в динамичном районе Campos Elíseos в Поланко. Этот переезд знаменует этап роста, развития и консолидации и представляет собой ключевые инвестиции в будущее фирмы. Новые помещения спроектированы для максимизации сотрудничества во всех областях на благо клиентов, обеспечивая непрерывное предоставление высококачественных и интегрированных услуг, подтверждая приверженность и философию фирмы быть там, где клиенты нуждаются в ней.",
     centerTitle: "В центре бизнеса и ближе к нашим клиентам",
     centerText: "Наши новые офисы расположены в самом динамичном деловом центре Мексики и одном из важнейших в Латинской Америке. Стратегически расположенные в оживлённом районе Поланко, всего в нескольких шагах от легендарного Пасео-де-ла-Реформа, мы обеспечиваем близость, необходимую нашим клиентам для оперативной и персонализированной поддержки.",
     collabTitle: "Сотрудничество, технологии и благополучие",
@@ -241,10 +241,10 @@ const content: Record<string, {
   },
   fr: {
     heroTitle: "NOUS ALLONS LÀ OÙ NOS CLIENTS ONT BESOIN DE NOUS",
-    heroSubtitle: "Nouveaux bureaux de Von Wobeser y Sierra",
+    heroSubtitle: "Nouveaux bureaux de Santos & Saucedo",
     scroll: "défiler",
     visionTitle: "Une vision du futur, de la collaboration et de l'excellence",
-    visionText: "Von Wobeser y Sierra a achevé la transition vers ses nouveaux bureaux dans le quartier dynamique de Campos Elíseos à Polanco. Ce déménagement marque une étape de croissance, d'évolution et de consolidation, et représente un investissement clé dans l'avenir du cabinet. Les nouvelles installations sont conçues pour maximiser la collaboration dans tous les domaines au profit des clients, assurant la fourniture continue de services de haute qualité et intégrés, réaffirmant l'engagement et la philosophie du cabinet d'être là où les clients ont besoin de lui.",
+    visionText: "Santos & Saucedo a achevé la transition vers ses nouveaux bureaux dans le quartier dynamique de Campos Elíseos à Polanco. Ce déménagement marque une étape de croissance, d'évolution et de consolidation, et représente un investissement clé dans l'avenir du cabinet. Les nouvelles installations sont conçues pour maximiser la collaboration dans tous les domaines au profit des clients, assurant la fourniture continue de services de haute qualité et intégrés, réaffirmant l'engagement et la philosophie du cabinet d'être là où les clients ont besoin de lui.",
     centerTitle: "Au centre des affaires et plus proche de nos clients",
     centerText: "Nos nouveaux bureaux sont situés dans le centre d'affaires le plus dynamique du Mexique et l'un des plus importants d'Amérique latine. Stratégiquement positionnés dans le quartier animé de Polanco, à quelques pas du légendaire Paseo de la Reforma, nous garantissons la proximité dont nos clients ont besoin pour un soutien agile et personnalisé.",
     collabTitle: "Collaboration, technologie et bien-être",
@@ -265,10 +265,10 @@ const content: Record<string, {
   },
   it: {
     heroTitle: "ANDIAMO DOVE I CLIENTI HANNO BISOGNO DI NOI",
-    heroSubtitle: "Nuovi uffici di Von Wobeser y Sierra",
+    heroSubtitle: "Nuovi uffici di Santos & Saucedo",
     scroll: "scorri",
     visionTitle: "Una visione del futuro, collaborazione ed eccellenza",
-    visionText: "Von Wobeser y Sierra ha completato la transizione verso i suoi nuovi uffici nella dinamica zona di Campos Elíseos a Polanco. Questo trasferimento segna una fase di crescita, evoluzione e consolidamento, e rappresenta un investimento chiave nel futuro dello studio. Le nuove strutture sono progettate per massimizzare la collaborazione in tutte le aree a beneficio dei clienti, garantendo la fornitura continua di servizi di alta qualità e integrati, riaffermando l'impegno e la filosofia dello studio di essere dove i clienti ne hanno bisogno.",
+    visionText: "Santos & Saucedo ha completato la transizione verso i suoi nuovi uffici nella dinamica zona di Campos Elíseos a Polanco. Questo trasferimento segna una fase di crescita, evoluzione e consolidamento, e rappresenta un investimento chiave nel futuro dello studio. Le nuove strutture sono progettate per massimizzare la collaborazione in tutte le aree a beneficio dei clienti, garantendo la fornitura continua di servizi di alta qualità e integrati, riaffermando l'impegno e la filosofia dello studio di essere dove i clienti ne hanno bisogno.",
     centerTitle: "Al centro degli affari e più vicini ai nostri clienti",
     centerText: "I nostri nuovi uffici si trovano nel centro commerciale più dinamico del Messico e uno dei più importanti dell'America Latina. Strategicamente posizionati nel vivace quartiere di Polanco, a pochi passi dall'iconico Paseo de la Reforma, garantiamo la vicinanza di cui i nostri clienti hanno bisogno per un supporto agile e personalizzato.",
     collabTitle: "Collaborazione, tecnologia e benessere",
@@ -343,7 +343,7 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
         <div className="bg-background border-b border-border px-6 py-4 flex items-center justify-between flex-shrink-0">
           <img
             src={logoHD}
-            alt="Von Wobeser"
+            alt="Santos & Saucedo"
             width={318}
             height={70}
             className="h-6 md:h-8 w-auto"

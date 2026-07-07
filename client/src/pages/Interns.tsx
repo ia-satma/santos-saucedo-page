@@ -37,7 +37,7 @@ export default function Interns() {
       heroTitle: "Internship Program",
       heroSubtitle: "Launch your legal career at one of Mexico's most prestigious law firms. Gain hands-on experience and develop essential skills alongside industry leaders.",
       applyNow: "Apply Now",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       
       programOverviewTitle: "Program Overview",
       programOverviewSubtitle: "Two pathways to start your legal career",
@@ -81,7 +81,7 @@ export default function Interns() {
         { step: "4", title: "Offer & Onboarding", text: "Successful candidates receive an offer and begin our comprehensive onboarding program." },
       ],
 
-      benefitsTitle: "Benefits of Interning at Von Wobeser",
+      benefitsTitle: "Benefits of Interning at Santos & Saucedo",
       benefitsSubtitle: "Invest in your future with us",
       benefits: [
         { icon: Award, title: "Prestigious Experience", text: "Add experience at a top-ranked Mexican law firm to your resume. Our reputation opens doors." },
@@ -105,7 +105,7 @@ export default function Interns() {
       heroTitle: "Programa de Pasantes",
       heroSubtitle: "Inicia tu carrera legal en una de las firmas de abogados más prestigiosas de México. Obtén experiencia práctica y desarrolla habilidades esenciales junto a líderes de la industria.",
       applyNow: "Aplicar Ahora",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       
       programOverviewTitle: "Descripción del Programa",
       programOverviewSubtitle: "Dos caminos para iniciar tu carrera legal",
@@ -149,7 +149,7 @@ export default function Interns() {
         { step: "4", title: "Oferta e Inducción", text: "Los candidatos exitosos reciben una oferta y comienzan nuestro programa integral de inducción." },
       ],
 
-      benefitsTitle: "Beneficios de una Pasantía en Von Wobeser",
+      benefitsTitle: "Beneficios de una Pasantía en Santos & Saucedo",
       benefitsSubtitle: "Invierte en tu futuro con nosotros",
       benefits: [
         { icon: Award, title: "Experiencia Prestigiosa", text: "Agrega experiencia en una firma mexicana de primer nivel a tu currículum. Nuestra reputación abre puertas." },
@@ -173,7 +173,7 @@ export default function Interns() {
       heroTitle: "Praktikantenprogramm",
       heroSubtitle: "Starten Sie Ihre juristische Karriere bei einer der renommiertesten Anwaltskanzleien Mexikos. Sammeln Sie praktische Erfahrungen und entwickeln Sie wesentliche Fähigkeiten an der Seite von Branchenführern.",
       applyNow: "Jetzt bewerben",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       
       programOverviewTitle: "Programmübersicht",
       programOverviewSubtitle: "Zwei Wege, um Ihre juristische Karriere zu beginnen",
@@ -217,7 +217,7 @@ export default function Interns() {
         { step: "4", title: "Angebot & Onboarding", text: "Erfolgreiche Kandidaten erhalten ein Angebot und beginnen unser umfassendes Onboarding-Programm." },
       ],
 
-      benefitsTitle: "Vorteile eines Praktikums bei Von Wobeser",
+      benefitsTitle: "Vorteile eines Praktikums bei Santos & Saucedo",
       benefitsSubtitle: "Investieren Sie in Ihre Zukunft mit uns",
       benefits: [
         { icon: Award, title: "Prestigeträchtige Erfahrung", text: "Fügen Sie Erfahrung bei einer erstklassigen mexikanischen Kanzlei Ihrem Lebenslauf hinzu. Unser Ruf öffnet Türen." },
@@ -241,7 +241,7 @@ export default function Interns() {
       heroTitle: "实习生计划",
       heroSubtitle: "在墨西哥最负盛名的律师事务所之一开启您的法律职业生涯。与行业领袖一起获得实践经验并发展必要技能。",
       applyNow: "立即申请",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       
       programOverviewTitle: "项目概述",
       programOverviewSubtitle: "开启法律职业生涯的两种途径",
@@ -285,7 +285,7 @@ export default function Interns() {
         { step: "4", title: "录用与入职", text: "成功的候选人将收到录用通知并开始我们全面的入职培训计划。" },
       ],
 
-      benefitsTitle: "在Von Wobeser实习的好处",
+      benefitsTitle: "在Santos & Saucedo实习的好处",
       benefitsSubtitle: "与我们一起投资您的未来",
       benefits: [
         { icon: Award, title: "享有盛誉的经验", text: "在简历中添加顶级墨西哥律师事务所的工作经验。我们的声誉为您打开大门。" },
@@ -309,7 +309,7 @@ export default function Interns() {
       heroTitle: "인턴십 프로그램",
       heroSubtitle: "멕시코에서 가장 권위 있는 로펌 중 하나에서 법률 경력을 시작하세요. 업계 리더들과 함께 실무 경험을 쌓고 필수 기술을 개발하세요.",
       applyNow: "지금 신청",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       
       programOverviewTitle: "프로그램 개요",
       programOverviewSubtitle: "법률 경력을 시작하는 두 가지 경로",
@@ -353,7 +353,7 @@ export default function Interns() {
         { step: "4", title: "제안 및 온보딩", text: "성공적인 후보자는 제안을 받고 종합적인 온보딩 프로그램을 시작합니다." },
       ],
 
-      benefitsTitle: "Von Wobeser 인턴십의 혜택",
+      benefitsTitle: "Santos & Saucedo 인턴십의 혜택",
       benefitsSubtitle: "우리와 함께 미래에 투자하세요",
       benefits: [
         { icon: Award, title: "명망 있는 경험", text: "이력서에 최고 수준의 멕시코 로펌 경험을 추가하세요. 우리의 명성이 문을 열어줍니다." },
@@ -377,7 +377,7 @@ export default function Interns() {
       heroTitle: "インターンシッププログラム",
       heroSubtitle: "メキシコで最も権威ある法律事務所の一つで法律キャリアをスタートさせましょう。業界リーダーと共に実践経験を積み、必要なスキルを身につけてください。",
       applyNow: "今すぐ応募",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       
       programOverviewTitle: "プログラム概要",
       programOverviewSubtitle: "法律キャリアを始める2つの道",
@@ -421,7 +421,7 @@ export default function Interns() {
         { step: "4", title: "オファー＆オンボーディング", text: "合格した候補者はオファーを受け取り、包括的なオンボーディングプログラムを開始します。" },
       ],
 
-      benefitsTitle: "Von Wobeserでインターンする特典",
+      benefitsTitle: "Santos & Saucedoでインターンする特典",
       benefitsSubtitle: "私たちと共に未来に投資しましょう",
       benefits: [
         { icon: Award, title: "名門での経験", text: "履歴書にトップクラスのメキシコ法律事務所での経験を追加しましょう。私たちの評判が扉を開きます。" },
@@ -445,7 +445,7 @@ export default function Interns() {
       heroTitle: "برنامج التدريب",
       heroSubtitle: "ابدأ مسيرتك القانونية في واحدة من أعرق مكاتب المحاماة في المكسيك. اكتسب خبرة عملية وطوّر المهارات الأساسية جنباً إلى جنب مع قادة الصناعة.",
       applyNow: "قدم الآن",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       
       programOverviewTitle: "نظرة عامة على البرنامج",
       programOverviewSubtitle: "مساران لبدء مسيرتك القانونية",
@@ -489,7 +489,7 @@ export default function Interns() {
         { step: "4", title: "العرض والتأهيل", text: "يتلقى المرشحون الناجحون عرضاً ويبدأون برنامج التأهيل الشامل لدينا." },
       ],
 
-      benefitsTitle: "فوائد التدريب في Von Wobeser",
+      benefitsTitle: "فوائد التدريب في Santos & Saucedo",
       benefitsSubtitle: "استثمر في مستقبلك معنا",
       benefits: [
         { icon: Award, title: "خبرة مرموقة", text: "أضف خبرة في مكتب محاماة مكسيكي رفيع المستوى إلى سيرتك الذاتية. سمعتنا تفتح الأبواب." },
@@ -513,7 +513,7 @@ export default function Interns() {
       heroTitle: "Программа стажировки",
       heroSubtitle: "Начните свою юридическую карьеру в одной из самых престижных юридических фирм Мексики. Получите практический опыт и развивайте необходимые навыки вместе с лидерами отрасли.",
       applyNow: "Подать заявку",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       
       programOverviewTitle: "Обзор программы",
       programOverviewSubtitle: "Два пути для начала вашей юридической карьеры",
@@ -557,7 +557,7 @@ export default function Interns() {
         { step: "4", title: "Предложение и адаптация", text: "Успешные кандидаты получают предложение и начинают нашу комплексную программу адаптации." },
       ],
 
-      benefitsTitle: "Преимущества стажировки в Von Wobeser",
+      benefitsTitle: "Преимущества стажировки в Santos & Saucedo",
       benefitsSubtitle: "Инвестируйте в свое будущее вместе с нами",
       benefits: [
         { icon: Award, title: "Престижный опыт", text: "Добавьте в резюме опыт работы в ведущей мексиканской юридической фирме. Наша репутация открывает двери." },
@@ -581,7 +581,7 @@ export default function Interns() {
       heroTitle: "Programme de stage",
       heroSubtitle: "Lancez votre carrière juridique dans l'un des cabinets d'avocats les plus prestigieux du Mexique. Acquérez une expérience pratique et développez des compétences essentielles aux côtés des leaders du secteur.",
       applyNow: "Postuler maintenant",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       
       programOverviewTitle: "Aperçu du programme",
       programOverviewSubtitle: "Deux voies pour démarrer votre carrière juridique",
@@ -625,7 +625,7 @@ export default function Interns() {
         { step: "4", title: "Offre et intégration", text: "Les candidats retenus reçoivent une offre et commencent notre programme d'intégration complet." },
       ],
 
-      benefitsTitle: "Avantages d'un stage chez Von Wobeser",
+      benefitsTitle: "Avantages d'un stage chez Santos & Saucedo",
       benefitsSubtitle: "Investissez dans votre avenir avec nous",
       benefits: [
         { icon: Award, title: "Expérience prestigieuse", text: "Ajoutez une expérience dans un cabinet d'avocats mexicain de premier plan à votre CV. Notre réputation ouvre des portes." },
@@ -649,7 +649,7 @@ export default function Interns() {
       heroTitle: "Programma di tirocinio",
       heroSubtitle: "Inizia la tua carriera legale presso uno degli studi legali più prestigiosi del Messico. Acquisisci esperienza pratica e sviluppa competenze essenziali al fianco dei leader del settore.",
       applyNow: "Candidati ora",
-      applyEmail: "reclutamiento@vonwobeser.com",
+      applyEmail: "reclutamiento@santossaucedo.com",
       
       programOverviewTitle: "Panoramica del programma",
       programOverviewSubtitle: "Due percorsi per iniziare la tua carriera legale",
@@ -693,7 +693,7 @@ export default function Interns() {
         { step: "4", title: "Offerta e onboarding", text: "I candidati idonei ricevono un'offerta e iniziano il nostro programma di onboarding completo." },
       ],
 
-      benefitsTitle: "Vantaggi del tirocinio presso Von Wobeser",
+      benefitsTitle: "Vantaggi del tirocinio presso Santos & Saucedo",
       benefitsSubtitle: "Investi nel tuo futuro con noi",
       benefits: [
         { icon: Award, title: "Esperienza prestigiosa", text: "Aggiungi al tuo curriculum un'esperienza presso uno studio legale messicano di primo livello. La nostra reputazione apre le porte." },

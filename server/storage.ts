@@ -272,26 +272,21 @@ export interface IStorage {
 
 const siteContent: SiteContent = {
   heroTitle: "WE GO WHERE CLIENTS NEED US",
-  heroSubtitle: "New offices of Von Wobeser y Sierra",
-  visionTitle: "A vision of the future, collaboration, and excellence",
-  visionText: "Von Wobeser y Sierra has completed the transition to its new offices in the dynamic Campos Elíseos area in Polanco.",
-  locationTitle: "New office address",
-  locationText: "Torre SOMA Chapultepec Piso 18. Campos Elíseos 204, Polanco",
-  statsTitle: "Collaboration, technology and well-being",
-  quoteText: "The relocation of our offices responds to two inseparable goals: first, being closer to our clients; and second, offering our team a space designed to foster collaboration and productivity.",
-  quoteAuthor: "Fernando Carreño",
-  quoteRole: "Partner and member of the Executive Committee",
-  address: "Torre SOMA Chapultepec Piso 18. Campos Elíseos 204, Polanco, C.P. 11560, Ciudad de México",
-  phone: "+52 55 5258 1000",
-  email: "info@vonwobeser.com",
+  heroSubtitle: "Santos & Saucedo Abogados",
+  visionTitle: "Labor law counsel built on experience and trust",
+  visionText: "Santos & Saucedo Abogados has more than 35 years of experience advising companies on individual and collective labor matters, labor administration, and workplace compliance.",
+  locationTitle: "Office address",
+  locationText: "Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.",
+  statsTitle: "Santos & Saucedo Abogados",
+  quoteText: "",
+  quoteAuthor: "",
+  quoteRole: "",
+  address: "Río Tamazunchale 205 Norte, San Pedro Garza García, N.L., México",
+  phone: "+52 81 8335 2086",
+  email: "info@santossaucedo.com",
 };
 
-const stats: Stat[] = [
-  { value: "5,300", label: "square meters", labelEs: "metros cuadrados" },
-  { value: "300+", label: "workstations", labelEs: "estaciones de trabajo" },
-  { value: "16", label: "meeting rooms", labelEs: "salas de juntas" },
-  { value: "6", label: "levels", labelEs: "niveles" },
-];
+const stats: Stat[] = [];
 
 export class DatabaseStorage implements IStorage {
   async getUser(id: string): Promise<User | undefined> {
@@ -668,7 +663,7 @@ export class DatabaseStorage implements IStorage {
       return [];
     }
     
-    const newsIds = pivotRows.map(row => row.newsId);
+    const newsIds = pivotRows.map((row: { newsId: string }) => row.newsId);
     const result: News[] = [];
     
     for (const newsId of newsIds) {
@@ -691,7 +686,7 @@ export class DatabaseStorage implements IStorage {
       return [];
     }
     
-    const teamMemberIds = pivotRows.map(row => row.teamMemberId);
+    const teamMemberIds = pivotRows.map((row: { teamMemberId: string }) => row.teamMemberId);
     const result: TeamMember[] = [];
     
     for (const teamMemberId of teamMemberIds) {

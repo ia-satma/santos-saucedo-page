@@ -1,7 +1,7 @@
-# Design Guidelines: Von Wobeser y Sierra Corporate Website
+# Design Guidelines: Santos & Saucedo Abogados
 
-## Manual de Identidad Corporativa (Junio 2022)
-Este documento sigue las especificaciones oficiales del Manual de Identidad Corporativa de Von Wobeser y Sierra.
+## Manual de Identidad Corporativa
+Este documento define la identidad visual de Santos & Saucedo Abogados aplicada a la plataforma web (adaptada de la base Von Wobeser y Sierra por SATMA, julio 2026).
 
 ---
 
@@ -10,65 +10,56 @@ Este documento sigue las especificaciones oficiales del Manual de Identidad Corp
 ### Color Principal
 | Referencia | Valor | Uso |
 |------------|-------|-----|
-| PANTONE 187 | **#AA1A2E** | Logotipo, líneas de apoyo, CTAs principales |
-| RGB | 170, 26, 46 | |
-| HSL | 352° 73% 38% | |
+| Navy | **#202058** | Logotipo, líneas de apoyo, CTAs principales |
+| RGB | 32, 32, 88 | |
+| HSL | 240° 47% 24% | |
 
-### Colores Secundarios (Grises)
+### Variantes de Marca
 | Nombre | HEX | Uso |
 |--------|-----|-----|
-| Cool Gray 1 | **#D9D8D7** | Fondos web, elementos gráficos de apoyo |
-| Cool Gray 4 | **#BBBBBB** | Fondos, elementos gráficos, textos secundarios |
-| Cool Gray 8 | **#878A8E** | Fondos, elementos gráficos, textos |
-| Cool Gray 11 | **#54565B** | Texto principal, elementos gráficos |
-| Negro | **#1D1D1B** | Elementos gráficos de apoyo |
+| Navy Profundo | **#181848** | Fondos oscuros, hero, footer |
+| Navy Suave | **#484878** | Estados hover, acentos secundarios |
+| Gris de Apoyo | **#484848** | Texto secundario del wordmark |
 
 ### Uso del Color
-- **Fondos:** Blanco (#FFFFFF) primario, grises corporativos para secciones alternas
-- **Texto:** Cool Gray 11 (#54565B) para cuerpo, #1D1D1B para headlines
-- **Acentos:** Rojo (#AA1A2E) para CTAs y elementos importantes - usar con moderación
-- **Bordes/Divisores:** Cool Gray 1 (#D9D8D7)
+- **Fondos:** Blanco/gris neutro (#FAFAFA) primario, navy para secciones destacadas (hero, footer)
+- **Texto:** Gris neutro oscuro para cuerpo, navy para headlines y acentos
+- **Acentos:** Navy (#202058) para CTAs y elementos importantes - usar con moderación
+- **Bordes/Divisores:** Gris neutro claro
 
 ---
 
 ## 2. Tipografías
 
-### Tipografías Corporativas (Diseño profesional)
+Se conserva el esquema tipográfico heredado (serif editorial + sans de apoyo), aplicado en tono navy.
+
 | Fuente | Uso |
 |--------|-----|
-| **Publico** | Títulos, subtítulos, citas de desempeño |
-| **Optima** | Texto corrido en documentos, dirección de la firma |
-| **Geomanist** | Textos de apoyo, nombres de secciones, firmas |
-
-### Tipografías Web (Alternativas disponibles)
-| Alternativa | Reemplaza a | Uso |
-|-------------|-------------|-----|
-| **Georgia** | Publico | Títulos, subtítulos, introducciones |
-| **Calibri** | Optima | Texto corrido |
-| **Century Gothic** | Geomanist | Textos de apoyo, labels |
+| **Playfair Display** | Títulos, subtítulos, H1–H3 |
+| **Optima / Lato** | Texto corrido, cuerpo |
+| **Geomanist / Century Gothic** | Labels, menú, botones |
 
 ### Variables CSS Implementadas
 ```css
---font-heading: 'Georgia', 'Publico', 'Times New Roman', serif;
---font-sans: 'Calibri', 'Optima', 'Segoe UI', sans-serif;
---font-support: 'Century Gothic', 'Geomanist', 'Segoe UI', sans-serif;
+--font-heading: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
+--font-sans: 'Optima', 'Lato', 'Calibri', 'Segoe UI', sans-serif;
+--font-support: 'Geomanist', 'Century Gothic', 'Lato', 'Segoe UI', sans-serif;
 ```
 
 ### Reglas de Uso
-- **NO usar versión itálica** excepto para: palabras en otro idioma, citas textuales, o mensajes cortos a destacar
-- La fuente del logotipo NO se usa en comunicados
+- **NO usar versión itálica** excepto para: palabras en otro idioma, citas textuales, blockquotes, o mensajes cortos a destacar
 
 ---
 
 ## 3. Elementos Gráficos de Apoyo
 
 ### Líneas
-- ✅ **Líneas rojas horizontales** - Permitido
-- ❌ **Líneas rojas verticales** - PROHIBIDO
+- ✅ **Líneas navy horizontales** - Permitido
+- ❌ **Líneas navy verticales** - Evitar
 
 ### Fondos
-- Fondos rojos (para secciones destacadas)
-- Fondos en gris claro (Cool Gray 1)
+- Fondos navy (para secciones destacadas: hero, footer, CTAs)
+- Fondos en gris claro neutro
 - Franjas y recuadros grises
 
 ---
@@ -76,21 +67,14 @@ Este documento sigue las especificaciones oficiales del Manual de Identidad Corp
 ## 4. Logotipo
 
 ### Uso Principal
-- Logotipo en color rojo corporativo (#AA1A2E) sobre fondo blanco
-- Esta es la aplicación principal y preferida
-
-### Monograma "VW"
-- Uso exclusivo en internet
-- No usar en materiales impresos
+- Monograma "SS" entrelazado (dos S en espejo) dentro de triángulo navy + wordmark "SANTOS & SAUCEDO"
+- Versión color: navy sobre fondo blanco (`logo-ss-color.png`)
+- Versión blanca: monograma y wordmark en blanco, para fondos navy/oscuros (`logo-ss-white.png`)
+- Favicon: monograma aislado, recortado del lockup horizontal
 
 ### Área de Seguridad
-- Reservar espacio "1X" alrededor del logotipo (X = altura de la letra "V")
+- Reservar espacio alrededor del logotipo equivalente a la altura del triángulo del monograma
 - Esta zona no debe invadirse con ningún elemento gráfico
-
-### Versión Diversidad
-- Única versión permitida con colores alternativos
-- Solo para publicaciones del área de Diversidad
-- Usa colores de la bandera LGBTQ+
 
 ---
 
@@ -106,25 +90,28 @@ Este documento sigue las especificaciones oficiales del Manual de Identidad Corp
 - Padding secciones: py-20 (desktop) / py-12 (mobile)
 
 ### Grid Patterns
-- News cards: 3 columnas (lg:grid-cols-3, md:grid-cols-2)
-- Estadísticas: 4 columnas (md:grid-cols-4)
+- Tarjetas de contenido: 3 columnas (lg:grid-cols-3, md:grid-cols-2)
+- Áreas laborales: grid de 6 tarjetas
 - Galería: Grid asimétrico masonry
 
 ---
 
 ## 6. Navegación
 
+### Sitemap
+Inicio · La Firma · Áreas Laborales · Abogados · Publicaciones · Contacto · Avisos
+
 ### Header
 - Fixed header con transición transparente-a-sólido en scroll
 - Logo alineado a la izquierda
 - Menú alineado a la derecha
-- Selector de idioma en esquina superior derecha
+- Sin selector de idioma visible en el prototipo (español único; multilenguaje diferido a Fase 3)
 - Sin border radius
 
 ### Footer
-- Layout multi-columna: Dirección | Enlaces | Social
-- Fondo gris oscuro con texto blanco
-- Copyright y disclaimers legales
+- Layout multi-columna: Dirección | Enlaces | Contacto
+- Fondo navy con texto blanco
+- Copyright y avisos legales
 
 ---
 
@@ -132,7 +119,7 @@ Este documento sigue las especificaciones oficiales del Manual de Identidad Corp
 
 ### Imagen
 - Full-viewport (min-h-screen)
-- Overlay oscuro para legibilidad (bg-black/40)
+- Overlay navy oscuro para legibilidad (bg-[#181848]/40)
 - Indicador de scroll sutil
 
 ### Contenido
@@ -158,7 +145,7 @@ Este documento sigue las especificaciones oficiales del Manual de Identidad Corp
 
 ## 9. Accesibilidad
 
-- Focus states: 2px red outline (ring-2 ring-primary)
+- Focus states: 2px navy outline (ring-2 ring-primary)
 - Touch target mínimo: 44px × 44px
 - Contrast ratio: Mínimo 4.5:1 para todo texto
 - Alt text obligatorio para imágenes
@@ -169,6 +156,15 @@ Este documento sigue las especificaciones oficiales del Manual de Identidad Corp
 ## 10. Dark Mode
 
 En modo oscuro:
-- El rojo primario se aclara ligeramente a HSL(352, 73%, 42%)
+- El navy primario se aclara ligeramente a HSL(240, 50%, 58%)
 - Los grises se invierten manteniendo la jerarquía
 - Mantener contraste adecuado en todos los textos
+
+---
+
+## 11. Datos de Contacto (para uso en meta/schema/footer)
+
+- **Dirección:** Río Tamazunchale 205 Norte, San Pedro Garza García, N.L., México
+- **Teléfono:** (81) 8335 2086
+- **Email:** info@santossaucedo.com
+- **Horario:** Lunes–Viernes, 9:00–19:00
