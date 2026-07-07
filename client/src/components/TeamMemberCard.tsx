@@ -5,6 +5,7 @@ import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { isStaticSite } from "@/lib/queryClient";
 import { isNativeLanguage } from "@/lib/translationUtils";
+import { getTeamPhotoObjectPosition } from "@/lib/teamPhotoPosition";
 import type { TeamMember } from "@shared/schema";
 
 interface TeamMemberCardProps {
@@ -73,6 +74,7 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
             src={member.imageUrl}
             alt={member.name}
             className="absolute inset-0 w-full h-full object-cover object-top"
+            style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }}
             loading="lazy"
           />
         ) : (

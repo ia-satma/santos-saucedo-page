@@ -15,6 +15,7 @@ import { PersonJsonLd, BreadcrumbJsonLd } from "@/components/JsonLdSchema";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isStaticSite } from "@/lib/queryClient";
+import { getTeamPhotoObjectPosition } from "@/lib/teamPhotoPosition";
 import { LeadParagraph } from "@/components/editorial";
 import type { TeamMember, PracticeGroup, IndustryGroup, Education, Affiliation, Ranking, Publication, RepresentativeMatter, BarAdmission, News, LanguageCode } from "@shared/schema";
 
@@ -1291,6 +1292,7 @@ export default function TeamMemberDetail() {
                       src={member.imageUrl}
                       alt={member?.name}
                       className="absolute inset-0 h-full w-full object-cover object-top"
+                      style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }}
                       data-testid="img-profile-photo"
                     />
                     <div
