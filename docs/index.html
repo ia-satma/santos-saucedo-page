@@ -3,236 +3,588 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Santos & Saucedo — Vista previa del rebrand</title>
+<title>Santos & Saucedo Abogados | Prototipo web</title>
+<meta name="description" content="Vista previa del prototipo web de Santos & Saucedo Abogados, firma especializada en derecho laboral en San Pedro Garza García, Nuevo León." />
 <meta name="robots" content="noindex, nofollow" />
 <link rel="icon" type="image/png" href="assets/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet" />
 <style>
-  :root{
-    --navy:#202058;
-    --navy-deep:#181848;
-    --navy-soft:#484878;
-    --gray:#484848;
-    --paper:#FAFAFA;
-    --line:#E3E3E8;
+  :root {
+    --navy: #202058;
+    --navy-deep: #181848;
+    --navy-soft: #33336d;
+    --ink: #171717;
+    --muted: #666672;
+    --paper: #fafafa;
+    --white: #ffffff;
+    --line: #e3e3e8;
+    --silver: #f1f1f4;
+    --accent: #8c8cae;
   }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{
-    font-family:'Lato',-apple-system,sans-serif;
-    background:var(--paper);
-    color:#171717;
-    line-height:1.6;
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    line-height: 1.6;
   }
-  h1,h2,h3{font-family:'Playfair Display',Georgia,serif;font-weight:500;letter-spacing:-0.01em}
-  a{color:inherit}
-  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+  img { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
 
-  /* Header */
-  header.site{background:var(--navy);color:#fff;padding:56px 0 64px}
-  header.site img{height:52px;width:auto;display:block;margin-bottom:28px}
-  header.site .eyebrow{
-    text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;
-    color:#B8B8DA;font-weight:700;margin-bottom:10px;
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(250, 250, 250, 0.94);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(16px);
   }
-  header.site h1{font-size:clamp(1.7rem,3.6vw,2.6rem);max-width:20ch;color:#fff}
-  header.site p.lead{margin-top:16px;max-width:56ch;color:#D6D6EC;font-size:1.05rem}
-  .badge-row{margin-top:28px;display:flex;gap:10px;flex-wrap:wrap}
-  .badge{
-    display:inline-flex;align-items:center;gap:6px;
-    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
-    padding:6px 14px;border-radius:999px;font-size:.82rem;color:#EDEDF6;
+  .topbar .wrap {
+    min-height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
   }
-  .badge .dot{width:7px;height:7px;border-radius:50%;background:#7ED9A0}
-  .badge.pending .dot{background:#E8C468}
+  .brand img { width: 210px; height: auto; }
+  nav { display: flex; gap: 24px; align-items: center; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--navy); font-weight: 700; }
+  nav a { padding: 10px 0; border-bottom: 1px solid transparent; transition: border-color 180ms ease, color 180ms ease; }
+  nav a:hover { border-color: var(--navy); color: var(--navy-deep); }
 
-  /* Sections */
-  section{padding:56px 0}
-  section + section{border-top:1px solid var(--line)}
-  section h2{font-size:1.5rem;color:var(--navy);margin-bottom:6px}
-  section .desc{color:#5B5B5B;max-width:62ch;margin-bottom:32px;font-size:.98rem}
-
-  /* Progress list */
-  .progress-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
-  .stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:20px}
-  .stage .status{
-    display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.06em;
-    text-transform:uppercase;padding:3px 9px;border-radius:5px;margin-bottom:10px;
+  .hero {
+    min-height: 640px;
+    background: var(--navy);
+    color: var(--white);
+    overflow: hidden;
   }
-  .stage.done .status{background:#E4F5EA;color:#1E8A4C}
-  .stage.progress .status{background:#FCF1DA;color:#A8790F}
-  .stage.todo .status{background:#F0F0F0;color:#7A7A7A}
-  .stage h3{font-family:'Lato';font-weight:700;font-size:.98rem;color:#171717;margin-bottom:6px}
-  .stage p{font-size:.87rem;color:#666}
-
-  /* Brand assets */
-  .lockups{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:36px}
-  .lockup{border-radius:10px;overflow:hidden;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;padding:36px 24px}
-  .lockup.light{background:#fff}
-  .lockup.dark{background:var(--navy)}
-  .lockup img{max-width:100%;height:auto}
-
-  .palette{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:36px}
-  .swatch{border-radius:10px;overflow:hidden;border:1px solid var(--line)}
-  .swatch .fill{height:74px}
-  .swatch .label{background:#fff;padding:10px 12px;font-size:.78rem}
-  .swatch .label .hex{display:block;color:#8A8A8A;font-family:Menlo,monospace;font-size:.72rem;margin-top:2px}
-
-  .type-sample{display:grid;gap:22px}
-  .type-row{background:#fff;border:1px solid var(--line);border-radius:10px;padding:22px 24px}
-  .type-row .tag{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:#8A8A8A;margin-bottom:8px;font-family:'Lato'}
-  .type-row .heading-sample{font-size:1.7rem;color:var(--navy)}
-  .type-row .body-sample{font-size:1rem;color:#333;max-width:60ch}
-
-  /* Sitemap */
-  .sitemap{display:flex;flex-wrap:wrap;gap:10px}
-  .sitemap span{
-    background:#fff;border:1px solid var(--line);border-radius:999px;
-    padding:8px 16px;font-size:.88rem;color:var(--navy);font-weight:600;
+  .hero-grid {
+    min-height: 640px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+    align-items: stretch;
   }
-  .sitemap span.muted{color:#9A9A9A;border-style:dashed}
+  .hero-copy {
+    padding: 82px 72px 76px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #c5c5df;
+    font-weight: 900;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 54px;
+    line-height: 1.03;
+    font-weight: 500;
+    max-width: 680px;
+  }
+  .lead {
+    margin-top: 24px;
+    max-width: 620px;
+    color: #dedeee;
+    font-size: 18px;
+    line-height: 1.75;
+  }
+  .actions {
+    margin-top: 34px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .button {
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    border-radius: 4px;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 900;
+    transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+  }
+  .button:active { transform: translateY(1px); }
+  .button.primary { background: var(--white); color: var(--navy); border: 1px solid var(--white); }
+  .button.primary:hover { background: #ececf5; }
+  .button.ghost { border: 1px solid rgba(255, 255, 255, 0.36); color: var(--white); }
+  .button.ghost:hover { border-color: var(--white); }
 
-  /* Note box */
-  .note{background:#fff;border:1px solid var(--line);border-left:4px solid var(--navy);border-radius:8px;padding:20px 24px;font-size:.92rem;color:#444}
-  .note strong{color:var(--navy)}
+  .hero-media {
+    position: relative;
+    min-height: 640px;
+  }
+  .hero-media::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--navy) 0%, rgba(32, 32, 88, 0.28) 44%, rgba(32, 32, 88, 0.05) 100%);
+    z-index: 1;
+  }
+  .hero-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.78) contrast(1.05);
+  }
 
-  footer{padding:36px 0 56px;color:#9A9A9A;font-size:.82rem}
-  footer a{color:var(--navy);text-decoration:none}
-  footer a:hover{text-decoration:underline}
+  .metrics {
+    background: var(--white);
+    border-bottom: 1px solid var(--line);
+  }
+  .metric-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .metric {
+    padding: 30px 34px;
+    border-left: 1px solid var(--line);
+  }
+  .metric:first-child { border-left: 0; }
+  .metric strong {
+    display: block;
+    color: var(--navy);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 34px;
+    font-weight: 500;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .metric span { color: var(--muted); font-size: 14px; }
+
+  section { padding: 84px 0; }
+  .section-head {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.8fr) minmax(320px, 1.2fr);
+    gap: 56px;
+    align-items: start;
+    margin-bottom: 40px;
+  }
+  h2 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 38px;
+    line-height: 1.1;
+    font-weight: 500;
+    color: var(--navy);
+  }
+  .section-head p {
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.75;
+  }
+
+  .areas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--line);
+  }
+  .area {
+    min-height: 136px;
+    padding: 26px 28px 28px;
+    background: var(--white);
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .area:nth-child(even) { border-right: 0; }
+  .area .num {
+    display: block;
+    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    font-weight: 900;
+    margin-bottom: 18px;
+  }
+  .area h3 {
+    font-size: 18px;
+    line-height: 1.35;
+    color: var(--navy-deep);
+    max-width: 420px;
+  }
+
+  .firm-band {
+    background: var(--silver);
+  }
+  .firm-grid {
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 52px;
+    align-items: center;
+  }
+  .firm-copy p {
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.75;
+  }
+  .principles {
+    display: grid;
+    gap: 12px;
+  }
+  .principle {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 22px 24px;
+  }
+  .principle span {
+    display: block;
+    color: var(--navy);
+    font-weight: 900;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .principle p { color: var(--muted); font-size: 15px; }
+
+  .publication-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 18px;
+  }
+  .publication {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 28px;
+    min-height: 206px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .publication.large { min-height: 430px; }
+  .publication .tag {
+    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 900;
+    margin-bottom: 16px;
+  }
+  .publication h3 {
+    font-family: "Playfair Display", Georgia, serif;
+    color: var(--navy);
+    font-size: 28px;
+    line-height: 1.15;
+    font-weight: 500;
+  }
+  .publication:not(.large) h3 { font-size: 22px; }
+  .publication p {
+    margin-top: 16px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+  .publication .read {
+    margin-top: 28px;
+    color: var(--navy);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 900;
+  }
+  .publication-stack { display: grid; gap: 18px; }
+
+  .team-preview {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .team-preview h2 { color: var(--white); }
+  .team-preview .section-head p { color: #d8d8eb; }
+  .team-row {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 18px;
+  }
+  .profile-note {
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 8px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .profile-note h3 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 30px;
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+  .profile-note p { color: #d8d8eb; line-height: 1.75; }
+  .profile-list {
+    display: grid;
+    gap: 10px;
+  }
+  .profile-list div {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 14px 0;
+  }
+  .profile-list strong {
+    display: block;
+    font-size: 15px;
+  }
+  .profile-list span {
+    color: #bfbfde;
+    font-size: 13px;
+  }
+
+  .contact {
+    background: var(--white);
+  }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 44px;
+    align-items: start;
+  }
+  .contact-card {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 28px;
+    background: var(--paper);
+  }
+  .contact-card h3 {
+    color: var(--navy);
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .contact-card p,
+  .contact-card a {
+    display: block;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .contact-card a:hover { color: var(--navy); }
+
+  footer {
+    padding: 42px 0;
+    background: var(--navy-deep);
+    color: #cacade;
+  }
+  footer .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  footer img { width: 180px; }
+  footer span { font-size: 13px; color: #b8b8d2; }
+
+  @media (max-width: 900px) {
+    .topbar .wrap { min-height: auto; padding: 18px 0; align-items: flex-start; flex-direction: column; }
+    nav { flex-wrap: wrap; gap: 12px 18px; }
+    .brand img { width: 188px; }
+    .hero-grid,
+    .section-head,
+    .firm-grid,
+    .publication-grid,
+    .team-row,
+    .contact-grid { grid-template-columns: 1fr; }
+    .hero-copy { padding: 68px 0 44px; }
+    .hero-media { min-height: 340px; }
+    h1 { font-size: 42px; }
+    h2 { font-size: 32px; }
+    .metric-grid { grid-template-columns: 1fr; }
+    .metric { border-left: 0; border-top: 1px solid var(--line); }
+    .metric:first-child { border-top: 0; }
+    .areas { grid-template-columns: 1fr; }
+    .area { border-right: 0; }
+    footer .wrap { align-items: flex-start; flex-direction: column; }
+  }
+
+  @media (max-width: 560px) {
+    .wrap { width: min(100% - 28px, 1180px); }
+    nav { font-size: 11px; }
+    h1 { font-size: 34px; }
+    h2 { font-size: 28px; }
+    .lead { font-size: 16px; }
+    section { padding: 64px 0; }
+    .publication.large { min-height: 0; }
+  }
 </style>
 </head>
 <body>
-
-  <header class="site">
+  <header class="topbar">
     <div class="wrap">
-      <img src="assets/logo-ss-white.png" alt="Santos & Saucedo" />
-      <div class="eyebrow">Ecosistema Web · Vista previa</div>
-      <h1>Santos & Saucedo — Prototipo Web</h1>
-      <p class="lead">
-        Snapshot estático del avance visual. Esta página no requiere backend ni base de datos —
-        muestra la dirección de marca aplicada al nuevo ecosistema web. El sitio funcional completo
-        (contenido real, directorio de abogados, publicaciones, CMS y agentes IA) corre localmente
-        con base de datos y se comparte por separado.
-      </p>
-      <div class="badge-row">
-        <span class="badge"><span class="dot"></span> Identidad visual</span>
-        <span class="badge pending"><span class="dot"></span> Arquitectura de información</span>
-        <span class="badge pending"><span class="dot"></span> Contenido inicial S&amp;S</span>
-      </div>
+      <a class="brand" href="#inicio" aria-label="Santos & Saucedo inicio">
+        <img src="assets/logo-ss-color.png" alt="Santos & Saucedo Abogados" />
+      </a>
+      <nav aria-label="Navegación principal">
+        <a href="#firma">La Firma</a>
+        <a href="#areas">Áreas Laborales</a>
+        <a href="#abogados">Abogados</a>
+        <a href="#publicaciones">Publicaciones</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
     </div>
   </header>
 
-  <section>
-    <div class="wrap">
-      <h2>Estado del proyecto</h2>
-      <p class="desc">Etapa 1 del ecosistema web (prototipo aprobable), según la propuesta SATMA de julio 2026.</p>
-      <div class="progress-grid">
-        <div class="stage done">
-          <span class="status">Hecho</span>
-          <h3>Identidad visual digital</h3>
-          <p>Paleta navy #202058, logotipo y favicon de Santos &amp; Saucedo integrados en el código fuente de la plataforma.</p>
+  <main id="inicio">
+    <section class="hero" aria-label="Santos & Saucedo Abogados">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow">Firma especializada en derecho laboral</div>
+          <h1>Santos & Saucedo Abogados</h1>
+          <p class="lead">
+            Una firma que ayuda a anticipar, ordenar y resolver asuntos laborales con precisión jurídica,
+            criterio práctico y sensibilidad institucional.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="#contacto">Solicitar asesoría</a>
+            <a class="button ghost" href="#areas">Ver áreas laborales</a>
+          </div>
         </div>
-        <div class="stage progress">
-          <span class="status">En curso</span>
-          <h3>Arquitectura de información</h3>
-          <p>Reordenando navegación a Inicio · La Firma · Áreas Laborales · Abogados · Publicaciones · Contacto.</p>
-        </div>
-        <div class="stage todo">
-          <span class="status">Pendiente</span>
-          <h3>Contenido inicial S&amp;S</h3>
-          <p>Áreas laborales, perfiles de muestra, narrativa de firma y datos de contacto reales.</p>
-        </div>
-        <div class="stage todo">
-          <span class="status">Pendiente</span>
-          <h3>Verificación end-to-end</h3>
-          <p>Revisión completa en navegador, responsive y capturas para el paquete de aprobación.</p>
+        <div class="hero-media" aria-hidden="true">
+          <img src="assets/hero-office.jpg" alt="" />
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section>
-    <div class="wrap">
-      <h2>Identidad de marca</h2>
-      <p class="desc">Logotipo aplicado sobre fondo claro y sobre el navy corporativo.</p>
-      <div class="lockups">
-        <div class="lockup light"><img src="assets/logo-ss-color.png" alt="Santos & Saucedo — versión color" /></div>
-        <div class="lockup dark"><img src="assets/logo-ss-white.png" alt="Santos & Saucedo — versión blanca" /></div>
+    <aside class="metrics" aria-label="Datos destacados">
+      <div class="wrap metric-grid">
+        <div class="metric"><strong>35+</strong><span>Años de experiencia asesorando empresas.</span></div>
+        <div class="metric"><strong>6</strong><span>Áreas laborales para prevención, cumplimiento y resolución.</span></div>
+        <div class="metric"><strong>NL</strong><span>Atención desde San Pedro Garza García, Nuevo León.</span></div>
       </div>
+    </aside>
 
-      <h2 style="margin-top:8px">Paleta</h2>
-      <p class="desc">Navy institucional, grises sobrios y fondos claros para una presencia legal sobria y especializada.</p>
-      <div class="palette">
-        <div class="swatch">
-          <div class="fill" style="background:#202058"></div>
-          <div class="label">Navy primario<span class="hex">#202058</span></div>
+    <section id="areas">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Áreas Laborales</h2>
+          <p>
+            El prototipo organiza la experiencia de la firma alrededor de asuntos laborales concretos:
+            conflictos, administración, diagnóstico, auditoría y planeación preventiva.
+          </p>
         </div>
-        <div class="swatch">
-          <div class="fill" style="background:#181848"></div>
-          <div class="label">Navy profundo<span class="hex">#181848</span></div>
-        </div>
-        <div class="swatch">
-          <div class="fill" style="background:#484878"></div>
-          <div class="label">Navy suave<span class="hex">#484878</span></div>
-        </div>
-        <div class="swatch">
-          <div class="fill" style="background:#484848"></div>
-          <div class="label">Gris de apoyo<span class="hex">#484848</span></div>
-        </div>
-        <div class="swatch">
-          <div class="fill" style="background:#FAFAFA;border-bottom:1px solid #E3E3E8"></div>
-          <div class="label">Fondo claro<span class="hex">#FAFAFA</span></div>
+        <div class="areas">
+          <article class="area"><span class="num">01</span><h3>Conflictos Individuales y Colectivos de Trabajo</h3></article>
+          <article class="area"><span class="num">02</span><h3>Revisión de la Función de Administración Laboral</h3></article>
+          <article class="area"><span class="num">03</span><h3>Diagnóstico de Relaciones Laborales</h3></article>
+          <article class="area"><span class="num">04</span><h3>Planes de Mejora</h3></article>
+          <article class="area"><span class="num">05</span><h3>Auditoría Jurídico-Laboral</h3></article>
+          <article class="area"><span class="num">06</span><h3>Planeación Estratégica y Capacitación</h3></article>
         </div>
       </div>
+    </section>
 
-      <h2 style="margin-top:8px">Tipografía</h2>
-      <p class="desc">Se conserva el esquema serif/sans heredado del manual de identidad, en tono navy.</p>
-      <div class="type-sample">
-        <div class="type-row">
-          <div class="tag">Headings — Playfair Display</div>
-          <div class="heading-sample">Santos &amp; Saucedo Abogados</div>
+    <section class="firm-band" id="firma">
+      <div class="wrap firm-grid">
+        <div class="firm-copy">
+          <div class="eyebrow">La Firma</div>
+          <h2>Consejo laboral con enfoque preventivo.</h2>
+          <p>
+            La plataforma presenta a Santos & Saucedo como una boutique laboral sobria, cercana y técnica,
+            orientada a acompañar a empresas en decisiones sensibles de capital humano.
+          </p>
         </div>
-        <div class="type-row">
-          <div class="tag">Cuerpo — Lato / Optima</div>
-          <div class="body-sample">Una firma especializada que ayuda a anticipar, ordenar y resolver asuntos laborales con precisión jurídica, criterio práctico y sensibilidad institucional.</div>
+        <div class="principles">
+          <div class="principle"><span>Prevención</span><p>Identificar riesgos laborales antes de que se conviertan en contingencias.</p></div>
+          <div class="principle"><span>Orden</span><p>Documentación, procesos internos y cumplimiento alineados con la operación real.</p></div>
+          <div class="principle"><span>Resolución</span><p>Representación y estrategia para conflictos individuales o colectivos.</p></div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section>
-    <div class="wrap">
-      <h2>Sitemap objetivo</h2>
-      <p class="desc">Estructura de navegación de la firma laboral (en implementación).</p>
-      <div class="sitemap">
-        <span>Inicio</span>
-        <span>La Firma</span>
-        <span>Áreas Laborales</span>
-        <span>Abogados</span>
-        <span>Publicaciones</span>
-        <span>Contacto</span>
-        <span class="muted">Avisos</span>
+    <section id="publicaciones">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Publicaciones</h2>
+          <p>
+            Muestra inicial del centro de conocimiento. En la versión funcional, estas publicaciones se administran desde el CMS.
+          </p>
+        </div>
+        <div class="publication-grid">
+          <article class="publication large">
+            <div>
+              <div class="tag">Alerta laboral</div>
+              <h3>Lo que las empresas deben saber sobre conflictos individuales de trabajo.</h3>
+              <p>Panorama práctico del proceso que enfrentan los empleadores cuando un conflicto laboral llega a una etapa formal.</p>
+            </div>
+            <a class="read" href="#contacto">Consultar enfoque</a>
+          </article>
+          <div class="publication-stack">
+            <article class="publication">
+              <div>
+                <div class="tag">Prevención</div>
+                <h3>Revisión de administración laboral antes del conflicto.</h3>
+                <p>Cómo detectar vacíos internos mientras todavía son corregibles.</p>
+              </div>
+            </article>
+            <article class="publication">
+              <div>
+                <div class="tag">Cumplimiento</div>
+                <h3>Checklist de auditoría jurídico-laboral.</h3>
+                <p>Una guía inicial para empresas en crecimiento.</p>
+              </div>
+            </article>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section>
-    <div class="wrap">
-      <div class="note">
-        <strong>Nota:</strong> este repositorio contiene la base de código completa
-        (React + Express + Postgres + agentes IA) del ecosistema web Santos &amp; Saucedo,
-        en proceso de adaptación. Esta página es solo un snapshot de marca —
-        no refleja el contenido, la navegación ni las páginas reales del sitio final.
+    <section class="team-preview" id="abogados">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Abogados</h2>
+          <p>
+            La estructura del directorio ya está contemplada para perfiles, áreas, publicaciones y datos de contacto.
+          </p>
+        </div>
+        <div class="team-row">
+          <article class="profile-note">
+            <h3>Directorio profesional listo para carga de perfiles.</h3>
+            <p>
+              El sitio completo permite presentar socios, asociados y equipo de apoyo con biografía,
+              experiencia, educación, publicaciones relacionadas y especialidades laborales.
+            </p>
+          </article>
+          <div class="profile-list" aria-label="Estructura de perfiles">
+            <div><strong>Socios</strong><span>Perfil, trayectoria, práctica y datos de contacto.</span></div>
+            <div><strong>Asociados</strong><span>Experiencia, idiomas y áreas laborales.</span></div>
+            <div><strong>Publicaciones por abogado</strong><span>Relación automática con artículos y alertas.</span></div>
+            <div><strong>Administración interna</strong><span>CMS para edición del directorio.</span></div>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <section class="contact" id="contacto">
+      <div class="wrap contact-grid">
+        <div>
+          <div class="eyebrow">Contacto</div>
+          <h2>Atención desde San Pedro Garza García.</h2>
+          <p class="lead" style="color: var(--muted);">
+            Esta vista pública sirve para revisión del concepto visual. La versión funcional completa corre con backend,
+            base de datos, CMS y automatizaciones internas.
+          </p>
+        </div>
+        <div class="contact-card">
+          <h3>Santos & Saucedo Abogados</h3>
+          <p>Río Tamazunchale 205 Norte</p>
+          <p>San Pedro Garza García, Nuevo León</p>
+          <a href="tel:+528183352086">+52 81 8335 2086</a>
+          <a href="mailto:info@santossaucedo.com">info@santossaucedo.com</a>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <footer>
     <div class="wrap">
-      Actualizado durante el desarrollo · <a href="https://github.com/ia-satma/santos-saucedo-page">Repositorio</a>
+      <img src="assets/logo-ss-white.png" alt="Santos & Saucedo Abogados" />
+      <span>Prototipo web para revisión visual. Julio 2026.</span>
     </div>
   </footer>
-
 </body>
 </html>
