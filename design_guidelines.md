@@ -1,7 +1,7 @@
 # Design Guidelines: Santos & Saucedo Abogados
 
 ## Manual de Identidad Corporativa
-Este documento define la identidad visual de Santos & Saucedo Abogados aplicada a la plataforma web (adaptada de la base Von Wobeser y Sierra por SATMA, julio 2026).
+Este documento define la identidad visual de Santos & Saucedo Abogados aplicada a la plataforma web (adaptada de la base Santos & Saucedo por SATMA, julio 2026).
 
 ---
 

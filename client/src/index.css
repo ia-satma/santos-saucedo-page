@@ -31,13 +31,13 @@ blockquote {
 /* LIGHT MODE */
 :root {
   /* Santos & Saucedo corporate palette */
-  --vw-red: #202058;
-  --vw-gray-1: #D5D2CD;  /* light swatch left  */
-  --vw-gray-2: #C0BDB8;  /* light swatch right */
-  --vw-gray-4: #8B8D89;  /* dark swatch left   */
-  --vw-gray-8: #5B5C5F;  /* dark swatch middle */
-  --vw-gray-11: #2E2E2A; /* dark swatch right  */
-  --vw-black: #1D1D1B;
+  --ss-red: #202058;
+  --ss-gray-1: #D5D2CD;  /* light swatch left  */
+  --ss-gray-2: #C0BDB8;  /* light swatch right */
+  --ss-gray-4: #8B8D89;  /* dark swatch left   */
+  --ss-gray-8: #5B5C5F;  /* dark swatch middle */
+  --ss-gray-11: #2E2E2A; /* dark swatch right  */
+  --ss-black: #1D1D1B;
 
   --button-outline: rgba(0,0,0, .10);
   --badge-outline: rgba(0,0,0, .05);

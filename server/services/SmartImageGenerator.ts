@@ -5,14 +5,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as https from 'https';
 
-const VON_WOBESER_BRAND = {
+const SANTOS_SAUCEDO_BRAND = {
   primaryColor: '#202058',
   colorName: 'deep burgundy red',
   style: 'professional corporate legal',
   aesthetics: 'sophisticated, elegant, minimalist with sharp edges',
 };
 
-const LOGO_PATH = path.join(process.cwd(), 'attached_assets', 'vonwobeser_logo_hd.png');
+const LOGO_PATH = path.join(process.cwd(), 'attached_assets', 'logo-ss-color.png');
 const OUTPUT_DIR = path.join(process.cwd(), 'public', 'generated-images');
 
 const geminiAI = new GoogleGenAI({

@@ -19,7 +19,7 @@ The language switching logic is failing. Content is leaking across languages.
 
 ### 3. NAVIGATION & BROKEN LINKS (FUNCTIONAL FIXES)
 * **Contact Page:** The "Visit our website" button is creating a loop/reload. Update the `href` to point to the correct homepage URL or external link provided in the config.
-* **Careers Page:** The "Apply Now" and "Send Application" buttons are unresponsive. Connect these buttons to the `mailto:reclutamiento@vwys.com.mx` logic or the corresponding modal form.
+* **Careers Page:** The "Apply Now" and "Send Application" buttons are unresponsive. Connect these buttons to the `mailto:reclutamiento@santossaucedo.com` logic or the corresponding modal form.
 * **External Events:** The "More Information" (Más información) links on Event cards are hitting 404/DNS errors. Verify the URLs or add error handling to prevent the app from crashing on bad links.
 
 ### 4. RTL LAYOUT (ARABIC)

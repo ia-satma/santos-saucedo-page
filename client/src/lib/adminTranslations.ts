@@ -1403,7 +1403,7 @@ export const AGENT_CARD_TRANSLATIONS: Record<string, Record<string, AgentCardTra
       businessName: "Der Intelligente Visualisierer",
       role: "Kreativdirektor",
       description: "Ein Mehrmotoren-Generierungssystem mit intelligentem Fallback. Wenn OpenAI einen Prompt wegen der Inhaltsrichtlinie ablehnt, schreibt dieser Agent das Konzept sofort abstrakt um oder wechselt zu Gemini, um visuelle Inhalte zu garantieren. Lässt nie einen Artikel ohne Bild.",
-      capabilities: ["DALL-E 3 primärer Generierungsmotor", "Gemini 2.5 Flash automatischer Fallback", "Juristische Prompt-Bereinigung (abstrahiert sensible Themen)", "Markenkonformes #202058-Farb-Injection", "Automatische Von-Wobeser-Logo-Überlagerung"],
+      capabilities: ["DALL-E 3 primärer Generierungsmotor", "Gemini 2.5 Flash automatischer Fallback", "Juristische Prompt-Bereinigung (abstrahiert sensible Themen)", "Markenkonformes #202058-Farb-Injection", "Automatische Santos & Saucedo Logo-Überlagerung"],
     },
     zh: {
       businessName: "智能可视化器",

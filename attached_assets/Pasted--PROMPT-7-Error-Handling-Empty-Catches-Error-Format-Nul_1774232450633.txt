@@ -1,7 +1,7 @@
 ## PROMPT 7: Error Handling — Empty Catches + Error Format + Null Guards (MEDIO)
 
 ```
-CONTEXTO: Este proyecto es el website de Von Wobeser y Sierra, una firma de abogados mexicana. Tiene multiples agentes AI y un API REST. Hay problemas sistemicos de manejo de errores que ocultan bugs y hacen dificil debuggear en produccion.
+CONTEXTO: Este proyecto es el website de Santos & Saucedo, una firma de abogados mexicana. Tiene multiples agentes AI y un API REST. Hay problemas sistemicos de manejo de errores que ocultan bugs y hacen dificil debuggear en produccion.
 
 PROBLEMA: 5 issues de manejo de errores:
 

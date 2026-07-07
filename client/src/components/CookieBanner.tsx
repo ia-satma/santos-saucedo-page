@@ -14,7 +14,7 @@ interface CookiePreferences {
   marketing: boolean;
 }
 
-const STORAGE_KEY = 'vwb_cookie_preferences';
+const STORAGE_KEY = 'ss_cookie_preferences';
 
 export default function CookieBanner({ language }: CookieBannerProps) {
   const [visible, setVisible] = useState(false);

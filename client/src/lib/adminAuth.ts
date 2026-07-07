@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 
-const TOKEN_KEY = "vwb_admin_token";
+const TOKEN_KEY = "ss_admin_token";
 
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;

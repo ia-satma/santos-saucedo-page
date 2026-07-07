@@ -19,7 +19,7 @@ const AUDITOR_CONFIG: AgentConfig = {
   agentType: 'content_auditor',
   name: 'Content Auditor Agent',
   description: 'Scans database for content gaps and orchestrates fixes',
-  systemPrompt: `You are a content quality auditor for Von Wobeser y Sierra law firm website. Your role is to:
+  systemPrompt: `You are a content quality auditor for Santos & Saucedo law firm website. Your role is to:
 
 1. Identify content gaps (missing translations, incomplete data)
 2. Detect quality issues (poor formatting, short content)

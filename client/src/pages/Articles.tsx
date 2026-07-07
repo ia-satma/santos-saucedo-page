@@ -42,7 +42,7 @@ function ArticleImageWithFallback({
     return (
       <div className={`bg-muted flex items-center justify-center ${className}`}>
         <span className="text-4xl font-heading font-light text-muted-foreground/60 tracking-[0.18em]">
-          VWS
+          S&S
         </span>
       </div>
     );

@@ -20,7 +20,7 @@ interface PCloudResponse {
 export class PCloudStorage {
   private authToken: string | null = null;
   private apiHost: string = 'eapi.pcloud.com';
-  private basePath: string = '/VonWobeser/agents';
+  private basePath: string = '/SantosSaucedo/agents';
 
   async authenticate(): Promise<boolean> {
     const username = process.env.PCLOUD_USERNAME;

@@ -10,13 +10,7 @@ import worldMapDarkImg from "@assets/mapa-dark_1776101215469.png";
 import frankfurtSkyline from "@assets/stock_images/frankfurt_dusk_1.jpg";
 import torreSomaImg from "@assets/hyatt-park-scaled_1776460775865.jpeg";
 
-import clausVonWobeserPhoto from "@assets/of_counsel_photos/claus_von_wobeser.jpg";
-import luisBurguenoPhoto from "@assets/partner_photos/luis_burgueno.jpg";
-import katharinaRoehrPhoto from "@assets/partner_photos/katharina_roehr.jpg";
-import rupertHuttlerPhoto from "@assets/partner_photos/rupert_huttler.jpg";
-import annaMariaBrandstadterPhoto from "@assets/associate_photos/anna_maria_brandstadter.jpg";
-import michaelSchreiberPhoto from "@assets/associate_photos/michael_schreiber.jpg";
-import alexanderBarnesPhoto from "@assets/associate_photos/alexander_barnes.jpg";
+import logoColor from "@assets/logo-ss-color.png";
 
 type SupportedLanguage = "es" | "en" | "de" | "zh" | "ko" | "ja" | "ar" | "ru" | "fr" | "it";
 
@@ -57,7 +51,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     title: "Global Reach",
     subtitle: "Santos & Saucedo's German Desk provides specialized legal services for German-speaking clients investing in Mexico and Latin America.",
     mexicoLabel: "MEXICO CITY",
-    mexicoSubtitle: "Torre SOMA Chapultepec",
+    mexicoSubtitle: "Río Tamazunchale 205 Norte",
     germanyLabel: "GERMANY",
     germanySubtitle: "German Desk",
     historicalText: "For more than 34 years, Santos & Saucedo has maintained a dedicated German Desk to serve German-speaking clients investing in Mexico and Latin America. Our German Desk attorneys are fluent in German, English, and Spanish, and have extensive experience working with German and Austrian companies on their investments in the region. We understand the German business culture and legal requirements, enabling us to provide seamless service that bridges both legal systems.",
@@ -82,7 +76,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     title: "Alcance Global",
     subtitle: "El German Desk de Santos & Saucedo proporciona servicios legales especializados para clientes de habla alemana que invierten en México y América Latina.",
     mexicoLabel: "CIUDAD DE MÉXICO",
-    mexicoSubtitle: "Torre SOMA Chapultepec",
+    mexicoSubtitle: "Río Tamazunchale 205 Norte",
     germanyLabel: "ALEMANIA",
     germanySubtitle: "German Desk",
     historicalText: "Durante más de 34 años, Santos & Saucedo ha mantenido un German Desk dedicado a atender a clientes de habla alemana que invierten en México y América Latina. Los abogados de nuestro German Desk hablan alemán, inglés y español con fluidez, y tienen amplia experiencia trabajando con empresas alemanas y austriacas en sus inversiones en la región. Comprendemos la cultura empresarial y los requisitos legales alemanes, lo que nos permite brindar un servicio integrado que conecta ambos sistemas legales.",
@@ -107,7 +101,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     title: "German Desk",
     subtitle: "Ihre Brücke zwischen Deutschland und Mexiko",
     mexicoLabel: "MEXIKO-STADT",
-    mexicoSubtitle: "Torre SOMA Chapultepec",
+    mexicoSubtitle: "Río Tamazunchale 205 Norte",
     germanyLabel: "DEUTSCHLAND",
     germanySubtitle: "German Desk",
     historicalText: "Seit mehr als 34 Jahren arbeiten wir mit deutschen Unternehmen zusammen. Santos & Saucedo unterhält einen eigenen German Desk für deutschsprachige Mandanten, die in Mexiko und Lateinamerika investieren. Unsere Anwälte des German Desk sprechen fließend Deutsch, Englisch und Spanisch und verfügen über umfangreiche Erfahrung in der Zusammenarbeit mit deutschen und österreichischen Unternehmen bei ihren Investitionen in der Region. Wir verstehen die deutsche Geschäftskultur und rechtlichen Anforderungen und können so einen nahtlosen Service bieten, der beide Rechtssysteme verbindet.",
@@ -132,7 +126,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     title: "德国业务部",
     subtitle: "德国与墨西哥之间的桥梁",
     mexicoLabel: "墨西哥城",
-    mexicoSubtitle: "Torre SOMA Chapultepec",
+    mexicoSubtitle: "Río Tamazunchale 205 Norte",
     germanyLabel: "德国",
     germanySubtitle: "德国业务部",
     historicalText: "34年来我们一直与德国企业合作。Santos & Saucedo设有专门的德国业务部,为在墨西哥和拉丁美洲投资的德语客户提供服务。我们德国业务部的律师精通德语、英语和西班牙语,在与德国和奥地利公司合作投资该地区方面拥有丰富的经验。我们了解德国的商业文化和法律要求,能够提供连接两个法律体系的无缝服务。",
@@ -157,7 +151,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     title: "German Desk",
     subtitle: "독일과 멕시코를 연결하는 다리",
     mexicoLabel: "멕시코시티",
-    mexicoSubtitle: "Torre SOMA Chapultepec",
+    mexicoSubtitle: "Río Tamazunchale 205 Norte",
     germanyLabel: "독일",
     germanySubtitle: "German Desk",
     historicalText: "34년 이상 독일 기업과 협력해 왔습니다. Santos & Saucedo는 멕시코와 라틴 아메리카에 투자하는 독일어권 고객을 위한 전담 German Desk를 운영하고 있습니다. 저희 German Desk 변호사들은 독일어, 영어, 스페인어에 능통하며, 독일 및 오스트리아 기업의 지역 투자에 대한 풍부한 경험을 보유하고 있습니다. 저희는 독일의 비즈니스 문화와 법적 요건을 이해하여 두 법률 시스템을 연결하는 원활한 서비스를 제공합니다.",
@@ -182,7 +176,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     title: "German Desk",
     subtitle: "ドイツとメキシコを結ぶ架け橋",
     mexicoLabel: "メキシコシティ",
-    mexicoSubtitle: "Torre SOMA Chapultepec",
+    mexicoSubtitle: "Río Tamazunchale 205 Norte",
     germanyLabel: "ドイツ",
     germanySubtitle: "German Desk",
     historicalText: "34年以上にわたりドイツ企業と協力してきました。Santos & Saucedoは、メキシコおよびラテンアメリカへの投資を行うドイツ語圏のクライアントにサービスを提供する専用のGerman Deskを維持しています。当事務所のGerman Deskの弁護士は、ドイツ語、英語、スペイン語に堪能であり、ドイツおよびオーストリア企業の当地域への投資に関する豊富な経験を持っています。私たちはドイツのビジネス文化と法的要件を理解しており、両法制度を橋渡しするシームレスなサービスを提供することができます。",
@@ -207,7 +201,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     title: "المكتب الألماني",
     subtitle: "جسرك بين ألمانيا والمكسيك",
     mexicoLabel: "مكسيكو سيتي",
-    mexicoSubtitle: "Torre SOMA Chapultepec",
+    mexicoSubtitle: "Río Tamazunchale 205 Norte",
     germanyLabel: "ألمانيا",
     germanySubtitle: "المكتب الألماني",
     historicalText: "منذ أكثر من 34 عامًا نعمل مع الشركات الألمانية. تحتفظ Santos & Saucedo بمكتب ألماني مخصص لخدمة العملاء الناطقين بالألمانية الذين يستثمرون في المكسيك وأمريكا اللاتينية. يجيد محامو المكتب الألماني لدينا اللغات الألمانية والإنجليزية والإسبانية، ولديهم خبرة واسعة في العمل مع الشركات الألمانية والنمساوية في استثماراتها في المنطقة. نحن نفهم ثقافة الأعمال الألمانية والمتطلبات القانونية، مما يمكننا من تقديم خدمة سلسة تربط بين النظامين القانونيين.",
@@ -232,7 +226,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     title: "German Desk",
     subtitle: "Ваш мост между Германией и Мексикой",
     mexicoLabel: "МЕХИКО",
-    mexicoSubtitle: "Torre SOMA Chapultepec",
+    mexicoSubtitle: "Río Tamazunchale 205 Norte",
     germanyLabel: "ГЕРМАНИЯ",
     germanySubtitle: "Немецкий отдел",
     historicalText: "Более 34 лет мы работаем с немецкими компаниями. Santos & Saucedo имеет специализированный German Desk для обслуживания немецкоязычных клиентов, инвестирующих в Мексику и Латинскую Америку. Наши адвокаты German Desk свободно владеют немецким, английским и испанским языками и имеют большой опыт работы с немецкими и австрийскими компаниями по их инвестициям в регионе. Мы понимаем немецкую деловую культуру и правовые требования, что позволяет нам предоставлять бесперебойный сервис, связывающий обе правовые системы.",
@@ -257,7 +251,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     title: "German Desk",
     subtitle: "Votre pont entre l'Allemagne et le Mexique",
     mexicoLabel: "MEXICO",
-    mexicoSubtitle: "Torre SOMA Chapultepec",
+    mexicoSubtitle: "Río Tamazunchale 205 Norte",
     germanyLabel: "ALLEMAGNE",
     germanySubtitle: "Bureau Allemand",
     historicalText: "Depuis plus de 34 ans, nous travaillons avec des entreprises allemandes. Santos & Saucedo dispose d'un German Desk dédié pour servir les clients germanophones investissant au Mexique et en Amérique latine. Les avocats de notre German Desk parlent couramment l'allemand, l'anglais et l'espagnol, et possèdent une vaste expérience de travail avec des entreprises allemandes et autrichiennes sur leurs investissements dans la région. Nous comprenons la culture d'entreprise allemande et les exigences juridiques, ce qui nous permet de fournir un service fluide qui relie les deux systèmes juridiques.",
@@ -282,7 +276,7 @@ const content: Record<SupportedLanguage, ContentTranslation> = {
     title: "German Desk",
     subtitle: "Il vostro ponte tra Germania e Messico",
     mexicoLabel: "CITTÀ DEL MESSICO",
-    mexicoSubtitle: "Torre SOMA Chapultepec",
+    mexicoSubtitle: "Río Tamazunchale 205 Norte",
     germanyLabel: "GERMANIA",
     germanySubtitle: "German Desk",
     historicalText: "Da oltre 34 anni collaboriamo con aziende tedesche. Santos & Saucedo mantiene un German Desk dedicato per servire i clienti di lingua tedesca che investono in Messico e in America Latina. I nostri avvocati del German Desk parlano fluentemente tedesco, inglese e spagnolo e hanno una vasta esperienza nel lavorare con aziende tedesche e austriache sui loro investimenti nella regione. Comprendiamo la cultura aziendale tedesca e i requisiti legali, il che ci consente di fornire un servizio senza soluzione di continuità che collega entrambi i sistemi giuridici.",
@@ -354,19 +348,17 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
   const [showGermanyModal, setShowGermanyModal] = useState(false);
 
   const gdSocios: GDMember[] = [
-    { id: "claus-von-wobeser", name: "Claus von Wobeser", photo: clausVonWobeserPhoto,       category: t.foundingPartner, slug: "claus-von-wobeser", number: "01" },
-    { id: "luis-burgueno",     name: "Luis Burgueño",     photo: luisBurguenoPhoto,           category: t.partner,         slug: "luis-burgueno",     number: "02" },
+    { id: "enrique-hernan-santos-guzman", name: "Enrique Hernán Santos Gúzman", photo: logoColor, category: t.foundingPartner, slug: "enrique-hernan-santos-guzman", number: "01" },
+    { id: "socio-fundador-saucedo", name: "[FALTA: Nombre del Socio Fundador Saucedo]", photo: logoColor, category: t.partner, slug: "socio-fundador-saucedo", number: "02" },
   ];
 
   const gdOfCounsel: GDMember[] = [
-    { id: "katharina-roehr", name: "Katharina Roehr",  photo: katharinaRoehrPhoto, category: t.ofCounselTitle, slug: "katharina-roehr", number: "01" },
-    { id: "rupert-huttler",  name: "Rupert Hüttler",   photo: rupertHuttlerPhoto,  category: t.ofCounselTitle, slug: "rupert-huttler",  number: "02" },
+    { id: "consejero-administracion-laboral", name: "[FALTA: Nombre de Consejero]", photo: logoColor, category: t.ofCounselTitle, slug: "consejero-administracion-laboral", number: "01" },
   ];
 
   const gdAssociates: GDMember[] = [
-    { id: "anna-maria-brandstadter", name: "Anna Maria Brandstädter", photo: annaMariaBrandstadterPhoto, category: t.associatesTitle, slug: "anna-maria-brandstadter", number: "01" },
-    { id: "michael-schreiber",       name: "Michael Schreiber",       photo: michaelSchreiberPhoto,       category: t.associatesTitle, slug: "michael-schreiber",       number: "02" },
-    { id: "alexander-barnes",        name: "Alexander Barnes",        photo: alexanderBarnesPhoto,         category: t.associatesTitle, slug: "alexander-barnes",        number: "03" },
+    { id: "asociada-senior-auditoria", name: "[FALTA: Nombre de Asociada Senior]", photo: logoColor, category: t.associatesTitle, slug: "asociada-senior-auditoria", number: "01" },
+    { id: "asociado-relaciones-laborales", name: "[FALTA: Nombre de Asociado]", photo: logoColor, category: t.associatesTitle, slug: "asociado-relaciones-laborales", number: "02" },
   ];
 
   return (
@@ -451,7 +443,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                   </div>
                 </div>
                 <p className="text-sm text-white/50 leading-relaxed">
-                  Torre SOMA Chapultepec Piso 18, Campos Elíseos 204, Polanco
+                  Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.
                 </p>
                 <span className="inline-flex items-center gap-1.5 mt-4 text-xs text-primary uppercase tracking-[0.12em] font-medium group-hover:gap-2.5 transition-all">
                   {t.viewDetails} <ArrowRight className="w-3.5 h-3.5" />
@@ -559,7 +551,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
             <div className="relative h-72 md:h-80 overflow-hidden">
               <img
                 src={torreSomaImg}
-                alt="Torre SOMA Chapultepec"
+                alt="Río Tamazunchale 205 Norte"
                 className="w-full h-full object-cover"
                 data-testid="img-modal-mexico"
               />
@@ -586,8 +578,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                     {t.addressLabel}
                   </p>
                   <p className="text-sm text-foreground leading-relaxed">
-                    Torre SOMA Chapultepec Piso 18, Campos Elíseos 204, Polanco, C.P. 11560, Ciudad de México
-                  </p>
+                    Río Tamazunchale 205 Norte, San Pedro Garza García, N.L., San Pedro Garza García, Nuevo León, México</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -596,7 +587,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                   <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mb-1.5 font-medium">
                     {t.phoneLabel}
                   </p>
-                  <p className="text-sm text-foreground">+52 55 5258 1000</p>
+                  <p className="text-sm text-foreground">+52 81 8335 2930</p>
                 </div>
               </div>
               <Button

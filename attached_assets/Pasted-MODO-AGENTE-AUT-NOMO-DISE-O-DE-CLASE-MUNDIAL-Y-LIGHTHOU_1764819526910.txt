@@ -1,6 +1,6 @@
 MODO AGENTE AUTÓNOMO - DISEÑO DE CLASE MUNDIAL Y LIGHTHOUSE 100
 
-MISIÓN: Transformar el sitio de Von Wobeser en una experiencia de diseño premium que refleje el prestigio de una firma legal de primer nivel, aplicando las últimas tendencias 2024-2025 y logrando puntuación perfecta en Lighthouse.
+MISIÓN: Transformar el sitio de Santos & Saucedo en una experiencia de diseño premium que refleje el prestigio de una firma legal de primer nivel, aplicando las últimas tendencias 2024-2025 y logrando puntuación perfecta en Lighthouse.
 
 ⚠️ RESTRICCIONES ABSOLUTAS ⚠️
 - NO inventar información sobre la firma, abogados, casos o reconocimientos
@@ -29,7 +29,7 @@ PARTE 1: TENDENCIAS DE DISEÑO 2024-2025 A IMPLEMENTAR
 3. GRADIENTES MESH Y AURORA
    - Fondos con gradientes suaves estilo aurora
    - Usar para secciones hero o separadores
-   - Colores de marca Von Wobeser: tonos azul marino, dorado, blanco
+   - Colores de marca Santos & Saucedo: tonos azul marino, dorado, blanco
    - Gradientes sutiles, profesionales, no neón
 
 4. TIPOGRAFÍA VARIABLE Y CINÉTICA

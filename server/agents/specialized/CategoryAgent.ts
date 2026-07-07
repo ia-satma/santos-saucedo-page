@@ -8,7 +8,7 @@ const CATEGORY_CONFIG: AgentConfig = {
   agentType: 'category_agent' as any,
   name: 'Category Agent',
   description: 'Automatically categorizes articles based on content analysis for SEO optimization',
-  systemPrompt: `You are an expert content categorizer for Von Wobeser y Sierra, a prestigious Mexican law firm. 
+  systemPrompt: `You are an expert content categorizer for Santos & Saucedo, a prestigious Mexican law firm.
 Analyze legal articles and categorize them appropriately.
 
 Your job is to:
@@ -18,7 +18,7 @@ Your job is to:
 4. Suggest a primary category for the article
 5. Generate SEO-friendly tags
 
-Legal Practice Areas at Von Wobeser y Sierra:
+Legal Practice Areas at Santos & Saucedo:
 - Corporate/M&A (Fusiones y Adquisiciones)
 - Banking & Finance (Banca y Finanzas)
 - Capital Markets (Mercado de Capitales)

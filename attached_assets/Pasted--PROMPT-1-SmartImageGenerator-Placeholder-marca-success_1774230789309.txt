@@ -1,7 +1,7 @@
 # PROMPT 1: SmartImageGenerator — Placeholder marca `success: true` (CRITICO)
 
 ```
-CONTEXTO: Este proyecto es el website de Von Wobeser y Sierra, una firma de abogados mexicana. Usa Express + React + TypeScript. El sistema tiene un generador de imagenes AI (SmartImageGenerator) que intenta DALL-E primero, luego Gemini como fallback.
+CONTEXTO: Este proyecto es el website de Santos & Saucedo, una firma de abogados mexicana. Usa Express + React + TypeScript. El sistema tiene un generador de imagenes AI (SmartImageGenerator) que intenta DALL-E primero, luego Gemini como fallback.
 
 PROBLEMA: En el archivo `server/services/SmartImageGenerator.ts`, cuando AMBOS motores de generacion de imagenes fallan (DALL-E y Gemini), el sistema asigna un placeholder SVG pero marca el resultado como `success: true` (linea 366). Esto es incorrecto — los callers creen que la imagen se genero exitosamente cuando en realidad es un placeholder generico. Esto oculta errores y previene la recuperacion adecuada.
 

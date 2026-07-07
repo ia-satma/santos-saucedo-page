@@ -122,14 +122,14 @@ Return JSON with cleaned title, content, and excerpt.`;
   private preClean(text: string): string {
     return text
       .replace(/-- \d+ of \d+ --/g, '')
-      .replace(/VON WOBESER Y SIERRA, S\.C\./g, '')
+      .replace(/SANTOS & SAUCEDO, S\.C\./g, '')
       .replace(/Paseo de los Tamarindos 60, 05120 Ciudad de México/g, '')
-      .replace(/\+52 \(55\) 5258 1000/g, '')
-      .replace(/vonwobeser\.com/g, '')
+      .replace(/\+52 81 8335 2930/g, '')
+      .replace(/santossaucedo\.com/g, '')
       .replace(/La información incluida en esta nota no constituye[\s\S]*?abogados aquí mencionados\./g, '')
       .replace(/A T E N T A M E N T E/g, '')
       .replace(/Para obtener información adicional, contactar a:/g, '')
-      .replace(/[a-z]+@vwys\.com\.mx/gi, '')
+      .replace(/[a-z]+@santossaucedo\.com/gi, '')
       .replace(/\+52 \(55\) \d{4}[- ]\d{4}/g, '')
       .replace(/\n{4,}/g, '\n\n\n')
       .trim();

@@ -25,7 +25,7 @@ const TRANSLATOR_CONFIG: AgentConfig = {
   agentType: 'polyglot_translator',
   name: 'Polyglot Translator Agent',
   description: 'Translates legal content to 10 languages with specialized legal terminology',
-  systemPrompt: `You are an expert legal translator for Von Wobeser y Sierra, a prestigious Mexican law firm. Your translations must be:
+  systemPrompt: `You are an expert legal translator for Santos & Saucedo, a prestigious Mexican law firm. Your translations must be:
 
 1. ACCURATE: Preserve legal meaning precisely
 2. PROFESSIONAL: Use formal legal register appropriate for corporate communications

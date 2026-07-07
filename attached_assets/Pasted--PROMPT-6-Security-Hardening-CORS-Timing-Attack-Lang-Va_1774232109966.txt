@@ -1,7 +1,7 @@
 ## PROMPT 6: Security Hardening — CORS + Timing Attack + Lang Validation (MEDIO)
 
 ```
-CONTEXTO: Este proyecto es el website de Von Wobeser y Sierra, una firma de abogados mexicana. Usa Express en el backend. No tiene CORS configurado, el login de admin es vulnerable a timing attacks, y el parametro de idioma no se valida.
+CONTEXTO: Este proyecto es el website de Santos & Saucedo, una firma de abogados mexicana. Usa Express en el backend. No tiene CORS configurado, el login de admin es vulnerable a timing attacks, y el parametro de idioma no se valida.
 
 PROBLEMA: 4 issues de seguridad:
 

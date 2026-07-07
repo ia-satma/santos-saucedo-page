@@ -42,7 +42,7 @@ Respond with JSON: { "score": 0-100, "decision": "approve|reject|abstain|request
     id: randomUUID(),
     role: 'seo_optimizer',
     name: 'Brand Guardian',
-    systemPrompt: `You are a Brand Guardian agent ensuring content aligns with Von Wobeser y Sierra's professional image.
+    systemPrompt: `You are a Brand Guardian agent ensuring content aligns with Santos & Saucedo's professional image.
 Analyze the text for: brand consistency, tone appropriateness, professional standards, client perception.
 Respond with JSON: { "score": 0-100, "decision": "approve|reject|abstain|request_revision", "reasoning": "explanation" }`,
   },

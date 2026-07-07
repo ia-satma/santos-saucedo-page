@@ -47,7 +47,7 @@ export default function Careers() {
         { icon: Lightbulb, title: "Innovation", text: "We embrace new ideas and approaches to solve challenges" },
       ],
       environmentTitle: "Work Environment",
-      environmentText: "Our modern offices in Torre SOMA Chapultepec offer a dynamic and inspiring workspace. We believe in work-life balance and provide flexible arrangements to support our team members' well-being. Join a firm where your voice matters and your contributions are recognized.",
+      environmentText: "Our modern offices in Río Tamazunchale 205 Norte offer a dynamic and inspiring workspace. We believe in work-life balance and provide flexible arrangements to support our team members' well-being. Join a firm where your voice matters and your contributions are recognized.",
       benefitsTitle: "Benefits & Perks",
       benefitsSubtitle: "We take care of our team",
       benefits: [
@@ -145,7 +145,7 @@ export default function Careers() {
         { icon: Lightbulb, title: "Innovación", text: "Adoptamos nuevas ideas y enfoques para resolver desafíos" },
       ],
       environmentTitle: "Ambiente de Trabajo",
-      environmentText: "Nuestras oficinas modernas en Torre SOMA Chapultepec ofrecen un espacio de trabajo dinámico e inspirador. Creemos en el equilibrio entre vida y trabajo y proporcionamos arreglos flexibles para apoyar el bienestar de nuestro equipo. Únete a una firma donde tu voz importa y tus contribuciones son reconocidas.",
+      environmentText: "Nuestras oficinas modernas en Río Tamazunchale 205 Norte ofrecen un espacio de trabajo dinámico e inspirador. Creemos en el equilibrio entre vida y trabajo y proporcionamos arreglos flexibles para apoyar el bienestar de nuestro equipo. Únete a una firma donde tu voz importa y tus contribuciones son reconocidas.",
       benefitsTitle: "Beneficios y Prestaciones",
       benefitsSubtitle: "Cuidamos de nuestro equipo",
       benefits: [
@@ -243,7 +243,7 @@ export default function Careers() {
         { icon: Lightbulb, title: "Innovation", text: "Wir begrüßen neue Ideen und Ansätze zur Lösung von Herausforderungen" },
       ],
       environmentTitle: "Arbeitsumgebung",
-      environmentText: "Unsere modernen Büros im Torre SOMA Chapultepec bieten einen dynamischen und inspirierenden Arbeitsplatz. Wir glauben an Work-Life-Balance und bieten flexible Regelungen zur Unterstützung des Wohlbefindens unserer Teammitglieder. Treten Sie einer Kanzlei bei, in der Ihre Stimme zählt und Ihre Beiträge anerkannt werden.",
+      environmentText: "Unsere modernen Büros im Río Tamazunchale 205 Norte bieten einen dynamischen und inspirierenden Arbeitsplatz. Wir glauben an Work-Life-Balance und bieten flexible Regelungen zur Unterstützung des Wohlbefindens unserer Teammitglieder. Treten Sie einer Kanzlei bei, in der Ihre Stimme zählt und Ihre Beiträge anerkannt werden.",
       benefitsTitle: "Vorteile",
       benefitsSubtitle: "Wir kümmern uns um unser Team",
       benefits: [
@@ -341,7 +341,7 @@ export default function Careers() {
         { icon: Lightbulb, title: "创新", text: "我们拥抱新思想和新方法来解决挑战" },
       ],
       environmentTitle: "工作环境",
-      environmentText: "我们位于Torre SOMA Chapultepec的现代化办公室提供充满活力和灵感的工作空间。我们相信工作与生活的平衡，并提供灵活的安排来支持团队成员的福祉。加入一家您的声音很重要、您的贡献得到认可的公司。",
+      environmentText: "我们位于Río Tamazunchale 205 Norte的现代化办公室提供充满活力和灵感的工作空间。我们相信工作与生活的平衡，并提供灵活的安排来支持团队成员的福祉。加入一家您的声音很重要、您的贡献得到认可的公司。",
       benefitsTitle: "福利待遇",
       benefitsSubtitle: "我们关心我们的团队",
       benefits: [
@@ -439,7 +439,7 @@ export default function Careers() {
         { icon: Lightbulb, title: "혁신", text: "우리는 도전을 해결하기 위한 새로운 아이디어와 접근 방식을 수용합니다" },
       ],
       environmentTitle: "근무 환경",
-      environmentText: "Torre SOMA Chapultepec에 위치한 우리의 현대적인 사무실은 역동적이고 영감을 주는 작업 공간을 제공합니다. 우리는 일과 삶의 균형을 믿으며 팀원들의 웰빙을 지원하기 위한 유연한 근무 방식을 제공합니다. 여러분의 목소리가 중요하고 기여가 인정받는 회사에 합류하세요.",
+      environmentText: "Río Tamazunchale 205 Norte에 위치한 우리의 현대적인 사무실은 역동적이고 영감을 주는 작업 공간을 제공합니다. 우리는 일과 삶의 균형을 믿으며 팀원들의 웰빙을 지원하기 위한 유연한 근무 방식을 제공합니다. 여러분의 목소리가 중요하고 기여가 인정받는 회사에 합류하세요.",
       benefitsTitle: "복리후생",
       benefitsSubtitle: "우리는 팀을 소중히 여깁니다",
       benefits: [
@@ -537,7 +537,7 @@ export default function Careers() {
         { icon: Lightbulb, title: "革新", text: "私たちは課題を解決するための新しいアイデアとアプローチを受け入れます" },
       ],
       environmentTitle: "職場環境",
-      environmentText: "Torre SOMA Chapultepecにある私たちの近代的なオフィスは、ダイナミックでインスピレーションを与える職場を提供しています。私たちはワークライフバランスを信じており、チームメンバーの健康をサポートするための柔軟な勤務形態を提供しています。あなたの声が大切にされ、貢献が認められる事務所に参加してください。",
+      environmentText: "Río Tamazunchale 205 Norteにある私たちの近代的なオフィスは、ダイナミックでインスピレーションを与える職場を提供しています。私たちはワークライフバランスを信じており、チームメンバーの健康をサポートするための柔軟な勤務形態を提供しています。あなたの声が大切にされ、貢献が認められる事務所に参加してください。",
       benefitsTitle: "福利厚生",
       benefitsSubtitle: "私たちはチームを大切にします",
       benefits: [
@@ -635,7 +635,7 @@ export default function Careers() {
         { icon: Lightbulb, title: "الابتكار", text: "نتبنى أفكارًا ومناهج جديدة لحل التحديات" },
       ],
       environmentTitle: "بيئة العمل",
-      environmentText: "توفر مكاتبنا الحديثة في Torre SOMA Chapultepec مساحة عمل ديناميكية وملهمة. نؤمن بالتوازن بين العمل والحياة ونوفر ترتيبات مرنة لدعم رفاهية أعضاء فريقنا. انضم إلى شركة حيث صوتك مهم ومساهماتك معترف بها.",
+      environmentText: "توفر مكاتبنا الحديثة في Río Tamazunchale 205 Norte مساحة عمل ديناميكية وملهمة. نؤمن بالتوازن بين العمل والحياة ونوفر ترتيبات مرنة لدعم رفاهية أعضاء فريقنا. انضم إلى شركة حيث صوتك مهم ومساهماتك معترف بها.",
       benefitsTitle: "المزايا والمكافآت",
       benefitsSubtitle: "نحن نهتم بفريقنا",
       benefits: [
@@ -733,7 +733,7 @@ export default function Careers() {
         { icon: Lightbulb, title: "Инновации", text: "Мы принимаем новые идеи и подходы для решения задач" },
       ],
       environmentTitle: "Рабочая среда",
-      environmentText: "Наши современные офисы в Torre SOMA Chapultepec предлагают динамичное и вдохновляющее рабочее пространство. Мы верим в баланс между работой и личной жизнью и предоставляем гибкие условия для поддержки благополучия членов нашей команды. Присоединяйтесь к фирме, где ваш голос имеет значение, а ваш вклад признаётся.",
+      environmentText: "Наши современные офисы в Río Tamazunchale 205 Norte предлагают динамичное и вдохновляющее рабочее пространство. Мы верим в баланс между работой и личной жизнью и предоставляем гибкие условия для поддержки благополучия членов нашей команды. Присоединяйтесь к фирме, где ваш голос имеет значение, а ваш вклад признаётся.",
       benefitsTitle: "Преимущества и льготы",
       benefitsSubtitle: "Мы заботимся о нашей команде",
       benefits: [
@@ -831,7 +831,7 @@ export default function Careers() {
         { icon: Lightbulb, title: "Innovation", text: "Nous adoptons de nouvelles idées et approches pour résoudre les défis" },
       ],
       environmentTitle: "Environnement de Travail",
-      environmentText: "Nos bureaux modernes dans la Torre SOMA Chapultepec offrent un espace de travail dynamique et inspirant. Nous croyons à l'équilibre travail-vie personnelle et proposons des arrangements flexibles pour soutenir le bien-être de nos collaborateurs. Rejoignez un cabinet où votre voix compte et vos contributions sont reconnues.",
+      environmentText: "Nos bureaux modernes dans la Río Tamazunchale 205 Norte offrent un espace de travail dynamique et inspirant. Nous croyons à l'équilibre travail-vie personnelle et proposons des arrangements flexibles pour soutenir le bien-être de nos collaborateurs. Rejoignez un cabinet où votre voix compte et vos contributions sont reconnues.",
       benefitsTitle: "Avantages",
       benefitsSubtitle: "Nous prenons soin de notre équipe",
       benefits: [
@@ -929,7 +929,7 @@ export default function Careers() {
         { icon: Lightbulb, title: "Innovazione", text: "Accogliamo nuove idee e approcci per risolvere le sfide" },
       ],
       environmentTitle: "Ambiente di Lavoro",
-      environmentText: "I nostri moderni uffici nella Torre SOMA Chapultepec offrono uno spazio di lavoro dinamico e stimolante. Crediamo nell'equilibrio tra lavoro e vita privata e offriamo accordi flessibili per supportare il benessere dei membri del nostro team. Unisciti a uno studio dove la tua voce conta e i tuoi contributi sono riconosciuti.",
+      environmentText: "I nostri moderni uffici nella Río Tamazunchale 205 Norte offrono uno spazio di lavoro dinamico e stimolante. Crediamo nell'equilibrio tra lavoro e vita privata e offriamo accordi flessibili per supportare il benessere dei membri del nostro team. Unisciti a uno studio dove la tua voce conta e i tuoi contributi sono riconosciuti.",
       benefitsTitle: "Benefit e Vantaggi",
       benefitsSubtitle: "Ci prendiamo cura del nostro team",
       benefits: [

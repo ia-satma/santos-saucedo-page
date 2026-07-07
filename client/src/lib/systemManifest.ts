@@ -242,7 +242,7 @@ export const AI_HANDS_AGENTS: SystemFeature[] = [
     keyCapabilities: [
       'Fallback de 3 motores de imagen',
       'Sanitización de 28 términos sensibles',
-      'Overlay automático de logo VWS',
+      'Overlay automático de logo S&S',
       'Garantía 100% de generación',
       'Inyección de paleta corporativa',
     ],
@@ -558,7 +558,7 @@ export const CORE_INFRASTRUCTURE: SystemFeature[] = [
     category: 'infrastructure',
     name: 'Sincronización en la Nube Persistente',
     technicalName: 'PCloudStorage',
-    technicalDetail: 'Autenticación OAuth con pCloud, sincronización bidireccional de conocimiento y evolución, path base /VonWobeser/agents, upload multipart, listado de archivos con metadata, tolerancia a fallos de red.',
+    technicalDetail: 'Autenticación OAuth con pCloud, sincronización bidireccional de conocimiento y evolución, path base /SantosSaucedo/agents, upload multipart, listado de archivos con metadata, tolerancia a fallos de red.',
     userBenefit: 'Persistencia de conocimiento de agentes a través de sesiones y reinicios. El aprendizaje nunca se pierde.',
     status: 'production',
     keyCapabilities: [
@@ -569,7 +569,7 @@ export const CORE_INFRASTRUCTURE: SystemFeature[] = [
       'Persistencia cross-session',
     ],
     technicalSpecs: {
-      basePath: '/VonWobeser/agents',
+      basePath: '/SantosSaucedo/agents',
       provider: 'pCloud',
     },
   },
@@ -635,7 +635,7 @@ export const CORE_INFRASTRUCTURE: SystemFeature[] = [
     category: 'infrastructure',
     name: 'Detector Geográfico de Idioma',
     technicalName: 'GeolocationLanguageDetector',
-    technicalDetail: 'Endpoint /api/detect-language con ip-api.com, mapeo país→idioma para 40+ países (MX→es, DE→de, CN→zh, etc.), fallback a español para países no mapeados, localStorage persistence (vwb_language), HTML lang attribute update.',
+    technicalDetail: 'Endpoint /api/detect-language con ip-api.com, mapeo país→idioma para 40+ países (MX→es, DE→de, CN→zh, etc.), fallback a español para países no mapeados, localStorage persistence (ss_language), HTML lang attribute update.',
     userBenefit: 'Experiencia personalizada desde el primer visit. Visitantes ven contenido en su idioma sin configuración manual.',
     status: 'production',
     keyCapabilities: [
@@ -727,7 +727,7 @@ export const PUBLIC_MODULES: SystemFeature[] = [
     category: 'public_site',
     name: 'Centro de Noticias y Publicaciones',
     technicalName: 'News.tsx + NewsDetail.tsx + Articles.tsx',
-    technicalDetail: 'Scroll infinito con paginación, traducción dinámica vía useTranslatedContent, fallback de imagen con branding VWS, formateo de fecha por locale, filtrado categoría/autor, slugs optimizados para SEO.',
+    technicalDetail: 'Scroll infinito con paginación, traducción dinámica vía useTranslatedContent, fallback de imagen con branding S&S, formateo de fecha por locale, filtrado categoría/autor, slugs optimizados para SEO.',
     userBenefit: 'Noticias legales en tiempo real en 10 idiomas con carga inteligente. Posiciona la Firma como líder de pensamiento en asuntos legales mexicanos.',
     status: 'production',
     keyCapabilities: [
@@ -882,7 +882,7 @@ export const PUBLIC_MODULES: SystemFeature[] = [
     category: 'public_site',
     name: 'Showcase de Oficinas Premium',
     technicalName: 'Experience.tsx + Offices.tsx + NewOfficesPopup.tsx',
-    technicalDetail: 'Galería fotográfica de oficinas, popup de nuevas oficinas, showcase Torre SOMA.',
+    technicalDetail: 'Galería fotográfica de oficinas, popup de nuevas oficinas, showcase de oficinas Santos & Saucedo.',
     userBenefit: 'Tour visual de espacios premium. Demuestra estabilidad e inversión en experiencia del cliente.',
     status: 'production',
     keyCapabilities: [

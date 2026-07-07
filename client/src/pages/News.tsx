@@ -30,7 +30,7 @@ function NewsImageWithFallback({
     return (
       <div className={`bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center ${className}`}>
         <span className="text-4xl font-heading font-bold text-primary/30 tracking-wider">
-          VWS
+          S&S
         </span>
       </div>
     );

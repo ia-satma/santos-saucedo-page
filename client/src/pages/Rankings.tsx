@@ -160,12 +160,12 @@ const awards: AwardInfo[] = [
 ];
 
 const rankedLawyers = [
-  { name: "Claus von Wobeser", slug: "claus-von-wobeser", title: "Founding Partner", titleEs: "Socio Fundador" },
-  { name: "Pablo Fautsch", slug: "pablo-fautsch", title: "Partner", titleEs: "Socio" },
-  { name: "Fernando Carreño", slug: "fernando-carreno", title: "Partner", titleEs: "Socio" },
-  { name: "Diego Sierra", slug: "diego-sierra", title: "Partner", titleEs: "Socio" },
-  { name: "Adrián Magallanes", slug: "adrian-magallanes", title: "Partner", titleEs: "Socio" },
-  { name: "Montserrat Manzano", slug: "montserrat-manzano", title: "Partner", titleEs: "Socio" },
+  { name: "Enrique Hernán Santos Gúzman", slug: "enrique-hernan-santos-guzman", title: "Founding Partner", titleEs: "Socio Fundador" },
+  { name: "[FALTA: Nombre del Socio Fundador Saucedo]", slug: "socio-fundador-saucedo", title: "Founding Partner", titleEs: "Socio Fundador" },
+  { name: "[FALTA: Nombre de Socia]", slug: "socia-conflictos-laborales", title: "Partner", titleEs: "Socia" },
+  { name: "[FALTA: Nombre de Consejero]", slug: "consejero-administracion-laboral", title: "Counsel", titleEs: "Consejero" },
+  { name: "[FALTA: Nombre de Asociada Senior]", slug: "asociada-senior-auditoria", title: "Senior Associate", titleEs: "Asociada Senior" },
+  { name: "[FALTA: Nombre de Asociado]", slug: "asociado-relaciones-laborales", title: "Associate", titleEs: "Asociado" },
 ];
 
 export default function Rankings() {

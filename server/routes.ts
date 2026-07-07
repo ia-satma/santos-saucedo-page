@@ -143,7 +143,7 @@ function generateVCard(member: any, language: "es" | "en" = "es"): string {
     'VERSION:3.0',
     `FN:${safeName}`,
     `N:${lastName};${firstName};;;`,
-    `ORG:Von Wobeser y Sierra, S.C.`,
+    `ORG:Santos & Saucedo, S.C.`,
     `TITLE:${title}`,
     `ROLE:${role}`,
   ];
@@ -156,8 +156,8 @@ function generateVCard(member: any, language: "es" | "en" = "es"): string {
     lines.push(`TEL;TYPE=WORK,VOICE:${member.phone}`);
   }
   
-  lines.push(`ADR;TYPE=WORK:;;Torre SOMA Chapultepec Piso 18, Campos Elíseos 204;Ciudad de México;CDMX;11560;México`);
-  lines.push(`URL:https://www.vonwobeser.com`);
+  lines.push(`ADR;TYPE=WORK:;;Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.;Ciudad de México;CDMX;11560;México`);
+  lines.push(`URL:https://www.santossaucedo.com`);
   
   if (member.linkedinUrl) {
     lines.push(`X-SOCIALPROFILE;TYPE=linkedin:${member.linkedinUrl}`);
@@ -246,7 +246,7 @@ export async function registerRoutes(
     immutable: true,
   }));
 
-  // Serve AI-generated images with Von Wobeser branding
+  // Serve AI-generated images with Santos & Saucedo branding
   const generatedImagesDir = path.join(process.cwd(), 'public', 'generated-images');
   if (!fs.existsSync(generatedImagesDir)) {
     fs.mkdirSync(generatedImagesDir, { recursive: true });
@@ -782,7 +782,7 @@ export async function registerRoutes(
   });
 
   app.get("/robots.txt", (_req, res) => {
-    const robotsTxt = `# robots.txt for https://www.vonwobeser.com
+    const robotsTxt = `# robots.txt for https://www.santossaucedo.com
 User-agent: *
 Allow: /
 
@@ -790,7 +790,7 @@ Allow: /
 Disallow: /api/
 
 # Sitemap location
-Sitemap: https://www.vonwobeser.com/sitemap.xml
+Sitemap: https://www.santossaucedo.com/sitemap.xml
 `;
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     res.send(robotsTxt);
@@ -798,7 +798,7 @@ Sitemap: https://www.vonwobeser.com/sitemap.xml
 
   app.get("/sitemap.xml", async (_req, res) => {
     try {
-      const baseUrl = 'https://www.vonwobeser.com';
+      const baseUrl = 'https://www.santossaucedo.com';
       const today = new Date().toISOString().split('T')[0];
 
       const staticPages = [

@@ -4,7 +4,7 @@ import { eq, or, ilike } from 'drizzle-orm';
 import { openai } from '../openai';
 
 async function generateBio(name: string, role: string, roleEs: string): Promise<{ bioEs: string; bio: string }> {
-  const prompt = `Eres un experto en comunicación corporativa para un despacho de abogados mexicano de primer nivel (Von Wobeser y Sierra). 
+  const prompt = `Eres un experto en comunicación corporativa para un despacho de abogados mexicano de primer nivel (Santos & Saucedo).
 
 Genera una biografía profesional BREVE (2-3 oraciones, máximo 150 palabras) para un asociado con los siguientes datos:
 - Nombre: ${name}
@@ -37,8 +37,8 @@ Responde SOLO con un JSON válido en este formato:
   } catch (error) {
     console.error(`Error generating bio for ${name}:`, error);
     return {
-      bioEs: `${name} es asociado/a en Von Wobeser y Sierra, especializado/a en ${roleEs || role}. Se dedica a brindar soluciones legales estratégicas y efectivas a los clientes del despacho.`,
-      bio: `${name} is an associate at Von Wobeser y Sierra, specializing in ${role || roleEs}. They are dedicated to providing strategic and effective legal solutions to the firm's clients.`
+      bioEs: `${name} es asociado/a en Santos & Saucedo, especializado/a en ${roleEs || role}. Se dedica a brindar soluciones legales estratégicas y efectivas a los clientes del despacho.`,
+      bio: `${name} is an associate at Santos & Saucedo, specializing in ${role || roleEs}. They are dedicated to providing strategic and effective legal solutions to the firm's clients.`
     };
   }
 }

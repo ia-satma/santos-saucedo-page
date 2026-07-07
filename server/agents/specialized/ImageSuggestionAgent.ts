@@ -5,7 +5,7 @@ import { news } from '../../../shared/schema';
 import { eq } from 'drizzle-orm';
 import { smartImageGenerator } from '../../services/SmartImageGenerator';
 
-const VON_WOBESER_BRAND = {
+const SANTOS_SAUCEDO_BRAND = {
   primaryColor: '#202058',
   colorName: 'deep burgundy red',
   style: 'professional corporate legal',
@@ -15,13 +15,13 @@ const VON_WOBESER_BRAND = {
 const IMAGE_CONFIG: AgentConfig = {
   agentType: 'image_suggestion' as any,
   name: 'Image Suggestion Agent',
-  description: 'Analyzes article content and generates branded images using DALL-E 3 with Von Wobeser corporate identity',
-  systemPrompt: `You are an expert at creating visual content for Von Wobeser y Sierra, a prestigious Mexican law firm.
+  description: 'Analyzes article content and generates branded images using DALL-E 3 with Santos & Saucedo corporate identity',
+  systemPrompt: `You are an expert at creating visual content for Santos & Saucedo, a prestigious Mexican law firm.
 
 BRAND GUIDELINES (Manual de Identidad Corporativa):
-- Primary Color: ${VON_WOBESER_BRAND.primaryColor} (${VON_WOBESER_BRAND.colorName})
-- Style: ${VON_WOBESER_BRAND.style}
-- Aesthetics: ${VON_WOBESER_BRAND.aesthetics}
+- Primary Color: ${SANTOS_SAUCEDO_BRAND.primaryColor} (${SANTOS_SAUCEDO_BRAND.colorName})
+- Style: ${SANTOS_SAUCEDO_BRAND.style}
+- Aesthetics: ${SANTOS_SAUCEDO_BRAND.aesthetics}
 - NO rounded corners - all elements should have sharp, clean edges
 - Color palette: burgundy red (#202058), white, dark grays, and gold accents
 
@@ -80,7 +80,7 @@ export class ImageSuggestionAgent extends BaseAgent {
         [
           {
             role: 'user',
-            content: `Article Title: ${title}\n\nArticle Content:\n${content.substring(0, 2000)}...\n\nGenerate an image prompt that follows Von Wobeser brand guidelines (burgundy red #202058, professional corporate style, sharp edges - no rounded corners).`,
+            content: `Article Title: ${title}\n\nArticle Content:\n${content.substring(0, 2000)}...\n\nGenerate an image prompt that follows Santos & Saucedo brand guidelines (burgundy red #202058, professional corporate style, sharp edges - no rounded corners).`,
           },
         ],
         { jsonMode: true, maxTokens: 600 }
@@ -121,7 +121,7 @@ export class ImageSuggestionAgent extends BaseAgent {
             sanitizedPrompt: imageResult.sanitizedPrompt,
             promptWasSanitized: imageResult.promptWasSanitized,
             themes: analysis.themes || [],
-            style: analysis.style || 'Von Wobeser corporate',
+            style: analysis.style || 'Santos & Saucedo corporate',
             brandCompliant: true,
             logoOverlay: imageResult.engine !== 'placeholder',
             imageGenerated: imageResult.engine !== 'placeholder',

@@ -13,8 +13,8 @@ interface LanguageContextType {
   isDetecting: boolean;
 }
 
-const STORAGE_KEY = "vwb_language";
-const DETECTION_KEY = "vwb_language_detected";
+const STORAGE_KEY = "ss_language";
+const DETECTION_KEY = "ss_language_detected";
 const DEFAULT_LANGUAGE: LanguageCode = isStaticSite ? "es" : "en";
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);

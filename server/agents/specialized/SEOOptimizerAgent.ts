@@ -8,7 +8,7 @@ const SEO_CONFIG: AgentConfig = {
   agentType: 'seo_optimizer',
   name: 'SEO Optimizer Agent',
   description: 'Optimizes article titles, meta descriptions, and content for search engines',
-  systemPrompt: `You are an SEO specialist for Von Wobeser y Sierra law firm. Your task is to optimize legal articles for search engines while maintaining professional tone.
+  systemPrompt: `You are an SEO specialist for Santos & Saucedo law firm. Your task is to optimize legal articles for search engines while maintaining professional tone.
 
 Optimization rules:
 1. TITLES: 50-60 characters, include primary keyword, compelling but professional

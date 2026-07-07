@@ -98,7 +98,7 @@ const AGENT_REGISTRY: AgentCapabilityCard[] = [
       "Gemini 2.5 Flash automatic fallback",
       "Legal prompt sanitization (abstracts sensitive topics)",
       "Brand-compliant #202058 color injection",
-      "Automatic Von Wobeser logo overlay"
+      "Automatic Santos & Saucedo logo overlay"
     ],
     status: "active",
     evolutionLevel: 3
@@ -126,7 +126,7 @@ const AGENT_REGISTRY: AgentCapabilityCard[] = [
     businessName: "The Legal Taxonomist",
     role: "Classification Oracle",
     category: "brain",
-    description: "Uses semantic understanding to classify content into Von Wobeser's practice areas, industry groups, and legal branches. Maintains consistency with the firm's established taxonomy.",
+    description: "Uses semantic understanding to classify content into Santos & Saucedo's practice areas, industry groups, and legal branches. Maintains consistency with the firm's established taxonomy.",
     capabilities: [
       "18 practice area classification",
       "7 industry group detection",

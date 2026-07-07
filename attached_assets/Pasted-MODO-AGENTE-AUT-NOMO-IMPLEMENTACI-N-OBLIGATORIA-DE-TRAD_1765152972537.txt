@@ -101,7 +101,7 @@ Crear src/locales/es/common.json:
     "attorneys": "Abogados",
     "capabilities": "Capacidades",
     "publications": "Publicaciones",
-    "career": "Carrera en VWyS",
+    "career": "Carrera en Santos & Saucedo",
     "contact": "Contacto",
     "probono": "Pro Bono",
     "diversity": "Diversidad e Inclusión",
@@ -120,10 +120,10 @@ Crear src/locales/es/common.json:
   "home": {
     "heroTagline": "VAMOS A DONDE NUESTROS CLIENTES NOS NECESITAN",
     "seeMore": "Ver Más",
-    "experienceBanner": "Von Wobeser y Sierra, S.C. cuenta con más de tres décadas de experiencia",
+    "experienceBanner": "Santos & Saucedo, S.C. cuenta con más de tres décadas de experiencia",
     "teamStats": "Equipo de más de 150 abogados (22 socios, 6 of counsel, 12 consejeros...)",
     "recognitionsTitle": "RECOGNITIONS",
-    "recognitionsIntro": "Von Wobeser y Sierra, S.C. ha sido reconocida a nivel internacional por diversas instituciones incluyendo",
+    "recognitionsIntro": "Santos & Saucedo, S.C. ha sido reconocida a nivel internacional por diversas instituciones incluyendo",
     "recognitionsList": "Chambers & Partners Global, Chambers & Partners Latin America, Legal 500, Latin Lawyer 250, Global Arbitration Review (GAR 100), Global Competition Review (GCR 100), Global Investigations Review (GIR 100), Global Restructuring Review (GCR), Lexology Index, Latin America Corporate Counsel Association (LACCA) e IFLR 1000, Best Lawyers, Benchmark Litigation entre otros."
   },
   "practices": {
@@ -159,7 +159,7 @@ Crear src/locales/es/common.json:
   },
   "germanDesk": {
     "title": "German Desk",
-    "description": "Por más de 34 años, Von Wobeser y Sierra ha trabajado con empresas alemanas..."
+    "description": "Por más de 34 años, Santos & Saucedo ha trabajado con empresas alemanas..."
   },
   "about": {
     "title": "Acerca de Nosotros",
@@ -175,7 +175,7 @@ Crear src/locales/es/common.json:
   "footer": {
     "address": "Torre SOMA Chapultepec, Campos Elíseos 204, Polanco, 11560, CDMX",
     "privacyNotice": "Aviso de Privacidad",
-    "copyright": "© 2025 Von Wobeser y Sierra, S.C. Todos los derechos reservados."
+    "copyright": "© 2025 Santos & Saucedo, S.C. Todos los derechos reservados."
   },
   "cta": {
     "seeMore": "Ver Más",
@@ -196,7 +196,7 @@ Crear src/locales/en/common.json:
     "attorneys": "Attorneys",
     "capabilities": "Capabilities",
     "publications": "Publications",
-    "career": "Career at VWyS",
+    "career": "Career at Santos & Saucedo",
     "contact": "Contact",
     "probono": "Pro Bono",
     "diversity": "Diversity & Inclusion",
@@ -215,10 +215,10 @@ Crear src/locales/en/common.json:
   "home": {
     "heroTagline": "WE GO WHERE CLIENTS NEED US",
     "seeMore": "See More",
-    "experienceBanner": "Von Wobeser y Sierra, S.C. has more than three decades of experience",
+    "experienceBanner": "Santos & Saucedo, S.C. has more than three decades of experience",
     "teamStats": "Team of more than 150 lawyers (22 partners, 6 of counsel, 12 counsel...)",
     "recognitionsTitle": "RECOGNITIONS",
-    "recognitionsIntro": "Von Wobeser y Sierra, S.C. has been recognized on an international level by various institutions including",
+    "recognitionsIntro": "Santos & Saucedo, S.C. has been recognized on an international level by various institutions including",
     "recognitionsList": "Chambers & Partners Global, Chambers & Partners Latin America, Legal 500, Latin Lawyer 250, Global Arbitration Review (GAR 100), Global Competition Review (GCR 100), Global Investigations Review (GIR 100), Global Restructuring Review (GCR), Lexology Index, Latin America Corporate Counsel Association (LACCA) and IFLR 1000, Best Lawyers, Benchmark Litigation among others."
   },
   "practices": {
@@ -254,7 +254,7 @@ Crear src/locales/en/common.json:
   },
   "germanDesk": {
     "title": "German Desk",
-    "description": "For more than 34 years, Von Wobeser y Sierra has worked with German companies..."
+    "description": "For more than 34 years, Santos & Saucedo has worked with German companies..."
   },
   "about": {
     "title": "About Us",
@@ -270,7 +270,7 @@ Crear src/locales/en/common.json:
   "footer": {
     "address": "Torre SOMA Chapultepec, Campos Elíseos 204, Polanco, 11560, CDMX",
     "privacyNotice": "Privacy Notice",
-    "copyright": "© 2025 Von Wobeser y Sierra, S.C. All rights reserved."
+    "copyright": "© 2025 Santos & Saucedo, S.C. All rights reserved."
   },
   "cta": {
     "seeMore": "See More",
@@ -291,7 +291,7 @@ Crear src/locales/de/common.json:
     "attorneys": "Anwälte",
     "capabilities": "Kompetenzen",
     "publications": "Publikationen",
-    "career": "Karriere bei VWyS",
+    "career": "Karriere bei Santos & Saucedo",
     "contact": "Kontakt",
     "probono": "Pro Bono",
     "diversity": "Vielfalt & Inklusion",
@@ -310,10 +310,10 @@ Crear src/locales/de/common.json:
   "home": {
     "heroTagline": "WIR GEHEN DORTHIN, WO UNSERE MANDANTEN UNS BRAUCHEN",
     "seeMore": "Mehr erfahren",
-    "experienceBanner": "Von Wobeser y Sierra, S.C. verfügt über mehr als drei Jahrzehnte Erfahrung",
+    "experienceBanner": "Santos & Saucedo, S.C. verfügt über mehr als drei Jahrzehnte Erfahrung",
     "teamStats": "Team von mehr als 150 Anwälten (22 Partner, 6 Of Counsel, 12 Counsel...)",
     "recognitionsTitle": "RECOGNITIONS",
-    "recognitionsIntro": "Von Wobeser y Sierra, S.C. wurde international von verschiedenen Institutionen anerkannt, darunter",
+    "recognitionsIntro": "Santos & Saucedo, S.C. wurde international von verschiedenen Institutionen anerkannt, darunter",
     "recognitionsList": "Chambers & Partners Global, Chambers & Partners Latin America, Legal 500, Latin Lawyer 250, Global Arbitration Review (GAR 100), Global Competition Review (GCR 100), Global Investigations Review (GIR 100), Global Restructuring Review (GCR), Lexology Index, Latin America Corporate Counsel Association (LACCA) und IFLR 1000, Best Lawyers, Benchmark Litigation und andere."
   },
   "practices": {
@@ -349,7 +349,7 @@ Crear src/locales/de/common.json:
   },
   "germanDesk": {
     "title": "German Desk",
-    "description": "Seit mehr als 34 Jahren arbeitet Von Wobeser y Sierra mit deutschen Unternehmen zusammen..."
+    "description": "Seit mehr als 34 Jahren arbeitet Santos & Saucedo mit deutschen Unternehmen zusammen..."
   },
   "about": {
     "title": "Über uns",
@@ -365,7 +365,7 @@ Crear src/locales/de/common.json:
   "footer": {
     "address": "Torre SOMA Chapultepec, Campos Elíseos 204, Polanco, 11560, CDMX",
     "privacyNotice": "Datenschutzhinweis",
-    "copyright": "© 2025 Von Wobeser y Sierra, S.C. Alle Rechte vorbehalten."
+    "copyright": "© 2025 Santos & Saucedo, S.C. Alle Rechte vorbehalten."
   },
   "cta": {
     "seeMore": "Mehr erfahren",
@@ -386,7 +386,7 @@ Crear src/locales/fr/common.json:
     "attorneys": "Avocats",
     "capabilities": "Compétences",
     "publications": "Publications",
-    "career": "Carrière chez VWyS",
+    "career": "Carrière chez Santos & Saucedo",
     "contact": "Contact",
     "probono": "Pro Bono",
     "diversity": "Diversité & Inclusion",
@@ -405,10 +405,10 @@ Crear src/locales/fr/common.json:
   "home": {
     "heroTagline": "NOUS ALLONS LÀ OÙ NOS CLIENTS ONT BESOIN DE NOUS",
     "seeMore": "En savoir plus",
-    "experienceBanner": "Von Wobeser y Sierra, S.C. possède plus de trois décennies d'expérience",
+    "experienceBanner": "Santos & Saucedo, S.C. possède plus de trois décennies d'expérience",
     "teamStats": "Équipe de plus de 150 avocats (22 associés, 6 of counsel, 12 counsel...)",
     "recognitionsTitle": "RECOGNITIONS",
-    "recognitionsIntro": "Von Wobeser y Sierra, S.C. a été reconnue au niveau international par diverses institutions, notamment",
+    "recognitionsIntro": "Santos & Saucedo, S.C. a été reconnue au niveau international par diverses institutions, notamment",
     "recognitionsList": "Chambers & Partners Global, Chambers & Partners Latin America, Legal 500, Latin Lawyer 250, Global Arbitration Review (GAR 100), Global Competition Review (GCR 100), Global Investigations Review (GIR 100), Global Restructuring Review (GCR), Lexology Index, Latin America Corporate Counsel Association (LACCA) et IFLR 1000, Best Lawyers, Benchmark Litigation entre autres."
   },
   "practices": {
@@ -444,7 +444,7 @@ Crear src/locales/fr/common.json:
   },
   "germanDesk": {
     "title": "German Desk",
-    "description": "Depuis plus de 34 ans, Von Wobeser y Sierra travaille avec des entreprises allemandes..."
+    "description": "Depuis plus de 34 ans, Santos & Saucedo travaille avec des entreprises allemandes..."
   },
   "about": {
     "title": "À propos",
@@ -460,7 +460,7 @@ Crear src/locales/fr/common.json:
   "footer": {
     "address": "Torre SOMA Chapultepec, Campos Elíseos 204, Polanco, 11560, CDMX",
     "privacyNotice": "Politique de confidentialité",
-    "copyright": "© 2025 Von Wobeser y Sierra, S.C. Tous droits réservés."
+    "copyright": "© 2025 Santos & Saucedo, S.C. Tous droits réservés."
   },
   "cta": {
     "seeMore": "En savoir plus",
@@ -481,7 +481,7 @@ Crear src/locales/it/common.json:
     "attorneys": "Avvocati",
     "capabilities": "Competenze",
     "publications": "Pubblicazioni",
-    "career": "Carriera presso VWyS",
+    "career": "Carriera presso Santos & Saucedo",
     "contact": "Contatto",
     "probono": "Pro Bono",
     "diversity": "Diversità e Inclusione",
@@ -500,10 +500,10 @@ Crear src/locales/it/common.json:
   "home": {
     "heroTagline": "ANDIAMO DOVE I NOSTRI CLIENTI HANNO BISOGNO DI NOI",
     "seeMore": "Scopri di più",
-    "experienceBanner": "Von Wobeser y Sierra, S.C. ha più di tre decenni di esperienza",
+    "experienceBanner": "Santos & Saucedo, S.C. ha più di tre decenni di esperienza",
     "teamStats": "Team di oltre 150 avvocati (22 soci, 6 of counsel, 12 counsel...)",
     "recognitionsTitle": "RECOGNITIONS",
-    "recognitionsIntro": "Von Wobeser y Sierra, S.C. è stata riconosciuta a livello internazionale da varie istituzioni tra cui",
+    "recognitionsIntro": "Santos & Saucedo, S.C. è stata riconosciuta a livello internazionale da varie istituzioni tra cui",
     "recognitionsList": "Chambers & Partners Global, Chambers & Partners Latin America, Legal 500, Latin Lawyer 250, Global Arbitration Review (GAR 100), Global Competition Review (GCR 100), Global Investigations Review (GIR 100), Global Restructuring Review (GCR), Lexology Index, Latin America Corporate Counsel Association (LACCA) e IFLR 1000, Best Lawyers, Benchmark Litigation tra gli altri."
   },
   "practices": {
@@ -539,7 +539,7 @@ Crear src/locales/it/common.json:
   },
   "germanDesk": {
     "title": "German Desk",
-    "description": "Da oltre 34 anni, Von Wobeser y Sierra lavora con aziende tedesche..."
+    "description": "Da oltre 34 anni, Santos & Saucedo lavora con aziende tedesche..."
   },
   "about": {
     "title": "Chi siamo",
@@ -555,7 +555,7 @@ Crear src/locales/it/common.json:
   "footer": {
     "address": "Torre SOMA Chapultepec, Campos Elíseos 204, Polanco, 11560, CDMX",
     "privacyNotice": "Informativa sulla privacy",
-    "copyright": "© 2025 Von Wobeser y Sierra, S.C. Tutti i diritti riservati."
+    "copyright": "© 2025 Santos & Saucedo, S.C. Tutti i diritti riservati."
   },
   "cta": {
     "seeMore": "Scopri di più",
@@ -576,7 +576,7 @@ Crear src/locales/pt/common.json:
     "attorneys": "Advogados",
     "capabilities": "Competências",
     "publications": "Publicações",
-    "career": "Carreira na VWyS",
+    "career": "Carreira na Santos & Saucedo",
     "contact": "Contato",
     "probono": "Pro Bono",
     "diversity": "Diversidade e Inclusão",
@@ -595,10 +595,10 @@ Crear src/locales/pt/common.json:
   "home": {
     "heroTagline": "VAMOS ONDE NOSSOS CLIENTES PRECISAM DE NÓS",
     "seeMore": "Saiba mais",
-    "experienceBanner": "Von Wobeser y Sierra, S.C. tem mais de três décadas de experiência",
+    "experienceBanner": "Santos & Saucedo, S.C. tem mais de três décadas de experiência",
     "teamStats": "Equipe de mais de 150 advogados (22 sócios, 6 of counsel, 12 counsel...)",
     "recognitionsTitle": "RECOGNITIONS",
-    "recognitionsIntro": "Von Wobeser y Sierra, S.C. foi reconhecida internacionalmente por várias instituições, incluindo",
+    "recognitionsIntro": "Santos & Saucedo, S.C. foi reconhecida internacionalmente por várias instituições, incluindo",
     "recognitionsList": "Chambers & Partners Global, Chambers & Partners Latin America, Legal 500, Latin Lawyer 250, Global Arbitration Review (GAR 100), Global Competition Review (GCR 100), Global Investigations Review (GIR 100), Global Restructuring Review (GCR), Lexology Index, Latin America Corporate Counsel Association (LACCA) e IFLR 1000, Best Lawyers, Benchmark Litigation entre outros."
   },
   "practices": {
@@ -634,7 +634,7 @@ Crear src/locales/pt/common.json:
   },
   "germanDesk": {
     "title": "German Desk",
-    "description": "Por mais de 34 anos, Von Wobeser y Sierra trabalha com empresas alemãs..."
+    "description": "Por mais de 34 anos, Santos & Saucedo trabalha com empresas alemãs..."
   },
   "about": {
     "title": "Sobre Nós",
@@ -650,7 +650,7 @@ Crear src/locales/pt/common.json:
   "footer": {
     "address": "Torre SOMA Chapultepec, Campos Elíseos 204, Polanco, 11560, CDMX",
     "privacyNotice": "Aviso de Privacidade",
-    "copyright": "© 2025 Von Wobeser y Sierra, S.C. Todos os direitos reservados."
+    "copyright": "© 2025 Santos & Saucedo, S.C. Todos os direitos reservados."
   },
   "cta": {
     "seeMore": "Saiba mais",
@@ -671,7 +671,7 @@ Crear src/locales/zh/common.json:
     "attorneys": "律师团队",
     "capabilities": "业务能力",
     "publications": "出版物",
-    "career": "加入VWyS",
+    "career": "加入Santos & Saucedo",
     "contact": "联系我们",
     "probono": "公益服务",
     "diversity": "多元与包容",
@@ -690,10 +690,10 @@ Crear src/locales/zh/common.json:
   "home": {
     "heroTagline": "我们随时为客户提供服务",
     "seeMore": "了解更多",
-    "experienceBanner": "Von Wobeser y Sierra, S.C. 拥有超过三十年的经验",
+    "experienceBanner": "Santos & Saucedo, S.C. 拥有超过三十年的经验",
     "teamStats": "团队拥有150多名律师（22名合伙人、6名顾问律师、12名法律顾问...）",
     "recognitionsTitle": "RECOGNITIONS",
-    "recognitionsIntro": "Von Wobeser y Sierra, S.C. 已获得多家国际机构的认可，包括",
+    "recognitionsIntro": "Santos & Saucedo, S.C. 已获得多家国际机构的认可，包括",
     "recognitionsList": "Chambers & Partners Global、Chambers & Partners Latin America、Legal 500、Latin Lawyer 250、Global Arbitration Review (GAR 100)、Global Competition Review (GCR 100)、Global Investigations Review (GIR 100)、Global Restructuring Review (GCR)、Lexology Index、Latin America Corporate Counsel Association (LACCA) 和 IFLR 1000、Best Lawyers、Benchmark Litigation等。"
   },
   "practices": {
@@ -729,7 +729,7 @@ Crear src/locales/zh/common.json:
   },
   "germanDesk": {
     "title": "德国业务",
-    "description": "三十多年来，Von Wobeser y Sierra一直与德国企业合作..."
+    "description": "三十多年来，Santos & Saucedo一直与德国企业合作..."
   },
   "about": {
     "title": "关于我们",
@@ -745,7 +745,7 @@ Crear src/locales/zh/common.json:
   "footer": {
     "address": "Torre SOMA Chapultepec, Campos Elíseos 204, Polanco, 11560, CDMX",
     "privacyNotice": "隐私声明",
-    "copyright": "© 2025 Von Wobeser y Sierra, S.C. 版权所有。"
+    "copyright": "© 2025 Santos & Saucedo, S.C. 版权所有。"
   },
   "cta": {
     "seeMore": "了解更多",
@@ -785,10 +785,10 @@ Crear src/locales/ja/common.json:
   "home": {
     "heroTagline": "クライアントが必要とする場所へ",
     "seeMore": "詳細を見る",
-    "experienceBanner": "Von Wobeser y Sierra, S.C.は30年以上の経験を持っています",
+    "experienceBanner": "Santos & Saucedo, S.C.は30年以上の経験を持っています",
     "teamStats": "150名以上の弁護士チーム（パートナー22名、オブカウンセル6名、カウンセル12名...）",
     "recognitionsTitle": "RECOGNITIONS",
-    "recognitionsIntro": "Von Wobeser y Sierra, S.C.は、以下を含む様々な国際機関から認められています",
+    "recognitionsIntro": "Santos & Saucedo, S.C.は、以下を含む様々な国際機関から認められています",
     "recognitionsList": "Chambers & Partners Global、Chambers & Partners Latin America、Legal 500、Latin Lawyer 250、Global Arbitration Review (GAR 100)、Global Competition Review (GCR 100)、Global Investigations Review (GIR 100)、Global Restructuring Review (GCR)、Lexology Index、Latin America Corporate Counsel Association (LACCA)、IFLR 1000、Best Lawyers、Benchmark Litigationなど。"
   },
   "practices": {
@@ -824,7 +824,7 @@ Crear src/locales/ja/common.json:
   },
   "germanDesk": {
     "title": "ジャーマンデスク",
-    "description": "Von Wobeser y Sierraは34年以上にわたりドイツ企業と協力してきました..."
+    "description": "Santos & Saucedoは34年以上にわたりドイツ企業と協力してきました..."
   },
   "about": {
     "title": "事務所概要",
@@ -840,7 +840,7 @@ Crear src/locales/ja/common.json:
   "footer": {
     "address": "Torre SOMA Chapultepec, Campos Elíseos 204, Polanco, 11560, CDMX",
     "privacyNotice": "プライバシーポリシー",
-    "copyright": "© 2025 Von Wobeser y Sierra, S.C. All rights reserved."
+    "copyright": "© 2025 Santos & Saucedo, S.C. All rights reserved."
   },
   "cta": {
     "seeMore": "詳細を見る",
@@ -880,10 +880,10 @@ Crear src/locales/ko/common.json:
   "home": {
     "heroTagline": "고객이 필요로 하는 곳으로 갑니다",
     "seeMore": "더 보기",
-    "experienceBanner": "Von Wobeser y Sierra, S.C.는 30년 이상의 경험을 보유하고 있습니다",
+    "experienceBanner": "Santos & Saucedo, S.C.는 30년 이상의 경험을 보유하고 있습니다",
     "teamStats": "150명 이상의 변호사 팀 (파트너 22명, 오브카운슬 6명, 카운슬 12명...)",
     "recognitionsTitle": "RECOGNITIONS",
-    "recognitionsIntro": "Von Wobeser y Sierra, S.C.는 다음을 포함한 여러 국제 기관으로부터 인정받았습니다",
+    "recognitionsIntro": "Santos & Saucedo, S.C.는 다음을 포함한 여러 국제 기관으로부터 인정받았습니다",
     "recognitionsList": "Chambers & Partners Global, Chambers & Partners Latin America, Legal 500, Latin Lawyer 250, Global Arbitration Review (GAR 100), Global Competition Review (GCR 100), Global Investigations Review (GIR 100), Global Restructuring Review (GCR), Lexology Index, Latin America Corporate Counsel Association (LACCA) 및 IFLR 1000, Best Lawyers, Benchmark Litigation 등."
   },
   "practices": {
@@ -919,7 +919,7 @@ Crear src/locales/ko/common.json:
   },
   "germanDesk": {
     "title": "저먼 데스크",
-    "description": "Von Wobeser y Sierra는 34년 이상 독일 기업들과 협력해 왔습니다..."
+    "description": "Santos & Saucedo는 34년 이상 독일 기업들과 협력해 왔습니다..."
   },
   "about": {
     "title": "회사 소개",
@@ -935,7 +935,7 @@ Crear src/locales/ko/common.json:
   "footer": {
     "address": "Torre SOMA Chapultepec, Campos Elíseos 204, Polanco, 11560, CDMX",
     "privacyNotice": "개인정보 보호정책",
-    "copyright": "© 2025 Von Wobeser y Sierra, S.C. All rights reserved."
+    "copyright": "© 2025 Santos & Saucedo, S.C. All rights reserved."
   },
   "cta": {
     "seeMore": "더 보기",
@@ -956,7 +956,7 @@ Crear src/locales/ru/common.json:
     "attorneys": "Юристы",
     "capabilities": "Компетенции",
     "publications": "Публикации",
-    "career": "Карьера в VWyS",
+    "career": "Карьера в Santos & Saucedo",
     "contact": "Контакты",
     "probono": "Pro Bono",
     "diversity": "Разнообразие и инклюзивность",
@@ -975,10 +975,10 @@ Crear src/locales/ru/common.json:
   "home": {
     "heroTagline": "МЫ ИДЁМ ТУДА, ГДЕ МЫ НУЖНЫ НАШИМ КЛИЕНТАМ",
     "seeMore": "Подробнее",
-    "experienceBanner": "Von Wobeser y Sierra, S.C. имеет более чем тридцатилетний опыт",
+    "experienceBanner": "Santos & Saucedo, S.C. имеет более чем тридцатилетний опыт",
     "teamStats": "Команда из более чем 150 юристов (22 партнера, 6 of counsel, 12 советников...)",
     "recognitionsTitle": "RECOGNITIONS",
-    "recognitionsIntro": "Von Wobeser y Sierra, S.C. получила международное признание от различных институтов, включая",
+    "recognitionsIntro": "Santos & Saucedo, S.C. получила международное признание от различных институтов, включая",
     "recognitionsList": "Chambers & Partners Global, Chambers & Partners Latin America, Legal 500, Latin Lawyer 250, Global Arbitration Review (GAR 100), Global Competition Review (GCR 100), Global Investigations Review (GIR 100), Global Restructuring Review (GCR), Lexology Index, Latin America Corporate Counsel Association (LACCA) и IFLR 1000, Best Lawyers, Benchmark Litigation и другие."
   },
   "practices": {
@@ -1014,7 +1014,7 @@ Crear src/locales/ru/common.json:
   },
   "germanDesk": {
     "title": "Немецкий отдел",
-    "description": "Более 34 лет Von Wobeser y Sierra работает с немецкими компаниями..."
+    "description": "Более 34 лет Santos & Saucedo работает с немецкими компаниями..."
   },
   "about": {
     "title": "О нас",
@@ -1030,7 +1030,7 @@ Crear src/locales/ru/common.json:
   "footer": {
     "address": "Torre SOMA Chapultepec, Campos Elíseos 204, Polanco, 11560, CDMX",
     "privacyNotice": "Политика конфиденциальности",
-    "copyright": "© 2025 Von Wobeser y Sierra, S.C. Все права защищены."
+    "copyright": "© 2025 Santos & Saucedo, S.C. Все права защищены."
   },
   "cta": {
     "seeMore": "Подробнее",

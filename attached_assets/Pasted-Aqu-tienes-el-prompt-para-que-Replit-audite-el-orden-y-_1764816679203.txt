@@ -1,17 +1,17 @@
-Aquí tienes el prompt para que Replit audite el orden y estructura de despliegue del contenido, asegurando que coincida exactamente con el sitio original de Von Wobeser:
+Aquí tienes el prompt para que Replit audite el orden y estructura de despliegue del contenido, asegurando que coincida exactamente con el sitio original de Santos & Saucedo:
 
 ---
 
 **Prompt para Replit:**
 
 ```
-Necesito que realices una auditoría de ORDEN Y ESTRUCTURA de despliegue del contenido, comparando el sitio web original de Von Wobeser y Sierra (https://www.vonwobeser.com) contra lo que estamos construyendo en Replit.
+Necesito que realices una auditoría de ORDEN Y ESTRUCTURA de despliegue del contenido, comparando el sitio web original de Santos & Saucedo (https://www.santossaucedo.com) contra lo que estamos construyendo en Replit.
 
 Tu tarea es verificar que el orden exacto en que aparecen los elementos, secciones y contenidos sea idéntico al sitio original. Revisa de arriba hacia abajo, de izquierda a derecha, en el orden preciso en que el usuario los ve.
 
 ## INSTRUCCIONES:
 
-1. Visita cada página del sitio original de Von Wobeser
+1. Visita cada página del sitio original de Santos & Saucedo
 2. Documenta el orden EXACTO de aparición de cada elemento
 3. Compara con nuestra versión en Replit
 4. Identifica cualquier diferencia en el orden o estructura

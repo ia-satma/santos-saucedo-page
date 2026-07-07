@@ -9,7 +9,7 @@ const ANALYZER_CONFIG: AgentConfig = {
   agentType: 'content_analyzer',
   name: 'Content Analyzer Agent',
   description: 'Analyzes legal articles for SEO, categorization, spelling/grammar, lawyer mentions, legal branches, and industries',
-  systemPrompt: `You are a specialized content analyst for Von Wobeser y Sierra, a prestigious Mexican law firm. Your task is to analyze legal articles and provide comprehensive reports including:
+  systemPrompt: `You are a specialized content analyst for Santos & Saucedo, a prestigious Mexican law firm. Your task is to analyze legal articles and provide comprehensive reports including:
 
 1. SEO Optimization: Keywords, title suggestions, meta descriptions, heading improvements
 2. Article Categorization: Primary and secondary categories

@@ -17,7 +17,7 @@ const quotes: Quote[] = [
     id: "chambers",
     source: "Chambers & Partners",
     year: "2025",
-    sourceUrl: "https://chambers.com/law-firm/von-wobeser-y-sierra-sc-latin-america-7:113:11856398",
+    sourceUrl: undefined,
     text: {
       en: "Santos & Saucedo is a leading full-service law firm with deep expertise across all practice areas and industries.",
       es: "Santos & Saucedo es una firma de abogados líder en servicio completo con profunda experiencia en todas las áreas de práctica e industrias.",
@@ -35,7 +35,7 @@ const quotes: Quote[] = [
     id: "legal500",
     source: "Legal 500",
     year: "2026",
-    sourceUrl: "https://www.legal500.com/firms/14641-von-wobeser-y-sierra-sc/14887-mexico-city-mexico/",
+    sourceUrl: undefined,
     text: {
       en: "The team is highly regarded for its sophisticated handling of complex cross-border transactions and disputes.",
       es: "El equipo es altamente reconocido por su manejo sofisticado de transacciones transfronterizas complejas y disputas.",
@@ -53,7 +53,7 @@ const quotes: Quote[] = [
     id: "latinlawyer",
     source: "Latin Lawyer",
     year: "2026",
-    sourceUrl: "https://latinlawyer.com/rankings/latin-lawyer-250/2024/firm/von-wobeser-y-sierra-sc",
+    sourceUrl: undefined,
     text: {
       en: "A market-leading firm that consistently delivers exceptional results for clients in the most demanding matters.",
       es: "Una firma líder en el mercado que constantemente entrega resultados excepcionales para clientes en los asuntos más exigentes.",

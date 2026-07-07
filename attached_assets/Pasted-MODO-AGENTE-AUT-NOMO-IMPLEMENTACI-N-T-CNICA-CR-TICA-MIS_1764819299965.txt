@@ -1,6 +1,6 @@
 MODO AGENTE AUTÓNOMO - IMPLEMENTACIÓN TÉCNICA CRÍTICA
 
-MISIÓN: Implementar optimizaciones de rendimiento, SEO y sistema de administración de blog en nuestro sitio de Von Wobeser.
+MISIÓN: Implementar optimizaciones de rendimiento, SEO y sistema de administración de blog en nuestro sitio de Santos & Saucedo.
 
 ⚠️ ADVERTENCIA: NO TOCAR CONTENIDO NI ESTRUCTURA VISUAL ⚠️
 Solo implementa las mejoras técnicas. No cambies textos, orden de secciones, ni diseño.
@@ -408,7 +408,7 @@ CREAR SISTEMA COMPLETO DE ADMIN:
    - Sidebar con navegación
    - Header con usuario logueado y logout
    - Responsive (debe funcionar en tablet)
-   - Colores consistentes con marca Von Wobeser
+   - Colores consistentes con marca Santos & Saucedo
    - Feedback visual en acciones (guardando, guardado, error)
    - Validación de formularios en tiempo real
 

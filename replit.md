@@ -1,7 +1,7 @@
-# Von Wobeser y Sierra Corporate Website
+# Santos & Saucedo Corporate Website
 
 ## Overview
-This project is a corporate website for Von Wobeser y Sierra, a leading Mexican law firm. Its primary purpose is to showcase their new office and firm capabilities through a single-page application. Key features include comprehensive multi-language support (10 languages with AI-powered legal translation), dark mode, and a professional design aesthetic. The site aims to provide a sophisticated online presence, highlighting news, office vision, statistics, image galleries, and location information.
+This project is a corporate website for Santos & Saucedo, a leading Mexican law firm. Its primary purpose is to showcase their new office and firm capabilities through a single-page application. Key features include comprehensive multi-language support (10 languages with AI-powered legal translation), dark mode, and a professional design aesthetic. The site aims to provide a sophisticated online presence, highlighting news, office vision, statistics, image galleries, and location information.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -16,7 +16,7 @@ The design emphasizes a professional corporate aesthetic with conservative anima
 ### Multi-Language Translation System
 The application implements a dual translation approach supporting 10 languages (en, es, de, zh, ko, ja, ar, ru, fr, it) with **100% translation coverage** - no English fallback text visible in any language mode:
 
-1. **Static UI Translations (i18next)**: Used for navigation, buttons, labels, and UI text. Translations are stored as inline JavaScript objects in `client/src/i18n.ts`. The system uses localStorage (`vwb_language`) for persistence and automatically updates the HTML `lang` attribute. RTL support is included for Arabic.
+1. **Static UI Translations (i18next)**: Used for navigation, buttons, labels, and UI text. Translations are stored as inline JavaScript objects in `client/src/i18n.ts`. The system uses localStorage (`ss_language`) for persistence and automatically updates the HTML `lang` attribute. RTL support is included for Arabic.
 
 2. **Page-Specific Content Translations**: All page components use inline content objects with complete translations for all 10 languages. Pattern: `content[language as keyof typeof content] || content.en`. This covers hero sections, feature descriptions, benefit lists, and all other static page content.
 
@@ -153,4 +153,4 @@ The backend has been transformed from a static brochure into a self-evolving sys
 - **Branding & Content:** Configuration and markdown stored in `attached_assets`.
 - **Favicon:** `/favicon.png`.
 - **Fonts:** Google Fonts CDN (Cormorant Garamond, Inter).
-- **Images:** Partner photos are served locally from `/partner_photos/` (21 photos), with an avatar component providing initials fallback for missing images. Office imagery uses Von Wobeser branding images.
+- **Images:** Partner photos are served locally from `/partner_photos/` (21 photos), with an avatar component providing initials fallback for missing images. Office imagery uses Santos & Saucedo branding images.

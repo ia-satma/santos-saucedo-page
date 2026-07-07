@@ -1,7 +1,7 @@
 ## PROMPT 2: Contact Form — Persistencia en DB + Sanitizacion (CRITICO)
 
 ```
-CONTEXTO: Este proyecto es el website de Von Wobeser y Sierra, una firma de abogados mexicana. Usa Express + React + TypeScript + Drizzle ORM + PostgreSQL. El contact form del sitio publico permite a potenciales clientes enviar consultas a la firma.
+CONTEXTO: Este proyecto es el website de Santos & Saucedo, una firma de abogados mexicana. Usa Express + React + TypeScript + Drizzle ORM + PostgreSQL. El contact form del sitio publico permite a potenciales clientes enviar consultas a la firma.
 
 PROBLEMA: El endpoint POST `/api/contact` en `server/routes.ts` (lineas 468-496) recibe submissions del contact form pero SOLO hace console.log — nunca guarda los datos en la base de datos. Si alguien envia una consulta, los datos se pierden cuando el servidor se reinicia. Ademas, los inputs del formulario no se sanitizan contra XSS.
 

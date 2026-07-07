@@ -1,7 +1,7 @@
 ## PROMPT 4: Agent System — Registrar ContentAnalyzer + Limpiar Conteo (ALTO)
 
 ```
-CONTEXTO: Este proyecto es el website de Von Wobeser y Sierra, una firma de abogados mexicana. Tiene un sistema de agentes AI que procesan articulos automaticamente (formateo, traduccion, SEO, imagenes, etc.). Los agentes se registran en un orquestador central.
+CONTEXTO: Este proyecto es el website de Santos & Saucedo, una firma de abogados mexicana. Tiene un sistema de agentes AI que procesan articulos automaticamente (formateo, traduccion, SEO, imagenes, etc.). Los agentes se registran en un orquestador central.
 
 PROBLEMA: Hay 3 issues relacionados en el sistema de agentes:
 

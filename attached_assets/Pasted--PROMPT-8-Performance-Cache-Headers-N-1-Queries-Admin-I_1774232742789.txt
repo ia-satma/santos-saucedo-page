@@ -1,7 +1,7 @@
 ## PROMPT 8: Performance — Cache Headers + N+1 Queries + Admin Init Race (BAJO)
 
 ```
-CONTEXTO: Este proyecto es el website de Von Wobeser y Sierra, una firma de abogados mexicana. Tiene assets estaticos servidos por Express, queries de base de datos en el orquestador de agentes, y un proceso de inicializacion del admin user.
+CONTEXTO: Este proyecto es el website de Santos & Saucedo, una firma de abogados mexicana. Tiene assets estaticos servidos por Express, queries de base de datos en el orquestador de agentes, y un proceso de inicializacion del admin user.
 
 PROBLEMA: 5 issues de performance e infraestructura:
 

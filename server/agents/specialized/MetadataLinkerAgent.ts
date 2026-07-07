@@ -8,7 +8,7 @@ const LINKER_CONFIG: AgentConfig = {
   agentType: 'metadata_linker',
   name: 'Metadata Linker Agent',
   description: 'Links articles to authors, practice groups, and industry groups',
-  systemPrompt: `You are a legal content analyst for Von Wobeser y Sierra law firm. Your task is to analyze article content and identify:
+  systemPrompt: `You are a legal content analyst for Santos & Saucedo law firm. Your task is to analyze article content and identify:
 
 1. AUTHORS: Identify lawyer names mentioned in the article (often at the end)
 2. PRACTICE AREAS: Determine which legal practice areas the article relates to

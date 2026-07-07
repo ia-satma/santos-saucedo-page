@@ -34,12 +34,8 @@ const PRACTICE_AREA_KEYWORDS: Record<string, string[]> = {
 };
 
 const ATTORNEY_EMAIL_MAP: Record<string, string> = {
-  'rafael vallejo': 'rvallejo@vwys.com.mx',
-  'adrián castillo': 'adcastillo@vwys.com.mx',
-  'adrian castillo': 'adcastillo@vwys.com.mx',
-  'claus von wobeser': 'cvonwobeser@vwys.com.mx',
-  'luis burgueño': 'lburgueno@vwys.com.mx',
-  'luis burgueno': 'lburgueno@vwys.com.mx',
+  'enrique hernán santos gúzman': 'info@santossaucedo.com',
+  'enrique hernan santos guzman': 'info@santossaucedo.com',
 };
 
 function extractDateFromFilename(filename: string): string | null {
@@ -85,7 +81,7 @@ function extractAuthors(text: string): { names: string[], emails: string[] } {
   const names: string[] = [];
   const emails: string[] = [];
   
-  const emailPattern = /([A-Za-zÁáÉéÍíÓóÚúÑñ\s]+),\s*(?:Socio|Partner|Of Counsel|Asociado|Associate)[:\s]*[^@]*?([a-z]+@vwys\.com\.mx)/gi;
+  const emailPattern = /([A-Za-zÁáÉéÍíÓóÚúÑñ\s]+),\s*(?:Socio|Partner|Of Counsel|Asociado|Associate)[:\s]*[^@]*?([a-z]+@santossaucedo\.com)/gi;
   let match;
   
   while ((match = emailPattern.exec(text)) !== null) {
@@ -98,7 +94,7 @@ function extractAuthors(text: string): { names: string[], emails: string[] } {
   }
   
   if (names.length === 0) {
-    const contactPattern = /([A-Za-zÁáÉéÍíÓóÚúÑñ\s]+)(?:,\s*(?:Socio|Partner))?[:\s]*\+52[^|]+\|\s*([a-z]+@vwys\.com\.mx)/gi;
+    const contactPattern = /([A-Za-zÁáÉéÍíÓóÚúÑñ\s]+)(?:,\s*(?:Socio|Partner))?[:\s]*\+52[^|]+\|\s*([a-z]+@santossaucedo\.com)/gi;
     while ((match = contactPattern.exec(text)) !== null) {
       const name = match[1].trim().replace(/Para obtener información adicional, contactar a:/i, '').trim();
       const email = match[2].toLowerCase();
@@ -181,14 +177,14 @@ function generateExcerpt(content: string, maxLength: number = 300): string {
 function cleanContent(text: string): string {
   return text
     .replace(/-- \d+ of \d+ --/g, '')
-    .replace(/VON WOBESER Y SIERRA, S\.C\./g, '')
+    .replace(/SANTOS & SAUCEDO, S\.C\./g, '')
     .replace(/Paseo de los Tamarindos 60, 05120 Ciudad de México/g, '')
-    .replace(/\+52 \(55\) 5258 1000/g, '')
-    .replace(/vonwobeser\.com/g, '')
+    .replace(/\+52 81 8335 2930/g, '')
+    .replace(/santossaucedo\.com/g, '')
     .replace(/La información incluida en esta nota no constituye.*?abogados aquí mencionados\./gs, '')
     .replace(/A T E N T A M E N T E/g, '')
     .replace(/Para obtener información adicional, contactar a:/g, '')
-    .replace(/[a-z]+@vwys\.com\.mx/gi, '')
+    .replace(/[a-z]+@santossaucedo\.com/gi, '')
     .replace(/\+52 \(55\) \d{4}[- ]\d{4}/g, '')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
@@ -234,7 +230,7 @@ async function extractArticle(pdfPath: string): Promise<ExtractedArticle | null>
 }
 
 async function main() {
-  const articlesDir = path.resolve('attached_assets/articles_extracted/Articulos Von Wobeser');
+  const articlesDir = path.resolve('attached_assets/articles_extracted/articulos_santos_saucedo');
   const files = fs.readdirSync(articlesDir).filter(f => f.endsWith('.pdf'));
   
   console.log(`Found ${files.length} PDF files to process`);
