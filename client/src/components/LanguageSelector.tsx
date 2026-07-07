@@ -60,16 +60,16 @@ export default function LanguageSelector({
           "focus:ring-2 focus:ring-offset-2 focus:ring-primary/50",
           compact ? "px-2 py-1" : "px-3 py-1.5",
           isMobile 
-            ? "bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30" 
+            ? "bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30"
             : isScrolled 
-              ? "bg-transparent border border-[#202058]/40 text-foreground hover:border-[#202058] hover:bg-[#202058]/5 dark:hover:bg-[#202058]/10" 
+              ? "bg-white/10 backdrop-blur-sm border border-white/30 text-white hover:bg-white/20"
               : "bg-black/30 backdrop-blur-sm border border-white/30 text-white hover:bg-black/40",
           className
         )}
         data-testid="select-language-trigger"
         aria-label={ariaLabel}
       >
-        <Globe className="w-4 h-4 shrink-0 text-[#202058]" aria-hidden="true" data-testid="icon-globe" />
+        <Globe className="w-4 h-4 shrink-0 text-white" aria-hidden="true" data-testid="icon-globe" />
         <SelectValue data-testid="text-current-language">
           {getDisplayName()}
         </SelectValue>
