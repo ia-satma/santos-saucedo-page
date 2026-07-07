@@ -1,0 +1,969 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ======================================================
+   CORPORATE IDENTITY FONTS — Manual de Identidad 2022
+   ====================================================== */
+
+/*
+  CORPORATE IDENTITY FONT STRATEGY (Manual de Identidad 2022)
+  ─────────────────────────────────────────────────────────────
+  • Playfair Display  → headlines / H1–H3  (loaded via Google Fonts, full Latin-ext)
+  • Optima            → body / running text (native on macOS/iOS; Lato as web fallback)
+  • Geomanist         → labels / menu / buttons (Century Gothic on Windows; Lato as web fallback)
+
+  The broken TTF files are intentionally NOT loaded via @font-face because they
+  are missing Latin-Extended glyphs (accented Spanish characters render incorrectly).
+  System fonts handle Optima on Apple devices; Lato is the universal web fallback.
+*/
+
+/* Italic is prohibited by the Manual de Identidad */
+* {
+  font-style: normal !important;
+}
+
+/* Exception: blockquote testimonials */
+blockquote {
+  font-style: italic !important;
+}
+
+/* LIGHT MODE */
+:root {
+  /* Von Wobeser Corporate Colors (Manual de Identidad Junio 2022) */
+  --vw-red: #202058;
+  --vw-gray-1: #D5D2CD;  /* light swatch left  */
+  --vw-gray-2: #C0BDB8;  /* light swatch right */
+  --vw-gray-4: #8B8D89;  /* dark swatch left   */
+  --vw-gray-8: #5B5C5F;  /* dark swatch middle */
+  --vw-gray-11: #2E2E2A; /* dark swatch right  */
+  --vw-black: #1D1D1B;
+
+  --button-outline: rgba(0,0,0, .10);
+  --badge-outline: rgba(0,0,0, .05);
+  --opaque-button-border-intensity: -8;
+  --elevate-1: rgba(0,0,0, .03);
+  --elevate-2: rgba(0,0,0, .08);
+
+  /* ── PALETA LIGHT ─────────────────────────────────────────
+     Grises 100 % neutros — sin tinte azul ni cálido.
+     Inspiración: Baker McKenzie, White & Case, Hogan Lovells.
+  ─────────────────────────────────────────────────────────── */
+  --background: 0 0% 98%;          /* #FAFAFA — blanco neutro puro    */
+  --foreground: 0 0% 9%;           /* #171717 — casi negro            */
+  --card: 0 0% 100%;               /* #FFFFFF — blanco puro           */
+  --card-foreground: 0 0% 9%;
+  --card-border: 0 0% 90%;         /* #E6E6E6 — borde sutil           */
+  --border: 0 0% 87%;              /* #DEDEDE                         */
+  --sidebar: 0 0% 96%;             /* #F5F5F5                         */
+  --sidebar-foreground: 0 0% 9%;
+  --sidebar-border: 0 0% 88%;
+  --sidebar-primary: 240 47% 24%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 0 0% 93%;
+  --sidebar-accent-foreground: 0 0% 9%;
+  --sidebar-ring: 240 47% 24%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 9%;
+  --popover-border: 0 0% 88%;
+  --primary: 240 47% 24%;          /* #202058 — rojo corporativo      */
+  --primary-foreground: 0 0% 98%;
+  --secondary: 0 0% 94%;           /* #F0F0F0 — sección alterna       */
+  --secondary-foreground: 0 0% 18%;
+  --muted: 0 0% 94%;               /* mismo que secondary             */
+  --muted-foreground: 0 0% 42%;    /* #6B6B6B — gris legible          */
+  --accent: 0 0% 92%;
+  --accent-foreground: 0 0% 9%;
+  --destructive: 0 72% 45%;
+  --destructive-foreground: 0 0% 98%;
+  --input: 0 0% 84%;
+  --ring: 240 47% 24%;
+  --chart-1: 240 47% 24%;
+  --chart-2: 240 38% 38%;
+  --chart-3: 0 0% 30%;
+  --chart-4: 0 0% 50%;
+  --chart-5: 240 24% 52%;
+  --font-sans: 'Optima', 'Lato', 'Calibri', 'Segoe UI', sans-serif;
+  --font-serif: 'Optima', 'Lato', 'Georgia', 'Times New Roman', serif;
+  --font-heading: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
+  --font-support: 'Geomanist', 'Century Gothic', 'Lato', 'Segoe UI', sans-serif;
+  --font-mono: Menlo, monospace;
+  --radius: .5rem;
+  --shadow-2xs: 0 1px 2px 0 hsl(220 25% 12% / 0.04);
+  --shadow-xs:  0 1px 3px 0 hsl(220 25% 12% / 0.06);
+  --shadow-sm:  0 1px 3px 0 hsl(220 25% 12% / 0.08), 0 1px 2px -1px hsl(220 25% 12% / 0.06);
+  --shadow:     0 4px 6px -1px hsl(220 25% 12% / 0.08), 0 2px 4px -2px hsl(220 25% 12% / 0.06);
+  --shadow-md:  0 8px 16px -4px hsl(220 25% 12% / 0.10), 0 4px 6px -4px hsl(220 25% 12% / 0.06);
+  --shadow-lg:  0 16px 24px -6px hsl(220 25% 12% / 0.12), 0 8px 10px -6px hsl(220 25% 12% / 0.06);
+  --shadow-xl:  0 24px 40px -8px hsl(220 25% 12% / 0.14), 0 12px 16px -8px hsl(220 25% 12% / 0.06);
+  --shadow-2xl: 0 40px 64px -12px hsl(220 25% 12% / 0.18);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+
+/* Fallback for older browsers */
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+  --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --primary-border: hsl(var(--primary));
+  --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --secondary-border: hsl(var(--secondary));
+  --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --muted-border: hsl(var(--muted));
+  --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --accent-border: hsl(var(--accent));
+  --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --destructive-border: hsl(var(--destructive));
+  --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+}
+
+.dark {
+  --button-outline: rgba(255,255,255, .10);
+  --badge-outline: rgba(255,255,255, .05);
+  --opaque-button-border-intensity: 9;
+  --elevate-1: rgba(255,255,255, .04);
+  --elevate-2: rgba(255,255,255, .09);
+
+  /* ── PALETA DARK ──────────────────────────────────────────
+     Carbón neutro profundo — sin azul, sin calidez.
+     Gris oscuro puro con jerarquía clara entre capas.
+  ─────────────────────────────────────────────────────────── */
+  --background: 0 0% 9%;           /* #171717 — carbón profundo       */
+  --foreground: 0 0% 93%;          /* #EDEDED — blanco neutro suave   */
+  --card: 0 0% 13%;                /* #212121 — panel elevado         */
+  --card-foreground: 0 0% 93%;
+  --card-border: 0 0% 20%;         /* #333333 — borde sutil           */
+  --border: 0 0% 22%;              /* #383838                         */
+  --sidebar: 0 0% 11%;             /* #1C1C1C                         */
+  --sidebar-foreground: 0 0% 90%;
+  --sidebar-border: 0 0% 19%;
+  --sidebar-primary: 240 50% 58%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 0 0% 18%;
+  --sidebar-accent-foreground: 0 0% 90%;
+  --sidebar-ring: 240 50% 58%;
+  --popover: 0 0% 12%;
+  --popover-foreground: 0 0% 93%;
+  --popover-border: 0 0% 21%;
+  --primary: 240 50% 58%;          /* rojo levemente más claro en oscuro */
+  --primary-foreground: 0 0% 98%;
+  --secondary: 0 0% 18%;           /* #2E2E2E — sección alterna       */
+  --secondary-foreground: 0 0% 82%;
+  --muted: 0 0% 16%;               /* #292929                         */
+  --muted-foreground: 0 0% 56%;    /* #8F8F8F — gris legible neutro   */
+  --accent: 0 0% 17%;
+  --accent-foreground: 0 0% 90%;
+  --destructive: 0 70% 45%;
+  --destructive-foreground: 0 0% 98%;
+  --input: 0 0% 25%;
+  --ring: 240 50% 58%;
+  --chart-1: 240 50% 64%;
+  --chart-2: 240 42% 70%;
+  --chart-3: 0 0% 65%;
+  --chart-4: 0 0% 48%;
+  --chart-5: 240 30% 60%;
+  --shadow-2xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.00);
+  --shadow-xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.00);
+  --shadow-sm: 0px 2px 0px 0px hsl(0 0% 0% / 0.00), 0px 1px 2px -1px hsl(0 0% 0% / 0.00);
+  --shadow: 0px 2px 0px 0px hsl(0 0% 0% / 0.00), 0px 1px 2px -1px hsl(0 0% 0% / 0.00);
+  --shadow-md: 0px 2px 0px 0px hsl(0 0% 0% / 0.00), 0px 2px 4px -1px hsl(0 0% 0% / 0.00);
+  --shadow-lg: 0px 2px 0px 0px hsl(0 0% 0% / 0.00), 0px 4px 6px -1px hsl(0 0% 0% / 0.00);
+  --shadow-xl: 0px 2px 0px 0px hsl(0 0% 0% / 0.00), 0px 8px 10px -1px hsl(0 0% 0% / 0.00);
+  --shadow-2xl: 0px 2px 0px 0px hsl(0 0% 0% / 0.00);
+
+/* Fallback for older browsers */
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+  --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --primary-border: hsl(var(--primary));
+  --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --secondary-border: hsl(var(--secondary));
+  --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --muted-border: hsl(var(--muted));
+  --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --accent-border: hsl(var(--accent));
+  --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --destructive-border: hsl(var(--destructive));
+  --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/**
+ * Using the elevate system.
+ * Automatic contrast adjustment.
+ *
+ * <element className="hover-elevate" />
+ * <element className="active-elevate-2" />
+ *
+ * // Using the tailwind utility when a data attribute is "on"
+ * <element className="toggle-elevate data-[state=on]:toggle-elevated" />
+ * // Or manually controlling the toggle state
+ * <element className="toggle-elevate toggle-elevated" />
+ *
+ * Elevation systems have to handle many states.
+ * - not-hovered, vs. hovered vs. active  (three mutually exclusive states)
+ * - toggled or not
+ * - focused or not (this is not handled with these utilities)
+ *
+ * Even without handling focused or not, this is six possible combinations that
+ * need to be distinguished from eachother visually.
+ */
+@layer utilities {
+
+  /* Skip links for accessibility - visually hidden until focused */
+  .skip-links {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 99999;
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .skip-link {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .skip-link:focus {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    width: auto;
+    height: auto;
+    padding: 0.75rem 1.5rem;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    border-radius: 0.375rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    z-index: 99999;
+  }
+
+  .skip-link:focus:nth-child(2) {
+    left: auto;
+    right: 0.5rem;
+  }
+
+  /* Enhanced focus indicators for accessibility */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* Focus indicators for interactive elements */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [role="button"]:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* Ensure focus is visible on dark backgrounds */
+  .dark a:focus-visible,
+  .dark button:focus-visible {
+    outline-color: hsl(var(--ring));
+  }
+
+  /* Hide ugly search cancel button in Chrome until we can style it properly */
+  input[type="search"]::-webkit-search-cancel-button {
+    @apply hidden;
+  }
+
+  /* Placeholder styling for contentEditable div */
+  [contenteditable][data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    color: hsl(var(--muted-foreground));
+    pointer-events: none;
+  }
+
+  /* .no-default-hover-elevate/no-default-active-elevate is an escape hatch so consumers of
+   * buttons/badges can remove the automatic brightness adjustment on interactions
+   * and program their own. */
+  .no-default-hover-elevate {}
+
+  .no-default-active-elevate {}
+
+
+  /**
+   * Toggleable backgrounds go behind the content. Hoverable/active goes on top.
+   * This way they can stack/compound. Both will overlap the parent's borders!
+   * So borders will be automatically adjusted both on toggle, and hover/active,
+   * and they will be compounded.
+   */
+  .toggle-elevate::before,
+  .toggle-elevate-2::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    /*border-radius: inherit;   match rounded corners */
+    border-radius: inherit;
+    z-index: -1;
+    /* sits behind content but above backdrop */
+  }
+
+  .toggle-elevate.toggle-elevated::before {
+    background-color: var(--elevate-2);
+  }
+
+  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
+  .border.toggle-elevate::before {
+    inset: -1px;
+  }
+
+  /* Does not work on elements with overflow:hidden! */
+  .hover-elevate:not(.no-default-hover-elevate),
+  .active-elevate:not(.no-default-active-elevate),
+  .hover-elevate-2:not(.no-default-hover-elevate),
+  .active-elevate-2:not(.no-default-active-elevate) {
+    position: relative;
+    z-index: 0;
+  }
+
+  .hover-elevate:not(.no-default-hover-elevate)::after,
+  .active-elevate:not(.no-default-active-elevate)::after,
+  .hover-elevate-2:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:not(.no-default-active-elevate)::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    /*border-radius: inherit;   match rounded corners */
+    border-radius: inherit;
+    z-index: 999;
+    /* sits in front of content */
+  }
+
+  .hover-elevate:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-1);
+  }
+
+  .hover-elevate-2:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-2);
+  }
+
+  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate:not(.no-active-interaction-elevate)::after,
+  .border.hover-elevate-2:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate-2:not(.no-active-interaction-elevate)::after,
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
+    inset: -1px;
+  }
+
+  /* Graceful handling for broken/loading images */
+  .img-fallback {
+    position: relative;
+    background-color: #F5F2EA;
+    background-image: url('/assets/logo-placeholder.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 30%;
+  }
+
+  .img-fallback img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Hide alt text when image fails */
+  .img-fallback img:not([src]),
+  .img-fallback img[src=""] {
+    visibility: hidden;
+  }
+
+  /* =========================================
+   * PERFORMANCE OPTIMIZATIONS (Lighthouse)
+   * =========================================*/
+  
+  /* GPU acceleration for smooth animations */
+  .gpu-accelerate {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+  
+  /* Content containment for better paint performance */
+  .contain-layout {
+    contain: layout;
+  }
+  
+  .contain-paint {
+    contain: paint;
+  }
+  
+  .contain-strict {
+    contain: strict;
+  }
+  
+  /* Reduce CLS by reserving space for dynamic content */
+  .aspect-hero {
+    aspect-ratio: 16/9;
+  }
+  
+  .aspect-card {
+    aspect-ratio: 4/3;
+  }
+  
+  .aspect-square {
+    aspect-ratio: 1/1;
+  }
+  
+  /* Lazy loading placeholder skeleton */
+  .skeleton-pulse {
+    background: linear-gradient(90deg, 
+      hsl(var(--muted)) 0%, 
+      hsl(var(--muted-foreground) / 0.1) 50%, 
+      hsl(var(--muted)) 100%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  
+  /* Optimize image rendering */
+  .img-optimized {
+    image-rendering: optimizeSpeed;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+  
+  /* =========================================
+   * 2024-2025 DESIGN TRENDS
+   * =========================================*/
+  
+  /* Glassmorphism effects */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+  
+  .glass-light {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .dark .glass {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .dark .glass-light {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  
+  /* Bento Grid System */
+  .bento-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: minmax(200px, auto);
+  }
+  
+  @media (max-width: 1024px) {
+    .bento-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .bento-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .bento-item {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .bento-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+  
+  .bento-span-2 {
+    grid-column: span 2;
+  }
+  
+  .bento-span-3 {
+    grid-column: span 3;
+  }
+  
+  .bento-row-2 {
+    grid-row: span 2;
+  }
+  
+  /* Micro-interactions */
+  .micro-bounce {
+    transition: transform 0.15s ease;
+  }
+  
+  .micro-bounce:hover {
+    transform: translateY(-2px);
+  }
+  
+  .micro-bounce:active {
+    transform: translateY(0);
+  }
+  
+  .micro-scale {
+    transition: transform 0.2s ease;
+  }
+  
+  .micro-scale:hover {
+    transform: scale(1.02);
+  }
+  
+  .micro-scale:active {
+    transform: scale(0.98);
+  }
+  
+  .micro-glow {
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .micro-glow:hover {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+  
+  /* Smooth fade-in animation */
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  .fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+  }
+  
+  .fade-in-delay-100 {
+    animation-delay: 100ms;
+  }
+  
+  .fade-in-delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .fade-in-delay-300 {
+    animation-delay: 300ms;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Staggered list animations */
+  .stagger-in > * {
+    opacity: 0;
+    animation: fadeInUp 0.4s ease-out forwards;
+  }
+  
+  .stagger-in > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger-in > *:nth-child(2) { animation-delay: 50ms; }
+  .stagger-in > *:nth-child(3) { animation-delay: 100ms; }
+  .stagger-in > *:nth-child(4) { animation-delay: 150ms; }
+  .stagger-in > *:nth-child(5) { animation-delay: 200ms; }
+  .stagger-in > *:nth-child(6) { animation-delay: 250ms; }
+  .stagger-in > *:nth-child(7) { animation-delay: 300ms; }
+  .stagger-in > *:nth-child(8) { animation-delay: 350ms; }
+  .stagger-in > *:nth-child(9) { animation-delay: 400ms; }
+  .stagger-in > *:nth-child(10) { animation-delay: 450ms; }
+  
+  /* Gradient text effect */
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.7));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* =========================================
+   * ACCESSIBILITY ENHANCEMENTS (WCAG AAA)
+   * =========================================*/
+  
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    
+    .skeleton-pulse {
+      animation: none;
+      background: hsl(var(--muted));
+    }
+  }
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    :root {
+      --foreground: 0 0% 0%;
+      --background: 0 0% 100%;
+      --border: 0 0% 0%;
+    }
+    
+    .dark {
+      --foreground: 0 0% 100%;
+      --background: 0 0% 0%;
+      --border: 0 0% 100%;
+    }
+  }
+  
+  /* Ensure minimum touch target size (44x44px) */
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  /* Screen reader only text */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  
+  /* Not screen reader only (visible again) */
+  .not-sr-only {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+  
+  /* Enhanced link underlines for visibility */
+  .link-underline {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    transition: text-decoration-thickness 0.2s ease;
+  }
+  
+  .link-underline:hover {
+    text-decoration-thickness: 2px;
+  }
+  
+  /* =========================================
+   * MOBILE-FIRST RESPONSIVE UTILITIES
+   * =========================================*/
+  
+  /* Safe area padding for mobile notches */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+  
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+  
+  /* Smooth scrolling */
+  .smooth-scroll {
+    scroll-behavior: smooth;
+  }
+  
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Custom styled scrollbar */
+  .scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground)) transparent;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground));
+    border-radius: 3px;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--foreground) / 0.5);
+  }
+  
+  /* Text balance for better readability */
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* =========================================
+   * MOBILE TOUCH & RESPONSIVENESS
+   * =========================================*/
+  
+  /* Touch manipulation for better mobile experience */
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Apply touch manipulation to all interactive elements */
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [role="button"],
+  [tabindex] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  }
+  
+  .dark button,
+  .dark a,
+  .dark input,
+  .dark select,
+  .dark textarea,
+  .dark [role="button"],
+  .dark [tabindex] {
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Minimum touch target utility class */
+  .touch-target-min {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  /* Prevent text size adjustment on mobile */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+}
+
+/* =========================================
+ * MOBILE BREAKPOINT STYLES
+ * =========================================*/
+
+/* Prevent horizontal scroll on mobile */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Small phones (320px) */
+@media screen and (max-width: 359px) {
+  html {
+    font-size: 14px;
+  }
+  
+  body {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  h1 {
+    font-size: 1.75rem;
+    line-height: 1.2;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+}
+
+/* Mobile-first base styles (up to 640px) */
+@media screen and (max-width: 639px) {
+  body {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  
+  /* Ensure minimum readable font size */
+  p, span, li, td, th, label {
+    font-size: max(16px, 1rem);
+  }
+  
+  /* Improve touch targets for all clickable elements */
+  a:not(.inline-link),
+  button {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  /* Prevent fixed headers from being too tall */
+  header {
+    max-height: 80px;
+  }
+  
+  /* Stack flex items vertically on small screens when needed */
+  .mobile-stack {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  /* Full width buttons on mobile */
+  .mobile-full-width {
+    width: 100%;
+  }
+}
+
+/* Tablets (768px+) */
+@media screen and (min-width: 768px) {
+  body {
+    font-size: 18px;
+    line-height: 1.7;
+  }
+}
+
+/* Agent Network Animations - Live Nerve Center */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(170, 26, 46, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(170, 26, 46, 0.6); }
+}
+
+@keyframes breathing {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.agent-pulse {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.agent-breathing {
+  animation: breathing 3s ease-in-out infinite;
+}
+
+@keyframes german-desk-dash {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 20; }
+}
+
+.german-desk-connector-line {
+  animation: german-desk-dash 1.5s linear infinite;
+}
