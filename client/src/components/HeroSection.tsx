@@ -99,7 +99,7 @@ function NewsItemTranslated({
       </h4>
       <Link 
         href={`/news/${item.slug}`}
-        className="inline-flex items-center gap-1 text-[11px] font-geomanist font-bold tracking-[0.15em] uppercase text-[#202058] hover:text-[#CC2038] no-underline transition-colors"
+        className="inline-flex items-center gap-1 text-[11px] font-geomanist font-bold tracking-[0.15em] uppercase text-white hover:text-white/80 no-underline transition-colors"
         data-testid={`link-news-seemore-${item.id}`}
       >
         {seeMoreText}
@@ -136,10 +136,10 @@ function NewsPanel({ language, news }: { language: LanguageCode; news: News[] })
       data-testid="panel-news-overlay"
     >
       <div
-        className="backdrop-blur-md border border-white/10 p-5 flex flex-col gap-4"
+        className="backdrop-blur-md border border-white/15 p-5 flex flex-col gap-4 shadow-xl"
         style={{
           width: '280px',
-          background: 'linear-gradient(135deg, rgba(0,0,0,0.72) 0%, rgba(20,20,20,0.65) 100%)',
+          background: 'linear-gradient(135deg, rgba(32,32,88,0.82) 0%, rgba(23,23,53,0.74) 100%)',
         }}
       >
         {/* Header */}
@@ -405,8 +405,8 @@ export default function HeroSection({ language }: HeroSectionProps) {
           </video>
         )}
         
-        <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/50 to-black/75" />
-        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black/90 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#171735]/52 via-[#202058]/30 to-[#171735]/62" />
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#171735]/82 to-transparent" />
       </div>
 
       {newsData && newsData.length > 0 && (

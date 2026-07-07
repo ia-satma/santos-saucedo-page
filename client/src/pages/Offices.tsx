@@ -751,7 +751,7 @@ export default function Offices() {
       <SEOHead page="offices" language={language} />
       <Header />
       
-      <section className="pt-36 pb-20 bg-[#1a1a19]" data-testid="section-offices-hero">
+      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-offices-hero">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -1161,14 +1161,14 @@ export default function Offices() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="bg-[#1a1a19] rounded-none p-8 lg:p-12 text-center"
+            className="section-stone rounded-none p-8 lg:p-12 text-center border border-border"
             data-testid="section-contact-cta"
           >
             <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
-            <h2 className="text-2xl font-heading font-light text-white mb-4 uppercase tracking-[0.12em]">
+            <h2 className="text-2xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
               {t.contactCtaTitle}
             </h2>
-            <p className="text-white/60 max-w-2xl mx-auto mb-8">
+            <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
               {t.contactCtaSubtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -1187,7 +1187,7 @@ export default function Offices() {
                 <Button 
                   variant="outline" 
                   size="lg" 
-                  className="rounded-none gap-2 border-white/20 text-white"
+                  className="rounded-none gap-2 border-primary/30 text-primary hover:bg-primary/5"
                   data-testid="button-schedule"
                 >
                   {t.scheduleButton}

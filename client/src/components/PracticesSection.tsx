@@ -152,7 +152,7 @@ export default function PracticesSection() {
   return (
     <section
       id="practices"
-      className="py-24 lg:py-32 bg-[#111110]"
+      className="py-24 lg:py-32 section-paper"
       data-testid="section-practices"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
@@ -172,7 +172,7 @@ export default function PracticesSection() {
 
               {/* Serif section heading — Playfair Display */}
               <h2
-                className="font-heading font-light text-xl md:text-2xl text-white/90 uppercase tracking-[0.12em] mb-6"
+                className="font-heading font-light text-xl md:text-2xl text-foreground uppercase tracking-[0.12em] mb-6"
                 data-testid="text-practices-title"
               >
                 {t.title}
@@ -180,13 +180,13 @@ export default function PracticesSection() {
 
               {/* Decorative large number */}
               <div className="relative mb-6 select-none pointer-events-none">
-                <span className="text-[9rem] leading-none font-heading font-light text-white/[0.10]">
+                <span className="text-[9rem] leading-none font-heading font-light text-primary/[0.12]">
                   6
                 </span>
               </div>
 
               {/* Intro sentence */}
-              <p className="text-sm text-white/50 leading-relaxed mb-10 max-w-xs">
+              <p className="text-sm text-muted-foreground leading-relaxed mb-10 max-w-xs">
                 {t.intro}
               </p>
 
@@ -203,7 +203,7 @@ export default function PracticesSection() {
                 </Link>
                 <Link
                   href="/practice-groups"
-                  className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.12em] uppercase text-white/50 hover:text-white transition-colors duration-200 group"
+                  className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.12em] uppercase text-primary/75 hover:text-primary transition-colors duration-200 group"
                   data-testid="link-practices-see-more"
                 >
                   {t.seeMore}
@@ -219,13 +219,13 @@ export default function PracticesSection() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="lg:w-2/3 border-t border-[#202058]/25 grid grid-cols-1 lg:grid-cols-2"
+            className="lg:w-2/3 border-t border-primary/20 grid grid-cols-1 lg:grid-cols-2 bg-white/55 shadow-sm"
           >
             {practiceAreas.map((area) => (
               <motion.div key={area.id} variants={itemVariants}>
                 <Link
                   href={`/practice-groups/${area.slug}`}
-                  className="group flex items-center gap-6 px-4 py-3 border-b border-[#202058]/25 border-l-2 border-l-transparent hover:border-l-[#202058] hover:bg-white/4 transition-all duration-200 h-full"
+                  className="group flex items-center gap-6 px-4 py-3 border-b border-primary/15 border-l-2 border-l-transparent hover:border-l-primary hover:bg-primary/[0.04] transition-all duration-200 h-full"
                   data-testid={`link-practice-${area.id}`}
                 >
                   <span
@@ -235,7 +235,7 @@ export default function PracticesSection() {
                     {String(area.id).padStart(2, "0")}
                   </span>
                   <span
-                    className="flex-1 text-sm font-light text-white/90 group-hover:text-white transition-colors duration-200 leading-snug"
+                    className="flex-1 text-sm font-light text-foreground group-hover:text-primary transition-colors duration-200 leading-snug"
                     data-testid={`text-practice-name-${area.id}`}
                   >
                     {getPracticeAreaName(area, language)}
@@ -263,7 +263,7 @@ export default function PracticesSection() {
           </Link>
           <Link
             href="/practice-groups"
-            className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.12em] uppercase text-white/50 hover:text-white transition-colors duration-200 group"
+            className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.12em] uppercase text-primary/75 hover:text-primary transition-colors duration-200 group"
             data-testid="link-practices-see-more-mobile"
           >
             {t.seeMore}

@@ -31,13 +31,19 @@ blockquote {
 /* LIGHT MODE */
 :root {
   /* Santos & Saucedo corporate palette */
+  --ss-navy: #202058;
+  --ss-paper: #F8F6F1;
+  --ss-stone: #EEE9E0;
+  --ss-warm-gray: #D8D1C6;
+  --ss-ink: #272622;
+  --ss-muted-ink: #6E6A61;
   --ss-red: #202058;
-  --ss-gray-1: #D5D2CD;  /* light swatch left  */
-  --ss-gray-2: #C0BDB8;  /* light swatch right */
-  --ss-gray-4: #8B8D89;  /* dark swatch left   */
-  --ss-gray-8: #5B5C5F;  /* dark swatch middle */
-  --ss-gray-11: #2E2E2A; /* dark swatch right  */
-  --ss-black: #1D1D1B;
+  --ss-gray-1: #EEE9E0;  /* editorial paper     */
+  --ss-gray-2: #D8D1C6;  /* warm divider        */
+  --ss-gray-4: #938E84;  /* secondary text      */
+  --ss-gray-8: #6E6A61;  /* muted ink           */
+  --ss-gray-11: #272622; /* primary ink         */
+  --ss-black: #171735;
 
   --button-outline: rgba(0,0,0, .10);
   --badge-outline: rgba(0,0,0, .05);
@@ -46,42 +52,42 @@ blockquote {
   --elevate-2: rgba(0,0,0, .08);
 
   /* ── PALETA LIGHT ─────────────────────────────────────────
-     Grises 100 % neutros — sin tinte azul ni cálido.
-     Inspiración: Baker McKenzie, White & Case, Hogan Lovells.
+     Editorial clara y cálida para Santos & Saucedo.
+     Navy corporativo como acento; superficies tipo papel.
   ─────────────────────────────────────────────────────────── */
-  --background: 0 0% 98%;          /* #FAFAFA — blanco neutro puro    */
-  --foreground: 0 0% 9%;           /* #171717 — casi negro            */
+  --background: 40 33% 96%;        /* #F8F6F1 — papel cálido          */
+  --foreground: 48 7% 14%;         /* #272622 — tinta suave           */
   --card: 0 0% 100%;               /* #FFFFFF — blanco puro           */
-  --card-foreground: 0 0% 9%;
-  --card-border: 0 0% 90%;         /* #E6E6E6 — borde sutil           */
-  --border: 0 0% 87%;              /* #DEDEDE                         */
-  --sidebar: 0 0% 96%;             /* #F5F5F5                         */
-  --sidebar-foreground: 0 0% 9%;
-  --sidebar-border: 0 0% 88%;
+  --card-foreground: 48 7% 14%;
+  --card-border: 34 20% 82%;       /* #D8D1C6 — borde editorial       */
+  --border: 34 20% 82%;
+  --sidebar: 40 28% 94%;
+  --sidebar-foreground: 48 7% 14%;
+  --sidebar-border: 34 20% 82%;
   --sidebar-primary: 240 47% 24%;
   --sidebar-primary-foreground: 0 0% 98%;
-  --sidebar-accent: 0 0% 93%;
-  --sidebar-accent-foreground: 0 0% 9%;
+  --sidebar-accent: 38 25% 90%;
+  --sidebar-accent-foreground: 48 7% 14%;
   --sidebar-ring: 240 47% 24%;
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 9%;
-  --popover-border: 0 0% 88%;
+  --popover-foreground: 48 7% 14%;
+  --popover-border: 34 20% 82%;
   --primary: 240 47% 24%;          /* #202058 — navy corporativo      */
   --primary-foreground: 0 0% 98%;
-  --secondary: 0 0% 94%;           /* #F0F0F0 — sección alterna       */
-  --secondary-foreground: 0 0% 18%;
-  --muted: 0 0% 94%;               /* mismo que secondary             */
-  --muted-foreground: 0 0% 42%;    /* #6B6B6B — gris legible          */
-  --accent: 0 0% 92%;
-  --accent-foreground: 0 0% 9%;
+  --secondary: 38 25% 90%;         /* #EEE9E0 — sección alterna       */
+  --secondary-foreground: 48 7% 18%;
+  --muted: 38 25% 90%;
+  --muted-foreground: 40 6% 41%;   /* #6E6A61 — gris cálido legible   */
+  --accent: 39 28% 92%;
+  --accent-foreground: 48 7% 14%;
   --destructive: 0 72% 45%;
   --destructive-foreground: 0 0% 98%;
-  --input: 0 0% 84%;
+  --input: 34 20% 78%;
   --ring: 240 47% 24%;
   --chart-1: 240 47% 24%;
   --chart-2: 240 38% 38%;
-  --chart-3: 0 0% 30%;
-  --chart-4: 0 0% 50%;
+  --chart-3: 40 8% 36%;
+  --chart-4: 35 11% 56%;
   --chart-5: 240 24% 52%;
   --font-sans: 'Optima', 'Lato', 'Calibri', 'Segoe UI', sans-serif;
   --font-serif: 'Optima', 'Lato', 'Georgia', 'Times New Roman', serif;
@@ -89,14 +95,14 @@ blockquote {
   --font-support: 'Geomanist', 'Century Gothic', 'Lato', 'Segoe UI', sans-serif;
   --font-mono: Menlo, monospace;
   --radius: .5rem;
-  --shadow-2xs: 0 1px 2px 0 hsl(220 25% 12% / 0.04);
-  --shadow-xs:  0 1px 3px 0 hsl(220 25% 12% / 0.06);
-  --shadow-sm:  0 1px 3px 0 hsl(220 25% 12% / 0.08), 0 1px 2px -1px hsl(220 25% 12% / 0.06);
-  --shadow:     0 4px 6px -1px hsl(220 25% 12% / 0.08), 0 2px 4px -2px hsl(220 25% 12% / 0.06);
-  --shadow-md:  0 8px 16px -4px hsl(220 25% 12% / 0.10), 0 4px 6px -4px hsl(220 25% 12% / 0.06);
-  --shadow-lg:  0 16px 24px -6px hsl(220 25% 12% / 0.12), 0 8px 10px -6px hsl(220 25% 12% / 0.06);
-  --shadow-xl:  0 24px 40px -8px hsl(220 25% 12% / 0.14), 0 12px 16px -8px hsl(220 25% 12% / 0.06);
-  --shadow-2xl: 0 40px 64px -12px hsl(220 25% 12% / 0.18);
+  --shadow-2xs: 0 1px 2px 0 hsl(35 28% 24% / 0.04);
+  --shadow-xs:  0 1px 3px 0 hsl(35 28% 24% / 0.06);
+  --shadow-sm:  0 1px 3px 0 hsl(35 28% 24% / 0.08), 0 1px 2px -1px hsl(35 28% 24% / 0.06);
+  --shadow:     0 4px 6px -1px hsl(35 28% 24% / 0.08), 0 2px 4px -2px hsl(35 28% 24% / 0.06);
+  --shadow-md:  0 8px 16px -4px hsl(35 28% 24% / 0.10), 0 4px 6px -4px hsl(35 28% 24% / 0.06);
+  --shadow-lg:  0 16px 24px -6px hsl(35 28% 24% / 0.12), 0 8px 10px -6px hsl(35 28% 24% / 0.06);
+  --shadow-xl:  0 24px 40px -8px hsl(35 28% 24% / 0.14), 0 12px 16px -8px hsl(35 28% 24% / 0.06);
+  --shadow-2xl: 0 40px 64px -12px hsl(35 28% 24% / 0.18);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
@@ -137,34 +143,33 @@ blockquote {
   --elevate-2: rgba(255,255,255, .09);
 
   /* ── PALETA DARK ──────────────────────────────────────────
-     Carbón neutro profundo — sin azul, sin calidez.
-     Gris oscuro puro con jerarquía clara entre capas.
+     Carbón/navy profundo, evitando negro puro.
   ─────────────────────────────────────────────────────────── */
-  --background: 0 0% 9%;           /* #171717 — carbón profundo       */
-  --foreground: 0 0% 93%;          /* #EDEDED — blanco neutro suave   */
-  --card: 0 0% 13%;                /* #212121 — panel elevado         */
+  --background: 240 37% 12%;       /* navy profundo                   */
+  --foreground: 42 24% 92%;
+  --card: 240 30% 16%;
   --card-foreground: 0 0% 93%;
-  --card-border: 0 0% 20%;         /* #333333 — borde sutil           */
-  --border: 0 0% 22%;              /* #383838                         */
-  --sidebar: 0 0% 11%;             /* #1C1C1C                         */
-  --sidebar-foreground: 0 0% 90%;
-  --sidebar-border: 0 0% 19%;
+  --card-border: 240 16% 28%;
+  --border: 240 16% 28%;
+  --sidebar: 240 34% 13%;
+  --sidebar-foreground: 42 24% 90%;
+  --sidebar-border: 240 16% 26%;
   --sidebar-primary: 240 50% 58%;
   --sidebar-primary-foreground: 0 0% 98%;
   --sidebar-accent: 0 0% 18%;
   --sidebar-accent-foreground: 0 0% 90%;
   --sidebar-ring: 240 50% 58%;
-  --popover: 0 0% 12%;
-  --popover-foreground: 0 0% 93%;
-  --popover-border: 0 0% 21%;
-  --primary: 240 50% 58%;          /* rojo levemente más claro en oscuro */
+  --popover: 240 30% 16%;
+  --popover-foreground: 42 24% 92%;
+  --popover-border: 240 16% 28%;
+  --primary: 240 48% 68%;
   --primary-foreground: 0 0% 98%;
-  --secondary: 0 0% 18%;           /* #2E2E2E — sección alterna       */
-  --secondary-foreground: 0 0% 82%;
-  --muted: 0 0% 16%;               /* #292929                         */
-  --muted-foreground: 0 0% 56%;    /* #8F8F8F — gris legible neutro   */
-  --accent: 0 0% 17%;
-  --accent-foreground: 0 0% 90%;
+  --secondary: 240 24% 21%;
+  --secondary-foreground: 42 24% 86%;
+  --muted: 240 22% 20%;
+  --muted-foreground: 38 14% 68%;
+  --accent: 240 22% 22%;
+  --accent-foreground: 42 24% 90%;
   --destructive: 0 70% 45%;
   --destructive-foreground: 0 0% 98%;
   --input: 0 0% 25%;
@@ -966,4 +971,80 @@ html, body {
 
 .german-desk-connector-line {
   animation: german-desk-dash 1.5s linear infinite;
+}
+
+/* Santos & Saucedo editorial light surfaces */
+.editorial-page-hero {
+  position: relative;
+  overflow: hidden;
+  color: hsl(var(--foreground));
+  border-bottom: 1px solid hsl(var(--border));
+  background:
+    radial-gradient(circle at 50% 0%, rgba(32, 32, 88, 0.12), transparent 42%),
+    linear-gradient(180deg, #fbfaf6 0%, var(--ss-paper) 48%, var(--ss-stone) 100%);
+}
+
+.editorial-page-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.42;
+  background-image:
+    linear-gradient(rgba(32, 32, 88, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(32, 32, 88, 0.035) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, black, transparent 72%);
+}
+
+.editorial-page-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.editorial-page-hero h1,
+.editorial-page-hero .text-white {
+  color: hsl(var(--foreground)) !important;
+}
+
+.editorial-page-hero p,
+.editorial-page-hero .text-white\/40,
+.editorial-page-hero .text-white\/50,
+.editorial-page-hero .text-white\/60,
+.editorial-page-hero .text-white\/70 {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+.editorial-page-hero a,
+.editorial-page-hero .hover\:text-white:hover {
+  color: hsl(var(--primary)) !important;
+}
+
+.section-paper {
+  background:
+    radial-gradient(circle at top left, rgba(32, 32, 88, 0.08), transparent 34rem),
+    linear-gradient(180deg, #fbfaf6 0%, var(--ss-paper) 100%);
+}
+
+.section-stone {
+  background:
+    linear-gradient(180deg, var(--ss-stone) 0%, var(--ss-paper) 100%);
+}
+
+.navy-photo-scrim {
+  background: linear-gradient(
+    to top,
+    rgba(20, 20, 58, 0.72) 0%,
+    rgba(32, 32, 88, 0.34) 45%,
+    rgba(32, 32, 88, 0.04) 100%
+  );
+}
+
+.navy-photo-scrim-strong {
+  background: linear-gradient(
+    to top,
+    rgba(20, 20, 58, 0.82) 0%,
+    rgba(32, 32, 88, 0.46) 52%,
+    rgba(32, 32, 88, 0.12) 100%
+  );
 }

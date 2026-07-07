@@ -229,7 +229,7 @@ export default function IndustryGroupsSection() {
   return (
     <section
       id="industry-groups"
-      className="bg-[#111110]"
+      className="section-stone"
       data-testid="section-industry-groups"
     >
       {/* Desktop: 7 expanding vertical panels — starts immediately at top of section */}
@@ -274,8 +274,8 @@ export default function IndustryGroupsSection() {
                 className="absolute inset-0"
                 style={{
                   background: isActive
-                    ? "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.3) 100%)"
-                    : "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 100%)",
+                    ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(32,32,88,0.34) 50%, rgba(32,32,88,0.12) 100%)"
+                    : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(32,32,88,0.36) 100%)",
                   transition: "background 0.5s ease",
                 }}
               />
@@ -347,7 +347,7 @@ export default function IndustryGroupsSection() {
                 aria-hidden="true"
                 className="absolute inset-0 w-full h-full object-cover transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-black/65 group-hover:bg-black/50 transition-colors duration-300" />
+              <div className="absolute inset-0 bg-[#202058]/60 group-hover:bg-[#202058]/44 transition-colors duration-300" />
               <span className="absolute top-3 left-3 text-[#202058] text-xs font-medium tabular-nums">
                 {String(group.id).padStart(2, "0")}
               </span>
@@ -376,7 +376,7 @@ export default function IndustryGroupsSection() {
             </p>
             {/* Serif section heading — Playfair Display */}
             <h2
-              className="font-heading font-light text-xl md:text-2xl text-white/90 uppercase tracking-[0.12em]"
+              className="font-heading font-light text-xl md:text-2xl text-foreground uppercase tracking-[0.12em]"
               data-testid="text-industry-groups-title"
             >
               {t.title}
@@ -385,7 +385,7 @@ export default function IndustryGroupsSection() {
         </div>
         <Link
           href="/industry-groups"
-          className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.15em] uppercase text-white/50 hover:text-white transition-colors duration-200 group"
+          className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.15em] uppercase text-primary/75 hover:text-primary transition-colors duration-200 group"
           data-testid="link-industry-groups-see-more"
           aria-label={t.seeMoreAriaLabel}
         >

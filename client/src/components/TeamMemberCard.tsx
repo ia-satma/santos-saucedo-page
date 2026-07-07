@@ -97,7 +97,7 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
         </div>
 
         {/* Bottom gradient */}
-        <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-2/5 navy-photo-scrim pointer-events-none" />
 
         {/* Bottom name + role text */}
         <div className="absolute inset-x-0 bottom-0 p-4 z-10">
@@ -116,7 +116,7 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
         </div>
 
         {/* Hover overlay with action buttons — vCard stops propagation; View Profile relies on outer Link */}
-        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-3 z-20">
+        <div className="absolute inset-0 bg-[#202058]/58 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-3 z-20">
           <Button
             variant="outline"
             size="sm"

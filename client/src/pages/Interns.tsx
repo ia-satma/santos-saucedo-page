@@ -741,7 +741,7 @@ export default function Interns() {
       <SEOHead page="interns" language={language} />
       <Header />
       
-      <section className="pt-36 pb-20 bg-[#1a1a19]" data-testid="section-interns-hero">
+      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-interns-hero">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -1052,7 +1052,7 @@ export default function Interns() {
             className="mb-12"
             data-testid="section-cta"
           >
-            <Card className="rounded-none border border-white/10 bg-[#1a1a19] text-white overflow-hidden">
+            <Card className="rounded-none border border-border bg-card shadow-sm overflow-hidden">
               <CardContent className="p-8 lg:p-12 text-center">
                 <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
                 <h2 
@@ -1061,16 +1061,16 @@ export default function Interns() {
                 >
                   {t.ctaTitle}
                 </h2>
-                <p className="text-base text-white/60 max-w-2xl mx-auto mb-6">
+                <p className="text-base text-muted-foreground max-w-2xl mx-auto mb-6">
                   {t.ctaSubtitle}
                 </p>
-                <p className="text-white/60 mb-2">
+                <p className="text-muted-foreground mb-2">
                   {t.ctaInstructions}
                 </p>
                 <p className="text-xl font-light text-primary mb-6">
                   {t.applyEmail}
                 </p>
-                <p className="text-sm text-white/50 max-w-2xl mx-auto mb-8">
+                <p className="text-sm text-muted-foreground max-w-2xl mx-auto mb-8">
                   {t.ctaNote}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -1089,7 +1089,7 @@ export default function Interns() {
                   <Button 
                     variant="outline"
                     size="lg"
-                    className="rounded-none border-white/20 text-white"
+                    className="rounded-none border-primary/30 text-primary hover:bg-primary/5"
                     asChild
                     data-testid="button-view-careers"
                   >

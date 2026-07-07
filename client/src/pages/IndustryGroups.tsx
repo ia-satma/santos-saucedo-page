@@ -46,7 +46,7 @@ function IndustryGroupCard({ group, index, learnMoreText }: IndustryGroupCardPro
   return (
     <Link href={`/industry-groups/${group.slug}`}>
       <article
-        className="group relative h-full overflow-hidden rounded-none bg-[#1a1a19] border-l-2 border-l-primary hover:border-l-4 transition-all duration-500 cursor-pointer aspect-[4/5]"
+        className="group relative h-full overflow-hidden rounded-none bg-card border-l-2 border-l-primary hover:border-l-4 shadow-sm hover:shadow-md transition-all duration-500 cursor-pointer aspect-[4/5]"
         data-testid={`card-industry-group-${group.slug}`}
         onMouseEnter={() => setIsHover(true)}
         onMouseLeave={() => setIsHover(false)}
@@ -75,15 +75,15 @@ function IndustryGroupCard({ group, index, learnMoreText }: IndustryGroupCardPro
           className="absolute inset-0 pointer-events-none"
           style={{
             background: isHover
-              ? "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.3) 100%)"
-              : "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 100%)",
+              ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(32,32,88,0.34) 50%, rgba(32,32,88,0.12) 100%)"
+              : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(32,32,88,0.38) 100%)",
             transition: "background 0.5s ease",
           }}
         />
 
         {/* Translation indicator */}
         {showTranslatingIndicator && (
-          <div className="absolute top-4 right-4 z-10 flex items-center gap-1 px-2 py-1 bg-black/60 backdrop-blur-sm text-xs text-white/80">
+          <div className="absolute top-4 right-4 z-10 flex items-center gap-1 px-2 py-1 bg-[#202058]/70 backdrop-blur-sm text-xs text-white/90">
             <Loader2 className="w-3 h-3 animate-spin" />
           </div>
         )}
@@ -250,7 +250,7 @@ export default function IndustryGroups() {
       <SEOHead page="industryGroups" language={language} />
       <Header />
       
-      <section className="pt-36 pb-20 bg-[#1a1a19]" data-testid="section-industry-groups-hero">
+      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-industry-groups-hero">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}

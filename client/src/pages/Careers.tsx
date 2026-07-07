@@ -1040,7 +1040,7 @@ export default function Careers() {
       <SEOHead page="careers" language={language} />
       <Header />
       
-      <section className="pt-36 pb-20 bg-[#1a1a19]" data-testid="section-careers-hero">
+      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-careers-hero">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -1360,7 +1360,7 @@ export default function Careers() {
               </Card>
 
               <Card 
-                className="rounded-none border border-white/10 bg-[#1a1a19] text-white"
+                className="rounded-none border border-border bg-card shadow-sm"
                 data-testid="card-internship-cta"
               >
                 <CardContent className="p-8 flex flex-col justify-center h-full">
@@ -1368,7 +1368,7 @@ export default function Careers() {
                   <h3 className="text-xl font-heading font-light mb-4">
                     {language === "es" ? "¿Listo para comenzar?" : "Ready to get started?"}
                   </h3>
-                  <p className="text-white/60 mb-6">
+                  <p className="text-muted-foreground mb-6">
                     {language === "es" 
                       ? "Aplica a nuestro programa de pasantías y da el primer paso en tu carrera legal."
                       : "Apply to our internship program and take the first step in your legal career."

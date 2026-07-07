@@ -341,7 +341,7 @@ export default function AboutUsSection() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 whileHover={{ y: -6, transition: { type: "spring", stiffness: 300, damping: 20, delay: 0 } }}
-                className="group relative bg-[#1a1a19] dark:bg-card rounded-none p-8 flex flex-col items-center text-center gap-4 overflow-visible cursor-default"
+                className="group relative bg-card border border-border shadow-sm dark:bg-card rounded-none p-8 flex flex-col items-center text-center gap-4 overflow-visible cursor-default"
                 data-testid={`value-item-${i}`}
               >
                 <div className="absolute top-0 left-0 w-full h-1 bg-primary group-hover:h-1.5 transition-all duration-300" />
@@ -350,13 +350,13 @@ export default function AboutUsSection() {
                 </div>
                 <div className="w-5 h-px bg-primary/40 group-hover:w-8 transition-all duration-500" />
                 <span
-                  className="text-xs md:text-sm font-medium uppercase tracking-[0.12em] text-white/90 dark:text-foreground leading-tight"
+                  className="text-xs md:text-sm font-medium uppercase tracking-[0.12em] text-foreground leading-tight"
                   data-testid={`text-value-${i}`}
                 >
                   {getValueName(value)}
                 </span>
                 <p
-                  className="text-xs text-white/60 dark:text-muted-foreground leading-relaxed"
+                  className="text-xs text-muted-foreground leading-relaxed"
                   data-testid={`text-value-desc-${i}`}
                 >
                   {getValueDesc(value)}

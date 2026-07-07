@@ -638,7 +638,7 @@ export default function Footer() {
   return (
     <footer
       id="footer"
-      className="bg-[#111110] text-white py-16 lg:py-20"
+      className="bg-[#171735] text-white py-16 lg:py-20"
       data-testid="footer"
       role="contentinfo"
       aria-label={t.footerLabel}

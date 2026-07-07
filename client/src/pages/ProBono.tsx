@@ -825,7 +825,7 @@ export default function ProBono() {
       <SEOHead page="proBono" language={language} />
       <Header />
 
-      <section className="pt-36 pb-20 bg-[#1a1a19]" data-testid="section-pro-bono-hero">
+      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-pro-bono-hero">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -927,7 +927,7 @@ export default function ProBono() {
           </div>
         </section>
 
-        <section className="bg-[#1a1a19] py-16 lg:py-20" data-testid="section-stats">
+        <section className="section-stone py-16 lg:py-20" data-testid="section-stats">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -936,7 +936,7 @@ export default function ProBono() {
               transition={{ duration: 0.6 }}
               className="text-center mb-12"
             >
-              <h2 className="text-2xl md:text-3xl font-heading font-light text-white uppercase tracking-[0.12em]">
+              <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em]">
                 {t.statsTitle}
               </h2>
               <div className="h-0.5 w-12 bg-primary mx-auto mt-4" />
@@ -958,7 +958,7 @@ export default function ProBono() {
                   <p className="text-4xl lg:text-5xl font-heading text-primary mb-2">
                     {stat.value}
                   </p>
-                  <p className="text-sm text-white/60 uppercase tracking-wider font-support">
+                  <p className="text-sm text-muted-foreground uppercase tracking-wider font-support">
                     {stat.label}
                   </p>
                 </motion.div>
@@ -1010,7 +1010,7 @@ export default function ProBono() {
           </div>
         </section>
 
-        <section className="py-20 lg:py-24 bg-[#1a1a19]" data-testid="section-cta">
+        <section className="py-20 lg:py-24 section-stone" data-testid="section-cta">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -1020,11 +1020,11 @@ export default function ProBono() {
               className="text-center max-w-3xl mx-auto"
             >
               <Scale className="w-10 h-10 text-primary mx-auto mb-6" />
-              <h2 className="text-2xl md:text-3xl font-heading font-light text-white uppercase tracking-[0.12em] mb-4">
+              <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em] mb-4">
                 {t.ctaTitle}
               </h2>
               <div className="h-0.5 w-12 bg-primary mx-auto mb-8" />
-              <p className="text-lg text-white/60 leading-relaxed mb-10" data-testid="text-cta-description">
+              <p className="text-lg text-muted-foreground leading-relaxed mb-10" data-testid="text-cta-description">
                 {t.ctaText}
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -1035,7 +1035,7 @@ export default function ProBono() {
                   </Button>
                 </Link>
                 <Link href="/about">
-                  <Button variant="outline" size="lg" className="rounded-none border-white/20 text-white hover:bg-white/10" data-testid="button-learn-more">
+                  <Button variant="outline" size="lg" className="rounded-none border-primary/30 text-primary hover:bg-primary/5" data-testid="button-learn-more">
                     {t.learnMoreAbout}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>

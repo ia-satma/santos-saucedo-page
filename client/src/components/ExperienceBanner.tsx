@@ -8,10 +8,10 @@ type ContentItem = {
 
 const content: Record<LanguageCode, ContentItem> = {
   en: {
-    text: "Santos & Saucedo Abogados has more than three decades of experience providing top-quality legal services.",
+    text: "Santos & Saucedo Abogados has more than 35 years of experience providing top-quality legal services.",
   },
   es: {
-    text: "Santos & Saucedo Abogados tiene más de tres décadas de experiencia brindando servicios legales de la más alta calidad.",
+    text: "Santos & Saucedo Abogados tiene más de 35 años de experiencia brindando servicios legales de la más alta calidad.",
   },
   de: {
     text: "Santos & Saucedo Abogados verfügt über mehr als drei Jahrzehnte Erfahrung in der Bereitstellung erstklassiger Rechtsdienstleistungen.",
@@ -45,7 +45,7 @@ export default function ExperienceBanner() {
 
   return (
     <section
-      className="py-16 lg:py-20 bg-[#202058]"
+      className="py-16 lg:py-20 section-stone border-y border-border"
       data-testid="section-experience-banner"
     >
       <div className="max-w-5xl mx-auto px-6 lg:px-12">
@@ -54,7 +54,7 @@ export default function ExperienceBanner() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="text-xl md:text-2xl lg:text-3xl font-serif text-white text-center leading-relaxed"
+          className="text-xl md:text-2xl lg:text-3xl font-serif text-primary text-center leading-relaxed"
           data-testid="text-experience-banner"
         >
           {t.text}

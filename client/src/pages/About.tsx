@@ -1157,7 +1157,7 @@ export default function About() {
       <SEOHead page="about" language={language} />
       <Header />
       
-      <section className="pt-36 pb-20 bg-[#1a1a19]" data-testid="section-about-hero">
+      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-about-hero">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -1346,10 +1346,10 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="mb-20 bg-[#1a1a19] rounded-none p-10 lg:p-14"
+            className="mb-20 section-stone rounded-none p-10 lg:p-14 border border-border"
             data-testid="section-stats"
           >
-            <h2 className="text-2xl font-heading font-light text-white mb-4 text-center uppercase tracking-[0.12em]">
+            <h2 className="text-2xl font-heading font-light text-foreground mb-4 text-center uppercase tracking-[0.12em]">
               {t.statsTitle}
             </h2>
             <div className="h-0.5 w-12 bg-primary mx-auto mb-10" />
@@ -1359,7 +1359,7 @@ export default function About() {
                   <p className="text-4xl lg:text-5xl font-heading text-primary mb-2">
                     {stat.value}
                   </p>
-                  <p className="text-sm text-white/60 uppercase tracking-wider">
+                  <p className="text-sm text-muted-foreground uppercase tracking-wider">
                     {stat.label}
                   </p>
                 </div>
@@ -1439,15 +1439,15 @@ export default function About() {
               transition={{ duration: 0.6, delay: 0.7 }}
               data-testid="section-careers"
             >
-              <Card className="h-full rounded-none border border-border bg-[#1a1a19]">
+              <Card className="h-full rounded-none border border-border bg-card shadow-sm">
                 <CardContent className="p-8">
                   <div className="flex items-center gap-3 mb-4">
                     <Briefcase className="w-8 h-8 text-primary" />
-                    <h2 className="text-xl font-heading font-light text-white uppercase tracking-[0.12em]">
+                    <h2 className="text-xl font-heading font-light text-foreground uppercase tracking-[0.12em]">
                       {t.careersTitle}
                     </h2>
                   </div>
-                  <p className="text-white/60 leading-relaxed mb-6" data-testid="text-careers">
+                  <p className="text-muted-foreground leading-relaxed mb-6" data-testid="text-careers">
                     {t.careersText}
                   </p>
                   <Button 

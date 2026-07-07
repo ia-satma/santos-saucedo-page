@@ -448,7 +448,7 @@ export default function Team() {
       <SEOHead page="team" language={language} />
       <Header />
       
-      <section className="pt-36 pb-20 bg-[#1a1a19]" data-testid="section-team-hero">
+      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-team-hero">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -475,23 +475,23 @@ export default function Team() {
       </section>
 
       {/* Filter bar */}
-      <div className="bg-[#0a0a09] border-b border-[#202058]/15 sticky top-0 z-40">
+      <div className="bg-card/92 backdrop-blur-xl border-b border-border sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 py-4">
           <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder={t.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 rounded-none bg-white/5 border-white/10 text-white placeholder:text-white/30 focus-visible:ring-[#202058]/40 focus-visible:border-[#202058]/40"
+                className="pl-9 rounded-none bg-background border-border text-foreground placeholder:text-muted-foreground/70 focus-visible:ring-primary/40 focus-visible:border-primary/40"
                 data-testid="input-search"
               />
             </div>
             <div className="flex flex-wrap gap-2 items-center">
               <Select value={filterSeniority} onValueChange={setFilterSeniority}>
-                <SelectTrigger className="w-36 rounded-none bg-white/5 border-white/10 text-white/80 text-xs" data-testid="select-seniority">
+                <SelectTrigger className="w-36 rounded-none bg-background border-border text-foreground text-xs" data-testid="select-seniority">
                   <SelectValue placeholder={t.seniority} />
                 </SelectTrigger>
                 <SelectContent>
@@ -502,7 +502,7 @@ export default function Team() {
                 </SelectContent>
               </Select>
               <Select value={filterLetter} onValueChange={setFilterLetter}>
-                <SelectTrigger className="w-28 rounded-none bg-white/5 border-white/10 text-white/80 text-xs" data-testid="select-alphabetic">
+                <SelectTrigger className="w-28 rounded-none bg-background border-border text-foreground text-xs" data-testid="select-alphabetic">
                   <SelectValue placeholder={t.alphabetic} />
                 </SelectTrigger>
                 <SelectContent>
@@ -513,12 +513,12 @@ export default function Team() {
                 </SelectContent>
               </Select>
               {hasActiveFilters && (
-                <Button variant="ghost" size="default" onClick={clearFilters} className="gap-1.5 rounded-none text-white/50 hover:text-white text-xs" data-testid="button-clear-filters">
+                <Button variant="ghost" size="default" onClick={clearFilters} className="gap-1.5 rounded-none text-muted-foreground hover:text-primary text-xs" data-testid="button-clear-filters">
                   <X className="w-3.5 h-3.5" />
                   {t.clearFilters}
                 </Button>
               )}
-              <span className="text-white/30 text-xs ml-2 hidden sm:inline" data-testid="text-results-count">{totalVisible} {t.teamMembers}</span>
+              <span className="text-muted-foreground text-xs ml-2 hidden sm:inline" data-testid="text-results-count">{totalVisible} {t.teamMembers}</span>
             </div>
           </div>
         </div>
@@ -591,7 +591,7 @@ export default function Team() {
                             {getPhotoSrc(member) && (
                               <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top" style={{ transform: isActive ? "scale(1.03)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                             )}
-                            <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.2) 100%)" : "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 100%)", transition: "background 0.5s ease" }} />
+                            <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(32,32,88,0.34) 50%, rgba(32,32,88,0.10) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(32,32,88,0.36) 100%)", transition: "background 0.5s ease" }} />
                             <div className="absolute top-0 right-0 w-px h-full bg-[#202058]/15" />
                             <div className="absolute bottom-5 left-3 right-3" style={{ opacity: isActive ? 0 : 1, transition: "opacity 0.2s ease" }}>
                               <p className="text-white/60 text-[9px] uppercase tracking-[0.12em] font-light truncate">{member.name}</p>
@@ -620,7 +620,7 @@ export default function Team() {
                       {getPhotoSrc(member) && (
                         <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                      <div className="absolute inset-0 navy-photo-scrim-strong" />
                       <div className="absolute bottom-0 left-0 right-0 px-3 pb-3">
                         <p className="text-[#202058] text-[8px] uppercase tracking-[0.1em] mb-0.5">{t.partnersOnly}</p>
                         <p className="text-white text-[9px] uppercase tracking-[0.06em] leading-snug font-light line-clamp-2">{member.name}</p>
@@ -664,7 +664,7 @@ export default function Team() {
                         {getPhotoSrc(member) && (
                           <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top" style={{ transform: isActive ? "scale(1.04)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                         )}
-                        <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.3) 100%)" : "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 100%)", transition: "background 0.5s ease" }} />
+                        <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(32,32,88,0.34) 50%, rgba(32,32,88,0.12) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.78) 0%, rgba(32,32,88,0.34) 100%)", transition: "background 0.5s ease" }} />
                         <div className="absolute top-0 right-0 w-px h-full bg-[#202058]/20" />
                         <div className="absolute bottom-6 left-4 right-4" style={{ opacity: isActive ? 0 : 1, transition: "opacity 0.25s ease" }}>
                           <p className="text-white/70 text-[9px] uppercase tracking-[0.12em] font-light truncate">{member.name}</p>
@@ -691,7 +691,7 @@ export default function Team() {
                       {getPhotoSrc(member) && (
                         <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                      <div className="absolute inset-0 navy-photo-scrim" />
                       <div className="absolute bottom-0 left-0 right-0 px-3 pb-3">
                         <p className="text-[#202058] text-[8px] uppercase tracking-[0.1em] mb-0.5">{member.title}</p>
                         <p className="text-white text-[9px] uppercase tracking-[0.06em] leading-snug font-light">{member.name}</p>
@@ -742,7 +742,7 @@ export default function Team() {
                             {getPhotoSrc(member) && (
                               <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top" style={{ transform: isActive ? "scale(1.03)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                             )}
-                            <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.2) 100%)" : "linear-gradient(to top, rgba(0,0,0,0.93) 0%, rgba(0,0,0,0.75) 100%)", transition: "background 0.5s ease" }} />
+                            <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.74) 0%, rgba(32,32,88,0.36) 50%, rgba(32,32,88,0.10) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.82) 0%, rgba(32,32,88,0.38) 100%)", transition: "background 0.5s ease" }} />
                             <div className="absolute top-0 right-0 w-px h-full bg-[#202058]/10" />
                             <div className="absolute bottom-4 left-3 right-3" style={{ opacity: isActive ? 0 : 1, transition: "opacity 0.2s ease" }}>
                               <p className="text-white/50 text-[8px] uppercase tracking-[0.1em] font-light truncate">{member.name}</p>
@@ -771,7 +771,7 @@ export default function Team() {
                       {getPhotoSrc(member) && (
                         <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                      <div className="absolute inset-0 navy-photo-scrim-strong" />
                       <div className="absolute bottom-0 left-0 right-0 px-2.5 pb-2.5">
                         <p className="text-[#202058] text-[7px] uppercase tracking-[0.08em] mb-0.5">{t.associates}</p>
                         <p className="text-white text-[8px] uppercase tracking-[0.05em] leading-snug font-light line-clamp-2">{member.name}</p>

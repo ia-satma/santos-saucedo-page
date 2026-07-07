@@ -435,7 +435,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                 transition={{ type: "spring", stiffness: 80, damping: 15, delay: 0.2 }}
                 whileHover={{ scale: 1.03, y: -4, transition: { type: "spring", stiffness: 300, damping: 20, delay: 0 } }}
                 onClick={() => setShowMexicoModal(true)}
-                className="w-full md:w-[340px] lg:w-[380px] flex-shrink-0 bg-[#1a1a19] border border-white/10 p-8 lg:p-10 shadow-lg hover-elevate cursor-pointer text-left group rounded-none"
+                className="w-full md:w-[340px] lg:w-[380px] flex-shrink-0 bg-card border border-border p-8 lg:p-10 shadow-lg hover-elevate cursor-pointer text-left group rounded-none"
                 data-testid="location-mexico"
               >
                 <div className="flex items-center gap-4 mb-5">
@@ -444,15 +444,15 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                   </div>
                   <div>
                     <p
-                      className="font-heading font-light text-base md:text-lg uppercase tracking-[0.12em] text-white/90 leading-tight"
+                      className="font-heading font-light text-base md:text-lg uppercase tracking-[0.12em] text-foreground leading-tight"
                       data-testid="text-mexico-label"
                     >
                       {t.mexicoLabel}
                     </p>
-                    <p className="text-xs text-white/50 mt-1">{t.mexicoSubtitle}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{t.mexicoSubtitle}</p>
                   </div>
                 </div>
-                <p className="text-sm text-white/50 leading-relaxed">
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.
                 </p>
                 <span className="inline-flex items-center gap-1.5 mt-4 text-xs text-primary uppercase tracking-[0.12em] font-medium group-hover:gap-2.5 transition-all">
@@ -521,7 +521,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                 transition={{ type: "spring", stiffness: 80, damping: 15, delay: 0.4 }}
                 whileHover={{ scale: 1.03, y: -4, transition: { type: "spring", stiffness: 300, damping: 20, delay: 0 } }}
                 onClick={() => setShowGermanyModal(true)}
-                className="w-full md:w-[340px] lg:w-[380px] flex-shrink-0 bg-[#1a1a19] border border-white/10 p-8 lg:p-10 shadow-lg hover-elevate cursor-pointer text-left group rounded-none"
+                className="w-full md:w-[340px] lg:w-[380px] flex-shrink-0 bg-card border border-border p-8 lg:p-10 shadow-lg hover-elevate cursor-pointer text-left group rounded-none"
                 data-testid="location-germany"
               >
                 <div className="flex items-center gap-4 mb-5">
@@ -530,15 +530,15 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                   </div>
                   <div>
                     <p
-                      className="font-heading font-light text-base md:text-lg uppercase tracking-[0.12em] text-white/90 leading-tight"
+                      className="font-heading font-light text-base md:text-lg uppercase tracking-[0.12em] text-foreground leading-tight"
                       data-testid="text-germany-label"
                     >
                       {t.germanyLabel}
                     </p>
-                    <p className="text-xs text-white/50 mt-1">{t.germanySubtitle}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{t.germanySubtitle}</p>
                   </div>
                 </div>
-                <p className="text-sm text-white/50 leading-relaxed">
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {t.germanDeskDescription}
                 </p>
                 <span className="inline-flex items-center gap-1.5 mt-4 text-xs text-primary uppercase tracking-[0.12em] font-medium group-hover:gap-2.5 transition-all">
@@ -565,7 +565,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                 className="w-full h-full object-cover"
                 data-testid="img-modal-mexico"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#171735]/88 via-[#202058]/42 to-[#202058]/10 pointer-events-none" />
               <div className="absolute inset-x-0 bottom-0 p-6">
                 <div className="w-10 h-px bg-[#202058] mb-3" />
                 <p className="text-[10px] tracking-[0.25em] uppercase text-[#202058] mb-2 font-medium">
@@ -628,7 +628,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                 className="w-full h-full object-cover object-center"
                 data-testid="img-modal-germany"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#171735]/88 via-[#202058]/42 to-[#202058]/10 pointer-events-none" />
               <div className="absolute inset-x-0 bottom-0 p-6">
                 <div className="w-10 h-px bg-[#202058] mb-3" />
                 <p className="text-[10px] tracking-[0.25em] uppercase text-[#202058] mb-2 font-medium">
@@ -707,7 +707,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
       </div>
 
       {/* German Desk Team — 3 groups by cargo */}
-      <div className="bg-[#111110]" data-testid="team-members-container">
+      <div className="section-stone" data-testid="team-members-container">
 
         {/* ─── SOCIOS ──────────────────────────────────────────── */}
         <div className="border-b border-[#202058]/10">
@@ -726,7 +726,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                   onMouseEnter={() => setActivePanel(member.id)}
                 >
                   <img src={member.photo} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-[50%_20%]" style={{ transform: isActive ? "scale(1.04)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} data-testid={`img-gdm-${member.slug}`} />
-                  <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.3) 100%)" : "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 100%)", transition: "background 0.5s ease" }} />
+                  <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(32,32,88,0.34) 50%, rgba(32,32,88,0.12) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(32,32,88,0.36) 100%)", transition: "background 0.5s ease" }} />
                   <div className="absolute top-0 right-0 w-px h-full bg-[#202058]/20" />
 
                   <div className="absolute bottom-5 left-3 right-3" style={{ opacity: isActive ? 0 : 1, transition: "opacity 0.25s ease" }}>
@@ -746,7 +746,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
             {gdSocios.map((member) => (
               <Link key={member.id} href={`/team/${member.slug}`} className="relative h-44 overflow-hidden group block" data-testid={`card-gdm-mobile-${member.slug}`} aria-label={member.name}>
                 <img src={member.photo} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-black/65 group-hover:bg-black/50 transition-colors duration-300" />
+                <div className="absolute inset-0 bg-[#202058]/60 group-hover:bg-[#202058]/44 transition-colors duration-300" />
 
                 <div className="absolute bottom-3 left-3 right-3">
                   <p className="text-[#202058] text-[9px] uppercase tracking-[0.08em] mb-0.5">{member.category}</p>
@@ -777,7 +777,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                   onMouseEnter={() => setActivePanel(member.id)}
                 >
                   <img src={member.photo} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-[50%_20%]" style={{ transform: isActive ? "scale(1.04)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} data-testid={`img-gdm-${member.slug}`} />
-                  <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.3) 100%)" : "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 100%)", transition: "background 0.5s ease" }} />
+                  <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(32,32,88,0.34) 50%, rgba(32,32,88,0.12) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(32,32,88,0.36) 100%)", transition: "background 0.5s ease" }} />
                   <div className="absolute top-0 right-0 w-px h-full bg-[#202058]/20" />
 
                   <div className="absolute bottom-5 left-3 right-3" style={{ opacity: isActive ? 0 : 1, transition: "opacity 0.25s ease" }}>
@@ -796,7 +796,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
             {gdOfCounsel.map((member) => (
               <Link key={member.id} href={`/team/${member.slug}`} className="relative h-44 overflow-hidden group block" data-testid={`card-gdm-mobile-${member.slug}`} aria-label={member.name}>
                 <img src={member.photo} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-black/65 group-hover:bg-black/50 transition-colors duration-300" />
+                <div className="absolute inset-0 bg-[#202058]/60 group-hover:bg-[#202058]/44 transition-colors duration-300" />
 
                 <div className="absolute bottom-3 left-3 right-3">
                   <p className="text-[#202058] text-[9px] uppercase tracking-[0.08em] mb-0.5">{member.category}</p>
@@ -827,7 +827,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                   onMouseEnter={() => setActivePanel(member.id)}
                 >
                   <img src={member.photo} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-[50%_20%]" style={{ transform: isActive ? "scale(1.04)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} data-testid={`img-gdm-${member.slug}`} />
-                  <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.3) 100%)" : "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 100%)", transition: "background 0.5s ease" }} />
+                  <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(32,32,88,0.34) 50%, rgba(32,32,88,0.12) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(32,32,88,0.36) 100%)", transition: "background 0.5s ease" }} />
                   <div className="absolute top-0 right-0 w-px h-full bg-[#202058]/20" />
 
                   <div className="absolute bottom-5 left-3 right-3" style={{ opacity: isActive ? 0 : 1, transition: "opacity 0.25s ease" }}>
@@ -846,7 +846,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
             {gdAssociates.map((member) => (
               <Link key={member.id} href={`/team/${member.slug}`} className="relative h-44 overflow-hidden group block" data-testid={`card-gdm-mobile-${member.slug}`} aria-label={member.name}>
                 <img src={member.photo} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-black/65 group-hover:bg-black/50 transition-colors duration-300" />
+                <div className="absolute inset-0 bg-[#202058]/60 group-hover:bg-[#202058]/44 transition-colors duration-300" />
 
                 <div className="absolute bottom-3 left-3 right-3">
                   <p className="text-[#202058] text-[9px] uppercase tracking-[0.08em] mb-0.5">{member.category}</p>
@@ -872,7 +872,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                 {t.sectionTitle}
               </p>
               <h2
-                className="font-heading font-light text-xl md:text-2xl text-white/90 uppercase tracking-[0.12em]"
+                className="font-heading font-light text-xl md:text-2xl text-foreground uppercase tracking-[0.12em]"
                 data-testid="text-team-title"
               >
                 {t.teamTitle}
@@ -881,7 +881,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
           </div>
           <Link
             href="/german-desk"
-            className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.15em] uppercase text-white/50 hover:text-white transition-colors duration-200 group"
+            className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.15em] uppercase text-primary/75 hover:text-primary transition-colors duration-200 group"
             data-testid="link-gdm-see-more"
           >
             {t.seeMore}

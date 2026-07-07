@@ -2013,7 +2013,7 @@ Escluse le festività federali messicane`
       <SEOHead page="terms" language={language} />
       <Header />
       
-      <section className="pt-36 pb-20 bg-[#1a1a19]" data-testid="section-terms-hero">
+      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-terms-hero">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}

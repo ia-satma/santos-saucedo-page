@@ -586,7 +586,7 @@ export default function DiversityInclusion() {
       <SEOHead page="diversityInclusion" language={language} />
       <Header />
 
-      <section className="pt-36 pb-20 bg-[#1a1a19]" data-testid="section-diversity-hero">
+      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-diversity-hero">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -648,7 +648,7 @@ export default function DiversityInclusion() {
           </div>
         </section>
 
-        <section className="bg-[#1a1a19] py-16 lg:py-20" data-testid="section-stats">
+        <section className="section-stone py-16 lg:py-20" data-testid="section-stats">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -657,7 +657,7 @@ export default function DiversityInclusion() {
               transition={{ duration: 0.6 }}
               className="text-center mb-12"
             >
-              <h2 className="text-2xl md:text-3xl font-heading font-light text-white uppercase tracking-[0.12em]">
+              <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em]">
                 {t.statsTitle}
               </h2>
               <div className="h-0.5 w-12 bg-primary mx-auto mt-4" />
@@ -679,7 +679,7 @@ export default function DiversityInclusion() {
                   <div className="text-4xl lg:text-5xl font-heading text-primary mb-2">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-white/60 font-support uppercase tracking-wider">
+                  <div className="text-sm text-muted-foreground font-support uppercase tracking-wider">
                     {stat.label}
                   </div>
                 </motion.div>
@@ -820,7 +820,7 @@ export default function DiversityInclusion() {
           </div>
         </section>
 
-        <section className="bg-[#1a1a19] py-20 lg:py-24" data-testid="section-join">
+        <section className="section-stone py-20 lg:py-24" data-testid="section-join">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -829,11 +829,11 @@ export default function DiversityInclusion() {
               transition={{ duration: 0.6 }}
               className="text-center max-w-3xl mx-auto"
             >
-              <h2 className="text-2xl md:text-3xl font-heading font-light text-white mb-4 uppercase tracking-[0.12em]">
+              <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
                 {t.joinTitle}
               </h2>
               <div className="h-0.5 w-12 bg-primary mx-auto mb-8" />
-              <p className="text-base text-white/60 mb-10 leading-relaxed">
+              <p className="text-base text-muted-foreground mb-10 leading-relaxed">
                 {t.joinText}
               </p>
               <Link href="/careers">

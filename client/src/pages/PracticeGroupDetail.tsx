@@ -615,7 +615,7 @@ export default function PracticeGroupDetail() {
     return (
       <div className="min-h-screen bg-background" data-testid="page-practice-group-loading">
         <Header />
-        <section className="pt-36 pb-20 bg-[#1a1a19]">
+        <section className="pt-36 pb-20 editorial-page-hero">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <Skeleton className="h-5 w-48 bg-white/10 mb-6" />
             <div className="flex items-center gap-4">
@@ -717,7 +717,7 @@ export default function PracticeGroupDetail() {
     <div className="min-h-screen bg-background" data-testid="page-practice-group-detail">
       <Header />
       
-      <section className="pt-36 pb-20 bg-[#1a1a19]" data-testid="section-practice-group-hero">
+      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-practice-group-hero">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
