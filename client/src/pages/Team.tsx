@@ -441,8 +441,7 @@ export default function Team() {
   const getInitials = (name: string) =>
     name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
-  const getPhotoSrc = (member: TeamMember) =>
-    member.imageUrl || `/partner_photos/${member.slug}.jpg`;
+  const getPhotoSrc = (member: TeamMember) => member.imageUrl || null;
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-team">
@@ -589,7 +588,9 @@ export default function Team() {
                             <div className="absolute inset-0 bg-muted flex items-center justify-center">
                               <span className="text-2xl font-heading font-bold text-[#202058]/50 select-none">{getInitials(member.name)}</span>
                             </div>
-                            <img src={getPhotoSrc(member)} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top" style={{ transform: isActive ? "scale(1.03)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                            {getPhotoSrc(member) && (
+                              <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top" style={{ transform: isActive ? "scale(1.03)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                            )}
                             <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.2) 100%)" : "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 100%)", transition: "background 0.5s ease" }} />
                             <div className="absolute top-0 right-0 w-px h-full bg-[#202058]/15" />
                             <div className="absolute bottom-5 left-3 right-3" style={{ opacity: isActive ? 0 : 1, transition: "opacity 0.2s ease" }}>
@@ -616,7 +617,9 @@ export default function Team() {
                       <div className="absolute inset-0 bg-muted flex items-center justify-center">
                         <span className="text-2xl font-heading font-bold text-[#202058]/50 select-none">{getInitials(member.name)}</span>
                       </div>
-                      <img src={getPhotoSrc(member)} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                      {getPhotoSrc(member) && (
+                        <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                       <div className="absolute bottom-0 left-0 right-0 px-3 pb-3">
                         <p className="text-[#202058] text-[8px] uppercase tracking-[0.1em] mb-0.5">{t.partnersOnly}</p>
@@ -658,7 +661,9 @@ export default function Team() {
                         <div className="absolute inset-0 bg-muted flex items-center justify-center">
                           <span className="text-4xl font-heading font-bold text-[#202058]/40 select-none">{getInitials(member.name)}</span>
                         </div>
-                        <img src={getPhotoSrc(member)} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top" style={{ transform: isActive ? "scale(1.04)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                        {getPhotoSrc(member) && (
+                          <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top" style={{ transform: isActive ? "scale(1.04)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                        )}
                         <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.3) 100%)" : "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 100%)", transition: "background 0.5s ease" }} />
                         <div className="absolute top-0 right-0 w-px h-full bg-[#202058]/20" />
                         <div className="absolute bottom-6 left-4 right-4" style={{ opacity: isActive ? 0 : 1, transition: "opacity 0.25s ease" }}>
@@ -683,7 +688,9 @@ export default function Team() {
                       <div className="absolute inset-0 bg-muted flex items-center justify-center">
                         <span className="text-3xl font-heading font-bold text-[#202058]/60 select-none">{getInitials(member.name)}</span>
                       </div>
-                      <img src={getPhotoSrc(member)} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                      {getPhotoSrc(member) && (
+                        <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
                       <div className="absolute bottom-0 left-0 right-0 px-3 pb-3">
                         <p className="text-[#202058] text-[8px] uppercase tracking-[0.1em] mb-0.5">{member.title}</p>
@@ -732,7 +739,9 @@ export default function Team() {
                             <div className="absolute inset-0 bg-muted flex items-center justify-center">
                               <span className="text-xl font-heading font-bold text-[#202058]/40 select-none">{getInitials(member.name)}</span>
                             </div>
-                            <img src={getPhotoSrc(member)} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top" style={{ transform: isActive ? "scale(1.03)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                            {getPhotoSrc(member) && (
+                              <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top" style={{ transform: isActive ? "scale(1.03)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                            )}
                             <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.2) 100%)" : "linear-gradient(to top, rgba(0,0,0,0.93) 0%, rgba(0,0,0,0.75) 100%)", transition: "background 0.5s ease" }} />
                             <div className="absolute top-0 right-0 w-px h-full bg-[#202058]/10" />
                             <div className="absolute bottom-4 left-3 right-3" style={{ opacity: isActive ? 0 : 1, transition: "opacity 0.2s ease" }}>
@@ -759,7 +768,9 @@ export default function Team() {
                       <div className="absolute inset-0 bg-muted flex items-center justify-center">
                         <span className="text-xl font-heading font-bold text-[#202058]/40 select-none">{getInitials(member.name)}</span>
                       </div>
-                      <img src={getPhotoSrc(member)} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                      {getPhotoSrc(member) && (
+                        <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
                       <div className="absolute bottom-0 left-0 right-0 px-2.5 pb-2.5">
                         <p className="text-[#202058] text-[7px] uppercase tracking-[0.08em] mb-0.5">{t.associates}</p>

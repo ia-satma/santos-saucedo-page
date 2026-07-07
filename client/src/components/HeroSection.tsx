@@ -62,6 +62,8 @@ const newsPanelLabels: Record<LanguageCode, NewsPanelLabels> = {
   },
 };
 
+const heroPoster = `${import.meta.env.BASE_URL}assets/hero-poster.jpg`;
+
 function NewsItemTranslated({ 
   item, 
   language, 
@@ -382,7 +384,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
             loop
             playsInline
             preload="metadata"
-            poster="/assets/hero-poster.jpg"
+            poster={heroPoster}
             className="absolute inset-0 w-full h-full object-cover opacity-70"
             data-testid="video-hero-background"
             aria-label={t.heroVideoLabel}
