@@ -1,10 +1,13 @@
-import { Switch, Route, useLocation } from "wouter";
+import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { useEffect, lazy, Suspense } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
+import { isStaticSite } from "@/lib/queryClient";
+
+const routerBase = isStaticSite ? "/santos-saucedo-page" : "";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -133,7 +136,38 @@ function SkipLinks() {
   );
 }
 
+function StaticAdminUnavailable() {
+  return (
+    <main className="min-h-screen bg-[#111110] text-white flex items-center justify-center px-6">
+      <section className="max-w-xl text-center">
+        <p className="text-xs uppercase tracking-[0.24em] text-white/60 mb-5">
+          Admin requiere backend
+        </p>
+        <h1 className="font-serif text-4xl md:text-5xl leading-tight mb-6">
+          El CMS no está disponible en GitHub Pages.
+        </h1>
+        <p className="text-white/70 leading-relaxed mb-8">
+          Esta vista pública muestra el front real con datos estáticos. Las herramientas de administración,
+          sesiones, cargas y agentes necesitan el servidor local o un backend desplegado.
+        </p>
+        <a
+          href={`${import.meta.env.BASE_URL}`}
+          className="inline-flex min-h-11 items-center justify-center border border-white/40 px-5 text-xs font-bold uppercase tracking-[0.16em] hover:bg-white hover:text-[#111110] transition-colors"
+        >
+          Volver al sitio
+        </a>
+      </section>
+    </main>
+  );
+}
+
 function Router() {
+  const [location] = useLocation();
+
+  if (isStaticSite && location.startsWith("/admin")) {
+    return <StaticAdminUnavailable />;
+  }
+
   return (
     <Suspense fallback={null}>
       <Switch>
@@ -196,10 +230,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <LanguageProvider>
-          <ScrollToTop />
-          <SkipLinks />
-          <Toaster />
-          <Router />
+          <WouterRouter base={routerBase}>
+            <ScrollToTop />
+            <SkipLinks />
+            <Toaster />
+            <Router />
+          </WouterRouter>
         </LanguageProvider>
       </TooltipProvider>
     </QueryClientProvider>

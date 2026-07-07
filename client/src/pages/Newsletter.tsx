@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, isStaticSite } from "@/lib/queryClient";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -91,6 +91,17 @@ export default function Newsletter() {
   });
 
   const onSubmit = (data: NewsletterFormData) => {
+    if (isStaticSite) {
+      toast({
+        title: language === "es" ? "Suscripción no disponible" : "Subscription unavailable",
+        description: language === "es"
+          ? "GitHub Pages no tiene backend para guardar suscripciones."
+          : "GitHub Pages has no backend to save newsletter subscriptions.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     newsletterMutation.mutate(data);
   };
 

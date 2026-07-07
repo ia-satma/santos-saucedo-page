@@ -14,6 +14,7 @@ import Footer from "@/components/Footer";
 import { PersonJsonLd, BreadcrumbJsonLd } from "@/components/JsonLdSchema";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
+import { isStaticSite } from "@/lib/queryClient";
 import { LeadParagraph } from "@/components/editorial";
 import type { TeamMember, PracticeGroup, IndustryGroup, Education, Affiliation, Ranking, Publication, RepresentativeMatter, BarAdmission, News, LanguageCode } from "@shared/schema";
 
@@ -1082,6 +1083,7 @@ export default function TeamMemberDetail() {
   };
 
   const handleDownloadVCard = () => {
+    if (isStaticSite) return;
     if (member) {
       window.location.href = `/api/team/${member.slug}/vcard?lang=${language}`;
     }

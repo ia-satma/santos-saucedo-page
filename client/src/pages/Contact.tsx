@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, isStaticSite } from "@/lib/queryClient";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -228,6 +228,30 @@ export default function Contact() {
   });
 
   const onSubmit = (data: ContactFormData) => {
+    if (isStaticSite) {
+      const subject = encodeURIComponent(`Contacto web - ${data.fullName}`);
+      const body = encodeURIComponent(
+        [
+          `Nombre: ${data.fullName}`,
+          `Email: ${data.email}`,
+          data.phone ? `Teléfono: ${data.phone}` : "",
+          data.company ? `Empresa: ${data.company}` : "",
+          data.practiceArea ? `Área: ${data.practiceArea}` : "",
+          "",
+          data.message,
+        ].filter(Boolean).join("\n"),
+      );
+
+      window.location.href = `mailto:${siteContent?.email || "info@santossaucedo.com"}?subject=${subject}&body=${body}`;
+      toast({
+        title: language === "es" ? "Enviar por correo" : "Send by email",
+        description: language === "es"
+          ? "GitHub Pages no tiene backend; se abrió tu cliente de correo para enviar el mensaje."
+          : "GitHub Pages has no backend; your email client was opened to send the message.",
+      });
+      return;
+    }
+
     contactMutation.mutate(data);
   };
 

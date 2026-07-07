@@ -87,6 +87,7 @@ import {
   alliances,
   specializedDesks,
 } from "@shared/schema";
+import { siteContentData, statsData } from "./seed";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
@@ -270,24 +271,6 @@ export interface IStorage {
   markContactSubmissionRead(id: string): Promise<boolean>;
 }
 
-const siteContent: SiteContent = {
-  heroTitle: "WE GO WHERE CLIENTS NEED US",
-  heroSubtitle: "Santos & Saucedo Abogados",
-  visionTitle: "Labor law counsel built on experience and trust",
-  visionText: "Santos & Saucedo Abogados has more than 35 years of experience advising companies on individual and collective labor matters, labor administration, and workplace compliance.",
-  locationTitle: "Office address",
-  locationText: "Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.",
-  statsTitle: "Santos & Saucedo Abogados",
-  quoteText: "",
-  quoteAuthor: "",
-  quoteRole: "",
-  address: "Río Tamazunchale 205 Norte, San Pedro Garza García, N.L., México",
-  phone: "+52 81 8335 2086",
-  email: "info@santossaucedo.com",
-};
-
-const stats: Stat[] = [];
-
 export class DatabaseStorage implements IStorage {
   async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
@@ -360,11 +343,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   getSiteContent(): SiteContent {
-    return siteContent;
+    return siteContentData;
   }
 
   getStats(): Stat[] {
-    return stats;
+    return statsData;
   }
 
   async getPracticeGroups(): Promise<PracticeGroup[]> {

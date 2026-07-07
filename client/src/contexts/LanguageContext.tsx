@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { SUPPORTED_LANGUAGES, type LanguageCode, type SupportedLanguage } from "@shared/schema";
+import { isStaticSite } from "@/lib/queryClient";
 
 type DisplayLanguage = "en" | "es";
 
@@ -14,7 +15,7 @@ interface LanguageContextType {
 
 const STORAGE_KEY = "vwb_language";
 const DETECTION_KEY = "vwb_language_detected";
-const DEFAULT_LANGUAGE: LanguageCode = "en";
+const DEFAULT_LANGUAGE: LanguageCode = isStaticSite ? "es" : "en";
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
@@ -101,7 +102,7 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
     const alreadyDetected = localStorage.getItem(DETECTION_KEY);
     
     // Only detect if no stored preference AND we haven't detected before
-    if (stored || alreadyDetected) return;
+    if (stored || alreadyDetected || isStaticSite) return;
     
     const detectLanguage = async () => {
       setIsDetecting(true);

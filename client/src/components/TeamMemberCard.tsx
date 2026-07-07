@@ -3,6 +3,7 @@ import { Download, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { isStaticSite } from "@/lib/queryClient";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import type { TeamMember } from "@shared/schema";
 
@@ -52,6 +53,7 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
   const handleDownloadVCard = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (isStaticSite) return;
     window.location.href = `/api/team/${member.slug}/vcard?lang=${language}`;
   };
 

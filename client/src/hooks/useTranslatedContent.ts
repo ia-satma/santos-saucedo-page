@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useEffect, useRef, useMemo } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { apiRequest, isStaticSite, queryClient } from "@/lib/queryClient";
 import { isNativeLanguage, type ContentType, type TranslatedFieldsMap } from "@/lib/translationUtils";
 
 interface TranslationResponse {
@@ -47,7 +47,7 @@ export function useTranslatedContent({
 
   const { data: cachedTranslations, isLoading } = useQuery<TranslationResponse>({
     queryKey: ['/api/translations', contentType, entityId, language],
-    enabled: enabled && !isNative && !!entityId,
+    enabled: enabled && !isStaticSite && !isNative && !!entityId,
   });
 
   const translateMutation = useMutation({
@@ -97,7 +97,7 @@ export function useTranslatedContent({
   const hasCachedTranslations = cachedTranslations?.translations && 
     Object.keys(cachedTranslations.translations).length > 0;
   
-  const needsTranslation = !isNative && enabled && !!entityId && !isLoading && 
+  const needsTranslation = !isStaticSite && !isNative && enabled && !!entityId && !isLoading &&
     !hasCachedTranslations && Object.keys(fieldsToTranslate).length > 0;
 
   const translationKey = `${contentType}-${entityId}-${language}`;
@@ -151,6 +151,16 @@ export function useTranslatedContent({
       return enFields;
     }
 
+    if (isStaticSite) {
+      const fallbackFields: TranslatedFieldsMap = {};
+      for (const [key, value] of Object.entries(fields)) {
+        if (!key.endsWith('Es')) {
+          fallbackFields[key] = value;
+        }
+      }
+      return fallbackFields;
+    }
+
     const translations = cachedTranslations?.translations || translateMutation.data?.translations;
     
     if (translations && Object.keys(translations).length > 0) {
@@ -172,7 +182,7 @@ export function useTranslatedContent({
     return pendingFields;
   };
 
-  const isTranslationPending = !isNative && (isLoading || translateMutation.isPending || needsTranslation);
+  const isTranslationPending = !isStaticSite && !isNative && (isLoading || translateMutation.isPending || needsTranslation);
 
   return {
     translatedFields: getTranslatedFields(),
@@ -206,7 +216,7 @@ export function useSingleTranslation() {
     field: string,
     sourceText: string
   ) => {
-    if (isNativeLanguage(language)) {
+    if (isNativeLanguage(language) || isStaticSite) {
       return Promise.resolve(sourceText);
     }
 

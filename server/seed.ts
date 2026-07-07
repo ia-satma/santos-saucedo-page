@@ -1,9 +1,24 @@
-import { db } from "./db";
-import { eq } from "drizzle-orm";
-import { news, officeImages, practiceGroups, industryGroups, teamMembers, representativeMatters, adminUsers, events } from "@shared/schema";
-import { hashPassword } from "./auth";
+import type { SiteContent, Stat } from "@shared/schema";
 
-const practiceGroupsData = [
+export const siteContentData: SiteContent = {
+  heroTitle: "WE GO WHERE CLIENTS NEED US",
+  heroSubtitle: "Santos & Saucedo Abogados",
+  visionTitle: "Labor law counsel built on experience and trust",
+  visionText: "Santos & Saucedo Abogados has more than 35 years of experience advising companies on individual and collective labor matters, labor administration, and workplace compliance.",
+  locationTitle: "Office address",
+  locationText: "Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.",
+  statsTitle: "Santos & Saucedo Abogados",
+  quoteText: "",
+  quoteAuthor: "",
+  quoteRole: "",
+  address: "Río Tamazunchale 205 Norte, San Pedro Garza García, N.L., México",
+  phone: "+52 81 8335 2086",
+  email: "info@santossaucedo.com",
+};
+
+export const statsData: Stat[] = [];
+
+export const practiceGroupsData = [
   {
     name: "Individual & Collective Labor Conflicts",
     nameEs: "Conflictos Individuales y Colectivos de Trabajo",
@@ -72,7 +87,7 @@ const practiceGroupsData = [
   },
 ];
 
-const industryGroupsData = [
+export const industryGroupsData = [
   { 
     name: "Automotive, Mobility & Manufacturing", 
     nameEs: "Automotriz, Movilidad y Manufactura", 
@@ -152,7 +167,7 @@ const industryGroupsData = [
   },
 ];
 
-const teamMembersData = [
+export const teamMembersData = [
   {
     name: "Enrique Hernán Santos Gúzman",
     slug: "enrique-hernan-santos-guzman",
@@ -230,7 +245,7 @@ const teamMembersData = [
   },
 ];
 
-const newsData = [
+export const newsData = [
   {
     title: "What companies should know about individual labor conflicts before conciliation and arbitration boards",
     titleEs: "Lo que las empresas deben saber sobre conflictos individuales de trabajo ante juntas de conciliación y arbitraje",
@@ -271,9 +286,9 @@ const newsData = [
 
 
 // Office photography pending (Fase 4 — institutional photo shoot)
-const officeImagesData: { imageUrl: string; alt: string; altEs: string; order: number }[] = [];
+export const officeImagesData: { imageUrl: string; alt: string; altEs: string; order: number }[] = [];
 
-const representativeMattersData = [
+export const representativeMattersData = [
   {
     title: "Acquisition of Major Telecommunications Company",
     titleEs: "Adquisición de Importante Empresa de Telecomunicaciones",
@@ -524,9 +539,22 @@ const representativeMattersData = [
 ];
 
 // No events scheduled yet for the prototype
-const eventsData: any[] = [];
+export const eventsData: any[] = [];
 
 export async function seed() {
+  const { db } = await import("./db");
+  const { eq } = await import("drizzle-orm");
+  const {
+    news,
+    officeImages,
+    practiceGroups,
+    industryGroups,
+    teamMembers,
+    representativeMatters,
+    adminUsers,
+    events,
+  } = await import("@shared/schema");
+
   console.log("Seeding database with Santos & Saucedo content...");
 
   const existingNews = await db.select().from(news);
