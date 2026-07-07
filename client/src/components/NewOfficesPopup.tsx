@@ -60,14 +60,14 @@ const content: Record<string, {
     collabText2: "The design is conceived to maximize collaboration among our 18 legal practice groups and 7 industry groups.",
     workplacesNum: "300+",
     workplacesLabel: "workplaces",
-    capacityText: "In its initial stage, the facilities offer capacity for more than 300 workstations, 16 meeting rooms, flexible spaces for social and academic activities with capacity for 250 people, and a panoramic terrace with privileged views of iconic Mexico City landmarks such as Chapultepec Forest and Campo Militar Marte.",
+    capacityText: "In its initial stage, the facilities offer capacity for more than 300 workstations, 16 meeting rooms, flexible spaces for social and academic activities with capacity for 250 people, and a panoramic terrace with privileged views of iconic San Pedro Garza García landmarks such as Chapultepec Forest and Campo Militar Marte.",
     quoteText: "The relocation of our offices responds to two inseparable goals: first, being closer to our clients; and second, offering our team a space designed to foster collaboration and productivity that translates into excellent service.",
     quoteAuthor: "Fernando Carreño",
     quoteRole: "Partner and member of the Executive Committee",
     addressTitle: "New office address",
     addressLine1: "Río Tamazunchale 205 Norte. San Pedro Garza García, N.L.",
     addressLine2: "Access via Arquímedes N.° 10",
-    addressLine3: "San Pedro Garza García, Nuevo León, México.",
+    addressLine3: "San Pedro Garza García, Nuevo León, C.P. 66220, México.",
     close: "Close",
     officeInterior: "Office interior",
   },
@@ -84,14 +84,14 @@ const content: Record<string, {
     collabText2: "El diseño está concebido para maximizar la colaboración entre nuestros 18 grupos de práctica legal y 7 grupos industriales.",
     workplacesNum: "300+",
     workplacesLabel: "estaciones de trabajo",
-    capacityText: "En su etapa inicial, las instalaciones ofrecen capacidad para más de 300 estaciones de trabajo, 16 salas de juntas, espacios flexibles para actividades sociales y académicas con capacidad para 250 personas, y una terraza panorámica con vistas privilegiadas de lugares emblemáticos de la Ciudad de México como el Bosque de Chapultepec y el Campo Militar Marte.",
+    capacityText: "En su etapa inicial, las instalaciones ofrecen capacidad para más de 300 estaciones de trabajo, 16 salas de juntas, espacios flexibles para actividades sociales y académicas con capacidad para 250 personas, y una terraza panorámica con vistas privilegiadas de lugares emblemáticos de la San Pedro Garza García como el Bosque de Chapultepec y el Campo Militar Marte.",
     quoteText: "La reubicación de nuestras oficinas responde a dos objetivos inseparables: primero, estar más cerca de nuestros clientes; y segundo, ofrecer a nuestro equipo un espacio diseñado para fomentar la colaboración y productividad que se traduce en un servicio excelente.",
     quoteAuthor: "Fernando Carreño",
     quoteRole: "Socio y miembro del Comité Ejecutivo",
     addressTitle: "Nueva dirección de oficinas",
     addressLine1: "Río Tamazunchale 205 Norte. San Pedro Garza García, N.L.",
     addressLine2: "Acceso por Arquímedes N.° 10",
-    addressLine3: "San Pedro Garza García, Nuevo León, México.",
+    addressLine3: "San Pedro Garza García, Nuevo León, C.P. 66220, México.",
     close: "Cerrar",
     officeInterior: "Interior de oficina",
   },
@@ -108,14 +108,14 @@ const content: Record<string, {
     collabText2: "Das Design ist darauf ausgelegt, die Zusammenarbeit zwischen unseren 18 Rechtsgebietsgruppen und 7 Branchengruppen zu maximieren.",
     workplacesNum: "300+",
     workplacesLabel: "Arbeitsplätze",
-    capacityText: "In der ersten Phase bieten die Räumlichkeiten Platz für mehr als 300 Arbeitsplätze, 16 Besprechungsräume, flexible Räume für gesellschaftliche und akademische Veranstaltungen mit einer Kapazität von 250 Personen sowie eine Panoramaterrasse mit privilegiertem Blick auf Wahrzeichen von Mexiko-Stadt wie den Chapultepec-Wald und den Campo Militar Marte.",
+    capacityText: "In der ersten Phase bieten die Räumlichkeiten Platz für mehr als 300 Arbeitsplätze, 16 Besprechungsräume, flexible Räume für gesellschaftliche und akademische Veranstaltungen mit einer Kapazität von 250 Personen sowie eine Panoramaterrasse mit privilegiertem Blick auf Wahrzeichen von San Pedro Garza García wie den Chapultepec-Wald und den Campo Militar Marte.",
     quoteText: "Der Umzug unserer Büros folgt zwei untrennbaren Zielen: erstens, näher bei unseren Mandanten zu sein; und zweitens, unserem Team einen Raum zu bieten, der die Zusammenarbeit und Produktivität fördert, was sich in exzellentem Service niederschlägt.",
     quoteAuthor: "Fernando Carreño",
     quoteRole: "Partner und Mitglied des Exekutivkomitees",
     addressTitle: "Neue Büroadresse",
     addressLine1: "Río Tamazunchale 205 Norte. San Pedro Garza García, N.L.",
     addressLine2: "Zugang über Arquímedes Nr. 10",
-    addressLine3: "San Pedro Garza García, Nuevo León, México.",
+    addressLine3: "San Pedro Garza García, Nuevo León, C.P. 66220, México.",
     close: "Schließen",
     officeInterior: "Büroeinrichtung",
   },
@@ -139,7 +139,7 @@ const content: Record<string, {
     addressTitle: "新办公室地址",
     addressLine1: "Río Tamazunchale 205 Norte 18 楼. San Pedro Garza García, N.L.",
     addressLine2: "通过 Arquímedes 10 号进入",
-    addressLine3: "邮编 11560, 墨西哥城.",
+    addressLine3: "San Pedro Garza García, Nuevo León, C.P. 66220, México.",
     close: "关闭",
     officeInterior: "办公室内部",
   },
@@ -163,7 +163,7 @@ const content: Record<string, {
     addressTitle: "새 사무소 주소",
     addressLine1: "Río Tamazunchale 205 Norte 18층. San Pedro Garza García, N.L.",
     addressLine2: "Arquímedes N.° 10으로 접근",
-    addressLine3: "우편번호 11560, 멕시코시티.",
+    addressLine3: "San Pedro Garza García, Nuevo León, C.P. 66220, México.",
     close: "닫기",
     officeInterior: "사무실 내부",
   },
@@ -187,7 +187,7 @@ const content: Record<string, {
     addressTitle: "新オフィス住所",
     addressLine1: "Río Tamazunchale 205 Norte 18階. San Pedro Garza García, N.L.",
     addressLine2: "Arquímedes N.° 10からアクセス",
-    addressLine3: "郵便番号 11560, メキシコシティ.",
+    addressLine3: "San Pedro Garza García, Nuevo León, C.P. 66220, México.",
     close: "閉じる",
     officeInterior: "オフィス内装",
   },
@@ -211,7 +211,7 @@ const content: Record<string, {
     addressTitle: "عنوان المكتب الجديد",
     addressLine1: "Río Tamazunchale 205 Norte. San Pedro Garza García, N.L.",
     addressLine2: "الدخول عبر Arquímedes رقم 10",
-    addressLine3: "الرمز البريدي 11560، مدينة مكسيكو.",
+    addressLine3: "San Pedro Garza García, Nuevo León, C.P. 66220, México.",
     close: "إغلاق",
     officeInterior: "مناطق المكتب الداخلية",
   },
@@ -235,7 +235,7 @@ const content: Record<string, {
     addressTitle: "Адрес нового офиса",
     addressLine1: "Río Tamazunchale 205 Norte. San Pedro Garza García, N.L.",
     addressLine2: "Вход через Arquímedes № 10",
-    addressLine3: "Почтовый индекс 11560, Мехико.",
+    addressLine3: "San Pedro Garza García, Nuevo León, C.P. 66220, México.",
     close: "Закрыть",
     officeInterior: "Интерьер офиса",
   },
@@ -259,7 +259,7 @@ const content: Record<string, {
     addressTitle: "Nouvelle adresse des bureaux",
     addressLine1: "Río Tamazunchale 205 Norte. San Pedro Garza García, N.L.",
     addressLine2: "Accès par Arquímedes N° 10",
-    addressLine3: "San Pedro Garza García, Nuevo León, México.",
+    addressLine3: "San Pedro Garza García, Nuevo León, C.P. 66220, México.",
     close: "Fermer",
     officeInterior: "Intérieur du bureau",
   },
@@ -283,7 +283,7 @@ const content: Record<string, {
     addressTitle: "Nuovo indirizzo degli uffici",
     addressLine1: "Río Tamazunchale 205 Norte. San Pedro Garza García, N.L.",
     addressLine2: "Accesso da Arquímedes N.° 10",
-    addressLine3: "San Pedro Garza García, Nuevo León, México.",
+    addressLine3: "San Pedro Garza García, Nuevo León, C.P. 66220, México.",
     close: "Chiudi",
     officeInterior: "Interni dell'ufficio",
   },
@@ -321,7 +321,41 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
     localStorage.setItem(STORAGE_KEY, "true");
   };
 
-  const t = content[language] || content.en;
+  const baseT = content[language] || content.en;
+  const t = {
+    ...baseT,
+    heroTitle: language === "es" ? "SANTOS & SAUCEDO" : "SANTOS & SAUCEDO",
+    heroSubtitle: language === "es" ? "Especialistas en Derecho Laboral" : "Labor Law Specialists",
+    visionTitle: language === "es" ? "Más de 35 años de experiencia" : "More than 35 years of experience",
+    visionText: language === "es"
+      ? "Somos un despacho jurídico especializado en Derecho Laboral, enfocado en acompañar a empresas nacionales e internacionales con asesoría preventiva, consultoría legal y representación en asuntos individuales y colectivos."
+      : "We are a legal firm specialized in labor law, focused on advising national and international companies through preventive counsel, legal consulting, and representation in individual and collective matters.",
+    centerTitle: language === "es" ? "Nuestra oficina" : "Our office",
+    centerText: language === "es"
+      ? "Nuestra sede se encuentra en Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, Nuevo León, C.P. 66220."
+      : "Our office is located at Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, Nuevo León, C.P. 66220.",
+    collabTitle: language === "es" ? "Asesoría laboral integral" : "Comprehensive labor counsel",
+    collabText: language === "es"
+      ? "El equipo atiende conflictos y juicios laborales individuales y colectivos, diagnóstico de interrelaciones laborales, auditoría jurídico laboral, planes de mejora y planeación laboral estratégica."
+      : "The team handles individual and collective labor disputes, workplace relations diagnostics, labor audits, improvement plans, and strategic labor planning.",
+    collabText2: language === "es"
+      ? "La prioridad es anticipar riesgos, ordenar relaciones laborales y sostener decisiones empresariales con criterio jurídico sólido."
+      : "The priority is to anticipate risks, organize workplace relations, and support business decisions with sound legal judgment.",
+    workplacesNum: "35+",
+    workplacesLabel: language === "es" ? "años de experiencia" : "years of experience",
+    capacityText: language === "es"
+      ? "La atención pública de la firma se concentra en su oficina de San Pedro Garza García y en el correo info@santossaucedo.com."
+      : "Public inquiries are handled through the San Pedro Garza García office and info@santossaucedo.com.",
+    quoteText: language === "es"
+      ? "Nuestro objetivo es brindar asesoría preventiva y consultoría legal en el área laboral a empresas nacionales e internacionales."
+      : "Our objective is to provide preventive counsel and legal consulting in labor matters to national and international companies.",
+    quoteAuthor: "Santos & Saucedo",
+    quoteRole: language === "es" ? "Derecho Laboral" : "Labor Law",
+    addressTitle: language === "es" ? "Dirección" : "Address",
+    addressLine1: "Río Tamazunchale 205 Norte",
+    addressLine2: "Colonia Del Valle",
+    addressLine3: "San Pedro Garza García, N.L., C.P. 66220",
+  };
 
   const scrollToContent = () => {
     const contentArea = document.getElementById("popup-content");

@@ -81,11 +81,19 @@ export default function QuoteSection() {
     queryKey: ["/api/site-content"],
   });
 
-  const t = content[language] || content.en;
+  const baseT = content[language] || content.en;
+  const t = {
+    ...baseT,
+    quote: language === "es"
+      ? "Nuestro objetivo es brindar asesoría preventiva y consultoría legal en el área laboral a empresas nacionales e internacionales."
+      : "Our objective is to provide preventive counsel and legal consulting in labor matters to national and international companies.",
+    author: "Santos & Saucedo",
+    role: language === "es" ? "Derecho Laboral" : "Labor Law",
+  };
 
-  const quote = siteContent?.quoteText || t.quote;
-  const author = siteContent?.quoteAuthor || t.author;
-  const role = siteContent?.quoteRole || t.role;
+  const quote = siteContent?.quoteText?.trim() || t.quote;
+  const author = siteContent?.quoteAuthor?.trim() || t.author;
+  const role = siteContent?.quoteRole?.trim() || t.role;
 
   if (error) {
     return (

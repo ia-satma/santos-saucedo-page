@@ -578,7 +578,7 @@ export function PersonJsonLd({
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Río Tamazunchale 205 Norte",
-      "addressLocality": "Ciudad de México",
+      "addressLocality": "San Pedro Garza García",
       "addressRegion": "Nuevo León",
       "addressCountry": "MX"
     },

@@ -1,4 +1,4 @@
-import { copyFile, mkdir, writeFile } from "fs/promises";
+import { copyFile, mkdir, readdir, rm, writeFile } from "fs/promises";
 import path from "path";
 import {
   eventsData,
@@ -177,6 +177,20 @@ async function generate() {
 
   for (const item of events) {
     await writeJson(`events/${item.id}.json`, item);
+  }
+
+  const teamPhotosOutDir = path.join(outDir, "team_photos");
+  const teamPhotosSourceDir = path.resolve("attached_assets/team_photos");
+  await rm(teamPhotosOutDir, { recursive: true, force: true });
+  await mkdir(teamPhotosOutDir, { recursive: true });
+  for (const fileName of await readdir(teamPhotosSourceDir)) {
+    if (fileName.startsWith("._")) continue;
+    await copyFile(path.join(teamPhotosSourceDir, fileName), path.join(teamPhotosOutDir, fileName));
+  }
+  for (const fileName of await readdir(teamPhotosOutDir)) {
+    if (fileName.startsWith("._")) {
+      await rm(path.join(teamPhotosOutDir, fileName), { force: true });
+    }
   }
 
   await copyFile(path.join(outDir, "index.html"), path.join(outDir, "404.html"));

@@ -24,95 +24,42 @@ interface DirectoryInfo {
 
 const directories: DirectoryInfo[] = [
   {
-    id: "chambers-global",
-    name: "Chambers Global",
-    nameEs: "Chambers Global",
+    id: "labor-practice",
+    name: "Labor Law Practice",
+    nameEs: "Derecho Laboral",
     icon: Globe2,
-    description: "Recognized as one of the leading law firms in Mexico for cross-border transactions and international matters.",
-    descriptionEs: "Reconocido como una de las firmas de abogados líderes en México para transacciones transfronterizas y asuntos internacionales.",
+    description: "Specialized counsel for companies in individual and collective labor matters.",
+    descriptionEs: "Asesoría especializada para empresas en asuntos laborales individuales y colectivos.",
     rankings: [
-      { en: "Band 1 - Corporate/M&A", es: "Banda 1 - Corporativo/M&A" },
-      { en: "Band 1 - Dispute Resolution", es: "Banda 1 - Resolución de Controversias" },
-      { en: "Band 1 - Antitrust", es: "Banda 1 - Competencia Económica" },
+      { en: "Individual and collective conflicts", es: "Conflictos individuales y colectivos" },
+      { en: "Labor administration review", es: "Revisión de administración laboral" },
+      { en: "Strategic labor planning", es: "Planeación laboral estratégica" },
     ],
   },
   {
-    id: "chambers-latam",
-    name: "Chambers Latin America",
-    nameEs: "Chambers América Latina",
+    id: "preventive-counsel",
+    name: "Preventive Counsel",
+    nameEs: "Asesoría Preventiva",
     icon: Award,
-    description: "Consistently ranked in the top tier across multiple practice areas for excellence in the Latin American market.",
-    descriptionEs: "Consistentemente clasificado en el nivel superior en múltiples áreas de práctica por excelencia en el mercado latinoamericano.",
+    description: "Preventive legal consulting for national and international companies operating in Mexico.",
+    descriptionEs: "Consultoría legal preventiva para empresas nacionales e internacionales que operan en México.",
     rankings: [
-      { en: "Band 1 - Corporate/M&A", es: "Banda 1 - Corporativo/M&A" },
-      { en: "Band 1 - Litigation", es: "Banda 1 - Litigio" },
-      { en: "Band 1 - Banking & Finance", es: "Banda 1 - Banca y Finanzas" },
-      { en: "Band 1 - Energy & Natural Resources", es: "Banda 1 - Energía y Recursos Naturales" },
+      { en: "Labor relations diagnostics", es: "Diagnóstico de relaciones laborales" },
+      { en: "Improvement plans", es: "Planes de mejora" },
+      { en: "Legal-labor audits", es: "Auditoría jurídico laboral" },
     ],
   },
   {
-    id: "legal500",
-    name: "Legal 500 Latin America",
-    nameEs: "Legal 500 América Latina",
+    id: "experience",
+    name: "35+ Years of Experience",
+    nameEs: "Más de 35 Años de Experiencia",
     icon: BookOpen,
-    description: "Highly recommended for outstanding client service and legal expertise across various sectors.",
-    descriptionEs: "Altamente recomendado por excelente servicio al cliente y experiencia legal en diversos sectores.",
+    description: "A labor-law boutique built around long-term company counsel and workplace relations.",
+    descriptionEs: "Una firma laboral construida alrededor de la asesoría empresarial y las relaciones de trabajo.",
     rankings: [
-      { en: "Tier 1 - Corporate and M&A", es: "Nivel 1 - Corporativo y M&A" },
-      { en: "Tier 1 - Dispute Resolution", es: "Nivel 1 - Resolución de Controversias" },
-      { en: "Tier 1 - Competition/Antitrust", es: "Nivel 1 - Competencia Económica" },
-    ],
-  },
-  {
-    id: "iflr1000",
-    name: "IFLR1000",
-    nameEs: "IFLR1000",
-    icon: Briefcase,
-    description: "Top-ranked for financial and corporate work, including complex restructuring and capital markets transactions.",
-    descriptionEs: "Clasificación superior para trabajo financiero y corporativo, incluyendo reestructuraciones complejas y transacciones de mercado de capitales.",
-    rankings: [
-      { en: "Tier 1 - M&A", es: "Nivel 1 - M&A" },
-      { en: "Tier 1 - Banking", es: "Nivel 1 - Banca" },
-      { en: "Tier 1 - Capital Markets", es: "Nivel 1 - Mercado de Capitales" },
-      { en: "Tier 1 - Restructuring & Insolvency", es: "Nivel 1 - Reestructuración e Insolvencia" },
-    ],
-  },
-  {
-    id: "latin-lawyer",
-    name: "Latin Lawyer 250",
-    nameEs: "Latin Lawyer 250",
-    icon: Scale,
-    description: "Featured as an Elite firm and consistently recognized among the top law firms in Latin America.",
-    descriptionEs: "Destacado como firma Elite y consistentemente reconocido entre las mejores firmas de abogados en América Latina.",
-    rankings: [
-      { en: "Elite Status", es: "Estatus Elite" },
-      { en: "Deal of the Year - Multiple Categories", es: "Operación del Año - Múltiples Categorías" },
-    ],
-  },
-  {
-    id: "best-lawyers",
-    name: "Best Lawyers",
-    nameEs: "Best Lawyers",
-    icon: Star,
-    description: "Multiple partners recognized as leading lawyers in their respective practice areas.",
-    descriptionEs: "Múltiples socios reconocidos como abogados líderes en sus respectivas áreas de práctica.",
-    rankings: [
-      { en: "Lawyer of the Year - Corporate Law", es: "Abogado del Año - Derecho Corporativo" },
-      { en: "Lawyer of the Year - M&A", es: "Abogado del Año - M&A" },
-      { en: "20+ Lawyers Recognized", es: "20+ Abogados Reconocidos" },
-    ],
-  },
-  {
-    id: "who-who-legal",
-    name: "Who's Who Legal",
-    nameEs: "Who's Who Legal",
-    icon: Users,
-    description: "Partners listed as Global Leaders and National Leaders across multiple specializations.",
-    descriptionEs: "Socios listados como Líderes Globales y Líderes Nacionales en múltiples especializaciones.",
-    rankings: [
-      { en: "Global Leaders - Arbitration", es: "Líderes Globales - Arbitraje" },
-      { en: "National Leaders - Competition", es: "Líderes Nacionales - Competencia" },
-      { en: "Thought Leaders - Investigations", es: "Líderes de Opinión - Investigaciones" },
+      { en: "Company-side counsel", es: "Asesoría empresarial" },
+      { en: "Preventive approach", es: "Enfoque preventivo" },
+      { en: "Labor compliance", es: "Cumplimiento laboral" },
     ],
   },
 ];
@@ -128,44 +75,42 @@ interface AwardInfo {
 
 const awards: AwardInfo[] = [
   {
-    id: "law-firm-year",
-    title: "Latin American Law Firm of the Year",
-    titleEs: "Firma de Abogados del Año en América Latina",
-    years: ["2023", "2021", "2019", "2017"],
-    description: "Chambers Latin America Awards recognition for outstanding performance and market-leading work.",
-    descriptionEs: "Reconocimiento de Chambers Latin America Awards por desempeño sobresaliente y trabajo líder en el mercado.",
+    id: "conflicts",
+    title: "Individual and Collective Labor Conflicts",
+    titleEs: "Conflictos Individuales y Colectivos",
+    description: "Representation in individual and collective disputes before labor authorities.",
+    descriptionEs: "Representación en conflictos individuales y colectivos ante autoridades laborales.",
   },
   {
-    id: "mexico-firm-year",
-    title: "Mexico Law Firm of the Year",
-    titleEs: "Firma de Abogados del Año en México",
-    years: ["2024", "2022", "2020", "2018"],
-    description: "Chambers Latin America Awards recognition as the leading law firm in Mexico.",
-    descriptionEs: "Reconocimiento de Chambers Latin America Awards como la firma de abogados líder en México.",
+    id: "audit",
+    title: "Legal-Labor Auditing",
+    titleEs: "Auditoría Jurídico Laboral",
+    description: "Review of labor documentation, processes, and compliance exposure.",
+    descriptionEs: "Revisión de documentación laboral, procesos y exposición de cumplimiento.",
   },
   {
-    id: "deal-of-year",
-    title: "Deal of the Year Awards",
-    titleEs: "Premios Operación del Año",
-    description: "Multiple Deal of the Year recognitions from Latin Lawyer, IFLR Americas, and Chambers for landmark transactions.",
-    descriptionEs: "Múltiples reconocimientos de Operación del Año de Latin Lawyer, IFLR Americas y Chambers por transacciones emblemáticas.",
+    id: "training",
+    title: "Strategic Labor Planning",
+    titleEs: "Planeación Laboral Estratégica",
+    description: "Courses, workshops, and planning designed to prevent labor risk.",
+    descriptionEs: "Cursos, talleres y planeación diseñados para prevenir riesgos laborales.",
   },
   {
-    id: "gir-100",
-    title: "GIR 100 - Global Investigations Review",
-    titleEs: "GIR 100 - Global Investigations Review",
-    description: "Recognized among the world's top 100 investigations practices for excellence in anti-corruption and compliance matters.",
-    descriptionEs: "Reconocido entre las 100 mejores prácticas de investigaciones del mundo por excelencia en asuntos anticorrupción y cumplimiento.",
+    id: "relations",
+    title: "Labor Relations Diagnostics",
+    titleEs: "Diagnóstico de Relaciones Laborales",
+    description: "Analysis of workplace relations to identify risks and improvement opportunities.",
+    descriptionEs: "Análisis de relaciones laborales para identificar riesgos y oportunidades de mejora.",
   },
 ];
 
 const rankedLawyers = [
-  { name: "Enrique Hernán Santos Gúzman", slug: "enrique-hernan-santos-guzman", title: "Founding Partner", titleEs: "Socio Fundador" },
-  { name: "[FALTA: Nombre del Socio Fundador Saucedo]", slug: "socio-fundador-saucedo", title: "Founding Partner", titleEs: "Socio Fundador" },
-  { name: "[FALTA: Nombre de Socia]", slug: "socia-conflictos-laborales", title: "Partner", titleEs: "Socia" },
-  { name: "[FALTA: Nombre de Consejero]", slug: "consejero-administracion-laboral", title: "Counsel", titleEs: "Consejero" },
-  { name: "[FALTA: Nombre de Asociada Senior]", slug: "asociada-senior-auditoria", title: "Senior Associate", titleEs: "Asociada Senior" },
-  { name: "[FALTA: Nombre de Asociado]", slug: "asociado-relaciones-laborales", title: "Associate", titleEs: "Asociado" },
+  { name: "Mario Saucedo Montemayor", slug: "mario-saucedo-montemayor", title: "Managing Partner", titleEs: "Socio Director" },
+  { name: "Enrique Santos Gúzman", slug: "enrique-santos-guzman", title: "Managing Partner", titleEs: "Socio Director" },
+  { name: "Enrique Santos Arce", slug: "enrique-santos-arce", title: "Founding Partner", titleEs: "Socio Fundador" },
+  { name: "Jaime Herrera de Herrera", slug: "jaime-herrera-de-herrera", title: "Partner", titleEs: "Socio" },
+  { name: "David Martínez Saucedo", slug: "david-martinez-saucedo", title: "Partner", titleEs: "Socio" },
+  { name: "Jorge A. Garza Martínez", slug: "jorge-a-garza-martinez", title: "Senior Associate", titleEs: "Asociado Senior" },
 ];
 
 export default function Rankings() {
@@ -408,7 +353,34 @@ export default function Rankings() {
     },
   };
 
-  const t = content[language] || content.en;
+  const baseT = content[language] || content.en;
+  const t = {
+    ...baseT,
+    title: language === "es" ? "Trayectoria" : "Experience",
+    subtitle: language === "es"
+      ? "Más de 35 años de experiencia especializada en Derecho Laboral"
+      : "More than 35 years of specialized experience in labor law",
+    overviewTitle: language === "es" ? "Experiencia Laboral Especializada" : "Specialized Labor Experience",
+    overviewText1: language === "es"
+      ? "Santos & Saucedo es un despacho jurídico especializado en Derecho Laboral que asesora a empresas nacionales e internacionales con un enfoque preventivo y práctico."
+      : "Santos & Saucedo is a legal firm specialized in labor law, advising national and international companies through a preventive and practical approach.",
+    overviewText2: language === "es"
+      ? "La firma trabaja en conflictos individuales y colectivos, auditoría jurídico laboral, diagnóstico de relaciones laborales, planes de mejora y planeación laboral estratégica."
+      : "The firm works on individual and collective disputes, legal-labor audits, workplace relations diagnostics, improvement plans, and strategic labor planning.",
+    directoriesTitle: language === "es" ? "Capacidades" : "Capabilities",
+    directoriesSubtitle: language === "es" ? "Áreas de trabajo públicas de la firma" : "Public practice capabilities of the firm",
+    awardsTitle: language === "es" ? "Servicios Relevantes" : "Relevant Services",
+    awardsSubtitle: language === "es" ? "Frentes de asesoría laboral descritos por la firma" : "Labor counsel workstreams described by the firm",
+    lawyersTitle: language === "es" ? "Equipo Principal" : "Core Team",
+    lawyersSubtitle: language === "es" ? "Socios y abogados de Santos & Saucedo" : "Partners and attorneys at Santos & Saucedo",
+    quoteText: language === "es"
+      ? "Somos un despacho jurídico que lleva más de 35 años de experiencia, especializado en Derecho Laboral."
+      : "We are a legal firm with more than 35 years of experience, specialized in labor law.",
+    quoteSource: "Santos & Saucedo",
+    recognitions: language === "es" ? "Experiencia" : "Experience",
+    awards: language === "es" ? "Servicios" : "Services",
+    rankings: language === "es" ? "Capacidades" : "Capabilities",
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },

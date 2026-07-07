@@ -10,8 +10,6 @@ import worldMapDarkImg from "@assets/mapa-dark_1776101215469.png";
 import frankfurtSkyline from "@assets/stock_images/frankfurt_dusk_1.jpg";
 import torreSomaImg from "@assets/hyatt-park-scaled_1776460775865.jpeg";
 
-import logoColor from "@assets/logo-ss-color.png";
-
 type SupportedLanguage = "es" | "en" | "de" | "zh" | "ko" | "ja" | "ar" | "ru" | "fr" | "it";
 
 interface WorldMapSectionProps {
@@ -341,24 +339,36 @@ interface GDMember {
   number: string;
 }
 
+const teamPhoto = (slug: string) => `${import.meta.env.BASE_URL}team_photos/${slug}.jpg`;
+
 export default function WorldMapSection({ language }: WorldMapSectionProps) {
-  const t = content[language] || content.en;
+  const t = {
+    ...(content[language] || content.en),
+    mexicoLabel: language === "es" ? "SAN PEDRO GARZA GARCÍA" : "SAN PEDRO GARZA GARCÍA",
+    mexicoSubtitle: "Río Tamazunchale 205 Norte",
+  };
   const [activePanel, setActivePanel] = useState<string | null>(null);
   const [showMexicoModal, setShowMexicoModal] = useState(false);
   const [showGermanyModal, setShowGermanyModal] = useState(false);
 
   const gdSocios: GDMember[] = [
-    { id: "enrique-hernan-santos-guzman", name: "Enrique Hernán Santos Gúzman", photo: logoColor, category: t.foundingPartner, slug: "enrique-hernan-santos-guzman", number: "01" },
-    { id: "socio-fundador-saucedo", name: "[FALTA: Nombre del Socio Fundador Saucedo]", photo: logoColor, category: t.partner, slug: "socio-fundador-saucedo", number: "02" },
+    { id: "mario-saucedo-montemayor", name: "Mario Saucedo Montemayor", photo: teamPhoto("mario-saucedo-montemayor"), category: t.partner, slug: "mario-saucedo-montemayor", number: "01" },
+    { id: "enrique-santos-guzman", name: "Enrique Santos Gúzman", photo: teamPhoto("enrique-santos-guzman"), category: t.partner, slug: "enrique-santos-guzman", number: "02" },
+    { id: "enrique-santos-arce", name: "Enrique Santos Arce", photo: teamPhoto("enrique-santos-arce"), category: t.foundingPartner, slug: "enrique-santos-arce", number: "03" },
+    { id: "jaime-herrera-de-herrera", name: "Jaime Herrera de Herrera", photo: teamPhoto("jaime-herrera-de-herrera"), category: t.partner, slug: "jaime-herrera-de-herrera", number: "04" },
+    { id: "david-martinez-saucedo", name: "David Martínez Saucedo", photo: teamPhoto("david-martinez-saucedo"), category: t.partner, slug: "david-martinez-saucedo", number: "05" },
   ];
 
   const gdOfCounsel: GDMember[] = [
-    { id: "consejero-administracion-laboral", name: "[FALTA: Nombre de Consejero]", photo: logoColor, category: t.ofCounselTitle, slug: "consejero-administracion-laboral", number: "01" },
+    { id: "jorge-a-garza-martinez", name: "Jorge A. Garza Martínez", photo: teamPhoto("jorge-a-garza-martinez"), category: t.associatesTitle, slug: "jorge-a-garza-martinez", number: "01" },
+    { id: "carlos-a-cerda-ramos", name: "Carlos A. Cerda Ramos", photo: teamPhoto("carlos-a-cerda-ramos"), category: t.associatesTitle, slug: "carlos-a-cerda-ramos", number: "02" },
+    { id: "orlando-cantu-garza", name: "Orlando Cantú Garza", photo: teamPhoto("orlando-cantu-garza"), category: t.associatesTitle, slug: "orlando-cantu-garza", number: "03" },
   ];
 
   const gdAssociates: GDMember[] = [
-    { id: "asociada-senior-auditoria", name: "[FALTA: Nombre de Asociada Senior]", photo: logoColor, category: t.associatesTitle, slug: "asociada-senior-auditoria", number: "01" },
-    { id: "asociado-relaciones-laborales", name: "[FALTA: Nombre de Asociado]", photo: logoColor, category: t.associatesTitle, slug: "asociado-relaciones-laborales", number: "02" },
+    { id: "ruben-a-frias-garcia", name: "Rubén A. Frías García", photo: teamPhoto("ruben-a-frias-garcia"), category: t.associatesTitle, slug: "ruben-a-frias-garcia", number: "01" },
+    { id: "maria-elena-mata-martinez", name: "María Elena Mata Martínez", photo: teamPhoto("maria-elena-mata-martinez"), category: t.associatesTitle, slug: "maria-elena-mata-martinez", number: "02" },
+    { id: "pedro-a-sanvicente-romero", name: "Pedro A. Sanvicente Romero", photo: teamPhoto("pedro-a-sanvicente-romero"), category: t.associatesTitle, slug: "pedro-a-sanvicente-romero", number: "03" },
   ];
 
   return (
@@ -578,7 +588,8 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                     {t.addressLabel}
                   </p>
                   <p className="text-sm text-foreground leading-relaxed">
-                    Río Tamazunchale 205 Norte, San Pedro Garza García, N.L., San Pedro Garza García, Nuevo León, México</p>
+                  Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220, México
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-4">

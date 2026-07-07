@@ -12,7 +12,7 @@ const fallbackImages: OfficeImage[] = [
   { id: "3", imageUrl: "https://santossaucedo.com/img/Collage/collage_05.jpg", alt: "Professional office interior design with contemporary furniture", altEs: "Diseño interior de oficinas profesional con mobiliario contemporáneo", order: 3 },
   { id: "4", imageUrl: "https://santossaucedo.com/img/Collage/collage_04.jpg", alt: "Executive meeting room with panoramic city views", altEs: "Sala de juntas ejecutiva con vistas panorámicas a la ciudad", order: 4 },
   { id: "5", imageUrl: "https://santossaucedo.com/img/Collage/collage_07.jpg", alt: "Executive work areas with ergonomic design", altEs: "Áreas de trabajo ejecutivas con diseño ergonómico", order: 5 },
-  { id: "6", imageUrl: "https://santossaucedo.com/img/Collage/05.jpg", alt: "Panoramic terrace view overlooking Mexico City skyline", altEs: "Vista de terraza panorámica con horizonte de Ciudad de México", order: 6 },
+  { id: "6", imageUrl: "https://santossaucedo.com/img/Collage/05.jpg", alt: "Office detail at Santos & Saucedo", altEs: "Detalle de oficina en Santos & Saucedo", order: 6 },
   { id: "7", imageUrl: "https://santossaucedo.com/img/Collage/collage_09.jpg", alt: "Contemporary lounge area for informal meetings", altEs: "Área de descanso contemporánea para reuniones informales", order: 7 },
   { id: "8", imageUrl: "https://santossaucedo.com/img/Collage/collage_08.jpg", alt: "State-of-the-art conference facilities", altEs: "Instalaciones de conferencias de última generación", order: 8 },
   { id: "9", imageUrl: "https://santossaucedo.com/img/Collage/collage_03.jpg", alt: "Modern workspace design promoting productivity", altEs: "Diseño moderno del espacio de trabajo que promueve la productividad", order: 9 },

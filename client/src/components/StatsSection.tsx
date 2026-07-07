@@ -140,7 +140,20 @@ export default function StatsSection({ language }: StatsSectionProps) {
     },
   };
 
-  const t = content[language] || content.en;
+  const baseT = content[language] || content.en;
+  const t = {
+    ...baseT,
+    title: language === "es" ? "Especialistas en Derecho Laboral" : "Labor Law Specialists",
+    subtitle: language === "es"
+      ? "Santos & Saucedo es un despacho jurídico con más de 35 años de experiencia, especializado en Derecho Laboral."
+      : "Santos & Saucedo is a legal firm with more than 35 years of experience, specialized in labor law.",
+    description: language === "es"
+      ? "La firma acompaña a empresas nacionales e internacionales con asesoría preventiva, consultoría laboral y representación en conflictos individuales y colectivos."
+      : "The firm advises national and international companies through preventive counsel, labor consulting, and representation in individual and collective disputes.",
+    capacity: language === "es"
+      ? "Desde San Pedro Garza García, Nuevo León, el equipo integra socios, asociados senior, asociados y staff enfocados en relaciones laborales, auditoría jurídico laboral, planes de mejora y planeación laboral estratégica."
+      : "From San Pedro Garza García, Nuevo León, the team brings together partners, senior associates, associates, and staff focused on workplace relations, labor audits, improvement plans, and strategic labor planning.",
+  };
 
   const statLabelTranslations: Record<string, Record<string, string>> = {
     en: {
@@ -392,7 +405,7 @@ export default function StatsSection({ language }: StatsSectionProps) {
           >
             <div className="w-12 h-px bg-[#202058] mb-6" />
             <p className="text-[#202058] text-[10px] tracking-[0.25em] uppercase mb-4">
-              GENSLER DESIGN
+              DERECHO LABORAL
             </p>
             <h2
               className="font-heading font-light text-2xl md:text-3xl lg:text-4xl text-foreground uppercase tracking-[0.12em] leading-tight mb-8"

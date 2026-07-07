@@ -156,7 +156,7 @@ function generateVCard(member: any, language: "es" | "en" = "es"): string {
     lines.push(`TEL;TYPE=WORK,VOICE:${member.phone}`);
   }
   
-  lines.push(`ADR;TYPE=WORK:;;Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.;Ciudad de México;CDMX;11560;México`);
+  lines.push(`ADR;TYPE=WORK:;;Río Tamazunchale 205 Norte, Colonia Del Valle;San Pedro Garza García;N.L.;66220;México`);
   lines.push(`URL:https://www.santossaucedo.com`);
   
   if (member.linkedinUrl) {
@@ -236,6 +236,12 @@ export async function registerRoutes(
   
   // Serve associate photos from attached_assets/associate_photos
   app.use('/associate_photos', express.static(path.join(process.cwd(), 'attached_assets', 'associate_photos'), {
+    maxAge: '7d',
+    immutable: true,
+  }));
+
+  // Serve Santos & Saucedo team photos from attached_assets/team_photos
+  app.use('/team_photos', express.static(path.join(process.cwd(), 'attached_assets', 'team_photos'), {
     maxAge: '7d',
     immutable: true,
   }));

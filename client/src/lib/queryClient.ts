@@ -55,7 +55,31 @@ async function readStaticJson(relativePath: string) {
     credentials: "same-origin",
   });
   await throwIfResNotOk(res);
-  return res.json();
+  return normalizeStaticAssets(await res.json());
+}
+
+function withBasePath(pathname: string) {
+  return `${import.meta.env.BASE_URL}${pathname.replace(/^\/+/, "")}`;
+}
+
+function normalizeStaticAssets(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(normalizeStaticAssets);
+  }
+
+  if (!value || typeof value !== "object") {
+    return value;
+  }
+
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).map(([key, item]) => {
+      if (key === "imageUrl" && typeof item === "string" && item.startsWith("/team_photos/")) {
+        return [key, withBasePath(item)];
+      }
+
+      return [key, normalizeStaticAssets(item)];
+    }),
+  );
 }
 
 function filterSearchResults(index: any, query: string) {

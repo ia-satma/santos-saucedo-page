@@ -104,7 +104,7 @@ export default function Offices() {
       address: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
       postalCode: "San Pedro Garza García, Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, México",
+      city: "San Pedro Garza García, Nuevo León, C.P. 66220, México",
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
@@ -147,7 +147,7 @@ export default function Offices() {
       parkingTitle: "Parking",
       parkingDesc: "Parking information is available upon scheduling your visit. Please contact our team before arrival.",
       taxiTitle: "Taxi / Uber",
-      taxiDesc: "Request your ride to 'Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.'. Please confirm arrival details with our team before your visit.",
+      taxiDesc: "Request your ride to 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'. Please confirm arrival details with our team before your visit.",
       contactCtaTitle: "Ready to Visit?",
       contactCtaSubtitle: "Schedule a meeting with our team or contact us for more information about our legal services.",
       contactButton: "Contact Us",
@@ -164,7 +164,7 @@ export default function Offices() {
       address: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
       postalCode: "San Pedro Garza García, Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, México",
+      city: "San Pedro Garza García, Nuevo León, C.P. 66220, México",
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
@@ -207,7 +207,7 @@ export default function Offices() {
       parkingTitle: "Estacionamiento",
       parkingDesc: "La información de estacionamiento está disponible al programar su visita. Por favor contacte a nuestro equipo antes de llegar.",
       taxiTitle: "Taxi / Uber",
-      taxiDesc: "Solicite su viaje a 'Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.'. Por favor confirme los detalles de llegada con nuestro equipo antes de su visita.",
+      taxiDesc: "Solicite su viaje a 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'. Por favor confirme los detalles de llegada con nuestro equipo antes de su visita.",
       contactCtaTitle: "¿Listo para Visitarnos?",
       contactCtaSubtitle: "Programe una reunión con nuestro equipo o contáctenos para más información sobre nuestros servicios legales.",
       contactButton: "Contáctenos",
@@ -224,7 +224,7 @@ export default function Offices() {
       address: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
       postalCode: "San Pedro Garza García, Nuevo León",
-      city: "Mexiko-Stadt, Mexiko",
+      city: "San Pedro Garza García, Mexiko",
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
@@ -240,7 +240,7 @@ export default function Offices() {
         { icon: ParkingCircle, text: "Tiefgarage mit 24/7-Sicherheit" },
       ],
       directionsTitle: "Anfahrt",
-      directionsText: "Río Tamazunchale 205 Norte befindet sich im Herzen von Nuevo León, einem der prestigeträchtigsten Geschäfts- und Wohnviertel von Mexiko-Stadt. Das Gebäude ist leicht von allen Hauptautobahnen und öffentlichen Verkehrsmitteln erreichbar.",
+      directionsText: "Río Tamazunchale 205 Norte befindet sich im Herzen von Nuevo León, einem der prestigeträchtigsten Geschäfts- und Wohnviertel von San Pedro Garza García. Das Gebäude ist leicht von allen Hauptautobahnen und öffentlichen Verkehrsmitteln erreichbar.",
       landmarksTitle: "Sehenswürdigkeiten in der Nähe",
       landmarks: [
         "Schloss Chapultepec (2 Min. Fahrt)",
@@ -267,7 +267,7 @@ export default function Offices() {
       parkingTitle: "Parken",
       parkingDesc: "Parkinformationen erhalten Sie bei der Terminvereinbarung. Bitte kontaktieren Sie unser Team vor Ihrer Ankunft.",
       taxiTitle: "Taxi / Uber",
-      taxiDesc: "Bestellen Sie Ihre Fahrt zu 'Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.'. Bitte bestätigen Sie die Ankunftsdetails vor Ihrem Besuch mit unserem Team.",
+      taxiDesc: "Bestellen Sie Ihre Fahrt zu 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'. Bitte bestätigen Sie die Ankunftsdetails vor Ihrem Besuch mit unserem Team.",
       contactCtaTitle: "Bereit für einen Besuch?",
       contactCtaSubtitle: "Vereinbaren Sie ein Treffen mit unserem Team oder kontaktieren Sie uns für weitere Informationen über unsere Rechtsdienstleistungen.",
       contactButton: "Kontaktieren Sie uns",
@@ -327,7 +327,7 @@ export default function Offices() {
       parkingTitle: "停车",
       parkingDesc: "请在预约访问时确认停车信息。到达前请联系我们的团队。",
       taxiTitle: "出租车 / Uber",
-      taxiDesc: "请将目的地设为'Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.'。到访前请与我们的团队确认抵达细节。",
+      taxiDesc: "请将目的地设为'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'。到访前请与我们的团队确认抵达细节。",
       contactCtaTitle: "准备好访问了吗？",
       contactCtaSubtitle: "与我们的团队安排会议，或联系我们了解更多关于我们法律服务的信息。",
       contactButton: "联系我们",
@@ -387,7 +387,7 @@ export default function Offices() {
       parkingTitle: "주차",
       parkingDesc: "방문 일정을 잡을 때 주차 정보를 확인해 주세요. 도착 전 저희 팀에 문의해 주세요.",
       taxiTitle: "택시 / Uber",
-      taxiDesc: "'Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.'로 차량을 요청하세요. 방문 전 도착 세부 사항을 저희 팀과 확인해 주세요.",
+      taxiDesc: "'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'로 차량을 요청하세요. 방문 전 도착 세부 사항을 저희 팀과 확인해 주세요.",
       contactCtaTitle: "방문 준비가 되셨나요?",
       contactCtaSubtitle: "저희 팀과의 미팅을 예약하거나 법률 서비스에 대한 자세한 정보를 문의해 주세요.",
       contactButton: "문의하기",
@@ -447,7 +447,7 @@ export default function Offices() {
       parkingTitle: "駐車場",
       parkingDesc: "駐車場情報は訪問予約時にご確認ください。到着前に当チームまでお問い合わせください。",
       taxiTitle: "タクシー / Uber",
-      taxiDesc: "'Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.'へ配車を依頼してください。訪問前に到着の詳細を当チームにご確認ください。",
+      taxiDesc: "'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'へ配車を依頼してください。訪問前に到着の詳細を当チームにご確認ください。",
       contactCtaTitle: "訪問の準備はできましたか？",
       contactCtaSubtitle: "私たちのチームとのミーティングをスケジュールするか、法的サービスの詳細についてお問い合わせください。",
       contactButton: "お問い合わせ",
@@ -507,7 +507,7 @@ export default function Offices() {
       parkingTitle: "مواقف السيارات",
       parkingDesc: "تتوفر معلومات مواقف السيارات عند جدولة زيارتك. يرجى التواصل مع فريقنا قبل الوصول.",
       taxiTitle: "تاكسي / أوبر",
-      taxiDesc: "اطلب رحلتك إلى 'Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.'. يرجى تأكيد تفاصيل الوصول مع فريقنا قبل زيارتك.",
+      taxiDesc: "اطلب رحلتك إلى 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'. يرجى تأكيد تفاصيل الوصول مع فريقنا قبل زيارتك.",
       contactCtaTitle: "مستعد للزيارة؟",
       contactCtaSubtitle: "حدد موعداً لاجتماع مع فريقنا أو اتصل بنا للحصول على مزيد من المعلومات حول خدماتنا القانونية.",
       contactButton: "اتصل بنا",
@@ -567,7 +567,7 @@ export default function Offices() {
       parkingTitle: "Парковка",
       parkingDesc: "Подземная парковка в Río Tamazunchale с валидацией для клиентов. Дополнительная публичная парковка рядом в Antara Fashion Hall и Palacio de Hierro Nuevo León.",
       taxiTitle: "Такси / Uber",
-      taxiDesc: "Укажите адрес 'Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.'. Пожалуйста, подтвердите детали прибытия с нашей командой до визита.",
+      taxiDesc: "Укажите адрес 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'. Пожалуйста, подтвердите детали прибытия с нашей командой до визита.",
       contactCtaTitle: "Готовы посетить нас?",
       contactCtaSubtitle: "Запланируйте встречу с нашей командой или свяжитесь с нами для получения дополнительной информации о наших юридических услугах.",
       contactButton: "Связаться с нами",
@@ -627,7 +627,7 @@ export default function Offices() {
       parkingTitle: "Stationnement",
       parkingDesc: "Les informations de stationnement sont disponibles lors de la planification de votre visite. Veuillez contacter notre équipe avant votre arrivée.",
       taxiTitle: "Taxi / Uber",
-      taxiDesc: "Demandez votre course vers 'Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.'. Veuillez confirmer les détails d.arrivée avec notre équipe avant votre visite.",
+      taxiDesc: "Demandez votre course vers 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'. Veuillez confirmer les détails d.arrivée avec notre équipe avant votre visite.",
       contactCtaTitle: "Prêt à nous rendre visite ?",
       contactCtaSubtitle: "Planifiez une réunion avec notre équipe ou contactez-nous pour plus d'informations sur nos services juridiques.",
       contactButton: "Contactez-nous",
@@ -687,7 +687,7 @@ export default function Offices() {
       parkingTitle: "Parcheggio",
       parkingDesc: "Le informazioni sul parcheggio sono disponibili al momento della pianificazione della visita. Contatta il nostro team prima dell.arrivo.",
       taxiTitle: "Taxi / Uber",
-      taxiDesc: "Richiedi la tua corsa a 'Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.'. Conferma i dettagli di arrivo con il nostro team prima della visita.",
+      taxiDesc: "Richiedi la tua corsa a 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'. Conferma i dettagli di arrivo con il nostro team prima della visita.",
       contactCtaTitle: "Pronti a visitarci?",
       contactCtaSubtitle: "Programmate un incontro con il nostro team o contattateci per maggiori informazioni sui nostri servizi legali.",
       contactButton: "Contattaci",
@@ -697,10 +697,35 @@ export default function Offices() {
     },
   };
 
-  const t = content[language] || content.en;
+  const baseT = content[language] || content.en;
+  const t = {
+    ...baseT,
+    mainOfficeTitle: language === "es" ? "Oficina Principal en San Pedro Garza García" : "San Pedro Garza García Office",
+    buildingName: "Río Tamazunchale 205 Norte",
+    floor: "",
+    address: "Río Tamazunchale 205 Norte",
+    colony: "Colonia Del Valle",
+    postalCode: "San Pedro Garza García, N.L.",
+    city: "C.P. 66220, México",
+    directionsText: language === "es"
+      ? "La oficina se ubica en Colonia Del Valle, San Pedro Garza García, Nuevo León. Use el enlace de mapa para obtener la ruta más directa desde su ubicación."
+      : "The office is located in Colonia Del Valle, San Pedro Garza García, Nuevo León. Use the map link for the most direct route from your location.",
+    landmarks: language === "es"
+      ? ["Colonia Del Valle", "San Pedro Garza García", "Zona corporativa de Nuevo León", "Río Tamazunchale"]
+      : ["Colonia Del Valle", "San Pedro Garza García", "Nuevo León business district", "Río Tamazunchale"],
+    metroDesc: language === "es"
+      ? "Use el enlace del mapa para obtener la ruta más directa en auto o transporte privado hacia San Pedro Garza García."
+      : "Use the map link for the most direct route by car or ride-share to San Pedro Garza García.",
+    parkingDesc: language === "es"
+      ? "La información de estacionamiento está disponible al programar su visita. Por favor contacte a nuestro equipo antes de llegar."
+      : "Parking information is available when scheduling your visit. Please contact our team before arrival.",
+    taxiDesc: language === "es"
+      ? "Solicite su viaje a 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'."
+      : "Request your ride to 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'.",
+  };
 
-  const googleMapsEmbedUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.661068768984!2d-99.19441!3d19.4325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1ff5f5c0c3e1b%3A0x7c0c7c7c7c7c7c7c!2sTorre%20SOMA%20Chapultepec!5e0!3m2!1ses!2smx!4v1700000000000!5m2!1ses!2smx";
-  const googleMapsDirectionsUrl = "https://www.google.com/maps/dir//Torre+SOMA+Chapultepec,+Campos+El%C3%ADseos+204,+Nuevo León,+11560+Ciudad+de+M%C3%A9xico,+CDMX,+Mexico";
+  const googleMapsEmbedUrl = "https://www.google.com/maps?q=R%C3%ADo+Tamazunchale+205+Norte,+Colonia+Del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220&output=embed";
+  const googleMapsDirectionsUrl = "https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Colonia+Del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220";
 
   const containerVariants = {
     hidden: { opacity: 0 },

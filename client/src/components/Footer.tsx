@@ -515,7 +515,19 @@ export default function Footer() {
     },
   };
 
-  const t = content[language] || content.en;
+  const baseT = content[language] || content.en;
+  const t = {
+    ...baseT,
+    building: "Río Tamazunchale 205 Norte",
+    street: "Colonia Del Valle",
+    city: "San Pedro Garza García, N.L., C.P. 66220, México",
+    legal: language === "es"
+      ? "© 2026 Santos & Saucedo Abogados. Todos los derechos reservados."
+      : "© 2026 Santos & Saucedo Abogados. All rights reserved.",
+    description: language === "es"
+      ? "Firma especializada en derecho laboral con más de 35 años de experiencia asesorando empresas nacionales e internacionales."
+      : "Labor-law firm with more than 35 years of experience advising national and international companies.",
+  };
 
   const renderContactInfo = () => {
     if (isLoading) {

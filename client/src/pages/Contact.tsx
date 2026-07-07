@@ -306,7 +306,7 @@ export default function Contact() {
       floor: "",
       street: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, México",
+      city: "San Pedro Garza García, Nuevo León, C.P. 66220, México",
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
@@ -348,7 +348,7 @@ export default function Contact() {
       floor: "",
       street: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, México",
+      city: "San Pedro Garza García, Nuevo León, C.P. 66220, México",
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
@@ -390,7 +390,7 @@ export default function Contact() {
       floor: "18. Stock",
       street: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, México",
+      city: "San Pedro Garza García, Nuevo León, C.P. 66220, México",
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
@@ -432,7 +432,7 @@ export default function Contact() {
       floor: "18层",
       street: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, México",
+      city: "San Pedro Garza García, Nuevo León, C.P. 66220, México",
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
@@ -474,7 +474,7 @@ export default function Contact() {
       floor: "18층",
       street: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, México",
+      city: "San Pedro Garza García, Nuevo León, C.P. 66220, México",
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
@@ -516,7 +516,7 @@ export default function Contact() {
       floor: "18階",
       street: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, México",
+      city: "San Pedro Garza García, Nuevo León, C.P. 66220, México",
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
@@ -558,7 +558,7 @@ export default function Contact() {
       floor: "الطابق 18",
       street: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, México",
+      city: "San Pedro Garza García, Nuevo León, C.P. 66220, México",
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
@@ -600,7 +600,7 @@ export default function Contact() {
       floor: "18 этаж",
       street: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, México",
+      city: "San Pedro Garza García, Nuevo León, C.P. 66220, México",
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
@@ -642,7 +642,7 @@ export default function Contact() {
       floor: "18ème étage",
       street: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, MéxicoMexique",
+      city: "San Pedro Garza García, Nuevo León, C.P. 66220, MéxicoMexique",
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
@@ -684,7 +684,7 @@ export default function Contact() {
       floor: "18° piano",
       street: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, MéxicoMessico",
+      city: "San Pedro Garza García, Nuevo León, C.P. 66220, MéxicoMessico",
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
@@ -719,9 +719,17 @@ export default function Contact() {
     },
   };
 
-  const t = content[language] || content.en;
+  const baseT = content[language] || content.en;
+  const t = {
+    ...baseT,
+    mainOffice: language === "es" ? "Oficina Principal - San Pedro Garza García" : baseT.mainOffice,
+    floor: "",
+    street: "Río Tamazunchale 205 Norte",
+    colony: "Colonia Del Valle",
+    city: "San Pedro Garza García, N.L., C.P. 66220, México",
+  };
 
-  const googleMapsUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.6610687689834!2d-99.19441!3d19.4325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1ff5f5c0c3e1b%3A0x7c0c7c7c7c7c7c7c!2sTorre%20SOMA%20Chapultepec!5e0!3m2!1sen!2smx!4v1700000000000!5m2!1sen!2smx";
+  const googleMapsUrl = "https://www.google.com/maps?q=R%C3%ADo+Tamazunchale+205+Norte,+Colonia+Del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220&output=embed";
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-contact">
@@ -967,7 +975,7 @@ export default function Contact() {
                         {t.mainOffice}
                       </h3>
                       <p className="text-sm text-muted-foreground">
-                        {t.building}, {t.floor}
+                        {t.building}
                       </p>
                     </div>
                   </div>
@@ -1020,7 +1028,7 @@ export default function Contact() {
                     data-testid="button-get-directions"
                   >
                     <a 
-                      href="https://www.google.com/maps/dir//Torre+SOMA+Chapultepec,+Campos+Elíseos+204,+Nuevo León,+11560+Ciudad+de+México,+CDMX,+Mexico"
+                      href="https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Colonia+Del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
