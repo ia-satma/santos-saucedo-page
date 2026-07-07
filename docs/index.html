@@ -13,577 +13,1068 @@
 <style>
   :root {
     --navy: #202058;
-    --navy-deep: #181848;
-    --navy-soft: #33336d;
-    --ink: #171717;
-    --muted: #666672;
-    --paper: #fafafa;
+    --navy-deep: #171742;
+    --night: #111110;
+    --ink: #1a1a1a;
+    --muted: #6c6c70;
+    --paper: #f7f7f4;
     --white: #ffffff;
-    --line: #e3e3e8;
-    --silver: #f1f1f4;
-    --accent: #8c8cae;
+    --line: rgba(255, 255, 255, 0.24);
+    --soft-line: #dddddc;
+    --red: #9d272c;
+    --gold: #b6a46b;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    font-family: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    color: var(--ink);
+    min-width: 320px;
     background: var(--paper);
-    line-height: 1.6;
+    color: var(--ink);
+    font-family: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.5;
   }
-  img { max-width: 100%; display: block; }
-  a { color: inherit; text-decoration: none; }
-  .wrap { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
 
-  .topbar {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    background: rgba(250, 250, 250, 0.94);
-    border-bottom: 1px solid var(--line);
-    backdrop-filter: blur(16px);
+  img {
+    display: block;
+    max-width: 100%;
   }
-  .topbar .wrap {
-    min-height: 76px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-  }
-  .brand img { width: 210px; height: auto; }
-  nav { display: flex; gap: 24px; align-items: center; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--navy); font-weight: 700; }
-  nav a { padding: 10px 0; border-bottom: 1px solid transparent; transition: border-color 180ms ease, color 180ms ease; }
-  nav a:hover { border-color: var(--navy); color: var(--navy-deep); }
 
-  .hero {
-    min-height: 640px;
-    background: var(--navy);
-    color: var(--white);
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .wrap {
+    width: min(1220px, calc(100% - 48px));
+    margin: 0 auto;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
     overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
-  .hero-grid {
-    min-height: 640px;
+
+  .site-header {
+    position: fixed;
+    z-index: 30;
+    top: 0;
+    right: 0;
+    left: 0;
+    color: var(--white);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    background: linear-gradient(180deg, rgba(12, 12, 16, 0.76), rgba(12, 12, 16, 0.18));
+    backdrop-filter: blur(8px);
+  }
+
+  .site-header .wrap {
+    min-height: 76px;
     display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
-    align-items: stretch;
+    grid-template-columns: 220px 1fr auto;
+    align-items: center;
+    gap: 28px;
   }
-  .hero-copy {
-    padding: 82px 72px 76px 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .eyebrow {
-    font-size: 12px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #c5c5df;
-    font-weight: 900;
-    margin-bottom: 18px;
-  }
-  h1 {
-    font-family: "Playfair Display", Georgia, serif;
-    font-size: 54px;
-    line-height: 1.03;
-    font-weight: 500;
-    max-width: 680px;
-  }
-  .lead {
-    margin-top: 24px;
-    max-width: 620px;
-    color: #dedeee;
-    font-size: 18px;
-    line-height: 1.75;
-  }
-  .actions {
-    margin-top: 34px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .button {
-    min-height: 46px;
+
+  .brand {
     display: inline-flex;
     align-items: center;
+    width: 192px;
+  }
+
+  .brand img {
+    width: 192px;
+    height: auto;
+  }
+
+  .main-nav {
+    display: flex;
+    align-items: center;
     justify-content: center;
-    padding: 0 20px;
-    border-radius: 4px;
+    gap: 28px;
     font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .main-nav a {
+    padding: 28px 0;
+    border-bottom: 2px solid transparent;
+    color: rgba(255, 255, 255, 0.88);
+    transition: color 180ms ease, border-color 180ms ease;
+  }
+
+  .main-nav a:hover {
+    color: var(--white);
+    border-color: var(--white);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    font-size: 12px;
+    font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    font-weight: 900;
-    transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
   }
-  .button:active { transform: translateY(1px); }
-  .button.primary { background: var(--white); color: var(--navy); border: 1px solid var(--white); }
-  .button.primary:hover { background: #ececf5; }
-  .button.ghost { border: 1px solid rgba(255, 255, 255, 0.36); color: var(--white); }
-  .button.ghost:hover { border-color: var(--white); }
 
-  .hero-media {
+  .search-button {
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 999px;
     position: relative;
-    min-height: 640px;
+    flex: 0 0 auto;
   }
-  .hero-media::before {
+
+  .search-button::before {
+    content: "";
+    position: absolute;
+    top: 11px;
+    left: 11px;
+    width: 11px;
+    height: 11px;
+    border: 2px solid var(--white);
+    border-radius: 999px;
+  }
+
+  .search-button::after {
+    content: "";
+    position: absolute;
+    top: 23px;
+    left: 23px;
+    width: 8px;
+    height: 2px;
+    background: var(--white);
+    transform: rotate(45deg);
+    transform-origin: left center;
+  }
+
+  .language {
+    color: rgba(255, 255, 255, 0.86);
+  }
+
+  .hero {
+    min-height: 760px;
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    background: var(--navy-deep);
+    color: var(--white);
+  }
+
+  .hero::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, var(--navy) 0%, rgba(32, 32, 88, 0.28) 44%, rgba(32, 32, 88, 0.05) 100%);
-    z-index: 1;
+    background-image:
+      linear-gradient(90deg, rgba(8, 8, 12, 0.9) 0%, rgba(21, 21, 48, 0.74) 34%, rgba(32, 32, 88, 0.38) 100%),
+      linear-gradient(180deg, rgba(5, 5, 8, 0.48) 0%, rgba(5, 5, 8, 0.1) 46%, rgba(5, 5, 8, 0.7) 100%),
+      url("assets/hero-office.jpg");
+    background-size: cover;
+    background-position: center;
+    transform: scale(1.02);
   }
-  .hero-media img {
+
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 112px 112px;
+    opacity: 0.38;
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 2;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: saturate(0.78) contrast(1.05);
+    min-height: 760px;
+    display: grid;
+    grid-template-columns: minmax(280px, 420px) 1fr minmax(170px, 240px);
+    align-items: center;
+    padding-top: 104px;
+    padding-bottom: 58px;
   }
 
-  .metrics {
-    background: var(--white);
-    border-bottom: 1px solid var(--line);
+  .news-panel {
+    align-self: end;
+    width: min(370px, 100%);
+    border-left: 3px solid var(--red);
+    background: rgba(11, 11, 17, 0.76);
+    backdrop-filter: blur(14px);
   }
-  .metric-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+
+  .news-panel h2 {
+    padding: 20px 24px 16px;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
   }
-  .metric {
-    padding: 30px 34px;
-    border-left: 1px solid var(--line);
-  }
-  .metric:first-child { border-left: 0; }
-  .metric strong {
+
+  .news-item {
     display: block;
-    color: var(--navy);
-    font-family: "Playfair Display", Georgia, serif;
-    font-size: 34px;
-    font-weight: 500;
-    line-height: 1;
-    margin-bottom: 8px;
+    padding: 22px 24px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
   }
-  .metric span { color: var(--muted); font-size: 14px; }
 
-  section { padding: 84px 0; }
-  .section-head {
+  .news-item strong {
+    display: block;
+    color: var(--white);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.22;
+  }
+
+  .news-item span {
+    display: inline-flex;
+    margin-top: 16px;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .hero-mark {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 26px;
+    text-align: center;
+  }
+
+  .hero-eyebrow,
+  .hero-subtitle,
+  .scroll-label {
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .hero-eyebrow {
+    color: rgba(255, 255, 255, 0.76);
+  }
+
+  .hero-logo {
+    width: min(520px, 74%);
+    padding: 26px 34px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
+  }
+
+  .hero-logo img {
+    width: 100%;
+  }
+
+  .hero-subtitle {
+    max-width: 520px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .scroll-cue {
+    align-self: end;
+    justify-self: end;
     display: grid;
-    grid-template-columns: minmax(260px, 0.8fr) minmax(320px, 1.2fr);
-    gap: 56px;
-    align-items: start;
-    margin-bottom: 40px;
-  }
-  h2 {
-    font-family: "Playfair Display", Georgia, serif;
-    font-size: 38px;
-    line-height: 1.1;
-    font-weight: 500;
-    color: var(--navy);
-  }
-  .section-head p {
-    color: var(--muted);
-    font-size: 17px;
-    line-height: 1.75;
+    justify-items: center;
+    gap: 16px;
+    color: rgba(255, 255, 255, 0.76);
   }
 
-  .areas {
+  .scroll-line {
+    width: 1px;
+    height: 82px;
+    background: rgba(255, 255, 255, 0.48);
+  }
+
+  .scroll-label {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+
+  .practice-section {
+    background: var(--night);
+    color: var(--white);
+    padding: 104px 0 108px;
+  }
+
+  .practice-grid {
+    display: grid;
+    grid-template-columns: minmax(260px, 420px) minmax(0, 1fr);
+    gap: 70px;
+    align-items: start;
+  }
+
+  .section-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .section-kicker::before {
+    content: "";
+    width: 52px;
+    height: 2px;
+    background: var(--red);
+  }
+
+  .practice-title {
+    color: var(--white);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 52px;
+    font-weight: 500;
+    line-height: 1.02;
+    text-transform: uppercase;
+  }
+
+  .practice-count {
+    margin-top: 16px;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.32);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 156px;
+    line-height: 0.86;
+  }
+
+  .practice-intro {
+    max-width: 320px;
+    margin-top: 28px;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 18px;
+    line-height: 1.62;
+  }
+
+  .practice-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+    margin-top: 34px;
+  }
+
+  .button {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    padding: 0 22px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .button-light {
+    background: var(--white);
+    color: var(--navy);
+  }
+
+  .text-link {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .practice-list {
     display: grid;
     grid-template-columns: 1fr 1fr;
     border-top: 1px solid var(--line);
-  }
-  .area {
-    min-height: 136px;
-    padding: 26px 28px 28px;
-    background: var(--white);
-    border-right: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-  }
-  .area:nth-child(even) { border-right: 0; }
-  .area .num {
-    display: block;
-    color: var(--accent);
-    font-size: 12px;
-    letter-spacing: 0.14em;
-    font-weight: 900;
-    margin-bottom: 18px;
-  }
-  .area h3 {
-    font-size: 18px;
-    line-height: 1.35;
-    color: var(--navy-deep);
-    max-width: 420px;
+    border-left: 1px solid var(--line);
   }
 
-  .firm-band {
-    background: var(--silver);
-  }
-  .firm-grid {
-    display: grid;
-    grid-template-columns: 0.95fr 1.05fr;
-    gap: 52px;
-    align-items: center;
-  }
-  .firm-copy p {
-    margin-top: 18px;
-    color: var(--muted);
-    font-size: 17px;
-    line-height: 1.75;
-  }
-  .principles {
-    display: grid;
-    gap: 12px;
-  }
-  .principle {
-    background: var(--white);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 22px 24px;
-  }
-  .principle span {
-    display: block;
-    color: var(--navy);
-    font-weight: 900;
-    font-size: 13px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-  .principle p { color: var(--muted); font-size: 15px; }
-
-  .publication-grid {
-    display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: 18px;
-  }
-  .publication {
-    background: var(--white);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 28px;
-    min-height: 206px;
+  .practice-item {
+    min-height: 176px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding: 28px 30px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    transition: background 180ms ease, transform 180ms ease;
   }
-  .publication.large { min-height: 430px; }
-  .publication .tag {
-    color: var(--accent);
-    font-size: 12px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    font-weight: 900;
-    margin-bottom: 16px;
-  }
-  .publication h3 {
-    font-family: "Playfair Display", Georgia, serif;
-    color: var(--navy);
-    font-size: 28px;
-    line-height: 1.15;
-    font-weight: 500;
-  }
-  .publication:not(.large) h3 { font-size: 22px; }
-  .publication p {
-    margin-top: 16px;
-    color: var(--muted);
-    line-height: 1.65;
-  }
-  .publication .read {
-    margin-top: 28px;
-    color: var(--navy);
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-weight: 900;
-  }
-  .publication-stack { display: grid; gap: 18px; }
 
-  .team-preview {
+  .practice-item:hover {
+    background: rgba(255, 255, 255, 0.055);
+  }
+
+  .practice-item span {
+    color: rgba(255, 255, 255, 0.42);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+  }
+
+  .practice-item h3 {
+    max-width: 390px;
+    color: var(--white);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 25px;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .experience-band {
     background: var(--navy);
     color: var(--white);
-  }
-  .team-preview h2 { color: var(--white); }
-  .team-preview .section-head p { color: #d8d8eb; }
-  .team-row {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 18px;
-  }
-  .profile-note {
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 8px;
-    padding: 30px;
-    background: rgba(255, 255, 255, 0.06);
-  }
-  .profile-note h3 {
-    font-family: "Playfair Display", Georgia, serif;
-    font-size: 30px;
-    font-weight: 500;
-    margin-bottom: 14px;
-  }
-  .profile-note p { color: #d8d8eb; line-height: 1.75; }
-  .profile-list {
-    display: grid;
-    gap: 10px;
-  }
-  .profile-list div {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
-    padding: 14px 0;
-  }
-  .profile-list strong {
-    display: block;
-    font-size: 15px;
-  }
-  .profile-list span {
-    color: #bfbfde;
-    font-size: 13px;
+    padding: 72px 0;
   }
 
-  .contact {
-    background: var(--white);
+  .experience-band p {
+    max-width: 930px;
+    margin: 0 auto;
+    text-align: center;
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.45;
   }
+
+  .events-section {
+    background: var(--paper);
+    padding: 92px 0 96px;
+  }
+
+  .events-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: 36px;
+  }
+
+  .events-head h2,
+  .about-copy h2,
+  .contact-copy h2 {
+    margin-top: 14px;
+    color: var(--navy);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 42px;
+    font-weight: 500;
+    line-height: 1.08;
+    text-transform: uppercase;
+  }
+
+  .light-kicker {
+    color: var(--red);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .outline-link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--navy);
+    border-radius: 2px;
+    padding: 0 18px;
+    color: var(--navy);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .empty-events {
+    display: grid;
+    place-items: center;
+    min-height: 210px;
+    border: 1px solid var(--soft-line);
+    background: var(--white);
+    color: var(--muted);
+    text-align: center;
+    font-size: 16px;
+  }
+
+  .about-section {
+    background: var(--white);
+    padding: 96px 0;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 0.92fr 1.08fr;
+    gap: 64px;
+    align-items: center;
+  }
+
+  .about-image {
+    min-height: 430px;
+    background-image:
+      linear-gradient(180deg, rgba(19, 19, 24, 0.04), rgba(19, 19, 24, 0.34)),
+      url("assets/hero-office.jpg");
+    background-size: cover;
+    background-position: center;
+  }
+
+  .about-copy p {
+    margin-top: 24px;
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1.72;
+  }
+
+  .about-points {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    margin-top: 34px;
+    background: var(--soft-line);
+  }
+
+  .about-point {
+    min-height: 132px;
+    background: var(--white);
+    padding: 22px;
+  }
+
+  .about-point strong {
+    display: block;
+    color: var(--navy);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .about-point span {
+    display: block;
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .contact-section {
+    background: #ececea;
+    padding: 92px 0;
+  }
+
   .contact-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 44px;
-    align-items: start;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 58px;
+    align-items: stretch;
   }
-  .contact-card {
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 28px;
-    background: var(--paper);
-  }
-  .contact-card h3 {
-    color: var(--navy);
-    font-size: 13px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 18px;
-  }
-  .contact-card p,
-  .contact-card a {
-    display: block;
-    color: var(--muted);
-    margin-bottom: 10px;
-  }
-  .contact-card a:hover { color: var(--navy); }
 
-  footer {
-    padding: 42px 0;
-    background: var(--navy-deep);
-    color: #cacade;
+  .contact-copy p {
+    margin-top: 24px;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.7;
   }
-  footer .wrap {
+
+  .contact-list {
+    display: grid;
+    gap: 14px;
+    margin-top: 34px;
+    color: var(--navy);
+    font-weight: 700;
+  }
+
+  .map-panel {
+    min-height: 390px;
+    display: grid;
+    place-items: center;
+    position: relative;
+    overflow: hidden;
+    background:
+      linear-gradient(90deg, rgba(32, 32, 88, 0.88), rgba(32, 32, 88, 0.52)),
+      url("assets/hero-office.jpg");
+    background-size: cover;
+    background-position: center;
+    color: var(--white);
+  }
+
+  .map-panel::before,
+  .map-panel::after {
+    content: "";
+    position: absolute;
+    background: rgba(255, 255, 255, 0.26);
+  }
+
+  .map-panel::before {
+    width: 100%;
+    height: 1px;
+    top: 50%;
+    left: 0;
+  }
+
+  .map-panel::after {
+    width: 1px;
+    height: 100%;
+    top: 0;
+    left: 50%;
+  }
+
+  .map-label {
+    z-index: 1;
+    max-width: 320px;
+    text-align: center;
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 28px;
+    line-height: 1.2;
+  }
+
+  .site-footer {
+    background: var(--night);
+    color: rgba(255, 255, 255, 0.76);
+    padding: 58px 0 38px;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.2fr repeat(3, 0.7fr);
+    gap: 40px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  }
+
+  .footer-brand img {
+    width: 210px;
+    margin-bottom: 22px;
+  }
+
+  .footer-brand p {
+    max-width: 380px;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .footer-col h3 {
+    margin-bottom: 18px;
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .footer-col a,
+  .footer-col span {
+    display: block;
+    margin-top: 10px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+  }
+
+  .legal {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 24px;
-  }
-  footer img { width: 180px; }
-  footer span { font-size: 13px; color: #b8b8d2; }
-
-  @media (max-width: 900px) {
-    .topbar .wrap { min-height: auto; padding: 18px 0; align-items: flex-start; flex-direction: column; }
-    nav { flex-wrap: wrap; gap: 12px 18px; }
-    .brand img { width: 188px; }
-    .hero-grid,
-    .section-head,
-    .firm-grid,
-    .publication-grid,
-    .team-row,
-    .contact-grid { grid-template-columns: 1fr; }
-    .hero-copy { padding: 68px 0 44px; }
-    .hero-media { min-height: 340px; }
-    h1 { font-size: 42px; }
-    h2 { font-size: 32px; }
-    .metric-grid { grid-template-columns: 1fr; }
-    .metric { border-left: 0; border-top: 1px solid var(--line); }
-    .metric:first-child { border-top: 0; }
-    .areas { grid-template-columns: 1fr; }
-    .area { border-right: 0; }
-    footer .wrap { align-items: flex-start; flex-direction: column; }
+    gap: 20px;
+    padding-top: 28px;
+    font-size: 13px;
   }
 
-  @media (max-width: 560px) {
-    .wrap { width: min(100% - 28px, 1180px); }
-    nav { font-size: 11px; }
-    h1 { font-size: 34px; }
-    h2 { font-size: 28px; }
-    .lead { font-size: 16px; }
-    section { padding: 64px 0; }
-    .publication.large { min-height: 0; }
+  @media (max-width: 1080px) {
+    .site-header .wrap {
+      grid-template-columns: 190px 1fr auto;
+    }
+
+    .brand,
+    .brand img {
+      width: 170px;
+    }
+
+    .main-nav {
+      gap: 18px;
+      font-size: 11px;
+    }
+
+    .hero-inner {
+      grid-template-columns: minmax(260px, 350px) 1fr;
+    }
+
+    .scroll-cue {
+      display: none;
+    }
+
+    .practice-grid,
+    .about-grid,
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .practice-copy {
+      max-width: 620px;
+    }
+
+    .practice-intro {
+      max-width: 520px;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .wrap {
+      width: min(100% - 32px, 720px);
+    }
+
+    .site-header {
+      position: absolute;
+      background: rgba(12, 12, 16, 0.74);
+    }
+
+    .site-header .wrap {
+      min-height: 72px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .main-nav {
+      display: none;
+    }
+
+    .hero,
+    .hero-inner {
+      min-height: 760px;
+    }
+
+    .hero-inner {
+      grid-template-columns: 1fr;
+      align-content: center;
+      gap: 42px;
+      padding-top: 112px;
+    }
+
+    .hero-mark {
+      order: 1;
+    }
+
+    .news-panel {
+      order: 2;
+      align-self: auto;
+      width: 100%;
+    }
+
+    .hero-logo {
+      width: min(450px, 92%);
+      padding: 22px 24px;
+    }
+
+    .practice-section,
+    .events-section,
+    .about-section,
+    .contact-section {
+      padding: 72px 0;
+    }
+
+    .practice-grid {
+      gap: 44px;
+    }
+
+    .practice-title {
+      font-size: 40px;
+    }
+
+    .practice-count {
+      font-size: 118px;
+    }
+
+    .practice-list,
+    .about-points,
+    .footer-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .events-head {
+      display: block;
+    }
+
+    .outline-link {
+      margin-top: 24px;
+    }
+
+    .experience-band p {
+      font-size: 25px;
+    }
+
+    .about-image,
+    .map-panel {
+      min-height: 320px;
+    }
+
+    .legal {
+      display: block;
+    }
+
+    .legal span + span {
+      display: block;
+      margin-top: 10px;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .brand,
+    .brand img {
+      width: 146px;
+    }
+
+    .language {
+      display: none;
+    }
+
+    .hero,
+    .hero-inner {
+      min-height: 720px;
+    }
+
+    .hero-eyebrow,
+    .hero-subtitle,
+    .scroll-label {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+    }
+
+    .news-item strong {
+      font-size: 18px;
+    }
+
+    .practice-title,
+    .events-head h2,
+    .about-copy h2,
+    .contact-copy h2 {
+      font-size: 33px;
+    }
+
+    .practice-item {
+      min-height: 150px;
+      padding: 24px;
+    }
+
+    .practice-item h3 {
+      font-size: 22px;
+    }
+
+    .experience-band p {
+      font-size: 22px;
+    }
   }
 </style>
 </head>
 <body>
-  <header class="topbar">
+  <header class="site-header" aria-label="Navegación principal">
     <div class="wrap">
-      <a class="brand" href="#inicio" aria-label="Santos & Saucedo inicio">
-        <img src="assets/logo-ss-color.png" alt="Santos & Saucedo Abogados" />
+      <a class="brand" href="#inicio" aria-label="Santos & Saucedo">
+        <img src="assets/logo-ss-white.png" alt="Santos & Saucedo" />
       </a>
-      <nav aria-label="Navegación principal">
+      <nav class="main-nav">
         <a href="#firma">La Firma</a>
         <a href="#areas">Áreas Laborales</a>
         <a href="#abogados">Abogados</a>
         <a href="#publicaciones">Publicaciones</a>
         <a href="#contacto">Contacto</a>
       </nav>
+      <div class="header-actions">
+        <a class="search-button" href="#publicaciones" aria-label="Buscar"></a>
+        <span class="language">Español</span>
+      </div>
     </div>
   </header>
 
   <main id="inicio">
     <section class="hero" aria-label="Santos & Saucedo Abogados">
-      <div class="wrap hero-grid">
-        <div class="hero-copy">
-          <div class="eyebrow">Firma especializada en derecho laboral</div>
-          <h1>Santos & Saucedo Abogados</h1>
-          <p class="lead">
-            Una firma que ayuda a anticipar, ordenar y resolver asuntos laborales con precisión jurídica,
-            criterio práctico y sensibilidad institucional.
-          </p>
-          <div class="actions">
-            <a class="button primary" href="#contacto">Solicitar asesoría</a>
-            <a class="button ghost" href="#areas">Ver áreas laborales</a>
+      <div class="wrap hero-inner">
+        <aside class="news-panel" aria-label="Noticias">
+          <h2>Noticias</h2>
+          <a class="news-item" href="#publicaciones">
+            <strong>Lo que las empresas deben saber sobre conflictos individuales de trabajo ante juntas de conciliación y arbitraje</strong>
+            <span>Ver más</span>
+          </a>
+          <a class="news-item" href="#publicaciones">
+            <strong>Por qué una revisión de la administración laboral importa antes del conflicto, no después</strong>
+            <span>Ver más</span>
+          </a>
+        </aside>
+
+        <div class="hero-mark">
+          <p class="hero-eyebrow">Firma de derecho laboral en Nuevo León</p>
+          <h1 class="sr-only">Santos & Saucedo Abogados</h1>
+          <div class="hero-logo">
+            <img src="assets/logo-ss-color.png" alt="Santos & Saucedo Abogados" />
+          </div>
+          <p class="hero-subtitle">Más de 35 años de asesoría laboral</p>
+        </div>
+
+        <a class="scroll-cue" href="#areas" aria-label="Ir a áreas laborales">
+          <span class="scroll-line"></span>
+          <span class="scroll-label">Scroll</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="practice-section" id="areas">
+      <div class="wrap practice-grid">
+        <div class="practice-copy">
+          <p class="section-kicker">Capacidades</p>
+          <h2 class="practice-title">Áreas Laborales</h2>
+          <div class="practice-count" aria-hidden="true">6</div>
+          <p class="practice-intro">Asesoría legal laboral integral en 6 áreas especializadas.</p>
+          <div class="practice-actions">
+            <a class="button button-light" href="#contacto">Obtener asesoría legal</a>
+            <a class="text-link" href="#areas">Ver todas las áreas</a>
           </div>
         </div>
-        <div class="hero-media" aria-hidden="true">
-          <img src="assets/hero-office.jpg" alt="" />
+
+        <div class="practice-list" aria-label="Áreas laborales">
+          <a class="practice-item" href="#contacto">
+            <span>01</span>
+            <h3>Conflictos Individuales y Colectivos de Trabajo</h3>
+          </a>
+          <a class="practice-item" href="#contacto">
+            <span>02</span>
+            <h3>Revisión de la Función de Administración Laboral</h3>
+          </a>
+          <a class="practice-item" href="#contacto">
+            <span>03</span>
+            <h3>Diagnóstico de Relaciones Laborales</h3>
+          </a>
+          <a class="practice-item" href="#contacto">
+            <span>04</span>
+            <h3>Planes de Mejora</h3>
+          </a>
+          <a class="practice-item" href="#contacto">
+            <span>05</span>
+            <h3>Auditoría Jurídico-Laboral</h3>
+          </a>
+          <a class="practice-item" href="#contacto">
+            <span>06</span>
+            <h3>Planeación Estratégica y Capacitación</h3>
+          </a>
         </div>
       </div>
     </section>
 
-    <aside class="metrics" aria-label="Datos destacados">
-      <div class="wrap metric-grid">
-        <div class="metric"><strong>35+</strong><span>Años de experiencia asesorando empresas.</span></div>
-        <div class="metric"><strong>6</strong><span>Áreas laborales para prevención, cumplimiento y resolución.</span></div>
-        <div class="metric"><strong>NL</strong><span>Atención desde San Pedro Garza García, Nuevo León.</span></div>
-      </div>
-    </aside>
-
-    <section id="areas">
+    <section class="experience-band">
       <div class="wrap">
-        <div class="section-head">
-          <h2>Áreas Laborales</h2>
-          <p>
-            El prototipo organiza la experiencia de la firma alrededor de asuntos laborales concretos:
-            conflictos, administración, diagnóstico, auditoría y planeación preventiva.
-          </p>
-        </div>
-        <div class="areas">
-          <article class="area"><span class="num">01</span><h3>Conflictos Individuales y Colectivos de Trabajo</h3></article>
-          <article class="area"><span class="num">02</span><h3>Revisión de la Función de Administración Laboral</h3></article>
-          <article class="area"><span class="num">03</span><h3>Diagnóstico de Relaciones Laborales</h3></article>
-          <article class="area"><span class="num">04</span><h3>Planes de Mejora</h3></article>
-          <article class="area"><span class="num">05</span><h3>Auditoría Jurídico-Laboral</h3></article>
-          <article class="area"><span class="num">06</span><h3>Planeación Estratégica y Capacitación</h3></article>
-        </div>
+        <p>Santos & Saucedo Abogados tiene más de tres décadas de experiencia brindando servicios legales de la más alta calidad.</p>
       </div>
     </section>
 
-    <section class="firm-band" id="firma">
-      <div class="wrap firm-grid">
-        <div class="firm-copy">
-          <div class="eyebrow">La Firma</div>
-          <h2>Consejo laboral con enfoque preventivo.</h2>
-          <p>
-            La plataforma presenta a Santos & Saucedo como una boutique laboral sobria, cercana y técnica,
-            orientada a acompañar a empresas en decisiones sensibles de capital humano.
-          </p>
-        </div>
-        <div class="principles">
-          <div class="principle"><span>Prevención</span><p>Identificar riesgos laborales antes de que se conviertan en contingencias.</p></div>
-          <div class="principle"><span>Orden</span><p>Documentación, procesos internos y cumplimiento alineados con la operación real.</p></div>
-          <div class="principle"><span>Resolución</span><p>Representación y estrategia para conflictos individuales o colectivos.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="publicaciones">
+    <section class="events-section" id="publicaciones">
       <div class="wrap">
-        <div class="section-head">
-          <h2>Publicaciones</h2>
-          <p>
-            Muestra inicial del centro de conocimiento. En la versión funcional, estas publicaciones se administran desde el CMS.
-          </p>
+        <div class="events-head">
+          <div>
+            <p class="light-kicker">Actividades de la firma</p>
+            <h2>Próximos Eventos</h2>
+          </div>
+          <a class="outline-link" href="#publicaciones">Ver todos los eventos</a>
         </div>
-        <div class="publication-grid">
-          <article class="publication large">
-            <div>
-              <div class="tag">Alerta laboral</div>
-              <h3>Lo que las empresas deben saber sobre conflictos individuales de trabajo.</h3>
-              <p>Panorama práctico del proceso que enfrentan los empleadores cuando un conflicto laboral llega a una etapa formal.</p>
+        <div class="empty-events">
+          <p>No hay eventos próximos</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="about-section" id="firma">
+      <div class="wrap about-grid">
+        <div class="about-image" role="img" aria-label="Oficinas de Santos & Saucedo"></div>
+        <div class="about-copy">
+          <p class="light-kicker">Acerca de nosotros</p>
+          <h2>Firma especializada en derecho laboral</h2>
+          <p>Santos & Saucedo Abogados acompaña a empresas con asesoría preventiva, atención de conflictos y planeación estratégica laboral desde San Pedro Garza García, Nuevo León.</p>
+          <div class="about-points" id="abogados">
+            <div class="about-point">
+              <strong>35+</strong>
+              <span>Años de experiencia</span>
             </div>
-            <a class="read" href="#contacto">Consultar enfoque</a>
-          </article>
-          <div class="publication-stack">
-            <article class="publication">
-              <div>
-                <div class="tag">Prevención</div>
-                <h3>Revisión de administración laboral antes del conflicto.</h3>
-                <p>Cómo detectar vacíos internos mientras todavía son corregibles.</p>
-              </div>
-            </article>
-            <article class="publication">
-              <div>
-                <div class="tag">Cumplimiento</div>
-                <h3>Checklist de auditoría jurídico-laboral.</h3>
-                <p>Una guía inicial para empresas en crecimiento.</p>
-              </div>
-            </article>
+            <div class="about-point">
+              <strong>6</strong>
+              <span>Áreas laborales</span>
+            </div>
+            <div class="about-point">
+              <strong>N.L.</strong>
+              <span>Nuevo León</span>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="team-preview" id="abogados">
-      <div class="wrap">
-        <div class="section-head">
-          <h2>Abogados</h2>
-          <p>
-            La estructura del directorio ya está contemplada para perfiles, áreas, publicaciones y datos de contacto.
-          </p>
-        </div>
-        <div class="team-row">
-          <article class="profile-note">
-            <h3>Directorio profesional listo para carga de perfiles.</h3>
-            <p>
-              El sitio completo permite presentar socios, asociados y equipo de apoyo con biografía,
-              experiencia, educación, publicaciones relacionadas y especialidades laborales.
-            </p>
-          </article>
-          <div class="profile-list" aria-label="Estructura de perfiles">
-            <div><strong>Socios</strong><span>Perfil, trayectoria, práctica y datos de contacto.</span></div>
-            <div><strong>Asociados</strong><span>Experiencia, idiomas y áreas laborales.</span></div>
-            <div><strong>Publicaciones por abogado</strong><span>Relación automática con artículos y alertas.</span></div>
-            <div><strong>Administración interna</strong><span>CMS para edición del directorio.</span></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="contact" id="contacto">
+    <section class="contact-section" id="contacto">
       <div class="wrap contact-grid">
-        <div>
-          <div class="eyebrow">Contacto</div>
-          <h2>Atención desde San Pedro Garza García.</h2>
-          <p class="lead" style="color: var(--muted);">
-            Esta vista pública sirve para revisión del concepto visual. La versión funcional completa corre con backend,
-            base de datos, CMS y automatizaciones internas.
-          </p>
+        <div class="contact-copy">
+          <p class="light-kicker">Contacto</p>
+          <h2>San Pedro Garza García</h2>
+          <p>Agenda una consulta para revisar necesidades laborales, riesgos de administración o estrategias de prevención para tu empresa.</p>
+          <div class="contact-list">
+            <a href="tel:+528183352086">+52 81 8335 2086</a>
+            <a href="mailto:info@santossaucedo.com">info@santossaucedo.com</a>
+            <span>Río Tamazunchale 205 Norte, San Pedro Garza García, N.L.</span>
+          </div>
         </div>
-        <div class="contact-card">
-          <h3>Santos & Saucedo Abogados</h3>
-          <p>Río Tamazunchale 205 Norte</p>
-          <p>San Pedro Garza García, Nuevo León</p>
-          <a href="tel:+528183352086">+52 81 8335 2086</a>
-          <a href="mailto:info@santossaucedo.com">info@santossaucedo.com</a>
+        <div class="map-panel" aria-label="Ubicación de la firma">
+          <p class="map-label">Río Tamazunchale 205 Norte</p>
         </div>
       </div>
     </section>
   </main>
 
-  <footer>
+  <footer class="site-footer">
     <div class="wrap">
-      <img src="assets/logo-ss-white.png" alt="Santos & Saucedo Abogados" />
-      <span>Prototipo web para revisión visual. Julio 2026.</span>
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="assets/logo-ss-white.png" alt="Santos & Saucedo" />
+          <p>Firma especializada en derecho laboral en San Pedro Garza García, N.L., con más de 35 años de experiencia asesorando empresas.</p>
+        </div>
+        <div class="footer-col">
+          <h3>La Firma</h3>
+          <a href="#firma">Acerca de Nosotros</a>
+          <a href="#abogados">Nuestro Equipo</a>
+          <a href="#contacto">Contacto</a>
+        </div>
+        <div class="footer-col">
+          <h3>Áreas Laborales</h3>
+          <a href="#areas">Áreas Laborales</a>
+        </div>
+        <div class="footer-col">
+          <h3>Recursos</h3>
+          <a href="#publicaciones">Publicaciones</a>
+          <a href="#publicaciones">Eventos</a>
+        </div>
+      </div>
+      <div class="legal">
+        <span>© 2026 Santos & Saucedo Abogados. Todos los derechos reservados.</span>
+        <span>Prototipo aprobable para revisión de cliente</span>
+      </div>
     </div>
   </footer>
 </body>
