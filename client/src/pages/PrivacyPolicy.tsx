@@ -50,7 +50,7 @@ San Pedro Garza García, Nuevo León, México
 
 For privacy-related inquiries:
 Email: privacidad@santossaucedo.com
-Phone: +52 81 8335 2930
+Phone: +52 81 8335 2086
 
 Our Data Protection Officer can be contacted at the above address for any questions regarding this Privacy Policy or the exercise of your data protection rights.`
         },
@@ -296,7 +296,7 @@ San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 Email: privacidad@santossaucedo.com
-Phone: +52 81 8335 2930
+Phone: +52 81 8335 2086
 
 Office Hours: Monday to Friday, 9:00 AM to 6:00 PM (Mexico City time)
 
@@ -334,7 +334,7 @@ San Pedro Garza García, Nuevo León, México
 
 Para consultas relacionadas con privacidad:
 Correo electrónico: privacidad@santossaucedo.com
-Teléfono: +52 81 8335 2930`
+Teléfono: +52 81 8335 2086`
         },
         {
           id: "data-collected",
@@ -513,7 +513,7 @@ San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 Correo electrónico: privacidad@santossaucedo.com
-Teléfono: +52 81 8335 2930
+Teléfono: +52 81 8335 2086
 
 Horario de atención: Lunes a viernes, 9:00 AM a 6:00 PM (hora de la Ciudad de México)`
         }
@@ -547,7 +547,7 @@ San Pedro Garza García, Nuevo León, México
 
 Für datenschutzbezogene Anfragen:
 E-Mail: privacidad@santossaucedo.com
-Telefon: +52 81 8335 2930
+Telefon: +52 81 8335 2086
 
 Unser Datenschutzbeauftragter kann unter der oben genannten Adresse für Fragen zu dieser Datenschutzrichtlinie kontaktiert werden.`
         },
@@ -739,7 +739,7 @@ San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 E-Mail: privacidad@santossaucedo.com
-Telefon: +52 81 8335 2930
+Telefon: +52 81 8335 2086
 
 Öffnungszeiten: Montag bis Freitag, 9:00 bis 18:00 Uhr (Ortszeit Mexiko-Stadt)
 
@@ -777,7 +777,7 @@ San Pedro Garza García, Nuevo León, México
 
 隐私相关咨询：
 电子邮件：privacidad@santossaucedo.com
-电话：+52 81 8335 2930
+电话：+52 81 8335 2086
 
 如对本隐私政策或行使您的数据保护权利有任何疑问，可通过上述地址联系我们的数据保护官。`
         },
@@ -981,7 +981,7 @@ San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 电子邮件：privacidad@santossaucedo.com
-电话：+52 81 8335 2930
+电话：+52 81 8335 2086
 
 办公时间：周一至周五，上午9:00至下午6:00（墨西哥城时间）
 
@@ -1019,7 +1019,7 @@ San Pedro Garza García, Nuevo León, México
 
 개인정보 관련 문의:
 이메일: privacidad@santossaucedo.com
-전화: +52 81 8335 2930
+전화: +52 81 8335 2086
 
 이 개인정보 처리방침 또는 데이터 보호 권리 행사에 관한 질문이 있으시면 위 주소로 당사 데이터 보호 책임자에게 연락하실 수 있습니다.`
         },
@@ -1223,7 +1223,7 @@ San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 이메일: privacidad@santossaucedo.com
-전화: +52 81 8335 2930
+전화: +52 81 8335 2086
 
 영업 시간: 월요일~금요일, 오전 9:00 ~ 오후 6:00 (멕시코시티 시간)
 
@@ -1261,7 +1261,7 @@ San Pedro Garza García, Nuevo León, México
 
 プライバシーに関するお問い合わせ：
 メール：privacidad@santossaucedo.com
-電話：+52 81 8335 2930
+電話：+52 81 8335 2086
 
 このプライバシーポリシーまたはデータ保護権の行使に関するご質問は、上記住所にある当社のデータ保護責任者にお問い合わせください。`
         },
@@ -1465,7 +1465,7 @@ San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 メール：privacidad@santossaucedo.com
-電話：+52 81 8335 2930
+電話：+52 81 8335 2086
 
 営業時間：月曜日〜金曜日、午前9:00〜午後6:00（メキシコシティ時間）
 
@@ -1503,7 +1503,7 @@ San Pedro Garza García, Nuevo León، مدينة مكسيكو، المكسيك
 
 للاستفسارات المتعلقة بالخصوصية:
 البريد الإلكتروني: privacidad@santossaucedo.com
-الهاتف: +52 81 8335 2930
+الهاتف: +52 81 8335 2086
 
 يمكن الاتصال بمسؤول حماية البيانات لدينا على العنوان أعلاه لأي أسئلة تتعلق بسياسة الخصوصية هذه أو ممارسة حقوق حماية البيانات الخاصة بك.`
         },
@@ -1707,7 +1707,7 @@ San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León، مدينة مكسيكو، المكسيك
 
 البريد الإلكتروني: privacidad@santossaucedo.com
-الهاتف: +52 81 8335 2930
+الهاتف: +52 81 8335 2086
 
 ساعات العمل: الاثنين إلى الجمعة، 9:00 صباحاً إلى 6:00 مساءً (بتوقيت مدينة مكسيكو)
 
@@ -1745,7 +1745,7 @@ San Pedro Garza García, Nuevo León, México
 
 По вопросам конфиденциальности:
 Электронная почта: privacidad@santossaucedo.com
-Телефон: +52 81 8335 2930
+Телефон: +52 81 8335 2086
 
 С нашим Сотрудником по защите данных можно связаться по указанному выше адресу для решения любых вопросов, касающихся настоящей Политики конфиденциальности или осуществления ваших прав на защиту данных.`
         },
@@ -1949,7 +1949,7 @@ San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 Электронная почта: privacidad@santossaucedo.com
-Телефон: +52 81 8335 2930
+Телефон: +52 81 8335 2086
 
 Часы работы: Понедельник – пятница, 9:00 – 18:00 (по времени Мехико)
 
@@ -1987,7 +1987,7 @@ San Pedro Garza García, Nuevo León, MéxicoMexique
 
 Pour les demandes liées à la confidentialité :
 E-mail : privacidad@santossaucedo.com
-Téléphone : +52 81 8335 2930
+Téléphone : +52 81 8335 2086
 
 Notre Délégué à la protection des données peut être contacté à l'adresse ci-dessus pour toute question concernant cette Politique de confidentialité ou l'exercice de vos droits en matière de protection des données.`
         },
@@ -2191,7 +2191,7 @@ San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, MéxicoMexique
 
 E-mail : privacidad@santossaucedo.com
-Téléphone : +52 81 8335 2930
+Téléphone : +52 81 8335 2086
 
 Heures d'ouverture : Lundi au vendredi, 9h00 à 18h00 (heure de Mexico)
 
@@ -2229,7 +2229,7 @@ San Pedro Garza García, Nuevo León, MéxicoMessico
 
 Per richieste relative alla privacy:
 E-mail: privacidad@santossaucedo.com
-Telefono: +52 81 8335 2930
+Telefono: +52 81 8335 2086
 
 Il nostro Responsabile della protezione dei dati può essere contattato all'indirizzo sopra indicato per qualsiasi domanda riguardante questa Informativa sulla privacy o l'esercizio dei tuoi diritti in materia di protezione dei dati.`
         },
@@ -2433,7 +2433,7 @@ San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, MéxicoMessico
 
 E-mail: privacidad@santossaucedo.com
-Telefono: +52 81 8335 2930
+Telefono: +52 81 8335 2086
 
 Orari di ufficio: Lunedì a venerdì, 9:00 - 18:00 (ora di Città del Messico)
 
@@ -2590,7 +2590,7 @@ Sito web: www.santossaucedo.com`
                     data-testid="link-privacy-phone"
                   >
                     <Phone className="w-4 h-4" />
-                    +52 81 8335 2930
+                    +52 81 8335 2086
                   </a>
                 </div>
               </CardContent>

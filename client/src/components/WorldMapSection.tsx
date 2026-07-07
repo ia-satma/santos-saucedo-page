@@ -587,7 +587,7 @@ export default function WorldMapSection({ language }: WorldMapSectionProps) {
                   <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mb-1.5 font-medium">
                     {t.phoneLabel}
                   </p>
-                  <p className="text-sm text-foreground">+52 81 8335 2930</p>
+                  <p className="text-sm text-foreground">+52 81 8335 2086</p>
                 </div>
               </div>
               <Button

@@ -179,7 +179,7 @@ function cleanContent(text: string): string {
     .replace(/-- \d+ of \d+ --/g, '')
     .replace(/SANTOS & SAUCEDO, S\.C\./g, '')
     .replace(/Paseo de los Tamarindos 60, 05120 Ciudad de México/g, '')
-    .replace(/\+52 81 8335 2930/g, '')
+    .replace(/\+52 81 8335 2086/g, '')
     .replace(/santossaucedo\.com/g, '')
     .replace(/La información incluida en esta nota no constituye.*?abogados aquí mencionados\./gs, '')
     .replace(/A T E N T A M E N T E/g, '')
