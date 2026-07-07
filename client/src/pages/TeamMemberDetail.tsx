@@ -1372,7 +1372,7 @@ export default function TeamMemberDetail() {
                   {member?.email && (
                     <Button 
                       variant="secondary"
-                      className="rounded-none bg-card/20 hover:bg-white/30 text-white border-0"
+                      className="rounded-none bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
                       asChild
                       data-testid="button-email"
                     >
@@ -1385,7 +1385,7 @@ export default function TeamMemberDetail() {
                   {member?.phone && (
                     <Button 
                       variant="secondary"
-                      className="rounded-none bg-card/20 hover:bg-white/30 text-white border-0"
+                      className="rounded-none bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
                       asChild
                       data-testid="button-phone"
                     >
@@ -1399,7 +1399,7 @@ export default function TeamMemberDetail() {
                     <Button 
                       variant="secondary"
                       size="icon"
-                      className="rounded-none bg-card/20 hover:bg-white/30 text-white border-0"
+                      className="rounded-none bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
                       asChild
                       data-testid="button-linkedin"
                     >

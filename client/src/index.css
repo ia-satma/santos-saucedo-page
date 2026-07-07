@@ -32,17 +32,17 @@ blockquote {
 :root {
   /* Santos & Saucedo corporate palette */
   --ss-navy: #202058;
-  --ss-paper: #F8F6F1;
-  --ss-stone: #EEE9E0;
-  --ss-warm-gray: #D8D1C6;
-  --ss-ink: #272622;
-  --ss-muted-ink: #6E6A61;
+  --ss-paper: #FFFFFF;
+  --ss-stone: #F4F4F5;
+  --ss-warm-gray: #E4E4E7;
+  --ss-ink: #18181B;
+  --ss-muted-ink: #5F6066;
   --ss-red: #202058;
-  --ss-gray-1: #EEE9E0;  /* editorial paper     */
-  --ss-gray-2: #D8D1C6;  /* warm divider        */
-  --ss-gray-4: #938E84;  /* secondary text      */
-  --ss-gray-8: #6E6A61;  /* muted ink           */
-  --ss-gray-11: #272622; /* primary ink         */
+  --ss-gray-1: #F4F4F5;  /* light neutral       */
+  --ss-gray-2: #E4E4E7;  /* divider             */
+  --ss-gray-4: #A1A1AA;  /* secondary text      */
+  --ss-gray-8: #5F6066;  /* muted ink           */
+  --ss-gray-11: #18181B; /* primary ink         */
   --ss-black: #171735;
 
   --button-outline: rgba(0,0,0, .10);
@@ -52,42 +52,42 @@ blockquote {
   --elevate-2: rgba(0,0,0, .08);
 
   /* ── PALETA LIGHT ─────────────────────────────────────────
-     Editorial clara y cálida para Santos & Saucedo.
-     Navy corporativo como acento; superficies tipo papel.
+     Blanco puro y grises neutros para Santos & Saucedo.
+     Navy corporativo como acento principal.
   ─────────────────────────────────────────────────────────── */
-  --background: 40 33% 96%;        /* #F8F6F1 — papel cálido          */
-  --foreground: 48 7% 14%;         /* #272622 — tinta suave           */
+  --background: 0 0% 100%;         /* #FFFFFF — blanco puro           */
+  --foreground: 240 5% 10%;        /* #18181B — tinta limpia          */
   --card: 0 0% 100%;               /* #FFFFFF — blanco puro           */
-  --card-foreground: 48 7% 14%;
-  --card-border: 34 20% 82%;       /* #D8D1C6 — borde editorial       */
-  --border: 34 20% 82%;
-  --sidebar: 40 28% 94%;
-  --sidebar-foreground: 48 7% 14%;
-  --sidebar-border: 34 20% 82%;
+  --card-foreground: 240 5% 10%;
+  --card-border: 240 6% 90%;
+  --border: 240 6% 90%;
+  --sidebar: 240 5% 98%;
+  --sidebar-foreground: 240 5% 10%;
+  --sidebar-border: 240 6% 90%;
   --sidebar-primary: 240 47% 24%;
   --sidebar-primary-foreground: 0 0% 98%;
-  --sidebar-accent: 38 25% 90%;
-  --sidebar-accent-foreground: 48 7% 14%;
+  --sidebar-accent: 240 5% 96%;
+  --sidebar-accent-foreground: 240 5% 10%;
   --sidebar-ring: 240 47% 24%;
   --popover: 0 0% 100%;
-  --popover-foreground: 48 7% 14%;
-  --popover-border: 34 20% 82%;
+  --popover-foreground: 240 5% 10%;
+  --popover-border: 240 6% 90%;
   --primary: 240 47% 24%;          /* #202058 — navy corporativo      */
   --primary-foreground: 0 0% 98%;
-  --secondary: 38 25% 90%;         /* #EEE9E0 — sección alterna       */
-  --secondary-foreground: 48 7% 18%;
-  --muted: 38 25% 90%;
-  --muted-foreground: 40 6% 41%;   /* #6E6A61 — gris cálido legible   */
-  --accent: 39 28% 92%;
-  --accent-foreground: 48 7% 14%;
+  --secondary: 240 5% 96%;         /* #F4F4F5 — sección alterna       */
+  --secondary-foreground: 240 5% 16%;
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 4% 39%;
+  --accent: 240 5% 96%;
+  --accent-foreground: 240 5% 10%;
   --destructive: 0 72% 45%;
   --destructive-foreground: 0 0% 98%;
-  --input: 34 20% 78%;
+  --input: 240 6% 84%;
   --ring: 240 47% 24%;
   --chart-1: 240 47% 24%;
   --chart-2: 240 38% 38%;
-  --chart-3: 40 8% 36%;
-  --chart-4: 35 11% 56%;
+  --chart-3: 240 4% 32%;
+  --chart-4: 240 4% 52%;
   --chart-5: 240 24% 52%;
   --font-sans: 'Optima', 'Lato', 'Calibri', 'Segoe UI', sans-serif;
   --font-serif: 'Optima', 'Lato', 'Georgia', 'Times New Roman', serif;
@@ -95,14 +95,14 @@ blockquote {
   --font-support: 'Geomanist', 'Century Gothic', 'Lato', 'Segoe UI', sans-serif;
   --font-mono: Menlo, monospace;
   --radius: .5rem;
-  --shadow-2xs: 0 1px 2px 0 hsl(35 28% 24% / 0.04);
-  --shadow-xs:  0 1px 3px 0 hsl(35 28% 24% / 0.06);
-  --shadow-sm:  0 1px 3px 0 hsl(35 28% 24% / 0.08), 0 1px 2px -1px hsl(35 28% 24% / 0.06);
-  --shadow:     0 4px 6px -1px hsl(35 28% 24% / 0.08), 0 2px 4px -2px hsl(35 28% 24% / 0.06);
-  --shadow-md:  0 8px 16px -4px hsl(35 28% 24% / 0.10), 0 4px 6px -4px hsl(35 28% 24% / 0.06);
-  --shadow-lg:  0 16px 24px -6px hsl(35 28% 24% / 0.12), 0 8px 10px -6px hsl(35 28% 24% / 0.06);
-  --shadow-xl:  0 24px 40px -8px hsl(35 28% 24% / 0.14), 0 12px 16px -8px hsl(35 28% 24% / 0.06);
-  --shadow-2xl: 0 40px 64px -12px hsl(35 28% 24% / 0.18);
+  --shadow-2xs: 0 1px 2px 0 hsl(240 24% 16% / 0.04);
+  --shadow-xs:  0 1px 3px 0 hsl(240 24% 16% / 0.06);
+  --shadow-sm:  0 1px 3px 0 hsl(240 24% 16% / 0.08), 0 1px 2px -1px hsl(240 24% 16% / 0.06);
+  --shadow:     0 4px 6px -1px hsl(240 24% 16% / 0.08), 0 2px 4px -2px hsl(240 24% 16% / 0.06);
+  --shadow-md:  0 8px 16px -4px hsl(240 24% 16% / 0.10), 0 4px 6px -4px hsl(240 24% 16% / 0.06);
+  --shadow-lg:  0 16px 24px -6px hsl(240 24% 16% / 0.12), 0 8px 10px -6px hsl(240 24% 16% / 0.06);
+  --shadow-xl:  0 24px 40px -8px hsl(240 24% 16% / 0.14), 0 12px 16px -8px hsl(240 24% 16% / 0.06);
+  --shadow-2xl: 0 40px 64px -12px hsl(240 24% 16% / 0.18);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
@@ -980,8 +980,8 @@ html, body {
   color: hsl(var(--foreground));
   border-bottom: 1px solid hsl(var(--border));
   background:
-    radial-gradient(circle at 50% 0%, rgba(32, 32, 88, 0.12), transparent 42%),
-    linear-gradient(180deg, #fbfaf6 0%, var(--ss-paper) 48%, var(--ss-stone) 100%);
+    radial-gradient(circle at 50% 0%, rgba(32, 32, 88, 0.08), transparent 42%),
+    linear-gradient(180deg, #ffffff 0%, var(--ss-paper) 48%, var(--ss-stone) 100%);
 }
 
 .editorial-page-hero::before {
@@ -991,8 +991,8 @@ html, body {
   pointer-events: none;
   opacity: 0.42;
   background-image:
-    linear-gradient(rgba(32, 32, 88, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(32, 32, 88, 0.035) 1px, transparent 1px);
+    linear-gradient(rgba(32, 32, 88, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(32, 32, 88, 0.025) 1px, transparent 1px);
   background-size: 42px 42px;
   mask-image: linear-gradient(to bottom, black, transparent 72%);
 }
@@ -1022,13 +1022,57 @@ html, body {
 
 .section-paper {
   background:
-    radial-gradient(circle at top left, rgba(32, 32, 88, 0.08), transparent 34rem),
-    linear-gradient(180deg, #fbfaf6 0%, var(--ss-paper) 100%);
+    radial-gradient(circle at top left, rgba(32, 32, 88, 0.05), transparent 34rem),
+    linear-gradient(180deg, #ffffff 0%, var(--ss-paper) 100%);
 }
 
 .section-stone {
   background:
     linear-gradient(180deg, var(--ss-stone) 0%, var(--ss-paper) 100%);
+}
+
+.dark .editorial-page-hero {
+  color: hsl(var(--foreground));
+  border-bottom-color: hsl(var(--border));
+  background:
+    radial-gradient(circle at 50% 0%, rgba(122, 122, 218, 0.18), transparent 42%),
+    linear-gradient(180deg, #171735 0%, hsl(var(--background)) 48%, hsl(var(--card)) 100%);
+}
+
+.dark .editorial-page-hero::before {
+  opacity: 0.28;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+}
+
+.dark .editorial-page-hero h1,
+.dark .editorial-page-hero .text-white {
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark .editorial-page-hero p,
+.dark .editorial-page-hero .text-white\/40,
+.dark .editorial-page-hero .text-white\/50,
+.dark .editorial-page-hero .text-white\/60,
+.dark .editorial-page-hero .text-white\/70 {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+.dark .editorial-page-hero a,
+.dark .editorial-page-hero .hover\:text-white:hover {
+  color: hsl(var(--primary)) !important;
+}
+
+.dark .section-paper {
+  background:
+    radial-gradient(circle at top left, rgba(122, 122, 218, 0.12), transparent 34rem),
+    linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--card)) 100%);
+}
+
+.dark .section-stone {
+  background:
+    linear-gradient(180deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
 }
 
 .navy-photo-scrim {
