@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Santos & Saucedo — Vista previa del rebrand</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/png" href="assets/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#202058;
+    --navy-deep:#181848;
+    --navy-soft:#484878;
+    --gray:#484848;
+    --paper:#FAFAFA;
+    --line:#E3E3E8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Lato',-apple-system,sans-serif;
+    background:var(--paper);
+    color:#171717;
+    line-height:1.6;
+  }
+  h1,h2,h3{font-family:'Playfair Display',Georgia,serif;font-weight:500;letter-spacing:-0.01em}
+  a{color:inherit}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+
+  /* Header */
+  header.site{background:var(--navy);color:#fff;padding:56px 0 64px}
+  header.site img{height:52px;width:auto;display:block;margin-bottom:28px}
+  header.site .eyebrow{
+    text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;
+    color:#B8B8DA;font-weight:700;margin-bottom:10px;
+  }
+  header.site h1{font-size:clamp(1.7rem,3.6vw,2.6rem);max-width:20ch;color:#fff}
+  header.site p.lead{margin-top:16px;max-width:56ch;color:#D6D6EC;font-size:1.05rem}
+  .badge-row{margin-top:28px;display:flex;gap:10px;flex-wrap:wrap}
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
+    padding:6px 14px;border-radius:999px;font-size:.82rem;color:#EDEDF6;
+  }
+  .badge .dot{width:7px;height:7px;border-radius:50%;background:#7ED9A0}
+  .badge.pending .dot{background:#E8C468}
+
+  /* Sections */
+  section{padding:56px 0}
+  section + section{border-top:1px solid var(--line)}
+  section h2{font-size:1.5rem;color:var(--navy);margin-bottom:6px}
+  section .desc{color:#5B5B5B;max-width:62ch;margin-bottom:32px;font-size:.98rem}
+
+  /* Progress list */
+  .progress-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:20px}
+  .stage .status{
+    display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.06em;
+    text-transform:uppercase;padding:3px 9px;border-radius:5px;margin-bottom:10px;
+  }
+  .stage.done .status{background:#E4F5EA;color:#1E8A4C}
+  .stage.progress .status{background:#FCF1DA;color:#A8790F}
+  .stage.todo .status{background:#F0F0F0;color:#7A7A7A}
+  .stage h3{font-family:'Lato';font-weight:700;font-size:.98rem;color:#171717;margin-bottom:6px}
+  .stage p{font-size:.87rem;color:#666}
+
+  /* Brand assets */
+  .lockups{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:36px}
+  .lockup{border-radius:10px;overflow:hidden;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;padding:36px 24px}
+  .lockup.light{background:#fff}
+  .lockup.dark{background:var(--navy)}
+  .lockup img{max-width:100%;height:auto}
+
+  .palette{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:36px}
+  .swatch{border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+  .swatch .fill{height:74px}
+  .swatch .label{background:#fff;padding:10px 12px;font-size:.78rem}
+  .swatch .label .hex{display:block;color:#8A8A8A;font-family:Menlo,monospace;font-size:.72rem;margin-top:2px}
+
+  .type-sample{display:grid;gap:22px}
+  .type-row{background:#fff;border:1px solid var(--line);border-radius:10px;padding:22px 24px}
+  .type-row .tag{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:#8A8A8A;margin-bottom:8px;font-family:'Lato'}
+  .type-row .heading-sample{font-size:1.7rem;color:var(--navy)}
+  .type-row .body-sample{font-size:1rem;color:#333;max-width:60ch}
+
+  /* Sitemap */
+  .sitemap{display:flex;flex-wrap:wrap;gap:10px}
+  .sitemap span{
+    background:#fff;border:1px solid var(--line);border-radius:999px;
+    padding:8px 16px;font-size:.88rem;color:var(--navy);font-weight:600;
+  }
+  .sitemap span.muted{color:#9A9A9A;border-style:dashed}
+
+  /* Note box */
+  .note{background:#fff;border:1px solid var(--line);border-left:4px solid var(--navy);border-radius:8px;padding:20px 24px;font-size:.92rem;color:#444}
+  .note strong{color:var(--navy)}
+
+  footer{padding:36px 0 56px;color:#9A9A9A;font-size:.82rem}
+  footer a{color:var(--navy);text-decoration:none}
+  footer a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+  <header class="site">
+    <div class="wrap">
+      <img src="assets/logo-ss-white.png" alt="Santos & Saucedo" />
+      <div class="eyebrow">Ecosistema Web · Vista previa</div>
+      <h1>Rebrand Von Wobeser → Santos & Saucedo</h1>
+      <p class="lead">
+        Snapshot estático del avance visual. Esta página no requiere backend ni base de datos —
+        muestra la dirección de marca aplicada sobre la plataforma original. El sitio funcional completo
+        (contenido real, directorio de abogados, publicaciones, CMS y agentes IA) corre localmente
+        con base de datos y se comparte por separado.
+      </p>
+      <div class="badge-row">
+        <span class="badge"><span class="dot"></span> Identidad visual</span>
+        <span class="badge pending"><span class="dot"></span> Arquitectura de información</span>
+        <span class="badge pending"><span class="dot"></span> Contenido inicial S&amp;S</span>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <h2>Estado del proyecto</h2>
+      <p class="desc">Etapa 1 del ecosistema web (prototipo aprobable), según la propuesta SATMA de julio 2026.</p>
+      <div class="progress-grid">
+        <div class="stage done">
+          <span class="status">Hecho</span>
+          <h3>Identidad visual digital</h3>
+          <p>Paleta navy #202058, logotipo y favicon de Santos &amp; Saucedo integrados en el código fuente de la plataforma.</p>
+        </div>
+        <div class="stage progress">
+          <span class="status">En curso</span>
+          <h3>Arquitectura de información</h3>
+          <p>Reordenando navegación a Inicio · La Firma · Áreas Laborales · Abogados · Publicaciones · Contacto.</p>
+        </div>
+        <div class="stage todo">
+          <span class="status">Pendiente</span>
+          <h3>Contenido inicial S&amp;S</h3>
+          <p>Áreas laborales, perfiles de muestra, narrativa de firma y datos de contacto reales.</p>
+        </div>
+        <div class="stage todo">
+          <span class="status">Pendiente</span>
+          <h3>Verificación end-to-end</h3>
+          <p>Revisión completa en navegador, responsive y capturas para el paquete de aprobación.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Identidad de marca</h2>
+      <p class="desc">Logotipo aplicado sobre fondo claro y sobre el navy corporativo.</p>
+      <div class="lockups">
+        <div class="lockup light"><img src="assets/logo-ss-color.png" alt="Santos & Saucedo — versión color" /></div>
+        <div class="lockup dark"><img src="assets/logo-ss-white.png" alt="Santos & Saucedo — versión blanca" /></div>
+      </div>
+
+      <h2 style="margin-top:8px">Paleta</h2>
+      <p class="desc">Navy institucional en lugar del rojo corporativo de la base Von Wobeser.</p>
+      <div class="palette">
+        <div class="swatch">
+          <div class="fill" style="background:#202058"></div>
+          <div class="label">Navy primario<span class="hex">#202058</span></div>
+        </div>
+        <div class="swatch">
+          <div class="fill" style="background:#181848"></div>
+          <div class="label">Navy profundo<span class="hex">#181848</span></div>
+        </div>
+        <div class="swatch">
+          <div class="fill" style="background:#484878"></div>
+          <div class="label">Navy suave<span class="hex">#484878</span></div>
+        </div>
+        <div class="swatch">
+          <div class="fill" style="background:#484848"></div>
+          <div class="label">Gris de apoyo<span class="hex">#484848</span></div>
+        </div>
+        <div class="swatch">
+          <div class="fill" style="background:#FAFAFA;border-bottom:1px solid #E3E3E8"></div>
+          <div class="label">Fondo claro<span class="hex">#FAFAFA</span></div>
+        </div>
+      </div>
+
+      <h2 style="margin-top:8px">Tipografía</h2>
+      <p class="desc">Se conserva el esquema serif/sans heredado del manual de identidad, en tono navy.</p>
+      <div class="type-sample">
+        <div class="type-row">
+          <div class="tag">Headings — Playfair Display</div>
+          <div class="heading-sample">Santos &amp; Saucedo Abogados</div>
+        </div>
+        <div class="type-row">
+          <div class="tag">Cuerpo — Lato / Optima</div>
+          <div class="body-sample">Una firma especializada que ayuda a anticipar, ordenar y resolver asuntos laborales con precisión jurídica, criterio práctico y sensibilidad institucional.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Sitemap objetivo</h2>
+      <p class="desc">Estructura de navegación de la firma laboral (en implementación).</p>
+      <div class="sitemap">
+        <span>Inicio</span>
+        <span>La Firma</span>
+        <span>Áreas Laborales</span>
+        <span>Abogados</span>
+        <span>Publicaciones</span>
+        <span>Contacto</span>
+        <span class="muted">Avisos</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="note">
+        <strong>Nota:</strong> este repositorio es privado y contiene la base de código completa
+        (React + Express + Postgres + agentes IA) heredada del proyecto Von Wobeser y Sierra,
+        en proceso de adaptación a Santos &amp; Saucedo. Esta página es solo un snapshot de marca —
+        no refleja el contenido, la navegación ni las páginas reales del sitio final.
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      Actualizado automáticamente durante el desarrollo · <a href="https://github.com/ia-satma/santos-saucedo-page">Repositorio (privado)</a>
+    </div>
+  </footer>
+
+</body>
+</html>
