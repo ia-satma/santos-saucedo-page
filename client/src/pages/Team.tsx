@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import type { CSSProperties } from "react";
 import { motion } from "framer-motion";
 import { AlertCircle, Users, Search, X, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
@@ -30,29 +29,11 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   return chunks;
 }
 
-function getDesktopPanelStyle(
-  isActive: boolean,
-  rowLength: number,
-  columns: number,
-  activeUnits: number,
-  transition: string
-): CSSProperties {
-  if (rowLength < columns) {
-    const availableUnits = columns - rowLength + 1;
-    const units = isActive ? Math.min(activeUnits, availableUnits) : 1;
+function getBalancedColumns(total: number, preferredColumns: number): number {
+  if (total <= preferredColumns) return total;
 
-    return {
-      flex: `0 0 ${(units / columns) * 100}%`,
-      transition,
-      minWidth: 0,
-    };
-  }
-
-  return {
-    flex: isActive ? activeUnits : 1,
-    transition,
-    minWidth: 0,
-  };
+  const rows = Math.ceil(total / preferredColumns);
+  return Math.ceil(total / rows);
 }
 
 // Map URL parameters to filter values
@@ -433,12 +414,18 @@ export default function Team() {
         return true;
       });
 
-    const byName = (a: TeamMember, b: TeamMember) => a.name.localeCompare(b.name);
+    const byConfiguredOrder = (a: TeamMember, b: TeamMember) => {
+      const orderA = a.order ?? 0;
+      const orderB = b.order ?? 0;
+
+      if (orderA !== orderB) return orderA - orderB;
+      return a.name.localeCompare(b.name);
+    };
 
     const isOfCounsel = (m: TeamMember) => m.title?.toLowerCase() === "of counsel";
-    const allPartners  = [...allTeamMembers.filter(m => m.isPartner)].sort(byName);
-    const allOfCounsel = [...allTeamMembers.filter(m => !m.isPartner && isOfCounsel(m))].sort(byName);
-    const allAssociates = [...allTeamMembers.filter(m => !m.isPartner && !isOfCounsel(m))].sort(byName);
+    const allPartners  = [...allTeamMembers.filter(m => m.isPartner)].sort(byConfiguredOrder);
+    const allOfCounsel = [...allTeamMembers.filter(m => !m.isPartner && isOfCounsel(m))].sort(byConfiguredOrder);
+    const allAssociates = [...allTeamMembers.filter(m => !m.isPartner && !isOfCounsel(m))].sort(byConfiguredOrder);
 
     return {
       partners:   applyTextFilters(allPartners),
@@ -455,6 +442,8 @@ export default function Team() {
     (showPartners   ? groupedMembers.partners.length   : 0) +
     (showOfCounsel  ? groupedMembers.ofCounsel.length  : 0) +
     (showAssociates ? groupedMembers.associates.length : 0);
+
+  const associateDesktopColumns = getBalancedColumns(groupedMembers.associates.length, 10);
 
   const hasActiveFilters = searchQuery || filterSeniority !== "all" || filterLetter !== "all" || filterPractice !== "all";
 
@@ -609,13 +598,7 @@ export default function Team() {
                             data-testid={`card-team-member-${member.slug}`}
                             aria-label={member.name}
                             className="relative overflow-hidden cursor-pointer block"
-                            style={getDesktopPanelStyle(
-                              isActive,
-                              row.length,
-                              8,
-                              4,
-                              "flex 0.5s cubic-bezier(0.22, 1, 0.36, 1), flex-basis 0.5s cubic-bezier(0.22, 1, 0.36, 1)"
-                            )}
+                            style={{ flex: isActive ? 4 : 1, transition: "flex 0.5s cubic-bezier(0.22, 1, 0.36, 1)", minWidth: 0 }}
                             onMouseEnter={() => setPartnerPanels(prev => ({ ...prev, [rowIdx]: `p-${member.id}` }))}
                           >
                             <div className="absolute inset-0 bg-muted flex items-center justify-center">
@@ -688,13 +671,7 @@ export default function Team() {
                         data-testid={`card-team-member-${member.slug}`}
                         aria-label={member.name}
                         className="relative overflow-hidden cursor-pointer block"
-                        style={getDesktopPanelStyle(
-                          isActive,
-                          groupedMembers.ofCounsel.length,
-                          Math.max(groupedMembers.ofCounsel.length, 4),
-                          3,
-                          "flex 0.5s cubic-bezier(0.22, 1, 0.36, 1), flex-basis 0.5s cubic-bezier(0.22, 1, 0.36, 1)"
-                        )}
+                        style={{ flex: isActive ? 3 : 1, transition: "flex 0.5s cubic-bezier(0.22, 1, 0.36, 1)", minWidth: 0 }}
                         onMouseEnter={() => setActivePanel(`oc-${member.id}`)}
                       >
                         <div className="absolute inset-0 bg-muted flex items-center justify-center">
@@ -756,7 +733,7 @@ export default function Team() {
                 </div>
                 {/* Desktop: expanding panels — multiple rows of 9 */}
                 <div className="hidden lg:block">
-                  {chunkArray(groupedMembers.associates, 9).map((row, rowIdx) => (
+                  {chunkArray(groupedMembers.associates, associateDesktopColumns).map((row, rowIdx) => (
                     <div
                       key={rowIdx}
                       className="flex w-full h-[400px]"
@@ -772,13 +749,7 @@ export default function Team() {
                             data-testid={`card-team-member-${member.slug}`}
                             aria-label={member.name}
                             className="relative overflow-hidden cursor-pointer block"
-                            style={getDesktopPanelStyle(
-                              isActive,
-                              row.length,
-                              9,
-                              4,
-                              "flex 0.45s cubic-bezier(0.22, 1, 0.36, 1), flex-basis 0.45s cubic-bezier(0.22, 1, 0.36, 1)"
-                            )}
+                            style={{ flex: isActive ? 4 : 1, transition: "flex 0.45s cubic-bezier(0.22, 1, 0.36, 1)", minWidth: 0 }}
                             onMouseEnter={() => setAssocPanels(prev => ({ ...prev, [rowIdx]: `a-${member.id}` }))}
                           >
                             <div className="absolute inset-0 bg-muted flex items-center justify-center">
