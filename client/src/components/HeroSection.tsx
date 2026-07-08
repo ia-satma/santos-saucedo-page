@@ -6,7 +6,7 @@ import { Link } from "wouter";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import type { SiteContent, News, LanguageCode } from "@shared/schema";
-import logoWhiteVertical from "@assets/LOGO-BLANCO-SS-V.svg";
+import logoWhiteVertical from "@assets/LOGO-BLANCO-SS-V-2.svg";
 
 interface HeroSectionProps {
   language: LanguageCode;
