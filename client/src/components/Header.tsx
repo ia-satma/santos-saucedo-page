@@ -12,9 +12,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import type { TeamMember, PracticeGroup, IndustryGroup, News, LanguageCode } from "@shared/schema";
 import logoColor from "@assets/logo-ss-color.png";
-
-const logoWhiteHorizontal =
-  "https://api.pcloud.com/getpubthumb?code=XZPrHr5Zs9CQA4pOqy8t3K6AVQTbe7dJP4W7&fileid=90118964062&size=1200x420&type=png";
+import logoWhiteHorizontal from "@assets/LOGO-BLANCO-SS-H2.svg";
 
 interface SearchResults {
   team: TeamMember[];
