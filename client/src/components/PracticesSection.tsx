@@ -162,7 +162,7 @@ export default function PracticesSection() {
   return (
     <section
       id="practices"
-      className="py-24 lg:py-32 section-paper"
+      className="py-24 lg:py-32 bg-[linear-gradient(135deg,#ffffff_0%,#f7f7fb_46%,#eeeef8_100%)]"
       data-testid="section-practices"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
@@ -178,7 +178,7 @@ export default function PracticesSection() {
           >
             <div className="flex flex-col">
               {/* Red rule */}
-              <div className="w-12 h-px bg-[#202058] mb-6" />
+              <div className="w-12 h-0.5 bg-[#202058] mb-6" />
 
               {/* Serif section heading — Playfair Display */}
               <h2
@@ -190,13 +190,13 @@ export default function PracticesSection() {
 
               {/* Decorative large number */}
               <div className="relative mb-6 select-none pointer-events-none">
-                <span className="text-[9rem] leading-none font-heading font-light text-primary/[0.12]">
+                <span className="text-[9rem] leading-none font-heading font-medium text-[#202058]/25 [text-shadow:0_1px_0_rgba(255,255,255,0.9)]">
                   6
                 </span>
               </div>
 
               {/* Intro sentence */}
-              <p className="text-sm text-muted-foreground leading-relaxed mb-10 max-w-xs">
+              <p className="text-sm text-[#303046] leading-relaxed mb-10 max-w-xs">
                 {t.intro}
               </p>
 
@@ -204,7 +204,7 @@ export default function PracticesSection() {
               <div className="flex flex-col gap-4">
                 <Link href="/contact">
                   <Button
-                    className="bg-[#202058] text-white uppercase tracking-wide text-xs w-full sm:w-auto"
+                    className="bg-[#202058] text-white uppercase tracking-wide text-xs w-full sm:w-auto shadow-[0_14px_30px_rgba(32,32,88,0.22)] hover:bg-[#171735]"
                     data-testid="button-practices-contact"
                   >
                     <Phone className="w-3.5 h-3.5 mr-2" />
@@ -229,23 +229,23 @@ export default function PracticesSection() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="lg:w-2/3 border-t border-primary/20 grid grid-cols-1 lg:grid-cols-2 bg-white/55 shadow-sm"
+            className="lg:w-2/3 grid grid-cols-1 lg:grid-cols-2 bg-white border border-[#202058]/10 shadow-[0_24px_70px_rgba(23,23,53,0.08)]"
           >
             {practiceAreas.map((area) => (
               <motion.div key={area.id} variants={itemVariants}>
                 <Link
                   href={`/practice-groups/${area.slug}`}
-                  className="group flex items-center gap-6 px-4 py-3 border-b border-primary/15 border-l-2 border-l-transparent hover:border-l-primary hover:bg-primary/[0.04] transition-all duration-200 h-full"
+                  className="group flex items-center gap-6 px-5 py-5 border-b border-[#202058]/10 border-l-2 border-l-transparent hover:border-l-[#202058] hover:bg-[#202058]/[0.045] transition-all duration-200 h-full"
                   data-testid={`link-practice-${area.id}`}
                 >
                   <span
-                    className="font-serif text-lg font-normal text-[#202058] w-12 shrink-0 tabular-nums"
+                    className="font-serif text-xl font-semibold text-[#202058] w-12 shrink-0 tabular-nums"
                     data-testid={`text-practice-number-${area.id}`}
                   >
                     {String(area.id).padStart(2, "0")}
                   </span>
                   <span
-                    className="flex-1 text-sm font-light text-foreground group-hover:text-primary transition-colors duration-200 leading-snug"
+                    className="flex-1 text-sm font-medium text-[#252538] group-hover:text-[#202058] transition-colors duration-200 leading-snug"
                     data-testid={`text-practice-name-${area.id}`}
                   >
                     {getPracticeAreaName(area, language)}

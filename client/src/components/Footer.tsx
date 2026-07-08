@@ -577,8 +577,8 @@ export default function Footer() {
       <div className="space-y-4">
         <address className="not-italic" data-testid="text-footer-address">
           <div className="flex items-start gap-3">
-            <Building2 className="w-4 h-4 text-primary flex-shrink-0 mt-1" aria-hidden="true" />
-            <div className="text-sm text-white/50">
+            <Building2 className="w-4 h-4 text-[#d9dafb] flex-shrink-0 mt-1" aria-hidden="true" />
+            <div className="text-sm text-white/72 leading-relaxed">
               <p>{t.building}</p>
               <p>{t.street}</p>
               <p>{t.city}</p>
@@ -586,10 +586,10 @@ export default function Footer() {
           </div>
         </address>
         <div className="flex items-center gap-3">
-          <Phone className="w-4 h-4 text-primary flex-shrink-0" aria-hidden="true" />
+          <Phone className="w-4 h-4 text-[#d9dafb] flex-shrink-0" aria-hidden="true" />
           <a
             href={`tel:${t.phone.replace(/\s/g, "")}`}
-            className="text-sm text-white/50 hover:text-white transition-colors"
+            className="text-sm text-white/72 hover:text-white transition-colors"
             data-testid="link-footer-phone"
             aria-label={`${t.phoneLabel}: ${t.phone}`}
           >
@@ -597,10 +597,10 @@ export default function Footer() {
           </a>
         </div>
         <div className="flex items-center gap-3">
-          <Mail className="w-4 h-4 text-primary flex-shrink-0" aria-hidden="true" />
+          <Mail className="w-4 h-4 text-[#d9dafb] flex-shrink-0" aria-hidden="true" />
           <a
             href={`mailto:${t.email}`}
-            className="text-sm text-white/50 hover:text-white transition-colors"
+            className="text-sm text-white/72 hover:text-white transition-colors"
             data-testid="link-footer-email"
             aria-label={`${t.emailLabel}: ${t.email}`}
           >
@@ -614,7 +614,7 @@ export default function Footer() {
   return (
     <footer
       id="footer"
-      className="bg-[#171735] text-white py-16 lg:py-20"
+      className="bg-[linear-gradient(135deg,#0e0f2c_0%,#171735_52%,#202058_100%)] text-white py-16 lg:py-20"
       data-testid="footer"
       role="contentinfo"
       aria-label={t.footerLabel}
@@ -628,7 +628,7 @@ export default function Footer() {
               className="h-8 mb-6"
               data-testid="img-footer-logo"
             />
-            <p className="text-white/50 text-sm leading-relaxed" data-testid="text-footer-description">
+            <p className="text-white/70 text-sm leading-relaxed" data-testid="text-footer-description">
               {t.description}
             </p>
           </div>
@@ -642,7 +642,7 @@ export default function Footer() {
                 <li key={link.id}>
                   <Link
                     href={link.href}
-                    className="text-white/50 hover:text-white transition-colors text-sm"
+                    className="text-white/70 hover:text-white transition-colors text-sm"
                     data-testid={`link-footer-${link.id}`}
                   >
                     {link.label}
@@ -662,7 +662,7 @@ export default function Footer() {
                   <li key={link.id}>
                     <Link
                       href={link.href}
-                      className="text-white/50 hover:text-white transition-colors text-sm"
+                      className="text-white/70 hover:text-white transition-colors text-sm"
                       data-testid={`link-footer-${link.id}`}
                     >
                       {link.label}
@@ -672,9 +672,9 @@ export default function Footer() {
               </ul>
             </nav>
             <div className="mt-6 pt-6 border-t border-white/10">
-              <div className="flex items-center gap-3 text-primary" data-testid="stat-practice-groups">
-                <span className="text-2xl font-heading" aria-label={`6 ${t.practiceLabel}`}>6</span>
-                <span className="text-xs text-white/50 uppercase tracking-wider">
+              <div className="flex items-center gap-3 text-[#d9dafb]" data-testid="stat-practice-groups">
+                <span className="text-3xl font-heading text-white" aria-label={`6 ${t.practiceLabel}`}>6</span>
+                <span className="text-xs text-white/72 uppercase tracking-wider">
                   {t.practiceLabel}
                 </span>
               </div>
@@ -690,7 +690,7 @@ export default function Footer() {
                 <li key={link.id}>
                   <Link
                     href={link.href}
-                    className="text-white/50 hover:text-white transition-colors text-sm"
+                    className="text-white/70 hover:text-white transition-colors text-sm"
                     data-testid={`link-footer-${link.id}`}
                   >
                     {link.label}
@@ -711,7 +711,7 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 sm:gap-6">
-              <p className="text-xs text-white/40" data-testid="text-copyright">
+              <p className="text-xs text-white/56" data-testid="text-copyright">
                 {t.legal}
               </p>
               <img 
@@ -724,21 +724,21 @@ export default function Footer() {
             <nav className="flex flex-wrap items-center gap-2 sm:gap-4" aria-label={t.legalLinksLabel}>
               <Link
                 href="/privacy-policy"
-                className="inline-flex items-center min-h-[44px] px-2 text-xs text-white/40 hover:text-white transition-colors touch-manipulation"
+                className="inline-flex items-center min-h-[44px] px-2 text-xs text-white/56 hover:text-white transition-colors touch-manipulation"
                 data-testid="link-privacy"
               >
                 {t.privacy}
               </Link>
               <Link
                 href="/terms"
-                className="inline-flex items-center min-h-[44px] px-2 text-xs text-white/40 hover:text-white transition-colors touch-manipulation"
+                className="inline-flex items-center min-h-[44px] px-2 text-xs text-white/56 hover:text-white transition-colors touch-manipulation"
                 data-testid="link-terms"
               >
                 {t.terms}
               </Link>
               <button
                 onClick={() => localStorage.removeItem('ss_cookie_consent')}
-                className="inline-flex items-center min-h-[44px] px-2 text-xs text-white/40 hover:text-white transition-colors touch-manipulation"
+                className="inline-flex items-center min-h-[44px] px-2 text-xs text-white/56 hover:text-white transition-colors touch-manipulation"
                 data-testid="button-cookies"
                 aria-label={t.cookiesLabel}
               >
