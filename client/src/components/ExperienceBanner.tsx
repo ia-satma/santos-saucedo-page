@@ -45,16 +45,17 @@ export default function ExperienceBanner() {
 
   return (
     <section
-      className="py-16 lg:py-20 bg-[#202058] border-y border-[#202058]"
+      className="relative overflow-hidden py-16 lg:py-20 bg-[radial-gradient(circle_at_82%_20%,rgba(32,32,88,0.78)_0%,rgba(23,23,53,0.64)_34%,rgba(14,15,44,0.96)_74%),linear-gradient(135deg,#0e0f2c_0%,#171735_52%,#202058_100%)] border-y border-[#d9dafb]/15"
       data-testid="section-experience-banner"
     >
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.05)_0%,transparent_34%,rgba(255,255,255,0.07)_100%)]" aria-hidden="true" />
       <div className="max-w-5xl mx-auto px-6 lg:px-12">
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="text-xl md:text-2xl lg:text-3xl font-serif text-white text-center leading-relaxed"
+          className="relative text-xl md:text-2xl lg:text-3xl font-serif text-white text-center leading-relaxed drop-shadow-[0_12px_28px_rgba(0,0,0,0.22)]"
           data-testid="text-experience-banner"
         >
           {t.text}

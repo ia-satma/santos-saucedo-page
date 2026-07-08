@@ -31,6 +31,10 @@ blockquote {
 /* LIGHT MODE */
 :root {
   /* Santos & Saucedo corporate palette */
+  --ss-blue-night: #0e0f2c;
+  --ss-blue-base: #171735;
+  --ss-blue-accent: #202058;
+  --ss-blue-soft: #d9dafb;
   --ss-navy: #202058;
   --ss-paper: #FFFFFF;
   --ss-stone: #F4F4F5;

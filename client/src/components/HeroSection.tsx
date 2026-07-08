@@ -358,11 +358,11 @@ export default function HeroSection({ language }: HeroSectionProps) {
     >
       <div className="absolute inset-0 z-0">
         <div 
-          className="absolute inset-0 bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460]"
+          className="absolute inset-0 bg-[radial-gradient(circle_at_78%_34%,rgba(32,32,88,0.72)_0%,rgba(23,23,53,0.5)_32%,rgba(14,15,44,0.92)_72%),linear-gradient(135deg,#0e0f2c_0%,#171735_54%,#202058_100%)]"
           data-testid="background-gradient"
         />
         <div 
-          className="absolute inset-0 opacity-30"
+          className="absolute inset-0 opacity-[0.24]"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23202058' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           }}
@@ -376,8 +376,9 @@ export default function HeroSection({ language }: HeroSectionProps) {
           data-testid={isMobile ? "img-hero-background-mobile" : "img-hero-background"}
         />
         
-        <div className="absolute inset-0 bg-gradient-to-b from-[#171735]/26 via-[#202058]/16 to-[#171735]/48" />
-        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#171735]/72 to-transparent" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(14,15,44,0.72)_0%,rgba(23,23,53,0.5)_48%,rgba(32,32,88,0.62)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(14,15,44,0.38)_0%,rgba(23,23,53,0.08)_42%,rgba(14,15,44,0.74)_100%)]" />
+        <div className="absolute bottom-0 left-0 right-0 h-44 bg-gradient-to-t from-[#0e0f2c]/88 to-transparent" />
       </div>
 
       {newsData && newsData.length > 0 && (
