@@ -6,9 +6,6 @@ import { Link } from "wouter";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import type { SiteContent, News, LanguageCode } from "@shared/schema";
-import heroVideo from "@assets/dron_1764710361340.mp4";
-import heroImage from "@assets/hero_office.jpg";
-import logoColor from "@assets/logo-ss-color.png";
 
 interface HeroSectionProps {
   language: LanguageCode;
@@ -18,6 +15,11 @@ type NewsPanelLabels = {
   news: string;
   seeMore: string;
 };
+
+const heroImage =
+  "https://api.pcloud.com/getpubthumb?code=XZHiHr5ZA1CCs4gfxBkcnDEz3Y4KW8jGDtx7&fileid=90168327625&size=1920x1080&type=png";
+const logoWhiteHorizontal =
+  "https://api.pcloud.com/getpubthumb?code=XZPrHr5Zs9CQA4pOqy8t3K6AVQTbe7dJP4W7&fileid=90118964062&size=1200x420&type=png";
 
 const newsPanelLabels: Record<LanguageCode, NewsPanelLabels> = {
   en: {
@@ -61,8 +63,6 @@ const newsPanelLabels: Record<LanguageCode, NewsPanelLabels> = {
     seeMore: "VEDI DI PIÙ",
   },
 };
-
-const heroPoster = `${import.meta.env.BASE_URL}assets/hero-poster.jpg`;
 
 function NewsItemTranslated({ 
   item, 
@@ -369,44 +369,16 @@ export default function HeroSection({ language }: HeroSectionProps) {
           }}
         />
         
-        {isMobile ? (
-          <img
-            src={heroImage}
-            alt={t.heroImageLabel}
-            className="absolute inset-0 w-full h-full object-cover opacity-70"
-            loading="eager"
-            data-testid="img-hero-background-mobile"
-          />
-        ) : (
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            poster={heroPoster}
-            className="absolute inset-0 w-full h-full object-cover opacity-70"
-            data-testid="video-hero-background"
-            aria-label={t.heroVideoLabel}
-            onError={(e) => {
-              (e.target as HTMLVideoElement).style.display = 'none';
-            }}
-          >
-            <source
-              src={heroVideo}
-              type="video/mp4"
-            />
-            <img 
-              src={heroImage}
-              alt={t.heroImageLabel}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            {t.videoFallback}
-          </video>
-        )}
+        <img
+          src={heroImage}
+          alt={t.heroImageLabel}
+          className="absolute inset-0 w-full h-full object-cover opacity-95"
+          loading="eager"
+          data-testid={isMobile ? "img-hero-background-mobile" : "img-hero-background"}
+        />
         
-        <div className="absolute inset-0 bg-gradient-to-b from-[#171735]/52 via-[#202058]/30 to-[#171735]/62" />
-        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#171735]/82 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#171735]/26 via-[#202058]/16 to-[#171735]/48" />
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#171735]/72 to-transparent" />
       </div>
 
       {newsData && newsData.length > 0 && (
@@ -429,9 +401,9 @@ export default function HeroSection({ language }: HeroSectionProps) {
           initial={{ opacity: 0, scale: 0.97 }}
           animate={isVisible ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.9, delay: 0.35 }}
-          src={logoColor}
+          src={logoWhiteHorizontal}
           alt={t.headline}
-          className="w-[92vw] max-w-[540px] sm:max-w-[780px] md:max-w-[1000px] lg:max-w-[1200px] h-auto object-contain"
+          className="w-[72vw] max-w-[250px] sm:max-w-[320px] md:max-w-[420px] lg:max-w-[500px] h-auto object-contain drop-shadow-2xl"
           style={{ imageRendering: "crisp-edges" }}
           data-testid="text-hero-headline"
         />
