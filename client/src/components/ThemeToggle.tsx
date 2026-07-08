@@ -47,7 +47,7 @@ export default function ThemeToggle() {
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className="text-white hover:bg-white/10 hover:text-white"
+      className="text-primary hover:bg-primary/10 hover:text-primary"
       data-testid="button-theme-toggle"
       aria-label={ariaLabel}
       aria-pressed={isDark}
