@@ -6,6 +6,7 @@ import { Link } from "wouter";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import type { SiteContent, News, LanguageCode } from "@shared/schema";
+import logoWhiteVertical from "@assets/LOGO-BLANCO-SS-V.svg";
 
 interface HeroSectionProps {
   language: LanguageCode;
@@ -18,8 +19,6 @@ type NewsPanelLabels = {
 
 const heroImage =
   "https://api.pcloud.com/getpubthumb?code=XZHiHr5ZA1CCs4gfxBkcnDEz3Y4KW8jGDtx7&fileid=90168327625&size=1920x1080&type=png";
-const logoWhiteHorizontal =
-  "https://api.pcloud.com/getpubthumb?code=XZPrHr5Zs9CQA4pOqy8t3K6AVQTbe7dJP4W7&fileid=90118964062&size=1200x420&type=png";
 
 const newsPanelLabels: Record<LanguageCode, NewsPanelLabels> = {
   en: {
@@ -403,9 +402,9 @@ export default function HeroSection({ language }: HeroSectionProps) {
           initial={{ opacity: 0, scale: 0.97 }}
           animate={isVisible ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.9, delay: 0.35 }}
-          src={logoWhiteHorizontal}
+          src={logoWhiteVertical}
           alt={t.headline}
-          className="w-[72vw] max-w-[250px] sm:max-w-[320px] md:max-w-[420px] lg:max-w-[500px] h-auto object-contain drop-shadow-2xl"
+          className="w-[54vw] max-w-[190px] sm:max-w-[230px] md:max-w-[270px] lg:max-w-[310px] max-h-[46vh] h-auto object-contain drop-shadow-2xl"
           style={{ imageRendering: "crisp-edges" }}
           data-testid="text-hero-headline"
         />
