@@ -598,14 +598,14 @@ export default function Team() {
                             data-testid={`card-team-member-${member.slug}`}
                             aria-label={member.name}
                             className="relative overflow-hidden cursor-pointer block"
-                            style={{ flex: isActive ? 4 : 1, transition: "flex 0.5s cubic-bezier(0.22, 1, 0.36, 1)", minWidth: 0 }}
+                            style={{ flex: isActive ? 3 : 1, transition: "flex 0.5s cubic-bezier(0.22, 1, 0.36, 1)", minWidth: 0 }}
                             onMouseEnter={() => setPartnerPanels(prev => ({ ...prev, [rowIdx]: `p-${member.id}` }))}
                           >
                             <div className="absolute inset-0 bg-muted flex items-center justify-center">
                               <span className="text-2xl font-heading font-bold text-[#202058]/50 select-none">{getInitials(member.name)}</span>
                             </div>
                             {getPhotoSrc(member) && (
-                              <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug), transform: isActive ? "scale(1.03)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                              <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-top" style={{ objectPosition: isActive ? "50% 44%" : getTeamPhotoObjectPosition(member.slug), transform: isActive ? "scale(1.01)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease, object-position 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                             )}
                             <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(32,32,88,0.34) 50%, rgba(32,32,88,0.10) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(32,32,88,0.36) 100%)", transition: "background 0.5s ease" }} />
                             <div className="absolute top-0 right-0 w-px h-full bg-[#202058]/15" />
