@@ -572,8 +572,43 @@ export default function SEOHead({
     const config = seoConfig[page];
     if (!config) return;
 
-    const title = customTitle || config.title[language];
-    const description = customDescription || config.description[language];
+    const safeSeo: Partial<Record<keyof typeof seoConfig, { title: string; description: string }>> = {
+      home: {
+        title: language === "es"
+          ? "Santos & Saucedo | Abogados Laborales en Monterrey"
+          : "Santos & Saucedo | Labor Lawyers in Monterrey",
+        description: language === "es"
+          ? "Derecho laboral estratégico para empresas. Más de 35 años asesorando compañías nacionales e internacionales en prevención, auditoría, capacitación y conflictos laborales."
+          : "Strategic labor law for companies. More than 35 years advising national and international companies on prevention, audits, training, and labor conflicts.",
+      },
+      about: {
+        title: language === "es" ? "La Firma | Santos & Saucedo" : "The Firm | Santos & Saucedo",
+        description: language === "es"
+          ? "Santos & Saucedo es una firma especializada en Derecho Laboral con más de 35 años de experiencia asesorando empresas nacionales e internacionales."
+          : "Santos & Saucedo is a labor-law firm with more than 35 years of experience advising national and international companies.",
+      },
+      practiceGroups: {
+        title: language === "es" ? "Áreas Laborales | Santos & Saucedo" : "Labor Practice Areas | Santos & Saucedo",
+        description: language === "es"
+          ? "Servicios laborales para empresas: conflictos individuales y colectivos, administración laboral, diagnóstico, planes de mejora, auditoría jurídico-laboral y capacitación."
+          : "Labor services for companies: individual and collective conflicts, labor administration, diagnosis, improvement plans, labor audits, and training.",
+      },
+      contact: {
+        title: language === "es" ? "Contacto | Santos & Saucedo" : "Contact | Santos & Saucedo",
+        description: language === "es"
+          ? "Contacte a Santos & Saucedo en Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, Nuevo León."
+          : "Contact Santos & Saucedo at Rio Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza Garcia, Nuevo Leon.",
+      },
+      offices: {
+        title: language === "es" ? "Oficina | Santos & Saucedo" : "Office | Santos & Saucedo",
+        description: language === "es"
+          ? "Oficina de Santos & Saucedo en San Pedro Garza García, Nuevo León."
+          : "Santos & Saucedo office in San Pedro Garza Garcia, Nuevo Leon.",
+      },
+    };
+
+    const title = customTitle || safeSeo[page]?.title || config.title[language];
+    const description = customDescription || safeSeo[page]?.description || config.description[language];
     const path = customPath || config.path;
     const image = customImage || DEFAULT_IMAGE;
     const url = `${BASE_URL}${path}`;

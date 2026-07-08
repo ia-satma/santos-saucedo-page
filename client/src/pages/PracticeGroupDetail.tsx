@@ -569,7 +569,7 @@ export default function PracticeGroupDetail() {
     return { partners, ofCounsel, associates };
   }, [allTeamMembers, slug]);
 
-  const practiceRankings = slug ? (practiceRankingsData[slug] || []) : [];
+  const practiceRankings: PracticeRanking[] = [];
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();

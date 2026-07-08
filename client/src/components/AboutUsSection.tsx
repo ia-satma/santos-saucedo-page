@@ -218,7 +218,22 @@ const valueVariants = {
 
 export default function AboutUsSection() {
   const { language } = useLanguage();
-  const t = content[language] || content.es;
+  const baseT = content[language] || content.es;
+  const isSpanish = language === "es";
+  const t = {
+    ...baseT,
+    eyebrow: isSpanish ? "LA FIRMA" : "THE FIRM",
+    sectionTitle: isSpanish ? "DERECHO LABORAL ESTRATÉGICO" : "STRATEGIC LABOR LAW",
+    visionTitle: isSpanish ? "Enfoque" : "Focus",
+    visionText: isSpanish
+      ? "Somos una firma especializada en Derecho Laboral para empresas, con más de 35 años de experiencia asesorando operaciones nacionales e internacionales."
+      : "We are a labor-law firm for companies, with more than 35 years of experience advising national and international operations.",
+    missionTitle: isSpanish ? "Método" : "Method",
+    missionText: isSpanish
+      ? "Diagnosticamos, prevenimos, corregimos, capacitamos y defendemos la operación laboral de la empresa."
+      : "We diagnose, prevent, correct, train, and defend companies' labor operations.",
+    valuesTitle: isSpanish ? "Nuestros Valores" : "Our Values",
+  };
 
   const getValueName = (v: ValueItem) => v[language] || v.en;
   const getValueDesc = (v: ValueItem) =>

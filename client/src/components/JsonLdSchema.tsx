@@ -18,183 +18,57 @@ const LANGUAGE_CODES: Record<LanguageCode, string> = {
 };
 
 const descriptions = {
-  legalService: {
-    en: "Santos & Saucedo Abogados is a labor-law boutique firm based in San Pedro Garza García, Nuevo León, with over 35 years of experience advising companies on individual and collective labor matters, labor administration, and workplace compliance.",
-    es: "Santos & Saucedo Abogados es una firma especializada en derecho laboral con sede en San Pedro Garza García, Nuevo León, con más de 35 años de experiencia asesorando empresas en conflictos individuales y colectivos de trabajo, administración laboral y cumplimiento normativo.",
-    de: "Santos & Saucedo Abogados ist eine führende Anwaltskanzlei in Mexiko, spezialisiert auf Unternehmensrecht, Prozessführung, Schiedsverfahren, Steuerrecht, Fusionen und Übernahmen und mehr. Gegründet 1986, anerkannt von Chambers, Legal 500 und anderen internationalen Verzeichnissen.",
-    zh: "Santos & Saucedo Abogados是墨西哥领先的律师事务所，专门从事公司法律服务、诉讼、仲裁、税法、并购等。成立于1986年，获得Chambers、Legal 500等国际目录认可。",
-    ko: "Santos & Saucedo Abogados는 멕시코의 선도적인 로펌으로, 기업 법률 서비스, 소송, 중재, 조세법, 인수합병 등을 전문으로 합니다. 1986년 설립, Chambers, Legal 500 등 국제 디렉토리에서 인정받고 있습니다.",
-    ja: "Santos & Saucedo Abogadosはメキシコの主要法律事務所であり、企業法務、訴訟、仲裁、税法、M&Aなどを専門としています。1986年設立、Chambers、Legal 500などの国際ディレクトリで認められています。",
-    ar: "Santos & Saucedo Abogados هي شركة محاماة رائدة في المكسيك، متخصصة في الخدمات القانونية للشركات والتقاضي والتحكيم وقانون الضرائب وعمليات الاندماج والاستحواذ. تأسست عام 1986، ومعترف بها من قبل Chambers و Legal 500.",
-    ru: "Santos & Saucedo Abogados — ведущая юридическая фирма в Мексике, специализирующаяся на корпоративных юридических услугах, судебных разбирательствах, арбитраже, налоговом праве, слияниях и поглощениях. Основана в 1986 году, признана Chambers, Legal 500.",
-    fr: "Santos & Saucedo Abogados est un cabinet d'avocats leader au Mexique, spécialisé dans les services juridiques aux entreprises, le contentieux, l'arbitrage, le droit fiscal, les fusions et acquisitions. Fondé en 1986, reconnu par Chambers, Legal 500.",
-    it: "Santos & Saucedo Abogados è uno studio legale leader in Messico, specializzato in servizi legali aziendali, contenzioso, arbitrato, diritto tributario, fusioni e acquisizioni. Fondato nel 1986, riconosciuto da Chambers, Legal 500.",
-  },
-  organization: {
-    en: "Santos & Saucedo Abogados is a labor-law boutique firm in San Pedro Garza García, Nuevo León, specializing in individual and collective labor conflicts, labor administration review, workplace relations diagnostics, and labor compliance auditing.",
-    es: "Santos & Saucedo Abogados es una firma especializada en derecho laboral en San Pedro Garza García, Nuevo León, con foco en conflictos individuales y colectivos de trabajo, revisión de la administración laboral, diagnóstico de relaciones laborales y auditoría jurídico-laboral.",
-    de: "Santos & Saucedo Abogados ist eine der renommiertesten Kanzleien Mexikos mit über 150 Anwälten, spezialisiert auf Gesellschaftsrecht, Prozessführung, Schiedsverfahren, M&A, Steuerrecht, Banken und Finanzen, geistiges Eigentum, Arbeits- und Umweltrecht.",
-    zh: "Santos & Saucedo Abogados是墨西哥最负盛名的律师事务所之一，拥有150多名律师，专门从事公司法、诉讼、仲裁、并购、税法、银行和金融、知识产权、劳动和环境法。",
-    ko: "Santos & Saucedo Abogados는 멕시코에서 가장 명망 있는 로펌 중 하나로, 150명 이상의 변호사가 기업법, 소송, 중재, M&A, 조세법, 금융, 지식재산권, 노동 및 환경법을 전문으로 합니다.",
-    ja: "Santos & Saucedo Abogadosはメキシコで最も権威ある法律事務所の一つであり、150名以上の弁護士が会社法、訴訟、仲裁、M&A、税法、銀行・金融、知的財産、労働・環境法を専門としています。",
-    ar: "Santos & Saucedo Abogados هي واحدة من أعرق شركات المحاماة في المكسيك، مع أكثر من 150 محامياً متخصصين في قانون الشركات والتقاضي والتحكيم والاندماج والاستحواذ وقانون الضرائب والخدمات المصرفية والملكية الفكرية.",
-    ru: "Santos & Saucedo Abogados — одна из самых престижных юридических фирм Мексики, насчитывающая более 150 юристов, специализирующихся на корпоративном праве, судебных разбирательствах, арбитраже, M&A, налоговом праве, банковском деле, интеллектуальной собственности.",
-    fr: "Santos & Saucedo Abogados est l'un des cabinets d'avocats les plus prestigieux du Mexique, avec plus de 150 avocats spécialisés en droit des sociétés, contentieux, arbitrage, M&A, droit fiscal, banque et finance, propriété intellectuelle, droit du travail et environnemental.",
-    it: "Santos & Saucedo Abogados è uno degli studi legali più prestigiosi del Messico, con oltre 150 avvocati specializzati in diritto societario, contenzioso, arbitrato, M&A, diritto tributario, banche e finanza, proprietà intellettuale, diritto del lavoro e ambientale.",
-  },
   slogan: {
-    en: "Legal excellence for your business in Mexico",
-    es: "Excelencia legal para sus negocios en México",
-    de: "Rechtliche Exzellenz für Ihr Geschäft in Mexiko",
-    zh: "为您在墨西哥的业务提供卓越的法律服务",
-    ko: "멕시코 비즈니스를 위한 법률적 탁월함",
-    ja: "メキシコでのビジネスのための法的卓越性",
-    ar: "التميز القانوني لأعمالك في المكسيك",
-    ru: "Юридическое превосходство для вашего бизнеса в Мексике",
-    fr: "Excellence juridique pour vos affaires au Mexique",
-    it: "Eccellenza legale per il tuo business in Messico",
-  },
-  localBusiness: {
-    en: "Main office of Santos & Saucedo, a labor-law boutique firm located in San Pedro Garza García, Nuevo León.",
-    es: "Oficina principal de Santos & Saucedo, firma especializada en derecho laboral ubicada en San Pedro Garza García, Nuevo León.",
-    de: "Hauptbüro von Santos & Saucedo im Río Tamazunchale 205 Norte, eine der renommiertesten Anwaltskanzleien Mexikos.",
-    zh: "Santos & Saucedo主办公室，位于Río Tamazunchale 205 Norte，是墨西哥最负盛名的律师事务所之一。",
-    ko: "Santos & Saucedo 본사 사무실, Río Tamazunchale 205 Norte에 위치, 멕시코에서 가장 명망 있는 로펌 중 하나입니다.",
-    ja: "Santos & Saucedoの本社オフィス、Río Tamazunchale 205 Norteに位置し、メキシコで最も権威ある法律事務所の一つです。",
-    ar: "المكتب الرئيسي لـ Santos & Saucedo، يقع في Río Tamazunchale 205 Norte، أحد أعرق شركات المحاماة في المكسيك.",
-    ru: "Главный офис Santos & Saucedo, расположенный в Río Tamazunchale 205 Norte, одной из самых престижных юридических фирм Мексики.",
-    fr: "Bureau principal de Santos & Saucedo, situé dans la Río Tamazunchale 205 Norte, l'un des cabinets d'avocats les plus prestigieux du Mexique.",
-    it: "Sede principale di Santos & Saucedo, situata nella Río Tamazunchale 205 Norte, uno degli studi legali più prestigiosi del Messico.",
-  },
-  legalServices: {
-    en: "Legal Services",
-    es: "Servicios Legales",
-    de: "Rechtsdienstleistungen",
-    zh: "法律服务",
-    ko: "법률 서비스",
-    ja: "法律サービス",
-    ar: "الخدمات القانونية",
-    ru: "Юридические услуги",
-    fr: "Services Juridiques",
-    it: "Servizi Legali",
+    en: "Strategic labor law for companies",
+    es: "Derecho laboral estrategico para empresas",
+    de: "Strategic labor law for companies",
+    zh: "Strategic labor law for companies",
+    ko: "Strategic labor law for companies",
+    ja: "Strategic labor law for companies",
+    ar: "Strategic labor law for companies",
+    ru: "Strategic labor law for companies",
+    fr: "Strategic labor law for companies",
+    it: "Strategic labor law for companies",
   },
   homeBreadcrumb: {
     en: "Home",
     es: "Inicio",
-    de: "Startseite",
-    zh: "首页",
-    ko: "홈",
-    ja: "ホーム",
-    ar: "الرئيسية",
-    ru: "Главная",
-    fr: "Accueil",
+    de: "Home",
+    zh: "Home",
+    ko: "Home",
+    ja: "Home",
+    ar: "Home",
+    ru: "Home",
+    fr: "Home",
     it: "Home",
   },
 };
 
-const serviceNames: Record<string, Record<LanguageCode, string>> = {
-  corporateLaw: {
-    en: "Corporate Law",
-    es: "Derecho Corporativo",
-    de: "Gesellschaftsrecht",
-    zh: "公司法",
-    ko: "기업법",
-    ja: "会社法",
-    ar: "قانون الشركات",
-    ru: "Корпоративное право",
-    fr: "Droit des Sociétés",
-    it: "Diritto Societario",
-  },
-  litigationArbitration: {
-    en: "Litigation and Arbitration",
-    es: "Litigio y Arbitraje",
-    de: "Prozessführung und Schiedsverfahren",
-    zh: "诉讼与仲裁",
-    ko: "소송 및 중재",
-    ja: "訴訟・仲裁",
-    ar: "التقاضي والتحكيم",
-    ru: "Судебные разбирательства и арбитраж",
-    fr: "Contentieux et Arbitrage",
-    it: "Contenzioso e Arbitrato",
-  },
-  mergersAcquisitions: {
-    en: "Mergers and Acquisitions",
-    es: "Fusiones y Adquisiciones",
-    de: "Fusionen und Übernahmen",
-    zh: "并购",
-    ko: "인수합병",
-    ja: "M&A",
-    ar: "الاندماج والاستحواذ",
-    ru: "Слияния и поглощения",
-    fr: "Fusions et Acquisitions",
-    it: "Fusioni e Acquisizioni",
-  },
-  taxLaw: {
-    en: "Tax Law",
-    es: "Derecho Fiscal",
-    de: "Steuerrecht",
-    zh: "税法",
-    ko: "조세법",
-    ja: "税法",
-    ar: "قانون الضرائب",
-    ru: "Налоговое право",
-    fr: "Droit Fiscal",
-    it: "Diritto Tributario",
-  },
-  bankingFinance: {
-    en: "Banking and Finance",
-    es: "Bancario y Finanzas",
-    de: "Banken und Finanzen",
-    zh: "银行与金融",
-    ko: "금융",
-    ja: "銀行・金融",
-    ar: "الخدمات المصرفية والمالية",
-    ru: "Банковское дело и финансы",
-    fr: "Banque et Finance",
-    it: "Banche e Finanza",
-  },
-  intellectualProperty: {
-    en: "Intellectual Property",
-    es: "Propiedad Intelectual",
-    de: "Geistiges Eigentum",
-    zh: "知识产权",
-    ko: "지식재산권",
-    ja: "知的財産",
-    ar: "الملكية الفكرية",
-    ru: "Интеллектуальная собственность",
-    fr: "Propriété Intellectuelle",
-    it: "Proprietà Intellettuale",
-  },
-  laborLaw: {
-    en: "Labor Law",
-    es: "Derecho Laboral",
-    de: "Arbeitsrecht",
-    zh: "劳动法",
-    ko: "노동법",
-    ja: "労働法",
-    ar: "قانون العمل",
-    ru: "Трудовое право",
-    fr: "Droit du Travail",
-    it: "Diritto del Lavoro",
-  },
-  environmentalLaw: {
-    en: "Environmental Law",
-    es: "Derecho Ambiental",
-    de: "Umweltrecht",
-    zh: "环境法",
-    ko: "환경법",
-    ja: "環境法",
-    ar: "القانون البيئي",
-    ru: "Экологическое право",
-    fr: "Droit de l'Environnement",
-    it: "Diritto Ambientale",
-  },
-};
-
 export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
+  const isSpanish = language === "es";
+  const safeDescription = isSpanish
+    ? "Santos & Saucedo Abogados es una firma especializada en derecho laboral en San Pedro Garza Garcia, Nuevo Leon, con mas de 35 anos de experiencia asesorando empresas nacionales e internacionales."
+    : "Santos & Saucedo Abogados is a labor-law firm in San Pedro Garza Garcia, Nuevo Leon, with more than 35 years of experience advising national and international companies.";
+  const laborServices = isSpanish
+    ? [
+        "Conflictos individuales y colectivos",
+        "Revision de administracion laboral",
+        "Diagnostico de relaciones laborales",
+        "Planes de mejora",
+        "Auditoria juridico-laboral",
+        "Planeacion estrategica, cursos y talleres",
+      ]
+    : [
+        "Individual and collective labor conflicts",
+        "Labor administration review",
+        "Workplace relations diagnosis",
+        "Improvement plans",
+        "Labor legal audit",
+        "Strategic planning, courses, and workshops",
+      ];
   const langDescriptions = {
-    legalService: descriptions.legalService[language],
-    organization: descriptions.organization[language],
+    legalService: safeDescription,
+    organization: safeDescription,
   };
 
   const organizationSchema = {
@@ -290,65 +164,14 @@ export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
     ],
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
-      "name": descriptions.legalServices[language],
-      "itemListElement": [
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": serviceNames.corporateLaw[language]
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": serviceNames.litigationArbitration[language]
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": serviceNames.mergersAcquisitions[language]
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": serviceNames.taxLaw[language]
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": serviceNames.bankingFinance[language]
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": serviceNames.intellectualProperty[language]
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": serviceNames.laborLaw[language]
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": serviceNames.environmentalLaw[language]
-          }
+      "name": isSpanish ? "Servicios laborales" : "Labor services",
+      "itemListElement": laborServices.map((name) => ({
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": name
         }
-      ]
+      }))
     },
     "knowsAbout": [
       "Derecho Laboral",
@@ -365,7 +188,7 @@ export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
     "@type": "LocalBusiness",
     "@id": "https://www.santossaucedo.com/#localbusiness",
     "name": "Santos & Saucedo Abogados",
-    "description": descriptions.localBusiness[language],
+    "description": safeDescription,
     "image": "https://santossaucedo.com/images/office.jpg",
     "url": "https://www.santossaucedo.com",
     "telephone": "+52 81 8335 2086",
@@ -401,7 +224,7 @@ export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
     "name": "Santos & Saucedo",
     "url": "https://www.santossaucedo.com",
     "inLanguage": LANGUAGE_CODES[language],
-    "description": descriptions.organization[language],
+    "description": safeDescription,
     "publisher": {
       "@id": "https://www.santossaucedo.com/#organization"
     },

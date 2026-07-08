@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { MapPin, Phone, Mail, Linkedin, ExternalLink, AlertCircle, Building2, Twitter, Settings } from "lucide-react";
+import { MapPin, Phone, Mail, AlertCircle, Building2, Settings } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -518,6 +518,17 @@ export default function Footer() {
   const baseT = content[language] || content.en;
   const t = {
     ...baseT,
+    firmLinks: [
+      { label: language === "es" ? "La Firma" : "The Firm", href: "/about", id: "about" },
+      { label: language === "es" ? "Equipo" : "Team", href: "/team", id: "people" },
+      { label: language === "es" ? "Contacto" : "Contact", href: "/contact", id: "contact" },
+    ],
+    capabilitiesLinks: [
+      { label: language === "es" ? "Áreas Laborales" : "Labor Practice Areas", href: "/practice-groups", id: "practice" },
+    ],
+    resourcesLinks: [
+      { label: language === "es" ? "Publicaciones" : "Publications", href: "/news", id: "news" },
+    ],
     building: "Río Tamazunchale 205 Norte",
     street: "Colonia Del Valle",
     city: "San Pedro Garza García, N.L., C.P. 66220, México",
@@ -595,41 +606,6 @@ export default function Footer() {
           >
             {t.email}
           </a>
-        </div>
-        <div className="pt-4">
-          <p className="text-xs text-white/40 uppercase tracking-wider mb-3">{t.followUs}</p>
-          <div className="flex items-center gap-2">
-            <a
-              href="/contact"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center min-w-[44px] min-h-[44px] p-2 text-white/50 hover:text-white transition-colors touch-manipulation"
-              data-testid="link-linkedin"
-              aria-label={t.linkedinLabel}
-            >
-              <Linkedin className="w-5 h-5" aria-hidden="true" />
-            </a>
-            <a
-              href="https://twitter.com/santossaucedo"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center min-w-[44px] min-h-[44px] p-2 text-white/50 hover:text-white transition-colors touch-manipulation"
-              data-testid="link-twitter"
-              aria-label={t.twitterLabel}
-            >
-              <Twitter className="w-5 h-5" aria-hidden="true" />
-            </a>
-            <a
-              href="https://www.santossaucedo.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center min-w-[44px] min-h-[44px] p-2 text-white/50 hover:text-white transition-colors touch-manipulation"
-              data-testid="link-website"
-              aria-label={t.websiteLabel}
-            >
-              <ExternalLink className="w-5 h-5" aria-hidden="true" />
-            </a>
-          </div>
         </div>
       </div>
     );

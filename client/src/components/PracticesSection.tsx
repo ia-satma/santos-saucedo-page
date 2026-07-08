@@ -147,7 +147,17 @@ const itemVariants = {
 
 export default function PracticesSection() {
   const { language } = useLanguage();
-  const t = content[language] || content.en;
+  const baseT = content[language] || content.en;
+  const t = {
+    ...baseT,
+    title: language === "es" ? "ÁREAS LABORALES" : "LABOR PRACTICE AREAS",
+    subtitle: language === "es" ? "6 ÁREAS ESPECIALIZADAS" : "6 SPECIALIZED AREAS",
+    intro: language === "es"
+      ? "Asesoría legal laboral integral en 6 áreas especializadas."
+      : "Strategic labor-law advisory across 6 specialized areas.",
+    seeMore: language === "es" ? "VER TODAS LAS ÁREAS" : "VIEW ALL AREAS",
+    ctaText: language === "es" ? "Obtener Asesoría Legal" : "Get Labor Advice",
+  };
 
   return (
     <section

@@ -812,21 +812,18 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         { loc: '/about', changefreq: 'monthly', priority: '0.8' },
         { loc: '/team', changefreq: 'weekly', priority: '0.9' },
         { loc: '/practice-groups', changefreq: 'monthly', priority: '0.8' },
-        { loc: '/industry-groups', changefreq: 'monthly', priority: '0.8' },
         { loc: '/news', changefreq: 'daily', priority: '0.9' },
         { loc: '/contact', changefreq: 'monthly', priority: '0.7' },
         { loc: '/careers', changefreq: 'weekly', priority: '0.7' },
-        { loc: '/rankings', changefreq: 'monthly', priority: '0.7' },
         { loc: '/offices', changefreq: 'monthly', priority: '0.7' },
         { loc: '/experience', changefreq: 'monthly', priority: '0.7' },
         { loc: '/privacy-policy', changefreq: 'yearly', priority: '0.3' },
         { loc: '/terms', changefreq: 'yearly', priority: '0.3' },
       ];
 
-      const [teamMembers, practiceGroups, industryGroups, newsItems] = await Promise.all([
+      const [teamMembers, practiceGroups, newsItems] = await Promise.all([
         storage.getTeamMembers(),
         storage.getPracticeGroups(),
-        storage.getIndustryGroups(),
         storage.getNews(),
       ]);
 
@@ -856,16 +853,6 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         urlEntries += `
   <url>
     <loc>${baseUrl}/practice-groups/${group.slug}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>`;
-      }
-
-      for (const group of industryGroups) {
-        urlEntries += `
-  <url>
-    <loc>${baseUrl}/industry-groups/${group.slug}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

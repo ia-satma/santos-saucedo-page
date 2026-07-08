@@ -1,14 +1,12 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { 
-  Award, 
   Users, 
   Globe2, 
   Building2, 
   Scale, 
   Heart, 
   Briefcase, 
-  ArrowRight,
   Sparkles,
   UserCheck,
   Target,
@@ -24,14 +22,12 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { NumberedCard } from "@/components/editorial";
 import type { TeamMember, PracticeGroup, IndustryGroup, LanguageCode } from "@shared/schema";
-import logoHD from "@assets/logo-ss-color.png";
 
 export default function About() {
   const { language } = useLanguage();
@@ -1131,7 +1127,50 @@ export default function About() {
     },
   };
 
-  const t = content[language] || content.en;
+  const baseT = content[language] || content.en;
+  const isSpanish = language === "es";
+  const t = {
+    ...baseT,
+    title: isSpanish ? "La Firma" : "The Firm",
+    subtitle: isSpanish
+      ? "Derecho laboral estratégico para empresas"
+      : "Strategic labor law for companies",
+    historyTitle: isSpanish ? "Santos & Saucedo Abogados" : "Santos & Saucedo Abogados",
+    historyText1: isSpanish
+      ? "Santos & Saucedo es una firma especializada en Derecho Laboral con más de 35 años de experiencia asesorando a empresas nacionales e internacionales."
+      : "Santos & Saucedo is a labor-law boutique firm with more than 35 years of experience advising national and international companies.",
+    historyText2: isSpanish
+      ? "Diagnosticamos, prevenimos, corregimos, capacitamos y defendemos la operación laboral de la empresa mediante asesoría preventiva, administración laboral, auditorías, capacitación y atención de conflictos individuales y colectivos."
+      : "We diagnose, prevent, correct, train, and defend companies' labor operations through preventive counsel, labor administration, audits, training, and individual and collective conflict resolution.",
+    valuesTitle: isSpanish ? "Nuestro enfoque" : "Our Approach",
+    cultureTitle: isSpanish ? "Metodología laboral" : "Labor Methodology",
+    cultureSubtitle: isSpanish
+      ? "Prevención, administración y defensa laboral"
+      : "Prevention, administration, and labor defense",
+    cultureIntro: isSpanish
+      ? "El trabajo del despacho se concentra en proteger la operación diaria de las empresas: revisar riesgos, ordenar procesos internos, fortalecer a los equipos responsables y responder con estrategia cuando surge un conflicto."
+      : "The firm's work focuses on protecting companies' daily operations: reviewing risk, organizing internal processes, strengthening responsible teams, and responding strategically when conflicts arise.",
+    cultureAspects: isSpanish
+      ? [
+          { icon: Shield, title: "Prevención", text: "Identificamos riesgos laborales antes de que escalen a contingencias." },
+          { icon: BarChart3, title: "Diagnóstico", text: "Revisamos administración laboral, documentación y relaciones de trabajo." },
+          { icon: GraduationCap, title: "Capacitación", text: "Preparamos a mandos y equipos de recursos humanos para actuar con criterio jurídico." },
+        ]
+      : [
+          { icon: Shield, title: "Prevention", text: "We identify labor risks before they escalate into contingencies." },
+          { icon: BarChart3, title: "Diagnosis", text: "We review labor administration, documentation, and workplace relations." },
+          { icon: GraduationCap, title: "Training", text: "We prepare management and HR teams to act with sound legal judgment." },
+        ],
+    statsTitle: isSpanish ? "La Firma en Números" : "The Firm in Numbers",
+    stats: [
+      { value: "35+", label: isSpanish ? "Años de Experiencia" : "Years of Experience" },
+      { value: String(teamMembers?.length || 24), label: isSpanish ? "Integrantes del Equipo" : "Team Members" },
+      { value: String(practiceGroups?.length || 6), label: isSpanish ? "Áreas Laborales" : "Labor Practice Areas" },
+      { value: "1", label: isSpanish ? "Oficina en Nuevo León" : "Office in Nuevo Leon" },
+    ],
+    viewTeam: isSpanish ? "Ver equipo" : "View team",
+    viewPractices: isSpanish ? "Ver áreas laborales" : "View labor areas",
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -1277,74 +1316,6 @@ export default function About() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.35 }}
-            className="mb-20 bg-gradient-to-br from-primary/5 to-primary/10 dark:from-primary/10 dark:to-primary/20 rounded-none p-10"
-            data-testid="section-diversity"
-          >
-            <div className="text-center mb-12">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <UsersRound className="w-8 h-8 text-primary" />
-                <h2 className="text-2xl font-heading font-light text-foreground uppercase tracking-[0.12em]">
-                  {t.diversityTitle}
-                </h2>
-              </div>
-              <p className="text-lg text-primary font-medium mb-4" data-testid="text-diversity-subtitle">
-                {t.diversitySubtitle}
-              </p>
-              <p className="text-lg text-foreground leading-relaxed text-justify max-w-4xl mx-auto" data-testid="text-diversity-intro">
-                {t.diversityIntro}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-              {t.diversityStats.map((stat, index) => (
-                <motion.div 
-                  key={index} 
-                  variants={itemVariants}
-                  className="text-center bg-card rounded-none p-6 shadow-sm"
-                  data-testid={`stat-diversity-${index}`}
-                >
-                  <p className="text-3xl lg:text-4xl font-heading text-primary mb-2">
-                    {stat.value}
-                  </p>
-                  <p className="text-sm text-muted-foreground uppercase tracking-wider">
-                    {stat.label}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div 
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-            viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10"
-            >
-              {t.diversityInitiatives.map((initiative, index) => (
-                <motion.div key={index} variants={itemVariants}>
-                  <NumberedCard
-                    index={index}
-                    title={initiative.title}
-                    body={initiative.text}
-                    icon={initiative.icon}
-                    dataTestid={`card-diversity-initiative-${index}`}
-                  />
-                </motion.div>
-              ))}
-            </motion.div>
-
-            <div className="text-center">
-              <p className="text-base text-foreground leading-relaxed max-w-3xl mx-auto" data-testid="text-diversity-commitment">
-                {t.diversityCommitment}
-              </p>
-            </div>
-          </motion.section>
-
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
             className="mb-20 section-stone rounded-none p-10 lg:p-14 border border-border"
             data-testid="section-stats"
@@ -1366,105 +1337,6 @@ export default function About() {
               ))}
             </div>
           </motion.section>
-
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="mb-20"
-            data-testid="section-rankings"
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <Award className="w-8 h-8 text-primary" />
-                  <h2 className="text-2xl font-heading font-light text-foreground uppercase tracking-[0.12em]">
-                    {t.rankingsTitle}
-                  </h2>
-                </div>
-                <p className="text-lg text-foreground leading-relaxed text-justify mb-6">
-                  {t.rankingsText}
-                </p>
-                <ul className="space-y-3">
-                  {t.rankings.map((ranking, index) => (
-                    <li key={index} className="flex items-center gap-3 text-foreground" data-testid={`text-ranking-${index}`}>
-                      <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
-                      {ranking}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="flex justify-center">
-                <img
-                  src={logoHD}
-                  alt="Santos & Saucedo"
-                  width={318}
-                  height={70}
-                  className="max-w-full h-auto"
-                  style={{ imageRendering: "crisp-edges" }}
-                  data-testid="img-rankings"
-                />
-              </div>
-            </div>
-          </motion.section>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-            <motion.section
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              data-testid="section-pro-bono"
-            >
-              <Card className="h-full rounded-none border border-border">
-                <CardContent className="p-8">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Heart className="w-8 h-8 text-primary" />
-                    <h2 className="text-xl font-heading font-light text-foreground uppercase tracking-[0.12em]">
-                      {t.proBonoTitle}
-                    </h2>
-                  </div>
-                  <p className="text-foreground leading-relaxed" data-testid="text-pro-bono">
-                    {t.proBonoText}
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.section>
-
-            <motion.section
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.7 }}
-              data-testid="section-careers"
-            >
-              <Card className="h-full rounded-none border border-border bg-card shadow-sm">
-                <CardContent className="p-8">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Briefcase className="w-8 h-8 text-primary" />
-                    <h2 className="text-xl font-heading font-light text-foreground uppercase tracking-[0.12em]">
-                      {t.careersTitle}
-                    </h2>
-                  </div>
-                  <p className="text-muted-foreground leading-relaxed mb-6" data-testid="text-careers">
-                    {t.careersText}
-                  </p>
-                  <Button 
-                    variant="default"
-                    className="rounded-none"
-                    asChild
-                    data-testid="button-careers"
-                  >
-                    <a href="mailto:carreras@santossaucedo.com">
-                      {t.learnMore}
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </a>
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.section>
-          </div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -110,40 +110,6 @@ function SearchResultPracticeGroup({
   );
 }
 
-function SearchResultIndustryGroup({
-  group,
-  language,
-  onSelect,
-}: {
-  group: IndustryGroup;
-  language: LanguageCode;
-  onSelect: (href: string) => void;
-}) {
-  const { translatedFields } = useTranslatedContent({
-    contentType: 'industry_group',
-    entityId: group.id.toString(),
-    fields: { name: group.nameEs || group.name, nameEs: group.nameEs },
-    enabled: language !== 'es',
-  });
-
-  const displayName = language === 'es'
-    ? group.nameEs
-    : (translatedFields.name || group.nameEs || group.name);
-
-  return (
-    <button
-      onClick={() => onSelect(`/industry-groups/${group.slug}`)}
-      className="w-full text-left px-2 py-2 hover:bg-muted"
-      data-testid={`search-result-industry-${group.slug}`}
-      role="option"
-    >
-      <p className="text-sm font-medium text-foreground">
-        {displayName}
-      </p>
-    </button>
-  );
-}
-
 function SearchResultNews({
   article,
   language,
@@ -290,7 +256,6 @@ export default function Header() {
   const hasResults = searchResults && (
     searchResults.team.length > 0 ||
     searchResults.practiceGroups.length > 0 ||
-    searchResults.industryGroups.length > 0 ||
     searchResults.news.length > 0
   );
 
@@ -476,22 +441,6 @@ export default function Header() {
                           </p>
                           {searchResults.practiceGroups.map((group) => (
                             <SearchResultPracticeGroup
-                              key={group.id}
-                              group={group}
-                              language={language as LanguageCode}
-                              onSelect={handleSearchSelect}
-                            />
-                          ))}
-                        </div>
-                      )}
-
-                      {searchResults.industryGroups.length > 0 && (
-                        <div className="p-2 border-t border-border" role="group" aria-label={t('industries.title')}>
-                          <p className="text-xs font-semibold text-muted-foreground uppercase px-2 mb-1">
-                            {t('industries.title')}
-                          </p>
-                          {searchResults.industryGroups.map((group) => (
-                            <SearchResultIndustryGroup
                               key={group.id}
                               group={group}
                               language={language as LanguageCode}

@@ -24,8 +24,6 @@ const NotFound = lazy(() => import("@/pages/not-found"));
 
 const PracticeGroups = lazy(() => import("@/pages/PracticeGroups"));
 const PracticeGroupDetail = lazy(() => import("@/pages/PracticeGroupDetail"));
-const IndustryGroups = lazy(() => import("@/pages/IndustryGroups"));
-const IndustryGroupDetail = lazy(() => import("@/pages/IndustryGroupDetail"));
 const Team = lazy(() => import("@/pages/Team"));
 const TeamMemberDetail = lazy(() => import("@/pages/TeamMemberDetail"));
 const NewsDetail = lazy(() => import("@/pages/NewsDetail"));
@@ -37,10 +35,7 @@ const Interns = lazy(() => import("@/pages/Interns"));
 const Experience = lazy(() => import("@/pages/Experience"));
 const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
 const Terms = lazy(() => import("@/pages/Terms"));
-const Rankings = lazy(() => import("@/pages/Rankings"));
 const Offices = lazy(() => import("@/pages/Offices"));
-const DiversityInclusion = lazy(() => import("@/pages/DiversityInclusion"));
-const ProBono = lazy(() => import("@/pages/ProBono"));
 const Articles = lazy(() => import("@/pages/Articles"));
 const Newsletter = lazy(() => import("@/pages/Newsletter"));
 const Events = lazy(() => import("@/pages/Events"));
@@ -174,8 +169,6 @@ function Router() {
         <Route path="/about" component={About} />
         <Route path="/practice-groups" component={PracticeGroups} />
         <Route path="/practice-groups/:slug" component={PracticeGroupDetail} />
-        <Route path="/industry-groups" component={IndustryGroups} />
-        <Route path="/industry-groups/:slug" component={IndustryGroupDetail} />
         <Route path="/team" component={Team} />
         <Route path="/team/:slug" component={TeamMemberDetail} />
         <Route path="/news" component={News} />
@@ -186,10 +179,7 @@ function Router() {
         <Route path="/experience" component={Experience} />
         <Route path="/privacy-policy" component={PrivacyPolicy} />
         <Route path="/terms" component={Terms} />
-        <Route path="/rankings" component={Rankings} />
         <Route path="/offices" component={Offices} />
-        <Route path="/diversity-inclusion" component={DiversityInclusion} />
-        <Route path="/pro-bono" component={ProBono} />
         <Route path="/articles" component={Articles} />
         <Route path="/newsletter" component={Newsletter} />
         <Route path="/events" component={Events} />
