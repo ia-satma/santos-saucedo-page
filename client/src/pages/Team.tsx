@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import type { CSSProperties } from "react";
 import { motion } from "framer-motion";
 import { AlertCircle, Users, Search, X, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
@@ -27,6 +28,31 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
     chunks.push(arr.slice(i, i + size));
   }
   return chunks;
+}
+
+function getDesktopPanelStyle(
+  isActive: boolean,
+  rowLength: number,
+  columns: number,
+  activeUnits: number,
+  transition: string
+): CSSProperties {
+  if (rowLength < columns) {
+    const availableUnits = columns - rowLength + 1;
+    const units = isActive ? Math.min(activeUnits, availableUnits) : 1;
+
+    return {
+      flex: `0 0 ${(units / columns) * 100}%`,
+      transition,
+      minWidth: 0,
+    };
+  }
+
+  return {
+    flex: isActive ? activeUnits : 1,
+    transition,
+    minWidth: 0,
+  };
 }
 
 // Map URL parameters to filter values
@@ -583,7 +609,13 @@ export default function Team() {
                             data-testid={`card-team-member-${member.slug}`}
                             aria-label={member.name}
                             className="relative overflow-hidden cursor-pointer block"
-                            style={{ flex: isActive ? 4 : 1, transition: "flex 0.5s cubic-bezier(0.22, 1, 0.36, 1)", minWidth: 0 }}
+                            style={getDesktopPanelStyle(
+                              isActive,
+                              row.length,
+                              8,
+                              4,
+                              "flex 0.5s cubic-bezier(0.22, 1, 0.36, 1), flex-basis 0.5s cubic-bezier(0.22, 1, 0.36, 1)"
+                            )}
                             onMouseEnter={() => setPartnerPanels(prev => ({ ...prev, [rowIdx]: `p-${member.id}` }))}
                           >
                             <div className="absolute inset-0 bg-muted flex items-center justify-center">
@@ -656,7 +688,13 @@ export default function Team() {
                         data-testid={`card-team-member-${member.slug}`}
                         aria-label={member.name}
                         className="relative overflow-hidden cursor-pointer block"
-                        style={{ flex: isActive ? 3 : 1, transition: "flex 0.5s cubic-bezier(0.22, 1, 0.36, 1)", minWidth: 0 }}
+                        style={getDesktopPanelStyle(
+                          isActive,
+                          groupedMembers.ofCounsel.length,
+                          Math.max(groupedMembers.ofCounsel.length, 4),
+                          3,
+                          "flex 0.5s cubic-bezier(0.22, 1, 0.36, 1), flex-basis 0.5s cubic-bezier(0.22, 1, 0.36, 1)"
+                        )}
                         onMouseEnter={() => setActivePanel(`oc-${member.id}`)}
                       >
                         <div className="absolute inset-0 bg-muted flex items-center justify-center">
@@ -734,7 +772,13 @@ export default function Team() {
                             data-testid={`card-team-member-${member.slug}`}
                             aria-label={member.name}
                             className="relative overflow-hidden cursor-pointer block"
-                            style={{ flex: isActive ? 4 : 1, transition: "flex 0.45s cubic-bezier(0.22, 1, 0.36, 1)", minWidth: 0 }}
+                            style={getDesktopPanelStyle(
+                              isActive,
+                              row.length,
+                              9,
+                              4,
+                              "flex 0.45s cubic-bezier(0.22, 1, 0.36, 1), flex-basis 0.45s cubic-bezier(0.22, 1, 0.36, 1)"
+                            )}
                             onMouseEnter={() => setAssocPanels(prev => ({ ...prev, [rowIdx]: `a-${member.id}` }))}
                           >
                             <div className="absolute inset-0 bg-muted flex items-center justify-center">
