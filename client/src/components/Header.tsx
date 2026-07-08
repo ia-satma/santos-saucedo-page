@@ -11,6 +11,7 @@ import LanguageSelector from "./LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import type { TeamMember, PracticeGroup, IndustryGroup, News, LanguageCode } from "@shared/schema";
+import logoColor from "@assets/logo-ss-color.png";
 
 const logoWhiteHorizontal =
   "https://api.pcloud.com/getpubthumb?code=XZPrHr5Zs9CQA4pOqy8t3K6AVQTbe7dJP4W7&fileid=90118964062&size=1200x420&type=png";
@@ -299,7 +300,7 @@ export default function Header() {
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
           isScrolled
-            ? "bg-[#202058]/96 backdrop-blur-md shadow-md py-3"
+            ? "bg-background/95 backdrop-blur-md shadow-md py-3"
             : "bg-transparent py-6"
         )}
         data-testid="header"
@@ -312,7 +313,7 @@ export default function Header() {
             aria-label={`Santos & Saucedo - ${t('nav.home')}`}
           >
             <img
-              src={logoWhiteHorizontal}
+              src={isScrolled ? logoColor : logoWhiteHorizontal}
               alt="Santos & Saucedo"
               className={cn(
                 "transition-all duration-300 flex-shrink-0 object-contain",
@@ -344,10 +345,10 @@ export default function Header() {
                   className={cn(
                     "inline-flex items-center gap-1 px-3 py-2 text-sm font-medium tracking-wide uppercase whitespace-nowrap transition-colors duration-200",
                     isScrolled
-                      ? "text-white/88 hover:text-white"
+                      ? "text-foreground hover:text-primary"
                       : "text-white/90 hover:text-white",
-                    location === item.href && (isScrolled ? "text-white" : "text-primary"),
-                    activeDropdown === item.id && "text-white"
+                    location === item.href && (isScrolled ? "text-primary" : "text-white"),
+                    activeDropdown === item.id && (isScrolled ? "text-primary" : "text-white")
                   )}
                   data-testid={`link-nav-${item.id}`}
                   aria-current={location === item.href ? "page" : undefined}
@@ -358,7 +359,8 @@ export default function Header() {
                   {item.subItems && (
                     <ChevronDown
                       className={cn(
-                        "w-3.5 h-3.5 transition-transform duration-200 text-white/80",
+                        "w-3.5 h-3.5 transition-transform duration-200",
+                        isScrolled ? "text-primary/80" : "text-white/80",
                         activeDropdown === item.id && "rotate-180"
                       )}
                       aria-hidden="true"
@@ -373,7 +375,7 @@ export default function Header() {
                       "absolute top-full left-0 mt-2 min-w-[220px] py-1.5 z-50",
                       "border shadow-2xl backdrop-blur-xl overflow-hidden",
                       isScrolled
-                        ? "bg-[#171735]/95 border-white/10"
+                        ? "bg-background/95 border-border"
                         : "bg-black/75 border-white/10"
                     )}
                     role="menu"
@@ -390,7 +392,9 @@ export default function Header() {
                           "flex items-center px-5 py-2.5 text-sm font-medium uppercase tracking-wide",
                           "border-l-2 border-transparent transition-all duration-150",
                           "hover:border-[#202058]",
-                          "text-white/80 hover:text-white hover:bg-white/8"
+                          isScrolled
+                            ? "text-foreground hover:text-primary hover:bg-muted"
+                            : "text-white/80 hover:text-white hover:bg-white/8"
                         )}
                         role="menuitem"
                         data-testid={`link-subnav-${subItem.id}`}
@@ -411,7 +415,7 @@ export default function Header() {
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  isScrolled ? "text-white/90 hover:text-white hover:bg-white/10" : "text-white/90 hover:text-white"
+                  isScrolled ? "text-primary hover:text-primary hover:bg-primary/10" : "text-white/90 hover:text-white"
                 )}
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 data-testid="button-search"
@@ -534,7 +538,7 @@ export default function Header() {
               size="icon"
               className={cn(
                 "lg:hidden",
-                isScrolled ? "text-white/90 hover:text-white hover:bg-white/10" : "text-white/90 hover:text-white"
+                isScrolled ? "text-primary hover:text-primary hover:bg-primary/10" : "text-white/90 hover:text-white"
               )}
               onClick={() => setIsMobileMenuOpen(true)}
               data-testid="button-mobile-menu"
