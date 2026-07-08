@@ -91,7 +91,7 @@ function NewsItemTranslated({
   const inner = (
     <>
       <h4 
-        className="text-sm font-medium text-white leading-snug mb-2 group-hover:text-white/80 transition-colors"
+        className="font-sans text-sm font-semibold text-white leading-snug mb-2 group-hover:text-white/80 transition-colors"
         data-testid={`text-news-title-${item.id}`}
       >
         {displayTitle}
@@ -402,7 +402,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
           initial={{ opacity: 0, y: 10 }}
           animate={isVisible ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.65 }}
-          className="inline-flex max-w-[640px] items-center justify-center border-y border-white/20 bg-white/[0.035] px-5 sm:px-7 py-2.5 text-white/80 text-[0.68rem] sm:text-xs tracking-[0.24em] uppercase leading-relaxed backdrop-blur-[1px]"
+          className="font-sans inline-flex max-w-[640px] items-center justify-center border-y border-white/20 bg-white/[0.035] px-5 sm:px-7 py-2.5 text-white/80 text-[0.68rem] sm:text-xs font-semibold tracking-[0.24em] uppercase leading-relaxed backdrop-blur-[1px]"
           data-testid="text-hero-subheadline"
         >
           {subheadline}
@@ -418,7 +418,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
         data-testid="button-scroll-down"
         aria-label={scrollAriaLabel}
       >
-        <span className="text-xs tracking-[0.2em] uppercase" data-testid="text-scroll">{t.scroll}</span>
+        <span className="font-sans text-xs font-semibold tracking-[0.2em] uppercase" data-testid="text-scroll">{t.scroll}</span>
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
