@@ -303,7 +303,7 @@ export default function AboutUsSection() {
                 <div className="flex flex-col justify-center pt-1">
                   <div className="w-8 h-0.5 bg-[#202058] mb-3" />
                   <h3
-                    className="font-heading font-light uppercase tracking-[0.12em] text-base lg:text-lg text-[#111126]"
+                    className="font-heading font-light uppercase tracking-[0.1em] text-2xl lg:text-3xl text-[#111126] leading-none"
                     data-testid={`text-${testId}-title`}
                   >
                     {title}
@@ -335,7 +335,7 @@ export default function AboutUsSection() {
         >
           <div className="w-6 h-px bg-primary mb-4 mx-auto" />
           <h3
-            className="font-heading font-light uppercase tracking-[0.12em] text-base lg:text-lg text-foreground"
+            className="font-heading font-light uppercase tracking-[0.12em] text-2xl md:text-3xl text-foreground leading-none"
             data-testid="text-values-title"
           >
             {t.valuesTitle}
@@ -366,7 +366,7 @@ export default function AboutUsSection() {
                 </div>
                 <div className="w-7 h-0.5 bg-[#202058]/60 group-hover:w-10 transition-all duration-500" />
                 <span
-                  className="text-xs md:text-sm font-semibold uppercase tracking-[0.12em] text-[#111126] leading-tight"
+                  className="font-heading font-light uppercase tracking-[0.1em] text-lg md:text-xl text-[#111126] leading-none"
                   data-testid={`text-value-${i}`}
                 >
                   {getValueName(value)}

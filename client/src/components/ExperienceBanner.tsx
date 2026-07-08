@@ -55,7 +55,7 @@ export default function ExperienceBanner() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="relative text-xl md:text-2xl lg:text-3xl font-sans font-medium text-white text-center leading-relaxed drop-shadow-[0_12px_28px_rgba(0,0,0,0.22)]"
+          className="relative font-heading font-light text-2xl md:text-4xl lg:text-[44px] text-white text-center leading-tight tracking-[0.04em] drop-shadow-[0_12px_28px_rgba(0,0,0,0.22)]"
           data-testid="text-experience-banner"
         >
           {t.text}
