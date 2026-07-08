@@ -17,8 +17,7 @@ const esCommon = {
     counsel: "Consejeros",
     associates: "Asociados",
     practices: "Prácticas",
-    industryGroups: "Grupos de Industria",
-    desk: "German Desk",
+    industryGroups: "Grupos de Industria",
     news: "Noticias",
     articles: "Artículos",
     newsletter: "Boletines",
@@ -49,13 +48,7 @@ const esCommon = {
   industries: {
     title: "Grupos de Industria",
     subtitle: "Sectores Especializados"
-  },
-  germanDesk: {
-    title: "German Desk",
-    description: "Por más de 34 años, Santos & Saucedo ha trabajado con empresas alemanas, ofreciendo asesoría legal integral en México.",
-    subtitle: "Especialistas en inversiones alemanas en México"
-  },
-  about: {
+  },  about: {
     title: "Acerca de Nosotros",
     vision: "Visión",
     mission: "Misión",
@@ -194,8 +187,7 @@ const enCommon = {
     counsel: "Counsel",
     associates: "Associates",
     practices: "Practices",
-    industryGroups: "Industry Groups",
-    desk: "German Desk",
+    industryGroups: "Industry Groups",
     news: "News",
     articles: "Articles",
     newsletter: "Newsletter",
@@ -226,13 +218,7 @@ const enCommon = {
   industries: {
     title: "Industry Groups",
     subtitle: "Specialized Sectors"
-  },
-  germanDesk: {
-    title: "German Desk",
-    description: "For more than 34 years, Santos & Saucedo has worked with German companies, providing comprehensive legal advice in Mexico.",
-    subtitle: "Specialists in German investments in Mexico"
-  },
-  about: {
+  },  about: {
     title: "About Us",
     vision: "Vision",
     mission: "Mission",
@@ -371,8 +357,7 @@ const deCommon = {
     counsel: "Counsel",
     associates: "Associates",
     practices: "Praxisbereiche",
-    industryGroups: "Branchengruppen",
-    desk: "German Desk",
+    industryGroups: "Branchengruppen",
     news: "Nachrichten",
     articles: "Artikel",
     newsletter: "Newsletter",
@@ -397,9 +382,7 @@ const deCommon = {
     welcomeSubtitle: "Eine führende Kanzlei in Mexiko"
   },
   practices: { title: "Praxisbereiche", subtitle: "Fachgebiete" },
-  industries: { title: "Branchengruppen", subtitle: "Spezialisierte Sektoren" },
-  germanDesk: { title: "German Desk", description: "Seit mehr als 34 Jahren arbeitet Santos & Saucedo mit deutschen Unternehmen zusammen und bietet umfassende Rechtsberatung in Mexiko.", subtitle: "Spezialisten für deutsche Investitionen in Mexiko" },
-  about: { title: "Über uns", vision: "Vision", mission: "Mission", values: "Werte", integrity: "Integrität", excellence: "Exzellenz", commitment: "Engagement", agility: "Agilität", diversityValue: "Vielfalt" },
+  industries: { title: "Branchengruppen", subtitle: "Spezialisierte Sektoren" },  about: { title: "Über uns", vision: "Vision", mission: "Mission", values: "Werte", integrity: "Integrität", excellence: "Exzellenz", commitment: "Engagement", agility: "Agilität", diversityValue: "Vielfalt" },
   footer: { address: "Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220, México", privacyNotice: "Datenschutzhinweis", copyright: "© 2025 Santos & Saucedo Abogados Alle Rechte vorbehalten.", termsOfUse: "Nutzungsbedingungen", quickLinks: "Schnellzugriff", followUs: "Folgen Sie uns", contactUs: "Kontaktieren Sie uns" },
   cta: { seeMore: "Mehr erfahren", contact: "Kontakt", readMore: "Weiterlesen", viewProfile: "Profil anzeigen", downloadVCard: "vCard herunterladen", learnMore: "Mehr erfahren", subscribe: "Abonnieren", submit: "Absenden", back: "Zurück", next: "Weiter", previous: "Vorherige" },
   team: { title: "Unser Team", partners: "Partner", ofCounsel: "Of Counsel", counsel: "Counsel", associates: "Associates", allAttorneys: "Alle Anwälte", searchPlaceholder: "Anwalt suchen...", filterByPractice: "Nach Praxisbereich filtern", filterByIndustry: "Nach Branche filtern" },
@@ -413,12 +396,10 @@ const deCommon = {
 };
 
 const zhCommon = {
-  nav: { ourFirm: "我们的律所", attorneys: "律师", capabilities: "业务能力", publications: "出版物", career: "加入S&S", contact: "联系我们", probono: "公益服务", diversity: "多元与包容", partners: "合伙人", ofCounsel: "顾问律师", counsel: "法律顾问", associates: "律师助理", practices: "业务领域", industryGroups: "行业组", desk: "德国业务部", news: "新闻", articles: "文章", newsletter: "通讯", interns: "实习生", home: "首页", about: "关于我们", rankings: "排名", offices: "办公室", events: "活动", experience: "经验", terms: "条款", privacy: "隐私" },
+  nav: { ourFirm: "我们的律所", attorneys: "律师", capabilities: "业务能力", publications: "出版物", career: "加入S&S", contact: "联系我们", probono: "公益服务", diversity: "多元与包容", partners: "合伙人", ofCounsel: "顾问律师", counsel: "法律顾问", associates: "律师助理", practices: "业务领域", industryGroups: "行业组", news: "新闻", articles: "文章", newsletter: "通讯", interns: "实习生", home: "首页", about: "关于我们", rankings: "排名", offices: "办公室", events: "活动", experience: "经验", terms: "条款", privacy: "隐私" },
   home: { heroTagline: "我们去客户需要我们的地方", seeMore: "查看更多", experienceBanner: "Santos & Saucedo Abogados 拥有超过三十年的经验", teamStats: "超过150名律师的团队（22名合伙人，6名顾问律师，12名法律顾问...）", recognitionsTitle: "荣誉认可", recognitionsIntro: "Santos & Saucedo Abogados 获得了众多国际机构的认可，包括", welcomeTitle: "欢迎", welcomeSubtitle: "墨西哥领先律所" },
   practices: { title: "业务领域", subtitle: "专业领域" },
-  industries: { title: "行业组", subtitle: "专业领域" },
-  germanDesk: { title: "德国业务部", description: "34年来，Santos & Saucedo 一直与德国企业合作，在墨西哥提供全面的法律咨询。", subtitle: "德国在墨投资专家" },
-  about: { title: "关于我们", vision: "愿景", mission: "使命", values: "价值观", integrity: "诚信", excellence: "卓越", commitment: "承诺", agility: "敏捷", diversityValue: "多元" },
+  industries: { title: "行业组", subtitle: "专业领域" },  about: { title: "关于我们", vision: "愿景", mission: "使命", values: "价值观", integrity: "诚信", excellence: "卓越", commitment: "承诺", agility: "敏捷", diversityValue: "多元" },
   footer: { address: "Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220, México", privacyNotice: "隐私声明", copyright: "© 2025 Santos & Saucedo Abogados 版权所有。", termsOfUse: "使用条款", quickLinks: "快速链接", followUs: "关注我们", contactUs: "联系我们" },
   cta: { seeMore: "查看更多", contact: "联系", readMore: "阅读更多", viewProfile: "查看简介", downloadVCard: "下载名片", learnMore: "了解更多", subscribe: "订阅", submit: "提交", back: "返回", next: "下一步", previous: "上一步" },
   team: { title: "我们的团队", partners: "合伙人", ofCounsel: "顾问律师", counsel: "法律顾问", associates: "律师助理", allAttorneys: "所有律师", searchPlaceholder: "搜索律师...", filterByPractice: "按业务领域筛选", filterByIndustry: "按行业筛选" },
@@ -432,12 +413,10 @@ const zhCommon = {
 };
 
 const koCommon = {
-  nav: { ourFirm: "우리 회사", attorneys: "변호사", capabilities: "역량", publications: "출판물", career: "S&S 채용", contact: "연락처", probono: "프로보노", diversity: "다양성과 포용성", partners: "파트너", ofCounsel: "고문 변호사", counsel: "법률 고문", associates: "어소시에이트", practices: "업무 분야", industryGroups: "산업 그룹", desk: "German Desk", news: "뉴스", articles: "기사", newsletter: "뉴스레터", interns: "인턴", home: "홈", about: "소개", rankings: "순위", offices: "사무소", events: "이벤트", experience: "경험", terms: "약관", privacy: "개인정보" },
+  nav: { ourFirm: "우리 회사", attorneys: "변호사", capabilities: "역량", publications: "출판물", career: "S&S 채용", contact: "연락처", probono: "프로보노", diversity: "다양성과 포용성", partners: "파트너", ofCounsel: "고문 변호사", counsel: "법률 고문", associates: "어소시에이트", practices: "업무 분야", industryGroups: "산업 그룹", news: "뉴스", articles: "기사", newsletter: "뉴스레터", interns: "인턴", home: "홈", about: "소개", rankings: "순위", offices: "사무소", events: "이벤트", experience: "경험", terms: "약관", privacy: "개인정보" },
   home: { heroTagline: "고객이 필요한 곳으로 갑니다", seeMore: "더 보기", experienceBanner: "Santos & Saucedo Abogados는 30년 이상의 경험을 보유하고 있습니다", teamStats: "150명 이상의 변호사 팀 (22명의 파트너, 6명의 고문 변호사, 12명의 법률 고문...)", recognitionsTitle: "수상 및 인정", recognitionsIntro: "Santos & Saucedo Abogados는 다음을 포함한 다양한 국제 기관으로부터 인정받았습니다", welcomeTitle: "환영합니다", welcomeSubtitle: "멕시코 최고의 로펌" },
   practices: { title: "업무 분야", subtitle: "전문 분야" },
-  industries: { title: "산업 그룹", subtitle: "전문 분야" },
-  germanDesk: { title: "German Desk", description: "34년 이상 Santos & Saucedo는 독일 기업들과 협력하여 멕시코에서 종합적인 법률 자문을 제공해 왔습니다.", subtitle: "멕시코 독일 투자 전문가" },
-  about: { title: "소개", vision: "비전", mission: "미션", values: "가치", integrity: "성실", excellence: "탁월함", commitment: "헌신", agility: "민첩성", diversityValue: "다양성" },
+  industries: { title: "산업 그룹", subtitle: "전문 분야" },  about: { title: "소개", vision: "비전", mission: "미션", values: "가치", integrity: "성실", excellence: "탁월함", commitment: "헌신", agility: "민첩성", diversityValue: "다양성" },
   footer: { address: "Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220, México", privacyNotice: "개인정보 처리방침", copyright: "© 2025 Santos & Saucedo Abogados 모든 권리 보유.", termsOfUse: "이용 약관", quickLinks: "빠른 링크", followUs: "팔로우", contactUs: "문의하기" },
   cta: { seeMore: "더 보기", contact: "연락", readMore: "더 읽기", viewProfile: "프로필 보기", downloadVCard: "vCard 다운로드", learnMore: "자세히 알아보기", subscribe: "구독", submit: "제출", back: "뒤로", next: "다음", previous: "이전" },
   team: { title: "우리 팀", partners: "파트너", ofCounsel: "고문 변호사", counsel: "법률 고문", associates: "어소시에이트", allAttorneys: "모든 변호사", searchPlaceholder: "변호사 검색...", filterByPractice: "업무 분야별 필터", filterByIndustry: "산업별 필터" },
@@ -451,12 +430,10 @@ const koCommon = {
 };
 
 const jaCommon = {
-  nav: { ourFirm: "当事務所について", attorneys: "弁護士", capabilities: "業務内容", publications: "出版物", career: "採用情報", contact: "お問い合わせ", probono: "プロボノ", diversity: "ダイバーシティ＆インクルージョン", partners: "パートナー", ofCounsel: "オブカウンセル", counsel: "カウンセル", associates: "アソシエイト", practices: "取扱分野", industryGroups: "産業グループ", desk: "German Desk", news: "ニュース", articles: "記事", newsletter: "ニュースレター", interns: "インターン", home: "ホーム", about: "概要", rankings: "ランキング", offices: "オフィス", events: "イベント", experience: "経験", terms: "利用規約", privacy: "プライバシー" },
+  nav: { ourFirm: "当事務所について", attorneys: "弁護士", capabilities: "業務内容", publications: "出版物", career: "採用情報", contact: "お問い合わせ", probono: "プロボノ", diversity: "ダイバーシティ＆インクルージョン", partners: "パートナー", ofCounsel: "オブカウンセル", counsel: "カウンセル", associates: "アソシエイト", practices: "取扱分野", industryGroups: "産業グループ", news: "ニュース", articles: "記事", newsletter: "ニュースレター", interns: "インターン", home: "ホーム", about: "概要", rankings: "ランキング", offices: "オフィス", events: "イベント", experience: "経験", terms: "利用規約", privacy: "プライバシー" },
   home: { heroTagline: "クライアントが必要とする場所へ", seeMore: "詳細を見る", experienceBanner: "Santos & Saucedo Abogadosは30年以上の経験を持っています", teamStats: "150名以上の弁護士チーム（パートナー22名、オブカウンセル6名、カウンセル12名...）", recognitionsTitle: "受賞・評価", recognitionsIntro: "Santos & Saucedo Abogadosは以下を含む様々な国際機関から評価されています", welcomeTitle: "ようこそ", welcomeSubtitle: "メキシコのリーディングファーム" },
   practices: { title: "取扱分野", subtitle: "専門分野" },
-  industries: { title: "産業グループ", subtitle: "専門セクター" },
-  germanDesk: { title: "German Desk", description: "34年以上にわたり、Santos & Saucedoはドイツ企業と協力し、メキシコで包括的な法的アドバイスを提供してきました。", subtitle: "メキシコへのドイツ投資の専門家" },
-  about: { title: "概要", vision: "ビジョン", mission: "ミッション", values: "価値観", integrity: "誠実さ", excellence: "卓越性", commitment: "コミットメント", agility: "機敏性", diversityValue: "多様性" },
+  industries: { title: "産業グループ", subtitle: "専門セクター" },  about: { title: "概要", vision: "ビジョン", mission: "ミッション", values: "価値観", integrity: "誠実さ", excellence: "卓越性", commitment: "コミットメント", agility: "機敏性", diversityValue: "多様性" },
   footer: { address: "Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220, México", privacyNotice: "プライバシーポリシー", copyright: "© 2025 Santos & Saucedo Abogados 無断複写・転載を禁じます。", termsOfUse: "利用規約", quickLinks: "クイックリンク", followUs: "フォロー", contactUs: "お問い合わせ" },
   cta: { seeMore: "詳細を見る", contact: "連絡", readMore: "続きを読む", viewProfile: "プロフィールを見る", downloadVCard: "vCardをダウンロード", learnMore: "詳しく見る", subscribe: "購読", submit: "送信", back: "戻る", next: "次へ", previous: "前へ" },
   team: { title: "チーム", partners: "パートナー", ofCounsel: "オブカウンセル", counsel: "カウンセル", associates: "アソシエイト", allAttorneys: "全弁護士", searchPlaceholder: "弁護士を検索...", filterByPractice: "取扱分野で絞り込み", filterByIndustry: "産業で絞り込み" },
@@ -470,12 +447,10 @@ const jaCommon = {
 };
 
 const arCommon = {
-  nav: { ourFirm: "شركتنا", attorneys: "المحامون", capabilities: "الخدمات", publications: "المنشورات", career: "الوظائف في S&S", contact: "اتصل بنا", probono: "خدمات مجانية", diversity: "التنوع والشمول", partners: "الشركاء", ofCounsel: "مستشار قانوني", counsel: "مستشار", associates: "محامون مساعدون", practices: "مجالات الممارسة", industryGroups: "مجموعات الصناعة", desk: "المكتب الألماني", news: "الأخبار", articles: "المقالات", newsletter: "النشرة الإخبارية", interns: "المتدربون", home: "الرئيسية", about: "من نحن", rankings: "التصنيفات", offices: "المكاتب", events: "الفعاليات", experience: "الخبرة", terms: "الشروط", privacy: "الخصوصية" },
+  nav: { ourFirm: "شركتنا", attorneys: "المحامون", capabilities: "الخدمات", publications: "المنشورات", career: "الوظائف في S&S", contact: "اتصل بنا", probono: "خدمات مجانية", diversity: "التنوع والشمول", partners: "الشركاء", ofCounsel: "مستشار قانوني", counsel: "مستشار", associates: "محامون مساعدون", practices: "مجالات الممارسة", industryGroups: "مجموعات الصناعة", news: "الأخبار", articles: "المقالات", newsletter: "النشرة الإخبارية", interns: "المتدربون", home: "الرئيسية", about: "من نحن", rankings: "التصنيفات", offices: "المكاتب", events: "الفعاليات", experience: "الخبرة", terms: "الشروط", privacy: "الخصوصية" },
   home: { heroTagline: "نذهب حيث يحتاجنا عملاؤنا", seeMore: "شاهد المزيد", experienceBanner: "تمتلك Santos & Saucedo Abogados أكثر من ثلاثة عقود من الخبرة", teamStats: "فريق من أكثر من 150 محامياً (22 شريكاً، 6 مستشارين قانونيين، 12 مستشاراً...)", recognitionsTitle: "التقديرات", recognitionsIntro: "حصلت Santos & Saucedo Abogados على اعتراف دولي من مؤسسات مختلفة بما في ذلك", welcomeTitle: "مرحباً بكم", welcomeSubtitle: "شركة رائدة في المكسيك" },
   practices: { title: "مجالات الممارسة", subtitle: "مجالات التخصص" },
-  industries: { title: "مجموعات الصناعة", subtitle: "القطاعات المتخصصة" },
-  germanDesk: { title: "المكتب الألماني", description: "لأكثر من 34 عاماً، عملت Santos & Saucedo مع الشركات الألمانية، وتقدم استشارات قانونية شاملة في المكسيك.", subtitle: "متخصصون في الاستثمارات الألمانية في المكسيك" },
-  about: { title: "من نحن", vision: "الرؤية", mission: "المهمة", values: "القيم", integrity: "النزاهة", excellence: "التميز", commitment: "الالتزام", agility: "المرونة", diversityValue: "التنوع" },
+  industries: { title: "مجموعات الصناعة", subtitle: "القطاعات المتخصصة" },  about: { title: "من نحن", vision: "الرؤية", mission: "المهمة", values: "القيم", integrity: "النزاهة", excellence: "التميز", commitment: "الالتزام", agility: "المرونة", diversityValue: "التنوع" },
   footer: { address: "Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220, México", privacyNotice: "إشعار الخصوصية", copyright: "© 2025 Santos & Saucedo Abogados جميع الحقوق محفوظة.", termsOfUse: "شروط الاستخدام", quickLinks: "روابط سريعة", followUs: "تابعنا", contactUs: "اتصل بنا" },
   cta: { seeMore: "شاهد المزيد", contact: "اتصل", readMore: "اقرأ المزيد", viewProfile: "عرض الملف الشخصي", downloadVCard: "تحميل vCard", learnMore: "اعرف المزيد", subscribe: "اشترك", submit: "إرسال", back: "رجوع", next: "التالي", previous: "السابق" },
   team: { title: "فريقنا", partners: "الشركاء", ofCounsel: "مستشار قانوني", counsel: "مستشار", associates: "محامون مساعدون", allAttorneys: "جميع المحامين", searchPlaceholder: "البحث عن محامٍ...", filterByPractice: "تصفية حسب الممارسة", filterByIndustry: "تصفية حسب الصناعة" },
@@ -489,12 +464,10 @@ const arCommon = {
 };
 
 const ruCommon = {
-  nav: { ourFirm: "О компании", attorneys: "Юристы", capabilities: "Услуги", publications: "Публикации", career: "Карьера в S&S", contact: "Контакты", probono: "Pro Bono", diversity: "Многообразие и инклюзивность", partners: "Партнёры", ofCounsel: "Of Counsel", counsel: "Консультанты", associates: "Ассоциаты", practices: "Практики", industryGroups: "Отраслевые группы", desk: "German Desk", news: "Новости", articles: "Статьи", newsletter: "Рассылка", interns: "Стажёры", home: "Главная", about: "О нас", rankings: "Рейтинги", offices: "Офисы", events: "Мероприятия", experience: "Опыт", terms: "Условия", privacy: "Конфиденциальность" },
+  nav: { ourFirm: "О компании", attorneys: "Юристы", capabilities: "Услуги", publications: "Публикации", career: "Карьера в S&S", contact: "Контакты", probono: "Pro Bono", diversity: "Многообразие и инклюзивность", partners: "Партнёры", ofCounsel: "Of Counsel", counsel: "Консультанты", associates: "Ассоциаты", practices: "Практики", industryGroups: "Отраслевые группы", news: "Новости", articles: "Статьи", newsletter: "Рассылка", interns: "Стажёры", home: "Главная", about: "О нас", rankings: "Рейтинги", offices: "Офисы", events: "Мероприятия", experience: "Опыт", terms: "Условия", privacy: "Конфиденциальность" },
   home: { heroTagline: "МЫ ИДЁМ ТУДА, ГДЕ НУЖНЫ НАШИМ КЛИЕНТАМ", seeMore: "Подробнее", experienceBanner: "Santos & Saucedo Abogados имеет более чем тридцатилетний опыт", teamStats: "Команда из более чем 150 юристов (22 партнёра, 6 of counsel, 12 консультантов...)", recognitionsTitle: "ПРИЗНАНИЕ", recognitionsIntro: "Santos & Saucedo Abogados получила международное признание от различных организаций, включая", welcomeTitle: "Добро пожаловать", welcomeSubtitle: "Ведущая фирма в Мексике" },
   practices: { title: "Практики", subtitle: "Области специализации" },
-  industries: { title: "Отраслевые группы", subtitle: "Специализированные секторы" },
-  germanDesk: { title: "German Desk", description: "Более 34 лет Santos & Saucedo работает с немецкими компаниями, предоставляя комплексные юридические консультации в Мексике.", subtitle: "Специалисты по немецким инвестициям в Мексике" },
-  about: { title: "О нас", vision: "Видение", mission: "Миссия", values: "Ценности", integrity: "Честность", excellence: "Превосходство", commitment: "Приверженность", agility: "Гибкость", diversityValue: "Многообразие" },
+  industries: { title: "Отраслевые группы", subtitle: "Специализированные секторы" },  about: { title: "О нас", vision: "Видение", mission: "Миссия", values: "Ценности", integrity: "Честность", excellence: "Превосходство", commitment: "Приверженность", agility: "Гибкость", diversityValue: "Многообразие" },
   footer: { address: "Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220, México", privacyNotice: "Политика конфиденциальности", copyright: "© 2025 Santos & Saucedo Abogados Все права защищены.", termsOfUse: "Условия использования", quickLinks: "Быстрые ссылки", followUs: "Подписывайтесь", contactUs: "Связаться с нами" },
   cta: { seeMore: "Подробнее", contact: "Связаться", readMore: "Читать далее", viewProfile: "Просмотреть профиль", downloadVCard: "Скачать vCard", learnMore: "Узнать больше", subscribe: "Подписаться", submit: "Отправить", back: "Назад", next: "Далее", previous: "Предыдущий" },
   team: { title: "Наша команда", partners: "Партнёры", ofCounsel: "Of Counsel", counsel: "Консультанты", associates: "Ассоциаты", allAttorneys: "Все юристы", searchPlaceholder: "Поиск юриста...", filterByPractice: "Фильтр по практике", filterByIndustry: "Фильтр по отрасли" },
@@ -508,12 +481,10 @@ const ruCommon = {
 };
 
 const frCommon = {
-  nav: { ourFirm: "Notre Cabinet", attorneys: "Avocats", capabilities: "Compétences", publications: "Publications", career: "Carrière chez S&S", contact: "Contact", probono: "Pro Bono", diversity: "Diversité et Inclusion", partners: "Associés", ofCounsel: "Of Counsel", counsel: "Counsel", associates: "Collaborateurs", practices: "Domaines d'expertise", industryGroups: "Groupes sectoriels", desk: "German Desk", news: "Actualités", articles: "Articles", newsletter: "Newsletter", interns: "Stagiaires", home: "Accueil", about: "À propos", rankings: "Classements", offices: "Bureaux", events: "Événements", experience: "Expérience", terms: "Conditions", privacy: "Confidentialité" },
+  nav: { ourFirm: "Notre Cabinet", attorneys: "Avocats", capabilities: "Compétences", publications: "Publications", career: "Carrière chez S&S", contact: "Contact", probono: "Pro Bono", diversity: "Diversité et Inclusion", partners: "Associés", ofCounsel: "Of Counsel", counsel: "Counsel", associates: "Collaborateurs", practices: "Domaines d'expertise", industryGroups: "Groupes sectoriels", news: "Actualités", articles: "Articles", newsletter: "Newsletter", interns: "Stagiaires", home: "Accueil", about: "À propos", rankings: "Classements", offices: "Bureaux", events: "Événements", experience: "Expérience", terms: "Conditions", privacy: "Confidentialité" },
   home: { heroTagline: "NOUS ALLONS LÀ OÙ NOS CLIENTS ONT BESOIN DE NOUS", seeMore: "En savoir plus", experienceBanner: "Santos & Saucedo Abogados possède plus de trois décennies d'expérience", teamStats: "Équipe de plus de 150 avocats (22 associés, 6 of counsel, 12 counsel...)", recognitionsTitle: "DISTINCTIONS", recognitionsIntro: "Santos & Saucedo Abogados a été reconnue au niveau international par diverses institutions, notamment", welcomeTitle: "Bienvenue", welcomeSubtitle: "Un cabinet leader au Mexique" },
   practices: { title: "Domaines d'expertise", subtitle: "Domaines de spécialisation" },
-  industries: { title: "Groupes sectoriels", subtitle: "Secteurs spécialisés" },
-  germanDesk: { title: "German Desk", description: "Depuis plus de 34 ans, Santos & Saucedo travaille avec des entreprises allemandes, offrant des conseils juridiques complets au Mexique.", subtitle: "Spécialistes des investissements allemands au Mexique" },
-  about: { title: "À propos de nous", vision: "Vision", mission: "Mission", values: "Valeurs", integrity: "Intégrité", excellence: "Excellence", commitment: "Engagement", agility: "Agilité", diversityValue: "Diversité" },
+  industries: { title: "Groupes sectoriels", subtitle: "Secteurs spécialisés" },  about: { title: "À propos de nous", vision: "Vision", mission: "Mission", values: "Valeurs", integrity: "Intégrité", excellence: "Excellence", commitment: "Engagement", agility: "Agilité", diversityValue: "Diversité" },
   footer: { address: "Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220, México", privacyNotice: "Politique de confidentialité", copyright: "© 2025 Santos & Saucedo Abogados Tous droits réservés.", termsOfUse: "Conditions d'utilisation", quickLinks: "Liens rapides", followUs: "Suivez-nous", contactUs: "Contactez-nous" },
   cta: { seeMore: "En savoir plus", contact: "Contacter", readMore: "Lire la suite", viewProfile: "Voir le profil", downloadVCard: "Télécharger vCard", learnMore: "En savoir plus", subscribe: "S'abonner", submit: "Envoyer", back: "Retour", next: "Suivant", previous: "Précédent" },
   team: { title: "Notre équipe", partners: "Associés", ofCounsel: "Of Counsel", counsel: "Counsel", associates: "Collaborateurs", allAttorneys: "Tous les avocats", searchPlaceholder: "Rechercher un avocat...", filterByPractice: "Filtrer par expertise", filterByIndustry: "Filtrer par secteur" },
@@ -527,12 +498,10 @@ const frCommon = {
 };
 
 const itCommon = {
-  nav: { ourFirm: "Il Nostro Studio", attorneys: "Avvocati", capabilities: "Competenze", publications: "Pubblicazioni", career: "Carriera in S&S", contact: "Contatti", probono: "Pro Bono", diversity: "Diversità e Inclusione", partners: "Soci", ofCounsel: "Of Counsel", counsel: "Counsel", associates: "Associati", practices: "Aree di Pratica", industryGroups: "Gruppi Settoriali", desk: "German Desk", news: "Notizie", articles: "Articoli", newsletter: "Newsletter", interns: "Stagisti", home: "Home", about: "Chi Siamo", rankings: "Classifiche", offices: "Uffici", events: "Eventi", experience: "Esperienza", terms: "Termini", privacy: "Privacy" },
+  nav: { ourFirm: "Il Nostro Studio", attorneys: "Avvocati", capabilities: "Competenze", publications: "Pubblicazioni", career: "Carriera in S&S", contact: "Contatti", probono: "Pro Bono", diversity: "Diversità e Inclusione", partners: "Soci", ofCounsel: "Of Counsel", counsel: "Counsel", associates: "Associati", practices: "Aree di Pratica", industryGroups: "Gruppi Settoriali", news: "Notizie", articles: "Articoli", newsletter: "Newsletter", interns: "Stagisti", home: "Home", about: "Chi Siamo", rankings: "Classifiche", offices: "Uffici", events: "Eventi", experience: "Esperienza", terms: "Termini", privacy: "Privacy" },
   home: { heroTagline: "ANDIAMO DOVE I NOSTRI CLIENTI HANNO BISOGNO DI NOI", seeMore: "Scopri di più", experienceBanner: "Santos & Saucedo Abogados ha più di tre decenni di esperienza", teamStats: "Team di oltre 150 avvocati (22 soci, 6 of counsel, 12 counsel...)", recognitionsTitle: "RICONOSCIMENTI", recognitionsIntro: "Santos & Saucedo Abogados è stata riconosciuta a livello internazionale da varie istituzioni tra cui", welcomeTitle: "Benvenuti", welcomeSubtitle: "Uno studio leader in Messico" },
   practices: { title: "Aree di Pratica", subtitle: "Aree di Specializzazione" },
-  industries: { title: "Gruppi Settoriali", subtitle: "Settori Specializzati" },
-  germanDesk: { title: "German Desk", description: "Da oltre 34 anni, Santos & Saucedo collabora con aziende tedesche, fornendo consulenza legale completa in Messico.", subtitle: "Specialisti in investimenti tedeschi in Messico" },
-  about: { title: "Chi Siamo", vision: "Visione", mission: "Missione", values: "Valori", integrity: "Integrità", excellence: "Eccellenza", commitment: "Impegno", agility: "Agilità", diversityValue: "Diversità" },
+  industries: { title: "Gruppi Settoriali", subtitle: "Settori Specializzati" },  about: { title: "Chi Siamo", vision: "Visione", mission: "Missione", values: "Valori", integrity: "Integrità", excellence: "Eccellenza", commitment: "Impegno", agility: "Agilità", diversityValue: "Diversità" },
   footer: { address: "Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220, México", privacyNotice: "Informativa sulla Privacy", copyright: "© 2025 Santos & Saucedo Abogados Tutti i diritti riservati.", termsOfUse: "Termini di Utilizzo", quickLinks: "Link Rapidi", followUs: "Seguici", contactUs: "Contattaci" },
   cta: { seeMore: "Scopri di più", contact: "Contatta", readMore: "Leggi di più", viewProfile: "Vedi Profilo", downloadVCard: "Scarica vCard", learnMore: "Scopri di più", subscribe: "Iscriviti", submit: "Invia", back: "Indietro", next: "Avanti", previous: "Precedente" },
   team: { title: "Il Nostro Team", partners: "Soci", ofCounsel: "Of Counsel", counsel: "Counsel", associates: "Associati", allAttorneys: "Tutti gli Avvocati", searchPlaceholder: "Cerca avvocato...", filterByPractice: "Filtra per Area", filterByIndustry: "Filtra per Settore" },

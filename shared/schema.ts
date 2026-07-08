@@ -335,7 +335,6 @@ export const practiceAreas = [
   { value: "telecommunications-media-technology", en: "Telecommunications, Media & Technology", es: "Telecomunicaciones, Medios y Tecnología" },
   { value: "environmental", en: "Environmental", es: "Ambiental" },
   { value: "administrative-law", en: "Administrative Law", es: "Derecho Administrativo" },
-  { value: "german-desk", en: "German Desk", es: "Desk Alemán" },
 ] as const;
 
 // ============================================

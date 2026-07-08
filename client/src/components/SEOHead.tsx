@@ -441,35 +441,7 @@ const seoConfig: Record<string, SEOConfig> = {
       it: "Santos & Saucedo è impegnata nei servizi legali pro bono da oltre 35 anni. Supportiamo ONG, cause per i diritti umani e accesso alla giustizia.",
     },
     path: "/pro-bono",
-  },
-  germanDesk: {
-    title: {
-      en: "German Desk | Santos & Saucedo",
-      es: "German Desk | Santos & Saucedo",
-      de: "German Desk | Santos & Saucedo",
-      zh: "德国服务台 | Santos & Saucedo",
-      ko: "German Desk | Santos & Saucedo",
-      ja: "ジャーマンデスク | Santos & Saucedo",
-      ar: "المكتب الألماني | Santos & Saucedo",
-      ru: "German Desk | Santos & Saucedo",
-      fr: "German Desk | Santos & Saucedo",
-      it: "German Desk | Santos & Saucedo",
-    },
-    description: {
-      en: "Over 34 years serving German and Austrian companies in Mexico. Our German Desk provides specialized legal services with attorneys educated in Germany and Austria.",
-      es: "Más de 34 años sirviendo a empresas alemanas y austriacas en México. Nuestro German Desk ofrece servicios legales especializados con abogados educados en Alemania y Austria.",
-      de: "Seit über 34 Jahren betreuen wir deutsche und österreichische Unternehmen in Mexiko. Unser German Desk bietet spezialisierte Rechtsdienstleistungen mit in Deutschland und Österreich ausgebildeten Anwälten.",
-      zh: "为在墨西哥的德国和奥地利公司服务超过34年。我们的德国服务台提供由德国和奥地利培训的律师提供的专业法律服务。",
-      ko: "34년 이상 멕시코에서 독일 및 오스트리아 기업에 서비스를 제공하고 있습니다. German Desk는 독일과 오스트리아에서 교육받은 변호사들이 전문 법률 서비스를 제공합니다.",
-      ja: "メキシコでドイツ・オーストリア企業に34年以上のサービスを提供。ジャーマンデスクでは、ドイツ・オーストリアで教育を受けた弁護士が専門的な法律サービスを提供します。",
-      ar: "أكثر من 34 عامًا في خدمة الشركات الألمانية والنمساوية في المكسيك. يقدم المكتب الألماني خدمات قانونية متخصصة مع محامين متعلمين في ألمانيا والنمسا.",
-      ru: "Более 34 лет обслуживаем немецкие и австрийские компании в Мексике. Наш German Desk предоставляет специализированные юридические услуги с юристами, получившими образование в Германии и Австрии.",
-      fr: "Plus de 34 ans au service des entreprises allemandes et autrichiennes au Mexique. Notre German Desk offre des services juridiques spécialisés avec des avocats formés en Allemagne et en Autriche.",
-      it: "Oltre 34 anni al servizio di aziende tedesche e austriache in Messico. Il nostro German Desk offre servizi legali specializzati con avvocati formati in Germania e Austria.",
-    },
-    path: "/german-desk",
-  },
-  articles: {
+  },  articles: {
     title: {
       en: "Articles | Santos & Saucedo",
       es: "Artículos | Santos & Saucedo",

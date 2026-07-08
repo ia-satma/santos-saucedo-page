@@ -964,15 +964,6 @@ html, body {
   animation: breathing 3s ease-in-out infinite;
 }
 
-@keyframes german-desk-dash {
-  0% { stroke-dashoffset: 0; }
-  100% { stroke-dashoffset: 20; }
-}
-
-.german-desk-connector-line {
-  animation: german-desk-dash 1.5s linear infinite;
-}
-
 /* Santos & Saucedo editorial light surfaces */
 .editorial-page-hero {
   position: relative;

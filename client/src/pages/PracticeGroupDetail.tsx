@@ -105,9 +105,6 @@ const practiceRankingsData: Record<string, PracticeRanking[]> = {
     { publication: "Chambers Latin America", ranking: "Ranked", rankingEs: "Clasificado", year: "2024", badgeType: "recommended" },
     { publication: "Legal 500", ranking: "Tier 3", rankingEs: "Tier 3", year: "2024", badgeType: "tier" },
   ],
-  "german-desk": [
-    { publication: "Legal 500", ranking: "Recommended", rankingEs: "Recomendado", year: "2024", badgeType: "recommended" },
-  ],
 };
 
 const practiceAreaRoleMapping: Record<string, string[]> = {
@@ -128,7 +125,6 @@ const practiceAreaRoleMapping: Record<string, string[]> = {
   "telecommunications-media-technology": ["Telecommunications, Media & Technology"],
   "environmental": ["Environmental"],
   "administrative-law": ["Administrative Law"],
-  "german-desk": ["German Desk"],
 };
 
 interface TranslatedMatterCardProps {
