@@ -40,7 +40,7 @@ export function LeadParagraph({
         </p>
       )}
       <p
-        className={`text-xl md:text-2xl font-heading font-light leading-relaxed text-foreground ${dropCapClasses}`}
+        className={`text-xl md:text-2xl font-sans font-light leading-relaxed text-foreground ${dropCapClasses}`}
       >
         {firstParagraph}
       </p>

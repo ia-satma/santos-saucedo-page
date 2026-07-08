@@ -157,7 +157,7 @@ export default function VisionSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-lg md:text-xl font-serif text-muted-foreground leading-relaxed mb-16"
+          className="text-lg md:text-xl font-sans text-muted-foreground leading-relaxed mb-16"
           data-testid="text-vision-description"
         >
           {t.text}
@@ -188,7 +188,7 @@ export default function VisionSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="text-lg font-serif text-muted-foreground leading-relaxed"
+          className="text-lg font-sans text-muted-foreground leading-relaxed"
           data-testid="text-vision-subtext"
         >
           {t.subtext}

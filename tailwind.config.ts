@@ -88,9 +88,9 @@ export default {
         heading: ["var(--font-heading)"],
         support: ["var(--font-support)"],
         mono: ["var(--font-mono)"],
-        publico: ["'Playfair Display'", "Georgia", "serif"],
-        optima: ["'Optima'", "'Lato'", "Calibri", "sans-serif"],
-        geomanist: ["'Geomanist'", "'Century Gothic'", "'Lato'", "sans-serif"],
+        publico: ["'Baanoo'", "Georgia", "serif"],
+        optima: ["'Outfit'", "'Segoe UI'", "Arial", "sans-serif"],
+        geomanist: ["'Outfit'", "'Segoe UI'", "Arial", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {

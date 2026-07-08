@@ -516,7 +516,7 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
 
             <section className="max-w-3xl mx-auto text-center py-10 border-t border-b border-border" data-testid="section-quote">
               <div className="font-heading text-6xl text-[#202058] opacity-40 mb-4 leading-none">&ldquo;</div>
-              <blockquote className="font-heading font-light text-lg md:text-xl text-foreground leading-relaxed mb-8 not-italic" style={{ fontStyle: "normal" }}>
+              <blockquote className="font-sans font-light text-lg md:text-xl text-foreground leading-relaxed mb-8 not-italic" style={{ fontStyle: "normal" }}>
                 {t.quoteText}
               </blockquote>
               <div className="w-12 h-px bg-[#202058] mx-auto mb-4" />
