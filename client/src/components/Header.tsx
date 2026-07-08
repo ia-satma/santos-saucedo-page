@@ -11,8 +11,9 @@ import LanguageSelector from "./LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import type { TeamMember, PracticeGroup, IndustryGroup, News, LanguageCode } from "@shared/schema";
-import logoColor from "@assets/logo-ss-color.png";
-import logoWhite from "@assets/logo-ss-white.png";
+
+const logoWhiteHorizontal =
+  "https://api.pcloud.com/getpubthumb?code=XZPrHr5Zs9CQA4pOqy8t3K6AVQTbe7dJP4W7&fileid=90118964062&size=1200x420&type=png";
 
 interface SearchResults {
   team: TeamMember[];
@@ -298,7 +299,7 @@ export default function Header() {
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
           isScrolled
-            ? "bg-background/95 backdrop-blur-md shadow-md py-3"
+            ? "bg-[#202058]/96 backdrop-blur-md shadow-md py-3"
             : "bg-transparent py-6"
         )}
         data-testid="header"
@@ -311,15 +312,14 @@ export default function Header() {
             aria-label={`Santos & Saucedo - ${t('nav.home')}`}
           >
             <img
-              src={isScrolled ? logoColor : logoWhite}
+              src={logoWhiteHorizontal}
               alt="Santos & Saucedo"
               className={cn(
                 "transition-all duration-300 flex-shrink-0 object-contain",
                 isScrolled
-                  ? "h-8 sm:h-9 md:h-11 w-auto max-w-[180px] sm:max-w-[220px] md:max-w-[280px] dark:brightness-0 dark:invert"
-                  : "h-9 sm:h-10 md:h-12 w-auto max-w-[180px] sm:max-w-[240px] md:max-w-[320px]"
+                  ? "h-7 sm:h-8 md:h-9 w-auto max-w-[180px] sm:max-w-[220px] md:max-w-[260px]"
+                  : "h-8 sm:h-9 md:h-10 w-auto max-w-[190px] sm:max-w-[240px] md:max-w-[300px]"
               )}
-              style={{ imageRendering: "crisp-edges" }}
               data-testid="img-logo"
             />
           </Link>
@@ -344,10 +344,10 @@ export default function Header() {
                   className={cn(
                     "inline-flex items-center gap-1 px-3 py-2 text-sm font-medium tracking-wide uppercase whitespace-nowrap transition-colors duration-200",
                     isScrolled
-                      ? "text-foreground hover:text-primary"
+                      ? "text-white/88 hover:text-white"
                       : "text-white/90 hover:text-white",
-                    location === item.href && "text-primary",
-                    activeDropdown === item.id && (isScrolled ? "text-primary" : "text-white")
+                    location === item.href && (isScrolled ? "text-white" : "text-primary"),
+                    activeDropdown === item.id && "text-white"
                   )}
                   data-testid={`link-nav-${item.id}`}
                   aria-current={location === item.href ? "page" : undefined}
@@ -358,7 +358,7 @@ export default function Header() {
                   {item.subItems && (
                     <ChevronDown
                       className={cn(
-                        "w-3.5 h-3.5 transition-transform duration-200 text-[#202058]",
+                        "w-3.5 h-3.5 transition-transform duration-200 text-white/80",
                         activeDropdown === item.id && "rotate-180"
                       )}
                       aria-hidden="true"
@@ -373,7 +373,7 @@ export default function Header() {
                       "absolute top-full left-0 mt-2 min-w-[220px] py-1.5 z-50",
                       "border shadow-2xl backdrop-blur-xl overflow-hidden",
                       isScrolled
-                        ? "bg-background border-border"
+                        ? "bg-[#171735]/95 border-white/10"
                         : "bg-black/75 border-white/10"
                     )}
                     role="menu"
@@ -390,9 +390,7 @@ export default function Header() {
                           "flex items-center px-5 py-2.5 text-sm font-medium uppercase tracking-wide",
                           "border-l-2 border-transparent transition-all duration-150",
                           "hover:border-[#202058]",
-                          isScrolled
-                            ? "text-foreground hover:text-[#202058] hover:bg-muted"
-                            : "text-white/80 hover:text-white hover:bg-white/8"
+                          "text-white/80 hover:text-white hover:bg-white/8"
                         )}
                         role="menuitem"
                         data-testid={`link-subnav-${subItem.id}`}
@@ -413,7 +411,7 @@ export default function Header() {
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  isScrolled ? "text-[#202058]" : "text-white/90 hover:text-white"
+                  isScrolled ? "text-white/90 hover:text-white hover:bg-white/10" : "text-white/90 hover:text-white"
                 )}
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 data-testid="button-search"
@@ -536,7 +534,7 @@ export default function Header() {
               size="icon"
               className={cn(
                 "lg:hidden",
-                isScrolled ? "text-[#202058]" : "text-white/90 hover:text-white"
+                isScrolled ? "text-white/90 hover:text-white hover:bg-white/10" : "text-white/90 hover:text-white"
               )}
               onClick={() => setIsMobileMenuOpen(true)}
               data-testid="button-mobile-menu"
@@ -562,10 +560,9 @@ export default function Header() {
           <div className="flex flex-col h-full overflow-hidden">
             <div className="flex items-center justify-between p-4 sm:p-6">
               <img
-                src={logoWhite}
+                src={logoWhiteHorizontal}
                 alt="Santos & Saucedo"
-                className="h-8 sm:h-10 w-auto max-w-[180px] sm:max-w-[220px] object-contain flex-shrink-0"
-                style={{ imageRendering: "crisp-edges" }}
+                className="h-8 sm:h-10 w-auto max-w-[210px] object-contain flex-shrink-0"
                 data-testid="img-logo-mobile"
               />
               <div className="flex items-center gap-2">
