@@ -35,7 +35,7 @@ const content: Record<LanguageCode, ContentItem> = {
     text: "Santos & Saucedo Abogados possède plus de trois décennies d'expérience dans la fourniture de services juridiques de haute qualité.",
   },
   it: {
-    text: "Santos & Saucedo Abogados vanta oltre tre decenni di esperienza nella fornitura di servizi legali di alta qualité.",
+    text: "Santos & Saucedo Abogados vanta oltre tre decenni di esperienza nella fornitura di servizi legali di alta qualità.",
   },
 };
 
