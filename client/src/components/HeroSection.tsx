@@ -386,15 +386,17 @@ export default function HeroSection({ language }: HeroSectionProps) {
       )}
 
       {/* Hero content — all in one centred block */}
-      <div className="relative z-10 flex flex-col items-center text-center px-6 gap-4 -mt-12 md:-mt-16">
+      <div className="relative z-10 flex flex-col items-center text-center px-6 gap-7 sm:gap-8 md:gap-9 -mt-12 md:-mt-16">
         <motion.p
           initial={{ opacity: 0, y: -10 }}
           animate={isVisible ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-white/90 text-xs sm:text-sm tracking-[0.3em] uppercase font-sans"
+          className="inline-flex w-full max-w-[760px] items-center justify-center gap-4 text-white/90 text-[0.7rem] sm:text-xs md:text-sm tracking-[0.32em] uppercase font-sans leading-relaxed"
           data-testid="text-hero-tagline"
         >
-          {t.tagline}
+          <span className="hidden sm:block h-px w-10 md:w-16 bg-white/40" aria-hidden="true" />
+          <span>{t.tagline}</span>
+          <span className="hidden sm:block h-px w-10 md:w-16 bg-white/40" aria-hidden="true" />
         </motion.p>
 
         <motion.img
@@ -412,7 +414,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
           initial={{ opacity: 0, y: 10 }}
           animate={isVisible ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.65 }}
-          className="text-white/70 text-xs tracking-[0.2em] uppercase"
+          className="inline-flex max-w-[640px] items-center justify-center border-y border-white/20 bg-white/[0.035] px-5 sm:px-7 py-2.5 text-white/80 text-[0.68rem] sm:text-xs tracking-[0.24em] uppercase leading-relaxed backdrop-blur-[1px]"
           data-testid="text-hero-subheadline"
         >
           {subheadline}
