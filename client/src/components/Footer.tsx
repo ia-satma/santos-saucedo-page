@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { SiteContent } from "@shared/schema";
 import esrLogo from "@assets/image_1764710915519.png";
-import footerLogo from "@assets/Recurso_2_1764819007853.png";
+import footerLogo from "@assets/logo-ss-white.png";
 
 export default function Footer() {
   const { language } = useLanguage();
@@ -625,7 +625,7 @@ export default function Footer() {
             <img
               src={footerLogo}
               alt="Santos & Saucedo"
-              className="h-8 mb-6"
+              className="h-10 w-auto mb-6"
               data-testid="img-footer-logo"
             />
             <p className="text-white/70 text-sm leading-relaxed" data-testid="text-footer-description">
