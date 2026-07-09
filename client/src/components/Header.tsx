@@ -11,8 +11,8 @@ import LanguageSelector from "./LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import type { TeamMember, PracticeGroup, IndustryGroup, News, LanguageCode } from "@shared/schema";
-import logoColor from "@assets/logo-ss-color.png";
-import logoWhiteHorizontal from "@assets/LOGO-BLANCO-SS-H2.svg";
+import logoColor from "@assets/logos-v2/SantosSaucedo_Logo-Principal.png";
+import logoWhiteHorizontal from "@assets/logos-v2/SantosSaucedo_Logo-Variante-Blanca.png";
 
 interface SearchResults {
   team: TeamMember[];

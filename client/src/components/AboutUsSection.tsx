@@ -274,7 +274,7 @@ export default function AboutUsSection() {
           </h2>
           <div className="flex items-center justify-center gap-3">
             <div className="w-10 h-px bg-primary" />
-            <div className="w-2 h-2 bg-primary rotate-45" />
+            <div className="w-2 h-2 bg-brand rotate-45" />
             <div className="w-10 h-px bg-primary" />
           </div>
         </motion.div>
@@ -318,7 +318,7 @@ export default function AboutUsSection() {
               </p>
               {/* Bottom accent */}
               <div className="mt-auto pt-4 border-t border-[#202058]/10">
-                <div className="w-10 h-0.5 bg-[#202058]/70 group-hover:w-20 transition-all duration-500" />
+                <div className="w-10 h-0.5 bg-brand group-hover:w-20 transition-all duration-500" />
               </div>
             </motion.div>
           ))}
@@ -333,7 +333,7 @@ export default function AboutUsSection() {
           className="text-center mb-12"
           data-testid="subsection-values"
         >
-          <div className="w-6 h-px bg-primary mb-4 mx-auto" />
+          <div className="w-6 h-px bg-brand mb-4 mx-auto" />
           <h3
             className="font-heading font-light uppercase tracking-[0.12em] text-2xl md:text-3xl text-foreground leading-none"
             data-testid="text-values-title"
@@ -364,7 +364,7 @@ export default function AboutUsSection() {
                 <div className="w-16 h-16 rounded-full bg-[#202058] shadow-[0_12px_28px_rgba(32,32,88,0.2)] flex items-center justify-center mt-2 transition-transform duration-300 group-hover:scale-110">
                   <Icon className="w-7 h-7 text-white" strokeWidth={1.8} />
                 </div>
-                <div className="w-7 h-0.5 bg-[#202058]/60 group-hover:w-10 transition-all duration-500" />
+                <div className="w-7 h-0.5 bg-brand group-hover:w-10 transition-all duration-500" />
                 <span
                   className="font-heading font-light uppercase tracking-[0.1em] text-lg md:text-xl text-[#111126] leading-none"
                   data-testid={`text-value-${i}`}

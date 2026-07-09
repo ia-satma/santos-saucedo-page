@@ -177,8 +177,8 @@ export default function PracticesSection() {
             className="lg:w-1/3 mb-12 lg:mb-0"
           >
             <div className="flex flex-col">
-              {/* Red rule */}
-              <div className="w-12 h-0.5 bg-[#202058] mb-6" />
+              {/* Brand accent rule */}
+              <div className="w-12 h-0.5 bg-brand mb-6" />
 
               {/* Serif section heading — Playfair Display */}
               <h2
@@ -235,7 +235,7 @@ export default function PracticesSection() {
               <motion.div key={area.id} variants={itemVariants}>
                 <Link
                   href={`/practice-groups/${area.slug}`}
-                  className="group flex items-center gap-6 px-5 py-5 border-b border-[#202058]/10 border-l-2 border-l-transparent hover:border-l-[#202058] hover:bg-[#202058]/[0.045] transition-all duration-200 h-full"
+                  className="group flex items-center gap-6 px-5 py-5 border-b border-[#202058]/10 border-l-2 border-l-transparent hover:border-l-brand hover:bg-[#202058]/[0.045] transition-all duration-200 h-full"
                   data-testid={`link-practice-${area.id}`}
                 >
                   <span

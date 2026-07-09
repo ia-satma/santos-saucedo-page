@@ -89,6 +89,8 @@ blockquote {
   --muted-foreground: 240 4% 39%;
   --accent: 240 5% 96%;
   --accent-foreground: 240 5% 10%;
+  --brand: 80 81% 58%;             /* #B2EB3E — lima acento (logo V2)  */
+  --brand-foreground: 240 47% 16%; /* navy para texto sobre lima      */
   --destructive: 0 72% 45%;
   --destructive-foreground: 0 0% 98%;
   --input: 240 6% 84%;
@@ -179,6 +181,8 @@ blockquote {
   --muted-foreground: 38 14% 68%;
   --accent: 240 22% 22%;
   --accent-foreground: 42 24% 90%;
+  --brand: 80 80% 60%;             /* lima acento — modo oscuro       */
+  --brand-foreground: 240 40% 12%;
   --destructive: 0 70% 45%;
   --destructive-foreground: 0 0% 98%;
   --input: 0 0% 25%;

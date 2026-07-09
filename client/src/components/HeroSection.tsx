@@ -6,7 +6,7 @@ import { Link } from "wouter";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import type { SiteContent, News, LanguageCode } from "@shared/schema";
-import logoWhiteVertical from "@assets/LOGO-BLANCO-SS-V-2.svg";
+import logoWhiteWordmark from "@assets/logos-v2/SantosSaucedo_Logo-Variante-Blanca.png";
 
 interface HeroSectionProps {
   language: LanguageCode;
@@ -114,7 +114,7 @@ function NewsItemTranslated({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 1 + index * 0.15 }}
-      className="group pl-3 border-l-2 border-[#202058]"
+      className="group pl-3 border-l-2 border-brand"
       data-testid={`card-news-${item.id}`}
     >
       {inner}
@@ -143,7 +143,7 @@ function NewsPanel({ language, news }: { language: LanguageCode; news: News[] })
       >
         {/* Header */}
         <div className="flex items-center gap-3">
-          <div className="w-4 h-px bg-[#202058]" aria-hidden="true" />
+          <div className="w-4 h-px bg-brand" aria-hidden="true" />
           <h3
             className="text-[10px] font-geomanist tracking-[0.3em] uppercase text-white/50"
             data-testid="text-news-header"
@@ -209,98 +209,98 @@ const heroContent: Record<LanguageCode, HeroContent> = {
     videoFallback: "Tu navegador no soporta el elemento de video.",
   },
   de: {
-    tagline: "FÜHRENDE ANWALTSKANZLEI IN MEXIKO",
+    tagline: "ARBEITSRECHTSKANZLEI IN NUEVO LEÓN",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "Erstklassige Unternehmensrechtsberatung seit 1986",
+    subheadline: "Über 35 Jahre Arbeitsrechtsberatung",
     scroll: "scrollen",
     ctaContact: "KONTAKT",
     ctaConsult: "BERATUNG VEREINBAREN",
-    heroVideoLabel: "Luftaufnahme der Büros von Santos & Saucedo in Mexiko-Stadt",
-    heroImageLabel: "Hauptgebäude von Santos & Saucedo",
+    heroVideoLabel: "Santos & Saucedo Abogados",
+    heroImageLabel: "Santos & Saucedo Abogados",
     ariaLabel: "Hauptbegrüßungsbereich",
     videoFallback: "Ihr Browser unterstützt das Video-Element nicht.",
   },
   zh: {
-    tagline: "墨西哥领先律师事务所",
+    tagline: "新莱昂州劳动法律师事务所",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "自1986年以来的卓越企业法律服务",
+    subheadline: "35 年以上劳动法律咨询经验",
     scroll: "滚动",
     ctaContact: "联系我们",
     ctaConsult: "预约咨询",
-    heroVideoLabel: "Santos & Saucedo 墨西哥城办公室鸟瞰图",
-    heroImageLabel: "Santos & Saucedo 总部大楼",
+    heroVideoLabel: "Santos & Saucedo Abogados",
+    heroImageLabel: "Santos & Saucedo Abogados",
     ariaLabel: "主要欢迎区域",
     videoFallback: "您的浏览器不支持视频元素。",
   },
   ko: {
-    tagline: "멕시코 최고의 로펌",
+    tagline: "누에보레온 노동법 로펌",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "1986년부터 이어온 기업 법률 서비스의 우수성",
+    subheadline: "35년 이상의 노동법 자문 경험",
     scroll: "스크롤",
     ctaContact: "문의하기",
     ctaConsult: "상담 예약",
-    heroVideoLabel: "멕시코시티 Santos & Saucedo 사무실 항공 전경",
-    heroImageLabel: "Santos & Saucedo 본사 건물",
+    heroVideoLabel: "Santos & Saucedo Abogados",
+    heroImageLabel: "Santos & Saucedo Abogados",
     ariaLabel: "메인 환영 섹션",
     videoFallback: "브라우저가 비디오 요소를 지원하지 않습니다.",
   },
   ja: {
-    tagline: "メキシコをリードする法律事務所",
+    tagline: "ヌエボ・レオン州の労働法律事務所",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "1986年以来の企業法務における卓越性",
+    subheadline: "35年以上の労働法アドバイザリー",
     scroll: "スクロール",
     ctaContact: "お問い合わせ",
     ctaConsult: "相談を予約する",
-    heroVideoLabel: "メキシコシティにあるSantos & Saucedoオフィスの空撮映像",
-    heroImageLabel: "Santos & Saucedo 本社ビル",
+    heroVideoLabel: "Santos & Saucedo Abogados",
+    heroImageLabel: "Santos & Saucedo Abogados",
     ariaLabel: "メインウェルカムセクション",
     videoFallback: "お使いのブラウザはビデオ要素をサポートしていません。",
   },
   ar: {
-    tagline: "شركة محاماة رائدة في المكسيك",
+    tagline: "شركة محاماة متخصصة في قانون العمل في نويفو ليون",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "التميز القانوني للشركات منذ عام 1986",
+    subheadline: "أكثر من 35 عامًا من الاستشارات في قانون العمل",
     scroll: "تمرير",
     ctaContact: "اتصل بنا",
     ctaConsult: "حجز استشارة",
-    heroVideoLabel: "منظر جوي لمكاتب Santos & Saucedo في مدينة مكسيكو",
-    heroImageLabel: "مبنى المقر الرئيسي لـ Santos & Saucedo",
+    heroVideoLabel: "Santos & Saucedo Abogados",
+    heroImageLabel: "Santos & Saucedo Abogados",
     ariaLabel: "قسم الترحيب الرئيسي",
     videoFallback: "متصفحك لا يدعم عنصر الفيديو.",
   },
   ru: {
-    tagline: "ВЕДУЩАЯ ЮРИДИЧЕСКАЯ ФИРМА В МЕКСИКЕ",
+    tagline: "ЮРИДИЧЕСКАЯ ФИРМА ПО ТРУДОВОМУ ПРАВУ В НУЭВО-ЛЕОНЕ",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "Высочайший уровень корпоративного права с 1986 года",
+    subheadline: "Более 35 лет консультаций по трудовому праву",
     scroll: "прокрутка",
     ctaContact: "СВЯЗАТЬСЯ С НАМИ",
     ctaConsult: "ЗАПИСАТЬСЯ НА КОНСУЛЬТАЦИЮ",
-    heroVideoLabel: "Аэросъёмка офисов Santos & Saucedo в Мехико",
-    heroImageLabel: "Здание штаб-квартиры Santos & Saucedo",
+    heroVideoLabel: "Santos & Saucedo Abogados",
+    heroImageLabel: "Santos & Saucedo Abogados",
     ariaLabel: "Главный приветственный раздел",
     videoFallback: "Ваш браузер не поддерживает видео элемент.",
   },
   fr: {
-    tagline: "CABINET D'AVOCATS DE PREMIER PLAN AU MEXIQUE",
+    tagline: "CABINET DE DROIT DU TRAVAIL À NUEVO LEÓN",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "Excellence juridique d'entreprise depuis 1986",
+    subheadline: "Plus de 35 ans de conseil en droit du travail",
     scroll: "défiler",
     ctaContact: "CONTACTEZ-NOUS",
     ctaConsult: "PRENDRE RENDEZ-VOUS",
-    heroVideoLabel: "Vue aérienne des bureaux de Santos & Saucedo à Mexico",
-    heroImageLabel: "Bâtiment du siège de Santos & Saucedo",
+    heroVideoLabel: "Santos & Saucedo Abogados",
+    heroImageLabel: "Santos & Saucedo Abogados",
     ariaLabel: "Section d'accueil principale",
     videoFallback: "Votre navigateur ne prend pas en charge l'élément vidéo.",
   },
   it: {
-    tagline: "STUDIO LEGALE LEADER IN MESSICO",
+    tagline: "STUDIO LEGALE DI DIRITTO DEL LAVORO A NUEVO LEÓN",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "Eccellenza legale aziendale dal 1986",
+    subheadline: "Oltre 35 anni di consulenza in diritto del lavoro",
     scroll: "scorri",
     ctaContact: "CONTATTACI",
     ctaConsult: "PRENOTA UNA CONSULENZA",
-    heroVideoLabel: "Vista aerea degli uffici di Santos & Saucedo a Città del Messico",
-    heroImageLabel: "Edificio della sede di Santos & Saucedo",
+    heroVideoLabel: "Santos & Saucedo Abogados",
+    heroImageLabel: "Santos & Saucedo Abogados",
     ariaLabel: "Sezione di benvenuto principale",
     videoFallback: "Il tuo browser non supporta l'elemento video.",
   },
@@ -391,10 +391,9 @@ export default function HeroSection({ language }: HeroSectionProps) {
           initial={{ opacity: 0, scale: 0.97 }}
           animate={isVisible ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.9, delay: 0.35 }}
-          src={logoWhiteVertical}
+          src={logoWhiteWordmark}
           alt={t.headline}
-          className="w-[54vw] max-w-[190px] sm:max-w-[230px] md:max-w-[270px] lg:max-w-[310px] max-h-[46vh] h-auto object-contain drop-shadow-2xl"
-          style={{ imageRendering: "crisp-edges" }}
+          className="w-[80vw] max-w-[380px] sm:max-w-[480px] md:max-w-[560px] lg:max-w-[620px] h-auto object-contain drop-shadow-2xl"
           data-testid="text-hero-headline"
         />
 
