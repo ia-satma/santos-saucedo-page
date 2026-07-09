@@ -376,8 +376,8 @@ export default function HeroSection({ language }: HeroSectionProps) {
           data-testid={isMobile ? "img-hero-background-mobile" : "img-hero-background"}
         />
         
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(14,15,44,0.72)_0%,rgba(23,23,53,0.5)_48%,rgba(32,32,88,0.62)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(14,15,44,0.38)_0%,rgba(23,23,53,0.08)_42%,rgba(14,15,44,0.74)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(14,15,44,0.5)_0%,rgba(23,23,53,0.2)_50%,rgba(14,15,44,0.1)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(14,15,44,0.2)_0%,rgba(23,23,53,0.03)_45%,rgba(14,15,44,0.6)_100%)]" />
         <div className="absolute bottom-0 left-0 right-0 h-44 bg-gradient-to-t from-[#0e0f2c]/88 to-transparent" />
       </div>
 
