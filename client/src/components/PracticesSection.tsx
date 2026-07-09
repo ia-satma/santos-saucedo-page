@@ -190,7 +190,7 @@ export default function PracticesSection() {
 
               {/* Decorative large number */}
               <div className="relative mb-6 select-none pointer-events-none">
-                <span className="text-[9rem] leading-none font-heading font-medium text-[#202058]/25 [text-shadow:0_1px_0_rgba(255,255,255,0.9)]">
+                <span className="text-[9rem] leading-none font-heading font-medium text-brand/40 [text-shadow:0_1px_0_rgba(255,255,255,0.9)]">
                   6
                 </span>
               </div>
