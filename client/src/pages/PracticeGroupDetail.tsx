@@ -90,14 +90,14 @@ function TranslatedMatterCard({ matter, language, t }: TranslatedMatterCardProps
               {matter.isHighlight && (
                 <Badge
                   variant="outline"
-                  className="rounded-none text-[10px] uppercase tracking-[0.18em] border-[#202058] text-[#202058] bg-transparent"
+                  className="rounded-none text-[11px] uppercase tracking-[0.18em] border-[#202058] text-[#202058] bg-transparent"
                 >
                   {t.featured}
                 </Badge>
               )}
               <Badge
                 variant="outline"
-                className="rounded-none text-[10px] uppercase tracking-[0.18em] border-white/20 text-white/70 bg-transparent"
+                className="rounded-none text-[11px] uppercase tracking-[0.18em] border-white/20 text-white/70 bg-transparent"
                 data-testid={`badge-matter-year-${matter.id}`}
               >
                 {matter.year}
@@ -119,7 +119,7 @@ function TranslatedMatterCard({ matter, language, t }: TranslatedMatterCardProps
         </p>
         {displayClient && (
           <p
-            className="text-[10px] uppercase tracking-[0.25em] text-white/40"
+            className="text-[11px] uppercase tracking-[0.25em] text-white/40"
             data-testid={`text-matter-client-${matter.id}`}
           >
             <span className="text-white/60">

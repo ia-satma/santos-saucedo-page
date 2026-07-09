@@ -145,7 +145,7 @@ function NewsPanel({ language, news }: { language: LanguageCode; news: News[] })
         <div className="flex items-center gap-3">
           <div className="w-4 h-px bg-brand" aria-hidden="true" />
           <h3
-            className="text-[10px] font-geomanist tracking-[0.3em] uppercase text-white/50"
+            className="text-[11px] font-geomanist tracking-[0.3em] uppercase text-white/50"
             data-testid="text-news-header"
           >
             {t.news}

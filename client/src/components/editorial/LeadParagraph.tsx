@@ -35,7 +35,7 @@ export function LeadParagraph({
       data-testid={testId}
     >
       {eyebrow && (
-        <p className="text-[10px] tracking-[0.3em] uppercase text-[#202058] mb-4 font-medium">
+        <p className="text-[11px] tracking-[0.3em] uppercase text-[#202058] mb-4 font-medium">
           {eyebrow}
         </p>
       )}

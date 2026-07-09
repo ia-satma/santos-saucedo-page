@@ -15,7 +15,7 @@ export function PullQuote({ quote, attribution, className = "", testId }: PullQu
         {quote}
       </p>
       {attribution && (
-        <p className="text-[10px] text-[#202058] tracking-[0.25em] uppercase mt-4 font-medium">
+        <p className="text-[11px] text-[#202058] tracking-[0.25em] uppercase mt-4 font-medium">
           {attribution}
         </p>
       )}

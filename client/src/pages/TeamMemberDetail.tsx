@@ -260,7 +260,7 @@ function RankingItemTranslated({
               <div className="flex flex-wrap items-center gap-2 mt-2">
                 <Badge 
                   variant="outline"
-                  className="rounded-none text-[10px] uppercase tracking-[0.18em] border-[#202058] text-[#202058]"
+                  className="rounded-none text-[11px] uppercase tracking-[0.18em] border-[#202058] text-[#202058]"
                   data-testid={`badge-ranking-band-${index}`}
                 >
                   {displayRanking}
@@ -268,7 +268,7 @@ function RankingItemTranslated({
                 {ranking.year && (
                   <Badge 
                     variant="outline" 
-                    className="rounded-none text-[10px] uppercase tracking-[0.18em]"
+                    className="rounded-none text-[11px] uppercase tracking-[0.18em]"
                   >
                     {ranking.year}
                   </Badge>
@@ -299,7 +299,7 @@ function RankingItemTranslated({
           {ranking.publication}
         </p>
         {ranking.year && (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             {ranking.year}
           </p>
         )}

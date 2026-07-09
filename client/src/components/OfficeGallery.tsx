@@ -57,7 +57,7 @@ export default function OfficeGallery() {
         {/* Editorial header */}
         <div className="mb-12">
           <div className="w-12 h-px bg-[#202058] mb-4" />
-          <p className="text-[#202058] text-[10px] tracking-[0.25em] uppercase mb-3">
+          <p className="text-[#202058] text-[11px] tracking-[0.25em] uppercase mb-3">
             {t.eyebrow}
           </p>
           <h2 className="font-heading font-light text-foreground text-3xl md:text-4xl uppercase tracking-[0.12em]">

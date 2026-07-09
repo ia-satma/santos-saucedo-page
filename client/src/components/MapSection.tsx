@@ -284,7 +284,7 @@ export default function MapSection({ language }: MapSectionProps) {
         >
           <div className="w-12 h-px bg-primary mb-6 mx-auto" />
           <p
-            className="text-primary text-[10px] tracking-[0.25em] uppercase mb-4"
+            className="text-primary text-[11px] tracking-[0.25em] uppercase mb-4"
             data-testid="text-location-eyebrow"
           >
             {t.eyebrow}

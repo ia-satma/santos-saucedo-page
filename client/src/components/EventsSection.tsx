@@ -295,7 +295,7 @@ export default function EventsSection({ language }: EventsSectionProps) {
           <div>
             <div className="w-12 h-px bg-[#202058] mb-6" />
             <p
-              className="text-[#202058] text-[10px] tracking-[0.25em] uppercase mb-4"
+              className="text-[#202058] text-[11px] tracking-[0.25em] uppercase mb-4"
               data-testid="text-events-eyebrow"
             >
               {t.eyebrow}

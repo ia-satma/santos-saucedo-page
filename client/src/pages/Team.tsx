@@ -610,7 +610,7 @@ export default function Team() {
                             </div>
                             <div className="absolute bottom-5 left-4 right-4" style={{ opacity: isActive ? 1 : 0, transform: isActive ? "translateY(0)" : "translateY(6px)", transition: "opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s" }}>
                               <p className="font-heading font-light text-sm uppercase tracking-[0.1em] leading-snug mb-1 text-white whitespace-nowrap overflow-hidden text-ellipsis">{member.name}</p>
-                              <p className="text-[10px] text-[#202058] uppercase tracking-[0.08em] mb-3">{t.partnersOnly}</p>
+                              <p className="text-[11px] text-[#202058] uppercase tracking-[0.08em] mb-3">{t.partnersOnly}</p>
                               <div className="flex items-center gap-2 text-[#202058]">
                                 <span className="text-[9px] uppercase tracking-[0.1em]">{t.viewProfile}</span>
                                 <ArrowRight className="w-3.5 h-3.5" />

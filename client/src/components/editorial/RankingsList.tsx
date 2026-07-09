@@ -48,7 +48,7 @@ export function RankingsList({
               </p>
               {item.year && (
                 <span
-                  className="hidden sm:inline text-[10px] text-muted-foreground tracking-[0.2em] uppercase shrink-0"
+                  className="hidden sm:inline text-[11px] text-muted-foreground tracking-[0.2em] uppercase shrink-0"
                   data-testid={`text-${testIdPrefix}-year-${index}`}
                 >
                   {item.year}

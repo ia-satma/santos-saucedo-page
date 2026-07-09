@@ -571,7 +571,7 @@ export default function NewsDetail() {
                   data-testid="eyebrow-news"
                 >
                   <div className="h-px w-10 bg-[#202058]" aria-hidden="true" />
-                  <span className="text-[10px] tracking-[0.3em] uppercase text-white/90 font-medium">
+                  <span className="text-[11px] tracking-[0.3em] uppercase text-white/90 font-medium">
                     {language === 'es' ? 'Noticia' : language === 'de' ? 'Nachrichten' : language === 'fr' ? 'Actualité' : language === 'it' ? 'Notizie' : 'News'}
                   </span>
                 </div>

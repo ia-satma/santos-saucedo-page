@@ -110,7 +110,7 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
             {member.name}
           </p>
           <p
-            className={`text-[10px] tracking-[0.08em] leading-snug transition-opacity duration-300 ${showTranslating ? "opacity-40 animate-pulse text-white/70" : "text-white/70"}`}
+            className={`text-[11px] tracking-[0.08em] leading-snug transition-opacity duration-300 ${showTranslating ? "opacity-40 animate-pulse text-white/70" : "text-white/70"}`}
             data-testid={`text-team-member-role-${member.slug}`}
           >
             {displayRole}
