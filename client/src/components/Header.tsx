@@ -256,13 +256,15 @@ export default function Header() {
     searchResults.practiceGroups.length > 0 ||
     searchResults.news.length > 0
   );
+  const isHomePage = location === "/";
+  const isSolidHeader = isScrolled || !isHomePage;
 
   return (
     <>
       <header
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-          isScrolled
+          isSolidHeader
             ? "bg-background/95 backdrop-blur-md shadow-md py-3"
             : "bg-transparent py-6"
         )}
@@ -276,11 +278,11 @@ export default function Header() {
             aria-label={`Santos & Saucedo - ${t('nav.home')}`}
           >
             <img
-              src={isScrolled ? logoColor : logoWhiteHorizontal}
+              src={isSolidHeader ? logoColor : logoWhiteHorizontal}
               alt="Santos & Saucedo"
               className={cn(
                 "transition-all duration-300 flex-shrink-0 object-contain",
-                isScrolled
+                isSolidHeader
                   ? "h-7 sm:h-8 md:h-9 w-auto max-w-[180px] sm:max-w-[220px] md:max-w-[260px]"
                   : "h-8 sm:h-9 md:h-10 w-auto max-w-[190px] sm:max-w-[240px] md:max-w-[300px]"
               )}
@@ -307,11 +309,11 @@ export default function Header() {
                   href={item.href}
                   className={cn(
                     "inline-flex items-center gap-1 px-3 py-2 text-sm font-medium tracking-wide uppercase whitespace-nowrap transition-colors duration-200",
-                    isScrolled
+                    isSolidHeader
                       ? "text-foreground hover:text-primary"
                       : "text-white/90 hover:text-white",
-                    location === item.href && (isScrolled ? "text-primary" : "text-white"),
-                    activeDropdown === item.id && (isScrolled ? "text-primary" : "text-white")
+                    location === item.href && (isSolidHeader ? "text-primary" : "text-white"),
+                    activeDropdown === item.id && (isSolidHeader ? "text-primary" : "text-white")
                   )}
                   data-testid={`link-nav-${item.id}`}
                   aria-current={location === item.href ? "page" : undefined}
@@ -323,7 +325,7 @@ export default function Header() {
                     <ChevronDown
                       className={cn(
                         "w-3.5 h-3.5 transition-transform duration-200",
-                        isScrolled ? "text-primary/80" : "text-white/80",
+                        isSolidHeader ? "text-primary/80" : "text-white/80",
                         activeDropdown === item.id && "rotate-180"
                       )}
                       aria-hidden="true"
@@ -337,7 +339,7 @@ export default function Header() {
                     className={cn(
                       "absolute top-full left-0 mt-2 min-w-[220px] py-1.5 z-50",
                       "border shadow-2xl backdrop-blur-xl overflow-hidden",
-                      isScrolled
+                      isSolidHeader
                         ? "bg-background/95 border-border"
                         : "bg-black/75 border-white/10"
                     )}
@@ -355,7 +357,7 @@ export default function Header() {
                           "flex items-center px-5 py-2.5 text-sm font-medium uppercase tracking-wide",
                           "border-l-2 border-transparent transition-all duration-150",
                           "hover:border-[#202058]",
-                          isScrolled
+                          isSolidHeader
                             ? "text-foreground hover:text-primary hover:bg-muted"
                             : "text-white/80 hover:text-white hover:bg-white/8"
                         )}
@@ -378,7 +380,7 @@ export default function Header() {
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  isScrolled ? "text-primary hover:text-primary hover:bg-primary/10" : "text-white/90 hover:text-white"
+                  isSolidHeader ? "text-primary hover:text-primary hover:bg-primary/10" : "text-white/90 hover:text-white"
                 )}
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 data-testid="button-search"
@@ -475,17 +477,17 @@ export default function Header() {
               )}
             </div>
 
-            {isScrolled && <ThemeToggle />}
+            {isSolidHeader && <ThemeToggle />}
 
-            <LanguageSelector isScrolled={isScrolled} className="hidden sm:flex" />
-            <LanguageSelector isScrolled={isScrolled} compact className="flex sm:hidden" />
+            <LanguageSelector isScrolled={isSolidHeader} className="hidden sm:flex" />
+            <LanguageSelector isScrolled={isSolidHeader} compact className="flex sm:hidden" />
 
             <Button
               variant="ghost"
               size="icon"
               className={cn(
                 "lg:hidden",
-                isScrolled ? "text-primary hover:text-primary hover:bg-primary/10" : "text-white/90 hover:text-white"
+                isSolidHeader ? "text-primary hover:text-primary hover:bg-primary/10" : "text-white/90 hover:text-white"
               )}
               onClick={() => setIsMobileMenuOpen(true)}
               data-testid="button-mobile-menu"
