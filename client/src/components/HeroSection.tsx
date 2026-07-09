@@ -7,6 +7,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import type { SiteContent, News, LanguageCode } from "@shared/schema";
 import logoWhiteWordmark from "@assets/logos-v2/SantosSaucedo_Logo-Variante-Blanca.png";
+import heroImage from "@assets/hero-monterrey.webp";
 
 interface HeroSectionProps {
   language: LanguageCode;
@@ -16,9 +17,6 @@ type NewsPanelLabels = {
   news: string;
   seeMore: string;
 };
-
-const heroImage =
-  "https://api.pcloud.com/getpubthumb?code=XZHiHr5ZA1CCs4gfxBkcnDEz3Y4KW8jGDtx7&fileid=90168327625&size=1920x1080&type=png";
 
 const newsPanelLabels: Record<LanguageCode, NewsPanelLabels> = {
   en: {
@@ -373,6 +371,8 @@ export default function HeroSection({ language }: HeroSectionProps) {
           alt={t.heroImageLabel}
           className="absolute inset-0 w-full h-full object-cover opacity-95"
           loading="eager"
+          fetchPriority="high"
+          decoding="async"
           data-testid={isMobile ? "img-hero-background-mobile" : "img-hero-background"}
         />
         

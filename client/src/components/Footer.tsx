@@ -610,6 +610,8 @@ export default function Footer() {
               src={footerLogo}
               alt="Santos & Saucedo"
               className="h-14 w-auto mb-6"
+              loading="lazy"
+              decoding="async"
               data-testid="img-footer-logo"
             />
             <p className="text-white/70 text-sm leading-relaxed" data-testid="text-footer-description">
@@ -698,10 +700,12 @@ export default function Footer() {
               <p className="text-xs text-white/56" data-testid="text-copyright">
                 {t.legal}
               </p>
-              <img 
-                src={esrLogo} 
+              <img
+                src={esrLogo}
                 alt={t.esrAlt}
                 className="h-10 object-contain"
+                loading="lazy"
+                decoding="async"
                 data-testid="img-esr-logo"
               />
             </div>

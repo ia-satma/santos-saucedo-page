@@ -45,6 +45,8 @@ function NewsImageWithFallback({
       src={src}
       alt={alt}
       className={className}
+      loading="lazy"
+      decoding="async"
       onError={() => setHasError(true)}
     />
   );
@@ -1293,6 +1295,8 @@ export default function TeamMemberDetail() {
                       alt={member?.name}
                       className="absolute inset-0 h-full w-full object-cover object-top"
                       style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }}
+                      loading="eager"
+                      decoding="async"
                       data-testid="img-profile-photo"
                     />
                     <div

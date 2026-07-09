@@ -34,6 +34,8 @@ function NewsHeroImage({
       src={hasError ? fallbackImage : src}
       alt={alt}
       className="w-full h-full object-cover"
+      loading="eager"
+      decoding="async"
       onError={() => setHasError(true)}
       data-testid="img-news-hero"
     />
@@ -66,12 +68,14 @@ function NewsCardImage({
       src={src}
       alt={alt}
       className={className}
+      loading="lazy"
+      decoding="async"
       onError={() => setHasError(true)}
     />
   );
 }
 
-function AuthorCard({ 
+function AuthorCard({
   author, 
   getInitials, 
   truncateBio 
