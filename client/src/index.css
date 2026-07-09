@@ -258,6 +258,14 @@ blockquote {
   }
 }
 
+/* Refine lucide-react icons: consistent, lighter stroke for a premium line
+   weight across the app (default is 2; unify to 1.75). Kept OUTSIDE @layer so
+   Tailwind does not tree-shake it — the `lucide` class is added at runtime by
+   the icon library, so it never appears literally in the content scan. */
+.lucide {
+  stroke-width: 1.75;
+}
+
 /**
  * Using the elevate system.
  * Automatic contrast adjustment.
