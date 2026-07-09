@@ -105,7 +105,7 @@ blockquote {
   --font-heading: 'Baanoo', Georgia, 'Times New Roman', serif;
   --font-support: 'Outfit', 'Segoe UI', Arial, sans-serif;
   --font-mono: Menlo, monospace;
-  --radius: .5rem;
+  --radius: .85rem;
   --shadow-2xs: 0 1px 2px 0 hsl(240 24% 16% / 0.04);
   --shadow-xs:  0 1px 3px 0 hsl(240 24% 16% / 0.06);
   --shadow-sm:  0 1px 3px 0 hsl(240 24% 16% / 0.08), 0 1px 2px -1px hsl(240 24% 16% / 0.06);
@@ -246,6 +246,8 @@ blockquote {
   h5,
   h6 {
     font-family: var(--font-heading);
+    letter-spacing: -0.012em;
+    line-height: 1.12;
   }
 
   p,
@@ -264,6 +266,60 @@ blockquote {
    the icon library, so it never appears literally in the content scan. */
 .lucide {
   stroke-width: 1.75;
+}
+
+/* ---------------------------------------------------------------------------
+   Modern surface & depth system (rebrand v2)
+   Kill the "box effect": borderless soft cards, ambient section depth, and
+   dividers that fade at the edges instead of hard rules. Kept outside @layer
+   so Tailwind never tree-shakes them.
+--------------------------------------------------------------------------- */
+
+/* Borderless soft card: rounded, layered navy-tinted shadow, gentle lift. */
+.card-soft {
+  background-color: #fff;
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow-md);
+  transition: box-shadow .4s cubic-bezier(.4, 0, .2, 1), transform .4s cubic-bezier(.4, 0, .2, 1);
+}
+.card-soft:hover {
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-6px);
+}
+.dark .card-soft {
+  background-color: hsl(240 24% 16%);
+  box-shadow: 0 12px 34px -10px rgba(0, 0, 0, .55);
+}
+
+/* Ambient depth for light sections: whisper-soft navy + lime glows on white,
+   so sections read as layered atmosphere rather than flat panels. */
+.section-ambient {
+  position: relative;
+  background:
+    radial-gradient(120% 95% at 88% -10%, rgba(32, 32, 88, 0.055) 0%, transparent 55%),
+    radial-gradient(95% 85% at -5% 110%, rgba(178, 235, 62, 0.05) 0%, transparent 52%),
+    #ffffff;
+}
+
+/* A cooler, quieter alternate surface (very light navy tint) for rhythm. */
+.section-mist {
+  background: linear-gradient(180deg, #ffffff 0%, #f6f7fb 55%, #f2f3fa 100%);
+}
+.dark .section-ambient {
+  background:
+    radial-gradient(120% 95% at 88% -10%, rgba(120, 120, 200, 0.10) 0%, transparent 55%),
+    radial-gradient(95% 85% at -5% 110%, rgba(178, 235, 62, 0.06) 0%, transparent 52%),
+    hsl(240 37% 12%);
+}
+.dark .section-mist {
+  background: linear-gradient(180deg, hsl(240 37% 13%) 0%, hsl(240 30% 16%) 100%);
+}
+
+/* Hairline that fades out at both ends — no hard divider lines. */
+.divider-soft {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, rgba(32, 32, 88, .16), transparent);
 }
 
 /**

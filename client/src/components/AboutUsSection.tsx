@@ -247,7 +247,7 @@ export default function AboutUsSection() {
   return (
     <section
       id="about-us"
-      className="py-20 lg:py-28 bg-background"
+      className="py-24 lg:py-32 section-ambient"
       data-testid="section-about-us"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
@@ -291,10 +291,9 @@ export default function AboutUsSection() {
             <motion.div
               key={testId}
               variants={cardVariants}
-              className="group relative overflow-hidden bg-[linear-gradient(135deg,#ffffff_0%,#ffffff_52%,#f3f3fb_100%)] border border-[#202058]/15 rounded-none p-8 lg:p-10 flex flex-col gap-6 shadow-[0_22px_60px_rgba(23,23,53,0.08)] hover:shadow-[0_28px_80px_rgba(23,23,53,0.12)] transition-shadow duration-300"
+              className="card-soft group relative overflow-hidden p-10 lg:p-12 flex flex-col gap-6"
               data-testid={testId}
             >
-              <div className="absolute inset-x-0 top-0 h-1 bg-brand" aria-hidden="true" />
               {/* Icon circle */}
               <div className="flex items-start gap-5">
                 <div className="flex-shrink-0 w-14 h-14 rounded-full bg-[#202058] shadow-[0_12px_28px_rgba(32,32,88,0.2)] flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-1">
@@ -317,7 +316,7 @@ export default function AboutUsSection() {
                 {text}
               </p>
               {/* Bottom accent */}
-              <div className="mt-auto pt-4 border-t border-[#202058]/10">
+              <div className="mt-auto pt-4">
                 <div className="w-10 h-0.5 bg-brand group-hover:w-20 transition-all duration-500" />
               </div>
             </motion.div>
@@ -357,10 +356,9 @@ export default function AboutUsSection() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 whileHover={{ y: -6, transition: { type: "spring", stiffness: 300, damping: 20, delay: 0 } }}
-                className="group relative bg-[linear-gradient(180deg,#ffffff_0%,#f8f8fc_100%)] border border-[#202058]/15 shadow-[0_18px_46px_rgba(23,23,53,0.07)] hover:shadow-[0_26px_70px_rgba(23,23,53,0.12)] dark:bg-card rounded-none p-8 flex flex-col items-center text-center gap-4 overflow-visible cursor-default transition-shadow duration-300"
+                className="card-soft group relative p-8 lg:p-10 flex flex-col items-center text-center gap-4 cursor-default"
                 data-testid={`value-item-${i}`}
               >
-                <div className="absolute top-0 left-0 w-full h-1.5 bg-[#202058] group-hover:h-2 transition-all duration-300" />
                 <div className="w-16 h-16 rounded-full bg-[#202058] shadow-[0_12px_28px_rgba(32,32,88,0.2)] flex items-center justify-center mt-2 transition-transform duration-300 group-hover:scale-110">
                   <Icon className="w-7 h-7 text-white" strokeWidth={1.8} />
                 </div>

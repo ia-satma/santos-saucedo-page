@@ -204,7 +204,7 @@ export default function PracticesSection() {
               <div className="flex flex-col gap-4">
                 <Link href="/contact">
                   <Button
-                    className="bg-brand text-brand-foreground uppercase tracking-wide text-xs w-full sm:w-auto shadow-[0_14px_30px_rgba(32,32,88,0.22)] hover:brightness-95"
+                    className="rounded-xl bg-brand text-brand-foreground uppercase tracking-wide text-xs w-full sm:w-auto shadow-[0_14px_30px_rgba(32,32,88,0.22)] hover:brightness-95"
                     data-testid="button-practices-contact"
                   >
                     <Phone className="w-3.5 h-3.5 mr-2" />
@@ -229,13 +229,13 @@ export default function PracticesSection() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="lg:w-2/3 grid grid-cols-1 lg:grid-cols-2 bg-white border border-[#202058]/10 shadow-[0_24px_70px_rgba(23,23,53,0.08)]"
+            className="lg:w-2/3 card-soft grid grid-cols-1 lg:grid-cols-2 gap-2 p-4 lg:p-6"
           >
             {practiceAreas.map((area) => (
               <motion.div key={area.id} variants={itemVariants}>
                 <Link
                   href={`/practice-groups/${area.slug}`}
-                  className="group flex items-center gap-6 px-5 py-5 border-b border-[#202058]/10 border-l-2 border-l-transparent hover:border-l-brand hover:bg-[#202058]/[0.045] transition-all duration-200 h-full"
+                  className="group flex items-center gap-6 px-6 py-6 rounded-xl hover:bg-[#202058]/[0.04] transition-all duration-200 h-full"
                   data-testid={`link-practice-${area.id}`}
                 >
                   <span
@@ -264,7 +264,7 @@ export default function PracticesSection() {
         <div className="lg:hidden mt-10 flex flex-col gap-4">
           <Link href="/contact">
             <Button
-              className="bg-brand text-brand-foreground uppercase tracking-wide text-xs w-full"
+              className="rounded-xl bg-brand text-brand-foreground uppercase tracking-wide text-xs w-full"
               data-testid="button-practices-contact-mobile"
             >
               <Phone className="w-3.5 h-3.5 mr-2" />

@@ -337,11 +337,11 @@ export default function Header() {
                 {item.subItems && activeDropdown === item.id && (
                   <div
                     className={cn(
-                      "absolute top-full left-0 mt-2 min-w-[220px] py-1.5 z-50",
-                      "border shadow-2xl backdrop-blur-xl overflow-hidden",
+                      "absolute top-full left-0 mt-2 min-w-[220px] py-2 z-50",
+                      "rounded-2xl shadow-2xl backdrop-blur-xl overflow-hidden ring-1 ring-black/[0.04]",
                       isSolidHeader
-                        ? "bg-background/95 border-border"
-                        : "bg-black/75 border-white/10"
+                        ? "bg-background/95"
+                        : "bg-black/75"
                     )}
                     role="menu"
                     aria-label={`${t(item.labelKey)} submenu`}
@@ -394,7 +394,7 @@ export default function Header() {
               {isSearchOpen && (
                 <div
                   id="search-panel"
-                  className="absolute right-0 top-full mt-2 w-80 bg-card shadow-xl border border-border overflow-hidden"
+                  className="absolute right-0 top-full mt-2 w-80 bg-card shadow-2xl rounded-2xl ring-1 ring-black/[0.04] overflow-hidden"
                   data-testid="container-search"
                   role="search"
                   aria-label={t('common.search')}
@@ -405,7 +405,7 @@ export default function Header() {
                       placeholder={t('common.searchPlaceholder')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="rounded-none"
+                      className="rounded-lg"
                       autoFocus
                       data-testid="input-global-search"
                       aria-label={t('common.search')}

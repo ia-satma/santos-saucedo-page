@@ -241,7 +241,7 @@ export default function MapSection({ language }: MapSectionProps) {
 
   if (error) {
     return (
-      <section id="location" className="py-20 lg:py-28 bg-muted" data-testid="section-location">
+      <section id="location" className="py-24 lg:py-32 section-mist" data-testid="section-location">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
           <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
           <p className="text-muted-foreground" data-testid="text-location-error">{t.errorMessage}</p>
@@ -252,7 +252,7 @@ export default function MapSection({ language }: MapSectionProps) {
 
   if (isLoading) {
     return (
-      <section id="location" className="py-20 lg:py-28 bg-muted" data-testid="section-location">
+      <section id="location" className="py-24 lg:py-32 section-mist" data-testid="section-location">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <Skeleton className="h-10 w-64 mx-auto mb-12" data-testid="skeleton-location-title" />
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
@@ -269,7 +269,7 @@ export default function MapSection({ language }: MapSectionProps) {
   return (
     <section
       id="location"
-      className="py-20 lg:py-28 bg-muted"
+      className="py-24 lg:py-32 section-mist"
       data-testid="section-location"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
@@ -303,7 +303,7 @@ export default function MapSection({ language }: MapSectionProps) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="lg:col-span-3 aspect-[16/10] lg:aspect-auto lg:min-h-[400px] rounded-none overflow-hidden shadow-lg"
+            className="lg:col-span-3 aspect-[16/10] lg:aspect-auto lg:min-h-[400px] rounded-2xl overflow-hidden shadow-lg"
           >
             <iframe
               src={embedUrl}
@@ -325,7 +325,7 @@ export default function MapSection({ language }: MapSectionProps) {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="lg:col-span-2 flex flex-col justify-center"
           >
-            <div className="bg-background p-8 lg:p-10 shadow-sm" data-testid="card-contact-info">
+            <div className="card-soft p-8 lg:p-10" data-testid="card-contact-info">
               <div className="flex items-start gap-4 mb-8">
                 <MapPin className="w-6 h-6 text-primary flex-shrink-0 mt-1" data-testid="icon-location" />
                 <div data-testid="text-address">
@@ -369,7 +369,7 @@ export default function MapSection({ language }: MapSectionProps) {
                 <Button
                   asChild
                   variant="default"
-                  className="w-full rounded-none"
+                  className="w-full rounded-xl"
                   data-testid="button-directions"
                 >
                   <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer">
@@ -381,7 +381,7 @@ export default function MapSection({ language }: MapSectionProps) {
                 <Button
                   asChild
                   variant="outline"
-                  className="w-full rounded-none"
+                  className="w-full rounded-xl"
                   data-testid="button-view-map"
                 >
                   <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer">

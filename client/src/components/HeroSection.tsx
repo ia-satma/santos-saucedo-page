@@ -133,7 +133,7 @@ function NewsPanel({ language, news }: { language: LanguageCode; news: News[] })
       data-testid="panel-news-overlay"
     >
       <div
-        className="backdrop-blur-md border border-white/15 p-5 flex flex-col gap-4 shadow-xl"
+        className="backdrop-blur-md rounded-2xl border border-white/10 ring-1 ring-inset ring-white/5 p-6 flex flex-col gap-4 shadow-2xl"
         style={{
           width: '280px',
           background: 'linear-gradient(135deg, rgba(32,32,88,0.82) 0%, rgba(23,23,53,0.74) 100%)',

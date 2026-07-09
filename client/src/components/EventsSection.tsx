@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight, AlertCircle, MapPin, Calendar, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
@@ -61,14 +60,14 @@ function EventCard({ event, language, learnMoreText, formatDate }: EventCardProp
   };
 
   return (
-    <Card
-      className="group h-full overflow-hidden border border-border shadow-sm hover:shadow-lg transition-all duration-300 rounded-none bg-card"
+    <div
+      className="card-soft group h-full overflow-hidden"
       data-testid={`card-event-${event.id}`}
     >
-      <div className="p-6">
+      <div className="p-8">
         <div className="flex items-start justify-between gap-3 mb-4">
           <Badge
-            className="bg-brand text-brand-foreground font-medium rounded-none"
+            className="bg-brand text-brand-foreground font-medium rounded-xl"
             data-testid={`badge-event-type-${event.id}`}
           >
             {getEventTypeLabel(event.eventType || 'conference', language)}
@@ -121,7 +120,7 @@ function EventCard({ event, language, learnMoreText, formatDate }: EventCardProp
           </a>
         )}
       </div>
-    </Card>
+    </div>
   );
 }
 
@@ -265,7 +264,7 @@ export default function EventsSection({ language }: EventsSectionProps) {
 
   if (error) {
     return (
-      <section id="events" className="py-20 lg:py-28 bg-muted border-t border-border" data-testid="section-events">
+      <section id="events" className="py-24 lg:py-32 section-mist" data-testid="section-events">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="text-center py-12">
             <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
@@ -279,7 +278,7 @@ export default function EventsSection({ language }: EventsSectionProps) {
   return (
     <section
       id="events"
-      className="py-20 lg:py-28 bg-muted border-t border-border"
+      className="py-24 lg:py-32 section-mist"
       data-testid="section-events"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
@@ -311,7 +310,7 @@ export default function EventsSection({ language }: EventsSectionProps) {
           <Link href="/events">
             <Button
               variant="outline"
-              className="group rounded-none shrink-0"
+              className="group rounded-xl shrink-0"
               data-testid="button-view-all-events"
             >
               {t.viewAll}
@@ -323,12 +322,12 @@ export default function EventsSection({ language }: EventsSectionProps) {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
             {[1, 2, 3, 4].map((i) => (
-              <Card
+              <div
                 key={i}
-                className="overflow-hidden border border-border shadow-sm rounded-none bg-card"
+                className="card-soft overflow-hidden"
                 data-testid={`skeleton-event-${i}`}
               >
-                <div className="p-6">
+                <div className="p-8">
                   <Skeleton className="h-5 w-24 mb-4" />
                   <Skeleton className="h-4 w-32 mb-3" />
                   <Skeleton className="h-6 w-full mb-2" />
@@ -337,7 +336,7 @@ export default function EventsSection({ language }: EventsSectionProps) {
                   <Skeleton className="h-4 w-full mb-1" />
                   <Skeleton className="h-4 w-5/6" />
                 </div>
-              </Card>
+              </div>
             ))}
           </div>
         ) : events && events.length === 0 ? (
@@ -372,7 +371,7 @@ export default function EventsSection({ language }: EventsSectionProps) {
           <Link href="/events">
             <Button
               variant="outline"
-              className="group rounded-none"
+              className="group rounded-xl"
               data-testid="button-view-all-events-mobile"
             >
               {t.viewAll}
