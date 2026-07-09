@@ -402,7 +402,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
           initial={{ opacity: 0, y: 10 }}
           animate={isVisible ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.65 }}
-          className="font-sans inline-flex max-w-[640px] items-center justify-center border-y border-white/20 bg-white/[0.035] px-5 sm:px-7 py-2.5 text-white/80 text-[0.68rem] sm:text-xs font-semibold tracking-[0.24em] uppercase leading-relaxed backdrop-blur-[1px]"
+          className="font-sans inline-flex max-w-[680px] items-center justify-center border-y border-white/20 bg-white/[0.035] px-5 sm:px-7 py-3 text-white/90 text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase leading-relaxed backdrop-blur-[1px]"
           data-testid="text-hero-subheadline"
         >
           {subheadline}

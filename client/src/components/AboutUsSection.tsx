@@ -261,7 +261,7 @@ export default function AboutUsSection() {
           className="text-center mb-16"
         >
           <p
-            className="text-primary text-[10px] tracking-[0.28em] uppercase mb-4"
+            className="text-primary text-[11px] tracking-[0.28em] uppercase mb-4"
             data-testid="text-about-us-eyebrow"
           >
             {t.eyebrow}
@@ -372,7 +372,7 @@ export default function AboutUsSection() {
                   {getValueName(value)}
                 </span>
                 <p
-                  className="text-xs text-[#565866] leading-relaxed"
+                  className="text-sm text-[#565866] leading-relaxed"
                   data-testid={`text-value-desc-${i}`}
                 >
                   {getValueDesc(value)}
