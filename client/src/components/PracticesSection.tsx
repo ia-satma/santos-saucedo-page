@@ -204,7 +204,7 @@ export default function PracticesSection() {
               <div className="flex flex-col gap-4">
                 <Link href="/contact">
                   <Button
-                    className="bg-[#202058] text-white uppercase tracking-wide text-xs w-full sm:w-auto shadow-[0_14px_30px_rgba(32,32,88,0.22)] hover:bg-[#171735]"
+                    className="bg-brand text-brand-foreground uppercase tracking-wide text-xs w-full sm:w-auto shadow-[0_14px_30px_rgba(32,32,88,0.22)] hover:brightness-95"
                     data-testid="button-practices-contact"
                   >
                     <Phone className="w-3.5 h-3.5 mr-2" />
@@ -264,7 +264,7 @@ export default function PracticesSection() {
         <div className="lg:hidden mt-10 flex flex-col gap-4">
           <Link href="/contact">
             <Button
-              className="bg-[#202058] text-white uppercase tracking-wide text-xs w-full"
+              className="bg-brand text-brand-foreground uppercase tracking-wide text-xs w-full"
               data-testid="button-practices-contact-mobile"
             >
               <Phone className="w-3.5 h-3.5 mr-2" />

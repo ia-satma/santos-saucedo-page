@@ -273,9 +273,9 @@ export default function AboutUsSection() {
             {t.sectionTitle}
           </h2>
           <div className="flex items-center justify-center gap-3">
-            <div className="w-10 h-px bg-primary" />
+            <div className="w-10 h-px bg-brand" />
             <div className="w-2 h-2 bg-brand rotate-45" />
-            <div className="w-10 h-px bg-primary" />
+            <div className="w-10 h-px bg-brand" />
           </div>
         </motion.div>
 
@@ -294,7 +294,7 @@ export default function AboutUsSection() {
               className="group relative overflow-hidden bg-[linear-gradient(135deg,#ffffff_0%,#ffffff_52%,#f3f3fb_100%)] border border-[#202058]/15 rounded-none p-8 lg:p-10 flex flex-col gap-6 shadow-[0_22px_60px_rgba(23,23,53,0.08)] hover:shadow-[0_28px_80px_rgba(23,23,53,0.12)] transition-shadow duration-300"
               data-testid={testId}
             >
-              <div className="absolute inset-x-0 top-0 h-1 bg-[#202058]" aria-hidden="true" />
+              <div className="absolute inset-x-0 top-0 h-1 bg-brand" aria-hidden="true" />
               {/* Icon circle */}
               <div className="flex items-start gap-5">
                 <div className="flex-shrink-0 w-14 h-14 rounded-full bg-[#202058] shadow-[0_12px_28px_rgba(32,32,88,0.2)] flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-1">

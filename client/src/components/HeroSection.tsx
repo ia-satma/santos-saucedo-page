@@ -401,7 +401,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
           initial={{ opacity: 0, y: 10 }}
           animate={isVisible ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.65 }}
-          className="font-sans inline-flex max-w-[680px] items-center justify-center border-y border-white/20 bg-white/[0.035] px-5 sm:px-7 py-3 text-white/90 text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase leading-relaxed backdrop-blur-[1px]"
+          className="font-sans inline-flex max-w-[680px] items-center justify-center border-y border-brand/40 bg-white/[0.035] px-5 sm:px-7 py-3 text-white/90 text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase leading-relaxed backdrop-blur-[1px]"
           data-testid="text-hero-subheadline"
         >
           {subheadline}
@@ -413,7 +413,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
         animate={isVisible ? { opacity: 1 } : {}}
         transition={{ duration: 0.6, delay: 1 }}
         onClick={scrollToNews}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/85 hover:text-white transition-colors cursor-pointer min-h-[44px] min-w-[44px] touch-manipulation p-2"
+        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-brand/90 hover:text-brand transition-colors cursor-pointer min-h-[44px] min-w-[44px] touch-manipulation p-2"
         data-testid="button-scroll-down"
         aria-label={scrollAriaLabel}
       >

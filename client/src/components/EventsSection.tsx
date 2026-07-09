@@ -68,7 +68,7 @@ function EventCard({ event, language, learnMoreText, formatDate }: EventCardProp
       <div className="p-6">
         <div className="flex items-start justify-between gap-3 mb-4">
           <Badge
-            className="bg-[#202058] text-white font-medium rounded-none"
+            className="bg-brand text-brand-foreground font-medium rounded-none"
             data-testid={`badge-event-type-${event.id}`}
           >
             {getEventTypeLabel(event.eventType || 'conference', language)}
