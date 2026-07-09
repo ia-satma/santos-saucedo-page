@@ -573,8 +573,8 @@ export default function Team() {
                 <div className="px-6 lg:px-12 pt-10 pb-4">
                   <div className="flex items-center gap-3 mb-1">
                     <div className="w-8 h-px bg-[#202058] shrink-0" />
-                    <p className="text-[#202058] text-[10px] tracking-[0.3em] uppercase font-medium">NUESTRO EQUIPO</p>
-                    <span className="text-muted-foreground text-[9px] tracking-wider ml-1">— {groupedMembers.partners.length}</span>
+                    <p className="text-[#202058] text-[10px] tracking-[0.3em] uppercase font-medium">{t.title}</p>
+                    <span className="text-muted-foreground text-[9px] tracking-wider uppercase ml-1">— {groupedMembers.partners.length} {t.partnersOnly}</span>
                   </div>
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
                     {t.partnersOnly}
@@ -653,8 +653,8 @@ export default function Team() {
                 <div className="px-6 lg:px-12 pt-10 pb-4">
                   <div className="flex items-center gap-3 mb-1">
                     <div className="w-8 h-px bg-[#202058] shrink-0" />
-                    <p className="text-[#202058] text-[10px] tracking-[0.3em] uppercase font-medium">{t.ofCounsel}</p>
-                    <span className="text-muted-foreground text-[9px] tracking-wider ml-1">— {groupedMembers.ofCounsel.length}</span>
+                    <p className="text-[#202058] text-[10px] tracking-[0.3em] uppercase font-medium">{t.title}</p>
+                    <span className="text-muted-foreground text-[9px] tracking-wider uppercase ml-1">— {groupedMembers.ofCounsel.length} {t.ofCounsel}</span>
                   </div>
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
                     {t.ofCounsel}
@@ -724,8 +724,8 @@ export default function Team() {
                 <div className="px-6 lg:px-12 pt-10 pb-4">
                   <div className="flex items-center gap-3 mb-1">
                     <div className="w-8 h-px bg-[#202058] shrink-0" />
-                    <p className="text-[#202058] text-[10px] tracking-[0.3em] uppercase font-medium">{t.associates}</p>
-                    <span className="text-muted-foreground text-[9px] tracking-wider ml-1">— {groupedMembers.associates.length}</span>
+                    <p className="text-[#202058] text-[10px] tracking-[0.3em] uppercase font-medium">{t.title}</p>
+                    <span className="text-muted-foreground text-[9px] tracking-wider uppercase ml-1">— {groupedMembers.associates.length} {t.associates}</span>
                   </div>
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
                     {t.associates}
