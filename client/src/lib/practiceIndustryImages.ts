@@ -15,6 +15,12 @@ import pIntlTrade from "@assets/santos_saucedo_branded/p-international-trade.png
 import pTmt from "@assets/santos_saucedo_branded/p-telecommunications-media-technology.png";
 import pEnvironmental from "@assets/santos_saucedo_branded/p-environmental.png";
 import pAdministrative from "@assets/santos_saucedo_branded/p-administrative-law.png";
+import laborConflicts from "@assets/service_areas/area-1-conflictos-laborales.webp";
+import laborAdministration from "@assets/service_areas/area-2-administracion-laboral.webp";
+import laborDiagnostics from "@assets/service_areas/area-3-diagnostico-relaciones-laborales.webp";
+import improvementPlans from "@assets/service_areas/area-4-planes-mejora.webp";
+import legalLaborAudit from "@assets/service_areas/area-5-auditoria-juridico-laboral.webp";
+import strategicTraining from "@assets/service_areas/area-6-planeacion-capacitacion.webp";
 
 import iAutomotive from "@assets/santos_saucedo_branded/i-automotive-mobility-manufacturing.png";
 import iConsumer from "@assets/santos_saucedo_branded/i-consumer-goods.png";
@@ -25,6 +31,12 @@ import iRealEstateInd from "@assets/santos_saucedo_branded/i-real-estate-industr
 import iTech from "@assets/santos_saucedo_branded/i-technology-industry.png";
 
 export const PRACTICE_IMAGES: Record<string, string> = {
+  "conflictos-individuales-colectivos": laborConflicts,
+  "administracion-laboral": laborAdministration,
+  "diagnostico-relaciones-laborales": laborDiagnostics,
+  "planes-mejora": improvementPlans,
+  "auditoria-juridico-laboral": legalLaborAudit,
+  "planeacion-estrategica-capacitacion": strategicTraining,
   "corporate-ma": pCorporateMa,
   "antitrust-competition": pAntitrust,
   "arbitration": pArbitration,
@@ -60,8 +72,7 @@ export const INDUSTRY_IMAGES: Record<string, string> = {
 const FALLBACK_IMAGE = pCorporateMa;
 
 export function getPracticeImage(slug: string, override?: string | null): string {
-  if (override && override.trim().length > 0) return override;
-  return PRACTICE_IMAGES[slug] || FALLBACK_IMAGE;
+  return PRACTICE_IMAGES[slug] || (override && override.trim().length > 0 ? override : FALLBACK_IMAGE);
 }
 
 export function getIndustryImage(slug: string, override?: string | null): string {
