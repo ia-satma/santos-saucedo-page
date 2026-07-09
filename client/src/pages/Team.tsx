@@ -130,7 +130,7 @@ export default function Team() {
   }> = {
     en: {
       title: "Our Team",
-      subtitle: "Meet the experienced attorneys who make our firm a leader in legal excellence",
+      subtitle: "Meet the legal team behind our firm's standard of excellence",
       errorMessage: "Failed to load team members",
       allMembers: "All",
       partnersOnly: "Partners",
@@ -157,7 +157,7 @@ export default function Team() {
     },
     es: {
       title: "Nuestro Equipo",
-      subtitle: "Conozca a los experimentados abogados que hacen de nuestra firma un líder en excelencia legal",
+      subtitle: "Conozca al equipo legal que sostiene la excelencia de nuestra firma",
       errorMessage: "Error al cargar los miembros del equipo",
       allMembers: "Todos",
       partnersOnly: "Socios",
@@ -481,7 +481,7 @@ export default function Team() {
               {t.title}
             </h1>
             <p 
-              className="text-base text-white/60 max-w-2xl mx-auto"
+              className="text-base text-white/60 max-w-xl mx-auto text-balance"
               data-testid="text-team-subtitle"
             >
               {t.subtitle}
@@ -571,11 +571,7 @@ export default function Team() {
             {showPartners && groupedMembers.partners.length > 0 && (
               <section className="border-b border-border" data-testid="section-partners">
                 <div className="px-6 lg:px-12 pt-10 pb-4">
-                  <div className="flex items-center gap-3 mb-1">
-                    <div className="w-8 h-px bg-[#202058] shrink-0" />
-                    <p className="text-[#202058] text-[10px] tracking-[0.3em] uppercase font-medium">{t.title}</p>
-                    <span className="text-muted-foreground text-[9px] tracking-wider uppercase ml-1">— {groupedMembers.partners.length} {t.partnersOnly}</span>
-                  </div>
+                  <div className="w-10 h-px bg-[#202058] mb-4" />
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
                     {t.partnersOnly}
                   </h2>
@@ -651,11 +647,7 @@ export default function Team() {
             {showOfCounsel && groupedMembers.ofCounsel.length > 0 && (
               <section className="border-b border-border" data-testid="section-ofcounsel">
                 <div className="px-6 lg:px-12 pt-10 pb-4">
-                  <div className="flex items-center gap-3 mb-1">
-                    <div className="w-8 h-px bg-[#202058] shrink-0" />
-                    <p className="text-[#202058] text-[10px] tracking-[0.3em] uppercase font-medium">{t.title}</p>
-                    <span className="text-muted-foreground text-[9px] tracking-wider uppercase ml-1">— {groupedMembers.ofCounsel.length} {t.ofCounsel}</span>
-                  </div>
+                  <div className="w-10 h-px bg-[#202058] mb-4" />
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
                     {t.ofCounsel}
                   </h2>
@@ -722,11 +714,7 @@ export default function Team() {
             {showAssociates && groupedMembers.associates.length > 0 && (
               <section data-testid="section-associates">
                 <div className="px-6 lg:px-12 pt-10 pb-4">
-                  <div className="flex items-center gap-3 mb-1">
-                    <div className="w-8 h-px bg-[#202058] shrink-0" />
-                    <p className="text-[#202058] text-[10px] tracking-[0.3em] uppercase font-medium">{t.title}</p>
-                    <span className="text-muted-foreground text-[9px] tracking-wider uppercase ml-1">— {groupedMembers.associates.length} {t.associates}</span>
-                  </div>
+                  <div className="w-10 h-px bg-[#202058] mb-4" />
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
                     {t.associates}
                   </h2>

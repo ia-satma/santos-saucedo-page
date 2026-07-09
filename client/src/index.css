@@ -1031,6 +1031,7 @@ html, body {
 .editorial-page-hero .text-white\/60,
 .editorial-page-hero .text-white\/70 {
   color: hsl(var(--muted-foreground)) !important;
+  text-wrap: balance;
 }
 
 .editorial-page-hero a,
