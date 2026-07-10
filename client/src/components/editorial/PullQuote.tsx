@@ -8,14 +8,14 @@ interface PullQuoteProps {
 export function PullQuote({ quote, attribution, className = "", testId }: PullQuoteProps) {
   return (
     <blockquote
-      className={`border-l-2 border-[#202058] pl-6 md:pl-8 py-2 max-w-3xl ${className}`}
+      className={`border-l-2 border-primary pl-6 md:pl-8 py-2 max-w-3xl ${className}`}
       data-testid={testId}
     >
       <p className="text-2xl md:text-3xl font-sans font-light leading-snug text-foreground">
         {quote}
       </p>
       {attribution && (
-        <p className="text-[11px] text-[#202058] tracking-[0.25em] uppercase mt-4 font-medium">
+        <p className="text-[11px] text-primary tracking-[0.25em] uppercase mt-4 font-medium">
           {attribution}
         </p>
       )}

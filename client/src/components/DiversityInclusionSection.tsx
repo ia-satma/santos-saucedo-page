@@ -196,7 +196,7 @@ export default function DiversityInclusionSection() {
           >
             <div className="w-8 h-px bg-[#202058] mb-5" />
             <p
-              className="text-[#202058] text-[10px] tracking-[0.25em] uppercase mb-5"
+              className="text-primary text-[10px] tracking-[0.25em] uppercase mb-5"
               data-testid="text-diversity-inclusion-eyebrow"
             >
               {t.eyebrow}

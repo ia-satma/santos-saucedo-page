@@ -285,7 +285,7 @@ export default function IndustryGroupsSection() {
 
               {/* Number — top left */}
               <span
-                className="absolute top-5 left-4 text-[#202058] text-xs font-medium tabular-nums tracking-wider"
+                className="absolute top-5 left-4 text-primary text-xs font-medium tabular-nums tracking-wider"
                 data-testid={`text-industry-group-number-${group.id}`}
               >
                 {String(group.id).padStart(2, "0")}
@@ -320,7 +320,7 @@ export default function IndustryGroupsSection() {
                 <p className="font-heading font-light text-base uppercase tracking-[0.1em] leading-snug mb-3 text-white">
                   {name}
                 </p>
-                <div className="flex items-center gap-2 text-[#202058]">
+                <div className="flex items-center gap-2 text-primary">
                   <ArrowRight className="w-4 h-4" />
                 </div>
               </div>
@@ -348,7 +348,7 @@ export default function IndustryGroupsSection() {
                 className="absolute inset-0 w-full h-full object-cover transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-[#202058]/60 group-hover:bg-[#202058]/44 transition-colors duration-300" />
-              <span className="absolute top-3 left-3 text-[#202058] text-xs font-medium tabular-nums">
+              <span className="absolute top-3 left-3 text-primary text-xs font-medium tabular-nums">
                 {String(group.id).padStart(2, "0")}
               </span>
               <p className="absolute bottom-3 left-3 right-3 text-white/90 text-xs uppercase tracking-[0.1em] leading-snug font-light">
@@ -371,7 +371,7 @@ export default function IndustryGroupsSection() {
           <div className="w-10 h-px bg-[#202058] shrink-0" />
           <div>
             {/* Eyebrow label — small red uppercase, comes first */}
-            <p className="text-[#202058] text-[10px] tracking-[0.25em] uppercase mb-1">
+            <p className="text-primary text-[10px] tracking-[0.25em] uppercase mb-1">
               {t.subtitle}
             </p>
             {/* Serif section heading — Playfair Display */}

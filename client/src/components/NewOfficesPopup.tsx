@@ -470,7 +470,7 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
                 {t.collabText2}
               </p>
               <div className="flex flex-col items-center mb-8">
-                <span className="text-5xl md:text-6xl font-heading font-light text-[#202058] leading-none">
+                <span className="text-5xl md:text-6xl font-heading font-light text-primary leading-none">
                   {t.workplacesNum}
                 </span>
                 <span className="text-[10px] text-muted-foreground uppercase tracking-[0.25em] mt-3">
@@ -515,7 +515,7 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
             </section>
 
             <section className="max-w-3xl mx-auto text-center py-10 border-t border-b border-border" data-testid="section-quote">
-              <div className="font-heading text-6xl text-[#202058] opacity-40 mb-4 leading-none">&ldquo;</div>
+              <div className="font-heading text-6xl text-primary opacity-40 mb-4 leading-none">&ldquo;</div>
               <blockquote className="font-sans font-light text-lg md:text-xl text-foreground leading-relaxed mb-8 not-italic" style={{ fontStyle: "normal" }}>
                 {t.quoteText}
               </blockquote>
@@ -533,10 +533,10 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
                 href={GOOGLE_MAPS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex flex-col items-center gap-3 min-h-[44px] p-4 text-muted-foreground hover:text-[#202058] transition-colors group touch-manipulation"
+                className="inline-flex flex-col items-center gap-3 min-h-[44px] p-4 text-muted-foreground hover:text-primary transition-colors group touch-manipulation"
                 data-testid="link-popup-address"
               >
-                <MapPin className="w-8 h-8 text-[#202058] group-hover:scale-110 transition-transform" />
+                <MapPin className="w-8 h-8 text-primary group-hover:scale-110 transition-transform" />
                 <div className="text-sm leading-relaxed">
                   <p>{t.addressLine1}</p>
                   <p>{t.addressLine2}</p>

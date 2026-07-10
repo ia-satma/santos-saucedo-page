@@ -8,7 +8,7 @@ export function Eyebrow({ label, className = "", testId }: EyebrowProps) {
   return (
     <div className={`flex items-center gap-3 ${className}`} data-testid={testId}>
       <div className="w-8 h-px bg-[#202058] shrink-0" aria-hidden="true" />
-      <p className="text-[#202058] text-[11px] tracking-[0.25em] uppercase font-medium">
+      <p className="text-primary text-[11px] tracking-[0.25em] uppercase font-medium">
         {label}
       </p>
     </div>

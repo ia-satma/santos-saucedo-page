@@ -90,7 +90,7 @@ function TranslatedMatterCard({ matter, language, t }: TranslatedMatterCardProps
               {matter.isHighlight && (
                 <Badge
                   variant="outline"
-                  className="rounded-xl text-[11px] uppercase tracking-[0.18em] border-[#202058] text-[#202058] bg-transparent"
+                  className="rounded-xl text-[11px] uppercase tracking-[0.18em] border-primary text-primary bg-transparent"
                 >
                   {t.featured}
                 </Badge>
@@ -494,7 +494,7 @@ export default function PracticeGroupDetail() {
 
   const getBadgeStyles = (badgeType: string) => {
     if (badgeType === "band" || badgeType === "tier" || badgeType === "star") {
-      return "border border-[#202058] text-[#202058] bg-transparent uppercase tracking-[0.18em]";
+      return "border border-primary text-primary bg-transparent uppercase tracking-[0.18em]";
     }
     return "border border-border text-foreground bg-transparent uppercase tracking-[0.18em]";
   };
@@ -619,7 +619,7 @@ export default function PracticeGroupDetail() {
                 {language === "es" ? member.roleEs : member.role}
               </p>
             </div>
-            <ChevronRight className="w-5 h-5 text-[#202058] shrink-0" />
+            <ChevronRight className="w-5 h-5 text-primary shrink-0" />
           </div>
         </CardContent>
       </Card>
@@ -823,7 +823,7 @@ export default function PracticeGroupDetail() {
                       className="text-sm font-heading font-light text-foreground mb-4 flex items-center gap-3 uppercase tracking-[0.12em]"
                       data-testid="text-partners-title"
                     >
-                      <Badge variant="outline" className="rounded-xl text-xs uppercase tracking-[0.15em] border-[#202058] text-[#202058] bg-transparent">
+                      <Badge variant="outline" className="rounded-xl text-xs uppercase tracking-[0.15em] border-primary text-primary bg-transparent">
                         {filteredAndGroupedMembers.partners.length}
                       </Badge>
                       {t.partners}

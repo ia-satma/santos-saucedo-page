@@ -356,7 +356,7 @@ export default function Header() {
                         className={cn(
                           "flex items-center px-5 py-2.5 text-sm font-medium uppercase tracking-wide",
                           "border-l-2 border-transparent transition-all duration-150",
-                          "hover:border-[#202058]",
+                          "hover:border-primary",
                           isSolidHeader
                             ? "text-foreground hover:text-primary hover:bg-muted"
                             : "text-white/80 hover:text-white hover:bg-white/8"

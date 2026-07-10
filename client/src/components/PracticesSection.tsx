@@ -196,7 +196,7 @@ export default function PracticesSection() {
               </div>
 
               {/* Intro sentence */}
-              <p className="text-sm text-[#303046] leading-relaxed mb-10 max-w-xs">
+              <p className="text-sm text-foreground leading-relaxed mb-10 max-w-xs">
                 {t.intro}
               </p>
 
@@ -239,19 +239,19 @@ export default function PracticesSection() {
                   data-testid={`link-practice-${area.id}`}
                 >
                   <span
-                    className="font-serif text-xl font-semibold text-[#202058] w-12 shrink-0 tabular-nums"
+                    className="font-serif text-xl font-semibold text-primary w-12 shrink-0 tabular-nums"
                     data-testid={`text-practice-number-${area.id}`}
                   >
                     {String(area.id).padStart(2, "0")}
                   </span>
                   <span
-                    className="flex-1 text-sm font-medium text-[#252538] group-hover:text-[#202058] transition-colors duration-200 leading-snug"
+                    className="flex-1 text-sm font-medium text-foreground group-hover:text-primary transition-colors duration-200 leading-snug"
                     data-testid={`text-practice-name-${area.id}`}
                   >
                     {getPracticeAreaName(area, language)}
                   </span>
                   <ArrowRight
-                    className="w-4 h-4 text-[#202058] shrink-0 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200"
+                    className="w-4 h-4 text-primary shrink-0 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200"
                   />
                 </Link>
               </motion.div>

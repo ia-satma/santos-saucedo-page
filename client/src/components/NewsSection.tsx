@@ -175,7 +175,7 @@ function NewsCardTranslated({ item, language, dateLocale, seeMoreText }: NewsCar
             ) : ""}
           </p>
           <h3 
-            className={`text-lg font-publico text-[#1D1D1B] dark:text-white leading-relaxed mb-3 line-clamp-2 ${isTranslating ? 'opacity-50' : ''}`}
+            className={`text-lg font-publico text-foreground dark:text-white leading-relaxed mb-3 line-clamp-2 ${isTranslating ? 'opacity-50' : ''}`}
             data-testid={`text-news-title-${item.id}`}
           >
             {displayTitle}
@@ -189,7 +189,7 @@ function NewsCardTranslated({ item, language, dateLocale, seeMoreText }: NewsCar
             </p>
           )}
           <span
-            className="inline-flex items-center gap-2 text-xs font-geomanist font-bold tracking-[0.15em] uppercase text-[#202058] hover:text-[#181848] transition-colors group/link no-underline"
+            className="inline-flex items-center gap-2 text-xs font-geomanist font-bold tracking-[0.15em] uppercase text-primary hover:text-primary transition-colors group/link no-underline"
             data-testid={`link-news-read-${item.id}`}
           >
             {seeMoreText}
@@ -258,7 +258,7 @@ export default function NewsSection() {
         >
           <div className="flex flex-col items-center mb-2">
             <h2
-              className="text-2xl md:text-3xl font-geomanist tracking-[0.25em] uppercase text-[#3A3A3A] dark:text-white pb-3"
+              className="text-2xl md:text-3xl font-geomanist tracking-[0.25em] uppercase text-muted-foreground dark:text-white pb-3"
               data-testid="text-news-title"
             >
               {t.title}
@@ -268,7 +268,7 @@ export default function NewsSection() {
           <div className="flex justify-end mt-4">
             <Link
               href="/news"
-              className="hidden md:flex items-center gap-2 text-xs font-geomanist font-bold tracking-[0.15em] uppercase text-[#202058] hover:text-[#181848] no-underline transition-colors group"
+              className="hidden md:flex items-center gap-2 text-xs font-geomanist font-bold tracking-[0.15em] uppercase text-primary hover:text-primary no-underline transition-colors group"
               data-testid="link-news-see-more"
             >
               {t.seeMore}
@@ -315,7 +315,7 @@ export default function NewsSection() {
         <div className="mt-10 text-center md:hidden">
           <Link
             href="/news"
-            className="inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2 text-xs font-geomanist font-bold tracking-[0.15em] uppercase text-[#202058] hover:text-[#181848] no-underline touch-manipulation"
+            className="inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2 text-xs font-geomanist font-bold tracking-[0.15em] uppercase text-primary hover:text-primary no-underline touch-manipulation"
             data-testid="link-news-see-more-mobile"
           >
             {t.seeMore}

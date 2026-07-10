@@ -133,7 +133,7 @@ function EducationItemTranslated({
 
   return (
     <div 
-      className="border-l-2 border-[#202058] pl-4 py-1"
+      className="border-l-2 border-primary pl-4 py-1"
       data-testid={`item-education-${index}`}
     >
       <p className="text-lg font-medium text-foreground">
@@ -262,7 +262,7 @@ function RankingItemTranslated({
               <div className="flex flex-wrap items-center gap-2 mt-2">
                 <Badge 
                   variant="outline"
-                  className="rounded-xl text-[11px] uppercase tracking-[0.18em] border-[#202058] text-[#202058]"
+                  className="rounded-xl text-[11px] uppercase tracking-[0.18em] border-primary text-primary"
                   data-testid={`badge-ranking-band-${index}`}
                 >
                   {displayRanking}
@@ -339,7 +339,7 @@ function PublicationItemTranslated({
 
   return (
     <div 
-      className="border-l-2 border-[#202058] pl-4 py-1"
+      className="border-l-2 border-primary pl-4 py-1"
       data-testid={`item-publication-${index}`}
     >
       <p className="text-foreground font-medium">
@@ -1501,7 +1501,7 @@ export default function TeamMemberDetail() {
                         <span>{t.rankings}</span>
                         <Badge
                           variant="outline"
-                          className="ml-auto rounded-xl text-xs uppercase tracking-[0.15em] border-[#202058] text-[#202058]"
+                          className="ml-auto rounded-xl text-xs uppercase tracking-[0.15em] border-primary text-primary"
                           data-testid="badge-rankings-count"
                         >
                           {processedRankings.totalCount}
@@ -1804,7 +1804,7 @@ export default function TeamMemberDetail() {
                     {(member.experience as any[]).map((exp, index) => (
                       <div 
                         key={index}
-                        className="border-l-2 border-[#202058] pl-4 py-1"
+                        className="border-l-2 border-primary pl-4 py-1"
                         data-testid={`item-experience-${index}`}
                       >
                         <p className="text-lg font-medium text-foreground">
@@ -1847,7 +1847,7 @@ export default function TeamMemberDetail() {
                   
                   <div className="flex items-baseline gap-2 mb-4">
                     <span 
-                      className="text-4xl font-heading font-light text-[#202058]"
+                      className="text-4xl font-heading font-light text-primary"
                       style={{ fontFeatureSettings: '"lnum"' }}
                       data-testid="text-total-recognitions-count"
                     >

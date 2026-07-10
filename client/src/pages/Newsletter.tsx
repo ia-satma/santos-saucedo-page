@@ -572,7 +572,7 @@ export default function Newsletter() {
                         <Mail className="w-6 h-6 text-primary" />
                       </div>
                       <h2 
-                        className="text-xl font-heading font-light text-[#202058] dark:text-white uppercase tracking-[0.12em]"
+                        className="text-xl font-heading font-light text-primary dark:text-white uppercase tracking-[0.12em]"
                         data-testid="text-form-title"
                       >
                         {t.formTitle}
@@ -712,7 +712,7 @@ export default function Newsletter() {
               className="space-y-6"
             >
               <h2 
-                className="text-xl font-heading font-light text-[#202058] dark:text-white mb-6 uppercase tracking-[0.12em]"
+                className="text-xl font-heading font-light text-primary dark:text-white mb-6 uppercase tracking-[0.12em]"
                 data-testid="text-benefits-title"
               >
                 {t.whatYouReceive}
@@ -771,7 +771,7 @@ export default function Newsletter() {
               <div className="flex items-center justify-center gap-3 mb-4">
                 <Archive className="w-8 h-8 text-primary" />
                 <h2 
-                  className="text-xl font-heading font-light text-[#202058] dark:text-white uppercase tracking-[0.12em]"
+                  className="text-xl font-heading font-light text-primary dark:text-white uppercase tracking-[0.12em]"
                   data-testid="text-archives-title"
                 >
                   {t.archivesTitle}
@@ -826,7 +826,7 @@ export default function Newsletter() {
                       </p>
                       <a 
                         href={`mailto:info@santossaucedo.com?subject=${encodeURIComponent(language === 'es' ? `Solicitud de Newsletter: ${archive.title}` : `Newsletter Request: ${archive.title}`)}`}
-                        className="inline-flex items-center gap-2 text-sm text-primary hover:text-[#181848] transition-colors"
+                        className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary transition-colors"
                         data-testid={`button-archive-view-${index}`}
                       >
                         <ExternalLink className="w-4 h-4" />

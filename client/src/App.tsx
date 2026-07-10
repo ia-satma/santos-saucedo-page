@@ -146,7 +146,7 @@ function StaticAdminUnavailable() {
         </p>
         <a
           href={`${import.meta.env.BASE_URL}`}
-          className="inline-flex min-h-11 items-center justify-center border border-white/40 px-5 text-xs font-bold uppercase tracking-[0.16em] hover:bg-white hover:text-[#111110] transition-colors"
+          className="inline-flex min-h-11 items-center justify-center border border-white/40 px-5 text-xs font-bold uppercase tracking-[0.16em] hover:bg-white/10 hover:text-white transition-colors"
         >
           Volver al sitio
         </a>

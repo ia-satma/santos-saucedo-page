@@ -120,7 +120,7 @@ export default function SocialProofSection() {
           className="text-center mb-20"
         >
           <h2
-            className="text-2xl md:text-3xl lg:text-4xl font-heading font-light text-[#202058] uppercase tracking-[0.12em]"
+            className="text-2xl md:text-3xl lg:text-4xl font-heading font-light text-primary uppercase tracking-[0.12em]"
             data-testid="text-social-proof-title"
           >
             {t.title}
@@ -152,7 +152,7 @@ export default function SocialProofSection() {
               {/* Large red opening quote — rises above the text block */}
               <div
                 aria-hidden="true"
-                className="text-[#202058] font-serif select-none pointer-events-none"
+                className="text-primary font-serif select-none pointer-events-none"
                 style={{
                   fontSize: "5.5rem",
                   lineHeight: "0.65",
@@ -214,7 +214,7 @@ export default function SocialProofSection() {
                       href={quote.sourceUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-support text-xs uppercase tracking-[0.12em] text-[#202058] hover:underline"
+                      className="font-support text-xs uppercase tracking-[0.12em] text-primary hover:underline"
                       data-testid={`link-source-${quote.id}`}
                     >
                       {t.readOn} {quote.source} →
