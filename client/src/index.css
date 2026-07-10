@@ -158,13 +158,13 @@ blockquote {
      Carbón/navy profundo, evitando negro puro.
   ─────────────────────────────────────────────────────────── */
   --background: 243 47% 7%;        /* Azul Noche muy profundo (contraste) */
-  --foreground: 42 24% 92%;
+  --foreground: 0 0% 98%;
   --card: 243 36% 12%;
   --card-foreground: 0 0% 93%;
   --card-border: 240 16% 28%;
   --border: 240 16% 28%;
   --sidebar: 240 34% 13%;
-  --sidebar-foreground: 42 24% 90%;
+  --sidebar-foreground: 0 0% 92%;
   --sidebar-border: 240 16% 26%;
   --sidebar-primary: 240 50% 58%;
   --sidebar-primary-foreground: 0 0% 98%;
@@ -172,17 +172,17 @@ blockquote {
   --sidebar-accent-foreground: 0 0% 90%;
   --sidebar-ring: 240 50% 58%;
   --popover: 240 30% 16%;
-  --popover-foreground: 42 24% 92%;
+  --popover-foreground: 0 0% 98%;
   --popover-border: 240 16% 28%;
   --primary: 79 74% 55%;           /* acento VERDE en oscuro (navy se pierde) */
   --primary-foreground: 243 59% 12%;
   --secondary: 240 24% 21%;
-  --secondary-foreground: 42 24% 86%;
+  --secondary-foreground: 0 0% 90%;
   --muted: 240 22% 20%;
   --muted-foreground: 38 14% 68%;
-  --body: 42 14% 78%;
+  --body: 0 0% 84%;
   --accent: 240 22% 22%;
-  --accent-foreground: 42 24% 90%;
+  --accent-foreground: 0 0% 92%;
   --brand: 79 74% 55%;             /* Verde Lima — modo oscuro        */
   --brand-foreground: 243 59% 12%;
   --destructive: 0 70% 45%;
