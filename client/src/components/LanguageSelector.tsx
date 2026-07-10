@@ -56,14 +56,14 @@ export default function LanguageSelector({
     <Select value={language} onValueChange={handleLanguageChange}>
       <SelectTrigger 
         className={cn(
-          "gap-2 min-w-0 w-auto min-h-[36px] touch-manipulation rounded-none font-medium transition-all",
+          "gap-2 min-w-0 w-auto min-h-[36px] touch-manipulation rounded-sm font-medium transition-all",
           "focus:ring-2 focus:ring-offset-2 focus:ring-primary/50",
           compact ? "px-2 py-1" : "px-3 py-1.5",
-          isMobile 
-            ? "bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30"
-            : isScrolled 
-              ? "bg-transparent border border-primary/35 text-foreground hover:bg-primary/5 hover:border-primary/70"
-              : "bg-black/30 backdrop-blur-sm border border-white/30 text-white hover:bg-black/40",
+          isMobile
+            ? "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30"
+            : isScrolled
+              ? "bg-primary/[0.06] text-foreground hover:bg-primary/10"
+              : "bg-black/30 backdrop-blur-sm text-white hover:bg-black/40",
           className
         )}
         data-testid="select-language-trigger"

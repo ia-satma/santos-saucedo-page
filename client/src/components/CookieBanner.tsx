@@ -418,14 +418,14 @@ export default function CookieBanner({ language }: CookieBannerProps) {
             <div className="flex flex-wrap gap-3 shrink-0">
               <button 
                 onClick={openPreferences}
-                className="min-h-[44px] px-4 py-2 text-sm border border-white/20 hover:bg-white/10 transition-colors touch-manipulation"
+                className="min-h-[44px] px-4 py-2 text-sm rounded-sm bg-white/10 hover:bg-white/20 transition-colors touch-manipulation"
                 data-testid="button-cookie-configure"
               >
                 {t.configure}
               </button>
               <button 
                 onClick={acceptAll}
-                className="min-h-[44px] px-6 py-2 text-sm bg-[#12103E] text-white font-medium hover:bg-[#0C0A2C] transition-colors touch-manipulation"
+                className="min-h-[44px] px-6 py-2 text-sm rounded-sm bg-brand text-brand-foreground font-bold hover:brightness-95 transition-all touch-manipulation"
                 data-testid="button-cookie-accept"
               >
                 {t.accept}
@@ -527,14 +527,14 @@ export default function CookieBanner({ language }: CookieBannerProps) {
             <div className="flex flex-col sm:flex-row gap-3 p-6 border-t border-white/10">
               <button
                 onClick={saveCustomPreferences}
-                className="flex-1 min-h-[44px] px-6 py-3 text-sm border border-white/20 hover:bg-white/10 transition-colors font-medium touch-manipulation"
+                className="flex-1 min-h-[44px] px-6 py-3 text-sm rounded-sm bg-white/10 hover:bg-white/20 transition-colors font-medium touch-manipulation"
                 data-testid="button-save-preferences"
               >
                 {t.savePreferences}
               </button>
               <button
                 onClick={acceptAll}
-                className="flex-1 min-h-[44px] px-6 py-3 text-sm bg-[#12103E] text-white font-medium hover:bg-[#0C0A2C] transition-colors touch-manipulation"
+                className="flex-1 min-h-[44px] px-6 py-3 text-sm rounded-sm bg-brand text-brand-foreground font-bold hover:brightness-95 transition-all touch-manipulation"
                 data-testid="button-accept-all-preferences"
               >
                 {t.acceptAllButton}

@@ -609,7 +609,7 @@ export default function Footer() {
             <img
               src={footerLogo}
               alt="Santos & Saucedo"
-              className="h-20 w-auto mb-6"
+              className="h-24 w-auto mb-6"
               loading="lazy"
               decoding="async"
               data-testid="img-footer-logo"

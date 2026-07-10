@@ -182,7 +182,7 @@ export default function PracticesSection() {
 
               {/* Serif section heading — Playfair Display */}
               <h2
-                className="font-heading font-light text-xl md:text-2xl text-foreground uppercase tracking-[0.12em] mb-6"
+                className="font-heading font-medium text-2xl md:text-3xl text-foreground uppercase tracking-[0.12em] mb-6"
                 data-testid="text-practices-title"
               >
                 {t.title}
@@ -190,7 +190,7 @@ export default function PracticesSection() {
 
               {/* Decorative large number */}
               <div className="relative mb-6 select-none pointer-events-none">
-                <span className="text-[9rem] leading-none font-heading font-medium text-brand [text-shadow:0_1px_0_rgba(255,255,255,0.9)]">
+                <span className="text-[7rem] leading-none font-heading font-medium text-brand [text-shadow:0_1px_0_rgba(255,255,255,0.9)]">
                   6
                 </span>
               </div>
