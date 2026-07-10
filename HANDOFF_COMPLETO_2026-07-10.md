@@ -88,9 +88,18 @@ respira; nada de bordes/cajas duras. **Modo oscuro soportado por tokens** (sin t
 
 **Modo oscuro (regla de color):** el navy se pierde sobre fondo oscuro → en `.dark` el **acento pasa a
 Verde Lima** (`--primary` = verde, `--primary-foreground` = navy, `--ring` = verde); fondo y superficies
-más profundos (`--background 243 47% 7%`) para contraste. Los verdes de marca van a **100% opacidad**
-(sin `/40`, `/90`). Gotcha: en clases Tailwind arbitrarias (`bg-[…rgba(…)…]`, `shadow-[…]`) el `rgba()`
-**no puede llevar espacios** (`rgba(18,16,62,…)`, no `rgba(18, 16, 62, …)`) o la clase se rompe.
+más profundos (`--background 243 47% 7%`) para contraste. El texto en oscuro es **blanco neutro**
+(`--foreground 0 0% 98%`, `--body 0 0% 84%`) — se quitó el tinte "hueso" cálido (hue 42). Los verdes de
+marca van a **100% opacidad** (sin `/40`, `/90`). Gotcha: en clases Tailwind arbitrarias
+(`bg-[…rgba(…)…]`, `shadow-[…]`) el `rgba()` **no puede llevar espacios** (`rgba(18,16,62,…)`, no
+`rgba(18, 16, 62, …)`) o la clase se rompe.
+
+**Regla del verde (dónde aplicarlo):** Verde Lima va como **acento/forma** — reglas y subrayados de
+sección (`h-px`/`h-0.5 bg-brand`), hairline del eyebrow, bullets, barras, la "S", el numeral gigante —
+y como **texto/íconos SOBRE superficies oscuras** (fotos con overlay navy, bandas navy, modo oscuro; p.
+ej. los cargos sobre las fotos de Abogados). **Nunca** como texto pequeño sobre blanco (contraste ~1.4:1,
+ilegible): títulos, cuerpo y eyebrows sobre blanco se quedan en Azul Noche/tinta. Navy sobre verde (texto
+navy en botón lima) sí.
 
 ## 6. Arquitectura y deploy
 
