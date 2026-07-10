@@ -86,6 +86,12 @@ Utilidades globales en `client/src/index.css`:
 **Principio:** Azul Noche cimienta, Verde Lima puntúa, títulos serif con autoridad, cuerpo gris que
 respira; nada de bordes/cajas duras. **Modo oscuro soportado por tokens** (sin texto invisible).
 
+**Modo oscuro (regla de color):** el navy se pierde sobre fondo oscuro → en `.dark` el **acento pasa a
+Verde Lima** (`--primary` = verde, `--primary-foreground` = navy, `--ring` = verde); fondo y superficies
+más profundos (`--background 243 47% 7%`) para contraste. Los verdes de marca van a **100% opacidad**
+(sin `/40`, `/90`). Gotcha: en clases Tailwind arbitrarias (`bg-[…rgba(…)…]`, `shadow-[…]`) el `rgba()`
+**no puede llevar espacios** (`rgba(18,16,62,…)`, no `rgba(18, 16, 62, …)`) o la clase se rompe.
+
 ## 6. Arquitectura y deploy
 
 - **Stack:** React 18 + Vite + Tailwind + Radix/shadcn + framer-motion + i18next. Backend Express +
