@@ -418,7 +418,7 @@ export default function Rankings() {
             <div className="flex items-center justify-center gap-3 mb-6">
               <Trophy className="w-10 h-10 text-primary" />
             </div>
-            <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
+            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1
               className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
               data-testid="text-rankings-title"
@@ -605,7 +605,7 @@ export default function Rankings() {
                         data-testid={`card-lawyer-${lawyer.slug}`}
                       >
                         <CardContent className="p-6 flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium flex-shrink-0">
+                          <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-primary font-medium flex-shrink-0">
                             {lawyer.name
                               .split(" ")
                               .map((n) => n[0])

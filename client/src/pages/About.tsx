@@ -1205,7 +1205,7 @@ export default function About() {
             transition={{ duration: 0.7 }}
             className="text-center"
           >
-            <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
+            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1 
               className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
               data-testid="text-about-title"
@@ -1323,7 +1323,7 @@ export default function About() {
             <h2 className="text-2xl font-heading font-light text-foreground mb-4 text-center uppercase tracking-[0.12em]">
               {t.statsTitle}
             </h2>
-            <div className="h-0.5 w-12 bg-primary mx-auto mb-10" />
+            <div className="h-0.5 w-12 bg-brand mx-auto mb-10" />
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
               {t.stats.map((stat, index) => (
                 <div key={index} className="text-center" data-testid={`stat-${index}`}>

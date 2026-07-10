@@ -83,7 +83,7 @@ export default function NotFound() {
         <Card className="w-full max-w-lg mx-4">
           <CardContent className="pt-8 pb-8 px-8 text-center">
             <div className="flex justify-center mb-6">
-              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full bg-brand/10 flex items-center justify-center">
                 <AlertCircle className="h-10 w-10 text-primary" />
               </div>
             </div>

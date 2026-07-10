@@ -61,7 +61,7 @@ function SearchResultTeamMember({
       data-testid={`search-result-team-${member.slug}`}
       role="option"
     >
-      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-medium" aria-hidden="true">
+      <div className="w-8 h-8 rounded-full bg-brand/10 flex items-center justify-center text-primary text-xs font-medium" aria-hidden="true">
         {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
       </div>
       <div>

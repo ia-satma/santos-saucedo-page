@@ -145,7 +145,7 @@ export default function QuoteSection() {
           </blockquote>
 
           <div className="flex flex-col items-center">
-            <div className="w-16 h-px bg-primary mb-6" data-testid="divider-quote" />
+            <div className="w-16 h-px bg-brand mb-6" data-testid="divider-quote" />
             <p
               className="text-lg font-medium text-foreground"
               data-testid="text-quote-author"

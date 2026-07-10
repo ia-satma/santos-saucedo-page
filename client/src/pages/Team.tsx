@@ -473,7 +473,7 @@ export default function Team() {
             transition={{ duration: 0.7 }}
             className="text-center"
           >
-            <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
+            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1 
               className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
               data-testid="text-team-title"
@@ -610,8 +610,8 @@ export default function Team() {
                             </div>
                             <div className="absolute bottom-5 left-4 right-4" style={{ opacity: isActive ? 1 : 0, transform: isActive ? "translateY(0)" : "translateY(6px)", transition: "opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s" }}>
                               <p className="font-heading font-light text-sm uppercase tracking-[0.1em] leading-snug mb-1 text-white whitespace-nowrap overflow-hidden text-ellipsis">{member.name}</p>
-                              <p className="text-[11px] text-primary uppercase tracking-[0.08em] mb-3">{t.partnersOnly}</p>
-                              <div className="flex items-center gap-2 text-primary">
+                              <p className="text-[11px] text-brand uppercase tracking-[0.08em] mb-3">{t.partnersOnly}</p>
+                              <div className="flex items-center gap-2 text-brand">
                                 <span className="text-[9px] uppercase tracking-[0.1em]">{t.viewProfile}</span>
                                 <ArrowRight className="w-3.5 h-3.5" />
                               </div>
@@ -634,7 +634,7 @@ export default function Team() {
                       )}
                       <div className="absolute inset-0 navy-photo-scrim-strong" />
                       <div className="absolute bottom-0 left-0 right-0 px-3 pb-3">
-                        <p className="text-primary text-[8px] uppercase tracking-[0.1em] mb-0.5">{t.partnersOnly}</p>
+                        <p className="text-brand text-[8px] uppercase tracking-[0.1em] mb-0.5">{t.partnersOnly}</p>
                         <p className="text-white text-[9px] uppercase tracking-[0.06em] leading-snug font-light line-clamp-2">{member.name}</p>
                       </div>
                     </Link>
@@ -679,8 +679,8 @@ export default function Team() {
                         </div>
                         <div className="absolute bottom-6 left-5 right-5" style={{ opacity: isActive ? 1 : 0, transform: isActive ? "translateY(0)" : "translateY(8px)", transition: "opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s" }}>
                           <p className="font-heading font-light text-base uppercase tracking-[0.1em] leading-snug mb-1 text-white">{member.name}</p>
-                          <p className="text-xs text-primary uppercase tracking-[0.08em] mb-3">{member.title}</p>
-                          <div className="flex items-center gap-2 text-primary">
+                          <p className="text-xs text-brand uppercase tracking-[0.08em] mb-3">{member.title}</p>
+                          <div className="flex items-center gap-2 text-brand">
                             <span className="text-[9px] uppercase tracking-[0.1em]">{t.viewProfile}</span>
                             <ArrowRight className="w-4 h-4" />
                           </div>
@@ -701,7 +701,7 @@ export default function Team() {
                       )}
                       <div className="absolute inset-0 navy-photo-scrim" />
                       <div className="absolute bottom-0 left-0 right-0 px-3 pb-3">
-                        <p className="text-primary text-[8px] uppercase tracking-[0.1em] mb-0.5">{member.title}</p>
+                        <p className="text-brand text-[8px] uppercase tracking-[0.1em] mb-0.5">{member.title}</p>
                         <p className="text-white text-[9px] uppercase tracking-[0.06em] leading-snug font-light">{member.name}</p>
                       </div>
                     </Link>
@@ -753,8 +753,8 @@ export default function Team() {
                             </div>
                             <div className="absolute bottom-4 left-3 right-3" style={{ opacity: isActive ? 1 : 0, transform: isActive ? "translateY(0)" : "translateY(6px)", transition: "opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s" }}>
                               <p className="font-heading font-light text-sm uppercase tracking-[0.08em] leading-snug mb-0.5 text-white whitespace-nowrap overflow-hidden text-ellipsis">{member.name}</p>
-                              <p className="text-[9px] text-primary uppercase tracking-[0.08em] mb-2">{t.associates}</p>
-                              <div className="flex items-center gap-1.5 text-primary">
+                              <p className="text-[9px] text-brand uppercase tracking-[0.08em] mb-2">{t.associates}</p>
+                              <div className="flex items-center gap-1.5 text-brand">
                                 <span className="text-[9px] uppercase tracking-[0.1em]">{t.viewProfile}</span>
                                 <ArrowRight className="w-3 h-3" />
                               </div>
@@ -777,7 +777,7 @@ export default function Team() {
                       )}
                       <div className="absolute inset-0 navy-photo-scrim-strong" />
                       <div className="absolute bottom-0 left-0 right-0 px-2.5 pb-2.5">
-                        <p className="text-primary text-[7px] uppercase tracking-[0.08em] mb-0.5">{t.associates}</p>
+                        <p className="text-brand text-[7px] uppercase tracking-[0.08em] mb-0.5">{t.associates}</p>
                         <p className="text-white text-[8px] uppercase tracking-[0.05em] leading-snug font-light line-clamp-2">{member.name}</p>
                       </div>
                     </Link>

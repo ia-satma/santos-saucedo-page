@@ -604,7 +604,7 @@ export default function DiversityInclusion() {
             >
               <UsersRound className="w-10 h-10 text-primary" />
             </motion.div>
-            <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
+            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1
               className="text-4xl md:text-5xl lg:text-6xl font-heading font-light text-white mb-6 uppercase tracking-[0.15em]"
               data-testid="text-diversity-title"
@@ -631,7 +631,7 @@ export default function DiversityInclusion() {
               transition={{ duration: 0.6 }}
             >
               <div className="flex items-center gap-4 mb-8">
-                <div className="h-0.5 w-8 bg-primary" />
+                <div className="h-0.5 w-8 bg-brand" />
                 <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em]">
                   {t.foundingTitle}
                 </h2>
@@ -660,7 +660,7 @@ export default function DiversityInclusion() {
               <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em]">
                 {t.statsTitle}
               </h2>
-              <div className="h-0.5 w-12 bg-primary mx-auto mt-4" />
+              <div className="h-0.5 w-12 bg-brand mx-auto mt-4" />
             </motion.div>
             <motion.div
               variants={containerVariants}
@@ -700,7 +700,7 @@ export default function DiversityInclusion() {
               <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em] mb-4">
                 {t.valuesTitle}
               </h2>
-              <div className="h-0.5 w-12 bg-primary mx-auto" />
+              <div className="h-0.5 w-12 bg-brand mx-auto" />
             </motion.div>
             <motion.div
               variants={containerVariants}
@@ -739,7 +739,7 @@ export default function DiversityInclusion() {
               <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em] mb-4">
                 {t.initiativesTitle}
               </h2>
-              <div className="h-0.5 w-12 bg-primary mx-auto" />
+              <div className="h-0.5 w-12 bg-brand mx-auto" />
             </motion.div>
 
             <motion.div
@@ -812,7 +812,7 @@ export default function DiversityInclusion() {
               <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
                 {t.commitmentTitle}
               </h2>
-              <div className="h-0.5 w-12 bg-primary mx-auto mb-8" />
+              <div className="h-0.5 w-12 bg-brand mx-auto mb-8" />
               <p className="text-lg text-muted-foreground leading-relaxed text-justify">
                 {t.commitmentText}
               </p>
@@ -832,7 +832,7 @@ export default function DiversityInclusion() {
               <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
                 {t.joinTitle}
               </h2>
-              <div className="h-0.5 w-12 bg-primary mx-auto mb-8" />
+              <div className="h-0.5 w-12 bg-brand mx-auto mb-8" />
               <p className="text-base text-muted-foreground mb-10 leading-relaxed">
                 {t.joinText}
               </p>

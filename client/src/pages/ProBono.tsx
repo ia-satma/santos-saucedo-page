@@ -843,7 +843,7 @@ export default function ProBono() {
             >
               <Heart className="w-10 h-10 text-primary" />
             </motion.div>
-            <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
+            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1
               className="text-4xl md:text-5xl lg:text-6xl font-heading font-light text-white mb-6 uppercase tracking-[0.15em]"
               data-testid="text-pro-bono-title"
@@ -870,7 +870,7 @@ export default function ProBono() {
               transition={{ duration: 0.6 }}
             >
               <div className="flex items-center gap-4 mb-8">
-                <div className="h-0.5 w-8 bg-primary" />
+                <div className="h-0.5 w-8 bg-brand" />
                 <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em]">
                   {t.commitmentTitle}
                 </h2>
@@ -902,7 +902,7 @@ export default function ProBono() {
               <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em] mb-4">
                 {t.areasTitle}
               </h2>
-              <div className="h-0.5 w-12 bg-primary mx-auto" />
+              <div className="h-0.5 w-12 bg-brand mx-auto" />
             </motion.div>
 
             <motion.div
@@ -939,7 +939,7 @@ export default function ProBono() {
               <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em]">
                 {t.statsTitle}
               </h2>
-              <div className="h-0.5 w-12 bg-primary mx-auto mt-4" />
+              <div className="h-0.5 w-12 bg-brand mx-auto mt-4" />
             </motion.div>
             <motion.div
               variants={containerVariants}
@@ -979,7 +979,7 @@ export default function ProBono() {
               <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
                 {t.participationTitle}
               </h2>
-              <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
+              <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
               <p className="text-lg text-primary font-medium mb-4" data-testid="text-participation-subtitle">
                 {t.participationSubtitle}
               </p>
@@ -1023,7 +1023,7 @@ export default function ProBono() {
               <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em] mb-4">
                 {t.ctaTitle}
               </h2>
-              <div className="h-0.5 w-12 bg-primary mx-auto mb-8" />
+              <div className="h-0.5 w-12 bg-brand mx-auto mb-8" />
               <p className="text-lg text-muted-foreground leading-relaxed mb-10" data-testid="text-cta-description">
                 {t.ctaText}
               </p>

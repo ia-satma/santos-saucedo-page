@@ -352,7 +352,7 @@ export default function EventsPage() {
             transition={{ duration: 0.7 }}
             className="text-center"
           >
-            <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
+            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1 
               className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
               data-testid="text-events-title"

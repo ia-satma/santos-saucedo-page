@@ -750,7 +750,7 @@ export default function Interns() {
             transition={{ duration: 0.7 }}
             className="text-center"
           >
-            <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
+            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1 
               className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
               data-testid="text-interns-title"
@@ -1054,7 +1054,7 @@ export default function Interns() {
           >
             <Card className="overflow-hidden">
               <CardContent className="p-8 lg:p-12 text-center">
-                <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
+                <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
                 <h2 
                   className="text-xl md:text-2xl font-heading font-light mb-4 uppercase tracking-[0.12em]"
                   data-testid="text-cta-title"

@@ -168,7 +168,7 @@ export default function VisionSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="w-24 h-px bg-primary mx-auto mb-16"
+          className="w-24 h-px bg-brand mx-auto mb-16"
           data-testid="divider-vision"
         />
 

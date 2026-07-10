@@ -98,7 +98,7 @@ function PracticeGroupCard({ group, index, learnMoreText }: PracticeGroupCardPro
 
         {/* Content overlay — bottom */}
         <div className="absolute inset-x-0 bottom-0 p-6 lg:p-7 flex flex-col">
-          <div className="w-8 h-px bg-primary mb-4" />
+          <div className="w-8 h-px bg-brand mb-4" />
           <h3
             className="text-base lg:text-lg font-medium text-white mb-3 uppercase tracking-[0.12em] leading-snug"
             data-testid={`text-practice-group-name-${group.slug}`}
@@ -259,7 +259,7 @@ export default function PracticeGroups() {
             transition={{ duration: 0.7 }}
             className="text-center"
           >
-            <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
+            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1 
               className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
               data-testid="text-practice-groups-title"

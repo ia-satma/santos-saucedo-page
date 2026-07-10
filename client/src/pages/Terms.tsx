@@ -2025,7 +2025,7 @@ Escluse le festività federali messicane`
             <div className="flex justify-center mb-4">
               <Scale className="w-12 h-12 text-primary" />
             </div>
-            <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
+            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1 
               className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
               data-testid="text-terms-title"
@@ -2066,7 +2066,7 @@ Escluse le festività federali messicane`
                 <Card className="overflow-hidden">
                   <CardContent className="p-0">
                     <div className="flex items-center gap-4 p-6 bg-muted">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center flex-shrink-0">
                         <section.icon className="w-6 h-6 text-primary" />
                       </div>
                       <h2 

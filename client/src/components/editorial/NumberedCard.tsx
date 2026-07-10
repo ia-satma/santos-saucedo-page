@@ -40,7 +40,7 @@ export function NumberedCard({
           <h3 className="text-foreground uppercase tracking-[0.12em] text-sm font-medium leading-snug">
             {title}
           </h3>
-          <span className="block h-px w-10 bg-primary mt-3 mb-4 transition-all duration-300 group-hover:w-16" />
+          <span className="block h-px w-10 bg-brand mt-3 mb-4 transition-all duration-300 group-hover:w-16" />
           {body && (
             <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
           )}

@@ -760,7 +760,7 @@ export default function Offices() {
             transition={{ duration: 0.7 }}
             className="text-center"
           >
-            <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
+            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1 
               className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
               data-testid="text-offices-title"
@@ -796,7 +796,7 @@ export default function Offices() {
                 <Card className="h-full" data-testid="card-office-info">
                   <CardContent className="p-6 lg:p-8 space-y-6">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center flex-shrink-0">
                         <Building2 className="w-6 h-6 text-primary" />
                       </div>
                       <div>
@@ -939,7 +939,7 @@ export default function Offices() {
                 <ul className="space-y-2">
                   {t.landmarks.map((landmark, index) => (
                     <li key={index} className="flex items-center gap-3 text-muted-foreground" data-testid={`landmark-${index}`}>
-                      <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+                      <div className="w-2 h-2 rounded-full bg-brand flex-shrink-0" />
                       {landmark}
                     </li>
                   ))}
@@ -1018,7 +1018,7 @@ export default function Offices() {
                 <Card className="h-full" data-testid="card-meeting-rooms">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center">
                         <Users className="w-6 h-6 text-primary" />
                       </div>
                       <h3 className="text-lg font-light uppercase tracking-[0.12em] text-foreground">
@@ -1036,7 +1036,7 @@ export default function Offices() {
                 <Card className="h-full" data-testid="card-video-conferencing">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center">
                         <Video className="w-6 h-6 text-primary" />
                       </div>
                       <h3 className="text-lg font-light uppercase tracking-[0.12em] text-foreground">
@@ -1054,7 +1054,7 @@ export default function Offices() {
                 <Card className="h-full" data-testid="card-client-hospitality">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center">
                         <Coffee className="w-6 h-6 text-primary" />
                       </div>
                       <h3 className="text-lg font-light uppercase tracking-[0.12em] text-foreground">
@@ -1072,7 +1072,7 @@ export default function Offices() {
                 <Card className="h-full" data-testid="card-accessibility">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center">
                         <Accessibility className="w-6 h-6 text-primary" />
                       </div>
                       <h3 className="text-lg font-light uppercase tracking-[0.12em] text-foreground">
@@ -1164,7 +1164,7 @@ export default function Offices() {
             className="section-stone rounded-lg p-8 lg:p-12 text-center"
             data-testid="section-contact-cta"
           >
-            <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
+            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h2 className="text-2xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
               {t.contactCtaTitle}
             </h2>

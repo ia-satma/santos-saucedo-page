@@ -80,7 +80,7 @@ function RelatedTeamMemberCard({
       >
         <span
           aria-hidden="true"
-          className="absolute start-0 top-1/2 -translate-y-1/2 w-[2px] h-0 bg-primary transition-all duration-200 group-hover:h-8"
+          className="absolute start-0 top-1/2 -translate-y-1/2 w-[2px] h-0 bg-brand transition-all duration-200 group-hover:h-8"
         />
         <Avatar className="w-12 h-12 shrink-0">
           <AvatarImage
@@ -401,7 +401,7 @@ function AffiliationItemTranslated({
       className="flex items-start gap-3"
       data-testid={`item-affiliation-${index}`}
     >
-      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+      <div className="w-2 h-2 rounded-full bg-brand mt-2 flex-shrink-0" />
       <div>
         <p className="text-foreground">
           {displayOrganization}
@@ -518,7 +518,7 @@ function RepresentativeMatterTranslated({
       className="flex items-start gap-3"
       data-testid={`item-representative-matter-${index}`}
     >
-      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+      <div className="w-2 h-2 rounded-full bg-brand mt-2 flex-shrink-0" />
       <div>
         <p className="text-foreground">
           {displayDescription}
@@ -1949,7 +1949,7 @@ export default function TeamMemberDetail() {
                   <div className="mb-6">
                     <span
                       aria-hidden="true"
-                      className="block w-2.5 h-[2px] bg-primary mb-3"
+                      className="block w-2.5 h-[2px] bg-brand mb-3"
                     />
                     <h2
                       className="text-xs font-medium text-foreground uppercase tracking-[0.12em]"

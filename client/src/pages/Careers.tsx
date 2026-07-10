@@ -1049,7 +1049,7 @@ export default function Careers() {
             transition={{ duration: 0.7 }}
             className="text-center"
           >
-            <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
+            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1 
               className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
               data-testid="text-careers-title"
@@ -1331,7 +1331,7 @@ export default function Careers() {
                             key={index} 
                             className="text-sm text-muted-foreground flex items-start gap-2"
                           >
-                            <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-brand mt-2 flex-shrink-0" />
                             {item}
                           </li>
                         ))}
@@ -1349,7 +1349,7 @@ export default function Careers() {
                             key={index} 
                             className="text-sm text-muted-foreground flex items-start gap-2"
                           >
-                            <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-brand mt-2 flex-shrink-0" />
                             {item}
                           </li>
                         ))}
