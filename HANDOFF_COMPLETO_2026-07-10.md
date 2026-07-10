@@ -1,7 +1,7 @@
 # Handoff completo — Santos & Saucedo (sitio web)
 
 > Documento de contexto self-contained. Con esto una nueva sesión/dev tiene el panorama completo del
-> proyecto y de lo trabajado hasta **2026-07-10**. Último commit al generarlo: `4a7e192`.
+> proyecto y de lo trabajado hasta **2026-07-10**. Último commit: `54cc048` (rebrand + modo oscuro).
 
 ---
 
@@ -15,8 +15,10 @@ full-service de CDMX) — React 18 + Vite + Tailwind + Express + Neon + agentes 
 a la boutique laboral. Etapa 1 / Fase 2: prototipo navegable aprobable.
 
 **Regla de oro para detectar contenido heredado:** *S&S es SOLO laboral, +35 años, San Pedro Garza
-García N.L., navy `#202058` + verde `#B2EB3E`.* Cualquier texto/dato que diga otra cosa (CDMX,
-Polanco, full-service, rankings, 1986/1952, 70 años) es herencia de Von Wobeser (VW) a purgar.
+García N.L., **Azul Noche `#12103E` + Verde Lima `#A5E029`** (branding 2026-07).* Cualquier texto/dato
+que diga otra cosa (CDMX, Polanco, full-service, rankings, 1986/1952, 70 años) es herencia de Von
+Wobeser (VW) a purgar. Nota: `#202058`/`#B2EB3E` era la paleta S&S **anterior** (V2), ya reemplazada —
+no es VW; los crimson VW `#AC162C`/`#841A1A` siguen prohibidos.
 
 ## 2. El cliente (hechos verificados)
 
@@ -41,23 +43,26 @@ Polanco, full-service, rankings, 1986/1952, 70 años) es herencia de Von Wobeser
 
 ## 4. Identidad visual
 
-**Paleta (navy + verde V2):**
+**Paleta (branding 2026-07 — Azul Noche + Verde Lima):**
 
-| Rol | HEX |
-|-----|-----|
-| Azul noche | `#0e0f2c` |
-| Azul base | `#171735` |
-| Azul corporativo / **primario** | `#202058` |
-| Azul suave (sobre oscuro) | `#d9dafb` |
-| **Verde lima (acento V2)** | **`#B2EB3E`** |
+| Rol | HEX | Token |
+|-----|-----|-------|
+| Azul Noche / **primario** | `#12103E` | `--primary` (`243 59% 15%`) |
+| Ramp navy (gradientes hero/footer) | `#0A0826` / `#100E30` | hex fijo |
+| Azul suave (texto/iconos sobre navy) | `#D9D8F7` | hex fijo |
+| **Verde Lima (acento)** | **`#A5E029`** | `--brand` (`79 75% 52%`) |
+| Tinta de cuerpo | `#555` | `--body` (`0 0% 33%`) |
 
-- El logo V2 del cliente introdujo el **verde lima** como color de marca (la "S" del wordmark).
-  Navy cimienta la estructura; **verde = acento puntual** (CTAs, badges, reglas, isotipo).
-- ⚠️ Contraste: el verde NO va para texto sobre blanco (~1.4:1). **Navy sobre verde = 10.5:1** →
-  botones verdes con texto navy sí (legibles). Prohibidos los colores VW `#AC162C`/`#841A1A`.
+- **Azul Noche** cimienta la estructura; **Verde Lima = acento puntual** (CTA, badges, reglas, isotipo).
+- Todo es **token-driven** en `client/src/index.css` (`:root` claro + `.dark`): recolorar = cambiar
+  tokens. Las bandas navy fijas se cambian por hex (siguen correctas en claro **y** oscuro).
+- ⚠️ Contraste: el verde NO va para texto sobre blanco. **Azul Noche sobre lima** sí (botón CTA).
+  Prohibidos los crimson VW `#AC162C`/`#841A1A`. La paleta S&S anterior (`#202058`/`#B2EB3E`) ya no se usa.
 
-**Tipografía:** títulos serif **Baanoo** (`client/public/fonts/Baanoo.ttf`; tracking `-0.012em`,
-line-height `1.12`) · cuerpo/UI sans **Outfit** (Google Fonts).
+**Tipografía (branding 2026-07):** títulos serif **Lora** (Google Fonts, `--font-heading`; clásica de
+alto contraste, weight 600, tracking `-0.012em`, line-height `1.12`, color oscuro Azul Noche) · cuerpo/UI
+sans **Outfit** (weight 400, color `#555` vía `--body`) · eyebrows Outfit **bold** en Azul Noche.
+(Baanoo quedó sin uso; su `@font-face` sigue en el CSS pero `--font-heading` ya apunta a Lora.)
 
 **Logos V2** (en `attached_assets/logos-v2/`): `Logo-Principal` (navy+S verde → header claro),
 `Logo-Variante-Blanca` (blanco+S verde → hero/header oscuro), `Isotipo-Principal-07` (S verde → footer),
@@ -65,20 +70,21 @@ line-height `1.12`) · cuerpo/UI sans **Outfit** (Google Fonts).
 
 **Hero:** imagen branded Cerro de la Silla + S verde, self-hosted `attached_assets/hero-monterrey.webp`.
 
-## 5. Sistema de diseño (rediseño 2026-07-10)
+## 5. Sistema de diseño (actualizado 2026-07-10: modo oscuro + rebrand)
 
-Objetivo: matar el "efecto caja", crear profundidad, navy+verde, tipografía elegante. Utilidades
-globales en `client/src/index.css`:
+Objetivo: matar el "efecto caja", profundidad, Azul Noche + Verde Lima, tipografía editorial elegante.
+Utilidades globales en `client/src/index.css`:
 
-- **`.card-soft`** — tarjeta SIN borde: redondeada 1.5rem, sombra navy en capas, lift en hover. Es el
-  estilo de card unificado en TODO el sitio (home + internas). El `<Card>` base de shadcn también se suavizó.
-- **`.section-ambient`** / **`.section-mist`** — fondos de sección con profundidad, alternados con la
-  banda navy de Experiencia para dar capas/ritmo.
-- **`.divider-soft`** — línea que se desvanece (sin divisorias duras).
-- Radios globales suaves (`--radius .85rem`; Tailwind lg/md/sm). Iconos **lucide** con trazo unificado
-  a 1.75 (regla global `.lucide`). Color `brand` (verde) en `tailwind.config.ts`.
+- **`.card-soft`** — tarjeta SIN borde: redondeada **~8px**, sombra navy en capas, lift en hover.
+  Estilo de card unificado; el `<Card>` base de shadcn también sin borde (`rounded-lg`).
+- **`.section-ambient`** / **`.section-mist`** — fondos de sección con profundidad/ritmo.
+- **`.divider-soft`** — línea que se desvanece; separadores duros atenuados a `/40`.
+- **Radios:** `--radius .5rem`; Tailwind `lg .5rem` (8px, tarjetas) · `md .375rem` · `sm .25rem`
+  (**4px, botones/inputs**). CTA = variante **`brand`** del Button (lima, texto Azul Noche, bold, 4px, hover).
+- Iconos **lucide** trazo 1.75. **Todo el color por tokens de tema** (claro + `.dark`).
 
-**Principio:** navy cimienta, verde puntúa, todo respira; nada de bordes/cajas duras.
+**Principio:** Azul Noche cimienta, Verde Lima puntúa, títulos serif con autoridad, cuerpo gris que
+respira; nada de bordes/cajas duras. **Modo oscuro soportado por tokens** (sin texto invisible).
 
 ## 6. Arquitectura y deploy
 
@@ -110,11 +116,25 @@ globales en `client/src/index.css`:
    las páginas internas; `<Card>` base suavizado.
 8. Subidos al repo los docs internos `CONTEXTO_PROYECTO_*` e `INVESTIGACION_360_*` (repo público, con OK del cliente).
 
+**Sesión posterior (2026-07-10, mismo día):**
+
+9. **Refactor de modo oscuro** (`d9c96c3`) — tokenizados ≈150 colores hardcodeados
+   (`text-[#202058]`→`text-primary`, tintas→`text-foreground`, grises→`text-muted-foreground`,
+   borders/rings→tokens); arreglado el hover del panel admin-fallback. Dark mode legible en todo el sitio.
+10. **Rebrand + tipografía** (`54cc048`) — **Azul Noche `#12103E` + Verde Lima `#A5E029`** (nueva marca,
+    reemplaza `#202058`/`#B2EB3E`); títulos **Lora**, cuerpo `#555`, eyebrows bold; variante `brand` del
+    Button (CTA lima/navy/4px); radios editoriales (tarjetas 8px, botones 4px); limpieza de bordes-caja.
+    Todo por tokens → modo oscuro intacto. (Nota: el repo tenía finales de línea mezclados; algunos
+    archivos se normalizaron a LF en ese commit — solo las líneas de color/radio son cambios reales.)
+
 ## 9. Estado actual y commits
 
-Todo pusheado a `main`. Deploy OK. Último: `4a7e192`.
+Todo pusheado a `main`. Deploy OK (Actions success). Último: `54cc048`.
 
 ```
+54cc048 Rebrand: Lora serif + Azul Noche/Verde Lima palette, editorial radii, declutter
+d9c96c3 Refactor dark mode: tokenize hardcoded text/border/ring colors sitewide
+f614fce Add full project handoff/context doc (2026-07-10)
 4a7e192 Propagate soft card style to all internal pages
 25303ce Redesign UI: kill the box effect, add depth, modernize type
 94169f6 Swap hero to branded Monterrey image, lighten overlays so green S shows
@@ -129,18 +149,20 @@ f3c058c Purge Von Wobeser heritage, add V2 logos, add lime-green brand accent
 
 ## 10. Pendientes
 
-**🔴 #1 — Refactor de modo oscuro (decidido, sin empezar).** El sitio es light-first con colores
-hardcodeados (≈45 `bg-white`, 70+ textos navy fijos) → el dark mode no está bien soportado; el
-rediseño lo destapó (texto invisible en tarjetas oscuras). **Decisión del cliente: "arreglarlo bien"**
-= convertir superficies y textos a **tokens de tema** (`text-foreground`, `text-muted-foreground`,
-`text-primary`, `bg-card`…) en todo el sitio.
+**✅ #1 — Refactor de modo oscuro — HECHO** (`d9c96c3`). Superficies y textos convertidos a tokens de
+tema en todo el sitio; el dark mode se ve premium y consistente (verificado en el CSS desplegado).
+
+**✅ Rebrand + tipografía — HECHO** (`54cc048`): Azul Noche/Verde Lima, Lora, cuerpo `#555`, radios
+editoriales, limpieza de cajas. Detalle en §4 y §5.
 
 **Contenido (dependen del cliente):** bios reales del equipo (educación, experiencia, idiomas,
 ortografía de nombres); iconos sociales que apuntan a `#`; señales de autoridad (publicaciones, casos
 anonimizados); SEO/GEO local.
 
-**Menores/opcionales:** borrar del repo el código/PNGs VW muertos (limpieza); Baanoo TTF→woff2;
-ocultar o no el selector "ES"; en varias páginas los idiomas no-español renderizan inglés (override ES vs no-ES).
+**Menores/opcionales:** botones no-CTA quedaron a 8px (los CTA lima a 4px) — unificar a 4px si se
+quiere; quitar `@font-face`/TTF de Baanoo (ya sin uso) y fuentes huérfanas (Publico/Optima/Geomanist);
+borrar código/PNGs VW muertos y `RankingsSection` (no se renderiza); ocultar o no el selector "ES";
+en varias páginas los idiomas no-español renderizan inglés (override ES vs no-ES).
 
 ## 11. Gotchas del entorno
 
@@ -158,5 +180,6 @@ colores crimson `#AC162C`/`#841A1A`.
 
 ---
 
-*Generado por Claude Code el 2026-07-10. Fuente de verdad viva: el cerebro Obsidian
-(`proyectos/santos-saucedo/`) + este repo.*
+*Generado por Claude Code el 2026-07-10; actualizado el mismo día con el refactor de modo oscuro
+(`d9c96c3`) y el rebrand Azul Noche/Verde Lima + Lora (`54cc048`). Fuente de verdad viva: el cerebro
+Obsidian (`proyectos/santos-saucedo/`) + este repo.*
