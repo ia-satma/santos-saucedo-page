@@ -263,7 +263,7 @@ export default function NewsSection() {
             >
               {t.title}
             </h2>
-            <div className="h-[2px] w-16 bg-[#12103E]" aria-hidden="true" />
+            <div className="h-[2px] w-16 bg-brand" aria-hidden="true" />
           </div>
           <div className="flex justify-end mt-4">
             <Link

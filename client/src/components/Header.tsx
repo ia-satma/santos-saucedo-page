@@ -277,16 +277,30 @@ export default function Header() {
             data-testid="link-logo"
             aria-label={`Santos & Saucedo - ${t('nav.home')}`}
           >
+            {/* Navy logo: only on a light SOLID header. Hidden in dark mode
+                (would vanish on the dark header) and when transparent over the hero. */}
             <img
-              src={isSolidHeader ? logoColor : logoWhiteHorizontal}
+              src={logoColor}
               alt="Santos & Saucedo"
               className={cn(
                 "transition-all duration-300 flex-shrink-0 object-contain",
                 isSolidHeader
-                  ? "h-7 sm:h-8 md:h-9 w-auto max-w-[180px] sm:max-w-[220px] md:max-w-[260px]"
-                  : "h-8 sm:h-9 md:h-10 w-auto max-w-[190px] sm:max-w-[240px] md:max-w-[300px]"
+                  ? "h-7 sm:h-8 md:h-9 w-auto max-w-[180px] sm:max-w-[220px] md:max-w-[260px] block dark:hidden"
+                  : "hidden"
               )}
               data-testid="img-logo"
+            />
+            {/* White logo: transparent hero header (any theme) OR dark solid header. */}
+            <img
+              src={logoWhiteHorizontal}
+              alt="Santos & Saucedo"
+              className={cn(
+                "transition-all duration-300 flex-shrink-0 object-contain",
+                isSolidHeader
+                  ? "h-7 sm:h-8 md:h-9 w-auto max-w-[180px] sm:max-w-[220px] md:max-w-[260px] hidden dark:block"
+                  : "h-8 sm:h-9 md:h-10 w-auto max-w-[190px] sm:max-w-[240px] md:max-w-[300px] block"
+              )}
+              aria-hidden="true"
             />
           </Link>
 
@@ -504,7 +518,7 @@ export default function Header() {
       {isMobileMenuOpen && (
         <div
           id="mobile-menu"
-          className="fixed inset-0 z-[60] bg-primary"
+          className="fixed inset-0 z-[60] bg-[#12103E]"
           data-testid="modal-mobile-menu"
           role="dialog"
           aria-modal="true"

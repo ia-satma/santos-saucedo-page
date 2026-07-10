@@ -1101,7 +1101,7 @@ export default function TeamMemberDetail() {
   const getPublicationIcon = (_publication: string) => (
     <span
       aria-hidden="true"
-      className="inline-block w-1.5 h-1.5 bg-[#12103E] mt-1.5"
+      className="inline-block w-1.5 h-1.5 bg-brand mt-1.5"
     />
   );
 
@@ -1326,7 +1326,7 @@ export default function TeamMemberDetail() {
                 className="md:hidden h-px w-full bg-[#12103E]/20"
               />
               <div className="flex-1 min-w-0 text-center md:text-left px-6 py-8 md:px-10 md:py-10">
-                <div className="h-px w-10 bg-[#12103E] mb-4 mx-auto md:mx-0" aria-hidden="true" />
+                <div className="h-px w-10 bg-brand mb-4 mx-auto md:mx-0" aria-hidden="true" />
                 <div className="flex flex-col md:flex-row items-center gap-3 mb-3">
                   <h1 
                     className="text-2xl md:text-3xl lg:text-4xl font-heading font-light text-white uppercase tracking-[0.12em]"
@@ -1493,7 +1493,7 @@ export default function TeamMemberDetail() {
                 >
                   <div className="card-soft p-8">
                     <div className="mb-6">
-                      <div className="h-px w-10 bg-[#12103E] mb-4" aria-hidden="true" />
+                      <div className="h-px w-10 bg-brand mb-4" aria-hidden="true" />
                       <h2
                         className="text-xl font-heading font-light text-foreground flex items-center gap-3 uppercase tracking-[0.12em]"
                         data-testid="text-rankings-title"
@@ -1836,7 +1836,7 @@ export default function TeamMemberDetail() {
                   data-testid="section-featured-recognition"
                 >
                   <div className="mb-4">
-                    <div className="h-px w-10 bg-[#12103E] mb-4" aria-hidden="true" />
+                    <div className="h-px w-10 bg-brand mb-4" aria-hidden="true" />
                     <h2 
                       className="text-lg font-heading font-light text-foreground uppercase tracking-[0.12em]"
                       data-testid="text-featured-recognition-title"
@@ -2014,7 +2014,7 @@ export default function TeamMemberDetail() {
                           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                           {article.category && (
                             <span 
-                              className="absolute top-3 left-3 px-2 py-1 text-xs font-medium bg-primary text-white rounded"
+                              className="absolute top-3 left-3 px-2 py-1 text-xs font-medium bg-primary text-primary-foreground rounded"
                               data-testid={`badge-news-category-${article.slug}`}
                             >
                               {language === "es" ? article.categoryEs : article.category?.charAt(0).toUpperCase() + article.category?.slice(1)}

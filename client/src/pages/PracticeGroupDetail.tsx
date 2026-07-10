@@ -80,7 +80,7 @@ function TranslatedMatterCard({ matter, language, t }: TranslatedMatterCardProps
       {matter.isHighlight && (
         <span
           aria-hidden="true"
-          className="absolute left-0 top-0 bottom-0 w-[2px] bg-[#12103E]"
+          className="absolute left-0 top-0 bottom-0 w-[2px] bg-brand"
         />
       )}
       <CardContent className="p-6">
@@ -725,7 +725,7 @@ export default function PracticeGroupDetail() {
                 transition={{ duration: 0.6, delay: 0.22 }}
               >
                 <div className="mb-4">
-                  <div className="h-px w-10 bg-[#12103E] mb-4" aria-hidden="true" />
+                  <div className="h-px w-10 bg-brand mb-4" aria-hidden="true" />
                   <h2
                     className="text-xl font-heading font-light text-foreground uppercase tracking-[0.12em]"
                     data-testid="text-success-cases-title"
@@ -808,7 +808,7 @@ export default function PracticeGroupDetail() {
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
                 <div className="mb-8">
-                  <div className="h-px w-10 bg-[#12103E] mb-4" aria-hidden="true" />
+                  <div className="h-px w-10 bg-brand mb-4" aria-hidden="true" />
                   <h2
                     className="text-xl font-heading font-light text-foreground uppercase tracking-[0.12em]"
                     data-testid="text-our-team-title"

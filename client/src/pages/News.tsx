@@ -123,7 +123,7 @@ function NewsCard({ article, readMoreText }: NewsCardProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
           {article.category && (
             <span 
-              className="absolute top-3 left-3 px-2 py-1 text-xs font-medium bg-primary text-white rounded"
+              className="absolute top-3 left-3 px-2 py-1 text-xs font-medium bg-primary text-primary-foreground rounded"
               data-testid={`badge-category-${article.slug}`}
             >
               {getCategoryLabel()}
@@ -487,7 +487,7 @@ export default function NewsPage() {
                   onClick={() => setSelectedCategory(cat.value)}
                   className={`transition-all ${
                     selectedCategory === cat.value 
-                      ? "bg-primary text-white" 
+                      ? "bg-primary text-primary-foreground" 
                       : "text-muted-foreground hover:bg-muted"
                   }`}
                   data-testid={`button-filter-${cat.value}`}

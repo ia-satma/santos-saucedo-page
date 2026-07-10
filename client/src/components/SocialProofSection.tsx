@@ -176,7 +176,7 @@ export default function SocialProofSection() {
               {/* Attribution */}
               <div className="flex flex-col items-center" data-testid={`attribution-${quote.id}`}>
                 <div
-                  className="w-10 h-px bg-[#12103E] mb-4"
+                  className="w-10 h-px bg-brand mb-4"
                   data-testid={`divider-quote-${quote.id}`}
                 />
                 <div className="h-12 md:h-14 flex items-center justify-center">

@@ -292,7 +292,7 @@ export default function EventsSection({ language }: EventsSectionProps) {
           className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 mb-12"
         >
           <div>
-            <div className="w-12 h-px bg-[#12103E] mb-6" />
+            <div className="w-12 h-px bg-brand mb-6" />
             <p
               className="text-primary text-[11px] tracking-[0.25em] uppercase mb-4"
               data-testid="text-events-eyebrow"

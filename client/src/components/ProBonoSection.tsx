@@ -158,7 +158,7 @@ export default function ProBonoSection() {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="mb-6"
           >
-            <div className="w-8 h-px bg-[#12103E] mb-5" />
+            <div className="w-8 h-px bg-brand mb-5" />
             <p
               className="text-primary text-[10px] tracking-[0.25em] uppercase mb-4"
               data-testid="text-pro-bono-eyebrow"

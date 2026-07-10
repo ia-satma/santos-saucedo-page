@@ -403,7 +403,7 @@ export default function StatsSection({ language }: StatsSectionProps) {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="w-12 h-px bg-[#12103E] mb-6" />
+            <div className="w-12 h-px bg-brand mb-6" />
             <p className="text-primary text-[10px] tracking-[0.25em] uppercase mb-4">
               DERECHO LABORAL
             </p>

@@ -296,11 +296,11 @@ export default function AboutUsSection() {
             >
               {/* Icon circle */}
               <div className="flex items-start gap-5">
-                <div className="flex-shrink-0 w-14 h-14 rounded-full bg-[#12103E] shadow-[0_12px_28px_rgba(18,16,62,0.2)] flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-1">
-                  <Icon className="w-6 h-6 text-white" strokeWidth={1.8} />
+                <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary shadow-[0_12px_28px_rgba(18,16,62,0.2)] flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-1">
+                  <Icon className="w-6 h-6 text-primary-foreground" strokeWidth={1.8} />
                 </div>
                 <div className="flex flex-col justify-center pt-1">
-                  <div className="w-8 h-0.5 bg-[#12103E] mb-3" />
+                  <div className="w-8 h-0.5 bg-brand mb-3" />
                   <h3
                     className="font-heading font-light uppercase tracking-[0.1em] text-2xl lg:text-3xl text-foreground leading-none"
                     data-testid={`text-${testId}-title`}
@@ -359,8 +359,8 @@ export default function AboutUsSection() {
                 className="card-soft group relative p-8 lg:p-10 flex flex-col items-center text-center gap-4 cursor-default"
                 data-testid={`value-item-${i}`}
               >
-                <div className="w-16 h-16 rounded-full bg-[#12103E] shadow-[0_12px_28px_rgba(18,16,62,0.2)] flex items-center justify-center mt-2 transition-transform duration-300 group-hover:scale-110">
-                  <Icon className="w-7 h-7 text-white" strokeWidth={1.8} />
+                <div className="w-16 h-16 rounded-full bg-primary shadow-[0_12px_28px_rgba(18,16,62,0.2)] flex items-center justify-center mt-2 transition-transform duration-300 group-hover:scale-110">
+                  <Icon className="w-7 h-7 text-primary-foreground" strokeWidth={1.8} />
                 </div>
                 <div className="w-7 h-0.5 bg-brand group-hover:w-10 transition-all duration-500" />
                 <span

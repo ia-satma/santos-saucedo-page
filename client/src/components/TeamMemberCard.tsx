@@ -46,7 +46,7 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
   };
 
   const getSeniorityBg = () => {
-    if (member.isPartner) return "bg-primary";
+    if (member.isPartner) return "bg-[#12103E]";
     if (member.title === "Of Counsel") return "bg-[#5B5C5F]";
     return "bg-[#8B8D89]";
   };

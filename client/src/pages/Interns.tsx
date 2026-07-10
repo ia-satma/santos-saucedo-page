@@ -974,7 +974,7 @@ export default function Interns() {
                     data-testid={`card-step-${index}`}
                   >
                     <CardContent className="p-6">
-                      <div className="w-12 h-12 rounded-full bg-primary text-white text-xl font-bold flex items-center justify-center mx-auto mb-4">
+                      <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground text-xl font-bold flex items-center justify-center mx-auto mb-4">
                         {step.step}
                       </div>
                       <h3 className="font-light uppercase tracking-[0.12em] text-foreground mb-2">

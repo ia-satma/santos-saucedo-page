@@ -56,7 +56,7 @@ export default function OfficeGallery() {
       <div className="max-w-7xl mx-auto px-6">
         {/* Editorial header */}
         <div className="mb-12">
-          <div className="w-12 h-px bg-[#12103E] mb-4" />
+          <div className="w-12 h-px bg-brand mb-4" />
           <p className="text-primary text-[11px] tracking-[0.25em] uppercase mb-3">
             {t.eyebrow}
           </p>

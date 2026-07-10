@@ -368,7 +368,7 @@ export default function IndustryGroupsSection() {
         className="max-w-7xl mx-auto px-6 lg:px-12 py-8 flex flex-wrap items-center justify-between gap-4"
       >
         <div className="flex items-center gap-5">
-          <div className="w-10 h-px bg-[#12103E] shrink-0" />
+          <div className="w-10 h-px bg-brand shrink-0" />
           <div>
             {/* Eyebrow label — small red uppercase, comes first */}
             <p className="text-primary text-[10px] tracking-[0.25em] uppercase mb-1">

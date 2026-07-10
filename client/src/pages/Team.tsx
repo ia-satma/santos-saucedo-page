@@ -571,7 +571,7 @@ export default function Team() {
             {showPartners && groupedMembers.partners.length > 0 && (
               <section data-testid="section-partners">
                 <div className="px-6 lg:px-12 pt-10 pb-4">
-                  <div className="w-10 h-px bg-[#12103E] mb-4" />
+                  <div className="w-10 h-px bg-brand mb-4" />
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
                     {t.partnersOnly}
                   </h2>
@@ -647,7 +647,7 @@ export default function Team() {
             {showOfCounsel && groupedMembers.ofCounsel.length > 0 && (
               <section data-testid="section-ofcounsel">
                 <div className="px-6 lg:px-12 pt-10 pb-4">
-                  <div className="w-10 h-px bg-[#12103E] mb-4" />
+                  <div className="w-10 h-px bg-brand mb-4" />
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
                     {t.ofCounsel}
                   </h2>
@@ -714,7 +714,7 @@ export default function Team() {
             {showAssociates && groupedMembers.associates.length > 0 && (
               <section data-testid="section-associates">
                 <div className="px-6 lg:px-12 pt-10 pb-4">
-                  <div className="w-10 h-px bg-[#12103E] mb-4" />
+                  <div className="w-10 h-px bg-brand mb-4" />
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
                     {t.associates}
                   </h2>

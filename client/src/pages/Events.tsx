@@ -387,7 +387,7 @@ export default function EventsPage() {
                   onClick={() => setSelectedType(type.value)}
                   className={`transition-all ${
                     selectedType === type.value 
-                      ? "bg-primary text-white" 
+                      ? "bg-primary text-primary-foreground" 
                       : "text-muted-foreground hover:bg-muted"
                   }`}
                   data-testid={`button-filter-${type.value}`}

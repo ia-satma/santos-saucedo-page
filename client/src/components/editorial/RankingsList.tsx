@@ -37,7 +37,7 @@ export function RankingsList({
           >
             <div className="flex items-center gap-4 min-w-0 flex-1">
               <div
-                className="w-2 h-2 bg-[#12103E] shrink-0"
+                className="w-2 h-2 bg-brand shrink-0"
                 aria-hidden="true"
               />
               <p
