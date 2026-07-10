@@ -190,7 +190,7 @@ export default function PracticesSection() {
 
               {/* Decorative large number */}
               <div className="relative mb-6 select-none pointer-events-none">
-                <span className="text-[9rem] leading-none font-heading font-medium text-brand/40 [text-shadow:0_1px_0_rgba(255,255,255,0.9)]">
+                <span className="text-[9rem] leading-none font-heading font-medium text-brand [text-shadow:0_1px_0_rgba(255,255,255,0.9)]">
                   6
                 </span>
               </div>
@@ -205,7 +205,7 @@ export default function PracticesSection() {
                 <Link href="/contact">
                   <Button
                     variant="brand"
-                    className="uppercase tracking-wide text-xs w-full sm:w-auto shadow-[0_14px_30px_rgba(18, 16, 62,0.22)]"
+                    className="uppercase tracking-wide text-xs w-full sm:w-auto shadow-[0_14px_30px_rgba(18,16,62,0.22)]"
                     data-testid="button-practices-contact"
                   >
                     <Phone className="w-3.5 h-3.5 mr-2" />

@@ -157,9 +157,9 @@ blockquote {
   /* ── PALETA DARK ──────────────────────────────────────────
      Carbón/navy profundo, evitando negro puro.
   ─────────────────────────────────────────────────────────── */
-  --background: 243 40% 10%;       /* Azul Noche profundo             */
+  --background: 243 47% 7%;        /* Azul Noche muy profundo (contraste) */
   --foreground: 42 24% 92%;
-  --card: 243 32% 15%;
+  --card: 243 36% 12%;
   --card-foreground: 0 0% 93%;
   --card-border: 240 16% 28%;
   --border: 240 16% 28%;
@@ -174,8 +174,8 @@ blockquote {
   --popover: 240 30% 16%;
   --popover-foreground: 42 24% 92%;
   --popover-border: 240 16% 28%;
-  --primary: 243 55% 70%;
-  --primary-foreground: 0 0% 98%;
+  --primary: 79 74% 55%;           /* acento VERDE en oscuro (navy se pierde) */
+  --primary-foreground: 243 59% 12%;
   --secondary: 240 24% 21%;
   --secondary-foreground: 42 24% 86%;
   --muted: 240 22% 20%;
@@ -188,7 +188,7 @@ blockquote {
   --destructive: 0 70% 45%;
   --destructive-foreground: 0 0% 98%;
   --input: 0 0% 25%;
-  --ring: 240 50% 58%;
+  --ring: 79 74% 55%;
   --chart-1: 240 50% 64%;
   --chart-2: 240 42% 70%;
   --chart-3: 0 0% 65%;
@@ -313,12 +313,12 @@ blockquote {
 }
 .dark .section-ambient {
   background:
-    radial-gradient(120% 95% at 88% -10%, rgba(116, 110, 206, 0.10) 0%, transparent 55%),
-    radial-gradient(95% 85% at -5% 110%, rgba(165, 224, 41, 0.06) 0%, transparent 52%),
-    hsl(240 37% 12%);
+    radial-gradient(120% 95% at 88% -10%, rgba(24, 20, 66, 0.55) 0%, transparent 55%),
+    radial-gradient(95% 85% at -5% 110%, rgba(165, 224, 41, 0.08) 0%, transparent 52%),
+    hsl(243 47% 7%);
 }
 .dark .section-mist {
-  background: linear-gradient(180deg, hsl(240 37% 13%) 0%, hsl(240 30% 16%) 100%);
+  background: linear-gradient(180deg, hsl(243 44% 8%) 0%, hsl(243 36% 12%) 100%);
 }
 
 /* Hairline that fades out at both ends — no hard divider lines. */
@@ -1128,7 +1128,7 @@ html, body {
   color: hsl(var(--foreground));
   border-bottom-color: hsl(var(--border));
   background:
-    radial-gradient(circle at 50% 0%, rgba(118, 112, 214, 0.18), transparent 42%),
+    radial-gradient(circle at 50% 0%, rgba(165, 224, 41, 0.10), transparent 42%),
     linear-gradient(180deg, #100E30 0%, hsl(var(--background)) 48%, hsl(var(--card)) 100%);
 }
 
@@ -1159,7 +1159,7 @@ html, body {
 
 .dark .section-paper {
   background:
-    radial-gradient(circle at top left, rgba(118, 112, 214, 0.12), transparent 34rem),
+    radial-gradient(circle at top left, rgba(165, 224, 41, 0.08), transparent 34rem),
     linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--card)) 100%);
 }
 

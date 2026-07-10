@@ -274,8 +274,8 @@ export default function IndustryGroupsSection() {
                 className="absolute inset-0"
                 style={{
                   background: isActive
-                    ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(18, 16, 62,0.34) 50%, rgba(18, 16, 62,0.12) 100%)"
-                    : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(18, 16, 62,0.36) 100%)",
+                    ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(18,16,62,0.34) 50%, rgba(18,16,62,0.12) 100%)"
+                    : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(18,16,62,0.36) 100%)",
                   transition: "background 0.5s ease",
                 }}
               />

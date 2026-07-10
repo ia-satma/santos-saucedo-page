@@ -136,7 +136,7 @@ function NewsPanel({ language, news }: { language: LanguageCode; news: News[] })
         className="backdrop-blur-md rounded-lg border border-white/10 ring-1 ring-inset ring-white/5 p-6 flex flex-col gap-4 shadow-2xl"
         style={{
           width: '280px',
-          background: 'linear-gradient(135deg, rgba(18, 16, 62,0.82) 0%, rgba(16, 14, 48,0.74) 100%)',
+          background: 'linear-gradient(135deg, rgba(18,16,62,0.82) 0%, rgba(16,14,48,0.74) 100%)',
         }}
       >
         {/* Header */}
@@ -356,7 +356,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
     >
       <div className="absolute inset-0 z-0">
         <div 
-          className="absolute inset-0 bg-[radial-gradient(circle_at_78%_34%,rgba(18, 16, 62,0.72)_0%,rgba(16, 14, 48,0.5)_32%,rgba(10, 8, 38,0.92)_72%),linear-gradient(135deg,#0A0826_0%,#100E30_54%,#12103E_100%)]"
+          className="absolute inset-0 bg-[radial-gradient(circle_at_78%_34%,rgba(18,16,62,0.72)_0%,rgba(16,14,48,0.5)_32%,rgba(10,8,38,0.92)_72%),linear-gradient(135deg,#0A0826_0%,#100E30_54%,#12103E_100%)]"
           data-testid="background-gradient"
         />
         <div 
@@ -376,8 +376,8 @@ export default function HeroSection({ language }: HeroSectionProps) {
           data-testid={isMobile ? "img-hero-background-mobile" : "img-hero-background"}
         />
         
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10, 8, 38,0.5)_0%,rgba(16, 14, 48,0.2)_50%,rgba(10, 8, 38,0.1)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10, 8, 38,0.2)_0%,rgba(16, 14, 48,0.03)_45%,rgba(10, 8, 38,0.6)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,8,38,0.5)_0%,rgba(16,14,48,0.2)_50%,rgba(10,8,38,0.1)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,8,38,0.2)_0%,rgba(16,14,48,0.03)_45%,rgba(10,8,38,0.6)_100%)]" />
         <div className="absolute bottom-0 left-0 right-0 h-44 bg-gradient-to-t from-[#0A0826]/88 to-transparent" />
       </div>
 
@@ -401,7 +401,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
           initial={{ opacity: 0, y: 10 }}
           animate={isVisible ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.65 }}
-          className="font-sans inline-flex max-w-[680px] items-center justify-center border-y border-brand/40 bg-white/[0.035] px-5 sm:px-7 py-3 text-white/90 text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase leading-relaxed backdrop-blur-[1px]"
+          className="font-sans inline-flex max-w-[680px] items-center justify-center border-y border-brand bg-white/[0.035] px-5 sm:px-7 py-3 text-white/90 text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase leading-relaxed backdrop-blur-[1px]"
           data-testid="text-hero-subheadline"
         >
           {subheadline}
@@ -413,7 +413,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
         animate={isVisible ? { opacity: 1 } : {}}
         transition={{ duration: 0.6, delay: 1 }}
         onClick={scrollToNews}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-brand/90 hover:text-brand transition-colors cursor-pointer min-h-[44px] min-w-[44px] touch-manipulation p-2"
+        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-brand hover:text-brand transition-colors cursor-pointer min-h-[44px] min-w-[44px] touch-manipulation p-2"
         data-testid="button-scroll-down"
         aria-label={scrollAriaLabel}
       >

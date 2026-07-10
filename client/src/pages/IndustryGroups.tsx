@@ -75,8 +75,8 @@ function IndustryGroupCard({ group, index, learnMoreText }: IndustryGroupCardPro
           className="absolute inset-0 pointer-events-none"
           style={{
             background: isHover
-              ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(18, 16, 62,0.34) 50%, rgba(18, 16, 62,0.12) 100%)"
-              : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(18, 16, 62,0.38) 100%)",
+              ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(18,16,62,0.34) 50%, rgba(18,16,62,0.12) 100%)"
+              : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(18,16,62,0.38) 100%)",
             transition: "background 0.5s ease",
           }}
         />
