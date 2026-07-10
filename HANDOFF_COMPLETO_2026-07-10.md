@@ -87,8 +87,10 @@ Utilidades globales en `client/src/index.css`:
 respira; nada de bordes/cajas duras. **Modo oscuro soportado por tokens** (sin texto invisible).
 
 **Modo oscuro (regla de color):** el navy se pierde sobre fondo oscuro → en `.dark` el **acento pasa a
-Verde Lima** (`--primary` = verde, `--primary-foreground` = navy, `--ring` = verde); fondo y superficies
-más profundos (`--background 243 47% 7%`) para contraste. El texto en oscuro es **blanco neutro**
+Verde Lima** (`--primary` = verde, `--primary-foreground` = navy, `--ring` = verde). El **fondo base en
+oscuro es el navy-índigo del footer** (`--background 243 52% 11%`; toda la escala de superficies en hue
+243 — cards/popover 16%, muted/secondary/accent escalonados encima — para que sea coherente, no
+near-black). El texto en oscuro es **blanco neutro**
 (`--foreground 0 0% 98%`, `--body 0 0% 84%`) — se quitó el tinte "hueso" cálido (hue 42). Los verdes de
 marca van a **100% opacidad** (sin `/40`, `/90`). El texto muted en oscuro también es neutro
 (`--muted-foreground 0 0% 68%`, sin beige). Gotcha: en clases Tailwind arbitrarias
