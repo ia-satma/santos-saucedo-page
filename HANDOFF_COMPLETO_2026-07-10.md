@@ -105,6 +105,12 @@ dejes `bg-primary` con `text-white` (en oscuro sería blanco sobre verde). **Log
 **blanca** cuando el header está oscuro o transparente; la navy solo en header claro sólido (si no, se
 pierde) — se resuelve con variantes `dark:` en dos `<img>`.
 
+**Fondos de sección claros hardcodeados = texto invisible en oscuro:** un `bg-[linear-gradient(…#fff…)]`
+(o `bg-white`, `bg-[#f…]`) **no cambia** en `.dark`, así que la sección se queda blanca pero el texto
+(token) se vuelve blanco → invisible. Usa siempre superficies theme-aware: **`.section-ambient`** (base
+= `--background`, para que las tarjetas resalten) o **`.section-mist`**, o tokens (`bg-background/muted`).
+Pasó en `PracticesSection` (Áreas).
+
 **Regla del verde (dónde aplicarlo):** Verde Lima va como **acento/forma** — reglas y subrayados de
 sección (`h-px`/`h-0.5 bg-brand`), hairline del eyebrow, bullets, barras, la "S", el numeral gigante —
 y como **texto/íconos SOBRE superficies oscuras** (fotos con overlay navy, bandas navy, modo oscuro; p.
