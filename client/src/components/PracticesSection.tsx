@@ -162,7 +162,7 @@ export default function PracticesSection() {
   return (
     <section
       id="practices"
-      className="py-24 lg:py-32 bg-[linear-gradient(135deg,#ffffff_0%,#f7f7fb_46%,#eeeef8_100%)]"
+      className="py-24 lg:py-32 section-ambient"
       data-testid="section-practices"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
