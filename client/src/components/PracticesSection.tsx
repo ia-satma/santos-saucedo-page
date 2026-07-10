@@ -204,7 +204,8 @@ export default function PracticesSection() {
               <div className="flex flex-col gap-4">
                 <Link href="/contact">
                   <Button
-                    className="rounded-xl bg-brand text-brand-foreground uppercase tracking-wide text-xs w-full sm:w-auto shadow-[0_14px_30px_rgba(32,32,88,0.22)] hover:brightness-95"
+                    variant="brand"
+                    className="uppercase tracking-wide text-xs w-full sm:w-auto shadow-[0_14px_30px_rgba(18, 16, 62,0.22)]"
                     data-testid="button-practices-contact"
                   >
                     <Phone className="w-3.5 h-3.5 mr-2" />
@@ -235,7 +236,7 @@ export default function PracticesSection() {
               <motion.div key={area.id} variants={itemVariants}>
                 <Link
                   href={`/practice-groups/${area.slug}`}
-                  className="group flex items-center gap-6 px-6 py-6 rounded-xl hover:bg-[#202058]/[0.04] transition-all duration-200 h-full"
+                  className="group flex items-center gap-6 px-6 py-6 rounded-lg hover:bg-[#12103E]/[0.04] transition-all duration-200 h-full"
                   data-testid={`link-practice-${area.id}`}
                 >
                   <span
@@ -264,7 +265,8 @@ export default function PracticesSection() {
         <div className="lg:hidden mt-10 flex flex-col gap-4">
           <Link href="/contact">
             <Button
-              className="rounded-xl bg-brand text-brand-foreground uppercase tracking-wide text-xs w-full"
+              variant="brand"
+              className="uppercase tracking-wide text-xs w-full"
               data-testid="button-practices-contact-mobile"
             >
               <Phone className="w-3.5 h-3.5 mr-2" />

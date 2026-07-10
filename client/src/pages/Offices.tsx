@@ -875,7 +875,7 @@ export default function Offices() {
                     </div>
 
                     <Button 
-                      className="w-full rounded-xl mt-4" 
+                      className="w-full rounded-lg mt-4" 
                       asChild
                       data-testid="button-directions"
                     >
@@ -895,7 +895,7 @@ export default function Offices() {
 
               <div className="order-1 lg:order-2">
                 <div 
-                  className="w-full h-[400px] lg:h-full min-h-[400px] rounded-2xl overflow-hidden"
+                  className="w-full h-[400px] lg:h-full min-h-[400px] rounded-lg overflow-hidden"
                   data-testid="container-map"
                 >
                   <iframe
@@ -919,7 +919,7 @@ export default function Offices() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-20 bg-muted rounded-2xl p-8 lg:p-12"
+            className="mb-20 bg-muted rounded-lg p-8 lg:p-12"
             data-testid="section-directions"
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -968,7 +968,7 @@ export default function Offices() {
             {imagesLoading ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" data-testid="skeleton-gallery">
                 {Array.from({ length: 8 }).map((_, index) => (
-                  <Skeleton key={index} className="aspect-[4/3] rounded-xl" />
+                  <Skeleton key={index} className="aspect-[4/3] rounded-lg" />
                 ))}
               </div>
             ) : (
@@ -980,7 +980,7 @@ export default function Offices() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: index * 0.05 }}
-                    className="aspect-[4/3] rounded-xl overflow-hidden cursor-pointer group"
+                    className="aspect-[4/3] rounded-lg overflow-hidden cursor-pointer group"
                     onClick={() => setSelectedImage(image)}
                     data-testid={`gallery-image-${image.id}`}
                   >
@@ -1161,7 +1161,7 @@ export default function Offices() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="section-stone rounded-2xl p-8 lg:p-12 text-center"
+            className="section-stone rounded-lg p-8 lg:p-12 text-center"
             data-testid="section-contact-cta"
           >
             <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
@@ -1176,7 +1176,7 @@ export default function Offices() {
                 <Button 
                   variant="default" 
                   size="lg" 
-                  className="rounded-xl gap-2"
+                  className="rounded-lg gap-2"
                   data-testid="button-contact"
                 >
                   {t.contactButton}
@@ -1187,7 +1187,7 @@ export default function Offices() {
                 <Button 
                   variant="outline" 
                   size="lg" 
-                  className="rounded-xl gap-2 border-primary/30 text-primary hover:bg-primary/5"
+                  className="rounded-lg gap-2 border-primary/30 text-primary hover:bg-primary/5"
                   data-testid="button-schedule"
                 >
                   {t.scheduleButton}
@@ -1209,7 +1209,7 @@ export default function Offices() {
             <img
               src={selectedImage.imageUrl}
               alt={language === "es" ? selectedImage.altEs : selectedImage.alt}
-              className="w-full h-auto max-h-[80vh] object-contain rounded-xl"
+              className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
             />
             <button
               onClick={() => setSelectedImage(null)}

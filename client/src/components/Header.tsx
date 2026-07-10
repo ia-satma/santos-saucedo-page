@@ -338,7 +338,7 @@ export default function Header() {
                   <div
                     className={cn(
                       "absolute top-full left-0 mt-2 min-w-[220px] py-2 z-50",
-                      "rounded-2xl shadow-2xl backdrop-blur-xl overflow-hidden ring-1 ring-black/[0.04]",
+                      "rounded-lg shadow-2xl backdrop-blur-xl overflow-hidden ring-1 ring-black/[0.04]",
                       isSolidHeader
                         ? "bg-background/95"
                         : "bg-black/75"
@@ -394,7 +394,7 @@ export default function Header() {
               {isSearchOpen && (
                 <div
                   id="search-panel"
-                  className="absolute right-0 top-full mt-2 w-80 bg-card shadow-2xl rounded-2xl ring-1 ring-black/[0.04] overflow-hidden"
+                  className="absolute right-0 top-full mt-2 w-80 bg-card shadow-2xl rounded-lg ring-1 ring-black/[0.04] overflow-hidden"
                   data-testid="container-search"
                   role="search"
                   aria-label={t('common.search')}

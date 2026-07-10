@@ -439,7 +439,7 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
 
           <div className="bg-background px-6 md:px-12 py-12 space-y-12">
             <section className="max-w-3xl mx-auto text-center" data-testid="section-vision">
-              <div className="w-12 h-px bg-[#202058] mb-6 mx-auto" />
+              <div className="w-12 h-px bg-[#12103E] mb-6 mx-auto" />
               <h3 className="text-xl md:text-2xl font-heading font-light text-foreground mb-6 uppercase tracking-[0.12em]">
                 {t.visionTitle}
               </h3>
@@ -449,7 +449,7 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
             </section>
 
             <section className="max-w-3xl mx-auto text-center" data-testid="section-center">
-              <div className="w-12 h-px bg-[#202058] mb-6 mx-auto" />
+              <div className="w-12 h-px bg-[#12103E] mb-6 mx-auto" />
               <h3 className="text-xl md:text-2xl font-heading font-light text-foreground mb-6 uppercase tracking-[0.12em]">
                 {t.centerTitle}
               </h3>
@@ -459,7 +459,7 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
             </section>
 
             <section className="max-w-3xl mx-auto text-center" data-testid="section-collaboration">
-              <div className="w-12 h-px bg-[#202058] mb-6 mx-auto" />
+              <div className="w-12 h-px bg-[#12103E] mb-6 mx-auto" />
               <h3 className="text-xl md:text-2xl font-heading font-light text-foreground mb-6 uppercase tracking-[0.12em]">
                 {t.collabTitle}
               </h3>
@@ -519,13 +519,13 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
               <blockquote className="font-sans font-light text-lg md:text-xl text-foreground leading-relaxed mb-8 not-italic" style={{ fontStyle: "normal" }}>
                 {t.quoteText}
               </blockquote>
-              <div className="w-12 h-px bg-[#202058] mx-auto mb-4" />
+              <div className="w-12 h-px bg-[#12103E] mx-auto mb-4" />
               <p className="text-xs text-foreground uppercase tracking-[0.2em] mb-1">{t.quoteAuthor}</p>
               <p className="text-[10px] text-muted-foreground uppercase tracking-[0.25em]">{t.quoteRole}</p>
             </section>
 
             <section className="max-w-3xl mx-auto text-center" data-testid="section-address">
-              <div className="w-12 h-px bg-[#202058] mb-6 mx-auto" />
+              <div className="w-12 h-px bg-[#12103E] mb-6 mx-auto" />
               <h3 className="text-xl md:text-2xl font-heading font-light text-foreground mb-6 uppercase tracking-[0.12em]">
                 {t.addressTitle}
               </h3>
@@ -547,7 +547,7 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
           </div>
         </div>
 
-        <div className="bg-[#202058] p-4 flex-shrink-0">
+        <div className="bg-[#12103E] p-4 flex-shrink-0">
           <Button
             onClick={handleClose}
             variant="ghost"

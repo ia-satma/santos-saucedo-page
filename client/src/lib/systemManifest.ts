@@ -236,7 +236,7 @@ export const AI_HANDS_AGENTS: SystemFeature[] = [
     category: 'ai_hands',
     name: 'Sintetizador Visual con Escudo Legal',
     technicalName: 'SmartImageGenerator + ImageSuggestionAgent',
-    technicalDetail: 'DALL-E 3 primario → Gemini 2.5 Flash fallback → Placeholder garantizado. Sanitización de políticas de contenido (28 términos legales sensibles → reemplazos abstractos), inyección de color de marca (#202058), overlay de logo con Sharp (150px sobre fondo blanco, esquina inferior derecha).',
+    technicalDetail: 'DALL-E 3 primario → Gemini 2.5 Flash fallback → Placeholder garantizado. Sanitización de políticas de contenido (28 términos legales sensibles → reemplazos abstractos), inyección de color de marca (#12103E), overlay de logo con Sharp (150px sobre fondo blanco, esquina inferior derecha).',
     userBenefit: 'Generación gráfica con "Sanitización Legal" que reinterpreta conceptos sensibles para asegurar integridad institucional. Previene bloqueos de publicación por censura de IA y garantiza 100% de uptime visual.',
     status: 'production',
     keyCapabilities: [
@@ -251,7 +251,7 @@ export const AI_HANDS_AGENTS: SystemFeature[] = [
       fallbackEngine: 'Gemini 2.5 Flash',
       sanitizedTerms: 28,
       logoSize: '150px',
-      brandColor: '#202058',
+      brandColor: '#12103E',
     },
   },
   {

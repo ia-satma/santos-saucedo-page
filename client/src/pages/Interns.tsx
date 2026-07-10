@@ -764,7 +764,7 @@ export default function Interns() {
               {t.heroSubtitle}
             </p>
             <Button 
-              className="rounded-xl"
+              className="rounded-lg"
               variant="default"
               size="lg"
               asChild
@@ -876,7 +876,7 @@ export default function Interns() {
                   >
                     <CardContent className="p-6">
                       <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                           <area.icon className="w-6 h-6 text-primary" />
                         </div>
                         <div>
@@ -1025,7 +1025,7 @@ export default function Interns() {
                   >
                     <CardContent className="p-6">
                       <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                           <benefit.icon className="w-6 h-6 text-primary" />
                         </div>
                         <div>
@@ -1077,7 +1077,7 @@ export default function Interns() {
                   <Button 
                     variant="default"
                     size="lg"
-                    className="rounded-xl"
+                    className="rounded-lg"
                     asChild
                     data-testid="button-cta-apply"
                   >
@@ -1089,7 +1089,7 @@ export default function Interns() {
                   <Button 
                     variant="outline"
                     size="lg"
-                    className="rounded-xl border-primary/30 text-primary hover:bg-primary/5"
+                    className="rounded-lg border-primary/30 text-primary hover:bg-primary/5"
                     asChild
                     data-testid="button-view-careers"
                   >
@@ -1121,7 +1121,7 @@ export default function Interns() {
                   </p>
                 </div>
                 <Button 
-                  className="rounded-xl whitespace-nowrap"
+                  className="rounded-lg whitespace-nowrap"
                   asChild
                   data-testid="button-contact-email"
                 >

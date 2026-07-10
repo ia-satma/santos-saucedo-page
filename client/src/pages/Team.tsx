@@ -501,13 +501,13 @@ export default function Team() {
                 placeholder={t.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 rounded-xl bg-background border-border text-foreground placeholder:text-muted-foreground/70 focus-visible:ring-primary/40 focus-visible:border-primary/40"
+                className="pl-9 rounded-lg bg-background border-border text-foreground placeholder:text-muted-foreground/70 focus-visible:ring-primary/40 focus-visible:border-primary/40"
                 data-testid="input-search"
               />
             </div>
             <div className="flex flex-wrap gap-2 items-center">
               <Select value={filterSeniority} onValueChange={setFilterSeniority}>
-                <SelectTrigger className="w-36 rounded-xl bg-background border-border text-foreground text-xs" data-testid="select-seniority">
+                <SelectTrigger className="w-36 rounded-lg bg-background border-border text-foreground text-xs" data-testid="select-seniority">
                   <SelectValue placeholder={t.seniority} />
                 </SelectTrigger>
                 <SelectContent>
@@ -518,7 +518,7 @@ export default function Team() {
                 </SelectContent>
               </Select>
               <Select value={filterLetter} onValueChange={setFilterLetter}>
-                <SelectTrigger className="w-28 rounded-xl bg-background border-border text-foreground text-xs" data-testid="select-alphabetic">
+                <SelectTrigger className="w-28 rounded-lg bg-background border-border text-foreground text-xs" data-testid="select-alphabetic">
                   <SelectValue placeholder={t.alphabetic} />
                 </SelectTrigger>
                 <SelectContent>
@@ -529,7 +529,7 @@ export default function Team() {
                 </SelectContent>
               </Select>
               {hasActiveFilters && (
-                <Button variant="ghost" size="default" onClick={clearFilters} className="gap-1.5 rounded-xl text-muted-foreground hover:text-primary text-xs" data-testid="button-clear-filters">
+                <Button variant="ghost" size="default" onClick={clearFilters} className="gap-1.5 rounded-lg text-muted-foreground hover:text-primary text-xs" data-testid="button-clear-filters">
                   <X className="w-3.5 h-3.5" />
                   {t.clearFilters}
                 </Button>
@@ -560,7 +560,7 @@ export default function Team() {
             <Users className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
             <p className="text-muted-foreground">{t.noResults}</p>
             {hasActiveFilters && (
-              <Button variant="ghost" onClick={clearFilters} className="mt-4 gap-2 rounded-xl" data-testid="button-clear-empty">
+              <Button variant="ghost" onClick={clearFilters} className="mt-4 gap-2 rounded-lg" data-testid="button-clear-empty">
                 <X className="w-4 h-4" />{t.clearFilters}
               </Button>
             )}
@@ -571,7 +571,7 @@ export default function Team() {
             {showPartners && groupedMembers.partners.length > 0 && (
               <section data-testid="section-partners">
                 <div className="px-6 lg:px-12 pt-10 pb-4">
-                  <div className="w-10 h-px bg-[#202058] mb-4" />
+                  <div className="w-10 h-px bg-[#12103E] mb-4" />
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
                     {t.partnersOnly}
                   </h2>
@@ -603,8 +603,8 @@ export default function Team() {
                             {getPhotoSrc(member) && (
                               <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-top" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug), transform: isActive ? "scale(1.01)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                             )}
-                            <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(32,32,88,0.34) 50%, rgba(32,32,88,0.10) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(32,32,88,0.36) 100%)", transition: "background 0.5s ease" }} />
-                            <div className="absolute top-0 right-0 w-px h-full bg-[#202058]/15" />
+                            <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(18, 16, 62,0.34) 50%, rgba(18, 16, 62,0.10) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(18, 16, 62,0.36) 100%)", transition: "background 0.5s ease" }} />
+                            <div className="absolute top-0 right-0 w-px h-full bg-[#12103E]/15" />
                             <div className="absolute bottom-5 left-3 right-3" style={{ opacity: isActive ? 0 : 1, transition: "opacity 0.2s ease" }}>
                               <p className="text-white/60 text-[9px] uppercase tracking-[0.12em] font-light truncate">{member.name}</p>
                             </div>
@@ -647,7 +647,7 @@ export default function Team() {
             {showOfCounsel && groupedMembers.ofCounsel.length > 0 && (
               <section data-testid="section-ofcounsel">
                 <div className="px-6 lg:px-12 pt-10 pb-4">
-                  <div className="w-10 h-px bg-[#202058] mb-4" />
+                  <div className="w-10 h-px bg-[#12103E] mb-4" />
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
                     {t.ofCounsel}
                   </h2>
@@ -672,8 +672,8 @@ export default function Team() {
                         {getPhotoSrc(member) && (
                           <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-top" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug), transform: isActive ? "scale(1.04)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                         )}
-                        <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(32,32,88,0.34) 50%, rgba(32,32,88,0.12) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.78) 0%, rgba(32,32,88,0.34) 100%)", transition: "background 0.5s ease" }} />
-                        <div className="absolute top-0 right-0 w-px h-full bg-[#202058]/20" />
+                        <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(18, 16, 62,0.34) 50%, rgba(18, 16, 62,0.12) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.78) 0%, rgba(18, 16, 62,0.34) 100%)", transition: "background 0.5s ease" }} />
+                        <div className="absolute top-0 right-0 w-px h-full bg-[#12103E]/20" />
                         <div className="absolute bottom-6 left-4 right-4" style={{ opacity: isActive ? 0 : 1, transition: "opacity 0.25s ease" }}>
                           <p className="text-white/70 text-[9px] uppercase tracking-[0.12em] font-light truncate">{member.name}</p>
                         </div>
@@ -714,7 +714,7 @@ export default function Team() {
             {showAssociates && groupedMembers.associates.length > 0 && (
               <section data-testid="section-associates">
                 <div className="px-6 lg:px-12 pt-10 pb-4">
-                  <div className="w-10 h-px bg-[#202058] mb-4" />
+                  <div className="w-10 h-px bg-[#12103E] mb-4" />
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
                     {t.associates}
                   </h2>
@@ -746,8 +746,8 @@ export default function Team() {
                             {getPhotoSrc(member) && (
                               <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-top" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug), transform: isActive ? "scale(1.03)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                             )}
-                            <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.74) 0%, rgba(32,32,88,0.36) 50%, rgba(32,32,88,0.10) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.82) 0%, rgba(32,32,88,0.38) 100%)", transition: "background 0.5s ease" }} />
-                            <div className="absolute top-0 right-0 w-px h-full bg-[#202058]/10" />
+                            <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.74) 0%, rgba(18, 16, 62,0.36) 50%, rgba(18, 16, 62,0.10) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.82) 0%, rgba(18, 16, 62,0.38) 100%)", transition: "background 0.5s ease" }} />
+                            <div className="absolute top-0 right-0 w-px h-full bg-[#12103E]/10" />
                             <div className="absolute bottom-4 left-3 right-3" style={{ opacity: isActive ? 0 : 1, transition: "opacity 0.2s ease" }}>
                               <p className="text-white/50 text-[8px] uppercase tracking-[0.1em] font-light truncate">{member.name}</p>
                             </div>

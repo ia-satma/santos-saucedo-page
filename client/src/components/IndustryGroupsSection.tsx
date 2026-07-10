@@ -274,14 +274,14 @@ export default function IndustryGroupsSection() {
                 className="absolute inset-0"
                 style={{
                   background: isActive
-                    ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(32,32,88,0.34) 50%, rgba(32,32,88,0.12) 100%)"
-                    : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(32,32,88,0.36) 100%)",
+                    ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(18, 16, 62,0.34) 50%, rgba(18, 16, 62,0.12) 100%)"
+                    : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(18, 16, 62,0.36) 100%)",
                   transition: "background 0.5s ease",
                 }}
               />
 
               {/* Red vertical separator line */}
-              <div className="absolute top-0 right-0 w-px h-full bg-[#202058]/20" />
+              <div className="absolute top-0 right-0 w-px h-full bg-[#12103E]/20" />
 
               {/* Number — top left */}
               <span
@@ -347,7 +347,7 @@ export default function IndustryGroupsSection() {
                 aria-hidden="true"
                 className="absolute inset-0 w-full h-full object-cover transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-[#202058]/60 group-hover:bg-[#202058]/44 transition-colors duration-300" />
+              <div className="absolute inset-0 bg-[#12103E]/60 group-hover:bg-[#12103E]/44 transition-colors duration-300" />
               <span className="absolute top-3 left-3 text-primary text-xs font-medium tabular-nums">
                 {String(group.id).padStart(2, "0")}
               </span>
@@ -368,7 +368,7 @@ export default function IndustryGroupsSection() {
         className="max-w-7xl mx-auto px-6 lg:px-12 py-8 flex flex-wrap items-center justify-between gap-4"
       >
         <div className="flex items-center gap-5">
-          <div className="w-10 h-px bg-[#202058] shrink-0" />
+          <div className="w-10 h-px bg-[#12103E] shrink-0" />
           <div>
             {/* Eyebrow label — small red uppercase, comes first */}
             <p className="text-primary text-[10px] tracking-[0.25em] uppercase mb-1">

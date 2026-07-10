@@ -425,7 +425,7 @@ export default function CookieBanner({ language }: CookieBannerProps) {
               </button>
               <button 
                 onClick={acceptAll}
-                className="min-h-[44px] px-6 py-2 text-sm bg-[#202058] text-white font-medium hover:bg-[#181848] transition-colors touch-manipulation"
+                className="min-h-[44px] px-6 py-2 text-sm bg-[#12103E] text-white font-medium hover:bg-[#0C0A2C] transition-colors touch-manipulation"
                 data-testid="button-cookie-accept"
               >
                 {t.accept}
@@ -483,7 +483,7 @@ export default function CookieBanner({ language }: CookieBannerProps) {
                       data-testid={`card-cookie-${key}`}
                     >
                       <div className="flex items-start gap-4">
-                        <div className="shrink-0 w-10 h-10 flex items-center justify-center bg-[#202058]/20 text-primary">
+                        <div className="shrink-0 w-10 h-10 flex items-center justify-center bg-[#12103E]/20 text-primary">
                           <Icon className="w-5 h-5" />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -505,7 +505,7 @@ export default function CookieBanner({ language }: CookieBannerProps) {
                                   onCheckedChange={() => togglePreference(key)}
                                   disabled={disabled}
                                   data-testid={`switch-cookie-${key}`}
-                                  className="data-[state=checked]:bg-[#202058]"
+                                  className="data-[state=checked]:bg-[#12103E]"
                                 />
                               )}
                             </div>
@@ -534,7 +534,7 @@ export default function CookieBanner({ language }: CookieBannerProps) {
               </button>
               <button
                 onClick={acceptAll}
-                className="flex-1 min-h-[44px] px-6 py-3 text-sm bg-[#202058] text-white font-medium hover:bg-[#181848] transition-colors touch-manipulation"
+                className="flex-1 min-h-[44px] px-6 py-3 text-sm bg-[#12103E] text-white font-medium hover:bg-[#0C0A2C] transition-colors touch-manipulation"
                 data-testid="button-accept-all-preferences"
               >
                 {t.acceptAllButton}

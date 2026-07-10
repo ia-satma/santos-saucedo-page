@@ -647,7 +647,7 @@ export default function Newsletter() {
 
                       <Button
                         type="submit"
-                        className="w-full rounded-xl bg-[#202058] hover:bg-[#181848]"
+                        className="w-full rounded-lg bg-[#12103E] hover:bg-[#0C0A2C]"
                         disabled={newsletterMutation.isPending}
                         data-testid="button-subscribe"
                       >

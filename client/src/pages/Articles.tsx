@@ -370,7 +370,7 @@ export default function ArticlesPage() {
                 placeholder={t.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 rounded-xl"
+                className="pl-10 rounded-lg"
                 data-testid="input-search-articles"
               />
             </div>

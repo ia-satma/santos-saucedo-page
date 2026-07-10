@@ -36,23 +36,23 @@ blockquote {
 /* LIGHT MODE */
 :root {
   /* Santos & Saucedo corporate palette */
-  --ss-blue-night: #0e0f2c;
-  --ss-blue-base: #171735;
-  --ss-blue-accent: #202058;
-  --ss-blue-soft: #d9dafb;
-  --ss-navy: #202058;
+  --ss-blue-night: #0A0826;
+  --ss-blue-base: #100E30;
+  --ss-blue-accent: #12103E;
+  --ss-blue-soft: #D9D8F7;
+  --ss-navy: #12103E;
   --ss-paper: #FFFFFF;
   --ss-stone: #F4F4F5;
   --ss-warm-gray: #E4E4E7;
   --ss-ink: #18181B;
   --ss-muted-ink: #5F6066;
-  --ss-red: #202058;
+  --ss-red: #12103E;
   --ss-gray-1: #F4F4F5;  /* light neutral       */
   --ss-gray-2: #E4E4E7;  /* divider             */
   --ss-gray-4: #A1A1AA;  /* secondary text      */
   --ss-gray-8: #5F6066;  /* muted ink           */
   --ss-gray-11: #18181B; /* primary ink         */
-  --ss-black: #171735;
+  --ss-black: #100E30;
 
   --button-outline: rgba(0,0,0, .10);
   --badge-outline: rgba(0,0,0, .05);
@@ -65,47 +65,48 @@ blockquote {
      Navy corporativo como acento principal.
   ─────────────────────────────────────────────────────────── */
   --background: 0 0% 100%;         /* #FFFFFF — blanco puro           */
-  --foreground: 240 5% 10%;        /* #18181B — tinta limpia          */
+  --foreground: 243 30% 12%;        /* #18181B — tinta limpia          */
   --card: 0 0% 100%;               /* #FFFFFF — blanco puro           */
-  --card-foreground: 240 5% 10%;
+  --card-foreground: 243 30% 12%;
   --card-border: 240 6% 90%;
   --border: 240 6% 90%;
   --sidebar: 240 5% 98%;
-  --sidebar-foreground: 240 5% 10%;
+  --sidebar-foreground: 243 30% 12%;
   --sidebar-border: 240 6% 90%;
-  --sidebar-primary: 240 47% 24%;
+  --sidebar-primary: 243 59% 15%;
   --sidebar-primary-foreground: 0 0% 98%;
   --sidebar-accent: 240 5% 96%;
-  --sidebar-accent-foreground: 240 5% 10%;
-  --sidebar-ring: 240 47% 24%;
+  --sidebar-accent-foreground: 243 30% 12%;
+  --sidebar-ring: 243 59% 15%;
   --popover: 0 0% 100%;
-  --popover-foreground: 240 5% 10%;
+  --popover-foreground: 243 30% 12%;
   --popover-border: 240 6% 90%;
-  --primary: 240 47% 24%;          /* #202058 — navy corporativo      */
+  --primary: 243 59% 15%;          /* #12103E — navy corporativo      */
   --primary-foreground: 0 0% 98%;
   --secondary: 240 5% 96%;         /* #F4F4F5 — sección alterna       */
   --secondary-foreground: 240 5% 16%;
   --muted: 240 5% 96%;
-  --muted-foreground: 240 4% 39%;
+  --muted-foreground: 240 5% 42%;
+  --body: 0 0% 33%;                /* #545454 ≈ #555 — cuerpo respirado */
   --accent: 240 5% 96%;
-  --accent-foreground: 240 5% 10%;
-  --brand: 80 81% 58%;             /* #B2EB3E — lima acento (logo V2)  */
-  --brand-foreground: 240 47% 16%; /* navy para texto sobre lima      */
+  --accent-foreground: 243 30% 12%;
+  --brand: 79 75% 52%;             /* #A5E029 — Verde Lima (acento)    */
+  --brand-foreground: 243 59% 15%; /* #12103E — Azul Noche sobre lima  */
   --destructive: 0 72% 45%;
   --destructive-foreground: 0 0% 98%;
   --input: 240 6% 84%;
-  --ring: 240 47% 24%;
-  --chart-1: 240 47% 24%;
+  --ring: 243 59% 15%;
+  --chart-1: 243 59% 15%;
   --chart-2: 240 38% 38%;
   --chart-3: 240 4% 32%;
   --chart-4: 240 4% 52%;
   --chart-5: 240 24% 52%;
   --font-sans: 'Outfit', 'Segoe UI', Arial, sans-serif;
-  --font-serif: 'Baanoo', Georgia, 'Times New Roman', serif;
-  --font-heading: 'Baanoo', Georgia, 'Times New Roman', serif;
+  --font-serif: 'Lora', Georgia, 'Times New Roman', serif;
+  --font-heading: 'Lora', Georgia, 'Times New Roman', serif;
   --font-support: 'Outfit', 'Segoe UI', Arial, sans-serif;
   --font-mono: Menlo, monospace;
-  --radius: .85rem;
+  --radius: .5rem;
   --shadow-2xs: 0 1px 2px 0 hsl(240 24% 16% / 0.04);
   --shadow-xs:  0 1px 3px 0 hsl(240 24% 16% / 0.06);
   --shadow-sm:  0 1px 3px 0 hsl(240 24% 16% / 0.08), 0 1px 2px -1px hsl(240 24% 16% / 0.06);
@@ -156,9 +157,9 @@ blockquote {
   /* ── PALETA DARK ──────────────────────────────────────────
      Carbón/navy profundo, evitando negro puro.
   ─────────────────────────────────────────────────────────── */
-  --background: 240 37% 12%;       /* navy profundo                   */
+  --background: 243 40% 10%;       /* Azul Noche profundo             */
   --foreground: 42 24% 92%;
-  --card: 240 30% 16%;
+  --card: 243 32% 15%;
   --card-foreground: 0 0% 93%;
   --card-border: 240 16% 28%;
   --border: 240 16% 28%;
@@ -173,16 +174,17 @@ blockquote {
   --popover: 240 30% 16%;
   --popover-foreground: 42 24% 92%;
   --popover-border: 240 16% 28%;
-  --primary: 240 48% 68%;
+  --primary: 243 55% 70%;
   --primary-foreground: 0 0% 98%;
   --secondary: 240 24% 21%;
   --secondary-foreground: 42 24% 86%;
   --muted: 240 22% 20%;
   --muted-foreground: 38 14% 68%;
+  --body: 42 14% 78%;
   --accent: 240 22% 22%;
   --accent-foreground: 42 24% 90%;
-  --brand: 80 80% 60%;             /* lima acento — modo oscuro       */
-  --brand-foreground: 240 40% 12%;
+  --brand: 79 74% 55%;             /* Verde Lima — modo oscuro        */
+  --brand-foreground: 243 59% 12%;
   --destructive: 0 70% 45%;
   --destructive-foreground: 0 0% 98%;
   --input: 0 0% 25%;
@@ -236,7 +238,9 @@ blockquote {
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased bg-background;
+    color: hsl(var(--body));
+    font-weight: 400;
   }
 
   h1,
@@ -246,6 +250,8 @@ blockquote {
   h5,
   h6 {
     font-family: var(--font-heading);
+    color: hsl(var(--foreground));
+    font-weight: 600;
     letter-spacing: -0.012em;
     line-height: 1.12;
   }
@@ -278,7 +284,7 @@ blockquote {
 /* Borderless soft card: rounded, layered navy-tinted shadow, gentle lift. */
 .card-soft {
   background-color: #fff;
-  border-radius: 1.5rem;
+  border-radius: .5rem;
   box-shadow: var(--shadow-md);
   transition: box-shadow .4s cubic-bezier(.4, 0, .2, 1), transform .4s cubic-bezier(.4, 0, .2, 1);
 }
@@ -296,8 +302,8 @@ blockquote {
 .section-ambient {
   position: relative;
   background:
-    radial-gradient(120% 95% at 88% -10%, rgba(32, 32, 88, 0.055) 0%, transparent 55%),
-    radial-gradient(95% 85% at -5% 110%, rgba(178, 235, 62, 0.05) 0%, transparent 52%),
+    radial-gradient(120% 95% at 88% -10%, rgba(18, 16, 62, 0.055) 0%, transparent 55%),
+    radial-gradient(95% 85% at -5% 110%, rgba(165, 224, 41, 0.05) 0%, transparent 52%),
     #ffffff;
 }
 
@@ -307,8 +313,8 @@ blockquote {
 }
 .dark .section-ambient {
   background:
-    radial-gradient(120% 95% at 88% -10%, rgba(120, 120, 200, 0.10) 0%, transparent 55%),
-    radial-gradient(95% 85% at -5% 110%, rgba(178, 235, 62, 0.06) 0%, transparent 52%),
+    radial-gradient(120% 95% at 88% -10%, rgba(116, 110, 206, 0.10) 0%, transparent 55%),
+    radial-gradient(95% 85% at -5% 110%, rgba(165, 224, 41, 0.06) 0%, transparent 52%),
     hsl(240 37% 12%);
 }
 .dark .section-mist {
@@ -319,7 +325,7 @@ blockquote {
 .divider-soft {
   height: 1px;
   border: 0;
-  background: linear-gradient(90deg, transparent, rgba(32, 32, 88, .16), transparent);
+  background: linear-gradient(90deg, transparent, rgba(18, 16, 62, .16), transparent);
 }
 
 /**
@@ -1066,7 +1072,7 @@ html, body {
   color: hsl(var(--foreground));
   border-bottom: 1px solid hsl(var(--border));
   background:
-    radial-gradient(circle at 50% 0%, rgba(32, 32, 88, 0.08), transparent 42%),
+    radial-gradient(circle at 50% 0%, rgba(18, 16, 62, 0.08), transparent 42%),
     linear-gradient(180deg, #ffffff 0%, var(--ss-paper) 48%, var(--ss-stone) 100%);
 }
 
@@ -1077,8 +1083,8 @@ html, body {
   pointer-events: none;
   opacity: 0.42;
   background-image:
-    linear-gradient(rgba(32, 32, 88, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(32, 32, 88, 0.025) 1px, transparent 1px);
+    linear-gradient(rgba(18, 16, 62, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(18, 16, 62, 0.025) 1px, transparent 1px);
   background-size: 42px 42px;
   mask-image: linear-gradient(to bottom, black, transparent 72%);
 }
@@ -1109,7 +1115,7 @@ html, body {
 
 .section-paper {
   background:
-    radial-gradient(circle at top left, rgba(32, 32, 88, 0.05), transparent 34rem),
+    radial-gradient(circle at top left, rgba(18, 16, 62, 0.05), transparent 34rem),
     linear-gradient(180deg, #ffffff 0%, var(--ss-paper) 100%);
 }
 
@@ -1122,8 +1128,8 @@ html, body {
   color: hsl(var(--foreground));
   border-bottom-color: hsl(var(--border));
   background:
-    radial-gradient(circle at 50% 0%, rgba(122, 122, 218, 0.18), transparent 42%),
-    linear-gradient(180deg, #171735 0%, hsl(var(--background)) 48%, hsl(var(--card)) 100%);
+    radial-gradient(circle at 50% 0%, rgba(118, 112, 214, 0.18), transparent 42%),
+    linear-gradient(180deg, #100E30 0%, hsl(var(--background)) 48%, hsl(var(--card)) 100%);
 }
 
 .dark .editorial-page-hero::before {
@@ -1153,7 +1159,7 @@ html, body {
 
 .dark .section-paper {
   background:
-    radial-gradient(circle at top left, rgba(122, 122, 218, 0.12), transparent 34rem),
+    radial-gradient(circle at top left, rgba(118, 112, 214, 0.12), transparent 34rem),
     linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--card)) 100%);
 }
 
@@ -1166,8 +1172,8 @@ html, body {
   background: linear-gradient(
     to top,
     rgba(20, 20, 58, 0.72) 0%,
-    rgba(32, 32, 88, 0.34) 45%,
-    rgba(32, 32, 88, 0.04) 100%
+    rgba(18, 16, 62, 0.34) 45%,
+    rgba(18, 16, 62, 0.04) 100%
   );
 }
 
@@ -1175,7 +1181,7 @@ html, body {
   background: linear-gradient(
     to top,
     rgba(20, 20, 58, 0.82) 0%,
-    rgba(32, 32, 88, 0.46) 52%,
-    rgba(32, 32, 88, 0.12) 100%
+    rgba(18, 16, 62, 0.46) 52%,
+    rgba(18, 16, 62, 0.12) 100%
   );
 }

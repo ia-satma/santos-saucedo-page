@@ -169,7 +169,7 @@ function PracticeGroupBadge({
     <Link href={`/practice-groups/${group.slug}`}>
       <Badge
         variant="outline"
-        className="rounded-xl cursor-pointer py-2 px-4 no-default-hover-elevate no-default-active-elevate transition-colors duration-200 hover:bg-primary hover:text-primary-foreground hover:border-primary"
+        className="rounded-lg cursor-pointer py-2 px-4 no-default-hover-elevate no-default-active-elevate transition-colors duration-200 hover:bg-primary hover:text-primary-foreground hover:border-primary"
         data-testid={`badge-practice-group-${group.slug}`}
       >
         {displayName}
@@ -200,7 +200,7 @@ function IndustryGroupBadge({
     <Link href={`/industry-groups/${group.slug}`}>
       <Badge
         variant="outline"
-        className="rounded-xl cursor-pointer py-2 px-4 no-default-hover-elevate no-default-active-elevate transition-colors duration-200 hover:bg-primary hover:text-primary-foreground hover:border-primary"
+        className="rounded-lg cursor-pointer py-2 px-4 no-default-hover-elevate no-default-active-elevate transition-colors duration-200 hover:bg-primary hover:text-primary-foreground hover:border-primary"
         data-testid={`badge-industry-group-${group.slug}`}
       >
         {displayName}
@@ -262,7 +262,7 @@ function RankingItemTranslated({
               <div className="flex flex-wrap items-center gap-2 mt-2">
                 <Badge 
                   variant="outline"
-                  className="rounded-xl text-[11px] uppercase tracking-[0.18em] border-primary text-primary"
+                  className="rounded-lg text-[11px] uppercase tracking-[0.18em] border-primary text-primary"
                   data-testid={`badge-ranking-band-${index}`}
                 >
                   {displayRanking}
@@ -270,7 +270,7 @@ function RankingItemTranslated({
                 {ranking.year && (
                   <Badge 
                     variant="outline" 
-                    className="rounded-xl text-[11px] uppercase tracking-[0.18em]"
+                    className="rounded-lg text-[11px] uppercase tracking-[0.18em]"
                   >
                     {ranking.year}
                   </Badge>
@@ -444,7 +444,7 @@ function BarAdmissionItemTranslated({
   return (
     <Badge 
       variant="secondary"
-      className="rounded-xl py-2 px-4"
+      className="rounded-lg py-2 px-4"
       data-testid={`badge-bar-admission-${index}`}
     >
       {displayJurisdiction}
@@ -480,7 +480,7 @@ function LanguageItemTranslated({
   return (
     <Badge 
       variant="outline"
-      className="rounded-xl py-2 px-4"
+      className="rounded-lg py-2 px-4"
       data-testid={`badge-language-${index}`}
     >
       {displayLanguage}
@@ -1101,7 +1101,7 @@ export default function TeamMemberDetail() {
   const getPublicationIcon = (_publication: string) => (
     <span
       aria-hidden="true"
-      className="inline-block w-1.5 h-1.5 bg-[#202058] mt-1.5"
+      className="inline-block w-1.5 h-1.5 bg-[#12103E] mt-1.5"
     />
   );
 
@@ -1319,14 +1319,14 @@ export default function TeamMemberDetail() {
               </div>
               <div
                 aria-hidden="true"
-                className="hidden md:block w-px shrink-0 bg-[#202058]/20"
+                className="hidden md:block w-px shrink-0 bg-[#12103E]/20"
               />
               <div
                 aria-hidden="true"
-                className="md:hidden h-px w-full bg-[#202058]/20"
+                className="md:hidden h-px w-full bg-[#12103E]/20"
               />
               <div className="flex-1 min-w-0 text-center md:text-left px-6 py-8 md:px-10 md:py-10">
-                <div className="h-px w-10 bg-[#202058] mb-4 mx-auto md:mx-0" aria-hidden="true" />
+                <div className="h-px w-10 bg-[#12103E] mb-4 mx-auto md:mx-0" aria-hidden="true" />
                 <div className="flex flex-col md:flex-row items-center gap-3 mb-3">
                   <h1 
                     className="text-2xl md:text-3xl lg:text-4xl font-heading font-light text-white uppercase tracking-[0.12em]"
@@ -1336,7 +1336,7 @@ export default function TeamMemberDetail() {
                   </h1>
                   <Badge 
                     variant="secondary" 
-                    className="bg-white/20 text-white border-0 rounded-xl"
+                    className="bg-white/20 text-white border-0 rounded-lg"
                     data-testid="badge-seniority"
                   >
                     {getSeniorityLabel()}
@@ -1378,7 +1378,7 @@ export default function TeamMemberDetail() {
                   {member?.email && (
                     <Button 
                       variant="secondary"
-                      className="rounded-xl bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
+                      className="rounded-lg bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
                       asChild
                       data-testid="button-email"
                     >
@@ -1391,7 +1391,7 @@ export default function TeamMemberDetail() {
                   {member?.phone && (
                     <Button 
                       variant="secondary"
-                      className="rounded-xl bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
+                      className="rounded-lg bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
                       asChild
                       data-testid="button-phone"
                     >
@@ -1405,7 +1405,7 @@ export default function TeamMemberDetail() {
                     <Button 
                       variant="secondary"
                       size="icon"
-                      className="rounded-xl bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
+                      className="rounded-lg bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
                       asChild
                       data-testid="button-linkedin"
                     >
@@ -1416,7 +1416,7 @@ export default function TeamMemberDetail() {
                   )}
                   <Button 
                     variant="secondary"
-                    className="rounded-xl bg-card text-primary hover:bg-white/90"
+                    className="rounded-lg bg-card text-primary hover:bg-white/90"
                     onClick={handleDownloadVCard}
                     data-testid="button-download-vcard"
                   >
@@ -1493,7 +1493,7 @@ export default function TeamMemberDetail() {
                 >
                   <div className="card-soft p-8">
                     <div className="mb-6">
-                      <div className="h-px w-10 bg-[#202058] mb-4" aria-hidden="true" />
+                      <div className="h-px w-10 bg-[#12103E] mb-4" aria-hidden="true" />
                       <h2
                         className="text-xl font-heading font-light text-foreground flex items-center gap-3 uppercase tracking-[0.12em]"
                         data-testid="text-rankings-title"
@@ -1501,7 +1501,7 @@ export default function TeamMemberDetail() {
                         <span>{t.rankings}</span>
                         <Badge
                           variant="outline"
-                          className="ml-auto rounded-xl text-xs uppercase tracking-[0.15em] border-primary text-primary"
+                          className="ml-auto rounded-lg text-xs uppercase tracking-[0.15em] border-primary text-primary"
                           data-testid="badge-rankings-count"
                         >
                           {processedRankings.totalCount}
@@ -1836,7 +1836,7 @@ export default function TeamMemberDetail() {
                   data-testid="section-featured-recognition"
                 >
                   <div className="mb-4">
-                    <div className="h-px w-10 bg-[#202058] mb-4" aria-hidden="true" />
+                    <div className="h-px w-10 bg-[#12103E] mb-4" aria-hidden="true" />
                     <h2 
                       className="text-lg font-heading font-light text-foreground uppercase tracking-[0.12em]"
                       data-testid="text-featured-recognition-title"
@@ -1885,7 +1885,7 @@ export default function TeamMemberDetail() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="bg-muted rounded-2xl p-6"
+                className="bg-muted rounded-lg p-6"
                 data-testid="section-contact-cta"
               >
                 <h2 
@@ -1903,7 +1903,7 @@ export default function TeamMemberDetail() {
                 <div className="flex flex-col gap-3">
                   {member?.email && (
                     <Button 
-                      className="w-full rounded-xl"
+                      className="w-full rounded-lg"
                       asChild
                       data-testid="button-email-contact"
                     >
@@ -1916,7 +1916,7 @@ export default function TeamMemberDetail() {
                   {member?.phone && (
                     <Button 
                       variant="outline"
-                      className="w-full rounded-xl"
+                      className="w-full rounded-lg"
                       asChild
                       data-testid="button-call-contact"
                     >
@@ -1928,7 +1928,7 @@ export default function TeamMemberDetail() {
                   )}
                   <Button 
                     variant="outline"
-                    className="w-full rounded-xl"
+                    className="w-full rounded-lg"
                     onClick={handleDownloadVCard}
                     data-testid="button-download-vcard-sidebar"
                   >

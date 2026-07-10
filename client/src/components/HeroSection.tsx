@@ -133,10 +133,10 @@ function NewsPanel({ language, news }: { language: LanguageCode; news: News[] })
       data-testid="panel-news-overlay"
     >
       <div
-        className="backdrop-blur-md rounded-2xl border border-white/10 ring-1 ring-inset ring-white/5 p-6 flex flex-col gap-4 shadow-2xl"
+        className="backdrop-blur-md rounded-lg border border-white/10 ring-1 ring-inset ring-white/5 p-6 flex flex-col gap-4 shadow-2xl"
         style={{
           width: '280px',
-          background: 'linear-gradient(135deg, rgba(32,32,88,0.82) 0%, rgba(23,23,53,0.74) 100%)',
+          background: 'linear-gradient(135deg, rgba(18, 16, 62,0.82) 0%, rgba(16, 14, 48,0.74) 100%)',
         }}
       >
         {/* Header */}
@@ -356,7 +356,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
     >
       <div className="absolute inset-0 z-0">
         <div 
-          className="absolute inset-0 bg-[radial-gradient(circle_at_78%_34%,rgba(32,32,88,0.72)_0%,rgba(23,23,53,0.5)_32%,rgba(14,15,44,0.92)_72%),linear-gradient(135deg,#0e0f2c_0%,#171735_54%,#202058_100%)]"
+          className="absolute inset-0 bg-[radial-gradient(circle_at_78%_34%,rgba(18, 16, 62,0.72)_0%,rgba(16, 14, 48,0.5)_32%,rgba(10, 8, 38,0.92)_72%),linear-gradient(135deg,#0A0826_0%,#100E30_54%,#12103E_100%)]"
           data-testid="background-gradient"
         />
         <div 
@@ -376,9 +376,9 @@ export default function HeroSection({ language }: HeroSectionProps) {
           data-testid={isMobile ? "img-hero-background-mobile" : "img-hero-background"}
         />
         
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(14,15,44,0.5)_0%,rgba(23,23,53,0.2)_50%,rgba(14,15,44,0.1)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(14,15,44,0.2)_0%,rgba(23,23,53,0.03)_45%,rgba(14,15,44,0.6)_100%)]" />
-        <div className="absolute bottom-0 left-0 right-0 h-44 bg-gradient-to-t from-[#0e0f2c]/88 to-transparent" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10, 8, 38,0.5)_0%,rgba(16, 14, 48,0.2)_50%,rgba(10, 8, 38,0.1)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10, 8, 38,0.2)_0%,rgba(16, 14, 48,0.03)_45%,rgba(10, 8, 38,0.6)_100%)]" />
+        <div className="absolute bottom-0 left-0 right-0 h-44 bg-gradient-to-t from-[#0A0826]/88 to-transparent" />
       </div>
 
       {newsData && newsData.length > 0 && (

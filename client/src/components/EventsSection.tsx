@@ -67,7 +67,7 @@ function EventCard({ event, language, learnMoreText, formatDate }: EventCardProp
       <div className="p-8">
         <div className="flex items-start justify-between gap-3 mb-4">
           <Badge
-            className="bg-brand text-brand-foreground font-medium rounded-xl"
+            className="bg-brand text-brand-foreground font-medium rounded-lg"
             data-testid={`badge-event-type-${event.id}`}
           >
             {getEventTypeLabel(event.eventType || 'conference', language)}
@@ -292,7 +292,7 @@ export default function EventsSection({ language }: EventsSectionProps) {
           className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 mb-12"
         >
           <div>
-            <div className="w-12 h-px bg-[#202058] mb-6" />
+            <div className="w-12 h-px bg-[#12103E] mb-6" />
             <p
               className="text-primary text-[11px] tracking-[0.25em] uppercase mb-4"
               data-testid="text-events-eyebrow"
@@ -310,7 +310,7 @@ export default function EventsSection({ language }: EventsSectionProps) {
           <Link href="/events">
             <Button
               variant="outline"
-              className="group rounded-xl shrink-0"
+              className="group rounded-lg shrink-0"
               data-testid="button-view-all-events"
             >
               {t.viewAll}
@@ -371,7 +371,7 @@ export default function EventsSection({ language }: EventsSectionProps) {
           <Link href="/events">
             <Button
               variant="outline"
-              className="group rounded-xl"
+              className="group rounded-lg"
               data-testid="button-view-all-events-mobile"
             >
               {t.viewAll}

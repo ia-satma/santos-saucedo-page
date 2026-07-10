@@ -274,7 +274,7 @@ export default function Contact() {
     connectTitle: string;
     connectSubtitle: string;
     linkedinText: string;
-    websiteText: string;
+    websiteText: string;
     contactUs: string;
     sendEmail: string;
     callUs: string;
@@ -314,7 +314,7 @@ export default function Contact() {
       connectTitle: "Connect With Us",
       connectSubtitle: "Follow us on social media and stay updated on the latest legal developments",
       linkedinText: "Follow us on LinkedIn",
-      websiteText: "Visit our website",
+      websiteText: "Visit our website",
       contactUs: "Contact Us",
       sendEmail: "Send Email",
       callUs: "Call Us",
@@ -354,7 +354,7 @@ export default function Contact() {
       connectTitle: "Conéctese Con Nosotros",
       connectSubtitle: "Síganos en redes sociales y manténgase informado sobre los últimos desarrollos legales",
       linkedinText: "Síguenos en LinkedIn",
-      websiteText: "Visite nuestro sitio web",
+      websiteText: "Visite nuestro sitio web",
       contactUs: "Contáctenos",
       sendEmail: "Enviar Email",
       callUs: "Llámenos",
@@ -394,7 +394,7 @@ export default function Contact() {
       connectTitle: "Verbinden Sie sich mit uns",
       connectSubtitle: "Folgen Sie uns in den sozialen Medien und bleiben Sie über die neuesten rechtlichen Entwicklungen informiert",
       linkedinText: "Folgen Sie uns auf LinkedIn",
-      websiteText: "Besuchen Sie unsere Website",
+      websiteText: "Besuchen Sie unsere Website",
       contactUs: "Kontakt",
       sendEmail: "E-Mail senden",
       callUs: "Rufen Sie uns an",
@@ -434,7 +434,7 @@ export default function Contact() {
       connectTitle: "与我们联系",
       connectSubtitle: "关注我们的社交媒体，了解最新的法律动态",
       linkedinText: "在LinkedIn上关注我们",
-      websiteText: "访问我们的网站",
+      websiteText: "访问我们的网站",
       contactUs: "联系我们",
       sendEmail: "发送电子邮件",
       callUs: "致电我们",
@@ -474,7 +474,7 @@ export default function Contact() {
       connectTitle: "소셜 미디어",
       connectSubtitle: "소셜 미디어를 팔로우하고 최신 법률 동향을 확인하세요",
       linkedinText: "LinkedIn에서 팔로우",
-      websiteText: "웹사이트 방문",
+      websiteText: "웹사이트 방문",
       contactUs: "문의하기",
       sendEmail: "이메일 보내기",
       callUs: "전화하기",
@@ -514,7 +514,7 @@ export default function Contact() {
       connectTitle: "ソーシャルメディア",
       connectSubtitle: "ソーシャルメディアをフォローして、最新の法務情報をご確認ください",
       linkedinText: "LinkedInでフォロー",
-      websiteText: "ウェブサイトを訪問",
+      websiteText: "ウェブサイトを訪問",
       contactUs: "お問い合わせ",
       sendEmail: "メールを送信",
       callUs: "電話する",
@@ -554,7 +554,7 @@ export default function Contact() {
       connectTitle: "تواصل معنا",
       connectSubtitle: "تابعنا على وسائل التواصل الاجتماعي وابق على اطلاع بآخر التطورات القانونية",
       linkedinText: "تابعنا على LinkedIn",
-      websiteText: "زيارة موقعنا",
+      websiteText: "زيارة موقعنا",
       contactUs: "اتصل بنا",
       sendEmail: "إرسال بريد إلكتروني",
       callUs: "اتصل بنا",
@@ -594,7 +594,7 @@ export default function Contact() {
       connectTitle: "Связаться с нами",
       connectSubtitle: "Подписывайтесь на нас в социальных сетях и будьте в курсе последних юридических новостей",
       linkedinText: "Подписаться в LinkedIn",
-      websiteText: "Посетить наш сайт",
+      websiteText: "Посетить наш сайт",
       contactUs: "Связаться с нами",
       sendEmail: "Отправить письмо",
       callUs: "Позвонить нам",
@@ -634,7 +634,7 @@ export default function Contact() {
       connectTitle: "Restez connectés",
       connectSubtitle: "Suivez-nous sur les réseaux sociaux et restez informés des dernières évolutions juridiques",
       linkedinText: "Suivez-nous sur LinkedIn",
-      websiteText: "Visitez notre site web",
+      websiteText: "Visitez notre site web",
       contactUs: "Contactez-nous",
       sendEmail: "Envoyer un e-mail",
       callUs: "Appelez-nous",
@@ -674,7 +674,7 @@ export default function Contact() {
       connectTitle: "Connettiti con noi",
       connectSubtitle: "Seguici sui social media e rimani aggiornato sugli ultimi sviluppi legali",
       linkedinText: "Seguici su LinkedIn",
-      websiteText: "Visita il nostro sito web",
+      websiteText: "Visita il nostro sito web",
       contactUs: "Contattaci",
       sendEmail: "Invia e-mail",
       callUs: "Chiamaci",
@@ -899,7 +899,7 @@ export default function Contact() {
 
                     <Button 
                       type="submit" 
-                      className="w-full md:w-auto rounded-xl"
+                      className="w-full md:w-auto rounded-lg"
                       disabled={contactMutation.isPending}
                       data-testid="button-submit-contact"
                     >
@@ -1005,7 +1005,7 @@ export default function Contact() {
                   
                   <Button 
                     variant="outline"
-                    className="w-full rounded-xl"
+                    className="w-full rounded-lg"
                     asChild
                     data-testid="button-get-directions"
                   >
@@ -1039,7 +1039,7 @@ export default function Contact() {
                   </h3>
                   <div className="flex flex-col gap-3">
                     <Button 
-                      className="w-full rounded-xl"
+                      className="w-full rounded-lg"
                       asChild
                       data-testid="button-send-email"
                     >
@@ -1050,7 +1050,7 @@ export default function Contact() {
                     </Button>
                     <Button 
                       variant="outline"
-                      className="w-full rounded-xl"
+                      className="w-full rounded-lg"
                       asChild
                       data-testid="button-call-us"
                     >
@@ -1080,7 +1080,7 @@ export default function Contact() {
                   <div className="flex flex-col gap-3">
                     <Button 
                       variant="outline"
-                      className="w-full rounded-xl justify-start"
+                      className="w-full rounded-lg justify-start"
                       asChild
                       data-testid="button-linkedin"
                     >
@@ -1095,7 +1095,7 @@ export default function Contact() {
                     </Button>
                     <Button 
                       variant="outline"
-                      className="w-full rounded-xl justify-start"
+                      className="w-full rounded-lg justify-start"
                       asChild
                       data-testid="button-website"
                     >

@@ -143,7 +143,7 @@ export default function ProBonoSection() {
 
   return (
     <section
-      className="bg-muted border-t border-border overflow-hidden"
+      className="bg-muted border-t border-border/40 overflow-hidden"
       data-testid="section-pro-bono"
     >
       <div className="flex flex-col lg:flex-row lg:min-h-[400px]">
@@ -158,7 +158,7 @@ export default function ProBonoSection() {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="mb-6"
           >
-            <div className="w-8 h-px bg-[#202058] mb-5" />
+            <div className="w-8 h-px bg-[#12103E] mb-5" />
             <p
               className="text-primary text-[10px] tracking-[0.25em] uppercase mb-4"
               data-testid="text-pro-bono-eyebrow"
@@ -191,7 +191,7 @@ export default function ProBonoSection() {
               <motion.div
                 key={i}
                 variants={pillarItem}
-                className="border-t border-border pt-4 pb-4"
+                className="border-t border-border/40 pt-4 pb-4"
                 data-testid={`pillar-probono-${i}`}
               >
                 <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-foreground mb-1">
@@ -255,7 +255,7 @@ export default function ProBonoSection() {
             >
               {t.title}
             </p>
-            <div className="w-8 h-px bg-[#202058]/80 mt-4" />
+            <div className="w-8 h-px bg-[#12103E]/80 mt-4" />
           </div>
         </motion.div>
 

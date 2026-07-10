@@ -1063,7 +1063,7 @@ export default function Careers() {
               {t.heroSubtitle}
             </p>
             <Button 
-              className="rounded-xl"
+              className="rounded-lg"
               variant="default"
               size="lg"
               asChild
@@ -1265,7 +1265,7 @@ export default function Careers() {
                         </div>
                         <div className="flex-shrink-0">
                           <Button 
-                            className="rounded-xl w-full lg:w-auto"
+                            className="rounded-lg w-full lg:w-auto"
                             asChild
                             data-testid={`button-apply-position-${index}`}
                           >
@@ -1376,7 +1376,7 @@ export default function Careers() {
                   </p>
                   <Button 
                     variant="default"
-                    className="rounded-xl w-full"
+                    className="rounded-lg w-full"
                     asChild
                     data-testid="button-internship-apply"
                   >
@@ -1460,7 +1460,7 @@ export default function Careers() {
                       </div>
                     </div>
                     <Button 
-                      className="rounded-xl w-full mt-6"
+                      className="rounded-lg w-full mt-6"
                       asChild
                       data-testid="button-send-application"
                     >

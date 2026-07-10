@@ -772,7 +772,7 @@ export default function DiversityInclusion() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <Card className="rounded-none border border-border bg-gradient-to-br from-primary/5 to-primary/10 dark:from-primary/10 dark:to-primary/20">
+              <Card className="bg-gradient-to-br from-primary/5 to-primary/10 dark:from-primary/10 dark:to-primary/20">
                 <CardContent className="p-8 md:p-10">
                   <div className="flex items-center gap-3 mb-6">
                     <HeartHandshake className="w-8 h-8 text-primary" />

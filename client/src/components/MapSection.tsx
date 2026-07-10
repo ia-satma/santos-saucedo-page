@@ -303,7 +303,7 @@ export default function MapSection({ language }: MapSectionProps) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="lg:col-span-3 aspect-[16/10] lg:aspect-auto lg:min-h-[400px] rounded-2xl overflow-hidden shadow-lg"
+            className="lg:col-span-3 aspect-[16/10] lg:aspect-auto lg:min-h-[400px] rounded-lg overflow-hidden shadow-lg"
           >
             <iframe
               src={embedUrl}
@@ -369,7 +369,7 @@ export default function MapSection({ language }: MapSectionProps) {
                 <Button
                   asChild
                   variant="default"
-                  className="w-full rounded-xl"
+                  className="w-full rounded-lg"
                   data-testid="button-directions"
                 >
                   <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer">
@@ -381,7 +381,7 @@ export default function MapSection({ language }: MapSectionProps) {
                 <Button
                   asChild
                   variant="outline"
-                  className="w-full rounded-xl"
+                  className="w-full rounded-lg"
                   data-testid="button-view-map"
                 >
                   <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer">

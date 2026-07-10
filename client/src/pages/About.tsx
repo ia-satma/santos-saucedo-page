@@ -1346,13 +1346,13 @@ export default function About() {
             className="flex flex-col sm:flex-row justify-center gap-4"
           >
             <Link href="/team">
-              <Button className="rounded-xl" data-testid="button-view-team">
+              <Button className="rounded-lg" data-testid="button-view-team">
                 <Users className="w-4 h-4 mr-2" />
                 {t.viewTeam}
               </Button>
             </Link>
             <Link href="/practice-groups">
-              <Button variant="outline" className="rounded-xl" data-testid="button-view-practices">
+              <Button variant="outline" className="rounded-lg" data-testid="button-view-practices">
                 <Briefcase className="w-4 h-4 mr-2" />
                 {t.viewPractices}
               </Button>

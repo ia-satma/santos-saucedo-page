@@ -75,15 +75,15 @@ function IndustryGroupCard({ group, index, learnMoreText }: IndustryGroupCardPro
           className="absolute inset-0 pointer-events-none"
           style={{
             background: isHover
-              ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(32,32,88,0.34) 50%, rgba(32,32,88,0.12) 100%)"
-              : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(32,32,88,0.38) 100%)",
+              ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(18, 16, 62,0.34) 50%, rgba(18, 16, 62,0.12) 100%)"
+              : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(18, 16, 62,0.38) 100%)",
             transition: "background 0.5s ease",
           }}
         />
 
         {/* Translation indicator */}
         {showTranslatingIndicator && (
-          <div className="absolute top-4 right-4 z-10 flex items-center gap-1 px-2 py-1 bg-[#202058]/70 backdrop-blur-sm text-xs text-white/90">
+          <div className="absolute top-4 right-4 z-10 flex items-center gap-1 px-2 py-1 bg-[#12103E]/70 backdrop-blur-sm text-xs text-white/90">
             <Loader2 className="w-3 h-3 animate-spin" />
           </div>
         )}

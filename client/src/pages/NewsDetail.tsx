@@ -574,7 +574,7 @@ export default function NewsDetail() {
                   className="flex items-center gap-3 mb-4"
                   data-testid="eyebrow-news"
                 >
-                  <div className="h-px w-10 bg-[#202058]" aria-hidden="true" />
+                  <div className="h-px w-10 bg-[#12103E]" aria-hidden="true" />
                   <span className="text-[11px] tracking-[0.3em] uppercase text-white/90 font-medium">
                     {language === 'es' ? 'Noticia' : language === 'de' ? 'Nachrichten' : language === 'fr' ? 'Actualité' : language === 'it' ? 'Notizie' : 'News'}
                   </span>
@@ -656,7 +656,7 @@ export default function NewsDetail() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-xl"
+                    className="rounded-lg"
                     onClick={() => handleShare("linkedin")}
                     data-testid="button-share-linkedin"
                     title="LinkedIn"
@@ -666,7 +666,7 @@ export default function NewsDetail() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-xl"
+                    className="rounded-lg"
                     onClick={() => handleShare("twitter")}
                     data-testid="button-share-twitter"
                     title="Twitter/X"
@@ -676,7 +676,7 @@ export default function NewsDetail() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-xl"
+                    className="rounded-lg"
                     onClick={() => handleShare("whatsapp")}
                     data-testid="button-share-whatsapp"
                     title="WhatsApp"
@@ -686,7 +686,7 @@ export default function NewsDetail() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-xl"
+                    className="rounded-lg"
                     onClick={() => handleShare("email")}
                     data-testid="button-share-email"
                     title="Email"
@@ -696,7 +696,7 @@ export default function NewsDetail() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-xl"
+                    className="rounded-lg"
                     onClick={handleCopyLink}
                     data-testid="button-share-copy-link"
                     title={t.copyLink}

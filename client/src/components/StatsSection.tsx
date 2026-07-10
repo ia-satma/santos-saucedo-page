@@ -403,7 +403,7 @@ export default function StatsSection({ language }: StatsSectionProps) {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="w-12 h-px bg-[#202058] mb-6" />
+            <div className="w-12 h-px bg-[#12103E] mb-6" />
             <p className="text-primary text-[10px] tracking-[0.25em] uppercase mb-4">
               DERECHO LABORAL
             </p>
@@ -475,7 +475,7 @@ export default function StatsSection({ language }: StatsSectionProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="border-t border-border pt-10 mt-14"
+          className="border-t border-border/40 pt-10 mt-14"
         >
           <p
             className="text-sm text-muted-foreground leading-relaxed max-w-4xl text-justify"

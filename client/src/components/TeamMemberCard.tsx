@@ -118,11 +118,11 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
         </div>
 
         {/* Hover overlay with action buttons — vCard stops propagation; View Profile relies on outer Link */}
-        <div className="absolute inset-0 bg-[#202058]/58 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-3 z-20">
+        <div className="absolute inset-0 bg-[#12103E]/58 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-3 z-20">
           <Button
             variant="outline"
             size="sm"
-            className="w-32 text-white border-white text-xs tracking-[0.08em] rounded-xl"
+            className="w-32 text-white border-white text-xs tracking-[0.08em] rounded-lg"
             onClick={handleDownloadVCard}
             data-testid={`button-download-vcard-${member.slug}`}
           >
@@ -132,7 +132,7 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
           <Button
             variant="default"
             size="sm"
-            className="w-32 text-xs tracking-[0.08em] rounded-xl"
+            className="w-32 text-xs tracking-[0.08em] rounded-lg"
             data-testid={`button-view-profile-${member.slug}`}
           >
             <Briefcase className="w-3 h-3 mr-1.5" />

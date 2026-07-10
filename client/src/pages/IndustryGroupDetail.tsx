@@ -39,7 +39,7 @@ function TranslatedPracticeGroupBadge({ practiceGroup, language }: TranslatedPra
         className="flex items-center justify-between gap-4 py-4 px-1 hover-elevate cursor-pointer"
       >
         <div className="flex items-center gap-4 min-w-0">
-          <div className="w-2 h-2 bg-[#202058] shrink-0" aria-hidden="true" />
+          <div className="w-2 h-2 bg-[#12103E] shrink-0" aria-hidden="true" />
           <span className="text-foreground font-medium uppercase tracking-[0.12em] text-sm">
             {displayName}
           </span>
@@ -428,7 +428,7 @@ export default function IndustryGroupDetail() {
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
                 <div className="mb-6">
-                  <div className="h-px w-10 bg-[#202058] mb-4" aria-hidden="true" />
+                  <div className="h-px w-10 bg-[#12103E] mb-4" aria-hidden="true" />
                   <h2
                     className="text-xl font-heading font-light text-foreground uppercase tracking-[0.12em]"
                     data-testid="text-related-services-title"
@@ -436,7 +436,7 @@ export default function IndustryGroupDetail() {
                     {t.relatedServices}
                   </h2>
                 </div>
-                <ul className="divide-y divide-border border-y border-border" data-testid="list-related-practices">
+                <ul className="divide-y divide-border/60" data-testid="list-related-practices">
                   {relatedPracticeGroups.map((practiceGroup) => (
                     <TranslatedPracticeGroupBadge
                       key={practiceGroup.id}
