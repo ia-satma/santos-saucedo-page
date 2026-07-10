@@ -90,9 +90,18 @@ respira; nada de bordes/cajas duras. **Modo oscuro soportado por tokens** (sin t
 Verde Lima** (`--primary` = verde, `--primary-foreground` = navy, `--ring` = verde); fondo y superficies
 más profundos (`--background 243 47% 7%`) para contraste. El texto en oscuro es **blanco neutro**
 (`--foreground 0 0% 98%`, `--body 0 0% 84%`) — se quitó el tinte "hueso" cálido (hue 42). Los verdes de
-marca van a **100% opacidad** (sin `/40`, `/90`). Gotcha: en clases Tailwind arbitrarias
+marca van a **100% opacidad** (sin `/40`, `/90`). El texto muted en oscuro también es neutro
+(`--muted-foreground 0 0% 68%`, sin beige). Gotcha: en clases Tailwind arbitrarias
 (`bg-[…rgba(…)…]`, `shadow-[…]`) el `rgba()` **no puede llevar espacios** (`rgba(18,16,62,…)`, no
 `rgba(18, 16, 62, …)`) o la clase se rompe.
+
+**Rellenos en oscuro (ojo — `bg-primary` = VERDE en `.dark`):** por eso, todo relleno navy pequeño
+(círculos de ícono, badges, chips) usa **`bg-primary` + `text-primary-foreground`** → navy+blanco en
+claro, **verde+navy en oscuro** (legible). Los rellenos navy grandes que deben seguir navy en oscuro
+(menú móvil full-screen, badge de socio) van en **hex fijo `bg-[#12103E]`** (con `text-white`). Nunca
+dejes `bg-primary` con `text-white` (en oscuro sería blanco sobre verde). **Logo del header:** versión
+**blanca** cuando el header está oscuro o transparente; la navy solo en header claro sólido (si no, se
+pierde) — se resuelve con variantes `dark:` en dos `<img>`.
 
 **Regla del verde (dónde aplicarlo):** Verde Lima va como **acento/forma** — reglas y subrayados de
 sección (`h-px`/`h-0.5 bg-brand`), hairline del eyebrow, bullets, barras, la "S", el numeral gigante —
