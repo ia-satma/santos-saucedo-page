@@ -561,7 +561,7 @@ export default function Footer() {
       <div className="space-y-4">
         <address className="not-italic" data-testid="text-footer-address">
           <div className="flex items-start gap-3">
-            <Building2 className="w-4 h-4 text-[#D9D8F7] flex-shrink-0 mt-1" aria-hidden="true" />
+            <Building2 className="w-4 h-4 text-brand flex-shrink-0 mt-1" aria-hidden="true" />
             <div className="text-sm text-white/72 leading-relaxed">
               <p>{t.building}</p>
               <p>{t.street}</p>
@@ -570,7 +570,7 @@ export default function Footer() {
           </div>
         </address>
         <div className="flex items-center gap-3">
-          <Phone className="w-4 h-4 text-[#D9D8F7] flex-shrink-0" aria-hidden="true" />
+          <Phone className="w-4 h-4 text-brand flex-shrink-0" aria-hidden="true" />
           <a
             href={`tel:${t.phone.replace(/\s/g, "")}`}
             className="text-sm text-white/72 hover:text-white transition-colors"
@@ -581,7 +581,7 @@ export default function Footer() {
           </a>
         </div>
         <div className="flex items-center gap-3">
-          <Mail className="w-4 h-4 text-[#D9D8F7] flex-shrink-0" aria-hidden="true" />
+          <Mail className="w-4 h-4 text-brand flex-shrink-0" aria-hidden="true" />
           <a
             href={`mailto:${t.email}`}
             className="text-sm text-white/72 hover:text-white transition-colors"
@@ -609,7 +609,7 @@ export default function Footer() {
             <img
               src={footerLogo}
               alt="Santos & Saucedo"
-              className="h-14 w-auto mb-6"
+              className="h-20 w-auto mb-6"
               loading="lazy"
               decoding="async"
               data-testid="img-footer-logo"
@@ -658,7 +658,7 @@ export default function Footer() {
               </ul>
             </nav>
             <div className="mt-6 pt-6 border-t border-white/10">
-              <div className="flex items-center gap-3 text-[#D9D8F7]" data-testid="stat-practice-groups">
+              <div className="flex items-center gap-3 text-brand" data-testid="stat-practice-groups">
                 <span className="text-3xl font-heading text-white" aria-label={`6 ${t.practiceLabel}`}>6</span>
                 <span className="text-xs text-white/72 uppercase tracking-wider">
                   {t.practiceLabel}
