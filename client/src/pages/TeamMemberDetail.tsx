@@ -169,7 +169,7 @@ function PracticeGroupBadge({
     <Link href={`/practice-groups/${group.slug}`}>
       <Badge
         variant="outline"
-        className="rounded-none cursor-pointer py-2 px-4 no-default-hover-elevate no-default-active-elevate transition-colors duration-200 hover:bg-primary hover:text-primary-foreground hover:border-primary"
+        className="rounded-xl cursor-pointer py-2 px-4 no-default-hover-elevate no-default-active-elevate transition-colors duration-200 hover:bg-primary hover:text-primary-foreground hover:border-primary"
         data-testid={`badge-practice-group-${group.slug}`}
       >
         {displayName}
@@ -200,7 +200,7 @@ function IndustryGroupBadge({
     <Link href={`/industry-groups/${group.slug}`}>
       <Badge
         variant="outline"
-        className="rounded-none cursor-pointer py-2 px-4 no-default-hover-elevate no-default-active-elevate transition-colors duration-200 hover:bg-primary hover:text-primary-foreground hover:border-primary"
+        className="rounded-xl cursor-pointer py-2 px-4 no-default-hover-elevate no-default-active-elevate transition-colors duration-200 hover:bg-primary hover:text-primary-foreground hover:border-primary"
         data-testid={`badge-industry-group-${group.slug}`}
       >
         {displayName}
@@ -247,7 +247,7 @@ function RankingItemTranslated({
   if (isTiered) {
     return (
       <Card 
-        className="border border-border bg-card rounded-none overflow-visible"
+        className="overflow-visible"
         data-testid={`card-ranking-tiered-${index}`}
       >
         <CardContent className="p-4">
@@ -262,7 +262,7 @@ function RankingItemTranslated({
               <div className="flex flex-wrap items-center gap-2 mt-2">
                 <Badge 
                   variant="outline"
-                  className="rounded-none text-[11px] uppercase tracking-[0.18em] border-[#202058] text-[#202058]"
+                  className="rounded-xl text-[11px] uppercase tracking-[0.18em] border-[#202058] text-[#202058]"
                   data-testid={`badge-ranking-band-${index}`}
                 >
                   {displayRanking}
@@ -270,7 +270,7 @@ function RankingItemTranslated({
                 {ranking.year && (
                   <Badge 
                     variant="outline" 
-                    className="rounded-none text-[11px] uppercase tracking-[0.18em]"
+                    className="rounded-xl text-[11px] uppercase tracking-[0.18em]"
                   >
                     {ranking.year}
                   </Badge>
@@ -290,7 +290,7 @@ function RankingItemTranslated({
 
   return (
     <div
-      className="flex items-center gap-3 p-3 bg-card rounded-none border border-border"
+      className="flex items-center gap-3 p-4 card-soft"
       data-testid={`item-ranking-simple-${index}`}
     >
       <div className="flex-shrink-0">
@@ -444,7 +444,7 @@ function BarAdmissionItemTranslated({
   return (
     <Badge 
       variant="secondary"
-      className="rounded-none py-2 px-4"
+      className="rounded-xl py-2 px-4"
       data-testid={`badge-bar-admission-${index}`}
     >
       {displayJurisdiction}
@@ -480,7 +480,7 @@ function LanguageItemTranslated({
   return (
     <Badge 
       variant="outline"
-      className="rounded-none py-2 px-4"
+      className="rounded-xl py-2 px-4"
       data-testid={`badge-language-${index}`}
     >
       {displayLanguage}
@@ -1336,7 +1336,7 @@ export default function TeamMemberDetail() {
                   </h1>
                   <Badge 
                     variant="secondary" 
-                    className="bg-white/20 text-white border-0 rounded-none"
+                    className="bg-white/20 text-white border-0 rounded-xl"
                     data-testid="badge-seniority"
                   >
                     {getSeniorityLabel()}
@@ -1378,7 +1378,7 @@ export default function TeamMemberDetail() {
                   {member?.email && (
                     <Button 
                       variant="secondary"
-                      className="rounded-none bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
+                      className="rounded-xl bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
                       asChild
                       data-testid="button-email"
                     >
@@ -1391,7 +1391,7 @@ export default function TeamMemberDetail() {
                   {member?.phone && (
                     <Button 
                       variant="secondary"
-                      className="rounded-none bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
+                      className="rounded-xl bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
                       asChild
                       data-testid="button-phone"
                     >
@@ -1405,7 +1405,7 @@ export default function TeamMemberDetail() {
                     <Button 
                       variant="secondary"
                       size="icon"
-                      className="rounded-none bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
+                      className="rounded-xl bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
                       asChild
                       data-testid="button-linkedin"
                     >
@@ -1416,7 +1416,7 @@ export default function TeamMemberDetail() {
                   )}
                   <Button 
                     variant="secondary"
-                    className="rounded-none bg-card text-primary hover:bg-white/90"
+                    className="rounded-xl bg-card text-primary hover:bg-white/90"
                     onClick={handleDownloadVCard}
                     data-testid="button-download-vcard"
                   >
@@ -1491,7 +1491,7 @@ export default function TeamMemberDetail() {
                   transition={{ duration: 0.6, delay: 0.25 }}
                   data-testid="section-rankings"
                 >
-                  <div className="rounded-none p-6 border border-border bg-card">
+                  <div className="card-soft p-8">
                     <div className="mb-6">
                       <div className="h-px w-10 bg-[#202058] mb-4" aria-hidden="true" />
                       <h2
@@ -1501,7 +1501,7 @@ export default function TeamMemberDetail() {
                         <span>{t.rankings}</span>
                         <Badge
                           variant="outline"
-                          className="ml-auto rounded-none text-xs uppercase tracking-[0.15em] border-[#202058] text-[#202058]"
+                          className="ml-auto rounded-xl text-xs uppercase tracking-[0.15em] border-[#202058] text-[#202058]"
                           data-testid="badge-rankings-count"
                         >
                           {processedRankings.totalCount}
@@ -1832,7 +1832,7 @@ export default function TeamMemberDetail() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.35 }}
-                  className="rounded-none p-6 border border-border bg-card"
+                  className="card-soft p-8"
                   data-testid="section-featured-recognition"
                 >
                   <div className="mb-4">
@@ -1885,7 +1885,7 @@ export default function TeamMemberDetail() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="bg-muted rounded-none p-6"
+                className="bg-muted rounded-2xl p-6"
                 data-testid="section-contact-cta"
               >
                 <h2 
@@ -1903,7 +1903,7 @@ export default function TeamMemberDetail() {
                 <div className="flex flex-col gap-3">
                   {member?.email && (
                     <Button 
-                      className="w-full rounded-none"
+                      className="w-full rounded-xl"
                       asChild
                       data-testid="button-email-contact"
                     >
@@ -1916,7 +1916,7 @@ export default function TeamMemberDetail() {
                   {member?.phone && (
                     <Button 
                       variant="outline"
-                      className="w-full rounded-none"
+                      className="w-full rounded-xl"
                       asChild
                       data-testid="button-call-contact"
                     >
@@ -1928,7 +1928,7 @@ export default function TeamMemberDetail() {
                   )}
                   <Button 
                     variant="outline"
-                    className="w-full rounded-none"
+                    className="w-full rounded-xl"
                     onClick={handleDownloadVCard}
                     data-testid="button-download-vcard-sidebar"
                   >
@@ -1958,7 +1958,7 @@ export default function TeamMemberDetail() {
                       {t.relatedTeam}
                     </h2>
                   </div>
-                  <div className="divide-y border-y border-border">
+                  <div className="space-y-1">
                     {relatedMembers.map((relatedMember) => (
                       <RelatedTeamMemberCard
                         key={relatedMember.id}
@@ -1980,7 +1980,7 @@ export default function TeamMemberDetail() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="mt-16 pt-12 border-t border-border"
+            className="mt-16 pt-12"
             data-testid="section-related-news"
           >
             <div className="max-w-6xl mx-auto">
@@ -2002,7 +2002,7 @@ export default function TeamMemberDetail() {
                   >
                     <Link href={`/news/${article.slug}`}>
                       <Card
-                        className="group h-full rounded-none overflow-hidden border border-border shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer bg-card"
+                        className="group h-full overflow-hidden transition-all duration-300 cursor-pointer"
                         data-testid={`card-related-news-${article.slug}`}
                       >
                         <div className="relative h-48 overflow-hidden bg-muted">

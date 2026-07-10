@@ -65,10 +65,8 @@ function EventCard({ event, language, isUpcoming, formatDate, t }: EventCardProp
 
   return (
     <Card
-      className={`group h-full rounded-none overflow-hidden border shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer bg-card ${
-        isUpcoming 
-          ? 'border-border' 
-          : 'border-gray-100 dark:border-gray-800 opacity-80'
+      className={`group h-full overflow-hidden transition-all duration-300 cursor-pointer ${
+        isUpcoming ? '' : 'opacity-80'
       }`}
       data-testid={`card-event-${event.id}`}
     >
@@ -410,9 +408,9 @@ export default function EventsPage() {
           ) : isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {Array.from({ length: 6 }).map((_, i) => (
-                <Card 
-                  key={i} 
-                  className="rounded-none overflow-hidden border-0 shadow-sm"
+                <Card
+                  key={i}
+                  className="overflow-hidden"
                   data-testid={`skeleton-event-${i}`}
                 >
                   <CardContent className="p-6">

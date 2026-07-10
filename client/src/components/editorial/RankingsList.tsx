@@ -25,7 +25,7 @@ export function RankingsList({
   testIdPrefix = "ranking",
 }: RankingsListProps) {
   return (
-    <ul className="divide-y divide-border border-y border-border" data-testid={`list-${testIdPrefix}s`}>
+    <ul className="space-y-1" data-testid={`list-${testIdPrefix}s`}>
       {items.map((item, index) => {
         const displayRanking =
           language === "es" && item.rankingEs ? item.rankingEs : item.ranking;
@@ -56,7 +56,7 @@ export function RankingsList({
               )}
             </div>
             <Badge
-              className={`rounded-none text-xs flex items-center gap-1 shrink-0 ${
+              className={`rounded-xl text-xs flex items-center gap-1 shrink-0 ${
                 getBadgeStyles ? getBadgeStyles(item.badgeType ?? "") : "bg-[#202058] text-white border-0"
               }`}
               data-testid={`badge-${testIdPrefix}-${index}`}

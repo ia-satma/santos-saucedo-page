@@ -764,7 +764,7 @@ export default function Interns() {
               {t.heroSubtitle}
             </p>
             <Button 
-              className="rounded-none"
+              className="rounded-xl"
               variant="default"
               size="lg"
               asChild
@@ -803,7 +803,7 @@ export default function Interns() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <Card className="rounded-none border border-border" data-testid="card-summer-program">
+              <Card className="" data-testid="card-summer-program">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-xl font-heading font-light text-foreground">
                     <Calendar className="w-6 h-6 text-primary" />
@@ -821,7 +821,7 @@ export default function Interns() {
                 </CardContent>
               </Card>
 
-              <Card className="rounded-none border border-border" data-testid="card-permanent-program">
+              <Card className="" data-testid="card-permanent-program">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-xl font-heading font-light text-foreground">
                     <Briefcase className="w-6 h-6 text-primary" />
@@ -871,12 +871,12 @@ export default function Interns() {
               {t.learningAreas.map((area, index) => (
                 <motion.div key={index} variants={itemVariants}>
                   <Card 
-                    className="rounded-none border border-border h-full"
+                    className="h-full"
                     data-testid={`card-learning-${index}`}
                   >
                     <CardContent className="p-6">
                       <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-none bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                           <area.icon className="w-6 h-6 text-primary" />
                         </div>
                         <div>
@@ -915,7 +915,7 @@ export default function Interns() {
               </p>
             </div>
 
-            <Card className="rounded-none border border-border bg-muted" data-testid="card-requirements">
+            <Card className="bg-muted" data-testid="card-requirements">
               <CardContent className="p-8">
                 <motion.ul 
                   className="grid grid-cols-1 md:grid-cols-2 gap-4"
@@ -970,7 +970,7 @@ export default function Interns() {
               {t.applicationSteps.map((step, index) => (
                 <motion.div key={index} variants={itemVariants}>
                   <Card 
-                    className="rounded-none border border-border h-full text-center"
+                    className="h-full text-center"
                     data-testid={`card-step-${index}`}
                   >
                     <CardContent className="p-6">
@@ -1020,12 +1020,12 @@ export default function Interns() {
               {t.benefits.map((benefit, index) => (
                 <motion.div key={index} variants={itemVariants}>
                   <Card 
-                    className="rounded-none border border-border h-full"
+                    className="h-full"
                     data-testid={`card-benefit-${index}`}
                   >
                     <CardContent className="p-6">
                       <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-none bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                           <benefit.icon className="w-6 h-6 text-primary" />
                         </div>
                         <div>
@@ -1052,7 +1052,7 @@ export default function Interns() {
             className="mb-12"
             data-testid="section-cta"
           >
-            <Card className="rounded-none border border-border bg-card shadow-sm overflow-hidden">
+            <Card className="overflow-hidden">
               <CardContent className="p-8 lg:p-12 text-center">
                 <div className="h-0.5 w-12 bg-primary mx-auto mb-6" />
                 <h2 
@@ -1077,7 +1077,7 @@ export default function Interns() {
                   <Button 
                     variant="default"
                     size="lg"
-                    className="rounded-none"
+                    className="rounded-xl"
                     asChild
                     data-testid="button-cta-apply"
                   >
@@ -1089,7 +1089,7 @@ export default function Interns() {
                   <Button 
                     variant="outline"
                     size="lg"
-                    className="rounded-none border-primary/30 text-primary hover:bg-primary/5"
+                    className="rounded-xl border-primary/30 text-primary hover:bg-primary/5"
                     asChild
                     data-testid="button-view-careers"
                   >
@@ -1110,7 +1110,7 @@ export default function Interns() {
             transition={{ duration: 0.6 }}
             data-testid="section-contact"
           >
-            <Card className="rounded-none border border-border" data-testid="card-contact">
+            <Card className="" data-testid="card-contact">
               <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div>
                   <h3 className="text-lg font-light uppercase tracking-[0.12em] text-foreground mb-1">
@@ -1121,7 +1121,7 @@ export default function Interns() {
                   </p>
                 </div>
                 <Button 
-                  className="rounded-none whitespace-nowrap"
+                  className="rounded-xl whitespace-nowrap"
                   asChild
                   data-testid="button-contact-email"
                 >

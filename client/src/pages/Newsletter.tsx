@@ -564,7 +564,7 @@ export default function Newsletter() {
               transition={{ duration: 0.6, delay: 0.1 }}
               data-testid="section-newsletter-form"
             >
-              <Card className="rounded-none border border-border">
+              <Card>
                 <CardContent className="p-8">
                   <div className="mb-8">
                     <div className="flex items-center gap-3 mb-4">
@@ -645,9 +645,9 @@ export default function Newsletter() {
                         )}
                       />
 
-                      <Button 
-                        type="submit" 
-                        className="w-full rounded-none bg-[#202058] hover:bg-[#181848]"
+                      <Button
+                        type="submit"
+                        className="w-full rounded-xl bg-[#202058] hover:bg-[#181848]"
                         disabled={newsletterMutation.isPending}
                         data-testid="button-subscribe"
                       >
@@ -682,7 +682,7 @@ export default function Newsletter() {
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="mt-8"
               >
-                <Card className="rounded-none border border-border bg-muted" data-testid="card-frequency">
+                <Card className="bg-muted" data-testid="card-frequency">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-2">
                       <Calendar className="w-5 h-5 text-primary" />
@@ -727,8 +727,7 @@ export default function Newsletter() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
                   >
-                    <Card 
-                      className="rounded-none border border-border"
+                    <Card
                       data-testid={`card-benefit-${index}`}
                     >
                       <CardContent className="p-6">
@@ -799,8 +798,8 @@ export default function Newsletter() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
                 >
-                  <Card 
-                    className="rounded-none border border-border h-full"
+                  <Card
+                    className="h-full"
                     data-testid={`card-archive-${index}`}
                   >
                     <CardContent className="p-6">

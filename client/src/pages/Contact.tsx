@@ -750,7 +750,7 @@ export default function Contact() {
             className="mb-16"
             data-testid="section-contact-form"
           >
-            <Card className="rounded-none border border-border">
+            <Card className="">
               <CardContent className="p-8">
                 <div className="mb-8">
                   <h2 
@@ -779,6 +779,7 @@ export default function Contact() {
                             <FormControl>
                               <Input 
                                 placeholder={t.fullNamePlaceholder} 
+                                className="rounded-lg"
                                 {...field} 
                                 data-testid="input-fullname"
                               />
@@ -798,6 +799,7 @@ export default function Contact() {
                               <Input 
                                 type="email"
                                 placeholder={t.emailPlaceholder} 
+                                className="rounded-lg"
                                 {...field} 
                                 data-testid="input-email"
                               />
@@ -817,6 +819,7 @@ export default function Contact() {
                               <Input 
                                 type="tel"
                                 placeholder={t.phonePlaceholder} 
+                                className="rounded-lg"
                                 {...field} 
                                 data-testid="input-phone"
                               />
@@ -835,6 +838,7 @@ export default function Contact() {
                             <FormControl>
                               <Input 
                                 placeholder={t.companyPlaceholder} 
+                                className="rounded-lg"
                                 {...field} 
                                 data-testid="input-company"
                               />
@@ -853,7 +857,7 @@ export default function Contact() {
                           <FormLabel data-testid="label-practice-area">{t.practiceAreaLabel}</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
-                              <SelectTrigger data-testid="select-practice-area">
+                              <SelectTrigger className="rounded-lg" data-testid="select-practice-area">
                                 <SelectValue placeholder={t.practiceAreaPlaceholder} />
                               </SelectTrigger>
                             </FormControl>
@@ -883,7 +887,7 @@ export default function Contact() {
                           <FormControl>
                             <Textarea 
                               placeholder={t.messagePlaceholder} 
-                              className="min-h-[120px]"
+                              className="min-h-[120px] rounded-lg"
                               {...field} 
                               data-testid="textarea-message"
                             />
@@ -895,7 +899,7 @@ export default function Contact() {
 
                     <Button 
                       type="submit" 
-                      className="w-full md:w-auto rounded-none"
+                      className="w-full md:w-auto rounded-xl"
                       disabled={contactMutation.isPending}
                       data-testid="button-submit-contact"
                     >
@@ -931,7 +935,7 @@ export default function Contact() {
                 {t.officesTitle}
               </h2>
               
-              <Card className="rounded-none border border-border overflow-hidden" data-testid="card-main-office">
+              <Card className="overflow-hidden" data-testid="card-main-office">
                 <div className="aspect-video w-full">
                   <iframe
                     src={googleMapsUrl}
@@ -1001,7 +1005,7 @@ export default function Contact() {
                   
                   <Button 
                     variant="outline"
-                    className="w-full rounded-none"
+                    className="w-full rounded-xl"
                     asChild
                     data-testid="button-get-directions"
                   >
@@ -1025,7 +1029,7 @@ export default function Contact() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="space-y-8"
             >
-              <Card className="rounded-none border border-border bg-muted" data-testid="card-contact-cta">
+              <Card className="bg-muted" data-testid="card-contact-cta">
                 <CardContent className="p-8">
                   <h3 
                     className="text-xl font-heading font-light text-foreground mb-4"
@@ -1035,7 +1039,7 @@ export default function Contact() {
                   </h3>
                   <div className="flex flex-col gap-3">
                     <Button 
-                      className="w-full rounded-none"
+                      className="w-full rounded-xl"
                       asChild
                       data-testid="button-send-email"
                     >
@@ -1046,7 +1050,7 @@ export default function Contact() {
                     </Button>
                     <Button 
                       variant="outline"
-                      className="w-full rounded-none"
+                      className="w-full rounded-xl"
                       asChild
                       data-testid="button-call-us"
                     >
@@ -1059,7 +1063,7 @@ export default function Contact() {
                 </CardContent>
               </Card>
 
-              <Card className="rounded-none border border-border" data-testid="card-connect">
+              <Card className="" data-testid="card-connect">
                 <CardContent className="p-8">
                   <h3 
                     className="text-xl font-heading font-light text-foreground mb-2"
@@ -1076,7 +1080,7 @@ export default function Contact() {
                   <div className="flex flex-col gap-3">
                     <Button 
                       variant="outline"
-                      className="w-full rounded-none justify-start"
+                      className="w-full rounded-xl justify-start"
                       asChild
                       data-testid="button-linkedin"
                     >
@@ -1091,7 +1095,7 @@ export default function Contact() {
                     </Button>
                     <Button 
                       variant="outline"
-                      className="w-full rounded-none justify-start"
+                      className="w-full rounded-xl justify-start"
                       asChild
                       data-testid="button-website"
                     >

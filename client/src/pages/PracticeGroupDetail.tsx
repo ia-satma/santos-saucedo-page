@@ -74,7 +74,7 @@ function TranslatedMatterCard({ matter, language, t }: TranslatedMatterCardProps
 
   return (
     <Card
-      className="rounded-none border border-white/[0.08] bg-[#222220] relative shadow-none"
+      className="bg-[#222220] relative"
       data-testid={`card-matter-${matter.id}`}
     >
       {matter.isHighlight && (
@@ -90,14 +90,14 @@ function TranslatedMatterCard({ matter, language, t }: TranslatedMatterCardProps
               {matter.isHighlight && (
                 <Badge
                   variant="outline"
-                  className="rounded-none text-[11px] uppercase tracking-[0.18em] border-[#202058] text-[#202058] bg-transparent"
+                  className="rounded-xl text-[11px] uppercase tracking-[0.18em] border-[#202058] text-[#202058] bg-transparent"
                 >
                   {t.featured}
                 </Badge>
               )}
               <Badge
                 variant="outline"
-                className="rounded-none text-[11px] uppercase tracking-[0.18em] border-white/20 text-white/70 bg-transparent"
+                className="rounded-xl text-[11px] uppercase tracking-[0.18em] border-white/20 text-white/70 bg-transparent"
                 data-testid={`badge-matter-year-${matter.id}`}
               >
                 {matter.year}
@@ -532,7 +532,7 @@ export default function PracticeGroupDetail() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <Skeleton className="h-5 w-48 bg-white/10 mb-6" />
             <div className="flex items-center gap-4">
-              <Skeleton className="h-16 w-16 rounded-none bg-white/10" />
+              <Skeleton className="h-16 w-16 rounded-xl bg-white/10" />
               <Skeleton className="h-12 w-64 bg-white/10" />
             </div>
           </div>
@@ -569,7 +569,7 @@ export default function PracticeGroupDetail() {
   const renderMemberCard = (member: TeamMember) => (
     <Link key={member.id} href={`/team/${member.slug}`}>
       <Card
-        className="rounded-none border-0 bg-[#222220] cursor-pointer hover-elevate shadow-none overflow-hidden"
+        className="border-0 bg-[#222220] cursor-pointer hover-elevate overflow-hidden"
         data-testid={`card-team-member-${member.slug}`}
       >
         <CardContent className="p-0 flex items-stretch gap-0">
@@ -649,7 +649,7 @@ export default function PracticeGroupDetail() {
             </Link>
             <div className="flex items-center gap-4">
               {IconComponent && (
-                <div className="w-16 h-16 rounded-none bg-white/5 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center">
                   <IconComponent className="w-8 h-8 text-primary" data-testid="icon-practice-group-detail" />
                 </div>
               )}
@@ -823,7 +823,7 @@ export default function PracticeGroupDetail() {
                       className="text-sm font-heading font-light text-foreground mb-4 flex items-center gap-3 uppercase tracking-[0.12em]"
                       data-testid="text-partners-title"
                     >
-                      <Badge variant="outline" className="rounded-none text-xs uppercase tracking-[0.15em] border-[#202058] text-[#202058] bg-transparent">
+                      <Badge variant="outline" className="rounded-xl text-xs uppercase tracking-[0.15em] border-[#202058] text-[#202058] bg-transparent">
                         {filteredAndGroupedMembers.partners.length}
                       </Badge>
                       {t.partners}
@@ -840,7 +840,7 @@ export default function PracticeGroupDetail() {
                       className="text-sm font-heading font-light text-foreground mb-4 flex items-center gap-3 uppercase tracking-[0.12em]"
                       data-testid="text-of-counsel-title"
                     >
-                      <Badge variant="outline" className="rounded-none text-xs uppercase tracking-[0.15em] border-border text-muted-foreground bg-transparent">
+                      <Badge variant="outline" className="rounded-xl text-xs uppercase tracking-[0.15em] border-border text-muted-foreground bg-transparent">
                         {filteredAndGroupedMembers.ofCounsel.length}
                       </Badge>
                       {t.ofCounsel}
@@ -857,7 +857,7 @@ export default function PracticeGroupDetail() {
                       className="text-sm font-heading font-light text-foreground mb-4 flex items-center gap-3 uppercase tracking-[0.12em]"
                       data-testid="text-associates-title"
                     >
-                      <Badge variant="outline" className="rounded-none text-xs uppercase tracking-[0.15em] border-border text-muted-foreground bg-transparent">
+                      <Badge variant="outline" className="rounded-xl text-xs uppercase tracking-[0.15em] border-border text-muted-foreground bg-transparent">
                         {filteredAndGroupedMembers.associates.length}
                       </Badge>
                       {t.associates}
@@ -870,7 +870,7 @@ export default function PracticeGroupDetail() {
                         <Link href={`/team?practice=${slug}`}>
                           <Button
                             variant="outline"
-                            className="rounded-none gap-2"
+                            className="rounded-xl gap-2"
                             data-testid="button-view-all-associates"
                           >
                             {t.viewAll} ({filteredAndGroupedMembers.associates.length})
@@ -894,7 +894,7 @@ export default function PracticeGroupDetail() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="bg-muted rounded-none p-8 lg:p-12"
+              className="bg-muted rounded-2xl p-8 lg:p-12"
               data-testid="section-contact-cta"
             >
               <h2
@@ -912,7 +912,7 @@ export default function PracticeGroupDetail() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/contact">
                   <Button
-                    className="rounded-none"
+                    className="rounded-xl"
                     data-testid="button-email-us"
                   >
                     <Mail className="w-4 h-4 mr-2" />
@@ -921,7 +921,7 @@ export default function PracticeGroupDetail() {
                 </Link>
                 <Button
                   variant="outline"
-                  className="rounded-none"
+                  className="rounded-xl"
                   data-testid="button-call-us"
                   onClick={() => window.location.href = "tel:+525552581000"}
                 >

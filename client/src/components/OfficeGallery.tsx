@@ -80,7 +80,7 @@ export default function OfficeGallery() {
 
         {/* Empty state */}
         {!isLoading && images.length === 0 && (
-          <div className="h-64 flex items-center justify-center border border-border" data-testid="gallery-empty">
+          <div className="h-64 flex items-center justify-center card-soft" data-testid="gallery-empty">
             <p className="text-muted-foreground text-sm tracking-[0.1em] uppercase">
               {language === "es" ? "Galería próximamente" : "Gallery coming soon"}
             </p>

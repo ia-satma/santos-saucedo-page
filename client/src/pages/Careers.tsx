@@ -1063,7 +1063,7 @@ export default function Careers() {
               {t.heroSubtitle}
             </p>
             <Button 
-              className="rounded-none"
+              className="rounded-xl"
               variant="default"
               size="lg"
               asChild
@@ -1102,7 +1102,7 @@ export default function Careers() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-              <Card className="rounded-none border border-border" data-testid="card-culture">
+              <Card className="" data-testid="card-culture">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-lg font-heading font-light text-foreground uppercase tracking-[0.1em]">
                     <Building2 className="w-6 h-6 text-primary" />
@@ -1116,7 +1116,7 @@ export default function Careers() {
                 </CardContent>
               </Card>
 
-              <Card className="rounded-none border border-border" data-testid="card-environment">
+              <Card className="" data-testid="card-environment">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-lg font-heading font-light text-foreground uppercase tracking-[0.1em]">
                     <Target className="w-6 h-6 text-primary" />
@@ -1131,7 +1131,7 @@ export default function Careers() {
               </Card>
             </div>
 
-            <Card className="rounded-none border border-border bg-muted" data-testid="card-values">
+            <Card className="bg-muted" data-testid="card-values">
               <CardHeader>
                 <CardTitle className="text-lg font-heading font-light text-foreground text-center uppercase tracking-[0.1em]">
                   {t.valuesTitle}
@@ -1235,7 +1235,7 @@ export default function Careers() {
               {t.positions.map((position, index) => (
                 <motion.div key={index} variants={itemVariants}>
                   <Card 
-                    className="rounded-none border border-border"
+                    className=""
                     data-testid={`card-position-${index}`}
                   >
                     <CardContent className="p-6">
@@ -1265,7 +1265,7 @@ export default function Careers() {
                         </div>
                         <div className="flex-shrink-0">
                           <Button 
-                            className="rounded-none w-full lg:w-auto"
+                            className="rounded-xl w-full lg:w-auto"
                             asChild
                             data-testid={`button-apply-position-${index}`}
                           >
@@ -1305,7 +1305,7 @@ export default function Careers() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <Card 
-                className="rounded-none border border-border lg:col-span-2"
+                className="lg:col-span-2"
                 data-testid="card-internship-overview"
               >
                 <CardHeader>
@@ -1360,7 +1360,7 @@ export default function Careers() {
               </Card>
 
               <Card 
-                className="rounded-none border border-border bg-card shadow-sm"
+                className=""
                 data-testid="card-internship-cta"
               >
                 <CardContent className="p-8 flex flex-col justify-center h-full">
@@ -1376,7 +1376,7 @@ export default function Careers() {
                   </p>
                   <Button 
                     variant="default"
-                    className="rounded-none w-full"
+                    className="rounded-xl w-full"
                     asChild
                     data-testid="button-internship-apply"
                   >
@@ -1409,7 +1409,7 @@ export default function Careers() {
                 <p className="text-lg text-muted-foreground mb-6">
                   {t.applySubtitle}
                 </p>
-                <Card className="rounded-none border border-border bg-muted" data-testid="card-apply-instructions">
+                <Card className="bg-muted" data-testid="card-apply-instructions">
                   <CardContent className="p-8">
                     <p className="text-muted-foreground mb-4">
                       {t.applyInstructions}
@@ -1431,7 +1431,7 @@ export default function Careers() {
 
               <div>
                 <Card 
-                  className="rounded-none border border-border h-full"
+                  className="h-full"
                   data-testid="card-careers-contact"
                 >
                   <CardContent className="p-8">
@@ -1460,7 +1460,7 @@ export default function Careers() {
                       </div>
                     </div>
                     <Button 
-                      className="rounded-none w-full mt-6"
+                      className="rounded-xl w-full mt-6"
                       asChild
                       data-testid="button-send-application"
                     >

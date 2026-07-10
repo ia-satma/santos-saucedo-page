@@ -111,7 +111,7 @@ function NewsCard({ article, readMoreText }: NewsCardProps) {
   return (
     <Link href={`/news/${article.slug}`}>
       <Card
-        className="group h-full rounded-none overflow-hidden border border-border shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer bg-card"
+        className="group h-full overflow-hidden transition-all duration-300 cursor-pointer"
         data-testid={`card-news-${article.slug}`}
       >
         <div className="relative h-48 overflow-hidden bg-muted">
@@ -504,7 +504,7 @@ export default function NewsPage() {
                 placeholder={t.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 rounded-none"
+                className="pl-10 rounded-xl"
                 data-testid="input-search-news"
               />
             </div>
@@ -520,9 +520,9 @@ export default function NewsPage() {
           ) : isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {Array.from({ length: 6 }).map((_, i) => (
-                <Card 
-                  key={i} 
-                  className="rounded-none overflow-hidden border-0 shadow-sm"
+                <Card
+                  key={i}
+                  className="overflow-hidden"
                   data-testid={`skeleton-news-${i}`}
                 >
                   <Skeleton className="h-48 w-full" />

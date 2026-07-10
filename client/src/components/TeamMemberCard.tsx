@@ -122,7 +122,7 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
           <Button
             variant="outline"
             size="sm"
-            className="w-32 text-white border-white text-xs tracking-[0.08em] rounded-none"
+            className="w-32 text-white border-white text-xs tracking-[0.08em] rounded-xl"
             onClick={handleDownloadVCard}
             data-testid={`button-download-vcard-${member.slug}`}
           >
@@ -132,7 +132,7 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
           <Button
             variant="default"
             size="sm"
-            className="w-32 text-xs tracking-[0.08em] rounded-none"
+            className="w-32 text-xs tracking-[0.08em] rounded-xl"
             data-testid={`button-view-profile-${member.slug}`}
           >
             <Briefcase className="w-3 h-3 mr-1.5" />

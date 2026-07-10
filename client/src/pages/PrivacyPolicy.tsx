@@ -2534,9 +2534,9 @@ Sito web: www.santossaucedo.com`
                 variants={itemVariants}
                 data-testid={`section-privacy-${section.id}`}
               >
-                <Card className="rounded-none border border-border overflow-hidden">
+                <Card className="overflow-hidden">
                   <CardContent className="p-0">
-                    <div className="flex items-center gap-4 p-6 bg-muted border-b border-border">
+                    <div className="flex items-center gap-4 p-6 bg-muted">
                       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                         <section.icon className="w-6 h-6 text-primary" />
                       </div>
@@ -2568,7 +2568,7 @@ Sito web: www.santossaucedo.com`
             transition={{ duration: 0.6, delay: 0.8 }}
             className="mt-16 text-center"
           >
-            <Card className="rounded-none border border-primary/20 bg-primary/5 dark:bg-primary/10">
+            <Card className=" bg-primary/5 dark:bg-primary/10">
               <CardContent className="p-8">
                 <Shield className="w-10 h-10 text-primary mx-auto mb-4" />
                 <p className="text-foreground mb-4">

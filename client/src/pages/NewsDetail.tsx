@@ -107,7 +107,7 @@ function AuthorCard({
       className="block"
     >
       <Card
-        className="group overflow-visible border border-border shadow-sm hover:shadow-lg transition-all duration-300 rounded-none bg-card hover-elevate"
+        className="group overflow-visible transition-all duration-300 hover-elevate"
         data-testid={`card-author-${author.slug}`}
       >
         <CardContent className="p-6">
@@ -643,8 +643,8 @@ export default function NewsDetail() {
               )}
             </div>
 
-            <div 
-              className="border-t border-border pt-8 mb-16"
+            <div
+              className="pt-8 mb-16"
               data-testid="section-share"
             >
               <div className="flex flex-wrap items-center gap-4">
@@ -656,7 +656,7 @@ export default function NewsDetail() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-none"
+                    className="rounded-xl"
                     onClick={() => handleShare("linkedin")}
                     data-testid="button-share-linkedin"
                     title="LinkedIn"
@@ -666,7 +666,7 @@ export default function NewsDetail() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-none"
+                    className="rounded-xl"
                     onClick={() => handleShare("twitter")}
                     data-testid="button-share-twitter"
                     title="Twitter/X"
@@ -676,7 +676,7 @@ export default function NewsDetail() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-none"
+                    className="rounded-xl"
                     onClick={() => handleShare("whatsapp")}
                     data-testid="button-share-whatsapp"
                     title="WhatsApp"
@@ -686,7 +686,7 @@ export default function NewsDetail() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-none"
+                    className="rounded-xl"
                     onClick={() => handleShare("email")}
                     data-testid="button-share-email"
                     title="Email"
@@ -696,7 +696,7 @@ export default function NewsDetail() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-none"
+                    className="rounded-xl"
                     onClick={handleCopyLink}
                     data-testid="button-share-copy-link"
                     title={t.copyLink}
@@ -756,7 +756,7 @@ export default function NewsDetail() {
                     className="block"
                   >
                     <Card
-                      className="group overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300 rounded-none bg-card hover-elevate"
+                      className="group overflow-hidden transition-all duration-300 hover-elevate"
                       data-testid={`card-related-news-${item.id}`}
                     >
                       <div className="aspect-[16/10] overflow-hidden">

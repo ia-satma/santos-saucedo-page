@@ -491,7 +491,7 @@ export default function Team() {
       </section>
 
       {/* Filter bar */}
-      <div className="bg-card/92 backdrop-blur-xl border-b border-border sticky top-0 z-40 shadow-sm">
+      <div className="bg-card/92 backdrop-blur-xl sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 py-4">
           <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
             <div className="relative flex-1">
@@ -501,13 +501,13 @@ export default function Team() {
                 placeholder={t.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 rounded-none bg-background border-border text-foreground placeholder:text-muted-foreground/70 focus-visible:ring-primary/40 focus-visible:border-primary/40"
+                className="pl-9 rounded-xl bg-background border-border text-foreground placeholder:text-muted-foreground/70 focus-visible:ring-primary/40 focus-visible:border-primary/40"
                 data-testid="input-search"
               />
             </div>
             <div className="flex flex-wrap gap-2 items-center">
               <Select value={filterSeniority} onValueChange={setFilterSeniority}>
-                <SelectTrigger className="w-36 rounded-none bg-background border-border text-foreground text-xs" data-testid="select-seniority">
+                <SelectTrigger className="w-36 rounded-xl bg-background border-border text-foreground text-xs" data-testid="select-seniority">
                   <SelectValue placeholder={t.seniority} />
                 </SelectTrigger>
                 <SelectContent>
@@ -518,7 +518,7 @@ export default function Team() {
                 </SelectContent>
               </Select>
               <Select value={filterLetter} onValueChange={setFilterLetter}>
-                <SelectTrigger className="w-28 rounded-none bg-background border-border text-foreground text-xs" data-testid="select-alphabetic">
+                <SelectTrigger className="w-28 rounded-xl bg-background border-border text-foreground text-xs" data-testid="select-alphabetic">
                   <SelectValue placeholder={t.alphabetic} />
                 </SelectTrigger>
                 <SelectContent>
@@ -529,7 +529,7 @@ export default function Team() {
                 </SelectContent>
               </Select>
               {hasActiveFilters && (
-                <Button variant="ghost" size="default" onClick={clearFilters} className="gap-1.5 rounded-none text-muted-foreground hover:text-primary text-xs" data-testid="button-clear-filters">
+                <Button variant="ghost" size="default" onClick={clearFilters} className="gap-1.5 rounded-xl text-muted-foreground hover:text-primary text-xs" data-testid="button-clear-filters">
                   <X className="w-3.5 h-3.5" />
                   {t.clearFilters}
                 </Button>
@@ -560,7 +560,7 @@ export default function Team() {
             <Users className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
             <p className="text-muted-foreground">{t.noResults}</p>
             {hasActiveFilters && (
-              <Button variant="ghost" onClick={clearFilters} className="mt-4 gap-2 rounded-none" data-testid="button-clear-empty">
+              <Button variant="ghost" onClick={clearFilters} className="mt-4 gap-2 rounded-xl" data-testid="button-clear-empty">
                 <X className="w-4 h-4" />{t.clearFilters}
               </Button>
             )}
@@ -569,7 +569,7 @@ export default function Team() {
           <>
             {/* ─── SOCIOS ──────────────────────────────────────── */}
             {showPartners && groupedMembers.partners.length > 0 && (
-              <section className="border-b border-border" data-testid="section-partners">
+              <section data-testid="section-partners">
                 <div className="px-6 lg:px-12 pt-10 pb-4">
                   <div className="w-10 h-px bg-[#202058] mb-4" />
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
@@ -645,7 +645,7 @@ export default function Team() {
 
             {/* ─── OF COUNSEL ──────────────────────────────────── */}
             {showOfCounsel && groupedMembers.ofCounsel.length > 0 && (
-              <section className="border-b border-border" data-testid="section-ofcounsel">
+              <section data-testid="section-ofcounsel">
                 <div className="px-6 lg:px-12 pt-10 pb-4">
                   <div className="w-10 h-px bg-[#202058] mb-4" />
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">

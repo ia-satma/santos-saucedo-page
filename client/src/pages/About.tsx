@@ -1317,7 +1317,7 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="mb-20 section-stone rounded-none p-10 lg:p-14 border border-border"
+            className="mb-20 card-soft p-10 lg:p-14"
             data-testid="section-stats"
           >
             <h2 className="text-2xl font-heading font-light text-foreground mb-4 text-center uppercase tracking-[0.12em]">
@@ -1346,13 +1346,13 @@ export default function About() {
             className="flex flex-col sm:flex-row justify-center gap-4"
           >
             <Link href="/team">
-              <Button className="rounded-none" data-testid="button-view-team">
+              <Button className="rounded-xl" data-testid="button-view-team">
                 <Users className="w-4 h-4 mr-2" />
                 {t.viewTeam}
               </Button>
             </Link>
             <Link href="/practice-groups">
-              <Button variant="outline" className="rounded-none" data-testid="button-view-practices">
+              <Button variant="outline" className="rounded-xl" data-testid="button-view-practices">
                 <Briefcase className="w-4 h-4 mr-2" />
                 {t.viewPractices}
               </Button>

@@ -46,7 +46,7 @@ function PracticeGroupCard({ group, index, learnMoreText }: PracticeGroupCardPro
   return (
     <Link href={`/practice-groups/${group.slug}`}>
       <article
-        className="group relative h-full overflow-hidden rounded-none bg-card border-l-2 border-l-primary hover:border-l-4 shadow-sm hover:shadow-md transition-all duration-500 cursor-pointer aspect-[4/5]"
+        className="group relative h-full overflow-hidden card-soft cursor-pointer aspect-[4/5]"
         data-testid={`card-practice-group-${group.slug}`}
         onMouseEnter={() => setIsHover(true)}
         onMouseLeave={() => setIsHover(false)}
@@ -290,11 +290,11 @@ export default function PracticeGroups() {
               {Array.from({ length: 9 }).map((_, i) => (
                 <Card 
                   key={i} 
-                  className="rounded-none border-0 shadow-sm bg-muted"
+                  className="border-0 bg-muted"
                   data-testid={`skeleton-practice-group-${i}`}
                 >
                   <CardContent className="p-6">
-                    <Skeleton className="h-10 w-10 rounded-none mb-4" />
+                    <Skeleton className="h-10 w-10 rounded-xl mb-4" />
                     <Skeleton className="h-6 w-3/4 mb-3" />
                     <Skeleton className="h-4 w-full mb-2" />
                     <Skeleton className="h-4 w-5/6 mb-4" />
