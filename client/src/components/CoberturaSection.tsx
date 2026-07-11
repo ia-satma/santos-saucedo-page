@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { MapPin, Building2, Handshake } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { WaveLines, MonogramS } from "@/components/BrandDecor";
 import type { LanguageCode } from "@shared/schema";
 
 type CoberturaContent = {
@@ -61,10 +62,15 @@ export default function CoberturaSection() {
     >
       {/* subtle dotted / grid texture */}
       <div
-        className="absolute inset-0 opacity-[0.08]"
+        className="absolute inset-0 opacity-[0.07]"
         aria-hidden="true"
         style={{ backgroundImage: "radial-gradient(#ffffff 1px, transparent 1px)", backgroundSize: "26px 26px" }}
       />
+      {/* flowing wave-lines + oversized S watermark (2026 deck motifs) */}
+      <div className="absolute inset-y-0 right-0 w-2/3 text-white/[0.13] pointer-events-none" aria-hidden="true">
+        <WaveLines className="w-full h-full" />
+      </div>
+      <MonogramS className="absolute -right-16 -bottom-24 w-[360px] max-w-[48%] opacity-[0.08] pointer-events-none select-none [filter:brightness(0)_invert(1)]" />
       <div className="relative max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         <motion.div
           initial={{ opacity: 0, x: -24 }}
