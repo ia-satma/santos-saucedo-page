@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { WaveLines, MonogramS } from "@/components/BrandDecor";
 import type { LanguageCode } from "@shared/schema";
 
 type ContentItem = {
@@ -50,11 +49,7 @@ export default function ExperienceBanner() {
       data-testid="section-experience-banner"
     >
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.05)_0%,transparent_34%,rgba(255,255,255,0.07)_100%)]" aria-hidden="true" />
-      <div className="absolute inset-y-0 left-0 w-2/3 text-white/[0.12] pointer-events-none" aria-hidden="true">
-        <WaveLines className="w-full h-full" />
-      </div>
-      <MonogramS className="absolute -left-16 top-1/2 -translate-y-1/2 w-[320px] max-w-[42%] opacity-[0.07] pointer-events-none select-none [filter:brightness(0)_invert(1)]" />
-      <div className="relative z-10 max-w-5xl mx-auto px-6 lg:px-12">
+      <div className="max-w-5xl mx-auto px-6 lg:px-12">
         <div className="w-16 h-1 bg-brand mx-auto mb-8" aria-hidden="true" />
         <motion.p
           initial={{ opacity: 0, y: 20 }}
