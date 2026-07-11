@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import PracticesSection from "@/components/PracticesSection";
+import CoberturaSection from "@/components/CoberturaSection";
 import ExperienceBanner from "@/components/ExperienceBanner";
 import AboutUsSection from "@/components/AboutUsSection";
 import MapSection from "@/components/MapSection";
@@ -26,10 +27,13 @@ export default function Home() {
         {/* 2. Hero Section with news overlay */}
         <HeroSection language={language} />
 
-        {/* 3. Labor Practice Areas */}
+        {/* 3. Areas of Specialty (4) */}
         <PracticesSection />
 
-        {/* 4. Experience Banner */}
+        {/* 4. National Coverage / Alliance (+72 cities) */}
+        <CoberturaSection />
+
+        {/* 5. Experience Banner */}
         <ExperienceBanner />
 
         {/* Upcoming Events */}
