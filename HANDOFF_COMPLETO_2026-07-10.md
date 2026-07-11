@@ -14,22 +14,31 @@ Garza García, N.L. Construido por la agencia SATMA.
 full-service de CDMX) — React 18 + Vite + Tailwind + Express + Neon + agentes IA — y la **rebrandea**
 a la boutique laboral. Etapa 1 / Fase 2: prototipo navegable aprobable.
 
-**Regla de oro para detectar contenido heredado:** *S&S es SOLO laboral, +35 años, San Pedro Garza
-García N.L., **Azul Noche `#12103E` + Verde Lima `#A5E029`** (branding 2026-07).* Cualquier texto/dato
-que diga otra cosa (CDMX, Polanco, full-service, rankings, 1986/1952, 70 años) es herencia de Von
-Wobeser (VW) a purgar. Nota: `#202058`/`#B2EB3E` era la paleta S&S **anterior** (V2), ya reemplazada —
-no es VW; los crimson VW `#AC162C`/`#841A1A` siguen prohibidos.
+**Regla de oro (actualizada — Presentación de Servicios 2026):** *S&S es una firma **multi-área con raíz
+laboral** — 4 áreas: Laboral y Seguridad Social · Corporativo y Contractual · Migratorio · Litigio
+Contencioso — **15 años como firma / +35 de experiencia**, San Pedro Garza García N.L., azul + Verde Lima
+`#A5E029`, con **alianza nacional (+72 ciudades)**.* Sigue prohibido lo VW (CDMX/Polanco, full-service
+ajeno, rankings, 1952/1986/"70 años", crimson `#AC162C`/`#841A1A`). **OJO:** el modelo previo "SOLO
+laboral / 6 áreas" quedó **SUPERSEDED** por la presentación oficial 2026 (multi-área). `#202058`/`#B2EB3E`
+es paleta S&S anterior (V2), reemplazada.
 
 ## 2. El cliente (hechos verificados)
 
 - **Razón social:** SANTOS & SAUCEDO, S.C. (el aviso también menciona "Saucedo Santos S.C." — confirmar).
-- **Especialidad:** Derecho Laboral (única). **Trayectoria:** +35 años. **Clientes:** empresas nacionales e internacionales.
+- **Modelo (Presentación 2026):** firma **multi-área con raíz laboral**. **15 años como firma / +35 de
+  experiencia.** Clientes nacionales y multinacionales; **alianza con presencia en +72 ciudades** de MX.
 - **Domicilio:** Río Tamazunchale 205 Norte, Col. Del Valle, San Pedro Garza García, N.L., C.P. 66220.
-- **Tel:** (81) 8335 2086 · **Correo:** info@santossaucedo.com · **Horario:** L–V 9:00–19:00.
-- **6 áreas laborales:** (1) conflictos individuales y colectivos ante juntas, (2) revisión de
-  administración laboral, (3) diagnóstico de relaciones laborales, (4) planes de mejora,
-  (5) auditoría jurídico-laboral, (6) planeación estratégica, cursos y talleres.
-- **Posicionamiento:** "Derecho laboral estratégico para empresas."
+- **Tel:** (81) 8335 2086 · **Correo:** info@santossaucedo.com (la presentación usa msaucedom@santossaucedo.com).
+- **4 áreas de especialidad** (slugs en `server/seed.ts`): (1) **Laboral y Seguridad Social**
+  `laboral-seguridad-social` (raíz; incluye litigio laboral, auditorías, colectiva, compliance);
+  (2) **Corporativo y Contractual** `corporativo-contractual`; (3) **Migratorio** `migratorio`;
+  (4) **Litigio Contencioso** `litigio-contencioso` (civil/mercantil/penal). Servicios detallados en el seed.
+- **Posicionamiento:** "Administración del capital humano y defensa legal para empresas nacionales y
+  multinacionales."
+- **Pendientes del PDF 2026 (por hacer):** diseño azul real del PDF + motivos verdes; secciones nuevas
+  **Cobertura Nacional** (mapa MX, +72 ciudades), **Clientes** (logos globales/nacionales/Asia — requiere
+  assets), **Socios Fundadores** (4); actualizar SEOHead/JsonLdSchema. Imágenes del PDF en
+  `../PDF 2026 - IMAGES/`.
 - **Equipo:** 24 personas publicadas (nombre/foto/cargo confirmados; **bios/idiomas/educación faltan**
   — validación del cliente). Ojo ortografía: Gúzman, Huán, Misden, Mirelles, Vásquez/Vázquez.
 
