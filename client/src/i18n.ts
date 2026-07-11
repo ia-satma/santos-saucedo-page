@@ -6,7 +6,7 @@ const esCommon = {
   nav: {
     ourFirm: "La Firma",
     attorneys: "Abogados",
-    capabilities: "Áreas Laborales",
+    capabilities: "Áreas de Práctica",
     publications: "Publicaciones",
     career: "Carrera en S&S",
     contact: "Contacto",

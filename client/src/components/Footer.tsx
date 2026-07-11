@@ -74,7 +74,7 @@ export default function Footer() {
       privacy: "Privacy Policy",
       terms: "Terms of Use",
       cookies: "Cookie Preferences",
-      description: "Labor-law boutique firm in San Pedro Garza García, N.L., with over 35 years of experience advising companies.",
+      description: "Boutique law firm in San Pedro Garza García, N.L. — human-capital administration and legal defense for companies, rooted in labor law, with over 35 years of experience.",
       practiceLabel: "Labor Practice Areas",
       industryLabel: "Industry Groups",
       errorMessage: "Contact information unavailable",
@@ -100,9 +100,9 @@ export default function Footer() {
         { label: "Nuestro Equipo", href: "/team", id: "people" },
         { label: "Contacto", href: "/contact", id: "contact" },
       ],
-      capabilities: "Áreas Laborales",
+      capabilities: "Áreas de Práctica",
       capabilitiesLinks: [
-        { label: "Áreas Laborales", href: "/practice-groups", id: "practice" },
+        { label: "Áreas de Práctica", href: "/practice-groups", id: "practice" },
       ],
       resources: "Recursos",
       resourcesLinks: [
@@ -118,8 +118,8 @@ export default function Footer() {
       privacy: "Política de Privacidad",
       terms: "Términos de Uso",
       cookies: "Preferencias de Cookies",
-      description: "Firma especializada en derecho laboral en San Pedro Garza García, N.L., con más de 35 años de experiencia asesorando empresas.",
-      practiceLabel: "Áreas Laborales",
+      description: "Firma boutique en San Pedro Garza García, N.L. — administración del capital humano y defensa legal para empresas, con raíz en el derecho laboral y más de 35 años de experiencia.",
+      practiceLabel: "Áreas de Práctica",
       industryLabel: "Grupos Industriales",
       errorMessage: "Información de contacto no disponible",
       followUs: "Síguenos",
@@ -508,7 +508,7 @@ export default function Footer() {
       { label: language === "es" ? "Contacto" : "Contact", href: "/contact", id: "contact" },
     ],
     capabilitiesLinks: [
-      { label: language === "es" ? "Áreas Laborales" : "Labor Practice Areas", href: "/practice-groups", id: "practice" },
+      { label: language === "es" ? "Áreas de Práctica" : "Practice Areas", href: "/practice-groups", id: "practice" },
     ],
     resourcesLinks: [
       { label: language === "es" ? "Publicaciones" : "Publications", href: "/news", id: "news" },
@@ -520,8 +520,8 @@ export default function Footer() {
       ? "© 2026 Santos & Saucedo Abogados. Todos los derechos reservados."
       : "© 2026 Santos & Saucedo Abogados. All rights reserved.",
     description: language === "es"
-      ? "Firma especializada en derecho laboral con más de 35 años de experiencia asesorando empresas nacionales e internacionales."
-      : "Labor-law firm with more than 35 years of experience advising national and international companies.",
+      ? "Firma legal para empresas —laboral, corporativo, migratorio y litigio— con raíz laboral y más de 35 años de experiencia asesorando operaciones nacionales e internacionales."
+      : "Law firm for companies —labor, corporate, immigration and litigation— rooted in labor law, with more than 35 years of experience advising national and international operations.",
   };
 
   const renderContactInfo = () => {

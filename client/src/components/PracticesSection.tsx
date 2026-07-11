@@ -21,12 +21,10 @@ interface PracticeArea {
 }
 
 const practiceAreas: PracticeArea[] = [
-  { id: 1, nameEn: "Individual & Collective Labor Conflicts", nameEs: "Conflictos Individuales y Colectivos de Trabajo", nameDe: "Individual & Collective Labor Conflicts", nameZh: "Individual & Collective Labor Conflicts", nameKo: "Individual & Collective Labor Conflicts", nameJa: "Individual & Collective Labor Conflicts", nameAr: "Individual & Collective Labor Conflicts", nameRu: "Individual & Collective Labor Conflicts", nameFr: "Individual & Collective Labor Conflicts", nameIt: "Individual & Collective Labor Conflicts", slug: "conflictos-individuales-colectivos" },
-  { id: 2, nameEn: "Labor Administration Review", nameEs: "Revisión de la Función de Administración Laboral", nameDe: "Labor Administration Review", nameZh: "Labor Administration Review", nameKo: "Labor Administration Review", nameJa: "Labor Administration Review", nameAr: "Labor Administration Review", nameRu: "Labor Administration Review", nameFr: "Labor Administration Review", nameIt: "Labor Administration Review", slug: "administracion-laboral" },
-  { id: 3, nameEn: "Labor Relations Diagnostics", nameEs: "Diagnóstico de Relaciones Laborales", nameDe: "Labor Relations Diagnostics", nameZh: "Labor Relations Diagnostics", nameKo: "Labor Relations Diagnostics", nameJa: "Labor Relations Diagnostics", nameAr: "Labor Relations Diagnostics", nameRu: "Labor Relations Diagnostics", nameFr: "Labor Relations Diagnostics", nameIt: "Labor Relations Diagnostics", slug: "diagnostico-relaciones-laborales" },
-  { id: 4, nameEn: "Improvement Plans", nameEs: "Planes de Mejora", nameDe: "Improvement Plans", nameZh: "Improvement Plans", nameKo: "Improvement Plans", nameJa: "Improvement Plans", nameAr: "Improvement Plans", nameRu: "Improvement Plans", nameFr: "Improvement Plans", nameIt: "Improvement Plans", slug: "planes-mejora" },
-  { id: 5, nameEn: "Legal-Labor Auditing", nameEs: "Auditoría Jurídico-Laboral", nameDe: "Legal-Labor Auditing", nameZh: "Legal-Labor Auditing", nameKo: "Legal-Labor Auditing", nameJa: "Legal-Labor Auditing", nameAr: "Legal-Labor Auditing", nameRu: "Legal-Labor Auditing", nameFr: "Legal-Labor Auditing", nameIt: "Legal-Labor Auditing", slug: "auditoria-juridico-laboral" },
-  { id: 6, nameEn: "Strategic Planning & Training", nameEs: "Planeación Estratégica y Capacitación", nameDe: "Strategic Planning & Training", nameZh: "Strategic Planning & Training", nameKo: "Strategic Planning & Training", nameJa: "Strategic Planning & Training", nameAr: "Strategic Planning & Training", nameRu: "Strategic Planning & Training", nameFr: "Strategic Planning & Training", nameIt: "Strategic Planning & Training", slug: "planeacion-estrategica-capacitacion" },
+  { id: 1, nameEn: "Labor & Social Security", nameEs: "Laboral y Seguridad Social", nameDe: "Labor & Social Security", nameZh: "Labor & Social Security", nameKo: "Labor & Social Security", nameJa: "Labor & Social Security", nameAr: "Labor & Social Security", nameRu: "Labor & Social Security", nameFr: "Labor & Social Security", nameIt: "Labor & Social Security", slug: "laboral-seguridad-social" },
+  { id: 2, nameEn: "Corporate & Contractual", nameEs: "Corporativo y Contractual", nameDe: "Corporate & Contractual", nameZh: "Corporate & Contractual", nameKo: "Corporate & Contractual", nameJa: "Corporate & Contractual", nameAr: "Corporate & Contractual", nameRu: "Corporate & Contractual", nameFr: "Corporate & Contractual", nameIt: "Corporate & Contractual", slug: "corporativo-contractual" },
+  { id: 3, nameEn: "Immigration", nameEs: "Migratorio", nameDe: "Immigration", nameZh: "Immigration", nameKo: "Immigration", nameJa: "Immigration", nameAr: "Immigration", nameRu: "Immigration", nameFr: "Immigration", nameIt: "Immigration", slug: "migratorio" },
+  { id: 4, nameEn: "Contentious Litigation", nameEs: "Litigio Contencioso", nameDe: "Contentious Litigation", nameZh: "Contentious Litigation", nameKo: "Contentious Litigation", nameJa: "Contentious Litigation", nameAr: "Contentious Litigation", nameRu: "Contentious Litigation", nameFr: "Contentious Litigation", nameIt: "Contentious Litigation", slug: "litigio-contencioso" },
 ];
 
 interface PracticesContent {
@@ -39,16 +37,16 @@ interface PracticesContent {
 
 const content: Record<LanguageCode, PracticesContent> = {
   en: {
-    title: "LABOR PRACTICE AREAS",
-    subtitle: "6 SPECIALIZED AREAS",
-    intro: "Comprehensive labor law advisory across 6 specialized areas.",
+    title: "AREAS OF SPECIALTY",
+    subtitle: "4 AREAS OF SPECIALTY",
+    intro: "Human-capital administration and legal defense, across 4 areas of specialty rooted in labor law.",
     seeMore: "SEE ALL AREAS",
     ctaText: "Get Legal Advice",
   },
   es: {
-    title: "ÁREAS LABORALES",
-    subtitle: "6 ÁREAS ESPECIALIZADAS",
-    intro: "Asesoría legal laboral integral en 6 áreas especializadas.",
+    title: "ÁREAS DE ESPECIALIDAD",
+    subtitle: "4 ÁREAS DE ESPECIALIDAD",
+    intro: "Administración del capital humano y defensa legal, en 4 áreas de especialidad con raíz laboral.",
     seeMore: "VER TODAS LAS ÁREAS",
     ctaText: "Obtener Asesoría Legal",
   },
@@ -150,13 +148,13 @@ export default function PracticesSection() {
   const baseT = content[language] || content.en;
   const t = {
     ...baseT,
-    title: language === "es" ? "ÁREAS LABORALES" : "LABOR PRACTICE AREAS",
-    subtitle: language === "es" ? "6 ÁREAS ESPECIALIZADAS" : "6 SPECIALIZED AREAS",
+    title: language === "es" ? "ÁREAS DE ESPECIALIDAD" : "AREAS OF SPECIALTY",
+    subtitle: language === "es" ? "4 ÁREAS DE ESPECIALIDAD" : "4 AREAS OF SPECIALTY",
     intro: language === "es"
-      ? "Asesoría legal laboral integral en 6 áreas especializadas."
-      : "Strategic labor-law advisory across 6 specialized areas.",
+      ? "Administración del capital humano y defensa legal, en 4 áreas de especialidad con raíz laboral."
+      : "Human-capital administration and legal defense, across 4 areas of specialty rooted in labor law.",
     seeMore: language === "es" ? "VER TODAS LAS ÁREAS" : "VIEW ALL AREAS",
-    ctaText: language === "es" ? "Obtener Asesoría Legal" : "Get Labor Advice",
+    ctaText: language === "es" ? "Obtener Asesoría Legal" : "Get Legal Advice",
   };
 
   return (
@@ -191,7 +189,7 @@ export default function PracticesSection() {
               {/* Decorative large number */}
               <div className="relative mb-6 select-none pointer-events-none">
                 <span className="text-[7rem] leading-none font-heading font-medium text-brand [text-shadow:0_1px_0_rgba(255,255,255,0.9)]">
-                  6
+                  4
                 </span>
               </div>
 

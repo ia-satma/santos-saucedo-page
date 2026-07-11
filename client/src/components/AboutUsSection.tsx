@@ -223,15 +223,15 @@ export default function AboutUsSection() {
   const t = {
     ...baseT,
     eyebrow: isSpanish ? "LA FIRMA" : "THE FIRM",
-    sectionTitle: isSpanish ? "DERECHO LABORAL ESTRATÉGICO" : "STRATEGIC LABOR LAW",
+    sectionTitle: isSpanish ? "CAPITAL HUMANO Y DEFENSA LEGAL" : "HUMAN CAPITAL & LEGAL DEFENSE",
     visionTitle: isSpanish ? "Enfoque" : "Focus",
     visionText: isSpanish
-      ? "Somos una firma especializada en Derecho Laboral para empresas, con más de 35 años de experiencia asesorando operaciones nacionales e internacionales."
-      : "We are a labor-law firm for companies, with more than 35 years of experience advising national and international operations.",
+      ? "Somos una firma de abogados que brinda asesoría y servicios legales para la administración del capital humano y la defensa legal de empresas nacionales y multinacionales. Con raíz en el derecho laboral y más de 35 años de experiencia."
+      : "We are a law firm providing legal counsel and services for human-capital administration and the legal defense of national and multinational companies. Rooted in labor law, with more than 35 years of experience.",
     missionTitle: isSpanish ? "Método" : "Method",
     missionText: isSpanish
-      ? "Diagnosticamos, prevenimos, corregimos, capacitamos y defendemos la operación laboral de la empresa."
-      : "We diagnose, prevent, correct, train, and defend companies' labor operations.",
+      ? "Diagnosticamos, prevenimos, corregimos, capacitamos y defendemos la operación de la empresa en materia laboral, corporativa, migratoria y contenciosa."
+      : "We diagnose, prevent, correct, train, and defend companies' operations across labor, corporate, immigration, and litigation matters.",
     valuesTitle: isSpanish ? "Nuestros Valores" : "Our Values",
   };
 

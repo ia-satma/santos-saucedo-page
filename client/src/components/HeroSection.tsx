@@ -183,9 +183,9 @@ type HeroContent = {
 
 const heroContent: Record<LanguageCode, HeroContent> = {
   en: {
-    tagline: "LABOR LAW FIRM IN NUEVO LEÓN",
+    tagline: "LAW FIRM FOR COMPANIES · NUEVO LEÓN",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "35+ Years of Labor Law Counsel",
+    subheadline: "15 Years as a Firm · 35+ of Experience",
     scroll: "scroll",
     ctaContact: "CONTACT US",
     ctaConsult: "SCHEDULE CONSULTATION",
@@ -195,9 +195,9 @@ const heroContent: Record<LanguageCode, HeroContent> = {
     videoFallback: "Your browser does not support the video element.",
   },
   es: {
-    tagline: "FIRMA DE DERECHO LABORAL EN NUEVO LEÓN",
+    tagline: "FIRMA LEGAL PARA EMPRESAS · NUEVO LEÓN",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "Más de 35 Años de Asesoría Laboral",
+    subheadline: "15 Años como Firma · +35 de Experiencia",
     scroll: "scroll",
     ctaContact: "CONTÁCTENOS",
     ctaConsult: "AGENDAR CONSULTA",

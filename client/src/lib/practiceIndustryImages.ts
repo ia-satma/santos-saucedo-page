@@ -1,23 +1,17 @@
 import laborConflicts from "@assets/service_areas/area-1-conflictos-laborales.webp";
 import laborAdministration from "@assets/service_areas/area-2-administracion-laboral.webp";
 import laborDiagnostics from "@assets/service_areas/area-3-diagnostico-relaciones-laborales.webp";
-import improvementPlans from "@assets/service_areas/area-4-planes-mejora.webp";
 import legalLaborAudit from "@assets/service_areas/area-5-auditoria-juridico-laboral.webp";
-import strategicTraining from "@assets/service_areas/area-6-planeacion-capacitacion.webp";
 
-// Santos & Saucedo is a labor-law boutique with 6 practice areas, each with an
-// optimized WebP. The inherited Von Wobeser full-service practice/industry
-// images (p-*/i-*, ~58 MB of PNGs) were statically imported here and shipped in
-// the bundle even though S&S never renders them (their slugs don't exist in the
-// data, and the industry-groups page isn't routed). They were removed to keep
-// the site fast; only the 6 labor WebP images remain.
+// Santos & Saucedo (2026) presents 4 areas of specialty — labor-rooted, plus
+// corporate, immigration and litigation. Each maps to an optimized WebP; these
+// reuse the existing labor-area photos as a stopgap until the presentation's
+// per-area photos (documents/laptop, handshake, passport, gavel) are supplied.
 export const PRACTICE_IMAGES: Record<string, string> = {
-  "conflictos-individuales-colectivos": laborConflicts,
-  "administracion-laboral": laborAdministration,
-  "diagnostico-relaciones-laborales": laborDiagnostics,
-  "planes-mejora": improvementPlans,
-  "auditoria-juridico-laboral": legalLaborAudit,
-  "planeacion-estrategica-capacitacion": strategicTraining,
+  "laboral-seguridad-social": laborConflicts,
+  "corporativo-contractual": laborAdministration,
+  "migratorio": laborDiagnostics,
+  "litigio-contencioso": legalLaborAudit,
 };
 
 // No static industry images: the industry-groups page is not part of the S&S
