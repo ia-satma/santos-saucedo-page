@@ -45,7 +45,7 @@ export default function ExperienceBanner() {
 
   return (
     <section
-      className="relative overflow-hidden py-20 lg:py-28 bg-[radial-gradient(circle_at_82%_20%,rgba(18,16,62,0.78)_0%,rgba(16,14,48,0.64)_34%,rgba(10,8,38,0.96)_74%),linear-gradient(135deg,#0A0826_0%,#100E30_52%,#12103E_100%)]"
+      className="relative overflow-hidden py-20 lg:py-28 bg-[radial-gradient(circle_at_82%_20%,rgba(18,16,62,0.78)_0%,rgba(16,14,48,0.64)_34%,rgba(10,8,38,0.96)_74%),linear-gradient(135deg,#12116E_0%,#191884_52%,#1E1C92_100%)]"
       data-testid="section-experience-banner"
     >
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.05)_0%,transparent_34%,rgba(255,255,255,0.07)_100%)]" aria-hidden="true" />

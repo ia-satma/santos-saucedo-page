@@ -875,7 +875,7 @@ export default function AdminEvents() {
                   setEditingEvent(null);
                   form.reset();
                 }}
-                className="bg-[#12103E] hover:bg-[#8B1525] rounded-none"
+                className="bg-[#1E1C92] hover:bg-[#8B1525] rounded-none"
                 data-testid="button-new-event"
               >
                 <PlusCircle className="h-4 w-4 mr-2" />
@@ -1171,7 +1171,7 @@ export default function AdminEvents() {
                     <Button
                       type="submit"
                       disabled={saveMutation.isPending}
-                      className="bg-[#12103E] hover:bg-[#8B1525] rounded-none"
+                      className="bg-[#1E1C92] hover:bg-[#8B1525] rounded-none"
                       data-testid="button-save"
                     >
                       {saveMutation.isPending ? t.saving : t.save}

@@ -46,7 +46,7 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
   };
 
   const getSeniorityBg = () => {
-    if (member.isPartner) return "bg-[#12103E]";
+    if (member.isPartner) return "bg-[#1E1C92]";
     if (member.title === "Of Counsel") return "bg-[#5B5C5F]";
     return "bg-[#8B8D89]";
   };
@@ -118,7 +118,7 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
         </div>
 
         {/* Hover overlay with action buttons — vCard stops propagation; View Profile relies on outer Link */}
-        <div className="absolute inset-0 bg-[#12103E]/58 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-3 z-20">
+        <div className="absolute inset-0 bg-[#1E1C92]/58 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-3 z-20">
           <Button
             variant="outline"
             size="sm"

@@ -518,7 +518,7 @@ export default function Header() {
       {isMobileMenuOpen && (
         <div
           id="mobile-menu"
-          className="fixed inset-0 z-[60] bg-[#12103E]"
+          className="fixed inset-0 z-[60] bg-[#1E1C92]"
           data-testid="modal-mobile-menu"
           role="dialog"
           aria-modal="true"

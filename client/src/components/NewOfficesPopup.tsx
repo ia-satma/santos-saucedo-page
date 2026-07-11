@@ -547,7 +547,7 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
           </div>
         </div>
 
-        <div className="bg-[#12103E] p-4 flex-shrink-0">
+        <div className="bg-[#1E1C92] p-4 flex-shrink-0">
           <Button
             onClick={handleClose}
             variant="ghost"

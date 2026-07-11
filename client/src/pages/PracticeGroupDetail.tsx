@@ -602,7 +602,7 @@ export default function PracticeGroupDetail() {
           </div>
           <div
             aria-hidden="true"
-            className="w-px shrink-0 bg-[#12103E]/30"
+            className="w-px shrink-0 bg-[#1E1C92]/30"
           />
           <div className="flex-1 min-w-0 flex items-center gap-3 px-4 py-4">
             <div className="flex-1 min-w-0">

@@ -180,7 +180,7 @@ export default function DiversityInclusionSection() {
             >
               {t.title}
             </h2>
-            <div className="w-8 h-px bg-[#12103E]/80 mt-4" />
+            <div className="w-8 h-px bg-[#1E1C92]/80 mt-4" />
           </div>
         </motion.div>
 

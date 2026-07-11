@@ -83,7 +83,7 @@ function PracticeGroupCard({ group, index, learnMoreText }: PracticeGroupCardPro
 
         {/* Translation indicator — top right */}
         {showTranslatingIndicator && (
-          <div className="absolute top-4 right-4 z-10 flex items-center gap-1 px-2 py-1 bg-[#12103E]/70 backdrop-blur-sm text-xs text-white/90">
+          <div className="absolute top-4 right-4 z-10 flex items-center gap-1 px-2 py-1 bg-[#1E1C92]/70 backdrop-blur-sm text-xs text-white/90">
             <Loader2 className="w-3 h-3 animate-spin" />
           </div>
         )}

@@ -356,7 +356,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
     >
       <div className="absolute inset-0 z-0">
         <div 
-          className="absolute inset-0 bg-[radial-gradient(circle_at_78%_34%,rgba(18,16,62,0.72)_0%,rgba(16,14,48,0.5)_32%,rgba(10,8,38,0.92)_72%),linear-gradient(135deg,#0A0826_0%,#100E30_54%,#12103E_100%)]"
+          className="absolute inset-0 bg-[radial-gradient(circle_at_78%_34%,rgba(18,16,62,0.72)_0%,rgba(16,14,48,0.5)_32%,rgba(10,8,38,0.92)_72%),linear-gradient(135deg,#12116E_0%,#191884_54%,#1E1C92_100%)]"
           data-testid="background-gradient"
         />
         <div 
@@ -378,7 +378,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
         
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,8,38,0.5)_0%,rgba(16,14,48,0.2)_50%,rgba(10,8,38,0.1)_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,8,38,0.2)_0%,rgba(16,14,48,0.03)_45%,rgba(10,8,38,0.6)_100%)]" />
-        <div className="absolute bottom-0 left-0 right-0 h-44 bg-gradient-to-t from-[#0A0826]/88 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-44 bg-gradient-to-t from-[#12116E]/88 to-transparent" />
       </div>
 
       {newsData && newsData.length > 0 && (

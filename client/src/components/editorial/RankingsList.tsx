@@ -57,7 +57,7 @@ export function RankingsList({
             </div>
             <Badge
               className={`rounded-lg text-xs flex items-center gap-1 shrink-0 ${
-                getBadgeStyles ? getBadgeStyles(item.badgeType ?? "") : "bg-[#12103E] text-white border-0"
+                getBadgeStyles ? getBadgeStyles(item.badgeType ?? "") : "bg-[#1E1C92] text-white border-0"
               }`}
               data-testid={`badge-${testIdPrefix}-${index}`}
             >

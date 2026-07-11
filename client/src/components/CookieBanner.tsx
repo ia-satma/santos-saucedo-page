@@ -483,7 +483,7 @@ export default function CookieBanner({ language }: CookieBannerProps) {
                       data-testid={`card-cookie-${key}`}
                     >
                       <div className="flex items-start gap-4">
-                        <div className="shrink-0 w-10 h-10 flex items-center justify-center bg-[#12103E]/20 text-primary">
+                        <div className="shrink-0 w-10 h-10 flex items-center justify-center bg-[#1E1C92]/20 text-primary">
                           <Icon className="w-5 h-5" />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -505,7 +505,7 @@ export default function CookieBanner({ language }: CookieBannerProps) {
                                   onCheckedChange={() => togglePreference(key)}
                                   disabled={disabled}
                                   data-testid={`switch-cookie-${key}`}
-                                  className="data-[state=checked]:bg-[#12103E]"
+                                  className="data-[state=checked]:bg-[#1E1C92]"
                                 />
                               )}
                             </div>

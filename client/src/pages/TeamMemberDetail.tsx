@@ -1319,11 +1319,11 @@ export default function TeamMemberDetail() {
               </div>
               <div
                 aria-hidden="true"
-                className="hidden md:block w-px shrink-0 bg-[#12103E]/20"
+                className="hidden md:block w-px shrink-0 bg-[#1E1C92]/20"
               />
               <div
                 aria-hidden="true"
-                className="md:hidden h-px w-full bg-[#12103E]/20"
+                className="md:hidden h-px w-full bg-[#1E1C92]/20"
               />
               <div className="flex-1 min-w-0 text-center md:text-left px-6 py-8 md:px-10 md:py-10">
                 <div className="h-px w-10 bg-brand mb-4 mx-auto md:mx-0" aria-hidden="true" />

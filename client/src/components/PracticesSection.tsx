@@ -234,7 +234,7 @@ export default function PracticesSection() {
               <motion.div key={area.id} variants={itemVariants}>
                 <Link
                   href={`/practice-groups/${area.slug}`}
-                  className="group flex items-center gap-6 px-6 py-6 rounded-lg hover:bg-[#12103E]/[0.04] transition-all duration-200 h-full"
+                  className="group flex items-center gap-6 px-6 py-6 rounded-lg hover:bg-[#1E1C92]/[0.04] transition-all duration-200 h-full"
                   data-testid={`link-practice-${area.id}`}
                 >
                   <span

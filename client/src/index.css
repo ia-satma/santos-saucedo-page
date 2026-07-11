@@ -36,23 +36,23 @@ blockquote {
 /* LIGHT MODE */
 :root {
   /* Santos & Saucedo corporate palette */
-  --ss-blue-night: #0A0826;
-  --ss-blue-base: #100E30;
-  --ss-blue-accent: #12103E;
+  --ss-blue-night: #12116E;
+  --ss-blue-base: #191884;
+  --ss-blue-accent: #1E1C92;
   --ss-blue-soft: #D9D8F7;
-  --ss-navy: #12103E;
+  --ss-navy: #1E1C92;
   --ss-paper: #FFFFFF;
   --ss-stone: #F4F4F5;
   --ss-warm-gray: #E4E4E7;
   --ss-ink: #18181B;
   --ss-muted-ink: #5F6066;
-  --ss-red: #12103E;
+  --ss-red: #1E1C92;
   --ss-gray-1: #F4F4F5;  /* light neutral       */
   --ss-gray-2: #E4E4E7;  /* divider             */
   --ss-gray-4: #A1A1AA;  /* secondary text      */
   --ss-gray-8: #5F6066;  /* muted ink           */
   --ss-gray-11: #18181B; /* primary ink         */
-  --ss-black: #100E30;
+  --ss-black: #191884;
 
   --button-outline: rgba(0,0,0, .10);
   --badge-outline: rgba(0,0,0, .05);
@@ -73,15 +73,15 @@ blockquote {
   --sidebar: 240 5% 98%;
   --sidebar-foreground: 243 30% 12%;
   --sidebar-border: 240 6% 90%;
-  --sidebar-primary: 243 59% 15%;
+  --sidebar-primary: 241 64% 27%;
   --sidebar-primary-foreground: 0 0% 98%;
   --sidebar-accent: 240 5% 96%;
   --sidebar-accent-foreground: 243 30% 12%;
-  --sidebar-ring: 243 59% 15%;
+  --sidebar-ring: 241 64% 27%;
   --popover: 0 0% 100%;
   --popover-foreground: 243 30% 12%;
   --popover-border: 240 6% 90%;
-  --primary: 243 59% 15%;          /* #12103E — navy corporativo      */
+  --primary: 241 64% 27%;          /* #1E1C92 — navy corporativo      */
   --primary-foreground: 0 0% 98%;
   --secondary: 240 5% 96%;         /* #F4F4F5 — sección alterna       */
   --secondary-foreground: 240 5% 16%;
@@ -91,12 +91,12 @@ blockquote {
   --accent: 240 5% 96%;
   --accent-foreground: 243 30% 12%;
   --brand: 79 75% 52%;             /* #A5E029 — Verde Lima (acento)    */
-  --brand-foreground: 243 59% 15%; /* #12103E — Azul Noche sobre lima  */
+  --brand-foreground: 241 64% 27%; /* #1E1C92 — Azul Noche sobre lima  */
   --destructive: 0 72% 45%;
   --destructive-foreground: 0 0% 98%;
   --input: 240 6% 84%;
-  --ring: 243 59% 15%;
-  --chart-1: 243 59% 15%;
+  --ring: 241 64% 27%;
+  --chart-1: 241 64% 27%;
   --chart-2: 240 38% 38%;
   --chart-3: 240 4% 32%;
   --chart-4: 240 4% 52%;
@@ -1129,7 +1129,7 @@ html, body {
   border-bottom-color: hsl(var(--border));
   background:
     radial-gradient(circle at 50% 0%, rgba(165, 224, 41, 0.10), transparent 42%),
-    linear-gradient(180deg, #100E30 0%, hsl(var(--background)) 48%, hsl(var(--card)) 100%);
+    linear-gradient(180deg, #191884 0%, hsl(var(--background)) 48%, hsl(var(--card)) 100%);
 }
 
 .dark .editorial-page-hero::before {

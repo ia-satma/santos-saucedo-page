@@ -281,7 +281,7 @@ export default function IndustryGroupsSection() {
               />
 
               {/* Red vertical separator line */}
-              <div className="absolute top-0 right-0 w-px h-full bg-[#12103E]/20" />
+              <div className="absolute top-0 right-0 w-px h-full bg-[#1E1C92]/20" />
 
               {/* Number — top left */}
               <span
@@ -347,7 +347,7 @@ export default function IndustryGroupsSection() {
                 aria-hidden="true"
                 className="absolute inset-0 w-full h-full object-cover transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-[#12103E]/60 group-hover:bg-[#12103E]/44 transition-colors duration-300" />
+              <div className="absolute inset-0 bg-[#1E1C92]/60 group-hover:bg-[#1E1C92]/44 transition-colors duration-300" />
               <span className="absolute top-3 left-3 text-primary text-xs font-medium tabular-nums">
                 {String(group.id).padStart(2, "0")}
               </span>
