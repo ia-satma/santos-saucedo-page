@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { MapPin, Handshake } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import bgSNavy from "@assets/pdf2026/bg-s-navy.webp";
-import mapaCoberturaNacional from "@assets/pdf2026/mapa-cobertura-nacional.webp";
+import mapaMexico from "@assets/pdf2026/mapa-mexico.svg";
 import type { LanguageCode } from "@shared/schema";
 
 type CoberturaContent = {
@@ -107,7 +107,7 @@ export default function CoberturaSection() {
             </div>
           </motion.div>
 
-          {/* Official Mexico coverage map (2026 deck, p.10) — Nuevo León highlighted in lime */}
+          {/* Mexico map (Nuevo León highlighted in lime) — no card, just floats on the section with a soft shadow */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -115,21 +115,15 @@ export default function CoberturaSection() {
             transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="w-full flex justify-center lg:justify-end"
           >
-            <div className="w-full max-w-md">
-              <div
-                className="rounded-lg bg-white shadow-[0_20px_50px_rgba(0,0,0,0.35)]"
-                style={{
-                  aspectRatio: "499.2 / 367.2",
-                  backgroundImage: `url(${mapaCoberturaNacional})`,
-                  backgroundSize: "192.3% 147.06%",
-                  backgroundPosition: "100% 62.5%",
-                  backgroundRepeat: "no-repeat",
-                }}
-                role="img"
-                aria-label={t.mapCaption}
+            <div className="w-full max-w-xl">
+              <img
+                src={mapaMexico}
+                alt={t.mapCaption}
+                className="w-full h-auto"
+                style={{ filter: "drop-shadow(0 25px 45px rgba(0,0,0,0.45)) drop-shadow(0 0 40px rgba(165,224,41,0.12))" }}
                 data-testid="img-cobertura-map"
               />
-              <div className="mt-4 flex items-center justify-center gap-2 text-white/70">
+              <div className="mt-2 flex items-center justify-center gap-2 text-white/70">
                 <span className="w-2.5 h-2.5 rounded-full bg-brand shrink-0" aria-hidden="true" />
                 <span className="text-[11px] tracking-[0.14em] uppercase">{t.mapCaption}</span>
               </div>
