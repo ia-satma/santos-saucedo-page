@@ -1,8 +1,8 @@
 # Handoff completo — Santos & Saucedo (sitio web)
 
 > Documento de contexto self-contained. Con esto una nueva sesión/dev tiene el panorama completo del
-> proyecto y de lo trabajado hasta **2026-07-13**. Último commit: `0bc0370` (animación de entrada del
-> logo del hero).
+> proyecto y de lo trabajado hasta **2026-07-13**. Último commit: `9c5e060` (logo del hero vuelve a
+> estático — la animación de entrada se probó y el cliente pidió revertirla).
 
 ---
 
@@ -285,20 +285,23 @@ oficial, 14 págs, exportado a `../PDF 2026 - IMAGES/`):**
     `prefers-reduced-motion` (se desactiva la rotación, queda la primera frase fija). El override de
     CMS para inglés (`siteContent.heroSubtitle`) sigue funcionando — si existe, se muestra solo, sin
     rotar.
-29. **Animación de entrada del logo del hero** (`0bc0370`) — a pedido del cliente: "SANTO" entra desde
-    la izquierda, la "S" lima queda fija y aparece con fade+scale, "AUCEDO" entra desde la derecha; una
-    sola vez al cargar la página (no en loop, decisión confirmada con el cliente vía pregunta directa;
-    también se confirmó que la animación va **solo en el hero**, no en el logo del header). Técnica:
-    la MISMA imagen del wordmark (`SantosSaucedo_Logo-Variante-Blanca.png`, 8000×2217px) se repite 3
-    veces apiladas con `clip-path: inset(...)` distinto cada una (0–39% / 39–49% / 49–100% del ancho),
-    y cada copia anima su propio `transform`/`opacity` — así no hace falta recortar/generar assets
-    nuevos, es la imagen oficial intacta, solo enmascarada. Los % de corte se midieron visualmente
-    contra el asset real (ver metodología: overlay de reglas en % sobre el logo, base64-embebido en un
-    artifact HTML, verificado con capturas antes de aplicar).
+29. **Animación de entrada del logo del hero — probada y revertida** (`0bc0370`, revertido en
+    `9c5e060`) — a pedido del cliente se probó: "SANTO" entra desde la izquierda, la "S" lima queda
+    fija con fade+scale, "AUCEDO" entra desde la derecha, una sola vez al cargar (no loop, confirmado
+    con el cliente vía pregunta directa; también se confirmó que iría solo en el hero, no en el logo
+    del header). Técnica usada: la MISMA imagen del wordmark
+    (`SantosSaucedo_Logo-Variante-Blanca.png`, 8000×2217px) repetida 3 veces apiladas con
+    `clip-path: inset(...)` distinto cada una (0–39% / 39–49% / 49–100% del ancho), cada copia
+    animando su propio `transform`/`opacity` — sin recortar/generar assets nuevos, imagen oficial
+    intacta solo enmascarada. **El cliente vio el resultado en vivo y pidió revertirlo** ("cancela no
+    queda bien" → "dejalo estatico") — el logo del hero volvió a la versión simple (fade + scale
+    0.97→1, sin split). Si se retoma en el futuro, la técnica de los 3 clips (0–39/39–49/49–100%) ya
+    está validada visualmente y lista para reusar, pero el timing/easing habría que revisarlo — no se
+    llegó a preguntar al cliente qué específicamente no le convenció.
 
 ## 9. Estado actual y commits
 
-Todo pusheado a `main`. Deploy OK (Actions success). Último: `0bc0370`.
+Todo pusheado a `main`. Deploy OK (Actions success). Último: `9c5e060`.
 
 Ver `git log --oneline -20` para el detalle completo; hitos clave arriba en §8 (puntos 9–16).
 
