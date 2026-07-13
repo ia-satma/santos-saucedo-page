@@ -19,16 +19,16 @@ const LANGUAGE_CODES: Record<LanguageCode, string> = {
 
 const descriptions = {
   slogan: {
-    en: "Strategic labor law for companies",
-    es: "Derecho laboral estrategico para empresas",
-    de: "Strategic labor law for companies",
-    zh: "Strategic labor law for companies",
-    ko: "Strategic labor law for companies",
-    ja: "Strategic labor law for companies",
-    ar: "Strategic labor law for companies",
-    ru: "Strategic labor law for companies",
-    fr: "Strategic labor law for companies",
-    it: "Strategic labor law for companies",
+    en: "Human-capital administration and legal defense for companies",
+    es: "Administracion del capital humano y defensa legal para empresas",
+    de: "Human-capital administration and legal defense for companies",
+    zh: "Human-capital administration and legal defense for companies",
+    ko: "Human-capital administration and legal defense for companies",
+    ja: "Human-capital administration and legal defense for companies",
+    ar: "Human-capital administration and legal defense for companies",
+    ru: "Human-capital administration and legal defense for companies",
+    fr: "Human-capital administration and legal defense for companies",
+    it: "Human-capital administration and legal defense for companies",
   },
   homeBreadcrumb: {
     en: "Home",
@@ -47,24 +47,20 @@ const descriptions = {
 export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
   const isSpanish = language === "es";
   const safeDescription = isSpanish
-    ? "Santos & Saucedo Abogados es una firma especializada en derecho laboral en San Pedro Garza Garcia, Nuevo Leon, con mas de 35 anos de experiencia asesorando empresas nacionales e internacionales."
-    : "Santos & Saucedo Abogados is a labor-law firm in San Pedro Garza Garcia, Nuevo Leon, with more than 35 years of experience advising national and international companies.";
+    ? "Santos & Saucedo Abogados es una firma legal para empresas -laboral, corporativo, migratorio y litigio-, con raiz en el derecho laboral y mas de 35 anos de experiencia asesorando empresas nacionales y multinacionales. Parte de una alianza con presencia en mas de 72 ciudades de Mexico."
+    : "Santos & Saucedo Abogados is a law firm for companies -labor, corporate, immigration and litigation-, rooted in labor law with more than 35 years of experience advising national and multinational companies. Part of an alliance with presence in more than 72 cities across Mexico.";
   const laborServices = isSpanish
     ? [
-        "Conflictos individuales y colectivos",
-        "Revision de administracion laboral",
-        "Diagnostico de relaciones laborales",
-        "Planes de mejora",
-        "Auditoria juridico-laboral",
-        "Planeacion estrategica, cursos y talleres",
+        "Laboral y Seguridad Social",
+        "Corporativo y Contractual",
+        "Migratorio",
+        "Litigio Contencioso (Civil, Mercantil y Penal)",
       ]
     : [
-        "Individual and collective labor conflicts",
-        "Labor administration review",
-        "Workplace relations diagnosis",
-        "Improvement plans",
-        "Labor legal audit",
-        "Strategic planning, courses, and workshops",
+        "Labor & Social Security",
+        "Corporate & Contractual",
+        "Immigration",
+        "Contentious Litigation (Civil, Commercial & Criminal)",
       ];
   const langDescriptions = {
     legalService: safeDescription,
@@ -110,11 +106,11 @@ export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
     },
     "knowsAbout": [
       "Derecho Laboral",
-      "Conflictos Individuales y Colectivos de Trabajo",
-      "Administración Laboral",
-      "Relaciones Laborales",
-      "Auditoría Jurídico-Laboral",
-      "Planeación Estratégica Laboral"
+      "Seguridad Social",
+      "Derecho Corporativo y Contractual",
+      "Derecho Migratorio",
+      "Litigio Contencioso",
+      "Administración del Capital Humano"
     ]
   };
 
@@ -164,7 +160,7 @@ export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
     ],
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
-      "name": isSpanish ? "Servicios laborales" : "Labor services",
+      "name": isSpanish ? "Áreas de especialidad" : "Areas of specialty",
       "itemListElement": laborServices.map((name) => ({
         "@type": "Offer",
         "itemOffered": {
@@ -175,11 +171,11 @@ export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
     },
     "knowsAbout": [
       "Derecho Laboral",
-      "Conflictos Individuales y Colectivos de Trabajo",
-      "Administración Laboral",
-      "Relaciones Laborales",
-      "Auditoría Jurídico-Laboral",
-      "Planeación Estratégica Laboral"
+      "Seguridad Social",
+      "Derecho Corporativo y Contractual",
+      "Derecho Migratorio",
+      "Litigio Contencioso",
+      "Administración del Capital Humano"
     ]
   };
 

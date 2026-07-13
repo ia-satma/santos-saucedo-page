@@ -39,8 +39,8 @@ interface SEOConfig {
 const seoConfig: Record<string, SEOConfig> = {
   home: {
     title: {
-      en: "Santos & Saucedo | Labor Law Firm in Mexico",
-      es: "Santos & Saucedo | Abogados Especialistas en Derecho Laboral",
+      en: "Santos & Saucedo | Law Firm for Companies in Mexico",
+      es: "Santos & Saucedo | Abogados para Empresas — Laboral, Corporativo, Migratorio y Litigio",
       de: "Santos & Saucedo | Kanzlei für Arbeitsrecht in Mexiko",
       zh: "Santos & Saucedo | 墨西哥劳动法律师事务所",
       ko: "Santos & Saucedo | 멕시코 노동법 전문 로펌",
@@ -51,8 +51,8 @@ const seoConfig: Record<string, SEOConfig> = {
       it: "Santos & Saucedo | Studio Legale di Diritto del Lavoro in Messico",
     },
     description: {
-      en: "Santos & Saucedo is a labor-law boutique firm in San Pedro Garza García, Nuevo León, with over 35 years of experience advising companies on labor conflicts, compliance, and workplace relations.",
-      es: "Santos & Saucedo es una firma especializada en derecho laboral en San Pedro Garza García, Nuevo León, con más de 35 años de experiencia asesorando empresas en conflictos laborales, cumplimiento normativo y relaciones de trabajo.",
+      en: "Santos & Saucedo is a law firm for companies in San Pedro Garza García, Nuevo León — labor, corporate, immigration and litigation — rooted in labor law, with over 35 years of experience and a national alliance in more than 72 Mexican cities.",
+      es: "Santos & Saucedo es una firma legal para empresas en San Pedro Garza García, Nuevo León —laboral, corporativo, migratorio y litigio—, con raíz en el derecho laboral, más de 35 años de experiencia y una alianza nacional en más de 72 ciudades de México.",
       de: "Santos & Saucedo ist eine auf Arbeitsrecht spezialisierte Kanzlei in San Pedro Garza García, Nuevo León, mit über 35 Jahren Erfahrung in der Beratung von Unternehmen bei Arbeitskonflikten, Compliance und Arbeitsbeziehungen.",
       zh: "Santos & Saucedo是一家位于新莱昂州圣佩德罗加尔萨加西亚的劳动法专业律师事务所，拥有超过35年为企业提供劳动纠纷、合规及劳动关系咨询的经验。",
       ko: "Santos & Saucedo는 누에보레온주 산 페드로 가르사 가르시아에 위치한 노동법 전문 로펌으로, 35년 이상 기업에 노동 분쟁, 규정 준수 및 노사 관계에 관한 자문을 제공해 왔습니다.",
@@ -78,8 +78,8 @@ const seoConfig: Record<string, SEOConfig> = {
       it: "Chi Siamo | Santos & Saucedo",
     },
     description: {
-      en: "Learn about Santos & Saucedo's history, values, and preventive approach to labor law. A firm specialized in labor law with more than 35 years advising national and international companies.",
-      es: "Conozca la historia, los valores y el enfoque preventivo de Santos & Saucedo. Firma especializada en derecho laboral con más de 35 años asesorando empresas nacionales e internacionales.",
+      en: "Learn about Santos & Saucedo's history, values, and approach — human-capital administration and legal defense for companies, rooted in labor law, with more than 35 years advising national and multinational companies.",
+      es: "Conozca la historia, los valores y el enfoque de Santos & Saucedo — administración del capital humano y defensa legal para empresas, con raíz en el derecho laboral, más de 35 años asesorando empresas nacionales y multinacionales.",
       de: "Erfahren Sie mehr über die Geschichte, Werte und den präventiven Ansatz von Santos & Saucedo im Arbeitsrecht. Eine auf Arbeitsrecht spezialisierte Kanzlei mit über 35 Jahren Erfahrung in der Beratung nationaler und internationaler Unternehmen.",
       zh: "了解Santos & Saucedo的历史、价值观以及在劳动法领域的预防性理念。一家专注于劳动法的律师事务所，拥有超过35年为国内外企业提供咨询的经验。",
       ko: "Santos & Saucedo의 역사, 가치, 그리고 노동법에 대한 예방적 접근을 알아보세요. 35년 이상 국내외 기업에 자문을 제공해 온 노동법 전문 로펌입니다.",
@@ -132,8 +132,8 @@ const seoConfig: Record<string, SEOConfig> = {
       it: "Aree di Pratica | Santos & Saucedo",
     },
     description: {
-      en: "Labor services for companies: individual and collective conflicts before conciliation boards, labor administration review, workplace relations diagnosis, improvement plans, legal-labor audits, and strategic planning, courses, and workshops.",
-      es: "Servicios laborales para empresas: conflictos individuales y colectivos ante juntas de conciliación, revisión de administración laboral, diagnóstico de relaciones laborales, planes de mejora, auditoría jurídico-laboral y planeación estratégica, cursos y talleres.",
+      en: "Four areas of specialty for companies, rooted in labor law: Labor & Social Security, Corporate & Contractual, Immigration, and Contentious Litigation (civil, commercial and criminal).",
+      es: "Cuatro áreas de especialidad para empresas, con raíz en el derecho laboral: Laboral y Seguridad Social, Corporativo y Contractual, Migratorio, y Litigio Contencioso (civil, mercantil y penal).",
       de: "Arbeitsrechtliche Leistungen für Unternehmen: individuelle und kollektive Konflikte vor Schlichtungsstellen, Prüfung der Personalverwaltung, Diagnose der Arbeitsbeziehungen, Verbesserungspläne, arbeitsrechtliche Audits sowie strategische Planung, Kurse und Workshops.",
       zh: "为企业提供的劳动法服务：向调解委员会提起的个人与集体争议、劳动管理审查、劳动关系诊断、改进计划、劳动法律审计，以及战略规划、课程与研讨会。",
       ko: "기업을 위한 노동법 서비스: 조정위원회에 제기하는 개별 및 집단 분쟁, 노무 관리 검토, 노사 관계 진단, 개선 계획, 노동 법률 감사, 전략 기획, 강좌 및 워크숍.",
@@ -240,8 +240,8 @@ const seoConfig: Record<string, SEOConfig> = {
       it: "Carriere | Santos & Saucedo",
     },
     description: {
-      en: "Join a labor-law firm. Explore career opportunities, internship programs, and professional development at Santos & Saucedo.",
-      es: "Únase a una firma de derecho laboral. Explore oportunidades de carrera, programas de pasantías y desarrollo profesional en Santos & Saucedo.",
+      en: "Join a law firm for companies, rooted in labor law. Explore career opportunities, internship programs, and professional development at Santos & Saucedo.",
+      es: "Únase a una firma legal para empresas, con raíz en el derecho laboral. Explore oportunidades de carrera, programas de pasantías y desarrollo profesional en Santos & Saucedo.",
       de: "Werden Sie Teil einer Kanzlei für Arbeitsrecht. Entdecken Sie Karrieremöglichkeiten und Praktikumsprogramme bei Santos & Saucedo.",
       zh: "加入一家劳动法律师事务所。探索Santos & Saucedo的职业机会、实习项目和专业发展。",
       ko: "노동법 전문 로펌에 합류하세요. Santos & Saucedo의 채용 기회, 인턴십 프로그램 및 전문 개발을 살펴보세요.",
@@ -267,8 +267,8 @@ const seoConfig: Record<string, SEOConfig> = {
       it: "Classifiche & Riconoscimenti | Santos & Saucedo",
     },
     description: {
-      en: "For more than 35 years, Santos & Saucedo has earned the trust of national and international companies through its focused labor-law practice and consistent results.",
-      es: "Durante más de 35 años, Santos & Saucedo ha ganado la confianza de empresas nacionales e internacionales gracias a su práctica especializada en derecho laboral y a resultados consistentes.",
+      en: "For more than 35 years, Santos & Saucedo has earned the trust of national and multinational companies through its labor-rooted, multi-area practice and consistent results.",
+      es: "Durante más de 35 años, Santos & Saucedo ha ganado la confianza de empresas nacionales y multinacionales gracias a su práctica multi-área con raíz laboral y a resultados consistentes.",
       de: "Seit über 35 Jahren genießt Santos & Saucedo das Vertrauen nationaler und internationaler Unternehmen dank seiner spezialisierten arbeitsrechtlichen Praxis und konsistenter Ergebnisse.",
       zh: "35年多来，Santos & Saucedo凭借专注的劳动法业务和稳定的成果，赢得了国内外企业的信任。",
       ko: "35년 이상 Santos & Saucedo는 노동법에 특화된 업무와 일관된 성과로 국내외 기업의 신뢰를 얻어 왔습니다.",
@@ -509,8 +509,8 @@ const seoConfig: Record<string, SEOConfig> = {
       it: "Eventi | Santos & Saucedo",
     },
     description: {
-      en: "Join Santos & Saucedo at conferences, webinars, speaking engagements, and networking events. Stay connected with our labor-law firm.",
-      es: "Únase a Santos & Saucedo en conferencias, webinars, ponencias y eventos de networking. Manténgase conectado con nuestra firma de derecho laboral.",
+      en: "Join Santos & Saucedo at conferences, webinars, speaking engagements, and networking events. Stay connected with our firm.",
+      es: "Únase a Santos & Saucedo en conferencias, webinars, ponencias y eventos de networking. Manténgase conectado con nuestra firma.",
       de: "Nehmen Sie an Konferenzen, Webinaren, Vorträgen und Networking-Events von Santos & Saucedo teil.",
       zh: "加入Santos & Saucedo的会议、网络研讨会、演讲和社交活动。与我们的劳动法律师事务所保持联系。",
       ko: "Santos & Saucedo의 컨퍼런스, 웨비나, 강연 및 네트워킹 이벤트에 참여하세요. 노동법 전문 로펌과 연결되세요.",
@@ -536,8 +536,8 @@ const seoConfig: Record<string, SEOConfig> = {
       it: "Programma Tirocini | Santos & Saucedo",
     },
     description: {
-      en: "Launch your legal career with Santos & Saucedo's internship program. Summer and permanent internships available for law students. Gain hands-on experience at a labor-law firm.",
-      es: "Inicia tu carrera legal con el programa de pasantías de Santos & Saucedo. Pasantías de verano y permanentes disponibles para estudiantes de derecho. Obtén experiencia práctica en una firma de derecho laboral.",
+      en: "Launch your legal career with Santos & Saucedo's internship program. Summer and permanent internships available for law students. Gain hands-on experience at a multi-area firm rooted in labor law.",
+      es: "Inicia tu carrera legal con el programa de pasantías de Santos & Saucedo. Pasantías de verano y permanentes disponibles para estudiantes de derecho. Obtén experiencia práctica en una firma multi-área con raíz en el derecho laboral.",
       de: "Starten Sie Ihre juristische Karriere mit dem Praktikumsprogramm von Santos & Saucedo. Sommer- und Dauerpraktika für Jurastudenten verfügbar.",
       zh: "通过Santos & Saucedo的实习项目开启您的法律职业生涯。为法学院学生提供暑期和长期实习机会。在一家劳动法律师事务所获得实践经验。",
       ko: "Santos & Saucedo의 인턴십 프로그램으로 법률 커리어를 시작하세요. 법대생을 위한 여름 및 정규 인턴십이 있습니다.",
@@ -575,23 +575,23 @@ export default function SEOHead({
     const safeSeo: Partial<Record<keyof typeof seoConfig, { title: string; description: string }>> = {
       home: {
         title: language === "es"
-          ? "Santos & Saucedo | Abogados Laborales en Monterrey"
-          : "Santos & Saucedo | Labor Lawyers in Monterrey",
+          ? "Santos & Saucedo | Abogados para Empresas en San Pedro Garza García"
+          : "Santos & Saucedo | Law Firm for Companies in San Pedro Garza García",
         description: language === "es"
-          ? "Derecho laboral estratégico para empresas. Más de 35 años asesorando compañías nacionales e internacionales en prevención, auditoría, capacitación y conflictos laborales."
-          : "Strategic labor law for companies. More than 35 years advising national and international companies on prevention, audits, training, and labor conflicts.",
+          ? "Administración del capital humano y defensa legal para empresas, con raíz en el derecho laboral. Más de 35 años de experiencia y alianza nacional en más de 72 ciudades de México."
+          : "Human-capital administration and legal defense for companies, rooted in labor law. More than 35 years of experience and a national alliance across more than 72 Mexican cities.",
       },
       about: {
         title: language === "es" ? "La Firma | Santos & Saucedo" : "The Firm | Santos & Saucedo",
         description: language === "es"
-          ? "Santos & Saucedo es una firma especializada en Derecho Laboral con más de 35 años de experiencia asesorando empresas nacionales e internacionales."
-          : "Santos & Saucedo is a labor-law firm with more than 35 years of experience advising national and international companies.",
+          ? "Santos & Saucedo es una firma legal para empresas —laboral, corporativo, migratorio y litigio— con raíz en el derecho laboral y más de 35 años de experiencia asesorando empresas nacionales y multinacionales."
+          : "Santos & Saucedo is a law firm for companies —labor, corporate, immigration and litigation— rooted in labor law, with more than 35 years of experience advising national and multinational companies.",
       },
       practiceGroups: {
-        title: language === "es" ? "Áreas Laborales | Santos & Saucedo" : "Labor Practice Areas | Santos & Saucedo",
+        title: language === "es" ? "Áreas de Práctica | Santos & Saucedo" : "Practice Areas | Santos & Saucedo",
         description: language === "es"
-          ? "Servicios laborales para empresas: conflictos individuales y colectivos, administración laboral, diagnóstico, planes de mejora, auditoría jurídico-laboral y capacitación."
-          : "Labor services for companies: individual and collective conflicts, labor administration, diagnosis, improvement plans, labor audits, and training.",
+          ? "Cuatro áreas de especialidad para empresas, con raíz en el derecho laboral: Laboral y Seguridad Social, Corporativo y Contractual, Migratorio, y Litigio Contencioso."
+          : "Four areas of specialty for companies, rooted in labor law: Labor & Social Security, Corporate & Contractual, Immigration, and Contentious Litigation.",
       },
       contact: {
         title: language === "es" ? "Contacto | Santos & Saucedo" : "Contact | Santos & Saucedo",
