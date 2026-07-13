@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { SUPPORTED_LANGUAGES, type LanguageCode } from "@shared/schema";
 
 const BASE_URL = "https://www.santossaucedo.com";
-const DEFAULT_IMAGE = "https://santossaucedo.com/images/santossaucedo_2025_.png";
+const DEFAULT_IMAGE = "https://santossaucedo.com/images/santossaucedo_2025.png";
 
 const HREFLANG_CODES: Record<LanguageCode, string> = {
   en: "en",
