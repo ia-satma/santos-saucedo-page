@@ -1,8 +1,8 @@
 # Handoff completo — Santos & Saucedo (sitio web)
 
 > Documento de contexto self-contained. Con esto una nueva sesión/dev tiene el panorama completo del
-> proyecto y de lo trabajado hasta **2026-07-13**. Último commit: `4047d88` (favicon SVG + rediseño
-> `/practice-groups`).
+> proyecto y de lo trabajado hasta **2026-07-13**. Último commit: `623cdd8` (fusión Cobertura +
+> Experience Banner, arregla el salto de color del home).
 
 ---
 
@@ -240,9 +240,34 @@ oficial, 14 págs, exportado a `../PDF 2026 - IMAGES/`):**
     en verde lima. Grid cambiado a `sm:grid-cols-2` (2×2, `max-w-4xl`) para acomodar exactamente 4 tarjetas
     sin huérfanas.
 
+23. **Footer con marca de agua "S"** (`7a9105b`, corregido en `d05ddd3`) — el cliente pidió el mismo
+    fondo azul con la "S" de marca de agua que se usa en los heroes oscuros, aplicado al `<footer>`
+    (`.footer-watermark` en `index.css`, `bg-s-navy.webp`). Primer intento con `opacity:.3` +
+    `mix-blend-mode:soft-light` (mismo tratamiento que Cobertura/hero) salió **casi invisible** sobre
+    el fondo ya oscuro del footer — el cliente lo reportó ("sigo viendo igual el footer"). Fix: la
+    imagen se aplica **directa, sin opacity ni blend-mode** (a diferencia de Cobertura/hero, que sí
+    la necesitan porque están sobre secciones donde el watermark debe ser sutil). Verificado
+    visualmente comparando la imagen fuente contra la del repo antes de confirmar que eran idénticas.
+24. **Fix del "tinte morado" en hover de tarjetas de Áreas** (mismo commit `d05ddd3`) — el overlay
+    `rgba(18,16,62,…)` sobre la foto en `PracticeGroupCard` (rediseño del punto 22) era estático
+    (no cambiaba con el hover); al pasar el cursor la foto se desatura a color pero el tinte navy se
+    quedaba encima, leyéndose como una "máscara" sucia. Fix: el overlay ahora se atenúa en hover
+    (`isHover ? rgba(...,0.12) : rgba(...,0.4)`, con transición) para que el color real de la foto se
+    vea limpio.
+25. **Fusión Cobertura Nacional + Experience Banner** (`623cdd8`) — el cliente reportó un salto de
+    color feo entre "Cobertura Nacional" (azul índigo limpio `#1E1C92`) y el banner de "+35 años"
+    justo debajo (mismo gradiente pero con un radial `rgba(10,8,38,0.96)` casi opaco encima, copiado
+    del tratamiento de oscurecimiento de fotos del Hero — aplicado sobre un panel de color plano
+    ennegrecía la sección entera). En vez de solo recalibrar el radial, se **fusionaron las dos
+    secciones en una sola franja navy**: `CoberturaSection.tsx` ahora muestra 2 stat cards en fila
+    ("+72 Ciudades" / "35+ Años de Experiencia") en vez de 1 sola; `ExperienceBanner.tsx` se **borró**
+    (solo se usaba en `Home.tsx`, sin otras referencias). El home queda con solo 3 "momentos navy"
+    deliberados y espaciados: Hero → Cobertura+Experiencia → Footer, con contenido claro entre cada
+    uno — en vez de una secuencia azul-azul-oscuro-accidental.
+
 ## 9. Estado actual y commits
 
-Todo pusheado a `main`. Deploy OK (Actions success). Último: `4047d88`.
+Todo pusheado a `main`. Deploy OK (Actions success). Último: `623cdd8`.
 
 Ver `git log --oneline -20` para el detalle completo; hitos clave arriba en §8 (puntos 9–16).
 
