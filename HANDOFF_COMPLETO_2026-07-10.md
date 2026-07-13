@@ -205,15 +205,24 @@ Ver `git log --oneline -20` para el detalle completo; hitos clave arriba en §8 
 **✅ Modo oscuro, rebrand V1, pivote a 4 áreas, azul del PDF, Cobertura Nacional, tarjetas de Áreas,
 SEO/JsonLd — HECHO** (detalle §8).
 
+**✅ Fotos de los 4 socios fundadores — HECHO** (`772ec4d`, `78a30fc`). Cliente reenvió las 4 en
+**formato cuadrado** (`../PDF 2026 - IMAGES/socios- asociados/socios-15..18.png`, ya NO circulares).
+- Enrique Santos Arce, Enrique Santos Guzmán, Mario Saucedo Montemayor: fotos actualizadas en
+  `attached_assets/team_photos/*.png` (reemplazan los `.jpg` viejos; `imageUrl` en `server/seed.ts`
+  actualizado a `.png`).
+- **Mario Saucedo Rodríguez (†)** — no estaba en el roster activo (deceased, sin bio). Cliente pidió
+  agregarlo como fundador in memoriam → nueva entrada en `teamMembersData` (`server/seed.ts`, slug
+  `mario-saucedo-rodriguez`, order 4 = orden del PDF, justo tras Enrique Santos Arce; se recorrieron
+  +1 los `order` de los demás, 4-24 → 5-25). Título "Socio Fundador (In Memoriam)"; **sin email/teléfono**
+  a propósito (son opcionales en el schema y los botones de contacto en `TeamMemberDetail.tsx` ya están
+  condicionados a `member?.email`/`member?.phone`, así que no aparecen — no se presenta como contacto
+  activo). Foto en blanco y negro de la presentación.
+
 **🔴 Bloqueado esperando al cliente (2026-07-13):**
-- **Fotos de socios/asociados**: el PDF trajo fotos individuales en
-  `../PDF 2026 - IMAGES/socios- asociados/` — 4 socios fundadores (recorte circular, fondo pintura
-  abstracta) + **37 fotos de asociados SIN nombre** (ni el archivo ni el PDF los traen). El sitio ya
-  tiene 19 asociados con nombre/bio escritos → **no calzan 1 a 1**. Cliente confirmó: va a pasar la
-  **lista nombre→archivo**. NO asignar por orden de archivo sin esa lista (riesgo de atribución
-  incorrecta en un sitio de abogados). Fotos de fundadores: cliente las va a re-enviar en **formato
-  cuadrado** (las circulares no calzan con las tarjetas `object-cover` del sitio) — no usar las
-  circulares mientras tanto.
+- **Fotos de asociados**: **37 fotos SIN nombre** en `../PDF 2026 - IMAGES/socios- asociados/`
+  (`socios-asociados-19..56.jpg`, ni el archivo ni el PDF traen nombres). El sitio ya tiene 19 asociados
+  con nombre/bio escritos → **no calzan 1 a 1**. Cliente confirmó: va a pasar la **lista nombre→archivo**.
+  NO asignar por orden de archivo sin esa lista (riesgo de atribución incorrecta en un sitio de abogados).
 - **Logos de clientes** (sección "Clientes" del PDF: Globales/Nacionales/Asia) — pendiente de que el
   cliente pase los logos individuales (SVG/PNG transparente).
 - **Mapa de México** en Cobertura Nacional — la sección ya existe (texto + stat), falta el visual del
