@@ -1,8 +1,8 @@
 # Handoff completo — Santos & Saucedo (sitio web)
 
 > Documento de contexto self-contained. Con esto una nueva sesión/dev tiene el panorama completo del
-> proyecto y de lo trabajado hasta **2026-07-13**. Último commit: `623cdd8` (fusión Cobertura +
-> Experience Banner, arregla el salto de color del home).
+> proyecto y de lo trabajado hasta **2026-07-13**. Último commit: `0bc0370` (animación de entrada del
+> logo del hero).
 
 ---
 
@@ -265,9 +265,40 @@ oficial, 14 págs, exportado a `../PDF 2026 - IMAGES/`):**
     deliberados y espaciados: Hero → Cobertura+Experiencia → Footer, con contenido claro entre cada
     uno — en vez de una secuencia azul-azul-oscuro-accidental.
 
+26. **Fix real de "la máscara que se mueve"** (`a305441`) — el reporte original ("SE MUEVE LA MASCARA
+    DE LAS IMAGENES") seguía sin resolverse tras quitar el `backdrop-blur` del badge (punto 19): la
+    causa real era que la foto tenía `transform: scale()` en hover pero el degradado navy encima era
+    un elemento hermano **sin** ese transform — al hacer zoom, la foto se movía por debajo de un tinte
+    fijo, dando la sensación de "máscara que se mueve". Fix en `PracticesSection.tsx` (home) y
+    `PracticeGroups.tsx` (`/practice-groups`): la foto y su overlay ahora viven **dentro del mismo
+    contenedor** que recibe el `scale()`, así que escalan juntos como una sola pieza. El badge de
+    ícono queda fuera de ese contenedor (no se mueve).
+27. **Rediseño de la etiqueta del hero** (`04f2746`) — "15 Años como Firma · +35 de Experiencia" vivía
+    en una caja con borde translúcido (`border-y border-brand bg-white/[0.035] backdrop-blur`) que
+    desentonaba con el resto del sitio. Reemplazada por el mismo patrón "regla + texto" (línea lima +
+    texto tracked uppercase) que ya usan los eyebrows de otras secciones (ej. Cobertura Nacional), sin
+    caja ni blur.
+28. **Rotador de frases en el hero** (`119ef84`, ampliado en `7390228`) — la etiqueta bajo el logo ahora
+    **rota 4 frases cortas** con crossfade cada 4.5s: "15 Años como Firma" → "+35 de Experiencia" →
+    "Alianza Nacional en +72 Ciudades" → "Laboral · Corporativo · Migratorio · Litigio" (en los 10
+    idiomas; los idiomas no-ES/EN reutilizan el tono ya simplificado que tenían). Respeta
+    `prefers-reduced-motion` (se desactiva la rotación, queda la primera frase fija). El override de
+    CMS para inglés (`siteContent.heroSubtitle`) sigue funcionando — si existe, se muestra solo, sin
+    rotar.
+29. **Animación de entrada del logo del hero** (`0bc0370`) — a pedido del cliente: "SANTO" entra desde
+    la izquierda, la "S" lima queda fija y aparece con fade+scale, "AUCEDO" entra desde la derecha; una
+    sola vez al cargar la página (no en loop, decisión confirmada con el cliente vía pregunta directa;
+    también se confirmó que la animación va **solo en el hero**, no en el logo del header). Técnica:
+    la MISMA imagen del wordmark (`SantosSaucedo_Logo-Variante-Blanca.png`, 8000×2217px) se repite 3
+    veces apiladas con `clip-path: inset(...)` distinto cada una (0–39% / 39–49% / 49–100% del ancho),
+    y cada copia anima su propio `transform`/`opacity` — así no hace falta recortar/generar assets
+    nuevos, es la imagen oficial intacta, solo enmascarada. Los % de corte se midieron visualmente
+    contra el asset real (ver metodología: overlay de reglas en % sobre el logo, base64-embebido en un
+    artifact HTML, verificado con capturas antes de aplicar).
+
 ## 9. Estado actual y commits
 
-Todo pusheado a `main`. Deploy OK (Actions success). Último: `623cdd8`.
+Todo pusheado a `main`. Deploy OK (Actions success). Último: `0bc0370`.
 
 Ver `git log --oneline -20` para el detalle completo; hitos clave arriba en §8 (puntos 9–16).
 
