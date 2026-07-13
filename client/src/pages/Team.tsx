@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import NuestroEquipoSection from "@/components/NuestroEquipoSection";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getTeamPhotoObjectPosition } from "@/lib/teamPhotoPosition";
@@ -788,6 +789,8 @@ export default function Team() {
           </>
         )}
       </main>
+
+      <NuestroEquipoSection />
 
       <Footer />
     </div>
