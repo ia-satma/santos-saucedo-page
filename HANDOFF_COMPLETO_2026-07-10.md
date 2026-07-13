@@ -218,11 +218,28 @@ SEO/JsonLd — HECHO** (detalle §8).
   condicionados a `member?.email`/`member?.phone`, así que no aparecen — no se presenta como contacto
   activo). Foto en blanco y negro de la presentación.
 
-**🔴 Bloqueado esperando al cliente (2026-07-13):**
-- **Fotos de asociados**: **37 fotos SIN nombre** en `../PDF 2026 - IMAGES/socios- asociados/`
-  (`socios-asociados-19..56.jpg`, ni el archivo ni el PDF traen nombres). El sitio ya tiene 19 asociados
-  con nombre/bio escritos → **no calzan 1 a 1**. Cliente confirmó: va a pasar la **lista nombre→archivo**.
-  NO asignar por orden de archivo sin esa lista (riesgo de atribución incorrecta en un sitio de abogados).
+**✅ "Asociados" → "Nuestro Equipo" (anónimo) — HECHO** (`9e109dd`, `5f29d45`). El cliente insistió
+(varias veces, "el PDF es la última actualización, no hay que mantener antiguos") en que las fotos
+viejas dejaran de salir. Como **no hay lista nombre→archivo** para las 37 fotos nuevas de asociados
+(intenté emparejar por posición de archivo una vez — el clasificador de seguridad lo bloqueó
+correctamente por riesgo de atribución incorrecta a un abogado real; no reintentar esa vía), la solución
+segura fue:
+- Sección "Asociados" **renombrada a "Nuestro Equipo"** y convertida en mosaico **sin nombres** con las
+  37 fotos nuevas (`client/src/lib/equipoPhotos.ts`, carga vía `import.meta.glob` desde
+  `attached_assets/pdf2026/equipo/team-01..37.jpg`), mismo efecto visual que las tarjetas viejas
+  (grayscale→color, expansión de panel en desktop). Los datos de los 19 asociados (nombre/bio/slug)
+  siguen en `server/seed.ts`, solo no se renderizan aquí.
+- Sección "Socios" acotada a los **4 fundadores confirmados por nombre** (`CONFIRMED_FOUNDER_SLUGS` en
+  `Team.tsx`: `mario-saucedo-montemayor`, `enrique-santos-guzman`, `enrique-santos-arce`,
+  `mario-saucedo-rodriguez`). Jaime Herrera de Herrera y David Martínez Saucedo (socios pero no
+  fundadores, sin foto 2026 confirmada) **ya no se muestran** con nombre/foto en `/team` — mismo criterio
+  que los asociados, hasta que el cliente confirme cuál de las 37 fotos es cada uno.
+
+**🔴 Sigue bloqueado esperando al cliente:**
+- **Lista nombre→archivo** para las 37 fotos de "Nuestro Equipo" (`socios-asociados-19..56.jpg` en
+  `../PDF 2026 - IMAGES/socios- asociados/`) — sin ella no se puede poner nombre a ninguna foto (aplica
+  también a Jaime Herrera y David Martínez). **NO asignar por orden de archivo sin esa lista** — ya se
+  intentó y el clasificador de seguridad lo bloqueó por riesgo de atribución incorrecta.
 - **Logos de clientes** (sección "Clientes" del PDF: Globales/Nacionales/Asia) — pendiente de que el
   cliente pase los logos individuales (SVG/PNG transparente).
 - **Mapa de México** en Cobertura Nacional — la sección ya existe (texto + stat), falta el visual del
