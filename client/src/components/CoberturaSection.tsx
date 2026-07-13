@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { MapPin, Building2, Handshake } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import bgSNavy from "@assets/pdf2026/bg-s-navy.webp";
 import type { LanguageCode } from "@shared/schema";
 
 type CoberturaContent = {
@@ -59,11 +60,11 @@ export default function CoberturaSection() {
       className="relative overflow-hidden py-24 lg:py-28 text-white bg-[linear-gradient(135deg,#12116E_0%,#191884_52%,#1E1C92_100%)]"
       data-testid="section-cobertura"
     >
-      {/* subtle dotted / grid texture */}
+      {/* "S" isotype watermark from the 2026 presentation cover */}
       <div
-        className="absolute inset-0 opacity-[0.08]"
+        className="absolute inset-0 opacity-40 mix-blend-soft-light"
         aria-hidden="true"
-        style={{ backgroundImage: "radial-gradient(#ffffff 1px, transparent 1px)", backgroundSize: "26px 26px" }}
+        style={{ backgroundImage: `url(${bgSNavy})`, backgroundSize: "cover", backgroundPosition: "center" }}
       />
       <div className="relative max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         <motion.div

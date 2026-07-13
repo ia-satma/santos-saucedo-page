@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
+import bgSNavy from "@assets/pdf2026/bg-s-navy.webp";
 import type { LanguageCode } from "@shared/schema";
 
 type ContentItem = {
@@ -48,8 +49,12 @@ export default function ExperienceBanner() {
       className="relative overflow-hidden py-20 lg:py-28 bg-[radial-gradient(circle_at_82%_20%,rgba(18,16,62,0.78)_0%,rgba(16,14,48,0.64)_34%,rgba(10,8,38,0.96)_74%),linear-gradient(135deg,#12116E_0%,#191884_52%,#1E1C92_100%)]"
       data-testid="section-experience-banner"
     >
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.05)_0%,transparent_34%,rgba(255,255,255,0.07)_100%)]" aria-hidden="true" />
-      <div className="max-w-5xl mx-auto px-6 lg:px-12">
+      <div
+        className="absolute inset-0 opacity-30 mix-blend-soft-light"
+        aria-hidden="true"
+        style={{ backgroundImage: `url(${bgSNavy})`, backgroundSize: "cover", backgroundPosition: "center" }}
+      />
+      <div className="relative z-10 max-w-5xl mx-auto px-6 lg:px-12">
         <div className="w-16 h-1 bg-brand mx-auto mb-8" aria-hidden="true" />
         <motion.p
           initial={{ opacity: 0, y: 20 }}

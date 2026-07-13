@@ -3,6 +3,7 @@ import { ArrowRight, Phone } from "lucide-react";
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
+import bgWaves from "@assets/pdf2026/bg-waves-gray.webp";
 import type { LanguageCode } from "@shared/schema";
 
 interface PracticeArea {
@@ -160,10 +161,16 @@ export default function PracticesSection() {
   return (
     <section
       id="practices"
-      className="py-24 lg:py-32 section-ambient"
+      className="relative overflow-hidden py-24 lg:py-32 section-ambient"
       data-testid="section-practices"
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+      {/* flowing wave-lines texture from the 2026 presentation, light mode only */}
+      <div
+        className="absolute inset-0 opacity-40 mix-blend-multiply dark:hidden"
+        aria-hidden="true"
+        style={{ backgroundImage: `url(${bgWaves})`, backgroundSize: "cover", backgroundPosition: "60% 40%" }}
+      />
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
         <div className="flex flex-col lg:flex-row lg:gap-20">
 
           {/* Left editorial identity column */}
