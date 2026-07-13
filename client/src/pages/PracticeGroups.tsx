@@ -74,7 +74,10 @@ function PracticeGroupCard({ group, index, learnMoreText }: PracticeGroupCardPro
             aria-hidden="true"
             className="absolute inset-0 pointer-events-none"
             style={{
-              background: "linear-gradient(to top, rgba(18,16,62,0.55) 0%, rgba(18,16,62,0.05) 45%)",
+              background: isHover
+                ? "linear-gradient(to top, rgba(18,16,62,0.12) 0%, rgba(18,16,62,0) 35%)"
+                : "linear-gradient(to top, rgba(18,16,62,0.4) 0%, rgba(18,16,62,0.02) 35%)",
+              transition: "background 0.5s ease",
             }}
           />
 

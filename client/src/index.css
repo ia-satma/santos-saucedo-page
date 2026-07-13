@@ -1169,8 +1169,6 @@ html, body {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.3;
-  mix-blend-mode: soft-light;
   background-image: url(../../attached_assets/pdf2026/bg-s-navy.webp);
   background-size: cover;
   background-position: center;
