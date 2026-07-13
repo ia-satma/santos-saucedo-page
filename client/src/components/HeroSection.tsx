@@ -454,15 +454,45 @@ export default function HeroSection({ language }: HeroSectionProps) {
 
       {/* Hero content: brand mark and experience line. */}
       <div className="relative z-10 flex flex-col items-center text-center px-6 gap-6 sm:gap-7 md:gap-8 -mt-8 md:-mt-12">
-        <motion.img
-          initial={{ opacity: 0, scale: 0.97 }}
-          animate={isVisible ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.9, delay: 0.35 }}
-          src={logoWhiteWordmark}
-          alt={t.headline}
-          className="w-[80vw] max-w-[380px] sm:max-w-[480px] md:max-w-[560px] lg:max-w-[620px] h-auto object-contain drop-shadow-2xl"
+        <div
+          role="img"
+          aria-label={t.headline}
           data-testid="text-hero-headline"
-        />
+          className="relative w-[80vw] max-w-[380px] sm:max-w-[480px] md:max-w-[560px] lg:max-w-[620px] drop-shadow-2xl"
+          style={{ aspectRatio: "8000 / 2217" }}
+        >
+          {/* "SANTO" — slides in from the left, isotype "S" stays put and fades/scales in, "AUCEDO" slides in from the right. One-time entrance, same wordmark image clipped into 3 pieces. */}
+          <motion.img
+            initial={{ opacity: 0, x: "-12%" }}
+            animate={isVisible ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            src={logoWhiteWordmark}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-contain"
+            style={{ clipPath: "inset(0 61% 0 0)" }}
+          />
+          <motion.img
+            initial={{ opacity: 0, scale: 0.7 }}
+            animate={isVisible ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.6, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
+            src={logoWhiteWordmark}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-contain"
+            style={{ clipPath: "inset(0 51% 0 39%)" }}
+          />
+          <motion.img
+            initial={{ opacity: 0, x: "12%" }}
+            animate={isVisible ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            src={logoWhiteWordmark}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-contain"
+            style={{ clipPath: "inset(0 0 0 49%)" }}
+          />
+        </div>
 
         <motion.div
           initial={{ opacity: 0, y: 10 }}
