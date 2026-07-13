@@ -37,6 +37,15 @@ function getBalancedColumns(total: number, preferredColumns: number): number {
   return Math.ceil(total / rows);
 }
 
+// The 4 founders whose 2026 presentation photo is confirmed by name (the
+// deck's own "Socios Fundadores" page captions each one). See groupedMembers.
+const CONFIRMED_FOUNDER_SLUGS = new Set([
+  "mario-saucedo-montemayor",
+  "enrique-santos-guzman",
+  "enrique-santos-arce",
+  "mario-saucedo-rodriguez",
+]);
+
 // Map URL parameters to filter values
 const urlTypeToFilter: Record<string, string> = {
   "partners": "partners",
@@ -424,7 +433,12 @@ export default function Team() {
     };
 
     const isOfCounsel = (m: TeamMember) => m.title?.toLowerCase() === "of counsel";
-    const allPartners  = [...allTeamMembers.filter(m => m.isPartner)].sort(byConfiguredOrder);
+    // Only these 4 have a confirmed, name-matched 2026 photo (the presentation's own
+    // "Socios Fundadores" page, which captions each one). Other isPartner:true members
+    // (e.g. Jaime Herrera de Herrera, David Martínez Saucedo) don't have a confirmed new
+    // photo yet, so — same reasoning as the associates mosaic — they're not shown as a
+    // named/individually-photographed card until their file is identified.
+    const allPartners  = [...allTeamMembers.filter(m => m.isPartner && CONFIRMED_FOUNDER_SLUGS.has(m.slug))].sort(byConfiguredOrder);
     const allOfCounsel = [...allTeamMembers.filter(m => !m.isPartner && isOfCounsel(m))].sort(byConfiguredOrder);
     const allAssociates = [...allTeamMembers.filter(m => !m.isPartner && !isOfCounsel(m))].sort(byConfiguredOrder);
 
