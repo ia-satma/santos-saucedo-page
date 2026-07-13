@@ -80,18 +80,19 @@ export default function CoberturaSection() {
         style={{ backgroundImage: `url(${bgSNavy})`, backgroundSize: "cover", backgroundPosition: "center" }}
       />
 
-      {/* Mexico map — large background element, Nuevo León highlighted in lime, bleeds off the right edge */}
+      {/* Mexico map — large background element, Nuevo León highlighted in lime, bleeds off the right edge.
+          Fades in via mask-image on the map itself (not a separate overlay) so the fade always lines up
+          exactly with the image's own edge — no risk of a visible seam between two mismatched elements. */}
       <img
         src={mapaMexico}
         alt=""
         aria-hidden="true"
         className="hidden md:block absolute top-1/2 -translate-y-1/2 -right-[8%] w-[65%] lg:w-[58%] h-auto opacity-90 pointer-events-none"
+        style={{
+          WebkitMaskImage: "linear-gradient(90deg, transparent 0%, black 32%)",
+          maskImage: "linear-gradient(90deg, transparent 0%, black 32%)",
+        }}
         data-testid="img-cobertura-map"
-      />
-      <div
-        className="hidden md:block absolute inset-y-0 right-0 w-[45%] pointer-events-none"
-        aria-hidden="true"
-        style={{ background: "linear-gradient(90deg, #1E1C92 0%, rgba(30,28,146,0) 35%)" }}
       />
 
       <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
