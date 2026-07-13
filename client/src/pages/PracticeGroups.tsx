@@ -12,6 +12,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { getPracticeImage } from "@/lib/practiceIndustryImages";
+import { getIcon } from "@/lib/icons";
 import type { PracticeGroup } from "@shared/schema";
 
 interface PracticeGroupCardProps {
@@ -39,65 +40,59 @@ function PracticeGroupCard({ group, index, learnMoreText }: PracticeGroupCardPro
   const displayName = translatedFields.name || group.name;
   const displayDescription = translatedFields.description || group.description;
   const showTranslatingIndicator = isLoading || isTranslating;
-  const numberLabel = String(index + 1).padStart(2, "0");
 
   const imageUrl = getPracticeImage(group.slug, group.imageUrl);
+  const Icon = getIcon(group.iconName || "scale");
 
   return (
     <Link href={`/practice-groups/${group.slug}`}>
       <article
-        className="group relative h-full overflow-hidden card-soft cursor-pointer aspect-[4/5]"
+        className="group relative h-full overflow-hidden card-soft cursor-pointer flex flex-col"
         data-testid={`card-practice-group-${group.slug}`}
         onMouseEnter={() => setIsHover(true)}
         onMouseLeave={() => setIsHover(false)}
       >
-        {/* Background image — grayscale at rest, color on hover (matches home pattern) */}
-        <img
-          src={imageUrl}
-          alt=""
-          loading="lazy"
-          aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-          style={{
-            filter: isHover ? "grayscale(0%)" : "grayscale(100%)",
-            transform: isHover ? "scale(1.04)" : "scale(1)",
-            transition:
-              "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease",
-          }}
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).style.display = "none";
-          }}
-        />
+        {/* Photo — grayscale at rest, color on hover (matches home pattern) */}
+        <div className="relative aspect-[4/3] overflow-hidden">
+          <img
+            src={imageUrl}
+            alt=""
+            loading="lazy"
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            style={{
+              filter: isHover ? "grayscale(0%)" : "grayscale(100%)",
+              transform: isHover ? "scale(1.04)" : "scale(1)",
+              transition:
+                "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease",
+            }}
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = "none";
+            }}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: "linear-gradient(to top, rgba(18,16,62,0.55) 0%, rgba(18,16,62,0.05) 45%)",
+            }}
+          />
 
-        {/* Dark overlay — crossfade between rest and hover gradient */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: isHover
-              ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(18,16,62,0.34) 50%, rgba(18,16,62,0.12) 100%)"
-              : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(18,16,62,0.38) 100%)",
-            transition: "background 0.5s ease",
-          }}
-        />
-
-        {/* Translation indicator — top right */}
-        {showTranslatingIndicator && (
-          <div className="absolute top-4 right-4 z-10 flex items-center gap-1 px-2 py-1 bg-[#1E1C92]/70 backdrop-blur-sm text-xs text-white/90">
-            <Loader2 className="w-3 h-3 animate-spin" />
+          {/* Icon badge — top left */}
+          <div className="absolute top-3 left-3 w-9 h-9 rounded-full bg-primary/40 flex items-center justify-center ring-1 ring-white/25">
+            <Icon className="w-4 h-4 text-white" />
           </div>
-        )}
 
-        {/* Decorative number — top left, large translucent */}
-        <span
-          className="absolute top-5 left-6 text-5xl font-heading font-light text-white/20 select-none pointer-events-none tabular-nums"
-          data-testid={`number-practice-group-${group.slug}`}
-        >
-          {numberLabel}
-        </span>
+          {/* Translation indicator — top right */}
+          {showTranslatingIndicator && (
+            <div className="absolute top-3 right-3 z-10 flex items-center gap-1 px-2 py-1 bg-[#1E1C92]/70 backdrop-blur-sm text-xs text-white/90">
+              <Loader2 className="w-3 h-3 animate-spin" />
+            </div>
+          )}
+        </div>
 
-        {/* Content overlay — bottom */}
-        <div className="absolute inset-x-0 bottom-0 p-6 lg:p-7 flex flex-col">
+        {/* Navy label bar */}
+        <div className="flex-1 flex flex-col bg-primary p-6 lg:p-7">
           <div className="w-8 h-px bg-brand mb-4" />
           <h3
             className="text-base lg:text-lg font-medium text-white mb-3 uppercase tracking-[0.12em] leading-snug"
@@ -106,13 +101,13 @@ function PracticeGroupCard({ group, index, learnMoreText }: PracticeGroupCardPro
             {displayName}
           </h3>
           <p
-            className="text-sm text-white/70 mb-5 line-clamp-2"
+            className="text-sm text-white/70 mb-5 line-clamp-2 flex-1"
             data-testid={`text-practice-group-desc-${group.slug}`}
           >
             {displayDescription}
           </p>
           <span
-            className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.12em] text-primary group-hover:gap-2.5 transition-all"
+            className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.12em] text-[#A5E029] group-hover:gap-2.5 transition-all"
             data-testid={`link-practice-group-${group.slug}`}
           >
             {learnMoreText}
@@ -286,10 +281,10 @@ export default function PracticeGroups() {
               </p>
             </div>
           ) : isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {Array.from({ length: 9 }).map((_, i) => (
-                <Card 
-                  key={i} 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Card
+                  key={i}
                   className="border-0 bg-muted"
                   data-testid={`skeleton-practice-group-${i}`}
                 >
@@ -309,7 +304,7 @@ export default function PracticeGroups() {
               initial="hidden"
               whileInView="visible"
             viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto"
             >
               {practiceGroups?.map((group, idx) => (
                 <motion.div key={group.id} variants={itemVariants}>
