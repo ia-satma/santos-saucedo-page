@@ -54,32 +54,39 @@ function PracticeGroupCard({ group, index, learnMoreText }: PracticeGroupCardPro
       >
         {/* Photo — grayscale at rest, color on hover (matches home pattern) */}
         <div className="relative aspect-[4/3] overflow-hidden">
-          <img
-            src={imageUrl}
-            alt=""
-            loading="lazy"
-            aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-            style={{
-              filter: isHover ? "grayscale(0%)" : "grayscale(100%)",
-              transform: isHover ? "scale(1.04)" : "scale(1)",
-              transition:
-                "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease",
-            }}
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).style.display = "none";
-            }}
-          />
           <div
-            aria-hidden="true"
-            className="absolute inset-0 pointer-events-none"
             style={{
-              background: isHover
-                ? "linear-gradient(to top, rgba(18,16,62,0.12) 0%, rgba(18,16,62,0) 35%)"
-                : "linear-gradient(to top, rgba(18,16,62,0.4) 0%, rgba(18,16,62,0.02) 35%)",
-              transition: "background 0.5s ease",
+              position: "absolute",
+              inset: 0,
+              transform: isHover ? "scale(1.04)" : "scale(1)",
+              transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)",
             }}
-          />
+          >
+            <img
+              src={imageUrl}
+              alt=""
+              loading="lazy"
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+              style={{
+                filter: isHover ? "grayscale(0%)" : "grayscale(100%)",
+                transition: "filter 0.5s ease",
+              }}
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).style.display = "none";
+              }}
+            />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: isHover
+                  ? "linear-gradient(to top, rgba(18,16,62,0.12) 0%, rgba(18,16,62,0) 35%)"
+                  : "linear-gradient(to top, rgba(18,16,62,0.4) 0%, rgba(18,16,62,0.02) 35%)",
+                transition: "background 0.5s ease",
+              }}
+            />
+          </div>
 
           {/* Icon badge — top left */}
           <div className="absolute top-3 left-3 w-9 h-9 rounded-full bg-primary/40 flex items-center justify-center ring-1 ring-white/25">

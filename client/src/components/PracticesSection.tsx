@@ -249,16 +249,18 @@ export default function PracticesSection() {
                     className="group relative block overflow-hidden rounded-lg shadow-[var(--shadow-md)] hover:shadow-[var(--shadow-xl)] transition-shadow duration-300"
                     data-testid={`link-practice-${area.id}`}
                   >
-                    <div className="relative aspect-[4/3]">
-                      <img
-                        src={getPracticeImage(area.slug)}
-                        alt=""
-                        aria-hidden="true"
-                        loading="lazy"
-                        decoding="async"
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,17,110,0.15)_0%,rgba(18,17,110,0.55)_100%)]" aria-hidden="true" />
+                    <div className="relative aspect-[4/3] overflow-hidden">
+                      <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-105">
+                        <img
+                          src={getPracticeImage(area.slug)}
+                          alt=""
+                          aria-hidden="true"
+                          loading="lazy"
+                          decoding="async"
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,17,110,0.15)_0%,rgba(18,17,110,0.55)_100%)]" aria-hidden="true" />
+                      </div>
                       <div className="absolute top-3 left-3 w-9 h-9 rounded-full bg-primary/40 flex items-center justify-center ring-1 ring-white/25">
                         <Icon className="w-4 h-4 text-white" strokeWidth={1.75} aria-hidden="true" />
                       </div>
