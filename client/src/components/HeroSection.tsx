@@ -186,7 +186,8 @@ const heroContent: Record<LanguageCode, HeroContent> = {
     tagline: "LAW FIRM FOR COMPANIES · NUEVO LEÓN",
     headline: "SANTOS & SAUCEDO",
     subheadlines: [
-      "15 Years as a Firm · 35+ of Experience",
+      "15 Years as a Firm",
+      "35+ Years of Experience",
       "National Alliance Across +72 Cities",
       "Labor · Corporate · Immigration · Litigation",
     ],
@@ -202,7 +203,8 @@ const heroContent: Record<LanguageCode, HeroContent> = {
     tagline: "FIRMA LEGAL PARA EMPRESAS · NUEVO LEÓN",
     headline: "SANTOS & SAUCEDO",
     subheadlines: [
-      "15 Años como Firma · +35 de Experiencia",
+      "15 Años como Firma",
+      "+35 de Experiencia",
       "Alianza Nacional en +72 Ciudades",
       "Laboral · Corporativo · Migratorio · Litigio",
     ],
@@ -218,6 +220,7 @@ const heroContent: Record<LanguageCode, HeroContent> = {
     tagline: "ARBEITSRECHTSKANZLEI IN NUEVO LEÓN",
     headline: "SANTOS & SAUCEDO",
     subheadlines: [
+      "15 Jahre als Kanzlei",
       "Über 35 Jahre Arbeitsrechtsberatung",
       "Landesweite Allianz in +72 Städten",
       "Arbeitsrecht · Gesellschaftsrecht · Migration · Prozessführung",
@@ -234,6 +237,7 @@ const heroContent: Record<LanguageCode, HeroContent> = {
     tagline: "新莱昂州劳动法律师事务所",
     headline: "SANTOS & SAUCEDO",
     subheadlines: [
+      "成立 15 年",
       "35 年以上劳动法律咨询经验",
       "全国联盟覆盖 72 多个城市",
       "劳动法 · 公司法 · 移民 · 诉讼",
@@ -250,6 +254,7 @@ const heroContent: Record<LanguageCode, HeroContent> = {
     tagline: "누에보레온 노동법 로펌",
     headline: "SANTOS & SAUCEDO",
     subheadlines: [
+      "설립 15년",
       "35년 이상의 노동법 자문 경험",
       "72개 이상 도시의 전국 얼라이언스",
       "노동법 · 회사법 · 이민법 · 소송",
@@ -266,6 +271,7 @@ const heroContent: Record<LanguageCode, HeroContent> = {
     tagline: "ヌエボ・レオン州の労働法律事務所",
     headline: "SANTOS & SAUCEDO",
     subheadlines: [
+      "設立15年",
       "35年以上の労働法アドバイザリー",
       "72都市以上に広がる全国アライアンス",
       "労働法 · 会社法 · 移民法 · 訴訟",
@@ -282,6 +288,7 @@ const heroContent: Record<LanguageCode, HeroContent> = {
     tagline: "شركة محاماة متخصصة في قانون العمل في نويفو ليون",
     headline: "SANTOS & SAUCEDO",
     subheadlines: [
+      "15 عامًا كشركة",
       "أكثر من 35 عامًا من الاستشارات في قانون العمل",
       "تحالف وطني في أكثر من 72 مدينة",
       "العمل · الشركات · الهجرة · التقاضي",
@@ -298,6 +305,7 @@ const heroContent: Record<LanguageCode, HeroContent> = {
     tagline: "ЮРИДИЧЕСКАЯ ФИРМА ПО ТРУДОВОМУ ПРАВУ В НУЭВО-ЛЕОНЕ",
     headline: "SANTOS & SAUCEDO",
     subheadlines: [
+      "15 лет как фирма",
       "Более 35 лет консультаций по трудовому праву",
       "Национальный альянс более чем в 72 городах",
       "Трудовое право · Корпоративное право · Миграция · Судебные споры",
@@ -314,6 +322,7 @@ const heroContent: Record<LanguageCode, HeroContent> = {
     tagline: "CABINET DE DROIT DU TRAVAIL À NUEVO LEÓN",
     headline: "SANTOS & SAUCEDO",
     subheadlines: [
+      "15 ans en tant que cabinet",
       "Plus de 35 ans de conseil en droit du travail",
       "Alliance nationale dans plus de 72 villes",
       "Droit du travail · Droit des sociétés · Immigration · Contentieux",
@@ -330,6 +339,7 @@ const heroContent: Record<LanguageCode, HeroContent> = {
     tagline: "STUDIO LEGALE DI DIRITTO DEL LAVORO A NUEVO LEÓN",
     headline: "SANTOS & SAUCEDO",
     subheadlines: [
+      "15 anni come studio",
       "Oltre 35 anni di consulenza in diritto del lavoro",
       "Alleanza nazionale in oltre 72 città",
       "Diritto del lavoro · Diritto societario · Immigrazione · Contenzioso",
