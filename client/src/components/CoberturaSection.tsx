@@ -79,74 +79,70 @@ export default function CoberturaSection() {
         aria-hidden="true"
         style={{ backgroundImage: `url(${bgSNavy})`, backgroundSize: "cover", backgroundPosition: "center" }}
       />
+
+      {/* Mexico map — large background element, Nuevo León highlighted in lime, bleeds off the right edge */}
+      <img
+        src={mapaMexico}
+        alt=""
+        aria-hidden="true"
+        className="hidden md:block absolute top-1/2 -translate-y-1/2 -right-[8%] w-[65%] lg:w-[58%] h-auto opacity-90 pointer-events-none"
+        data-testid="img-cobertura-map"
+      />
+      <div
+        className="hidden md:block absolute inset-y-0 right-0 w-[45%] pointer-events-none"
+        aria-hidden="true"
+        style={{ background: "linear-gradient(90deg, #1E1C92 0%, rgba(30,28,146,0) 35%)" }}
+      />
+
       <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-8 h-px bg-brand shrink-0" />
-              <span className="text-brand text-[11px] font-bold tracking-[0.25em] uppercase">{t.eyebrow}</span>
+        <motion.div
+          initial={{ opacity: 0, x: -24 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="max-w-xl"
+        >
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-8 h-px bg-brand shrink-0" />
+            <span className="text-brand text-[11px] font-bold tracking-[0.25em] uppercase">{t.eyebrow}</span>
+          </div>
+          <h2 className="font-heading font-medium text-3xl md:text-4xl lg:text-5xl leading-tight mb-6 text-white" data-testid="text-cobertura-title">
+            {t.title}
+          </h2>
+          <p className="text-white/80 leading-relaxed">{t.text}</p>
+          <div className="mt-8 flex flex-col gap-3">
+            <div className="flex items-center gap-3 text-white/85">
+              <MapPin className="w-5 h-5 text-brand shrink-0" aria-hidden="true" />
+              <span className="text-sm">{t.point1}</span>
             </div>
-            <h2 className="font-heading font-medium text-3xl md:text-4xl lg:text-5xl leading-tight mb-6 text-white" data-testid="text-cobertura-title">
-              {t.title}
-            </h2>
-            <p className="text-white/80 leading-relaxed max-w-xl">{t.text}</p>
-            <div className="mt-8 flex flex-col gap-3">
-              <div className="flex items-center gap-3 text-white/85">
-                <MapPin className="w-5 h-5 text-brand shrink-0" aria-hidden="true" />
-                <span className="text-sm">{t.point1}</span>
-              </div>
-              <div className="flex items-center gap-3 text-white/85">
-                <Handshake className="w-5 h-5 text-brand shrink-0" aria-hidden="true" />
-                <span className="text-sm">{t.point2}</span>
-              </div>
+            <div className="flex items-center gap-3 text-white/85">
+              <Handshake className="w-5 h-5 text-brand shrink-0" aria-hidden="true" />
+              <span className="text-sm">{t.point2}</span>
             </div>
-          </motion.div>
+          </div>
+          <div className="mt-6 flex items-center gap-2 text-white/60">
+            <span className="w-2 h-2 rounded-full bg-brand shrink-0" aria-hidden="true" />
+            <span className="text-[11px] tracking-[0.14em] uppercase">{t.mapCaption}</span>
+          </div>
+        </motion.div>
 
-          {/* Mexico map (Nuevo León highlighted in lime) — no card, just floats on the section with a soft shadow */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full flex justify-center lg:justify-end"
-          >
-            <div className="w-full max-w-xl">
-              <img
-                src={mapaMexico}
-                alt={t.mapCaption}
-                className="w-full h-auto"
-                style={{ filter: "drop-shadow(0 25px 45px rgba(0,0,0,0.45)) drop-shadow(0 0 40px rgba(165,224,41,0.12))" }}
-                data-testid="img-cobertura-map"
-              />
-              <div className="mt-2 flex items-center justify-center gap-2 text-white/70">
-                <span className="w-2.5 h-2.5 rounded-full bg-brand shrink-0" aria-hidden="true" />
-                <span className="text-[11px] tracking-[0.14em] uppercase">{t.mapCaption}</span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Highlights strip */}
+        {/* Highlights strip — aligned with the text column above */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-16 lg:mt-20 pt-10 border-t border-white/15"
+          className="mt-14 lg:mt-16 pt-8 border-t border-white/15 max-w-xl"
         >
-          <div className="grid grid-cols-2 max-w-lg mx-auto">
-            <div className="text-center px-4">
+          <div className="flex items-center gap-8 sm:gap-12">
+            <div>
               <div className="font-heading font-bold text-brand leading-none text-4xl md:text-5xl">{t.stat}</div>
               <div className="mt-3 text-[11px] md:text-xs uppercase tracking-[0.14em] text-white/70 leading-relaxed">
                 {t.statLabel}
               </div>
             </div>
-            <div className="text-center px-4 border-l border-white/15">
+            <div className="w-px self-stretch bg-white/15" aria-hidden="true" />
+            <div>
               <div className="font-heading font-bold text-brand leading-none text-4xl md:text-5xl">{t.stat2}</div>
               <div className="mt-3 text-[11px] md:text-xs uppercase tracking-[0.14em] text-white/70 leading-relaxed">
                 {t.stat2Label}
