@@ -71,7 +71,7 @@ export const teamMembersData = [
   {
     name: "Mario Saucedo Montemayor",
     slug: "mario-saucedo-montemayor",
-    imageUrl: "/team_photos/mario-saucedo-montemayor.jpg",
+    imageUrl: "/team_photos/mario-saucedo-montemayor.png",
     title: "Managing Partner",
     titleEs: "Socio Director",
     role: "Labor Law",
@@ -86,7 +86,7 @@ export const teamMembersData = [
   {
     name: "Enrique Santos Gúzman",
     slug: "enrique-santos-guzman",
-    imageUrl: "/team_photos/enrique-santos-guzman.jpg",
+    imageUrl: "/team_photos/enrique-santos-guzman.png",
     title: "Managing Partner",
     titleEs: "Socio Director",
     role: "Labor Law",
@@ -101,7 +101,7 @@ export const teamMembersData = [
   {
     name: "Enrique Santos Arce",
     slug: "enrique-santos-arce",
-    imageUrl: "/team_photos/enrique-santos-arce.jpg",
+    imageUrl: "/team_photos/enrique-santos-arce.png",
     title: "Founding Partner",
     titleEs: "Socio Fundador",
     role: "Labor Law",
