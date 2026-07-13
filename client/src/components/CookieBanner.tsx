@@ -455,7 +455,7 @@ export default function CookieBanner({ language }: CookieBannerProps) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-6 border-b border-white/10">
-              <h2 className="text-xl font-semibold" data-testid="text-preferences-title">
+              <h2 className="text-xl font-semibold text-white" data-testid="text-preferences-title">
                 {t.preferencesTitle}
               </h2>
               <button

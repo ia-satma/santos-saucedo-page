@@ -137,7 +137,7 @@ function StaticAdminUnavailable() {
         <p className="text-xs uppercase tracking-[0.24em] text-white/60 mb-5">
           Admin requiere backend
         </p>
-        <h1 className="font-serif text-4xl md:text-5xl leading-tight mb-6">
+        <h1 className="font-serif text-4xl md:text-5xl leading-tight mb-6 text-white">
           El CMS no está disponible en GitHub Pages.
         </h1>
         <p className="text-white/70 leading-relaxed mb-8">

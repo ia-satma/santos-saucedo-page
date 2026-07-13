@@ -77,7 +77,7 @@ export default function CoberturaSection() {
             <div className="w-8 h-px bg-brand shrink-0" />
             <span className="text-brand text-[11px] font-bold tracking-[0.25em] uppercase">{t.eyebrow}</span>
           </div>
-          <h2 className="font-heading font-medium text-3xl md:text-4xl lg:text-5xl leading-tight mb-6" data-testid="text-cobertura-title">
+          <h2 className="font-heading font-medium text-3xl md:text-4xl lg:text-5xl leading-tight mb-6 text-white" data-testid="text-cobertura-title">
             {t.title}
           </h2>
           <p className="text-white/80 leading-relaxed max-w-xl">{t.text}</p>
