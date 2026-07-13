@@ -1,7 +1,7 @@
 # Handoff completo — Santos & Saucedo (sitio web)
 
 > Documento de contexto self-contained. Con esto una nueva sesión/dev tiene el panorama completo del
-> proyecto y de lo trabajado hasta **2026-07-10**. Último commit: `54cc048` (rebrand + modo oscuro).
+> proyecto y de lo trabajado hasta **2026-07-13**. Último commit: `ff7c7eb` (pivote 2026 + azul PDF).
 
 ---
 
@@ -56,7 +56,7 @@ es paleta S&S anterior (V2), reemplazada.
 
 | Rol | HEX | Token |
 |-----|-----|-------|
-| Azul Noche / **primario** | `#12103E` | `--primary` (`243 59% 15%`) |
+| Azul Noche / **primario** (royal, del PDF 2026) | `#1E1C92` | `--primary` (`241 64% 27%`) |
 | Ramp navy (gradientes hero/footer) | `#0A0826` / `#100E30` | hex fijo |
 | Azul suave (texto/iconos sobre navy) | `#D9D8F7` | hex fijo |
 | **Verde Lima (acento)** | **`#A5E029`** | `--brand` (`79 75% 52%`) |
@@ -109,7 +109,7 @@ marca van a **100% opacidad** (sin `/40`, `/90`). El texto muted en oscuro tambi
 **Rellenos en oscuro (ojo — `bg-primary` = VERDE en `.dark`):** por eso, todo relleno navy pequeño
 (círculos de ícono, badges, chips) usa **`bg-primary` + `text-primary-foreground`** → navy+blanco en
 claro, **verde+navy en oscuro** (legible). Los rellenos navy grandes que deben seguir navy en oscuro
-(menú móvil full-screen, badge de socio) van en **hex fijo `bg-[#12103E]`** (con `text-white`). Nunca
+(menú móvil full-screen, badge de socio) van en **hex fijo `bg-[#1E1C92]`** (con `text-white`). Nunca
 dejes `bg-primary` con `text-white` (en oscuro sería blanco sobre verde). **Logo del header:** versión
 **blanca** cuando el header está oscuro o transparente; la navy solo en header claro sólido (si no, se
 pierde) — se resuelve con variantes `dark:` en dos `<img>`.
@@ -162,41 +162,64 @@ navy en botón lima) sí.
 9. **Refactor de modo oscuro** (`d9c96c3`) — tokenizados ≈150 colores hardcodeados
    (`text-[#202058]`→`text-primary`, tintas→`text-foreground`, grises→`text-muted-foreground`,
    borders/rings→tokens); arreglado el hover del panel admin-fallback. Dark mode legible en todo el sitio.
-10. **Rebrand + tipografía** (`54cc048`) — **Azul Noche `#12103E` + Verde Lima `#A5E029`** (nueva marca,
-    reemplaza `#202058`/`#B2EB3E`); títulos **Lora**, cuerpo `#555`, eyebrows bold; variante `brand` del
-    Button (CTA lima/navy/4px); radios editoriales (tarjetas 8px, botones 4px); limpieza de bordes-caja.
-    Todo por tokens → modo oscuro intacto. (Nota: el repo tenía finales de línea mezclados; algunos
-    archivos se normalizaron a LF en ese commit — solo las líneas de color/radio son cambios reales.)
+10. **Rebrand + tipografía** (`54cc048`) — Azul Noche + Verde Lima V1, Lora, radios editoriales.
+    (Superseded por el pivote 2026-07-13 abajo — el azul cambió a "royal" del PDF.)
+
+**Sesión 2026-07-13 — Pivote al modelo de la Presentación de Servicios 2026 (cliente entregó el PDF
+oficial, 14 págs, exportado a `../PDF 2026 - IMAGES/`):**
+
+11. **Fixes de modo oscuro** (`7e17edd`…`212d33f`) — texto "hueso" cálido → blanco neutro; ~30 reglas/
+    bullets/íconos hardcodeados en navy → verde (no cambiaban en oscuro); rellenos `bg-primary` (verde en
+    oscuro) con texto blanco corregidos a `text-primary-foreground`; menú móvil y badge de socio fijados
+    a navy (`#12103E`→ahora royal) para no volverse verdes; logo del header con variante blanca en
+    oscuro/transparente; **fondo base en oscuro = navy del footer** (`243 52% 11%`), toda la escala
+    armonizada a un solo tono; fix de una sección con fondo claro hardcodeado (texto invisible en oscuro).
+12. **Pivote de contenido** (`8d68a48`) — el sitio era "solo laboral/6 áreas"; la presentación oficial es
+    **multi-área con raíz laboral**. `server/seed.ts` `practiceGroupsData` → **4 áreas** (Laboral y
+    Seguridad Social · Corporativo y Contractual · Migratorio · Litigio Contencioso) con servicios
+    exactos del PDF; posicionamiento → "administración del capital humano y defensa legal"; años →
+    "15 como firma · +35 de experiencia"; nav "Áreas Laborales"→"Áreas de Práctica".
+13. **Diseño → azul real del PDF** (`f918e04`) — `--primary` de `#12103E` (casi negro) a **`#1E1C92`**
+    (índigo royal, como la presentación); hex-swap de bandas/aliases. Híbrido: se conserva **Lora** y el
+    verde. Luego (`7bba875`) se reemplazaron los intentos de gráficos CSS por los **vectores reales del
+    PDF** que el cliente subió (`attached_assets/pdf2026/`: `bg-s-navy.webp` isotipo "S" en las bandas
+    azules vía `mix-blend-soft-light`; `bg-waves-gray.webp` líneas onduladas en la sección de Áreas vía
+    `mix-blend-multiply`, solo modo claro). *Nota: un primer intento con SVG dibujado a mano (`1525dcd`)
+    fue revertido (`a834ecf`) por feedback del cliente — usar SIEMPRE los assets reales, no recrearlos.*
+14. **Sección nueva "Cobertura Nacional"** (`3fbda04`, componente `CoberturaSection.tsx`) — alianza +
+    "+72 ciudades", banda azul con acentos verdes, en el home tras las Áreas.
+15. **Áreas → 4 tarjetas** (`bc0e3db`) — reemplazado el listado numerado por 4 tarjetas (foto + ícono +
+    etiqueta navy), estilo pág. 5 del PDF. Nuevo ícono `building-2` agregado a `lib/icons.ts`.
+16. **SEO/JsonLd actualizado** (`ff7c7eb`) — `JsonLdSchema` (slogan/knowsAbout/OfferCatalog → 4 áreas) y
+    `SEOHead` (¡ojo! hay un bloque `safeSeo` que tiene **prioridad** sobre `seoConfig` para
+    home/about/practiceGroups — hay que editar AMBOS o el título/meta real no cambia).
 
 ## 9. Estado actual y commits
 
-Todo pusheado a `main`. Deploy OK (Actions success). Último: `54cc048`.
+Todo pusheado a `main`. Deploy OK (Actions success). Último: `ff7c7eb`.
 
-```
-54cc048 Rebrand: Lora serif + Azul Noche/Verde Lima palette, editorial radii, declutter
-d9c96c3 Refactor dark mode: tokenize hardcoded text/border/ring colors sitewide
-f614fce Add full project handoff/context doc (2026-07-10)
-4a7e192 Propagate soft card style to all internal pages
-25303ce Redesign UI: kill the box effect, add depth, modernize type
-94169f6 Swap hero to branded Monterrey image, lighten overlays so green S shows
-f396481 Optimize performance: self-host hero as WebP, drop dead images, lazy-load
-244f18d Add project context and 360 research docs
-83befe6 Refine icon direction: keep lucide, unify stroke weight to 1.75
-4d682cb Improve legibility: bump undersized text on internal pages
-1cff25a Tint the oversized "6" in Labor Areas with the lime-green accent
-c63b0a0 Amplify lime-green brand accent across more areas
-f3c058c Purge Von Wobeser heritage, add V2 logos, add lime-green brand accent
-```
+Ver `git log --oneline -20` para el detalle completo; hitos clave arriba en §8 (puntos 9–16).
 
 ## 10. Pendientes
 
-**✅ #1 — Refactor de modo oscuro — HECHO** (`d9c96c3`). Superficies y textos convertidos a tokens de
-tema en todo el sitio; el dark mode se ve premium y consistente (verificado en el CSS desplegado).
+**✅ Modo oscuro, rebrand V1, pivote a 4 áreas, azul del PDF, Cobertura Nacional, tarjetas de Áreas,
+SEO/JsonLd — HECHO** (detalle §8).
 
-**✅ Rebrand + tipografía — HECHO** (`54cc048`): Azul Noche/Verde Lima, Lora, cuerpo `#555`, radios
-editoriales, limpieza de cajas. Detalle en §4 y §5.
+**🔴 Bloqueado esperando al cliente (2026-07-13):**
+- **Fotos de socios/asociados**: el PDF trajo fotos individuales en
+  `../PDF 2026 - IMAGES/socios- asociados/` — 4 socios fundadores (recorte circular, fondo pintura
+  abstracta) + **37 fotos de asociados SIN nombre** (ni el archivo ni el PDF los traen). El sitio ya
+  tiene 19 asociados con nombre/bio escritos → **no calzan 1 a 1**. Cliente confirmó: va a pasar la
+  **lista nombre→archivo**. NO asignar por orden de archivo sin esa lista (riesgo de atribución
+  incorrecta en un sitio de abogados). Fotos de fundadores: cliente las va a re-enviar en **formato
+  cuadrado** (las circulares no calzan con las tarjetas `object-cover` del sitio) — no usar las
+  circulares mientras tanto.
+- **Logos de clientes** (sección "Clientes" del PDF: Globales/Nacionales/Asia) — pendiente de que el
+  cliente pase los logos individuales (SVG/PNG transparente).
+- **Mapa de México** en Cobertura Nacional — la sección ya existe (texto + stat), falta el visual del
+  mapa con Nuevo León resaltado (pág. 10 del PDF).
 
-**Contenido (dependen del cliente):** bios reales del equipo (educación, experiencia, idiomas,
+**Contenido (dependen del cliente, previos):** bios reales del equipo (educación, experiencia, idiomas,
 ortografía de nombres); iconos sociales que apuntan a `#`; señales de autoridad (publicaciones, casos
 anonimizados); SEO/GEO local.
 
