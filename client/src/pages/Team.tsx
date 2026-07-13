@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/select";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import NuestroEquipoSection from "@/components/NuestroEquipoSection";
 import SEOHead from "@/components/SEOHead";
+import { equipoPhotos } from "@/lib/equipoPhotos";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getTeamPhotoObjectPosition } from "@/lib/teamPhotoPosition";
 import type { TeamMember, PracticeGroup, IndustryGroup } from "@shared/schema";
@@ -442,9 +442,9 @@ export default function Team() {
   const totalVisible =
     (showPartners   ? groupedMembers.partners.length   : 0) +
     (showOfCounsel  ? groupedMembers.ofCounsel.length  : 0) +
-    (showAssociates ? groupedMembers.associates.length : 0);
+    (showAssociates ? equipoPhotos.length              : 0);
 
-  const associateDesktopColumns = getBalancedColumns(groupedMembers.associates.length, 10);
+  const equipoDesktopColumns = getBalancedColumns(equipoPhotos.length, 10);
 
   const hasActiveFilters = searchQuery || filterSeniority !== "all" || filterLetter !== "all" || filterPractice !== "all";
 
@@ -515,7 +515,7 @@ export default function Team() {
                   <SelectItem value="all">{t.all}</SelectItem>
                   <SelectItem value="partners">{t.partnersOnly}</SelectItem>
                   <SelectItem value="ofcounsel">{t.ofCounsel}</SelectItem>
-                  <SelectItem value="associates">{t.associates}</SelectItem>
+                  <SelectItem value="associates">{language === "es" ? "Nuestro Equipo" : "Our Team"}</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={filterLetter} onValueChange={setFilterLetter}>
@@ -711,56 +711,38 @@ export default function Team() {
               </section>
             )}
 
-            {/* ─── ASOCIADOS ───────────────────────────────────── */}
-            {showAssociates && groupedMembers.associates.length > 0 && (
+            {/* ─── NUESTRO EQUIPO (anonymous photo mosaic — no name mapping yet) ── */}
+            {showAssociates && equipoPhotos.length > 0 && (
               <section data-testid="section-associates">
                 <div className="px-6 lg:px-12 pt-10 pb-4">
                   <div className="w-10 h-px bg-brand mb-4" />
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
-                    {t.associates}
+                    {language === "es" ? "Nuestro Equipo" : "Our Team"}
                   </h2>
                 </div>
-                {/* Desktop: expanding panels — multiple rows of 9 */}
+                {/* Desktop: expanding panels — multiple rows */}
                 <div className="hidden lg:block">
-                  {chunkArray(groupedMembers.associates, associateDesktopColumns).map((row, rowIdx) => (
+                  {chunkArray(equipoPhotos, equipoDesktopColumns).map((row, rowIdx) => (
                     <div
                       key={rowIdx}
                       className="flex w-full h-[400px]"
                       onMouseLeave={() => setAssocPanels(prev => ({ ...prev, [rowIdx]: null }))}
                     >
-                      {row.map((member, colIdx) => {
-                        const idx = rowIdx * 9 + colIdx;
-                        const isActive = assocPanels[rowIdx] === `a-${member.id}`;
+                      {row.map((photo, colIdx) => {
+                        const panelKey = `p-${rowIdx}-${colIdx}`;
+                        const isActive = assocPanels[rowIdx] === panelKey;
                         return (
-                          <Link
-                            key={member.id}
-                            href={`/team/${member.slug}`}
-                            data-testid={`card-team-member-${member.slug}`}
-                            aria-label={member.name}
+                          <div
+                            key={panelKey}
+                            data-testid={`img-equipo-${rowIdx}-${colIdx}`}
                             className="relative overflow-hidden cursor-pointer block"
                             style={{ flex: isActive ? 4 : 1, transition: "flex 0.45s cubic-bezier(0.22, 1, 0.36, 1)", minWidth: 0 }}
-                            onMouseEnter={() => setAssocPanels(prev => ({ ...prev, [rowIdx]: `a-${member.id}` }))}
+                            onMouseEnter={() => setAssocPanels(prev => ({ ...prev, [rowIdx]: panelKey }))}
                           >
-                            <div className="absolute inset-0 bg-muted flex items-center justify-center">
-                              <span className="text-xl font-heading font-bold text-primary/40 select-none">{getInitials(member.name)}</span>
-                            </div>
-                            {getPhotoSrc(member) && (
-                              <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-top" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug), transform: isActive ? "scale(1.03)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
-                            )}
+                            <img src={photo} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-top" style={{ transform: isActive ? "scale(1.03)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} />
                             <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.74) 0%, rgba(18,16,62,0.36) 50%, rgba(18,16,62,0.10) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.82) 0%, rgba(18,16,62,0.38) 100%)", transition: "background 0.5s ease" }} />
                             <div className="absolute top-0 right-0 w-px h-full bg-[#1E1C92]/10" />
-                            <div className="absolute bottom-4 left-3 right-3" style={{ opacity: isActive ? 0 : 1, transition: "opacity 0.2s ease" }}>
-                              <p className="text-white/50 text-[8px] uppercase tracking-[0.1em] font-light truncate">{member.name}</p>
-                            </div>
-                            <div className="absolute bottom-4 left-3 right-3" style={{ opacity: isActive ? 1 : 0, transform: isActive ? "translateY(0)" : "translateY(6px)", transition: "opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s" }}>
-                              <p className="font-heading font-light text-sm uppercase tracking-[0.08em] leading-snug mb-0.5 text-white whitespace-nowrap overflow-hidden text-ellipsis">{member.name}</p>
-                              <p className="text-[9px] text-brand uppercase tracking-[0.08em] mb-2">{t.associates}</p>
-                              <div className="flex items-center gap-1.5 text-brand">
-                                <span className="text-[9px] uppercase tracking-[0.1em]">{t.viewProfile}</span>
-                                <ArrowRight className="w-3 h-3" />
-                              </div>
-                            </div>
-                          </Link>
+                          </div>
                         );
                       })}
                     </div>
@@ -768,20 +750,11 @@ export default function Team() {
                 </div>
                 {/* Mobile: 2-column portrait grid */}
                 <div className="lg:hidden grid grid-cols-2 gap-px">
-                  {groupedMembers.associates.map((member, idx) => (
-                    <Link key={member.id} href={`/team/${member.slug}`} className="relative overflow-hidden group block cursor-pointer" style={{ aspectRatio: "3/4" }} data-testid={`card-team-member-mob-${member.slug}`} aria-label={member.name}>
-                      <div className="absolute inset-0 bg-muted flex items-center justify-center">
-                        <span className="text-xl font-heading font-bold text-primary/40 select-none">{getInitials(member.name)}</span>
-                      </div>
-                      {getPhotoSrc(member) && (
-                        <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
-                      )}
+                  {equipoPhotos.map((photo, idx) => (
+                    <div key={idx} className="relative overflow-hidden group block cursor-pointer" style={{ aspectRatio: "3/4" }} data-testid={`img-equipo-mob-${idx}`}>
+                      <img src={photo} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" />
                       <div className="absolute inset-0 navy-photo-scrim-strong" />
-                      <div className="absolute bottom-0 left-0 right-0 px-2.5 pb-2.5">
-                        <p className="text-brand text-[7px] uppercase tracking-[0.08em] mb-0.5">{t.associates}</p>
-                        <p className="text-white text-[8px] uppercase tracking-[0.05em] leading-snug font-light line-clamp-2">{member.name}</p>
-                      </div>
-                    </Link>
+                    </div>
                   ))}
                 </div>
               </section>
@@ -789,8 +762,6 @@ export default function Team() {
           </>
         )}
       </main>
-
-      <NuestroEquipoSection />
 
       <Footer />
     </div>
