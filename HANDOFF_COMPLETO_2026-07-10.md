@@ -1,7 +1,8 @@
 # Handoff completo — Santos & Saucedo (sitio web)
 
 > Documento de contexto self-contained. Con esto una nueva sesión/dev tiene el panorama completo del
-> proyecto y de lo trabajado hasta **2026-07-13**. Último commit: `ff7c7eb` (pivote 2026 + azul PDF).
+> proyecto y de lo trabajado hasta **2026-07-13**. Último commit: `4047d88` (favicon SVG + rediseño
+> `/practice-groups`).
 
 ---
 
@@ -194,9 +195,54 @@ oficial, 14 págs, exportado a `../PDF 2026 - IMAGES/`):**
     `SEOHead` (¡ojo! hay un bloque `safeSeo` que tiene **prioridad** sobre `seoConfig` para
     home/about/practiceGroups — hay que editar AMBOS o el título/meta real no cambia).
 
+**Sesión 2026-07-13 (continuación) — pulido visual sitewide + rediseño de `/practice-groups`:**
+
+17. **Fix crop de fotos de fundadores** (`01cf205`) — en el panel expandido de `/team` la cara quedaba
+    muy abajo (crop `object-position` genérico). Overrides por slug (`50% 22%`) en
+    `client/src/lib/teamPhotoPosition.ts` para los 4 fundadores confirmados, sin tocar el default global.
+18. **Encabezados ilegibles (bug sistémico)** (`7f21160`) — la regla base `h1-h6 { color:
+    hsl(var(--foreground)) }` (`index.css`) le gana a un `text-white` heredado del contenedor en
+    cualquier heading sin color propio explícito. Auditado el sitio completo (agente Explore) y
+    corregidos los 3 casos confirmados: título "Cobertura Nacional" (`CoberturaSection.tsx`), título del
+    modal de preferencias de cookies (`CookieBanner.tsx`), y el `<h1>` del fallback
+    `StaticAdminUnavailable` en `App.tsx`. **Regla para el futuro:** todo `<h1>`-`<h6>` sobre fondo oscuro
+    necesita su propio `text-white` (o token), nunca depender solo de heredar del contenedor.
+19. **Fix "máscara que se mueve" en tarjetas de Áreas** (`332dbbe`) — el badge circular del ícono usaba
+    `backdrop-blur-sm`, que muestrea en vivo el contenido detrás; al hacer zoom la foto en hover
+    (`scale-105`), el blur se distorsionaba visiblemente. Quitado el `backdrop-blur-sm`, badge ahora
+    `bg-primary/40` sólido. **No confirmado visualmente por el cliente todavía** — si el glitch persiste,
+    revisar de nuevo con captura en mano.
+20. **Fondos reales de vectores en los 19 heroes internos** (`108a9ec`) — `.editorial-page-hero::before`
+    (compartida por todas las páginas internas vía `pt-36 pb-20 editorial-page-hero`) pasó de un patrón
+    CSS de puntos a los vectores reales subidos por el cliente a pCloud (`attached_assets/pdf2026/`):
+    modo claro = `bg-waves-gray.webp` (líneas onduladas, `mix-blend-multiply`); modo oscuro = `bg-s-navy.webp`
+    (isotipo "S" grande, `mix-blend-soft-light`). Ojo: existían DOS selectores `.dark
+    .editorial-page-hero::before` — el que manda es el que está más abajo en el archivo, no el que se
+    agrega primero.
+21. **Favicon — resuelto** (`ef57a00` revierte el intento roto, `4047d88` activa el bueno) — el favicon
+    seguía mostrando el logo pre-rebrand. Primer intento (recrear a mano el path del SVG viejo) salió
+    como un mosaico roto tipo tablero de ajedrez (el path original mezclaba el glifo "S" con un triángulo
+    de marca vía winding-rule, y rellenarlo plano con un color rompía el dibujo) — revertido. Segundo
+    intento, technique segura: el **PNG oficial** (`SantosSaucedo_Isotipo-Principal-07.png`, de
+    `Downloads/SANTOSSAUCEDO/LOGO/`, verificado 4501×4501 con alfa real) embebido en base64 dentro de un
+    `<svg>` con fondo navy `#1E1C92` (`client/public/favicon.svg`) — sin tracing manual de vectores, cero
+    riesgo de winding-rule. Cableado en `client/index.html` como `<link rel="icon" type="image/svg+xml">`
+    (antes del `.png`, que queda de *fallback*). **Pendiente menor:** `apple-touch-icon` (ícono al agregar
+    a pantalla de inicio en iOS) sigue apuntando al `favicon.png` viejo — no se pudo rasterizar una
+    versión navy+isotipo en PNG en esta sesión (sin herramientas de imagen locales; la ruta de Adobe MCP
+    fue bloqueada por el clasificador de seguridad al no estar relacionada con el resto de la tarea).
+    Retomar cuando haya forma de rasterizar, o pedir al cliente un PNG cuadrado ya compuesto.
+22. **Rediseño de `/practice-groups`** (`ec6e0f7`) — la página completa de listado (distinta del widget
+    del home) seguía con el diseño viejo: tarjetas `aspect-[4/5]` con numeral translúcido "01"-"04" en
+    grid de 3 columnas, que con solo 4 áreas dejaba una tarjeta huérfana sola en la segunda fila.
+    Rediseñada la tarjeta (`PracticeGroupCard`) al mismo lenguaje visual ya aprobado en el home: foto
+    (grayscale→color en hover) + badge de ícono circular + barra navy inferior con nombre/descripción/CTA
+    en verde lima. Grid cambiado a `sm:grid-cols-2` (2×2, `max-w-4xl`) para acomodar exactamente 4 tarjetas
+    sin huérfanas.
+
 ## 9. Estado actual y commits
 
-Todo pusheado a `main`. Deploy OK (Actions success). Último: `ff7c7eb`.
+Todo pusheado a `main`. Deploy OK (Actions success). Último: `4047d88`.
 
 Ver `git log --oneline -20` para el detalle completo; hitos clave arriba en §8 (puntos 9–16).
 
@@ -234,6 +280,12 @@ segura fue:
   `mario-saucedo-rodriguez`). Jaime Herrera de Herrera y David Martínez Saucedo (socios pero no
   fundadores, sin foto 2026 confirmada) **ya no se muestran** con nombre/foto en `/team` — mismo criterio
   que los asociados, hasta que el cliente confirme cuál de las 37 fotos es cada uno.
+
+**🟡 Menores de esta sesión (2026-07-13 continuación):**
+- `apple-touch-icon` sigue en el PNG viejo (ver punto 21 de §8) — falta rasterizar el isotipo oficial
+  sobre navy en PNG cuadrado.
+- Fix del "mask que se mueve" en tarjetas de Áreas (punto 19 de §8) — aplicado pero sin confirmación
+  visual del cliente todavía.
 
 **🔴 Sigue bloqueado esperando al cliente:**
 - **Lista nombre→archivo** para las 37 fotos de "Nuestro Equipo" (`socios-asociados-19..56.jpg` en
