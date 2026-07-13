@@ -114,6 +114,19 @@ export const teamMembersData = [
     order: 3
   },
   {
+    name: "Mario Saucedo Rodríguez",
+    slug: "mario-saucedo-rodriguez",
+    imageUrl: "/team_photos/mario-saucedo-rodriguez.png",
+    title: "Founding Partner (In Memoriam)",
+    titleEs: "Socio Fundador (In Memoriam)",
+    role: "Labor Law",
+    roleEs: "Derecho Laboral",
+    bio: "Mario Saucedo Rodríguez was a founding partner of Santos & Saucedo Abogados, helping establish the firm's labor-law practice.",
+    bioEs: "Mario Saucedo Rodríguez fue socio fundador de Santos & Saucedo Abogados, y contribuyó a establecer la práctica laboral de la firma.",
+    isPartner: true,
+    order: 4
+  },
+  {
     name: "Jaime Herrera de Herrera",
     slug: "jaime-herrera-de-herrera",
     imageUrl: "/team_photos/jaime-herrera-de-herrera.jpg",
@@ -126,7 +139,7 @@ export const teamMembersData = [
     email: "info@santossaucedo.com",
     phone: "+52 81 8335 2086",
     isPartner: true,
-    order: 4
+    order: 5
   },
   {
     name: "David Martínez Saucedo",
@@ -141,7 +154,7 @@ export const teamMembersData = [
     email: "info@santossaucedo.com",
     phone: "+52 81 8335 2086",
     isPartner: true,
-    order: 5
+    order: 6
   },
   {
     name: "Jorge A. Garza Martínez",
@@ -155,7 +168,7 @@ export const teamMembersData = [
     bioEs: "Jorge A. Garza Martínez es asociado senior de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 6
+    order: 7
   },
   {
     name: "Carlos A. Cerda Ramos",
@@ -169,7 +182,7 @@ export const teamMembersData = [
     bioEs: "Carlos A. Cerda Ramos es asociado senior de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 7
+    order: 8
   },
   {
     name: "Orlando Cantú Garza",
@@ -183,7 +196,7 @@ export const teamMembersData = [
     bioEs: "Orlando Cantú Garza es asociado senior de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 8
+    order: 9
   },
   {
     name: "Rubén A. Frías García",
@@ -197,7 +210,7 @@ export const teamMembersData = [
     bioEs: "Rubén A. Frías García es asociado de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 9
+    order: 10
   },
   {
     name: "María Elena Mata Martínez",
@@ -211,7 +224,7 @@ export const teamMembersData = [
     bioEs: "María Elena Mata Martínez es asociada de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 10
+    order: 11
   },
   {
     name: "Pedro A. Sanvicente Romero",
@@ -225,7 +238,7 @@ export const teamMembersData = [
     bioEs: "Pedro A. Sanvicente Romero es asociado de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 11
+    order: 12
   },
   {
     name: "Eduardo Castillo Cervantes",
@@ -239,7 +252,7 @@ export const teamMembersData = [
     bioEs: "Eduardo Castillo Cervantes es asociado de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 12
+    order: 13
   },
   {
     name: "José María Ureña Flores",
@@ -253,7 +266,7 @@ export const teamMembersData = [
     bioEs: "José María Ureña Flores es asociado de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 13
+    order: 14
   },
   {
     name: "Lillia Cardoza Díaz de León",
@@ -267,7 +280,7 @@ export const teamMembersData = [
     bioEs: "Lillia Cardoza Díaz de León es asociada de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 14
+    order: 15
   },
   {
     name: "Erick Estrada Márquez",
@@ -281,7 +294,7 @@ export const teamMembersData = [
     bioEs: "Erick Estrada Márquez es asociado de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 15
+    order: 16
   },
   {
     name: "Huán José Treviño Cavazos",
@@ -295,7 +308,7 @@ export const teamMembersData = [
     bioEs: "Huán José Treviño Cavazos es asociado de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 16
+    order: 17
   },
   {
     name: "Misden Castillo Chávez",
@@ -309,7 +322,7 @@ export const teamMembersData = [
     bioEs: "Misden Castillo Chávez es asociada de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 17
+    order: 18
   },
   {
     name: "Ancella Reynoso Pámanes",
@@ -323,7 +336,7 @@ export const teamMembersData = [
     bioEs: "Ancella Reynoso Pámanes es asociada de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 18
+    order: 19
   },
   {
     name: "Diana G. Lopez Rodríguez",
@@ -337,7 +350,7 @@ export const teamMembersData = [
     bioEs: "Diana G. Lopez Rodríguez es asociada de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 19
+    order: 20
   },
   {
     name: "Carlos F. Rodríguez Mirelles",
@@ -351,7 +364,7 @@ export const teamMembersData = [
     bioEs: "Carlos F. Rodríguez Mirelles es asociado junior de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 20
+    order: 21
   },
   {
     name: "Rubí Quintanilla Martínez",
@@ -365,7 +378,7 @@ export const teamMembersData = [
     bioEs: "Rubí Quintanilla Martínez es asociada junior de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 21
+    order: 22
   },
   {
     name: "Gabriela L. García Vásquez",
@@ -379,7 +392,7 @@ export const teamMembersData = [
     bioEs: "Gabriela L. García Vásquez es asociada junior de Santos & Saucedo Abogados.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 22
+    order: 23
   },
   {
     name: "Luis A Saucedo Rodríguez",
@@ -393,7 +406,7 @@ export const teamMembersData = [
     bioEs: "Luis A Saucedo Rodríguez forma parte del staff de Santos & Saucedo.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 23
+    order: 24
   },
   {
     name: "Jorge A. Melchor Ortíz",
@@ -407,7 +420,7 @@ export const teamMembersData = [
     bioEs: "Jorge A. Melchor Ortíz forma parte del staff de Santos & Saucedo.",
     email: "info@santossaucedo.com",
     isPartner: false,
-    order: 24
+    order: 25
   },
 ];
 
