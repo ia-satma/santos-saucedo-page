@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -171,7 +171,7 @@ function NewsPanel({ language, news }: { language: LanguageCode; news: News[] })
 type HeroContent = {
   tagline: string;
   headline: string;
-  subheadline: string;
+  subheadlines: string[];
   scroll: string;
   ctaContact: string;
   ctaConsult: string;
@@ -185,7 +185,11 @@ const heroContent: Record<LanguageCode, HeroContent> = {
   en: {
     tagline: "LAW FIRM FOR COMPANIES · NUEVO LEÓN",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "15 Years as a Firm · 35+ of Experience",
+    subheadlines: [
+      "15 Years as a Firm · 35+ of Experience",
+      "National Alliance Across +72 Cities",
+      "Labor · Corporate · Immigration · Litigation",
+    ],
     scroll: "scroll",
     ctaContact: "CONTACT US",
     ctaConsult: "SCHEDULE CONSULTATION",
@@ -197,7 +201,11 @@ const heroContent: Record<LanguageCode, HeroContent> = {
   es: {
     tagline: "FIRMA LEGAL PARA EMPRESAS · NUEVO LEÓN",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "15 Años como Firma · +35 de Experiencia",
+    subheadlines: [
+      "15 Años como Firma · +35 de Experiencia",
+      "Alianza Nacional en +72 Ciudades",
+      "Laboral · Corporativo · Migratorio · Litigio",
+    ],
     scroll: "scroll",
     ctaContact: "CONTÁCTENOS",
     ctaConsult: "AGENDAR CONSULTA",
@@ -209,7 +217,11 @@ const heroContent: Record<LanguageCode, HeroContent> = {
   de: {
     tagline: "ARBEITSRECHTSKANZLEI IN NUEVO LEÓN",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "Über 35 Jahre Arbeitsrechtsberatung",
+    subheadlines: [
+      "Über 35 Jahre Arbeitsrechtsberatung",
+      "Landesweite Allianz in +72 Städten",
+      "Arbeitsrecht · Gesellschaftsrecht · Migration · Prozessführung",
+    ],
     scroll: "scrollen",
     ctaContact: "KONTAKT",
     ctaConsult: "BERATUNG VEREINBAREN",
@@ -221,7 +233,11 @@ const heroContent: Record<LanguageCode, HeroContent> = {
   zh: {
     tagline: "新莱昂州劳动法律师事务所",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "35 年以上劳动法律咨询经验",
+    subheadlines: [
+      "35 年以上劳动法律咨询经验",
+      "全国联盟覆盖 72 多个城市",
+      "劳动法 · 公司法 · 移民 · 诉讼",
+    ],
     scroll: "滚动",
     ctaContact: "联系我们",
     ctaConsult: "预约咨询",
@@ -233,7 +249,11 @@ const heroContent: Record<LanguageCode, HeroContent> = {
   ko: {
     tagline: "누에보레온 노동법 로펌",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "35년 이상의 노동법 자문 경험",
+    subheadlines: [
+      "35년 이상의 노동법 자문 경험",
+      "72개 이상 도시의 전국 얼라이언스",
+      "노동법 · 회사법 · 이민법 · 소송",
+    ],
     scroll: "스크롤",
     ctaContact: "문의하기",
     ctaConsult: "상담 예약",
@@ -245,7 +265,11 @@ const heroContent: Record<LanguageCode, HeroContent> = {
   ja: {
     tagline: "ヌエボ・レオン州の労働法律事務所",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "35年以上の労働法アドバイザリー",
+    subheadlines: [
+      "35年以上の労働法アドバイザリー",
+      "72都市以上に広がる全国アライアンス",
+      "労働法 · 会社法 · 移民法 · 訴訟",
+    ],
     scroll: "スクロール",
     ctaContact: "お問い合わせ",
     ctaConsult: "相談を予約する",
@@ -257,7 +281,11 @@ const heroContent: Record<LanguageCode, HeroContent> = {
   ar: {
     tagline: "شركة محاماة متخصصة في قانون العمل في نويفو ليون",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "أكثر من 35 عامًا من الاستشارات في قانون العمل",
+    subheadlines: [
+      "أكثر من 35 عامًا من الاستشارات في قانون العمل",
+      "تحالف وطني في أكثر من 72 مدينة",
+      "العمل · الشركات · الهجرة · التقاضي",
+    ],
     scroll: "تمرير",
     ctaContact: "اتصل بنا",
     ctaConsult: "حجز استشارة",
@@ -269,7 +297,11 @@ const heroContent: Record<LanguageCode, HeroContent> = {
   ru: {
     tagline: "ЮРИДИЧЕСКАЯ ФИРМА ПО ТРУДОВОМУ ПРАВУ В НУЭВО-ЛЕОНЕ",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "Более 35 лет консультаций по трудовому праву",
+    subheadlines: [
+      "Более 35 лет консультаций по трудовому праву",
+      "Национальный альянс более чем в 72 городах",
+      "Трудовое право · Корпоративное право · Миграция · Судебные споры",
+    ],
     scroll: "прокрутка",
     ctaContact: "СВЯЗАТЬСЯ С НАМИ",
     ctaConsult: "ЗАПИСАТЬСЯ НА КОНСУЛЬТАЦИЮ",
@@ -281,7 +313,11 @@ const heroContent: Record<LanguageCode, HeroContent> = {
   fr: {
     tagline: "CABINET DE DROIT DU TRAVAIL À NUEVO LEÓN",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "Plus de 35 ans de conseil en droit du travail",
+    subheadlines: [
+      "Plus de 35 ans de conseil en droit du travail",
+      "Alliance nationale dans plus de 72 villes",
+      "Droit du travail · Droit des sociétés · Immigration · Contentieux",
+    ],
     scroll: "défiler",
     ctaContact: "CONTACTEZ-NOUS",
     ctaConsult: "PRENDRE RENDEZ-VOUS",
@@ -293,7 +329,11 @@ const heroContent: Record<LanguageCode, HeroContent> = {
   it: {
     tagline: "STUDIO LEGALE DI DIRITTO DEL LAVORO A NUEVO LEÓN",
     headline: "SANTOS & SAUCEDO",
-    subheadline: "Oltre 35 anni di consulenza in diritto del lavoro",
+    subheadlines: [
+      "Oltre 35 anni di consulenza in diritto del lavoro",
+      "Alleanza nazionale in oltre 72 città",
+      "Diritto del lavoro · Diritto societario · Immigrazione · Contenzioso",
+    ],
     scroll: "scorri",
     ctaContact: "CONTATTACI",
     ctaConsult: "PRENOTA UNA CONSULENZA",
@@ -319,6 +359,7 @@ const scrollAriaLabels: Record<LanguageCode, string> = {
 
 export default function HeroSection({ language }: HeroSectionProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [phraseIndex, setPhraseIndex] = useState(0);
   const isMobile = useIsMobile();
 
   const { data: siteContent } = useQuery<SiteContent>({
@@ -342,10 +383,26 @@ export default function HeroSection({ language }: HeroSectionProps) {
 
   const t = heroContent[language] || heroContent.en;
   const scrollAriaLabel = scrollAriaLabels[language] || scrollAriaLabels.en;
-  
-  const subheadline = (language === "en" && siteContent?.heroSubtitle) 
-    ? siteContent.heroSubtitle 
-    : t.subheadline;
+
+  const subheadlines = (language === "en" && siteContent?.heroSubtitle)
+    ? [siteContent.heroSubtitle]
+    : t.subheadlines;
+
+  useEffect(() => {
+    setPhraseIndex(0);
+  }, [language]);
+
+  useEffect(() => {
+    if (subheadlines.length < 2) return;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+    const interval = setInterval(() => {
+      setPhraseIndex((i) => (i + 1) % subheadlines.length);
+    }, 4500);
+    return () => clearInterval(interval);
+  }, [subheadlines.length]);
+
+  const subheadline = subheadlines[phraseIndex % subheadlines.length];
 
   return (
     <section
@@ -404,12 +461,21 @@ export default function HeroSection({ language }: HeroSectionProps) {
           className="flex flex-col items-center gap-3"
         >
           <div className="w-10 h-px bg-brand" aria-hidden="true" />
-          <p
-            className="font-sans max-w-[680px] text-white/85 text-xs sm:text-sm font-semibold tracking-[0.25em] uppercase leading-relaxed"
-            data-testid="text-hero-subheadline"
-          >
-            {subheadline}
-          </p>
+          <div className="min-h-[2.5rem] sm:min-h-[1.75rem] flex items-center justify-center px-4">
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={phraseIndex}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="font-sans max-w-[680px] text-white/85 text-xs sm:text-sm font-semibold tracking-[0.25em] uppercase leading-relaxed"
+                data-testid="text-hero-subheadline"
+              >
+                {subheadline}
+              </motion.p>
+            </AnimatePresence>
+          </div>
         </motion.div>
       </div>
 
