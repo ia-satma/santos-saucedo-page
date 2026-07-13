@@ -397,15 +397,20 @@ export default function HeroSection({ language }: HeroSectionProps) {
           data-testid="text-hero-headline"
         />
 
-        <motion.p
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={isVisible ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.65 }}
-          className="font-sans inline-flex max-w-[680px] items-center justify-center border-y border-brand bg-white/[0.035] px-5 sm:px-7 py-3 text-white/90 text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase leading-relaxed backdrop-blur-[1px]"
-          data-testid="text-hero-subheadline"
+          className="flex flex-col items-center gap-3"
         >
-          {subheadline}
-        </motion.p>
+          <div className="w-10 h-px bg-brand" aria-hidden="true" />
+          <p
+            className="font-sans max-w-[680px] text-white/85 text-xs sm:text-sm font-semibold tracking-[0.25em] uppercase leading-relaxed"
+            data-testid="text-hero-subheadline"
+          >
+            {subheadline}
+          </p>
+        </motion.div>
       </div>
 
       <motion.button
