@@ -3,6 +3,8 @@ import { ArrowRight, Phone } from "lucide-react";
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
+import { getIcon } from "@/lib/icons";
+import { getPracticeImage } from "@/lib/practiceIndustryImages";
 import bgWaves from "@assets/pdf2026/bg-waves-gray.webp";
 import type { LanguageCode } from "@shared/schema";
 
@@ -19,13 +21,14 @@ interface PracticeArea {
   nameFr: string;
   nameIt: string;
   slug: string;
+  iconName: string;
 }
 
 const practiceAreas: PracticeArea[] = [
-  { id: 1, nameEn: "Labor & Social Security", nameEs: "Laboral y Seguridad Social", nameDe: "Labor & Social Security", nameZh: "Labor & Social Security", nameKo: "Labor & Social Security", nameJa: "Labor & Social Security", nameAr: "Labor & Social Security", nameRu: "Labor & Social Security", nameFr: "Labor & Social Security", nameIt: "Labor & Social Security", slug: "laboral-seguridad-social" },
-  { id: 2, nameEn: "Corporate & Contractual", nameEs: "Corporativo y Contractual", nameDe: "Corporate & Contractual", nameZh: "Corporate & Contractual", nameKo: "Corporate & Contractual", nameJa: "Corporate & Contractual", nameAr: "Corporate & Contractual", nameRu: "Corporate & Contractual", nameFr: "Corporate & Contractual", nameIt: "Corporate & Contractual", slug: "corporativo-contractual" },
-  { id: 3, nameEn: "Immigration", nameEs: "Migratorio", nameDe: "Immigration", nameZh: "Immigration", nameKo: "Immigration", nameJa: "Immigration", nameAr: "Immigration", nameRu: "Immigration", nameFr: "Immigration", nameIt: "Immigration", slug: "migratorio" },
-  { id: 4, nameEn: "Contentious Litigation", nameEs: "Litigio Contencioso", nameDe: "Contentious Litigation", nameZh: "Contentious Litigation", nameKo: "Contentious Litigation", nameJa: "Contentious Litigation", nameAr: "Contentious Litigation", nameRu: "Contentious Litigation", nameFr: "Contentious Litigation", nameIt: "Contentious Litigation", slug: "litigio-contencioso" },
+  { id: 1, nameEn: "Labor & Social Security", nameEs: "Laboral y Seguridad Social", nameDe: "Labor & Social Security", nameZh: "Labor & Social Security", nameKo: "Labor & Social Security", nameJa: "Labor & Social Security", nameAr: "Labor & Social Security", nameRu: "Labor & Social Security", nameFr: "Labor & Social Security", nameIt: "Labor & Social Security", slug: "laboral-seguridad-social", iconName: "shield-check" },
+  { id: 2, nameEn: "Corporate & Contractual", nameEs: "Corporativo y Contractual", nameDe: "Corporate & Contractual", nameZh: "Corporate & Contractual", nameKo: "Corporate & Contractual", nameJa: "Corporate & Contractual", nameAr: "Corporate & Contractual", nameRu: "Corporate & Contractual", nameFr: "Corporate & Contractual", nameIt: "Corporate & Contractual", slug: "corporativo-contractual", iconName: "building-2" },
+  { id: 3, nameEn: "Immigration", nameEs: "Migratorio", nameDe: "Immigration", nameZh: "Immigration", nameKo: "Immigration", nameJa: "Immigration", nameAr: "Immigration", nameRu: "Immigration", nameFr: "Immigration", nameIt: "Immigration", slug: "migratorio", iconName: "globe" },
+  { id: 4, nameEn: "Contentious Litigation", nameEs: "Litigio Contencioso", nameDe: "Contentious Litigation", nameZh: "Contentious Litigation", nameKo: "Contentious Litigation", nameJa: "Contentious Litigation", nameAr: "Contentious Litigation", nameRu: "Contentious Litigation", nameFr: "Contentious Litigation", nameIt: "Contentious Litigation", slug: "litigio-contencioso", iconName: "gavel" },
 ];
 
 interface PracticesContent {
@@ -229,39 +232,52 @@ export default function PracticesSection() {
             </div>
           </motion.div>
 
-          {/* Right list column — 2-column grid on desktop */}
+          {/* Right column — 4 area cards (photo + icon + label), 2x2 on desktop */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="lg:w-2/3 card-soft grid grid-cols-1 lg:grid-cols-2 gap-2 p-4 lg:p-6"
+            className="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5"
           >
-            {practiceAreas.map((area) => (
-              <motion.div key={area.id} variants={itemVariants}>
-                <Link
-                  href={`/practice-groups/${area.slug}`}
-                  className="group flex items-center gap-6 px-6 py-6 rounded-lg hover:bg-[#1E1C92]/[0.04] transition-all duration-200 h-full"
-                  data-testid={`link-practice-${area.id}`}
-                >
-                  <span
-                    className="font-serif text-xl font-semibold text-primary w-12 shrink-0 tabular-nums"
-                    data-testid={`text-practice-number-${area.id}`}
+            {practiceAreas.map((area) => {
+              const Icon = getIcon(area.iconName);
+              return (
+                <motion.div key={area.id} variants={itemVariants}>
+                  <Link
+                    href={`/practice-groups/${area.slug}`}
+                    className="group relative block overflow-hidden rounded-lg shadow-[var(--shadow-md)] hover:shadow-[var(--shadow-xl)] transition-shadow duration-300"
+                    data-testid={`link-practice-${area.id}`}
                   >
-                    {String(area.id).padStart(2, "0")}
-                  </span>
-                  <span
-                    className="flex-1 text-sm font-medium text-foreground group-hover:text-primary transition-colors duration-200 leading-snug"
-                    data-testid={`text-practice-name-${area.id}`}
-                  >
-                    {getPracticeAreaName(area, language)}
-                  </span>
-                  <ArrowRight
-                    className="w-4 h-4 text-primary shrink-0 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200"
-                  />
-                </Link>
-              </motion.div>
-            ))}
+                    <div className="relative aspect-[4/3]">
+                      <img
+                        src={getPracticeImage(area.slug)}
+                        alt=""
+                        aria-hidden="true"
+                        loading="lazy"
+                        decoding="async"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,17,110,0.15)_0%,rgba(18,17,110,0.55)_100%)]" aria-hidden="true" />
+                      <div className="absolute top-3 left-3 w-9 h-9 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center ring-1 ring-white/25">
+                        <Icon className="w-4 h-4 text-white" strokeWidth={1.75} aria-hidden="true" />
+                      </div>
+                    </div>
+                    <div className="bg-primary px-4 py-3 flex items-center justify-between gap-2">
+                      <span
+                        className="text-white text-xs sm:text-[13px] font-bold uppercase tracking-[0.06em] leading-snug"
+                        data-testid={`text-practice-name-${area.id}`}
+                      >
+                        {getPracticeAreaName(area, language)}
+                      </span>
+                      <ArrowRight
+                        className="w-4 h-4 text-brand shrink-0 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200"
+                      />
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
           </motion.div>
 
         </div>
