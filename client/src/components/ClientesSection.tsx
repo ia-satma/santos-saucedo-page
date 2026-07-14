@@ -1,24 +1,25 @@
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { clienteLogos } from "@/lib/clienteLogos";
+import { clienteLogos, clienteLogosAsia } from "@/lib/clienteLogos";
 import type { LanguageCode } from "@shared/schema";
 
 type ClientesContent = {
   eyebrow: string;
   title: string;
+  asiaLabel: string;
 };
 
 const content: Record<LanguageCode, ClientesContent> = {
-  es: { eyebrow: "CONFIANZA", title: "Clientes que Confían en Nosotros" },
-  en: { eyebrow: "TRUST", title: "Clients Who Trust Us" },
-  de: { eyebrow: "VERTRAUEN", title: "Kunden, die uns vertrauen" },
-  zh: { eyebrow: "信任", title: "信赖我们的客户" },
-  ko: { eyebrow: "신뢰", title: "우리를 신뢰하는 고객" },
-  ja: { eyebrow: "信頼", title: "私たちを信頼するクライアント" },
-  ar: { eyebrow: "الثقة", title: "عملاء يثقون بنا" },
-  ru: { eyebrow: "ДОВЕРИЕ", title: "Клиенты, которые нам доверяют" },
-  fr: { eyebrow: "CONFIANCE", title: "Des clients qui nous font confiance" },
-  it: { eyebrow: "FIDUCIA", title: "Clienti che si fidano di noi" },
+  es: { eyebrow: "CONFIANZA", title: "Clientes que Confían en Nosotros", asiaLabel: "Clientes en Asia" },
+  en: { eyebrow: "TRUST", title: "Clients Who Trust Us", asiaLabel: "Clients in Asia" },
+  de: { eyebrow: "VERTRAUEN", title: "Kunden, die uns vertrauen", asiaLabel: "Kunden in Asien" },
+  zh: { eyebrow: "信任", title: "信赖我们的客户", asiaLabel: "亚洲客户" },
+  ko: { eyebrow: "신뢰", title: "우리를 신뢰하는 고객", asiaLabel: "아시아 고객" },
+  ja: { eyebrow: "信頼", title: "私たちを信頼するクライアント", asiaLabel: "アジアのクライアント" },
+  ar: { eyebrow: "الثقة", title: "عملاء يثقون بنا", asiaLabel: "عملاء في آسيا" },
+  ru: { eyebrow: "ДОВЕРИЕ", title: "Клиенты, которые нам доверяют", asiaLabel: "Клиенты в Азии" },
+  fr: { eyebrow: "CONFIANCE", title: "Des clients qui nous font confiance", asiaLabel: "Clients en Asie" },
+  it: { eyebrow: "FIDUCIA", title: "Clienti che si fidano di noi", asiaLabel: "Clienti in Asia" },
 };
 
 function LogoTile({ logo }: { logo: (typeof clienteLogos)[number] }) {
@@ -99,6 +100,42 @@ export default function ClientesSection() {
           </div>
         </div>
       </motion.div>
+
+      {/* Asia clients — same section, grouped separately with their own label */}
+      {clienteLogosAsia.length > 0 && (
+        <>
+          <div className="max-w-7xl mx-auto px-6 lg:px-12">
+            <div className="flex items-center gap-4 mt-14 mb-6">
+              <div className="h-px flex-1 bg-black/[0.08]" />
+              <span
+                className="text-primary text-[11px] tracking-[0.24em] uppercase shrink-0"
+                data-testid="text-clientes-asia-label"
+              >
+                {t.asiaLabel}
+              </span>
+              <div className="h-px flex-1 bg-black/[0.08]" />
+            </div>
+          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            style={{
+              maskImage: "linear-gradient(90deg, transparent 0%, black 6%, black 94%, transparent 100%)",
+              WebkitMaskImage: "linear-gradient(90deg, transparent 0%, black 6%, black 94%, transparent 100%)",
+            }}
+          >
+            <div className="marquee-row overflow-hidden">
+              <div className="marquee-track">
+                {[...clienteLogosAsia, ...clienteLogosAsia].map((logo, i) => (
+                  <LogoTile key={`${logo.slug}-${i}`} logo={logo} />
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
     </section>
   );
 }
