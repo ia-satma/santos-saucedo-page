@@ -1,8 +1,8 @@
 # Handoff completo — Santos & Saucedo (sitio web)
 
 > Documento de contexto self-contained. Con esto una nueva sesión/dev tiene el panorama completo del
-> proyecto y de lo trabajado hasta **2026-07-13**. Último commit: `9c5e060` (logo del hero vuelve a
-> estático — la animación de entrada se probó y el cliente pidió revertirla).
+> proyecto y de lo trabajado hasta **2026-07-13**. Último commit: `3664b79` (sección de Clientes, 64
+> logos).
 
 ---
 
@@ -298,10 +298,42 @@ oficial, 14 págs, exportado a `../PDF 2026 - IMAGES/`):**
     0.97→1, sin split). Si se retoma en el futuro, la técnica de los 3 clips (0–39/39–49/49–100%) ya
     está validada visualmente y lista para reusar, pero el timing/easing habría que revisarlo — no se
     llegó a preguntar al cliente qué específicamente no le convenció.
+30. **Mapa de México en Cobertura Nacional** (`d731a45`…`758bd50`, 3 iteraciones con feedback directo
+    del cliente) — pendiente desde hace varias sesiones. El cliente subió el SVG real y sin fondo
+    (`PDF 2026 - IMAGES/SVG/mapamex.svg` → `attached_assets/pdf2026/mapa-mexico.svg`; 32 estados,
+    Nuevo León ya viene resaltado en lima con su propio filtro de sombra incluido en el SVG). Iteración
+    1: mapa en tarjeta blanca con `box-shadow` fuerte a la derecha del texto — el cliente lo rechazó
+    ("se ve muy mal la sombra... mejor ponlo como de fondo mucho más grande"). Iteración 2: mapa como
+    elemento de fondo grande (`position:absolute`, sin caja), con un `<div>` de degradado por separado
+    para desvanecerlo hacia el texto — **tenía un bug**: el `<div>` de degradado y el `<img>` del mapa
+    usaban límites en % distintos (el mapa empezaba a mostrarse en x:43%, el degradado en x:55%), dejando
+    12 puntos porcentuales de mapa a opacidad plena sin transición — se veía como una línea vertical
+    dura ("por qué se ve dividido a la mitad"). Iteración 3 (fix): el desvanecido se aplica con
+    `mask-image`/`-webkit-mask-image` **directo sobre el `<img>` del mapa**, no como overlay separado —
+    así el degradado siempre queda pegado al borde real de la imagen, sin posibilidad de desalineación.
+    **Lección para el futuro:** cuando se combinan dos elementos posicionados independientemente para
+    lograr un efecto de fundido, preferir `mask-image` en un solo elemento — evita esta clase entera de
+    bug de "límites que no coinciden".
+31. **Sección "Clientes" — 64 logos** (`3664b79`) — pendiente desde el pivote 2026-07-13. El cliente
+    subió `PDF 2026 - IMAGES/CLIENTES/` (129 archivos). Dos hallazgos antes de construir: (a) todos los
+    archivos `CLIENTES-ASIA-*.webp` son **duplicados byte-a-byte** de los `CLIENTES-*.webp` (mismo
+    md5) — no es un set distinto de clientes de Asia, se ignoraron por completo; (b) `CLIENTES-74.webp`
+    no es un logo individual sino la **diapositiva completa** del PDF ya armada en grid (32 logos) —
+    se excluyó también (quedaba redundante con los logos individuales). Quedaron **64 logos únicos**.
+    Un agente identificó el nombre de cada empresa leyendo el wordmark de cada imagen (FEMSA, KIA,
+    AT&T, Xignux, Nestlé, HSBC, Topgolf, etc. — lista completa en `client/src/lib/clienteLogos.ts`).
+    Archivos copiados y renombrados a slugs legibles en `attached_assets/pdf2026/clientes/*.webp`.
+    Nueva sección `ClientesSection.tsx` (fondo claro `.section-mist`, para no sumar una 4ª franja navy
+    — el home se queda en los 3 momentos navy ya establecidos: Hero → Cobertura+Experiencia → Footer),
+    con un **marquee de 2 filas en direcciones opuestas** (CSS `@keyframes marquee-left/-right` en
+    `index.css`, cada fila duplica su contenido para loop perfecto en `-50%`, se pausa en hover, se
+    desactiva con `prefers-reduced-motion`). Insertada en `Home.tsx` justo después de Cobertura Nacional.
+    **No confirmado visualmente por el cliente todavía** (el visor de artifacts tuvo timeout repetido
+    durante la verificación; se confió en el patrón CSS ya usado en otras tarjetas del sitio).
 
 ## 9. Estado actual y commits
 
-Todo pusheado a `main`. Deploy OK (Actions success). Último: `9c5e060`.
+Todo pusheado a `main`. Deploy OK (Actions success). Último: `3664b79`.
 
 Ver `git log --oneline -20` para el detalle completo; hitos clave arriba en §8 (puntos 9–16).
 
@@ -340,21 +372,20 @@ segura fue:
   fundadores, sin foto 2026 confirmada) **ya no se muestran** con nombre/foto en `/team` — mismo criterio
   que los asociados, hasta que el cliente confirme cuál de las 37 fotos es cada uno.
 
+**✅ Mapa de México y sección Clientes — HECHO** (detalle puntos 30–31 de §8). El mask-move de las
+tarjetas de Áreas quedó confirmado arreglado de raíz en el punto 26 de §8 (ya no es un pendiente).
+
 **🟡 Menores de esta sesión (2026-07-13 continuación):**
 - `apple-touch-icon` sigue en el PNG viejo (ver punto 21 de §8) — falta rasterizar el isotipo oficial
   sobre navy en PNG cuadrado.
-- Fix del "mask que se mueve" en tarjetas de Áreas (punto 19 de §8) — aplicado pero sin confirmación
-  visual del cliente todavía.
+- Sección Clientes (punto 31 de §8) — construida y desplegada, pero **sin confirmación visual del
+  cliente todavía** (el visor de preview tuvo timeout durante la verificación).
 
 **🔴 Sigue bloqueado esperando al cliente:**
 - **Lista nombre→archivo** para las 37 fotos de "Nuestro Equipo" (`socios-asociados-19..56.jpg` en
   `../PDF 2026 - IMAGES/socios- asociados/`) — sin ella no se puede poner nombre a ninguna foto (aplica
   también a Jaime Herrera y David Martínez). **NO asignar por orden de archivo sin esa lista** — ya se
   intentó y el clasificador de seguridad lo bloqueó por riesgo de atribución incorrecta.
-- **Logos de clientes** (sección "Clientes" del PDF: Globales/Nacionales/Asia) — pendiente de que el
-  cliente pase los logos individuales (SVG/PNG transparente).
-- **Mapa de México** en Cobertura Nacional — la sección ya existe (texto + stat), falta el visual del
-  mapa con Nuevo León resaltado (pág. 10 del PDF).
 
 **Contenido (dependen del cliente, previos):** bios reales del equipo (educación, experiencia, idiomas,
 ortografía de nombres); iconos sociales que apuntan a `#`; señales de autoridad (publicaciones, casos
