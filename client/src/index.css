@@ -1207,3 +1207,30 @@ html, body {
     rgba(18, 16, 62, 0.12) 100%
   );
 }
+
+/* Client-logo marquee — two rows scrolling in opposite directions, seamless loop
+   (each track's content is duplicated in the JSX so -50% is exactly one full lap). */
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes marquee-right {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-left 48s linear infinite;
+}
+.marquee-track-reverse {
+  animation-name: marquee-right;
+}
+.marquee-row:hover .marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}

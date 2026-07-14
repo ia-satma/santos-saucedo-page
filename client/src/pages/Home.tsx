@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import PracticesSection from "@/components/PracticesSection";
 import CoberturaSection from "@/components/CoberturaSection";
+import ClientesSection from "@/components/ClientesSection";
 import AboutUsSection from "@/components/AboutUsSection";
 import MapSection from "@/components/MapSection";
 import EventsSection from "@/components/EventsSection";
@@ -31,6 +32,9 @@ export default function Home() {
 
         {/* 4. National Coverage / Alliance (+72 cities, +35 years) */}
         <CoberturaSection />
+
+        {/* Clients logo wall */}
+        <ClientesSection />
 
         {/* Upcoming Events */}
         <EventsSection language={language} />
