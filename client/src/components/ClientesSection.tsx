@@ -86,14 +86,14 @@ export default function ClientesSection() {
         }}
       >
         <div className="marquee-row overflow-hidden">
-          <div className="marquee-track">
+          <div className="marquee-track marquee-track-slow">
             {[...rowA, ...rowA].map((logo, i) => (
               <LogoTile key={`${logo.slug}-${i}`} logo={logo} />
             ))}
           </div>
         </div>
         <div className="marquee-row overflow-hidden">
-          <div className="marquee-track marquee-track-reverse">
+          <div className="marquee-track marquee-track-reverse marquee-track-slow">
             {[...rowB, ...rowB].map((logo, i) => (
               <LogoTile key={`${logo.slug}-${i}`} logo={logo} />
             ))}
