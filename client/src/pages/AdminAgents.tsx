@@ -152,7 +152,9 @@ export default function AdminAgents() {
     queryKey: ["/api/agents/status"],
     queryFn: async () => {
       const res = await adminApiRequest("GET", "/api/agents/status");
-      return res.json();
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.error || "Failed to load agent status");
+      return body;
     },
     refetchInterval: 5000,
     enabled: isAuthenticated && !!token,
@@ -162,7 +164,9 @@ export default function AdminAgents() {
     queryKey: ["/api/agents/evolution/proposals"],
     queryFn: async () => {
       const res = await adminApiRequest("GET", "/api/agents/evolution/proposals");
-      return res.json();
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.error || "Failed to load evolution proposals");
+      return Array.isArray(body) ? body : [];
     },
     enabled: isAuthenticated && !!token,
   });
