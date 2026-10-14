@@ -35,11 +35,9 @@ async function getClient(): Promise<StorageClient | null> {
     try {
       const moduleName = "@replit/object-storage";
       const { Client } = await import(moduleName);
-      const client = new Client() as StorageClient;
       const bucketId = process.env.REPLIT_APP_STORAGE_BUCKET_ID || process.env.APP_STORAGE_BUCKET_ID;
-      if (bucketId && typeof (client as StorageClient & { init?: (id: string) => Promise<unknown> }).init === "function") {
-        await (client as StorageClient & { init: (id: string) => Promise<unknown> }).init(bucketId);
-      }
+      const ClientConstructor = Client as new (options?: { bucketId?: string }) => StorageClient;
+      const client = new ClientConstructor(bucketId ? { bucketId } : undefined);
       return client;
     } catch (error) {
       if (isReplitRuntime && process.env.NODE_ENV === "production") {
