@@ -742,7 +742,7 @@ export async function seed() {
   }
 
   const existingIndustryGroups = await db.select().from(industryGroups);
-  if (existingIndustryGroups.length === 0) {
+  if (existingIndustryGroups.length === 0 && industryGroupsData.length > 0) {
     console.log("Seeding industry groups...");
     await db.insert(industryGroups).values(industryGroupsData);
   }
