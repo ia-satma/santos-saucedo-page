@@ -8,6 +8,12 @@ import path from "path";
 import fs from "fs";
 import crypto from "crypto";
 import multer from "multer";
+import {
+  appStorageObjectKeyFromPath,
+  deleteAppStorageObject,
+  downloadAppStorageObject,
+  uploadAppStorageObject,
+} from "./replitStorage";
 
 // Global WebSocket clients map for pipeline progress updates
 const pipelineClients: Map<string, WebSocket> = new Map();
@@ -99,16 +105,7 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: (_req, _file, cb) => {
-      cb(null, uploadsDir);
-    },
-    filename: (_req, file, cb) => {
-      const uniqueSuffix = crypto.randomBytes(8).toString("hex");
-      const ext = path.extname(file.originalname);
-      cb(null, `${Date.now()}-${uniqueSuffix}${ext}`);
-    },
-  }),
+  storage: multer.memoryStorage(),
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB limit
   },
@@ -896,6 +893,35 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   });
 
   // Serve uploaded files
+  app.get('/media/*', async (req: Request, res: Response) => {
+    try {
+      const objectName = req.params[0];
+      if (!objectName || !objectName.startsWith('public/')) {
+        return res.status(404).end();
+      }
+
+      const contents = await downloadAppStorageObject(objectName);
+      if (!contents) return res.status(404).end();
+
+      const extension = path.extname(objectName).toLowerCase();
+      const mimeByExtension: Record<string, string> = {
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.png': 'image/png',
+        '.gif': 'image/gif',
+        '.webp': 'image/webp',
+        '.svg': 'image/svg+xml',
+        '.pdf': 'application/pdf',
+      };
+      res.setHeader('Content-Type', mimeByExtension[extension] || 'application/octet-stream');
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      res.send(contents);
+    } catch (error) {
+      console.error('Serve App Storage media error:', error);
+      res.status(500).end();
+    }
+  });
+
   app.use('/uploads', express.static(uploadsDir, {
     maxAge: '1d',
     immutable: true,
@@ -2438,15 +2464,22 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
   // Upload media
   app.post("/api/admin/media/upload", authMiddleware, requireRole("editor", "admin"), upload.single("file"), async (req: Request, res: Response) => {
+    let objectName: string | null = null;
     try {
       if (!req.file) {
         return res.status(400).json({ error: "No file uploaded" });
       }
 
+      const uniqueSuffix = crypto.randomBytes(8).toString("hex");
+      const ext = path.extname(req.file.originalname).toLowerCase();
+      const filename = `${Date.now()}-${uniqueSuffix}${ext}`;
+      objectName = `public/media/${filename}`;
+      await uploadAppStorageObject(objectName, req.file.buffer);
+
       const mediaItem = await storage.createMediaItem({
-        filename: req.file.filename,
+        filename,
         originalName: req.file.originalname,
-        path: `/uploads/${req.file.filename}`,
+        path: `/media/${objectName}`,
         mimeType: req.file.mimetype,
         size: req.file.size,
         uploadedBy: req.adminUser!.id,
@@ -2456,6 +2489,13 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
       res.status(201).json(mediaItem);
     } catch (error) {
+      if (objectName) {
+        try {
+          await deleteAppStorageObject(objectName);
+        } catch (cleanupError) {
+          console.error("Upload cleanup error:", cleanupError);
+        }
+      }
       console.error("Upload media error:", error);
       res.status(500).json({ error: "Failed to upload file" });
     }
@@ -2464,6 +2504,14 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // Delete media item
   app.delete("/api/admin/media/:id", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
+      const mediaItem = (await storage.getMediaItems()).find((item) => item.id === req.params.id);
+      if (!mediaItem) {
+        return res.status(404).json({ error: "Media item not found" });
+      }
+
+      const objectName = appStorageObjectKeyFromPath(mediaItem.path);
+      if (objectName) await deleteAppStorageObject(objectName);
+
       const deleted = await storage.deleteMediaItem(req.params.id);
       if (!deleted) {
         return res.status(404).json({ error: "Media item not found" });
@@ -3581,7 +3629,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   if (agentsEnabled) {
     // Agent system routes
     const agentRoutes = await import('./agents/api/agentRoutes');
-    app.use('/api/agents', agentRoutes.default);
+    app.use('/api/agents', authMiddleware, requireRole("editor", "admin"), agentRoutes.default);
 
     // Initialize agents on server start
     const { initializeAgents } = await import('./agents');
