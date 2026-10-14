@@ -15,6 +15,10 @@ run = ["npm", "run", "start:deploy"]
 localPort = 5000
 externalPort = 80
 
+[[ports]]
+localPort = 24678
+externalPort = 3000
+
 [env]
 PORT = "5000"
 
@@ -40,3 +44,12 @@ waitForPort = 5000
 [postMerge]
 path = "scripts/post-merge.sh"
 timeoutMs = 90000
+
+[userenv]
+
+[userenv.shared]
+ADMIN_EMAIL = "ia@satma.mx"
+ENABLE_APP_AGENTS = "true"
+
+[objectStorage]
+defaultBucketID = "replit-objstore-a762ba38-4a40-4039-87df-f954bf9d578a"
