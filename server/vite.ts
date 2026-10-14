@@ -10,9 +10,21 @@ const viteLogger = createLogger();
 
 export async function setupVite(server: Server, app: Express) {
   const port = parseInt(process.env.PORT || "5000", 10);
+  // Replit serves the development app through an HTTPS proxy while the
+  // workspace server listens on the internal HTTP port. Vite's default HMR
+  // client then tries to reconnect to that internal port and can reload the
+  // whole page repeatedly (which is especially disruptive on admin forms).
+  // Keep HMR for local development, but disable it in Replit where the proxy
+  // is responsible for serving the stable preview.
+  const isReplitPreview = Boolean(
+    process.env.REPL_ID ||
+    process.env.REPLIT_DEPLOYMENT ||
+    process.env.REPLIT_DB_URL ||
+    process.env.REPLIT_DEV_DOMAIN,
+  );
   const serverOptions = {
     middlewareMode: true,
-    hmr: { server, clientPort: port },
+    hmr: isReplitPreview ? false : { server, clientPort: port },
     allowedHosts: true as const,
   };
 
