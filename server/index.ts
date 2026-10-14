@@ -13,12 +13,31 @@ const httpServer = createServer(app);
 
 app.use(compression());
 
+const corsOrigins = (process.env.CORS_ORIGIN || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || true,
+  origin: corsOrigins.length > 0 ? corsOrigins : false,
   credentials: true,
   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"],
 }));
+
+let applicationReady = false;
+
+app.get("/healthz", (_req, res) => {
+  res.status(200).json({ ok: true, service: "santos-saucedo" });
+});
+
+app.get("/readyz", (_req, res) => {
+  if (!applicationReady) {
+    res.status(503).json({ ok: false, ready: false });
+    return;
+  }
+  res.status(200).json({ ok: true, ready: true });
+});
 
 declare module "http" {
   interface IncomingMessage {
@@ -107,14 +126,20 @@ app.use((req, res, next) => {
     async () => {
       log(`serving on port ${port}`);
       
-      // Initialize and start the agent orchestrator
-      try {
-        await orchestrator.initialize();
-        orchestrator.start(2000); // Process jobs every 2 seconds
-        log("Agent orchestrator initialized and started", "agents");
-      } catch (error) {
-        log(`Failed to initialize agent orchestrator: ${error}`, "agents");
+      const agentsEnabled = process.env.ENABLE_APP_AGENTS === "true";
+      if (agentsEnabled) {
+        try {
+          await orchestrator.initialize();
+          orchestrator.start(2000); // Process jobs every 2 seconds
+          log("Agent orchestrator initialized and started", "agents");
+        } catch (error) {
+          log(`Failed to initialize agent orchestrator: ${error}`, "agents");
+        }
+      } else {
+        log("Application agents disabled; set ENABLE_APP_AGENTS=true to enable them", "agents");
       }
+
+      applicationReady = true;
 
       // Hourly maintenance tick — clean expired admin sessions
       setInterval(async () => {

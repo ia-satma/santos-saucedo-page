@@ -1,5 +1,17 @@
 # Santos & Saucedo Corporate Website
 
+## Replit setup (manual, sin Replit Agent)
+
+La preparación reproducible para Replit está en
+[`docs/REPLIT_SETUP_SANTOS_SAUCEDO.md`](docs/REPLIT_SETUP_SANTOS_SAUCEDO.md). El proyecto usa
+Node 24, `npm run start:workspace` para Workspace/Preview y `npm run start:deploy` para Deployment.
+Las migraciones no se ejecutan automáticamente al hacer merge: primero se provisiona la base de
+Development, se configuran Secrets y después se ejecuta `npm run db:push` de forma explícita.
+
+Replit Agent no forma parte del flujo. `ENABLE_APP_AGENTS=false` permite validar el backend y el CMS
+sin iniciar los agentes internos de la aplicación; se habilitan únicamente después de validar sus
+tablas y Secrets.
+
 ## Overview
 This project is a corporate website for Santos & Saucedo, a leading Mexican law firm. Its primary purpose is to showcase their new office and firm capabilities through a single-page application. Key features include comprehensive multi-language support (10 languages with AI-powered legal translation), dark mode, and a professional design aesthetic. The site aims to provide a sophisticated online presence, highlighting news, office vision, statistics, image galleries, and location information.
 

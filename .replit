@@ -1,5 +1,5 @@
-modules = ["nodejs-20", "web", "postgresql-16"]
-run = "npm run dev"
+modules = ["nodejs-24", "web", "postgresql-16"]
+run = "npm run start:workspace"
 hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
@@ -9,7 +9,7 @@ packages = ["unzip", "jq"]
 [deployment]
 deploymentTarget = "autoscale"
 build = ["npm", "run", "build"]
-run = ["npm", "run", "start"]
+run = ["npm", "run", "start:deploy"]
 
 [[ports]]
 localPort = 5000
@@ -24,7 +24,6 @@ runButton = "Project"
 [[workflows.workflow]]
 name = "Project"
 mode = "parallel"
-author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
@@ -32,21 +31,11 @@ args = "Start application"
 
 [[workflows.workflow]]
 name = "Start application"
-author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run dev"
+args = "npm run start:workspace"
 waitForPort = 5000
-
-[agent]
-integrations = ["javascript_openai:1.0.0", "javascript_openai_ai_integrations:1.0.0", "javascript_gemini_ai_integrations:1.0.0"]
-
-[userenv]
-
-[userenv.shared]
-ADMIN_EMAIL = "admin@vonwobeser.com"
-ADMIN_PASSWORD_HASH = "$2b$10$YjjklWJgO3RtE3iBZ2oKwek00bTZ/6oc0YppsuqItCx5mEAJqaQJu"
 
 [postMerge]
 path = "scripts/post-merge.sh"

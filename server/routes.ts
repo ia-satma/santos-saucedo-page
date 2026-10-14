@@ -182,6 +182,19 @@ export async function registerRoutes(
     console.error("[seed] Seeding failed, continuing without seed data:", err);
   }
 
+  const agentsEnabled = process.env.ENABLE_APP_AGENTS === "true";
+  if (!agentsEnabled) {
+    const disabledAgentService = (_req: Request, res: Response) => {
+      res.status(503).json({
+        error: "Application agents are disabled",
+        hint: "Set ENABLE_APP_AGENTS=true after the CMS schema and AI Secrets are validated.",
+      });
+    };
+    app.use("/api/agents", disabledAgentService);
+    app.use("/api/audits", disabledAgentService);
+    app.use("/api/health-check", disabledAgentService);
+  }
+
   // Setup WebSocket server for pipeline progress updates
   const wss = new WebSocketServer({ server: httpServer, path: '/ws/pipeline' });
   
@@ -895,6 +908,10 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // Admin Initialization (create first admin user)
   app.post("/api/admin/init", async (req: Request, res: Response) => {
     try {
+      if (process.env.ALLOW_ADMIN_INIT !== "true") {
+        return res.status(404).json({ error: "Admin initialization is disabled" });
+      }
+
       // Validate input
       const validation = adminLoginSchema.safeParse(req.body);
       if (!validation.success) {
@@ -3561,13 +3578,15 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
     }
   });
 
-  // Agent system routes
-  const agentRoutes = await import('./agents/api/agentRoutes');
-  app.use('/api/agents', agentRoutes.default);
+  if (agentsEnabled) {
+    // Agent system routes
+    const agentRoutes = await import('./agents/api/agentRoutes');
+    app.use('/api/agents', agentRoutes.default);
 
-  // Initialize agents on server start
-  const { initializeAgents } = await import('./agents');
-  initializeAgents().catch(err => console.error('[Agents] Initialization error:', err));
+    // Initialize agents on server start
+    const { initializeAgents } = await import('./agents');
+    initializeAgents().catch(err => console.error('[Agents] Initialization error:', err));
+  }
 
   return httpServer;
 }
