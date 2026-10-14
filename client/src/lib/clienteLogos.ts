@@ -4,6 +4,26 @@ const logoModules = import.meta.glob("../../../attached_assets/pdf2026/clientes/
   import: "default",
 }) as Record<string, string>;
 
+const asiaLogoModules = import.meta.glob("../../../attached_assets/pdf2026/clientes-asia/*.webp", {
+  eager: true,
+  import: "default",
+}) as Record<string, string>;
+
+const asiaDisplayNames: Record<string, string> = {
+  "manwah": "Man Wah",
+  "yanfeng": "Yanfeng",
+  "hengli": "Hengli",
+  "cfmoto": "CFMOTO",
+  "senix": "Senix",
+  "unison": "Unison",
+  "hofusan": "Hofusan Industrial Park",
+  "giansun": "Giansun",
+  "jarlin-cabinetry": "Jarlin Cabinetry",
+  "junma-benteng": "Junma · Benteng",
+  "minth": "Minth",
+  "bellinturf": "Bellinturf",
+};
+
 const displayNames: Record<string, string> = {
   "aceros-del-toro": "Aceros del Toro",
   "adecco": "Adecco",
@@ -85,5 +105,19 @@ export const clienteLogos: ClienteLogo[] = Object.keys(logoModules)
       slug,
       name: displayNames[slug] || slug,
       image: logoModules[key],
+    };
+  });
+
+// Distinct set of Asia-market clients (verified individually — not the
+// earlier "CLIENTES-ASIA-*" upload, which turned out to be an accidental
+// byte-for-byte duplicate of the main set and was discarded).
+export const clienteLogosAsia: ClienteLogo[] = Object.keys(asiaLogoModules)
+  .sort()
+  .map((key) => {
+    const slug = key.split("/").pop()!.replace(".webp", "");
+    return {
+      slug,
+      name: asiaDisplayNames[slug] || slug,
+      image: asiaLogoModules[key],
     };
   });

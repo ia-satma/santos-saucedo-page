@@ -1226,6 +1226,9 @@ html, body {
 .marquee-track-reverse {
   animation-name: marquee-right;
 }
+.marquee-track-slow {
+  animation-duration: 110s;
+}
 .marquee-row:hover .marquee-track {
   animation-play-state: paused;
 }
