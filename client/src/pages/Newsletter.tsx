@@ -564,8 +564,9 @@ export default function Newsletter() {
               transition={{ duration: 0.6, delay: 0.1 }}
               data-testid="section-newsletter-form"
             >
-              <Card>
-                <CardContent className="p-8">
+              {/* Tarjeta sin borde ni sombra visibles: sin su p-8 el formulario comparte el borde del encabezado */}
+              <Card className="border-0 shadow-none bg-transparent">
+                <CardContent className="p-0">
                   <div className="mb-8">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center">

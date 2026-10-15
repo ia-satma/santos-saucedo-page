@@ -363,7 +363,7 @@ export function Socios26({ lang }: { lang: Lang26 }) {
                   </div>
                   <figcaption className="sm:mt-5">
                     <span className="ss-display block text-[26px] leading-[0.95] sm:text-[30px] lg:text-[34px]">{person.name}</span>
-                    <span className="ss-label mt-3 block text-[11px] tracking-[0.12em] text-ss-ink/70">{t.role}</span>
+                    <span className="ss-label mt-3 block text-[11px] tracking-[0.12em] text-ss-ink/70">{person.role}</span>
                   </figcaption>
                 </figure>
             </Reveal>

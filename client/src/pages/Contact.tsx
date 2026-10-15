@@ -750,8 +750,9 @@ export default function Contact() {
             className="mb-16"
             data-testid="section-contact-form"
           >
-            <Card className="">
-              <CardContent className="p-8">
+            {/* Tarjeta sin borde ni sombra visibles: sin su p-8 el formulario comparte el borde del encabezado */}
+            <Card className="border-0 shadow-none bg-transparent">
+              <CardContent className="p-0">
                 <div className="mb-8">
                   <h2 
                     className="text-xl font-heading font-light text-foreground mb-2 uppercase tracking-[0.12em]"

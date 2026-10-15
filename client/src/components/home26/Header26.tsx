@@ -5,33 +5,62 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import { home26, langAttrs, nav26, type Lang26 } from "./content";
 import { useSiteContact } from "./useSiteContact";
+import { useDialog26 } from "./useDialog26";
+import Search26, { search26Text } from "./Search26";
+import { LangList26, LangSwitch26 } from "./LangMenu26";
 
-// Elementos que pueden recibir foco dentro del diálogo
-const FOCUSABLE =
-  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+// Rutas que también marcan una sección del menú, además de sus propias subrutas
+// (/articles estaba bajo Publicaciones junto a /news en el Header anterior)
+const alsoActive: Record<string, string[]> = {
+  "/news": ["/articles"],
+};
+
+// Un solo panel abierto a la vez: menú móvil o buscador, nunca los dos
+type Panel = "menu" | "search" | null;
+// A dónde vuelve el foco al cerrar: al botón que abrió el panel, o a la navegación
+// de escritorio si el menú se cerró por pasar a ≥1024px (el botón Menú ya no se ve).
+type FocusTarget = "menu" | "search" | "nav" | null;
+
+function SearchIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" className="h-[18px] w-[18px] shrink-0" fill="none" strokeWidth={1.5}>
+      <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" />
+      <path d="M13 13l5 5" strokeLinecap="square" className="stroke-ss-lime" />
+    </svg>
+  );
+}
 
 export default function Header26() {
-  const { displayLanguage, setLanguage } = useLanguage();
+  const { displayLanguage } = useLanguage();
   // Cualquier idioma distinto de ES se trata como EN (el contenido nuevo solo existe en ES/EN)
   const lang: Lang26 = displayLanguage === "es" ? "es" : "en";
   const t = home26[lang];
+  const s = search26Text[lang];
   const items = nav26[lang];
   const { phone, phoneHref } = useSiteContact(lang);
   const [location] = useLocation();
-  const [open, setOpen] = useState(false);
+  const [panel, setPanel] = useState<Panel>(null);
   const [scrolled, setScrolled] = useState(false);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const searchButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
-  // A dónde va el foco al cerrar: al botón Menú, o a la navegación de escritorio
-  // si el diálogo se cerró por pasar a ≥1024px (el botón ya no se ve).
-  const restoreFocusRef = useRef<"button" | "nav" | null>(null);
-  const openRef = useRef(open);
-  openRef.current = open;
+  const restoreFocusRef = useRef<FocusTarget>(null);
+  const panelRef = useRef(panel);
+  panelRef.current = panel;
 
-  const closeMenu = (restoreFocus: "button" | "nav" | null = "button") => {
+  const closePanel = (restoreFocus: FocusTarget) => {
     restoreFocusRef.current = restoreFocus;
-    setOpen(false);
+    setPanel(null);
+  };
+
+  // Se llama al cerrar (o desmontar) cualquiera de los dos diálogos
+  const restoreFocus = () => {
+    const target = restoreFocusRef.current;
+    restoreFocusRef.current = null;
+    if (target === "menu") menuButtonRef.current?.focus();
+    else if (target === "search") searchButtonRef.current?.focus();
+    else if (target === "nav") document.getElementById("main-navigation")?.focus();
   };
 
   useEffect(() => {
@@ -41,92 +70,25 @@ export default function Header26() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    if (!open) return;
-    const root = document.getElementById("root");
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    // El diálogo vive en body (portal); el resto de la página queda inerte
-    root?.setAttribute("inert", "");
-    firstLinkRef.current?.focus();
-
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        closeMenu();
-        return;
-      }
-      if (e.key !== "Tab") return;
-      // Trampa de foco: Tab y Shift+Tab ciclan dentro del diálogo
-      const dialog = dialogRef.current;
-      if (!dialog) return;
-      const nodes = Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
-        (el) => el.getClientRects().length > 0,
-      );
-      if (nodes.length === 0) {
-        e.preventDefault();
-        return;
-      }
-      const first = nodes[0];
-      const last = nodes[nodes.length - 1];
-      const active = document.activeElement;
-      if (!active || !dialog.contains(active)) {
-        e.preventDefault();
-        (e.shiftKey ? last : first).focus();
-      } else if (e.shiftKey && active === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && active === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-    document.addEventListener("keydown", onKey);
-
+  useDialog26(panel === "menu", dialogRef, {
+    initialFocus: () => firstLinkRef.current,
+    onEscape: () => closePanel("menu"),
+    onClosed: restoreFocus,
     // Al pasar a escritorio el diálogo se oculta (lg:hidden): se cierra para no dejar la página inerte
-    const mq = window.matchMedia("(min-width: 1024px)");
-    const onMq = () => {
-      if (mq.matches) closeMenu("nav");
-    };
-    mq.addEventListener("change", onMq);
+    closeWhen: { query: "(min-width: 1024px)", onMatch: () => closePanel("nav") },
+  });
 
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      mq.removeEventListener("change", onMq);
-      document.body.style.overflow = prev;
-      root?.removeAttribute("inert");
-      const target = restoreFocusRef.current;
-      restoreFocusRef.current = null;
-      if (target === "button") menuButtonRef.current?.focus();
-      else if (target === "nav") document.getElementById("main-navigation")?.focus();
-    };
-  }, [open]);
-
-  // Cambio de ruta: cierra el menú y devuelve el foco solo si estaba abierto
+  // Cambio de ruta: cierra el panel y devuelve el foco solo si estaba abierto
   useEffect(() => {
-    if (openRef.current) closeMenu();
+    if (panelRef.current) closePanel(panelRef.current);
   }, [location]);
 
-  const isActive = (href: string) => location === href || location.startsWith(`${href}/`);
-
-  // Función de render (no componente) para que el foco no se pierda al cambiar de idioma
-  const renderLangSwitch = (className = "") => (
-    <div className={`ss-label flex items-center gap-2 ${className}`} role="group" aria-label="Idioma / Language">
-      {(["es", "en"] as const).map((code, i) => (
-        <span key={code} className="flex items-center gap-2">
-          {i > 0 && <span aria-hidden="true" className="text-white/50">/</span>}
-          <button
-            type="button"
-            onClick={() => setLanguage(code)}
-            aria-pressed={lang === code}
-            className={`min-h-[44px] uppercase transition-colors ${lang === code ? "text-white" : "text-white/60 hover:text-white"}`}
-          >
-            {code}
-          </button>
-        </span>
-      ))}
-    </div>
-  );
+  // "page" en la página exacta; "true" en sus subrutas (/team/slug marca Socios)
+  const currentFor = (href: string): "page" | "true" | undefined => {
+    if (location === href) return "page";
+    const bases = [href, ...(alsoActive[href] ?? [])];
+    return bases.some((b) => location === b || location.startsWith(`${b}/`)) ? "true" : undefined;
+  };
 
   return (
     <>
@@ -137,9 +99,17 @@ export default function Header26() {
         }`}
         data-testid="header"
       >
-        <div className="ss-container flex h-[68px] items-center justify-between gap-8 lg:h-20">
+        {/* Entre 1024 y 1279px se aprietan logo, huecos y espaciado del menú para que quepan
+            navegación, buscador e idiomas; desde 1280px vuelve la medida de la portada */}
+        <div className="ss-container flex h-[68px] items-center justify-between gap-4 lg:h-20 lg:gap-6 xl:gap-8">
           <Link href="/" aria-label="Santos & Saucedo" className="shrink-0" data-testid="link-logo">
-            <img src={logoBlancoLima} alt="Santos & Saucedo" className="h-[26px] w-auto lg:h-[30px]" width={183} height={30} />
+            <img
+              src={logoBlancoLima}
+              alt="Santos & Saucedo"
+              className="h-[22px] w-auto min-[360px]:h-[26px] xl:h-[30px]"
+              width={183}
+              height={30}
+            />
           </Link>
 
           {/* Destino del skip link: visible en todo ancho (lista en escritorio, botón Menú en móvil) */}
@@ -147,15 +117,16 @@ export default function Header26() {
             id="main-navigation"
             tabIndex={-1}
             aria-label={lang === "es" ? "Principal" : "Main"}
-            className="flex items-center lg:ml-auto"
+            className="flex items-center gap-5 lg:ml-auto xl:gap-8"
           >
-            <ul className="hidden items-center gap-[clamp(20px,2.2vw,36px)] lg:flex">
+            <ul className="hidden items-center gap-4 lg:flex xl:gap-[clamp(20px,2.2vw,36px)]">
               {items.map((item) => (
-                <li key={item.href}>
+                // flex + pt-[2px] (compensa el padding-bottom de .ss-link): mismo centro que Buscar y ES/EN
+                <li key={item.href} className="flex">
                   <Link
                     href={item.href}
-                    aria-current={isActive(item.href) ? "page" : undefined}
-                    className="ss-label ss-link ss-link--lime text-[12px] tracking-[0.16em] text-white/80 transition-colors hover:text-white aria-[current=page]:text-white"
+                    aria-current={currentFor(item.href)}
+                    className="ss-label ss-link ss-link--lime whitespace-nowrap pt-[2px] text-[12px] tracking-[0.12em] text-white/80 transition-colors hover:text-white aria-[current=page]:text-white aria-[current=true]:bg-[length:100%_2px] aria-[current=true]:text-white xl:tracking-[0.16em]"
                   >
                     {item.label}
                   </Link>
@@ -163,15 +134,31 @@ export default function Header26() {
               ))}
             </ul>
 
+            {/* Buscador: icono con nombre accesible; el texto se ve desde 1280px.
+                Márgenes negativos: área táctil de 44px sin ensanchar la fila */}
+            <button
+              ref={searchButtonRef}
+              type="button"
+              aria-haspopup="dialog"
+              aria-expanded={panel === "search"}
+              aria-controls="search-dialog"
+              data-testid="button-search"
+              onClick={() => setPanel("search")}
+              className="ss-label -mx-3 flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 text-[12px] tracking-[0.16em] text-white/80 transition-colors hover:text-white xl:mx-0 xl:min-w-0"
+            >
+              <SearchIcon />
+              <span className="sr-only xl:not-sr-only">{s.open}</span>
+            </button>
+
             <button
               ref={menuButtonRef}
               type="button"
               className="ss-label flex min-h-[44px] items-center gap-3 text-white lg:hidden"
-              aria-expanded={open}
+              aria-expanded={panel === "menu"}
               aria-controls="mobile-menu"
               aria-haspopup="dialog"
               data-testid="button-mobile-menu"
-              onClick={() => setOpen(true)}
+              onClick={() => setPanel("menu")}
             >
               {t.menu}
               <span aria-hidden="true" className="flex w-6 flex-col gap-[6px]">
@@ -181,11 +168,13 @@ export default function Header26() {
             </button>
           </nav>
 
-          {renderLangSwitch("hidden lg:flex")}
+          <LangSwitch26 lang={lang} className="hidden lg:flex" />
         </div>
       </header>
 
-      {open &&
+      {panel === "search" && <Search26 lang={lang} onClose={() => closePanel("search")} onClosed={restoreFocus} />}
+
+      {panel === "menu" &&
         createPortal(
           <div
             ref={dialogRef}
@@ -195,15 +184,15 @@ export default function Header26() {
             aria-label={t.menu}
             {...langAttrs[lang]}
             data-testid="modal-mobile-menu"
-            className="ss26 fixed inset-0 z-[70] flex flex-col overflow-y-auto bg-ss-panel text-white lg:hidden"
+            className="ss26 fixed inset-0 z-[70] flex flex-col overflow-y-auto overscroll-contain bg-ss-panel text-white lg:hidden"
           >
-            <div className="ss-container relative flex h-[68px] items-center justify-between">
+            <div className="ss-container relative flex h-[68px] shrink-0 items-center justify-between">
               <img src={logoBlancoLima} alt="Santos & Saucedo" className="h-[26px] w-auto" width={159} height={26} />
               <button
                 type="button"
                 className="ss-label flex min-h-[44px] items-center text-white"
                 data-testid="button-close-menu"
-                onClick={() => closeMenu()}
+                onClick={() => closePanel("menu")}
               >
                 {t.close}
               </button>
@@ -215,8 +204,8 @@ export default function Header26() {
                     <Link
                       href={item.href}
                       ref={i === 0 ? firstLinkRef : undefined}
-                      aria-current={isActive(item.href) ? "page" : undefined}
-                      onClick={() => closeMenu()}
+                      aria-current={currentFor(item.href)}
+                      onClick={() => closePanel("menu")}
                       className="flex items-baseline gap-5 py-4"
                     >
                       <span aria-hidden="true" className="ss-label ss-num w-8 text-ss-lime">
@@ -228,9 +217,9 @@ export default function Header26() {
                 ))}
               </ol>
             </nav>
-            <div className="ss-container relative flex items-center justify-between py-8">
-              {renderLangSwitch()}
-              <a href={phoneHref} className="ss-label ss-num text-white/70">
+            <div className="ss-container relative space-y-4 py-8">
+              <LangList26 lang={lang} />
+              <a href={phoneHref} className="ss-label ss-num inline-flex min-h-[44px] items-center text-white/70">
                 {phone}
               </a>
             </div>

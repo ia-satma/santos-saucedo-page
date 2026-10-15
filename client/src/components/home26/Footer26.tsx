@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SUPPORTED_LANGUAGES } from "@shared/schema";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import { home26, langAttrs, nav26, type Lang26 } from "./content";
 import { SectionMark } from "./primitives";
@@ -21,8 +22,11 @@ function openCookiePreferences() {
 }
 
 export default function Footer26() {
-  const { displayLanguage, setLanguage } = useLanguage();
+  const { language, displayLanguage, setLanguage } = useLanguage();
   const lang: Lang26 = displayLanguage === "es" ? "es" : "en";
+  // Idioma real (no el de la interfaz, que cae a EN): con alemán, francés, etc.
+  // ni Español ni English quedan marcados; se añade el idioma activo como tercer botón.
+  const activeOther = language !== "es" && language !== "en" ? SUPPORTED_LANGUAGES.find((l) => l.code === language) : undefined;
   const t = home26[lang].footer;
   const l = ui[lang];
   const items = nav26[lang];
@@ -117,13 +121,24 @@ export default function Footer26() {
                 <button
                   key={code}
                   type="button"
+                  lang={code}
                   onClick={() => setLanguage(code)}
-                  aria-pressed={lang === code}
-                  className={`${linkCls} ${lang === code ? "text-white" : "text-white/60 hover:text-white"}`}
+                  aria-pressed={language === code}
+                  className={`${linkCls} ${language === code ? "text-white" : "text-white/60 hover:text-white"}`}
                 >
                   {code === "es" ? "Español" : "English"}
                 </button>
               ))}
+              {activeOther && (
+                <button
+                  type="button"
+                  lang={activeOther.code}
+                  aria-pressed="true"
+                  className={`${linkCls} text-white`}
+                >
+                  <span dir={activeOther.code === "ar" ? "rtl" : undefined}>{activeOther.nameNative}</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

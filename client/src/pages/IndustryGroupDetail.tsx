@@ -297,7 +297,8 @@ export default function IndustryGroupDetail() {
     return (
       <div className="min-h-screen bg-background" data-testid="page-industry-group-error">
         <Header />
-        <div className="pt-32 pb-20">
+        {/* Cabecera sticky en flujo: ya no hace falta compensar el header fijo */}
+        <main id="main-content" className="pt-16 pb-20 lg:pt-20">
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
             <AlertCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
             <h2 className="text-2xl font-heading text-foreground mb-4" data-testid="text-error-title">
@@ -310,7 +311,7 @@ export default function IndustryGroupDetail() {
               </Button>
             </Link>
           </div>
-        </div>
+        </main>
         <Footer />
       </div>
     );

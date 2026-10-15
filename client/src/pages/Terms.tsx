@@ -2014,7 +2014,8 @@ Escluse le festività federali messicane`
       <Header />
       
       <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-terms-hero">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        {/* Columna del documento (max-w-4xl): titular, subtítulo y fecha sobre su borde */}
+        <div className="max-w-4xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -2022,9 +2023,6 @@ Escluse le festività federali messicane`
             transition={{ duration: 0.7 }}
             className="text-center"
           >
-            <div className="flex justify-center mb-4">
-              <Scale className="w-12 h-12 text-primary" />
-            </div>
             <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1 
               className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"

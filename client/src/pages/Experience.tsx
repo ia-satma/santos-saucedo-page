@@ -345,6 +345,8 @@ export default function Experience() {
         </div>
       </section>
 
+      {/* Destino del skip link; sin clases para no cambiar el layout */}
+      <main id="main-content">
       {mattersError ? (
         <div className="text-center py-20" data-testid="container-experience-error">
           <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
@@ -643,6 +645,7 @@ export default function Experience() {
           </section>
         </>
       )}
+      </main>
 
       <Footer />
     </div>

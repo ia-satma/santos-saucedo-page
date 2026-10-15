@@ -1023,8 +1023,9 @@ html, body {
     align-items: center;
   }
   
-  /* Prevent fixed headers from being too tall */
-  header {
+  /* Prevent fixed headers from being too tall.
+     Header26 (.ss26) fija su propio alto; :where() mantiene la especificidad 0,0,1. */
+  header:where(:not(.ss26)) {
     max-height: 80px;
   }
   
@@ -1067,54 +1068,251 @@ html, body {
   animation: breathing 3s ease-in-out infinite;
 }
 
-/* Santos & Saucedo editorial light surfaces */
+/* ======================================================
+   Encabezado de página interno — marca 2026
+   section.pt-36.pb-20.editorial-page-hero (22 páginas públicas).
+   Degradado de la portada, eyebrow "§ 01 ——", h1 en Bebas
+   mayúsculas al inicio y subtítulo blanco al 75 %. Igual en claro
+   y oscuro. Selectores de especificidad 0,1,1 o más: ganan a las
+   utilidades de Tailwind (0,1,0) sin !important.
+   ====================================================== */
 .editorial-page-hero {
+  /* Tokens de .ss26 que usan ss-link, ss-arrow y la barra (el hero no está dentro de .ss26) */
+  --ss-ink: #140f4b;
+  --ss-deep: #110c49;
+  --ss-lime: #b2eb3e;
+  --ss-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   position: relative;
   overflow: hidden;
-  color: hsl(var(--foreground));
-  border-bottom: 1px solid hsl(var(--border));
-  background:
-    radial-gradient(circle at 50% 0%, rgba(18, 16, 62, 0.08), transparent 42%),
-    linear-gradient(180deg, #ffffff 0%, var(--ss-paper) 48%, var(--ss-stone) 100%);
+  isolation: isolate;
+  color: #fff;
+  background-color: #110c49;
+  background-image: linear-gradient(148deg, #110c49 0%, #130e5b 58%, #170d94 100%);
+  /* Franja superior del degradado de la portada: en una caja baja y ancha el 148deg
+     llevaba el violeta a la esquina superior derecha, pegado a la cabecera tinta.
+     Con el alto de la portada (≈56vw) el borde superior queda en el tono profundo. */
+  background-size: 100% max(100%, 56vw);
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  /* Anillos ring-ring y contorno de foco global en lima (#b2eb3e) */
+  --ring: 80 81% 58%;
 }
 
-.editorial-page-hero::before {
+.editorial-page-hero,
+.editorial-page-hero :where(p, li, address, button, input, select, textarea) {
+  font-family: "SS Sans", "Source Sans 3", system-ui, sans-serif;
+}
+
+/* La cabecera nueva es sticky y ocupa su lugar: ya no hay que compensar pt-36 */
+.editorial-page-hero.pt-36 {
+  padding-top: clamp(64px, 8vw, 112px);
+}
+.editorial-page-hero.pb-20 {
+  padding-bottom: clamp(56px, 7vw, 96px);
+}
+
+/* Todo al inicio (izquierda; derecha en árabe). El contenedor .max-w-7xl.mx-auto
+   es ancestro de .text-center: sigue centrando la caja. */
+.editorial-page-hero .text-center {
+  text-align: start;
+}
+.editorial-page-hero .text-center .mx-auto {
+  margin-inline: 0 auto;
+}
+/* Solo filas de maquetación: los botones (inline-flex justify-center) centran su icono */
+.editorial-page-hero .text-center .justify-center:not(a, button) {
+  justify-content: flex-start;
+}
+@media (max-width: 767.98px) {
+  /* Perfil de socio (columna en móvil): nombre y cargo al inicio */
+  .editorial-page-hero .flex-col.items-center {
+    align-items: flex-start;
+  }
+}
+
+/* Eyebrow del expediente: la barra de marca (h-0.5 w-12; h-px w-10 en el perfil)
+   pasa a "§ 01 ——", como el "§ 00 ——" de la portada. El número sigue el orden del
+   menú (01 firma … 06 contacto); privacidad, términos y el resto llevan el § solo. */
+.editorial-page-hero .bg-brand {
+  background-color: #b2eb3e;
+}
+.editorial-page-hero :is(.h-0\.5, .h-px).bg-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: max-content;
+  height: auto;
+  margin-inline: 0;
+  background: none;
+}
+.editorial-page-hero :is(.h-0\.5, .h-px).bg-brand::before {
+  content: "§" var(--ss-index, "");
+  color: #b2eb3e;
+  font: 600 12px/1.35 "SS Sans", "Source Sans 3", system-ui, sans-serif;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+.editorial-page-hero :is(.h-0\.5, .h-px).bg-brand::after {
   content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.55;
-  mix-blend-mode: multiply;
-  background-image: url(../../attached_assets/pdf2026/bg-waves-gray.webp);
-  background-size: cover;
-  background-position: 70% 30%;
-  mask-image: linear-gradient(to bottom, black, transparent 78%);
+  flex: none;
+  width: 28px;
+  height: 2px;
+  background: #b2eb3e;
+}
+.editorial-page-hero:is([data-testid="section-about-hero"], [data-testid="section-experience-hero"]) {
+  --ss-index: " 01";
+}
+.editorial-page-hero:is([data-testid="section-practice-groups-hero"], [data-testid="section-practice-group-hero"]) {
+  --ss-index: " 02";
+}
+.editorial-page-hero:is([data-testid="section-team-hero"], [data-testid="section-team-member-hero"]) {
+  --ss-index: " 03";
+}
+.editorial-page-hero:is([data-testid="section-news-hero"], [data-testid="section-articles-hero"], [data-testid="section-newsletter-hero"], [data-testid="section-events-hero"]) {
+  --ss-index: " 04";
+}
+.editorial-page-hero:is([data-testid="section-careers-hero"], [data-testid="section-interns-hero"]) {
+  --ss-index: " 05";
+}
+.editorial-page-hero:is([data-testid="section-contact-hero"], [data-testid="section-offices-hero"]) {
+  --ss-index: " 06";
 }
 
-.editorial-page-hero > * {
-  position: relative;
-  z-index: 1;
+/* Enlaces de vuelta ("Todos los miembros"…): etiqueta de interfaz, como ss-label */
+:is(.editorial-page-hero, [data-testid="section-news-hero"]) [data-testid^="link-back-to"] {
+  font: 600 12px/1.35 "SS Sans", "Source Sans 3", system-ui, sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
-.editorial-page-hero h1,
-.editorial-page-hero .text-white {
-  color: hsl(var(--foreground)) !important;
-}
-
-.editorial-page-hero p,
-.editorial-page-hero .text-white\/40,
-.editorial-page-hero .text-white\/50,
-.editorial-page-hero .text-white\/60,
-.editorial-page-hero .text-white\/70 {
-  color: hsl(var(--muted-foreground)) !important;
+/* Titular. Un punto por debajo de la portada (clamp 56–112px): la portada sigue mandando */
+.editorial-page-hero h1 {
+  min-width: 0;
+  color: #fff;
+  font-family: "SS Display", "Bebas Neue", "Arial Narrow", sans-serif;
+  font-weight: 400;
+  font-size: clamp(48px, 5.4vw, 80px);
+  line-height: 0.9;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-align: start;
   text-wrap: balance;
+  font-feature-settings: "kern", "lnum";
+  /* Red de seguridad: una palabra más ancha que la columna se parte en vez de desbordar */
+  overflow-wrap: break-word;
+}
+/* Fichas (práctica, industria, socio): titular junto a foto o icono, un punto menor */
+.editorial-page-hero :is(.flex > h1, h1.ss-hero-detail) {
+  font-size: clamp(44px, 5vw, 72px);
+}
+/* Compuestos largos (Praktikantenprogramm ≈ 385px a 48px): guion antes que corte seco */
+.editorial-page-hero h1:is(:lang(de), :lang(ru)) {
+  hyphens: auto;
+  hyphenate-limit-chars: 12 5 5;
+}
+/* Sin diccionario de guiones el compuesto se partía sin guion: a 40px cabe entero (≈321px) */
+@media (max-width: 479.98px) {
+  .editorial-page-hero h1:lang(de) {
+    font-size: 40px;
+  }
+}
+/* Bebas solo cubre el latín: en ruso, chino, japonés, coreano y árabe el titular
+   usa la sans, sin mayúsculas forzadas y con interlínea que no monta las líneas. */
+.editorial-page-hero h1:is(:lang(ru), :lang(zh), :lang(ja), :lang(ko), :lang(ar)),
+.ss-news-title:is(:lang(ru), :lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
+  font-family: "SS Sans", "Source Sans 3", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(32px, 4.2vw, 64px);
+  line-height: 1.15;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.editorial-page-hero h1:lang(ar),
+.ss-news-title:lang(ar) {
+  line-height: 1.4;
 }
 
-.editorial-page-hero a,
-.editorial-page-hero .hover\:text-white:hover {
-  color: hsl(var(--primary)) !important;
+/* Subtítulo y notas bajo el titular (fecha de actualización, aviso de traducción) */
+.editorial-page-hero h1 ~ p {
+  max-width: 40rem;
+  margin-inline: 0;
+  color: rgb(255 255 255 / 0.75);
+  font-size: clamp(18px, 0.4vw + 16px, 20px);
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0;
+  text-align: start;
+  text-wrap: pretty;
+}
+.editorial-page-hero h1 + p {
+  margin-top: clamp(4px, 0.8vw, 12px);
+}
+.editorial-page-hero h1 ~ p.text-sm {
+  color: rgb(255 255 255 / 0.65);
+  font-size: 16px;
+  line-height: 1.5;
 }
 
+/* Tokens oscuros sobre el degradado: iconos y textos de acento en lima, el resto en blanco */
+.editorial-page-hero .text-primary,
+.editorial-page-hero .text-brand {
+  color: #b2eb3e;
+}
+.editorial-page-hero :is(.text-foreground, .text-card-foreground) {
+  color: #fff;
+}
+.editorial-page-hero .text-muted-foreground {
+  color: rgb(255 255 255 / 0.7);
+}
+
+/* Botón sólido navy: contorno blanco, sin relleno */
+.editorial-page-hero :is(a, button).bg-primary {
+  background-color: transparent;
+  border-color: rgb(255 255 255 / 0.45);
+  color: #fff;
+}
+.editorial-page-hero :is(a, button).bg-primary:hover {
+  border-color: #b2eb3e;
+}
+
+/* Botones translúcidos del perfil (correo, teléfono, LinkedIn): como su variante
+   dark: (relleno blanco/10), con borde blanco/40 para un contorno de 3:1 */
+.editorial-page-hero :is(a, button).text-primary:not(.bg-card, .bg-white) {
+  background-color: rgb(255 255 255 / 0.1);
+  border-color: rgb(255 255 255 / 0.4);
+  color: #fff;
+}
+.editorial-page-hero :is(a, button).text-primary:not(.bg-card, .bg-white):hover {
+  background-color: rgb(255 255 255 / 0.2);
+}
+
+/* Esquinas rectas, como cabecera, buscador y pie (shadcn redondea botones y fichas) */
+.editorial-page-hero :is(a, button, .rounded-lg, .rounded-md) {
+  border-radius: 0;
+}
+
+/* Filetes navy del perfil (bg-[#1E1C92]/20), invisibles sobre el degradado */
+.editorial-page-hero .bg-\[\#1E1C92\]\/20 {
+  background-color: rgb(255 255 255 / 0.15);
+}
+
+/* Superficies claras dentro del encabezado (vCard, campos): texto marino.
+   Va después de las reglas de tokens para ganarles a igual especificidad.
+   (Sin .bg-background: el @apply bg-background de body copiaría estas reglas.) */
+.editorial-page-hero :is(.bg-card, .bg-white),
+.editorial-page-hero :is(.bg-card, .bg-white) :is(.text-primary, .text-brand, .text-foreground, .text-card-foreground, .text-muted-foreground) {
+  color: #140f4b;
+}
+
+/* Foco: contorno lima + anillo marino, como en .ss26 (gana a focus-visible:outline-none) */
+.editorial-page-hero :is(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
+  outline: 3px solid #b2eb3e;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #140f4b;
+}
+
+/* Santos & Saucedo editorial light surfaces */
 .section-paper {
   background:
     radial-gradient(circle at top left, rgba(18, 16, 62, 0.05), transparent 34rem),
@@ -1124,40 +1322,6 @@ html, body {
 .section-stone {
   background:
     linear-gradient(180deg, var(--ss-stone) 0%, var(--ss-paper) 100%);
-}
-
-.dark .editorial-page-hero {
-  color: hsl(var(--foreground));
-  border-bottom-color: hsl(var(--border));
-  background:
-    radial-gradient(circle at 50% 0%, rgba(165, 224, 41, 0.10), transparent 42%),
-    linear-gradient(180deg, #191884 0%, hsl(var(--background)) 48%, hsl(var(--card)) 100%);
-}
-
-.dark .editorial-page-hero::before {
-  opacity: 0.35;
-  mix-blend-mode: soft-light;
-  background-image: url(../../attached_assets/pdf2026/bg-s-navy.webp);
-  background-size: cover;
-  background-position: center;
-}
-
-.dark .editorial-page-hero h1,
-.dark .editorial-page-hero .text-white {
-  color: hsl(var(--foreground)) !important;
-}
-
-.dark .editorial-page-hero p,
-.dark .editorial-page-hero .text-white\/40,
-.dark .editorial-page-hero .text-white\/50,
-.dark .editorial-page-hero .text-white\/60,
-.dark .editorial-page-hero .text-white\/70 {
-  color: hsl(var(--muted-foreground)) !important;
-}
-
-.dark .editorial-page-hero a,
-.dark .editorial-page-hero .hover\:text-white:hover {
-  color: hsl(var(--primary)) !important;
 }
 
 /* Footer — navy "S" watermark, always on regardless of theme (footer bg is a fixed hex gradient) */

@@ -1169,7 +1169,8 @@ export default function TeamMemberDetail() {
     return (
       <div className="min-h-screen bg-background" data-testid="page-team-member-error">
         <Header />
-        <div className="pt-32 pb-20">
+        {/* Cabecera sticky en flujo: ya no hace falta compensar el header fijo */}
+        <main id="main-content" className="pt-16 pb-20 lg:pt-20">
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
             <AlertCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
             <h2 className="text-2xl font-heading text-foreground mb-4" data-testid="text-error-title">
@@ -1182,7 +1183,7 @@ export default function TeamMemberDetail() {
               </Button>
             </Link>
           </div>
-        </div>
+        </main>
         <Footer />
       </div>
     );
@@ -1193,7 +1194,7 @@ export default function TeamMemberDetail() {
       <div className="min-h-screen bg-background" data-testid="page-team-member-loading">
         <Header />
         <section className="pt-36 pb-20 editorial-page-hero">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="max-w-6xl mx-auto px-6 lg:px-12">
             <Skeleton className="h-5 w-48 bg-white/10 mb-6" />
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
               <Skeleton className="h-32 w-32 rounded-full bg-white/10" />
@@ -1267,7 +1268,8 @@ export default function TeamMemberDetail() {
       )}
       
       <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-team-member-hero">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        {/* Mismo ancho que la biografía (max-w-6xl): foto y vuelta alineadas con el cuerpo */}
+        <div className="max-w-6xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1285,7 +1287,7 @@ export default function TeamMemberDetail() {
             </Link>
             <div className="flex flex-col md:flex-row items-stretch gap-0">
               <div
-                className="relative aspect-square w-full md:w-[280px] lg:w-[320px] shrink-0 overflow-hidden"
+                className="group relative aspect-square w-full md:w-[280px] lg:w-[320px] shrink-0 overflow-hidden"
                 data-testid="container-profile-photo"
               >
                 {member?.imageUrl ? (
@@ -1293,7 +1295,8 @@ export default function TeamMemberDetail() {
                     <img
                       src={member.imageUrl}
                       alt={member?.name}
-                      className="absolute inset-0 h-full w-full object-cover object-top"
+                      // En grises, como la rejilla de Equipo (el color vuelve al pasar el cursor)
+                      className="absolute inset-0 h-full w-full object-cover object-top grayscale transition-[filter] duration-500 group-hover:grayscale-0"
                       style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }}
                       loading="eager"
                       decoding="async"
@@ -1301,11 +1304,11 @@ export default function TeamMemberDetail() {
                     />
                     <div
                       aria-hidden="true"
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-[#1a1a19]/10 to-[#1a1a19]/70"
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-ss-ink/10 to-ss-ink/60"
                     />
                     <div
                       aria-hidden="true"
-                      className="absolute inset-0 bg-gradient-to-b from-transparent to-[#1a1a19]/40"
+                      className="absolute inset-0 bg-gradient-to-b from-transparent to-ss-ink/40"
                     />
                   </>
                 ) : (
@@ -1325,23 +1328,22 @@ export default function TeamMemberDetail() {
                 aria-hidden="true"
                 className="md:hidden h-px w-full bg-[#1E1C92]/20"
               />
-              <div className="flex-1 min-w-0 text-center md:text-left px-6 py-8 md:px-10 md:py-10">
-                <div className="h-px w-10 bg-brand mb-4 mx-auto md:mx-0" aria-hidden="true" />
-                <div className="flex flex-col md:flex-row items-center gap-3 mb-3">
-                  <h1 
-                    className="text-2xl md:text-3xl lg:text-4xl font-heading font-light text-white uppercase tracking-[0.12em]"
-                    data-testid="text-team-member-name"
-                  >
-                    {member?.name}
-                  </h1>
-                  <Badge 
-                    variant="secondary" 
-                    className="bg-white/20 text-white border-0 rounded-lg"
-                    data-testid="badge-seniority"
-                  >
+              {/* Sin padding lateral en móvil: el texto arranca en el borde de la foto y de la vuelta */}
+              <div className="flex-1 min-w-0 text-center md:text-left px-0 py-8 md:px-10 md:py-10">
+                {/* Eyebrow del expediente: "§ 03 —— SOCIO" (la barra se dibuja en index.css).
+                    La categoría va aquí y no en una píldora junto al nombre. */}
+                <p className="flex items-center gap-4 mb-4">
+                  <span className="h-px w-10 bg-brand" aria-hidden="true" />
+                  <span className="ss-label text-white/70" data-testid="badge-seniority">
                     {getSeniorityLabel()}
-                  </Badge>
-                </div>
+                  </span>
+                </p>
+                <h1 
+                  className="ss-hero-detail mb-3 text-2xl md:text-3xl lg:text-4xl font-heading font-light text-white uppercase tracking-[0.12em]"
+                  data-testid="text-team-member-name"
+                >
+                  {member?.name}
+                </h1>
                 {(() => {
                   const normalize = (s: string) =>
                     s

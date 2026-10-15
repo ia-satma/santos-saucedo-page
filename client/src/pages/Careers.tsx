@@ -1062,18 +1062,17 @@ export default function Careers() {
             >
               {t.heroSubtitle}
             </p>
-            <Button 
-              className="rounded-lg"
-              variant="default"
-              size="lg"
-              asChild
+            {/* Enlace de texto de la marca (etiqueta, subrayado lima, flecha), sin botón con caja */}
+            <a
+              href={`mailto:${t.applyEmail}`}
+              className="ss-label group inline-flex min-h-[44px] items-center gap-3 text-white"
               data-testid="button-hero-apply"
             >
-              <a href={`mailto:${t.applyEmail}`}>
-                <Briefcase className="w-5 h-5 mr-2" />
-                {t.apply}
-              </a>
-            </Button>
+              <span className="ss-link ss-link--lime">{t.apply}</span>
+              <span aria-hidden="true" className="ss-arrow text-ss-lime">
+                →
+              </span>
+            </a>
           </motion.div>
         </div>
       </section>

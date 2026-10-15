@@ -1,6 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { AlertCircle, Home, ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Header from "@/components/Header";
@@ -78,48 +75,48 @@ export default function NotFound() {
   return (
     <div className="min-h-screen bg-background flex flex-col" dir={isRTL ? "rtl" : "ltr"} data-testid="page-not-found">
       <Header />
-      
-      <main className="flex-1 flex items-center justify-center py-20">
-        <Card className="w-full max-w-lg mx-4">
-          <CardContent className="pt-8 pb-8 px-8 text-center">
-            <div className="flex justify-center mb-6">
-              <div className="w-20 h-20 rounded-full bg-brand/10 flex items-center justify-center">
-                <AlertCircle className="h-10 w-10 text-primary" />
-              </div>
-            </div>
-            
-            <h1 
-              className="text-3xl font-heading font-medium text-foreground mb-3"
-              data-testid="text-404-title"
-            >
-              404 - {t.title}
-            </h1>
 
-            <p 
-              className="text-muted-foreground mb-8"
-              data-testid="text-404-subtitle"
-            >
-              {t.subtitle}
-            </p>
+      {/* Mismo encabezado de marca que las páginas internas (degradado, eyebrow §, Bebas),
+          con enlaces de texto en vez de botones */}
+      <main id="main-content" className="flex-1 pt-36 pb-20 editorial-page-hero" data-testid="section-not-found-hero">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <p className="flex items-center gap-4 mb-6">
+            <span className="h-0.5 w-12 bg-brand" aria-hidden="true" />
+            <span className="ss-label text-white/70">Error 404</span>
+          </p>
 
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button asChild data-testid="button-go-home">
-                <Link href="/">
-                  <Home className="w-4 h-4 mr-2" />
-                  {t.goHome}
-                </Link>
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => window.history.back()}
-                data-testid="button-go-back"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
+          <h1 className="mb-5" data-testid="text-404-title">
+            {t.title}
+          </h1>
+
+          <p data-testid="text-404-subtitle">{t.subtitle}</p>
+
+          <div className="mt-10 flex flex-wrap items-center gap-x-10 gap-y-2">
+            <Link
+              href="/"
+              className="ss-label group inline-flex min-h-[44px] items-center gap-3 text-white"
+              data-testid="button-go-home"
+            >
+              <span className="ss-link ss-link--lime">{t.goHome}</span>
+              <span aria-hidden="true" className="ss-arrow text-ss-lime">
+                {isRTL ? "←" : "→"}
+              </span>
+            </Link>
+            <button
+              type="button"
+              onClick={() => window.history.back()}
+              className="ss-label group inline-flex min-h-[44px] items-center gap-3 text-white/70 transition-colors hover:text-white"
+              data-testid="button-go-back"
+            >
+              <span aria-hidden="true" className="text-ss-lime">
+                {isRTL ? "→" : "←"}
+              </span>
+              <span className="ss-link group-hover:[background-size:100%_1px] group-focus-visible:[background-size:100%_1px]">
                 {t.goBack}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              </span>
+            </button>
+          </div>
+        </div>
       </main>
 
       <Footer />

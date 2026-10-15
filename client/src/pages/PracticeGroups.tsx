@@ -291,7 +291,7 @@ export default function PracticeGroups() {
               </p>
             </div>
           ) : isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 max-w-4xl">
               {Array.from({ length: 4 }).map((_, i) => (
                 <Card
                   key={i}
@@ -314,7 +314,7 @@ export default function PracticeGroups() {
               initial="hidden"
               whileInView="visible"
             viewport={{ once: true }}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 max-w-4xl"
             >
               {practiceGroups?.map((group, idx) => (
                 <motion.div key={group.id} variants={itemVariants}>

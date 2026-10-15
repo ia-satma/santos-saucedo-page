@@ -11,7 +11,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
-import { getIcon } from "@/lib/icons";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { Eyebrow, LeadParagraph, RankingsList, type RankingItem } from "@/components/editorial";
 import type { PracticeGroup, TeamMember, RepresentativeMatterDb } from "@shared/schema";
@@ -505,7 +504,8 @@ export default function PracticeGroupDetail() {
     return (
       <div className="min-h-screen bg-background" data-testid="page-practice-group-error">
         <Header />
-        <div className="pt-32 pb-20">
+        {/* Cabecera sticky en flujo: ya no hace falta compensar el header fijo */}
+        <main id="main-content" className="pt-16 pb-20 lg:pt-20">
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
             <AlertCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
             <h2 className="text-2xl font-heading text-foreground mb-4" data-testid="text-error-title">
@@ -518,7 +518,7 @@ export default function PracticeGroupDetail() {
               </Button>
             </Link>
           </div>
-        </div>
+        </main>
         <Footer />
       </div>
     );
@@ -529,12 +529,9 @@ export default function PracticeGroupDetail() {
       <div className="min-h-screen bg-background" data-testid="page-practice-group-loading">
         <Header />
         <section className="pt-36 pb-20 editorial-page-hero">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="max-w-4xl mx-auto px-6 lg:px-12">
             <Skeleton className="h-5 w-48 bg-white/10 mb-6" />
-            <div className="flex items-center gap-4">
-              <Skeleton className="h-16 w-16 rounded-lg bg-white/10" />
-              <Skeleton className="h-12 w-64 bg-white/10" />
-            </div>
+            <Skeleton className="h-12 w-64 bg-white/10" />
           </div>
         </section>
         <main id="main-content" className="py-16 lg:py-20">
@@ -550,7 +547,6 @@ export default function PracticeGroupDetail() {
     );
   }
 
-  const IconComponent = practiceGroup ? getIcon(practiceGroup.iconName) : null;
   const displayName = language === 'es' 
     ? (practiceGroup?.nameEs || practiceGroup?.name)
     : language === 'en'
@@ -631,7 +627,8 @@ export default function PracticeGroupDetail() {
       <Header />
       
       <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-practice-group-hero">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        {/* Columna de lectura del cuerpo (max-w-4xl): vuelta y titular sobre el mismo borde */}
+        <div className="max-w-4xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -647,14 +644,11 @@ export default function PracticeGroupDetail() {
                 {t.backToAll}
               </span>
             </Link>
-            <div className="flex items-center gap-4">
-              {IconComponent && (
-                <div className="w-16 h-16 rounded-lg bg-white/5 flex items-center justify-center">
-                  <IconComponent className="w-8 h-8 text-primary" data-testid="icon-practice-group-detail" />
-                </div>
-              )}
+            {/* Eyebrow compartido ("§ 02 ——", index.css) en lugar de la ficha con icono */}
+            <div className="h-0.5 w-12 bg-brand mb-6" />
+            <div>
               <h1 
-                className="text-2xl md:text-3xl lg:text-4xl font-heading font-light text-white uppercase tracking-[0.15em]"
+                className="ss-hero-detail text-2xl md:text-3xl lg:text-4xl font-heading font-light text-white uppercase tracking-[0.15em]"
                 data-testid="text-practice-group-title"
               >
                 {displayName || (isTranslating ? (

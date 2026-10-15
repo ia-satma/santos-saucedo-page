@@ -37,6 +37,22 @@
   font-display: swap;
 }
 
+/* Alto de Header26 (h-[68px] / lg:h-20). Los elementos sticky de las páginas
+   se colocan debajo con top: var(--ss-header-h). */
+:root {
+  --ss-header-h: 68px;
+}
+@media (min-width: 1024px) {
+  :root {
+    --ss-header-h: 80px;
+  }
+}
+
+/* Con el encabezado sticky, el foco y las anclas no quedan tapados por él */
+html:has(header.ss26) {
+  scroll-padding-top: var(--ss-header-h);
+}
+
 .ss26 {
   --ss-ink: #140f4b;
   --ss-deep: #110c49;
@@ -56,9 +72,10 @@
 }
 
 /* index.css corta el desborde horizontal con `hidden`, que convierte a body en
-   contenedor de scroll y anula `position: sticky`. Solo en el Inicio 2026 se usa
-   `clip` (recorta igual, sin contenedor de scroll): el encabezado y la columna de
-   Prácticas quedan fijos. Especificidad 0,1,1 / 0,1,2: gana a `html, body`. */
+   contenedor de scroll y anula `position: sticky`. En toda página con Header26 o
+   Footer26 (.ss26: Inicio y páginas públicas; no el admin) se usa `clip` (recorta
+   igual, sin contenedor de scroll): el encabezado, la columna de Prácticas y los
+   filtros sticky quedan fijos. Especificidad 0,1,1 / 0,1,2: gana a `html, body`. */
 html:has(.ss26),
 html:has(.ss26) body {
   overflow-x: clip;

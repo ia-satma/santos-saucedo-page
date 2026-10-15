@@ -505,8 +505,10 @@ export default function Team() {
         </div>
       </section>
 
-      {/* Filter bar */}
-      <div className="bg-card/92 backdrop-blur-xl sticky top-0 z-40">
+      {/* Filter bar: se pega bajo la cabecera sticky (z-40 < z-50 del header).
+          bg-card/92 no existe en la escala de Tailwind (la barra quedaba transparente); /95 sí.
+          Filete inferior: separa la barra pegada de las fotos que pasan debajo. */}
+      <div className="bg-card/95 backdrop-blur-xl sticky top-[var(--ss-header-h)] z-40 border-b border-ss-ink/10">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 py-4">
           <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
             <div className="relative flex-1">
@@ -585,7 +587,7 @@ export default function Team() {
             {/* ─── SOCIOS ──────────────────────────────────────── */}
             {showPartners && groupedMembers.partners.length > 0 && (
               <section data-testid="section-partners">
-                <div className="px-6 lg:px-12 pt-10 pb-4">
+                <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-10 pb-4">
                   <div className="w-10 h-px bg-brand mb-4" />
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
                     {t.partnersOnly}
@@ -661,7 +663,7 @@ export default function Team() {
             {/* ─── OF COUNSEL ──────────────────────────────────── */}
             {showOfCounsel && groupedMembers.ofCounsel.length > 0 && (
               <section data-testid="section-ofcounsel">
-                <div className="px-6 lg:px-12 pt-10 pb-4">
+                <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-10 pb-4">
                   <div className="w-10 h-px bg-brand mb-4" />
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
                     {t.ofCounsel}
@@ -728,7 +730,7 @@ export default function Team() {
             {/* ─── NUESTRO EQUIPO (anonymous photo mosaic — no name mapping yet) ── */}
             {showAssociates && equipoPhotos.length > 0 && (
               <section data-testid="section-associates">
-                <div className="px-6 lg:px-12 pt-10 pb-4">
+                <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-10 pb-4">
                   <div className="w-10 h-px bg-brand mb-4" />
                   <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
                     {language === "es" ? "Nuestro Equipo" : "Our Team"}

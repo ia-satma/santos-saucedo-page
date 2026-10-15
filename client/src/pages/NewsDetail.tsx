@@ -19,26 +19,25 @@ import { isNativeLanguage } from "@/lib/translationUtils";
 import { LeadParagraph } from "@/components/editorial";
 import type { News, TeamMember } from "@shared/schema";
 
-function NewsHeroImage({ 
-  src, 
-  alt
-}: { 
-  src: string; 
-  alt: string;
-}) {
+// Imagen del artículo con su velo tinta. Sin imagen, o si no carga, no se pinta nada:
+// queda el degradado de la marca de la sección (sin foto genérica de reemplazo).
+// alt vacío: el h1 ya dice el título.
+function NewsHeroImage({ src }: { src: string }) {
   const [hasError, setHasError] = useState(false);
-  const fallbackImage = "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80";
-  
+  if (!src || hasError) return null;
   return (
-    <img
-      src={hasError ? fallbackImage : src}
-      alt={alt}
-      className="w-full h-full object-cover"
-      loading="eager"
-      decoding="async"
-      onError={() => setHasError(true)}
-      data-testid="img-news-hero"
-    />
+    <>
+      <img
+        src={src}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover"
+        loading="eager"
+        decoding="async"
+        onError={() => setHasError(true)}
+        data-testid="img-news-hero"
+      />
+      <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-ss-deep/90 via-ss-deep/50 to-ss-deep/20" />
+    </>
   );
 }
 
@@ -468,7 +467,8 @@ export default function NewsDetail() {
     return (
       <div className="min-h-screen bg-background" data-testid="page-news-error">
         <Header />
-        <div className="pt-32 pb-20">
+        {/* Cabecera sticky en flujo: ya no hace falta compensar el header fijo */}
+        <main id="main-content" className="pt-16 pb-20 lg:pt-20">
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
             <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h2 className="text-2xl font-heading text-foreground mb-4" data-testid="text-error-title">
@@ -483,7 +483,7 @@ export default function NewsDetail() {
               {t.backToNews}
             </Button>
           </div>
-        </div>
+        </main>
         <Footer />
       </div>
     );
@@ -493,7 +493,8 @@ export default function NewsDetail() {
     return (
       <div className="min-h-screen bg-background" data-testid="page-news-loading">
         <Header />
-        <section className="pt-24 relative">
+        {/* La imagen arranca bajo la cabecera sticky; antes pt-24 compensaba el header fijo */}
+        <section className="relative">
           <Skeleton className="w-full h-[50vh] min-h-[400px]" />
         </section>
         <main id="main-content" className="py-16 lg:py-20">
@@ -514,7 +515,7 @@ export default function NewsDetail() {
 
   const displayTitle = translatedFields.title || newsArticle?.title;
   const displayContent = translatedFields.content || translatedFields.excerpt || newsArticle?.content || newsArticle?.excerpt;
-  const heroImage = newsArticle?.imageUrl || "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80";
+  const heroImage = newsArticle?.imageUrl || "";
 
   const primaryAuthor = relatedAuthors && relatedAuthors.length > 0 ? relatedAuthors[0] : null;
 
@@ -546,16 +547,16 @@ export default function NewsDetail() {
         </>
       )}
       
-      <section className="pt-24 relative" data-testid="section-news-hero">
-        <div className="relative w-full h-[50vh] min-h-[400px] overflow-hidden">
-          <NewsHeroImage
-            src={heroImage}
-            alt={displayTitle || ""}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
+      {/* La imagen arranca bajo la cabecera sticky; antes pt-24 compensaba el header fijo */}
+      <section className="relative" data-testid="section-news-hero">
+        {/* Fondo de la marca: franja superior del degradado de la portada (como los encabezados internos) */}
+        {/* Alto mínimo (50vh, 400px) en vez de fijo y texto en el flujo: con el titular en Bebas
+            un título largo hace crecer la banda en lugar de quedar recortado por arriba */}
+        <div className="ss-gradient bg-ss-deep bg-[length:100%_max(100%,56vw)] bg-left-top bg-no-repeat relative flex w-full min-h-[max(50vh,400px)] items-end overflow-hidden">
+          <NewsHeroImage key={heroImage} src={heroImage} />
           
-          <div className="absolute inset-0 flex items-end">
-            <div className="max-w-4xl mx-auto px-6 lg:px-12 pb-12 w-full">
+          <div className="relative w-full">
+            <div className="max-w-4xl mx-auto px-6 lg:px-12 pt-12 pb-12 w-full">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -570,12 +571,14 @@ export default function NewsDetail() {
                   {t.backToNews}
                 </button>
                 
+                {/* Eyebrow del expediente, como los encabezados internos: "§ 04 —— NOTICIA" */}
                 <div
-                  className="flex items-center gap-3 mb-4"
+                  className="flex items-center gap-4 mb-4"
                   data-testid="eyebrow-news"
                 >
-                  <div className="h-px w-10 bg-brand" aria-hidden="true" />
-                  <span className="text-[11px] tracking-[0.3em] uppercase text-white/90 font-medium">
+                  <span aria-hidden="true" className="ss-label ss-num text-ss-lime">§ 04</span>
+                  <span aria-hidden="true" className="h-0.5 w-7 shrink-0 bg-ss-lime" />
+                  <span className="ss-label text-white/70">
                     {language === 'es' ? 'Noticia' : language === 'de' ? 'Nachrichten' : language === 'fr' ? 'Actualité' : language === 'it' ? 'Notizie' : 'News'}
                   </span>
                 </div>
@@ -586,7 +589,7 @@ export default function NewsDetail() {
                 </div>
                 
                 <h1 
-                  className="text-3xl md:text-4xl lg:text-5xl font-heading font-light text-white leading-tight"
+                  className="ss-display ss-news-title text-[clamp(40px,4.4vw,64px)] leading-[0.95] text-white"
                   data-testid="text-news-title"
                 >
                   {displayTitle}

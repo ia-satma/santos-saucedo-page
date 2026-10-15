@@ -133,12 +133,12 @@ export const home26 = {
     },
     socios: {
       label: "Socios",
-      title: "Socios fundadores",
-      role: "Socio fundador",
+      title: "Socios",
+      // Cargos tomados del panel (team_members.title_es).
       people: [
-        { name: "Enrique Hernán Santos Arce", photo: "santos-arce" },
-        { name: "Enrique Hernán Santos Guzmán", photo: "santos-guzman" },
-        { name: "Mario Saucedo Montemayor", photo: "saucedo-montemayor" },
+        { name: "Enrique Hernán Santos Arce", photo: "santos-arce", role: "Socio fundador" },
+        { name: "Enrique Hernán Santos Guzmán", photo: "santos-guzman", role: "Socio director" },
+        { name: "Mario Saucedo Montemayor", photo: "saucedo-montemayor", role: "Socio director" },
       ],
       link: "Conozca al equipo",
     },
@@ -250,12 +250,11 @@ export const home26 = {
     },
     socios: {
       label: "Partners",
-      title: "Founding partners",
-      role: "Founding partner",
+      title: "Partners",
       people: [
-        { name: "Enrique Hernán Santos Arce", photo: "santos-arce" },
-        { name: "Enrique Hernán Santos Guzmán", photo: "santos-guzman" },
-        { name: "Mario Saucedo Montemayor", photo: "saucedo-montemayor" },
+        { name: "Enrique Hernán Santos Arce", photo: "santos-arce", role: "Founding partner" },
+        { name: "Enrique Hernán Santos Guzmán", photo: "santos-guzman", role: "Managing partner" },
+        { name: "Mario Saucedo Montemayor", photo: "saucedo-montemayor", role: "Managing partner" },
       ],
       link: "Meet the team",
     },
