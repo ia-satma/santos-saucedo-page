@@ -79,6 +79,15 @@ export default {
           foreground: "hsl(var(--sidebar-accent-foreground) / <alpha-value>)",
           border: "var(--sidebar-accent-border)"
         },
+        // Marca 2026 (Expediente §). Hex para que funcionen los modificadores /15, /70…
+        ss: {
+          ink: "#140F4B",
+          deep: "#110C49",
+          violet: "#170D94",
+          panel: "#0A044B",
+          lime: "#B2EB3E",
+          paper: "#EEEEEE",
+        },
         status: {
           online: "rgb(34 197 94)",
           away: "rgb(245 158 11)",

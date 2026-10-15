@@ -41,6 +41,13 @@ export default function CookieBanner({ language }: CookieBannerProps) {
     }
   }, []);
 
+  // Abre el panel de preferencias desde fuera (enlace "Preferencias de cookies" del pie)
+  useEffect(() => {
+    const open = () => setShowPreferences(true);
+    window.addEventListener('ss:open-cookie-preferences', open);
+    return () => window.removeEventListener('ss:open-cookie-preferences', open);
+  }, []);
+
   const savePreferences = (prefs: CookiePreferences) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
     setVisible(false);
@@ -399,16 +406,16 @@ export default function CookieBanner({ language }: CookieBannerProps) {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="fixed bottom-0 left-0 w-full bg-[#1a1a1a] text-white p-6 z-[60] border-t border-primary shadow-2xl"
+          className="fixed bottom-0 left-0 w-full bg-[#0A044B] text-white px-6 py-5 z-[60] border-t border-white/15"
           data-testid="banner-cookie-consent"
         >
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-gray-300 flex-1">
+            <div className="text-[14px] leading-relaxed text-white/70 flex-1">
               <p>
                 {t.message}
                 <a 
                   href="/privacy-policy" 
-                  className="underline text-primary ml-1 hover:text-white transition-colors"
+                  className="underline underline-offset-4 decoration-[#B2EB3E] text-white ml-1 hover:text-[#B2EB3E] transition-colors"
                   data-testid="link-privacy-policy"
                 >
                   {t.privacy}
@@ -418,14 +425,14 @@ export default function CookieBanner({ language }: CookieBannerProps) {
             <div className="flex flex-wrap gap-3 shrink-0">
               <button 
                 onClick={openPreferences}
-                className="min-h-[44px] px-4 py-2 text-sm rounded-sm bg-white/10 hover:bg-white/20 transition-colors touch-manipulation"
+                className="min-h-[44px] px-5 py-2 text-[12px] font-semibold uppercase tracking-[0.16em] border border-white/30 text-white hover:border-white transition-colors touch-manipulation"
                 data-testid="button-cookie-configure"
               >
                 {t.configure}
               </button>
               <button 
                 onClick={acceptAll}
-                className="min-h-[44px] px-6 py-2 text-sm rounded-sm bg-brand text-brand-foreground font-bold hover:brightness-95 transition-all touch-manipulation"
+                className="min-h-[44px] px-6 py-2 text-[12px] font-semibold uppercase tracking-[0.16em] bg-white text-[#140F4B] hover:bg-[#B2EB3E] transition-colors touch-manipulation"
                 data-testid="button-cookie-accept"
               >
                 {t.accept}

@@ -1,0 +1,313 @@
+/* ======================================================
+   SANTOS & SAUCEDO 2026 — "Expediente §"
+   Marca 2026: marino + lima, titulares condensados en
+   mayúsculas, Source Sans en el texto, § como sistema.
+   Fuentes OFL autoalojadas (licencias en ./fonts/OFL-*.txt).
+   ====================================================== */
+
+@font-face {
+  font-family: "SS Display";
+  src: url("./fonts/BebasNeue-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SS Sans";
+  src: url("./fonts/SourceSans3-var.woff2") format("woff2");
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SS Sans";
+  src: url("./fonts/SourceSans3-Italic-var.woff2") format("woff2");
+  font-weight: 200 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SS Serif";
+  src: url("./fonts/SourceSerif4-Italic-var.woff2") format("woff2");
+  font-weight: 300 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+.ss26 {
+  --ss-ink: #140f4b;
+  --ss-deep: #110c49;
+  --ss-violet: #170d94;
+  --ss-panel: #0a044b;
+  --ss-lime: #b2eb3e;
+  --ss-paper: #eeeeee;
+  --ss-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ss-pad: clamp(20px, 5vw, 72px);
+
+  font-family: "SS Sans", "Source Sans 3", system-ui, sans-serif;
+  color: var(--ss-ink);
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* index.css corta el desborde horizontal con `hidden`, que convierte a body en
+   contenedor de scroll y anula `position: sticky`. Solo en el Inicio 2026 se usa
+   `clip` (recorta igual, sin contenedor de scroll): el encabezado y la columna de
+   Prácticas quedan fijos. Especificidad 0,1,1 / 0,1,2: gana a `html, body`. */
+html:has(.ss26),
+html:has(.ss26) body {
+  overflow-x: clip;
+}
+
+/* index.css fija familia y color en encabezados, párrafos y botones;
+   dentro de .ss26 heredan del sistema 2026 (especificidad baja con :where). */
+.ss26 :where(h1, h2, h3, h4, h5, h6, p, li, address, input, textarea, button) {
+  font-family: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+.ss26 :where(h1, h2, h3, h4, h5, h6) {
+  font-weight: inherit;
+  line-height: inherit;
+}
+/* index.css fuerza 16px en p/span/li/label en móvil; aquí cada tamaño lo fija el sistema. */
+.ss26 :where(p, span, li, label, dt, dd) {
+  font-size: inherit;
+}
+
+.ss26 ::selection {
+  background: var(--ss-lime);
+  color: var(--ss-ink);
+}
+
+/* Contenedor: 1320px de contenido + márgenes laterales fluidos */
+.ss-container {
+  width: 100%;
+  max-width: calc(1320px + 2 * var(--ss-pad));
+  margin-inline: auto;
+  padding-inline: var(--ss-pad);
+}
+
+/* Titulares: condensada en mayúsculas, como la presentación 2026 */
+.ss-display {
+  font-family: "SS Display", "Bebas Neue", "Arial Narrow", sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.88;
+  font-feature-settings: "kern", "lnum";
+  text-wrap: balance;
+}
+
+/* Etiquetas y cabeceras de sección */
+.ss-label {
+  font-family: "SS Sans", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.35;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Romana con remates, itálica, solo para la creencia y citas.
+   index.css anula las itálicas con `* { font-style: normal !important }`. */
+.ss26 .ss-serif {
+  font-family: "SS Serif", Georgia, "Times New Roman", serif;
+  font-style: italic !important;
+  font-weight: 350;
+  font-optical-sizing: auto;
+}
+
+.ss-prose {
+  font-size: 18px;
+  line-height: 1.68;
+  text-wrap: pretty;
+  hanging-punctuation: first;
+}
+
+.ss-lead {
+  font-size: clamp(18px, 1.1vw + 12px, 22px);
+  line-height: 1.55;
+  font-weight: 300;
+  text-wrap: pretty;
+}
+
+.ss-num {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Fondos de la marca */
+.ss-gradient {
+  background-color: var(--ss-deep);
+  background-image: linear-gradient(148deg, #110c49 0%, #130e5b 58%, #170d94 100%);
+}
+
+.ss-panel {
+  background-color: var(--ss-panel);
+}
+
+.ss-paper {
+  background-color: var(--ss-paper);
+}
+
+/* Enlaces: subrayado que se dibuja de izquierda a derecha */
+.ss-link {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 320ms var(--ss-ease), color 200ms ease;
+  padding-bottom: 2px;
+}
+.ss-link:hover,
+.ss-link[aria-current="page"],
+a:hover .ss-link,
+a:focus-visible .ss-link {
+  background-size: 100% 1px;
+}
+.ss-link--lime {
+  background-image: linear-gradient(var(--ss-lime), var(--ss-lime));
+  background-size: 0% 2px;
+}
+.ss-link--lime:hover,
+.ss-link--lime[aria-current="page"],
+a:hover .ss-link--lime,
+a:focus-visible .ss-link--lime {
+  background-size: 100% 2px;
+}
+
+/* Flecha de los enlaces de texto */
+.ss-arrow {
+  display: inline-block;
+  transition: transform 320ms var(--ss-ease);
+}
+a:hover > .ss-arrow,
+a:focus-visible > .ss-arrow {
+  transform: translateX(4px);
+}
+
+/* Foco visible. Fondo oscuro (por defecto): contorno lima + anillo marino.
+   Especificidad 0,3,0 para ganar a `.dark a:focus-visible` de index.css. */
+.ss26 :is(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
+  outline: 3px solid var(--ss-lime);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--ss-ink);
+}
+/* Fondo claro (contrato: toda sección clara lleva .ss-paper): marino, sin lima
+   (lima sobre papel ≈ 1.2:1). */
+.ss-paper :is(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
+  outline: 3px solid #140f4b;
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* Entrada única al aparecer (Reveal). Solo se oculta con JS activo
+   (html.ss-js, ver main.tsx): sin JS el contenido queda visible. */
+.ss-reveal {
+  transition: opacity var(--ss-dur, 560ms) var(--ss-ease), transform var(--ss-dur, 560ms) var(--ss-ease);
+  transition-delay: var(--ss-delay, 0s);
+}
+.ss-js .ss-reveal {
+  opacity: 0;
+  transform: translate3d(0, var(--ss-y, 24px), 0);
+}
+.ss-js .ss-reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Tratamiento común de fotografía: algo menos de color, algo más de contraste */
+.ss-photo {
+  filter: saturate(0.82) contrast(1.06);
+}
+
+/* Foto que se asienta: escala 1.06 → 1 una vez (estado inicial solo con JS) */
+.ss-settle {
+  transition: transform 1400ms var(--ss-ease), opacity 620ms var(--ss-ease);
+}
+.ss-js .ss-settle {
+  transform: scale(1.06);
+  opacity: 0.6;
+}
+.ss-js .ss-settle.is-in {
+  transform: none;
+  opacity: 1;
+}
+
+/* Barra lima que se dibuja una vez (sin JS queda dibujada) */
+.ss-bar {
+  display: inline-block;
+  width: 28px;
+  height: 2px;
+  background: var(--ss-lime);
+  transform-origin: left center;
+  transition: transform 400ms var(--ss-ease) calc(var(--ss-delay, 0s) + 150ms);
+}
+.ss-js .ss-bar {
+  transform: scaleX(0);
+}
+.ss-js .is-in .ss-bar,
+.ss-js .ss-bar.is-in {
+  transform: scaleX(1);
+}
+
+/* Fila de prácticas: la subnumeración § pasa de tenue a pleno */
+.ss-row .ss-row-num {
+  color: rgb(20 15 75 / 0.65);
+  transition: color 320ms var(--ss-ease);
+}
+.ss-row:hover .ss-row-num,
+.ss-row:focus-within .ss-row-num {
+  color: var(--ss-ink);
+}
+.ss-row .ss-row-rule {
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 520ms var(--ss-ease);
+}
+.ss-row:hover .ss-row-rule,
+.ss-row:focus-within .ss-row-rule {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Misma especificidad que los estados .ss-js de arriba: gana por orden */
+  .ss-js .ss-reveal,
+  .ss-js .ss-settle,
+  .ss-js .ss-bar {
+    opacity: 1;
+    transform: none;
+  }
+  .ss-reveal,
+  .ss-settle,
+  .ss-bar,
+  .ss-link,
+  .ss-arrow,
+  .ss-row .ss-row-num,
+  .ss-row .ss-row-rule {
+    transition: none;
+  }
+  /* Sin desplazamiento en hover: la flecha no se mueve */
+  a:hover > .ss-arrow,
+  a:focus-visible > .ss-arrow {
+    transform: none;
+  }
+}
+
+/* Impresión: todo visible aunque no se haya desplazado (misma especificidad
+   que los estados ocultos de arriba; gana por orden) */
+@media print {
+  .ss-js .ss-reveal,
+  .ss-js .ss-settle,
+  .ss-js .ss-bar {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

@@ -1,55 +1,43 @@
-import Header from "@/components/Header";
-import HeroSection from "@/components/HeroSection";
-import PracticesSection from "@/components/PracticesSection";
-import CoberturaSection from "@/components/CoberturaSection";
-import ClientesSection from "@/components/ClientesSection";
-import AboutUsSection from "@/components/AboutUsSection";
-import MapSection from "@/components/MapSection";
-import EventsSection from "@/components/EventsSection";
-import Footer from "@/components/Footer";
+import Header26 from "@/components/home26/Header26";
+import Hero26 from "@/components/home26/Hero26";
+import {
+  Firma26,
+  Creemos26,
+  Practicas26,
+  Extranjeras26,
+  Monitor26,
+  Socios26,
+} from "@/components/home26/Sections26";
+import Footer26 from "@/components/home26/Footer26";
 import JsonLdSchema from "@/components/JsonLdSchema";
 import CookieBanner from "@/components/CookieBanner";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Home() {
-  const { language } = useLanguage();
+  const { language, displayLanguage } = useLanguage();
+  const lang = displayLanguage === "es" ? "es" : "en";
 
   return (
-    <div className="min-h-screen bg-card" data-testid="page-home">
+    <div className="ss26 min-h-screen" data-testid="page-home">
       <SEOHead page="home" language={language} />
       <JsonLdSchema language={language} />
-      
-      {/* 1. Header/Nav with deep menu */}
-      <Header />
-      
+
+      <Header26 />
+
       <main id="main-content">
-        {/* 2. Hero Section with news overlay */}
-        <HeroSection language={language} />
-
-        {/* 3. Areas of Specialty (4) */}
-        <PracticesSection />
-
-        {/* 4. National Coverage / Alliance (+72 cities, +35 years) */}
-        <CoberturaSection />
-
-        {/* Clients logo wall */}
-        <ClientesSection />
-
-        {/* Upcoming Events */}
-        <EventsSection language={language} />
-
-        {/* 5. About Us (Vision, Mission, Values) */}
-        <AboutUsSection />
-
-        {/* 6. Map / Location */}
-        <MapSection language={language} />
+        {/* Expediente §: cada sección es un § numerado */}
+        <Hero26 lang={lang} />
+        <Firma26 lang={lang} />
+        <Creemos26 lang={lang} />
+        <Practicas26 lang={lang} />
+        <Extranjeras26 lang={lang} />
+        <Monitor26 lang={lang} />
+        <Socios26 lang={lang} />
       </main>
-      
-      {/* 14. Footer */}
-      <Footer />
-      
-      {/* Popups and Banners */}
+
+      <Footer26 />
+
       <CookieBanner language={language} />
     </div>
   );

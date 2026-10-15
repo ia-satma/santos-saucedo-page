@@ -1013,9 +1013,11 @@ html, body {
     font-size: max(16px, 1rem);
   }
   
-  /* Improve touch targets for all clickable elements */
-  a:not(.inline-link),
-  button {
+  /* Improve touch targets for all clickable elements.
+     Salvo en el Inicio 2026 (.ss26), donde el inline-flex rompe rejillas y flex;
+     :where() conserva la especificidad original (no le gana a .hidden). */
+  a:not(.inline-link):where(:not(.ss26 a)),
+  button:where(:not(.ss26 button)) {
     min-height: 44px;
     display: inline-flex;
     align-items: center;
