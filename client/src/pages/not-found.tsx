@@ -98,8 +98,9 @@ export default function NotFound() {
               data-testid="button-go-home"
             >
               <span className="ss-link ss-link--lime">{t.goHome}</span>
+              {/* Siempre "→": en árabe la espeja .ss-arrow:dir(rtl) (ss26.css), como en Carreras */}
               <span aria-hidden="true" className="ss-arrow text-ss-lime">
-                {isRTL ? "←" : "→"}
+                →
               </span>
             </Link>
             <button

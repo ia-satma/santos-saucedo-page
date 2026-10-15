@@ -29,6 +29,115 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { NumberedCard } from "@/components/editorial";
 import type { TeamMember, PracticeGroup, IndustryGroup, LanguageCode } from "@shared/schema";
 
+// Metodología laboral de /about (en ES/EN va en el propio componente) y dos cifras:
+// integrantes del equipo (no solo abogados) y la oficina en Nuevo León.
+const laborMethod: Partial<Record<LanguageCode, {
+  title: string;
+  subtitle: string;
+  intro: string;
+  /** Prevención, Diagnóstico, Capacitación: [título, texto] */
+  aspects: [string, string][];
+  team: string;
+  office: string;
+}>> = {
+  de: {
+    title: "Arbeitsrechtliche Methodik",
+    subtitle: "Prävention, Personalverwaltung und Verteidigung im Arbeitsrecht",
+    intro: "Die Arbeit der Kanzlei konzentriert sich darauf, den täglichen Betrieb der Unternehmen zu schützen: Risiken prüfen, interne Abläufe ordnen, die verantwortlichen Teams stärken und strategisch reagieren, wenn ein Konflikt entsteht.",
+    aspects: [
+      ["Prävention", "Wir erkennen arbeitsrechtliche Risiken, bevor sie zu Streitfällen werden."],
+      ["Diagnose", "Wir prüfen Personalverwaltung, Dokumentation und Arbeitsbeziehungen."],
+      ["Schulung", "Wir bereiten Führungskräfte und Personalabteilungen darauf vor, mit rechtlichem Urteilsvermögen zu handeln."],
+    ],
+    team: "Teammitglieder",
+    office: "Büro in Nuevo León",
+  },
+  zh: {
+    title: "劳动法工作方法",
+    subtitle: "预防、劳动管理与劳动争议辩护",
+    intro: "本所的工作重点是保护企业的日常运营：评估风险、梳理内部流程、加强相关负责团队，并在冲突发生时以策略应对。",
+    aspects: [
+      ["预防", "我们在劳动风险演变为纠纷之前予以识别。"],
+      ["诊断", "我们审查劳动管理、相关文件和劳动关系。"],
+      ["培训", "我们帮助管理层和人力资源团队以稳健的法律判断行事。"],
+    ],
+    team: "团队成员",
+    office: "新莱昂州办公室",
+  },
+  ko: {
+    title: "노동법 방법론",
+    subtitle: "예방, 노무 관리, 노동 분쟁 방어",
+    intro: "법인의 업무는 기업의 일상적인 운영을 보호하는 데 집중합니다. 위험을 검토하고, 내부 절차를 정비하며, 담당 팀을 강화하고, 분쟁이 생기면 전략적으로 대응합니다.",
+    aspects: [
+      ["예방", "노동 위험이 분쟁으로 번지기 전에 파악합니다."],
+      ["진단", "노무 관리, 관련 문서, 근로 관계를 검토합니다."],
+      ["교육", "관리자와 인사팀이 법적 판단에 근거해 행동할 수 있도록 준비시킵니다."],
+    ],
+    team: "팀 구성원",
+    office: "누에보레온 사무소",
+  },
+  ja: {
+    title: "労働法の方法論",
+    subtitle: "予防、労務管理、労働紛争での防御",
+    intro: "当事務所の業務は、企業の日々の事業運営を守ることに重点を置いています。リスクを検証し、社内プロセスを整え、担当チームを強化し、紛争が生じた際には戦略的に対応します。",
+    aspects: [
+      ["予防", "労働リスクが紛争に発展する前に特定します。"],
+      ["診断", "労務管理、関連書類、労使関係を見直します。"],
+      ["研修", "管理職と人事チームが法的に適切な判断で行動できるよう支援します。"],
+    ],
+    team: "チームメンバー",
+    office: "ヌエボ・レオン州の事務所",
+  },
+  ar: {
+    title: "منهجية العمل في قانون العمل",
+    subtitle: "الوقاية والإدارة العمالية والدفاع في النزاعات العمالية",
+    intro: "يتركز عمل المكتب على حماية العمليات اليومية للشركات: مراجعة المخاطر، وتنظيم الإجراءات الداخلية، وتعزيز الفرق المسؤولة، والاستجابة باستراتيجية عند نشوء أي نزاع.",
+    aspects: [
+      ["الوقاية", "نحدد المخاطر العمالية قبل أن تتحول إلى نزاعات."],
+      ["التشخيص", "نراجع الإدارة العمالية والوثائق وعلاقات العمل."],
+      ["التدريب", "نُعدّ المديرين وفرق الموارد البشرية للتصرف وفق تقدير قانوني سليم."],
+    ],
+    team: "أعضاء الفريق",
+    office: "مكتب في نويفو ليون",
+  },
+  ru: {
+    title: "Методология в трудовом праве",
+    subtitle: "Профилактика, кадровое администрирование и защита в трудовых спорах",
+    intro: "Работа фирмы направлена на защиту повседневной деятельности компаний: оценку рисков, упорядочение внутренних процессов, укрепление ответственных команд и стратегический ответ при возникновении конфликта.",
+    aspects: [
+      ["Профилактика", "Мы выявляем трудовые риски до того, как они перерастут в споры."],
+      ["Диагностика", "Мы проверяем кадровое администрирование, документацию и трудовые отношения."],
+      ["Обучение", "Мы готовим руководителей и кадровые службы принимать юридически обоснованные решения."],
+    ],
+    team: "Сотрудников",
+    office: "Офис в Нуэво-Леоне",
+  },
+  fr: {
+    title: "Méthodologie en droit du travail",
+    subtitle: "Prévention, administration du personnel et défense en droit du travail",
+    intro: "Le travail du cabinet vise à protéger l'activité quotidienne des entreprises : examiner les risques, structurer les processus internes, renforcer les équipes responsables et répondre avec stratégie lorsqu'un conflit survient.",
+    aspects: [
+      ["Prévention", "Nous identifions les risques sociaux avant qu'ils ne se transforment en litiges."],
+      ["Diagnostic", "Nous examinons l'administration du personnel, la documentation et les relations de travail."],
+      ["Formation", "Nous préparons les dirigeants et les équipes RH à agir avec discernement juridique."],
+    ],
+    team: "Membres de l'équipe",
+    office: "Bureau à Nuevo León",
+  },
+  it: {
+    title: "Metodologia giuslavoristica",
+    subtitle: "Prevenzione, amministrazione del personale e difesa in materia di lavoro",
+    intro: "Il lavoro dello studio si concentra sulla tutela dell'operatività quotidiana delle aziende: valutare i rischi, ordinare i processi interni, rafforzare i team responsabili e rispondere con strategia quando sorge un conflitto.",
+    aspects: [
+      ["Prevenzione", "Individuiamo i rischi giuslavoristici prima che si trasformino in contenziosi."],
+      ["Diagnosi", "Esaminiamo l'amministrazione del personale, la documentazione e i rapporti di lavoro."],
+      ["Formazione", "Prepariamo dirigenti e team delle risorse umane ad agire con criterio giuridico."],
+    ],
+    team: "Membri del team",
+    office: "Sede a Nuevo León",
+  },
+};
+
 export default function About() {
   const { language } = useLanguage();
 
@@ -1129,7 +1238,8 @@ export default function About() {
 
   const baseT = content[language] || content.en;
   const isSpanish = language === "es";
-  const t = {
+  // ES/EN: textos del reposicionamiento laboral
+  const labor: typeof baseT = {
     ...baseT,
     title: isSpanish ? "La Firma" : "The Firm",
     subtitle: isSpanish
@@ -1171,6 +1281,30 @@ export default function About() {
     viewTeam: isSpanish ? "Ver equipo" : "View team",
     viewPractices: isSpanish ? "Ver áreas laborales" : "View labor areas",
   };
+
+  // Los otros 8 idiomas: título, subtítulo, historia, valores y botones de content[lang]
+  // (el h1 coincide con el menú y el pie, chrome26.ts); la metodología laboral y las
+  // cifras de ES/EN, traducidas aquí.
+  const method = laborMethod[language];
+  const t: typeof baseT = method
+    ? {
+        ...baseT,
+        cultureTitle: method.title,
+        cultureSubtitle: method.subtitle,
+        cultureIntro: method.intro,
+        cultureAspects: [Shield, BarChart3, GraduationCap].map((icon, i) => ({
+          icon,
+          title: method.aspects[i][0],
+          text: method.aspects[i][1],
+        })),
+        stats: [
+          baseT.stats[0],
+          { value: String(teamMembers?.length || 24), label: method.team },
+          baseT.stats[2],
+          { value: "1", label: method.office },
+        ],
+      }
+    : labor;
 
   const containerVariants = {
     hidden: { opacity: 0 },

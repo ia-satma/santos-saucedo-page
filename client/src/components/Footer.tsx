@@ -8,11 +8,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 // CookieBanner va con el pie: escucha "ss:open-cookie-preferences" (botón del pie)
 // y muestra el aviso de consentimiento a quien entra por una página interna.
 // Home monta Footer26 y CookieBanner por su cuenta, sin este envoltorio: no se duplica.
+// `localized`: el pie de las páginas internas sigue el idioma elegido (10 idiomas).
 export default function Footer(_props: Record<string, unknown> = {}) {
   const { language } = useLanguage();
   return (
     <>
-      <Footer26 />
+      <Footer26 localized />
       <CookieBanner language={language} />
     </>
   );

@@ -278,15 +278,17 @@ export default function Experience() {
     });
   }, [matters, searchQuery, selectedPracticeArea, selectedIndustry, language]);
 
+  // null si la práctica o la industria no existe (slugs anteriores al reposicionamiento):
+  // la insignia no se muestra, en lugar de enseñar el slug o enlazar a una página inexistente
   const getPracticeAreaName = (slug: string) => {
     const group = practiceGroups?.find((g) => g.slug === slug);
-    return group ? (language === "es" ? group.nameEs : group.name) : slug;
+    return group ? (language === "es" ? group.nameEs : group.name) : null;
   };
 
   const getIndustryName = (slug: string | null) => {
     if (!slug) return null;
     const group = industryGroups?.find((g) => g.slug === slug);
-    return group ? (language === "es" ? group.nameEs : group.name) : slug;
+    return group ? (language === "es" ? group.nameEs : group.name) : null;
   };
 
   const containerVariants = {
@@ -435,26 +437,28 @@ export default function Experience() {
                             </span>
                           </div>
                           <div className="flex flex-wrap gap-2">
-                            <Link href={`/practice-groups/${matter.practiceAreaSlug}`}>
-                              <Badge 
-                                variant="secondary" 
-                                className="text-xs cursor-pointer hover-elevate"
-                                data-testid={`badge-featured-practice-${matter.id}`}
-                              >
-                                <Briefcase className="w-3 h-3 mr-1" />
-                                {getPracticeAreaName(matter.practiceAreaSlug)}
-                              </Badge>
-                            </Link>
-                            {matter.industrySlug && (
-                              <Link href={`/industry-groups/${matter.industrySlug}`}>
+                            {/* Enlace solo a prácticas que existen (/api/practice-groups) */}
+                            {getPracticeAreaName(matter.practiceAreaSlug) && (
+                              <Link href={`/practice-groups/${matter.practiceAreaSlug}`}>
                                 <Badge 
-                                  variant="outline" 
+                                  variant="secondary" 
                                   className="text-xs cursor-pointer hover-elevate"
-                                  data-testid={`badge-featured-industry-${matter.id}`}
+                                  data-testid={`badge-featured-practice-${matter.id}`}
                                 >
-                                  {getIndustryName(matter.industrySlug)}
+                                  <Briefcase className="w-3 h-3 mr-1" />
+                                  {getPracticeAreaName(matter.practiceAreaSlug)}
                                 </Badge>
                               </Link>
+                            )}
+                            {/* Sin enlace: no hay páginas públicas de industrias (rutas retiradas en 4f995a6) */}
+                            {getIndustryName(matter.industrySlug) && (
+                              <Badge 
+                                variant="outline" 
+                                className="text-xs"
+                                data-testid={`badge-featured-industry-${matter.id}`}
+                              >
+                                {getIndustryName(matter.industrySlug)}
+                              </Badge>
                             )}
                           </div>
                         </CardContent>
@@ -610,28 +614,29 @@ export default function Experience() {
                               </p>
                             </div>
                             <div className="flex flex-wrap lg:flex-nowrap gap-2 lg:min-w-fit">
-                              <Link href={`/practice-groups/${matter.practiceAreaSlug}`}>
-                                <Badge 
-                                  variant="secondary" 
-                                  className="text-xs cursor-pointer hover-elevate whitespace-nowrap"
-                                  data-testid={`badge-matter-practice-${matter.id}`}
-                                >
-                                  <Briefcase className="w-3 h-3 mr-1" />
-                                  {getPracticeAreaName(matter.practiceAreaSlug)}
-                                  <ChevronRight className="w-3 h-3 ml-1" />
-                                </Badge>
-                              </Link>
-                              {matter.industrySlug && (
-                                <Link href={`/industry-groups/${matter.industrySlug}`}>
+                              {/* Enlace solo a prácticas que existen (/api/practice-groups) */}
+                              {getPracticeAreaName(matter.practiceAreaSlug) && (
+                                <Link href={`/practice-groups/${matter.practiceAreaSlug}`}>
                                   <Badge 
-                                    variant="outline" 
+                                    variant="secondary" 
                                     className="text-xs cursor-pointer hover-elevate whitespace-nowrap"
-                                    data-testid={`badge-matter-industry-${matter.id}`}
+                                    data-testid={`badge-matter-practice-${matter.id}`}
                                   >
-                                    {getIndustryName(matter.industrySlug)}
+                                    <Briefcase className="w-3 h-3 mr-1" />
+                                    {getPracticeAreaName(matter.practiceAreaSlug)}
                                     <ChevronRight className="w-3 h-3 ml-1" />
                                   </Badge>
                                 </Link>
+                              )}
+                              {/* Sin enlace ni flecha: no hay páginas públicas de industrias */}
+                              {getIndustryName(matter.industrySlug) && (
+                                <Badge 
+                                  variant="outline" 
+                                  className="text-xs whitespace-nowrap"
+                                  data-testid={`badge-matter-industry-${matter.id}`}
+                                >
+                                  {getIndustryName(matter.industrySlug)}
+                                </Badge>
                               )}
                             </div>
                           </div>

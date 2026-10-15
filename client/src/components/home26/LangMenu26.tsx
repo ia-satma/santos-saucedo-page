@@ -1,16 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SUPPORTED_LANGUAGES, type LanguageCode } from "@shared/schema";
-import type { Lang26 } from "./content";
+import { chrome26 } from "./chrome26";
 
 // ES y EN van a la vista; los otros 8 (orden de shared/schema) van en la lista compacta
 const MAIN: LanguageCode[] = ["es", "en"];
 const OTHERS = SUPPORTED_LANGUAGES.filter((l) => !MAIN.includes(l.code));
-
-const ui = {
-  es: { others: "Otros idiomas", list: "Idioma" },
-  en: { others: "Other languages", list: "Language" },
-} as const;
 
 // El árabe no admite espaciado entre letras (rompe las ligaduras) y se escribe de derecha a izquierda
 const nameProps = (code: LanguageCode) =>
@@ -27,9 +22,9 @@ function GlobeIcon() {
 }
 
 /** Escritorio: ES / EN a la vista y un botón con los otros 8 idiomas en una lista emergente. */
-export function LangSwitch26({ lang, className = "" }: { lang: Lang26; className?: string }) {
+export function LangSwitch26({ lang, className = "" }: { lang: LanguageCode; className?: string }) {
   const { language, setLanguage } = useLanguage();
-  const t = ui[lang];
+  const t = chrome26[lang].langs;
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -52,7 +47,7 @@ export function LangSwitch26({ lang, className = "" }: { lang: Lang26; className
   };
 
   return (
-    <div className={`flex items-center gap-3 ${className}`} role="group" aria-label="Idioma / Language">
+    <div className={`flex items-center gap-3 ${className}`} role="group" aria-label={t.group}>
       <div className="ss-label flex items-center gap-2">
         {MAIN.map((code, i) => (
           <span key={code} className="flex items-center gap-2">
@@ -108,8 +103,9 @@ export function LangSwitch26({ lang, className = "" }: { lang: Lang26; className
         {open && (
           <div
             id="ss26-lang-others"
-            // Pegada al borde inferior de la cabecera (80px − 44px del botón) / 2 = 18px
-            className="absolute right-0 top-[calc(100%+18px)] z-10 min-w-[220px] border border-white/15 bg-ss-panel py-2 shadow-[0_24px_48px_-16px_rgba(0,0,0,0.55)]"
+            // Pegada al borde inferior de la cabecera (80px − 44px del botón) / 2 = 18px.
+            // end-0: alineada al final del botón (a la izquierda en árabe)
+            className="absolute end-0 top-[calc(100%+18px)] z-10 min-w-[220px] border border-white/15 bg-ss-panel py-2 shadow-[0_24px_48px_-16px_rgba(0,0,0,0.55)]"
           >
             <p id="ss26-lang-others-title" className="ss-label px-5 pb-1 pt-2 text-white/60">
               {t.others}
@@ -122,7 +118,7 @@ export function LangSwitch26({ lang, className = "" }: { lang: Lang26; className
                     lang={l.code}
                     aria-pressed={language === l.code}
                     onClick={() => choose(l.code)}
-                    className="flex min-h-[44px] w-full items-center justify-between gap-6 border-l-2 border-transparent pl-[18px] pr-5 text-left text-[15px] text-white/80 transition-colors hover:bg-white/5 hover:text-white aria-pressed:border-ss-lime aria-pressed:text-white"
+                    className="flex min-h-[44px] w-full items-center justify-between gap-6 border-s-2 border-transparent pe-5 ps-[18px] text-start text-[15px] text-white/80 transition-colors hover:bg-white/5 hover:text-white aria-pressed:border-ss-lime aria-pressed:text-white"
                   >
                     <span {...nameProps(l.code)}>{l.nameNative}</span>
                     <span aria-hidden="true" className="ss-label text-white/50">
@@ -140,12 +136,12 @@ export function LangSwitch26({ lang, className = "" }: { lang: Lang26; className
 }
 
 /** Menú móvil: ES / EN primero, como en escritorio; los otros 8 en una lista discreta de dos columnas. */
-export function LangList26({ lang }: { lang: Lang26 }) {
+export function LangList26({ lang }: { lang: LanguageCode }) {
   const { language, setLanguage } = useLanguage();
   return (
     <div role="group" aria-labelledby="ss26-menu-lang">
       <p id="ss26-menu-lang" className="ss-label text-white/60">
-        {ui[lang].list}
+        {chrome26[lang].langs.label}
       </p>
       <ul className="ss-label mt-1 flex items-center gap-2">
         {MAIN.map((code, i) => {
@@ -179,7 +175,7 @@ export function LangList26({ lang }: { lang: Lang26 }) {
               lang={l.code}
               aria-pressed={language === l.code}
               onClick={() => setLanguage(l.code)}
-              className="flex min-h-[44px] w-full items-center text-left text-[15px] normal-case tracking-normal text-white/60 transition-colors hover:text-white aria-pressed:text-white aria-pressed:underline aria-pressed:decoration-ss-lime aria-pressed:decoration-2 aria-pressed:underline-offset-[6px]"
+              className="flex min-h-[44px] w-full items-center text-start text-[15px] normal-case tracking-normal text-white/60 transition-colors hover:text-white aria-pressed:text-white aria-pressed:underline aria-pressed:decoration-ss-lime aria-pressed:decoration-2 aria-pressed:underline-offset-[6px]"
             >
               <span {...nameProps(l.code)}>{l.nameNative}</span>
             </button>

@@ -2,18 +2,12 @@ import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SUPPORTED_LANGUAGES } from "@shared/schema";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
-import { home26, langAttrs, nav26, type Lang26 } from "./content";
+import { useChrome26 } from "./chrome26";
 import { SectionMark } from "./primitives";
 import { useSiteContact } from "./useSiteContact";
 
-// Etiquetas de interfaz del pie (no es texto de la firma).
-const ui = {
-  es: { office: "Oficina", firm: "Firma", legal: "Legal", language: "Idioma", terms: "Términos de uso", cookies: "Preferencias de cookies" },
-  en: { office: "Office", firm: "Firm", legal: "Legal", language: "Language", terms: "Terms of use", cookies: "Cookie preferences" },
-} as const;
-
 // Área de clic de 32px (WCAG 2.5.8 pide 24px); el subrayado va en el texto, no en la caja.
-const linkCls = "inline-flex min-h-8 items-center text-left text-[16px] transition-colors";
+const linkCls = "inline-flex min-h-8 items-center text-start text-[16px] transition-colors";
 
 // Abre el panel de preferencias de CookieBanner sin borrar lo guardado
 // (CookieBanner escucha este evento).
@@ -21,28 +15,32 @@ function openCookiePreferences() {
   window.dispatchEvent(new Event("ss:open-cookie-preferences"));
 }
 
-export default function Footer26() {
-  const { language, displayLanguage, setLanguage } = useLanguage();
-  const lang: Lang26 = displayLanguage === "es" ? "es" : "en";
-  // Idioma real (no el de la interfaz, que cae a EN): con alemán, francés, etc.
+interface Footer26Props {
+  /** Páginas internas: interfaz en los 10 idiomas. Sin él (portada) solo ES/EN, como su contenido */
+  localized?: boolean;
+}
+
+export default function Footer26({ localized = false }: Footer26Props) {
+  const { language, setLanguage } = useLanguage();
+  const { t: chrome, base } = useChrome26(localized);
+  // Idioma real (no el de la interfaz, que en la portada cae a EN): con alemán, francés, etc.
   // ni Español ni English quedan marcados; se añade el idioma activo como tercer botón.
   const activeOther = language !== "es" && language !== "en" ? SUPPORTED_LANGUAGES.find((l) => l.code === language) : undefined;
-  const t = home26[lang].footer;
-  const l = ui[lang];
-  const items = nav26[lang];
+  const t = chrome.footer;
+  const items = chrome.nav;
   const year = new Date().getFullYear();
 
-  // Misma consulta que el pie anterior; lo estático de content.ts queda como respaldo.
-  const { address, phone, phoneHref, email } = useSiteContact(lang);
+  // Misma consulta que el pie anterior; lo estático de content.ts (ES/EN) queda como respaldo.
+  const { address, phone, phoneHref, email } = useSiteContact(base);
 
   return (
     <footer
       id="footer"
-      {...langAttrs[lang]}
+      {...chrome.attrs}
       className="ss26 relative isolate overflow-hidden bg-ss-ink text-white"
       data-testid="footer"
     >
-      <SectionMark className="absolute -right-[4%] -top-[30%] -z-10 h-[170%] bg-white opacity-[0.03]" />
+      <SectionMark className="absolute -end-[4%] -top-[30%] -z-10 h-[170%] bg-white opacity-[0.03]" />
 
       <div className="ss-container grid grid-cols-2 gap-x-6 gap-y-14 pb-14 pt-20 md:grid-cols-3 lg:grid-cols-12 lg:pb-16 lg:pt-28">
         <div className="col-span-2 md:col-span-3 lg:col-span-4">
@@ -50,19 +48,21 @@ export default function Footer26() {
         </div>
 
         <address className="col-span-2 not-italic md:col-span-1 lg:col-span-3" data-testid="text-footer-address">
-          <p className="ss-label text-ss-lime">{l.office}</p>
+          <p className="ss-label text-ss-lime">{t.office}</p>
           <p className="mt-5 text-[16px] leading-[1.6] text-white/80">
+            {/* bdi: en árabe (RTL) el punto final de "N.L." no salta al principio de la línea */}
             {address.map((line, i) => (
               <span key={i} className="block">
-                {line}
+                <bdi>{line}</bdi>
               </span>
             ))}
           </p>
+          {/* Teléfono y correo siempre de izquierda a derecha: en árabe los grupos de cifras se invertían */}
           <div className="mt-3 flex flex-col items-start">
-            <a href={phoneHref} className={`${linkCls} ss-num text-white`} data-testid="link-footer-phone">
+            <a href={phoneHref} dir="ltr" className={`${linkCls} ss-num text-white`} data-testid="link-footer-phone">
               <span className="ss-link">{phone}</span>
             </a>
-            <a href={`mailto:${email}`} className={`${linkCls} text-white [overflow-wrap:anywhere]`} data-testid="link-footer-email">
+            <a href={`mailto:${email}`} dir="ltr" className={`${linkCls} text-white [overflow-wrap:anywhere]`} data-testid="link-footer-email">
               <span className="ss-link">{email}</span>
             </a>
           </div>
@@ -70,7 +70,7 @@ export default function Footer26() {
 
         <nav aria-labelledby="ss26-footer-firm" className="lg:col-span-2">
           <p id="ss26-footer-firm" className="ss-label text-ss-lime">
-            {l.firm}
+            {t.firm}
           </p>
           <ul className="mt-4">
             {items.map((item) => (
@@ -86,7 +86,7 @@ export default function Footer26() {
         <div className="flex flex-col gap-12 lg:col-span-3">
           <nav aria-labelledby="ss26-footer-legal">
             <p id="ss26-footer-legal" className="ss-label text-ss-lime">
-              {l.legal}
+              {t.legal}
             </p>
             <ul className="mt-4">
               <li>
@@ -96,7 +96,7 @@ export default function Footer26() {
               </li>
               <li>
                 <Link href="/terms" className={`${linkCls} text-white/80 hover:text-white`} data-testid="link-terms">
-                  <span className="ss-link">{l.terms}</span>
+                  <span className="ss-link">{t.terms}</span>
                 </Link>
               </li>
               <li>
@@ -106,7 +106,7 @@ export default function Footer26() {
                   className={`${linkCls} group text-white/80 hover:text-white`}
                   data-testid="button-cookies"
                 >
-                  <span className="ss-link group-hover:[background-size:100%_1px] group-focus-visible:[background-size:100%_1px]">{l.cookies}</span>
+                  <span className="ss-link group-hover:[background-size:100%_1px] group-focus-visible:[background-size:100%_1px]">{t.cookies}</span>
                 </button>
               </li>
             </ul>
@@ -114,7 +114,7 @@ export default function Footer26() {
 
           <div role="group" aria-labelledby="ss26-footer-lang">
             <p id="ss26-footer-lang" className="ss-label text-ss-lime">
-              {l.language}
+              {chrome.langs.label}
             </p>
             <div className="mt-4 flex flex-wrap gap-x-5">
               {(["es", "en"] as const).map((code) => (

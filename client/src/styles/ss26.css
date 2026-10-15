@@ -209,6 +209,60 @@ a:focus-visible > .ss-arrow {
   transform: translateX(4px);
 }
 
+/* Árabe (RTL). :dir() sigue el dir efectivo de cada elemento: en la portada, con
+   <html dir="rtl">, cabecera y secciones declaran dir="ltr" y no se espejan.
+   El subrayado se dibuja desde la derecha y la flecha apunta y avanza hacia la izquierda. */
+.ss-link:dir(rtl) {
+  background-position: 100% 100%;
+}
+.ss-arrow:dir(rtl) {
+  transform: scaleX(-1);
+}
+a:hover > .ss-arrow:dir(rtl),
+a:focus-visible > .ss-arrow:dir(rtl) {
+  transform: translateX(-4px) scaleX(-1);
+}
+
+/* Árabe, chino, japonés y coreano: sin espaciado entre letras en etiquetas y titulares
+   (en árabe rompe la unión de las letras; en CJK abre huecos ajenos a la escritura).
+   Fuera quedan los botones de idioma (lang="ja"…): su código (JA) es latino y conserva
+   el espaciado, también en la interfaz en español o inglés.
+   Especificidad 0,4,1: gana a las utilidades tracking-[…] de la cabecera. */
+.ss26 :is(.ss-label, .ss-display, [class*="tracking-"]):is(:lang(ar), :lang(zh), :lang(ja), :lang(ko)):not(button[lang] *) {
+  letter-spacing: 0;
+}
+
+/* Menú de escritorio en alemán, francés y ruso: etiquetas más largas que en ES/EN.
+   Medido con el código de idioma junto al globo: a 1024 px el alemán se salía 36 px,
+   el francés 45 y el ruso 1; a 1280 px, el alemán 12 y el francés 56. Se cierran
+   espaciado entre letras y huecos solo en esos idiomas y anchos, sin recortar texto. */
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  #main-navigation > ul:is(:lang(de), :lang(fr), :lang(ru)) {
+    gap: 12px;
+  }
+  #main-navigation > ul:is(:lang(de), :lang(fr), :lang(ru)) a {
+    letter-spacing: 0.06em;
+  }
+}
+@media (min-width: 1280px) and (max-width: 1439.98px) {
+  #main-navigation > ul:is(:lang(de), :lang(fr)) {
+    gap: 20px;
+  }
+  #main-navigation > ul:is(:lang(de), :lang(fr)) a {
+    letter-spacing: 0.12em;
+  }
+}
+
+/* Menú móvil: Bebas solo cubre el latín. En ruso, chino, japonés, coreano y árabe los
+   enlaces usan la sans, sin mayúsculas forzadas, como los titulares de página (index.css). */
+#mobile-menu .ss-display:is(:lang(ru), :lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
+  font-family: "SS Sans", "Source Sans 3", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 1.2;
+  text-transform: none;
+}
+
 /* Foco visible. Fondo oscuro (por defecto): contorno lima + anillo marino.
    Especificidad 0,3,0 para ganar a `.dark a:focus-visible` de index.css. */
 .ss26 :is(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
@@ -310,10 +364,14 @@ a:focus-visible > .ss-arrow {
   .ss-row .ss-row-rule {
     transition: none;
   }
-  /* Sin desplazamiento en hover: la flecha no se mueve */
+  /* Sin desplazamiento en hover: la flecha no se mueve (en RTL sigue espejada) */
   a:hover > .ss-arrow,
   a:focus-visible > .ss-arrow {
     transform: none;
+  }
+  a:hover > .ss-arrow:dir(rtl),
+  a:focus-visible > .ss-arrow:dir(rtl) {
+    transform: scaleX(-1);
   }
 }
 

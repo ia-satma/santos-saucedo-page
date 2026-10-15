@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useId, useRef, type KeyboardEvent } from 'react';
+import { createPortal } from 'react-dom';
+import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Switch } from '@/components/ui/switch';
 import { X, Shield, BarChart3, Settings2, Megaphone } from 'lucide-react';
+import { FOCUSABLE, useDialog26 } from '@/components/home26/useDialog26';
 
 interface CookieBannerProps {
   language: "en" | "es" | "de" | "zh" | "ko" | "ja" | "ar" | "ru" | "fr" | "it";
@@ -16,6 +19,26 @@ interface CookiePreferences {
 
 const STORAGE_KEY = 'ss_cookie_preferences';
 
+const DEFAULT_PREFERENCES: CookiePreferences = {
+  essential: true,
+  analytics: false,
+  functionality: false,
+  marketing: false,
+};
+
+// Lo guardado en localStorage (o los valores por defecto si no hay nada o no se puede leer)
+function readSavedPreferences(): CookiePreferences {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return { ...DEFAULT_PREFERENCES, ...JSON.parse(saved), essential: true };
+  } catch {}
+  return DEFAULT_PREFERENCES;
+}
+
+// Quién abrió el panel: el botón "Configurar" del banner (se desmonta mientras el panel
+// está abierto) o el elemento que tenía el foco (p. ej. "Preferencias de cookies" del pie)
+type Opener = 'banner' | HTMLElement | null;
+
 export default function CookieBanner({ language }: CookieBannerProps) {
   const [visible, setVisible] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
@@ -25,6 +48,18 @@ export default function CookieBanner({ language }: CookieBannerProps) {
     functionality: false,
     marketing: false,
   });
+  const openRef = useRef(false);
+  openRef.current = showPreferences;
+  const openerRef = useRef<Opener>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const configureRef = useRef<HTMLButtonElement>(null);
+  const bannerRef = useRef<HTMLDivElement>(null);
+  const bannerShown = visible && !showPreferences;
+  const uid = useId();
+  const titleId = `${uid}-title`;
+  const descriptionId = `${uid}-description`;
+  const dir = language === 'ar' ? 'rtl' : 'ltr';
 
   useEffect(() => {
     const savedPreferences = localStorage.getItem(STORAGE_KEY);
@@ -41,15 +76,25 @@ export default function CookieBanner({ language }: CookieBannerProps) {
     }
   }, []);
 
+  const openPreferences = (opener: Opener) => {
+    if (openRef.current) return;
+    openRef.current = true;
+    openerRef.current = opener;
+    setShowPreferences(true);
+  };
+
   // Abre el panel de preferencias desde fuera (enlace "Preferencias de cookies" del pie)
   useEffect(() => {
-    const open = () => setShowPreferences(true);
+    const open = () =>
+      openPreferences(document.activeElement instanceof HTMLElement ? document.activeElement : null);
     window.addEventListener('ss:open-cookie-preferences', open);
     return () => window.removeEventListener('ss:open-cookie-preferences', open);
   }, []);
 
   const savePreferences = (prefs: CookiePreferences) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+    // Al reabrir (p. ej. desde el pie), los interruptores muestran lo guardado
+    setPreferences(prefs);
     setVisible(false);
     setShowPreferences(false);
   };
@@ -68,12 +113,71 @@ export default function CookieBanner({ language }: CookieBannerProps) {
     savePreferences(preferences);
   };
 
-  const openPreferences = () => {
-    setShowPreferences(true);
+  // Cerrar sin guardar (Escape, X o clic en el velo) descarta los cambios: vuelve lo guardado
+  const closePreferences = () => {
+    setPreferences(readSavedPreferences());
+    setShowPreferences(false);
   };
 
-  const closePreferences = () => {
-    setShowPreferences(false);
+  // Mientras el banner está a la vista, el foco del teclado no debe quedar debajo de él
+  // (WCAG 2.4.11): <html> reserva su alto abajo en scroll-padding (el navegador sube el
+  // control enfocado) y <body> en padding (para llegar a lo último de la página)
+  useEffect(() => {
+    const banner = bannerRef.current;
+    if (!bannerShown || !banner) return;
+    const root = document.documentElement;
+    const reserve = () => {
+      const h = `${banner.offsetHeight}px`;
+      root.style.scrollPaddingBottom = h;
+      document.body.style.paddingBottom = h;
+    };
+    reserve();
+    const observer = new ResizeObserver(reserve);
+    observer.observe(banner);
+    return () => {
+      observer.disconnect();
+      root.style.scrollPaddingBottom = '';
+      document.body.style.paddingBottom = '';
+    };
+  }, [bannerShown]);
+
+  // Al cerrar (o desmontar) el panel, el foco vuelve a quien lo abrió
+  const restoreFocus = () => {
+    const opener = openerRef.current;
+    openerRef.current = null;
+    if (opener === 'banner') {
+      // Cerrado sin guardar: el banner vuelve y el foco va a su botón "Configurar"
+      if (visible && configureRef.current) {
+        configureRef.current.focus();
+        return;
+      }
+    } else if (opener && opener.isConnected && opener !== document.body) {
+      opener.focus();
+      return;
+    }
+    // Sin destino (se guardó desde el banner): el foco sale del panel, que se va
+    if (dialogRef.current?.contains(document.activeElement)) {
+      (document.activeElement as HTMLElement).blur();
+    }
+  };
+
+  useDialog26(showPreferences, dialogRef, {
+    initialFocus: () => titleRef.current,
+    onEscape: closePreferences,
+    onClosed: restoreFocus,
+  });
+
+  // El título (tabIndex -1) no está en la trampa de useDialog26: Shift+Tab desde él
+  // saldría del documento, así que salta al último control del panel
+  const onDialogKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== 'Tab' || !e.shiftKey || e.target !== titleRef.current) return;
+    const nodes = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? []).filter(
+      (el) => el.getClientRects().length > 0,
+    );
+    const last = nodes[nodes.length - 1];
+    if (!last) return;
+    e.preventDefault();
+    last.focus();
   };
 
   const togglePreference = (key: keyof CookiePreferences) => {
@@ -90,6 +194,8 @@ export default function CookieBanner({ language }: CookieBannerProps) {
     preferencesDescription: string;
     savePreferences: string;
     acceptAllButton: string;
+    close: string;
+    bannerLabel: string;
     categories: {
       essential: { title: string; description: string; alwaysOn: string };
       analytics: { title: string; description: string };
@@ -106,6 +212,8 @@ export default function CookieBanner({ language }: CookieBannerProps) {
       preferencesDescription: "Manage your cookie preferences below. You can enable or disable different types of cookies. Essential cookies are always active as they are necessary for the website to function properly.",
       savePreferences: "Save Preferences",
       acceptAllButton: "Accept All",
+      close: "Close",
+      bannerLabel: "Cookie notice",
       categories: {
         essential: {
           title: "Essential Cookies",
@@ -135,6 +243,8 @@ export default function CookieBanner({ language }: CookieBannerProps) {
       preferencesDescription: "Gestione sus preferencias de cookies a continuación. Puede habilitar o deshabilitar diferentes tipos de cookies. Las cookies esenciales siempre están activas ya que son necesarias para el correcto funcionamiento del sitio web.",
       savePreferences: "Guardar Preferencias",
       acceptAllButton: "Aceptar Todas",
+      close: "Cerrar",
+      bannerLabel: "Aviso de cookies",
       categories: {
         essential: {
           title: "Cookies Esenciales",
@@ -156,14 +266,16 @@ export default function CookieBanner({ language }: CookieBannerProps) {
       },
     },
     de: {
-      message: "Wir verwenden Cookies, um Ihre Erfahrung auf unserer Website zu verbessern. Durch die Nutzung unserer Website stimmen Sie unserer Verwendung von Cookies zu.",
+      message: "Wir verwenden eigene Cookies und Cookies von Drittanbietern, um unsere Dienste zu verbessern und Ihnen auf Grundlage der Analyse Ihres Surfverhaltens Werbung zu zeigen, die Ihren Präferenzen entspricht.",
       privacy: "Mehr erfahren",
-      configure: "Ablehnen",
+      configure: "Einstellungen",
       accept: "Akzeptieren",
       preferencesTitle: "Cookie-Einstellungen",
       preferencesDescription: "Verwalten Sie unten Ihre Cookie-Einstellungen. Sie können verschiedene Arten von Cookies aktivieren oder deaktivieren. Essentielle Cookies sind immer aktiv, da sie für das ordnungsgemäße Funktionieren der Website erforderlich sind.",
       savePreferences: "Einstellungen speichern",
       acceptAllButton: "Alle akzeptieren",
+      close: "Schließen",
+      bannerLabel: "Cookie-Hinweis",
       categories: {
         essential: {
           title: "Essentielle Cookies",
@@ -185,14 +297,16 @@ export default function CookieBanner({ language }: CookieBannerProps) {
       },
     },
     zh: {
-      message: "我们使用 Cookie 来改善您在我们网站上的体验。继续使用我们的网站即表示您同意我们使用 Cookie。",
+      message: "我们使用自有及第三方 Cookie 来改进我们的服务，并通过分析您的浏览习惯向您展示与您偏好相关的广告。",
       privacy: "了解更多",
-      configure: "拒绝",
+      configure: "设置",
       accept: "接受",
       preferencesTitle: "Cookie 偏好设置",
       preferencesDescription: "在下方管理您的 Cookie 偏好设置。您可以启用或禁用不同类型的 Cookie。必要 Cookie 始终处于活动状态，因为它们对于网站正常运行是必需的。",
       savePreferences: "保存偏好设置",
       acceptAllButton: "全部接受",
+      close: "关闭",
+      bannerLabel: "Cookie 通知",
       categories: {
         essential: {
           title: "必要 Cookie",
@@ -214,14 +328,16 @@ export default function CookieBanner({ language }: CookieBannerProps) {
       },
     },
     ko: {
-      message: "당사 웹사이트에서 더 나은 경험을 제공하기 위해 쿠키를 사용합니다. 당사 웹사이트를 사용하면 쿠키 사용에 동의하는 것입니다.",
+      message: "당사는 서비스를 개선하고 귀하의 브라우징 습관을 분석하여 선호도에 맞는 광고를 보여 드리기 위해 자사 및 제3자 쿠키를 사용합니다.",
       privacy: "자세히 알아보기",
-      configure: "거부",
+      configure: "설정",
       accept: "수락",
       preferencesTitle: "쿠키 환경설정",
       preferencesDescription: "아래에서 쿠키 환경설정을 관리하세요. 다양한 유형의 쿠키를 활성화하거나 비활성화할 수 있습니다. 필수 쿠키는 웹사이트가 제대로 작동하는 데 필요하므로 항상 활성화되어 있습니다.",
       savePreferences: "환경설정 저장",
       acceptAllButton: "모두 수락",
+      close: "닫기",
+      bannerLabel: "쿠키 알림",
       categories: {
         essential: {
           title: "필수 쿠키",
@@ -243,14 +359,16 @@ export default function CookieBanner({ language }: CookieBannerProps) {
       },
     },
     ja: {
-      message: "当サイトでは、ユーザー体験向上のためにCookieを使用しています。当サイトを利用することで、Cookieの使用に同意したものとみなされます。",
+      message: "当サイトでは、サービスの向上と、閲覧傾向の分析に基づくお客様の嗜好に合わせた広告の表示のために、自社およびサードパーティのCookieを使用しています。",
       privacy: "詳しく見る",
-      configure: "拒否する",
+      configure: "設定",
       accept: "同意する",
       preferencesTitle: "Cookie設定",
       preferencesDescription: "以下でCookieの設定を管理できます。さまざまな種類のCookieを有効または無効にできます。必須Cookieは、ウェブサイトが正常に機能するために必要なため、常に有効です。",
       savePreferences: "設定を保存",
       acceptAllButton: "すべて同意",
+      close: "閉じる",
+      bannerLabel: "Cookieに関するお知らせ",
       categories: {
         essential: {
           title: "必須Cookie",
@@ -272,14 +390,16 @@ export default function CookieBanner({ language }: CookieBannerProps) {
       },
     },
     ar: {
-      message: "نستخدم ملفات تعريف الارتباط لتحسين تجربتك على موقعنا. باستخدام موقعنا، فإنك توافق على استخدامنا لملفات تعريف الارتباط.",
+      message: "نستخدم ملفات تعريف الارتباط الخاصة بنا وملفات الجهات الخارجية لتحسين خدماتنا وعرض إعلانات تتعلق بتفضيلاتك من خلال تحليل عادات التصفح لديك.",
       privacy: "اعرف المزيد",
-      configure: "رفض",
+      configure: "الإعدادات",
       accept: "قبول",
       preferencesTitle: "تفضيلات ملفات تعريف الارتباط",
       preferencesDescription: "قم بإدارة تفضيلات ملفات تعريف الارتباط أدناه. يمكنك تفعيل أو تعطيل أنواع مختلفة من ملفات تعريف الارتباط. ملفات تعريف الارتباط الأساسية نشطة دائمًا لأنها ضرورية لعمل الموقع بشكل صحيح.",
       savePreferences: "حفظ التفضيلات",
       acceptAllButton: "قبول الكل",
+      close: "إغلاق",
+      bannerLabel: "إشعار ملفات تعريف الارتباط",
       categories: {
         essential: {
           title: "ملفات تعريف الارتباط الأساسية",
@@ -301,14 +421,16 @@ export default function CookieBanner({ language }: CookieBannerProps) {
       },
     },
     ru: {
-      message: "Мы используем файлы cookie для улучшения вашего опыта на нашем сайте. Используя наш сайт, вы соглашаетесь на использование файлов cookie.",
+      message: "Мы используем собственные и сторонние файлы cookie, чтобы улучшать наши услуги и показывать вам рекламу, соответствующую вашим предпочтениям, на основе анализа ваших привычек в интернете.",
       privacy: "Узнать больше",
-      configure: "Отклонить",
+      configure: "Настроить",
       accept: "Принять",
       preferencesTitle: "Настройки Cookie",
       preferencesDescription: "Управляйте своими предпочтениями cookie ниже. Вы можете включить или отключить различные типы cookie. Необходимые cookie всегда активны, так как они необходимы для правильной работы сайта.",
       savePreferences: "Сохранить настройки",
       acceptAllButton: "Принять все",
+      close: "Закрыть",
+      bannerLabel: "Уведомление о файлах cookie",
       categories: {
         essential: {
           title: "Необходимые Cookie",
@@ -330,14 +452,16 @@ export default function CookieBanner({ language }: CookieBannerProps) {
       },
     },
     fr: {
-      message: "Nous utilisons des cookies pour améliorer votre expérience sur notre site. En utilisant notre site, vous acceptez notre utilisation des cookies.",
+      message: "Nous utilisons des cookies propres et tiers pour améliorer nos services et vous montrer des publicités liées à vos préférences grâce à l'analyse de vos habitudes de navigation.",
       privacy: "En savoir plus",
-      configure: "Refuser",
+      configure: "Personnaliser",
       accept: "Accepter",
       preferencesTitle: "Préférences de Cookies",
       preferencesDescription: "Gérez vos préférences de cookies ci-dessous. Vous pouvez activer ou désactiver différents types de cookies. Les cookies essentiels sont toujours actifs car ils sont nécessaires au bon fonctionnement du site.",
       savePreferences: "Enregistrer les préférences",
       acceptAllButton: "Tout accepter",
+      close: "Fermer",
+      bannerLabel: "Avis relatif aux cookies",
       categories: {
         essential: {
           title: "Cookies Essentiels",
@@ -359,14 +483,16 @@ export default function CookieBanner({ language }: CookieBannerProps) {
       },
     },
     it: {
-      message: "Utilizziamo i cookie per migliorare la tua esperienza sul nostro sito. Utilizzando il nostro sito, accetti il nostro utilizzo dei cookie.",
+      message: "Utilizziamo cookie propri e di terze parti per migliorare i nostri servizi e mostrarti pubblicità in linea con le tue preferenze, mediante l'analisi delle tue abitudini di navigazione.",
       privacy: "Scopri di più",
-      configure: "Rifiuta",
+      configure: "Personalizza",
       accept: "Accetta",
       preferencesTitle: "Preferenze Cookie",
       preferencesDescription: "Gestisci le tue preferenze sui cookie qui sotto. Puoi abilitare o disabilitare diversi tipi di cookie. I cookie essenziali sono sempre attivi poiché sono necessari per il corretto funzionamento del sito.",
       savePreferences: "Salva preferenze",
       acceptAllButton: "Accetta tutti",
+      close: "Chiudi",
+      bannerLabel: "Informativa sui cookie",
       categories: {
         essential: {
           title: "Cookie Essenziali",
@@ -399,157 +525,199 @@ export default function CookieBanner({ language }: CookieBannerProps) {
   ];
 
   return (
-    <AnimatePresence>
-      {visible && !showPreferences && (
-        <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          className="fixed bottom-0 left-0 w-full bg-[#0A044B] text-white px-6 py-5 z-[60] border-t border-white/15"
-          data-testid="banner-cookie-consent"
-        >
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-[14px] leading-relaxed text-white/70 flex-1">
-              <p>
-                {t.message}
-                <a 
-                  href="/privacy-policy" 
-                  className="underline underline-offset-4 decoration-[#B2EB3E] text-white ml-1 hover:text-[#B2EB3E] transition-colors"
-                  data-testid="link-privacy-policy"
-                >
-                  {t.privacy}
-                </a>.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3 shrink-0">
-              <button 
-                onClick={openPreferences}
-                className="min-h-[44px] px-5 py-2 text-[12px] font-semibold uppercase tracking-[0.16em] border border-white/30 text-white hover:border-white transition-colors touch-manipulation"
-                data-testid="button-cookie-configure"
-              >
-                {t.configure}
-              </button>
-              <button 
-                onClick={acceptAll}
-                className="min-h-[44px] px-6 py-2 text-[12px] font-semibold uppercase tracking-[0.16em] bg-white text-[#140F4B] hover:bg-[#B2EB3E] transition-colors touch-manipulation"
-                data-testid="button-cookie-accept"
-              >
-                {t.accept}
-              </button>
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      {showPreferences && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-          data-testid="modal-cookie-preferences-overlay"
-          onClick={closePreferences}
-        >
+    <>
+      {/* Banner inferior: no modal, la página sigue usable. .ss26 le da el foco lima y la
+          tipografía del sistema 2026 también en las páginas internas (va fuera de su .ss26) */}
+      <AnimatePresence>
+        {bannerShown && (
           <motion.div
-            initial={{ scale: 0.95, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.95, opacity: 0, y: 20 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="bg-[#1a1a1a] text-white w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-primary/30"
-            data-testid="modal-cookie-preferences"
-            onClick={(e) => e.stopPropagation()}
+            key="banner"
+            ref={bannerRef}
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="ss26 fixed bottom-0 left-0 w-full bg-[#0A044B] text-white px-6 py-5 z-[60] border-t border-white/15"
+            role="region"
+            aria-label={t.bannerLabel}
+            dir={dir}
+            data-testid="banner-cookie-consent"
           >
-            <div className="flex items-center justify-between p-6 border-b border-white/10">
-              <h2 className="text-xl font-semibold text-white" data-testid="text-preferences-title">
-                {t.preferencesTitle}
-              </h2>
-              <button
-                onClick={closePreferences}
-                className="min-w-[44px] min-h-[44px] p-2 flex items-center justify-center hover:bg-white/10 transition-colors touch-manipulation"
-                data-testid="button-close-preferences"
-                aria-label="Close"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-6">
-              <p className="text-sm text-gray-400 mb-6" data-testid="text-preferences-description">
-                {t.preferencesDescription}
-              </p>
-
-              <div className="space-y-4">
-                {categoryConfig.map(({ key, icon: Icon, disabled }) => {
-                  const category = t.categories[key];
-                  return (
-                    <div
-                      key={key}
-                      className="border border-white/10 p-4 hover:border-white/20 transition-colors"
-                      data-testid={`card-cookie-${key}`}
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="shrink-0 w-10 h-10 flex items-center justify-center bg-[#1E1C92]/20 text-primary">
-                          <Icon className="w-5 h-5" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-4 mb-2">
-                            <h3 className="font-medium text-white" data-testid={`text-cookie-title-${key}`}>
-                              {category.title}
-                            </h3>
-                            <div className="shrink-0 flex items-center gap-2">
-                              {disabled ? (
-                                <span 
-                                  className="text-xs text-primary font-medium"
-                                  data-testid={`text-cookie-always-on-${key}`}
-                                >
-                                  {(category as typeof t.categories.essential).alwaysOn}
-                                </span>
-                              ) : (
-                                <Switch
-                                  checked={preferences[key]}
-                                  onCheckedChange={() => togglePreference(key)}
-                                  disabled={disabled}
-                                  data-testid={`switch-cookie-${key}`}
-                                  className="data-[state=checked]:bg-[#1E1C92]"
-                                />
-                              )}
-                            </div>
-                          </div>
-                          <p 
-                            className="text-sm text-gray-400 leading-relaxed"
-                            data-testid={`text-cookie-description-${key}`}
-                          >
-                            {category.description}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="text-[14px] leading-relaxed text-white/70 flex-1">
+                <p>
+                  {t.message}
+                  {/* Link de wouter: respeta la base del router (/santos-saucedo-page/ en Pages) */}
+                  <Link
+                    href="/privacy-policy"
+                    className="underline underline-offset-4 decoration-[#B2EB3E] text-white ms-1 hover:text-[#B2EB3E] transition-colors"
+                    data-testid="link-privacy-policy"
+                  >
+                    {t.privacy}
+                  </Link>.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3 shrink-0">
+                <button
+                  ref={configureRef}
+                  onClick={() => openPreferences('banner')}
+                  className="min-h-[44px] px-5 py-2 text-[12px] font-semibold uppercase tracking-[0.16em] border border-white/30 text-white hover:border-white transition-colors touch-manipulation"
+                  data-testid="button-cookie-configure"
+                >
+                  {t.configure}
+                </button>
+                <button
+                  onClick={acceptAll}
+                  className="min-h-[44px] px-6 py-2 text-[12px] font-semibold uppercase tracking-[0.16em] bg-white text-[#140F4B] hover:bg-[#B2EB3E] transition-colors touch-manipulation"
+                  data-testid="button-cookie-accept"
+                >
+                  {t.accept}
+                </button>
               </div>
             </div>
-
-            <div className="flex flex-col sm:flex-row gap-3 p-6 border-t border-white/10">
-              <button
-                onClick={saveCustomPreferences}
-                className="flex-1 min-h-[44px] px-6 py-3 text-sm rounded-sm bg-white/10 hover:bg-white/20 transition-colors font-medium touch-manipulation"
-                data-testid="button-save-preferences"
-              >
-                {t.savePreferences}
-              </button>
-              <button
-                onClick={acceptAll}
-                className="flex-1 min-h-[44px] px-6 py-3 text-sm rounded-sm bg-brand text-brand-foreground font-bold hover:brightness-95 transition-all touch-manipulation"
-                data-testid="button-accept-all-preferences"
-              >
-                {t.acceptAllButton}
-              </button>
-            </div>
           </motion.div>
-        </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Panel de preferencias: diálogo modal en body (useDialog26 deja #root inerte).
+          .ss26 da la tipografía y el foco visible del sistema 2026 fuera de la página. */}
+      {createPortal(
+        <AnimatePresence>
+          {showPreferences && (
+            <motion.div
+              key="preferences"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="ss26 fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+              data-testid="modal-cookie-preferences-overlay"
+              onClick={closePreferences}
+            >
+              <motion.div
+                ref={dialogRef}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={titleId}
+                aria-describedby={descriptionId}
+                dir={dir}
+                initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="bg-[#1a1a1a] text-white w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-primary/30"
+                data-testid="modal-cookie-preferences"
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={onDialogKeyDown}
+              >
+                <div className="flex items-center justify-between p-6 border-b border-white/10">
+                  {/* Recibe el foco al abrir; no es un control, así que sin contorno */}
+                  <h2
+                    ref={titleRef}
+                    id={titleId}
+                    tabIndex={-1}
+                    className="text-xl font-semibold text-white outline-none focus-visible:!outline-none focus-visible:!shadow-none"
+                    data-testid="text-preferences-title"
+                  >
+                    {t.preferencesTitle}
+                  </h2>
+                  <button
+                    onClick={closePreferences}
+                    className="min-w-[44px] min-h-[44px] p-2 flex items-center justify-center hover:bg-white/10 transition-colors touch-manipulation"
+                    data-testid="button-close-preferences"
+                    aria-label={t.close}
+                  >
+                    <X className="w-5 h-5" aria-hidden="true" />
+                  </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-6">
+                  <p id={descriptionId} className="text-sm text-gray-400 mb-6" data-testid="text-preferences-description">
+                    {t.preferencesDescription}
+                  </p>
+
+                  <div className="space-y-4">
+                    {categoryConfig.map(({ key, icon: Icon, disabled }) => {
+                      const category = t.categories[key];
+                      const categoryTitleId = `${uid}-${key}-title`;
+                      const categoryDescriptionId = `${uid}-${key}-description`;
+                      return (
+                        <div
+                          key={key}
+                          className="border border-white/10 p-4 hover:border-white/20 transition-colors"
+                          data-testid={`card-cookie-${key}`}
+                        >
+                          <div className="flex items-start gap-4">
+                            <div className="shrink-0 w-10 h-10 flex items-center justify-center bg-[#1E1C92]/20 text-primary">
+                              <Icon className="w-5 h-5" aria-hidden="true" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between gap-4 mb-2">
+                                <h3 id={categoryTitleId} className="font-medium text-white" data-testid={`text-cookie-title-${key}`}>
+                                  {category.title}
+                                </h3>
+                                <div className="shrink-0 flex items-center gap-2">
+                                  {disabled ? (
+                                    <span
+                                      className="text-xs text-ss-lime font-medium"
+                                      data-testid={`text-cookie-always-on-${key}`}
+                                    >
+                                      {(category as typeof t.categories.essential).alwaysOn}
+                                    </span>
+                                  ) : (
+                                    // Nombre accesible: el título de la categoría; descripción: su texto.
+                                    // En RTL el pulgar parte de la derecha: activo, se mueve a la izquierda.
+                                    // Contraste sobre el panel: inactivo, pista oscura con borde claro y
+                                    // pulgar blanco; activo, pista lima con pulgar marino.
+                                    <Switch
+                                      checked={preferences[key]}
+                                      onCheckedChange={() => togglePreference(key)}
+                                      disabled={disabled}
+                                      aria-labelledby={categoryTitleId}
+                                      aria-describedby={categoryDescriptionId}
+                                      data-testid={`switch-cookie-${key}`}
+                                      className="border-white/60 data-[state=unchecked]:bg-transparent data-[state=checked]:border-[#B2EB3E] data-[state=checked]:bg-[#B2EB3E] [&>span]:bg-white [&[data-state=checked]>span]:bg-[#140F4B] rtl:[&[data-state=checked]>span]:-translate-x-5"
+                                    />
+                                  )}
+                                </div>
+                              </div>
+                              <p
+                                id={categoryDescriptionId}
+                                className="text-sm text-gray-400 leading-relaxed"
+                                data-testid={`text-cookie-description-${key}`}
+                              >
+                                {category.description}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 p-6 border-t border-white/10">
+                  <button
+                    onClick={saveCustomPreferences}
+                    className="flex-1 min-h-[44px] px-6 py-3 text-sm rounded-sm bg-white/10 hover:bg-white/20 transition-colors font-medium touch-manipulation"
+                    data-testid="button-save-preferences"
+                  >
+                    {t.savePreferences}
+                  </button>
+                  <button
+                    onClick={acceptAll}
+                    className="flex-1 min-h-[44px] px-6 py-3 text-sm rounded-sm bg-brand text-brand-foreground font-bold hover:brightness-95 transition-all touch-manipulation"
+                    data-testid="button-accept-all-preferences"
+                  >
+                    {t.acceptAllButton}
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body,
       )}
-    </AnimatePresence>
+    </>
   );
 }

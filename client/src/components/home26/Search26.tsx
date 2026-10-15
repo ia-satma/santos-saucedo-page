@@ -2,9 +2,9 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import type { TeamMember, PracticeGroup, IndustryGroup, News } from "@shared/schema";
+import type { TeamMember, PracticeGroup, IndustryGroup, News, LanguageCode } from "@shared/schema";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
-import { langAttrs, type Lang26 } from "./content";
+import { chrome26 } from "./chrome26";
 import { useDialog26 } from "./useDialog26";
 
 interface SearchResults {
@@ -21,36 +21,6 @@ const SHOW_INDUSTRIES = false;
 const MIN_CHARS = 2;
 const DEBOUNCE_MS = 250;
 
-export const search26Text = {
-  es: {
-    open: "Buscar",
-    dialog: "Buscar en el sitio",
-    label: "Buscar en el sitio",
-    placeholder: "Nombre, práctica o tema",
-    hint: "Equipo, prácticas y análisis del Monitor Laboral. Escriba al menos dos caracteres.",
-    loading: "Buscando…",
-    error: "La búsqueda no está disponible en este momento.",
-    empty: (q: string) => `Sin resultados para «${q}».`,
-    count: (n: number) => (n === 1 ? "1 resultado" : `${n} resultados`),
-    close: "Cerrar",
-    // /api/search devuelve a todo el equipo (socios, asociados y staff), no solo socios
-    groups: { team: "Equipo", practiceGroups: "Prácticas", industryGroups: "Industrias", news: "Análisis" },
-  },
-  en: {
-    open: "Search",
-    dialog: "Search the site",
-    label: "Search the site",
-    placeholder: "Name, practice or topic",
-    hint: "People, practices and Labor Monitor analysis. Type at least two characters.",
-    loading: "Searching…",
-    error: "Search is not available right now.",
-    empty: (q: string) => `No results for “${q}”.`,
-    count: (n: number) => (n === 1 ? "1 result" : `${n} results`),
-    close: "Close",
-    groups: { team: "People", practiceGroups: "Practices", industryGroups: "Industries", news: "Analysis" },
-  },
-} as const;
-
 type GroupId = keyof SearchResults;
 // Prefijos de data-testid del Header anterior
 const testPrefix: Record<GroupId, string> = {
@@ -63,27 +33,38 @@ interface Row {
   key: string;
   href: string;
   title: string;
+  /** Idioma del dato (ES o EN), que puede no ser el de la interfaz */
+  titleLang?: string;
   meta?: string;
+  metaLang?: string;
 }
 
-function formatDate(value: unknown, lang: Lang26) {
+// Los datos solo existen en ES/EN: en español el campo ES; en los otros 9 idiomas el EN;
+// si falta, el otro. Devuelve también su idioma para el atributo lang (lectores de pantalla).
+function pick(es: boolean, esText: string | null | undefined, enText: string | null | undefined) {
+  const first = es ? esText : enText;
+  if (first) return { text: first, lang: chrome26[es ? "es" : "en"].attrs.lang };
+  return { text: (es ? enText : esText) || "", lang: chrome26[es ? "en" : "es"].attrs.lang };
+}
+
+function formatDate(value: unknown, locale: string) {
   if (!value) return undefined;
   const d = new Date(value as string);
   if (Number.isNaN(d.getTime())) return undefined;
-  return d.toLocaleDateString(lang === "es" ? "es-MX" : "en-US", { day: "numeric", month: "short", year: "numeric" });
+  return d.toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" });
 }
 
 // Cargo del miembro. "Staff" llega igual en titleEs: en español se omite antes que mostrar
 // una etiqueta sin traducir.
-function memberMeta(m: TeamMember, es: boolean) {
-  const title = (es ? m.titleEs : m.title) || m.titleEs || m.title;
-  if (!title) return undefined;
-  if (es && title.trim().toLowerCase() === "staff") return undefined;
-  return title;
+function memberMeta(m: TeamMember, es: boolean): Pick<Row, "meta" | "metaLang"> {
+  const { text, lang } = pick(es, m.titleEs, m.title);
+  if (!text) return {};
+  if (es && text.trim().toLowerCase() === "staff") return {};
+  return { meta: text, metaLang: lang };
 }
 
 // Mismas rutas que el Header anterior: /team/:slug, /practice-groups/:slug, /news/:slug
-function toGroups(data: SearchResults, lang: Lang26): { id: GroupId; rows: Row[] }[] {
+function toGroups(data: SearchResults, lang: LanguageCode): { id: GroupId; rows: Row[] }[] {
   const es = lang === "es";
   const groups: { id: GroupId; rows: Row[] }[] = [
     {
@@ -92,42 +73,46 @@ function toGroups(data: SearchResults, lang: Lang26): { id: GroupId; rows: Row[]
         key: m.slug,
         href: `/team/${m.slug}`,
         title: m.name,
-        meta: memberMeta(m, es),
+        ...memberMeta(m, es),
       })),
     },
     {
       id: "practiceGroups",
-      rows: (data.practiceGroups ?? []).map((g) => ({
-        key: g.slug,
-        href: `/practice-groups/${g.slug}`,
-        title: (es ? g.nameEs : g.name) || g.nameEs || g.name,
-      })),
+      rows: (data.practiceGroups ?? []).map((g) => {
+        const name = pick(es, g.nameEs, g.name);
+        return { key: g.slug, href: `/practice-groups/${g.slug}`, title: name.text, titleLang: name.lang };
+      }),
     },
     {
       id: "industryGroups",
       rows: SHOW_INDUSTRIES
-        ? (data.industryGroups ?? []).map((g) => ({
-            key: g.slug,
-            href: `/industry-groups/${g.slug}`,
-            title: (es ? g.nameEs : g.name) || g.nameEs || g.name,
-          }))
+        ? (data.industryGroups ?? []).map((g) => {
+            const name = pick(es, g.nameEs, g.name);
+            return { key: g.slug, href: `/industry-groups/${g.slug}`, title: name.text, titleLang: name.lang };
+          })
         : [],
     },
     {
       id: "news",
-      rows: (data.news ?? []).map((n) => ({
-        key: n.slug,
-        href: `/news/${n.slug}`,
-        title: (es ? n.titleEs : n.title) || n.titleEs || n.title,
-        meta: formatDate(n.date, lang),
-      })),
+      rows: (data.news ?? []).map((n) => {
+        const title = pick(es, n.titleEs, n.title);
+        return {
+          key: n.slug,
+          href: `/news/${n.slug}`,
+          title: title.text,
+          titleLang: title.lang,
+          // Fecha en el formato del idioma de la interfaz
+          meta: formatDate(n.date, chrome26[lang].locale),
+        };
+      }),
     },
   ];
   return groups.filter((g) => g.rows.length > 0);
 }
 
 interface Search26Props {
-  lang: Lang26;
+  /** Idioma de la interfaz (lo decide Header26) */
+  lang: LanguageCode;
   /** Escape, botón Cerrar o clic en un resultado */
   onClose: () => void;
   /** Tras cerrar o desmontar: devolver el foco */
@@ -136,7 +121,7 @@ interface Search26Props {
 
 /** Buscador a pantalla completa. Se monta al abrir: cada apertura empieza vacía. */
 export default function Search26({ lang, onClose, onClosed }: Search26Props) {
-  const t = search26Text[lang];
+  const { attrs, search: t } = chrome26[lang];
   const dialogRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   // Enter mientras llegan resultados nuevos: ir al primero cuando lleguen
@@ -230,7 +215,7 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
       role="dialog"
       aria-modal="true"
       aria-label={t.dialog}
-      {...langAttrs[lang]}
+      {...attrs}
       data-testid="modal-search"
       className="ss26 fixed inset-0 z-[70] flex flex-col overflow-y-auto overscroll-contain bg-ss-panel text-white"
     >
@@ -318,13 +303,19 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
                         data-search-result=""
                         data-testid={`search-result-${testPrefix[g.id]}-${row.key}`}
                         onClick={onClose}
-                        // Foco: tinte, filete lima a la izquierda y el subrayado del título (sin el contorno de 3px)
-                        className="-ml-4 flex flex-col gap-1 py-4 pl-4 transition-colors focus-visible:!outline-none focus-visible:bg-white/5 focus-visible:!shadow-[inset_2px_0_0_0_#B2EB3E]"
+                        // Foco: el contorno lima de 3px de .ss26 (ss26.css), más tinte y el subrayado del título
+                        className="-ms-4 flex flex-col gap-1 py-4 ps-4 transition-colors focus-visible:bg-white/5"
                       >
                         <span className="text-[19px] leading-snug text-white lg:text-[21px]">
-                          <span className="ss-link ss-link--lime">{row.title}</span>
+                          <span className="ss-link ss-link--lime" lang={row.titleLang}>
+                            {row.title}
+                          </span>
                         </span>
-                        {row.meta && <span className="ss-label ss-num text-white/60">{row.meta}</span>}
+                        {row.meta && (
+                          <span className="ss-label ss-num text-white/60" lang={row.metaLang}>
+                            {row.meta}
+                          </span>
+                        )}
                       </Link>
                     </li>
                   ))}

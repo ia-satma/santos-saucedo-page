@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useLocation } from "wouter";
-import { useLanguage } from "@/contexts/LanguageContext";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
-import { home26, langAttrs, nav26, type Lang26 } from "./content";
+import { useChrome26 } from "./chrome26";
 import { useSiteContact } from "./useSiteContact";
 import { useDialog26 } from "./useDialog26";
-import Search26, { search26Text } from "./Search26";
+import Search26 from "./Search26";
 import { LangList26, LangSwitch26 } from "./LangMenu26";
 
 // Rutas que también marcan una sección del menú, además de sus propias subrutas
@@ -30,14 +29,15 @@ function SearchIcon() {
   );
 }
 
-export default function Header26() {
-  const { displayLanguage } = useLanguage();
-  // Cualquier idioma distinto de ES se trata como EN (el contenido nuevo solo existe en ES/EN)
-  const lang: Lang26 = displayLanguage === "es" ? "es" : "en";
-  const t = home26[lang];
-  const s = search26Text[lang];
-  const items = nav26[lang];
-  const { phone, phoneHref } = useSiteContact(lang);
+interface Header26Props {
+  /** Páginas internas: interfaz en los 10 idiomas. Sin él (portada) solo ES/EN, como su contenido */
+  localized?: boolean;
+}
+
+export default function Header26({ localized = false }: Header26Props) {
+  const { code, t, base } = useChrome26(localized);
+  const items = t.nav;
+  const { phone, phoneHref } = useSiteContact(base);
   const [location] = useLocation();
   const [panel, setPanel] = useState<Panel>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -93,14 +93,15 @@ export default function Header26() {
   return (
     <>
       <header
-        {...langAttrs[lang]}
+        {...t.attrs}
         className={`ss26 sticky top-0 z-50 bg-ss-ink text-white transition-[box-shadow] duration-300 ${
           scrolled ? "shadow-[0_1px_0_rgba(255,255,255,0.08)]" : ""
         }`}
         data-testid="header"
       >
         {/* Entre 1024 y 1279px se aprietan logo, huecos y espaciado del menú para que quepan
-            navegación, buscador e idiomas; desde 1280px vuelve la medida de la portada */}
+            navegación, buscador e idiomas; desde 1280px vuelve la medida de la portada.
+            En alemán, francés y ruso el menú se aprieta algo más (ss26.css) */}
         <div className="ss-container flex h-[68px] items-center justify-between gap-4 lg:h-20 lg:gap-6 xl:gap-8">
           <Link href="/" aria-label="Santos & Saucedo" className="shrink-0" data-testid="link-logo">
             <img
@@ -116,8 +117,8 @@ export default function Header26() {
           <nav
             id="main-navigation"
             tabIndex={-1}
-            aria-label={lang === "es" ? "Principal" : "Main"}
-            className="flex items-center gap-5 lg:ml-auto xl:gap-8"
+            aria-label={t.header.nav}
+            className="flex items-center gap-5 lg:ms-auto xl:gap-8"
           >
             <ul className="hidden items-center gap-4 lg:flex xl:gap-[clamp(20px,2.2vw,36px)]">
               {items.map((item) => (
@@ -147,7 +148,7 @@ export default function Header26() {
               className="ss-label -mx-3 flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 text-[12px] tracking-[0.16em] text-white/80 transition-colors hover:text-white xl:mx-0 xl:min-w-0"
             >
               <SearchIcon />
-              <span className="sr-only xl:not-sr-only">{s.open}</span>
+              <span className="sr-only xl:not-sr-only">{t.search.open}</span>
             </button>
 
             <button
@@ -160,7 +161,7 @@ export default function Header26() {
               data-testid="button-mobile-menu"
               onClick={() => setPanel("menu")}
             >
-              {t.menu}
+              {t.header.menu}
               <span aria-hidden="true" className="flex w-6 flex-col gap-[6px]">
                 <span className="h-px w-full bg-white" />
                 <span className="h-px w-2/3 self-end bg-ss-lime" />
@@ -168,11 +169,11 @@ export default function Header26() {
             </button>
           </nav>
 
-          <LangSwitch26 lang={lang} className="hidden lg:flex" />
+          <LangSwitch26 lang={code} className="hidden lg:flex" />
         </div>
       </header>
 
-      {panel === "search" && <Search26 lang={lang} onClose={() => closePanel("search")} onClosed={restoreFocus} />}
+      {panel === "search" && <Search26 lang={code} onClose={() => closePanel("search")} onClosed={restoreFocus} />}
 
       {panel === "menu" &&
         createPortal(
@@ -181,8 +182,8 @@ export default function Header26() {
             id="mobile-menu"
             role="dialog"
             aria-modal="true"
-            aria-label={t.menu}
-            {...langAttrs[lang]}
+            aria-label={t.header.menu}
+            {...t.attrs}
             data-testid="modal-mobile-menu"
             className="ss26 fixed inset-0 z-[70] flex flex-col overflow-y-auto overscroll-contain bg-ss-panel text-white lg:hidden"
           >
@@ -194,10 +195,10 @@ export default function Header26() {
                 data-testid="button-close-menu"
                 onClick={() => closePanel("menu")}
               >
-                {t.close}
+                {t.header.close}
               </button>
             </div>
-            <nav className="ss-container relative mt-8 flex-1" aria-label={lang === "es" ? "Principal" : "Main"}>
+            <nav className="ss-container relative mt-8 flex-1" aria-label={t.header.nav}>
               <ol className="border-t border-white/15">
                 {items.map((item, i) => (
                   <li key={item.href} className="border-b border-white/15">
@@ -218,8 +219,9 @@ export default function Header26() {
               </ol>
             </nav>
             <div className="ss-container relative space-y-4 py-8">
-              <LangList26 lang={lang} />
-              <a href={phoneHref} className="ss-label ss-num inline-flex min-h-[44px] items-center text-white/70">
+              <LangList26 lang={code} />
+              {/* dir="ltr": en árabe los grupos de cifras del teléfono se invertían */}
+              <a href={phoneHref} dir="ltr" className="ss-label ss-num inline-flex min-h-[44px] items-center text-white/70">
                 {phone}
               </a>
             </div>

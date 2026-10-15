@@ -196,16 +196,15 @@ function IndustryGroupBadge({
     ? (group.nameEs || group.name)
     : (translatedFields.name || group.nameEs || group.name);
 
+  // Sin enlace: el sitio no tiene páginas públicas de industrias (rutas retiradas en 4f995a6)
   return (
-    <Link href={`/industry-groups/${group.slug}`}>
-      <Badge
-        variant="outline"
-        className="rounded-lg cursor-pointer py-2 px-4 no-default-hover-elevate no-default-active-elevate transition-colors duration-200 hover:bg-primary hover:text-primary-foreground hover:border-primary"
-        data-testid={`badge-industry-group-${group.slug}`}
-      >
-        {displayName}
-      </Badge>
-    </Link>
+    <Badge
+      variant="outline"
+      className="rounded-lg py-2 px-4 no-default-hover-elevate no-default-active-elevate"
+      data-testid={`badge-industry-group-${group.slug}`}
+    >
+      {displayName}
+    </Badge>
   );
 }
 

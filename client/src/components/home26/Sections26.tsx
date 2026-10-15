@@ -33,9 +33,11 @@ export function Firma26({ lang }: { lang: Lang26 }) {
   const [photoRef, photoIn] = useInView<HTMLDivElement>();
   return (
     <section id="firma" {...langAttrs[lang]} className={`ss-paper ${Y.firma}`} aria-labelledby="ss26-firma">
-      {/* Retícula de 12: texto en 5 columnas, foto de la 7 a la 12 */}
+      {/* Retícula de 12. Desde 1280: texto en 4 columnas y foto de la 5 a la 12 (el borde de
+          la columna 5 es el mismo de Prácticas, Socios y el pie). Entre 1024 y 1279 las 4
+          columnas dejaban ~35 caracteres por línea: texto en 5 y foto vertical en 6. */}
       <div className="ss-container grid grid-cols-1 gap-y-14 lg:grid-cols-12 lg:gap-x-6">
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-5 xl:col-span-4">
           <Reveal>
             <SectionHead num="01" label={t.label} />
           </Reveal>
@@ -58,8 +60,8 @@ export function Firma26({ lang }: { lang: Lang26 }) {
           </Reveal>
         </div>
 
-        <figure className="lg:col-span-6 lg:col-start-7">
-          <div ref={photoRef} className="overflow-hidden bg-ss-ink">
+        <figure className="lg:col-span-6 lg:col-start-7 xl:col-span-8 xl:col-start-5">
+          <div ref={photoRef} className="relative overflow-hidden bg-ss-ink xl:aspect-square">
             <img
               src={edificioCerro}
               alt={t.alt}
@@ -68,8 +70,11 @@ export function Firma26({ lang }: { lang: Lang26 }) {
               width={952}
               height={937}
               // 3:4 desde el borde izquierdo: deja fuera el letrero del estacionamiento
-              // (x 712–918 de 952) y conserva la entrada y el cerro reflejado
-              className={`ss-photo ss-settle aspect-[3/4] w-full object-cover object-[0%_50%] ${photoIn ? "is-in" : ""}`}
+              // (x 712–918 de 952) y conserva la entrada y el cerro reflejado.
+              // Desde 1280, 8 columnas: cuadrado (en 3:4 la foto pasaba del alto de la
+              // ventana). Imagen al 136% (952/700) del ancho: el cuadro muestra x 0–700,
+              // sin el letrero, anclado abajo para no cortar la entrada
+              className={`ss-photo ss-settle aspect-[3/4] w-full object-cover object-[0%_50%] xl:absolute xl:inset-y-0 xl:left-0 xl:aspect-auto xl:h-full xl:w-[136%] xl:max-w-none xl:object-[0%_100%] ${photoIn ? "is-in" : ""}`}
             />
           </div>
           <figcaption className="mt-4 flex gap-4 text-[14px] leading-snug text-ss-ink/65">
@@ -120,7 +125,8 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
     <section id="practices" {...langAttrs[lang]} className={`ss-paper bg-white ${Y.practicas}`} aria-labelledby="ss26-practicas">
       <div className="ss-container grid grid-cols-1 gap-x-6 gap-y-12 lg:grid-cols-12">
         <div className="lg:col-span-4">
-          <div className="lg:sticky lg:top-32">
+          {/* Pegada bajo la cabecera (alto en --ss-header-h, ss26.css) con 2rem de aire */}
+          <div className="lg:sticky lg:top-[calc(var(--ss-header-h)+2rem)]">
             <Reveal>
               <SectionHead num="03" label={t.label} />
             </Reveal>

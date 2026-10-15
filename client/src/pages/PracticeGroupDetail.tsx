@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSiteContact } from "@/components/home26/useSiteContact";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { Eyebrow, LeadParagraph, RankingsList, type RankingItem } from "@/components/editorial";
@@ -133,7 +134,9 @@ function TranslatedMatterCard({ matter, language, t }: TranslatedMatterCardProps
 }
 
 export default function PracticeGroupDetail() {
-  const { language } = useLanguage();
+  const { language, displayLanguage } = useLanguage();
+  // "Llamar" marca el teléfono del pie (/api/site-content)
+  const { phoneHref } = useSiteContact(displayLanguage);
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
 
@@ -917,7 +920,7 @@ export default function PracticeGroupDetail() {
                   variant="outline"
                   className="rounded-lg"
                   data-testid="button-call-us"
-                  onClick={() => window.location.href = "tel:+525552581000"}
+                  onClick={() => window.location.href = phoneHref}
                 >
                   <Phone className="w-4 h-4 mr-2" />
                   {t.callUs}

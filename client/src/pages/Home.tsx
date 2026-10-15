@@ -20,8 +20,9 @@ export default function Home() {
 
   return (
     <div className="ss26 min-h-screen" data-testid="page-home">
-      <SEOHead page="home" language={language} />
-      <JsonLdSchema language={language} />
+      {/* Título, descripción y datos estructurados en el idioma que la portada muestra (ES/EN) */}
+      <SEOHead page="home" language={lang} />
+      <JsonLdSchema language={lang} />
 
       <Header26 />
 

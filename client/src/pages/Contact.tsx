@@ -33,6 +33,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { SiteContent, ContactFormData, LanguageCode } from "@shared/schema";
 import { practiceAreas } from "@shared/schema";
 
+// Perfil de LinkedIn del despacho. Sin URL confirmada el botón "Síguenos en LinkedIn"
+// no se muestra (antes enlazaba a /contact en otra pestaña). Para activarlo, poner aquí
+// la URL externa (https://www.linkedin.com/company/…).
+const FIRM_LINKEDIN_URL: string | null = null;
+
 const validationMessages: Record<LanguageCode, {
   fullNameRequired: string;
   emailRequired: string;
@@ -1079,21 +1084,23 @@ export default function Contact() {
                     {t.connectSubtitle}
                   </p>
                   <div className="flex flex-col gap-3">
-                    <Button 
-                      variant="outline"
-                      className="w-full rounded-lg justify-start"
-                      asChild
-                      data-testid="button-linkedin"
-                    >
-                      <a 
-                        href="/contact"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                    {FIRM_LINKEDIN_URL && (
+                      <Button
+                        variant="outline"
+                        className="w-full rounded-lg justify-start"
+                        asChild
+                        data-testid="button-linkedin"
                       >
-                        <Linkedin className="w-4 h-4 mr-3" />
-                        {t.linkedinText}
-                      </a>
-                    </Button>
+                        <a
+                          href={FIRM_LINKEDIN_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Linkedin className="w-4 h-4 mr-3" />
+                          {t.linkedinText}
+                        </a>
+                      </Button>
+                    )}
                     <Button 
                       variant="outline"
                       className="w-full rounded-lg justify-start"

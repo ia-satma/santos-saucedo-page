@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useParams } from "wouter";
+import { Link, useLocation, useParams } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowLeft, Calendar, Share2, Linkedin, Twitter, Mail, LinkIcon, AlertCircle, MessageCircle, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -447,9 +447,10 @@ export default function NewsDetail() {
     }
   };
 
-  const scrollToNewsSection = () => {
-    window.location.href = "/#news";
-  };
+  // Al listado del Monitor (/news) con el router: respeta la base de GitHub Pages
+  // (/santos-saucedo-page/). Antes iba a "/#news" de la portada anterior.
+  const [, navigate] = useLocation();
+  const goToNewsList = () => navigate("/news");
 
   const relatedNews = allNews?.filter((item) => item.id !== newsArticle?.id).slice(0, 3);
 
@@ -476,7 +477,7 @@ export default function NewsDetail() {
             </h2>
             <Button 
               variant="outline" 
-              onClick={scrollToNewsSection}
+              onClick={goToNewsList}
               data-testid="button-back-to-news"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -493,9 +494,17 @@ export default function NewsDetail() {
     return (
       <div className="min-h-screen bg-background" data-testid="page-news-loading">
         <Header />
-        {/* La imagen arranca bajo la cabecera sticky; antes pt-24 compensaba el header fijo */}
-        <section className="relative">
-          <Skeleton className="w-full h-[50vh] min-h-[400px]" />
+        {/* Carga con la misma banda de marca que la vista final (degradado y alto mínimo),
+            con los marcadores de vuelta, eyebrow y titular en blanco translúcido */}
+        <section className="relative" aria-busy="true">
+          <div className="ss-gradient bg-ss-deep bg-[length:100%_max(100%,56vw)] bg-left-top bg-no-repeat flex w-full min-h-[max(50vh,400px)] items-end">
+            <div className="max-w-4xl mx-auto px-6 lg:px-12 pt-12 pb-12 w-full">
+              <Skeleton className="h-4 w-36 mb-6 bg-white/10" />
+              <Skeleton className="h-3 w-40 mb-5 bg-white/10" />
+              <Skeleton className="h-12 w-full mb-3 bg-white/10" />
+              <Skeleton className="h-12 w-2/3 bg-white/10" />
+            </div>
+          </div>
         </section>
         <main id="main-content" className="py-16 lg:py-20">
           <div className="max-w-4xl mx-auto px-6 lg:px-12">
@@ -563,7 +572,7 @@ export default function NewsDetail() {
                 transition={{ duration: 0.6 }}
               >
                 <button
-                  onClick={scrollToNewsSection}
+                  onClick={goToNewsList}
                   className="inline-flex items-center gap-2 text-white/90 hover:text-white transition-colors mb-6 cursor-pointer text-sm"
                   data-testid="link-back-to-news"
                 >

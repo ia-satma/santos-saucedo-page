@@ -5,11 +5,14 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSiteContact } from "@/components/home26/useSiteContact";
 
 type SupportedLanguage = 'en' | 'es' | 'de' | 'zh' | 'ko' | 'ja' | 'ar' | 'ru' | 'fr' | 'it';
 
 export default function PrivacyPolicy() {
-  const { language } = useLanguage();
+  const { language, displayLanguage } = useLanguage();
+  // Mismo teléfono (texto y número marcado) que el pie: /api/site-content
+  const { phone, phoneHref } = useSiteContact(displayLanguage);
 
   const content: Record<SupportedLanguage, {
     title: string;
@@ -2583,12 +2586,12 @@ Sito web: www.santossaucedo.com`
                   </a>
                   <span className="hidden sm:inline text-gray-400">|</span>
                   <a 
-                    href="tel:+525552581000"
+                    href={phoneHref}
                     className="flex items-center gap-2 text-primary hover:underline"
                     data-testid="link-privacy-phone"
                   >
                     <Phone className="w-4 h-4" />
-                    +52 81 8335 2086
+                    {phone}
                   </a>
                 </div>
               </CardContent>
