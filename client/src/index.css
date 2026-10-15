@@ -1185,6 +1185,10 @@ html, body {
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
+/* En árabe la flecha de vuelta apunta hacia el inicio de la línea, que está a la derecha */
+:is(.editorial-page-hero, [data-testid="section-news-hero"]) [data-testid^="link-back-to"] svg:dir(rtl) {
+  transform: scaleX(-1);
+}
 
 /* Titular. Un punto por debajo de la portada (clamp 56–112px): la portada sigue mandando */
 .editorial-page-hero h1 {
@@ -1305,8 +1309,10 @@ html, body {
   color: #140f4b;
 }
 
-/* Foco: contorno lima + anillo marino, como en .ss26 (gana a focus-visible:outline-none) */
-.editorial-page-hero :is(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
+/* Foco: contorno lima + anillo marino, como en .ss26 (gana a focus-visible:outline-none).
+   También en la banda de la noticia, que no es .editorial-page-hero: allí "Volver a noticias"
+   tenía un contorno marino sobre marino, casi invisible. */
+:is(.editorial-page-hero, [data-testid="section-news-hero"]) :is(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
   outline: 3px solid #b2eb3e;
   outline-offset: 2px;
   box-shadow: 0 0 0 2px #140f4b;

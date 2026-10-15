@@ -110,8 +110,10 @@ export const home26 = {
       title: "Monitor Laboral",
       intro: "Análisis de la firma sobre los cambios que afectan a las empresas.",
       items: [
+        // Sin fecha mientras los análisis no estén publicados: en el índice, una sola fila
+        // con fecha hacía parecer que a las otras les faltaba el dato.
         {
-          date: "12 oct 2026",
+          date: "",
           tag: "Jornada",
           title: "Registro electrónico de jornada: lo que establece la reforma y lo que aún está pendiente",
           body: "La obligación entra en vigor el 1 de enero de 2027. Los lineamientos técnicos de la Secretaría del Trabajo todavía no se publican.",
@@ -228,7 +230,7 @@ export const home26 = {
       intro: "The firm's analysis of the changes that affect employers.",
       items: [
         {
-          date: "Oct 12, 2026",
+          date: "",
           tag: "Working hours",
           title: "Electronic time records: what the reform requires and what is still pending",
           body: "The obligation takes effect on January 1, 2027. The Labor Ministry has not yet published the technical guidelines.",

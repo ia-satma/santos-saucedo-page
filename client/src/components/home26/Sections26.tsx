@@ -279,46 +279,51 @@ export function Monitor26({ lang }: { lang: Lang26 }) {
         </div>
 
         {/* Propuestas de análisis: todavía no son artículos, así que no enlazan.
-            Escritorio: el principal en 7 columnas y dos al costado desde la columna 9
-            (misma línea que la tercera columna de Socios). */}
-        <ul className="mt-14 grid grid-cols-1 gap-y-12 md:grid-cols-2 md:gap-x-12 lg:mt-16 lg:grid-cols-12 lg:gap-x-6">
+            Índice con filetes a todo el ancho del contenedor (turno 3 con Codex: lo eligieron
+            5 de 5 jueces frente al ancho completo y al tope de 60rem). Desde lg: tema en las
+            columnas 1–4 y texto desde la 5, la misma línea que la foto de la Firma y la
+            segunda tarjeta de Socios; una sola medida para titular y resumen (5 columnas
+            desde xl, ≈ 70 caracteres). */}
+        <ul className="mt-14 border-t border-ss-ink/15 lg:mt-16">
           {t.items.map((item, i) => {
             const lead = i === 0;
-            const last = i === t.items.length - 1;
             const parts = lead ? splitAtColon(item.title) : null;
-            const placement = lead
-              ? "md:col-span-2 lg:col-span-7 lg:row-span-2 lg:pr-10"
-              : `lg:col-span-4 lg:col-start-9 ${last ? "lg:border-t lg:border-ss-ink/15 lg:pt-10" : ""}`;
             return (
-              <Reveal as="li" key={item.title} delay={i * 0.06} className={placement}>
-                <p className="ss-label ss-num flex gap-3 text-[11px] tracking-[0.12em] text-ss-ink/70">
-                  {item.date && <span>{item.date}</span>}
-                  {item.date && <span aria-hidden>·</span>}
+              <Reveal
+                as="li"
+                key={item.title}
+                delay={i * 0.06}
+                className="grid grid-cols-1 gap-y-4 border-b border-ss-ink/15 py-8 lg:grid-cols-12 lg:gap-x-6 lg:py-10"
+              >
+                <p className="ss-label ss-num flex flex-col gap-1 text-[11px] tracking-[0.12em] lg:col-span-4 lg:pt-2">
+                  {item.date && <span className="text-ss-ink/70">{item.date}</span>}
                   <span className="text-ss-ink">{item.tag}</span>
                 </p>
-                {lead ? (
-                  <>
-                    <h3 className="mt-5 max-w-[24em] text-[clamp(26px,2.6vw,36px)] font-semibold leading-[1.15] tracking-[-0.01em] text-ss-ink [text-wrap:balance]">
-                      {/* Dos bloques desde md: cada uno se equilibra por separado
-                          (con <br> Chrome no equilibra y deja una palabra sola) */}
-                      {parts ? (
-                        <>
-                          <span className="md:block">{parts[0]}</span> <span className="md:block">{parts[1]}</span>
-                        </>
-                      ) : (
-                        item.title
-                      )}
-                    </h3>
-                    <p className="ss-prose mt-5 max-w-[42em] text-ss-ink/75">{item.body}</p>
-                  </>
-                ) : (
-                  <>
-                    <h3 className="mt-4 text-[20px] font-semibold leading-[1.3] tracking-[-0.005em] text-ss-ink lg:text-[22px]">
-                      {item.title}
-                    </h3>
-                    <p className="mt-3 text-[16px] leading-[1.6] text-ss-ink/70">{item.body}</p>
-                  </>
-                )}
+                <div className="lg:col-span-7 lg:col-start-5 xl:col-span-5">
+                  {lead ? (
+                    <>
+                      <h3 className="text-[clamp(28px,2.6vw,36px)] font-semibold leading-[1.15] tracking-[-0.01em] text-ss-ink [text-wrap:balance]">
+                        {/* Dos bloques desde md: cada uno se equilibra por separado
+                            (con <br> Chrome no equilibra y deja una palabra sola) */}
+                        {parts ? (
+                          <>
+                            <span className="md:block">{parts[0]}</span> <span className="md:block">{parts[1]}</span>
+                          </>
+                        ) : (
+                          item.title
+                        )}
+                      </h3>
+                      <p className="ss-prose mt-5 text-ss-ink/75">{item.body}</p>
+                    </>
+                  ) : (
+                    <>
+                      <h3 className="text-[20px] font-semibold leading-[1.3] tracking-[-0.005em] text-ss-ink [text-wrap:balance] lg:text-[22px]">
+                        {item.title}
+                      </h3>
+                      <p className="mt-3 text-[16px] leading-[1.6] text-ss-ink/70 [text-wrap:pretty]">{item.body}</p>
+                    </>
+                  )}
+                </div>
               </Reveal>
             );
           })}

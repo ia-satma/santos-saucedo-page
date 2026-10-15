@@ -227,8 +227,11 @@ a:focus-visible > .ss-arrow:dir(rtl) {
    (en árabe rompe la unión de las letras; en CJK abre huecos ajenos a la escritura).
    Fuera quedan los botones de idioma (lang="ja"…): su código (JA) es latino y conserva
    el espaciado, también en la interfaz en español o inglés.
-   Especificidad 0,4,1: gana a las utilidades tracking-[…] de la cabecera. */
-.ss26 :is(.ss-label, .ss-display, [class*="tracking-"]):is(:lang(ar), :lang(zh), :lang(ja), :lang(ko)):not(button[lang] *) {
+   También en los encabezados de las páginas internas y de la noticia, que quedan fuera de
+   .ss26 (la fecha de la noticia y los enlaces de vuelta llevaban el espaciado en chino).
+   Especificidad 0,4,1: gana a las utilidades tracking-[…] de la cabecera y a la regla de
+   los enlaces de vuelta (0,2,0). */
+:is(.ss26, .editorial-page-hero, [data-testid="section-news-hero"]) :is(.ss-label, .ss-display, [class*="tracking-"], [data-testid^="link-back-to"]):is(:lang(ar), :lang(zh), :lang(ja), :lang(ko)):not(button[lang] *) {
   letter-spacing: 0;
 }
 

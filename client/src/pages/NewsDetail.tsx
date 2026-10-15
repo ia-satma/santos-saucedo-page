@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useParams } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowLeft, Calendar, Share2, Linkedin, Twitter, Mail, LinkIcon, AlertCircle, MessageCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, Share2, Linkedin, Twitter, Mail, LinkIcon, AlertCircle, MessageCircle, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { es, enUS, de, zhCN, ko, ja, arSA, ru, fr, it } from "date-fns/locale";
@@ -494,15 +494,16 @@ export default function NewsDetail() {
     return (
       <div className="min-h-screen bg-background" data-testid="page-news-loading">
         <Header />
-        {/* Carga con la misma banda de marca que la vista final (degradado y alto mínimo),
-            con los marcadores de vuelta, eyebrow y titular en blanco translúcido */}
+        {/* Carga con la misma banda de marca que la vista final sin foto (el caso habitual):
+            degradado, mismo margen superior y marcadores de vuelta, eyebrow, titular y fecha */}
         <section className="relative" aria-busy="true">
-          <div className="ss-gradient bg-ss-deep bg-[length:100%_max(100%,56vw)] bg-left-top bg-no-repeat flex w-full min-h-[max(50vh,400px)] items-end">
-            <div className="max-w-4xl mx-auto px-6 lg:px-12 pt-12 pb-12 w-full">
+          <div className="ss-gradient bg-ss-deep bg-[length:100%_max(100%,56vw)] bg-left-top bg-no-repeat flex w-full">
+            <div className="max-w-4xl mx-auto px-6 lg:px-12 pt-[clamp(40px,8vw,112px)] pb-[clamp(56px,7vw,96px)] w-full">
               <Skeleton className="h-4 w-36 mb-6 bg-white/10" />
               <Skeleton className="h-3 w-40 mb-5 bg-white/10" />
               <Skeleton className="h-12 w-full mb-3 bg-white/10" />
               <Skeleton className="h-12 w-2/3 bg-white/10" />
+              <Skeleton className="h-3 w-32 mt-6 bg-white/10" />
             </div>
           </div>
         </section>
@@ -561,11 +562,14 @@ export default function NewsDetail() {
         {/* Fondo de la marca: franja superior del degradado de la portada (como los encabezados internos) */}
         {/* Alto mínimo (50vh, 400px) en vez de fijo y texto en el flujo: con el titular en Bebas
             un título largo hace crecer la banda en lugar de quedar recortado por arriba */}
-        <div className="ss-gradient bg-ss-deep bg-[length:100%_max(100%,56vw)] bg-left-top bg-no-repeat relative flex w-full min-h-[max(50vh,400px)] items-end overflow-hidden">
+        {/* La banda alta con el titular abajo solo tiene sentido sobre una foto. Sin foto, el
+            titular arranca arriba como en los demás encabezados y su posición ya no depende del
+            alto de la ventana (a 768×900 quedaba a 248 px de la cabecera). */}
+        <div className={`ss-gradient bg-ss-deep bg-[length:100%_max(100%,56vw)] bg-left-top bg-no-repeat relative flex w-full overflow-hidden ${heroImage ? "min-h-[max(50vh,400px)] items-end" : ""}`}>
           <NewsHeroImage key={heroImage} src={heroImage} />
           
           <div className="relative w-full">
-            <div className="max-w-4xl mx-auto px-6 lg:px-12 pt-12 pb-12 w-full">
+            <div className={`max-w-4xl mx-auto px-6 lg:px-12 w-full ${heroImage ? "pt-12 pb-12" : "pt-[clamp(40px,8vw,112px)] pb-[clamp(56px,7vw,96px)]"}`}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -576,7 +580,7 @@ export default function NewsDetail() {
                   className="inline-flex items-center gap-2 text-white/90 hover:text-white transition-colors mb-6 cursor-pointer text-sm"
                   data-testid="link-back-to-news"
                 >
-                  <ArrowLeft className="w-4 h-4" />
+                  <ArrowLeft className="w-4 h-4" aria-hidden="true" />
                   {t.backToNews}
                 </button>
                 
@@ -592,12 +596,7 @@ export default function NewsDetail() {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 text-white/85 text-sm mb-4">
-                  <Calendar className="w-4 h-4" />
-                  <span data-testid="text-news-date">{formatDate(newsArticle?.date || null)}</span>
-                </div>
-                
-                <h1 
+                <h1
                   className="ss-display ss-news-title text-[clamp(40px,4.4vw,64px)] leading-[0.95] text-white"
                   data-testid="text-news-title"
                 >
@@ -606,6 +605,19 @@ export default function NewsDetail() {
                     <Loader2 className="inline-block w-5 h-5 ml-3 animate-spin text-white/60" />
                   )}
                 </h1>
+
+                {/* Fecha bajo el titular, como en prensa: el titular sube y queda cerca de la cabecera */}
+                {newsArticle?.date && (
+                  <p className="ss-label ss-num mt-6 text-white/70">
+                    <time
+                      // Instante completo, como datePublished del JSON-LD: no cambia con la zona del visitante
+                      dateTime={new Date(newsArticle.date).toISOString()}
+                      data-testid="text-news-date"
+                    >
+                      {formatDate(newsArticle.date)}
+                    </time>
+                  </p>
+                )}
               </motion.div>
             </div>
           </div>

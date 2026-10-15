@@ -19,6 +19,14 @@ import { getTeamPhotoObjectPosition } from "@/lib/teamPhotoPosition";
 import { LeadParagraph } from "@/components/editorial";
 import type { TeamMember, PracticeGroup, IndustryGroup, Education, Affiliation, Ranking, Publication, RepresentativeMatter, BarAdmission, News, LanguageCode } from "@shared/schema";
 
+// Retícula del encabezado del perfil, compartida por la vista y su carga para que no se
+// desalineen. Móvil: nombre, foto y contacto en ese orden. Desde md: foto en la columna 1
+// (dos filas, al menos cuadrada), filete de 1px y el texto en la 3 alineado con la foto.
+const PROFILE_GRID = "grid grid-cols-1 md:grid-cols-[280px_1px_minmax(0,1fr)] md:grid-rows-[auto_1fr] lg:grid-cols-[320px_1px_minmax(0,1fr)]";
+const PROFILE_PHOTO_CELL = "aspect-square w-full md:col-start-1 md:row-span-2 md:row-start-1 md:aspect-auto md:min-h-[280px] lg:min-h-[320px]";
+const PROFILE_IDENTITY_CELL = "pb-8 md:col-start-3 md:row-start-1 md:px-10 md:pb-6";
+const PROFILE_ACTIONS_CELL = "pt-8 md:col-start-3 md:row-start-2 md:px-10 md:pb-10 md:pt-0";
+
 function NewsImageWithFallback({ 
   src, 
   alt, 
@@ -1192,15 +1200,19 @@ export default function TeamMemberDetail() {
     return (
       <div className="min-h-screen bg-background" data-testid="page-team-member-loading">
         <Header />
-        <section className="pt-36 pb-20 editorial-page-hero">
+        <section className="pt-36 pb-20 editorial-page-hero" aria-busy="true">
           <div className="max-w-6xl mx-auto px-6 lg:px-12">
-            <Skeleton className="h-5 w-48 bg-white/10 mb-6" />
-            <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-              <Skeleton className="h-32 w-32 rounded-full bg-white/10" />
-              <div className="text-center md:text-left">
-                <Skeleton className="h-10 w-64 bg-white/10 mb-3" />
-                <Skeleton className="h-6 w-48 bg-white/10 mb-2" />
-                <Skeleton className="h-5 w-32 bg-white/10" />
+            <Skeleton className="h-4 w-44 bg-white/10 mb-6" />
+            <div className={PROFILE_GRID}>
+              <div className={PROFILE_IDENTITY_CELL}>
+                <Skeleton className="h-3 w-28 bg-white/10 mb-4" />
+                <Skeleton className="h-12 w-4/5 bg-white/10 mb-3" />
+                <Skeleton className="h-12 w-3/5 bg-white/10 mb-4" />
+                <Skeleton className="h-5 w-40 bg-white/10" />
+              </div>
+              <Skeleton className={`${PROFILE_PHOTO_CELL} rounded-none bg-white/10`} />
+              <div className={PROFILE_ACTIONS_CELL}>
+                <Skeleton className="h-10 w-56 bg-white/10" />
               </div>
             </div>
           </div>
@@ -1280,55 +1292,17 @@ export default function TeamMemberDetail() {
                 className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 cursor-pointer text-sm"
                 data-testid="link-back-to-team"
               >
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
                 {t.backToAll}
               </span>
             </Link>
-            <div className="flex flex-col md:flex-row items-stretch gap-0">
-              <div
-                className="group relative aspect-square w-full md:w-[280px] lg:w-[320px] shrink-0 overflow-hidden"
-                data-testid="container-profile-photo"
-              >
-                {member?.imageUrl ? (
-                  <>
-                    <img
-                      src={member.imageUrl}
-                      alt={member?.name}
-                      // En grises, como la rejilla de Equipo (el color vuelve al pasar el cursor)
-                      className="absolute inset-0 h-full w-full object-cover object-top grayscale transition-[filter] duration-500 group-hover:grayscale-0"
-                      style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }}
-                      loading="eager"
-                      decoding="async"
-                      data-testid="img-profile-photo"
-                    />
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-ss-ink/10 to-ss-ink/60"
-                    />
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0 bg-gradient-to-b from-transparent to-ss-ink/40"
-                    />
-                  </>
-                ) : (
-                  <div
-                    className="absolute inset-0 flex items-center justify-center bg-white/10 text-white text-6xl font-light"
-                    data-testid="avatar-fallback"
-                  >
-                    {member?.name ? getInitials(member.name) : ''}
-                  </div>
-                )}
-              </div>
-              <div
-                aria-hidden="true"
-                className="hidden md:block w-px shrink-0 bg-[#1E1C92]/20"
-              />
-              <div
-                aria-hidden="true"
-                className="md:hidden h-px w-full bg-[#1E1C92]/20"
-              />
+            {/* Móvil (y lectores de pantalla): nombre, foto y contacto, en ese orden; antes la
+                foto a todo lo ancho empujaba el nombre bajo el primer pantallazo. Desde md cada
+                bloque va a su celda: foto a la izquierda en las dos filas y el texto alineado
+                con su borde superior. */}
+            <div className={PROFILE_GRID}>
               {/* Sin padding lateral en móvil: el texto arranca en el borde de la foto y de la vuelta */}
-              <div className="flex-1 min-w-0 text-center md:text-left px-0 py-8 md:px-10 md:py-10">
+              <div className={`min-w-0 text-center md:text-left ${PROFILE_IDENTITY_CELL}`}>
                 {/* Eyebrow del expediente: "§ 03 —— SOCIO" (la barra se dibuja en index.css).
                     La categoría va aquí y no en una píldora junto al nombre. */}
                 <p className="flex items-center gap-4 mb-4">
@@ -1369,62 +1343,102 @@ export default function TeamMemberDetail() {
                   );
                 })()}
                 <p 
-                  className="text-lg text-white/85 mb-6"
+                  className="text-lg text-white/85"
                   data-testid="text-team-member-role"
                 >
                   {displayRole}
                 </p>
-                
-                <div className="flex flex-wrap justify-center md:justify-start gap-3">
-                  {member?.email && (
-                    <Button 
-                      variant="secondary"
-                      className="rounded-lg bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
-                      asChild
-                      data-testid="button-email"
-                    >
-                      <a href={`mailto:${member.email}`}>
-                        <Mail className="w-4 h-4 mr-2" />
-                        {member.email}
-                      </a>
-                    </Button>
-                  )}
-                  {member?.phone && (
-                    <Button 
-                      variant="secondary"
-                      className="rounded-lg bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
-                      asChild
-                      data-testid="button-phone"
-                    >
-                      <a href={`tel:${member.phone}`}>
-                        <Phone className="w-4 h-4 mr-2" />
-                        {member.phone}
-                      </a>
-                    </Button>
-                  )}
-                  {member?.linkedinUrl && (
-                    <Button 
-                      variant="secondary"
-                      size="icon"
-                      className="rounded-lg bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
-                      asChild
-                      data-testid="button-linkedin"
-                    >
-                      <a href={member.linkedinUrl} target="_blank" rel="noopener noreferrer">
-                        <Linkedin className="w-4 h-4" />
-                      </a>
-                    </Button>
-                  )}
+              </div>
+
+              <div
+                className={`group relative overflow-hidden ${PROFILE_PHOTO_CELL}`}
+                data-testid="container-profile-photo"
+              >
+                {member?.imageUrl ? (
+                  <>
+                    <img
+                      src={member.imageUrl}
+                      // alt vacío: el nombre ya está en el h1 de al lado (antes se leía dos veces)
+                      alt=""
+                      // En grises, como la rejilla de Equipo (el color vuelve al pasar el cursor)
+                      className="absolute inset-0 h-full w-full object-cover object-top grayscale transition-[filter] duration-500 group-hover:grayscale-0"
+                      style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }}
+                      loading="eager"
+                      decoding="async"
+                      data-testid="img-profile-photo"
+                    />
+                    <div
+                      aria-hidden="true"
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-ss-ink/10 to-ss-ink/60"
+                    />
+                    <div
+                      aria-hidden="true"
+                      className="absolute inset-0 bg-gradient-to-b from-transparent to-ss-ink/40"
+                    />
+                  </>
+                ) : (
+                  <div
+                    className="absolute inset-0 flex items-center justify-center bg-white/10 text-white text-6xl font-light"
+                    data-testid="avatar-fallback"
+                  >
+                    {member?.name ? getInitials(member.name) : ''}
+                  </div>
+                )}
+              </div>
+              <div
+                aria-hidden="true"
+                className="hidden md:col-start-2 md:row-span-2 md:row-start-1 md:block bg-[#1E1C92]/20"
+              />
+              <div className={`flex flex-wrap content-start justify-start gap-3 ${PROFILE_ACTIONS_CELL}`}>
+                {member?.email && (
                   <Button 
                     variant="secondary"
-                    className="rounded-lg bg-card text-primary hover:bg-white/90"
-                    onClick={handleDownloadVCard}
-                    data-testid="button-download-vcard"
+                    className="rounded-lg bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
+                    asChild
+                    data-testid="button-email"
                   >
-                    <Download className="w-4 h-4 mr-2" />
-                    {t.downloadVCard}
+                    <a href={`mailto:${member.email}`}>
+                      <Mail className="w-4 h-4 me-2" aria-hidden="true" />
+                      {member.email}
+                    </a>
                   </Button>
-                </div>
+                )}
+                {member?.phone && (
+                  <Button 
+                    variant="secondary"
+                    className="rounded-lg bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
+                    asChild
+                    data-testid="button-phone"
+                  >
+                    <a href={`tel:${member.phone}`}>
+                      <Phone className="w-4 h-4 me-2" aria-hidden="true" />
+                      {/* dir="ltr": en árabe el número se leía "2086 8335 81 52+" */}
+                      <span dir="ltr">{member.phone}</span>
+                    </a>
+                  </Button>
+                )}
+                {member?.linkedinUrl && (
+                  <Button 
+                    variant="secondary"
+                    size="icon"
+                    className="rounded-lg bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
+                    asChild
+                    data-testid="button-linkedin"
+                  >
+                    <a href={member.linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label={`LinkedIn: ${member.name}`}>
+                      <Linkedin className="w-4 h-4" aria-hidden="true" />
+                    </a>
+                  </Button>
+                )}
+                <Button 
+                  variant="secondary"
+                  className="rounded-lg bg-card text-primary hover:bg-white/90"
+                  onClick={handleDownloadVCard}
+                  data-testid="button-download-vcard"
+                >
+                  <Download className="w-4 h-4 me-2" aria-hidden="true" />
+                  {t.downloadVCard}
+                </Button>
               </div>
             </div>
           </motion.div>
@@ -1909,7 +1923,7 @@ export default function TeamMemberDetail() {
                       data-testid="button-email-contact"
                     >
                       <a href={`mailto:${member.email}`}>
-                        <Mail className="w-4 h-4 mr-2" />
+                        <Mail className="w-4 h-4 me-2" aria-hidden="true" />
                         {t.emailUs}
                       </a>
                     </Button>
@@ -1922,7 +1936,7 @@ export default function TeamMemberDetail() {
                       data-testid="button-call-contact"
                     >
                       <a href={`tel:${member.phone}`}>
-                        <Phone className="w-4 h-4 mr-2" />
+                        <Phone className="w-4 h-4 me-2" aria-hidden="true" />
                         {t.callUs}
                       </a>
                     </Button>
@@ -1933,7 +1947,7 @@ export default function TeamMemberDetail() {
                     onClick={handleDownloadVCard}
                     data-testid="button-download-vcard-sidebar"
                   >
-                    <Download className="w-4 h-4 mr-2" />
+                    <Download className="w-4 h-4 me-2" aria-hidden="true" />
                     {t.downloadVCard}
                   </Button>
                 </div>
