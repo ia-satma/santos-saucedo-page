@@ -488,8 +488,13 @@ export default function Experience() {
                     />
                   </div>
                   
+                  {/* Nombre accesible propio en cada filtro: un combobox no lo toma del valor visible */}
                   <Select value={selectedPracticeArea} onValueChange={setSelectedPracticeArea}>
-                    <SelectTrigger className="w-full md:w-[220px]" data-testid="select-practice-area">
+                    <SelectTrigger
+                      className="w-full md:w-[220px]"
+                      aria-label={t.filterByPractice}
+                      data-testid="select-practice-area"
+                    >
                       <SelectValue placeholder={t.filterByPractice} />
                     </SelectTrigger>
                     <SelectContent>
@@ -509,7 +514,11 @@ export default function Experience() {
                   </Select>
                   
                   <Select value={selectedIndustry} onValueChange={setSelectedIndustry}>
-                    <SelectTrigger className="w-full md:w-[220px]" data-testid="select-industry">
+                    <SelectTrigger
+                      className="w-full md:w-[220px]"
+                      aria-label={t.filterByIndustry}
+                      data-testid="select-industry"
+                    >
                       <SelectValue placeholder={t.filterByIndustry} />
                     </SelectTrigger>
                     <SelectContent>

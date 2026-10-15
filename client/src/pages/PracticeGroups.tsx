@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
@@ -13,8 +14,12 @@ import { Eyebrow } from "@/components/editorial";
 import type { PracticeGroup } from "@shared/schema";
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
-// lleva su propio idioma y dirección, para que :lang() y el algoritmo bidi lo traten como inglés.
-const EN_SOURCE = { lang: "en", dir: "ltr" } as const;
+// el bloque lleva lang="en" (para :lang(): la romana, no la sans de CJK y árabe) y conserva la
+// dirección de la página (en árabe, alineado a la derecha junto al número § 2.n); el texto va
+// aislado en <bdi lang="en" dir="ltr">, como en Team.tsx.
+function EnglishSource({ children }: { children: ReactNode }) {
+  return <bdi lang="en" dir="ltr">{children}</bdi>;
+}
 
 const rowVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -53,8 +58,8 @@ function PracticeGroupRow({ group, index }: PracticeGroupRowProps) {
   const showTranslatingIndicator = isLoading || isTranslating;
 
   const isOtherLanguage = language !== "es" && language !== "en";
-  const nameSource = isOtherLanguage && displayName === group.name ? EN_SOURCE : undefined;
-  const descriptionSource = isOtherLanguage && displayDescription === group.description ? EN_SOURCE : undefined;
+  const nameIsSource = isOtherLanguage && displayName === group.name;
+  const descriptionIsSource = isOtherLanguage && displayDescription === group.description;
 
   const nameId = `practice-name-${group.slug}`;
   const descriptionId = `practice-desc-${group.slug}`;
@@ -82,9 +87,9 @@ function PracticeGroupRow({ group, index }: PracticeGroupRowProps) {
           id={nameId}
           className="ss-display text-[clamp(26px,2.3vw,34px)] font-[420] leading-[1.15] tracking-[-0.012em] text-ss-marino sm:col-start-2 sm:row-start-1"
           data-testid={`text-practice-group-name-${group.slug}`}
-          {...nameSource}
+          lang={nameIsSource ? "en" : undefined}
         >
-          {displayName}
+          {nameIsSource ? <EnglishSource>{displayName}</EnglishSource> : displayName}
           {showTranslatingIndicator && (
             <Loader2 className="inline-block w-4 h-4 ms-3 align-middle animate-spin text-ss-medio" aria-hidden="true" />
           )}
@@ -93,9 +98,9 @@ function PracticeGroupRow({ group, index }: PracticeGroupRowProps) {
           id={descriptionId}
           className="ss-prose max-w-[60ch] text-[17px] text-ss-tinta sm:col-start-2 sm:row-start-2 lg:col-start-3 lg:row-start-1"
           data-testid={`text-practice-group-desc-${group.slug}`}
-          {...descriptionSource}
+          lang={descriptionIsSource ? "en" : undefined}
         >
-          {displayDescription}
+          {descriptionIsSource ? <EnglishSource>{displayDescription}</EnglishSource> : displayDescription}
         </p>
         <span aria-hidden="true" className="ss-arrow hidden text-[22px] text-ss-marino sm:block sm:col-start-3 sm:row-start-1 lg:col-start-4">
           →

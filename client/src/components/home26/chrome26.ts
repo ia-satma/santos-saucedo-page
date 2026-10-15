@@ -6,7 +6,8 @@ import type { Lang26 } from "./content";
 // ES y EN son los textos aprobados de la portada (no cambian). Los otros 8 reutilizan
 // i18n.ts y CookieBanner cuando hay equivalente; cada enlace del menú lleva el título
 // (h1) que muestra su página, salvo Carreras (el h1 es una frase: se usa el nombre
-// corto) y los títulos franceses que no caben en la cabecera.
+// corto), los títulos franceses que no caben en la cabecera y la publicación en coreano,
+// japonés y árabe: "Noticias" a secas, como en chino y ruso, sin "insights".
 
 export interface NavItem26 {
   label: string;
@@ -165,9 +166,10 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
     footer: {
       office: "Büro",
       firm: "Kanzlei",
+      // \u00ad: guion de corte en las palabras largas (a 320 px la columna del pie mide ~128 px)
       legal: "Rechtliches",
-      privacy: "Datenschutzhinweis",
-      terms: "Nutzungsbedingungen",
+      privacy: "Datenschutz\u00adhinweis",
+      terms: "Nutzungs\u00adbedingungen",
       cookies: "Cookie-Einstellungen",
       disclaimer: "Die Informationen auf dieser Website sind allgemeiner Natur und stellen keine Rechtsberatung dar.",
       rights: "Santos & Saucedo",
@@ -206,7 +208,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
   ko: {
     attrs: { lang: "ko", dir: "ltr" },
     locale: "ko-KR",
-    nav: nav("회사 소개", "업무 분야", "우리 팀", "뉴스 및 인사이트", "채용", "문의하기"),
+    nav: nav("회사 소개", "업무 분야", "우리 팀", "뉴스", "채용", "문의하기"),
     header: { nav: "주 메뉴", menu: "메뉴", close: "닫기" },
     search: {
       open: "검색",
@@ -236,7 +238,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
   ja: {
     attrs: { lang: "ja", dir: "ltr" },
     locale: "ja-JP",
-    nav: nav("事務所について", "取扱分野", "私たちのチーム", "ニュースとインサイト", "採用情報", "お問い合わせ"),
+    nav: nav("事務所について", "取扱分野", "私たちのチーム", "ニュース", "採用情報", "お問い合わせ"),
     header: { nav: "メインメニュー", menu: "メニュー", close: "閉じる" },
     search: {
       open: "検索",
@@ -267,7 +269,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
     attrs: { lang: "ar", dir: "rtl" },
     // "ar" sin región: calendario gregoriano (ar-SA usaría el hégira)
     locale: "ar",
-    nav: nav("عن الشركة", "مجالات الممارسة", "فريقنا", "الأخبار والرؤى", "الوظائف", "اتصل بنا"),
+    nav: nav("عن الشركة", "مجالات الممارسة", "فريقنا", "الأخبار", "الوظائف", "اتصل بنا"),
     header: { nav: "القائمة الرئيسية", menu: "القائمة", close: "إغلاق" },
     search: {
       open: "بحث",
@@ -317,7 +319,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       office: "Офис",
       firm: "Фирма",
       legal: "Правовая информация",
-      privacy: "Политика конфиденциальности",
+      privacy: "Политика конфиденци\u00adальности",
       terms: "Условия использования",
       cookies: "Настройки cookie",
       disclaimer: "Информация на этом сайте носит общий характер и не является юридической консультацией.",
@@ -352,7 +354,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       legal: "Informations légales",
       privacy: "Politique de confidentialité",
       terms: "Conditions d’utilisation",
-      cookies: "Préférences de cookies",
+      cookies: "Préférences des cookies",
       disclaimer: "Les informations publiées sur ce site sont de nature générale et ne constituent pas un avis juridique.",
       rights: "Santos & Saucedo",
     },
@@ -382,7 +384,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       legal: "Note legali",
       privacy: "Informativa sulla privacy",
       terms: "Termini di utilizzo",
-      cookies: "Preferenze cookie",
+      cookies: "Preferenze dei cookie",
       disclaimer: "Le informazioni contenute in questo sito hanno carattere generale e non costituiscono consulenza legale.",
       rights: "Santos & Saucedo",
     },

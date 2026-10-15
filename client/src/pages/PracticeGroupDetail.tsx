@@ -16,6 +16,9 @@ import type { PracticeGroup, TeamMember, RepresentativeMatterDb } from "@shared/
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
 // lleva su propio idioma y dirección, para que :lang() y el algoritmo bidi lo traten como inglés.
+// La descripción larga va entera en LTR (EN_SOURCE). El titular conserva la dirección de la
+// página (en árabe, alineado a la derecha con la vuelta y el eyebrow): el bloque solo lleva
+// lang="en" (la romana, no la sans de CJK y árabe) y el texto va en <bdi lang="en" dir="ltr">.
 const EN_SOURCE = { lang: "en", dir: "ltr" } as const;
 
 // Columna de lectura (≈800 px) al borde izquierdo del contenedor de cabecera y pie
@@ -550,7 +553,7 @@ export default function PracticeGroupDetail() {
       ? sourceDescription
       : (translatedFields.fullDescription || translatedFields.description || (translationPending ? null : sourceDescription));
   const shownName = displayName || (translationPending ? null : practiceGroup?.name);
-  const nameSource = isOtherLanguage && !!shownName && shownName === practiceGroup?.name ? EN_SOURCE : undefined;
+  const nameIsSource = isOtherLanguage && !!shownName && shownName === practiceGroup?.name;
   const descriptionSource = isOtherLanguage && !!displayDescription &&
     (displayDescription === practiceGroup?.fullDescription || displayDescription === practiceGroup?.description);
 
@@ -595,8 +598,12 @@ export default function PracticeGroupDetail() {
           <p
             className="ss-label text-ss-medio mt-1 truncate"
             data-testid={`text-team-member-role-${member.slug}`}
+            lang={isOtherLanguage ? "en" : undefined}
           >
-            {language === "es" ? member.roleEs : member.role}
+            {/* Fuera de ES/EN el cargo es el inglés de origen: marcado como el titular */}
+            {isOtherLanguage
+              ? <bdi lang="en" dir="ltr">{member.role}</bdi>
+              : (language === "es" ? member.roleEs : member.role)}
           </p>
         </div>
       </article>
@@ -632,9 +639,9 @@ export default function PracticeGroupDetail() {
                 <h1
                   className="ss-hero-detail"
                   data-testid="text-practice-group-title"
-                  {...nameSource}
+                  lang={nameIsSource ? "en" : undefined}
                 >
-                  {shownName || (translationPending && (
+                  {nameIsSource ? <bdi lang="en" dir="ltr">{shownName}</bdi> : shownName || (translationPending && (
                     <span className="flex items-center gap-2">
                       <Loader2 className="w-5 h-5 animate-spin text-white/60" aria-hidden="true" />
                     </span>

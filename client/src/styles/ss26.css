@@ -453,7 +453,8 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 
 /* Filete corto (24 × 1 px) que se dibuja una vez (sin JS queda dibujado).
    Sobre Azul Profundo, blanco al 35 % (el mismo del § de los encabezados internos; al 14 %,
-   el de los filetes largos, un trazo tan corto no se ve); sobre claro, Línea. */
+   el de los filetes largos, un trazo tan corto no se ve); sobre blanco, Línea; sobre Hueso,
+   Entrada (Línea apenas se ve en el papel), como el eyebrow papel de las páginas internas. */
 .ss-bar {
   display: inline-block;
   width: 24px;
@@ -461,6 +462,9 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   background: var(--ss-rule);
   transform-origin: left center;
   transition: transform 400ms var(--ss-ease) calc(var(--ss-delay, 0s) + 150ms);
+}
+.ss-paper .ss-bar {
+  background: var(--ss-input);
 }
 :is(.ss-navy, .editorial-page-hero) .ss-bar {
   background: rgb(255 255 255 / 0.35);

@@ -1,11 +1,7 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { 
-  Users, 
-  Globe2, 
   Building2, 
-  Scale, 
-  Heart, 
   Sparkles,
   UserCheck,
   Target,
@@ -159,7 +155,8 @@ export default function About() {
     historyText1: string;
     historyText2: string;
     valuesTitle: string;
-    values: { icon: typeof Scale; title: string; text: string }[];
+    /** "Cómo trabajamos" de la redacción aprobada (Nuestra firma): cuatro principios */
+    values: { title: string; text: string }[];
     cultureTitle: string;
     cultureSubtitle: string;
     cultureIntro: string;
@@ -189,12 +186,12 @@ export default function About() {
       historyTitle: "Our History",
       historyText1: "Santos & Saucedo is a boutique firm specialized in Labor Law, with more than 35 years advising national and international companies. From San Pedro Garza García, Nuevo León, we counsel our clients' management, human resources, and in-house legal teams.",
       historyText2: "Our work combines prevention, consulting, audits, training, and defense in individual and collective labor conflicts. We help companies organize their labor administration, reduce risk, and make better decisions before, during, and after a conflict.",
-      valuesTitle: "Our Values",
+      valuesTitle: "How we work",
       values: [
-        { icon: Scale, title: "Excellence", text: "We are committed to delivering the highest quality legal services" },
-        { icon: Heart, title: "Integrity", text: "Ethical conduct and transparency guide all our actions" },
-        { icon: Users, title: "Collaboration", text: "We work as one team to achieve the best results for our clients" },
-        { icon: Globe2, title: "Innovation", text: "We embrace new technologies and approaches to serve our clients better" },
+        { title: "Prevention", text: "We review before the authorities do. A timely audit costs less than a lawsuit and often makes one unnecessary." },
+        { title: "Accountability", text: "Every matter is handled by a partner who knows the client and answers for the work from start to finish." },
+        { title: "Candor", text: "We say what we see, even when it is not what is expected. Sometimes the best advice is not to litigate." },
+        { title: "Consistency", text: "The same judgment across all of a client's workplaces, in any city in the country." },
       ],
       cultureTitle: "Our Culture",
       cultureSubtitle: "A workplace where talent thrives and excellence is the standard",
@@ -294,12 +291,12 @@ export default function About() {
       historyTitle: "Nuestra historia",
       historyText1: "Santos & Saucedo es un despacho boutique especializado en derecho laboral, con más de 35 años acompañando a empresas nacionales e internacionales. Desde San Pedro Garza García, Nuevo León, asesoramos a la dirección, a recursos humanos y a los equipos legales internos de nuestros clientes.",
       historyText2: "Nuestro trabajo combina prevención, consultoría, auditoría, capacitación y defensa en conflictos laborales individuales y colectivos. Ayudamos a las empresas a ordenar su administración laboral, reducir riesgos y tomar mejores decisiones antes, durante y después de un conflicto.",
-      valuesTitle: "Nuestros valores",
+      valuesTitle: "Cómo trabajamos",
       values: [
-        { icon: Scale, title: "Excelencia", text: "Estamos comprometidos a brindar servicios legales de la más alta calidad" },
-        { icon: Heart, title: "Integridad", text: "La conducta ética y la transparencia guían todas nuestras acciones" },
-        { icon: Users, title: "Colaboración", text: "Trabajamos en equipo para lograr los mejores resultados para nuestros clientes" },
-        { icon: Globe2, title: "Innovación", text: "Adoptamos nuevas tecnologías y enfoques para servir mejor a nuestros clientes" },
+        { title: "Prevención", text: "Revisamos antes de que lo haga la autoridad. Una auditoría a tiempo cuesta menos que un juicio y con frecuencia lo hace innecesario." },
+        { title: "Responsabilidad", text: "Cada asunto lo atiende un socio que conoce al cliente y responde por el trabajo de principio a fin." },
+        { title: "Franqueza", text: "Decimos lo que vemos, aunque no sea lo que se espera. A veces el mejor consejo es no litigar." },
+        { title: "Consistencia", text: "El mismo criterio en todos los centros de trabajo de un cliente, en cualquier ciudad del país." },
       ],
       cultureTitle: "Nuestra cultura",
       cultureSubtitle: "Un lugar de trabajo donde el talento prospera y la excelencia es el estándar",
@@ -399,12 +396,12 @@ export default function About() {
       historyTitle: "Unsere Geschichte",
       historyText1: "Santos & Saucedo ist eine auf Arbeitsrecht spezialisierte Boutique-Kanzlei, die seit mehr als 35 Jahren nationale und internationale Unternehmen berät. Von San Pedro Garza García, Nuevo León aus beraten wir die Geschäftsführung, die Personalabteilung und die internen Rechtsteams unserer Mandanten.",
       historyText2: "Unsere Arbeit verbindet Prävention, Beratung, Audits, Schulung und Verteidigung in individuellen und kollektiven Arbeitskonflikten. Wir helfen Unternehmen, ihre Arbeitsverwaltung zu ordnen, Risiken zu reduzieren und bessere Entscheidungen vor, während und nach einem Konflikt zu treffen.",
-      valuesTitle: "Unsere Werte",
+      valuesTitle: "Wie wir arbeiten",
       values: [
-        { icon: Scale, title: "Exzellenz", text: "Wir sind bestrebt, Rechtsdienstleistungen von höchster Qualität zu erbringen" },
-        { icon: Heart, title: "Integrität", text: "Ethisches Verhalten und Transparenz leiten all unsere Handlungen" },
-        { icon: Users, title: "Zusammenarbeit", text: "Wir arbeiten als ein Team, um die besten Ergebnisse für unsere Mandanten zu erzielen" },
-        { icon: Globe2, title: "Innovation", text: "Wir nutzen neue Technologien und Ansätze, um unsere Mandanten besser zu betreuen" },
+        { title: "Prävention", text: "Wir prüfen, bevor es die Behörde tut. Ein rechtzeitiges Audit kostet weniger als ein Prozess und macht ihn oft überflüssig." },
+        { title: "Verantwortung", text: "Jedes Mandat betreut ein Partner, der den Mandanten kennt und von Anfang bis Ende für die Arbeit einsteht." },
+        { title: "Offenheit", text: "Wir sagen, was wir sehen, auch wenn es nicht das ist, was man erwartet. Manchmal ist der beste Rat, keinen Prozess zu führen." },
+        { title: "Beständigkeit", text: "Derselbe Maßstab an allen Arbeitsstätten eines Mandanten, in jeder Stadt des Landes." },
       ],
       cultureTitle: "Unsere Kultur",
       cultureSubtitle: "Ein Arbeitsplatz, an dem Talente gedeihen und Exzellenz der Standard ist",
@@ -494,8 +491,8 @@ export default function About() {
       proBonoText: "Wir sind zutiefst dem Ziel verpflichtet, Pro-Bono-Rechtsdienstleistungen für Bedürftige zu erbringen. Unsere Anwälte widmen erhebliche Zeit der Unterstützung von Wohltätigkeitsorganisationen, Menschenrechtsanliegen und Initiativen für den Zugang zur Justiz.",
       careersTitle: "Karriere",
       careersText: "Werden Sie Teil einer der führenden Anwaltskanzleien Mexikos und bauen Sie Ihre Karriere mit den Besten auf. Wir bieten außergewöhnliche Möglichkeiten für Wachstum und Entwicklung.",
-      learnMore: "Mehr Erfahren",
-      viewTeam: "Unser Team Ansehen",
+      learnMore: "Mehr erfahren",
+      viewTeam: "Unser Team ansehen",
       viewPractices: "Praxisbereiche ansehen",
     },
     zh: {
@@ -504,12 +501,12 @@ export default function About() {
       historyTitle: "我们的历史",
       historyText1: "Santos & Saucedo 是一家专注于劳动法的精品律师事务所，拥有超过35年为国内外企业提供服务的经验。我们立足于新莱昂州圣佩德罗-加尔萨-加西亚，为客户的管理层、人力资源部门和内部法务团队提供咨询。",
       historyText2: "我们的工作涵盖预防、咨询、审计、培训以及个人和集体劳动纠纷中的辩护。我们帮助企业理顺劳动管理、降低风险，并在纠纷发生前、发生中和发生后做出更好的决策。",
-      valuesTitle: "我们的价值观",
+      valuesTitle: "我们的工作方式",
       values: [
-        { icon: Scale, title: "卓越", text: "我们致力于提供最高质量的法律服务" },
-        { icon: Heart, title: "诚信", text: "道德行为和透明度指导我们所有的行动" },
-        { icon: Users, title: "协作", text: "我们作为一个团队合作，为客户取得最佳结果" },
-        { icon: Globe2, title: "创新", text: "我们采用新技术和方法来更好地服务客户" },
+        { title: "预防", text: "我们赶在主管机关之前进行审查。及时的审计比诉讼成本更低，而且往往使诉讼不再必要。" },
+        { title: "责任", text: "每一项事务都由一位了解客户的合伙人亲自负责，自始至终对工作承担责任。" },
+        { title: "坦诚", text: "我们直言所见，即使那并非对方所期待的。有时，最好的建议是不打官司。" },
+        { title: "一致", text: "客户在全国任何城市的每一个工作场所，都适用同一标准。" },
       ],
       cultureTitle: "我们的文化",
       cultureSubtitle: "人才蓬勃发展、卓越为标准的工作场所",
@@ -609,12 +606,12 @@ export default function About() {
       historyTitle: "우리의 역사",
       historyText1: "Santos & Saucedo는 노동법을 전문으로 하는 부티크 로펌으로, 35년 이상 국내외 기업을 자문해 왔습니다. 누에보레온주 산페드로 가르사 가르시아에서 고객사의 경영진, 인사부서 및 사내 법무팀을 자문합니다.",
       historyText2: "우리의 업무는 예방, 컨설팅, 감사, 교육 및 개별·집단 노동 분쟁에서의 방어를 결합합니다. 우리는 기업이 노무 관리를 정비하고 위험을 줄이며 분쟁 전, 중, 후에 더 나은 의사결정을 내리도록 돕습니다.",
-      valuesTitle: "우리의 가치",
+      valuesTitle: "일하는 방식",
       values: [
-        { icon: Scale, title: "탁월함", text: "우리는 최고 품질의 법률 서비스를 제공하기 위해 노력합니다" },
-        { icon: Heart, title: "정직", text: "윤리적 행동과 투명성이 우리의 모든 행동을 안내합니다" },
-        { icon: Users, title: "협력", text: "우리는 고객에게 최상의 결과를 달성하기 위해 하나의 팀으로 일합니다" },
-        { icon: Globe2, title: "혁신", text: "우리는 고객에게 더 나은 서비스를 제공하기 위해 새로운 기술과 접근 방식을 수용합니다" },
+        { title: "예방", text: "당국보다 먼저 검토합니다. 적시에 실시한 감사는 소송보다 비용이 적게 들고, 소송 자체를 불필요하게 만드는 경우가 많습니다." },
+        { title: "책임", text: "모든 사안은 고객을 잘 아는 파트너가 맡아 처음부터 끝까지 책임집니다." },
+        { title: "솔직함", text: "기대와 다르더라도 보이는 그대로 말씀드립니다. 때로는 소송하지 않는 것이 최선의 조언입니다." },
+        { title: "일관성", text: "전국 어느 도시에서든 고객의 모든 사업장에 같은 기준을 적용합니다." },
       ],
       cultureTitle: "우리의 문화",
       cultureSubtitle: "재능이 번창하고 탁월함이 표준인 직장",
@@ -714,12 +711,12 @@ export default function About() {
       historyTitle: "私たちの歴史",
       historyText1: "Santos & Saucedoは労働法に特化したブティック法律事務所であり、35年以上にわたり国内外の企業を支援してきました。ヌエボ・レオン州サン・ペドロ・ガルサ・ガルシアを拠点に、クライアントの経営陣、人事部門、社内法務チームに助言を提供しています。",
       historyText2: "私たちの業務は、予防、コンサルティング、監査、研修、そして個別および集団の労働紛争における防御を組み合わせています。企業が労務管理を整え、リスクを軽減し、紛争の前・最中・後においてより良い意思決定を行えるよう支援します。",
-      valuesTitle: "私たちの価値観",
+      valuesTitle: "私たちの仕事の進め方",
       values: [
-        { icon: Scale, title: "卓越", text: "最高品質の法的サービスを提供することに尽力しています" },
-        { icon: Heart, title: "誠実", text: "倫理的な行動と透明性がすべての行動の指針です" },
-        { icon: Users, title: "協力", text: "クライアントのために最善の結果を達成するため、一つのチームとして働きます" },
-        { icon: Globe2, title: "革新", text: "クライアントにより良いサービスを提供するため、新しい技術とアプローチを取り入れています" },
+        { title: "予防", text: "当局より先に確認します。適時の監査は訴訟よりも費用がかからず、多くの場合、訴訟そのものを不要にします。" },
+        { title: "責任", text: "各案件は、クライアントをよく知るパートナーが担当し、最初から最後まで責任を持ちます。" },
+        { title: "率直さ", text: "期待されている答えでなくても、見えたことをそのままお伝えします。訴訟をしないことが最善の助言である場合もあります。" },
+        { title: "一貫性", text: "国内のどの都市にあっても、クライアントのすべての事業所で同じ基準を適用します。" },
       ],
       cultureTitle: "私たちの文化",
       cultureSubtitle: "才能が開花し、卓越が基準となる職場",
@@ -819,12 +816,12 @@ export default function About() {
       historyTitle: "تاريخنا",
       historyText1: "Santos & Saucedo هي شركة محاماة متخصصة (بوتيك) في قانون العمل، بخبرة تزيد عن 35 عامًا في تقديم المشورة للشركات المحلية والدولية. من سان بيدرو غارزا غارسيا، نويفو ليون، نقدم المشورة لإدارة عملائنا وأقسام الموارد البشرية والفرق القانونية الداخلية.",
       historyText2: "يجمع عملنا بين الوقاية والاستشارة والتدقيق والتدريب والدفاع في النزاعات العمالية الفردية والجماعية. نساعد الشركات على تنظيم إدارتها العمالية والحد من المخاطر واتخاذ قرارات أفضل قبل النزاع وأثناءه وبعده.",
-      valuesTitle: "قيمنا",
+      valuesTitle: "كيف نعمل",
       values: [
-        { icon: Scale, title: "التميز", text: "نحن ملتزمون بتقديم خدمات قانونية عالية الجودة" },
-        { icon: Heart, title: "النزاهة", text: "السلوك الأخلاقي والشفافية يوجهان جميع أفعالنا" },
-        { icon: Users, title: "التعاون", text: "نعمل كفريق واحد لتحقيق أفضل النتائج لعملائنا" },
-        { icon: Globe2, title: "الابتكار", text: "نتبنى التقنيات والأساليب الجديدة لخدمة عملائنا بشكل أفضل" },
+        { title: "الوقاية", text: "نراجع قبل أن تفعل السلطات ذلك. فالتدقيق في الوقت المناسب أقل كلفة من الدعوى القضائية، وكثيرًا ما يجعلها غير ضرورية." },
+        { title: "المسؤولية", text: "يتولى كل قضية شريك يعرف العميل ويتحمل مسؤولية العمل من بدايته إلى نهايته." },
+        { title: "الصراحة", text: "نقول ما نراه، حتى وإن لم يكن ما يُنتظر. وأحيانًا تكون أفضل نصيحة هي عدم اللجوء إلى التقاضي." },
+        { title: "الاتساق", text: "المعيار نفسه في جميع مراكز عمل العميل، في أي مدينة من مدن البلاد." },
       ],
       cultureTitle: "ثقافتنا",
       cultureSubtitle: "مكان عمل يزدهر فيه الموهوبون والتميز هو المعيار",
@@ -924,12 +921,12 @@ export default function About() {
       historyTitle: "Наша история",
       historyText1: "Santos & Saucedo — это бутиковая фирма, специализирующаяся на трудовом праве, с более чем 35-летним опытом консультирования национальных и международных компаний. Из Сан-Педро-Гарса-Гарсия, Нуэво-Леон, мы консультируем руководство, кадровые службы и внутренние юридические команды наших клиентов.",
       historyText2: "Наша работа сочетает профилактику, консультирование, аудит, обучение и защиту в индивидуальных и коллективных трудовых конфликтах. Мы помогаем компаниям упорядочить кадровое администрирование, снизить риски и принимать более взвешенные решения до, во время и после конфликта.",
-      valuesTitle: "Наши ценности",
+      valuesTitle: "Как мы работаем",
       values: [
-        { icon: Scale, title: "Превосходство", text: "Мы стремимся предоставлять юридические услуги высочайшего качества" },
-        { icon: Heart, title: "Честность", text: "Этичное поведение и прозрачность направляют все наши действия" },
-        { icon: Users, title: "Сотрудничество", text: "Мы работаем как единая команда для достижения лучших результатов для наших клиентов" },
-        { icon: Globe2, title: "Инновации", text: "Мы внедряем новые технологии и подходы для лучшего обслуживания клиентов" },
+        { title: "Профилактика", text: "Мы проводим проверку раньше, чем это сделают органы власти. Своевременный аудит обходится дешевле судебного разбирательства и часто делает его ненужным." },
+        { title: "Ответственность", text: "Каждое дело ведёт партнёр, который знает клиента и отвечает за работу от начала до конца." },
+        { title: "Прямота", text: "Мы говорим то, что видим, даже если этого не ждут. Иногда лучший совет — не судиться." },
+        { title: "Последовательность", text: "Единый подход на всех предприятиях клиента, в любом городе страны." },
       ],
       cultureTitle: "Наша культура",
       cultureSubtitle: "Рабочее место, где процветают таланты и превосходство является стандартом",
@@ -1029,12 +1026,12 @@ export default function About() {
       historyTitle: "Notre histoire",
       historyText1: "Santos & Saucedo est un cabinet boutique spécialisé en droit du travail, fort de plus de 35 ans d'expérience au service d'entreprises nationales et internationales. Depuis San Pedro Garza García, Nuevo León, nous conseillons la direction, les ressources humaines et les équipes juridiques internes de nos clients.",
       historyText2: "Notre travail combine prévention, conseil, audits, formation et défense dans les conflits du travail individuels et collectifs. Nous aidons les entreprises à organiser leur administration du travail, à réduire les risques et à prendre de meilleures décisions avant, pendant et après un conflit.",
-      valuesTitle: "Nos valeurs",
+      valuesTitle: "Notre façon de travailler",
       values: [
-        { icon: Scale, title: "Excellence", text: "Nous nous engageons à fournir des services juridiques de la plus haute qualité" },
-        { icon: Heart, title: "Intégrité", text: "La conduite éthique et la transparence guident toutes nos actions" },
-        { icon: Users, title: "Collaboration", text: "Nous travaillons en équipe pour obtenir les meilleurs résultats pour nos clients" },
-        { icon: Globe2, title: "Innovation", text: "Nous adoptons de nouvelles technologies et approches pour mieux servir nos clients" },
+        { title: "Prévention", text: "Nous examinons avant que l'autorité ne le fasse. Un audit réalisé à temps coûte moins cher qu'un procès et le rend souvent inutile." },
+        { title: "Responsabilité", text: "Chaque dossier est suivi par un associé qui connaît le client et répond du travail du début à la fin." },
+        { title: "Franchise", text: "Nous disons ce que nous voyons, même si ce n'est pas ce que l'on attend. Parfois, le meilleur conseil est de ne pas aller en justice." },
+        { title: "Cohérence", text: "Le même critère dans tous les établissements d'un client, dans toutes les villes du pays." },
       ],
       cultureTitle: "Notre culture",
       cultureSubtitle: "Un lieu de travail où les talents s'épanouissent et l'excellence est la norme",
@@ -1134,12 +1131,12 @@ export default function About() {
       historyTitle: "La nostra storia",
       historyText1: "Santos & Saucedo è uno studio boutique specializzato in diritto del lavoro, con oltre 35 anni di esperienza nella consulenza a imprese nazionali e internazionali. Da San Pedro Garza García, Nuevo León, assistiamo la direzione, le risorse umane e i team legali interni dei nostri clienti.",
       historyText2: "Il nostro lavoro combina prevenzione, consulenza, audit, formazione e difesa nei conflitti di lavoro individuali e collettivi. Aiutiamo le aziende a organizzare la propria amministrazione del lavoro, ridurre i rischi e prendere decisioni migliori prima, durante e dopo un conflitto.",
-      valuesTitle: "I nostri valori",
+      valuesTitle: "Come lavoriamo",
       values: [
-        { icon: Scale, title: "Eccellenza", text: "Ci impegniamo a fornire servizi legali della massima qualità" },
-        { icon: Heart, title: "Integrità", text: "La condotta etica e la trasparenza guidano tutte le nostre azioni" },
-        { icon: Users, title: "Collaborazione", text: "Lavoriamo come un unico team per ottenere i migliori risultati per i nostri clienti" },
-        { icon: Globe2, title: "Innovazione", text: "Adottiamo nuove tecnologie e approcci per servire meglio i nostri clienti" },
+        { title: "Prevenzione", text: "Verifichiamo prima che lo faccia l'autorità. Un audit tempestivo costa meno di una causa e spesso la rende superflua." },
+        { title: "Responsabilità", text: "Ogni pratica è seguita da un socio che conosce il cliente e risponde del lavoro dall'inizio alla fine." },
+        { title: "Franchezza", text: "Diciamo ciò che vediamo, anche quando non è ciò che ci si aspetta. A volte il miglior consiglio è non fare causa." },
+        { title: "Coerenza", text: "Lo stesso criterio in tutte le sedi di lavoro di un cliente, in qualsiasi città del Paese." },
       ],
       cultureTitle: "La nostra cultura",
       cultureSubtitle: "Un ambiente di lavoro dove i talenti prosperano e l'eccellenza è lo standard",
@@ -1251,7 +1248,7 @@ export default function About() {
     historyText2: isSpanish
       ? "Diagnosticamos, prevenimos, corregimos, capacitamos y defendemos la operación laboral de la empresa mediante asesoría preventiva, administración laboral, auditorías, capacitación y atención de conflictos individuales y colectivos."
       : "We diagnose, prevent, correct, train, and defend companies' labor operations through preventive counsel, labor administration, audits, training, and individual and collective conflict resolution.",
-    valuesTitle: isSpanish ? "Nuestro enfoque" : "Our Approach",
+    valuesTitle: isSpanish ? "Cómo trabajamos" : "How we work",
     cultureTitle: isSpanish ? "Metodología laboral" : "Labor Methodology",
     cultureSubtitle: isSpanish
       ? "Prevención, administración y defensa laboral"
@@ -1421,7 +1418,7 @@ export default function About() {
                 </p>
               </div>
 
-              {/* Misma rejilla de 4 columnas que "Nuestro enfoque" y las cifras: los bordes de
+              {/* Misma rejilla de 4 columnas que "Cómo trabajamos" y las cifras: los bordes de
                   columna coinciden entre secciones (tres filas y una celda vacía) */}
               <motion.div
                 variants={containerVariants}

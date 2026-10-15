@@ -10,6 +10,10 @@ import { useSiteContact } from "./useSiteContact";
 const linkCls = "inline-flex min-h-8 items-center text-start text-[16px] transition-colors";
 // Encabezados de columna: etiqueta en blanco tenue sobre Azul Profundo (la lima no va en texto)
 const headCls = "ss-label text-white/75";
+// Listas de enlaces: a 320 px cada columna mide ~128 px y una sola palabra larga
+// (Nutzungsbedingungen, конфиденциальности) se salía; primero el guion del idioma, y si no
+// hay, el corte donde haga falta.
+const listCls = "mt-4 hyphens-auto [overflow-wrap:anywhere]";
 
 // Abre el panel de preferencias de CookieBanner sin borrar lo guardado
 // (CookieBanner escucha este evento).
@@ -78,7 +82,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
           <p id="ss26-footer-firm" className={headCls}>
             {t.firm}
           </p>
-          <ul className="mt-4">
+          <ul className={listCls}>
             {items.map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className={`${linkCls} text-white/80 hover:text-white`}>
@@ -94,7 +98,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
             <p id="ss26-footer-legal" className={headCls}>
               {t.legal}
             </p>
-            <ul className="mt-4">
+            <ul className={listCls}>
               <li>
                 <Link href="/privacy-policy" className={`${linkCls} text-white/80 hover:text-white`} data-testid="link-privacy">
                   <span className="ss-link">{t.privacy}</span>

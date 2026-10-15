@@ -5,6 +5,7 @@ import salaJuntas from "@assets/ss26/sala-juntas.webp";
 import socioSantosArce from "@assets/ss26/socio-enrique-hernan-santos-arce.webp";
 import socioSantosGuzman from "@assets/ss26/socio-enrique-hernan-santos-guzman.webp";
 import socioSaucedoMontemayor from "@assets/ss26/socio-mario-saucedo-montemayor.webp";
+import { fallbackToOriginalSrc, getTeamPhotoSrcSet } from "@/lib/teamPhotoSources";
 import { Reveal, SectionHead, TextLink, useInView } from "./primitives";
 import { home26, langAttrs, type Lang26 } from "./content";
 
@@ -25,10 +26,17 @@ const GAP_X = "lg:gap-x-[clamp(32px,6vw,96px)]";
    sección: Azul Marino sobre claro, blanco sobre Azul Profundo. */
 const H2 = "ss-display mt-8 text-[clamp(36px,3.7vw,56px)] leading-[1.07]";
 
+/* Retratos de socios, por slug de /team. El WebP de la portada (652 px) queda como src de
+   respaldo; el navegador elige del srcset de team_photos (360w y 652w, el de /team) según
+   el hueco: 112 px en teléfono, un tercio del contenedor desde sm (416 px a 1440, 424 máx.). */
 const socioPhotos: Record<string, string> = {
-  "santos-arce": socioSantosArce,
-  "santos-guzman": socioSantosGuzman,
-  "saucedo-montemayor": socioSaucedoMontemayor,
+  "enrique-santos-arce": socioSantosArce,
+  "enrique-santos-guzman": socioSantosGuzman,
+  "mario-saucedo-montemayor": socioSaucedoMontemayor,
+};
+const socioSrcSetProps = (slug: string) => {
+  const srcSet = getTeamPhotoSrcSet(`${import.meta.env.BASE_URL}team_photos/${slug}.png`);
+  return srcSet ? { srcSet, sizes: "(min-width: 1464px) 424px, (min-width: 640px) calc(30vw - 16px), 112px" } : {};
 };
 
 /* § 01 — La firma */
@@ -43,7 +51,7 @@ export function Firma26({ lang }: { lang: Lang26 }) {
       <div className="ss-container grid grid-cols-1 gap-y-14 lg:grid-cols-12 lg:gap-x-6">
         <div className="lg:col-span-5 xl:col-span-4">
           <Reveal>
-            <SectionHead num="01" label={t.label} />
+            <SectionHead num="01" />
           </Reveal>
           <Reveal delay={0.06}>
             <h2 id="ss26-firma" className={`${H2} text-ss-marino`}>
@@ -104,7 +112,7 @@ export function Creemos26({ lang }: { lang: Lang26 }) {
     >
       <div className="ss-container grid grid-cols-1 gap-x-6 lg:grid-cols-12">
         <Reveal className="lg:col-span-12">
-          <SectionHead num="02" label={t.label} tone="dark" />
+          <SectionHead num="02" tone="dark" />
         </Reveal>
         <Reveal delay={0.08} className="mt-12 lg:col-span-11 lg:mt-16">
           {/* La única itálica del sitio (romana 300 estática); en una línea a 1440 px */}
@@ -141,7 +149,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
           {/* Pegada bajo la cabecera (alto en --ss-header-h, ss26.css) con 2rem de aire */}
           <div className="lg:sticky lg:top-[calc(var(--ss-header-h)+2rem)]">
             <Reveal>
-              <SectionHead num="03" label={t.label} />
+              <SectionHead num="03" />
             </Reveal>
             <Reveal delay={0.06}>
               <h2 id="ss26-practicas" className={`${H2} text-ss-marino`}>
@@ -229,7 +237,7 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
         <div className="flex items-center px-[var(--ss-pad)] py-20 lg:py-24 lg:pl-0 lg:pr-[clamp(48px,6vw,104px)]">
           <div className="max-w-[560px]">
             <Reveal>
-              <SectionHead num="04" label={t.label} tone="dark" />
+              <SectionHead num="04" tone="dark" />
             </Reveal>
             <Reveal delay={0.06}>
               <h2 id="ss26-extranjeras" className={H2}>
@@ -278,7 +286,7 @@ export function Monitor26({ lang }: { lang: Lang26 }) {
         <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-8">
           <div className="max-w-[60rem]">
             <Reveal>
-              <SectionHead num="05" label={t.label} />
+              <SectionHead num="05" />
             </Reveal>
             <Reveal delay={0.06}>
               <h2 id="ss26-monitor" className={`${H2} text-ss-marino`}>
@@ -358,7 +366,7 @@ export function Socios26({ lang }: { lang: Lang26 }) {
         <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-8">
           <div>
             <Reveal>
-              <SectionHead num="06" label={t.label} />
+              <SectionHead num="06" />
             </Reveal>
             <Reveal delay={0.06}>
               <h2 id="ss26-socios" className={`${H2} text-ss-marino`}>
@@ -377,10 +385,12 @@ export function Socios26({ lang }: { lang: Lang26 }) {
             <Reveal as="li" key={person.name} delay={i * 0.08}>
                 <figure className="group grid grid-cols-[112px_1fr] items-end gap-x-5 sm:block">
                   <div className="overflow-hidden bg-ss-paper">
-                    {/* Fuente 652×652 recortada a 4:5, en grises como todo retrato; alt vacío:
-                        el pie ya da el nombre */}
+                    {/* Fuente 652×652 (360 en teléfono) recortada a 4:5, en grises como todo
+                        retrato; alt vacío: el pie ya da el nombre */}
                     <img
                       src={socioPhotos[person.photo]}
+                      {...socioSrcSetProps(person.photo)}
+                      onError={fallbackToOriginalSrc}
                       alt=""
                       loading="lazy"
                       decoding="async"

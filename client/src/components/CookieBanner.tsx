@@ -205,31 +205,31 @@ export default function CookieBanner({ language }: CookieBannerProps) {
   }> = {
     en: {
       message: "We use our own and third-party cookies to improve our services and show you advertising related to your preferences by analyzing your browsing habits.",
-      privacy: "View Privacy Policy",
+      privacy: "View privacy policy",
       configure: "Configure",
       accept: "Accept all",
-      preferencesTitle: "Cookie Preferences",
+      preferencesTitle: "Cookie preferences",
       preferencesDescription: "Manage your cookie preferences below. You can enable or disable different types of cookies. Essential cookies are always active as they are necessary for the website to function properly.",
-      savePreferences: "Save Preferences",
-      acceptAllButton: "Accept All",
+      savePreferences: "Save preferences",
+      acceptAllButton: "Accept all",
       close: "Close",
       bannerLabel: "Cookie notice",
       categories: {
         essential: {
-          title: "Essential Cookies",
+          title: "Essential cookies",
           description: "These cookies are strictly necessary for the website to function properly. They enable basic functions like page navigation, secure access, and session management. The website cannot function properly without these cookies.",
           alwaysOn: "Always active",
         },
         analytics: {
-          title: "Analytics Cookies",
+          title: "Analytics cookies",
           description: "These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously. They help us measure traffic, identify popular pages, and improve user experience.",
         },
         functionality: {
-          title: "Functionality Cookies",
+          title: "Functionality cookies",
           description: "These cookies enable enhanced functionality and personalization, such as remembering your language preferences, region settings, and customized layouts. Without these cookies, some features may not be available.",
         },
         marketing: {
-          title: "Marketing Cookies",
+          title: "Marketing cookies",
           description: "These cookies are used to deliver advertisements more relevant to you and your interests. They may be used to limit the number of times you see an advertisement and help measure the effectiveness of advertising campaigns.",
         },
       },
@@ -425,7 +425,7 @@ export default function CookieBanner({ language }: CookieBannerProps) {
       privacy: "Узнать больше",
       configure: "Настроить",
       accept: "Принять",
-      preferencesTitle: "Настройки Cookie",
+      preferencesTitle: "Настройки cookie",
       preferencesDescription: "Управляйте своими предпочтениями cookie ниже. Вы можете включить или отключить различные типы cookie. Необходимые cookie всегда активны, так как они необходимы для правильной работы сайта.",
       savePreferences: "Сохранить настройки",
       acceptAllButton: "Принять все",
@@ -433,20 +433,20 @@ export default function CookieBanner({ language }: CookieBannerProps) {
       bannerLabel: "Уведомление о файлах cookie",
       categories: {
         essential: {
-          title: "Необходимые Cookie",
+          title: "Необходимые cookie",
           description: "Эти cookie строго необходимы для правильной работы сайта. Они обеспечивают базовые функции, такие как навигация по страницам, безопасный доступ и управление сессией. Сайт не может правильно работать без этих cookie.",
           alwaysOn: "Всегда активны",
         },
         analytics: {
-          title: "Аналитические Cookie",
+          title: "Аналитические cookie",
           description: "Эти cookie помогают нам понять, как посетители взаимодействуют с нашим сайтом, собирая и сообщая информацию анонимно. Они помогают нам измерять трафик, определять популярные страницы и улучшать пользовательский опыт.",
         },
         functionality: {
-          title: "Функциональные Cookie",
+          title: "Функциональные cookie",
           description: "Эти cookie обеспечивают расширенную функциональность и персонализацию, такую как запоминание ваших языковых предпочтений, региональных настроек и пользовательских макетов. Без этих cookie некоторые функции могут быть недоступны.",
         },
         marketing: {
-          title: "Маркетинговые Cookie",
+          title: "Маркетинговые cookie",
           description: "Эти cookie используются для показа более релевантной рекламы вам и вашим интересам. Они могут использоваться для ограничения количества показов рекламы и измерения эффективности рекламных кампаний.",
         },
       },
@@ -456,7 +456,7 @@ export default function CookieBanner({ language }: CookieBannerProps) {
       privacy: "En savoir plus",
       configure: "Personnaliser",
       accept: "Accepter",
-      preferencesTitle: "Préférences de Cookies",
+      preferencesTitle: "Préférences des cookies",
       preferencesDescription: "Gérez vos préférences de cookies ci-dessous. Vous pouvez activer ou désactiver différents types de cookies. Les cookies essentiels sont toujours actifs car ils sont nécessaires au bon fonctionnement du site.",
       savePreferences: "Enregistrer les préférences",
       acceptAllButton: "Tout accepter",
@@ -464,20 +464,20 @@ export default function CookieBanner({ language }: CookieBannerProps) {
       bannerLabel: "Avis relatif aux cookies",
       categories: {
         essential: {
-          title: "Cookies Essentiels",
+          title: "Cookies essentiels",
           description: "Ces cookies sont strictement nécessaires au bon fonctionnement du site. Ils permettent des fonctions de base comme la navigation, l'accès sécurisé et la gestion des sessions. Le site ne peut pas fonctionner correctement sans ces cookies.",
           alwaysOn: "Toujours actifs",
         },
         analytics: {
-          title: "Cookies Analytiques",
+          title: "Cookies analytiques",
           description: "Ces cookies nous aident à comprendre comment les visiteurs interagissent avec notre site en collectant et rapportant des informations de manière anonyme. Ils nous aident à mesurer le trafic, identifier les pages populaires et améliorer l'expérience utilisateur.",
         },
         functionality: {
-          title: "Cookies de Fonctionnalité",
+          title: "Cookies de fonctionnalité",
           description: "Ces cookies permettent des fonctionnalités améliorées et une personnalisation, comme mémoriser vos préférences de langue, paramètres régionaux et mises en page personnalisées. Sans ces cookies, certaines fonctionnalités peuvent ne pas être disponibles.",
         },
         marketing: {
-          title: "Cookies Marketing",
+          title: "Cookies marketing",
           description: "Ces cookies sont utilisés pour diffuser des publicités plus pertinentes pour vous et vos intérêts. Ils peuvent être utilisés pour limiter le nombre de fois où vous voyez une publicité et aider à mesurer l'efficacité des campagnes publicitaires.",
         },
       },
@@ -487,7 +487,7 @@ export default function CookieBanner({ language }: CookieBannerProps) {
       privacy: "Scopri di più",
       configure: "Personalizza",
       accept: "Accetta",
-      preferencesTitle: "Preferenze Cookie",
+      preferencesTitle: "Preferenze dei cookie",
       preferencesDescription: "Gestisci le tue preferenze sui cookie qui sotto. Puoi abilitare o disabilitare diversi tipi di cookie. I cookie essenziali sono sempre attivi poiché sono necessari per il corretto funzionamento del sito.",
       savePreferences: "Salva preferenze",
       acceptAllButton: "Accetta tutti",
@@ -495,20 +495,20 @@ export default function CookieBanner({ language }: CookieBannerProps) {
       bannerLabel: "Informativa sui cookie",
       categories: {
         essential: {
-          title: "Cookie Essenziali",
+          title: "Cookie essenziali",
           description: "Questi cookie sono strettamente necessari per il corretto funzionamento del sito. Abilitano funzioni di base come la navigazione, l'accesso sicuro e la gestione delle sessioni. Il sito non può funzionare correttamente senza questi cookie.",
           alwaysOn: "Sempre attivi",
         },
         analytics: {
-          title: "Cookie Analitici",
+          title: "Cookie analitici",
           description: "Questi cookie ci aiutano a capire come i visitatori interagiscono con il nostro sito raccogliendo e riportando informazioni in modo anonimo. Ci aiutano a misurare il traffico, identificare le pagine popolari e migliorare l'esperienza utente.",
         },
         functionality: {
-          title: "Cookie di Funzionalità",
+          title: "Cookie di funzionalità",
           description: "Questi cookie consentono funzionalità avanzate e personalizzazione, come ricordare le tue preferenze linguistiche, impostazioni regionali e layout personalizzati. Senza questi cookie, alcune funzionalità potrebbero non essere disponibili.",
         },
         marketing: {
-          title: "Cookie di Marketing",
+          title: "Cookie di marketing",
           description: "Questi cookie vengono utilizzati per fornire pubblicità più pertinenti a te e ai tuoi interessi. Possono essere utilizzati per limitare il numero di volte in cui vedi un annuncio e aiutare a misurare l'efficacia delle campagne pubblicitarie.",
         },
       },
@@ -537,13 +537,14 @@ export default function CookieBanner({ language }: CookieBannerProps) {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="ss26 fixed bottom-0 left-0 w-full bg-ss-navy text-white px-6 py-5 z-[60] border-t border-white/15"
+            className="ss26 fixed bottom-0 left-0 w-full bg-ss-navy text-white py-5 z-[60] border-t border-white/15"
             role="region"
             aria-label={t.bannerLabel}
             dir={dir}
             data-testid="banner-cookie-consent"
           >
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            {/* Mismo contenedor que cabecera, páginas y pie (.ss-container): bordes alineados con el logotipo */}
+            <div className="ss-container flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div className="text-[15px] leading-relaxed text-white/85 flex-1">
                 <p>
                   {t.message}

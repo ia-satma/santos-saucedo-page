@@ -48,7 +48,6 @@ export const home26 = {
       { value: "4", label: "Prácticas" },
     ],
     firma: {
-      label: "La firma",
       title: "Una práctica dedicada a\u00a0las empresas",
       body: [
         "Santos & Saucedo nació en San Pedro Garza García en 2010 con una práctica dedicada a las empresas. Desde entonces asesora a grupos industriales mexicanos, a multinacionales y a empresas de capital asiático en las decisiones que involucran a su personal: la contratación, la organización del trabajo, la relación con el sindicato, la terminación de una relación laboral y la defensa ante las autoridades y los tribunales.",
@@ -59,7 +58,6 @@ export const home26 = {
       alt: "Fachada de cristal de las oficinas de Santos & Saucedo con el Cerro de la Silla reflejado",
     },
     creemos: {
-      label: "Lo que creemos",
       quote: "La prevención es la primera defensa.",
       body: [
         "Estamos convencidos de que la mayoría de los conflictos laborales se resuelven antes de llegar a un tribunal: en un contrato bien redactado, en un expediente en orden, en una negociación preparada con tiempo.",
@@ -67,7 +65,6 @@ export const home26 = {
       ],
     },
     practicas: {
-      label: "Prácticas",
       // Dos líneas fijas, como el titular de portada
       title: ["Cuatro prácticas,", "un mismo criterio"],
       // slug: el de la base; la fila enlaza a /practice-groups/<slug>
@@ -96,7 +93,6 @@ export const home26 = {
       link: "Todas las prácticas",
     },
     extranjeras: {
-      label: "Empresas extranjeras",
       title: "Empresas extranjeras en México",
       body:
         "Nuevo León recibe cada año nuevas plantas de capital asiático, estadounidense y europeo. Para estas empresas, las prácticas corporativa, migratoria y laboral de la firma trabajan en conjunto, desde la constitución de la sociedad hasta la contratación del primer turno.",
@@ -106,7 +102,6 @@ export const home26 = {
       alt: "Sala de juntas de Santos & Saucedo con el tríptico abstracto de la firma",
     },
     monitor: {
-      label: "Monitor Laboral",
       title: "Monitor Laboral",
       intro: "Análisis de la firma sobre los cambios que afectan a las empresas.",
       items: [
@@ -134,13 +129,13 @@ export const home26 = {
       link: "Ver todos los análisis",
     },
     socios: {
-      label: "Socios",
       title: "Socios",
       // Nombres, cargos (team_members.title_es) y orden ("order") tomados del panel, como en /team.
+      // photo: el slug del socio en /team (sus retratos en team_photos).
       people: [
-        { name: "Mario Saucedo Montemayor", photo: "saucedo-montemayor", role: "Socio director" },
-        { name: "Enrique Santos Guzmán", photo: "santos-guzman", role: "Socio director" },
-        { name: "Enrique Santos Arce", photo: "santos-arce", role: "Socio fundador" },
+        { name: "Mario Saucedo Montemayor", photo: "mario-saucedo-montemayor", role: "Socio director" },
+        { name: "Enrique Santos Guzmán", photo: "enrique-santos-guzman", role: "Socio director" },
+        { name: "Enrique Santos Arce", photo: "enrique-santos-arce", role: "Socio fundador" },
       ],
       link: "Conozca al equipo",
     },
@@ -169,7 +164,6 @@ export const home26 = {
       { value: "4", label: "Practices" },
     ],
     firma: {
-      label: "The firm",
       title: "A practice devoted to\u00a0employers",
       body: [
         "Santos & Saucedo was founded in San Pedro Garza García in 2010 with a practice devoted to employers. Since then it has advised Mexican industrial groups, multinationals and Asian-owned companies on the decisions that involve their people: hiring, the organization of work, union relations, terminations and the defense before authorities and courts.",
@@ -180,7 +174,6 @@ export const home26 = {
       alt: "Glass facade of the Santos & Saucedo offices reflecting the Cerro de la Silla",
     },
     creemos: {
-      label: "What we believe",
       quote: "Prevention is the first defense.",
       body: [
         "We are convinced that most labor disputes are resolved before they reach a court: in a well-drafted contract, in a file kept in order, in a negotiation prepared in advance.",
@@ -188,7 +181,6 @@ export const home26 = {
       ],
     },
     practicas: {
-      label: "Practices",
       title: ["Four practices,", "one standard"],
       items: [
         {
@@ -215,7 +207,6 @@ export const home26 = {
       link: "All practices",
     },
     extranjeras: {
-      label: "Foreign companies",
       title: "Foreign companies in Mexico",
       body:
         "Every year Nuevo León receives new plants backed by Asian, American and European capital. For these companies, the firm's corporate, immigration and labor practices work together, from incorporation to hiring the first shift.",
@@ -224,7 +215,6 @@ export const home26 = {
       alt: "Santos & Saucedo boardroom with the firm's abstract triptych",
     },
     monitor: {
-      label: "Labor Monitor",
       title: "Labor Monitor",
       intro: "The firm's analysis of the changes that affect employers.",
       items: [
@@ -250,12 +240,11 @@ export const home26 = {
       link: "All analysis",
     },
     socios: {
-      label: "Partners",
       title: "Partners",
       people: [
-        { name: "Mario Saucedo Montemayor", photo: "saucedo-montemayor", role: "Managing partner" },
-        { name: "Enrique Santos Guzmán", photo: "santos-guzman", role: "Managing partner" },
-        { name: "Enrique Santos Arce", photo: "santos-arce", role: "Founding partner" },
+        { name: "Mario Saucedo Montemayor", photo: "mario-saucedo-montemayor", role: "Managing partner" },
+        { name: "Enrique Santos Guzmán", photo: "enrique-santos-guzman", role: "Managing partner" },
+        { name: "Enrique Santos Arce", photo: "enrique-santos-arce", role: "Founding partner" },
       ],
       link: "Meet the team",
     },

@@ -2052,8 +2052,9 @@ Escluse le festività federali messicane`
       <main id="main-content">
         {/* Encabezado de papel ("memorándum impreso"), como los artículos: Hueso, h1 Azul Marino */}
         <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" data-testid="section-terms-hero">
-          {/* Columna del documento (max-w-4xl): titular, subtítulo y fecha sobre su borde */}
-          <div className="max-w-4xl mx-auto px-6 lg:px-12">
+          {/* Columna del documento (max-w-4xl): titular, subtítulo y fecha sobre su borde. En el
+              teléfono arranca en el margen del logotipo (--ss-pad); en escritorio va centrada. */}
+          <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12">
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -2084,7 +2085,7 @@ Escluse le festività federali messicane`
         </section>
 
         <div className="py-16 lg:py-20">
-        <div className="max-w-4xl mx-auto px-6 lg:px-12">
+        <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12">
           {/* Secciones abiertas: filete superior, h2 en romana y texto corrido. Sin cajas ni iconos. */}
           <motion.div
             variants={containerVariants}

@@ -1266,7 +1266,9 @@ San Pedro Garza García, Nuevo León, México
       ]
     },
     ja: {
-      title: "プライバシーポリシー",
+      // Punto de corte (espacio de ancho cero) entre las dos palabras: con auto-phrase el
+      // titular no tenía dónde partirse y a 320 px quedaba "プライバシーポリ|シー".
+      title: "プライバシー\u200Bポリシー",
       subtitle: "お客様の個人データの収集、使用、保護方法について",
       lastUpdated: "最終更新：2024年12月",
       sections: [
@@ -2511,8 +2513,9 @@ Sito web: www.santossaucedo.com`
       <main id="main-content">
         {/* Encabezado de papel ("memorándum impreso"), como los artículos: Hueso, h1 Azul Marino */}
         <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" data-testid="section-privacy-hero">
-          {/* Columna del documento (max-w-4xl): titular, subtítulo y fecha sobre su borde */}
-          <div className="max-w-4xl mx-auto px-6 lg:px-12">
+          {/* Columna del documento (max-w-4xl): titular, subtítulo y fecha sobre su borde. En el
+              teléfono arranca en el margen del logotipo (--ss-pad); en escritorio va centrada. */}
+          <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12">
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -2543,7 +2546,7 @@ Sito web: www.santossaucedo.com`
         </section>
 
         <div className="py-16 lg:py-20">
-        <div className="max-w-4xl mx-auto px-6 lg:px-12">
+        <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12">
           {/* Secciones abiertas: filete superior, h2 en romana y texto corrido. Sin cajas ni iconos. */}
           <motion.div
             variants={containerVariants}

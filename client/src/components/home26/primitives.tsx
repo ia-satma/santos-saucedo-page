@@ -128,31 +128,33 @@ export function SectionMark({ className = "", style }: { className?: string; sty
   );
 }
 
-/** Cabecera de sección del expediente: "§ 01 — La firma". */
+/** Cabecera de sección del expediente: "§ 01 ——", como <Eyebrow> en las páginas internas.
+    Solo el héroe lleva etiqueta ("§ 00 —— San Pedro Garza García…"): en las secciones el h2
+    ya nombra la sección y la etiqueta lo repetía. § y cifras son gráficos (aria-hidden). */
 export function SectionHead({
   num,
   label,
   tone = "light",
-  accent = false,
   className = "",
 }: {
   num: string;
-  label: string;
+  label?: string;
   tone?: "light" | "dark";
-  /** Filete corto entre número y etiqueta: solo en el héroe de la portada. */
-  accent?: boolean;
   className?: string;
 }) {
   const dark = tone === "dark";
   return (
-    <p className={`ss-label flex items-center gap-4 ${dark ? "text-white/75" : "text-ss-medio"} ${className}`}>
+    <p
+      aria-hidden={label ? undefined : true}
+      className={`ss-label flex items-center gap-4 ${dark ? "text-white/75" : "text-ss-medio"} ${className}`}
+    >
       {/* Sobre Azul Profundo, solo el glifo § va en lima (eco del § del logotipo); las cifras,
           en blanco tenue. Es marcado y no ::first-letter: Chromium lo ignora en "§ 01". */}
-      <span className={`ss-num shrink-0 whitespace-nowrap ${dark ? "text-white/75" : "text-ss-marino"}`}>
+      <span aria-hidden="true" className={`ss-num shrink-0 whitespace-nowrap ${dark ? "text-white/75" : "text-ss-marino"}`}>
         <span className={dark ? "text-ss-lime" : ""}>§</span> {num}
       </span>
-      {accent && <ShortRule />}
-      <span>{label}</span>
+      <ShortRule />
+      {label && <span>{label}</span>}
     </p>
   );
 }

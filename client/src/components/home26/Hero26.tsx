@@ -15,7 +15,7 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
       <div className="ss-container grid grid-cols-1 items-center gap-x-6 gap-y-10 pt-12 lg:min-h-[min(calc(100svh-240px),660px)] lg:grid-cols-12 lg:pb-20 lg:pt-16">
         <div className="relative z-10 lg:col-span-7">
           <Reveal>
-            <SectionHead num="00" label={t.hero.kicker} tone="dark" accent />
+            <SectionHead num="00" label={t.hero.kicker} tone="dark" />
           </Reveal>
 
           <h1

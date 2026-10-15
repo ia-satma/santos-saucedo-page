@@ -15,24 +15,33 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isStaticSite } from "@/lib/queryClient";
 import { getTeamPhotoObjectPosition } from "@/lib/teamPhotoPosition";
-import { fallbackToOriginalSrc, getTeamPhotoSrcSet, getTeamPhotoThumb, highFetchPriority } from "@/lib/teamPhotoSources";
+import { fallbackToOriginalSrc, getTeamPhotoSrcSet, getTeamPhotoThumb, highFetchPriority, isNamedOnTeamPage } from "@/lib/teamPhotoSources";
 import { Eyebrow, LeadParagraph } from "@/components/editorial";
 import type { TeamMember, PracticeGroup, IndustryGroup, Education, Affiliation, Ranking, Publication, RepresentativeMatter, BarAdmission, News, LanguageCode } from "@shared/schema";
 
 // Retícula del encabezado del perfil, compartida por la vista y su carga para que no se
-// desalineen. Móvil: nombre, foto y contacto en ese orden. Desde md: foto en la columna 1
-// (dos filas, al menos cuadrada), filete de 1px y el texto en la 3 alineado con la foto.
-// Retrato de 240 px (md) y 260 px (lg): la banda Azul Profundo no pasa de lo que piden
-// el nombre y los botones (con 320 px medía 542 px de alto a 1440).
+// desalineen (el orden del DOM es el del teléfono; desde md cada bloque va a su celda).
+// Teléfono: nombre, botones y foto: los tres botones quedan en el primer pantallazo, antes
+// que el retrato cuadrado. md: foto en la columna 1 (dos filas, al menos cuadrada), filete
+// de 1 px y el texto en la 3 alineado con la foto; los botones debajo, en una fila de tres a
+// todo lo ancho (junto al retrato quedaban dos y uno). lg: los botones vuelven a la columna
+// del texto, al pie, alineados con el borde inferior del retrato (240 px en md, 260 en lg).
 const PROFILE_GRID = "grid grid-cols-1 md:grid-cols-[240px_1px_minmax(0,1fr)] md:grid-rows-[auto_1fr] lg:grid-cols-[260px_1px_minmax(0,1fr)]";
 const PROFILE_PHOTO_CELL = "aspect-square w-full md:col-start-1 md:row-span-2 md:row-start-1 md:aspect-auto md:min-h-[240px] lg:min-h-[260px]";
 // Ancho del retrato en cada tramo, para que srcset elija la variante WebP adecuada
 const PROFILE_PHOTO_SIZES = "(min-width: 1024px) 260px, (min-width: 768px) 240px, 100vw";
-const PROFILE_IDENTITY_CELL = "pb-8 md:col-start-3 md:row-start-1 md:px-10 md:pb-6";
-const PROFILE_ACTIONS_CELL = "pt-8 md:col-start-3 md:row-start-2 md:px-10 md:pb-10 md:pt-0";
+const PROFILE_IDENTITY_CELL = "pb-6 md:col-start-3 md:row-start-1 md:px-10";
+const PROFILE_ACTIONS_CELL = "pb-8 md:col-span-3 md:col-start-1 md:row-start-3 md:pb-0 md:pt-8 lg:col-span-1 lg:col-start-3 lg:row-start-2 lg:self-end lg:px-10 lg:pt-0";
+
+// Relleno del encabezado: el mismo de los demás encabezados internos, escrito aquí y sin las
+// clases pt-36/pb-20 (la regla propia de la ficha en index.css dejaba 86/64 px a 1440).
+const PROFILE_HERO = "pt-[clamp(56px,4vw,72px)] pb-[clamp(40px,3.6vw,56px)]";
+// Botones sobre Hueso: contorno y texto Azul Marino; relleno Azul Marino al pasar el cursor
+// (twMerge sustituye el border-primary/text-primary de la variante outline)
+const PROFILE_BUTTON = "min-h-11 w-full whitespace-normal text-center leading-[1.2] border-ss-marino text-ss-marino transition-colors duration-200 hover:bg-ss-marino hover:text-white";
 
 // Texto sin traducción (la traducción automática falló o no llegó): se muestra el original
-// en inglés, marcado lang="en" dir="ltr"; si tampoco hay inglés, el español (lang="es").
+// en inglés, marcado lang="en"; si tampoco hay inglés, el español (lang="es").
 type LocalizedText = { text: string | null | undefined; lang?: "en" | "es" };
 function pickLocalized(
   language: LanguageCode,
@@ -46,8 +55,11 @@ function pickLocalized(
   if (en) return { text: en, lang: "en" };
   return { text: es, lang: es ? "es" : undefined };
 }
-function langProps(lang?: "en" | "es") {
-  return lang ? { lang, dir: "ltr" as const } : {};
+// Solo el texto de respaldo va aislado en <bdi lang>: el bloque conserva la dirección de la
+// página (en árabe, alineado a la derecha como el eyebrow y el nombre) y <bdi> toma la
+// dirección de su propio texto, así que el punto final no salta al otro extremo.
+function LocalizedRun({ value }: { value: LocalizedText }) {
+  return value.lang ? <bdi lang={value.lang}>{value.text}</bdi> : <>{value.text}</>;
 }
 
 function NewsImageWithFallback({ 
@@ -128,12 +140,13 @@ function RelatedTeamMemberCard({
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
-          <p className="font-heading text-[17px] leading-[1.2] tracking-[-0.01em] text-ss-marino truncate group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1">
+          {/* Nombre y cargo completos: si no caben, pasan a una segunda línea (antes "Mario Saucedo M…") */}
+          <p className="font-heading text-[17px] leading-[1.2] tracking-[-0.01em] text-ss-marino group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1">
             {relatedMember.name}
           </p>
           {/* Sin traducción, el cargo en inglés va en <bdi>: aislado del árabe sin cambiar la alineación */}
-          <p className="ss-label text-ss-medio truncate mt-1">
-            {displayTitle.lang ? <bdi {...langProps(displayTitle.lang)}>{displayTitle.text}</bdi> : displayTitle.text}
+          <p className="ss-label text-ss-medio mt-1">
+            <LocalizedRun value={displayTitle} />
           </p>
         </div>
       </div>
@@ -208,9 +221,8 @@ function PracticeGroupBadge({
         variant="outline"
         className="cursor-pointer px-3 py-1.5 no-default-hover-elevate no-default-active-elevate transition-colors duration-200 hover:border-ss-marino hover:text-ss-marino"
         data-testid={`badge-practice-group-${group.slug}`}
-        {...langProps(displayName.lang)}
       >
-        {displayName.text}
+        <LocalizedRun value={displayName} />
       </Badge>
     </Link>
   );
@@ -238,9 +250,8 @@ function IndustryGroupBadge({
       variant="outline"
       className="px-3 py-1.5 no-default-hover-elevate no-default-active-elevate"
       data-testid={`badge-industry-group-${group.slug}`}
-      {...langProps(displayName.lang)}
     >
-      {displayName.text}
+      <LocalizedRun value={displayName} />
     </Badge>
   );
 }
@@ -619,7 +630,9 @@ export default function TeamMemberDetail() {
     representativeMatters: string;
     experience: string;
     contactCta: string;
-    contactSubtitle: string;
+    officeLabel: string;
+    phoneLabel: string;
+    emailLabel: string;
     emailUs: string;
     callUs: string;
     downloadVCard: string;
@@ -661,8 +674,10 @@ export default function TeamMemberDetail() {
       publications: "Publications",
       representativeMatters: "Representative Matters",
       experience: "Professional Experience",
-      contactCta: "Get in touch",
-      contactSubtitle: "Connect with our team to discuss how we can assist with your legal needs.",
+      contactCta: "Contact",
+      officeLabel: "Office",
+      phoneLabel: "Telephone",
+      emailLabel: "Email",
       emailUs: "Send Email",
       callUs: "Call",
       downloadVCard: "Download vCard",
@@ -704,8 +719,10 @@ export default function TeamMemberDetail() {
       publications: "Publicaciones",
       representativeMatters: "Asuntos representativos",
       experience: "Experiencia profesional",
-      contactCta: "Contáctenos",
-      contactSubtitle: "Conéctese con nuestro equipo para discutir cómo podemos ayudarle con sus necesidades legales.",
+      contactCta: "Contacto",
+      officeLabel: "Oficina",
+      phoneLabel: "Teléfono",
+      emailLabel: "Correo",
       emailUs: "Enviar correo",
       callUs: "Llamar",
       downloadVCard: "Descargar vCard",
@@ -747,8 +764,10 @@ export default function TeamMemberDetail() {
       publications: "Publikationen",
       representativeMatters: "Referenzmandate",
       experience: "Erfahrung",
-      contactCta: "Kontakt aufnehmen",
-      contactSubtitle: "Kontaktieren Sie unser Team, um zu besprechen, wie wir Ihnen helfen können.",
+      contactCta: "Kontakt",
+      officeLabel: "Büro",
+      phoneLabel: "Telefon",
+      emailLabel: "E-Mail",
       emailUs: "E-Mail senden",
       callUs: "Anrufen",
       downloadVCard: "VCard herunterladen",
@@ -790,8 +809,10 @@ export default function TeamMemberDetail() {
       publications: "出版物",
       representativeMatters: "代表案例",
       experience: "工作经历",
-      contactCta: "联系我们",
-      contactSubtitle: "联系我们的团队，讨论我们如何协助您的法律需求。",
+      contactCta: "联系方式",
+      officeLabel: "办公室",
+      phoneLabel: "电话",
+      emailLabel: "电子邮件",
       emailUs: "发送邮件",
       callUs: "电话联系",
       downloadVCard: "下载名片",
@@ -833,8 +854,10 @@ export default function TeamMemberDetail() {
       publications: "출판물",
       representativeMatters: "대표 사건",
       experience: "경력",
-      contactCta: "연락하기",
-      contactSubtitle: "법률 서비스에 대해 상담하려면 저희 팀에 연락해 주세요.",
+      contactCta: "연락처",
+      officeLabel: "사무소",
+      phoneLabel: "전화",
+      emailLabel: "이메일",
       emailUs: "이메일 보내기",
       callUs: "전화하기",
       downloadVCard: "명함 다운로드",
@@ -876,8 +899,10 @@ export default function TeamMemberDetail() {
       publications: "出版物",
       representativeMatters: "代表的案件",
       experience: "経験",
-      contactCta: "お問い合わせ",
-      contactSubtitle: "法務ニーズについてご相談ください。",
+      contactCta: "連絡先",
+      officeLabel: "事務所",
+      phoneLabel: "電話",
+      emailLabel: "メール",
       emailUs: "メールを送る",
       callUs: "電話する",
       downloadVCard: "名刺をダウンロード",
@@ -919,8 +944,10 @@ export default function TeamMemberDetail() {
       publications: "المنشورات",
       representativeMatters: "القضايا التمثيلية",
       experience: "الخبرة",
-      contactCta: "تواصل معنا",
-      contactSubtitle: "تواصل مع فريقنا لمناقشة كيف يمكننا المساعدة في احتياجاتك القانونية.",
+      contactCta: "التواصل",
+      officeLabel: "المكتب",
+      phoneLabel: "الهاتف",
+      emailLabel: "البريد الإلكتروني",
       emailUs: "إرسال بريد إلكتروني",
       callUs: "اتصل",
       downloadVCard: "تحميل بطاقة العمل",
@@ -962,8 +989,10 @@ export default function TeamMemberDetail() {
       publications: "Публикации",
       representativeMatters: "Показательные дела",
       experience: "Опыт",
-      contactCta: "Связаться с нами",
-      contactSubtitle: "Свяжитесь с нашей командой, чтобы обсудить ваши юридические потребности.",
+      contactCta: "Контакты",
+      officeLabel: "Офис",
+      phoneLabel: "Телефон",
+      emailLabel: "Эл. почта",
       emailUs: "Отправить email",
       callUs: "Позвонить",
       downloadVCard: "Скачать визитку",
@@ -1005,8 +1034,10 @@ export default function TeamMemberDetail() {
       publications: "Publications",
       representativeMatters: "Affaires représentatives",
       experience: "Expérience",
-      contactCta: "Nous contacter",
-      contactSubtitle: "Contactez notre équipe pour discuter de vos besoins juridiques.",
+      contactCta: "Contact",
+      officeLabel: "Bureau",
+      phoneLabel: "Téléphone",
+      emailLabel: "E-mail",
       emailUs: "Envoyer un email",
       callUs: "Appeler",
       downloadVCard: "Télécharger vCard",
@@ -1048,8 +1079,10 @@ export default function TeamMemberDetail() {
       publications: "Pubblicazioni",
       representativeMatters: "Casi rappresentativi",
       experience: "Esperienza",
-      contactCta: "Contattaci",
-      contactSubtitle: "Contatta il nostro team per discutere delle tue esigenze legali.",
+      contactCta: "Contatti",
+      officeLabel: "Ufficio",
+      phoneLabel: "Telefono",
+      emailLabel: "E-mail",
       emailUs: "Invia email",
       callUs: "Chiama",
       downloadVCard: "Scarica vCard",
@@ -1117,8 +1150,10 @@ export default function TeamMemberDetail() {
     }
   };
 
+  // Misma regla que /team (isNamedOnTeamPage): un socio sin foto confirmada tampoco aparece aquí
   const relatedMembers = allTeamMembers?.filter(m => 
     m.id !== member?.id && 
+    isNamedOnTeamPage(m) &&
     ((m.isPartner && member?.isPartner) || 
      (m.title === member?.title))
   ).slice(0, 4);
@@ -1213,20 +1248,21 @@ export default function TeamMemberDetail() {
       <div className="min-h-screen bg-background" data-testid="page-team-member-loading">
         <Header />
         <main id="main-content">
-          <section className="pt-36 pb-20 editorial-page-hero" aria-busy="true">
+          {/* Carga con el mismo encabezado Hueso y el mismo orden que la vista final */}
+          <section className={`${PROFILE_HERO} editorial-page-hero editorial-page-hero--paper`} aria-busy="true">
             <div className="ss-container">
-              <Skeleton className="h-4 w-44 bg-white/10 mb-6" />
+              <Skeleton className="h-4 w-44 bg-ss-rule mb-6" />
               <div className={PROFILE_GRID}>
                 <div className={PROFILE_IDENTITY_CELL}>
-                  <Skeleton className="h-3 w-28 bg-white/10 mb-4" />
-                  <Skeleton className="h-12 w-4/5 bg-white/10 mb-3" />
-                  <Skeleton className="h-12 w-3/5 bg-white/10 mb-4" />
-                  <Skeleton className="h-5 w-40 bg-white/10" />
+                  <Skeleton className="h-3 w-28 bg-ss-rule mb-4" />
+                  <Skeleton className="h-12 w-4/5 bg-ss-rule mb-3" />
+                  <Skeleton className="h-12 w-3/5 bg-ss-rule mb-4" />
+                  <Skeleton className="h-5 w-40 bg-ss-rule" />
                 </div>
-                <Skeleton className={`${PROFILE_PHOTO_CELL} rounded-none bg-white/10`} />
                 <div className={PROFILE_ACTIONS_CELL}>
-                  <Skeleton className="h-10 w-56 bg-white/10" />
+                  <Skeleton className="h-11 w-56 bg-ss-rule" />
                 </div>
+                <Skeleton className={`${PROFILE_PHOTO_CELL} rounded-none bg-ss-rule`} />
               </div>
             </div>
           </section>
@@ -1252,7 +1288,6 @@ export default function TeamMemberDetail() {
   const localizedRole = pickLocalized(language, translatedFields.role, member?.role, member?.roleEs);
   const localizedBio = pickLocalized(language, translatedFields.bio, member?.bio, member?.bioEs);
   const displayTitle = localizedTitle.text;
-  const displayRole = localizedRole.text;
   const displayBio = localizedBio.text;
   const profilePhotoSrcSet = getTeamPhotoSrcSet(member?.imageUrl);
 
@@ -1288,9 +1323,11 @@ export default function TeamMemberDetail() {
       
       {/* El encabezado va dentro de main (el h1 queda en el landmark y en "Saltar al contenido");
           el relleno vertical está en el envoltorio del cuerpo, no en main, para que la banda
-          Azul Profundo siga pegada a la cabecera. */}
+          siga pegada a la cabecera. Encabezado en papel, como el del artículo
+          (.editorial-page-hero--paper): Hueso, nombre en Azul Marino, filete inferior en Línea,
+          § y foco en Azul Marino; la cabecera sigue en Azul Profundo. */}
       <main id="main-content">
-        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-team-member-hero">
+        <section className={`${PROFILE_HERO} editorial-page-hero editorial-page-hero--paper`} data-testid="section-team-member-hero">
           {/* Mismo contenedor que la cabecera y el cuerpo: la foto arranca en el borde del logo */}
           <div className="ss-container">
             <motion.div
@@ -1315,11 +1352,11 @@ export default function TeamMemberDetail() {
               <div className={PROFILE_GRID}>
                 {/* Sin padding lateral en móvil: el texto arranca en el borde de la foto y de la vuelta */}
                 <div className={`min-w-0 text-center md:text-left ${PROFILE_IDENTITY_CELL}`}>
-                  {/* Eyebrow del expediente: "§ 03 —— Socio" (glifo § en lima, components/editorial).
-                      La categoría va aquí y no en una píldora junto al nombre. */}
+                  {/* Eyebrow del expediente: "§ 03 —— Socio" (sobre Hueso, § y cifras en Azul Marino;
+                      la lima solo va sobre Azul Profundo). La categoría va aquí y no en una píldora. */}
                   <Eyebrow
                     num="03"
-                    tone="navy"
+                    tone="paper"
                     label={getSeniorityLabel()}
                     labelTestId="badge-seniority"
                     className="mb-4"
@@ -1343,27 +1380,67 @@ export default function TeamMemberDetail() {
                       seniorityLabel &&
                       normalize(displayTitle) === normalize(seniorityLabel);
                     if (titleMatchesSeniority) return null;
+                    // Sin traducción, el cargo y la práctica en inglés van en <bdi lang="en">: el
+                    // párrafo sigue la dirección de la página (en árabe, a la derecha bajo el nombre)
                     return (
                       <p
                         className="mb-1"
                         data-testid="text-team-member-title"
-                        {...langProps(localizedTitle.lang)}
                       >
-                        {displayTitle}
+                        <LocalizedRun value={localizedTitle} />
                         {isTranslating && (
-                          <Loader2 className="inline-block w-4 h-4 ml-2 animate-spin text-white/60" />
+                          <Loader2 className="inline-block w-4 h-4 ms-2 animate-spin text-ss-medio" aria-hidden="true" />
                         )}
                       </p>
                     );
                   })()}
                   <p
                     data-testid="text-team-member-role"
-                    {...langProps(localizedRole.lang)}
                   >
-                    {displayRole}
+                    <LocalizedRun value={localizedRole} />
                   </p>
                 </div>
 
+                {/* Tres botones iguales de contorno Azul Marino de 1 px, texto Azul Marino y, al pasar
+                    el cursor, relleno Azul Marino con texto blanco; sin iconos: ninguno pesa más que el
+                    nombre. Teléfono: uno debajo de otro, antes del retrato. Desde sm, una fila de tres
+                    columnas iguales (en md, a todo lo ancho bajo el retrato y el nombre; desde lg, al
+                    pie de la columna del texto). El número de teléfono (dir="ltr") está en el bloque
+                    de contacto. */}
+                <div className={`grid grid-cols-1 sm:grid-cols-3 lg:max-w-[48rem] content-start gap-3 ${PROFILE_ACTIONS_CELL}`}>
+                  {member?.email && (
+                    <Button
+                      variant="outline"
+                      className={PROFILE_BUTTON}
+                      asChild
+                      data-testid="button-email"
+                    >
+                      <a href={`mailto:${member.email}`}>
+                        {t.emailUs}
+                      </a>
+                    </Button>
+                  )}
+                  {member?.phone && (
+                    <Button
+                      variant="outline"
+                      className={PROFILE_BUTTON}
+                      asChild
+                      data-testid="button-phone"
+                    >
+                      <a href={`tel:${member.phone}`}>
+                        {t.callUs}
+                      </a>
+                    </Button>
+                  )}
+                  <Button
+                    variant="outline"
+                    className={PROFILE_BUTTON}
+                    onClick={handleDownloadVCard}
+                    data-testid="button-download-vcard"
+                  >
+                    {t.downloadVCard}
+                  </Button>
+                </div>
                 <div
                   className={`group relative overflow-hidden ${PROFILE_PHOTO_CELL}`}
                   data-testid="container-profile-photo"
@@ -1391,7 +1468,7 @@ export default function TeamMemberDetail() {
                     </>
                   ) : (
                     <div
-                      className="absolute inset-0 flex items-center justify-center bg-white/10 text-white text-6xl font-heading font-normal"
+                      className="absolute inset-0 flex items-center justify-center bg-ss-rule text-ss-marino text-6xl font-heading font-normal"
                       data-testid="avatar-fallback"
                     >
                       {member?.name ? getInitials(member.name) : ''}
@@ -1400,47 +1477,8 @@ export default function TeamMemberDetail() {
                 </div>
                 <div
                   aria-hidden="true"
-                  className="hidden md:col-start-2 md:row-span-2 md:row-start-1 md:block bg-white/[0.14]"
+                  className="hidden md:col-start-2 md:row-span-2 md:row-start-1 md:block bg-ss-rule"
                 />
-                {/* Tres botones iguales de contorno blanco, sin iconos: ninguno pesa más que el nombre.
-                    Retícula de columnas iguales: una fila de tres desde sm (también a 1024); entre md
-                    y lg, junto al retrato, dos y uno alineados a la retícula; en el teléfono, uno
-                    debajo de otro. El número de teléfono (dir="ltr") y LinkedIn están en el bloque
-                    de contacto. */}
-                <div className={`grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 lg:max-w-[48rem] content-start gap-3 ${PROFILE_ACTIONS_CELL}`}>
-                  {member?.email && (
-                    <Button
-                      variant="outline"
-                      className="min-h-11 w-full whitespace-normal text-center leading-[1.2] border-white/45 text-white hover:border-white"
-                      asChild
-                      data-testid="button-email"
-                    >
-                      <a href={`mailto:${member.email}`}>
-                        {t.emailUs}
-                      </a>
-                    </Button>
-                  )}
-                  {member?.phone && (
-                    <Button
-                      variant="outline"
-                      className="min-h-11 w-full whitespace-normal text-center leading-[1.2] border-white/45 text-white hover:border-white"
-                      asChild
-                      data-testid="button-phone"
-                    >
-                      <a href={`tel:${member.phone}`}>
-                        {t.callUs}
-                      </a>
-                    </Button>
-                  )}
-                  <Button
-                    variant="outline"
-                    className="min-h-11 w-full whitespace-normal text-center leading-[1.2] border-white/45 text-white hover:border-white"
-                    onClick={handleDownloadVCard}
-                    data-testid="button-download-vcard"
-                  >
-                    {t.downloadVCard}
-                  </Button>
-                </div>
               </div>
             </motion.div>
           </div>
@@ -1471,7 +1509,14 @@ export default function TeamMemberDetail() {
                         <Loader2 className="w-4 h-4 animate-spin text-ss-medio" aria-hidden="true" />
                       )}
                     </h2>
-                    <div data-testid="container-biography" {...langProps(localizedBio.lang)}>
+                    {/* Biografía sin traducción: lang="en" en el bloque, que conserva la dirección de la
+                        página (filete y alineación a la derecha en árabe); cada párrafo toma la dirección
+                        de su texto (unicode-bidi: plaintext), así el punto final no salta al inicio. */}
+                    <div
+                      data-testid="container-biography"
+                      lang={localizedBio.lang}
+                      className={localizedBio.lang ? "rtl:text-right [&_p]:[unicode-bidi:plaintext]" : undefined}
+                    >
                       {displayBio ? (() => {
                         const paragraphs = displayBio.split(/\n\s*\n/).map((p: string) => p.trim()).filter(Boolean);
                         const [first, ...rest] = paragraphs.length ? paragraphs : [displayBio];
@@ -1834,77 +1879,64 @@ export default function TeamMemberDetail() {
               </div>
 
               <div className="lg:col-span-4 space-y-10">
-                {/* Contacto: bloque Hueso con un solo botón principal y dos enlaces de texto */}
-                <motion.section
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                  className="bg-ss-paper p-6 lg:p-8"
-                  data-testid="section-contact-cta"
-                >
-                  <h2 
-                    className="ss-h3 text-[20px] mb-3"
-                    data-testid="text-contact-cta-title"
+                {/* Contacto: lista de datos sobre Hueso (oficina, teléfono, correo), sin botones ni
+                    frase de venta; las acciones ya están en el encabezado. Sin correo ni teléfono
+                    (socio in memoriam) no hay bloque. */}
+                {(member?.email || member?.phone) && (
+                  <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                    className="bg-ss-paper p-6 lg:p-8"
+                    data-testid="section-contact-cta"
                   >
-                    {t.contactCta}
-                  </h2>
-                  <p 
-                    className="text-base leading-[1.55] text-ss-tinta mb-6"
-                    data-testid="text-contact-cta-subtitle"
-                  >
-                    {t.contactSubtitle}
-                  </p>
-                  {member?.email && (
-                    <Button 
-                      className="w-full min-h-11"
-                      asChild
-                      data-testid="button-email-contact"
+                    <h2
+                      className="ss-label text-ss-marino mb-5"
+                      data-testid="text-contact-cta-title"
                     >
-                      <a href={`mailto:${member.email}`}>
-                        {t.emailUs}
-                      </a>
-                    </Button>
-                  )}
-                  <ul className="mt-5 space-y-3 text-[15px] font-semibold">
-                    {member?.phone && (
-                      <li>
-                        <a
-                          href={`tel:${member.phone}`}
-                          className="gap-1.5 text-ss-marino underline-offset-4 hover:underline"
-                          data-testid="button-call-contact"
-                        >
-                          {t.callUs}{" "}
-                          {/* dir="ltr": en árabe el número se leía "2086 8335 81 52+" */}
-                          <span dir="ltr" className="font-normal text-ss-tinta">{member.phone}</span>
-                        </a>
-                      </li>
-                    )}
-                    <li>
-                      <button
-                        type="button"
-                        onClick={handleDownloadVCard}
-                        className="text-ss-marino underline-offset-4 hover:underline"
-                        data-testid="button-download-vcard-sidebar"
-                      >
-                        {t.downloadVCard}
-                      </button>
-                    </li>
-                    {member?.linkedinUrl && (
-                      <li>
-                        <a
-                          href={member.linkedinUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-ss-marino underline-offset-4 hover:underline"
-                          data-testid="button-linkedin"
-                        >
-                          LinkedIn
-                        </a>
-                      </li>
-                    )}
-                  </ul>
-                </motion.section>
+                      {t.contactCta}
+                    </h2>
+                    <dl className="space-y-4 text-base leading-[1.5] text-ss-tinta" data-testid="text-contact-cta-subtitle">
+                      <div>
+                        <dt className="ss-label text-ss-medio">{t.officeLabel}</dt>
+                        {/* <bdi>: en árabe el punto de "N.L." saltaba al principio de la línea */}
+                        <dd className="mt-1"><bdi>San Pedro Garza García, N.L.</bdi></dd>
+                      </div>
+                      {member?.phone && (
+                        <div>
+                          <dt className="ss-label text-ss-medio">{t.phoneLabel}</dt>
+                          <dd className="mt-1">
+                            {/* dir="ltr": en árabe el número se leía "2086 8335 81 52+" */}
+                            <a
+                              href={`tel:${member.phone.replace(/\s+/g, "")}`}
+                              dir="ltr"
+                              className="text-ss-marino underline-offset-4 hover:underline"
+                              data-testid="button-call-contact"
+                            >
+                              {member.phone}
+                            </a>
+                          </dd>
+                        </div>
+                      )}
+                      {member?.email && (
+                        <div>
+                          <dt className="ss-label text-ss-medio">{t.emailLabel}</dt>
+                          <dd className="mt-1 [overflow-wrap:anywhere]">
+                            <a
+                              href={`mailto:${member.email}`}
+                              dir="ltr"
+                              className="text-ss-marino underline-offset-4 hover:underline"
+                              data-testid="button-email-contact"
+                            >
+                              {member.email}
+                            </a>
+                          </dd>
+                        </div>
+                      )}
+                    </dl>
+                  </motion.section>
+                )}
 
                 {processedRankings && (
                   <motion.section
@@ -1957,8 +1989,9 @@ export default function TeamMemberDetail() {
               </div>
             </div>
 
-            {/* Equipo relacionado: fila de cuatro con filete superior en cada persona, debajo de
-                las dos columnas; una columna con filete final en el teléfono */}
+            {/* Equipo relacionado: filete superior en cada persona, debajo de las dos columnas; dos
+                columnas desde sm y cuatro desde xl (en lg las celdas cortaban nombres y cargos); una
+                columna con filete final en el teléfono */}
             {relatedMembers && relatedMembers.length > 0 && (
               <motion.section
                 initial={{ opacity: 0, y: 20 }}
@@ -1974,7 +2007,7 @@ export default function TeamMemberDetail() {
                 >
                   {t.relatedTeam}
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 border-b border-ss-rule sm:border-b-0">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-8 border-b border-ss-rule sm:border-b-0">
                   {relatedMembers.map((relatedMember) => (
                     <RelatedTeamMemberCard
                       key={relatedMember.id}

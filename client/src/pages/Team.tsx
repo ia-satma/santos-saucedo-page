@@ -19,7 +19,7 @@ import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getTeamPhotoObjectPosition } from "@/lib/teamPhotoPosition";
 import { equipoMosaicPhotos as equipoPhotos } from "@/lib/equipoMosaicPhotos";
-import { fallbackToOriginalSrc, getTeamPhotoSrcSet, highFetchPriority } from "@/lib/teamPhotoSources";
+import { fallbackToOriginalSrc, getTeamPhotoSrcSet, highFetchPriority, isNamedOnTeamPage, isOfCounselMember } from "@/lib/teamPhotoSources";
 import { Eyebrow } from "@/components/editorial";
 import type { TeamMember, PracticeGroup, IndustryGroup } from "@shared/schema";
 
@@ -32,21 +32,13 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   return chunks;
 }
 
-function getBalancedColumns(total: number, preferredColumns: number): number {
-  if (total <= preferredColumns) return total;
+// Mosaico "Integrantes del equipo": columnas por tramo (teléfono, md, lg en adelante)
+const EQUIPO_COLUMNS = { phone: 5, md: 8, lg: 10 } as const;
 
-  const rows = Math.ceil(total / preferredColumns);
-  return Math.ceil(total / rows);
+// Columnas vacías al final de la última fila (0 si la cuenta cierra la fila)
+function emptyColumns(total: number, columns: number): number {
+  return (columns - (total % columns)) % columns;
 }
-
-// The 4 founders whose 2026 presentation photo is confirmed by name (the
-// deck's own "Socios Fundadores" page captions each one). See groupedMembers.
-const CONFIRMED_FOUNDER_SLUGS = new Set([
-  "mario-saucedo-montemayor",
-  "enrique-santos-guzman",
-  "enrique-santos-arce",
-  "mario-saucedo-rodriguez",
-]);
 
 // Map URL parameters to filter values
 const urlTypeToFilter: Record<string, string> = {
@@ -137,6 +129,7 @@ export default function Team() {
     initialLabel: string;
     allLetters: string;
     mosaicNote: string;
+    mosaicCount: string;
     positions: {
       foundingPartner: string;
       partner: string;
@@ -147,7 +140,7 @@ export default function Team() {
   }> = {
     en: {
       title: "Our Team",
-      subtitle: "Meet the legal team behind our firm's standard of excellence",
+      subtitle: "Partners and team of Santos & Saucedo.",
       errorMessage: "Failed to load team members",
       allMembers: "All",
       partnersOnly: "Partners",
@@ -169,6 +162,7 @@ export default function Team() {
       initialLabel: "Initial",
       allLetters: "All",
       mosaicNote: "Portraits of {n} team members.",
+      mosaicCount: "{n} team members",
       positions: {
         foundingPartner: "Founding Partner",
         partner: "Partner",
@@ -179,7 +173,7 @@ export default function Team() {
     },
     es: {
       title: "Nuestro equipo",
-      subtitle: "Conozca al equipo legal que sostiene la excelencia de nuestra firma",
+      subtitle: "Socios y equipo de Santos & Saucedo.",
       errorMessage: "Error al cargar los miembros del equipo",
       allMembers: "Todos",
       partnersOnly: "Socios",
@@ -201,6 +195,7 @@ export default function Team() {
       initialLabel: "Inicial",
       allLetters: "Todas",
       mosaicNote: "Retratos de {n} integrantes del equipo.",
+      mosaicCount: "{n} integrantes",
       positions: {
         foundingPartner: "Socio fundador",
         partner: "Socio",
@@ -211,7 +206,7 @@ export default function Team() {
     },
     de: {
       title: "Unser Team",
-      subtitle: "Lernen Sie unsere Experten kennen",
+      subtitle: "Partner und Team von Santos & Saucedo.",
       errorMessage: "Teammitglieder konnten nicht geladen werden",
       allMembers: "Alle",
       partnersOnly: "Partner",
@@ -233,6 +228,7 @@ export default function Team() {
       initialLabel: "Buchstabe",
       allLetters: "Alle",
       mosaicNote: "Porträts von {n} Teammitgliedern.",
+      mosaicCount: "{n} Teammitglieder",
       positions: {
         foundingPartner: "Gründungspartner",
         partner: "Partner",
@@ -243,7 +239,7 @@ export default function Team() {
     },
     zh: {
       title: "我们的团队",
-      subtitle: "认识我们的专家",
+      subtitle: "Santos & Saucedo 的合伙人与团队。",
       errorMessage: "无法加载团队成员",
       allMembers: "全部",
       partnersOnly: "合伙人",
@@ -265,6 +261,7 @@ export default function Team() {
       initialLabel: "首字母",
       allLetters: "全部",
       mosaicNote: "{n} 位团队成员的肖像。",
+      mosaicCount: "{n} 位团队成员",
       positions: {
         foundingPartner: "创始合伙人",
         partner: "合伙人",
@@ -275,7 +272,7 @@ export default function Team() {
     },
     ko: {
       title: "우리 팀",
-      subtitle: "전문가들을 만나보세요",
+      subtitle: "Santos & Saucedo의 파트너와 팀.",
       errorMessage: "팀원을 불러올 수 없습니다",
       allMembers: "전체",
       partnersOnly: "파트너",
@@ -297,6 +294,7 @@ export default function Team() {
       initialLabel: "이니셜",
       allLetters: "전체",
       mosaicNote: "팀 구성원 {n}명의 사진.",
+      mosaicCount: "팀 구성원 {n}명",
       positions: {
         foundingPartner: "창립 파트너",
         partner: "파트너",
@@ -307,7 +305,7 @@ export default function Team() {
     },
     ja: {
       title: "私たちのチーム",
-      subtitle: "専門家をご紹介します",
+      subtitle: "Santos & Saucedoのパートナーとチーム。",
       errorMessage: "チームメンバーを読み込めませんでした",
       allMembers: "すべて",
       partnersOnly: "パートナー",
@@ -329,6 +327,7 @@ export default function Team() {
       initialLabel: "頭文字",
       allLetters: "すべて",
       mosaicNote: "チームメンバー{n}名の写真。",
+      mosaicCount: "チームメンバー{n}名",
       positions: {
         foundingPartner: "創立パートナー",
         partner: "パートナー",
@@ -339,7 +338,7 @@ export default function Team() {
     },
     ar: {
       title: "فريقنا",
-      subtitle: "تعرف على خبرائنا",
+      subtitle: "شركاء Santos & Saucedo وفريقها.",
       errorMessage: "فشل في تحميل أعضاء الفريق",
       allMembers: "الكل",
       partnersOnly: "الشركاء",
@@ -361,6 +360,7 @@ export default function Team() {
       initialLabel: "الحرف الأول",
       allLetters: "الكل",
       mosaicNote: "صور {n} من أعضاء الفريق.",
+      mosaicCount: "أعضاء الفريق: {n}",
       positions: {
         foundingPartner: "شريك مؤسس",
         partner: "شريك",
@@ -371,7 +371,7 @@ export default function Team() {
     },
     ru: {
       title: "Наша команда",
-      subtitle: "Познакомьтесь с нашими экспертами",
+      subtitle: "Партнёры и команда Santos & Saucedo.",
       errorMessage: "Не удалось загрузить членов команды",
       allMembers: "Все",
       partnersOnly: "Партнёры",
@@ -393,6 +393,7 @@ export default function Team() {
       initialLabel: "Первая буква",
       allLetters: "Все",
       mosaicNote: "Портреты сотрудников: {n}.",
+      mosaicCount: "Сотрудников: {n}",
       positions: {
         foundingPartner: "Партнёр-основатель",
         partner: "Партнёр",
@@ -403,7 +404,7 @@ export default function Team() {
     },
     fr: {
       title: "Notre équipe",
-      subtitle: "Rencontrez nos experts",
+      subtitle: "Associés et équipe de Santos & Saucedo.",
       errorMessage: "Échec du chargement des membres de l'équipe",
       allMembers: "Tous",
       partnersOnly: "Associés",
@@ -425,6 +426,7 @@ export default function Team() {
       initialLabel: "Initiale",
       allLetters: "Toutes",
       mosaicNote: "Portraits de {n} membres de l'équipe.",
+      mosaicCount: "{n} membres de l'équipe",
       positions: {
         foundingPartner: "Associé fondateur",
         partner: "Associé",
@@ -435,7 +437,7 @@ export default function Team() {
     },
     it: {
       title: "Il nostro team",
-      subtitle: "Conosci i nostri esperti",
+      subtitle: "Soci e team di Santos & Saucedo.",
       errorMessage: "Impossibile caricare i membri del team",
       allMembers: "Tutti",
       partnersOnly: "Partner",
@@ -457,6 +459,7 @@ export default function Team() {
       initialLabel: "Iniziale",
       allLetters: "Tutte",
       mosaicNote: "Ritratti di {n} membri del team.",
+      mosaicCount: "{n} membri del team",
       positions: {
         foundingPartner: "Partner fondatore",
         partner: "Partner",
@@ -489,15 +492,14 @@ export default function Team() {
       return a.name.localeCompare(b.name);
     };
 
-    const isOfCounsel = (m: TeamMember) => m.title?.toLowerCase() === "of counsel";
-    // Only these 4 have a confirmed, name-matched 2026 photo (the presentation's own
-    // "Socios Fundadores" page, which captions each one). Other isPartner:true members
-    // (e.g. Jaime Herrera de Herrera, David Martínez Saucedo) don't have a confirmed new
-    // photo yet, so — same reasoning as the associates mosaic — they're not shown as a
-    // named/individually-photographed card until their file is identified.
-    const allPartners  = [...allTeamMembers.filter(m => m.isPartner && CONFIRMED_FOUNDER_SLUGS.has(m.slug))].sort(byConfiguredOrder);
-    const allOfCounsel = [...allTeamMembers.filter(m => !m.isPartner && isOfCounsel(m))].sort(byConfiguredOrder);
-    const allAssociates = [...allTeamMembers.filter(m => !m.isPartner && !isOfCounsel(m))].sort(byConfiguredOrder);
+    // Only the 4 founders with a confirmed, name-matched 2026 photo (the presentation's own
+    // "Socios Fundadores" page, which captions each one) are shown as named cards. Other
+    // isPartner:true members (e.g. Jaime Herrera de Herrera, David Martínez Saucedo) wait
+    // until their file is identified — same reasoning as the associates mosaic. The rule
+    // (isNamedOnTeamPage, lib/teamPhotoSources) is shared with "Equipo relacionado".
+    const allPartners  = [...allTeamMembers.filter(m => m.isPartner && isNamedOnTeamPage(m))].sort(byConfiguredOrder);
+    const allOfCounsel = [...allTeamMembers.filter(m => !m.isPartner && isNamedOnTeamPage(m))].sort(byConfiguredOrder);
+    const allAssociates = [...allTeamMembers.filter(m => !m.isPartner && !isOfCounselMember(m))].sort(byConfiguredOrder);
 
     return {
       partners:   applyTextFilters(allPartners),
@@ -515,7 +517,13 @@ export default function Team() {
     (showOfCounsel  ? groupedMembers.ofCounsel.length  : 0) +
     (showAssociates ? equipoPhotos.length              : 0);
 
-  const equipoDesktopColumns = getBalancedColumns(equipoPhotos.length, 10);
+  // Celda Hueso de cierre del mosaico: ocupa las columnas que la última fila deja vacías y
+  // lleva la cuenta (calculada, no escrita a mano), para que la retícula termine a propósito
+  const equipoCount = t.mosaicCount.replace("{n}", String(equipoPhotos.length));
+  const equipoClosingSpan = {
+    phone: emptyColumns(equipoPhotos.length, EQUIPO_COLUMNS.phone),
+    md: emptyColumns(equipoPhotos.length, EQUIPO_COLUMNS.md),
+  };
 
   const hasActiveFilters = searchQuery || filterSeniority !== "all" || filterLetter !== "all" || filterPractice !== "all";
 
@@ -824,11 +832,11 @@ export default function Team() {
                   {/* Los retratos son decorativos (alt vacío) hasta que exista la relación de nombres */}
                   <p className="sr-only">{t.mosaicNote.replace("{n}", String(equipoPhotos.length))}</p>
                 </div>
-                {/* Desktop: filas que se expanden al pasar el cursor. Sin cursor de enlace: no llevan
-                    a ninguna parte. La última fila se completa con huecos para que cada retrato
-                    conserve el mismo ancho y los bordes de las columnas no se desplacen. */}
+                {/* Desktop: diez columnas a todo lo ancho; filas que se expanden al pasar el cursor.
+                    Sin cursor de enlace: no llevan a ninguna parte. La última fila termina en una
+                    celda Hueso que ocupa las columnas vacías (cada retrato conserva su ancho). */}
                 <div className="hidden lg:block">
-                  {chunkArray(equipoPhotos, equipoDesktopColumns).map((row, rowIdx) => (
+                  {chunkArray(equipoPhotos, EQUIPO_COLUMNS.lg).map((row, rowIdx) => (
                     <div
                       key={rowIdx}
                       className="flex w-full h-[400px]"
@@ -851,20 +859,50 @@ export default function Team() {
                           </div>
                         );
                       })}
-                      {Array.from({ length: equipoDesktopColumns - row.length }).map((_, padIdx) => (
-                        <div key={`pad-${padIdx}`} aria-hidden="true" style={{ flex: 1, minWidth: 0 }} />
-                      ))}
+                      {row.length < EQUIPO_COLUMNS.lg && (
+                        // La cuenta ya la lee el párrafo sr-only de arriba. Sin relleno en la celda (la
+                        // etiqueta va en absoluto): el relleno se sumaba a su base flex y estrechaba
+                        // los retratos de la última fila.
+                        <div
+                          aria-hidden="true"
+                          data-testid="cell-equipo-closing"
+                          className="relative bg-ss-paper"
+                          style={{ flex: EQUIPO_COLUMNS.lg - row.length, minWidth: 0 }}
+                        >
+                          <p className="ss-label ss-num text-ss-medio absolute bottom-6 start-6 end-6">{equipoCount}</p>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
-                {/* Teléfono y tableta: retícula de columnas iguales (3 en el teléfono: un tercio menos
-                    de recorrido y menos ampliación de los originales de 295 px) */}
-                <div className="lg:hidden grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-px">
+                {/* Teléfono y tableta: retícula compacta de columnas iguales (5 en el teléfono, 8 desde
+                    md), con la misma celda Hueso de cierre en la última fila */}
+                <div className="lg:hidden grid grid-cols-5 md:grid-cols-8 gap-px">
                   {equipoPhotos.map((photo, idx) => (
                     <div key={idx} className="relative overflow-hidden block" style={{ aspectRatio: "3/4" }} data-testid={`img-equipo-mob-${idx}`}>
                       <img src={photo} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top" />
                     </div>
                   ))}
+                  {equipoClosingSpan.phone > 0 && (
+                    <div
+                      aria-hidden="true"
+                      data-testid="cell-equipo-closing-mob"
+                      className="flex items-end bg-ss-paper p-3 md:hidden"
+                      style={{ gridColumn: `span ${equipoClosingSpan.phone} / span ${equipoClosingSpan.phone}` }}
+                    >
+                      <p className="ss-label ss-num text-ss-medio">{equipoCount}</p>
+                    </div>
+                  )}
+                  {equipoClosingSpan.md > 0 && (
+                    <div
+                      aria-hidden="true"
+                      data-testid="cell-equipo-closing-md"
+                      className="hidden items-end bg-ss-paper p-4 md:flex"
+                      style={{ gridColumn: `span ${equipoClosingSpan.md} / span ${equipoClosingSpan.md}` }}
+                    >
+                      <p className="ss-label ss-num text-ss-medio">{equipoCount}</p>
+                    </div>
+                  )}
                 </div>
               </section>
             )}

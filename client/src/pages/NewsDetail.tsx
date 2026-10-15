@@ -19,7 +19,10 @@ import type { News, TeamMember } from "@shared/schema";
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
 // lleva su propio idioma y dirección, para que :lang() (la romana, no la sans de CJK) y el
-// algoritmo bidi (en árabe, el punto final al final) lo traten como inglés.
+// algoritmo bidi (en árabe, el punto final al final) lo traten como inglés. El cuerpo largo del
+// artículo va entero en LTR (EN_SOURCE). En los titulares el bloque solo lleva lang="en" y
+// conserva la dirección de la página (en árabe, alineado a la derecha con el eyebrow y la
+// vuelta); el texto va aislado en <bdi lang="en" dir="ltr">, como en Team.tsx.
 const EN_SOURCE = { lang: "en", dir: "ltr" } as const;
 
 // Marca de X (antes Twitter), en el color del texto: la lucide "Twitter" es el pájaro retirado
@@ -194,7 +197,12 @@ export default function NewsDetail() {
     enabled: !!newsArticle,
   });
 
+  // Vuelta y relacionados con el nombre de la publicación, como el eyebrow (newsLabel) y el
+  // menú: "Monitor Laboral" en español, "Labor Monitor" en inglés; en los demás idiomas, el
+  // rótulo del menú (chrome26.ts).
   const content: Record<string, {
+    /** Primer paso de las migas (JSON-LD) */
+    home: string;
     backToNews: string;
     share: string;
     relatedNews: string;
@@ -214,9 +222,10 @@ export default function NewsDetail() {
     newsLabel: string;
   }> = {
     en: {
-      backToNews: "Back to News",
+      home: "Home",
+      backToNews: "Back to the Labor Monitor",
       share: "Share this article",
-      relatedNews: "Related News",
+      relatedNews: "More from the Labor Monitor",
       errorMessage: "Article not found",
       loading: "Loading...",
       readMore: "Read More",
@@ -232,9 +241,10 @@ export default function NewsDetail() {
       newsLabel: "Labor Monitor",
     },
     es: {
-      backToNews: "Volver a noticias",
+      home: "Inicio",
+      backToNews: "Volver al Monitor Laboral",
       share: "Compartir este artículo",
-      relatedNews: "Noticias relacionadas",
+      relatedNews: "Más del Monitor Laboral",
       errorMessage: "Artículo no encontrado",
       loading: "Cargando...",
       readMore: "Leer más",
@@ -250,9 +260,10 @@ export default function NewsDetail() {
       newsLabel: "Monitor Laboral",
     },
     de: {
-      backToNews: "Zurück zu Nachrichten",
+      home: "Startseite",
+      backToNews: "Zurück zu den Nachrichten",
       share: "Artikel teilen",
-      relatedNews: "Ähnliche Nachrichten",
+      relatedNews: "Weitere Nachrichten",
       errorMessage: "Nachricht nicht gefunden",
       loading: "Wird geladen...",
       readMore: "Weiterlesen",
@@ -268,9 +279,10 @@ export default function NewsDetail() {
       newsLabel: "Nachrichten",
     },
     zh: {
+      home: "首页",
       backToNews: "返回新闻",
       share: "分享文章",
-      relatedNews: "相关新闻",
+      relatedNews: "更多新闻",
       errorMessage: "未找到新闻",
       loading: "加载中...",
       readMore: "阅读更多",
@@ -286,9 +298,10 @@ export default function NewsDetail() {
       newsLabel: "新闻",
     },
     ko: {
+      home: "홈",
       backToNews: "뉴스로 돌아가기",
       share: "기사 공유",
-      relatedNews: "관련 뉴스",
+      relatedNews: "뉴스 더 보기",
       errorMessage: "뉴스를 찾을 수 없습니다",
       loading: "로딩 중...",
       readMore: "더 읽기",
@@ -304,9 +317,10 @@ export default function NewsDetail() {
       newsLabel: "뉴스",
     },
     ja: {
+      home: "ホーム",
       backToNews: "ニュースに戻る",
       share: "記事を共有",
-      relatedNews: "関連ニュース",
+      relatedNews: "その他のニュース",
       errorMessage: "ニュースが見つかりません",
       loading: "読み込み中...",
       readMore: "続きを読む",
@@ -322,9 +336,10 @@ export default function NewsDetail() {
       newsLabel: "ニュース",
     },
     ar: {
+      home: "الرئيسية",
       backToNews: "العودة إلى الأخبار",
       share: "مشاركة المقال",
-      relatedNews: "أخبار ذات صلة",
+      relatedNews: "المزيد من الأخبار",
       errorMessage: "الخبر غير موجود",
       loading: "جاري التحميل...",
       readMore: "اقرأ المزيد",
@@ -340,9 +355,10 @@ export default function NewsDetail() {
       newsLabel: "الأخبار",
     },
     ru: {
+      home: "Главная",
       backToNews: "Назад к новостям",
       share: "Поделиться статьёй",
-      relatedNews: "Похожие новости",
+      relatedNews: "Другие новости",
       errorMessage: "Новость не найдена",
       loading: "Загрузка...",
       readMore: "Читать далее",
@@ -358,9 +374,10 @@ export default function NewsDetail() {
       newsLabel: "Новости",
     },
     fr: {
+      home: "Accueil",
       backToNews: "Retour aux actualités",
       share: "Partager l'article",
-      relatedNews: "Actualités similaires",
+      relatedNews: "Autres actualités",
       errorMessage: "Actualité non trouvée",
       loading: "Chargement...",
       readMore: "Lire la suite",
@@ -376,9 +393,10 @@ export default function NewsDetail() {
       newsLabel: "Actualités",
     },
     it: {
+      home: "Home",
       backToNews: "Torna alle notizie",
       share: "Condividi articolo",
-      relatedNews: "Notizie correlate",
+      relatedNews: "Altre notizie",
       errorMessage: "Notizia non trovata",
       loading: "Caricamento...",
       readMore: "Leggi di più",
@@ -454,7 +472,7 @@ export default function NewsDetail() {
         <Header />
         {/* Cabecera sticky en flujo: ya no hace falta compensar el header fijo */}
         <main id="main-content" className="pt-16 pb-20 lg:pt-20">
-          <div className="max-w-4xl mx-auto px-6 lg:px-12">
+          <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12">
             <h2 className="ss-h2 mb-6" data-testid="text-error-title">
               {t.errorMessage}
             </h2>
@@ -480,7 +498,7 @@ export default function NewsDetail() {
             y marcadores de vuelta, eyebrow, titular y fecha */}
         <main id="main-content">
           <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" aria-busy="true">
-            <div className="max-w-4xl mx-auto px-6 lg:px-12 w-full">
+            <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12 w-full">
               <Skeleton className="h-4 w-36 mb-6 bg-ss-rule" />
               <Skeleton className="h-3 w-40 mb-5 bg-ss-rule" />
               <Skeleton className="h-12 w-full mb-3 bg-ss-rule" />
@@ -489,7 +507,7 @@ export default function NewsDetail() {
             </div>
           </section>
           <div className="py-16 lg:py-20">
-            <div className="max-w-4xl mx-auto px-6 lg:px-12">
+            <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12">
               <Skeleton className="h-4 w-32 mb-4" />
               <Skeleton className="h-10 w-full mb-2" />
               <Skeleton className="h-10 w-3/4 mb-8" />
@@ -509,10 +527,9 @@ export default function NewsDetail() {
   const displayContent = translatedFields.content || translatedFields.excerpt || newsArticle?.content || newsArticle?.excerpt;
   // Fuera de ES/EN, sin traducción se muestra el inglés de origen (y los relacionados siempre)
   const isOtherLanguage = language !== "es" && language !== "en";
-  const titleSource = isOtherLanguage && !!displayTitle && displayTitle === newsArticle?.title ? EN_SOURCE : undefined;
+  const titleIsSource = isOtherLanguage && !!displayTitle && displayTitle === newsArticle?.title;
   const contentSource = isOtherLanguage && !!displayContent &&
     (displayContent === newsArticle?.content || displayContent === newsArticle?.excerpt) ? EN_SOURCE : undefined;
-  const relatedSource = isOtherLanguage ? EN_SOURCE : undefined;
   const heroImage = newsArticle?.imageUrl || "";
 
   const primaryAuthor = relatedAuthors && relatedAuthors.length > 0 ? relatedAuthors[0] : null;
@@ -536,8 +553,9 @@ export default function NewsDetail() {
           />
           <BreadcrumbJsonLd
             items={[
-              { name: language === "es" ? "Inicio" : "Home", url: "https://www.santossaucedo.com" },
-              { name: language === "es" ? "Noticias" : "News", url: "https://www.santossaucedo.com/#news" },
+              { name: t.home, url: "https://www.santossaucedo.com" },
+              // La publicación, con el nombre del eyebrow y del menú, y su listado (/news)
+              { name: t.newsLabel, url: "https://www.santossaucedo.com/news" },
               { name: language === "es" ? newsArticle.titleEs : newsArticle.title, url: `https://www.santossaucedo.com/news/${newsArticle.slug}` }
             ]}
             language={language}
@@ -551,8 +569,10 @@ export default function NewsDetail() {
           salta el h1); el relleno del cuerpo va en su propio envoltorio. */}
       <main id="main-content">
         <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" data-testid="section-news-hero">
-          {/* Columna del artículo (max-w-4xl, ≈800 px útiles): vuelta, titular y cuerpo sobre el mismo borde */}
-          <div className="max-w-4xl mx-auto px-6 lg:px-12 w-full">
+          {/* Columna del artículo (max-w-4xl, ≈800 px útiles): vuelta, titular y cuerpo sobre el mismo borde.
+              Hasta lg, el margen lateral es el de ss-container (--ss-pad): en teléfono el texto
+              empieza bajo el logotipo (x = 20 a 390 px); desde lg la columna va centrada. */}
+          <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12 w-full">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -580,9 +600,9 @@ export default function NewsDetail() {
               <h1
                 className="ss-news-title"
                 data-testid="text-news-title"
-                {...titleSource}
+                lang={titleIsSource ? "en" : undefined}
               >
-                {displayTitle}
+                {titleIsSource ? <bdi lang="en" dir="ltr">{displayTitle}</bdi> : displayTitle}
                 {isTranslating && (
                   <Loader2 className="inline-block w-5 h-5 ml-3 animate-spin text-ss-medio" aria-hidden="true" />
                 )}
@@ -605,7 +625,7 @@ export default function NewsDetail() {
         </section>
 
         <div className="py-16 lg:py-20">
-          <div className="max-w-4xl mx-auto px-6 lg:px-12">
+          <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -779,9 +799,11 @@ export default function NewsDetail() {
                         <h3 
                           className="ss-h3 text-[20px] line-clamp-3 group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1"
                           data-testid={`text-related-news-title-${item.id}`}
-                          {...relatedSource}
+                          lang={isOtherLanguage ? "en" : undefined}
                         >
-                          {language === "es" ? item.titleEs : item.title}
+                          {isOtherLanguage
+                            ? <bdi lang="en" dir="ltr">{item.title}</bdi>
+                            : (language === "es" ? item.titleEs : item.title)}
                         </h3>
                       </article>
                     </Link>

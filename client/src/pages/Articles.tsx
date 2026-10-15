@@ -18,11 +18,14 @@ import { type News } from "@shared/schema";
 function ArticleImageWithFallback({ 
   src, 
   alt, 
-  className 
+  className,
+  lang,
 }: { 
   src: string; 
   alt: string; 
   className?: string;
+  /** Idioma del texto alternativo cuando es el inglés de origen */
+  lang?: string;
 }) {
   const [hasError, setHasError] = useState(false);
   
@@ -39,6 +42,7 @@ function ArticleImageWithFallback({
     <img
       src={src}
       alt={alt}
+      lang={lang}
       className={className}
       loading="lazy"
       decoding="async"
@@ -56,13 +60,15 @@ function ArticleCard({ article, readMoreText }: ArticleCardProps) {
   const { language } = useLanguage();
   const isSpanish = language === 'es';
   
+  // Como /news y el artículo (NewsDetail): sin traducción, el inglés de origen; fuera de ES/EN,
+  // marcado con lang="en" en el bloque y el texto en <bdi lang="en" dir="ltr">.
   const { translatedFields, isLoading, isTranslating } = useTranslatedContent({
     contentType: 'news',
     entityId: String(article.id),
     fields: {
-      title: article.titleEs || article.title,
+      title: article.title,
       titleEs: article.titleEs,
-      excerpt: article.excerptEs || article.excerpt,
+      excerpt: article.excerpt,
       excerptEs: article.excerptEs,
     },
     enabled: !isSpanish,
@@ -70,10 +76,13 @@ function ArticleCard({ article, readMoreText }: ArticleCardProps) {
 
   const displayTitle = isSpanish 
     ? (article.titleEs || article.title)
-    : (translatedFields.title || article.titleEs || article.title);
+    : (translatedFields.title || article.title);
   const displayExcerpt = isSpanish
     ? (article.excerptEs || article.excerpt)
-    : (translatedFields.excerpt || article.excerptEs || article.excerpt);
+    : (translatedFields.excerpt || article.excerpt);
+  const isOtherLanguage = !isSpanish && language !== 'en';
+  const titleIsSource = isOtherLanguage && !!displayTitle && displayTitle === article.title;
+  const excerptIsSource = isOtherLanguage && !!displayExcerpt && displayExcerpt === article.excerpt;
   
   const showTranslatingIndicator = isLoading || isTranslating;
 
@@ -89,6 +98,7 @@ function ArticleCard({ article, readMoreText }: ArticleCardProps) {
           <ArticleImageWithFallback
             src={article.imageUrl || ""}
             alt={displayTitle}
+            lang={titleIsSource ? "en" : undefined}
             className="ss-photo--colour w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
           />
           {showTranslatingIndicator && (
@@ -106,14 +116,16 @@ function ArticleCard({ article, readMoreText }: ArticleCardProps) {
         <h2
           className="ss-h3 text-[20px] mb-2 line-clamp-3 group-hover:underline decoration-1 underline-offset-4"
           data-testid={`text-article-title-${article.slug}`}
+          lang={titleIsSource ? "en" : undefined}
         >
-          {displayTitle}
+          {titleIsSource ? <bdi lang="en" dir="ltr">{displayTitle}</bdi> : displayTitle}
         </h2>
         <p
           className="text-base leading-[1.55] text-ss-tinta line-clamp-3 mb-4"
           data-testid={`text-article-excerpt-${article.slug}`}
+          lang={excerptIsSource ? "en" : undefined}
         >
-          {displayExcerpt}
+          {excerptIsSource ? <bdi lang="en" dir="ltr">{displayExcerpt}</bdi> : displayExcerpt}
         </p>
         <span className="mt-auto inline-flex items-center gap-2 text-[15px] font-semibold text-ss-marino">
           {readMoreText}
@@ -132,6 +144,8 @@ export default function ArticlesPage() {
     queryKey: ["/api/news"],
   });
 
+  // Subtítulo sin "insights" ni "nuestros expertos": la publicación, como en español. Sin
+  // artículos, una constatación neutra (no "regrese pronto").
   const content = {
     en: {
       title: "Articles",
@@ -141,7 +155,7 @@ export default function ArticlesPage() {
       readMore: "Read More",
       noResults: "No articles match your search",
       comingSoon: "Coming Soon",
-      comingSoonMessage: "We are preparing new articles. Please check back soon.",
+      comingSoonMessage: "There are no publications in this section yet.",
       published: "Published",
     },
     es: {
@@ -152,95 +166,95 @@ export default function ArticlesPage() {
       readMore: "Leer más",
       noResults: "No hay artículos que coincidan con su búsqueda",
       comingSoon: "Próximamente",
-      comingSoonMessage: "Estamos preparando nuevos artículos. Por favor regrese pronto.",
+      comingSoonMessage: "Aún no hay publicaciones en esta sección.",
       published: "Publicado",
     },
     de: {
       title: "Artikel",
-      subtitle: "Einblicke und Analysen unserer Experten",
+      subtitle: "Analysen und Veröffentlichungen von Santos & Saucedo",
       errorMessage: "Artikel konnten nicht geladen werden",
       searchPlaceholder: "Artikel suchen...",
       readMore: "Weiterlesen",
       noResults: "Keine Artikel entsprechen Ihrer Suche",
       comingSoon: "Demnächst",
-      comingSoonMessage: "Wir bereiten neue Artikel vor. Bitte schauen Sie bald wieder vorbei.",
+      comingSoonMessage: "In diesem Bereich gibt es noch keine Veröffentlichungen.",
       published: "Veröffentlicht",
     },
     zh: {
       title: "文章",
-      subtitle: "来自我们专家的见解与分析",
+      subtitle: "Santos & Saucedo 的分析与出版物",
       errorMessage: "文章加载失败",
       searchPlaceholder: "搜索文章...",
       readMore: "阅读更多",
       noResults: "没有符合搜索条件的文章",
       comingSoon: "即将推出",
-      comingSoonMessage: "我们正在准备新文章，请稍后再来。",
+      comingSoonMessage: "本栏目尚无文章。",
       published: "发布日期",
     },
     ko: {
       title: "기사",
-      subtitle: "전문가의 통찰력과 분석",
+      subtitle: "Santos & Saucedo의 분석과 간행물",
       errorMessage: "기사를 불러오지 못했습니다",
       searchPlaceholder: "기사 검색...",
       readMore: "자세히 보기",
       noResults: "검색 결과가 없습니다",
       comingSoon: "곧 출시",
-      comingSoonMessage: "새로운 기사를 준비 중입니다. 곧 다시 확인해 주세요.",
+      comingSoonMessage: "이 섹션에는 아직 게시물이 없습니다.",
       published: "게시일",
     },
     ja: {
       title: "記事",
-      subtitle: "専門家による洞察と分析",
+      subtitle: "Santos & Saucedoによる分析と刊行物",
       errorMessage: "記事の読み込みに失敗しました",
       searchPlaceholder: "記事を検索...",
       readMore: "続きを読む",
       noResults: "検索に一致する記事がありません",
       comingSoon: "近日公開",
-      comingSoonMessage: "新しい記事を準備中です。しばらくしてから再度ご確認ください。",
+      comingSoonMessage: "このセクションにはまだ記事がありません。",
       published: "公開日",
     },
     ar: {
       title: "المقالات",
-      subtitle: "رؤى وتحليلات من خبرائنا",
+      subtitle: "تحليلات ومنشورات Santos & Saucedo",
       errorMessage: "فشل تحميل المقالات",
       searchPlaceholder: "البحث في المقالات...",
       readMore: "اقرأ المزيد",
       noResults: "لا توجد مقالات تطابق بحثك",
       comingSoon: "قريباً",
-      comingSoonMessage: "نحن نعد مقالات جديدة. يرجى العودة قريباً.",
+      comingSoonMessage: "لا توجد منشورات في هذا القسم بعد.",
       published: "تاريخ النشر",
     },
     ru: {
       title: "Статьи",
-      subtitle: "Аналитика и публикации наших экспертов",
+      subtitle: "Аналитика и публикации Santos & Saucedo",
       errorMessage: "Не удалось загрузить статьи",
       searchPlaceholder: "Поиск статей...",
       readMore: "Читать далее",
       noResults: "Статьи по вашему запросу не найдены",
       comingSoon: "Скоро",
-      comingSoonMessage: "Мы готовим новые статьи. Пожалуйста, загляните позже.",
+      comingSoonMessage: "В этом разделе пока нет публикаций.",
       published: "Опубликовано",
     },
     fr: {
       title: "Articles",
-      subtitle: "Perspectives et analyses de nos experts",
+      subtitle: "Analyses et publications de Santos & Saucedo",
       errorMessage: "Échec du chargement des articles",
       searchPlaceholder: "Rechercher des articles...",
       readMore: "Lire la suite",
       noResults: "Aucun article ne correspond à votre recherche",
       comingSoon: "Bientôt disponible",
-      comingSoonMessage: "Nous préparons de nouveaux articles. Revenez bientôt.",
+      comingSoonMessage: "Cette section ne contient encore aucune publication.",
       published: "Publié le",
     },
     it: {
       title: "Articoli",
-      subtitle: "Approfondimenti e analisi dei nostri esperti",
+      subtitle: "Analisi e pubblicazioni di Santos & Saucedo",
       errorMessage: "Impossibile caricare gli articoli",
       searchPlaceholder: "Cerca articoli...",
       readMore: "Leggi di più",
       noResults: "Nessun articolo corrisponde alla tua ricerca",
       comingSoon: "Prossimamente",
-      comingSoonMessage: "Stiamo preparando nuovi articoli. Torna presto.",
+      comingSoonMessage: "Non ci sono ancora pubblicazioni in questa sezione.",
       published: "Pubblicato il",
     },
   };

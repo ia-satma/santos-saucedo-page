@@ -19,11 +19,14 @@ import { newsCategories, type News } from "@shared/schema";
 function NewsImageWithFallback({ 
   src, 
   alt, 
-  className 
+  className,
+  lang,
 }: { 
   src: string; 
   alt: string; 
   className?: string;
+  /** Idioma del texto alternativo cuando es el inglés de origen */
+  lang?: string;
 }) {
   const [hasError, setHasError] = useState(false);
   
@@ -40,6 +43,7 @@ function NewsImageWithFallback({
     <img
       src={src}
       alt={alt}
+      lang={lang}
       className={className}
       onError={() => setHasError(true)}
     />
@@ -57,13 +61,17 @@ function NewsCard({ article, readMoreText, categoryLabels }: NewsCardProps) {
   const { language } = useLanguage();
   const isSpanish = language === 'es';
   
+  // Mismo origen y misma vuelta atrás que el artículo (NewsDetail): sin traducción se muestra
+  // el inglés de origen (antes, el español sin marcar). Fuera de ES/EN ese inglés va marcado:
+  // lang="en" en el bloque (la romana, no la sans de CJK) y el texto en <bdi lang="en" dir="ltr">
+  // (en árabe el bloque sigue alineado a la derecha y el punto final no salta al principio).
   const { translatedFields, isLoading, isTranslating } = useTranslatedContent({
     contentType: 'news',
     entityId: String(article.id),
     fields: {
-      title: article.titleEs || article.title,
+      title: article.title,
       titleEs: article.titleEs,
-      excerpt: article.excerptEs || article.excerpt,
+      excerpt: article.excerpt,
       excerptEs: article.excerptEs,
     },
     enabled: !isSpanish,
@@ -71,10 +79,13 @@ function NewsCard({ article, readMoreText, categoryLabels }: NewsCardProps) {
 
   const displayTitle = isSpanish 
     ? (article.titleEs || article.title)
-    : (translatedFields.title || article.titleEs || article.title);
+    : (translatedFields.title || article.title);
   const displayExcerpt = isSpanish
     ? (article.excerptEs || article.excerpt)
-    : (translatedFields.excerpt || article.excerptEs || article.excerpt);
+    : (translatedFields.excerpt || article.excerpt);
+  const isOtherLanguage = !isSpanish && language !== 'en';
+  const titleIsSource = isOtherLanguage && !!displayTitle && displayTitle === article.title;
+  const excerptIsSource = isOtherLanguage && !!displayExcerpt && displayExcerpt === article.excerpt;
   
   const getCategoryLabel = () => {
     if (!article.category) return null;
@@ -101,6 +112,7 @@ function NewsCard({ article, readMoreText, categoryLabels }: NewsCardProps) {
           <NewsImageWithFallback
             src={article.imageUrl || ""}
             alt={displayTitle}
+            lang={titleIsSource ? "en" : undefined}
             className="ss-photo--colour w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
           />
           {showTranslatingIndicator && (
@@ -126,14 +138,16 @@ function NewsCard({ article, readMoreText, categoryLabels }: NewsCardProps) {
         <h2
           className="ss-h3 text-[20px] mb-2 line-clamp-3 group-hover:underline decoration-1 underline-offset-4"
           data-testid={`text-news-title-${article.slug}`}
+          lang={titleIsSource ? "en" : undefined}
         >
-          {displayTitle}
+          {titleIsSource ? <bdi lang="en" dir="ltr">{displayTitle}</bdi> : displayTitle}
         </h2>
         <p
           className="text-base leading-[1.55] text-ss-tinta line-clamp-3 mb-4"
           data-testid={`text-news-excerpt-${article.slug}`}
+          lang={excerptIsSource ? "en" : undefined}
         >
-          {displayExcerpt}
+          {excerptIsSource ? <bdi lang="en" dir="ltr">{displayExcerpt}</bdi> : displayExcerpt}
         </p>
         <span className="mt-auto inline-flex items-center gap-2 text-[15px] font-semibold text-ss-marino">
           {readMoreText}
@@ -210,7 +224,7 @@ export default function NewsPage() {
     },
     de: {
       title: "Nachrichten",
-      subtitle: "Neuigkeiten und Einblicke",
+      subtitle: "Neuigkeiten und Analysen",
       errorMessage: "Nachrichten konnten nicht geladen werden",
       searchPlaceholder: "Suchen...",
       readMore: "Weiterlesen",
@@ -218,7 +232,7 @@ export default function NewsPage() {
       published: "Veröffentlicht",
       all: "Alle",
       press: "Presse",
-      insights: "Einblicke",
+      insights: "Analysen",
       rankings: "Rankings",
       events: "Veranstaltungen",
       alerts: "Mitteilungen",
@@ -228,7 +242,7 @@ export default function NewsPage() {
     },
     zh: {
       title: "新闻",
-      subtitle: "新闻与见解",
+      subtitle: "新闻与分析",
       errorMessage: "加载新闻失败",
       searchPlaceholder: "搜索...",
       readMore: "阅读更多",
@@ -236,7 +250,7 @@ export default function NewsPage() {
       published: "发布于",
       all: "全部",
       press: "新闻稿",
-      insights: "洞察",
+      insights: "分析",
       rankings: "排名",
       events: "活动",
       alerts: "公告",
@@ -245,8 +259,8 @@ export default function NewsPage() {
       allCategories: "所有类别",
     },
     ko: {
-      title: "뉴스 및 인사이트",
-      subtitle: "뉴스와 인사이트",
+      title: "뉴스",
+      subtitle: "뉴스와 분석",
       errorMessage: "뉴스 로드 실패",
       searchPlaceholder: "검색...",
       readMore: "더 읽기",
@@ -254,7 +268,7 @@ export default function NewsPage() {
       published: "게시일",
       all: "전체",
       press: "보도자료",
-      insights: "인사이트",
+      insights: "분석",
       rankings: "순위",
       events: "이벤트",
       alerts: "공지",
@@ -263,8 +277,8 @@ export default function NewsPage() {
       allCategories: "모든 카테고리",
     },
     ja: {
-      title: "ニュースとインサイト",
-      subtitle: "ニュースと洞察",
+      title: "ニュース",
+      subtitle: "ニュースと分析",
       errorMessage: "ニュースの読み込みに失敗しました",
       searchPlaceholder: "検索...",
       readMore: "続きを読む",
@@ -272,7 +286,7 @@ export default function NewsPage() {
       published: "公開日",
       all: "すべて",
       press: "プレス",
-      insights: "インサイト",
+      insights: "分析",
       rankings: "ランキング",
       events: "イベント",
       alerts: "お知らせ",
@@ -281,8 +295,8 @@ export default function NewsPage() {
       allCategories: "すべてのカテゴリー",
     },
     ar: {
-      title: "الأخبار والرؤى",
-      subtitle: "الأخبار والرؤى",
+      title: "الأخبار",
+      subtitle: "الأخبار والتحليلات",
       errorMessage: "فشل تحميل الأخبار",
       searchPlaceholder: "بحث...",
       readMore: "اقرأ المزيد",
@@ -290,7 +304,7 @@ export default function NewsPage() {
       published: "نُشر",
       all: "الكل",
       press: "صحافة",
-      insights: "رؤى",
+      insights: "تحليلات",
       rankings: "تصنيفات",
       events: "فعاليات",
       alerts: "تنبيهات",
@@ -336,7 +350,7 @@ export default function NewsPage() {
     },
     it: {
       title: "Notizie",
-      subtitle: "Notizie e approfondimenti",
+      subtitle: "Notizie e analisi",
       errorMessage: "Impossibile caricare le notizie",
       searchPlaceholder: "Cerca...",
       readMore: "Leggi di più",
@@ -344,7 +358,7 @@ export default function NewsPage() {
       published: "Pubblicato",
       all: "Tutto",
       press: "Stampa",
-      insights: "Approfondimenti",
+      insights: "Analisi",
       rankings: "Classifiche",
       events: "Eventi",
       alerts: "Avvisi",

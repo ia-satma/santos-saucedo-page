@@ -29,7 +29,6 @@ import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
 import type { SiteContent, ContactFormData, LanguageCode } from "@shared/schema";
-import { practiceAreas } from "@shared/schema";
 
 // Perfil de LinkedIn del despacho. Sin URL confirmada el botón "Síguenos en LinkedIn"
 // no se muestra (antes enlazaba a /contact en otra pestaña). Para activarlo, poner aquí
@@ -39,6 +38,32 @@ const FIRM_LINKEDIN_URL: string | null = null;
 // Ciudad de la oficina: nombre propio, igual en todos los idiomas (título de la ficha;
 // "Oficina principal" va encima como etiqueta y el nombre ya no se parte tras un guion).
 const OFFICE_CITY = "San Pedro Garza García";
+
+// Prácticas de la firma (las cuatro de /practice-groups, con sus nombres) y "Otro". Antes el
+// formulario usaba la lista heredada de @shared/schema (fusiones, competencia, energía…), que
+// no son prácticas de Santos & Saucedo.
+const PRACTICE_OPTIONS: { value: string; label: Record<LanguageCode, string> }[] = [
+  {
+    value: "laboral-seguridad-social",
+    label: { es: "Laboral y seguridad social", en: "Labor and social security", de: "Arbeitsrecht und soziale Sicherheit", zh: "劳动与社会保障", ko: "노동 및 사회보장", ja: "労働・社会保障", ar: "العمل والضمان الاجتماعي", ru: "Трудовое право и социальное обеспечение", fr: "Droit du travail et sécurité sociale", it: "Diritto del lavoro e previdenza sociale" },
+  },
+  {
+    value: "corporativo-contractual",
+    label: { es: "Corporativo y contractual", en: "Corporate and contracts", de: "Gesellschafts- und Vertragsrecht", zh: "公司与合同", ko: "기업 및 계약", ja: "企業法務・契約", ar: "الشركات والعقود", ru: "Корпоративное и договорное право", fr: "Droit des sociétés et des contrats", it: "Diritto societario e contrattuale" },
+  },
+  {
+    value: "migratorio",
+    label: { es: "Migratorio", en: "Immigration", de: "Migrationsrecht", zh: "移民", ko: "출입국", ja: "出入国管理", ar: "الهجرة", ru: "Миграционное право", fr: "Immigration", it: "Immigrazione" },
+  },
+  {
+    value: "litigio-contencioso",
+    label: { es: "Litigio contencioso", en: "Litigation", de: "Prozessführung", zh: "诉讼", ko: "소송", ja: "訴訟", ar: "التقاضي", ru: "Судебные споры", fr: "Contentieux", it: "Contenzioso" },
+  },
+  {
+    value: "otro",
+    label: { es: "Otro", en: "Other", de: "Sonstiges", zh: "其他", ko: "기타", ja: "その他", ar: "أخرى", ru: "Другое", fr: "Autre", it: "Altro" },
+  },
+];
 
 // Lista de datos de la oficina: filas con filete superior; etiqueta (dt) en la sans
 // versal espaciada, Gris Medio; dato (dd) en la sans de 17 px, Gris Tinta.
@@ -151,50 +176,50 @@ const toastMessages: Record<LanguageCode, {
     errorDescription: "No fue posible enviar el mensaje. Intente de nuevo más tarde.",
   },
   de: {
-    successTitle: "Nachricht erfolgreich gesendet!",
-    successDescription: "Wir werden uns bald bei Ihnen melden.",
+    successTitle: "Nachricht gesendet",
+    successDescription: "Wir haben Ihre Nachricht erhalten.",
     errorTitle: "Fehler",
     errorDescription: "Fehler beim Senden der Nachricht. Bitte versuchen Sie es erneut.",
   },
   zh: {
-    successTitle: "消息发送成功！",
-    successDescription: "我们会尽快与您联系。",
+    successTitle: "消息已发送",
+    successDescription: "我们已收到您的消息。",
     errorTitle: "错误",
     errorDescription: "发送消息时出错。请重试。",
   },
   ko: {
-    successTitle: "메시지가 전송되었습니다!",
-    successDescription: "곧 연락드리겠습니다.",
+    successTitle: "메시지 전송 완료",
+    successDescription: "메시지를 받았습니다.",
     errorTitle: "오류",
     errorDescription: "메시지 전송에 실패했습니다. 다시 시도해 주세요.",
   },
   ja: {
-    successTitle: "メッセージが送信されました！",
-    successDescription: "まもなくご連絡いたします。",
+    successTitle: "メッセージを送信しました",
+    successDescription: "メッセージを受け付けました。",
     errorTitle: "エラー",
     errorDescription: "メッセージの送信に失敗しました。もう一度お試しください。",
   },
   ar: {
-    successTitle: "تم إرسال الرسالة!",
-    successDescription: "سنتواصل معك قريباً.",
+    successTitle: "تم إرسال الرسالة",
+    successDescription: "تلقّينا رسالتك.",
     errorTitle: "خطأ",
     errorDescription: "فشل في إرسال الرسالة. يرجى المحاولة مرة أخرى.",
   },
   ru: {
-    successTitle: "Сообщение успешно отправлено!",
-    successDescription: "Мы свяжемся с вами в ближайшее время.",
+    successTitle: "Сообщение отправлено",
+    successDescription: "Мы получили ваше сообщение.",
     errorTitle: "Ошибка",
     errorDescription: "Ошибка при отправке сообщения. Пожалуйста, попробуйте снова.",
   },
   fr: {
-    successTitle: "Message envoyé !",
-    successDescription: "Nous vous répondrons bientôt.",
+    successTitle: "Message envoyé",
+    successDescription: "Nous avons bien reçu votre message.",
     errorTitle: "Erreur",
     errorDescription: "Échec de l'envoi du message. Veuillez réessayer.",
   },
   it: {
-    successTitle: "Messaggio inviato con successo!",
-    successDescription: "Ti risponderemo al più presto.",
+    successTitle: "Messaggio inviato",
+    successDescription: "Abbiamo ricevuto il tuo messaggio.",
     errorTitle: "Errore",
     errorDescription: "Errore nell'invio del messaggio. Riprova.",
   },
@@ -254,7 +279,9 @@ export default function Contact() {
           `Email: ${data.email}`,
           data.phone ? `Teléfono: ${data.phone}` : "",
           data.company ? `Empresa: ${data.company}` : "",
-          data.practiceArea ? `Área: ${data.practiceArea}` : "",
+          data.practiceArea
+            ? `Área: ${PRACTICE_OPTIONS.find((o) => o.value === data.practiceArea)?.label.es ?? data.practiceArea}`
+            : "",
           "",
           data.message,
         ].filter(Boolean).join("\n"),
@@ -305,7 +332,6 @@ export default function Contact() {
     practiceAreaLabel: string;
     practiceAreaPlaceholder: string;
     messageLabel: string;
-    messagePlaceholder: string;
     submit: string;
     submitting: string;
   }> = {
@@ -341,7 +367,6 @@ export default function Contact() {
       practiceAreaLabel: "Practice Area of Interest (optional)",
       practiceAreaPlaceholder: "Select a practice area",
       messageLabel: "Message",
-      messagePlaceholder: "How can we help you?",
       submit: "Send Message",
       submitting: "Sending...",
     },
@@ -377,7 +402,6 @@ export default function Contact() {
       practiceAreaLabel: "Área de práctica de interés (opcional)",
       practiceAreaPlaceholder: "Seleccione un área de práctica",
       messageLabel: "Mensaje",
-      messagePlaceholder: "¿Cómo podemos ayudarle?",
       submit: "Enviar mensaje",
       submitting: "Enviando...",
     },
@@ -413,7 +437,6 @@ export default function Contact() {
       practiceAreaLabel: "Praxisbereich (optional)",
       practiceAreaPlaceholder: "Wählen Sie einen Praxisbereich",
       messageLabel: "Nachricht",
-      messagePlaceholder: "Wie können wir Ihnen helfen?",
       submit: "Nachricht senden",
       submitting: "Wird gesendet...",
     },
@@ -449,7 +472,6 @@ export default function Contact() {
       practiceAreaLabel: "业务领域 (可选)",
       practiceAreaPlaceholder: "选择业务领域",
       messageLabel: "留言",
-      messagePlaceholder: "我们能如何帮助您？",
       submit: "发送消息",
       submitting: "发送中...",
     },
@@ -485,7 +507,6 @@ export default function Contact() {
       practiceAreaLabel: "관심 업무 분야 (선택사항)",
       practiceAreaPlaceholder: "업무 분야를 선택하세요",
       messageLabel: "메시지",
-      messagePlaceholder: "어떻게 도와드릴까요?",
       submit: "메시지 전송",
       submitting: "전송 중...",
     },
@@ -521,7 +542,6 @@ export default function Contact() {
       practiceAreaLabel: "ご関心のある業務分野 (任意)",
       practiceAreaPlaceholder: "業務分野を選択してください",
       messageLabel: "メッセージ",
-      messagePlaceholder: "どのようにお手伝いできますか？",
       submit: "メッセージを送信",
       submitting: "送信中...",
     },
@@ -557,7 +577,6 @@ export default function Contact() {
       practiceAreaLabel: "مجال الممارسة (اختياري)",
       practiceAreaPlaceholder: "اختر مجال الممارسة",
       messageLabel: "الرسالة",
-      messagePlaceholder: "كيف يمكننا مساعدتك؟",
       submit: "إرسال الرسالة",
       submitting: "جاري الإرسال...",
     },
@@ -593,7 +612,6 @@ export default function Contact() {
       practiceAreaLabel: "Область практики (необязательно)",
       practiceAreaPlaceholder: "Выберите область практики",
       messageLabel: "Сообщение",
-      messagePlaceholder: "Чем мы можем вам помочь?",
       submit: "Отправить сообщение",
       submitting: "Отправка...",
     },
@@ -629,7 +647,6 @@ export default function Contact() {
       practiceAreaLabel: "Domaine de pratique (facultatif)",
       practiceAreaPlaceholder: "Sélectionnez un domaine de pratique",
       messageLabel: "Message",
-      messagePlaceholder: "Comment pouvons-nous vous aider?",
       submit: "Envoyer le message",
       submitting: "Envoi en cours...",
     },
@@ -665,7 +682,6 @@ export default function Contact() {
       practiceAreaLabel: "Area di pratica (opzionale)",
       practiceAreaPlaceholder: "Seleziona un'area di pratica",
       messageLabel: "Messaggio",
-      messagePlaceholder: "Come possiamo aiutarti?",
       submit: "Invia messaggio",
       submitting: "Invio in corso...",
     },
@@ -827,13 +843,13 @@ export default function Contact() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent data-testid="select-practice-area-content">
-                            {practiceAreas.map((area) => (
+                            {PRACTICE_OPTIONS.map((area) => (
                               <SelectItem 
                                 key={area.value} 
                                 value={area.value}
                                 data-testid={`option-practice-area-${area.value}`}
                               >
-                                {language === "es" ? area.es : area.en}
+                                {area.label[language] ?? area.label.en}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -851,7 +867,6 @@ export default function Contact() {
                         <FormLabel data-testid="label-message">{t.messageLabel}</FormLabel>
                         <FormControl>
                           <Textarea 
-                            placeholder={t.messagePlaceholder} 
                             className="min-h-[120px]"
                             {...field} 
                             data-testid="textarea-message"
@@ -901,10 +916,12 @@ export default function Contact() {
                   <dl className="border-b border-ss-rule">
                     <div className={rowClass}>
                       <dt className={dtClass}>{t.addressLabel}</dt>
+                      {/* Líneas en <div> y teléfono con el tamaño del dd: la regla móvil de
+                          index.css lleva los <span> a 16 px y la lista quedaba con dos tamaños */}
                       <dd className={ddClass} data-testid="text-office-address">
-                        <span className="block">{t.street}</span>
-                        <span className="block">{t.colony}</span>
-                        <span className="block">{t.city}</span>
+                        <div>{t.street}</div>
+                        <div>{t.colony}</div>
+                        <div>{t.city}</div>
                       </dd>
                     </div>
                     <div className={rowClass}>
@@ -915,7 +932,7 @@ export default function Contact() {
                           className={ddLinkClass}
                           data-testid="link-office-phone"
                         >
-                          <span dir="ltr">{t.phone}</span>
+                          <span dir="ltr" className="[font-size:inherit]">{t.phone}</span>
                         </a>
                       </dd>
                     </div>

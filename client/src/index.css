@@ -1136,11 +1136,20 @@ html, body {
   font-family: var(--font-sans);
 }
 
-/* Compacto: el encabezado ya no ocupa medio pantallazo. La cabecera sticky ocupa su lugar. */
+/* Compacto: el encabezado ya no ocupa medio pantallazo. La cabecera sticky ocupa su lugar.
+   A 1440 × 900, cabecera + encabezado de una línea ≈ 350 px (≤ 360): el Azul Profundo no
+   pasa del 40 % del primer pantallazo. */
 .editorial-page-hero.pt-36 {
-  padding-top: clamp(56px, 6vw, 96px);
+  padding-top: clamp(56px, 4vw, 72px);
 }
 .editorial-page-hero.pb-20 {
+  padding-bottom: clamp(40px, 3.6vw, 56px);
+}
+/* Ficha de socio: conserva su medida (su encabezado, con foto y datos, va por separado) */
+.editorial-page-hero.pt-36[data-testid="section-team-member-hero"] {
+  padding-top: clamp(56px, 6vw, 96px);
+}
+.editorial-page-hero.pb-20[data-testid="section-team-member-hero"] {
   padding-bottom: clamp(40px, 4.5vw, 64px);
 }
 
@@ -1163,60 +1172,10 @@ html, body {
   }
 }
 
-/* Eyebrow heredado. Las páginas que aún dibujan la barra de marca (h-0.5 w-12; h-px w-10)
-   la ven como "§ 01 ——", igual que <Eyebrow> (components/editorial): ::before lleva el
-   glifo § en lima y ::after las cifras al 74 % con el filete de 24 × 1 px dibujado como
-   fondo (un seudoelemento admite un solo color). El número sigue el orden del menú
-   (01 firma … 06 contacto); el resto lleva el § solo. */
+/* Relleno de marca heredado (insignias, botones brand): blanco al 35 % sobre Azul Profundo.
+   El eyebrow "§ 01 ——" lo dibuja <Eyebrow> (components/editorial). */
 .editorial-page-hero .bg-brand {
   background-color: rgb(255 255 255 / 0.35);
-}
-.editorial-page-hero :is(.h-0\.5, .h-px).bg-brand {
-  display: flex;
-  align-items: center;
-  width: max-content;
-  height: auto;
-  margin-inline: 0;
-  background: none;
-  font: 600 12px/1.4 var(--font-sans);
-  letter-spacing: 0.12em;
-  font-variant-numeric: tabular-nums lining-nums;
-  white-space: nowrap;
-}
-.editorial-page-hero :is(.h-0\.5, .h-px).bg-brand::before {
-  content: "§";
-  color: var(--ss-lime);
-}
-.editorial-page-hero :is(.h-0\.5, .h-px).bg-brand::after {
-  content: var(--ss-index, "");
-  /* Sin --ss-index (404, legales, pro bono…) el contenido queda vacío: stretch le da el alto
-     de la línea del § para que el filete de fondo se pinte igual ("§ ——", como <Eyebrow num="">) */
-  align-self: stretch;
-  white-space: pre;
-  color: rgb(255 255 255 / 0.74);
-  padding-inline-end: 40px;
-  background: linear-gradient(rgb(255 255 255 / 0.35), rgb(255 255 255 / 0.35)) no-repeat 100% 50% / 24px 1px;
-}
-.editorial-page-hero :is(.h-0\.5, .h-px).bg-brand:dir(rtl)::after {
-  background-position: 0 50%;
-}
-.editorial-page-hero:is([data-testid="section-about-hero"], [data-testid="section-experience-hero"]) {
-  --ss-index: " 01";
-}
-.editorial-page-hero:is([data-testid="section-practice-groups-hero"], [data-testid="section-practice-group-hero"]) {
-  --ss-index: " 02";
-}
-.editorial-page-hero:is([data-testid="section-team-hero"], [data-testid="section-team-member-hero"]) {
-  --ss-index: " 03";
-}
-.editorial-page-hero:is([data-testid="section-news-hero"], [data-testid="section-articles-hero"], [data-testid="section-newsletter-hero"], [data-testid="section-events-hero"]) {
-  --ss-index: " 04";
-}
-.editorial-page-hero:is([data-testid="section-careers-hero"], [data-testid="section-interns-hero"]) {
-  --ss-index: " 05";
-}
-.editorial-page-hero:is([data-testid="section-contact-hero"], [data-testid="section-offices-hero"]) {
-  --ss-index: " 06";
 }
 
 /* Enlaces de vuelta ("Todos los miembros"…): etiqueta de interfaz, como ss-label, al 74 % */
@@ -1327,12 +1286,12 @@ html, body {
 /* Corte de línea en coreano y japonés: nunca dentro de una palabra (경|력, キャ|リア).
    Coreano: entre palabras (keep-all), con overflow-wrap de red si una no cabe. Japonés:
    por frases (auto-phrase, Chrome 119+); los demás navegadores ignoran el valor y cortan
-   como hasta ahora. */
+   como hasta ahora. Las etiquetas (.ss-label: dt, eyebrows) también. */
 :is(h1, h2, h3, h4, h5, h6, .ss-display, .ss-label):lang(ko) {
   word-break: keep-all;
   overflow-wrap: break-word;
 }
-:is(h1, h2, h3, h4, h5, h6, .ss-display):lang(ja) {
+:is(h1, h2, h3, h4, h5, h6, .ss-display, .ss-label):lang(ja) {
   word-break: auto-phrase;
 }
 
@@ -1430,13 +1389,6 @@ html, body {
 }
 .editorial-page-hero--paper .bg-brand {
   background-color: var(--ss-input);
-}
-.editorial-page-hero--paper :is(.h-0\.5, .h-px).bg-brand::before,
-.editorial-page-hero--paper :is(.h-0\.5, .h-px).bg-brand::after {
-  color: var(--ss-marino);
-}
-.editorial-page-hero--paper :is(.h-0\.5, .h-px).bg-brand::after {
-  background-image: linear-gradient(var(--ss-input), var(--ss-input));
 }
 .editorial-page-hero--paper [data-testid^="link-back-to"] {
   color: var(--ss-medio);
