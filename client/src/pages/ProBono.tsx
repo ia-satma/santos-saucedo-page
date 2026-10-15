@@ -110,7 +110,7 @@ export default function ProBono() {
       commitmentTitle: "Más de 35 Años de Compromiso Pro Bono",
       commitmentText1: "Desde 1989, Santos & Saucedo ha estado a la vanguardia de los servicios legales pro bono en México. Nuestra firma fue una de las primeras en el país en establecer un programa pro bono formal, reflejando nuestro profundo compromiso con la responsabilidad social y el acceso a la justicia.",
       commitmentText2: "Nuestros abogados dedican miles de horas anualmente a asuntos pro bono, brindando representación legal de alta calidad a individuos y organizaciones que de otro modo no podrían pagarla. Este compromiso no es solo un programa—es un valor fundamental arraigado en la cultura de nuestra firma.",
-      areasTitle: "Áreas de Práctica Pro Bono",
+      areasTitle: "Áreas de práctica pro bono",
       areasSubtitle: "Enfocamos nuestros esfuerzos donde podemos generar el mayor impacto",
       areas: [
         { 
@@ -120,66 +120,66 @@ export default function ProBono() {
         },
         { 
           icon: Shield, 
-          title: "Derechos Humanos", 
+          title: "Derechos humanos", 
           text: "Nuestros abogados trabajan en casos que involucran derechos y libertades fundamentales, colaborando con organizaciones de derechos humanos para proteger a poblaciones vulnerables y abogar por cambios sistémicos."
         },
         { 
           icon: Gavel, 
-          title: "Acceso a la Justicia", 
+          title: "Acceso a la justicia", 
           text: "Representamos a individuos que no pueden pagar asesoría legal en asuntos críticos, asegurando que las circunstancias económicas no impidan a nadie recibir representación legal justa."
         },
         { 
           icon: HandHeart, 
-          title: "Organizaciones de Impacto Social", 
+          title: "Organizaciones de impacto social", 
           text: "Apoyamos a fundaciones, organizaciones benéficas y empresas sociales con estructuración legal, contratos y cumplimiento regulatorio para maximizar su impacto positivo en la sociedad."
         },
         { 
           icon: BookOpen, 
-          title: "Educación Legal", 
+          title: "Educación legal", 
           text: "Nuestros abogados participan en programas de alfabetización legal, educando a las comunidades sobre sus derechos y cómo navegar el sistema legal de manera efectiva."
         },
         { 
           icon: Globe2, 
-          title: "Causas Ambientales", 
+          title: "Causas ambientales", 
           text: "Asesoramos a organizaciones ambientales en asuntos regulatorios, iniciativas de conservación y proyectos de sostenibilidad que benefician a comunidades y ecosistemas."
         },
       ],
-      statsTitle: "Nuestro Impacto Pro Bono",
+      statsTitle: "Nuestro impacto pro bono",
       stats: [
         { value: "35+", label: "Años de Trabajo Pro Bono" },
-        { value: "5,000+", label: "Horas Pro Bono Anuales" },
-        { value: "100+", label: "Organizaciones Apoyadas" },
-        { value: "50+", label: "Abogados Participantes" },
+        { value: "5,000+", label: "Horas pro bono anuales" },
+        { value: "100+", label: "Organizaciones apoyadas" },
+        { value: "50+", label: "Abogados participantes" },
       ],
-      participationTitle: "Cómo Participan Nuestros Abogados",
+      participationTitle: "Cómo participan nuestros abogados",
       participationSubtitle: "Cada abogado en Santos & Saucedo está invitado a contribuir",
       participationIntro: "El trabajo pro bono es parte integral del desarrollo profesional en nuestra firma. Creemos que retribuir no solo sirve a nuestra comunidad sino que también enriquece las habilidades y perspectivas de nuestros abogados.",
       participationAspects: [
         { 
           icon: Users, 
-          title: "Comité Pro Bono Dedicado", 
+          title: "Comité pro bono dedicado", 
           text: "Un comité especializado coordina nuestros esfuerzos pro bono, asignando abogados a asuntos que se alinean con su experiencia e intereses mientras asegura representación de calidad."
         },
         { 
           icon: Handshake, 
-          title: "Alianzas Estratégicas", 
+          title: "Alianzas estratégicas", 
           text: "Colaboramos con organizaciones de asistencia legal, universidades y otras firmas de abogados para maximizar nuestro impacto colectivo y abordar desafíos complejos que requieren experiencia diversa."
         },
         { 
           icon: Award, 
-          title: "Programa de Reconocimiento", 
+          title: "Programa de reconocimiento", 
           text: "Reconocemos y celebramos a los abogados que hacen contribuciones sobresalientes al trabajo pro bono, reforzando su importancia para la cultura y valores de nuestra firma."
         },
         { 
           icon: TrendingUp, 
-          title: "Desarrollo Profesional", 
+          title: "Desarrollo profesional", 
           text: "Los asuntos pro bono ofrecen oportunidades únicas de aprendizaje, permitiendo a los abogados junior manejar responsabilidades significativas bajo la guía de mentores experimentados."
         },
       ],
-      ctaTitle: "Asóciese Con Nosotros",
+      ctaTitle: "Asóciese con nosotros",
       ctaText: "Si usted representa a una organización sin fines de lucro o conoce una causa valiosa que podría beneficiarse de asistencia legal pro bono, le invitamos a comunicarse con nosotros. Juntos, podemos trabajar hacia una sociedad más justa.",
       contactButton: "Contáctenos",
-      learnMoreAbout: "Conozca Más Sobre Nuestra Firma",
+      learnMoreAbout: "Conozca más sobre nuestra firma",
     },
     de: {
       title: "Pro Bono",
@@ -845,13 +845,13 @@ export default function ProBono() {
             </motion.div>
             <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1
-              className="text-4xl md:text-5xl lg:text-6xl font-heading font-light text-white mb-6 uppercase tracking-[0.15em]"
+              className="text-4xl md:text-5xl lg:text-6xl font-heading font-normal text-white mb-6"
               data-testid="text-pro-bono-title"
             >
               {t.title}
             </h1>
             <p
-              className="text-base md:text-lg text-white/60 max-w-3xl mx-auto font-light leading-relaxed"
+              className="text-base md:text-lg text-white/60 max-w-3xl mx-auto font-normal leading-relaxed"
               data-testid="text-pro-bono-subtitle"
             >
               {t.subtitle}
@@ -871,15 +871,15 @@ export default function ProBono() {
             >
               <div className="flex items-center gap-4 mb-8">
                 <div className="h-0.5 w-8 bg-brand" />
-                <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em]">
+                <h2 className="text-2xl md:text-3xl font-heading font-normal text-ss-marino">
                   {t.commitmentTitle}
                 </h2>
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <p className="text-lg text-foreground leading-relaxed text-justify">
+                <p className="text-lg text-foreground leading-relaxed">
                   {t.commitmentText1}
                 </p>
-                <p className="text-lg text-muted-foreground leading-relaxed text-justify">
+                <p className="text-lg text-muted-foreground leading-relaxed">
                   {t.commitmentText2}
                 </p>
               </div>
@@ -896,10 +896,10 @@ export default function ProBono() {
               transition={{ duration: 0.6 }}
               className="text-center mb-16"
             >
-              <p className="font-support text-xs uppercase tracking-[0.2em] text-primary mb-4" data-testid="text-areas-subtitle">
+              <p className="ss-label text-ss-marino mb-4" data-testid="text-areas-subtitle">
                 {t.areasSubtitle}
               </p>
-              <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em] mb-4">
+              <h2 className="text-2xl md:text-3xl font-heading font-normal text-ss-marino mb-4">
                 {t.areasTitle}
               </h2>
               <div className="h-0.5 w-12 bg-brand mx-auto" />
@@ -936,7 +936,7 @@ export default function ProBono() {
               transition={{ duration: 0.6 }}
               className="text-center mb-12"
             >
-              <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em]">
+              <h2 className="text-2xl md:text-3xl font-heading font-normal text-ss-marino">
                 {t.statsTitle}
               </h2>
               <div className="h-0.5 w-12 bg-brand mx-auto mt-4" />
@@ -955,10 +955,10 @@ export default function ProBono() {
                   className="text-center"
                   data-testid={`stat-${index}`}
                 >
-                  <p className="text-4xl lg:text-5xl font-heading text-primary mb-2">
+                  <p className="text-4xl lg:text-5xl font-heading font-[300] text-ss-marino [font-variant-numeric:lining-nums] mb-2">
                     {stat.value}
                   </p>
-                  <p className="text-sm text-muted-foreground uppercase tracking-wider font-support">
+                  <p className="ss-label text-ss-medio">
                     {stat.label}
                   </p>
                 </motion.div>
@@ -976,14 +976,14 @@ export default function ProBono() {
               transition={{ duration: 0.6 }}
               className="text-center mb-16"
             >
-              <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
+              <h2 className="text-2xl md:text-3xl font-heading font-normal text-ss-marino mb-4">
                 {t.participationTitle}
               </h2>
               <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
               <p className="text-lg text-primary font-medium mb-4" data-testid="text-participation-subtitle">
                 {t.participationSubtitle}
               </p>
-              <p className="text-lg text-muted-foreground leading-relaxed text-justify max-w-4xl mx-auto" data-testid="text-participation-intro">
+              <p className="text-lg text-muted-foreground leading-relaxed max-w-4xl mx-auto" data-testid="text-participation-intro">
                 {t.participationIntro}
               </p>
             </motion.div>
@@ -1020,7 +1020,7 @@ export default function ProBono() {
               className="text-center max-w-3xl mx-auto"
             >
               <Scale className="w-10 h-10 text-primary mx-auto mb-6" />
-              <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em] mb-4">
+              <h2 className="text-2xl md:text-3xl font-heading font-normal text-ss-marino mb-4">
                 {t.ctaTitle}
               </h2>
               <div className="h-0.5 w-12 bg-brand mx-auto mb-8" />

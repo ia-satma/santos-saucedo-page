@@ -56,7 +56,7 @@ export default function MapSection({ language }: MapSectionProps) {
     },
     es: {
       eyebrow: "UBICACIÓN",
-      title: "Nuestra Ubicación",
+      title: "Nuestra ubicación",
       subtitle: "Visítenos",
       building: "Río Tamazunchale 205 Norte",
       street: "San Pedro Garza García, N.L.",
@@ -67,7 +67,7 @@ export default function MapSection({ language }: MapSectionProps) {
       phone: siteContent?.phone || "+52 81 8335 2086",
       emailLabel: "Correo electrónico",
       email: siteContent?.email || "info@santossaucedo.com",
-      directions: "Obtener Direcciones",
+      directions: "Obtener direcciones",
       viewMap: "Ver en el mapa",
       officeHours: "Horario de atención",
       errorMessage: "Error al cargar información de ubicación",
@@ -284,13 +284,13 @@ export default function MapSection({ language }: MapSectionProps) {
         >
           <div className="w-12 h-px bg-brand mb-6 mx-auto" />
           <p
-            className="text-primary text-[11px] tracking-[0.25em] uppercase mb-4"
+            className="ss-label text-primary mb-4"
             data-testid="text-location-eyebrow"
           >
             {t.eyebrow}
           </p>
           <h2
-            className="font-heading font-light text-2xl md:text-3xl lg:text-4xl text-foreground uppercase tracking-[0.12em] leading-tight"
+            className="font-heading font-normal text-2xl md:text-3xl lg:text-4xl text-ss-marino leading-tight"
             data-testid="text-location-title"
           >
             {t.title}
@@ -303,7 +303,7 @@ export default function MapSection({ language }: MapSectionProps) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="lg:col-span-3 aspect-[16/10] lg:aspect-auto lg:min-h-[400px] rounded-lg overflow-hidden shadow-lg"
+            className="lg:col-span-3 aspect-[16/10] lg:aspect-auto lg:min-h-[400px] overflow-hidden"
           >
             <iframe
               src={embedUrl}
@@ -369,7 +369,7 @@ export default function MapSection({ language }: MapSectionProps) {
                 <Button
                   asChild
                   variant="default"
-                  className="w-full rounded-lg"
+                  className="w-full"
                   data-testid="button-directions"
                 >
                   <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer">
@@ -381,7 +381,7 @@ export default function MapSection({ language }: MapSectionProps) {
                 <Button
                   asChild
                   variant="outline"
-                  className="w-full rounded-lg"
+                  className="w-full"
                   data-testid="button-view-map"
                 >
                   <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer">

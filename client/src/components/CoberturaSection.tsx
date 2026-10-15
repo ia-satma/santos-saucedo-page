@@ -20,13 +20,13 @@ type CoberturaContent = {
 
 const content: Record<LanguageCode, CoberturaContent> = {
   es: {
-    eyebrow: "ALIANZA NACIONAL",
-    title: "Cobertura Nacional",
+    eyebrow: "Alianza nacional",
+    title: "Cobertura nacional",
     text: "Santos & Saucedo es parte de una alianza de firmas legales especializadas en materia laboral patronal con presencia en más de 72 ciudades de la República Mexicana, con las cuales brindamos servicios a nivel nacional.",
     stat: "+72",
     statLabel: "Ciudades de la República Mexicana",
     stat2: "35+",
-    stat2Label: "Años de Experiencia",
+    stat2Label: "Años de experiencia",
     point1: "Servicio y cobertura a nivel nacional",
     point2: "Firmas aliadas especializadas en materia laboral patronal",
     mapCaption: "Nuevo León · Sede",
@@ -70,7 +70,7 @@ export default function CoberturaSection() {
 
   return (
     <section
-      className="relative overflow-hidden py-24 lg:py-28 text-white bg-[linear-gradient(135deg,#12116E_0%,#191884_52%,#1E1C92_100%)]"
+      className="relative overflow-hidden py-24 lg:py-28 text-white bg-ss-navy"
       data-testid="section-cobertura"
     >
       {/* "S" isotype watermark from the 2026 presentation cover */}
@@ -80,7 +80,7 @@ export default function CoberturaSection() {
         style={{ backgroundImage: `url(${bgSNavy})`, backgroundSize: "cover", backgroundPosition: "center" }}
       />
 
-      {/* Mexico map — large background element, Nuevo León highlighted in lime, bleeds off the right edge.
+      {/* Mexico map — large background element, Nuevo León highlighted in the map asset, bleeds off the right edge.
           Fades in via mask-image on the map itself (not a separate overlay) so the fade always lines up
           exactly with the image's own edge — no risk of a visible seam between two mismatched elements. */}
       <img
@@ -104,26 +104,26 @@ export default function CoberturaSection() {
           className="max-w-xl"
         >
           <div className="flex items-center gap-3 mb-5">
-            <div className="w-8 h-px bg-brand shrink-0" />
-            <span className="text-brand text-[11px] font-bold tracking-[0.25em] uppercase">{t.eyebrow}</span>
+            <div className="w-6 h-px bg-white/35 shrink-0" />
+            <span className="ss-label text-white/75">{t.eyebrow}</span>
           </div>
-          <h2 className="font-heading font-medium text-3xl md:text-4xl lg:text-5xl leading-tight mb-6 text-white" data-testid="text-cobertura-title">
+          <h2 className="font-heading font-normal text-3xl md:text-4xl lg:text-5xl leading-tight mb-6 text-white" data-testid="text-cobertura-title">
             {t.title}
           </h2>
           <p className="text-white/80 leading-relaxed">{t.text}</p>
           <div className="mt-8 flex flex-col gap-3">
             <div className="flex items-center gap-3 text-white/85">
-              <MapPin className="w-5 h-5 text-brand shrink-0" aria-hidden="true" />
+              <MapPin className="w-5 h-5 text-white/75 shrink-0" aria-hidden="true" />
               <span className="text-sm">{t.point1}</span>
             </div>
             <div className="flex items-center gap-3 text-white/85">
-              <Handshake className="w-5 h-5 text-brand shrink-0" aria-hidden="true" />
+              <Handshake className="w-5 h-5 text-white/75 shrink-0" aria-hidden="true" />
               <span className="text-sm">{t.point2}</span>
             </div>
           </div>
           <div className="mt-6 flex items-center gap-2 text-white/60">
-            <span className="w-2 h-2 rounded-full bg-brand shrink-0" aria-hidden="true" />
-            <span className="text-[11px] tracking-[0.14em] uppercase">{t.mapCaption}</span>
+            <span className="w-2 h-2 rounded-full bg-white/50 shrink-0" aria-hidden="true" />
+            <span className="ss-label">{t.mapCaption}</span>
           </div>
         </motion.div>
 
@@ -137,15 +137,15 @@ export default function CoberturaSection() {
         >
           <div className="flex items-center gap-8 sm:gap-12">
             <div>
-              <div className="font-heading font-bold text-brand leading-none text-4xl md:text-5xl">{t.stat}</div>
-              <div className="mt-3 text-[11px] md:text-xs uppercase tracking-[0.14em] text-white/70 leading-relaxed">
+              <div className="font-heading font-[300] text-white leading-none text-4xl md:text-5xl [font-variant-numeric:lining-nums]">{t.stat}</div>
+              <div className="ss-label mt-3 text-white/75 leading-relaxed">
                 {t.statLabel}
               </div>
             </div>
             <div className="w-px self-stretch bg-white/15" aria-hidden="true" />
             <div>
-              <div className="font-heading font-bold text-brand leading-none text-4xl md:text-5xl">{t.stat2}</div>
-              <div className="mt-3 text-[11px] md:text-xs uppercase tracking-[0.14em] text-white/70 leading-relaxed">
+              <div className="font-heading font-[300] text-white leading-none text-4xl md:text-5xl [font-variant-numeric:lining-nums]">{t.stat2}</div>
+              <div className="ss-label mt-3 text-white/75 leading-relaxed">
                 {t.stat2Label}
               </div>
             </div>

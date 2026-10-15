@@ -57,10 +57,10 @@ export default function OfficeGallery() {
         {/* Editorial header */}
         <div className="mb-12">
           <div className="w-12 h-px bg-brand mb-4" />
-          <p className="text-primary text-[11px] tracking-[0.25em] uppercase mb-3">
+          <p className="ss-label text-primary mb-3">
             {t.eyebrow}
           </p>
-          <h2 className="font-heading font-light text-foreground text-3xl md:text-4xl uppercase tracking-[0.12em]">
+          <h2 className="font-heading font-normal text-ss-marino text-3xl md:text-4xl">
             {t.title}
           </h2>
         </div>
@@ -81,7 +81,7 @@ export default function OfficeGallery() {
         {/* Empty state */}
         {!isLoading && images.length === 0 && (
           <div className="h-64 flex items-center justify-center card-soft" data-testid="gallery-empty">
-            <p className="text-muted-foreground text-sm tracking-[0.1em] uppercase">
+            <p className="ss-label text-muted-foreground">
               {language === "es" ? "Galería próximamente" : "Gallery coming soon"}
             </p>
           </div>
@@ -170,7 +170,7 @@ export default function OfficeGallery() {
           )}
 
           {/* Counter */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/60 text-xs tracking-[0.2em] uppercase">
+          <div className="ss-label absolute bottom-4 left-1/2 -translate-x-1/2 text-white/60">
             {lightboxIndex + 1} / {images.length}
           </div>
         </div>

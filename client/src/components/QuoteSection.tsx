@@ -88,7 +88,7 @@ export default function QuoteSection() {
       ? "Nuestro objetivo es brindar asesoría preventiva y consultoría legal en el área laboral a empresas nacionales e internacionales."
       : "Our objective is to provide preventive counsel and legal consulting in labor matters to national and international companies.",
     author: "Santos & Saucedo",
-    role: language === "es" ? "Derecho Laboral" : "Labor Law",
+    role: language === "es" ? "Derecho laboral" : "Labor Law",
   };
 
   const quote = siteContent?.quoteText?.trim() || t.quote;
@@ -99,7 +99,7 @@ export default function QuoteSection() {
     return (
       <section id="quote" className="py-20 lg:py-28 bg-muted" data-testid="section-quote">
         <div className="max-w-4xl mx-auto px-6 lg:px-12 text-center">
-          <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <AlertCircle className="w-12 h-12 text-ss-medio mx-auto mb-4" />
           <p className="text-muted-foreground" data-testid="text-quote-error">{t.errorMessage}</p>
         </div>
       </section>
@@ -138,7 +138,7 @@ export default function QuoteSection() {
           <Quote className="w-12 h-12 text-primary/30 mx-auto mb-8" data-testid="icon-quote" />
           
           <blockquote
-            className="text-xl md:text-2xl lg:text-3xl font-heading font-light text-gray-700 dark:text-gray-200 leading-relaxed mb-10"
+            className="text-xl md:text-2xl lg:text-3xl font-heading font-normal text-ss-tinta dark:text-gray-200 leading-relaxed mb-10"
             data-testid="text-quote"
           >
             "{quote}"

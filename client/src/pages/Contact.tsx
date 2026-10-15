@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Clock, ExternalLink, Linkedin, Building2, Send, Loader2 } from "lucide-react";
+import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,6 +37,10 @@ import { practiceAreas } from "@shared/schema";
 // no se muestra (antes enlazaba a /contact en otra pestaña). Para activarlo, poner aquí
 // la URL externa (https://www.linkedin.com/company/…).
 const FIRM_LINKEDIN_URL: string | null = null;
+
+// "Clásica": titulares en romana 400, Azul Marino, caja de oración y al inicio; texto en Gris Tinta.
+const h2Class = "font-heading font-normal text-ss-marino text-[clamp(24px,2vw,30px)] leading-[1.18] tracking-[-0.012em] [text-wrap:balance]";
+const h3Class = "font-heading font-normal text-ss-marino text-[22px] leading-[1.25] tracking-[-0.01em]";
 
 const validationMessages: Record<LanguageCode, {
   fullNameRequired: string;
@@ -343,8 +347,8 @@ export default function Contact() {
     es: {
       title: "Contáctenos",
       subtitle: "Póngase en contacto con nuestro equipo de expertos legales",
-      officesTitle: "Nuestras Oficinas",
-      mainOffice: "Oficina Principal - San Pedro Garza García",
+      officesTitle: "Nuestras oficinas",
+      mainOffice: "Oficina principal - San Pedro Garza García",
       building: "Río Tamazunchale 205 Norte",
       floor: "",
       street: "San Pedro Garza García, N.L.",
@@ -353,31 +357,31 @@ export default function Contact() {
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
-      hours: "Horario de Oficina",
+      hours: "Horario de oficina",
       hoursDetails: "Lunes - Viernes: 9:00 AM - 7:00 PM (CST)",
-      getDirections: "Cómo Llegar",
-      connectTitle: "Conéctese Con Nosotros",
+      getDirections: "Cómo llegar",
+      connectTitle: "Conéctese con nosotros",
       connectSubtitle: "Síganos en redes sociales y manténgase informado sobre los últimos desarrollos legales",
       linkedinText: "Síguenos en LinkedIn",
       websiteText: "Visite nuestro sitio web",
       contactUs: "Contáctenos",
-      sendEmail: "Enviar Email",
+      sendEmail: "Enviar correo",
       callUs: "Llámenos",
-      formTitle: "Envíenos un Mensaje",
+      formTitle: "Envíenos un mensaje",
       formSubtitle: "Complete el formulario a continuación y nos pondremos en contacto con usted lo antes posible.",
-      fullName: "Nombre Completo",
+      fullName: "Nombre completo",
       fullNamePlaceholder: "Ingrese su nombre completo",
-      emailLabel: "Correo Electrónico",
+      emailLabel: "Correo electrónico",
       emailPlaceholder: "Ingrese su correo electrónico",
       phoneLabel: "Teléfono (opcional)",
       phonePlaceholder: "Ingrese su número de teléfono",
       companyLabel: "Empresa/Organización (opcional)",
       companyPlaceholder: "Ingrese el nombre de su empresa",
-      practiceAreaLabel: "Área de Práctica de Interés (opcional)",
+      practiceAreaLabel: "Área de práctica de interés (opcional)",
       practiceAreaPlaceholder: "Seleccione un área de práctica",
       messageLabel: "Mensaje",
       messagePlaceholder: "¿Cómo podemos ayudarle?",
-      submit: "Enviar Mensaje",
+      submit: "Enviar mensaje",
       submitting: "Enviando...",
     },
     de: {
@@ -705,7 +709,7 @@ export default function Contact() {
   const baseT = content[language] || content.en;
   const t = {
     ...baseT,
-    mainOffice: language === "es" ? "Oficina Principal - San Pedro Garza García" : baseT.mainOffice,
+    mainOffice: language === "es" ? "Oficina principal - San Pedro Garza García" : baseT.mainOffice,
     floor: "",
     street: "Río Tamazunchale 205 Norte",
     colony: "Colonia Del Valle",
@@ -730,7 +734,7 @@ export default function Contact() {
           >
             <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1 
-              className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
+              className="text-4xl md:text-5xl font-heading text-white mb-5"
               data-testid="text-contact-title"
             >
               {t.title}
@@ -756,17 +760,17 @@ export default function Contact() {
             data-testid="section-contact-form"
           >
             {/* Tarjeta sin borde ni sombra visibles: sin su p-8 el formulario comparte el borde del encabezado */}
-            <Card className="border-0 shadow-none bg-transparent">
+            <Card className="border-0 bg-transparent">
               <CardContent className="p-0">
                 <div className="mb-8">
                   <h2 
-                    className="text-xl font-heading font-light text-foreground mb-2 uppercase tracking-[0.12em]"
+                    className={`${h2Class} mb-3`}
                     data-testid="text-form-title"
                   >
                     {t.formTitle}
                   </h2>
                   <p 
-                    className="text-muted-foreground"
+                    className="text-base text-ss-tinta leading-relaxed max-w-2xl"
                     data-testid="text-form-subtitle"
                   >
                     {t.formSubtitle}
@@ -785,7 +789,6 @@ export default function Contact() {
                             <FormControl>
                               <Input 
                                 placeholder={t.fullNamePlaceholder} 
-                                className="rounded-lg"
                                 {...field} 
                                 data-testid="input-fullname"
                               />
@@ -805,7 +808,6 @@ export default function Contact() {
                               <Input 
                                 type="email"
                                 placeholder={t.emailPlaceholder} 
-                                className="rounded-lg"
                                 {...field} 
                                 data-testid="input-email"
                               />
@@ -825,7 +827,6 @@ export default function Contact() {
                               <Input 
                                 type="tel"
                                 placeholder={t.phonePlaceholder} 
-                                className="rounded-lg"
                                 {...field} 
                                 data-testid="input-phone"
                               />
@@ -844,7 +845,6 @@ export default function Contact() {
                             <FormControl>
                               <Input 
                                 placeholder={t.companyPlaceholder} 
-                                className="rounded-lg"
                                 {...field} 
                                 data-testid="input-company"
                               />
@@ -863,7 +863,7 @@ export default function Contact() {
                           <FormLabel data-testid="label-practice-area">{t.practiceAreaLabel}</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
-                              <SelectTrigger className="rounded-lg" data-testid="select-practice-area">
+                              <SelectTrigger data-testid="select-practice-area">
                                 <SelectValue placeholder={t.practiceAreaPlaceholder} />
                               </SelectTrigger>
                             </FormControl>
@@ -893,7 +893,7 @@ export default function Contact() {
                           <FormControl>
                             <Textarea 
                               placeholder={t.messagePlaceholder} 
-                              className="min-h-[120px] rounded-lg"
+                              className="min-h-[120px]"
                               {...field} 
                               data-testid="textarea-message"
                             />
@@ -905,21 +905,11 @@ export default function Contact() {
 
                     <Button 
                       type="submit" 
-                      className="w-full md:w-auto rounded-lg"
+                      className="w-full md:w-auto"
                       disabled={contactMutation.isPending}
                       data-testid="button-submit-contact"
                     >
-                      {contactMutation.isPending ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          {t.submitting}
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4 mr-2" />
-                          {t.submit}
-                        </>
-                      )}
+                      {contactMutation.isPending ? t.submitting : t.submit}
                     </Button>
                   </form>
                 </Form>
@@ -935,7 +925,7 @@ export default function Contact() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <h2 
-                className="text-xl font-heading font-light text-foreground mb-6 uppercase tracking-[0.12em]"
+                className={`${h2Class} mb-6`}
                 data-testid="text-offices-title"
               >
                 {t.officesTitle}
@@ -956,13 +946,12 @@ export default function Contact() {
                   />
                 </div>
                 <CardContent className="p-6">
-                  <div className="flex items-start gap-3 mb-4">
-                    <Building2 className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
+                  <div className="mb-5">
                     <div>
-                      <h3 className="font-light uppercase tracking-[0.12em] text-foreground mb-1" data-testid="text-office-name">
+                      <h3 className={`${h3Class} mb-1`} data-testid="text-office-name">
                         {t.mainOffice}
                       </h3>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-base text-ss-medio">
                         {t.building}
                       </p>
                     </div>
@@ -971,7 +960,7 @@ export default function Contact() {
                   <div className="space-y-3 mb-6">
                     <div className="flex items-start gap-3">
                       <MapPin className="w-4 h-4 text-primary flex-shrink-0 mt-1" />
-                      <div className="text-sm text-muted-foreground" data-testid="text-office-address">
+                      <div className="text-base text-ss-tinta" data-testid="text-office-address">
                         <p>{t.street}</p>
                         <p>{t.colony}</p>
                         <p>{t.city}</p>
@@ -982,7 +971,7 @@ export default function Contact() {
                       <Phone className="w-4 h-4 text-primary flex-shrink-0" />
                       <a 
                         href={`tel:${t.phone.replace(/\s/g, '')}`}
-                        className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                        className="text-base text-ss-tinta hover:text-ss-marino hover:underline underline-offset-4 transition-colors"
                         data-testid="link-office-phone"
                       >
                         {t.phone}
@@ -993,7 +982,7 @@ export default function Contact() {
                       <Mail className="w-4 h-4 text-primary flex-shrink-0" />
                       <a 
                         href={`mailto:${t.email}`}
-                        className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                        className="text-base text-ss-tinta hover:text-ss-marino hover:underline underline-offset-4 transition-colors"
                         data-testid="link-office-email"
                       >
                         {t.email}
@@ -1002,8 +991,8 @@ export default function Contact() {
                     
                     <div className="flex items-start gap-3">
                       <Clock className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                      <div className="text-sm text-muted-foreground" data-testid="text-office-hours">
-                        <p className="font-medium">{t.hours}</p>
+                      <div className="text-base text-ss-tinta" data-testid="text-office-hours">
+                        <p className="font-semibold">{t.hours}</p>
                         <p>{t.hoursDetails}</p>
                       </div>
                     </div>
@@ -1011,7 +1000,7 @@ export default function Contact() {
                   
                   <Button 
                     variant="outline"
-                    className="w-full rounded-lg"
+                    className="w-full"
                     asChild
                     data-testid="button-get-directions"
                   >
@@ -1020,7 +1009,6 @@ export default function Contact() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <MapPin className="w-4 h-4 mr-2" />
                       {t.getDirections}
                     </a>
                   </Button>
@@ -1038,30 +1026,28 @@ export default function Contact() {
               <Card className="bg-muted" data-testid="card-contact-cta">
                 <CardContent className="p-8">
                   <h3 
-                    className="text-xl font-heading font-light text-foreground mb-4"
+                    className={`${h3Class} mb-5`}
                     data-testid="text-contact-cta-title"
                   >
                     {t.contactUs}
                   </h3>
                   <div className="flex flex-col gap-3">
                     <Button 
-                      className="w-full rounded-lg"
+                      className="w-full"
                       asChild
                       data-testid="button-send-email"
                     >
                       <a href={`mailto:${t.email}`}>
-                        <Mail className="w-4 h-4 mr-2" />
                         {t.sendEmail}
                       </a>
                     </Button>
                     <Button 
                       variant="outline"
-                      className="w-full rounded-lg"
+                      className="w-full"
                       asChild
                       data-testid="button-call-us"
                     >
                       <a href={`tel:${t.phone.replace(/\s/g, '')}`}>
-                        <Phone className="w-4 h-4 mr-2" />
                         {t.callUs}
                       </a>
                     </Button>
@@ -1072,13 +1058,13 @@ export default function Contact() {
               <Card className="" data-testid="card-connect">
                 <CardContent className="p-8">
                   <h3 
-                    className="text-xl font-heading font-light text-foreground mb-2"
+                    className={`${h3Class} mb-2`}
                     data-testid="text-connect-title"
                   >
                     {t.connectTitle}
                   </h3>
                   <p 
-                    className="text-muted-foreground text-sm mb-6"
+                    className="text-base text-ss-tinta mb-6"
                     data-testid="text-connect-subtitle"
                   >
                     {t.connectSubtitle}
@@ -1087,7 +1073,7 @@ export default function Contact() {
                     {FIRM_LINKEDIN_URL && (
                       <Button
                         variant="outline"
-                        className="w-full rounded-lg justify-start"
+                        className="w-full"
                         asChild
                         data-testid="button-linkedin"
                       >
@@ -1096,14 +1082,13 @@ export default function Contact() {
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          <Linkedin className="w-4 h-4 mr-3" />
                           {t.linkedinText}
                         </a>
                       </Button>
                     )}
                     <Button 
                       variant="outline"
-                      className="w-full rounded-lg justify-start"
+                      className="w-full"
                       asChild
                       data-testid="button-website"
                     >
@@ -1112,7 +1097,6 @@ export default function Contact() {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <ExternalLink className="w-4 h-4 mr-3" />
                         {t.websiteText}
                       </a>
                     </Button>

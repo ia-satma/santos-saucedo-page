@@ -40,7 +40,7 @@ const seoConfig: Record<string, SEOConfig> = {
   home: {
     title: {
       en: "Santos & Saucedo | Law Firm for Companies in Mexico",
-      es: "Santos & Saucedo | Abogados para Empresas — Laboral, Corporativo, Migratorio y Litigio",
+      es: "Santos & Saucedo | Abogados para empresas — laboral, corporativo, migratorio y litigio",
       de: "Santos & Saucedo | Kanzlei für Arbeitsrecht in Mexiko",
       zh: "Santos & Saucedo | 墨西哥劳动法律师事务所",
       ko: "Santos & Saucedo | 멕시코 노동법 전문 로펌",
@@ -67,7 +67,7 @@ const seoConfig: Record<string, SEOConfig> = {
   about: {
     title: {
       en: "About Us | Santos & Saucedo",
-      es: "Acerca de Nosotros | Santos & Saucedo",
+      es: "Acerca de nosotros | Santos & Saucedo",
       de: "Über Uns | Santos & Saucedo",
       zh: "关于我们 | Santos & Saucedo",
       ko: "회사 소개 | Santos & Saucedo",
@@ -94,7 +94,7 @@ const seoConfig: Record<string, SEOConfig> = {
   team: {
     title: {
       en: "Our Team | Santos & Saucedo",
-      es: "Nuestro Equipo | Santos & Saucedo",
+      es: "Nuestro equipo | Santos & Saucedo",
       de: "Unser Team | Santos & Saucedo",
       zh: "我们的团队 | Santos & Saucedo",
       ko: "우리 팀 | Santos & Saucedo",
@@ -121,7 +121,7 @@ const seoConfig: Record<string, SEOConfig> = {
   practiceGroups: {
     title: {
       en: "Practice Areas | Santos & Saucedo",
-      es: "Áreas de Práctica | Santos & Saucedo",
+      es: "Áreas de práctica | Santos & Saucedo",
       de: "Praxisbereiche | Santos & Saucedo",
       zh: "业务领域 | Santos & Saucedo",
       ko: "업무 분야 | Santos & Saucedo",
@@ -133,7 +133,7 @@ const seoConfig: Record<string, SEOConfig> = {
     },
     description: {
       en: "Four areas of specialty for companies, rooted in labor law: Labor & Social Security, Corporate & Contractual, Immigration, and Contentious Litigation (civil, commercial and criminal).",
-      es: "Cuatro áreas de especialidad para empresas, con raíz en el derecho laboral: Laboral y Seguridad Social, Corporativo y Contractual, Migratorio, y Litigio Contencioso (civil, mercantil y penal).",
+      es: "Cuatro áreas de especialidad para empresas, con raíz en el derecho laboral: Laboral y seguridad social, Corporativo y contractual, Migratorio, y Litigio contencioso (civil, mercantil y penal).",
       de: "Arbeitsrechtliche Leistungen für Unternehmen: individuelle und kollektive Konflikte vor Schlichtungsstellen, Prüfung der Personalverwaltung, Diagnose der Arbeitsbeziehungen, Verbesserungspläne, arbeitsrechtliche Audits sowie strategische Planung, Kurse und Workshops.",
       zh: "为企业提供的劳动法服务：向调解委员会提起的个人与集体争议、劳动管理审查、劳动关系诊断、改进计划、劳动法律审计，以及战略规划、课程与研讨会。",
       ko: "기업을 위한 노동법 서비스: 조정위원회에 제기하는 개별 및 집단 분쟁, 노무 관리 검토, 노사 관계 진단, 개선 계획, 노동 법률 감사, 전략 기획, 강좌 및 워크숍.",
@@ -148,7 +148,7 @@ const seoConfig: Record<string, SEOConfig> = {
   industryGroups: {
     title: {
       en: "Industry Groups | Santos & Saucedo",
-      es: "Grupos Industriales | Santos & Saucedo",
+      es: "Grupos industriales | Santos & Saucedo",
       de: "Branchengruppen | Santos & Saucedo",
       zh: "行业组 | Santos & Saucedo",
       ko: "산업 그룹 | Santos & Saucedo",
@@ -175,7 +175,7 @@ const seoConfig: Record<string, SEOConfig> = {
   news: {
     title: {
       en: "News & Insights | Santos & Saucedo",
-      es: "Noticias e Insights | Santos & Saucedo",
+      es: "Noticias e insights | Santos & Saucedo",
       de: "Nachrichten & Einblicke | Santos & Saucedo",
       zh: "新闻与洞察 | Santos & Saucedo",
       ko: "뉴스 & 인사이트 | Santos & Saucedo",
@@ -256,7 +256,7 @@ const seoConfig: Record<string, SEOConfig> = {
   rankings: {
     title: {
       en: "Rankings & Recognition | Santos & Saucedo",
-      es: "Rankings y Reconocimientos | Santos & Saucedo",
+      es: "Rankings y reconocimientos | Santos & Saucedo",
       de: "Rankings & Auszeichnungen | Santos & Saucedo",
       zh: "排名与认可 | Santos & Saucedo",
       ko: "순위 & 인정 | Santos & Saucedo",
@@ -283,7 +283,7 @@ const seoConfig: Record<string, SEOConfig> = {
   experience: {
     title: {
       en: "Our Experience | Santos & Saucedo",
-      es: "Nuestra Experiencia | Santos & Saucedo",
+      es: "Nuestra experiencia | Santos & Saucedo",
       de: "Unsere Erfahrung | Santos & Saucedo",
       zh: "我们的经验 | Santos & Saucedo",
       ko: "우리의 경험 | Santos & Saucedo",
@@ -310,7 +310,7 @@ const seoConfig: Record<string, SEOConfig> = {
   offices: {
     title: {
       en: "Our Offices | Santos & Saucedo",
-      es: "Nuestras Oficinas | Santos & Saucedo",
+      es: "Nuestras oficinas | Santos & Saucedo",
       de: "Unsere Büros | Santos & Saucedo",
       zh: "我们的办公室 | Santos & Saucedo",
       ko: "사무소 안내 | Santos & Saucedo",
@@ -337,7 +337,7 @@ const seoConfig: Record<string, SEOConfig> = {
   privacyPolicy: {
     title: {
       en: "Privacy Policy | Santos & Saucedo",
-      es: "Política de Privacidad | Santos & Saucedo",
+      es: "Política de privacidad | Santos & Saucedo",
       de: "Datenschutzrichtlinie | Santos & Saucedo",
       zh: "隐私政策 | Santos & Saucedo",
       ko: "개인정보 처리방침 | Santos & Saucedo",
@@ -364,7 +364,7 @@ const seoConfig: Record<string, SEOConfig> = {
   terms: {
     title: {
       en: "Terms and Conditions | Santos & Saucedo",
-      es: "Términos y Condiciones | Santos & Saucedo",
+      es: "Términos y condiciones | Santos & Saucedo",
       de: "Allgemeine Geschäftsbedingungen | Santos & Saucedo",
       zh: "条款与条件 | Santos & Saucedo",
       ko: "이용약관 | Santos & Saucedo",
@@ -391,7 +391,7 @@ const seoConfig: Record<string, SEOConfig> = {
   diversityInclusion: {
     title: {
       en: "Diversity & Inclusion | Santos & Saucedo",
-      es: "Diversidad e Inclusión | Santos & Saucedo",
+      es: "Diversidad e inclusión | Santos & Saucedo",
       de: "Vielfalt & Inklusion | Santos & Saucedo",
       zh: "多元与包容 | Santos & Saucedo",
       ko: "다양성 & 포용성 | Santos & Saucedo",
@@ -418,7 +418,7 @@ const seoConfig: Record<string, SEOConfig> = {
   proBono: {
     title: {
       en: "Pro Bono | Santos & Saucedo",
-      es: "Pro Bono | Santos & Saucedo",
+      es: "Pro bono | Santos & Saucedo",
       de: "Pro Bono | Santos & Saucedo",
       zh: "公益法律服务 | Santos & Saucedo",
       ko: "프로보노 | Santos & Saucedo",
@@ -471,7 +471,7 @@ const seoConfig: Record<string, SEOConfig> = {
   newsletter: {
     title: {
       en: "Newsletter | Santos & Saucedo",
-      es: "Boletín Informativo | Santos & Saucedo",
+      es: "Boletín informativo | Santos & Saucedo",
       de: "Newsletter | Santos & Saucedo",
       zh: "通讯 | Santos & Saucedo",
       ko: "뉴스레터 | Santos & Saucedo",
@@ -525,7 +525,7 @@ const seoConfig: Record<string, SEOConfig> = {
   interns: {
     title: {
       en: "Internship Program | Santos & Saucedo",
-      es: "Programa de Pasantes | Santos & Saucedo",
+      es: "Programa de pasantes | Santos & Saucedo",
       de: "Praktikumsprogramm | Santos & Saucedo",
       zh: "实习项目 | Santos & Saucedo",
       ko: "인턴십 프로그램 | Santos & Saucedo",
@@ -575,22 +575,22 @@ export default function SEOHead({
     const safeSeo: Partial<Record<keyof typeof seoConfig, { title: string; description: string }>> = {
       home: {
         title: language === "es"
-          ? "Santos & Saucedo | Abogados para Empresas en San Pedro Garza García"
+          ? "Santos & Saucedo | Abogados para empresas en San Pedro Garza García"
           : "Santos & Saucedo | Law Firm for Companies in San Pedro Garza García",
         description: language === "es"
           ? "Administración del capital humano y defensa legal para empresas, con raíz en el derecho laboral. Más de 35 años de experiencia y alianza nacional en más de 72 ciudades de México."
           : "Human-capital administration and legal defense for companies, rooted in labor law. More than 35 years of experience and a national alliance across more than 72 Mexican cities.",
       },
       about: {
-        title: language === "es" ? "La Firma | Santos & Saucedo" : "The Firm | Santos & Saucedo",
+        title: language === "es" ? "La firma | Santos & Saucedo" : "The Firm | Santos & Saucedo",
         description: language === "es"
           ? "Santos & Saucedo es una firma legal para empresas —laboral, corporativo, migratorio y litigio— con raíz en el derecho laboral y más de 35 años de experiencia asesorando empresas nacionales y multinacionales."
           : "Santos & Saucedo is a law firm for companies —labor, corporate, immigration and litigation— rooted in labor law, with more than 35 years of experience advising national and multinational companies.",
       },
       practiceGroups: {
-        title: language === "es" ? "Áreas de Práctica | Santos & Saucedo" : "Practice Areas | Santos & Saucedo",
+        title: language === "es" ? "Áreas de práctica | Santos & Saucedo" : "Practice Areas | Santos & Saucedo",
         description: language === "es"
-          ? "Cuatro áreas de especialidad para empresas, con raíz en el derecho laboral: Laboral y Seguridad Social, Corporativo y Contractual, Migratorio, y Litigio Contencioso."
+          ? "Cuatro áreas de especialidad para empresas, con raíz en el derecho laboral: Laboral y seguridad social, Corporativo y contractual, Migratorio, y Litigio contencioso."
           : "Four areas of specialty for companies, rooted in labor law: Labor & Social Security, Corporate & Contractual, Immigration, and Contentious Litigation.",
       },
       contact: {

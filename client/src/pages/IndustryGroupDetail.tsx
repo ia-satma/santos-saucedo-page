@@ -1,16 +1,14 @@
 import { Link, useParams } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowLeft, Mail, Phone, AlertCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
-import { getIcon } from "@/lib/icons";
 import { Eyebrow, LeadParagraph } from "@/components/editorial";
 import type { IndustryGroup, PracticeGroup } from "@shared/schema";
 
@@ -36,16 +34,14 @@ function TranslatedPracticeGroupBadge({ practiceGroup, language }: TranslatedPra
     <li data-testid={`badge-related-practice-${practiceGroup.slug}`}>
       <Link
         href={`/practice-groups/${practiceGroup.slug}`}
-        className="flex items-center justify-between gap-4 py-4 px-1 hover-elevate cursor-pointer"
+        className="group flex w-full items-center justify-between gap-4 py-4 cursor-pointer"
       >
-        <div className="flex items-center gap-4 min-w-0">
-          <div className="w-2 h-2 bg-brand shrink-0" aria-hidden="true" />
-          <span className="text-foreground font-medium uppercase tracking-[0.12em] text-sm">
-            {displayName}
-          </span>
-        </div>
-        <span className="text-[10px] text-muted-foreground tracking-[0.2em] uppercase shrink-0">
-          {language === 'es' ? 'Ver' : 'View'} →
+        <span className="font-heading text-[19px] leading-[1.3] text-ss-marino min-w-0 group-hover:underline decoration-1 underline-offset-4">
+          {displayName}
+        </span>
+        <span className="ss-label text-ss-medio shrink-0">
+          {language === 'es' ? 'Ver' : 'View'}{" "}
+          <span aria-hidden="true" className="ss-label inline-block rtl:-scale-x-100">→</span>
         </span>
       </Link>
     </li>
@@ -119,23 +115,23 @@ export default function IndustryGroupDetail() {
       aboutIndustry: "About This Industry",
     },
     es: {
-      backToAll: "Todas las Industrias",
+      backToAll: "Todas las industrias",
       contactUs: "Contáctenos",
       contactCta: "Contacte a nuestro equipo",
       contactSubtitle: "Permita que nuestros abogados experimentados le ayuden a navegar los desafíos legales de esta industria.",
-      emailUs: "Enviar Email",
+      emailUs: "Enviar correo",
       callUs: "Llamar",
-      relatedServices: "Áreas de Práctica Relacionadas",
+      relatedServices: "Áreas de práctica relacionadas",
       errorMessage: "Industria no encontrada",
       loading: "Cargando...",
-      overview: "Descripción General",
-      keyContacts: "Contactos Clave",
-      relatedIndustries: "Industrias Relacionadas",
-      relatedPractices: "Áreas de Práctica Relacionadas",
-      representativeMatters: "Casos Representativos",
-      viewProfile: "Ver Perfil",
-      ourTeam: "Nuestro Equipo",
-      aboutIndustry: "Acerca de esta Industria",
+      overview: "Descripción general",
+      keyContacts: "Contactos clave",
+      relatedIndustries: "Industrias relacionadas",
+      relatedPractices: "Áreas de práctica relacionadas",
+      representativeMatters: "Casos representativos",
+      viewProfile: "Ver perfil",
+      ourTeam: "Nuestro equipo",
+      aboutIndustry: "Acerca de esta industria",
     },
     de: {
       backToAll: "Zurück zu Branchen",
@@ -299,14 +295,12 @@ export default function IndustryGroupDetail() {
         <Header />
         {/* Cabecera sticky en flujo: ya no hace falta compensar el header fijo */}
         <main id="main-content" className="pt-16 pb-20 lg:pt-20">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
-            <AlertCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-2xl font-heading text-foreground mb-4" data-testid="text-error-title">
+          <div className="max-w-7xl mx-auto px-6 lg:px-12">
+            <h2 className="ss-h2 mb-6" data-testid="text-error-title">
               {t.errorMessage}
             </h2>
             <Link href="/industry-groups">
               <Button variant="outline" data-testid="button-back-to-industry-groups">
-                <ArrowLeft className="w-4 h-4 mr-2" />
                 {t.backToAll}
               </Button>
             </Link>
@@ -324,10 +318,7 @@ export default function IndustryGroupDetail() {
         <section className="pt-36 pb-20 editorial-page-hero">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <Skeleton className="h-5 w-48 bg-white/10 mb-6" />
-            <div className="flex items-center gap-4">
-              <Skeleton className="h-16 w-16 rounded-none bg-white/10" />
-              <Skeleton className="h-12 w-64 bg-white/10" />
-            </div>
+            <Skeleton className="h-12 w-64 bg-white/10" />
           </div>
         </section>
         <main id="main-content" className="py-16 lg:py-20">
@@ -343,7 +334,6 @@ export default function IndustryGroupDetail() {
     );
   }
 
-  const IconComponent = industryGroup ? getIcon(industryGroup.iconName) : null;
   const displayName = translatedFields.name || industryGroup?.name;
   const displayDescription = translatedFields.fullDescription || translatedFields.description || industryGroup?.fullDescription || industryGroup?.description;
 
@@ -354,7 +344,8 @@ export default function IndustryGroupDetail() {
       <Header />
       
       <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-industry-group-hero">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        {/* Columna de lectura del cuerpo (max-w-4xl): vuelta y titular sobre el mismo borde */}
+        <div className="max-w-4xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -362,27 +353,24 @@ export default function IndustryGroupDetail() {
             transition={{ duration: 0.7 }}
           >
             <Link href="/industry-groups">
-              <span 
-                className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 cursor-pointer text-sm"
+              <span
+                className="inline-flex items-center gap-2 mb-6 cursor-pointer"
                 data-testid="link-back-to-industry-groups"
               >
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
                 {t.backToAll}
               </span>
             </Link>
-            <div className="flex items-center gap-4">
-              {IconComponent && (
-                <div className="w-16 h-16 rounded-none bg-white/5 flex items-center justify-center">
-                  <IconComponent className="w-8 h-8 text-primary" data-testid="icon-industry-group-detail" />
-                </div>
-              )}
-              <h1 
-                className="text-2xl md:text-3xl lg:text-4xl font-heading font-light text-white uppercase tracking-[0.15em]"
+            {/* Sin ficha con icono junto al titular: el eyebrow "§ ——" conserva su data-testid */}
+            <Eyebrow num="" tone="navy" className="mb-4" testId="icon-industry-group-detail" />
+            <div>
+              <h1
+                className="ss-hero-detail"
                 data-testid="text-industry-group-title"
               >
                 {displayName}
                 {isTranslating && (
-                  <Loader2 className="inline-block w-5 h-5 ml-3 animate-spin text-white/60" />
+                  <Loader2 className="inline-block w-5 h-5 ms-3 animate-spin text-white/60" />
                 )}
               </h1>
             </div>
@@ -418,9 +406,9 @@ export default function IndustryGroupDetail() {
           </div>
         </section>
 
-        {/* Related practice areas — muted band */}
+        {/* Áreas de práctica relacionadas: blanco, filete de sección y lista de filetes */}
         {relatedPracticeGroups && relatedPracticeGroups.length > 0 && (
-          <section className="bg-muted/40 py-16 lg:py-20" data-testid="section-related-services">
+          <section className="bg-background border-t border-ss-rule py-16 lg:py-20" data-testid="section-related-services">
             <div className="max-w-4xl mx-auto px-6 lg:px-12">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -428,16 +416,13 @@ export default function IndustryGroupDetail() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
-                <div className="mb-6">
-                  <div className="h-px w-10 bg-brand mb-4" aria-hidden="true" />
-                  <h2
-                    className="text-xl font-heading font-light text-foreground uppercase tracking-[0.12em]"
-                    data-testid="text-related-services-title"
-                  >
-                    {t.relatedServices}
-                  </h2>
-                </div>
-                <ul className="divide-y divide-border/60" data-testid="list-related-practices">
+                <h2
+                  className="ss-h2-sm mb-6"
+                  data-testid="text-related-services-title"
+                >
+                  {t.relatedServices}
+                </h2>
+                <ul className="divide-y divide-ss-rule border-y border-ss-rule" data-testid="list-related-practices">
                   {relatedPracticeGroups.map((practiceGroup) => (
                     <TranslatedPracticeGroupBadge
                       key={practiceGroup.id}
@@ -451,43 +436,37 @@ export default function IndustryGroupDetail() {
           </section>
         )}
 
-        {/* Contact CTA — light band */}
-        <section className="bg-background py-16 lg:py-20">
+        {/* Contacto: bloque Hueso, sin iconos */}
+        <section className="bg-background pb-16 lg:pb-24">
           <div className="max-w-4xl mx-auto px-6 lg:px-12">
             <motion.section
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="bg-muted rounded-none p-8 lg:p-12"
+              className="bg-ss-paper p-8 lg:p-12"
               data-testid="section-contact-cta"
             >
               <h2
-                className="text-xl font-heading font-light text-foreground mb-3 uppercase tracking-[0.12em]"
+                className="ss-h2-sm mb-3"
                 data-testid="text-contact-cta-title"
               >
                 {t.contactCta}
               </h2>
               <p
-                className="text-muted-foreground mb-6"
+                className="text-base text-ss-tinta mb-6 max-w-2xl"
                 data-testid="text-contact-cta-subtitle"
               >
                 {t.contactSubtitle}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  className="rounded-none"
-                  data-testid="button-email-us"
-                >
-                  <Mail className="w-4 h-4 mr-2" />
+                <Button data-testid="button-email-us">
                   {t.emailUs}
                 </Button>
                 <Button
                   variant="outline"
-                  className="rounded-none"
                   data-testid="button-call-us"
                 >
-                  <Phone className="w-4 h-4 mr-2" />
                   {t.callUs}
                 </Button>
               </div>

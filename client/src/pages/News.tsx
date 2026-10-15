@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { AlertCircle, Calendar, ArrowRight, Search, Newspaper, Loader2 } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,7 @@ import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
+import { Eyebrow } from "@/components/editorial";
 import { newsCategories, type News } from "@shared/schema";
 
 function NewsImageWithFallback({ 
@@ -28,10 +28,9 @@ function NewsImageWithFallback({
   
   if (hasError || !src) {
     return (
-      <div className={`bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center ${className}`}>
-        <span className="text-4xl font-heading font-bold text-primary/30 tracking-wider">
-          S&S
-        </span>
+      // Sin imagen: Hueso con un § tonal en Línea (en vez del "S&S")
+      <div aria-hidden="true" className={`bg-ss-paper flex items-center justify-center ${className}`}>
+        <span className="font-heading font-normal text-5xl text-ss-rule leading-none">§</span>
       </div>
     );
   }
@@ -108,60 +107,56 @@ function NewsCard({ article, readMoreText }: NewsCardProps) {
 
   const showTranslatingIndicator = isLoading || isTranslating;
 
+  // Fila abierta: foto sin velo, categoría y fecha como etiquetas, titular en romana
+  // Azul Marino, extracto de 16 px y enlace de texto. Sin caja, sombra ni iconos.
   return (
     <Link href={`/news/${article.slug}`}>
-      <Card
-        className="group h-full overflow-hidden transition-all duration-300 cursor-pointer"
+      <article
+        className="group h-full flex flex-col cursor-pointer"
         data-testid={`card-news-${article.slug}`}
       >
-        <div className="relative h-48 overflow-hidden bg-muted">
+        <div className="relative aspect-[16/10] overflow-hidden bg-ss-paper mb-5">
           <NewsImageWithFallback
             src={article.imageUrl || ""}
             alt={displayTitle}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="ss-photo--colour w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+          {showTranslatingIndicator && (
+            <div className="absolute top-3 end-3 flex items-center px-2 py-1 bg-ss-navy/80 text-white">
+              <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" />
+            </div>
+          )}
+        </div>
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-2">
           {article.category && (
-            <span 
-              className="absolute top-3 left-3 px-2 py-1 text-xs font-medium bg-primary text-primary-foreground rounded"
+            <span
+              className="ss-label text-ss-marino"
               data-testid={`badge-category-${article.slug}`}
             >
               {getCategoryLabel()}
             </span>
           )}
-          {showTranslatingIndicator && (
-            <div className="absolute top-3 right-3">
-              <div className="flex items-center gap-1 px-2 py-1 bg-black/50 rounded text-xs text-white">
-                <Loader2 className="w-3 h-3 animate-spin" />
-              </div>
-            </div>
-          )}
+          <span className="ss-label text-ss-medio" data-testid={`text-news-date-${article.slug}`}>
+            {formatDate(article.date)}
+          </span>
         </div>
-        <CardContent className="p-6">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-            <Calendar className="w-4 h-4" />
-            <span data-testid={`text-news-date-${article.slug}`}>
-              {formatDate(article.date)}
-            </span>
-          </div>
-          <h3 
-            className="text-xl font-semibold text-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2"
-            data-testid={`text-news-title-${article.slug}`}
-          >
-            {displayTitle}
-          </h3>
-          <p 
-            className="text-muted-foreground text-sm line-clamp-3 mb-4"
-            data-testid={`text-news-excerpt-${article.slug}`}
-          >
-            {displayExcerpt}
-          </p>
-          <div className="flex items-center gap-2 text-primary font-medium text-sm group-hover:gap-3 transition-all">
-            {readMoreText}
-            <ArrowRight className="w-4 h-4" />
-          </div>
-        </CardContent>
-      </Card>
+        <h3
+          className="ss-h3 text-[20px] mb-2 line-clamp-3 group-hover:underline decoration-1 underline-offset-4"
+          data-testid={`text-news-title-${article.slug}`}
+        >
+          {displayTitle}
+        </h3>
+        <p
+          className="text-base leading-[1.55] text-ss-tinta line-clamp-3 mb-4"
+          data-testid={`text-news-excerpt-${article.slug}`}
+        >
+          {displayExcerpt}
+        </p>
+        <span className="mt-auto inline-flex items-center gap-2 text-[15px] font-semibold text-ss-marino">
+          {readMoreText}
+          <span aria-hidden="true" className="text-[15px] inline-block transition-transform duration-300 group-hover:translate-x-1 rtl:-scale-x-100 rtl:group-hover:-translate-x-1">→</span>
+        </span>
+      </article>
     </Link>
   );
 }
@@ -212,11 +207,11 @@ export default function NewsPage() {
       allCategories: "All Categories",
     },
     es: {
-      title: "Noticias e Insights",
+      title: "Noticias e insights",
       subtitle: "Noticias y perspectivas",
       errorMessage: "Error al cargar las noticias",
       searchPlaceholder: "Buscar...",
-      readMore: "Leer Más",
+      readMore: "Leer más",
       noResults: "No se encontraron noticias",
       published: "Publicado",
       all: "Todos",
@@ -442,24 +437,23 @@ export default function NewsPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="text-center"
+            className="max-w-3xl"
           >
-            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
-            <h1 
-              className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
+            <Eyebrow num="04" tone="navy" className="mb-6" />
+            <h1
+              className="mb-5"
               data-testid="text-news-title"
             >
               {t.title}
             </h1>
-            <p 
-              className="text-base text-white/60 max-w-2xl mx-auto"
+            <p
               data-testid="text-news-subtitle"
             >
               {t.subtitle}
             </p>
             {translationBanner && (
-              <p 
-                className="mt-4 text-sm text-white/50 max-w-2xl mx-auto"
+              <p
+                className="mt-4 text-sm"
                 data-testid="text-translation-banner"
               >
                 {translationBanner}
@@ -485,11 +479,12 @@ export default function NewsPage() {
                   variant={selectedCategory === cat.value ? "default" : "outline"}
                   size="sm"
                   onClick={() => setSelectedCategory(cat.value)}
-                  className={`transition-all ${
-                    selectedCategory === cat.value 
-                      ? "bg-primary text-primary-foreground" 
-                      : "text-muted-foreground hover:bg-muted"
-                  }`}
+                  aria-pressed={selectedCategory === cat.value}
+                  className={
+                    selectedCategory === cat.value
+                      ? "text-sm"
+                      : "text-sm font-normal border-ss-input text-ss-tinta hover:border-ss-marino hover:text-ss-marino"
+                  }
                   data-testid={`button-filter-${cat.value}`}
                 >
                   {cat.label}
@@ -498,47 +493,43 @@ export default function NewsPage() {
             </div>
 
             <div className="relative max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search aria-hidden="true" className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ss-medio" />
               <Input
                 type="text"
                 placeholder={t.searchPlaceholder}
+                aria-label={t.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 rounded-lg"
+                className="ps-9 bg-white border-ss-input text-ss-tinta placeholder:text-ss-medio focus-visible:ring-ss-marino focus-visible:border-ss-marino"
                 data-testid="input-search-news"
               />
             </div>
           </motion.div>
 
           {error ? (
-            <div className="text-center py-12" data-testid="container-news-error">
-              <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground" data-testid="text-news-error">
+            <div className="py-12" data-testid="container-news-error">
+              <p className="text-base text-ss-medio" data-testid="text-news-error">
                 {t.errorMessage}
               </p>
             </div>
           ) : isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
               {Array.from({ length: 6 }).map((_, i) => (
-                <Card
+                <div
                   key={i}
-                  className="overflow-hidden"
                   data-testid={`skeleton-news-${i}`}
                 >
-                  <Skeleton className="h-48 w-full" />
-                  <CardContent className="p-6">
-                    <Skeleton className="h-4 w-24 mb-3" />
-                    <Skeleton className="h-6 w-full mb-2" />
-                    <Skeleton className="h-4 w-full mb-1" />
-                    <Skeleton className="h-4 w-3/4" />
-                  </CardContent>
-                </Card>
+                  <Skeleton className="aspect-[16/10] w-full bg-ss-paper mb-5" />
+                  <Skeleton className="h-4 w-24 mb-3 bg-ss-rule" />
+                  <Skeleton className="h-6 w-full mb-2 bg-ss-rule" />
+                  <Skeleton className="h-4 w-full mb-1 bg-ss-rule" />
+                  <Skeleton className="h-4 w-3/4 bg-ss-rule" />
+                </div>
               ))}
             </div>
           ) : filteredNews && filteredNews.length === 0 ? (
-            <div className="text-center py-12" data-testid="container-news-empty">
-              <Newspaper className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">
+            <div className="py-12" data-testid="container-news-empty">
+              <p className="text-base text-ss-medio">
                 {t.noResults}
               </p>
             </div>
@@ -548,7 +539,7 @@ export default function NewsPage() {
               initial="hidden"
               whileInView="visible"
             viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12"
             >
               {filteredNews?.map((article) => (
                 <motion.div key={article.id} variants={itemVariants}>

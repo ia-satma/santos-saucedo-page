@@ -47,7 +47,7 @@ const industryGroups: IndustryGroup[] = [
     id: 2,
     names: {
       en: "Consumer Goods",
-      es: "Bienes de Consumo",
+      es: "Bienes de consumo",
       de: "Konsumgüter",
       zh: "消费品",
       ko: "소비재",
@@ -64,7 +64,7 @@ const industryGroups: IndustryGroup[] = [
     id: 3,
     names: {
       en: "Energy & Natural Resources",
-      es: "Energía y Recursos Naturales",
+      es: "Energía y recursos naturales",
       de: "Energie & Natürliche Ressourcen",
       zh: "能源与自然资源",
       ko: "에너지 및 천연자원",
@@ -81,7 +81,7 @@ const industryGroups: IndustryGroup[] = [
     id: 4,
     names: {
       en: "Pharmaceutical & Life Sciences",
-      es: "Farmacéutica y Ciencias de la Salud",
+      es: "Farmacéutica y ciencias de la salud",
       de: "Pharma & Life Sciences",
       zh: "制药与生命科学",
       ko: "제약 및 생명과학",
@@ -98,7 +98,7 @@ const industryGroups: IndustryGroup[] = [
     id: 5,
     names: {
       en: "Financial Services",
-      es: "Servicios Financieros",
+      es: "Servicios financieros",
       de: "Finanzdienstleistungen",
       zh: "金融服务",
       ko: "금융 서비스",
@@ -281,7 +281,7 @@ export default function IndustryGroupsSection() {
               />
 
               {/* Red vertical separator line */}
-              <div className="absolute top-0 right-0 w-px h-full bg-[#1E1C92]/20" />
+              <div className="absolute top-0 right-0 w-px h-full bg-ss-rule" />
 
               {/* Number — top left */}
               <span
@@ -300,7 +300,7 @@ export default function IndustryGroupsSection() {
                 }}
               >
                 <span
-                  className="text-white/70 text-[10px] uppercase tracking-[0.18em] font-light whitespace-nowrap"
+                  className="ss-label text-white/70 whitespace-nowrap"
                   style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
                   data-testid={`text-industry-group-name-${group.id}`}
                 >
@@ -317,7 +317,7 @@ export default function IndustryGroupsSection() {
                   transition: "opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s",
                 }}
               >
-                <p className="font-heading font-light text-base uppercase tracking-[0.1em] leading-snug mb-3 text-white">
+                <p className="font-heading font-normal text-base leading-snug mb-3 text-white">
                   {name}
                 </p>
                 <div className="flex items-center gap-2 text-primary">
@@ -347,11 +347,11 @@ export default function IndustryGroupsSection() {
                 aria-hidden="true"
                 className="absolute inset-0 w-full h-full object-cover transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-[#1E1C92]/60 group-hover:bg-[#1E1C92]/44 transition-colors duration-300" />
+              <div className="absolute inset-0 bg-ss-navy/60 group-hover:bg-ss-navy/44 transition-colors duration-300" />
               <span className="absolute top-3 left-3 text-primary text-xs font-medium tabular-nums">
                 {String(group.id).padStart(2, "0")}
               </span>
-              <p className="absolute bottom-3 left-3 right-3 text-white/90 text-xs uppercase tracking-[0.1em] leading-snug font-light">
+              <p className="ss-label absolute bottom-3 left-3 right-3 text-white/90 leading-snug">
                 {name}
               </p>
             </Link>
@@ -371,12 +371,12 @@ export default function IndustryGroupsSection() {
           <div className="w-10 h-px bg-brand shrink-0" />
           <div>
             {/* Eyebrow label — small red uppercase, comes first */}
-            <p className="text-primary text-[10px] tracking-[0.25em] uppercase mb-1">
+            <p className="ss-label text-primary mb-1">
               {t.subtitle}
             </p>
             {/* Serif section heading — Playfair Display */}
             <h2
-              className="font-heading font-light text-xl md:text-2xl text-foreground uppercase tracking-[0.12em]"
+              className="font-heading font-normal text-xl md:text-2xl text-ss-marino"
               data-testid="text-industry-groups-title"
             >
               {t.title}
@@ -385,7 +385,7 @@ export default function IndustryGroupsSection() {
         </div>
         <Link
           href="/industry-groups"
-          className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.15em] uppercase text-primary/75 hover:text-primary transition-colors duration-200 group"
+          className="ss-label inline-flex items-center gap-2 text-primary/75 hover:text-primary transition-colors duration-200 group"
           data-testid="link-industry-groups-see-more"
           aria-label={t.seeMoreAriaLabel}
         >

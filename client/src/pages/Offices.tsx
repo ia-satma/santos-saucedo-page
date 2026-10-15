@@ -7,18 +7,11 @@ import {
   Mail, 
   Clock, 
   Building2, 
-  Car, 
-  Train, 
   Accessibility, 
   Video, 
-  Users, 
   Coffee, 
   Wifi,
   ParkingCircle,
-  Navigation,
-  ExternalLink,
-  ArrowRight,
-  Landmark
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -29,6 +22,12 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { OfficeImage } from "@shared/schema";
+
+// "Clásica": titulares en romana 400, Azul Marino, caja de oración y al inicio; texto en Gris Tinta.
+const h2Class = "font-heading font-normal text-ss-marino text-[clamp(28px,2.6vw,38px)] leading-[1.12] tracking-[-0.012em] [text-wrap:balance]";
+const h3Class = "font-heading font-normal text-ss-marino text-[22px] leading-[1.25] tracking-[-0.01em]";
+const h4Class = "font-heading font-normal text-ss-marino text-[20px] leading-[1.25] tracking-[-0.01em]";
+const leadClass = "font-serif font-normal text-ss-tinta text-[clamp(19px,0.6vw_+_14px,22px)] leading-[1.55] tracking-[-0.003em] [text-wrap:pretty]";
 
 interface AmenityItem {
   icon: typeof Building2;
@@ -156,9 +155,9 @@ export default function Offices() {
       viewOnMap: "View on Map",
     },
     es: {
-      heroTitle: "Nuestras Oficinas",
+      heroTitle: "Nuestras oficinas",
       heroSubtitle: "Visítenos en nuestras oficinas en San Pedro Garza García",
-      mainOfficeTitle: "Oficinas Centrales en San Pedro Garza García",
+      mainOfficeTitle: "Oficinas centrales en San Pedro Garza García",
       buildingName: "Río Tamazunchale 205 Norte",
       floor: "",
       address: "San Pedro Garza García, N.L.",
@@ -168,35 +167,35 @@ export default function Offices() {
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
-      officeHoursTitle: "Horario de Oficina",
+      officeHoursTitle: "Horario de oficina",
       officeHours: "Lunes - Viernes: 9:00 AM - 7:00 PM (CST)",
       saturdayHours: "Sábado - Domingo: Cerrado",
-      getDirections: "Cómo Llegar",
-      amenitiesTitle: "Amenidades del Edificio",
+      getDirections: "Cómo llegar",
+      amenitiesTitle: "Amenidades del edificio",
       amenities: [
         { icon: Building2, text: "Edificio de oficinas Clase A Premium" },
         { icon: Wifi, text: "Conectividad de fibra óptica de alta velocidad" },
         { icon: Coffee, text: "Cafetería ejecutiva y áreas de descanso" },
         { icon: ParkingCircle, text: "Estacionamiento subterráneo con seguridad 24/7" },
       ],
-      directionsTitle: "Cómo Llegar",
+      directionsTitle: "Cómo llegar",
       directionsText: "Río Tamazunchale 205 Norte está ubicada en San Pedro Garza García, uno de los distritos empresariales clave de Nuevo León. El edificio es fácilmente accesible desde todas las principales autopistas y transporte público.",
-      landmarksTitle: "Puntos de Referencia Cercanos",
+      landmarksTitle: "Puntos de referencia cercanos",
       landmarks: [
         "Castillo de Chapultepec (2 min en auto)",
         "Museo Nacional de Antropología (5 min en auto)",
         "Paseo de la Reforma (1 min caminando)",
         "Zona comercial de Nuevo León (5 min caminando)",
       ],
-      galleryTitle: "Galería de Oficinas",
+      galleryTitle: "Galería de oficinas",
       gallerySubtitle: "Explore nuestro moderno espacio de trabajo colaborativo diseñado para la excelencia",
-      facilitiesTitle: "Nuestras Instalaciones",
+      facilitiesTitle: "Nuestras instalaciones",
       facilitiesSubtitle: "Amenidades de última generación para nuestros clientes y equipo",
-      meetingRoomsTitle: "Salas de Juntas",
+      meetingRoomsTitle: "Salas de juntas",
       meetingRoomsDesc: "16 salas de juntas completamente equipadas que van desde espacios íntimos de consulta con clientes hasta grandes salas de conferencias, todas con tecnología avanzada de presentación y mobiliario confortable.",
       videoConferencingTitle: "Videoconferencias",
       videoConferencingDesc: "Instalaciones de videoconferencia de última generación que permiten una comunicación fluida con clientes y socios en todo el mundo, con personal de soporte técnico dedicado.",
-      clientHospitalityTitle: "Hospitalidad para Clientes",
+      clientHospitalityTitle: "Hospitalidad para clientes",
       clientHospitalityDesc: "Áreas de recepción ejecutivas con servicios de catering premium, salones privados para clientes y estacionamiento VIP para nuestros distinguidos visitantes.",
       accessibilityTitle: "Accesibilidad",
       accessibilityDesc: "Accesibilidad completa para sillas de ruedas en todas nuestras oficinas, incluyendo baños accesibles, elevadores y espacios de estacionamiento reservados.",
@@ -208,12 +207,12 @@ export default function Offices() {
       parkingDesc: "La información de estacionamiento está disponible al programar su visita. Por favor contacte a nuestro equipo antes de llegar.",
       taxiTitle: "Taxi / Uber",
       taxiDesc: "Solicite su viaje a 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'. Por favor confirme los detalles de llegada con nuestro equipo antes de su visita.",
-      contactCtaTitle: "¿Listo para Visitarnos?",
+      contactCtaTitle: "¿Listo para visitarnos?",
       contactCtaSubtitle: "Programe una reunión con nuestro equipo o contáctenos para más información sobre nuestros servicios legales.",
       contactButton: "Contáctenos",
-      scheduleButton: "Programar una Reunión",
-      headquarters: "Sede Central",
-      viewOnMap: "Ver en el Mapa",
+      scheduleButton: "Programar una reunión",
+      headquarters: "Sede central",
+      viewOnMap: "Ver en el mapa",
     },
     de: {
       heroTitle: "Unsere Büros",
@@ -700,7 +699,7 @@ export default function Offices() {
   const baseT = content[language] || content.en;
   const t = {
     ...baseT,
-    mainOfficeTitle: language === "es" ? "Oficina Principal en San Pedro Garza García" : "San Pedro Garza García Office",
+    mainOfficeTitle: language === "es" ? "Oficina principal en San Pedro Garza García" : "San Pedro Garza García Office",
     buildingName: "Río Tamazunchale 205 Norte",
     floor: "",
     address: "Río Tamazunchale 205 Norte",
@@ -762,7 +761,7 @@ export default function Offices() {
           >
             <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1 
-              className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
+              className="text-4xl md:text-5xl font-heading text-white mb-5"
               data-testid="text-offices-title"
             >
               {t.heroTitle}
@@ -787,7 +786,7 @@ export default function Offices() {
             className="mb-20"
             data-testid="section-main-office"
           >
-            <h2 className="text-2xl font-heading font-light text-foreground mb-8 text-center uppercase tracking-[0.12em]">
+            <h2 className={`${h2Class} mb-8`}>
               {t.mainOfficeTitle}
             </h2>
             
@@ -795,22 +794,19 @@ export default function Offices() {
               <div className="order-2 lg:order-1">
                 <Card className="h-full" data-testid="card-office-info">
                   <CardContent className="p-6 lg:p-8 space-y-6">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center flex-shrink-0">
-                        <Building2 className="w-6 h-6 text-primary" />
-                      </div>
+                    <div>
                       <div>
-                        <h3 className="text-xl font-light uppercase tracking-[0.12em] text-foreground mb-1" data-testid="text-building-name">
+                        <h3 className={`${h3Class} mb-1`} data-testid="text-building-name">
                           {t.buildingName}
                         </h3>
-                        <p className="text-muted-foreground" data-testid="text-floor">{t.floor}</p>
+                        <p className="text-ss-medio" data-testid="text-floor">{t.floor}</p>
                       </div>
                     </div>
 
                     <div className="space-y-3 pt-6">
                       <div className="flex items-start gap-3" data-testid="text-full-address">
                         <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                        <div className="text-foreground">
+                        <div className="text-ss-tinta">
                           <p>{t.address}</p>
                           <p>{t.colony}</p>
                           <p>{t.postalCode}</p>
@@ -820,10 +816,10 @@ export default function Offices() {
                       
                       <div className="flex items-center gap-3">
                         <Phone className="w-5 h-5 text-primary flex-shrink-0" />
-                        <div className="text-foreground">
+                        <div className="text-ss-tinta">
                           <a 
                             href={`tel:${t.phone.replace(/\s/g, "")}`} 
-                            className="hover:text-primary transition-colors"
+                            className="hover:text-ss-marino hover:underline underline-offset-4 transition-colors"
                             data-testid="link-phone"
                           >
                             {t.phone}
@@ -832,9 +828,9 @@ export default function Offices() {
                       </div>
                       
                       <div className="flex items-center gap-3">
-                        <Phone className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                        <div className="text-foreground">
-                          <span className="text-sm text-gray-500">Fax: </span>
+                        <Phone className="w-5 h-5 text-ss-medio flex-shrink-0" />
+                        <div className="text-ss-tinta">
+                          <span className="text-ss-medio">Fax: </span>
                           <span data-testid="text-fax">{t.fax}</span>
                         </div>
                       </div>
@@ -843,7 +839,7 @@ export default function Offices() {
                         <Mail className="w-5 h-5 text-primary flex-shrink-0" />
                         <a 
                           href={`mailto:${t.email}`}
-                          className="text-foreground hover:text-primary transition-colors"
+                          className="text-ss-tinta hover:text-ss-marino hover:underline underline-offset-4 transition-colors"
                           data-testid="link-email"
                         >
                           {t.email}
@@ -855,27 +851,27 @@ export default function Offices() {
                       <div className="flex items-start gap-3 mb-2">
                         <Clock className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                         <div>
-                          <h4 className="font-medium text-foreground mb-1">{t.officeHoursTitle}</h4>
-                          <p className="text-muted-foreground text-sm" data-testid="text-office-hours">{t.officeHours}</p>
-                          <p className="text-gray-500 dark:text-gray-500 text-sm">{t.saturdayHours}</p>
+                          <h4 className={`${h4Class} mb-1`}>{t.officeHoursTitle}</h4>
+                          <p className="text-ss-tinta" data-testid="text-office-hours">{t.officeHours}</p>
+                          <p className="text-ss-medio">{t.saturdayHours}</p>
                         </div>
                       </div>
                     </div>
 
                     <div className="pt-6">
-                      <h4 className="font-medium text-foreground mb-4">{t.amenitiesTitle}</h4>
+                      <h4 className={`${h4Class} mb-4`}>{t.amenitiesTitle}</h4>
                       <div className="space-y-3">
                         {t.amenities.map((amenity, index) => (
                           <div key={index} className="flex items-center gap-3" data-testid={`amenity-${index}`}>
-                            <amenity.icon className="w-5 h-5 text-primary flex-shrink-0" />
-                            <span className="text-muted-foreground text-sm">{amenity.text}</span>
+                            <span className="h-px w-2.5 flex-shrink-0 bg-ss-medio" aria-hidden="true" />
+                            <span className="text-ss-tinta">{amenity.text}</span>
                           </div>
                         ))}
                       </div>
                     </div>
 
                     <Button 
-                      className="w-full rounded-lg mt-4" 
+                      className="w-full mt-4" 
                       asChild
                       data-testid="button-directions"
                     >
@@ -884,9 +880,7 @@ export default function Offices() {
                         target="_blank" 
                         rel="noopener noreferrer"
                       >
-                        <Navigation className="w-4 h-4 mr-2" />
                         {t.getDirections}
-                        <ExternalLink className="w-4 h-4 ml-2" />
                       </a>
                     </Button>
                   </CardContent>
@@ -895,7 +889,7 @@ export default function Offices() {
 
               <div className="order-1 lg:order-2">
                 <div 
-                  className="w-full h-[400px] lg:h-full min-h-[400px] rounded-lg overflow-hidden"
+                  className="w-full h-[400px] lg:h-full min-h-[400px] overflow-hidden"
                   data-testid="container-map"
                 >
                   <iframe
@@ -919,27 +913,26 @@ export default function Offices() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-20 bg-muted rounded-lg p-8 lg:p-12"
+            className="mb-20 bg-ss-paper p-8 lg:p-12"
             data-testid="section-directions"
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               <div>
-                <h3 className="text-xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
+                <h3 className={`${h3Class} mb-4`}>
                   {t.directionsTitle}
                 </h3>
-                <p className="text-foreground leading-relaxed mb-6">
+                <p className="text-ss-tinta leading-relaxed mb-6">
                   {t.directionsText}
                 </p>
               </div>
               <div>
-                <h4 className="flex items-center gap-2 font-medium text-foreground mb-4">
-                  <Landmark className="w-5 h-5 text-primary" />
+                <h4 className={`${h4Class} mb-4`}>
                   {t.landmarksTitle}
                 </h4>
                 <ul className="space-y-2">
                   {t.landmarks.map((landmark, index) => (
-                    <li key={index} className="flex items-center gap-3 text-muted-foreground" data-testid={`landmark-${index}`}>
-                      <div className="w-2 h-2 rounded-full bg-brand flex-shrink-0" />
+                    <li key={index} className="flex items-center gap-3 text-ss-tinta" data-testid={`landmark-${index}`}>
+                      <span className="h-px w-2.5 flex-shrink-0 bg-ss-medio" aria-hidden="true" />
                       {landmark}
                     </li>
                   ))}
@@ -956,11 +949,11 @@ export default function Offices() {
             className="mb-20"
             data-testid="section-gallery"
           >
-            <div className="text-center mb-10">
-              <h2 className="text-2xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
+            <div className="mb-10">
+              <h2 className={`${h2Class} mb-4`}>
                 {t.galleryTitle}
               </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
+              <p className={`${leadClass} max-w-2xl`}>
                 {t.gallerySubtitle}
               </p>
             </div>
@@ -968,7 +961,7 @@ export default function Offices() {
             {imagesLoading ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" data-testid="skeleton-gallery">
                 {Array.from({ length: 8 }).map((_, index) => (
-                  <Skeleton key={index} className="aspect-[4/3] rounded-lg" />
+                  <Skeleton key={index} className="aspect-[4/3]" />
                 ))}
               </div>
             ) : (
@@ -980,7 +973,7 @@ export default function Offices() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: index * 0.05 }}
-                    className="aspect-[4/3] rounded-lg overflow-hidden cursor-pointer group"
+                    className="aspect-[4/3] overflow-hidden cursor-pointer group"
                     onClick={() => setSelectedImage(image)}
                     data-testid={`gallery-image-${image.id}`}
                   >
@@ -1004,11 +997,11 @@ export default function Offices() {
             className="mb-20"
             data-testid="section-facilities"
           >
-            <div className="text-center mb-10">
-              <h2 className="text-2xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
+            <div className="mb-10">
+              <h2 className={`${h2Class} mb-4`}>
                 {t.facilitiesTitle}
               </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
+              <p className={`${leadClass} max-w-2xl`}>
                 {t.facilitiesSubtitle}
               </p>
             </div>
@@ -1017,15 +1010,10 @@ export default function Offices() {
               <motion.div variants={itemVariants}>
                 <Card className="h-full" data-testid="card-meeting-rooms">
                   <CardContent className="p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center">
-                        <Users className="w-6 h-6 text-primary" />
-                      </div>
-                      <h3 className="text-lg font-light uppercase tracking-[0.12em] text-foreground">
-                        {t.meetingRoomsTitle}
-                      </h3>
-                    </div>
-                    <p className="text-muted-foreground leading-relaxed">
+                    <h3 className={`${h3Class} mb-4`}>
+                      {t.meetingRoomsTitle}
+                    </h3>
+                    <p className="text-ss-tinta leading-relaxed">
                       {t.meetingRoomsDesc}
                     </p>
                   </CardContent>
@@ -1035,15 +1023,10 @@ export default function Offices() {
               <motion.div variants={itemVariants}>
                 <Card className="h-full" data-testid="card-video-conferencing">
                   <CardContent className="p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center">
-                        <Video className="w-6 h-6 text-primary" />
-                      </div>
-                      <h3 className="text-lg font-light uppercase tracking-[0.12em] text-foreground">
-                        {t.videoConferencingTitle}
-                      </h3>
-                    </div>
-                    <p className="text-muted-foreground leading-relaxed">
+                    <h3 className={`${h3Class} mb-4`}>
+                      {t.videoConferencingTitle}
+                    </h3>
+                    <p className="text-ss-tinta leading-relaxed">
                       {t.videoConferencingDesc}
                     </p>
                   </CardContent>
@@ -1053,15 +1036,10 @@ export default function Offices() {
               <motion.div variants={itemVariants}>
                 <Card className="h-full" data-testid="card-client-hospitality">
                   <CardContent className="p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center">
-                        <Coffee className="w-6 h-6 text-primary" />
-                      </div>
-                      <h3 className="text-lg font-light uppercase tracking-[0.12em] text-foreground">
-                        {t.clientHospitalityTitle}
-                      </h3>
-                    </div>
-                    <p className="text-muted-foreground leading-relaxed">
+                    <h3 className={`${h3Class} mb-4`}>
+                      {t.clientHospitalityTitle}
+                    </h3>
+                    <p className="text-ss-tinta leading-relaxed">
                       {t.clientHospitalityDesc}
                     </p>
                   </CardContent>
@@ -1071,15 +1049,10 @@ export default function Offices() {
               <motion.div variants={itemVariants}>
                 <Card className="h-full" data-testid="card-accessibility">
                   <CardContent className="p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center">
-                        <Accessibility className="w-6 h-6 text-primary" />
-                      </div>
-                      <h3 className="text-lg font-light uppercase tracking-[0.12em] text-foreground">
-                        {t.accessibilityTitle}
-                      </h3>
-                    </div>
-                    <p className="text-muted-foreground leading-relaxed">
+                    <h3 className={`${h3Class} mb-4`}>
+                      {t.accessibilityTitle}
+                    </h3>
+                    <p className="text-ss-tinta leading-relaxed">
                       {t.accessibilityDesc}
                     </p>
                   </CardContent>
@@ -1096,11 +1069,11 @@ export default function Offices() {
             className="mb-20"
             data-testid="section-transport"
           >
-            <div className="text-center mb-10">
-              <h2 className="text-2xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
+            <div className="mb-10">
+              <h2 className={`${h2Class} mb-4`}>
                 {t.transportTitle}
               </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
+              <p className={`${leadClass} max-w-2xl`}>
                 {t.transportSubtitle}
               </p>
             </div>
@@ -1108,15 +1081,10 @@ export default function Offices() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="" data-testid="card-metro">
                 <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
-                      <Train className="w-6 h-6 text-orange-600" />
-                    </div>
-                    <h3 className="text-lg font-light uppercase tracking-[0.12em] text-foreground">
-                      {t.metroTitle}
-                    </h3>
-                  </div>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <h3 className={`${h3Class} mb-4`}>
+                    {t.metroTitle}
+                  </h3>
+                  <p className="text-ss-tinta leading-relaxed">
                     {t.metroDesc}
                   </p>
                 </CardContent>
@@ -1124,15 +1092,10 @@ export default function Offices() {
 
               <Card className="" data-testid="card-parking">
                 <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                      <ParkingCircle className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <h3 className="text-lg font-light uppercase tracking-[0.12em] text-foreground">
-                      {t.parkingTitle}
-                    </h3>
-                  </div>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <h3 className={`${h3Class} mb-4`}>
+                    {t.parkingTitle}
+                  </h3>
+                  <p className="text-ss-tinta leading-relaxed">
                     {t.parkingDesc}
                   </p>
                 </CardContent>
@@ -1140,15 +1103,10 @@ export default function Offices() {
 
               <Card className="" data-testid="card-taxi">
                 <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                      <Car className="w-6 h-6 text-green-600" />
-                    </div>
-                    <h3 className="text-lg font-light uppercase tracking-[0.12em] text-foreground">
-                      {t.taxiTitle}
-                    </h3>
-                  </div>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <h3 className={`${h3Class} mb-4`}>
+                    {t.taxiTitle}
+                  </h3>
+                  <p className="text-ss-tinta leading-relaxed">
                     {t.taxiDesc}
                   </p>
                 </CardContent>
@@ -1161,37 +1119,32 @@ export default function Offices() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="section-stone rounded-lg p-8 lg:p-12 text-center"
+            className="bg-ss-paper p-8 lg:p-12"
             data-testid="section-contact-cta"
           >
-            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
-            <h2 className="text-2xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
+            <h2 className={`${h2Class} mb-4`}>
               {t.contactCtaTitle}
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
+            <p className={`${leadClass} max-w-2xl mb-8`}>
               {t.contactCtaSubtitle}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/contact">
                 <Button 
                   variant="default" 
                   size="lg" 
-                  className="rounded-lg gap-2"
                   data-testid="button-contact"
                 >
                   {t.contactButton}
-                  <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
               <Link href="/contact">
                 <Button 
                   variant="outline" 
                   size="lg" 
-                  className="rounded-lg gap-2 border-primary/30 text-primary hover:bg-primary/5"
                   data-testid="button-schedule"
                 >
                   {t.scheduleButton}
-                  <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
             </div>
@@ -1209,11 +1162,12 @@ export default function Offices() {
             <img
               src={selectedImage.imageUrl}
               alt={language === "es" ? selectedImage.altEs : selectedImage.alt}
-              className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+              className="w-full h-auto max-h-[80vh] object-contain"
             />
             <button
               onClick={() => setSelectedImage(null)}
-              className="absolute top-4 right-4 w-10 h-10 rounded-full bg-card/10 text-white flex items-center justify-center hover:bg-white/20 transition-colors"
+              className="absolute top-4 right-4 w-11 h-11 bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-colors"
+              aria-label={language === "es" ? "Cerrar" : "Close"}
               data-testid="button-close-lightbox"
             >
               ×

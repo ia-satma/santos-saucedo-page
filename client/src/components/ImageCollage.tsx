@@ -181,7 +181,7 @@ export default function ImageCollage() {
         aria-label={t.galleryLabel}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
-          <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" aria-hidden="true" />
+          <AlertCircle className="w-12 h-12 text-ss-medio mx-auto mb-4" aria-hidden="true" />
           <p className="text-muted-foreground" data-testid="text-gallery-error" role="alert">{t.errorMessage}</p>
         </div>
       </section>

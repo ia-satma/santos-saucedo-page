@@ -71,7 +71,7 @@ const quotes: Quote[] = [
 
 const content: Record<LanguageCode, { title: string; readOn: string }> = {
   en: { title: "What They Say About Us", readOn: "Read on" },
-  es: { title: "Lo Que Dicen De Nosotros", readOn: "Leer en" },
+  es: { title: "Lo que dicen de nosotros", readOn: "Leer en" },
   de: { title: "Was Sie Über Uns Sagen", readOn: "Lesen Sie auf" },
   zh: { title: "客户评价", readOn: "阅读来源" },
   ko: { title: "고객 후기", readOn: "출처 보기" },
@@ -120,7 +120,7 @@ export default function SocialProofSection() {
           className="text-center mb-20"
         >
           <h2
-            className="text-2xl md:text-3xl lg:text-4xl font-heading font-light text-primary uppercase tracking-[0.12em]"
+            className="text-2xl md:text-3xl lg:text-4xl font-heading font-normal text-ss-marino"
             data-testid="text-social-proof-title"
           >
             {t.title}
@@ -152,7 +152,7 @@ export default function SocialProofSection() {
               {/* Large red opening quote — rises above the text block */}
               <div
                 aria-hidden="true"
-                className="text-primary font-serif select-none pointer-events-none"
+                className="text-ss-marino font-serif select-none pointer-events-none"
                 style={{
                   fontSize: "5.5rem",
                   lineHeight: "0.65",
@@ -214,7 +214,7 @@ export default function SocialProofSection() {
                       href={quote.sourceUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-support text-xs uppercase tracking-[0.12em] text-primary hover:underline"
+                      className="ss-label text-primary hover:underline"
                       data-testid={`link-source-${quote.id}`}
                     >
                       {t.readOn} {quote.source} →

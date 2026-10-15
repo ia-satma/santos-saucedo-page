@@ -97,7 +97,7 @@ export default function VisionSection() {
   const t = {
     ...baseT,
     text: language === "es"
-      ? "Santos & Saucedo Abogados es un despacho jurídico especializado en Derecho Laboral, con más de 35 años de experiencia brindando asesoría preventiva y consultoría legal a empresas nacionales e internacionales."
+      ? "Santos & Saucedo Abogados es un despacho jurídico especializado en derecho laboral, con más de 35 años de experiencia brindando asesoría preventiva y consultoría legal a empresas nacionales e internacionales."
       : "Santos & Saucedo Abogados is a labor-law firm with more than 35 years of experience providing preventive counsel and legal consulting to national and international companies.",
     subtitle: language === "es" ? "Asesoría preventiva y consultoría laboral" : "Preventive counsel and labor consulting",
     subtext: language === "es"
@@ -111,7 +111,7 @@ export default function VisionSection() {
     return (
       <section id="vision" className="py-20 lg:py-32 bg-background" data-testid="section-vision">
         <div className="max-w-4xl mx-auto px-6 lg:px-12 text-center">
-          <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <AlertCircle className="w-12 h-12 text-ss-medio mx-auto mb-4" />
           <p className="text-muted-foreground" data-testid="text-vision-error">{t.errorMessage}</p>
         </div>
       </section>
@@ -146,7 +146,7 @@ export default function VisionSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-2xl md:text-3xl lg:text-4xl font-heading font-light text-foreground leading-tight mb-10 uppercase tracking-[0.12em]"
+          className="text-2xl md:text-3xl lg:text-4xl font-heading font-normal text-ss-marino leading-tight mb-10"
           data-testid="text-vision-title"
         >
           {title}
@@ -177,7 +177,7 @@ export default function VisionSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="text-lg md:text-xl font-heading font-light text-foreground mb-8 uppercase tracking-[0.12em]"
+          className="text-lg md:text-xl font-heading font-normal text-ss-marino mb-8"
           data-testid="text-vision-subtitle"
         >
           {t.subtitle}

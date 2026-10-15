@@ -46,7 +46,7 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
   };
 
   const getSeniorityBg = () => {
-    if (member.isPartner) return "bg-[#1E1C92]";
+    if (member.isPartner) return "bg-ss-marino";
     if (member.title === "Of Counsel") return "bg-[#5B5C5F]";
     return "bg-[#8B8D89]";
   };
@@ -82,7 +82,7 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
             className="absolute inset-0 w-full h-full flex items-center justify-center"
             style={{ backgroundColor: "#D5D2CD" }}
           >
-            <span className="text-4xl font-heading font-bold text-primary select-none">
+            <span className="text-4xl font-heading font-normal text-ss-marino select-none">
               {getInitials(member.name)}
             </span>
           </div>
@@ -91,7 +91,7 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
         {/* Top-left position pill */}
         <div className="absolute top-3 left-3 z-10">
           <span
-            className={`${getSeniorityBg()} text-white text-[9px] font-bold tracking-[0.25em] uppercase px-2 py-1 inline-block`}
+            className={`ss-label ${getSeniorityBg()} text-white px-2 py-1 inline-block`}
             data-testid={`text-seniority-${member.slug}`}
           >
             {getSeniorityLabel()}
@@ -104,7 +104,7 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
         {/* Bottom name + role text */}
         <div className="absolute inset-x-0 bottom-0 p-4 z-10">
           <p
-            className="text-white font-heading font-bold text-sm tracking-[0.12em] uppercase leading-tight mb-0.5"
+            className="text-white font-heading font-normal text-sm leading-tight mb-0.5"
             data-testid={`text-team-member-name-${member.slug}`}
           >
             {member.name}
@@ -118,11 +118,11 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
         </div>
 
         {/* Hover overlay with action buttons — vCard stops propagation; View Profile relies on outer Link */}
-        <div className="absolute inset-0 bg-[#1E1C92]/58 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-3 z-20">
+        <div className="absolute inset-0 bg-ss-navy/58 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-3 z-20">
           <Button
             variant="outline"
             size="sm"
-            className="w-32 text-white border-white text-xs tracking-[0.08em] rounded-lg"
+            className="w-32 text-white border-white"
             onClick={handleDownloadVCard}
             data-testid={`button-download-vcard-${member.slug}`}
           >
@@ -132,7 +132,7 @@ export default function TeamMemberCard({ member, viewProfileLabel, positions }: 
           <Button
             variant="default"
             size="sm"
-            className="w-32 text-xs tracking-[0.08em] rounded-lg"
+            className="w-32"
             data-testid={`button-view-profile-${member.slug}`}
           >
             <Briefcase className="w-3 h-3 mr-1.5" />

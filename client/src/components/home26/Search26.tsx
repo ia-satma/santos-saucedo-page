@@ -251,7 +251,7 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
         }}
         onKeyDown={onKeyDown}
       >
-        <label htmlFor="ss26-search-input" className="ss-label block text-white/60">
+        <label htmlFor="ss26-search-input" className="ss-label block text-white/75">
           {t.label}
         </label>
         <input
@@ -270,17 +270,18 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
           enterKeyHint="search"
           aria-describedby="ss26-search-hint"
           data-testid="input-global-search"
-          className="mt-4 w-full appearance-none rounded-none border-0 border-b border-white/30 bg-transparent pb-3 text-[clamp(28px,2.4vw+16px,40px)] font-light leading-tight text-white caret-ss-lime placeholder:text-white/50 focus:border-transparent focus-visible:!shadow-[inset_0_-2px_0_0_#B2EB3E] focus-visible:!outline-none"
+          // Sin radio, filete blanco al 30 %; el foco de teclado sobre Azul Profundo es lima
+          className="mt-4 w-full appearance-none rounded-none border-0 border-b border-white/30 bg-transparent pb-3 text-[clamp(28px,2.4vw+16px,40px)] font-normal leading-tight text-white caret-white placeholder:text-white/50 focus:border-transparent focus-visible:!shadow-[inset_0_-2px_0_0_var(--ss-lime)] focus-visible:!outline-none"
         />
         {/* Con la consulta ya escrita la pista sobra a la vista; sigue para aria-describedby */}
         <p
           id="ss26-search-hint"
-          className={`mt-3 max-w-[60ch] text-[15px] leading-relaxed text-white/60 ${query.trim().length >= MIN_CHARS ? "sr-only" : ""}`}
+          className={`mt-3 max-w-[60ch] text-[15px] leading-relaxed text-white/75 ${query.trim().length >= MIN_CHARS ? "sr-only" : ""}`}
         >
           {t.hint}
         </p>
 
-        <p role="status" aria-live="polite" className="ss-label ss-num mt-10 min-h-[1.35em] text-white/70">
+        <p role="status" aria-live="polite" className="ss-label ss-num mt-10 min-h-[1.35em] text-white/75">
           {status}
         </p>
 
@@ -292,7 +293,7 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
                 aria-labelledby={`ss26-search-${g.id}`}
                 className="grid gap-4 lg:grid-cols-[minmax(160px,3fr)_9fr] lg:gap-10"
               >
-                <h2 id={`ss26-search-${g.id}`} className="ss-label pt-1 text-ss-lime lg:pt-5">
+                <h2 id={`ss26-search-${g.id}`} className="ss-label pt-1 text-white/[.66] lg:pt-5">
                   {t.groups[g.id]}
                 </h2>
                 <ul className="border-t border-white/15">
@@ -307,12 +308,12 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
                         className="-ms-4 flex flex-col gap-1 py-4 ps-4 transition-colors focus-visible:bg-white/5"
                       >
                         <span className="text-[19px] leading-snug text-white lg:text-[21px]">
-                          <span className="ss-link ss-link--lime" lang={row.titleLang}>
+                          <span className="ss-link" lang={row.titleLang}>
                             {row.title}
                           </span>
                         </span>
                         {row.meta && (
-                          <span className="ss-label ss-num text-white/60" lang={row.metaLang}>
+                          <span className="ss-label ss-num text-white/75" lang={row.metaLang}>
                             {row.meta}
                           </span>
                         )}

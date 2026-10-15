@@ -122,7 +122,7 @@ const content: Record<LanguageCode, AboutUsContent> = {
     visionText: "Ser la firma de abogados líder en México, reconocida por brindar servicios legales excepcionales, fomentar el talento y generar un impacto positivo en nuestra comunidad.",
     missionTitle: "Misión",
     missionText: "Proporcionar a nuestros clientes asesoría legal de la más alta calidad, combinando profunda experiencia con soluciones innovadoras y un compromiso inquebrantable con su éxito.",
-    valuesTitle: "Nuestros Valores",
+    valuesTitle: "Nuestros valores",
   },
   de: {
     eyebrow: "ÜBER UNS",
@@ -261,13 +261,13 @@ export default function AboutUsSection() {
           className="text-center mb-16"
         >
           <p
-            className="text-primary text-[11px] tracking-[0.28em] uppercase mb-4"
+            className="ss-label text-primary mb-4"
             data-testid="text-about-us-eyebrow"
           >
             {t.eyebrow}
           </p>
           <h2
-            className="font-heading font-light text-2xl md:text-3xl lg:text-4xl text-foreground uppercase tracking-[0.12em] leading-tight mb-5"
+            className="font-heading font-normal text-2xl md:text-3xl lg:text-4xl text-ss-marino leading-tight mb-5"
             data-testid="text-about-us-title"
           >
             {t.sectionTitle}
@@ -296,13 +296,13 @@ export default function AboutUsSection() {
             >
               {/* Icon circle */}
               <div className="flex items-start gap-5">
-                <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary shadow-[0_12px_28px_rgba(18,16,62,0.2)] flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-1">
+                <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-1">
                   <Icon className="w-6 h-6 text-primary-foreground" strokeWidth={1.8} />
                 </div>
                 <div className="flex flex-col justify-center pt-1">
                   <div className="w-8 h-0.5 bg-brand mb-3" />
                   <h3
-                    className="font-heading font-light uppercase tracking-[0.1em] text-2xl lg:text-3xl text-foreground leading-none"
+                    className="font-heading font-normal text-2xl lg:text-3xl text-ss-marino leading-none"
                     data-testid={`text-${testId}-title`}
                   >
                     {title}
@@ -334,7 +334,7 @@ export default function AboutUsSection() {
         >
           <div className="w-6 h-px bg-brand mb-4 mx-auto" />
           <h3
-            className="font-heading font-light uppercase tracking-[0.12em] text-2xl md:text-3xl text-foreground leading-none"
+            className="font-heading font-normal text-2xl md:text-3xl text-ss-marino leading-none"
             data-testid="text-values-title"
           >
             {t.valuesTitle}
@@ -359,12 +359,12 @@ export default function AboutUsSection() {
                 className="card-soft group relative p-8 lg:p-10 flex flex-col items-center text-center gap-4 cursor-default"
                 data-testid={`value-item-${i}`}
               >
-                <div className="w-16 h-16 rounded-full bg-primary shadow-[0_12px_28px_rgba(18,16,62,0.2)] flex items-center justify-center mt-2 transition-transform duration-300 group-hover:scale-110">
+                <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center mt-2 transition-transform duration-300 group-hover:scale-110">
                   <Icon className="w-7 h-7 text-primary-foreground" strokeWidth={1.8} />
                 </div>
                 <div className="w-7 h-0.5 bg-brand group-hover:w-10 transition-all duration-500" />
                 <span
-                  className="font-heading font-light uppercase tracking-[0.1em] text-lg md:text-xl text-foreground leading-none"
+                  className="font-heading font-normal text-lg md:text-xl text-ss-marino leading-none"
                   data-testid={`text-value-${i}`}
                 >
                   {getValueName(value)}

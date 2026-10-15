@@ -96,8 +96,8 @@ export function LangSwitch26({ lang, className = "" }: { lang: LanguageCode; cla
           {/* Solo el globo en todo ancho: el texto competía con el menú principal.
               El nombre accesible está en aria-label (y title para el ratón). */}
           <GlobeIcon />
-          {/* Idioma activo fuera de ES/EN: su código, con el subrayado lima de aria-current */}
-          {activeOther && <span className="ss-link ss-link--lime pt-[2px] [background-size:100%_2px]">{activeOther.code}</span>}
+          {/* Idioma activo fuera de ES/EN: su código, subrayado en blanco (la lima es del menú actual) */}
+          {activeOther && <span className="ss-link pt-[2px] [background-size:100%_1px]">{activeOther.code}</span>}
         </button>
 
         {open && (
@@ -105,9 +105,9 @@ export function LangSwitch26({ lang, className = "" }: { lang: LanguageCode; cla
             id="ss26-lang-others"
             // Pegada al borde inferior de la cabecera (80px − 44px del botón) / 2 = 18px.
             // end-0: alineada al final del botón (a la izquierda en árabe)
-            className="absolute end-0 top-[calc(100%+18px)] z-10 min-w-[220px] border border-white/15 bg-ss-navy py-2 shadow-[0_24px_48px_-16px_rgba(0,0,0,0.55)]"
+            className="absolute end-0 top-[calc(100%+18px)] z-10 min-w-[220px] border border-white/15 bg-ss-navy py-2"
           >
-            <p id="ss26-lang-others-title" className="ss-label px-5 pb-1 pt-2 text-white/60">
+            <p id="ss26-lang-others-title" className="ss-label px-5 pb-1 pt-2 text-white/75">
               {t.others}
             </p>
             <ul aria-labelledby="ss26-lang-others-title">
@@ -118,7 +118,7 @@ export function LangSwitch26({ lang, className = "" }: { lang: LanguageCode; cla
                     lang={l.code}
                     aria-pressed={language === l.code}
                     onClick={() => choose(l.code)}
-                    className="flex min-h-[44px] w-full items-center justify-between gap-6 border-s-2 border-transparent pe-5 ps-[18px] text-start text-[15px] text-white/80 transition-colors hover:bg-white/5 hover:text-white aria-pressed:border-ss-lime aria-pressed:text-white"
+                    className="flex min-h-[44px] w-full items-center justify-between gap-6 border-s-2 border-transparent pe-5 ps-[18px] text-start text-[15px] text-white/80 transition-colors hover:bg-white/5 hover:text-white aria-pressed:border-white/85 aria-pressed:text-white"
                   >
                     <span {...nameProps(l.code)}>{l.nameNative}</span>
                     <span aria-hidden="true" className="ss-label text-white/50">
@@ -140,7 +140,7 @@ export function LangList26({ lang }: { lang: LanguageCode }) {
   const { language, setLanguage } = useLanguage();
   return (
     <div role="group" aria-labelledby="ss26-menu-lang">
-      <p id="ss26-menu-lang" className="ss-label text-white/60">
+      <p id="ss26-menu-lang" className="ss-label text-white/75">
         {chrome26[lang].langs.label}
       </p>
       <ul className="ss-label mt-1 flex items-center gap-2">
@@ -175,7 +175,7 @@ export function LangList26({ lang }: { lang: LanguageCode }) {
               lang={l.code}
               aria-pressed={language === l.code}
               onClick={() => setLanguage(l.code)}
-              className="flex min-h-[44px] w-full items-center text-start text-[15px] normal-case tracking-normal text-white/60 transition-colors hover:text-white aria-pressed:text-white aria-pressed:underline aria-pressed:decoration-ss-lime aria-pressed:decoration-2 aria-pressed:underline-offset-[6px]"
+              className="flex min-h-[44px] w-full items-center text-start text-[15px] normal-case tracking-normal text-white/60 transition-colors hover:text-white aria-pressed:text-white aria-pressed:underline aria-pressed:decoration-white/85 aria-pressed:decoration-1 aria-pressed:underline-offset-[6px]"
             >
               <span {...nameProps(l.code)}>{l.nameNative}</span>
             </button>

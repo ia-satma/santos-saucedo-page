@@ -10,7 +10,7 @@ type ClientesContent = {
 };
 
 const content: Record<LanguageCode, ClientesContent> = {
-  es: { eyebrow: "CONFIANZA", title: "Clientes que Confían en Nosotros", asiaLabel: "Clientes en Asia" },
+  es: { eyebrow: "CONFIANZA", title: "Clientes que confían en nosotros", asiaLabel: "Clientes en Asia" },
   en: { eyebrow: "TRUST", title: "Clients Who Trust Us", asiaLabel: "Clients in Asia" },
   de: { eyebrow: "VERTRAUEN", title: "Kunden, die uns vertrauen", asiaLabel: "Kunden in Asien" },
   zh: { eyebrow: "信任", title: "信赖我们的客户", asiaLabel: "亚洲客户" },
@@ -25,7 +25,7 @@ const content: Record<LanguageCode, ClientesContent> = {
 function LogoTile({ logo }: { logo: (typeof clienteLogos)[number] }) {
   return (
     <div
-      className="shrink-0 w-40 h-24 mx-3 rounded-lg bg-white border border-black/[0.06] shadow-[var(--shadow-sm)] flex items-center justify-center px-5 py-4"
+      className="shrink-0 w-40 h-24 mx-3 bg-white border border-black/[0.06] flex items-center justify-center px-5 py-4"
       data-testid={`logo-cliente-${logo.slug}`}
     >
       <img
@@ -57,11 +57,11 @@ export default function ClientesSection() {
           transition={{ duration: 0.55 }}
           className="text-center mb-14"
         >
-          <p className="text-primary text-[11px] tracking-[0.28em] uppercase mb-4" data-testid="text-clientes-eyebrow">
+          <p className="ss-label text-primary mb-4" data-testid="text-clientes-eyebrow">
             {t.eyebrow}
           </p>
           <h2
-            className="font-heading font-light text-2xl md:text-3xl lg:text-4xl text-foreground uppercase tracking-[0.12em] leading-tight"
+            className="font-heading font-normal text-2xl md:text-3xl lg:text-4xl text-ss-marino leading-tight"
             data-testid="text-clientes-title"
           >
             {t.title}
@@ -108,7 +108,7 @@ export default function ClientesSection() {
             <div className="flex items-center gap-4 mt-14 mb-6">
               <div className="h-px flex-1 bg-black/[0.08]" />
               <span
-                className="text-primary text-[11px] tracking-[0.24em] uppercase shrink-0"
+                className="ss-label text-primary shrink-0"
                 data-testid="text-clientes-asia-label"
               >
                 {t.asiaLabel}

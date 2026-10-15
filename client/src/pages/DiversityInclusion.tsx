@@ -82,57 +82,57 @@ export default function DiversityInclusion() {
       joinButton: "View Career Opportunities",
     },
     es: {
-      title: "Diversidad e Inclusión",
+      title: "Diversidad e inclusión",
       subtitle: "Construyendo una profesión legal más inclusiva desde 1986",
-      foundingTitle: "Nuestro Compromiso Fundacional",
+      foundingTitle: "Nuestro compromiso fundacional",
       foundingText1: "Desde su fundación en 1986, Santos & Saucedo ha estado comprometido con crear un ambiente inclusivo donde el talento prospere sin importar antecedentes, género o circunstancias personales. Este compromiso fue incorporado en el ADN de nuestra firma desde el primer día y continúa guiando nuestras prácticas hoy.",
       foundingText2: "Creemos que las perspectivas diversas conducen a mejores soluciones legales. Nuestra firma ha defendido consistentemente la igualdad y la inclusión, mucho antes de que estos se convirtieran en estándares de la industria, reconociendo que un equipo diverso es nuestra mayor fortaleza para servir a clientes con necesidades legales complejas.",
-      statsTitle: "Nuestro Progreso en Números",
+      statsTitle: "Nuestro progreso en números",
       stats: [
-        { value: "45%", label: "Mujeres en la Firma", icon: UsersRound },
-        { value: "35%", label: "Mujeres Socias", icon: TrendingUp },
-        { value: "50%", label: "Mujeres en Roles de Liderazgo", icon: Target },
-        { value: "100%", label: "Compromiso con Igualdad de Oportunidades", icon: Shield },
+        { value: "45%", label: "Mujeres en la firma", icon: UsersRound },
+        { value: "35%", label: "Mujeres socias", icon: TrendingUp },
+        { value: "50%", label: "Mujeres en roles de liderazgo", icon: Target },
+        { value: "100%", label: "Compromiso con igualdad de oportunidades", icon: Shield },
       ],
-      initiativesTitle: "Nuestras Iniciativas de Diversidad",
+      initiativesTitle: "Nuestras iniciativas de diversidad",
       initiativesSubtitle: "Acciones concretas para un lugar de trabajo más equitativo",
       initiatives: [
         {
           icon: UserCheck,
-          title: "Contratación Inclusiva",
+          title: "Contratación inclusiva",
           text: "Nuestras prácticas de reclutamiento están diseñadas para atraer y evaluar candidatos basándose únicamente en sus habilidades, experiencia y potencial, asegurando igualdad de oportunidades para todos sin importar género, antecedentes o circunstancias personales.",
         },
         {
           icon: BarChart3,
-          title: "Igualdad de Género",
+          title: "Igualdad de género",
           text: "Promovemos activamente la igualdad de género en todos los niveles de la organización. Nuestros programas apoyan el avance de mujeres en posiciones de liderazgo y aseguran compensación equitativa y oportunidades de crecimiento.",
         },
         {
           icon: Sparkles,
-          title: "Igualdad de Oportunidades",
+          title: "Igualdad de oportunidades",
           text: "Cada miembro del equipo tiene acceso a los mismos recursos de desarrollo, asignaciones desafiantes y caminos de avance profesional. Estamos comprometidos a remover barreras y crear caminos hacia el éxito para todos.",
         },
         {
           icon: GraduationCap,
-          title: "Programas de Mentoría",
+          title: "Programas de mentoría",
           text: "Nuestros programas estructurados de mentoría emparejan a abogados junior con socios experimentados, fomentando el crecimiento profesional y asegurando que el conocimiento y las oportunidades se compartan en todos los niveles de nuestra organización.",
         },
       ],
-      proBonoTitle: "Diversidad a Través del Pro Bono",
+      proBonoTitle: "Diversidad a través del pro bono",
       proBonoText: "Nuestro compromiso con la diversidad se extiende más allá de las paredes de nuestra firma. A través de nuestra práctica pro bono, brindamos servicios legales a comunidades subrepresentadas, apoyamos organizaciones que luchan por la igualdad y contribuimos a iniciativas de acceso a la justicia que ayudan a nivelar el campo de juego para todos.",
-      proBonoButton: "Conoce Nuestro Trabajo Pro Bono",
-      commitmentTitle: "Nuestro Compromiso Continuo",
+      proBonoButton: "Conoce nuestro trabajo pro bono",
+      commitmentTitle: "Nuestro compromiso continuo",
       commitmentText: "La diversidad e inclusión no son solo políticas en Santos & Saucedo—son valores fundamentales que moldean cómo trabajamos, crecemos y servimos a nuestros clientes. Continuamente evaluamos y mejoramos nuestras prácticas para asegurar que estemos a la vanguardia en la creación de una profesión legal más equitativa.",
-      valuesTitle: "Valores de Inclusión",
+      valuesTitle: "Valores de inclusión",
       values: [
         { icon: Scale, title: "Equidad", text: "Trato justo e igual acceso a oportunidades para todos" },
         { icon: Heart, title: "Respeto", text: "Honrar la dignidad y las contribuciones únicas de cada individuo" },
         { icon: Users, title: "Pertenencia", text: "Crear un lugar de trabajo donde todos se sientan valorados e incluidos" },
         { icon: Award, title: "Excelencia", text: "Aprovechar perspectivas diversas para alcanzar los más altos estándares" },
       ],
-      joinTitle: "Únete a Nuestro Equipo",
+      joinTitle: "Únete a nuestro equipo",
       joinText: "Sé parte de una firma que valora tu perspectiva única y apoya tu crecimiento profesional.",
-      joinButton: "Ver Oportunidades de Carrera",
+      joinButton: "Ver oportunidades de carrera",
     },
     de: {
       title: "Vielfalt & Inklusion",
@@ -606,13 +606,13 @@ export default function DiversityInclusion() {
             </motion.div>
             <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1
-              className="text-4xl md:text-5xl lg:text-6xl font-heading font-light text-white mb-6 uppercase tracking-[0.15em]"
+              className="text-4xl md:text-5xl lg:text-6xl font-heading font-normal text-white mb-6"
               data-testid="text-diversity-title"
             >
               {t.title}
             </h1>
             <p
-              className="text-base md:text-lg text-white/60 max-w-3xl mx-auto font-light leading-relaxed"
+              className="text-base md:text-lg text-white/60 max-w-3xl mx-auto font-normal leading-relaxed"
               data-testid="text-diversity-subtitle"
             >
               {t.subtitle}
@@ -632,15 +632,15 @@ export default function DiversityInclusion() {
             >
               <div className="flex items-center gap-4 mb-8">
                 <div className="h-0.5 w-8 bg-brand" />
-                <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em]">
+                <h2 className="text-2xl md:text-3xl font-heading font-normal text-ss-marino">
                   {t.foundingTitle}
                 </h2>
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <p className="text-lg text-foreground leading-relaxed text-justify">
+                <p className="text-lg text-foreground leading-relaxed">
                   {t.foundingText1}
                 </p>
-                <p className="text-lg text-muted-foreground leading-relaxed text-justify">
+                <p className="text-lg text-muted-foreground leading-relaxed">
                   {t.foundingText2}
                 </p>
               </div>
@@ -657,7 +657,7 @@ export default function DiversityInclusion() {
               transition={{ duration: 0.6 }}
               className="text-center mb-12"
             >
-              <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em]">
+              <h2 className="text-2xl md:text-3xl font-heading font-normal text-ss-marino">
                 {t.statsTitle}
               </h2>
               <div className="h-0.5 w-12 bg-brand mx-auto mt-4" />
@@ -676,10 +676,10 @@ export default function DiversityInclusion() {
                   className="text-center"
                   data-testid={`stat-diversity-${index}`}
                 >
-                  <div className="text-4xl lg:text-5xl font-heading text-primary mb-2">
+                  <div className="text-4xl lg:text-5xl font-heading font-[300] text-ss-marino [font-variant-numeric:lining-nums] mb-2">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-muted-foreground font-support uppercase tracking-wider">
+                  <div className="ss-label text-ss-medio">
                     {stat.label}
                   </div>
                 </motion.div>
@@ -697,7 +697,7 @@ export default function DiversityInclusion() {
               transition={{ duration: 0.6 }}
               className="text-center mb-16"
             >
-              <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em] mb-4">
+              <h2 className="text-2xl md:text-3xl font-heading font-normal text-ss-marino mb-4">
                 {t.valuesTitle}
               </h2>
               <div className="h-0.5 w-12 bg-brand mx-auto" />
@@ -733,10 +733,10 @@ export default function DiversityInclusion() {
               transition={{ duration: 0.6 }}
               className="text-center mb-16"
             >
-              <p className="font-support text-xs uppercase tracking-[0.2em] text-primary mb-4" data-testid="text-initiatives-subtitle">
+              <p className="ss-label text-ss-marino mb-4" data-testid="text-initiatives-subtitle">
                 {t.initiativesSubtitle}
               </p>
-              <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em] mb-4">
+              <h2 className="text-2xl md:text-3xl font-heading font-normal text-ss-marino mb-4">
                 {t.initiativesTitle}
               </h2>
               <div className="h-0.5 w-12 bg-brand mx-auto" />
@@ -776,11 +776,11 @@ export default function DiversityInclusion() {
                 <CardContent className="p-8 md:p-10">
                   <div className="flex items-center gap-3 mb-6">
                     <HeartHandshake className="w-8 h-8 text-primary" />
-                    <h2 className="text-xl md:text-2xl font-heading font-light text-foreground uppercase tracking-[0.12em]">
+                    <h2 className="text-xl md:text-2xl font-heading font-normal text-ss-marino">
                       {t.proBonoTitle}
                     </h2>
                   </div>
-                  <p className="text-lg text-muted-foreground leading-relaxed text-justify mb-8">
+                  <p className="text-lg text-muted-foreground leading-relaxed mb-8">
                     {t.proBonoText}
                   </p>
                   <Link href="/pro-bono">
@@ -809,11 +809,11 @@ export default function DiversityInclusion() {
               transition={{ duration: 0.6 }}
               className="text-center max-w-4xl mx-auto"
             >
-              <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
+              <h2 className="text-2xl md:text-3xl font-heading font-normal text-ss-marino mb-4">
                 {t.commitmentTitle}
               </h2>
               <div className="h-0.5 w-12 bg-brand mx-auto mb-8" />
-              <p className="text-lg text-muted-foreground leading-relaxed text-justify">
+              <p className="text-lg text-muted-foreground leading-relaxed">
                 {t.commitmentText}
               </p>
             </motion.div>
@@ -829,7 +829,7 @@ export default function DiversityInclusion() {
               transition={{ duration: 0.6 }}
               className="text-center max-w-3xl mx-auto"
             >
-              <h2 className="text-2xl md:text-3xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
+              <h2 className="text-2xl md:text-3xl font-heading font-normal text-ss-marino mb-4">
                 {t.joinTitle}
               </h2>
               <div className="h-0.5 w-12 bg-brand mx-auto mb-8" />

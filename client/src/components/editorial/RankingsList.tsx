@@ -17,6 +17,7 @@ interface RankingsListProps {
   testIdPrefix?: string;
 }
 
+// Lista de filetes: publicación en Gris Tinta, año como etiqueta y la banda en un chip de 1 px.
 export function RankingsList({
   items,
   language,
@@ -25,30 +26,26 @@ export function RankingsList({
   testIdPrefix = "ranking",
 }: RankingsListProps) {
   return (
-    <ul className="space-y-1" data-testid={`list-${testIdPrefix}s`}>
+    <ul className="border-b border-ss-rule" data-testid={`list-${testIdPrefix}s`}>
       {items.map((item, index) => {
         const displayRanking =
           language === "es" && item.rankingEs ? item.rankingEs : item.ranking;
         return (
           <li
             key={index}
-            className="flex items-center justify-between gap-4 py-4 px-1 hover-elevate"
+            className="flex items-center justify-between gap-4 py-4 border-t border-ss-rule"
             data-testid={`card-${testIdPrefix}-${index}`}
           >
-            <div className="flex items-center gap-4 min-w-0 flex-1">
-              <div
-                className="w-2 h-2 bg-brand shrink-0"
-                aria-hidden="true"
-              />
+            <div className="flex items-baseline gap-4 min-w-0 flex-1">
               <p
-                className="text-foreground font-medium truncate"
+                className="text-ss-tinta truncate"
                 data-testid={`text-${testIdPrefix}-publication-${index}`}
               >
                 {item.publication}
               </p>
               {item.year && (
                 <span
-                  className="hidden sm:inline text-[11px] text-muted-foreground tracking-[0.2em] uppercase shrink-0"
+                  className="hidden sm:inline ss-label text-ss-medio shrink-0"
                   data-testid={`text-${testIdPrefix}-year-${index}`}
                 >
                   {item.year}
@@ -56,8 +53,9 @@ export function RankingsList({
               )}
             </div>
             <Badge
-              className={`rounded-lg text-xs flex items-center gap-1 shrink-0 ${
-                getBadgeStyles ? getBadgeStyles(item.badgeType ?? "") : "bg-[#1E1C92] text-white border-0"
+              variant="outline"
+              className={`text-sm font-normal flex items-center gap-1 shrink-0 ${
+                getBadgeStyles ? getBadgeStyles(item.badgeType ?? "") : "border-ss-rule text-ss-tinta bg-transparent"
               }`}
               data-testid={`badge-${testIdPrefix}-${index}`}
             >

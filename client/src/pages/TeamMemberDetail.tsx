@@ -1,10 +1,9 @@
 import { useState, useMemo } from "react";
 import { Link, useParams } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowLeft, Mail, Phone, Linkedin, AlertCircle, Download, GraduationCap, Globe2, Award, FileText, Briefcase, Scale, Users, BookOpen, Building2, Languages, Newspaper, Calendar, ArrowRight, Trophy, Star, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,7 +15,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isStaticSite } from "@/lib/queryClient";
 import { getTeamPhotoObjectPosition } from "@/lib/teamPhotoPosition";
-import { LeadParagraph } from "@/components/editorial";
+import { Eyebrow, LeadParagraph } from "@/components/editorial";
 import type { TeamMember, PracticeGroup, IndustryGroup, Education, Affiliation, Ranking, Publication, RepresentativeMatter, BarAdmission, News, LanguageCode } from "@shared/schema";
 
 // Retícula del encabezado del perfil, compartida por la vista y su carga para que no se
@@ -40,10 +39,9 @@ function NewsImageWithFallback({
   
   if (hasError || !src) {
     return (
-      <div className={`bg-muted flex items-center justify-center ${className}`}>
-        <span className="text-4xl font-heading font-light text-muted-foreground/60 tracking-[0.18em]">
-          S&S
-        </span>
+      // Sin imagen: Hueso con un § tonal en Línea (en vez del "S&S")
+      <div aria-hidden="true" className={`bg-ss-paper flex items-center justify-center ${className}`}>
+        <span className="font-heading font-normal text-5xl text-ss-rule leading-none">§</span>
       </div>
     );
   }
@@ -82,28 +80,26 @@ function RelatedTeamMemberCard({
 
   return (
     <Link href={`/team/${relatedMember.slug}`}>
+      {/* Fila con filete superior; retrato en grises como todos los retratos */}
       <div
-        className="group relative flex items-center gap-4 py-4 px-3 cursor-pointer hover-elevate"
+        className="group flex items-center gap-4 py-4 border-t border-ss-rule cursor-pointer"
         data-testid={`card-related-member-${relatedMember.slug}`}
       >
-        <span
-          aria-hidden="true"
-          className="absolute start-0 top-1/2 -translate-y-1/2 w-[2px] h-0 bg-brand transition-all duration-200 group-hover:h-8"
-        />
         <Avatar className="w-12 h-12 shrink-0">
           <AvatarImage
             src={relatedMember.imageUrl || undefined}
             alt={relatedMember.name}
+            className="ss-photo"
           />
-          <AvatarFallback className="bg-muted text-foreground text-sm">
+          <AvatarFallback className="bg-ss-paper text-ss-marino text-sm font-heading">
             {getInitials(relatedMember.name)}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-foreground truncate">
+          <p className="font-heading text-[17px] leading-[1.2] tracking-[-0.01em] text-ss-marino truncate group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1">
             {relatedMember.name}
           </p>
-          <p className="text-xs text-muted-foreground truncate uppercase tracking-[0.12em]">
+          <p className="ss-label text-ss-medio truncate mt-1">
             {displayTitle}
           </p>
         </div>
@@ -141,13 +137,13 @@ function EducationItemTranslated({
 
   return (
     <div 
-      className="border-l-2 border-primary pl-4 py-1"
+      className="border-s border-ss-rule ps-4 py-1"
       data-testid={`item-education-${index}`}
     >
-      <p className="text-lg font-medium text-foreground">
+      <p className="font-semibold text-ss-tinta">
         {displayDegree}
       </p>
-      <p className="text-muted-foreground">
+      <p className="text-ss-medio">
         {displaySchool}
         {edu.year && <span className="ml-2 text-sm">({edu.year})</span>}
       </p>
@@ -175,9 +171,10 @@ function PracticeGroupBadge({
 
   return (
     <Link href={`/practice-groups/${group.slug}`}>
+      {/* Chip de 14 px con filete Línea; al pasar el cursor, filete y texto Azul Marino */}
       <Badge
         variant="outline"
-        className="rounded-lg cursor-pointer py-2 px-4 no-default-hover-elevate no-default-active-elevate transition-colors duration-200 hover:bg-primary hover:text-primary-foreground hover:border-primary"
+        className="cursor-pointer px-3 py-1.5 no-default-hover-elevate no-default-active-elevate transition-colors duration-200 hover:border-ss-marino hover:text-ss-marino"
         data-testid={`badge-practice-group-${group.slug}`}
       >
         {displayName}
@@ -208,7 +205,7 @@ function IndustryGroupBadge({
   return (
     <Badge
       variant="outline"
-      className="rounded-lg py-2 px-4 no-default-hover-elevate no-default-active-elevate"
+      className="px-3 py-1.5 no-default-hover-elevate no-default-active-elevate"
       data-testid={`badge-industry-group-${group.slug}`}
     >
       {displayName}
@@ -229,7 +226,7 @@ function RankingItemTranslated({
   language: LanguageCode;
   memberId: string;
   isTiered: boolean;
-  getPublicationIcon: (publication: string) => JSX.Element;
+  getPublicationIcon: (publication: string) => JSX.Element | null;
 }) {
   const { translatedFields } = useTranslatedContent({
     contentType: 'team_member',
@@ -253,62 +250,53 @@ function RankingItemTranslated({
 
   if (isTiered) {
     return (
-      <Card 
-        className="overflow-visible"
+      // Fila con filete superior: publicación, banda en chip, año como etiqueta
+      <div 
+        className="border-t border-ss-rule py-4"
         data-testid={`card-ranking-tiered-${index}`}
       >
-        <CardContent className="p-4">
-          <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 mt-0.5">
-              {getPublicationIcon(ranking.publication)}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-foreground">
-                {ranking.publication}
-              </p>
-              <div className="flex flex-wrap items-center gap-2 mt-2">
-                <Badge 
-                  variant="outline"
-                  className="rounded-lg text-[11px] uppercase tracking-[0.18em] border-primary text-primary"
-                  data-testid={`badge-ranking-band-${index}`}
-                >
-                  {displayRanking}
-                </Badge>
-                {ranking.year && (
-                  <Badge 
-                    variant="outline" 
-                    className="rounded-lg text-[11px] uppercase tracking-[0.18em]"
-                  >
-                    {ranking.year}
-                  </Badge>
-                )}
-              </div>
-              {displayArea && (
-                <p className="text-sm text-muted-foreground mt-2">
-                  {displayArea}
-                </p>
+        <div className="flex items-start gap-3">
+          {getPublicationIcon(ranking.publication)}
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-ss-tinta">
+              {ranking.publication}
+            </p>
+            <div className="flex flex-wrap items-center gap-3 mt-2">
+              <Badge 
+                variant="outline"
+                data-testid={`badge-ranking-band-${index}`}
+              >
+                {displayRanking}
+              </Badge>
+              {ranking.year && (
+                <span className="ss-label ss-num text-ss-medio">
+                  {ranking.year}
+                </span>
               )}
             </div>
+            {displayArea && (
+              <p className="text-base text-ss-tinta mt-2">
+                {displayArea}
+              </p>
+            )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     );
   }
 
   return (
     <div
-      className="flex items-center gap-3 p-4 card-soft"
+      className="flex items-center gap-3 py-3 border-t border-ss-rule"
       data-testid={`item-ranking-simple-${index}`}
     >
-      <div className="flex-shrink-0">
-        {getPublicationIcon(ranking.publication)}
-      </div>
+      {getPublicationIcon(ranking.publication)}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-foreground truncate">
+        <p className="font-semibold text-ss-tinta truncate">
           {ranking.publication}
         </p>
         {ranking.year && (
-          <p className="text-sm text-muted-foreground">
+          <p className="ss-label ss-num text-ss-medio mt-1">
             {ranking.year}
           </p>
         )}
@@ -346,13 +334,13 @@ function PublicationItemTranslated({
 
   return (
     <div 
-      className="border-l-2 border-primary pl-4 py-1"
+      className="border-s border-ss-rule ps-4 py-1"
       data-testid={`item-publication-${index}`}
     >
-      <p className="text-foreground font-medium">
+      <p className="font-semibold text-ss-tinta">
         {displayTitle}
       </p>
-      <div className="flex flex-wrap items-center gap-2 mt-1 text-sm text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-2 mt-1 text-base text-ss-medio">
         {pub.journal && <span>{pub.journal}</span>}
         {pub.year && <span>• {pub.year}</span>}
         {pub.url && (
@@ -360,7 +348,7 @@ function PublicationItemTranslated({
             href={pub.url} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-primary hover:underline"
+            className="text-ss-marino underline-offset-4 hover:underline"
           >
             {viewPublicationText}
           </a>
@@ -405,16 +393,15 @@ function AffiliationItemTranslated({
 
   return (
     <div 
-      className="flex items-start gap-3"
+      className="border-t border-ss-rule pt-3"
       data-testid={`item-affiliation-${index}`}
     >
-      <div className="w-2 h-2 rounded-full bg-brand mt-2 flex-shrink-0" />
       <div>
-        <p className="text-foreground">
+        <p className="text-ss-tinta">
           {displayOrganization}
         </p>
         {displayRole && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base text-ss-medio">
             {displayRole}
           </p>
         )}
@@ -450,8 +437,8 @@ function BarAdmissionItemTranslated({
 
   return (
     <Badge 
-      variant="secondary"
-      className="rounded-lg py-2 px-4"
+      variant="outline"
+      className="px-3 py-1.5"
       data-testid={`badge-bar-admission-${index}`}
     >
       {displayJurisdiction}
@@ -487,7 +474,7 @@ function LanguageItemTranslated({
   return (
     <Badge 
       variant="outline"
-      className="rounded-lg py-2 px-4"
+      className="px-3 py-1.5"
       data-testid={`badge-language-${index}`}
     >
       {displayLanguage}
@@ -522,16 +509,15 @@ function RepresentativeMatterTranslated({
 
   return (
     <div 
-      className="flex items-start gap-3"
+      className="border-t border-ss-rule pt-3"
       data-testid={`item-representative-matter-${index}`}
     >
-      <div className="w-2 h-2 rounded-full bg-brand mt-2 flex-shrink-0" />
       <div>
-        <p className="text-foreground">
+        <p className="text-ss-tinta">
           {displayDescription}
         </p>
         {(matter.client || matter.year) && (
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-base text-ss-medio mt-1">
             {matter.client && <span>{matter.client}</span>}
             {matter.client && matter.year && <span> • </span>}
             {matter.year && <span>{matter.year}</span>}
@@ -670,45 +656,45 @@ export default function TeamMemberDetail() {
       },
     },
     es: {
-      backToAll: "Todos los Miembros",
+      backToAll: "Todos los miembros",
       partner: "Socio",
       ofCounsel: "Of Counsel",
       associate: "Asociado",
-      contactInfo: "Información de Contacto",
-      practiceAreas: "Áreas de Práctica",
-      industryGroups: "Grupos Industriales",
+      contactInfo: "Información de contacto",
+      practiceAreas: "Áreas de práctica",
+      industryGroups: "Grupos industriales",
       biography: "Biografía",
-      education: "Formación Académica",
-      barAdmissions: "Admisiones al Colegio",
+      education: "Formación académica",
+      barAdmissions: "Admisiones al colegio",
       languages: "Idiomas",
-      affiliations: "Afiliaciones Profesionales",
-      rankings: "Rankings y Reconocimientos",
+      affiliations: "Afiliaciones profesionales",
+      rankings: "Rankings y reconocimientos",
       publications: "Publicaciones",
-      representativeMatters: "Asuntos Representativos",
-      experience: "Experiencia Profesional",
+      representativeMatters: "Asuntos representativos",
+      experience: "Experiencia profesional",
       contactCta: "Contáctenos",
       contactSubtitle: "Conéctese con nuestro equipo para discutir cómo podemos ayudarle con sus necesidades legales.",
-      emailUs: "Enviar Email",
+      emailUs: "Enviar correo",
       callUs: "Llamar",
       downloadVCard: "Descargar vCard",
       errorMessage: "Miembro del equipo no encontrado",
       loading: "Cargando...",
-      relatedTeam: "Equipo Relacionado",
-      viewProfile: "Ver Perfil",
-      relatedNews: "Últimas Noticias y Artículos",
-      readMore: "Leer Más",
-      featuredRecognition: "Reconocimiento Destacado",
-      totalRecognitions: "Total de Reconocimientos",
-      topPublications: "Publicaciones Principales",
-      tieredRankings: "Rankings por Nivel",
-      otherRecognitions: "Otros Reconocimientos",
+      relatedTeam: "Equipo relacionado",
+      viewProfile: "Ver perfil",
+      relatedNews: "Últimas noticias y artículos",
+      readMore: "Leer más",
+      featuredRecognition: "Reconocimiento destacado",
+      totalRecognitions: "Total de reconocimientos",
+      topPublications: "Publicaciones principales",
+      tieredRankings: "Rankings por nivel",
+      otherRecognitions: "Otros reconocimientos",
       band: "Banda",
-      viewPublication: "Ver Publicación",
+      viewPublication: "Ver publicación",
       positions: {
-        foundingPartner: "Socio Fundador",
+        foundingPartner: "Socio fundador",
         partner: "Socio",
         ofCounsel: "Of Counsel",
-        seniorAssociate: "Asociado Senior",
+        seniorAssociate: "Asociado senior",
         associate: "Asociado",
       },
     },
@@ -1105,12 +1091,8 @@ export default function TeamMemberDetail() {
      (m.title === member?.title))
   ).slice(0, 4);
 
-  const getPublicationIcon = (_publication: string) => (
-    <span
-      aria-hidden="true"
-      className="inline-block w-1.5 h-1.5 bg-brand mt-1.5"
-    />
-  );
+  // Sin viñeta: la jerarquía la dan la letra y los filetes
+  const getPublicationIcon = (_publication: string): JSX.Element | null => null;
 
   const getPublicationPriority = (publication: string): number => {
     const pubLower = publication.toLowerCase();
@@ -1178,14 +1160,12 @@ export default function TeamMemberDetail() {
         <Header />
         {/* Cabecera sticky en flujo: ya no hace falta compensar el header fijo */}
         <main id="main-content" className="pt-16 pb-20 lg:pt-20">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
-            <AlertCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-2xl font-heading text-foreground mb-4" data-testid="text-error-title">
+          <div className="max-w-6xl mx-auto px-6 lg:px-12">
+            <h2 className="ss-h2 mb-6" data-testid="text-error-title">
               {t.errorMessage}
             </h2>
             <Link href="/team">
               <Button variant="outline" data-testid="button-back-to-team">
-                <ArrowLeft className="w-4 h-4 mr-2" />
                 {t.backToAll}
               </Button>
             </Link>
@@ -1289,7 +1269,7 @@ export default function TeamMemberDetail() {
           >
             <Link href="/team">
               <span 
-                className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 cursor-pointer text-sm"
+                className="inline-flex items-center gap-2 mb-6 cursor-pointer"
                 data-testid="link-back-to-team"
               >
                 <ArrowLeft className="w-4 h-4" aria-hidden="true" />
@@ -1303,16 +1283,17 @@ export default function TeamMemberDetail() {
             <div className={PROFILE_GRID}>
               {/* Sin padding lateral en móvil: el texto arranca en el borde de la foto y de la vuelta */}
               <div className={`min-w-0 text-center md:text-left ${PROFILE_IDENTITY_CELL}`}>
-                {/* Eyebrow del expediente: "§ 03 —— SOCIO" (la barra se dibuja en index.css).
+                {/* Eyebrow del expediente: "§ 03 —— Socio" (glifo § en lima, components/editorial).
                     La categoría va aquí y no en una píldora junto al nombre. */}
-                <p className="flex items-center gap-4 mb-4">
-                  <span className="h-px w-10 bg-brand" aria-hidden="true" />
-                  <span className="ss-label text-white/70" data-testid="badge-seniority">
-                    {getSeniorityLabel()}
-                  </span>
-                </p>
+                <Eyebrow
+                  num="03"
+                  tone="navy"
+                  label={getSeniorityLabel()}
+                  labelTestId="badge-seniority"
+                  className="mb-4"
+                />
                 <h1 
-                  className="ss-hero-detail mb-3 text-2xl md:text-3xl lg:text-4xl font-heading font-light text-white uppercase tracking-[0.12em]"
+                  className="ss-hero-detail mb-3"
                   data-testid="text-team-member-name"
                 >
                   {member?.name}
@@ -1332,7 +1313,7 @@ export default function TeamMemberDetail() {
                   if (titleMatchesSeniority) return null;
                   return (
                     <p
-                      className="text-xl text-white/90 font-medium mb-2"
+                      className="mb-1"
                       data-testid="text-team-member-title"
                     >
                       {displayTitle}
@@ -1343,7 +1324,6 @@ export default function TeamMemberDetail() {
                   );
                 })()}
                 <p 
-                  className="text-lg text-white/85"
                   data-testid="text-team-member-role"
                 >
                   {displayRole}
@@ -1360,25 +1340,17 @@ export default function TeamMemberDetail() {
                       src={member.imageUrl}
                       // alt vacío: el nombre ya está en el h1 de al lado (antes se leía dos veces)
                       alt=""
-                      // En grises, como la rejilla de Equipo (el color vuelve al pasar el cursor)
-                      className="absolute inset-0 h-full w-full object-cover object-top grayscale transition-[filter] duration-500 group-hover:grayscale-0"
+                      // En grises, como todos los retratos del sitio; sin velo marino encima
+                      className="ss-photo absolute inset-0 h-full w-full object-cover object-top"
                       style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }}
                       loading="eager"
                       decoding="async"
                       data-testid="img-profile-photo"
                     />
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-ss-ink/10 to-ss-ink/60"
-                    />
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0 bg-gradient-to-b from-transparent to-ss-ink/40"
-                    />
                   </>
                 ) : (
                   <div
-                    className="absolute inset-0 flex items-center justify-center bg-white/10 text-white text-6xl font-light"
+                    className="absolute inset-0 flex items-center justify-center bg-white/10 text-white text-6xl font-heading font-normal"
                     data-testid="avatar-fallback"
                   >
                     {member?.name ? getInitials(member.name) : ''}
@@ -1387,56 +1359,41 @@ export default function TeamMemberDetail() {
               </div>
               <div
                 aria-hidden="true"
-                className="hidden md:col-start-2 md:row-span-2 md:row-start-1 md:block bg-[#1E1C92]/20"
+                className="hidden md:col-start-2 md:row-span-2 md:row-start-1 md:block bg-white/[0.14]"
               />
-              <div className={`flex flex-wrap content-start justify-start gap-3 ${PROFILE_ACTIONS_CELL}`}>
+              {/* Tres botones iguales de contorno blanco, sin iconos: ninguno pesa más que el nombre.
+                  El número de teléfono (dir="ltr") y LinkedIn están en el bloque de contacto. */}
+              <div className={`flex flex-col sm:flex-row sm:flex-wrap content-start justify-start gap-3 ${PROFILE_ACTIONS_CELL}`}>
                 {member?.email && (
                   <Button 
-                    variant="secondary"
-                    className="rounded-lg bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
+                    variant="outline"
+                    className="min-h-11 sm:min-w-[12rem] border-white/45 text-white hover:border-white"
                     asChild
                     data-testid="button-email"
                   >
                     <a href={`mailto:${member.email}`}>
-                      <Mail className="w-4 h-4 me-2" aria-hidden="true" />
-                      {member.email}
+                      {t.emailUs}
                     </a>
                   </Button>
                 )}
                 {member?.phone && (
                   <Button 
-                    variant="secondary"
-                    className="rounded-lg bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
+                    variant="outline"
+                    className="min-h-11 sm:min-w-[12rem] border-white/45 text-white hover:border-white"
                     asChild
                     data-testid="button-phone"
                   >
                     <a href={`tel:${member.phone}`}>
-                      <Phone className="w-4 h-4 me-2" aria-hidden="true" />
-                      {/* dir="ltr": en árabe el número se leía "2086 8335 81 52+" */}
-                      <span dir="ltr">{member.phone}</span>
-                    </a>
-                  </Button>
-                )}
-                {member?.linkedinUrl && (
-                  <Button 
-                    variant="secondary"
-                    size="icon"
-                    className="rounded-lg bg-primary/[0.08] hover:bg-primary/[0.12] text-primary border border-primary/20 dark:bg-white/10 dark:hover:bg-white/20 dark:text-foreground dark:border-white/20"
-                    asChild
-                    data-testid="button-linkedin"
-                  >
-                    <a href={member.linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label={`LinkedIn: ${member.name}`}>
-                      <Linkedin className="w-4 h-4" aria-hidden="true" />
+                      {t.callUs}
                     </a>
                   </Button>
                 )}
                 <Button 
-                  variant="secondary"
-                  className="rounded-lg bg-card text-primary hover:bg-white/90"
+                  variant="outline"
+                  className="min-h-11 sm:min-w-[12rem] border-white/45 text-white hover:border-white"
                   onClick={handleDownloadVCard}
                   data-testid="button-download-vcard"
                 >
-                  <Download className="w-4 h-4 me-2" aria-hidden="true" />
                   {t.downloadVCard}
                 </Button>
               </div>
@@ -1447,8 +1404,9 @@ export default function TeamMemberDetail() {
 
       <main id="main-content" className="py-16 lg:py-20">
         <div className="max-w-6xl mx-auto px-6 lg:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            <div className="lg:col-span-2 space-y-12">
+          {/* Biografía en 8 columnas con "Áreas de práctica" debajo; contacto y equipo en 4 */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <div className="lg:col-span-8 space-y-12">
               {(displayBio || ((member?.bio || member?.bioEs) && isTranslating)) && (
                 <motion.section
                   initial={{ opacity: 0, y: 20 }}
@@ -1458,13 +1416,12 @@ export default function TeamMemberDetail() {
                   data-testid="section-biography"
                 >
                   <h2 
-                    className="text-xl font-heading font-light text-foreground mb-6 flex items-center gap-3 uppercase tracking-[0.12em]"
+                    className="ss-h3 mb-6 flex items-center gap-3"
                     data-testid="text-biography-title"
                   >
-                    <FileText className="w-6 h-6 text-primary" />
                     {t.biography}
                     {isTranslating && (
-                      <Loader2 className="w-4 h-4 animate-spin text-primary/60" />
+                      <Loader2 className="w-4 h-4 animate-spin text-ss-medio" aria-hidden="true" />
                     )}
                   </h2>
                   <div data-testid="container-biography">
@@ -1479,8 +1436,8 @@ export default function TeamMemberDetail() {
                         />
                       );
                     })() : (
-                      <div className="flex items-center gap-2 text-muted-foreground italic">
-                        <Loader2 className="w-4 h-4 animate-spin" />
+                      <div className="flex items-center gap-2 text-ss-medio">
+                        <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                         <span data-testid="text-translation-pending">
                           {language === 'de' ? 'Übersetzung lädt...' :
                            language === 'zh' ? '翻译加载中...' :
@@ -1506,30 +1463,28 @@ export default function TeamMemberDetail() {
                   transition={{ duration: 0.6, delay: 0.25 }}
                   data-testid="section-rankings"
                 >
-                  <div className="card-soft p-8">
+                  <div>
                     <div className="mb-6">
-                      <div className="h-px w-10 bg-brand mb-4" aria-hidden="true" />
                       <h2
-                        className="text-xl font-heading font-light text-foreground flex items-center gap-3 uppercase tracking-[0.12em]"
+                        className="ss-h3 flex items-baseline gap-3"
                         data-testid="text-rankings-title"
                       >
                         <span>{t.rankings}</span>
-                        <Badge
-                          variant="outline"
-                          className="ml-auto rounded-lg text-xs uppercase tracking-[0.15em] border-primary text-primary"
+                        <span
+                          className="ms-auto ss-label ss-num text-ss-medio"
                           data-testid="badge-rankings-count"
                         >
                           {processedRankings.totalCount}
-                        </Badge>
+                        </span>
                       </h2>
                     </div>
 
                     {processedRankings.tieredRankings.length > 0 && (
                       <div className="mb-6" data-testid="container-tiered-rankings">
-                        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.18em] mb-4">
+                        <h3 className="ss-label text-ss-medio mb-2">
                           {t.tieredRankings}
                         </h3>
-                        <div className="space-y-3">
+                        <div>
                           {processedRankings.tieredRankings.map((ranking, index) => (
                             <RankingItemTranslated
                               key={index}
@@ -1548,11 +1503,11 @@ export default function TeamMemberDetail() {
                     {processedRankings.simpleRankings.length > 0 && (
                       <div data-testid="container-simple-rankings">
                         {processedRankings.tieredRankings.length > 0 && (
-                          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.18em] mb-4">
+                          <h3 className="ss-label text-ss-medio mb-2">
                             {t.otherRecognitions}
                           </h3>
                         )}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
                           {processedRankings.simpleRankings.map((ranking, index) => (
                             <RankingItemTranslated
                               key={index}
@@ -1580,10 +1535,9 @@ export default function TeamMemberDetail() {
                   data-testid="section-practice-areas"
                 >
                   <h2 
-                    className="text-xl font-heading font-light text-foreground mb-6 flex items-center gap-3 uppercase tracking-[0.12em]"
+                    className="ss-h3 mb-5"
                     data-testid="text-practice-areas-title"
                   >
-                    <Briefcase className="w-6 h-6 text-primary" />
                     {t.practiceAreas}
                   </h2>
                   <div className="flex flex-wrap gap-2">
@@ -1607,10 +1561,9 @@ export default function TeamMemberDetail() {
                   data-testid="section-industry-groups"
                 >
                   <h2 
-                    className="text-xl font-heading font-light text-foreground mb-6 flex items-center gap-3 uppercase tracking-[0.12em]"
+                    className="ss-h3 mb-5"
                     data-testid="text-industry-groups-title"
                   >
-                    <Globe2 className="w-6 h-6 text-primary" />
                     {t.industryGroups}
                   </h2>
                   <div className="flex flex-wrap gap-2">
@@ -1634,10 +1587,9 @@ export default function TeamMemberDetail() {
                   data-testid="section-education"
                 >
                   <h2 
-                    className="text-xl font-heading font-light text-foreground mb-6 flex items-center gap-3 uppercase tracking-[0.12em]"
+                    className="ss-h3 mb-5"
                     data-testid="text-education-title"
                   >
-                    <GraduationCap className="w-6 h-6 text-primary" />
                     {t.education}
                   </h2>
                   <div className="space-y-4">
@@ -1663,10 +1615,9 @@ export default function TeamMemberDetail() {
                   data-testid="section-bar-admissions"
                 >
                   <h2 
-                    className="text-xl font-heading font-light text-foreground mb-6 flex items-center gap-3 uppercase tracking-[0.12em]"
+                    className="ss-h3 mb-5"
                     data-testid="text-bar-admissions-title"
                   >
-                    <Scale className="w-6 h-6 text-primary" />
                     {t.barAdmissions}
                   </h2>
                   <div className="flex flex-wrap gap-3">
@@ -1692,10 +1643,9 @@ export default function TeamMemberDetail() {
                   data-testid="section-languages"
                 >
                   <h2 
-                    className="text-xl font-heading font-light text-foreground mb-6 flex items-center gap-3 uppercase tracking-[0.12em]"
+                    className="ss-h3 mb-5"
                     data-testid="text-languages-title"
                   >
-                    <Languages className="w-6 h-6 text-primary" />
                     {t.languages}
                   </h2>
                   <div className="flex flex-wrap gap-3">
@@ -1721,10 +1671,9 @@ export default function TeamMemberDetail() {
                   data-testid="section-affiliations"
                 >
                   <h2 
-                    className="text-xl font-heading font-light text-foreground mb-6 flex items-center gap-3 uppercase tracking-[0.12em]"
+                    className="ss-h3 mb-5"
                     data-testid="text-affiliations-title"
                   >
-                    <Users className="w-6 h-6 text-primary" />
                     {t.affiliations}
                   </h2>
                   <div className="space-y-3">
@@ -1750,10 +1699,9 @@ export default function TeamMemberDetail() {
                   data-testid="section-publications"
                 >
                   <h2 
-                    className="text-xl font-heading font-light text-foreground mb-6 flex items-center gap-3 uppercase tracking-[0.12em]"
+                    className="ss-h3 mb-5"
                     data-testid="text-publications-title"
                   >
-                    <BookOpen className="w-6 h-6 text-primary" />
                     {t.publications}
                   </h2>
                   <div className="space-y-4">
@@ -1780,10 +1728,9 @@ export default function TeamMemberDetail() {
                   data-testid="section-representative-matters"
                 >
                   <h2 
-                    className="text-xl font-heading font-light text-foreground mb-6 flex items-center gap-3 uppercase tracking-[0.12em]"
+                    className="ss-h3 mb-5"
                     data-testid="text-representative-matters-title"
                   >
-                    <Briefcase className="w-6 h-6 text-primary" />
                     {t.representativeMatters}
                   </h2>
                   <div className="space-y-3">
@@ -1809,23 +1756,22 @@ export default function TeamMemberDetail() {
                   data-testid="section-experience"
                 >
                   <h2 
-                    className="text-xl font-heading font-light text-foreground mb-6 flex items-center gap-3 uppercase tracking-[0.12em]"
+                    className="ss-h3 mb-5"
                     data-testid="text-experience-title"
                   >
-                    <Building2 className="w-6 h-6 text-primary" />
                     {t.experience}
                   </h2>
                   <div className="space-y-4">
                     {(member.experience as any[]).map((exp, index) => (
                       <div 
                         key={index}
-                        className="border-l-2 border-primary pl-4 py-1"
+                        className="border-s border-ss-rule ps-4 py-1"
                         data-testid={`item-experience-${index}`}
                       >
-                        <p className="text-lg font-medium text-foreground">
+                        <p className="font-semibold text-ss-tinta">
                           {language === "es" && exp.positionEs ? exp.positionEs : exp.position}
                         </p>
-                        <p className="text-muted-foreground">
+                        <p className="text-ss-medio">
                           {exp.company}
                           {(exp.startYear || exp.endYear) && (
                             <span className="ml-2 text-sm">
@@ -1840,53 +1786,120 @@ export default function TeamMemberDetail() {
               )}
             </div>
 
-            <div className="space-y-8">
+            <div className="lg:col-span-4 space-y-10">
+              {/* Contacto: bloque Hueso con un solo botón principal y dos enlaces de texto */}
+              <motion.section
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="bg-ss-paper p-6 lg:p-8"
+                data-testid="section-contact-cta"
+              >
+                <h2 
+                  className="ss-h3 text-[20px] mb-3"
+                  data-testid="text-contact-cta-title"
+                >
+                  {t.contactCta}
+                </h2>
+                <p 
+                  className="text-base leading-[1.55] text-ss-tinta mb-6"
+                  data-testid="text-contact-cta-subtitle"
+                >
+                  {t.contactSubtitle}
+                </p>
+                {member?.email && (
+                  <Button 
+                    className="w-full min-h-11"
+                    asChild
+                    data-testid="button-email-contact"
+                  >
+                    <a href={`mailto:${member.email}`}>
+                      {t.emailUs}
+                    </a>
+                  </Button>
+                )}
+                <ul className="mt-5 space-y-3 text-[15px] font-semibold">
+                  {member?.phone && (
+                    <li>
+                      <a
+                        href={`tel:${member.phone}`}
+                        className="text-ss-marino underline-offset-4 hover:underline"
+                        data-testid="button-call-contact"
+                      >
+                        {t.callUs}{" "}
+                        {/* dir="ltr": en árabe el número se leía "2086 8335 81 52+" */}
+                        <span dir="ltr" className="font-normal text-ss-tinta">{member.phone}</span>
+                      </a>
+                    </li>
+                  )}
+                  <li>
+                    <button
+                      type="button"
+                      onClick={handleDownloadVCard}
+                      className="text-ss-marino underline-offset-4 hover:underline"
+                      data-testid="button-download-vcard-sidebar"
+                    >
+                      {t.downloadVCard}
+                    </button>
+                  </li>
+                  {member?.linkedinUrl && (
+                    <li>
+                      <a
+                        href={member.linkedinUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-ss-marino underline-offset-4 hover:underline"
+                        data-testid="button-linkedin"
+                      >
+                        LinkedIn
+                      </a>
+                    </li>
+                  )}
+                </ul>
+              </motion.section>
+
               {processedRankings && (
                 <motion.section
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.35 }}
-                  className="card-soft p-8"
+                  className="border-t border-ss-rule pt-6"
                   data-testid="section-featured-recognition"
                 >
-                  <div className="mb-4">
-                    <div className="h-px w-10 bg-brand mb-4" aria-hidden="true" />
-                    <h2 
-                      className="text-lg font-heading font-light text-foreground uppercase tracking-[0.12em]"
-                      data-testid="text-featured-recognition-title"
-                    >
-                      {t.featuredRecognition}
-                    </h2>
-                  </div>
+                  <h2 
+                    className="ss-h3 text-[20px] mb-4"
+                    data-testid="text-featured-recognition-title"
+                  >
+                    {t.featuredRecognition}
+                  </h2>
                   
-                  <div className="flex items-baseline gap-2 mb-4">
+                  <div className="flex items-baseline gap-3 mb-5">
                     <span 
-                      className="text-4xl font-heading font-light text-primary"
-                      style={{ fontFeatureSettings: '"lnum"' }}
+                      className="ss-figure text-[44px]"
                       data-testid="text-total-recognitions-count"
                     >
                       {processedRankings.totalCount}
                     </span>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="ss-label text-ss-medio">
                       {t.totalRecognitions}
                     </span>
                   </div>
                   
                   {processedRankings.topPublications.length > 0 && (
                     <div data-testid="container-top-publications">
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.18em] mb-2">
+                      <p className="ss-label text-ss-medio mb-2">
                         {t.topPublications}
                       </p>
                       <div className="space-y-2">
                         {processedRankings.topPublications.map((pub, index) => (
                           <div 
                             key={index}
-                            className="flex items-center gap-2 text-sm text-foreground"
+                            className="text-base text-ss-tinta"
                             data-testid={`item-top-publication-${index}`}
                           >
-                            {getPublicationIcon(pub)}
-                            <span className="truncate">{pub}</span>
+                            <span className="block truncate">{pub}</span>
                           </div>
                         ))}
                       </div>
@@ -1894,64 +1907,6 @@ export default function TeamMemberDetail() {
                   )}
                 </motion.section>
               )}
-
-              <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="bg-muted rounded-lg p-6"
-                data-testid="section-contact-cta"
-              >
-                <h2 
-                  className="text-xl font-heading font-light text-foreground mb-3"
-                  data-testid="text-contact-cta-title"
-                >
-                  {t.contactCta}
-                </h2>
-                <p 
-                  className="text-sm text-muted-foreground mb-6"
-                  data-testid="text-contact-cta-subtitle"
-                >
-                  {t.contactSubtitle}
-                </p>
-                <div className="flex flex-col gap-3">
-                  {member?.email && (
-                    <Button 
-                      className="w-full rounded-lg"
-                      asChild
-                      data-testid="button-email-contact"
-                    >
-                      <a href={`mailto:${member.email}`}>
-                        <Mail className="w-4 h-4 me-2" aria-hidden="true" />
-                        {t.emailUs}
-                      </a>
-                    </Button>
-                  )}
-                  {member?.phone && (
-                    <Button 
-                      variant="outline"
-                      className="w-full rounded-lg"
-                      asChild
-                      data-testid="button-call-contact"
-                    >
-                      <a href={`tel:${member.phone}`}>
-                        <Phone className="w-4 h-4 me-2" aria-hidden="true" />
-                        {t.callUs}
-                      </a>
-                    </Button>
-                  )}
-                  <Button 
-                    variant="outline"
-                    className="w-full rounded-lg"
-                    onClick={handleDownloadVCard}
-                    data-testid="button-download-vcard-sidebar"
-                  >
-                    <Download className="w-4 h-4 me-2" aria-hidden="true" />
-                    {t.downloadVCard}
-                  </Button>
-                </div>
-              </motion.section>
 
               {relatedMembers && relatedMembers.length > 0 && (
                 <motion.section
@@ -1961,19 +1916,13 @@ export default function TeamMemberDetail() {
                   transition={{ duration: 0.6, delay: 0.5 }}
                   data-testid="section-related-team"
                 >
-                  <div className="mb-6">
-                    <span
-                      aria-hidden="true"
-                      className="block w-2.5 h-[2px] bg-brand mb-3"
-                    />
-                    <h2
-                      className="text-xs font-medium text-foreground uppercase tracking-[0.12em]"
-                      data-testid="text-related-team-title"
-                    >
-                      {t.relatedTeam}
-                    </h2>
-                  </div>
-                  <div className="space-y-1">
+                  <h2
+                    className="ss-h3 text-[20px] mb-4"
+                    data-testid="text-related-team-title"
+                  >
+                    {t.relatedTeam}
+                  </h2>
+                  <div className="border-b border-ss-rule">
                     {relatedMembers.map((relatedMember) => (
                       <RelatedTeamMemberCard
                         key={relatedMember.id}
@@ -1998,15 +1947,14 @@ export default function TeamMemberDetail() {
             className="mt-16 pt-12"
             data-testid="section-related-news"
           >
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-6xl mx-auto px-6 lg:px-12">
               <h2 
-                className="text-xl font-heading font-light text-foreground mb-8 flex items-center gap-3 uppercase tracking-[0.12em]"
+                className="ss-h2-sm mb-8"
                 data-testid="text-related-news-title"
               >
-                <Newspaper className="w-6 h-6 text-primary" />
                 {t.relatedNews}
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
                 {relatedNews.map((article) => (
                   <motion.div 
                     key={article.id}
@@ -2016,51 +1964,50 @@ export default function TeamMemberDetail() {
                     transition={{ duration: 0.4 }}
                   >
                     <Link href={`/news/${article.slug}`}>
-                      <Card
-                        className="group h-full overflow-hidden transition-all duration-300 cursor-pointer"
+                      {/* Sin caja: imagen sin velo, categoría y fecha como etiquetas, titular en la romana */}
+                      <article
+                        className="group h-full cursor-pointer"
                         data-testid={`card-related-news-${article.slug}`}
                       >
-                        <div className="relative h-48 overflow-hidden bg-muted">
+                        <div className="relative h-48 overflow-hidden bg-ss-paper">
                           <NewsImageWithFallback
                             src={article.imageUrl || ""}
                             alt={language === "es" ? article.titleEs : article.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            className="ss-photo--colour w-full h-full object-cover"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                          {article.category && (
-                            <span 
-                              className="absolute top-3 left-3 px-2 py-1 text-xs font-medium bg-primary text-primary-foreground rounded"
-                              data-testid={`badge-news-category-${article.slug}`}
-                            >
-                              {language === "es" ? article.categoryEs : article.category?.charAt(0).toUpperCase() + article.category?.slice(1)}
-                            </span>
-                          )}
                         </div>
-                        <CardContent className="p-6">
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-                            <Calendar className="w-4 h-4" />
-                            <span data-testid={`text-news-date-${article.slug}`}>
+                        <div className="pt-5">
+                          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-2">
+                            {article.category && (
+                              <span 
+                                className="ss-label text-ss-marino"
+                                data-testid={`badge-news-category-${article.slug}`}
+                              >
+                                {language === "es" ? article.categoryEs : article.category?.charAt(0).toUpperCase() + article.category?.slice(1)}
+                              </span>
+                            )}
+                            <span className="ss-label ss-num text-ss-medio" data-testid={`text-news-date-${article.slug}`}>
                               {formatDate(article.date)}
                             </span>
-                          </div>
+                          </p>
                           <h3 
-                            className="text-xl font-semibold text-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2"
+                            className="ss-h3 text-[20px] mb-3 line-clamp-3 group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1"
                             data-testid={`text-news-title-${article.slug}`}
                           >
                             {language === "es" ? article.titleEs : article.title}
                           </h3>
                           <p 
-                            className="text-muted-foreground text-sm line-clamp-3 mb-4"
+                            className="text-base leading-[1.55] text-ss-tinta line-clamp-3 mb-4"
                             data-testid={`text-news-excerpt-${article.slug}`}
                           >
                             {language === "es" ? article.excerptEs : article.excerpt}
                           </p>
-                          <div className="flex items-center gap-2 text-primary font-medium text-sm group-hover:gap-3 transition-all">
+                          <span className="inline-flex items-center gap-2 text-[15px] font-semibold text-ss-marino">
                             {t.readMore}
-                            <ArrowRight className="w-4 h-4" />
-                          </div>
-                        </CardContent>
-                      </Card>
+                            <span aria-hidden="true" className="ss-arrow">→</span>
+                          </span>
+                        </div>
+                      </article>
                     </Link>
                   </motion.div>
                 ))}

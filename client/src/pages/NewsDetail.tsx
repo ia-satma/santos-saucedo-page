@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { Link, useLocation, useParams } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowLeft, Share2, Linkedin, Twitter, Mail, LinkIcon, AlertCircle, MessageCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, Linkedin, Twitter, Mail, LinkIcon, MessageCircle, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { es, enUS, de, zhCN, ko, ja, arSA, ru, fr, it } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
@@ -16,28 +15,27 @@ import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/JsonLdSchema";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
-import { LeadParagraph } from "@/components/editorial";
+import { Eyebrow, LeadParagraph } from "@/components/editorial";
 import type { News, TeamMember } from "@shared/schema";
 
-// Imagen del artículo con su velo tinta. Sin imagen, o si no carga, no se pinta nada:
-// queda el degradado de la marca de la sección (sin foto genérica de reemplazo).
+// Imagen del artículo: figura al inicio del cuerpo, bajo el encabezado de papel, sin velo.
+// Sin imagen, o si no carga, no se pinta nada (sin foto genérica de reemplazo).
 // alt vacío: el h1 ya dice el título.
 function NewsHeroImage({ src }: { src: string }) {
   const [hasError, setHasError] = useState(false);
   if (!src || hasError) return null;
   return (
-    <>
+    <figure className="mb-12">
       <img
         src={src}
         alt=""
-        className="absolute inset-0 w-full h-full object-cover"
+        className="ss-photo--colour block w-full aspect-[16/9] object-cover"
         loading="eager"
         decoding="async"
         onError={() => setHasError(true)}
         data-testid="img-news-hero"
       />
-      <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-ss-deep/90 via-ss-deep/50 to-ss-deep/20" />
-    </>
+    </figure>
   );
 }
 
@@ -54,10 +52,9 @@ function NewsCardImage({
   
   if (hasError || !src) {
     return (
-      <div className={`bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center ${className}`}>
-        <span className="text-3xl font-heading font-bold text-primary/30 tracking-wider">
-          S&S
-        </span>
+      // Sin imagen: Hueso con un § tonal en Línea (en vez del "S&S")
+      <div aria-hidden="true" className={`bg-ss-paper flex items-center justify-center ${className}`}>
+        <span className="font-heading font-normal text-5xl text-ss-rule leading-none">§</span>
       </div>
     );
   }
@@ -103,50 +100,49 @@ function AuthorCard({
   return (
     <Link 
       href={`/team/${author.slug}`}
-      className="block"
+      className="group block"
     >
-      <Card
-        className="group overflow-visible transition-all duration-300 hover-elevate"
+      {/* Fila con filete superior, sin caja; retrato en grises como todos los retratos */}
+      <div
+        className="border-t border-ss-rule pt-6 pb-2"
         data-testid={`card-author-${author.slug}`}
       >
-        <CardContent className="p-6">
-          <div className="flex items-start gap-4">
-            <Avatar className="w-16 h-16 flex-shrink-0 border-2 border-border" data-testid={`avatar-author-${author.slug}`}>
-              <AvatarImage 
-                src={author.imageUrl || undefined} 
-                alt={author.name}
-                className="object-cover"
-              />
-              <AvatarFallback className="bg-primary/10 text-primary text-lg font-medium">
-                {getInitials(author.name)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <h3 
-                className="text-lg font-medium text-foreground group-hover:text-primary transition-colors"
-                data-testid={`text-author-name-${author.slug}`}
-              >
-                {author.name}
-              </h3>
-              <p 
-                className="text-sm text-primary font-medium mb-2"
-                data-testid={`text-author-title-${author.slug}`}
-              >
-                {displayTitle}
-                {isTranslating && (
-                  <Loader2 className="inline-block w-3 h-3 ml-2 animate-spin text-primary/60" />
-                )}
-              </p>
-              <p 
-                className="text-sm text-muted-foreground leading-relaxed line-clamp-3"
-                data-testid={`text-author-bio-${author.slug}`}
-              >
-                {truncateBio(displayBio)}
-              </p>
-            </div>
+        <div className="flex items-start gap-4">
+          <Avatar className="w-16 h-16 flex-shrink-0" data-testid={`avatar-author-${author.slug}`}>
+            <AvatarImage 
+              src={author.imageUrl || undefined} 
+              alt={author.name}
+              className="object-cover ss-photo"
+            />
+            <AvatarFallback className="bg-ss-paper text-ss-marino text-lg font-heading">
+              {getInitials(author.name)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <h3 
+              className="ss-h3 text-[20px] transition-colors group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1"
+              data-testid={`text-author-name-${author.slug}`}
+            >
+              {author.name}
+            </h3>
+            <p 
+              className="ss-label text-ss-medio mt-1 mb-2"
+              data-testid={`text-author-title-${author.slug}`}
+            >
+              {displayTitle}
+              {isTranslating && (
+                <Loader2 className="inline-block w-3 h-3 ml-2 animate-spin text-ss-medio" aria-hidden="true" />
+              )}
+            </p>
+            <p 
+              className="text-base leading-[1.55] text-ss-tinta line-clamp-3"
+              data-testid={`text-author-bio-${author.slug}`}
+            >
+              {truncateBio(displayBio)}
+            </p>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </Link>
   );
 }
@@ -220,17 +216,17 @@ export default function NewsDetail() {
       category: "Category",
     },
     es: {
-      backToNews: "Volver a Noticias",
+      backToNews: "Volver a noticias",
       share: "Compartir este artículo",
-      relatedNews: "Noticias Relacionadas",
+      relatedNews: "Noticias relacionadas",
       errorMessage: "Artículo no encontrado",
       loading: "Cargando...",
-      readMore: "Leer Más",
-      copyLink: "Copiar Enlace",
+      readMore: "Leer más",
+      copyLink: "Copiar enlace",
       linkCopied: "¡Enlace copiado al portapapeles!",
       shareVia: "Compartir vía",
-      aboutTheAuthor: "Acerca del Autor",
-      aboutTheAuthors: "Acerca de los Autores",
+      aboutTheAuthor: "Acerca del autor",
+      aboutTheAuthors: "Acerca de los autores",
       publishedOn: "Publicado el",
       author: "Autor",
       topics: "Temas",
@@ -470,9 +466,8 @@ export default function NewsDetail() {
         <Header />
         {/* Cabecera sticky en flujo: ya no hace falta compensar el header fijo */}
         <main id="main-content" className="pt-16 pb-20 lg:pt-20">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
-            <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-heading text-foreground mb-4" data-testid="text-error-title">
+          <div className="max-w-4xl mx-auto px-6 lg:px-12">
+            <h2 className="ss-h2 mb-6" data-testid="text-error-title">
               {t.errorMessage}
             </h2>
             <Button 
@@ -480,7 +475,6 @@ export default function NewsDetail() {
               onClick={goToNewsList}
               data-testid="button-back-to-news"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
               {t.backToNews}
             </Button>
           </div>
@@ -494,17 +488,15 @@ export default function NewsDetail() {
     return (
       <div className="min-h-screen bg-background" data-testid="page-news-loading">
         <Header />
-        {/* Carga con la misma banda de marca que la vista final sin foto (el caso habitual):
-            degradado, mismo margen superior y marcadores de vuelta, eyebrow, titular y fecha */}
-        <section className="relative" aria-busy="true">
-          <div className="ss-gradient bg-ss-navy bg-[length:100%_max(100%,56vw)] bg-left-top bg-no-repeat flex w-full">
-            <div className="max-w-4xl mx-auto px-6 lg:px-12 pt-[clamp(40px,8vw,112px)] pb-[clamp(56px,7vw,96px)] w-full">
-              <Skeleton className="h-4 w-36 mb-6 bg-white/10" />
-              <Skeleton className="h-3 w-40 mb-5 bg-white/10" />
-              <Skeleton className="h-12 w-full mb-3 bg-white/10" />
-              <Skeleton className="h-12 w-2/3 bg-white/10" />
-              <Skeleton className="h-3 w-32 mt-6 bg-white/10" />
-            </div>
+        {/* Carga con el mismo encabezado de papel que la vista final: mismo margen superior
+            y marcadores de vuelta, eyebrow, titular y fecha */}
+        <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" aria-busy="true">
+          <div className="max-w-4xl mx-auto px-6 lg:px-12 w-full">
+            <Skeleton className="h-4 w-36 mb-6 bg-ss-rule" />
+            <Skeleton className="h-3 w-40 mb-5 bg-ss-rule" />
+            <Skeleton className="h-12 w-full mb-3 bg-ss-rule" />
+            <Skeleton className="h-12 w-2/3 bg-ss-rule" />
+            <Skeleton className="h-3 w-32 mt-6 bg-ss-rule" />
           </div>
         </section>
         <main id="main-content" className="py-16 lg:py-20">
@@ -557,70 +549,58 @@ export default function NewsDetail() {
         </>
       )}
       
-      {/* La imagen arranca bajo la cabecera sticky; antes pt-24 compensaba el header fijo */}
-      <section className="relative" data-testid="section-news-hero">
-        {/* Fondo de la marca: franja superior del degradado de la portada (como los encabezados internos) */}
-        {/* Alto mínimo (50vh, 400px) en vez de fijo y texto en el flujo: con el titular en Bebas
-            un título largo hace crecer la banda en lugar de quedar recortado por arriba */}
-        {/* La banda alta con el titular abajo solo tiene sentido sobre una foto. Sin foto, el
-            titular arranca arriba como en los demás encabezados y su posición ya no depende del
-            alto de la ventana (a 768×900 quedaba a 248 px de la cabecera). */}
-        <div className={`ss-gradient bg-ss-navy bg-[length:100%_max(100%,56vw)] bg-left-top bg-no-repeat relative flex w-full overflow-hidden ${heroImage ? "min-h-[max(50vh,400px)] items-end" : ""}`}>
-          <NewsHeroImage key={heroImage} src={heroImage} />
-          
-          <div className="relative w-full">
-            <div className={`max-w-4xl mx-auto px-6 lg:px-12 w-full ${heroImage ? "pt-12 pb-12" : "pt-[clamp(40px,8vw,112px)] pb-[clamp(56px,7vw,96px)]"}`}>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                <button
-                  onClick={goToNewsList}
-                  className="inline-flex items-center gap-2 text-white/90 hover:text-white transition-colors mb-6 cursor-pointer text-sm"
-                  data-testid="link-back-to-news"
-                >
-                  <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-                  {t.backToNews}
-                </button>
-                
-                {/* Eyebrow del expediente, como los encabezados internos: "§ 04 —— NOTICIA" */}
-                <div
-                  className="flex items-center gap-4 mb-4"
-                  data-testid="eyebrow-news"
-                >
-                  <span aria-hidden="true" className="ss-label ss-num text-ss-lime">§ 04</span>
-                  <span aria-hidden="true" className="h-0.5 w-7 shrink-0 bg-ss-lime" />
-                  <span className="ss-label text-white/70">
-                    {language === 'es' ? 'Noticia' : language === 'de' ? 'Nachrichten' : language === 'fr' ? 'Actualité' : language === 'it' ? 'Notizie' : 'News'}
-                  </span>
-                </div>
+      {/* Encabezado de papel ("memorándum impreso"): Hueso, titular Azul Marino, etiquetas en
+          Gris Medio y § en Azul Marino (index.css, .editorial-page-hero--paper). La foto del
+          artículo, si la hay, abre el cuerpo. */}
+      <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" data-testid="section-news-hero">
+        {/* Columna del artículo (max-w-4xl, ≈800 px útiles): vuelta, titular y cuerpo sobre el mismo borde */}
+        <div className="max-w-4xl mx-auto px-6 lg:px-12 w-full">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <button
+              onClick={goToNewsList}
+              className="inline-flex items-center gap-2 mb-6 cursor-pointer"
+              data-testid="link-back-to-news"
+            >
+              <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+              {t.backToNews}
+            </button>
 
-                <h1
-                  className="ss-display ss-news-title text-[clamp(40px,4.4vw,64px)] leading-[0.95] text-white"
-                  data-testid="text-news-title"
-                >
-                  {displayTitle}
-                  {isTranslating && (
-                    <Loader2 className="inline-block w-5 h-5 ml-3 animate-spin text-white/60" />
-                  )}
-                </h1>
+            {/* Eyebrow del expediente, como los encabezados internos: "§ 04 —— Noticia" */}
+            <Eyebrow
+              num="04"
+              tone="paper"
+              label={language === 'es' ? 'Noticia' : language === 'de' ? 'Nachrichten' : language === 'fr' ? 'Actualité' : language === 'it' ? 'Notizie' : 'News'}
+              className="mb-4"
+              testId="eyebrow-news"
+            />
 
-                {/* Fecha bajo el titular, como en prensa: el titular sube y queda cerca de la cabecera */}
-                {newsArticle?.date && (
-                  <p className="ss-label ss-num mt-6 text-white/70">
-                    <time
-                      // Instante completo, como datePublished del JSON-LD: no cambia con la zona del visitante
-                      dateTime={new Date(newsArticle.date).toISOString()}
-                      data-testid="text-news-date"
-                    >
-                      {formatDate(newsArticle.date)}
-                    </time>
-                  </p>
-                )}
-              </motion.div>
-            </div>
-          </div>
+            <h1
+              className="ss-news-title"
+              data-testid="text-news-title"
+            >
+              {displayTitle}
+              {isTranslating && (
+                <Loader2 className="inline-block w-5 h-5 ml-3 animate-spin text-ss-medio" aria-hidden="true" />
+              )}
+            </h1>
+
+            {/* Fecha bajo el titular, como en prensa */}
+            {newsArticle?.date && (
+              <p className="ss-label ss-num mt-6 text-ss-medio">
+                <time
+                  // Instante completo, como datePublished del JSON-LD: no cambia con la zona del visitante
+                  dateTime={new Date(newsArticle.date).toISOString()}
+                  data-testid="text-news-date"
+                >
+                  {formatDate(newsArticle.date)}
+                </time>
+              </p>
+            )}
+          </motion.div>
         </div>
       </section>
 
@@ -631,6 +611,8 @@ export default function NewsDetail() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
+            <NewsHeroImage key={heroImage} src={heroImage} />
+
             <div
               className="mb-12 relative"
               data-testid="container-news-content"
@@ -662,70 +644,73 @@ export default function NewsDetail() {
               })()}
               {isTranslating && displayContent && (
                 <div className="absolute top-0 right-0">
-                  <Loader2 className="w-4 h-4 animate-spin text-primary/60" />
+                  <Loader2 className="w-4 h-4 animate-spin text-ss-medio" aria-hidden="true" />
                 </div>
               )}
             </div>
 
+            {/* Compartir: botones de solo icono, funcionales, con nombre accesible */}
             <div
-              className="pt-8 mb-16"
+              className="pt-8 mb-16 border-t border-ss-rule"
               data-testid="section-share"
             >
               <div className="flex flex-wrap items-center gap-4">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Share2 className="w-4 h-4" />
-                  <span className="text-sm font-medium">{t.share}</span>
-                </div>
+                <span className="ss-label text-ss-medio">{t.share}</span>
                 <div className="flex flex-wrap gap-2">
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-lg"
+                    className="text-ss-marino"
                     onClick={() => handleShare("linkedin")}
                     data-testid="button-share-linkedin"
                     title="LinkedIn"
+                    aria-label="LinkedIn"
                   >
-                    <Linkedin className="w-4 h-4" />
+                    <Linkedin className="w-4 h-4" aria-hidden="true" />
                   </Button>
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-lg"
+                    className="text-ss-marino"
                     onClick={() => handleShare("twitter")}
                     data-testid="button-share-twitter"
                     title="Twitter/X"
+                    aria-label="Twitter/X"
                   >
-                    <Twitter className="w-4 h-4" />
+                    <Twitter className="w-4 h-4" aria-hidden="true" />
                   </Button>
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-lg"
+                    className="text-ss-marino"
                     onClick={() => handleShare("whatsapp")}
                     data-testid="button-share-whatsapp"
                     title="WhatsApp"
+                    aria-label="WhatsApp"
                   >
-                    <MessageCircle className="w-4 h-4" />
+                    <MessageCircle className="w-4 h-4" aria-hidden="true" />
                   </Button>
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-lg"
+                    className="text-ss-marino"
                     onClick={() => handleShare("email")}
                     data-testid="button-share-email"
                     title="Email"
+                    aria-label="Email"
                   >
-                    <Mail className="w-4 h-4" />
+                    <Mail className="w-4 h-4" aria-hidden="true" />
                   </Button>
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-lg"
+                    className="text-ss-marino"
                     onClick={handleCopyLink}
                     data-testid="button-share-copy-link"
                     title={t.copyLink}
+                    aria-label={t.copyLink}
                   >
-                    <LinkIcon className="w-4 h-4" />
+                    <LinkIcon className="w-4 h-4" aria-hidden="true" />
                   </Button>
                 </div>
               </div>
@@ -741,12 +726,12 @@ export default function NewsDetail() {
               data-testid="section-related-authors"
             >
               <h2 
-                className="text-xl font-heading font-light text-foreground mb-8 uppercase tracking-[0.12em]"
+                className="ss-h2-sm mb-6"
                 data-testid="text-authors-title"
               >
                 {relatedAuthors.length === 1 ? t.aboutTheAuthor : t.aboutTheAuthors}
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                 {relatedAuthors.map((author) => (
                   <AuthorCard 
                     key={author.id}
@@ -767,41 +752,37 @@ export default function NewsDetail() {
               data-testid="section-related-news"
             >
               <h2 
-                className="text-xl font-heading font-light text-foreground mb-8 uppercase tracking-[0.12em]"
+                className="ss-h2-sm mb-6"
                 data-testid="text-related-news-title"
               >
                 {t.relatedNews}
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-10">
                 {relatedNews.map((item) => (
                   <Link 
                     key={item.id} 
                     href={`/news/${item.slug}`}
-                    className="block"
+                    className="group block"
                   >
-                    <Card
-                      className="group overflow-hidden transition-all duration-300 hover-elevate"
-                      data-testid={`card-related-news-${item.id}`}
-                    >
+                    {/* Sin caja: imagen (o Hueso con §), fecha como etiqueta y titular en la romana */}
+                    <article data-testid={`card-related-news-${item.id}`}>
                       <div className="aspect-[16/10] overflow-hidden">
                         <NewsCardImage
                           src={item.imageUrl || ""}
                           alt={language === "es" ? item.titleEs : item.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          className="ss-photo--colour w-full h-full object-cover"
                         />
                       </div>
-                      <CardContent className="p-4">
-                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-2" data-testid={`text-related-news-date-${item.id}`}>
-                          {formatDate(item.date)}
-                        </p>
-                        <h3 
-                          className="text-base font-serif text-foreground leading-relaxed line-clamp-2"
-                          data-testid={`text-related-news-title-${item.id}`}
-                        >
-                          {language === "es" ? item.titleEs : item.title}
-                        </h3>
-                      </CardContent>
-                    </Card>
+                      <p className="ss-label ss-num text-ss-medio mt-4 mb-2" data-testid={`text-related-news-date-${item.id}`}>
+                        {formatDate(item.date)}
+                      </p>
+                      <h3 
+                        className="ss-h3 text-[20px] line-clamp-3 group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1"
+                        data-testid={`text-related-news-title-${item.id}`}
+                      >
+                        {language === "es" ? item.titleEs : item.title}
+                      </h3>
+                    </article>
                   </Link>
                 ))}
               </div>

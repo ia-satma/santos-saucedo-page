@@ -26,7 +26,7 @@ const directories: DirectoryInfo[] = [
   {
     id: "labor-practice",
     name: "Labor Law Practice",
-    nameEs: "Derecho Laboral",
+    nameEs: "Derecho laboral",
     icon: Globe2,
     description: "Specialized counsel for companies in individual and collective labor matters.",
     descriptionEs: "Asesoría especializada para empresas en asuntos laborales individuales y colectivos.",
@@ -39,7 +39,7 @@ const directories: DirectoryInfo[] = [
   {
     id: "preventive-counsel",
     name: "Preventive Counsel",
-    nameEs: "Asesoría Preventiva",
+    nameEs: "Asesoría preventiva",
     icon: Award,
     description: "Preventive legal consulting for national and international companies operating in Mexico.",
     descriptionEs: "Consultoría legal preventiva para empresas nacionales e internacionales que operan en México.",
@@ -77,40 +77,40 @@ const awards: AwardInfo[] = [
   {
     id: "conflicts",
     title: "Individual and Collective Labor Conflicts",
-    titleEs: "Conflictos Individuales y Colectivos",
+    titleEs: "Conflictos individuales y colectivos",
     description: "Representation in individual and collective disputes before labor authorities.",
     descriptionEs: "Representación en conflictos individuales y colectivos ante autoridades laborales.",
   },
   {
     id: "audit",
     title: "Legal-Labor Auditing",
-    titleEs: "Auditoría Jurídico Laboral",
+    titleEs: "Auditoría jurídico laboral",
     description: "Review of labor documentation, processes, and compliance exposure.",
     descriptionEs: "Revisión de documentación laboral, procesos y exposición de cumplimiento.",
   },
   {
     id: "training",
     title: "Strategic Labor Planning",
-    titleEs: "Planeación Laboral Estratégica",
+    titleEs: "Planeación laboral estratégica",
     description: "Courses, workshops, and planning designed to prevent labor risk.",
     descriptionEs: "Cursos, talleres y planeación diseñados para prevenir riesgos laborales.",
   },
   {
     id: "relations",
     title: "Labor Relations Diagnostics",
-    titleEs: "Diagnóstico de Relaciones Laborales",
+    titleEs: "Diagnóstico de relaciones laborales",
     description: "Analysis of workplace relations to identify risks and improvement opportunities.",
     descriptionEs: "Análisis de relaciones laborales para identificar riesgos y oportunidades de mejora.",
   },
 ];
 
 const rankedLawyers = [
-  { name: "Mario Saucedo Montemayor", slug: "mario-saucedo-montemayor", title: "Managing Partner", titleEs: "Socio Director" },
-  { name: "Enrique Santos Gúzman", slug: "enrique-santos-guzman", title: "Managing Partner", titleEs: "Socio Director" },
-  { name: "Enrique Santos Arce", slug: "enrique-santos-arce", title: "Founding Partner", titleEs: "Socio Fundador" },
+  { name: "Mario Saucedo Montemayor", slug: "mario-saucedo-montemayor", title: "Managing Partner", titleEs: "Socio director" },
+  { name: "Enrique Santos Guzmán", slug: "enrique-santos-guzman", title: "Managing Partner", titleEs: "Socio director" },
+  { name: "Enrique Santos Arce", slug: "enrique-santos-arce", title: "Founding Partner", titleEs: "Socio fundador" },
   { name: "Jaime Herrera de Herrera", slug: "jaime-herrera-de-herrera", title: "Partner", titleEs: "Socio" },
   { name: "David Martínez Saucedo", slug: "david-martinez-saucedo", title: "Partner", titleEs: "Socio" },
-  { name: "Jorge A. Garza Martínez", slug: "jorge-a-garza-martinez", title: "Senior Associate", titleEs: "Asociado Senior" },
+  { name: "Jorge A. Garza Martínez", slug: "jorge-a-garza-martinez", title: "Senior Associate", titleEs: "Asociado senior" },
 ];
 
 export default function Rankings() {
@@ -165,19 +165,19 @@ export default function Rankings() {
     es: {
       title: "Reconocimientos",
       subtitle: "Santos & Saucedo ha sido reconocido a nivel internacional por diversas instituciones que incluyen Chambers Global, Chambers Latin America, Latin Lawyer 250, Global Arbitration Review (GAR 100), Global Competition Review (GCR), Global Investigations Review (GIR), Legal 500, Lexology Index, Latin America Corporate Counsel Association (LACCA), IFLR 1000 e IFLR Energy & Infrastructure y Benchmark Litigation entre otras.",
-      overviewTitle: "Excelencia Reconocida Mundialmente",
+      overviewTitle: "Excelencia reconocida mundialmente",
       overviewText1: "Santos & Saucedo es consistentemente clasificado entre las principales firmas de abogados en México y América Latina por los directorios legales más prestigiosos del mundo. Nuestro compromiso con la excelencia, profunda experiencia y enfoque centrado en el cliente nos han ganado reconocimiento en todas las principales áreas de práctica.",
       overviewText2: "Durante más de siete décadas, hemos mantenido nuestra posición como líder del mercado, obteniendo clasificaciones de primer nivel de Chambers and Partners, Legal 500, IFLR1000, Latin Lawyer 250 y otras publicaciones líderes.",
-      directoriesTitle: "Principales Directorios Legales",
+      directoriesTitle: "Principales directorios legales",
       directoriesSubtitle: "Clasificaciones superiores en todos los principales directorios legales internacionales",
-      awardsTitle: "Premios y Logros",
+      awardsTitle: "Premios y logros",
       awardsSubtitle: "Reconocimientos recientes que destacan nuestra excelencia en servicios legales",
-      lawyersTitle: "Abogados Reconocidos",
+      lawyersTitle: "Abogados reconocidos",
       lawyersSubtitle: "Nuestros abogados son individualmente reconocidos como líderes en sus campos",
-      viewProfile: "Ver Perfil",
+      viewProfile: "Ver perfil",
       quoteText: "Santos & Saucedo es 'la firma mexicana destacada' con 'una envidiable cartera de clientes y una reputación estelar para trabajo transaccional y contencioso de alto nivel.'",
       quoteSource: "Chambers América Latina",
-      viewAllTeam: "Ver Todo el Equipo",
+      viewAllTeam: "Ver todo el equipo",
       recognitions: "Reconocimientos",
       awards: "Premios",
       rankings: "Rankings",
@@ -358,23 +358,23 @@ export default function Rankings() {
     ...baseT,
     title: language === "es" ? "Trayectoria" : "Experience",
     subtitle: language === "es"
-      ? "Más de 35 años de experiencia especializada en Derecho Laboral"
+      ? "Más de 35 años de experiencia especializada en derecho laboral"
       : "More than 35 years of specialized experience in labor law",
-    overviewTitle: language === "es" ? "Experiencia Laboral Especializada" : "Specialized Labor Experience",
+    overviewTitle: language === "es" ? "Experiencia laboral especializada" : "Specialized Labor Experience",
     overviewText1: language === "es"
-      ? "Santos & Saucedo es un despacho jurídico especializado en Derecho Laboral que asesora a empresas nacionales e internacionales con un enfoque preventivo y práctico."
+      ? "Santos & Saucedo es un despacho jurídico especializado en derecho laboral que asesora a empresas nacionales e internacionales con un enfoque preventivo y práctico."
       : "Santos & Saucedo is a legal firm specialized in labor law, advising national and international companies through a preventive and practical approach.",
     overviewText2: language === "es"
       ? "La firma trabaja en conflictos individuales y colectivos, auditoría jurídico laboral, diagnóstico de relaciones laborales, planes de mejora y planeación laboral estratégica."
       : "The firm works on individual and collective disputes, legal-labor audits, workplace relations diagnostics, improvement plans, and strategic labor planning.",
     directoriesTitle: language === "es" ? "Capacidades" : "Capabilities",
     directoriesSubtitle: language === "es" ? "Áreas de trabajo públicas de la firma" : "Public practice capabilities of the firm",
-    awardsTitle: language === "es" ? "Servicios Relevantes" : "Relevant Services",
+    awardsTitle: language === "es" ? "Servicios relevantes" : "Relevant Services",
     awardsSubtitle: language === "es" ? "Frentes de asesoría laboral descritos por la firma" : "Labor counsel workstreams described by the firm",
-    lawyersTitle: language === "es" ? "Equipo Principal" : "Core Team",
+    lawyersTitle: language === "es" ? "Equipo principal" : "Core Team",
     lawyersSubtitle: language === "es" ? "Socios y abogados de Santos & Saucedo" : "Partners and attorneys at Santos & Saucedo",
     quoteText: language === "es"
-      ? "Somos un despacho jurídico que lleva más de 35 años de experiencia, especializado en Derecho Laboral."
+      ? "Somos un despacho jurídico que lleva más de 35 años de experiencia, especializado en derecho laboral."
       : "We are a legal firm with more than 35 years of experience, specialized in labor law.",
     quoteSource: "Santos & Saucedo",
     recognitions: language === "es" ? "Experiencia" : "Experience",
@@ -420,7 +420,7 @@ export default function Rankings() {
             </div>
             <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1
-              className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
+              className="text-4xl md:text-5xl font-heading text-white mb-5"
               data-testid="text-rankings-title"
             >
               {t.title}
@@ -445,14 +445,14 @@ export default function Rankings() {
             className="mb-20"
             data-testid="section-rankings-overview"
           >
-            <h2 className="text-2xl font-heading font-light text-foreground mb-6 uppercase tracking-[0.12em]">
+            <h2 className="text-[clamp(28px,2.6vw,38px)] leading-[1.12] tracking-[-0.012em] font-heading font-normal text-ss-marino mb-6">
               {t.overviewTitle}
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <p className="text-lg text-foreground leading-relaxed text-justify">
+              <p className="text-lg text-ss-tinta leading-relaxed">
                 {t.overviewText1}
               </p>
-              <p className="text-lg text-foreground leading-relaxed text-justify">
+              <p className="text-lg text-ss-tinta leading-relaxed">
                 {t.overviewText2}
               </p>
             </div>
@@ -467,7 +467,7 @@ export default function Rankings() {
             data-testid="section-directories"
           >
             <div className="text-center mb-12">
-              <h2 className="text-2xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
+              <h2 className="text-[clamp(28px,2.6vw,38px)] leading-[1.12] tracking-[-0.012em] font-heading font-normal text-ss-marino mb-4">
                 {t.directoriesTitle}
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -514,7 +514,7 @@ export default function Rankings() {
             data-testid="section-awards"
           >
             <div className="text-center mb-12">
-              <h2 className="text-2xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
+              <h2 className="text-[clamp(28px,2.6vw,38px)] leading-[1.12] tracking-[-0.012em] font-heading font-normal text-ss-marino mb-4">
                 {t.awardsTitle}
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -565,7 +565,7 @@ export default function Rankings() {
           >
             <div className="max-w-4xl mx-auto text-center">
               <Quote className="w-12 h-12 text-primary/30 mx-auto mb-6" />
-              <blockquote className="text-xl md:text-2xl font-sans font-light text-foreground mb-6">
+              <blockquote className="text-xl md:text-2xl font-serif font-normal text-ss-tinta mb-6">
                 "{t.quoteText}"
               </blockquote>
               <cite className="text-primary font-medium">
@@ -583,7 +583,7 @@ export default function Rankings() {
             data-testid="section-ranked-lawyers"
           >
             <div className="text-center mb-12">
-              <h2 className="text-2xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
+              <h2 className="text-[clamp(28px,2.6vw,38px)] leading-[1.12] tracking-[-0.012em] font-heading font-normal text-ss-marino mb-4">
                 {t.lawyersTitle}
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -613,14 +613,14 @@ export default function Rankings() {
                               .slice(0, 2)}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-medium text-foreground group-hover:text-primary transition-colors">
+                            <h3 className="font-normal text-ss-marino group-hover:text-primary transition-colors">
                               {lawyer.name}
                             </h3>
                             <p className="text-sm text-muted-foreground">
                               {language === "es" ? lawyer.titleEs : lawyer.title}
                             </p>
                           </div>
-                          <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-primary transition-colors flex-shrink-0" />
+                          <ChevronRight className="w-5 h-5 text-ss-medio group-hover:text-primary transition-colors flex-shrink-0" />
                         </CardContent>
                       </Card>
                     </Link>

@@ -120,13 +120,13 @@ export default function RankingsSection() {
         >
           <div className="w-12 h-px bg-brand mb-6 mx-auto" />
           <p
-            className="text-primary text-[10px] tracking-[0.25em] uppercase mb-4"
+            className="ss-label text-primary mb-4"
             data-testid="text-rankings-eyebrow"
           >
             {t.eyebrow}
           </p>
           <h2
-            className="font-heading font-light text-2xl md:text-3xl lg:text-4xl text-foreground uppercase tracking-[0.12em] leading-tight mb-8"
+            className="font-heading font-normal text-2xl md:text-3xl lg:text-4xl text-ss-marino leading-tight mb-8"
             data-testid="text-rankings-title"
           >
             {t.title}
@@ -142,7 +142,7 @@ export default function RankingsSection() {
           className="text-center mb-6 max-w-4xl mx-auto"
         >
           <p
-            className="text-sm text-muted-foreground leading-relaxed text-justify"
+            className="text-sm text-muted-foreground leading-relaxed"
             data-testid="text-recognitions-intro"
           >
             {t.intro}
@@ -158,7 +158,7 @@ export default function RankingsSection() {
           className="text-center mb-10 max-w-4xl mx-auto"
         >
           <p
-            className="text-sm text-muted-foreground leading-relaxed text-justify"
+            className="text-sm text-muted-foreground leading-relaxed"
             data-testid="text-recognitions-institutions"
           >
             {t.institutions}

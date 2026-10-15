@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
-import { Shield, FileText, Database, Eye, Lock, Cookie, AlertCircle, Phone, Mail, Globe, Users, Building2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+// Los iconos solo quedan en los datos de cada sección; la página ya no los dibuja.
+import { Shield, FileText, Database, Eye, Lock, Cookie, AlertCircle, Phone, Globe, Users, Building2 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContact } from "@/components/home26/useSiteContact";
+import { Eyebrow } from "@/components/editorial";
 
 type SupportedLanguage = 'en' | 'es' | 'de' | 'zh' | 'ko' | 'ja' | 'ar' | 'ru' | 'fr' | 'it';
 
@@ -310,7 +311,7 @@ Website: www.santossaucedo.com`
       ]
     },
     es: {
-      title: "Aviso de Privacidad",
+      title: "Aviso de privacidad",
       subtitle: "Cómo recopilamos, utilizamos y protegemos sus datos personales",
       lastUpdated: "Última actualización: Diciembre 2024",
       sections: [
@@ -327,7 +328,7 @@ Al acceder o utilizar nuestro Sitio Web, usted reconoce que ha leído, comprendi
         {
           id: "data-controller",
           icon: Building2,
-          title: "2. Responsable del Tratamiento",
+          title: "2. Responsable del tratamiento",
           content: `El responsable del tratamiento de sus datos personales es:
 
 Santos & Saucedo Abogados
@@ -342,7 +343,7 @@ Teléfono: +52 81 8335 2086`
         {
           id: "data-collected",
           icon: Database,
-          title: "3. Datos Personales que Recopilamos",
+          title: "3. Datos personales que recopilamos",
           content: `Podemos recopilar y tratar las siguientes categorías de datos personales:
 
 Datos de Identificación:
@@ -365,7 +366,7 @@ Datos Técnicos:
         {
           id: "data-use",
           icon: Eye,
-          title: "4. Uso de sus Datos",
+          title: "4. Uso de sus datos",
           content: `Utilizamos sus datos personales para los siguientes fines:
 
 Finalidades Primarias (no requieren consentimiento adicional):
@@ -385,7 +386,7 @@ Puede optar por no recibir comunicaciones para finalidades secundarias contactá
         {
           id: "data-retention",
           icon: FileText,
-          title: "5. Conservación de Datos",
+          title: "5. Conservación de datos",
           content: `Conservamos sus datos personales solo durante el tiempo necesario para cumplir con los fines para los que fueron recopilados, a menos que la ley exija o permita un período de retención más largo.
 
 Períodos de Retención:
@@ -398,7 +399,7 @@ Períodos de Retención:
         {
           id: "data-sharing",
           icon: Users,
-          title: "6. Compartición de Datos",
+          title: "6. Compartición de datos",
           content: `Podemos compartir sus datos personales con las siguientes categorías de destinatarios:
 
 Dentro de S&S:
@@ -415,7 +416,7 @@ Nunca vendemos sus datos personales a terceros con fines de marketing.`
         {
           id: "arco-rights",
           icon: Shield,
-          title: "7. Sus Derechos ARCO",
+          title: "7. Sus derechos ARCO",
           content: `Conforme a la legislación mexicana, usted tiene los siguientes derechos sobre sus datos personales (conocidos como derechos ARCO):
 
 Acceso: Puede solicitar confirmación de si tratamos sus datos personales y acceder a dichos datos.
@@ -436,7 +437,7 @@ San Pedro Garza García, Nuevo León, México`
         {
           id: "transfers",
           icon: Globe,
-          title: "8. Transferencias a Terceros",
+          title: "8. Transferencias a terceros",
           content: `S&S puede transferir sus datos personales a terceros en las siguientes circunstancias:
 
 Transferencias que requieren consentimiento:
@@ -453,7 +454,7 @@ Cuando sus datos sean transferidos a países fuera de México, nos aseguramos de
         {
           id: "cookies",
           icon: Cookie,
-          title: "9. Política de Cookies",
+          title: "9. Política de cookies",
           content: `Nuestro sitio web utiliza cookies y tecnologías similares para mejorar su experiencia de navegación.
 
 Tipos de cookies que utilizamos:
@@ -472,7 +473,7 @@ Puede controlar y gestionar las cookies a través de la configuración de su nav
         {
           id: "security",
           icon: Lock,
-          title: "10. Medidas de Seguridad",
+          title: "10. Medidas de seguridad",
           content: `S&S implementa medidas de seguridad administrativas, técnicas y físicas integrales para proteger sus datos personales.
 
 Medidas administrativas:
@@ -492,7 +493,7 @@ Medidas físicas:
         {
           id: "changes",
           icon: AlertCircle,
-          title: "11. Cambios a este Aviso de Privacidad",
+          title: "11. Cambios a este aviso de privacidad",
           content: `S&S se reserva el derecho de modificar este Aviso de Privacidad en cualquier momento.
 
 Cómo le notificamos los cambios:
@@ -504,7 +505,7 @@ Le recomendamos revisar periódicamente este Aviso de Privacidad.`
         {
           id: "contact",
           icon: Phone,
-          title: "12. Información de Contacto",
+          title: "12. Información de contacto",
           content: `Para cualquier pregunta relacionada con este Aviso de Privacidad, contacte a:
 
 Oficial de Protección de Datos
@@ -2487,7 +2488,8 @@ Sito web: www.santossaucedo.com`
       <SEOHead page="privacyPolicy" language={language} />
       <Header />
       
-      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-privacy-hero">
+      {/* Encabezado de papel ("memorándum impreso"), como los artículos: Hueso, h1 Azul Marino */}
+      <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" data-testid="section-privacy-hero">
         {/* Columna del documento (max-w-4xl): titular, subtítulo y fecha sobre su borde */}
         <div className="max-w-4xl mx-auto px-6 lg:px-12">
           <motion.div
@@ -2495,23 +2497,22 @@ Sito web: www.santossaucedo.com`
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="text-center"
           >
-            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
-            <h1 
-              className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
+            <Eyebrow num="" tone="paper" className="mb-6" />
+            <h1
+              className="mb-5"
               data-testid="text-privacy-title"
             >
               {t.title}
             </h1>
-            <p 
-              className="text-base text-white/60 max-w-2xl mx-auto mb-4"
+            <p
+              className="mb-4"
               data-testid="text-privacy-subtitle"
             >
               {t.subtitle}
             </p>
-            <p 
-              className="text-sm text-white/50"
+            <p
+              className="text-sm"
               data-testid="text-privacy-updated"
             >
               {t.lastUpdated}
@@ -2522,80 +2523,64 @@ Sito web: www.santossaucedo.com`
 
       <main id="main-content" className="py-16 lg:py-20">
         <div className="max-w-4xl mx-auto px-6 lg:px-12">
+          {/* Secciones abiertas: filete superior, h2 en romana y texto corrido. Sin cajas ni iconos. */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="space-y-8"
+            className="space-y-12"
           >
             {t.sections.map((section) => (
-              <motion.div 
-                key={section.id} 
+              <motion.div
+                key={section.id}
                 variants={itemVariants}
+                className="border-t border-ss-rule pt-8"
                 data-testid={`section-privacy-${section.id}`}
               >
-                <Card className="overflow-hidden">
-                  <CardContent className="p-0">
-                    <div className="flex items-center gap-4 p-6 bg-muted">
-                      <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center flex-shrink-0">
-                        <section.icon className="w-6 h-6 text-primary" />
-                      </div>
-                      <h2 
-                        className="text-xl font-heading font-medium text-foreground"
-                        data-testid={`text-section-title-${section.id}`}
-                      >
-                        {section.title}
-                      </h2>
-                    </div>
-                    <div className="p-6">
-                      <div 
-                        className="text-foreground leading-relaxed whitespace-pre-line"
-                        data-testid={`text-section-content-${section.id}`}
-                      >
-                        {section.content}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <h2
+                  className="ss-h2-sm mb-4"
+                  data-testid={`text-section-title-${section.id}`}
+                >
+                  {section.title}
+                </h2>
+                <div
+                  className="ss-prose text-ss-tinta text-[17px] md:text-[18px] whitespace-pre-line"
+                  data-testid={`text-section-content-${section.id}`}
+                >
+                  {section.content}
+                </div>
               </motion.div>
             ))}
           </motion.div>
 
+          {/* Contacto: bloque Hueso con dos enlaces de texto */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="mt-16 text-center"
+            className="mt-16 bg-ss-paper p-8 lg:p-10"
           >
-            <Card className=" bg-primary/5 dark:bg-primary/10">
-              <CardContent className="p-8">
-                <Shield className="w-10 h-10 text-primary mx-auto mb-4" />
-                <p className="text-foreground mb-4">
-                  {contactText[language as keyof typeof contactText] || contactText.en}
-                </p>
-                <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-                  <a 
-                    href="mailto:privacidad@santossaucedo.com"
-                    className="flex items-center gap-2 text-primary hover:underline"
-                    data-testid="link-privacy-email"
-                  >
-                    <Mail className="w-4 h-4" />
-                    privacidad@santossaucedo.com
-                  </a>
-                  <span className="hidden sm:inline text-gray-400">|</span>
-                  <a 
-                    href={phoneHref}
-                    className="flex items-center gap-2 text-primary hover:underline"
-                    data-testid="link-privacy-phone"
-                  >
-                    <Phone className="w-4 h-4" />
-                    {phone}
-                  </a>
-                </div>
-              </CardContent>
-            </Card>
+            <p className="text-base text-ss-tinta mb-4">
+              {contactText[language as keyof typeof contactText] || contactText.en}
+            </p>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-x-8 gap-y-2">
+              <a
+                href="mailto:privacidad@santossaucedo.com"
+                className="font-semibold text-ss-marino underline decoration-1 underline-offset-4 hover:decoration-2"
+                data-testid="link-privacy-email"
+              >
+                privacidad@santossaucedo.com
+              </a>
+              <a
+                href={phoneHref}
+                className="font-semibold text-ss-marino underline decoration-1 underline-offset-4 hover:decoration-2"
+                data-testid="link-privacy-phone"
+              >
+                <span dir="ltr">{phone}</span>
+              </a>
+            </div>
           </motion.div>
         </div>
       </main>

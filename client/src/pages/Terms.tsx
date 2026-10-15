@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
-import { FileText, Scale, Globe, AlertTriangle, Users, Shield, Gavel, BookOpen, Bell, Phone, Mail, Building2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+// Los iconos solo quedan en los datos de cada sección; la página ya no los dibuja.
+import { FileText, Scale, Globe, AlertTriangle, Users, Shield, Gavel, BookOpen, Bell, Phone } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContact } from "@/components/home26/useSiteContact";
+import { Eyebrow } from "@/components/editorial";
 
 type SupportedLanguage = 'en' | 'es' | 'de' | 'zh' | 'ko' | 'ja' | 'ar' | 'ru' | 'fr' | 'it';
 
@@ -294,14 +295,14 @@ For inquiries related to potential legal representation, please contact us by te
       ]
     },
     es: {
-      title: "Términos y Condiciones",
+      title: "Términos y condiciones",
       subtitle: "Por favor lea estos términos cuidadosamente antes de usar nuestro sitio web",
       lastUpdated: "Última actualización: Diciembre 2024",
       sections: [
         {
           id: "acceptance",
           icon: FileText,
-          title: "1. Aceptación de los Términos",
+          title: "1. Aceptación de los términos",
           content: `Al acceder y utilizar el sitio web de Santos & Saucedo Abogados (en adelante "S&S," "la Firma," "nosotros" o "nuestro"), ubicado en www.santossaucedo.com (en adelante "el Sitio Web"), usted reconoce que ha leído, comprendido y acepta estar obligado por estos Términos y Condiciones de Uso (en adelante "Términos").
 
 Si no está de acuerdo con alguna parte de estos Términos, debe dejar de usar el Sitio Web inmediatamente. Su uso continuado del Sitio Web constituye su aceptación de estos Términos y cualquier modificación a los mismos.
@@ -317,7 +318,7 @@ Al usar este Sitio Web, usted declara y garantiza que:
         {
           id: "website-use",
           icon: Globe,
-          title: "2. Uso del Sitio Web",
+          title: "2. Uso del sitio web",
           content: `El Sitio Web se proporciona únicamente con fines informativos. El contenido de este Sitio Web tiene como objetivo proporcionar información general sobre S&S, sus servicios legales, áreas de práctica y equipo profesional.
 
 Usos Permitidos:
@@ -343,7 +344,7 @@ S&S se reserva el derecho de terminar o restringir su acceso al Sitio Web por cu
         {
           id: "intellectual-property",
           icon: BookOpen,
-          title: "3. Derechos de Propiedad Intelectual",
+          title: "3. Derechos de propiedad intelectual",
           content: `Todo el contenido de este Sitio Web, incluyendo pero no limitado a texto, gráficos, logotipos, imágenes, fotografías, videos, clips de audio, compilaciones de datos, software, íconos, y la selección y disposición de los mismos (colectivamente, "Contenido"), es propiedad exclusiva de Santos & Saucedo Abogados o sus proveedores de contenido y está protegido por las leyes de derechos de autor, marcas registradas, patentes, secretos comerciales y otras leyes de propiedad intelectual mexicanas e internacionales.
 
 Marcas Registradas:
@@ -358,7 +359,7 @@ Si cree que algún Contenido del Sitio Web infringe sus derechos de autor, comun
         {
           id: "no-legal-advice",
           icon: AlertTriangle,
-          title: "4. Descargo de Responsabilidad sobre Asesoría Legal",
+          title: "4. Descargo de responsabilidad sobre asesoría legal",
           content: `AVISO IMPORTANTE: La información contenida en este Sitio Web se proporciona únicamente con fines informativos y educativos generales y NO constituye asesoría legal.
 
 Nada en este Sitio Web debe interpretarse como:
@@ -378,7 +379,7 @@ IMPORTANTE: No envíe información confidencial o sensible a S&S a través de es
         {
           id: "no-attorney-client",
           icon: Users,
-          title: "5. No Existe Relación Abogado-Cliente",
+          title: "5. No existe relación abogado-cliente",
           content: `Su uso de este Sitio Web, incluyendo navegar por el Contenido, enviar formularios de contacto, enviar correos electrónicos o descargar materiales, NO crea una relación abogado-cliente entre usted y Santos & Saucedo Abogados o cualquiera de sus abogados.
 
 Una relación abogado-cliente con S&S solo se establece cuando:
@@ -393,7 +394,7 @@ Si está considerando contratar a S&S para representación legal, comuníquese c
         {
           id: "limitation-liability",
           icon: Shield,
-          title: "6. Limitación de Responsabilidad",
+          title: "6. Limitación de responsabilidad",
           content: `EN LA MÁXIMA MEDIDA PERMITIDA POR LA LEY APLICABLE:
 
 Descargo de Garantías:
@@ -408,7 +409,7 @@ EN LA MÁXIMA MEDIDA PERMITIDA POR LA LEY, LA RESPONSABILIDAD TOTAL DE S&S NO EX
         {
           id: "governing-law",
           icon: Gavel,
-          title: "7. Ley Aplicable",
+          title: "7. Ley aplicable",
           content: `Estos Términos y Condiciones serán regidos e interpretados de acuerdo con las leyes de los Estados Unidos Mexicanos (México), sin tener en cuenta sus disposiciones sobre conflictos de leyes.
 
 Ley Aplicable:
@@ -424,7 +425,7 @@ Si accede al Sitio Web desde fuera de México, lo hace bajo su propio riesgo y e
         {
           id: "dispute-resolution",
           icon: Scale,
-          title: "8. Resolución de Controversias",
+          title: "8. Resolución de controversias",
           content: `Cualquier disputa, controversia o reclamo que surja de o esté relacionado con estos Términos se resolverá de acuerdo con las siguientes disposiciones:
 
 Negociación:
@@ -439,7 +440,7 @@ Cualquier acción legal se presentará exclusivamente ante los tribunales federa
         {
           id: "modifications",
           icon: Bell,
-          title: "9. Modificaciones a los Términos",
+          title: "9. Modificaciones a los términos",
           content: `Santos & Saucedo Abogados se reserva el derecho de modificar estos Términos y Condiciones en cualquier momento sin previo aviso.
 
 Cómo se Comunican los Cambios:
@@ -451,7 +452,7 @@ Es su responsabilidad revisar estos Términos periódicamente para mantenerse in
         {
           id: "contact",
           icon: Phone,
-          title: "10. Información de Contacto",
+          title: "10. Información de contacto",
           content: `Si tiene alguna pregunta sobre estos Términos y Condiciones, comuníquese con nosotros:
 
 Santos & Saucedo Abogados
@@ -2016,7 +2017,8 @@ Escluse le festività federali messicane`
       <SEOHead page="terms" language={language} />
       <Header />
       
-      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-terms-hero">
+      {/* Encabezado de papel ("memorándum impreso"), como los artículos: Hueso, h1 Azul Marino */}
+      <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" data-testid="section-terms-hero">
         {/* Columna del documento (max-w-4xl): titular, subtítulo y fecha sobre su borde */}
         <div className="max-w-4xl mx-auto px-6 lg:px-12">
           <motion.div
@@ -2024,23 +2026,22 @@ Escluse le festività federali messicane`
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="text-center"
           >
-            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
-            <h1 
-              className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
+            <Eyebrow num="" tone="paper" className="mb-6" />
+            <h1
+              className="mb-5"
               data-testid="text-terms-title"
             >
               {t.title}
             </h1>
-            <p 
-              className="text-base text-white/60 max-w-2xl mx-auto mb-4"
+            <p
+              className="mb-4"
               data-testid="text-terms-subtitle"
             >
               {t.subtitle}
             </p>
-            <p 
-              className="text-sm text-white/50"
+            <p
+              className="text-sm"
               data-testid="text-terms-updated"
             >
               {t.lastUpdated}
@@ -2051,80 +2052,64 @@ Escluse le festività federali messicane`
 
       <main id="main-content" className="py-16 lg:py-20">
         <div className="max-w-4xl mx-auto px-6 lg:px-12">
+          {/* Secciones abiertas: filete superior, h2 en romana y texto corrido. Sin cajas ni iconos. */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="space-y-8"
+            className="space-y-12"
           >
             {t.sections.map((section) => (
-              <motion.div 
-                key={section.id} 
+              <motion.div
+                key={section.id}
                 variants={itemVariants}
+                className="border-t border-ss-rule pt-8"
                 data-testid={`section-terms-${section.id}`}
               >
-                <Card className="overflow-hidden">
-                  <CardContent className="p-0">
-                    <div className="flex items-center gap-4 p-6 bg-muted">
-                      <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center flex-shrink-0">
-                        <section.icon className="w-6 h-6 text-primary" />
-                      </div>
-                      <h2 
-                        className="text-xl font-heading font-medium text-foreground"
-                        data-testid={`text-section-title-${section.id}`}
-                      >
-                        {section.title}
-                      </h2>
-                    </div>
-                    <div className="p-6">
-                      <div 
-                        className="text-foreground leading-relaxed whitespace-pre-line"
-                        data-testid={`text-section-content-${section.id}`}
-                      >
-                        {section.content}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <h2
+                  className="ss-h2-sm mb-4"
+                  data-testid={`text-section-title-${section.id}`}
+                >
+                  {section.title}
+                </h2>
+                <div
+                  className="ss-prose text-ss-tinta text-[17px] md:text-[18px] whitespace-pre-line"
+                  data-testid={`text-section-content-${section.id}`}
+                >
+                  {section.content}
+                </div>
               </motion.div>
             ))}
           </motion.div>
 
+          {/* Contacto: bloque Hueso con dos enlaces de texto */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="mt-16 text-center"
+            className="mt-16 bg-ss-paper p-8 lg:p-10"
           >
-            <Card className=" bg-primary/5 dark:bg-primary/10">
-              <CardContent className="p-8">
-                <Scale className="w-10 h-10 text-primary mx-auto mb-4" />
-                <p className="text-foreground mb-4">
-                  {contactText[language as keyof typeof contactText] || contactText.en}
-                </p>
-                <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-                  <a 
-                    href="mailto:info@santossaucedo.com"
-                    className="flex items-center gap-2 text-primary hover:underline"
-                    data-testid="link-terms-email"
-                  >
-                    <Mail className="w-4 h-4" />
-                    info@santossaucedo.com
-                  </a>
-                  <span className="hidden sm:inline text-gray-400">|</span>
-                  <a 
-                    href={phoneHref}
-                    className="flex items-center gap-2 text-primary hover:underline"
-                    data-testid="link-terms-phone"
-                  >
-                    <Phone className="w-4 h-4" />
-                    {phone}
-                  </a>
-                </div>
-              </CardContent>
-            </Card>
+            <p className="text-base text-ss-tinta mb-4">
+              {contactText[language as keyof typeof contactText] || contactText.en}
+            </p>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-x-8 gap-y-2">
+              <a
+                href="mailto:info@santossaucedo.com"
+                className="font-semibold text-ss-marino underline decoration-1 underline-offset-4 hover:decoration-2"
+                data-testid="link-terms-email"
+              >
+                info@santossaucedo.com
+              </a>
+              <a
+                href={phoneHref}
+                className="font-semibold text-ss-marino underline decoration-1 underline-offset-4 hover:decoration-2"
+                data-testid="link-terms-phone"
+              >
+                <span dir="ltr">{phone}</span>
+              </a>
+            </div>
           </motion.div>
         </div>
       </main>

@@ -325,10 +325,10 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
   const t = {
     ...baseT,
     heroTitle: language === "es" ? "SANTOS & SAUCEDO" : "SANTOS & SAUCEDO",
-    heroSubtitle: language === "es" ? "Especialistas en Derecho Laboral" : "Labor Law Specialists",
+    heroSubtitle: language === "es" ? "Especialistas en derecho laboral" : "Labor Law Specialists",
     visionTitle: language === "es" ? "Más de 35 años de experiencia" : "More than 35 years of experience",
     visionText: language === "es"
-      ? "Somos un despacho jurídico especializado en Derecho Laboral, enfocado en acompañar a empresas nacionales e internacionales con asesoría preventiva, consultoría legal y representación en asuntos individuales y colectivos."
+      ? "Somos un despacho jurídico especializado en derecho laboral, enfocado en acompañar a empresas nacionales e internacionales con asesoría preventiva, consultoría legal y representación en asuntos individuales y colectivos."
       : "We are a legal firm specialized in labor law, focused on advising national and international companies through preventive counsel, legal consulting, and representation in individual and collective matters.",
     centerTitle: language === "es" ? "Nuestra oficina" : "Our office",
     centerText: language === "es"
@@ -350,7 +350,7 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
       ? "Nuestro objetivo es brindar asesoría preventiva y consultoría legal en el área laboral a empresas nacionales e internacionales."
       : "Our objective is to provide preventive counsel and legal consulting in labor matters to national and international companies.",
     quoteAuthor: "Santos & Saucedo",
-    quoteRole: language === "es" ? "Derecho Laboral" : "Labor Law",
+    quoteRole: language === "es" ? "Derecho laboral" : "Labor Law",
     addressTitle: language === "es" ? "Dirección" : "Address",
     addressLine1: "Río Tamazunchale 205 Norte",
     addressLine2: "Colonia Del Valle",
@@ -384,7 +384,7 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
             style={{ imageRendering: "crisp-edges" }}
             data-testid="img-popup-logo"
           />
-          <span className="text-[10px] text-muted-foreground uppercase tracking-[0.25em]">
+          <span className="ss-label text-muted-foreground">
             {language.toUpperCase()}
           </span>
         </div>
@@ -409,7 +409,7 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-2xl md:text-3xl lg:text-4xl font-heading font-light text-white leading-tight mb-4 uppercase tracking-[0.12em]"
+                className="text-2xl md:text-3xl lg:text-4xl font-heading font-normal text-white leading-tight mb-4"
                 data-testid="text-popup-hero-title"
               >
                 {t.heroTitle}
@@ -431,7 +431,7 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
                 className="mt-8 flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors mx-auto cursor-pointer min-h-[44px] min-w-[44px] p-2 touch-manipulation"
                 data-testid="button-popup-scroll"
               >
-                <span className="text-[10px] tracking-[0.25em] uppercase">{t.scroll}</span>
+                <span className="ss-label">{t.scroll}</span>
                 <ChevronDown className="w-5 h-5 animate-bounce" />
               </motion.button>
             </div>
@@ -440,44 +440,44 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
           <div className="bg-background px-6 md:px-12 py-12 space-y-12">
             <section className="max-w-3xl mx-auto text-center" data-testid="section-vision">
               <div className="w-12 h-px bg-brand mb-6 mx-auto" />
-              <h3 className="text-xl md:text-2xl font-heading font-light text-foreground mb-6 uppercase tracking-[0.12em]">
+              <h3 className="text-xl md:text-2xl font-heading font-normal text-ss-marino mb-6">
                 {t.visionTitle}
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed text-justify hyphens-none">
+              <p className="text-sm text-muted-foreground leading-relaxed hyphens-none">
                 {t.visionText}
               </p>
             </section>
 
             <section className="max-w-3xl mx-auto text-center" data-testid="section-center">
               <div className="w-12 h-px bg-brand mb-6 mx-auto" />
-              <h3 className="text-xl md:text-2xl font-heading font-light text-foreground mb-6 uppercase tracking-[0.12em]">
+              <h3 className="text-xl md:text-2xl font-heading font-normal text-ss-marino mb-6">
                 {t.centerTitle}
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed text-justify hyphens-none">
+              <p className="text-sm text-muted-foreground leading-relaxed hyphens-none">
                 {t.centerText}
               </p>
             </section>
 
             <section className="max-w-3xl mx-auto text-center" data-testid="section-collaboration">
               <div className="w-12 h-px bg-brand mb-6 mx-auto" />
-              <h3 className="text-xl md:text-2xl font-heading font-light text-foreground mb-6 uppercase tracking-[0.12em]">
+              <h3 className="text-xl md:text-2xl font-heading font-normal text-ss-marino mb-6">
                 {t.collabTitle}
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-4 text-justify hyphens-none">
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4 hyphens-none">
                 {t.collabText}
               </p>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-8 text-justify hyphens-none">
+              <p className="text-sm text-muted-foreground leading-relaxed mb-8 hyphens-none">
                 {t.collabText2}
               </p>
               <div className="flex flex-col items-center mb-8">
-                <span className="text-5xl md:text-6xl font-heading font-light text-primary leading-none">
+                <span className="text-5xl md:text-6xl font-heading font-[300] text-ss-marino leading-none [font-variant-numeric:lining-nums]">
                   {t.workplacesNum}
                 </span>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-[0.25em] mt-3">
+                <span className="ss-label text-muted-foreground mt-3">
                   {t.workplacesLabel}
                 </span>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed text-justify hyphens-none">
+              <p className="text-sm text-muted-foreground leading-relaxed hyphens-none">
                 {t.capacityText}
               </p>
             </section>
@@ -515,18 +515,18 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
             </section>
 
             <section className="max-w-3xl mx-auto text-center py-10 border-t border-b border-border" data-testid="section-quote">
-              <div className="font-heading text-6xl text-primary opacity-40 mb-4 leading-none">&ldquo;</div>
-              <blockquote className="font-sans font-light text-lg md:text-xl text-foreground leading-relaxed mb-8 not-italic" style={{ fontStyle: "normal" }}>
+              <div className="font-heading text-6xl text-ss-marino opacity-40 mb-4 leading-none">&ldquo;</div>
+              <blockquote className="font-sans font-normal text-lg md:text-xl text-foreground leading-relaxed mb-8 not-italic" style={{ fontStyle: "normal" }}>
                 {t.quoteText}
               </blockquote>
               <div className="w-12 h-px bg-brand mx-auto mb-4" />
-              <p className="text-xs text-foreground uppercase tracking-[0.2em] mb-1">{t.quoteAuthor}</p>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-[0.25em]">{t.quoteRole}</p>
+              <p className="ss-label text-foreground mb-1">{t.quoteAuthor}</p>
+              <p className="ss-label text-muted-foreground">{t.quoteRole}</p>
             </section>
 
             <section className="max-w-3xl mx-auto text-center" data-testid="section-address">
               <div className="w-12 h-px bg-brand mb-6 mx-auto" />
-              <h3 className="text-xl md:text-2xl font-heading font-light text-foreground mb-6 uppercase tracking-[0.12em]">
+              <h3 className="text-xl md:text-2xl font-heading font-normal text-ss-marino mb-6">
                 {t.addressTitle}
               </h3>
               <a
@@ -547,11 +547,11 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
           </div>
         </div>
 
-        <div className="bg-[#1E1C92] p-4 flex-shrink-0">
+        <div className="bg-ss-navy p-4 flex-shrink-0">
           <Button
             onClick={handleClose}
             variant="ghost"
-            className="w-full text-white hover:text-white hover:bg-white/10 text-xs tracking-[0.25em] uppercase"
+            className="w-full text-white hover:text-white hover:bg-white/10"
             data-testid="button-close-popup"
           >
             {t.close}

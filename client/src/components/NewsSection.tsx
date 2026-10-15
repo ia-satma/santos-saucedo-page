@@ -24,7 +24,7 @@ function NewsImageWithFallback({
     return (
       <div className={`bg-muted flex items-center justify-center ${className}`}>
         <div className="text-center">
-          <span className="text-4xl md:text-5xl font-heading font-light text-muted-foreground/60 tracking-[0.18em]">
+          <span className="text-4xl md:text-5xl font-heading font-normal text-muted-foreground/60">
             S&S
           </span>
         </div>
@@ -168,14 +168,14 @@ function NewsCardTranslated({ item, language, dateLocale, seeMoreText }: NewsCar
           />
         </div>
         <div className="p-6">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3" data-testid={`text-news-date-${item.id}`}>
+          <p className="ss-label text-muted-foreground mb-3" data-testid={`text-news-date-${item.id}`}>
             {item.date ? new Date(item.date).toLocaleDateString(
               dateLocale,
               { year: "numeric", month: "long", day: "numeric" }
             ) : ""}
           </p>
           <h3 
-            className={`text-lg font-serif text-foreground dark:text-white leading-relaxed mb-3 line-clamp-2 ${isTranslating ? 'opacity-50' : ''}`}
+            className={`text-lg font-serif text-ss-marino dark:text-white leading-relaxed mb-3 line-clamp-2 ${isTranslating ? 'opacity-50' : ''}`}
             data-testid={`text-news-title-${item.id}`}
           >
             {displayTitle}
@@ -189,7 +189,7 @@ function NewsCardTranslated({ item, language, dateLocale, seeMoreText }: NewsCar
             </p>
           )}
           <span
-            className="inline-flex items-center gap-2 text-xs font-sans font-bold tracking-[0.15em] uppercase text-primary hover:text-primary transition-colors group/link no-underline"
+            className="ss-label inline-flex items-center gap-2 text-primary hover:text-primary transition-colors group/link no-underline"
             data-testid={`link-news-read-${item.id}`}
           >
             {seeMoreText}
@@ -258,7 +258,7 @@ export default function NewsSection() {
         >
           <div className="flex flex-col items-center mb-2">
             <h2
-              className="text-2xl md:text-3xl font-sans tracking-[0.25em] uppercase text-muted-foreground dark:text-white pb-3"
+              className="text-2xl md:text-3xl font-heading text-muted-foreground dark:text-white pb-3"
               data-testid="text-news-title"
             >
               {t.title}
@@ -268,7 +268,7 @@ export default function NewsSection() {
           <div className="flex justify-end mt-4">
             <Link
               href="/news"
-              className="hidden md:flex items-center gap-2 text-xs font-sans font-bold tracking-[0.15em] uppercase text-primary hover:text-primary no-underline transition-colors group"
+              className="ss-label hidden md:flex items-center gap-2 text-primary hover:text-primary no-underline transition-colors group"
               data-testid="link-news-see-more"
             >
               {t.seeMore}
@@ -315,7 +315,7 @@ export default function NewsSection() {
         <div className="mt-10 text-center md:hidden">
           <Link
             href="/news"
-            className="inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2 text-xs font-sans font-bold tracking-[0.15em] uppercase text-primary hover:text-primary no-underline touch-manipulation"
+            className="ss-label inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2 text-primary hover:text-primary no-underline touch-manipulation"
             data-testid="link-news-see-more-mobile"
           >
             {t.seeMore}

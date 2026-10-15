@@ -20,11 +20,12 @@ type Panel = "menu" | "search" | null;
 // de escritorio si el menú se cerró por pasar a ≥1024px (el botón Menú ya no se ve).
 type FocusTarget = "menu" | "search" | "nav" | null;
 
+// Lupa en blanco: la lima queda en el logotipo, el § de las secciones y el menú actual
 function SearchIcon() {
   return (
     <svg aria-hidden="true" viewBox="0 0 20 20" className="h-[18px] w-[18px] shrink-0" fill="none" strokeWidth={1.5}>
       <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" />
-      <path d="M13 13l5 5" strokeLinecap="square" className="stroke-ss-lime" />
+      <path d="M13 13l5 5" strokeLinecap="square" className="stroke-white/85" />
     </svg>
   );
 }
@@ -122,12 +123,14 @@ export default function Header26({ localized = false }: Header26Props) {
           >
             <ul className="hidden items-center gap-4 lg:flex xl:gap-[clamp(20px,2.2vw,36px)]">
               {items.map((item) => (
-                // flex + pt-[2px] (compensa el padding-bottom de .ss-link): mismo centro que Buscar y ES/EN
+                // flex + pt-[2px] (compensa el padding-bottom de .ss-link): mismo centro que Buscar y ES/EN.
+                // Elemento actual (página o subruta): blanco y filete lima de 2 px (.ss-link--lime);
+                // al pasar el cursor, filete blanco de 1 px.
                 <li key={item.href} className="flex">
                   <Link
                     href={item.href}
                     aria-current={currentFor(item.href)}
-                    className="ss-label ss-link ss-link--lime whitespace-nowrap pt-[2px] text-[12px] tracking-[0.12em] text-white/80 transition-colors hover:text-white aria-[current=page]:text-white aria-[current=true]:bg-[length:100%_2px] aria-[current=true]:text-white xl:tracking-[0.16em]"
+                    className="ss-label ss-link ss-link--lime whitespace-nowrap pt-[2px] tracking-[0.10em] text-white/80 transition-colors hover:text-white aria-[current=page]:bg-[length:100%_2px] aria-[current=page]:text-white aria-[current=true]:bg-[length:100%_2px] aria-[current=true]:text-white"
                   >
                     {item.label}
                   </Link>
@@ -145,7 +148,7 @@ export default function Header26({ localized = false }: Header26Props) {
               aria-controls="search-dialog"
               data-testid="button-search"
               onClick={() => setPanel("search")}
-              className="ss-label -mx-3 flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 text-[12px] tracking-[0.16em] text-white/80 transition-colors hover:text-white xl:mx-0 xl:min-w-0"
+              className="ss-label -mx-3 flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 tracking-[0.10em] text-white/80 transition-colors hover:text-white xl:mx-0 xl:min-w-0"
             >
               <SearchIcon />
               <span className="sr-only xl:not-sr-only">{t.search.open}</span>
@@ -154,7 +157,7 @@ export default function Header26({ localized = false }: Header26Props) {
             <button
               ref={menuButtonRef}
               type="button"
-              className="ss-label flex min-h-[44px] items-center gap-3 text-white lg:hidden"
+              className="ss-label flex min-h-[44px] items-center gap-3 tracking-[0.10em] text-white lg:hidden"
               aria-expanded={panel === "menu"}
               aria-controls="mobile-menu"
               aria-haspopup="dialog"
@@ -164,7 +167,7 @@ export default function Header26({ localized = false }: Header26Props) {
               {t.header.menu}
               <span aria-hidden="true" className="flex w-6 flex-col gap-[6px]">
                 <span className="h-px w-full bg-white" />
-                <span className="h-px w-2/3 self-end bg-ss-lime" />
+                <span className="h-px w-2/3 self-end bg-white" />
               </span>
             </button>
           </nav>
@@ -209,10 +212,11 @@ export default function Header26({ localized = false }: Header26Props) {
                       onClick={() => closePanel("menu")}
                       className="flex items-baseline gap-5 py-4"
                     >
-                      <span aria-hidden="true" className="ss-label ss-num w-8 text-ss-lime">
+                      <span aria-hidden="true" className="ss-label ss-num w-8 text-white/[.66]">
                         {String(i + 1).padStart(2, "0")}
                       </span>
-                      <span className="ss-display text-[44px] leading-none">{item.label}</span>
+                      {/* Romana 350 a 34 px (ss26.css, #mobile-menu) */}
+                      <span className="ss-display">{item.label}</span>
                     </Link>
                   </li>
                 ))}
@@ -221,7 +225,7 @@ export default function Header26({ localized = false }: Header26Props) {
             <div className="ss-container relative space-y-4 py-8">
               <LangList26 lang={code} />
               {/* dir="ltr": en árabe los grupos de cifras del teléfono se invertían */}
-              <a href={phoneHref} dir="ltr" className="ss-label ss-num inline-flex min-h-[44px] items-center text-white/70">
+              <a href={phoneHref} dir="ltr" className="ss-label ss-num inline-flex min-h-[44px] items-center text-white/75">
                 {phone}
               </a>
             </div>

@@ -105,7 +105,10 @@ html:has(header.ss26) {
   scroll-padding-top: var(--ss-header-h);
 }
 
-/* Paleta (nombres del manual 2025). Azul Profundo es la única superficie oscura. */
+/* Paleta (nombres del manual 2025). Azul Profundo es la única superficie oscura.
+   En :root para que las páginas heredadas también las lean (las variables no chocan
+   con los tokens de shadcn de index.css, que no llevan el prefijo --ss-). */
+:root,
 .ss26,
 .editorial-page-hero,
 [data-testid="section-news-hero"] {
@@ -196,6 +199,29 @@ html:has(.ss26) body {
 :is(.ss-navy, .ss-gradient, .ss-panel) .ss-display {
   font-weight: 350;
 }
+/* Titular del héroe de la portada (86 px a 1440): 340, un pelo más fino que los h2 sobre
+   Azul Profundo. Tamaño, interlínea y espaciado van en Hero26. */
+#hero h1.ss-display {
+  font-weight: 340;
+}
+
+/* Cifras (héroe de la portada; sirve también para "La firma en números"): romana 300 con
+   cifras de caja alta proporcionales. Azul Marino sobre claro, blanco sobre Azul Profundo.
+   Nunca lima. */
+.ss-figure {
+  font-family: var(--ss-font-serif);
+  font-weight: 300;
+  font-optical-sizing: auto;
+  font-size: clamp(40px, 4.2vw, 64px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-feature-settings: "kern", "liga", "lnum";
+  font-variant-numeric: lining-nums proportional-nums;
+  color: var(--ss-marino);
+}
+:is(.ss-navy, .ss-gradient, .ss-panel, .editorial-page-hero) .ss-figure {
+  color: #fff;
+}
 
 /* Etiquetas: la única mayúscula del sistema (más el menú) */
 .ss-label {
@@ -215,6 +241,7 @@ html:has(.ss26) body {
   font-weight: 300;
   letter-spacing: -0.02em;
   line-height: 1.04;
+  font-feature-settings: "kern", "liga", "lnum";
 }
 
 .ss-prose {
@@ -339,13 +366,15 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   line-height: 1.4;
 }
 
-/* Menú de escritorio en alemán, francés y ruso: etiquetas más largas que en ES/EN.
-   A 1024–1279 px se cierran espaciado y huecos solo en esos idiomas, sin recortar texto. */
-@media (min-width: 1024px) and (max-width: 1279.98px) {
-  #main-navigation > ul:is(:lang(de), :lang(fr), :lang(ru)) {
+/* Menú de escritorio en alemán y francés: etiquetas más largas que en ES/EN. Medido con el
+   espaciado de 0.10em: sin ajuste desbordan hasta ~1060 px (de 18 px, fr 27 px a 1024); el
+   ruso ya cabe. Entre 1024 y 1151 px se cierran espaciado y huecos solo en esos dos idiomas,
+   con margen para otras letras del sistema, sin recortar texto. */
+@media (min-width: 1024px) and (max-width: 1151.98px) {
+  #main-navigation > ul:is(:lang(de), :lang(fr)) {
     gap: 12px;
   }
-  #main-navigation > ul:is(:lang(de), :lang(fr), :lang(ru)) a {
+  #main-navigation > ul:is(:lang(de), :lang(fr)) a {
     letter-spacing: 0.06em;
   }
 }
@@ -393,8 +422,10 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   transform: none;
 }
 
-/* Fotografía: retratos en escala de grises; .ss-photo--colour para el edificio */
-.ss-photo {
+/* Fotografía: todo retrato en escala de grises (.ss-photo o, explícito, .ss-photo--mono);
+   .ss-photo--colour solo para el edificio (Fig. 1 de la portada) */
+.ss-photo,
+.ss-photo--mono {
   filter: grayscale(1) contrast(1.04);
 }
 .ss-photo--colour {
@@ -415,7 +446,8 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 }
 
 /* Filete corto (24 × 1 px) que se dibuja una vez (sin JS queda dibujado).
-   Sobre Azul Profundo, blanco al 14 %; sobre claro, Línea. */
+   Sobre Azul Profundo, blanco al 35 % (el mismo del § de los encabezados internos; al 14 %,
+   el de los filetes largos, un trazo tan corto no se ve); sobre claro, Línea. */
 .ss-bar {
   display: inline-block;
   width: 24px;
@@ -425,7 +457,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   transition: transform 400ms var(--ss-ease) calc(var(--ss-delay, 0s) + 150ms);
 }
 :is(.ss-navy, .ss-gradient, .ss-panel, .editorial-page-hero) .ss-bar {
-  background: var(--ss-on-navy-rule);
+  background: rgb(255 255 255 / 0.35);
 }
 .ss-js .ss-bar {
   transform: scaleX(0);

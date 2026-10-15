@@ -1,12 +1,10 @@
 import { Link, useParams } from "wouter";
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Mail, Phone, AlertCircle, Award, Star, Trophy, ChevronRight, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -72,64 +70,48 @@ function TranslatedMatterCard({ matter, language, t }: TranslatedMatterCardProps
   const displayDescription = translatedFields.description || matter.description;
   const displayClient = translatedFields.client || matter.client;
 
+  // Fila abierta con filete superior (sin tarjeta oscura ni barra lima): año y "Destacado"
+  // como etiquetas, titular en romana Azul Marino, texto en Gris Tinta.
   return (
-    <Card
-      className="bg-[#222220] relative"
+    <article
+      className="border-t border-ss-rule pt-6"
       data-testid={`card-matter-${matter.id}`}
     >
-      {matter.isHighlight && (
-        <span
-          aria-hidden="true"
-          className="absolute left-0 top-0 bottom-0 w-[2px] bg-brand"
-        />
-      )}
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between gap-4 mb-3">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-3 flex-wrap">
-              {matter.isHighlight && (
-                <Badge
-                  variant="outline"
-                  className="rounded-lg text-[11px] uppercase tracking-[0.18em] border-primary text-primary bg-transparent"
-                >
-                  {t.featured}
-                </Badge>
-              )}
-              <Badge
-                variant="outline"
-                className="rounded-lg text-[11px] uppercase tracking-[0.18em] border-white/20 text-white/70 bg-transparent"
-                data-testid={`badge-matter-year-${matter.id}`}
-              >
-                {matter.year}
-              </Badge>
-            </div>
-            <h3
-              className="font-heading font-light text-white text-lg leading-snug"
-              data-testid={`text-matter-title-${matter.id}`}
-            >
-              {displayTitle}
-            </h3>
-          </div>
-        </div>
-        <p
-          className="text-white/70 mb-3 leading-relaxed"
-          data-testid={`text-matter-description-${matter.id}`}
-        >
-          {displayDescription}
-        </p>
-        {displayClient && (
-          <p
-            className="text-[11px] uppercase tracking-[0.25em] text-white/40"
-            data-testid={`text-matter-client-${matter.id}`}
-          >
-            <span className="text-white/60">
-              {t.client}{" "}
-            </span>
-            {displayClient}
-          </p>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-2">
+        {matter.isHighlight && (
+          <span className="ss-label text-ss-marino">{t.featured}</span>
         )}
-      </CardContent>
-    </Card>
+        <span
+          className="ss-label text-ss-medio"
+          data-testid={`badge-matter-year-${matter.id}`}
+        >
+          {matter.year}
+        </span>
+      </div>
+      <h3
+        className="ss-h3"
+        data-testid={`text-matter-title-${matter.id}`}
+      >
+        {displayTitle}
+      </h3>
+      <p
+        className="mt-2 text-base leading-[1.6] text-ss-tinta"
+        data-testid={`text-matter-description-${matter.id}`}
+      >
+        {displayDescription}
+      </p>
+      {displayClient && (
+        <p
+          className="mt-3 text-sm text-ss-medio"
+          data-testid={`text-matter-client-${matter.id}`}
+        >
+          <span className="text-sm font-semibold text-ss-tinta">
+            {t.client}{" "}
+          </span>
+          {displayClient}
+        </p>
+      )}
+    </article>
   );
 }
 
@@ -223,29 +205,29 @@ export default function PracticeGroupDetail() {
       client: "Client:",
     },
     es: {
-      backToAll: "Todas las Áreas de Práctica",
+      backToAll: "Todas las áreas de práctica",
       contactUs: "Contáctenos",
       contactCta: "Contacte a nuestro equipo",
       contactSubtitle: "Permita que nuestros abogados experimentados le ayuden a navegar sus desafíos legales.",
-      emailUs: "Enviar Email",
+      emailUs: "Enviar correo",
       callUs: "Llamar",
-      ourTeam: "Nuestro Equipo",
+      ourTeam: "Nuestro equipo",
       partners: "Socios",
       ofCounsel: "Of Counsel",
       associates: "Asociados",
       viewAll: "Ver todos",
-      viewProfile: "Ver Perfil",
-      rankingsTitle: "Rankings y Reconocimientos",
+      viewProfile: "Ver perfil",
+      rankingsTitle: "Rankings y reconocimientos",
       rankingsSubtitle: "Nuestra práctica ha sido reconocida por los principales directorios legales a nivel mundial.",
-      successCasesTitle: "Casos de Éxito",
+      successCasesTitle: "Casos de éxito",
       successCasesSubtitle: "Casos representativos manejados exitosamente por nuestra práctica.",
       errorMessage: "Área de práctica no encontrada",
       loading: "Cargando...",
       overview: "Resumen",
-      keyContacts: "Contactos Clave",
-      relatedIndustries: "Industrias Relacionadas",
-      relatedPractices: "Áreas de Práctica Relacionadas",
-      representativeMatters: "Casos Representativos",
+      keyContacts: "Contactos clave",
+      relatedIndustries: "Industrias relacionadas",
+      relatedPractices: "Áreas de práctica relacionadas",
+      representativeMatters: "Casos representativos",
       featured: "Destacado",
       client: "Cliente:",
     },
@@ -496,9 +478,9 @@ export default function PracticeGroupDetail() {
 
   const getBadgeStyles = (badgeType: string) => {
     if (badgeType === "band" || badgeType === "tier" || badgeType === "star") {
-      return "border border-primary text-primary bg-transparent uppercase tracking-[0.18em]";
+      return "border border-ss-marino text-ss-marino bg-transparent";
     }
-    return "border border-border text-foreground bg-transparent uppercase tracking-[0.18em]";
+    return "border border-ss-rule text-ss-tinta bg-transparent";
   };
 
   const getBadgeIcon = (_badgeType: string) => null;
@@ -509,14 +491,12 @@ export default function PracticeGroupDetail() {
         <Header />
         {/* Cabecera sticky en flujo: ya no hace falta compensar el header fijo */}
         <main id="main-content" className="pt-16 pb-20 lg:pt-20">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
-            <AlertCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-2xl font-heading text-foreground mb-4" data-testid="text-error-title">
+          <div className="max-w-7xl mx-auto px-6 lg:px-12">
+            <h2 className="ss-h2 mb-6" data-testid="text-error-title">
               {t.errorMessage}
             </h2>
             <Link href="/practice-groups">
               <Button variant="outline" data-testid="button-back-to-practice-groups">
-                <ArrowLeft className="w-4 h-4 mr-2" />
                 {t.backToAll}
               </Button>
             </Link>
@@ -565,63 +545,48 @@ export default function PracticeGroupDetail() {
   const displayedAssociates = filteredAndGroupedMembers.associates.slice(0, MAX_ASSOCIATES_DISPLAY);
   const hasMoreAssociates = filteredAndGroupedMembers.associates.length > MAX_ASSOCIATES_DISPLAY;
 
+  // Fila abierta: retrato en escala de grises, nombre en romana Azul Marino y cargo como etiqueta
   const renderMemberCard = (member: TeamMember) => (
     <Link key={member.id} href={`/team/${member.slug}`}>
-      <Card
-        className="border-0 bg-[#222220] cursor-pointer hover-elevate overflow-hidden"
+      <article
+        className="group flex items-center gap-4 border-t border-ss-rule py-4 cursor-pointer"
         data-testid={`card-team-member-${member.slug}`}
       >
-        <CardContent className="p-0 flex items-stretch gap-0">
-          <div
-            className="relative aspect-square w-28 sm:w-32 shrink-0 overflow-hidden"
-            data-testid={`img-team-member-${member.slug}`}
+        <div
+          className="relative w-16 h-20 shrink-0 overflow-hidden bg-ss-paper"
+          data-testid={`img-team-member-${member.slug}`}
+        >
+          {member.imageUrl ? (
+            <img
+              src={member.imageUrl}
+              alt={member.name}
+              loading="lazy"
+              className="ss-photo absolute inset-0 h-full w-full object-cover object-top"
+            />
+          ) : (
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 flex items-center justify-center font-heading text-[20px] text-ss-marino"
+            >
+              {getInitials(member.name)}
+            </span>
+          )}
+        </div>
+        <div className="min-w-0">
+          <h3
+            className="font-heading text-[18px] leading-[1.25] text-ss-marino truncate group-hover:underline decoration-1 underline-offset-4"
+            data-testid={`text-team-member-name-${member.slug}`}
           >
-            {member.imageUrl ? (
-              <>
-                <img
-                  src={member.imageUrl}
-                  alt={member.name}
-                  loading="lazy"
-                  className="absolute inset-0 h-full w-full object-cover object-top"
-                />
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-[#222220]/10 to-[#222220]/70"
-                />
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-0 bg-gradient-to-b from-transparent to-[#222220]/40"
-                />
-              </>
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center bg-white/10 text-white text-2xl font-medium">
-                {getInitials(member.name)}
-              </div>
-            )}
-          </div>
-          <div
-            aria-hidden="true"
-            className="w-px shrink-0 bg-[#1E1C92]/30"
-          />
-          <div className="flex-1 min-w-0 flex items-center gap-3 px-4 py-4">
-            <div className="flex-1 min-w-0">
-              <h3
-                className="font-semibold text-white truncate"
-                data-testid={`text-team-member-name-${member.slug}`}
-              >
-                {member.name}
-              </h3>
-              <p
-                className="text-sm text-white/60 truncate"
-                data-testid={`text-team-member-role-${member.slug}`}
-              >
-                {language === "es" ? member.roleEs : member.role}
-              </p>
-            </div>
-            <ChevronRight className="w-5 h-5 text-primary shrink-0" />
-          </div>
-        </CardContent>
-      </Card>
+            {member.name}
+          </h3>
+          <p
+            className="ss-label text-ss-medio mt-1 truncate"
+            data-testid={`text-team-member-role-${member.slug}`}
+          >
+            {language === "es" ? member.roleEs : member.role}
+          </p>
+        </div>
+      </article>
     </Link>
   );
 
@@ -639,19 +604,18 @@ export default function PracticeGroupDetail() {
             transition={{ duration: 0.7 }}
           >
             <Link href="/practice-groups">
-              <span 
-                className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 cursor-pointer text-sm"
+              <span
+                className="inline-flex items-center gap-2 mb-6 cursor-pointer"
                 data-testid="link-back-to-practice-groups"
               >
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
                 {t.backToAll}
               </span>
             </Link>
-            {/* Eyebrow compartido ("§ 02 ——", index.css) en lugar de la ficha con icono */}
-            <div className="h-0.5 w-12 bg-brand mb-6" />
+            <Eyebrow num="02" tone="navy" className="mb-4" />
             <div>
-              <h1 
-                className="ss-hero-detail text-2xl md:text-3xl lg:text-4xl font-heading font-light text-white uppercase tracking-[0.15em]"
+              <h1
+                className="ss-hero-detail"
                 data-testid="text-practice-group-title"
               >
                 {displayName || (isTranslating ? (
@@ -711,9 +675,9 @@ export default function PracticeGroupDetail() {
           </div>
         </section>
 
-        {/* Casos de Éxito — light band, dark cards */}
+        {/* Casos de éxito: blanco, filete de sección y filas abiertas */}
         {representativeMatters && representativeMatters.length > 0 && (
-          <section className="bg-muted/40 py-16 lg:py-20" data-testid="section-representative-matters">
+          <section className="bg-background border-t border-ss-rule py-16 lg:py-20" data-testid="section-representative-matters">
             <div className="max-w-4xl mx-auto px-6 lg:px-12">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -721,22 +685,19 @@ export default function PracticeGroupDetail() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.22 }}
               >
-                <div className="mb-4">
-                  <div className="h-px w-10 bg-brand mb-4" aria-hidden="true" />
-                  <h2
-                    className="text-xl font-heading font-light text-foreground uppercase tracking-[0.12em]"
-                    data-testid="text-success-cases-title"
-                  >
-                    {t.successCasesTitle}
-                  </h2>
-                </div>
+                <h2
+                  className="ss-h2-sm mb-3"
+                  data-testid="text-success-cases-title"
+                >
+                  {t.successCasesTitle}
+                </h2>
                 <p
-                  className="text-muted-foreground mb-6"
+                  className="text-base text-ss-medio mb-8 max-w-2xl"
                   data-testid="text-success-cases-subtitle"
                 >
                   {t.successCasesSubtitle}
                 </p>
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-1 gap-8">
                   {representativeMatters
                     .sort((a, b) => {
                       if (a.isHighlight && !b.isHighlight) return -1;
@@ -757,9 +718,9 @@ export default function PracticeGroupDetail() {
           </section>
         )}
 
-        {/* Rankings — muted band, refined hairline list */}
+        {/* Rankings: lista de filetes */}
         {practiceRankings.length > 0 && (
-          <section className="bg-background py-16 lg:py-20" data-testid="section-rankings">
+          <section className="bg-background border-t border-ss-rule py-16 lg:py-20" data-testid="section-rankings">
             <div className="max-w-4xl mx-auto px-6 lg:px-12">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -767,15 +728,15 @@ export default function PracticeGroupDetail() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.25 }}
               >
-                <Eyebrow label={t.rankingsTitle} className="mb-6" testId="eyebrow-rankings" />
+                <Eyebrow label={t.rankingsTitle} className="mb-4" testId="eyebrow-rankings" />
                 <h2
-                  className="text-2xl md:text-3xl font-heading font-light text-foreground uppercase tracking-[0.12em] mb-3"
+                  className="ss-h2-sm mb-3"
                   data-testid="text-rankings-title"
                 >
                   {t.rankingsTitle}
                 </h2>
                 <p
-                  className="text-muted-foreground mb-8 max-w-2xl"
+                  className="text-base text-ss-medio mb-8 max-w-2xl"
                   data-testid="text-rankings-subtitle"
                 >
                   {t.rankingsSubtitle}
@@ -792,11 +753,11 @@ export default function PracticeGroupDetail() {
           </section>
         )}
 
-        {/* Nuestro Equipo — light band, dark cards */}
+        {/* Nuestro equipo: blanco, filas abiertas con retrato */}
         {(filteredAndGroupedMembers.partners.length > 0 ||
           filteredAndGroupedMembers.ofCounsel.length > 0 ||
           filteredAndGroupedMembers.associates.length > 0) && (
-          <section className="bg-muted/40 py-16 lg:py-20" data-testid="section-team-members">
+          <section className="bg-background border-t border-ss-rule py-16 lg:py-20" data-testid="section-team-members">
             <div className="max-w-4xl mx-auto px-6 lg:px-12">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -804,45 +765,42 @@ export default function PracticeGroupDetail() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
-                <div className="mb-8">
-                  <div className="h-px w-10 bg-brand mb-4" aria-hidden="true" />
-                  <h2
-                    className="text-xl font-heading font-light text-foreground uppercase tracking-[0.12em]"
-                    data-testid="text-our-team-title"
-                  >
-                    {t.ourTeam}
-                  </h2>
-                </div>
+                <h2
+                  className="ss-h2-sm mb-8"
+                  data-testid="text-our-team-title"
+                >
+                  {t.ourTeam}
+                </h2>
 
                 {filteredAndGroupedMembers.partners.length > 0 && (
-                  <div className="mb-8" data-testid="section-partners">
+                  <div className="mb-10" data-testid="section-partners">
                     <h3
-                      className="text-sm font-heading font-light text-foreground mb-4 flex items-center gap-3 uppercase tracking-[0.12em]"
+                      className="ss-label text-ss-medio mb-2 flex items-baseline gap-3"
                       data-testid="text-partners-title"
                     >
-                      <Badge variant="outline" className="rounded-lg text-xs uppercase tracking-[0.15em] border-primary text-primary bg-transparent">
-                        {filteredAndGroupedMembers.partners.length}
-                      </Badge>
                       {t.partners}
+                      <span className="ss-label text-ss-marino">
+                        {filteredAndGroupedMembers.partners.length}
+                      </span>
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                       {filteredAndGroupedMembers.partners.map(renderMemberCard)}
                     </div>
                   </div>
                 )}
 
                 {filteredAndGroupedMembers.ofCounsel.length > 0 && (
-                  <div className="mb-8" data-testid="section-of-counsel">
+                  <div className="mb-10" data-testid="section-of-counsel">
                     <h3
-                      className="text-sm font-heading font-light text-foreground mb-4 flex items-center gap-3 uppercase tracking-[0.12em]"
+                      className="ss-label text-ss-medio mb-2 flex items-baseline gap-3"
                       data-testid="text-of-counsel-title"
                     >
-                      <Badge variant="outline" className="rounded-lg text-xs uppercase tracking-[0.15em] border-border text-muted-foreground bg-transparent">
-                        {filteredAndGroupedMembers.ofCounsel.length}
-                      </Badge>
                       {t.ofCounsel}
+                      <span className="ss-label text-ss-marino">
+                        {filteredAndGroupedMembers.ofCounsel.length}
+                      </span>
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                       {filteredAndGroupedMembers.ofCounsel.map(renderMemberCard)}
                     </div>
                   </div>
@@ -851,27 +809,25 @@ export default function PracticeGroupDetail() {
                 {displayedAssociates.length > 0 && (
                   <div data-testid="section-associates">
                     <h3
-                      className="text-sm font-heading font-light text-foreground mb-4 flex items-center gap-3 uppercase tracking-[0.12em]"
+                      className="ss-label text-ss-medio mb-2 flex items-baseline gap-3"
                       data-testid="text-associates-title"
                     >
-                      <Badge variant="outline" className="rounded-lg text-xs uppercase tracking-[0.15em] border-border text-muted-foreground bg-transparent">
-                        {filteredAndGroupedMembers.associates.length}
-                      </Badge>
                       {t.associates}
+                      <span className="ss-label text-ss-marino">
+                        {filteredAndGroupedMembers.associates.length}
+                      </span>
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                       {displayedAssociates.map(renderMemberCard)}
                     </div>
                     {hasMoreAssociates && (
-                      <div className="mt-6 text-center">
+                      <div className="mt-6">
                         <Link href={`/team?practice=${slug}`}>
                           <Button
                             variant="outline"
-                            className="rounded-lg gap-2"
                             data-testid="button-view-all-associates"
                           >
                             {t.viewAll} ({filteredAndGroupedMembers.associates.length})
-                            <ChevronRight className="w-4 h-4" />
                           </Button>
                         </Link>
                       </div>
@@ -883,46 +839,40 @@ export default function PracticeGroupDetail() {
           </section>
         )}
 
-        {/* Contact CTA — light band */}
-        <section className="bg-background py-16 lg:py-20">
+        {/* Contacto: bloque Hueso, sin iconos */}
+        <section className="bg-background pb-16 lg:pb-24">
           <div className="max-w-4xl mx-auto px-6 lg:px-12">
             <motion.section
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="bg-muted rounded-lg p-8 lg:p-12"
+              className="bg-ss-paper p-8 lg:p-12"
               data-testid="section-contact-cta"
             >
               <h2
-                className="text-xl font-heading font-light text-foreground mb-3 uppercase tracking-[0.12em]"
+                className="ss-h2-sm mb-3"
                 data-testid="text-contact-cta-title"
               >
                 {t.contactCta}
               </h2>
               <p
-                className="text-muted-foreground mb-6"
+                className="text-base text-ss-tinta mb-6 max-w-2xl"
                 data-testid="text-contact-cta-subtitle"
               >
                 {t.contactSubtitle}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/contact">
-                  <Button
-                    className="rounded-lg"
-                    data-testid="button-email-us"
-                  >
-                    <Mail className="w-4 h-4 mr-2" />
+                  <Button data-testid="button-email-us">
                     {t.emailUs}
                   </Button>
                 </Link>
                 <Button
                   variant="outline"
-                  className="rounded-lg"
                   data-testid="button-call-us"
                   onClick={() => window.location.href = phoneHref}
                 >
-                  <Phone className="w-4 h-4 mr-2" />
                   {t.callUs}
                 </Button>
               </div>

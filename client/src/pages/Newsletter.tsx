@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Mail, Send, Loader2, CheckCircle, Bell, FileText, Calendar, Briefcase, Archive, ExternalLink } from "lucide-react";
+import { Bell, FileText, Calendar, Briefcase } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +21,10 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
+
+// "Clásica": titulares en romana 400, Azul Marino, caja de oración y al inicio; texto en Gris Tinta.
+const h2Class = "font-heading font-normal text-ss-marino text-[clamp(24px,2vw,30px)] leading-[1.18] tracking-[-0.012em] [text-wrap:balance]";
+const h3Class = "font-heading font-normal text-ss-marino text-[22px] leading-[1.25] tracking-[-0.01em]";
 
 interface NewsletterFormData {
   email: string;
@@ -148,22 +152,22 @@ export default function Newsletter() {
     es: {
       title: "Boletines",
       subtitle: "Manténgase informado con los últimos insights legales y actualizaciones de la firma",
-      archivesTitle: "Boletines Anteriores",
+      archivesTitle: "Boletines anteriores",
       archivesSubtitle: "Acceda a nuestras ediciones anteriores y manténgase informado sobre nuestra cobertura legal.",
-      archiveItem1Title: "Actualización Legal Q4 2024",
+      archiveItem1Title: "Actualización legal Q4 2024",
       archiveItem1Date: "Diciembre 2024",
       archiveItem1Description: "Revisión de fin de año de los desarrollos legales significativos en México y cambios regulatorios clave.",
-      archiveItem2Title: "Actualización Legal Q3 2024",
+      archiveItem2Title: "Actualización legal Q3 2024",
       archiveItem2Date: "Septiembre 2024",
       archiveItem2Description: "Análisis de reformas fiscales y enmiendas de derecho corporativo que afectan a empresas en México.",
-      archiveItem3Title: "Actualización Legal Q2 2024",
+      archiveItem3Title: "Actualización legal Q2 2024",
       archiveItem3Date: "Junio 2024",
       archiveItem3Description: "Visión general de regulaciones del sector energético y requisitos de cumplimiento ambiental.",
-      viewArchive: "Ver Boletín",
+      viewArchive: "Ver boletín",
       comingSoon: "Archivo completo próximamente",
-      formTitle: "Suscríbase a Nuestro Boletín",
+      formTitle: "Suscríbase a nuestro boletín",
       formSubtitle: "Únase a nuestra lista de correo para recibir actualizaciones legales exclusivas, insights de la industria y noticias de la firma directamente en su bandeja de entrada.",
-      emailLabel: "Correo Electrónico",
+      emailLabel: "Correo electrónico",
       emailPlaceholder: "Ingrese su correo electrónico",
       firstNameLabel: "Nombre (opcional)",
       firstNamePlaceholder: "Ingrese su nombre",
@@ -171,17 +175,17 @@ export default function Newsletter() {
       lastNamePlaceholder: "Ingrese su apellido",
       submit: "Suscribirse",
       submitting: "Suscribiendo...",
-      whatYouReceive: "Lo Que Recibirá",
-      benefit1Title: "Actualizaciones Legales",
+      whatYouReceive: "Lo que recibirá",
+      benefit1Title: "Actualizaciones legales",
       benefit1Description: "Manténgase al día con cambios importantes en la ley y regulaciones mexicanas que pueden afectar su negocio.",
-      benefit2Title: "Insights de la Industria",
+      benefit2Title: "Insights de la industria",
       benefit2Description: "Análisis profundo y comentarios sobre desarrollos legales en sectores clave.",
-      benefit3Title: "Invitaciones a Eventos",
+      benefit3Title: "Invitaciones a eventos",
       benefit3Description: "Invitaciones exclusivas a webinars, seminarios y eventos de networking organizados por nuestra firma.",
-      benefit4Title: "Noticias de la Firma",
+      benefit4Title: "Noticias de la firma",
       benefit4Description: "Conozca nuestros últimos logros, nuevos miembros del equipo e involucramiento comunitario.",
       privacyNote: "Respetamos su privacidad. Su información nunca será compartida con terceros. Puede darse de baja en cualquier momento.",
-      frequency: "Frecuencia del Boletín",
+      frequency: "Frecuencia del boletín",
       frequencyDescription: "Nuestro boletín se envía mensualmente, con ediciones especiales ocasionales para desarrollos legales urgentes.",
     },
     de: {
@@ -539,7 +543,7 @@ export default function Newsletter() {
           >
             <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1 
-              className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
+              className="text-4xl md:text-5xl font-heading text-white mb-5"
               data-testid="text-newsletter-title"
             >
               {t.title}
@@ -565,22 +569,17 @@ export default function Newsletter() {
               data-testid="section-newsletter-form"
             >
               {/* Tarjeta sin borde ni sombra visibles: sin su p-8 el formulario comparte el borde del encabezado */}
-              <Card className="border-0 shadow-none bg-transparent">
+              <Card className="border-0 bg-transparent">
                 <CardContent className="p-0">
                   <div className="mb-8">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center">
-                        <Mail className="w-6 h-6 text-primary" />
-                      </div>
-                      <h2 
-                        className="text-xl font-heading font-light text-primary dark:text-white uppercase tracking-[0.12em]"
-                        data-testid="text-form-title"
-                      >
-                        {t.formTitle}
-                      </h2>
-                    </div>
+                    <h2 
+                      className={`${h2Class} mb-4`}
+                      data-testid="text-form-title"
+                    >
+                      {t.formTitle}
+                    </h2>
                     <p 
-                      className="text-muted-foreground"
+                      className="text-base text-ss-tinta leading-relaxed"
                       data-testid="text-form-subtitle"
                     >
                       {t.formSubtitle}
@@ -648,25 +647,15 @@ export default function Newsletter() {
 
                       <Button
                         type="submit"
-                        className="w-full rounded-lg bg-[#1E1C92] hover:bg-[#16156E]"
+                        className="w-full"
                         disabled={newsletterMutation.isPending}
                         data-testid="button-subscribe"
                       >
-                        {newsletterMutation.isPending ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            {t.submitting}
-                          </>
-                        ) : (
-                          <>
-                            <Send className="w-4 h-4 mr-2" />
-                            {t.submit}
-                          </>
-                        )}
+                        {newsletterMutation.isPending ? t.submitting : t.submit}
                       </Button>
 
                       <p 
-                        className="text-sm text-muted-foreground text-center"
+                        className="text-sm text-ss-medio"
                         data-testid="text-privacy-note"
                       >
                         {t.privacyNote}
@@ -685,17 +674,14 @@ export default function Newsletter() {
               >
                 <Card className="bg-muted" data-testid="card-frequency">
                   <CardContent className="p-6">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Calendar className="w-5 h-5 text-primary" />
-                      <h3 
-                        className="text-lg font-heading font-light text-foreground"
-                        data-testid="text-frequency-title"
-                      >
-                        {t.frequency}
-                      </h3>
-                    </div>
+                    <h3 
+                      className={`${h3Class} mb-2`}
+                      data-testid="text-frequency-title"
+                    >
+                      {t.frequency}
+                    </h3>
                     <p 
-                      className="text-sm text-muted-foreground"
+                      className="text-base text-ss-tinta"
                       data-testid="text-frequency-description"
                     >
                       {t.frequencyDescription}
@@ -713,7 +699,7 @@ export default function Newsletter() {
               className="space-y-6"
             >
               <h2 
-                className="text-xl font-heading font-light text-primary dark:text-white mb-6 uppercase tracking-[0.12em]"
+                className={`${h2Class} mb-6`}
                 data-testid="text-benefits-title"
               >
                 {t.whatYouReceive}
@@ -732,26 +718,18 @@ export default function Newsletter() {
                       data-testid={`card-benefit-${index}`}
                     >
                       <CardContent className="p-6">
-                        <div className="flex items-start gap-4">
-                          <div className="w-10 h-10 rounded-full bg-brand/10 flex items-center justify-center flex-shrink-0">
-                            <benefit.icon className="w-5 h-5 text-primary" />
-                          </div>
-                          <div>
-                            <h3 
-                              className="font-semibold text-foreground mb-1"
-                              data-testid={`text-benefit-title-${index}`}
-                            >
-                              {benefit.title}
-                            </h3>
-                            <p 
-                              className="text-sm text-muted-foreground"
-                              data-testid={`text-benefit-description-${index}`}
-                            >
-                              {benefit.description}
-                            </p>
-                          </div>
-                          <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                        </div>
+                        <h3 
+                          className={`${h3Class} mb-1`}
+                          data-testid={`text-benefit-title-${index}`}
+                        >
+                          {benefit.title}
+                        </h3>
+                        <p 
+                          className="text-base text-ss-tinta leading-relaxed"
+                          data-testid={`text-benefit-description-${index}`}
+                        >
+                          {benefit.description}
+                        </p>
                       </CardContent>
                     </Card>
                   </motion.div>
@@ -768,18 +746,15 @@ export default function Newsletter() {
             className="mt-16"
             data-testid="section-newsletter-archives"
           >
-            <div className="text-center mb-10">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <Archive className="w-8 h-8 text-primary" />
-                <h2 
-                  className="text-xl font-heading font-light text-primary dark:text-white uppercase tracking-[0.12em]"
-                  data-testid="text-archives-title"
-                >
-                  {t.archivesTitle}
-                </h2>
-              </div>
+            <div className="mb-10">
+              <h2 
+                className={`${h2Class} mb-4`}
+                data-testid="text-archives-title"
+              >
+                {t.archivesTitle}
+              </h2>
               <p 
-                className="text-muted-foreground max-w-2xl mx-auto"
+                className="text-base text-ss-tinta leading-relaxed max-w-2xl"
                 data-testid="text-archives-subtitle"
               >
                 {t.archivesSubtitle}
@@ -804,33 +779,31 @@ export default function Newsletter() {
                     data-testid={`card-archive-${index}`}
                   >
                     <CardContent className="p-6">
-                      <div className="flex items-center gap-2 mb-3">
-                        <FileText className="w-4 h-4 text-primary" />
+                      <div className="mb-3">
                         <span 
-                          className="text-sm text-primary font-medium"
+                          className="ss-label text-ss-medio"
                           data-testid={`text-archive-date-${index}`}
                         >
                           {archive.date}
                         </span>
                       </div>
                       <h3 
-                        className="font-semibold text-foreground mb-2"
+                        className={`${h3Class} mb-2`}
                         data-testid={`text-archive-title-${index}`}
                       >
                         {archive.title}
                       </h3>
                       <p 
-                        className="text-sm text-muted-foreground mb-4"
+                        className="text-base text-ss-tinta leading-relaxed mb-4"
                         data-testid={`text-archive-description-${index}`}
                       >
                         {archive.description}
                       </p>
                       <a 
-                        href={`mailto:info@santossaucedo.com?subject=${encodeURIComponent(language === 'es' ? `Solicitud de Newsletter: ${archive.title}` : `Newsletter Request: ${archive.title}`)}`}
-                        className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary transition-colors"
+                        href={`mailto:info@santossaucedo.com?subject=${encodeURIComponent(language === 'es' ? `Solicitud de boletín: ${archive.title}` : `Newsletter Request: ${archive.title}`)}`}
+                        className="inline-flex items-center text-[15px] font-semibold text-ss-marino underline decoration-ss-rule underline-offset-4 hover:decoration-ss-marino"
                         data-testid={`button-archive-view-${index}`}
                       >
-                        <ExternalLink className="w-4 h-4" />
                         {t.viewArchive}
                       </a>
                     </CardContent>
@@ -840,7 +813,7 @@ export default function Newsletter() {
             </div>
 
             <p 
-              className="text-center text-sm text-muted-foreground mt-8"
+              className="text-sm text-ss-medio mt-8"
               data-testid="text-archives-coming-soon"
             >
               {t.comingSoon}

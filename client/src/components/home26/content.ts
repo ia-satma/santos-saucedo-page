@@ -41,7 +41,6 @@ export const home26 = {
       title: ["Derecho laboral", "para empresas."],
       lead:
         "Santos & Saucedo asesora a empresas nacionales y multinacionales en la administración de su capital humano y las representa en asuntos laborales, corporativos, migratorios y contenciosos. Desde San Pedro Garza García, con presencia en más de 72 ciudades del país.",
-      sealLabel: "El signo de sección, centro del logotipo de la firma",
     },
     facts: [
       { value: "2010", label: "Año de fundación" },
@@ -162,7 +161,6 @@ export const home26 = {
       title: ["Labor law", "for employers."],
       lead:
         "Santos & Saucedo advises Mexican and multinational companies on the management of their workforce and represents them in labor, corporate, immigration and litigation matters. From San Pedro Garza García, with presence in more than 72 cities across Mexico.",
-      sealLabel: "The section sign, at the center of the firm's logotype",
     },
     facts: [
       { value: "2010", label: "Founded" },

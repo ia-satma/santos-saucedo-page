@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { AlertCircle, MapPin, Calendar, ExternalLink, CalendarDays } from "lucide-react";
+import { AlertCircle, MapPin, Calendar, CalendarDays } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,17 +14,6 @@ import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import type { Event } from "@shared/schema";
 import { eventTypes } from "@shared/schema";
-
-const getEventTypeColor = (eventType: string): string => {
-  const colors: Record<string, string> = {
-    conference: "bg-blue-600",
-    webinar: "bg-purple-600",
-    sponsorship: "bg-amber-600",
-    speaking: "bg-green-600",
-    networking: "bg-rose-600",
-  };
-  return colors[eventType] || "bg-gray-600";
-};
 
 const getEventTypeLabel = (eventType: string, language: string): string => {
   const type = eventTypes.find(t => t.value === eventType);
@@ -73,15 +62,15 @@ function EventCard({ event, language, isUpcoming, formatDate, t }: EventCardProp
       <CardContent className="p-6">
         <div className="flex items-start justify-between gap-3 mb-4 flex-wrap">
           <Badge 
-            className={`${getEventTypeColor(event.eventType || 'conference')} text-white font-medium`}
+            variant="outline"
             data-testid={`badge-event-type-${event.id}`}
           >
             {getEventTypeLabel(event.eventType || 'conference', language)}
           </Badge>
           {!isUpcoming && (
             <Badge 
-              variant="secondary"
-              className="text-gray-500"
+              variant="outline"
+              className="text-ss-medio"
               data-testid={`badge-event-past-${event.id}`}
             >
               {t.past}
@@ -97,7 +86,7 @@ function EventCard({ event, language, isUpcoming, formatDate, t }: EventCardProp
         </div>
         
         <h3 
-          className={`text-xl font-semibold text-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2 ${isTranslating ? 'opacity-70' : ''}`}
+          className={`font-heading font-normal text-[22px] leading-[1.25] tracking-[-0.01em] text-ss-marino mb-3 group-hover:underline decoration-1 underline-offset-4 line-clamp-2 ${isTranslating ? 'opacity-70' : ''}`}
           data-testid={`text-event-title-${event.id}`}
         >
           {displayTitle}
@@ -113,7 +102,7 @@ function EventCard({ event, language, isUpcoming, formatDate, t }: EventCardProp
         )}
         
         <p 
-          className={`text-muted-foreground text-sm line-clamp-3 mb-4 ${isTranslating ? 'opacity-70' : ''}`}
+          className={`text-ss-tinta text-base leading-relaxed line-clamp-3 mb-4 ${isTranslating ? 'opacity-70' : ''}`}
           data-testid={`text-event-description-${event.id}`}
         >
           {displayDescription}
@@ -124,11 +113,10 @@ function EventCard({ event, language, isUpcoming, formatDate, t }: EventCardProp
             href={event.externalUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-primary font-medium text-sm hover:underline"
+            className="inline-flex items-center text-ss-marino font-semibold text-[15px] underline decoration-ss-rule underline-offset-4 hover:decoration-ss-marino"
             data-testid={`link-event-learn-more-${event.id}`}
           >
             {t.learnMore}
-            <ExternalLink className="w-4 h-4" />
           </a>
         )}
       </CardContent>
@@ -173,7 +161,7 @@ export default function EventsPage() {
       subtitle: "Únase a nosotros en conferencias, webinars y eventos de networking",
       errorMessage: "Error al cargar los eventos",
       noResults: "No hay eventos que coincidan con su filtro",
-      learnMore: "Más Información",
+      learnMore: "Más información",
       all: "Todos",
       upcoming: "Próximos",
       past: "Pasados",
@@ -354,7 +342,7 @@ export default function EventsPage() {
           >
             <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1 
-              className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
+              className="text-4xl md:text-5xl font-heading text-white mb-5"
               data-testid="text-events-title"
             >
               {t.title}
@@ -388,7 +376,7 @@ export default function EventsPage() {
                   className={`transition-all ${
                     selectedType === type.value 
                       ? "bg-primary text-primary-foreground" 
-                      : "text-muted-foreground hover:bg-muted"
+                      : "border-ss-rule text-ss-tinta hover:border-ss-marino"
                   }`}
                   data-testid={`button-filter-${type.value}`}
                 >

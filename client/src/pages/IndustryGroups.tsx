@@ -1,9 +1,7 @@
-import { useState } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowRight, AlertCircle, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -12,6 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { getIndustryImage } from "@/lib/practiceIndustryImages";
+import { Eyebrow } from "@/components/editorial";
 import type { IndustryGroup } from "@shared/schema";
 
 interface IndustryGroupCardProps {
@@ -22,7 +21,6 @@ interface IndustryGroupCardProps {
 
 function IndustryGroupCard({ group, index, learnMoreText }: IndustryGroupCardProps) {
   const { language } = useLanguage();
-  const [isHover, setIsHover] = useState(false);
 
   const { translatedFields, isLoading, isTranslating } = useTranslatedContent({
     contentType: 'industry_group',
@@ -43,82 +41,58 @@ function IndustryGroupCard({ group, index, learnMoreText }: IndustryGroupCardPro
 
   const imageUrl = getIndustryImage(group.slug, group.imageUrl);
 
+  // Fila abierta "Clásica": filete superior, numeral en romana 300 Gris Claro, foto en
+  // escala de grises (sin color al pasar el cursor ni velo marino), titular en romana
+  // Azul Marino, texto de 16 px y enlace de texto. Sin borde lateral ni sombra.
   return (
     <Link href={`/industry-groups/${group.slug}`}>
       <article
-        className="group relative h-full overflow-hidden rounded-none bg-card border-l-2 border-l-primary hover:border-l-4 shadow-sm hover:shadow-md transition-all duration-500 cursor-pointer aspect-[4/5]"
+        className="group relative h-full cursor-pointer flex flex-col border-t border-ss-rule pt-6"
         data-testid={`card-industry-group-${group.slug}`}
-        onMouseEnter={() => setIsHover(true)}
-        onMouseLeave={() => setIsHover(false)}
       >
-        {/* Background image — grayscale at rest, color on hover (matches home pattern) */}
-        <img
-          src={imageUrl}
-          alt=""
-          loading="lazy"
-          aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-          style={{
-            filter: isHover ? "grayscale(0%)" : "grayscale(100%)",
-            transform: isHover ? "scale(1.04)" : "scale(1)",
-            transition:
-              "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease",
-          }}
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).style.display = "none";
-          }}
-        />
-
-        {/* Dark overlay — crossfade between rest and hover gradient */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: isHover
-              ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(18,16,62,0.34) 50%, rgba(18,16,62,0.12) 100%)"
-              : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(18,16,62,0.38) 100%)",
-            transition: "background 0.5s ease",
-          }}
-        />
-
-        {/* Translation indicator */}
-        {showTranslatingIndicator && (
-          <div className="absolute top-4 right-4 z-10 flex items-center gap-1 px-2 py-1 bg-[#1E1C92]/70 backdrop-blur-sm text-xs text-white/90">
-            <Loader2 className="w-3 h-3 animate-spin" />
-          </div>
-        )}
-
-        {/* Decorative number */}
         <span
-          className="absolute top-5 left-6 text-5xl font-heading font-light text-white/20 select-none pointer-events-none tabular-nums"
+          aria-hidden="true"
+          className="ss-numeral mb-4"
           data-testid={`number-industry-group-${group.slug}`}
         >
           {numberLabel}
         </span>
-
-        {/* Content overlay */}
-        <div className="absolute inset-x-0 bottom-0 p-6 lg:p-7 flex flex-col">
-          <div className="w-8 h-px bg-brand mb-4" />
-          <h3
-            className="text-base lg:text-lg font-medium text-white mb-3 uppercase tracking-[0.12em] leading-snug"
-            data-testid={`text-industry-group-name-${group.slug}`}
-          >
-            {displayName}
-          </h3>
-          <p
-            className="text-sm text-white/70 mb-5 line-clamp-2"
-            data-testid={`text-industry-group-desc-${group.slug}`}
-          >
-            {displayDescription}
-          </p>
-          <span
-            className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.12em] text-primary group-hover:gap-2.5 transition-all"
-            data-testid={`link-industry-group-${group.slug}`}
-          >
-            {learnMoreText}
-            <ArrowRight className="w-3.5 h-3.5" />
-          </span>
+        <div className="relative aspect-[4/3] overflow-hidden bg-ss-paper mb-5">
+          <img
+            src={imageUrl}
+            alt=""
+            loading="lazy"
+            aria-hidden="true"
+            className="ss-photo absolute inset-0 w-full h-full object-cover pointer-events-none transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = "none";
+            }}
+          />
+          {showTranslatingIndicator && (
+            <div className="absolute top-3 end-3 z-10 flex items-center px-2 py-1 bg-ss-navy/80 text-white">
+              <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" />
+            </div>
+          )}
         </div>
+        <h3
+          className="ss-h3 mb-2"
+          data-testid={`text-industry-group-name-${group.slug}`}
+        >
+          {displayName}
+        </h3>
+        <p
+          className="text-base leading-[1.55] text-ss-tinta mb-4 line-clamp-3 flex-1"
+          data-testid={`text-industry-group-desc-${group.slug}`}
+        >
+          {displayDescription}
+        </p>
+        <span
+          className="inline-flex items-center gap-2 text-[15px] font-semibold text-ss-marino"
+          data-testid={`link-industry-group-${group.slug}`}
+        >
+          <span className="text-[15px] group-hover:underline decoration-1 underline-offset-4">{learnMoreText}</span>
+          <span aria-hidden="true" className="text-[15px] inline-block transition-transform duration-300 group-hover:translate-x-1 rtl:-scale-x-100 rtl:group-hover:-translate-x-1">→</span>
+        </span>
       </article>
     </Link>
   );
@@ -145,7 +119,7 @@ export default function IndustryGroups() {
       title: "Industrias",
       subtitle: "Experiencia especializada en industrias",
       errorMessage: "Error al cargar las industrias",
-      learnMore: "Más Información",
+      learnMore: "Más información",
       searchPlaceholder: "Buscar...",
       viewAll: "Ver todo",
       noResults: "No se encontraron resultados",
@@ -257,17 +231,16 @@ export default function IndustryGroups() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="text-center"
+            className="max-w-3xl"
           >
-            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
-            <h1 
-              className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
+            <Eyebrow num="" tone="navy" className="mb-6" />
+            <h1
+              className="mb-5"
               data-testid="text-industry-groups-title"
             >
               {t.title}
             </h1>
-            <p 
-              className="text-base text-white/60 max-w-2xl mx-auto"
+            <p
               data-testid="text-industry-groups-subtitle"
             >
               {t.subtitle}
@@ -279,28 +252,25 @@ export default function IndustryGroups() {
       <main id="main-content" className="py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           {error ? (
-            <div className="text-center py-12" data-testid="container-industry-groups-error">
-              <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground" data-testid="text-industry-groups-error">
+            <div className="py-12" data-testid="container-industry-groups-error">
+              <p className="text-base text-ss-medio" data-testid="text-industry-groups-error">
                 {t.errorMessage}
               </p>
             </div>
           ) : isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
               {Array.from({ length: 7 }).map((_, i) => (
-                <Card 
-                  key={i} 
-                  className="rounded-none border-0 shadow-sm bg-muted"
+                <div
+                  key={i}
+                  className="border-t border-ss-rule pt-6"
                   data-testid={`skeleton-industry-group-${i}`}
                 >
-                  <CardContent className="p-6">
-                    <Skeleton className="h-10 w-10 rounded-none mb-4" />
-                    <Skeleton className="h-6 w-3/4 mb-3" />
-                    <Skeleton className="h-4 w-full mb-2" />
-                    <Skeleton className="h-4 w-5/6 mb-4" />
-                    <Skeleton className="h-4 w-24" />
-                  </CardContent>
-                </Card>
+                  <Skeleton className="h-8 w-10 mb-4 bg-ss-rule" />
+                  <Skeleton className="aspect-[4/3] w-full bg-ss-paper mb-5" />
+                  <Skeleton className="h-6 w-3/4 mb-3 bg-ss-rule" />
+                  <Skeleton className="h-4 w-full mb-2 bg-ss-rule" />
+                  <Skeleton className="h-4 w-24 bg-ss-rule" />
+                </div>
               ))}
             </div>
           ) : (
@@ -309,7 +279,7 @@ export default function IndustryGroups() {
               initial="hidden"
               whileInView="visible"
             viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12"
             >
               {industryGroups?.map((group, idx) => (
                 <motion.div key={group.id} variants={itemVariants}>

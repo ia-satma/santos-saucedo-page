@@ -20,7 +20,7 @@ const LANGUAGE_CODES: Record<LanguageCode, string> = {
 const descriptions = {
   slogan: {
     en: "Human-capital administration and legal defense for companies",
-    es: "Administracion del capital humano y defensa legal para empresas",
+    es: "Administración del capital humano y defensa legal para empresas",
     de: "Human-capital administration and legal defense for companies",
     zh: "Human-capital administration and legal defense for companies",
     ko: "Human-capital administration and legal defense for companies",
@@ -47,14 +47,14 @@ const descriptions = {
 export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
   const isSpanish = language === "es";
   const safeDescription = isSpanish
-    ? "Santos & Saucedo Abogados es una firma legal para empresas -laboral, corporativo, migratorio y litigio-, con raiz en el derecho laboral y mas de 35 anos de experiencia asesorando empresas nacionales y multinacionales. Parte de una alianza con presencia en mas de 72 ciudades de Mexico."
+    ? "Santos & Saucedo Abogados es una firma legal para empresas -laboral, corporativo, migratorio y litigio-, con raíz en el derecho laboral y más de 35 años de experiencia asesorando empresas nacionales y multinacionales. Parte de una alianza con presencia en más de 72 ciudades de México."
     : "Santos & Saucedo Abogados is a law firm for companies -labor, corporate, immigration and litigation-, rooted in labor law with more than 35 years of experience advising national and multinational companies. Part of an alliance with presence in more than 72 cities across Mexico.";
   const laborServices = isSpanish
     ? [
-        "Laboral y Seguridad Social",
-        "Corporativo y Contractual",
+        "Laboral y seguridad social",
+        "Corporativo y contractual",
         "Migratorio",
-        "Litigio Contencioso (Civil, Mercantil y Penal)",
+        "Litigio contencioso (civil, mercantil y penal)",
       ]
     : [
         "Labor & Social Security",
@@ -105,12 +105,12 @@ export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
       "name": "Mexico"
     },
     "knowsAbout": [
-      "Derecho Laboral",
-      "Seguridad Social",
-      "Derecho Corporativo y Contractual",
-      "Derecho Migratorio",
-      "Litigio Contencioso",
-      "Administración del Capital Humano"
+      "Derecho laboral",
+      "Seguridad social",
+      "Derecho corporativo y contractual",
+      "Derecho migratorio",
+      "Litigio contencioso",
+      "Administración del capital humano"
     ]
   };
 
@@ -170,12 +170,12 @@ export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
       }))
     },
     "knowsAbout": [
-      "Derecho Laboral",
-      "Seguridad Social",
-      "Derecho Corporativo y Contractual",
-      "Derecho Migratorio",
-      "Litigio Contencioso",
-      "Administración del Capital Humano"
+      "Derecho laboral",
+      "Seguridad social",
+      "Derecho corporativo y contractual",
+      "Derecho migratorio",
+      "Litigio contencioso",
+      "Administración del capital humano"
     ]
   };
 

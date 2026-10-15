@@ -236,31 +236,31 @@ export default function CookieBanner({ language }: CookieBannerProps) {
     },
     es: {
       message: "Utilizamos cookies propias y de terceros para mejorar nuestros servicios y mostrarle publicidad relacionada con sus preferencias mediante el análisis de sus hábitos de navegación.",
-      privacy: "Ver Política de Privacidad",
+      privacy: "Ver política de privacidad",
       configure: "Configurar",
       accept: "Aceptar todas",
-      preferencesTitle: "Preferencias de Cookies",
+      preferencesTitle: "Preferencias de cookies",
       preferencesDescription: "Gestione sus preferencias de cookies a continuación. Puede habilitar o deshabilitar diferentes tipos de cookies. Las cookies esenciales siempre están activas ya que son necesarias para el correcto funcionamiento del sitio web.",
-      savePreferences: "Guardar Preferencias",
-      acceptAllButton: "Aceptar Todas",
+      savePreferences: "Guardar preferencias",
+      acceptAllButton: "Aceptar todas",
       close: "Cerrar",
       bannerLabel: "Aviso de cookies",
       categories: {
         essential: {
-          title: "Cookies Esenciales",
+          title: "Cookies esenciales",
           description: "Estas cookies son estrictamente necesarias para el funcionamiento del sitio web. Permiten funciones básicas como la navegación de páginas, acceso seguro y gestión de sesiones. El sitio web no puede funcionar correctamente sin estas cookies.",
           alwaysOn: "Siempre activas",
         },
         analytics: {
-          title: "Cookies de Análisis",
+          title: "Cookies de análisis",
           description: "Estas cookies nos ayudan a entender cómo los visitantes interactúan con nuestro sitio web recopilando información de forma anónima. Nos ayudan a medir el tráfico, identificar páginas populares y mejorar la experiencia del usuario.",
         },
         functionality: {
-          title: "Cookies de Funcionalidad",
+          title: "Cookies de funcionalidad",
           description: "Estas cookies permiten funcionalidades mejoradas y personalización, como recordar sus preferencias de idioma, configuración regional y diseños personalizados. Sin estas cookies, algunas funciones pueden no estar disponibles.",
         },
         marketing: {
-          title: "Cookies de Marketing",
+          title: "Cookies de marketing",
           description: "Estas cookies se utilizan para mostrar anuncios más relevantes para usted y sus intereses. Pueden usarse para limitar el número de veces que ve un anuncio y ayudar a medir la efectividad de las campañas publicitarias.",
         },
       },
@@ -537,20 +537,20 @@ export default function CookieBanner({ language }: CookieBannerProps) {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="ss26 fixed bottom-0 left-0 w-full bg-[#0A044B] text-white px-6 py-5 z-[60] border-t border-white/15"
+            className="ss26 fixed bottom-0 left-0 w-full bg-ss-navy text-white px-6 py-5 z-[60] border-t border-white/15"
             role="region"
             aria-label={t.bannerLabel}
             dir={dir}
             data-testid="banner-cookie-consent"
           >
             <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-              <div className="text-[14px] leading-relaxed text-white/70 flex-1">
+              <div className="text-[15px] leading-relaxed text-white/85 flex-1">
                 <p>
                   {t.message}
                   {/* Link de wouter: respeta la base del router (/santos-saucedo-page/ en Pages) */}
                   <Link
                     href="/privacy-policy"
-                    className="underline underline-offset-4 decoration-[#B2EB3E] text-white ms-1 hover:text-[#B2EB3E] transition-colors"
+                    className="underline underline-offset-4 decoration-white/40 text-white ms-1 hover:decoration-white transition-colors"
                     data-testid="link-privacy-policy"
                   >
                     {t.privacy}
@@ -561,14 +561,14 @@ export default function CookieBanner({ language }: CookieBannerProps) {
                 <button
                   ref={configureRef}
                   onClick={() => openPreferences('banner')}
-                  className="min-h-[44px] px-5 py-2 text-[12px] font-semibold uppercase tracking-[0.16em] border border-white/30 text-white hover:border-white transition-colors touch-manipulation"
+                  className="min-h-[44px] px-5 py-2 font-sans text-[15px] font-semibold leading-none tracking-[0.01em] transition-colors touch-manipulation border border-white/45 text-white hover:border-white"
                   data-testid="button-cookie-configure"
                 >
                   {t.configure}
                 </button>
                 <button
                   onClick={acceptAll}
-                  className="min-h-[44px] px-6 py-2 text-[12px] font-semibold uppercase tracking-[0.16em] bg-white text-[#140F4B] hover:bg-[#B2EB3E] transition-colors touch-manipulation"
+                  className="min-h-[44px] px-5 py-2 font-sans text-[15px] font-semibold leading-none tracking-[0.01em] transition-colors touch-manipulation border border-white bg-white text-ss-navy hover:bg-white/90"
                   data-testid="button-cookie-accept"
                 >
                   {t.accept}
@@ -605,7 +605,7 @@ export default function CookieBanner({ language }: CookieBannerProps) {
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.95, opacity: 0, y: 20 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                className="bg-[#1a1a1a] text-white w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-primary/30"
+                className="bg-ss-navy text-white w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border border-white/15"
                 data-testid="modal-cookie-preferences"
                 onClick={(e) => e.stopPropagation()}
                 onKeyDown={onDialogKeyDown}
@@ -616,7 +616,7 @@ export default function CookieBanner({ language }: CookieBannerProps) {
                     ref={titleRef}
                     id={titleId}
                     tabIndex={-1}
-                    className="text-xl font-semibold text-white outline-none focus-visible:!outline-none focus-visible:!shadow-none"
+                    className="font-heading text-2xl font-normal leading-tight tracking-[-0.01em] text-white outline-none focus-visible:!outline-none focus-visible:!shadow-none"
                     data-testid="text-preferences-title"
                   >
                     {t.preferencesTitle}
@@ -632,12 +632,12 @@ export default function CookieBanner({ language }: CookieBannerProps) {
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6">
-                  <p id={descriptionId} className="text-sm text-gray-400 mb-6" data-testid="text-preferences-description">
+                  <p id={descriptionId} className="text-[15px] leading-relaxed text-white/75 mb-6" data-testid="text-preferences-description">
                     {t.preferencesDescription}
                   </p>
 
                   <div className="space-y-4">
-                    {categoryConfig.map(({ key, icon: Icon, disabled }) => {
+                    {categoryConfig.map(({ key, disabled }) => {
                       const category = t.categories[key];
                       const categoryTitleId = `${uid}-${key}-title`;
                       const categoryDescriptionId = `${uid}-${key}-description`;
@@ -648,18 +648,15 @@ export default function CookieBanner({ language }: CookieBannerProps) {
                           data-testid={`card-cookie-${key}`}
                         >
                           <div className="flex items-start gap-4">
-                            <div className="shrink-0 w-10 h-10 flex items-center justify-center bg-[#1E1C92]/20 text-primary">
-                              <Icon className="w-5 h-5" aria-hidden="true" />
-                            </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between gap-4 mb-2">
-                                <h3 id={categoryTitleId} className="font-medium text-white" data-testid={`text-cookie-title-${key}`}>
+                                <h3 id={categoryTitleId} className="font-semibold text-white" data-testid={`text-cookie-title-${key}`}>
                                   {category.title}
                                 </h3>
                                 <div className="shrink-0 flex items-center gap-2">
                                   {disabled ? (
                                     <span
-                                      className="text-xs text-ss-lime font-medium"
+                                      className="ss-label text-white/75"
                                       data-testid={`text-cookie-always-on-${key}`}
                                     >
                                       {(category as typeof t.categories.essential).alwaysOn}
@@ -668,7 +665,8 @@ export default function CookieBanner({ language }: CookieBannerProps) {
                                     // Nombre accesible: el título de la categoría; descripción: su texto.
                                     // En RTL el pulgar parte de la derecha: activo, se mueve a la izquierda.
                                     // Contraste sobre el panel: inactivo, pista oscura con borde claro y
-                                    // pulgar blanco; activo, pista lima con pulgar marino.
+                                    // pulgar blanco; activo, pista blanca con pulgar Azul Profundo (la lima
+                                    // queda para el § y el foco).
                                     <Switch
                                       checked={preferences[key]}
                                       onCheckedChange={() => togglePreference(key)}
@@ -676,14 +674,14 @@ export default function CookieBanner({ language }: CookieBannerProps) {
                                       aria-labelledby={categoryTitleId}
                                       aria-describedby={categoryDescriptionId}
                                       data-testid={`switch-cookie-${key}`}
-                                      className="border-white/60 data-[state=unchecked]:bg-transparent data-[state=checked]:border-[#B2EB3E] data-[state=checked]:bg-[#B2EB3E] [&>span]:bg-white [&[data-state=checked]>span]:bg-[#140F4B] rtl:[&[data-state=checked]>span]:-translate-x-5"
+                                      className="border-white/60 data-[state=unchecked]:bg-transparent data-[state=checked]:border-white data-[state=checked]:bg-white [&>span]:bg-white [&[data-state=checked]>span]:bg-ss-navy rtl:[&[data-state=checked]>span]:-translate-x-5"
                                     />
                                   )}
                                 </div>
                               </div>
                               <p
                                 id={categoryDescriptionId}
-                                className="text-sm text-gray-400 leading-relaxed"
+                                className="text-[15px] text-white/75 leading-relaxed"
                                 data-testid={`text-cookie-description-${key}`}
                               >
                                 {category.description}
@@ -699,14 +697,14 @@ export default function CookieBanner({ language }: CookieBannerProps) {
                 <div className="flex flex-col sm:flex-row gap-3 p-6 border-t border-white/10">
                   <button
                     onClick={saveCustomPreferences}
-                    className="flex-1 min-h-[44px] px-6 py-3 text-sm rounded-sm bg-white/10 hover:bg-white/20 transition-colors font-medium touch-manipulation"
+                    className="flex-1 min-h-[44px] px-5 py-2 font-sans text-[15px] font-semibold leading-none tracking-[0.01em] transition-colors touch-manipulation border border-white/45 text-white hover:border-white"
                     data-testid="button-save-preferences"
                   >
                     {t.savePreferences}
                   </button>
                   <button
                     onClick={acceptAll}
-                    className="flex-1 min-h-[44px] px-6 py-3 text-sm rounded-sm bg-brand text-brand-foreground font-bold hover:brightness-95 transition-all touch-manipulation"
+                    className="flex-1 min-h-[44px] px-5 py-2 font-sans text-[15px] font-semibold leading-none tracking-[0.01em] transition-colors touch-manipulation border border-white bg-white text-ss-navy hover:bg-white/90"
                     data-testid="button-accept-all-preferences"
                   >
                     {t.acceptAllButton}

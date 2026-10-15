@@ -89,14 +89,14 @@ function NewsItemTranslated({
   const inner = (
     <>
       <h4 
-        className="font-sans text-sm font-semibold text-white leading-snug mb-2 group-hover:text-white/80 transition-colors"
+        className="font-heading text-sm font-normal text-white leading-snug mb-2 group-hover:text-white/80 transition-colors"
         data-testid={`text-news-title-${item.id}`}
       >
         {displayTitle}
       </h4>
       <Link 
         href={`/news/${item.slug}`}
-        className="inline-flex items-center gap-1 text-[11px] font-sans font-bold tracking-[0.15em] uppercase text-white hover:text-white/80 no-underline transition-colors"
+        className="ss-label inline-flex items-center gap-1 text-white hover:text-white/80 no-underline transition-colors"
         data-testid={`link-news-seemore-${item.id}`}
       >
         {seeMoreText}
@@ -133,7 +133,7 @@ function NewsPanel({ language, news }: { language: LanguageCode; news: News[] })
       data-testid="panel-news-overlay"
     >
       <div
-        className="backdrop-blur-md rounded-lg border border-white/10 ring-1 ring-inset ring-white/5 p-6 flex flex-col gap-4 shadow-2xl"
+        className="backdrop-blur-md border border-white/10 ring-1 ring-inset ring-white/5 p-6 flex flex-col gap-4"
         style={{
           width: '280px',
           background: 'linear-gradient(135deg, rgba(18,16,62,0.82) 0%, rgba(16,14,48,0.74) 100%)',
@@ -141,9 +141,9 @@ function NewsPanel({ language, news }: { language: LanguageCode; news: News[] })
       >
         {/* Header */}
         <div className="flex items-center gap-3">
-          <div className="w-4 h-px bg-brand" aria-hidden="true" />
+          <div className="w-4 h-px bg-white/35" aria-hidden="true" />
           <h3
-            className="text-[11px] font-sans tracking-[0.3em] uppercase text-white/50"
+            className="ss-label text-white/75"
             data-testid="text-news-header"
           >
             {t.news}
@@ -203,9 +203,9 @@ const heroContent: Record<LanguageCode, HeroContent> = {
     tagline: "FIRMA LEGAL PARA EMPRESAS · NUEVO LEÓN",
     headline: "SANTOS & SAUCEDO",
     subheadlines: [
-      "15 Años como Firma",
+      "15 años como firma",
       "+35 de Experiencia",
-      "Alianza Nacional en +72 Ciudades",
+      "Alianza nacional en +72 ciudades",
       "Laboral · Corporativo · Migratorio · Litigio",
     ],
     scroll: "scroll",
@@ -423,7 +423,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
     >
       <div className="absolute inset-0 z-0">
         <div 
-          className="absolute inset-0 bg-[radial-gradient(circle_at_78%_34%,rgba(18,16,62,0.72)_0%,rgba(16,14,48,0.5)_32%,rgba(10,8,38,0.92)_72%),linear-gradient(135deg,#12116E_0%,#191884_54%,#1E1C92_100%)]"
+          className="absolute inset-0 bg-ss-navy"
           data-testid="background-gradient"
         />
         <div 
@@ -445,7 +445,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
         
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,8,38,0.5)_0%,rgba(16,14,48,0.2)_50%,rgba(10,8,38,0.1)_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,8,38,0.2)_0%,rgba(16,14,48,0.03)_45%,rgba(10,8,38,0.6)_100%)]" />
-        <div className="absolute bottom-0 left-0 right-0 h-44 bg-gradient-to-t from-[#12116E]/88 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-44 bg-gradient-to-t from-ss-navy/88 to-transparent" />
       </div>
 
       {newsData && newsData.length > 0 && (
@@ -470,7 +470,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
           transition={{ duration: 0.6, delay: 0.65 }}
           className="flex flex-col items-center gap-3"
         >
-          <div className="w-10 h-px bg-brand" aria-hidden="true" />
+          <div className="w-6 h-px bg-white/35" aria-hidden="true" />
           <div className="min-h-[2.5rem] sm:min-h-[1.75rem] flex items-center justify-center px-4">
             <AnimatePresence mode="wait">
               <motion.p
@@ -479,7 +479,7 @@ export default function HeroSection({ language }: HeroSectionProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
-                className="font-sans max-w-[680px] text-white/85 text-xs sm:text-sm font-semibold tracking-[0.25em] uppercase leading-relaxed"
+                className="ss-label max-w-[680px] text-white/85 leading-relaxed"
                 data-testid="text-hero-subheadline"
               >
                 {subheadline}
@@ -494,11 +494,11 @@ export default function HeroSection({ language }: HeroSectionProps) {
         animate={isVisible ? { opacity: 1 } : {}}
         transition={{ duration: 0.6, delay: 1 }}
         onClick={scrollToNews}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-brand hover:text-brand transition-colors cursor-pointer min-h-[44px] min-w-[44px] touch-manipulation p-2"
+        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/75 hover:text-white transition-colors cursor-pointer min-h-[44px] min-w-[44px] touch-manipulation p-2"
         data-testid="button-scroll-down"
         aria-label={scrollAriaLabel}
       >
-        <span className="font-sans text-xs font-semibold tracking-[0.2em] uppercase" data-testid="text-scroll">{t.scroll}</span>
+        <span className="ss-label" data-testid="text-scroll">{t.scroll}</span>
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}

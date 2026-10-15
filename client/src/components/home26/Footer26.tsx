@@ -8,6 +8,8 @@ import { useSiteContact } from "./useSiteContact";
 
 // Área de clic de 32px (WCAG 2.5.8 pide 24px); el subrayado va en el texto, no en la caja.
 const linkCls = "inline-flex min-h-8 items-center text-start text-[16px] transition-colors";
+// Encabezados de columna: etiqueta en blanco tenue sobre Azul Profundo (la lima no va en texto)
+const headCls = "ss-label text-white/75";
 
 // Abre el panel de preferencias de CookieBanner sin borrar lo guardado
 // (CookieBanner escucha este evento).
@@ -40,7 +42,8 @@ export default function Footer26({ localized = false }: Footer26Props) {
       className="ss26 relative isolate overflow-hidden bg-ss-navy text-white"
       data-testid="footer"
     >
-      <SectionMark className="absolute -end-[4%] -top-[30%] -z-10 h-[170%] bg-white opacity-[0.03]" />
+      {/* El § del logotipo como marca de agua tonal (blanco al 3 %, sin opacidad ni filtros) */}
+      <SectionMark className="absolute -end-[4%] -top-[30%] -z-10 h-[170%] bg-white/[.03]" />
 
       <div className="ss-container grid grid-cols-2 gap-x-6 gap-y-14 pb-14 pt-20 md:grid-cols-3 lg:grid-cols-12 lg:pb-16 lg:pt-28">
         <div className="col-span-2 md:col-span-3 lg:col-span-4">
@@ -48,7 +51,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
         </div>
 
         <address className="col-span-2 not-italic md:col-span-1 lg:col-span-3" data-testid="text-footer-address">
-          <p className="ss-label text-ss-lime">{t.office}</p>
+          <p className={headCls}>{t.office}</p>
           <p className="mt-5 text-[16px] leading-[1.6] text-white/80">
             {/* bdi: en árabe (RTL) el punto final de "N.L." no salta al principio de la línea */}
             {address.map((line, i) => (
@@ -69,7 +72,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
         </address>
 
         <nav aria-labelledby="ss26-footer-firm" className="lg:col-span-2">
-          <p id="ss26-footer-firm" className="ss-label text-ss-lime">
+          <p id="ss26-footer-firm" className={headCls}>
             {t.firm}
           </p>
           <ul className="mt-4">
@@ -85,7 +88,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
 
         <div className="flex flex-col gap-12 lg:col-span-3">
           <nav aria-labelledby="ss26-footer-legal">
-            <p id="ss26-footer-legal" className="ss-label text-ss-lime">
+            <p id="ss26-footer-legal" className={headCls}>
               {t.legal}
             </p>
             <ul className="mt-4">
@@ -113,7 +116,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
           </nav>
 
           <div role="group" aria-labelledby="ss26-footer-lang">
-            <p id="ss26-footer-lang" className="ss-label text-ss-lime">
+            <p id="ss26-footer-lang" className={headCls}>
               {chrome.langs.label}
             </p>
             <div className="mt-4 flex flex-wrap gap-x-5">

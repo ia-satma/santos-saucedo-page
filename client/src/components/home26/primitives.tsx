@@ -100,8 +100,9 @@ export function Reveal({
   );
 }
 
-/** Barra lima; se dibuja cuando su bloque entra (clase is-in del Reveal padre). */
-export function LimeBar({ className = "" }: { className?: string }) {
+/** Filete corto de 24 × 1 px (ss26.css: blanco tenue sobre Azul Profundo, Línea sobre claro);
+    se dibuja cuando su bloque entra (clase is-in del Reveal padre). */
+export function ShortRule({ className = "" }: { className?: string }) {
   return <span aria-hidden className={`ss-bar shrink-0 ${className}`} />;
 }
 
@@ -138,18 +139,19 @@ export function SectionHead({
   num: string;
   label: string;
   tone?: "light" | "dark";
-  /** Barra lima: solo en la portada. */
+  /** Filete corto entre número y etiqueta: solo en el héroe de la portada. */
   accent?: boolean;
   className?: string;
 }) {
   const dark = tone === "dark";
   return (
-    <p
-      className={`ss-label flex items-center gap-4 text-[11px] tracking-[0.12em] ${dark ? "text-white/70" : "text-ss-ink/65"} ${className}`}
-    >
-      <span className={`ss-num shrink-0 whitespace-nowrap ${dark ? "text-ss-lime" : "text-ss-ink"}`}>§ {num}</span>
-      {/* Sin regla entre número y etiqueta; la barra lima solo en la portada */}
-      {accent && <LimeBar />}
+    <p className={`ss-label flex items-center gap-4 ${dark ? "text-white/75" : "text-ss-medio"} ${className}`}>
+      {/* Sobre Azul Profundo, solo el glifo § va en lima (eco del § del logotipo); las cifras,
+          en blanco tenue. Es marcado y no ::first-letter: Chromium lo ignora en "§ 01". */}
+      <span className={`ss-num shrink-0 whitespace-nowrap ${dark ? "text-white/75" : "text-ss-marino"}`}>
+        <span className={dark ? "text-ss-lime" : ""}>§</span> {num}
+      </span>
+      {accent && <ShortRule />}
       <span>{label}</span>
     </p>
   );
@@ -172,10 +174,11 @@ export function TextLink({
     <Link
       href={href}
       // before: amplía el área táctil a ~42px sin mover el diseño (index.css ya no fuerza 44px en .ss26)
-      className={`ss-label group relative inline-flex items-center gap-3 before:absolute before:inset-x-0 before:-inset-y-3 ${dark ? "text-white" : "text-ss-ink"} ${className}`}
+      className={`ss-label group relative inline-flex items-center gap-3 before:absolute before:inset-x-0 before:-inset-y-3 ${dark ? "text-white" : "text-ss-marino"} ${className}`}
     >
-      <span className={`ss-link ${dark ? "ss-link--lime" : ""}`}>{children}</span>
-      <span aria-hidden className={`ss-arrow ${dark ? "text-ss-lime" : ""}`}>
+      {/* Subrayado de 1 px y flecha en el color del texto: la lima no va en enlaces */}
+      <span className="ss-link">{children}</span>
+      <span aria-hidden className="ss-arrow">
         →
       </span>
     </Link>

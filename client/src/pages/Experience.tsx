@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Search, AlertCircle, Calendar, Building2, Briefcase, Award, ChevronRight } from "lucide-react";
+import { Search, AlertCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,6 +19,11 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { RepresentativeMatterDb, PracticeGroup, IndustryGroup } from "@shared/schema";
+
+// "Clásica": titulares en romana 400, Azul Marino, caja de oración y al inicio; texto en Gris Tinta.
+const h2Class = "font-heading font-normal text-ss-marino text-[clamp(28px,2.6vw,38px)] leading-[1.12] tracking-[-0.012em] [text-wrap:balance]";
+const h3Class = "font-heading font-normal text-ss-marino text-[22px] leading-[1.25] tracking-[-0.01em]";
+const leadClass = "font-serif font-normal text-ss-tinta text-[clamp(19px,0.6vw_+_14px,22px)] leading-[1.55] tracking-[-0.003em] [text-wrap:pretty]";
 
 export default function Experience() {
   const { language } = useLanguage();
@@ -80,20 +85,20 @@ export default function Experience() {
       title: "Experiencia",
       subtitle: "Una trayectoria comprobada de excelencia en todas las áreas de práctica",
       heroDescription: "Durante más de tres décadas, Santos & Saucedo ha representado a empresas nacionales y multinacionales líderes en sus asuntos legales más complejos y de alto perfil. Nuestra experiencia abarca transacciones históricas, disputas pioneras y mandatos de asesoría estratégica.",
-      featuredTitle: "Asuntos Destacados",
+      featuredTitle: "Asuntos destacados",
       featuredSubtitle: "Casos de alto perfil que demuestran nuestra experiencia",
-      allMattersTitle: "Asuntos Representativos",
-      filterByPractice: "Filtrar por Área de Práctica",
-      filterByIndustry: "Filtrar por Industria",
+      allMattersTitle: "Asuntos representativos",
+      filterByPractice: "Filtrar por área de práctica",
+      filterByIndustry: "Filtrar por industria",
       searchPlaceholder: "Buscar asuntos...",
-      allPracticeAreas: "Todas las Áreas de Práctica",
-      allIndustries: "Todas las Industrias",
+      allPracticeAreas: "Todas las áreas de práctica",
+      allIndustries: "Todas las industrias",
       errorMessage: "Error al cargar los asuntos representativos",
       noResults: "No se encontraron asuntos que coincidan con los criterios",
-      confidentialClient: "Cliente Confidencial",
-      viewPracticeArea: "Ver Área de Práctica",
-      representativeMatters: "Asuntos Representativos",
-      industryExperience: "Experiencia por Industria",
+      confidentialClient: "Cliente confidencial",
+      viewPracticeArea: "Ver área de práctica",
+      representativeMatters: "Asuntos representativos",
+      industryExperience: "Experiencia por industria",
     },
     de: {
       title: "Erfahrung",
@@ -326,7 +331,7 @@ export default function Experience() {
           >
             <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1 
-              className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
+              className="text-4xl md:text-5xl font-heading text-white mb-5"
               data-testid="text-experience-title"
             >
               {t.title}
@@ -365,18 +370,15 @@ export default function Experience() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-center mb-12"
+                className="mb-12"
               >
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  <Award className="w-6 h-6 text-primary" />
-                  <h2 
-                    className="text-2xl font-heading font-light text-foreground uppercase tracking-[0.12em]"
-                    data-testid="text-featured-title"
-                  >
-                    {t.featuredTitle}
-                  </h2>
-                </div>
-                <p className="text-muted-foreground" data-testid="text-featured-subtitle">
+                <h2 
+                  className={`${h2Class} mb-4`}
+                  data-testid="text-featured-title"
+                >
+                  {t.featuredTitle}
+                </h2>
+                <p className={`${leadClass} max-w-2xl`} data-testid="text-featured-subtitle">
                   {t.featuredSubtitle}
                 </p>
               </motion.div>
@@ -408,28 +410,26 @@ export default function Experience() {
                   {highlightedMatters.map((matter) => (
                     <motion.div key={matter.id} variants={itemVariants}>
                       <Card
-                        className="h-full transition-shadow duration-300"
+                        className="h-full"
                         data-testid={`card-featured-matter-${matter.id}`}
                       >
                         <CardContent className="p-6">
-                          <div className="flex items-center gap-2 text-sm text-primary mb-3">
-                            <Calendar className="w-4 h-4" />
+                          <div className="ss-label text-ss-medio mb-3">
                             <span data-testid={`text-featured-year-${matter.id}`}>{matter.year}</span>
                           </div>
                           <h3 
-                            className="text-lg font-medium text-foreground mb-3 line-clamp-2"
+                            className={`${h3Class} mb-3 line-clamp-2`}
                             data-testid={`text-featured-title-${matter.id}`}
                           >
                             {language === "es" ? matter.titleEs : matter.title}
                           </h3>
                           <p 
-                            className="text-muted-foreground text-sm mb-4 line-clamp-3"
+                            className="text-ss-tinta text-base leading-relaxed mb-4 line-clamp-3"
                             data-testid={`text-featured-description-${matter.id}`}
                           >
                             {language === "es" ? matter.descriptionEs : matter.description}
                           </p>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                            <Building2 className="w-4 h-4" />
+                          <div className="text-[15px] text-ss-medio mb-4">
                             <span data-testid={`text-featured-client-${matter.id}`}>
                               {language === "es" 
                                 ? (matter.clientEs || matter.client || t.confidentialClient) 
@@ -441,11 +441,10 @@ export default function Experience() {
                             {getPracticeAreaName(matter.practiceAreaSlug) && (
                               <Link href={`/practice-groups/${matter.practiceAreaSlug}`}>
                                 <Badge 
-                                  variant="secondary" 
-                                  className="text-xs cursor-pointer hover-elevate"
+                                  variant="outline" 
+                                  className="cursor-pointer hover:border-ss-marino"
                                   data-testid={`badge-featured-practice-${matter.id}`}
                                 >
-                                  <Briefcase className="w-3 h-3 mr-1" />
                                   {getPracticeAreaName(matter.practiceAreaSlug)}
                                 </Badge>
                               </Link>
@@ -454,7 +453,6 @@ export default function Experience() {
                             {getIndustryName(matter.industrySlug) && (
                               <Badge 
                                 variant="outline" 
-                                className="text-xs"
                                 data-testid={`badge-featured-industry-${matter.id}`}
                               >
                                 {getIndustryName(matter.industrySlug)}
@@ -480,15 +478,15 @@ export default function Experience() {
                 className="mb-12"
               >
                 <h2 
-                  className="text-2xl font-heading font-light text-foreground text-center mb-8 uppercase tracking-[0.12em]"
+                  className={`${h2Class} mb-8`}
                   data-testid="text-all-matters-title"
                 >
                   {t.allMattersTitle}
                 </h2>
                 
-                <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-center mb-8">
+                <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center mb-8">
                   <div className="relative flex-1 max-w-md">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-ss-medio w-4 h-4" aria-hidden="true" />
                     <Input
                       type="text"
                       placeholder={t.searchPlaceholder}
@@ -564,7 +562,7 @@ export default function Experience() {
                 </div>
               ) : filteredMatters.length === 0 ? (
                 <div className="text-center py-12" data-testid="container-no-results">
-                  <Search className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                  <Search className="w-12 h-12 text-ss-rule mx-auto mb-4" aria-hidden="true" />
                   <p className="text-muted-foreground" data-testid="text-no-results">
                     {t.noResults}
                   </p>
@@ -580,19 +578,16 @@ export default function Experience() {
                   {filteredMatters.map((matter) => (
                     <motion.div key={matter.id} variants={itemVariants}>
                       <Card
-                        className="transition-shadow duration-300"
                         data-testid={`card-matter-${matter.id}`}
                       >
                         <CardContent className="p-6">
                           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                             <div className="flex-1">
                               <div className="flex items-center gap-4 mb-3">
-                                <div className="flex items-center gap-2 text-sm text-primary">
-                                  <Calendar className="w-4 h-4" />
+                                <div className="ss-label text-ss-medio">
                                   <span data-testid={`text-matter-year-${matter.id}`}>{matter.year}</span>
                                 </div>
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                  <Building2 className="w-4 h-4" />
+                                <div className="text-[15px] text-ss-medio">
                                   <span data-testid={`text-matter-client-${matter.id}`}>
                                     {language === "es" 
                                       ? (matter.clientEs || matter.client || t.confidentialClient) 
@@ -601,13 +596,13 @@ export default function Experience() {
                                 </div>
                               </div>
                               <h3 
-                                className="text-lg font-medium text-foreground mb-2"
+                                className={`${h3Class} mb-2`}
                                 data-testid={`text-matter-title-${matter.id}`}
                               >
                                 {language === "es" ? matter.titleEs : matter.title}
                               </h3>
                               <p 
-                                className="text-muted-foreground text-sm"
+                                className="text-ss-tinta text-base leading-relaxed"
                                 data-testid={`text-matter-description-${matter.id}`}
                               >
                                 {language === "es" ? matter.descriptionEs : matter.description}
@@ -618,13 +613,11 @@ export default function Experience() {
                               {getPracticeAreaName(matter.practiceAreaSlug) && (
                                 <Link href={`/practice-groups/${matter.practiceAreaSlug}`}>
                                   <Badge 
-                                    variant="secondary" 
-                                    className="text-xs cursor-pointer hover-elevate whitespace-nowrap"
+                                    variant="outline" 
+                                    className="cursor-pointer hover:border-ss-marino whitespace-nowrap"
                                     data-testid={`badge-matter-practice-${matter.id}`}
                                   >
-                                    <Briefcase className="w-3 h-3 mr-1" />
                                     {getPracticeAreaName(matter.practiceAreaSlug)}
-                                    <ChevronRight className="w-3 h-3 ml-1" />
                                   </Badge>
                                 </Link>
                               )}
@@ -632,7 +625,7 @@ export default function Experience() {
                               {getIndustryName(matter.industrySlug) && (
                                 <Badge 
                                   variant="outline" 
-                                  className="text-xs whitespace-nowrap"
+                                  className="whitespace-nowrap"
                                   data-testid={`badge-matter-industry-${matter.id}`}
                                 >
                                   {getIndustryName(matter.industrySlug)}

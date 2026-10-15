@@ -7,11 +7,13 @@
 
 /* LIGHT MODE */
 :root {
-  --button-outline: rgba(0,0,0, .10);
-  --badge-outline: rgba(0,0,0, .05);
+  /* Contornos: botón secundario con el filete de campo (#C9C8BD), etiquetas con la Línea */
+  --button-outline: #c9c8bd;
+  --badge-outline: #e1e0d7;
   --opaque-button-border-intensity: -8;
   --elevate-1: rgba(36, 37, 92, .03);
   --elevate-2: rgba(36, 37, 92, .06);
+  /* Los tokens --ss-* ("Clásica") viven en styles/ss26.css, también en :root. */
 
   /* ── PALETA LIGHT ("Clásica", manual 2025) ────────────────
      Blanco para cuerpos de página, Hueso #F3F1EA como único papel,
@@ -198,6 +200,7 @@
     font-weight: 400;
   }
 
+  /* Titulares: la romana (Newsreader) en 400, caja baja, tamaño óptico automático */
   h1,
   h2,
   h3,
@@ -206,9 +209,12 @@
   h6 {
     font-family: var(--font-heading);
     color: hsl(var(--foreground));
-    font-weight: 600;
+    font-weight: 400;
     letter-spacing: -0.012em;
     line-height: 1.12;
+    font-optical-sizing: auto;
+    font-feature-settings: "kern", "liga", "lnum";
+    text-wrap: balance;
   }
 
   p,
@@ -218,6 +224,112 @@
   textarea,
   button {
     font-family: var(--font-sans);
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Piezas tipográficas "Clásica" para las páginas internas (fuera de .ss26).
+   En @layer components: las utilidades de Tailwind pueden ajustarlas.
+--------------------------------------------------------------------------- */
+@layer components {
+  /* h2 de las páginas internas: romana 400, Azul Marino, alineado al inicio */
+  .ss-h2 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: clamp(28px, 2.6vw, 38px);
+    line-height: 1.12;
+    letter-spacing: -0.012em;
+    color: var(--ss-marino);
+    text-align: start;
+    text-transform: none;
+    text-wrap: balance;
+    font-optical-sizing: auto;
+    font-feature-settings: "kern", "liga", "lnum";
+  }
+  .ss-h2-sm {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: clamp(24px, 2vw, 30px);
+    line-height: 1.18;
+    letter-spacing: -0.012em;
+    color: var(--ss-marino);
+    text-align: start;
+    text-transform: none;
+    text-wrap: balance;
+    font-optical-sizing: auto;
+    font-feature-settings: "kern", "liga", "lnum";
+  }
+  /* h3 de filas, tarjetas y columnas laterales (22 px; 20 px en la lateral con text-[20px]) */
+  .ss-h3 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--ss-marino);
+    text-align: start;
+    text-transform: none;
+    text-wrap: balance;
+    font-optical-sizing: auto;
+    font-feature-settings: "kern", "liga", "lnum";
+  }
+  /* Cifras: .ss-figure está en styles/ss26.css (romana 300, Azul Marino; blanco sobre Azul Profundo) */
+  /* Numerales decorativos 01–04 de las filas: romana 300 en Gris Claro (solo sobre blanco) */
+  .ss-numeral {
+    font-family: var(--font-heading);
+    font-weight: 300;
+    font-size: clamp(30px, 2.4vw, 36px);
+    line-height: 1;
+    letter-spacing: 0;
+    color: var(--ss-claro);
+    font-optical-sizing: auto;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+  /* Eyebrow del expediente ("§ 02 —— Socio"), components/editorial/Eyebrow.tsx.
+     El color va en el componente: glifo § en lima solo sobre Azul Profundo. */
+  .ss-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 0;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 1.4;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: start;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  /* La regla móvil `span { font-size: max(16px, 1rem) }` no debe agrandar el § ni las cifras */
+  .ss-eyebrow :where(span) {
+    font-size: inherit;
+  }
+  /* Etiquetas y chips: sans 400 de 14 px, Gris Tinta, filete de 1 px en Línea */
+  .ss-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 5px 12px;
+    border: 1px solid var(--ss-rule);
+    background: transparent;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.3;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ss-tinta);
+    transition: border-color 200ms ease, color 200ms ease;
+  }
+  a.ss-chip:hover,
+  a:hover > .ss-chip {
+    border-color: var(--ss-marino);
+    color: var(--ss-marino);
   }
 }
 
@@ -230,57 +342,39 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Modern surface & depth system (rebrand v2)
-   Kill the "box effect": borderless soft cards, ambient section depth, and
-   dividers that fade at the edges instead of hard rules. Kept outside @layer
-   so Tailwind never tree-shakes them.
+   Superficies "Clásica": blanco para los cuerpos, Hueso como único papel,
+   filetes de 1 px en Línea. Sin sombras, sin esquinas, sin degradados.
+   Fuera de @layer para que Tailwind no las descarte.
 --------------------------------------------------------------------------- */
 
-/* Borderless soft card: rounded, layered navy-tinted shadow, gentle lift. */
+/* Antes tarjeta flotante con sombra y elevación; ahora fila abierta con filete superior */
 .card-soft {
-  background-color: #fff;
-  border-radius: .5rem;
-  box-shadow: var(--shadow-md);
-  transition: box-shadow .4s cubic-bezier(.4, 0, .2, 1), transform .4s cubic-bezier(.4, 0, .2, 1);
-}
-.card-soft:hover {
-  box-shadow: var(--shadow-xl);
-  transform: translateY(-6px);
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--ss-rule);
+  border-radius: 0;
+  box-shadow: none;
+  padding: 28px 0 0;
 }
 .dark .card-soft {
-  background-color: hsl(243 42% 16%);
-  box-shadow: 0 12px 34px -10px rgba(0, 0, 0, .55);
+  border-top-color: hsl(var(--border));
 }
 
-/* Ambient depth for light sections: whisper-soft navy + lime glows on white,
-   so sections read as layered atmosphere rather than flat panels. */
-.section-ambient {
-  position: relative;
-  background:
-    radial-gradient(120% 95% at 88% -10%, rgba(18, 16, 62, 0.055) 0%, transparent 55%),
-    radial-gradient(95% 85% at -5% 110%, rgba(165, 224, 41, 0.05) 0%, transparent 52%),
-    #ffffff;
-}
-
-/* A cooler, quieter alternate surface (very light navy tint) for rhythm. */
+/* Antes con brillos radiales marino y lima: blanco plano */
+.section-ambient,
 .section-mist {
-  background: linear-gradient(180deg, #ffffff 0%, #f6f7fb 55%, #f2f3fa 100%);
+  background: #fff;
 }
-.dark .section-ambient {
-  background:
-    radial-gradient(120% 95% at 88% -10%, rgba(24, 20, 66, 0.55) 0%, transparent 55%),
-    radial-gradient(95% 85% at -5% 110%, rgba(165, 224, 41, 0.08) 0%, transparent 52%),
-    hsl(243 52% 11%);
-}
+.dark .section-ambient,
 .dark .section-mist {
-  background: linear-gradient(180deg, hsl(243 40% 14%) 0%, hsl(243 42% 16%) 100%);
+  background: hsl(var(--background));
 }
 
-/* Hairline that fades out at both ends — no hard divider lines. */
+/* Filete de 1 px en Línea (antes se desvanecía en los extremos) */
 .divider-soft {
   height: 1px;
   border: 0;
-  background: linear-gradient(90deg, transparent, rgba(18, 16, 62, .16), transparent);
+  background: var(--ss-rule);
 }
 
 /**
@@ -343,8 +437,8 @@
     overflow: visible;
     clip: auto;
     white-space: normal;
-    border-radius: 0.375rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 0;
+    box-shadow: none;
     outline: 2px solid hsl(var(--ring));
     outline-offset: 2px;
     z-index: 99999;
@@ -471,7 +565,7 @@
   /* Graceful handling for broken/loading images */
   .img-fallback {
     position: relative;
-    background-color: #F5F2EA;
+    background-color: var(--ss-paper);
     background-image: url('/assets/logo-placeholder.svg');
     background-repeat: no-repeat;
     background-position: center;
@@ -605,14 +699,8 @@
   }
   
   .bento-item {
-    border-radius: 0.5rem;
+    border-radius: 0;
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .bento-item:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   }
   
   .bento-span-2 {
@@ -650,14 +738,6 @@
   
   .micro-scale:active {
     transform: scale(0.98);
-  }
-  
-  .micro-glow {
-    transition: box-shadow 0.3s ease;
-  }
-  
-  .micro-glow:hover {
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
   }
   
   /* Smooth fade-in animation */
@@ -958,9 +1038,10 @@ html, body {
 
 /* Mobile-first base styles (up to 640px) */
 @media screen and (max-width: 639px) {
+  /* Texto corrido: 17 px en teléfono (18 px desde 768) con interlínea 1.65 */
   body {
-    font-size: 16px;
-    line-height: 1.6;
+    font-size: 17px;
+    line-height: 1.65;
   }
   
   /* Ensure minimum readable font size */
@@ -1000,7 +1081,7 @@ html, body {
 @media screen and (min-width: 768px) {
   body {
     font-size: 18px;
-    line-height: 1.7;
+    line-height: 1.65;
   }
 }
 
@@ -1024,46 +1105,40 @@ html, body {
 }
 
 /* ======================================================
-   Encabezado de página interno — marca 2026
+   Encabezado de página interno — "Clásica"
    section.pt-36.pb-20.editorial-page-hero (22 páginas públicas).
-   Degradado de la portada, eyebrow "§ 01 ——", h1 en Bebas
-   mayúsculas al inicio y subtítulo blanco al 75 %. Igual en claro
-   y oscuro. Selectores de especificidad 0,1,1 o más: ganan a las
-   utilidades de Tailwind (0,1,0) sin !important.
+   Azul Profundo plano y compacto; eyebrow "§ 01 ——" con el glifo § en lima
+   y las cifras en blanco al 74 %; h1 en la romana (350) y subtítulo en la
+   sans al 84 %. Variante papel (.editorial-page-hero--paper) para los
+   artículos del Monitor y las páginas legales. Selectores de especificidad
+   0,1,1 o más: ganan a las utilidades de Tailwind (0,1,0) sin !important.
    ====================================================== */
 .editorial-page-hero {
-  /* Tokens de .ss26 que usan ss-link, ss-arrow y la barra (el hero no está dentro de .ss26) */
-  --ss-ink: #140f4b;
-  --ss-deep: #110c49;
+  /* Tokens que usan ss-link, ss-arrow y el eyebrow */
+  --ss-ink: #24255c;
+  --ss-navy: #1a1b42;
   --ss-lime: #b2eb3e;
-  --ss-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   position: relative;
   overflow: hidden;
   isolation: isolate;
   color: #fff;
-  background-color: #110c49;
-  background-image: linear-gradient(148deg, #110c49 0%, #130e5b 58%, #170d94 100%);
-  /* Franja superior del degradado de la portada: en una caja baja y ancha el 148deg
-     llevaba el violeta a la esquina superior derecha, pegado a la cabecera tinta.
-     Con el alto de la portada (≈56vw) el borde superior queda en el tono profundo. */
-  background-size: 100% max(100%, 56vw);
-  background-position: 0 0;
-  background-repeat: no-repeat;
-  /* Anillos ring-ring y contorno de foco global en lima (#b2eb3e) */
+  background-color: #1a1b42;
+  background-image: none;
+  /* Anillos ring-ring y contorno de foco sobre Azul Profundo: lima */
   --ring: 80 81% 58%;
 }
 
 .editorial-page-hero,
 .editorial-page-hero :where(p, li, address, button, input, select, textarea) {
-  font-family: "SS Sans", "Source Sans 3", system-ui, sans-serif;
+  font-family: var(--font-sans);
 }
 
-/* La cabecera nueva es sticky y ocupa su lugar: ya no hay que compensar pt-36 */
+/* Compacto: el encabezado ya no ocupa medio pantallazo. La cabecera sticky ocupa su lugar. */
 .editorial-page-hero.pt-36 {
-  padding-top: clamp(64px, 8vw, 112px);
+  padding-top: clamp(56px, 6vw, 96px);
 }
 .editorial-page-hero.pb-20 {
-  padding-bottom: clamp(56px, 7vw, 96px);
+  padding-bottom: clamp(40px, 4.5vw, 64px);
 }
 
 /* Todo al inicio (izquierda; derecha en árabe). El contenedor .max-w-7xl.mx-auto
@@ -1074,7 +1149,7 @@ html, body {
 .editorial-page-hero .text-center .mx-auto {
   margin-inline: 0 auto;
 }
-/* Solo filas de maquetación: los botones (inline-flex justify-center) centran su icono */
+/* Solo filas de maquetación: los botones (inline-flex justify-center) centran su texto */
 .editorial-page-hero .text-center .justify-center:not(a, button) {
   justify-content: flex-start;
 }
@@ -1085,35 +1160,39 @@ html, body {
   }
 }
 
-/* Eyebrow del expediente: la barra de marca (h-0.5 w-12; h-px w-10 en el perfil)
-   pasa a "§ 01 ——", como el "§ 00 ——" de la portada. El número sigue el orden del
-   menú (01 firma … 06 contacto); privacidad, términos y el resto llevan el § solo. */
+/* Eyebrow heredado. Las páginas que aún dibujan la barra de marca (h-0.5 w-12; h-px w-10)
+   la ven como "§ 01 ——", igual que <Eyebrow> (components/editorial): ::before lleva el
+   glifo § en lima y ::after las cifras al 74 % con el filete de 24 × 1 px dibujado como
+   fondo (un seudoelemento admite un solo color). El número sigue el orden del menú
+   (01 firma … 06 contacto); el resto lleva el § solo. */
 .editorial-page-hero .bg-brand {
-  background-color: #b2eb3e;
+  background-color: rgb(255 255 255 / 0.35);
 }
 .editorial-page-hero :is(.h-0\.5, .h-px).bg-brand {
   display: flex;
   align-items: center;
-  gap: 16px;
   width: max-content;
   height: auto;
   margin-inline: 0;
   background: none;
-}
-.editorial-page-hero :is(.h-0\.5, .h-px).bg-brand::before {
-  content: "§" var(--ss-index, "");
-  color: #b2eb3e;
-  font: 600 12px/1.35 "SS Sans", "Source Sans 3", system-ui, sans-serif;
-  letter-spacing: 0.14em;
+  font: 600 12px/1.4 var(--font-sans);
+  letter-spacing: 0.12em;
   font-variant-numeric: tabular-nums lining-nums;
   white-space: nowrap;
 }
+.editorial-page-hero :is(.h-0\.5, .h-px).bg-brand::before {
+  content: "§";
+  color: var(--ss-lime);
+}
 .editorial-page-hero :is(.h-0\.5, .h-px).bg-brand::after {
-  content: "";
-  flex: none;
-  width: 28px;
-  height: 2px;
-  background: #b2eb3e;
+  content: var(--ss-index, "");
+  white-space: pre;
+  color: rgb(255 255 255 / 0.74);
+  padding-inline-end: 40px;
+  background: linear-gradient(rgb(255 255 255 / 0.35), rgb(255 255 255 / 0.35)) no-repeat 100% 50% / 24px 1px;
+}
+.editorial-page-hero :is(.h-0\.5, .h-px).bg-brand:dir(rtl)::after {
+  background-position: 0 50%;
 }
 .editorial-page-hero:is([data-testid="section-about-hero"], [data-testid="section-experience-hero"]) {
   --ss-index: " 01";
@@ -1134,205 +1213,231 @@ html, body {
   --ss-index: " 06";
 }
 
-/* Enlaces de vuelta ("Todos los miembros"…): etiqueta de interfaz, como ss-label */
-:is(.editorial-page-hero, [data-testid="section-news-hero"]) [data-testid^="link-back-to"] {
-  font: 600 12px/1.35 "SS Sans", "Source Sans 3", system-ui, sans-serif;
-  letter-spacing: 0.14em;
+/* Enlaces de vuelta ("Todos los miembros"…): etiqueta de interfaz, como ss-label, al 74 % */
+.editorial-page-hero [data-testid^="link-back-to"] {
+  font: 600 12px/1.4 var(--font-sans);
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  color: rgb(255 255 255 / 0.74);
+  transition: color 200ms ease;
+}
+.editorial-page-hero [data-testid^="link-back-to"]:hover {
+  color: #fff;
 }
 /* En árabe la flecha de vuelta apunta hacia el inicio de la línea, que está a la derecha */
-:is(.editorial-page-hero, [data-testid="section-news-hero"]) [data-testid^="link-back-to"] svg:dir(rtl) {
+.editorial-page-hero [data-testid^="link-back-to"] svg:dir(rtl) {
   transform: scaleX(-1);
 }
 
-/* Titular. Un punto por debajo de la portada (clamp 56–112px): la portada sigue mandando */
+/* Titular: romana 350 en caja baja (la portada, a 86 px, sigue mandando) */
 .editorial-page-hero h1 {
   min-width: 0;
   color: #fff;
-  font-family: "SS Display", "Bebas Neue", "Arial Narrow", sans-serif;
-  font-weight: 400;
-  font-size: clamp(48px, 5.4vw, 80px);
-  line-height: 0.9;
-  letter-spacing: 0.01em;
-  text-transform: uppercase;
+  font-family: var(--font-heading);
+  font-weight: 350;
+  font-size: clamp(40px, 4.6vw, 68px);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  text-transform: none;
   text-align: start;
   text-wrap: balance;
-  font-feature-settings: "kern", "lnum";
+  font-optical-sizing: auto;
+  font-feature-settings: "kern", "liga", "lnum";
   /* Red de seguridad: una palabra más ancha que la columna se parte en vez de desbordar */
   overflow-wrap: break-word;
 }
 /* Fichas (práctica, industria, socio): titular junto a foto o icono, un punto menor */
 .editorial-page-hero :is(.flex > h1, h1.ss-hero-detail) {
-  font-size: clamp(44px, 5vw, 72px);
+  font-size: clamp(36px, 4.2vw, 62px);
 }
-/* Compuestos largos (Praktikantenprogramm ≈ 385px a 48px): guion antes que corte seco */
+/* Titular del artículo: romana 400 y medida de 20em (≈3 líneas a 1440 px) */
+.editorial-page-hero h1.ss-news-title {
+  max-width: 20em;
+  font-weight: 400;
+  font-size: clamp(32px, 3.4vw, 52px);
+  line-height: 1.1;
+  letter-spacing: -0.018em;
+}
+/* Compuestos largos (Praktikantenprogramm): guion antes que corte seco */
 .editorial-page-hero h1:is(:lang(de), :lang(ru)) {
   hyphens: auto;
   hyphenate-limit-chars: 12 5 5;
 }
-/* Sin diccionario de guiones el compuesto se partía sin guion: a 40px cabe entero (≈321px) */
+/* La romana es más ancha que la letra anterior: en alemán, en teléfono, un punto menor */
 @media (max-width: 479.98px) {
   .editorial-page-hero h1:lang(de) {
-    font-size: 40px;
+    font-size: clamp(32px, 9vw, 40px);
   }
 }
-/* Bebas solo cubre el latín: en ruso, chino, japonés, coreano y árabe el titular
-   usa la sans, sin mayúsculas forzadas y con interlínea que no monta las líneas. */
-.editorial-page-hero h1:is(:lang(ru), :lang(zh), :lang(ja), :lang(ko), :lang(ar)),
-.ss-news-title:is(:lang(ru), :lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
-  font-family: "SS Sans", "Source Sans 3", system-ui, sans-serif;
-  font-weight: 600;
+/* La romana cubre el latín y, con Source Serif 4, el cirílico. En chino, japonés, coreano
+   y árabe el titular pasa a la sans (letras del sistema), peso 500, sin espaciado. */
+.editorial-page-hero h1:is(:lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
+  font-family: var(--font-sans);
+  font-weight: 500;
   font-size: clamp(32px, 4.2vw, 64px);
-  line-height: 1.15;
+  line-height: 1.25;
   letter-spacing: 0;
-  text-transform: none;
 }
-.editorial-page-hero h1:lang(ar),
-.ss-news-title:lang(ar) {
+.editorial-page-hero h1.ss-news-title:is(:lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
+  font-size: clamp(28px, 3vw, 46px);
+}
+.editorial-page-hero h1:lang(ar) {
   line-height: 1.4;
 }
 
-/* Subtítulo y notas bajo el titular (fecha de actualización, aviso de traducción) */
-.editorial-page-hero h1 ~ p {
+/* Subtítulo y notas bajo el titular: sans 400 al 84 % (la fecha .ss-label conserva su estilo) */
+.editorial-page-hero h1 ~ p:not(.ss-label) {
   max-width: 40rem;
   margin-inline: 0;
-  color: rgb(255 255 255 / 0.75);
-  font-size: clamp(18px, 0.4vw + 16px, 20px);
+  color: rgb(255 255 255 / 0.84);
+  font-family: var(--font-sans);
+  font-size: clamp(18px, 0.4vw + 15px, 20px);
   font-weight: 400;
   line-height: 1.55;
   letter-spacing: 0;
   text-align: start;
   text-wrap: pretty;
 }
-.editorial-page-hero h1 + p {
+.editorial-page-hero h1 + p:not(.ss-label) {
   margin-top: clamp(4px, 0.8vw, 12px);
 }
 .editorial-page-hero h1 ~ p.text-sm {
-  color: rgb(255 255 255 / 0.65);
+  color: rgb(255 255 255 / 0.74);
   font-size: 16px;
   line-height: 1.5;
 }
 
-/* Tokens oscuros sobre el degradado: iconos y textos de acento en lima, el resto en blanco */
+/* Tokens de acento sobre Azul Profundo: blanco al 74 % (la lima no es color de texto) */
 .editorial-page-hero .text-primary,
 .editorial-page-hero .text-brand {
-  color: #b2eb3e;
+  color: rgb(255 255 255 / 0.74);
 }
 .editorial-page-hero :is(.text-foreground, .text-card-foreground) {
   color: #fff;
 }
 .editorial-page-hero .text-muted-foreground {
-  color: rgb(255 255 255 / 0.7);
+  color: rgb(255 255 255 / 0.74);
 }
 
-/* Botón sólido navy: contorno blanco, sin relleno */
-.editorial-page-hero :is(a, button).bg-primary {
+/* Botones (D15): todas las variantes de shadcn (default, secondary, brand, outline, que
+   lleva text-primary) y los blancos heredados toman un solo estilo de contorno: blanco al
+   45 %, texto blanco, sin relleno; al pasar el cursor, contorno blanco pleno (no lima).
+   Especificidad 0,2,1: gana a .text-primary/.bg-brand de arriba y a hover:bg-* de Tailwind.
+   Sin velo de elevación (hover-elevate) sobre el Azul Profundo. */
+.editorial-page-hero {
+  --elevate-1: transparent;
+  --elevate-2: transparent;
+}
+.editorial-page-hero :is(a, button):is(.bg-primary, .bg-secondary, .bg-brand, .bg-card, .bg-white, .border-primary) {
   background-color: transparent;
-  border-color: rgb(255 255 255 / 0.45);
+  background-image: none;
+  border: 1px solid rgb(255 255 255 / 0.45);
   color: #fff;
+  box-shadow: none;
 }
-.editorial-page-hero :is(a, button).bg-primary:hover {
-  border-color: #b2eb3e;
+.editorial-page-hero :is(a, button):is(.bg-primary, .bg-secondary, .bg-brand, .bg-card, .bg-white, .border-primary):hover {
+  border-color: #fff;
 }
-
-/* Botones translúcidos del perfil (correo, teléfono, LinkedIn): como su variante
-   dark: (relleno blanco/10), con borde blanco/40 para un contorno de 3:1 */
-.editorial-page-hero :is(a, button).text-primary:not(.bg-card, .bg-white) {
-  background-color: rgb(255 255 255 / 0.1);
-  border-color: rgb(255 255 255 / 0.4);
-  color: #fff;
-}
-.editorial-page-hero :is(a, button).text-primary:not(.bg-card, .bg-white):hover {
-  background-color: rgb(255 255 255 / 0.2);
-}
-
-/* Esquinas rectas, como cabecera, buscador y pie (shadcn redondea botones y fichas) */
-.editorial-page-hero :is(a, button, .rounded-lg, .rounded-md) {
-  border-radius: 0;
-}
-
-/* Filetes navy del perfil (bg-[#1E1C92]/20), invisibles sobre el degradado */
-.editorial-page-hero .bg-\[\#1E1C92\]\/20 {
-  background-color: rgb(255 255 255 / 0.15);
-}
-
-/* Superficies claras dentro del encabezado (vCard, campos): texto marino.
-   Va después de las reglas de tokens para ganarles a igual especificidad.
+/* Campos claros dentro del encabezado: texto Azul Marino.
    (Sin .bg-background: el @apply bg-background de body copiaría estas reglas.) */
-.editorial-page-hero :is(.bg-card, .bg-white),
-.editorial-page-hero :is(.bg-card, .bg-white) :is(.text-primary, .text-brand, .text-foreground, .text-card-foreground, .text-muted-foreground) {
-  color: #140f4b;
+.editorial-page-hero :is(input, select, textarea):is(.bg-card, .bg-white) {
+  color: var(--ss-marino);
 }
 
-/* Foco: contorno lima + anillo marino, como en .ss26 (gana a focus-visible:outline-none).
-   También en la banda de la noticia, que no es .editorial-page-hero: allí "Volver a noticias"
-   tenía un contorno marino sobre marino, casi invisible. */
-:is(.editorial-page-hero, [data-testid="section-news-hero"]) :is(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
-  outline: 3px solid #b2eb3e;
+/* Foco sobre Azul Profundo: contorno lima + anillo Azul Profundo, como en .ss26
+   (gana a focus-visible:outline-none) */
+.editorial-page-hero :is(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
+  outline: 3px solid var(--ss-lime);
   outline-offset: 2px;
-  box-shadow: 0 0 0 2px #140f4b;
+  box-shadow: 0 0 0 2px var(--ss-navy);
 }
 
-/* Santos & Saucedo editorial light surfaces */
-.section-paper {
-  background:
-    radial-gradient(circle at top left, rgba(18, 16, 62, 0.05), transparent 34rem),
-    linear-gradient(180deg, #ffffff 0%, var(--ss-paper) 100%);
+/* Variante papel ("memorándum impreso"): artículos del Monitor y páginas legales.
+   Hueso, h1 Azul Marino 400, etiquetas en Gris Medio, § en Azul Marino, filete inferior
+   en Línea y foco Azul Marino. Va después de las reglas oscuras: les gana a igual especificidad. */
+.editorial-page-hero--paper {
+  --ring: 239 44% 25%;
+  color: var(--ss-marino);
+  background-color: var(--ss-paper);
+  border-bottom: 1px solid var(--ss-rule);
+}
+.editorial-page-hero--paper h1 {
+  color: var(--ss-marino);
+  font-weight: 400;
+}
+.editorial-page-hero--paper h1 ~ p:not(.ss-label) {
+  color: var(--ss-tinta);
+}
+.editorial-page-hero--paper h1 ~ p.text-sm {
+  color: var(--ss-medio);
+}
+.editorial-page-hero--paper :is(.text-primary, .text-brand, .text-foreground, .text-card-foreground) {
+  color: var(--ss-marino);
+}
+.editorial-page-hero--paper .text-muted-foreground {
+  color: var(--ss-medio);
+}
+.editorial-page-hero--paper .bg-brand {
+  background-color: var(--ss-input);
+}
+.editorial-page-hero--paper :is(.h-0\.5, .h-px).bg-brand::before,
+.editorial-page-hero--paper :is(.h-0\.5, .h-px).bg-brand::after {
+  color: var(--ss-marino);
+}
+.editorial-page-hero--paper :is(.h-0\.5, .h-px).bg-brand::after {
+  background-image: linear-gradient(var(--ss-input), var(--ss-input));
+}
+.editorial-page-hero--paper [data-testid^="link-back-to"] {
+  color: var(--ss-medio);
+}
+.editorial-page-hero--paper [data-testid^="link-back-to"]:hover {
+  color: var(--ss-marino);
+}
+.editorial-page-hero--paper :is(a, button):is(.bg-primary, .bg-secondary, .bg-brand, .bg-card, .bg-white, .border-primary) {
+  border-color: var(--ss-input);
+  color: var(--ss-marino);
+}
+.editorial-page-hero--paper :is(a, button):is(.bg-primary, .bg-secondary, .bg-brand, .bg-card, .bg-white, .border-primary):hover {
+  border-color: var(--ss-marino);
+}
+.editorial-page-hero--paper :is(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
+  outline: 3px solid var(--ss-marino);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+/* Filete de 1 px (blanco al 14 %) al pie de la cabecera Azul Profundo, sobre el papel */
+html:has(.editorial-page-hero--paper) header.ss26 {
+  box-shadow: inset 0 -1px 0 var(--ss-on-navy-rule);
 }
 
+/* Superficies claras heredadas: Hueso plano, sin degradado */
+.section-paper,
 .section-stone {
-  background:
-    linear-gradient(180deg, var(--ss-stone) 0%, var(--ss-paper) 100%);
+  background: var(--ss-paper);
 }
-
-/* Footer — navy "S" watermark, always on regardless of theme (footer bg is a fixed hex gradient) */
-.footer-watermark {
-  position: relative;
-  overflow: hidden;
-}
-
-.footer-watermark::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: url(../../attached_assets/pdf2026/bg-s-navy.webp);
-  background-size: cover;
-  background-position: center;
-}
-
-.footer-watermark > * {
-  position: relative;
-  z-index: 1;
-}
-
-.dark .section-paper {
-  background:
-    radial-gradient(circle at top left, rgba(165, 224, 41, 0.08), transparent 34rem),
-    linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--card)) 100%);
-}
-
+.dark .section-paper,
 .dark .section-stone {
-  background:
-    linear-gradient(180deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
+  background: hsl(var(--card));
 }
 
-.navy-photo-scrim {
-  background: linear-gradient(
-    to top,
-    rgba(20, 20, 58, 0.72) 0%,
-    rgba(18, 16, 62, 0.34) 45%,
-    rgba(18, 16, 62, 0.04) 100%
-  );
-}
-
+/* Velo neutro (sin tinte marino ni violeta) bajo los nombres de los retratos */
+.navy-photo-scrim,
 .navy-photo-scrim-strong {
   background: linear-gradient(
     to top,
-    rgba(20, 20, 58, 0.82) 0%,
-    rgba(18, 16, 62, 0.46) 52%,
-    rgba(18, 16, 62, 0.12) 100%
+    rgb(20 20 32 / 0.72) 0%,
+    rgb(20 20 32 / 0.12) 42%,
+    transparent 100%
   );
+}
+
+/* Redes de seguridad mientras dura el barrido de las páginas heredadas:
+   sin texto justificado (ríos) y todo titular en la romana. */
+.text-justify {
+  text-align: start;
+}
+:is(h1, h2, h3, h4) {
+  font-family: var(--font-heading);
 }
 
 /* Client-logo marquee — two rows scrolling in opposite directions, seamless loop

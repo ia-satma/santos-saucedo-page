@@ -33,9 +33,9 @@ const content: Record<LanguageCode, ContentItem> = {
     text: "En Santos & Saucedo, creemos que la diversidad es fuente de fortaleza e innovación. Estamos comprometidos a crear un entorno inclusivo donde todos los individuos puedan prosperar y contribuir con sus perspectivas únicas a nuestra práctica.",
     buttonText: "VER MÁS",
     pillars: [
-      { label: "Paridad de Género", desc: "Igualdad de oportunidades para todo el talento, en todos los niveles." },
-      { label: "Cultura Inclusiva", desc: "Un entorno donde cada voz es escuchada y valorada." },
-      { label: "Perspectivas Diversas", desc: "Distintas miradas que enriquecen y fortalecen nuestra práctica." },
+      { label: "Paridad de género", desc: "Igualdad de oportunidades para todo el talento, en todos los niveles." },
+      { label: "Cultura inclusiva", desc: "Un entorno donde cada voz es escuchada y valorada." },
+      { label: "Perspectivas diversas", desc: "Distintas miradas que enriquecen y fortalecen nuestra práctica." },
     ],
   },
   de: {
@@ -122,7 +122,7 @@ const content: Record<LanguageCode, ContentItem> = {
     buttonText: "SCOPRI DI PIÙ",
     pillars: [
       { label: "Parità di Genere", desc: "Pari opportunità per tutti i talenti, a ogni livello." },
-      { label: "Cultura Inclusiva", desc: "Un ambiente dove ogni voce è ascoltata e valorizzata." },
+      { label: "Cultura inclusiva", desc: "Un ambiente dove ogni voce è ascoltata e valorizzata." },
       { label: "Prospettive Diverse", desc: "Punti di vista differenti che arricchiscono la nostra pratica." },
     ],
   },
@@ -175,12 +175,12 @@ export default function DiversityInclusionSection() {
           <div className="absolute inset-0 flex flex-col items-center justify-center px-8 text-center">
             <div className="w-8 h-px bg-white/60 mb-4" />
             <h2
-              className="font-heading font-light text-2xl lg:text-3xl xl:text-4xl text-white uppercase tracking-[0.12em] leading-tight"
+              className="font-heading font-normal text-2xl lg:text-3xl xl:text-4xl text-white leading-tight"
               data-testid="text-diversity-inclusion-title"
             >
               {t.title}
             </h2>
-            <div className="w-8 h-px bg-[#1E1C92]/80 mt-4" />
+            <div className="w-8 h-px bg-ss-rule mt-4" />
           </div>
         </motion.div>
 
@@ -196,7 +196,7 @@ export default function DiversityInclusionSection() {
           >
             <div className="w-8 h-px bg-brand mb-5" />
             <p
-              className="text-primary text-[10px] tracking-[0.25em] uppercase mb-5"
+              className="ss-label text-primary mb-5"
               data-testid="text-diversity-inclusion-eyebrow"
             >
               {t.eyebrow}
@@ -224,7 +224,7 @@ export default function DiversityInclusionSection() {
                 className="border-t border-border/40 pt-4 pb-4"
                 data-testid={`pillar-diversity-${i}`}
               >
-                <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-foreground mb-1">
+                <p className="ss-label text-foreground mb-1">
                   {pillar.label}
                 </p>
                 <p className="text-sm text-muted-foreground leading-relaxed">
@@ -243,7 +243,7 @@ export default function DiversityInclusionSection() {
             <Link href="/diversity-inclusion">
               <Button
                 variant="default"
-                className="rounded-none uppercase tracking-[0.15em] px-8"
+                className="rounded-none px-8"
                 data-testid="button-diversity-inclusion-see-more"
               >
                 {t.buttonText}

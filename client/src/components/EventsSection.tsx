@@ -67,7 +67,7 @@ function EventCard({ event, language, learnMoreText, formatDate }: EventCardProp
       <div className="p-8">
         <div className="flex items-start justify-between gap-3 mb-4">
           <Badge
-            className="bg-brand text-brand-foreground font-medium rounded-lg"
+            className="bg-brand text-brand-foreground font-medium"
             data-testid={`badge-event-type-${event.id}`}
           >
             {getEventTypeLabel(event.eventType || 'conference', language)}
@@ -82,7 +82,7 @@ function EventCard({ event, language, learnMoreText, formatDate }: EventCardProp
         </div>
 
         <h3
-          className={`font-heading font-light uppercase tracking-[0.08em] text-lg text-foreground mb-3 line-clamp-2 ${isTranslating ? 'opacity-50' : ''}`}
+          className={`font-heading font-normal text-lg text-ss-marino mb-3 line-clamp-2 ${isTranslating ? 'opacity-50' : ''}`}
           data-testid={`text-event-title-${event.id}`}
         >
           {getEventTitle()}
@@ -101,7 +101,7 @@ function EventCard({ event, language, learnMoreText, formatDate }: EventCardProp
         )}
 
         <p
-          className={`text-sm text-muted-foreground leading-relaxed text-justify line-clamp-3 mb-4 ${isTranslating ? 'opacity-50' : ''}`}
+          className={`text-sm text-muted-foreground leading-relaxed line-clamp-3 mb-4 ${isTranslating ? 'opacity-50' : ''}`}
           data-testid={`text-event-description-${event.id}`}
         >
           {getEventDescription()}
@@ -147,9 +147,9 @@ export default function EventsSection({ language }: EventsSectionProps) {
     },
     es: {
       eyebrow: "ACTIVIDADES DE LA FIRMA",
-      title: "Próximos Eventos",
-      viewAll: "Ver Todos los Eventos",
-      learnMore: "Más Información",
+      title: "Próximos eventos",
+      viewAll: "Ver todos los eventos",
+      learnMore: "Más información",
       errorMessage: "Error al cargar eventos",
       noEvents: "No hay eventos próximos",
     },
@@ -294,13 +294,13 @@ export default function EventsSection({ language }: EventsSectionProps) {
           <div>
             <div className="w-12 h-px bg-brand mb-6" />
             <p
-              className="text-primary text-[11px] tracking-[0.25em] uppercase mb-4"
+              className="ss-label text-primary mb-4"
               data-testid="text-events-eyebrow"
             >
               {t.eyebrow}
             </p>
             <h2
-              className="font-heading font-light text-2xl md:text-3xl lg:text-4xl text-foreground uppercase tracking-[0.12em] leading-tight"
+              className="font-heading font-normal text-2xl md:text-3xl lg:text-4xl text-ss-marino leading-tight"
               data-testid="text-events-title"
             >
               {t.title}
@@ -310,7 +310,7 @@ export default function EventsSection({ language }: EventsSectionProps) {
           <Link href="/events">
             <Button
               variant="outline"
-              className="group rounded-lg shrink-0"
+              className="group shrink-0"
               data-testid="button-view-all-events"
             >
               {t.viewAll}
@@ -371,7 +371,7 @@ export default function EventsSection({ language }: EventsSectionProps) {
           <Link href="/events">
             <Button
               variant="outline"
-              className="group rounded-lg"
+              className="group"
               data-testid="button-view-all-events-mobile"
             >
               {t.viewAll}

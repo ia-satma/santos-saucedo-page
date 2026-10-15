@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
-import { AlertCircle, Users, Search, X, ArrowRight } from "lucide-react";
+import { Search } from "lucide-react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ import SEOHead from "@/components/SEOHead";
 import { equipoPhotos } from "@/lib/equipoPhotos";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getTeamPhotoObjectPosition } from "@/lib/teamPhotoPosition";
+import { Eyebrow } from "@/components/editorial";
 import type { TeamMember, PracticeGroup, IndustryGroup } from "@shared/schema";
 
 // Helper to split an array into chunks of a given size
@@ -166,29 +167,29 @@ export default function Team() {
       },
     },
     es: {
-      title: "Nuestro Equipo",
+      title: "Nuestro equipo",
       subtitle: "Conozca al equipo legal que sostiene la excelencia de nuestra firma",
       errorMessage: "Error al cargar los miembros del equipo",
       allMembers: "Todos",
       partnersOnly: "Socios",
       ofCounsel: "Of Counsel",
       associates: "Asociados",
-      viewProfile: "Ver Perfil",
+      viewProfile: "Ver perfil",
       downloadVCard: "Descargar vCard",
       searchPlaceholder: "Buscar por nombre...",
       filterBy: "Filtrar por",
       seniority: "Nivel",
-      practiceArea: "Área de Práctica",
+      practiceArea: "Área de práctica",
       alphabetic: "Alfabético",
       all: "Todos",
       clearFilters: "Limpiar filtros",
       noResults: "No hay miembros que coincidan con los criterios",
       teamMembers: "miembros del equipo",
       positions: {
-        foundingPartner: "Socio Fundador",
+        foundingPartner: "Socio fundador",
         partner: "Socio",
         ofCounsel: "Of Counsel",
-        seniorAssociate: "Asociado Senior",
+        seniorAssociate: "Asociado senior",
         associate: "Asociado",
       },
     },
@@ -486,17 +487,15 @@ export default function Team() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="text-center"
           >
-            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
+            <Eyebrow num="03" tone="navy" className="mb-6" />
             <h1 
-              className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
+              className="mb-5"
               data-testid="text-team-title"
             >
               {t.title}
             </h1>
             <p 
-              className="text-base text-white/60 max-w-xl mx-auto text-balance"
               data-testid="text-team-subtitle"
             >
               {t.subtitle}
@@ -505,37 +504,38 @@ export default function Team() {
         </div>
       </section>
 
-      {/* Filter bar: se pega bajo la cabecera sticky (z-40 < z-50 del header).
-          bg-card/92 no existe en la escala de Tailwind (la barra quedaba transparente); /95 sí.
-          Filete inferior: separa la barra pegada de las fotos que pasan debajo. */}
-      <div className="bg-card/95 backdrop-blur-xl sticky top-[var(--ss-header-h)] z-40 border-b border-ss-ink/10">
+      {/* Filter bar: se pega bajo la cabecera sticky (z-40 < z-50 del header). Blanca y opaca,
+          con filete inferior en Línea que la separa de las fotos que pasan debajo. */}
+      <div className="bg-white sticky top-[var(--ss-header-h)] z-40 border-b border-ss-rule">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 py-4">
           <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ss-medio" aria-hidden="true" />
+              {/* Campo recto con el filete de campo (--ss-input); foco Azul Marino */}
               <Input
                 type="text"
                 placeholder={t.searchPlaceholder}
+                aria-label={t.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 rounded-lg bg-background border-border text-foreground placeholder:text-muted-foreground/70 focus-visible:ring-primary/40 focus-visible:border-primary/40"
+                className="ps-9 bg-white border-ss-input text-ss-tinta placeholder:text-ss-medio focus-visible:ring-ss-marino focus-visible:border-ss-marino"
                 data-testid="input-search"
               />
             </div>
             <div className="flex flex-wrap gap-2 items-center">
               <Select value={filterSeniority} onValueChange={setFilterSeniority}>
-                <SelectTrigger className="w-36 rounded-lg bg-background border-border text-foreground text-xs" data-testid="select-seniority">
+                <SelectTrigger className="w-40 bg-white border-ss-input text-ss-tinta text-sm" aria-label={t.seniority} data-testid="select-seniority">
                   <SelectValue placeholder={t.seniority} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">{t.all}</SelectItem>
                   <SelectItem value="partners">{t.partnersOnly}</SelectItem>
                   <SelectItem value="ofcounsel">{t.ofCounsel}</SelectItem>
-                  <SelectItem value="associates">{language === "es" ? "Nuestro Equipo" : "Our Team"}</SelectItem>
+                  <SelectItem value="associates">{language === "es" ? "Nuestro equipo" : "Our Team"}</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={filterLetter} onValueChange={setFilterLetter}>
-                <SelectTrigger className="w-28 rounded-lg bg-background border-border text-foreground text-xs" data-testid="select-alphabetic">
+                <SelectTrigger className="w-28 bg-white border-ss-input text-ss-tinta text-sm" aria-label={t.alphabetic} data-testid="select-alphabetic">
                   <SelectValue placeholder={t.alphabetic} />
                 </SelectTrigger>
                 <SelectContent>
@@ -546,12 +546,11 @@ export default function Team() {
                 </SelectContent>
               </Select>
               {hasActiveFilters && (
-                <Button variant="ghost" size="default" onClick={clearFilters} className="gap-1.5 rounded-lg text-muted-foreground hover:text-primary text-xs" data-testid="button-clear-filters">
-                  <X className="w-3.5 h-3.5" />
+                <Button variant="ghost" size="default" onClick={clearFilters} className="text-ss-marino underline-offset-4 hover:underline" data-testid="button-clear-filters">
                   {t.clearFilters}
                 </Button>
               )}
-              <span className="text-muted-foreground text-xs ml-2 hidden sm:inline" data-testid="text-results-count">{totalVisible} {t.teamMembers}</span>
+              <span className="text-ss-medio text-sm ms-2 hidden sm:inline" data-testid="text-results-count">{totalVisible} {t.teamMembers}</span>
             </div>
           </div>
         </div>
@@ -560,9 +559,8 @@ export default function Team() {
       <main id="main-content" data-testid="section-team-main">
 
         {errorAll ? (
-          <div className="text-center py-24" data-testid="container-team-error">
-            <AlertCircle className="w-12 h-12 text-muted-foreground/40 mx-auto mb-4" />
-            <p className="text-muted-foreground" data-testid="text-team-error">{t.errorMessage}</p>
+          <div className="max-w-7xl mx-auto px-6 lg:px-12 py-24" data-testid="container-team-error">
+            <p className="text-ss-tinta" data-testid="text-team-error">{t.errorMessage}</p>
           </div>
         ) : isLoadingAll ? (
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-px">
@@ -573,12 +571,11 @@ export default function Team() {
             ))}
           </div>
         ) : totalVisible === 0 ? (
-          <div className="text-center py-24" data-testid="container-team-empty">
-            <Users className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
-            <p className="text-muted-foreground">{t.noResults}</p>
+          <div className="max-w-7xl mx-auto px-6 lg:px-12 py-24" data-testid="container-team-empty">
+            <p className="text-ss-tinta">{t.noResults}</p>
             {hasActiveFilters && (
-              <Button variant="ghost" onClick={clearFilters} className="mt-4 gap-2 rounded-lg" data-testid="button-clear-empty">
-                <X className="w-4 h-4" />{t.clearFilters}
+              <Button variant="outline" onClick={clearFilters} className="mt-6" data-testid="button-clear-empty">
+                {t.clearFilters}
               </Button>
             )}
           </div>
@@ -588,8 +585,7 @@ export default function Team() {
             {showPartners && groupedMembers.partners.length > 0 && (
               <section data-testid="section-partners">
                 <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-10 pb-4">
-                  <div className="w-10 h-px bg-brand mb-4" />
-                  <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
+                  <h2 className="ss-h2-sm">
                     {t.partnersOnly}
                   </h2>
                 </div>
@@ -614,24 +610,25 @@ export default function Team() {
                             style={{ flex: isActive ? 3 : 1, transition: "flex 0.5s cubic-bezier(0.22, 1, 0.36, 1)", minWidth: 0 }}
                             onMouseEnter={() => setPartnerPanels(prev => ({ ...prev, [rowIdx]: `p-${member.id}` }))}
                           >
-                            <div className="absolute inset-0 bg-muted flex items-center justify-center">
-                              <span className="text-2xl font-heading font-bold text-primary/50 select-none">{getInitials(member.name)}</span>
+                            <div className="absolute inset-0 bg-ss-paper flex items-center justify-center">
+                              <span className="text-2xl font-heading text-ss-marino/50 select-none">{getInitials(member.name)}</span>
                             </div>
+                            {/* Retrato siempre en grises (también al pasar el cursor) y velo neutro único */}
                             {getPhotoSrc(member) && (
-                              <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-top" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug), transform: isActive ? "scale(1.01)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                              <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug), transform: isActive ? "scale(1.01)" : "scale(1)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                             )}
-                            <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(18,16,62,0.34) 50%, rgba(18,16,62,0.10) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.80) 0%, rgba(18,16,62,0.36) 100%)", transition: "background 0.5s ease" }} />
-                            <div className="absolute top-0 right-0 w-px h-full bg-[#1E1C92]/15" />
+                            <div className="absolute inset-0 navy-photo-scrim" />
+                            <div className="absolute top-0 right-0 w-px h-full bg-white/10" />
                             <div className="absolute bottom-5 left-3 right-3" style={{ opacity: isActive ? 0 : 1, transition: "opacity 0.2s ease" }}>
-                              <p className="text-white/60 text-[9px] uppercase tracking-[0.12em] font-light truncate">{member.name}</p>
+                              <p className="font-heading text-[18px] leading-[1.2] tracking-[-0.005em] text-white truncate">{member.name}</p>
                             </div>
                             <div className="absolute bottom-5 left-4 right-4" style={{ opacity: isActive ? 1 : 0, transform: isActive ? "translateY(0)" : "translateY(6px)", transition: "opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s" }}>
-                              <p className="font-heading font-light text-sm uppercase tracking-[0.1em] leading-snug mb-1 text-white whitespace-nowrap overflow-hidden text-ellipsis">{member.name}</p>
-                              <p className="text-[11px] text-brand uppercase tracking-[0.08em] mb-3">{t.partnersOnly}</p>
-                              <div className="flex items-center gap-2 text-brand">
-                                <span className="text-[9px] uppercase tracking-[0.1em]">{t.viewProfile}</span>
-                                <ArrowRight className="w-3.5 h-3.5" />
-                              </div>
+                              <p className="font-heading text-[18px] leading-[1.2] tracking-[-0.005em] mb-1 text-white whitespace-nowrap overflow-hidden text-ellipsis">{member.name}</p>
+                              <p className="ss-label text-[11px] text-white/75 mb-3">{t.partnersOnly}</p>
+                              <p className="ss-label text-[11px] text-white/75 flex items-center gap-2">
+                                <span>{t.viewProfile}</span>
+                                <span aria-hidden="true">→</span>
+                              </p>
                             </div>
                           </Link>
                         );
@@ -643,16 +640,16 @@ export default function Team() {
                 <div className="lg:hidden grid grid-cols-2 gap-px">
                   {groupedMembers.partners.map((member, idx) => (
                     <Link key={member.id} href={`/team/${member.slug}`} className="relative overflow-hidden group block cursor-pointer" style={{ aspectRatio: "3/4" }} data-testid={`card-team-member-mob-${member.slug}`} aria-label={member.name}>
-                      <div className="absolute inset-0 bg-muted flex items-center justify-center">
-                        <span className="text-2xl font-heading font-bold text-primary/50 select-none">{getInitials(member.name)}</span>
+                      <div className="absolute inset-0 bg-ss-paper flex items-center justify-center">
+                        <span className="text-2xl font-heading text-ss-marino/50 select-none">{getInitials(member.name)}</span>
                       </div>
                       {getPhotoSrc(member) && (
-                        <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                        <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                       )}
-                      <div className="absolute inset-0 navy-photo-scrim-strong" />
+                      <div className="absolute inset-0 navy-photo-scrim" />
                       <div className="absolute bottom-0 left-0 right-0 px-3 pb-3">
-                        <p className="text-brand text-[8px] uppercase tracking-[0.1em] mb-0.5">{t.partnersOnly}</p>
-                        <p className="text-white text-[9px] uppercase tracking-[0.06em] leading-snug font-light line-clamp-2">{member.name}</p>
+                        <p className="ss-label text-[11px] text-white/75 mb-1">{t.partnersOnly}</p>
+                        <p className="font-heading text-[16px] leading-[1.2] text-white line-clamp-2">{member.name}</p>
                       </div>
                     </Link>
                   ))}
@@ -664,8 +661,7 @@ export default function Team() {
             {showOfCounsel && groupedMembers.ofCounsel.length > 0 && (
               <section data-testid="section-ofcounsel">
                 <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-10 pb-4">
-                  <div className="w-10 h-px bg-brand mb-4" />
-                  <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
+                  <h2 className="ss-h2-sm">
                     {t.ofCounsel}
                   </h2>
                 </div>
@@ -683,24 +679,24 @@ export default function Team() {
                         style={{ flex: isActive ? 3 : 1, transition: "flex 0.5s cubic-bezier(0.22, 1, 0.36, 1)", minWidth: 0 }}
                         onMouseEnter={() => setActivePanel(`oc-${member.id}`)}
                       >
-                        <div className="absolute inset-0 bg-muted flex items-center justify-center">
-                          <span className="text-4xl font-heading font-bold text-primary/40 select-none">{getInitials(member.name)}</span>
+                        <div className="absolute inset-0 bg-ss-paper flex items-center justify-center">
+                          <span className="text-4xl font-heading text-ss-marino/50 select-none">{getInitials(member.name)}</span>
                         </div>
                         {getPhotoSrc(member) && (
-                          <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-top" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug), transform: isActive ? "scale(1.04)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                          <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug), transform: isActive ? "scale(1.04)" : "scale(1)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                         )}
-                        <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.72) 0%, rgba(18,16,62,0.34) 50%, rgba(18,16,62,0.12) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.78) 0%, rgba(18,16,62,0.34) 100%)", transition: "background 0.5s ease" }} />
-                        <div className="absolute top-0 right-0 w-px h-full bg-[#1E1C92]/20" />
+                        <div className="absolute inset-0 navy-photo-scrim" />
+                        <div className="absolute top-0 right-0 w-px h-full bg-white/10" />
                         <div className="absolute bottom-6 left-4 right-4" style={{ opacity: isActive ? 0 : 1, transition: "opacity 0.25s ease" }}>
-                          <p className="text-white/70 text-[9px] uppercase tracking-[0.12em] font-light truncate">{member.name}</p>
+                          <p className="font-heading text-[18px] leading-[1.2] tracking-[-0.005em] text-white truncate">{member.name}</p>
                         </div>
                         <div className="absolute bottom-6 left-5 right-5" style={{ opacity: isActive ? 1 : 0, transform: isActive ? "translateY(0)" : "translateY(8px)", transition: "opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s" }}>
-                          <p className="font-heading font-light text-base uppercase tracking-[0.1em] leading-snug mb-1 text-white">{member.name}</p>
-                          <p className="text-xs text-brand uppercase tracking-[0.08em] mb-3">{member.title}</p>
-                          <div className="flex items-center gap-2 text-brand">
-                            <span className="text-[9px] uppercase tracking-[0.1em]">{t.viewProfile}</span>
-                            <ArrowRight className="w-4 h-4" />
-                          </div>
+                          <p className="font-heading text-[18px] leading-[1.2] tracking-[-0.005em] mb-1 text-white">{member.name}</p>
+                          <p className="ss-label text-[11px] text-white/75 mb-3">{member.title}</p>
+                          <p className="ss-label text-[11px] text-white/75 flex items-center gap-2">
+                            <span>{t.viewProfile}</span>
+                            <span aria-hidden="true">→</span>
+                          </p>
                         </div>
                       </Link>
                     );
@@ -710,16 +706,16 @@ export default function Team() {
                 <div className="lg:hidden grid grid-cols-2 gap-px">
                   {groupedMembers.ofCounsel.map((member, idx) => (
                     <Link key={member.id} href={`/team/${member.slug}`} className="relative overflow-hidden group block cursor-pointer" style={{ aspectRatio: "3/4" }} data-testid={`card-team-member-mob-${member.slug}`} aria-label={member.name}>
-                      <div className="absolute inset-0 bg-muted flex items-center justify-center">
-                        <span className="text-3xl font-heading font-bold text-primary/60 select-none">{getInitials(member.name)}</span>
+                      <div className="absolute inset-0 bg-ss-paper flex items-center justify-center">
+                        <span className="text-3xl font-heading text-ss-marino/50 select-none">{getInitials(member.name)}</span>
                       </div>
                       {getPhotoSrc(member) && (
-                        <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                        <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
                       )}
                       <div className="absolute inset-0 navy-photo-scrim" />
                       <div className="absolute bottom-0 left-0 right-0 px-3 pb-3">
-                        <p className="text-brand text-[8px] uppercase tracking-[0.1em] mb-0.5">{member.title}</p>
-                        <p className="text-white text-[9px] uppercase tracking-[0.06em] leading-snug font-light">{member.name}</p>
+                        <p className="ss-label text-[11px] text-white/75 mb-1">{member.title}</p>
+                        <p className="font-heading text-[16px] leading-[1.2] text-white line-clamp-2">{member.name}</p>
                       </div>
                     </Link>
                   ))}
@@ -731,9 +727,8 @@ export default function Team() {
             {showAssociates && equipoPhotos.length > 0 && (
               <section data-testid="section-associates">
                 <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-10 pb-4">
-                  <div className="w-10 h-px bg-brand mb-4" />
-                  <h2 className="font-heading font-light text-xl uppercase tracking-[0.12em] text-foreground">
-                    {language === "es" ? "Nuestro Equipo" : "Our Team"}
+                  <h2 className="ss-h2-sm">
+                    {language === "es" ? "Nuestro equipo" : "Our Team"}
                   </h2>
                 </div>
                 {/* Desktop: expanding panels — multiple rows */}
@@ -755,9 +750,9 @@ export default function Team() {
                             style={{ flex: isActive ? 4 : 1, transition: "flex 0.45s cubic-bezier(0.22, 1, 0.36, 1)", minWidth: 0 }}
                             onMouseEnter={() => setAssocPanels(prev => ({ ...prev, [rowIdx]: panelKey }))}
                           >
-                            <img src={photo} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-top" style={{ transform: isActive ? "scale(1.03)" : "scale(1)", filter: isActive ? "grayscale(0%)" : "grayscale(100%)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease" }} />
-                            <div className="absolute inset-0" style={{ background: isActive ? "linear-gradient(to top, rgba(20,20,58,0.74) 0%, rgba(18,16,62,0.36) 50%, rgba(18,16,62,0.10) 100%)" : "linear-gradient(to top, rgba(20,20,58,0.82) 0%, rgba(18,16,62,0.38) 100%)", transition: "background 0.5s ease" }} />
-                            <div className="absolute top-0 right-0 w-px h-full bg-[#1E1C92]/10" />
+                            {/* Mosaico sin nombres: retrato en grises sin velo */}
+                            <img src={photo} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top" style={{ transform: isActive ? "scale(1.03)" : "scale(1)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)" }} />
+                            <div className="absolute top-0 right-0 w-px h-full bg-white/10" />
                           </div>
                         );
                       })}
@@ -768,8 +763,7 @@ export default function Team() {
                 <div className="lg:hidden grid grid-cols-2 gap-px">
                   {equipoPhotos.map((photo, idx) => (
                     <div key={idx} className="relative overflow-hidden group block cursor-pointer" style={{ aspectRatio: "3/4" }} data-testid={`img-equipo-mob-${idx}`}>
-                      <img src={photo} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-top transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105" />
-                      <div className="absolute inset-0 navy-photo-scrim-strong" />
+                      <img src={photo} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" />
                     </div>
                   ))}
                 </div>

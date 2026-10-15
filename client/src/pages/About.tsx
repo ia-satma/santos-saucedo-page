@@ -6,7 +6,6 @@ import {
   Building2, 
   Scale, 
   Heart, 
-  Briefcase, 
   Sparkles,
   UserCheck,
   Target,
@@ -26,7 +25,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { NumberedCard } from "@/components/editorial";
+import { Eyebrow, NumberedCard } from "@/components/editorial";
 import type { TeamMember, PracticeGroup, IndustryGroup, LanguageCode } from "@shared/schema";
 
 // Metodología laboral de /about (en ES/EN va en el propio componente) y dos cifras:
@@ -290,93 +289,93 @@ export default function About() {
       viewPractices: "View Practice Areas",
     },
     es: {
-      title: "Acerca de la Firma",
+      title: "Acerca de la firma",
       subtitle: "Más de 35 años de experiencia en derecho laboral empresarial",
-      historyTitle: "Nuestra Historia",
+      historyTitle: "Nuestra historia",
       historyText1: "Santos & Saucedo es un despacho boutique especializado en Derecho Laboral, con más de 35 años acompañando a empresas nacionales e internacionales. Desde San Pedro Garza García, Nuevo León, asesoramos a la dirección, a recursos humanos y a los equipos legales internos de nuestros clientes.",
       historyText2: "Nuestro trabajo combina prevención, consultoría, auditoría, capacitación y defensa en conflictos laborales individuales y colectivos. Ayudamos a las empresas a ordenar su administración laboral, reducir riesgos y tomar mejores decisiones antes, durante y después de un conflicto.",
-      valuesTitle: "Nuestros Valores",
+      valuesTitle: "Nuestros valores",
       values: [
         { icon: Scale, title: "Excelencia", text: "Estamos comprometidos a brindar servicios legales de la más alta calidad" },
         { icon: Heart, title: "Integridad", text: "La conducta ética y la transparencia guían todas nuestras acciones" },
         { icon: Users, title: "Colaboración", text: "Trabajamos en equipo para lograr los mejores resultados para nuestros clientes" },
         { icon: Globe2, title: "Innovación", text: "Adoptamos nuevas tecnologías y enfoques para servir mejor a nuestros clientes" },
       ],
-      cultureTitle: "Nuestra Cultura",
+      cultureTitle: "Nuestra cultura",
       cultureSubtitle: "Un lugar de trabajo donde el talento prospera y la excelencia es el estándar",
       cultureIntro: "En Santos & Saucedo, hemos cultivado una cultura única que combina el rigor profesional con un ambiente de apoyo y colaboración. Nuestros abogados trabajan junto a algunos de los profesionales legales más talentosos de México, fomentando una atmósfera de aprendizaje continuo y respeto mutuo.",
       cultureAspects: [
         { 
           icon: Building2, 
-          title: "Ambiente de Trabajo Moderno", 
+          title: "Ambiente de trabajo moderno", 
           text: "Instalaciones de vanguardia diseñadas para promover la colaboración, la creatividad y el bienestar. Nuestras oficinas cuentan con espacios abiertos, salas de reuniones con tecnología de punta y áreas para relajación y reuniones informales."
         },
         { 
           icon: Handshake, 
-          title: "Colaboración en Equipo", 
+          title: "Colaboración en equipo", 
           text: "Creemos que las mejores soluciones legales provienen de perspectivas diversas. Nuestros grupos de práctica trabajan de manera integrada, combinando experiencia especializada para brindar asesoría integral a nuestros clientes."
         },
         { 
           icon: GraduationCap, 
-          title: "Desarrollo Profesional", 
+          title: "Desarrollo profesional", 
           text: "La educación continua es fundamental para nuestra firma. Invertimos en programas de capacitación, oportunidades de mentoría y apoyo para estudios avanzados y certificaciones para ayudar a nuestros abogados a alcanzar su máximo potencial."
         },
         { 
           icon: HeartHandshake, 
-          title: "Participación Comunitaria", 
+          title: "Participación comunitaria", 
           text: "Estamos comprometidos con retribuir a la sociedad. A través del trabajo pro bono, asociaciones con ONGs y apoyo a iniciativas de educación legal, nos esforzamos por generar un impacto positivo más allá de nuestra práctica."
         },
         { 
           icon: Coffee, 
-          title: "Equilibrio Vida-Trabajo", 
+          title: "Equilibrio vida-trabajo", 
           text: "Reconocemos que el éxito sostenible requiere equilibrio. Nuestra firma promueve arreglos flexibles e iniciativas de bienestar para apoyar a los miembros de nuestro equipo tanto profesional como personalmente."
         },
         { 
           icon: Lightbulb, 
-          title: "Mentalidad de Innovación", 
+          title: "Mentalidad de innovación", 
           text: "Fomentamos el pensamiento creativo y adoptamos tecnología para brindar servicios legales más eficientes y efectivos. Nuestra cultura recompensa la iniciativa y valora las nuevas ideas de todos los niveles de la organización."
         },
       ],
-      diversityTitle: "Diversidad e Inclusión",
+      diversityTitle: "Diversidad e inclusión",
       diversitySubtitle: "Construyendo una profesión legal más inclusiva",
       diversityIntro: "Santos & Saucedo está comprometido con fomentar un lugar de trabajo diverso e inclusivo donde cada individuo sea valorado, respetado y empoderado para triunfar. Creemos que la diversidad de pensamiento, antecedentes y experiencia fortalece nuestra firma y mejora la calidad del servicio que brindamos a nuestros clientes.",
       diversityStats: [
-        { value: "45%", label: "Mujeres en la Firma", icon: UsersRound },
-        { value: "35%", label: "Mujeres Socias", icon: TrendingUp },
-        { value: "50%", label: "Mujeres en Roles de Liderazgo", icon: Target },
-        { value: "100%", label: "Compromiso con Igualdad de Oportunidades", icon: Shield },
+        { value: "45%", label: "Mujeres en la firma", icon: UsersRound },
+        { value: "35%", label: "Mujeres socias", icon: TrendingUp },
+        { value: "50%", label: "Mujeres en roles de liderazgo", icon: Target },
+        { value: "100%", label: "Compromiso con igualdad de oportunidades", icon: Shield },
       ],
       diversityInitiatives: [
         { 
           icon: UserCheck, 
-          title: "Contratación Inclusiva", 
+          title: "Contratación inclusiva", 
           text: "Nuestras prácticas de reclutamiento están diseñadas para atraer y evaluar candidatos basándose únicamente en sus habilidades, experiencia y potencial, asegurando igualdad de oportunidades para todos sin importar género, antecedentes o circunstancias personales."
         },
         { 
           icon: BarChart3, 
-          title: "Igualdad de Género", 
+          title: "Igualdad de género", 
           text: "Promovemos activamente la igualdad de género en todos los niveles de la organización. Nuestros programas apoyan el avance de mujeres en posiciones de liderazgo y aseguran compensación equitativa y oportunidades de crecimiento."
         },
         { 
           icon: Sparkles, 
-          title: "Igualdad de Oportunidades", 
+          title: "Igualdad de oportunidades", 
           text: "Cada miembro del equipo tiene acceso a los mismos recursos de desarrollo, asignaciones desafiantes y caminos de avance profesional. Estamos comprometidos a remover barreras y crear caminos hacia el éxito para todos."
         },
         { 
           icon: Shield, 
-          title: "Ambiente Inclusivo", 
+          title: "Ambiente inclusivo", 
           text: "Fomentamos un entorno donde las diferencias se celebran y todas las voces son escuchadas. Nuestras políticas y prácticas aseguran que cada individuo se sienta seguro, respetado y capaz de ser auténtico en el trabajo."
         },
       ],
       diversityCommitment: "Nuestro compromiso con la diversidad e inclusión no es solo una política—es un valor fundamental que moldea cómo trabajamos, crecemos y servimos a nuestros clientes. Continuamente evaluamos y mejoramos nuestras prácticas para asegurar que estemos a la vanguardia en la creación de una profesión legal más equitativa.",
-      statsTitle: "Nuestra Firma en Números",
+      statsTitle: "Nuestra firma en números",
       stats: [
-        { value: "35+", label: "Años de Experiencia" },
+        { value: "35+", label: "Años de experiencia" },
         { value: String(teamMembers?.length || 24), label: "Abogados" },
-        { value: String(practiceGroups?.length || 6), label: "Áreas Laborales" },
-        { value: "100%", label: "Enfoque Laboral" },
+        { value: String(practiceGroups?.length || 6), label: "Áreas laborales" },
+        { value: "100%", label: "Enfoque laboral" },
       ],
-      rankingsTitle: "Rankings y Reconocimientos",
+      rankingsTitle: "Rankings y reconocimientos",
       rankingsText: "Santos & Saucedo es consistentemente reconocido como uno de los principales despachos de abogados en México por los directorios legales más prestigiosos del mundo.",
       rankings: [
         "Chambers and Partners Global - Banda 1",
@@ -386,13 +385,13 @@ export default function About() {
         "IFLR1000 - Nivel 1",
         "Global Investigations Review 100",
       ],
-      proBonoTitle: "Pro Bono",
+      proBonoTitle: "Pro bono",
       proBonoText: "Estamos profundamente comprometidos con brindar servicios legales pro bono a quienes más lo necesitan. Nuestros abogados dedican tiempo significativo a apoyar organizaciones benéficas, causas de derechos humanos e iniciativas de acceso a la justicia.",
       careersTitle: "Carreras",
       careersText: "Únase a uno de los principales despachos de abogados de México y construya su carrera con los mejores. Ofrecemos oportunidades excepcionales de crecimiento y desarrollo.",
-      learnMore: "Conocer Más",
-      viewTeam: "Ver Nuestro Equipo",
-      viewPractices: "Ver Áreas de Práctica",
+      learnMore: "Conocer más",
+      viewTeam: "Ver nuestro equipo",
+      viewPractices: "Ver áreas de práctica",
     },
     de: {
       title: "Über die Kanzlei",
@@ -1241,7 +1240,7 @@ export default function About() {
   // ES/EN: textos del reposicionamiento laboral
   const labor: typeof baseT = {
     ...baseT,
-    title: isSpanish ? "La Firma" : "The Firm",
+    title: isSpanish ? "La firma" : "The Firm",
     subtitle: isSpanish
       ? "Derecho laboral estratégico para empresas"
       : "Strategic labor law for companies",
@@ -1271,11 +1270,11 @@ export default function About() {
           { icon: BarChart3, title: "Diagnosis", text: "We review labor administration, documentation, and workplace relations." },
           { icon: GraduationCap, title: "Training", text: "We prepare management and HR teams to act with sound legal judgment." },
         ],
-    statsTitle: isSpanish ? "La Firma en Números" : "The Firm in Numbers",
+    statsTitle: isSpanish ? "La firma en números" : "The Firm in Numbers",
     stats: [
-      { value: "35+", label: isSpanish ? "Años de Experiencia" : "Years of Experience" },
-      { value: String(teamMembers?.length || 24), label: isSpanish ? "Integrantes del Equipo" : "Team Members" },
-      { value: String(practiceGroups?.length || 6), label: isSpanish ? "Áreas Laborales" : "Labor Practice Areas" },
+      { value: "35+", label: isSpanish ? "Años de experiencia" : "Years of Experience" },
+      { value: String(teamMembers?.length || 24), label: isSpanish ? "Integrantes del equipo" : "Team Members" },
+      { value: String(practiceGroups?.length || 6), label: isSpanish ? "Áreas laborales" : "Labor Practice Areas" },
       { value: "1", label: isSpanish ? "Oficina en Nuevo León" : "Office in Nuevo Leon" },
     ],
     viewTeam: isSpanish ? "Ver equipo" : "View team",
@@ -1337,43 +1336,37 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="text-center"
+            className="max-w-3xl"
           >
-            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
-            <h1 
-              className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
-              data-testid="text-about-title"
-            >
+            <Eyebrow num="01" tone="navy" className="mb-6" />
+            <h1 className="mb-5" data-testid="text-about-title">
               {t.title}
             </h1>
-            <p 
-              className="text-base text-white/60 max-w-2xl mx-auto"
-              data-testid="text-about-subtitle"
-            >
+            <p data-testid="text-about-subtitle">
               {t.subtitle}
             </p>
           </motion.div>
         </div>
       </section>
 
-      <main id="main-content" className="py-16 lg:py-20">
+      <main id="main-content" className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-20"
+            className="mb-20 lg:mb-24"
             data-testid="section-history"
           >
-            <h2 className="text-2xl font-heading font-light text-foreground mb-6 uppercase tracking-[0.12em]">
+            <h2 className="ss-h2 mb-6">
               {t.historyTitle}
             </h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <p className="text-lg text-foreground leading-relaxed text-justify">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-5">
+              <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]">
                 {t.historyText1}
               </p>
-              <p className="text-lg text-foreground leading-relaxed text-justify">
+              <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]">
                 {t.historyText2}
               </p>
             </div>
@@ -1384,20 +1377,19 @@ export default function About() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="mb-20"
+            className="mb-20 lg:mb-24"
             data-testid="section-values"
           >
-            <h2 className="text-2xl font-heading font-light text-foreground mb-8 text-center uppercase tracking-[0.12em]">
+            <h2 className="ss-h2 mb-8">
               {t.valuesTitle}
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
               {t.values.map((value, index) => (
                 <motion.div key={index} variants={itemVariants}>
                   <NumberedCard
                     index={index}
                     title={value.title}
                     body={value.text}
-                    icon={value.icon}
                     dataTestid={`card-value-${index}`}
                   />
                 </motion.div>
@@ -1410,27 +1402,27 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="mb-20"
+            className="mb-20 lg:mb-24"
             data-testid="section-culture"
           >
-            <div className="text-center mb-12">
-              <h2 className="text-2xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]">
+            <div className="max-w-3xl mb-10">
+              <h2 className="ss-h2 mb-5">
                 {t.cultureTitle}
               </h2>
-              <p className="text-lg text-primary font-medium mb-4" data-testid="text-culture-subtitle">
+              <p className="ss-lead mb-5" data-testid="text-culture-subtitle">
                 {t.cultureSubtitle}
               </p>
-              <p className="text-lg text-foreground leading-relaxed text-justify max-w-4xl mx-auto" data-testid="text-culture-intro">
+              <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]" data-testid="text-culture-intro">
                 {t.cultureIntro}
               </p>
             </div>
-            
-            <motion.div 
+
+            <motion.div
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
-            viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              viewport={{ once: true }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10"
             >
               {t.cultureAspects.map((aspect, index) => (
                 <motion.div key={index} variants={itemVariants}>
@@ -1438,7 +1430,6 @@ export default function About() {
                     index={index}
                     title={aspect.title}
                     body={aspect.text}
-                    icon={aspect.icon}
                     dataTestid={`card-culture-${index}`}
                   />
                 </motion.div>
@@ -1446,30 +1437,31 @@ export default function About() {
             </motion.div>
           </motion.section>
 
+          {/* Cifras con el estilo de cifra de la portada (romana 300, Azul Marino),
+              filetes de 1 px y sin panel */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="mb-20 card-soft p-10 lg:p-14"
+            className="mb-20 lg:mb-24"
             data-testid="section-stats"
           >
-            <h2 className="text-2xl font-heading font-light text-foreground mb-4 text-center uppercase tracking-[0.12em]">
+            <h2 className="ss-h2 mb-8">
               {t.statsTitle}
             </h2>
-            <div className="h-0.5 w-12 bg-brand mx-auto mb-10" />
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            <dl className="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
               {t.stats.map((stat, index) => (
-                <div key={index} className="text-center" data-testid={`stat-${index}`}>
-                  <p className="text-4xl lg:text-5xl font-heading text-primary mb-2">
-                    {stat.value}
-                  </p>
-                  <p className="text-sm text-muted-foreground uppercase tracking-wider">
+                <div key={index} className="flex flex-col border-t border-ss-rule pt-6" data-testid={`stat-${index}`}>
+                  <dt className="ss-label text-ss-medio order-2 mt-3">
                     {stat.label}
-                  </p>
+                  </dt>
+                  <dd className="ss-figure order-1">
+                    {stat.value}
+                  </dd>
                 </div>
               ))}
-            </div>
+            </dl>
           </motion.section>
 
           <motion.div
@@ -1477,17 +1469,15 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="flex flex-col sm:flex-row justify-center gap-4"
+            className="flex flex-col sm:flex-row gap-4"
           >
             <Link href="/team">
-              <Button className="rounded-lg" data-testid="button-view-team">
-                <Users className="w-4 h-4 mr-2" />
+              <Button data-testid="button-view-team">
                 {t.viewTeam}
               </Button>
             </Link>
             <Link href="/practice-groups">
-              <Button variant="outline" className="rounded-lg" data-testid="button-view-practices">
-                <Briefcase className="w-4 h-4 mr-2" />
+              <Button variant="outline" data-testid="button-view-practices">
                 {t.viewPractices}
               </Button>
             </Link>

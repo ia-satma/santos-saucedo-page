@@ -9,7 +9,8 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "shadcn-card rounded-lg bg-card text-card-foreground shadow-[var(--shadow-md)] transition-shadow duration-300",
+      // "Clásica": sin sombra ni radio; un filete Línea de 1px separa la ficha del fondo
+      "shadcn-card rounded-none border border-card-border bg-card text-card-foreground",
       className
     )}
     {...props}
@@ -36,7 +37,7 @@ const CardTitle = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
+      "text-2xl font-semibold leading-tight",
       className
     )}
     {...props}

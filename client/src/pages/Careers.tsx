@@ -7,14 +7,9 @@ import {
   Briefcase, 
   Clock, 
   TrendingUp, 
-  Award, 
   BookOpen, 
-  Building2, 
   MapPin, 
   Mail, 
-  ArrowRight, 
-  Calendar,
-  Target,
   Lightbulb,
   Shield,
   HandHeart
@@ -27,6 +22,12 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { NumberedCard } from "@/components/editorial";
+
+// "Clásica": titulares en romana 400, Azul Marino, caja de oración y al inicio;
+// entradillas en romana 400 Gris Tinta; texto en sans 400 Gris Tinta.
+const h2Class = "font-heading font-normal text-ss-marino text-[clamp(28px,2.6vw,38px)] leading-[1.12] tracking-[-0.012em] [text-wrap:balance]";
+const h3Class = "font-heading font-normal text-ss-marino text-[22px] leading-[1.25] tracking-[-0.01em]";
+const leadClass = "font-serif font-normal text-ss-tinta text-[clamp(19px,0.6vw_+_14px,22px)] leading-[1.55] tracking-[-0.003em] [text-wrap:pretty]";
 
 export default function Careers() {
   const { language } = useLanguage();
@@ -63,9 +64,9 @@ export default function Careers() {
       positions: [
         {
           title: "Associate Attorney",
-          titleEs: "Abogado Asociado",
+          titleEs: "Abogado asociado",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Full-time",
@@ -75,9 +76,9 @@ export default function Careers() {
         },
         {
           title: "Legal Intern / Pasante",
-          titleEs: "Pasante de Derecho",
+          titleEs: "Pasante de derecho",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Internship",
@@ -131,39 +132,39 @@ export default function Careers() {
       apply: "Apply Now",
     },
     es: {
-      heroTitle: "Construye Tu Carrera Con Nosotros",
+      heroTitle: "Construye tu carrera con nosotros",
       heroSubtitle: "Únete a una firma especializada en derecho laboral y forma parte de un equipo que valora la excelencia, la integridad y el crecimiento profesional.",
-      whyJoinTitle: "Por Qué Trabajar en Santos & Saucedo",
+      whyJoinTitle: "Por qué trabajar en Santos & Saucedo",
       whyJoinSubtitle: "Descubre lo que nos hace un excelente lugar para trabajar",
-      cultureTitle: "Nuestra Cultura",
+      cultureTitle: "Nuestra cultura",
       cultureText: "En Santos & Saucedo, fomentamos un ambiente colaborativo e inclusivo donde cada miembro del equipo puede prosperar. Con más de 35 años de experiencia, combinamos tradición con innovación para brindar servicios legales excepcionales. Nuestra cultura enfatiza el trabajo en equipo, el respeto mutuo y el compromiso con los más altos estándares éticos.",
-      valuesTitle: "Nuestros Valores Fundamentales",
+      valuesTitle: "Nuestros valores fundamentales",
       values: [
         { icon: Scale, title: "Excelencia", text: "Nos esforzamos por la más alta calidad en todo lo que hacemos" },
         { icon: Heart, title: "Integridad", text: "La conducta ética guía todas nuestras relaciones profesionales" },
         { icon: Users, title: "Colaboración", text: "Trabajamos juntos como un equipo unificado para lograr el éxito" },
         { icon: Lightbulb, title: "Innovación", text: "Adoptamos nuevas ideas y enfoques para resolver desafíos" },
       ],
-      environmentTitle: "Ambiente de Trabajo",
+      environmentTitle: "Ambiente de trabajo",
       environmentText: "Nuestras oficinas modernas en Río Tamazunchale 205 Norte ofrecen un espacio de trabajo dinámico e inspirador. Creemos en el equilibrio entre vida y trabajo y proporcionamos arreglos flexibles para apoyar el bienestar de nuestro equipo. Únete a una firma donde tu voz importa y tus contribuciones son reconocidas.",
-      benefitsTitle: "Beneficios y Prestaciones",
+      benefitsTitle: "Beneficios y prestaciones",
       benefitsSubtitle: "Cuidamos de nuestro equipo",
       benefits: [
-        { icon: TrendingUp, title: "Compensación Competitiva", text: "Salarios líderes en el mercado y bonos por desempeño" },
-        { icon: GraduationCap, title: "Desarrollo Profesional", text: "Oportunidades continuas de aprendizaje y avance profesional" },
-        { icon: Clock, title: "Balance Vida-Trabajo", text: "Horarios flexibles y opciones de trabajo híbrido" },
-        { icon: Shield, title: "Beneficios de Salud", text: "Cobertura médica, dental y de visión completa" },
-        { icon: BookOpen, title: "Programas de Capacitación", text: "Capacitación interna y apoyo para certificaciones externas" },
+        { icon: TrendingUp, title: "Compensación competitiva", text: "Salarios líderes en el mercado y bonos por desempeño" },
+        { icon: GraduationCap, title: "Desarrollo profesional", text: "Oportunidades continuas de aprendizaje y avance profesional" },
+        { icon: Clock, title: "Balance vida-trabajo", text: "Horarios flexibles y opciones de trabajo híbrido" },
+        { icon: Shield, title: "Beneficios de salud", text: "Cobertura médica, dental y de visión completa" },
+        { icon: BookOpen, title: "Programas de capacitación", text: "Capacitación interna y apoyo para certificaciones externas" },
         { icon: HandHeart, title: "Mentoría", text: "Guía de socios experimentados y abogados senior" },
       ],
-      positionsTitle: "Posiciones Abiertas",
+      positionsTitle: "Posiciones abiertas",
       positionsSubtitle: "Explora las oportunidades actuales en nuestra firma",
       positions: [
         {
           title: "Associate Attorney",
-          titleEs: "Abogado Asociado",
+          titleEs: "Abogado asociado",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Full-time",
@@ -173,9 +174,9 @@ export default function Careers() {
         },
         {
           title: "Legal Intern / Pasante",
-          titleEs: "Pasante de Derecho",
+          titleEs: "Pasante de derecho",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Internship",
@@ -196,11 +197,11 @@ export default function Careers() {
           descriptionEs: "Apoya a nuestro equipo de litigio con investigación legal, preparación de documentos y gestión de casos en un ambiente dinámico.",
         },
       ],
-      internshipTitle: "Programa de Pasantías",
+      internshipTitle: "Programa de pasantías",
       internshipSubtitle: "Inicia tu carrera legal con nosotros",
-      internshipOverviewTitle: "Descripción del Programa",
+      internshipOverviewTitle: "Descripción del programa",
       internshipOverviewText: "Nuestro programa de pasantías está diseñado para proporcionar a los estudiantes de derecho una experiencia práctica integral en una firma especializada en derecho laboral. Los pasantes trabajan directamente con socios y asociados senior en casos y transacciones reales, obteniendo un conocimiento práctico invaluable.",
-      internshipDurationTitle: "Duración y Requisitos",
+      internshipDurationTitle: "Duración y requisitos",
       internshipDuration: [
         "Duración del programa: 6-12 meses",
         "Estudiantes de derecho en sus últimos años o recién graduados",
@@ -208,7 +209,7 @@ export default function Careers() {
         "Excelentes habilidades de comunicación escrita y verbal",
         "Dominio del español e inglés preferido",
       ],
-      internshipLearningTitle: "Lo Que Aprenderás",
+      internshipLearningTitle: "Lo que aprenderás",
       internshipLearning: [
         "Técnicas de investigación y análisis legal",
         "Redacción y revisión de documentos",
@@ -217,16 +218,16 @@ export default function Careers() {
         "Auditorías laborales y cumplimiento normativo",
         "Ética profesional y mejores prácticas",
       ],
-      applyTitle: "Cómo Aplicar",
+      applyTitle: "Cómo aplicar",
       applySubtitle: "Da el primer paso hacia tu futuro con nosotros",
       applyInstructions: "Para aplicar a cualquier posición o a nuestro programa de pasantías, por favor envía tu CV, carta de presentación y expediente académico a:",
       applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "Por favor incluye el título del puesto en el asunto de tu correo electrónico. Revisamos todas las aplicaciones cuidadosamente y contactaremos a los candidatos calificados para entrevistas.",
-      contactCardTitle: "Contacto de Carreras",
+      contactCardTitle: "Contacto de carreras",
       contactCardText: "¿Tienes preguntas sobre oportunidades en Santos & Saucedo?",
-      sendApplication: "Enviar Solicitud",
-      viewDetails: "Ver Detalles",
-      apply: "Aplicar Ahora",
+      sendApplication: "Enviar solicitud",
+      viewDetails: "Ver detalles",
+      apply: "Aplicar ahora",
     },
     de: {
       heroTitle: "Gestalten Sie Ihre Karriere bei uns",
@@ -259,9 +260,9 @@ export default function Careers() {
       positions: [
         {
           title: "Associate Attorney",
-          titleEs: "Abogado Asociado",
+          titleEs: "Abogado asociado",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Full-time",
@@ -271,9 +272,9 @@ export default function Careers() {
         },
         {
           title: "Legal Intern / Pasante",
-          titleEs: "Pasante de Derecho",
+          titleEs: "Pasante de derecho",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Internship",
@@ -357,9 +358,9 @@ export default function Careers() {
       positions: [
         {
           title: "Associate Attorney",
-          titleEs: "Abogado Asociado",
+          titleEs: "Abogado asociado",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Full-time",
@@ -369,9 +370,9 @@ export default function Careers() {
         },
         {
           title: "Legal Intern / Pasante",
-          titleEs: "Pasante de Derecho",
+          titleEs: "Pasante de derecho",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Internship",
@@ -455,9 +456,9 @@ export default function Careers() {
       positions: [
         {
           title: "Associate Attorney",
-          titleEs: "Abogado Asociado",
+          titleEs: "Abogado asociado",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Full-time",
@@ -467,9 +468,9 @@ export default function Careers() {
         },
         {
           title: "Legal Intern / Pasante",
-          titleEs: "Pasante de Derecho",
+          titleEs: "Pasante de derecho",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Internship",
@@ -553,9 +554,9 @@ export default function Careers() {
       positions: [
         {
           title: "Associate Attorney",
-          titleEs: "Abogado Asociado",
+          titleEs: "Abogado asociado",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Full-time",
@@ -565,9 +566,9 @@ export default function Careers() {
         },
         {
           title: "Legal Intern / Pasante",
-          titleEs: "Pasante de Derecho",
+          titleEs: "Pasante de derecho",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Internship",
@@ -651,9 +652,9 @@ export default function Careers() {
       positions: [
         {
           title: "Associate Attorney",
-          titleEs: "Abogado Asociado",
+          titleEs: "Abogado asociado",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Full-time",
@@ -663,9 +664,9 @@ export default function Careers() {
         },
         {
           title: "Legal Intern / Pasante",
-          titleEs: "Pasante de Derecho",
+          titleEs: "Pasante de derecho",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Internship",
@@ -749,9 +750,9 @@ export default function Careers() {
       positions: [
         {
           title: "Associate Attorney",
-          titleEs: "Abogado Asociado",
+          titleEs: "Abogado asociado",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Full-time",
@@ -761,9 +762,9 @@ export default function Careers() {
         },
         {
           title: "Legal Intern / Pasante",
-          titleEs: "Pasante de Derecho",
+          titleEs: "Pasante de derecho",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Internship",
@@ -847,9 +848,9 @@ export default function Careers() {
       positions: [
         {
           title: "Associate Attorney",
-          titleEs: "Abogado Asociado",
+          titleEs: "Abogado asociado",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Full-time",
@@ -859,9 +860,9 @@ export default function Careers() {
         },
         {
           title: "Legal Intern / Pasante",
-          titleEs: "Pasante de Derecho",
+          titleEs: "Pasante de derecho",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Internship",
@@ -945,9 +946,9 @@ export default function Careers() {
       positions: [
         {
           title: "Associate Attorney",
-          titleEs: "Abogado Asociado",
+          titleEs: "Abogado asociado",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Full-time",
@@ -957,9 +958,9 @@ export default function Careers() {
         },
         {
           title: "Legal Intern / Pasante",
-          titleEs: "Pasante de Derecho",
+          titleEs: "Pasante de derecho",
           department: "Labor Law",
-          departmentEs: "Derecho Laboral",
+          departmentEs: "Derecho laboral",
           location: "San Pedro Garza García",
           locationEs: "San Pedro Garza García",
           type: "Internship",
@@ -1051,7 +1052,7 @@ export default function Careers() {
           >
             <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1 
-              className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
+              className="text-4xl md:text-5xl font-heading text-white mb-5"
               data-testid="text-careers-title"
             >
               {t.heroTitle}
@@ -1062,14 +1063,14 @@ export default function Careers() {
             >
               {t.heroSubtitle}
             </p>
-            {/* Enlace de texto de la marca (etiqueta, subrayado lima, flecha), sin botón con caja */}
+            {/* Enlace de texto de la marca (etiqueta, subrayado al pasar, flecha), sin botón con caja */}
             <a
               href={`mailto:${t.applyEmail}`}
               className="ss-label group inline-flex min-h-[44px] items-center gap-3 text-white"
               data-testid="button-hero-apply"
             >
-              <span className="ss-link ss-link--lime">{t.apply}</span>
-              <span aria-hidden="true" className="ss-arrow text-ss-lime">
+              <span className="ss-link">{t.apply}</span>
+              <span aria-hidden="true" className="ss-arrow">
                 →
               </span>
             </a>
@@ -1088,14 +1089,14 @@ export default function Careers() {
             className="mb-20"
             data-testid="section-why-join"
           >
-            <div className="text-center mb-12">
+            <div className="mb-12">
               <h2 
-                className="text-2xl md:text-3xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]"
+                className={`${h2Class} mb-4`}
                 data-testid="text-why-join-title"
               >
                 {t.whyJoinTitle}
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className={`${leadClass} max-w-2xl`}>
                 {t.whyJoinSubtitle}
               </p>
             </div>
@@ -1103,13 +1104,12 @@ export default function Careers() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
               <Card className="" data-testid="card-culture">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-lg font-heading font-light text-foreground uppercase tracking-[0.1em]">
-                    <Building2 className="w-6 h-6 text-primary" />
+                  <CardTitle className={h3Class}>
                     {t.cultureTitle}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground leading-relaxed text-justify">
+                  <p className="text-base text-ss-tinta leading-relaxed">
                     {t.cultureText}
                   </p>
                 </CardContent>
@@ -1117,13 +1117,12 @@ export default function Careers() {
 
               <Card className="" data-testid="card-environment">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-lg font-heading font-light text-foreground uppercase tracking-[0.1em]">
-                    <Target className="w-6 h-6 text-primary" />
+                  <CardTitle className={h3Class}>
                     {t.environmentTitle}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground leading-relaxed text-justify">
+                  <p className="text-base text-ss-tinta leading-relaxed">
                     {t.environmentText}
                   </p>
                 </CardContent>
@@ -1132,7 +1131,7 @@ export default function Careers() {
 
             <Card className="bg-muted" data-testid="card-values">
               <CardHeader>
-                <CardTitle className="text-lg font-heading font-light text-foreground text-center uppercase tracking-[0.1em]">
+                <CardTitle className={h3Class}>
                   {t.valuesTitle}
                 </CardTitle>
               </CardHeader>
@@ -1154,7 +1153,6 @@ export default function Careers() {
                         index={index}
                         title={value.title}
                         body={value.text}
-                        icon={value.icon}
                       />
                     </motion.div>
                   ))}
@@ -1171,14 +1169,14 @@ export default function Careers() {
             className="mb-20"
             data-testid="section-benefits"
           >
-            <div className="text-center mb-12">
+            <div className="mb-12">
               <h2 
-                className="text-2xl md:text-3xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]"
+                className={`${h2Class} mb-4`}
                 data-testid="text-benefits-title"
               >
                 {t.benefitsTitle}
               </h2>
-              <p className="text-lg text-muted-foreground">
+              <p className={`${leadClass} max-w-2xl`}>
                 {t.benefitsSubtitle}
               </p>
             </div>
@@ -1196,7 +1194,6 @@ export default function Careers() {
                     index={index}
                     title={benefit.title}
                     body={benefit.text}
-                    icon={benefit.icon}
                     dataTestid={`card-benefit-${index}`}
                   />
                 </motion.div>
@@ -1212,14 +1209,14 @@ export default function Careers() {
             className="mb-20"
             data-testid="section-positions"
           >
-            <div className="text-center mb-12">
+            <div className="mb-12">
               <h2 
-                className="text-2xl md:text-3xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]"
+                className={`${h2Class} mb-4`}
                 data-testid="text-positions-title"
               >
                 {t.positionsTitle}
               </h2>
-              <p className="text-lg text-muted-foreground">
+              <p className={`${leadClass} max-w-2xl`}>
                 {t.positionsSubtitle}
               </p>
             </div>
@@ -1241,10 +1238,10 @@ export default function Careers() {
                       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex flex-wrap items-center gap-3 mb-3">
-                            <h3 className="text-xl font-light uppercase tracking-[0.12em] text-foreground">
+                            <h3 className={h3Class}>
                               {language === "es" ? position.titleEs : position.title}
                             </h3>
-                            <Badge variant="secondary" className="text-xs">
+                            <Badge variant="outline">
                               {language === "es" ? position.typeEs : position.type}
                             </Badge>
                           </div>
@@ -1258,19 +1255,18 @@ export default function Careers() {
                               {language === "es" ? position.locationEs : position.location}
                             </span>
                           </div>
-                          <p className="text-muted-foreground">
+                          <p className="text-base text-ss-tinta leading-relaxed">
                             {language === "es" ? position.descriptionEs : position.description}
                           </p>
                         </div>
                         <div className="flex-shrink-0">
                           <Button 
-                            className="rounded-lg w-full lg:w-auto"
+                            className="w-full lg:w-auto"
                             asChild
                             data-testid={`button-apply-position-${index}`}
                           >
                             <a href={`mailto:reclutamiento@santossaucedo.com?subject=${encodeURIComponent(language === "es" ? position.titleEs : position.title)}`}>
                               {t.apply}
-                              <ArrowRight className="w-4 h-4 ml-2" />
                             </a>
                           </Button>
                         </div>
@@ -1290,14 +1286,14 @@ export default function Careers() {
             className="mb-20"
             data-testid="section-internship"
           >
-            <div className="text-center mb-12">
+            <div className="mb-12">
               <h2 
-                className="text-2xl md:text-3xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]"
+                className={`${h2Class} mb-4`}
                 data-testid="text-internship-title"
               >
                 {t.internshipTitle}
               </h2>
-              <p className="text-lg text-muted-foreground">
+              <p className={`${leadClass} max-w-2xl`}>
                 {t.internshipSubtitle}
               </p>
             </div>
@@ -1308,29 +1304,27 @@ export default function Careers() {
                 data-testid="card-internship-overview"
               >
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-lg font-heading font-light text-foreground uppercase tracking-[0.1em]">
-                    <GraduationCap className="w-6 h-6 text-primary" />
+                  <CardTitle className={h3Class}>
                     {t.internshipOverviewTitle}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground leading-relaxed mb-6 text-justify">
+                  <p className="text-base text-ss-tinta leading-relaxed mb-6">
                     {t.internshipOverviewText}
                   </p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                        <Calendar className="w-5 h-5 text-primary" />
+                      <h4 className="font-heading font-normal text-ss-marino text-[20px] leading-[1.25] tracking-[-0.01em] mb-3">
                         {t.internshipDurationTitle}
                       </h4>
                       <ul className="space-y-2">
                         {t.internshipDuration.map((item, index) => (
                           <li 
                             key={index} 
-                            className="text-sm text-muted-foreground flex items-start gap-2"
+                            className="text-base text-ss-tinta flex items-start gap-3"
                           >
-                            <span className="w-1.5 h-1.5 rounded-full bg-brand mt-2 flex-shrink-0" />
+                            <span className="mt-[0.75em] h-px w-2.5 flex-shrink-0 bg-ss-medio" aria-hidden="true" />
                             {item}
                           </li>
                         ))}
@@ -1338,17 +1332,16 @@ export default function Careers() {
                     </div>
                     
                     <div>
-                      <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                        <Award className="w-5 h-5 text-primary" />
+                      <h4 className="font-heading font-normal text-ss-marino text-[20px] leading-[1.25] tracking-[-0.01em] mb-3">
                         {t.internshipLearningTitle}
                       </h4>
                       <ul className="space-y-2">
                         {t.internshipLearning.map((item, index) => (
                           <li 
                             key={index} 
-                            className="text-sm text-muted-foreground flex items-start gap-2"
+                            className="text-base text-ss-tinta flex items-start gap-3"
                           >
-                            <span className="w-1.5 h-1.5 rounded-full bg-brand mt-2 flex-shrink-0" />
+                            <span className="mt-[0.75em] h-px w-2.5 flex-shrink-0 bg-ss-medio" aria-hidden="true" />
                             {item}
                           </li>
                         ))}
@@ -1363,11 +1356,10 @@ export default function Careers() {
                 data-testid="card-internship-cta"
               >
                 <CardContent className="p-8 flex flex-col justify-center h-full">
-                  <GraduationCap className="w-12 h-12 mb-6 text-primary" />
-                  <h3 className="text-xl font-heading font-light mb-4">
+                  <h3 className={`${h3Class} mb-4`}>
                     {language === "es" ? "¿Listo para comenzar?" : "Ready to get started?"}
                   </h3>
-                  <p className="text-muted-foreground mb-6">
+                  <p className="text-base text-ss-tinta mb-6">
                     {language === "es" 
                       ? "Aplica a nuestro programa de pasantías y da el primer paso en tu carrera legal."
                       : "Apply to our internship program and take the first step in your legal career."
@@ -1375,13 +1367,12 @@ export default function Careers() {
                   </p>
                   <Button 
                     variant="default"
-                    className="rounded-lg w-full"
+                    className="w-full"
                     asChild
                     data-testid="button-internship-apply"
                   >
-                    <a href={`mailto:reclutamiento@santossaucedo.com?subject=${encodeURIComponent(language === "es" ? "Programa de Pasantías" : "Internship Program")}`}>
+                    <a href={`mailto:reclutamiento@santossaucedo.com?subject=${encodeURIComponent(language === "es" ? "Programa de pasantías" : "Internship Program")}`}>
                       {t.apply}
-                      <ArrowRight className="w-4 h-4 ml-2" />
                     </a>
                   </Button>
                 </CardContent>
@@ -1400,25 +1391,24 @@ export default function Careers() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
                 <h2 
-                  className="text-2xl md:text-3xl font-heading font-light text-foreground mb-4 uppercase tracking-[0.12em]"
+                  className={`${h2Class} mb-4`}
                   data-testid="text-apply-title"
                 >
                   {t.applyTitle}
                 </h2>
-                <p className="text-lg text-muted-foreground mb-6">
+                <p className={`${leadClass} mb-6`}>
                   {t.applySubtitle}
                 </p>
                 <Card className="bg-muted" data-testid="card-apply-instructions">
                   <CardContent className="p-8">
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-base text-ss-tinta mb-4">
                       {t.applyInstructions}
                     </p>
                     <a 
                       href={`mailto:${t.applyEmail}`}
-                      className="inline-flex items-center gap-2 text-xl font-semibold text-primary hover:underline mb-4"
+                      className="inline-block text-xl font-semibold text-ss-marino underline decoration-ss-rule underline-offset-4 hover:decoration-ss-marino mb-4"
                       data-testid="link-apply-email"
                     >
-                      <Mail className="w-5 h-5" />
                       {t.applyEmail}
                     </a>
                     <p className="text-sm text-muted-foreground">
@@ -1434,10 +1424,10 @@ export default function Careers() {
                   data-testid="card-careers-contact"
                 >
                   <CardContent className="p-8">
-                    <h3 className="text-base font-heading font-light text-foreground mb-2 uppercase tracking-[0.1em]">
+                    <h3 className={`${h3Class} mb-2`}>
                       {t.contactCardTitle}
                     </h3>
-                    <p className="text-muted-foreground mb-6">
+                    <p className="text-base text-ss-tinta mb-6">
                       {t.contactCardText}
                     </p>
                     <div className="space-y-3">
@@ -1459,12 +1449,11 @@ export default function Careers() {
                       </div>
                     </div>
                     <Button 
-                      className="rounded-lg w-full mt-6"
+                      className="w-full mt-6"
                       asChild
                       data-testid="button-send-application"
                     >
                       <a href={`mailto:${t.applyEmail}`}>
-                        <Mail className="w-4 h-4 mr-2" />
                         {t.sendApplication}
                       </a>
                     </Button>

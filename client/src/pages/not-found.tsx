@@ -76,13 +76,13 @@ export default function NotFound() {
     <div className="min-h-screen bg-background flex flex-col" dir={isRTL ? "rtl" : "ltr"} data-testid="page-not-found">
       <Header />
 
-      {/* Mismo encabezado de marca que las páginas internas (degradado, eyebrow §, Bebas),
+      {/* Mismo encabezado de marca que las páginas internas (Azul Profundo, eyebrow §, titular en romana),
           con enlaces de texto en vez de botones */}
       <main id="main-content" className="flex-1 pt-36 pb-20 editorial-page-hero" data-testid="section-not-found-hero">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <p className="flex items-center gap-4 mb-6">
             <span className="h-0.5 w-12 bg-brand" aria-hidden="true" />
-            <span className="ss-label text-white/70">Error 404</span>
+            <span className="ss-label text-white/75">Error 404</span>
           </p>
 
           <h1 className="mb-5" data-testid="text-404-title">
@@ -97,19 +97,19 @@ export default function NotFound() {
               className="ss-label group inline-flex min-h-[44px] items-center gap-3 text-white"
               data-testid="button-go-home"
             >
-              <span className="ss-link ss-link--lime">{t.goHome}</span>
+              <span className="ss-link">{t.goHome}</span>
               {/* Siempre "→": en árabe la espeja .ss-arrow:dir(rtl) (ss26.css), como en Carreras */}
-              <span aria-hidden="true" className="ss-arrow text-ss-lime">
+              <span aria-hidden="true" className="ss-arrow">
                 →
               </span>
             </Link>
             <button
               type="button"
               onClick={() => window.history.back()}
-              className="ss-label group inline-flex min-h-[44px] items-center gap-3 text-white/70 transition-colors hover:text-white"
+              className="ss-label group inline-flex min-h-[44px] items-center gap-3 text-white/75 transition-colors hover:text-white"
               data-testid="button-go-back"
             >
-              <span aria-hidden="true" className="text-ss-lime">
+              <span aria-hidden="true">
                 {isRTL ? "→" : "←"}
               </span>
               <span className="ss-link group-hover:[background-size:100%_1px] group-focus-visible:[background-size:100%_1px]">

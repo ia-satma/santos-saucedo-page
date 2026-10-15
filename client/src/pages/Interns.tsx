@@ -10,8 +10,6 @@ import {
   Heart,
   BookOpen,
   Mail,
-  ArrowRight,
-  CheckCircle2,
   Building2,
   Scale,
   HandHeart,
@@ -28,6 +26,12 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "wouter";
+
+// "Clásica": titulares en romana 400, Azul Marino, caja de oración y al inicio;
+// entradillas en romana 400 Gris Tinta; texto en sans 400 Gris Tinta.
+const h2Class = "font-heading font-normal text-ss-marino text-[clamp(28px,2.6vw,38px)] leading-[1.12] tracking-[-0.012em] [text-wrap:balance]";
+const h3Class = "font-heading font-normal text-ss-marino text-[22px] leading-[1.25] tracking-[-0.01em]";
+const leadClass = "font-serif font-normal text-ss-tinta text-[clamp(19px,0.6vw_+_14px,22px)] leading-[1.55] tracking-[-0.003em] [text-wrap:pretty]";
 
 export default function Interns() {
   const { language } = useLanguage();
@@ -102,29 +106,29 @@ export default function Interns() {
       contactText: "Have questions about our internship program? Reach out to our recruitment team.",
     },
     es: {
-      heroTitle: "Programa de Pasantes",
+      heroTitle: "Programa de pasantes",
       heroSubtitle: "Inicia tu carrera legal en una de las firmas de abogados más prestigiosas de México. Obtén experiencia práctica y desarrolla habilidades esenciales junto a líderes de la industria.",
-      applyNow: "Aplicar Ahora",
+      applyNow: "Aplicar ahora",
       applyEmail: "reclutamiento@santossaucedo.com",
       
-      programOverviewTitle: "Descripción del Programa",
+      programOverviewTitle: "Descripción del programa",
       programOverviewSubtitle: "Dos caminos para iniciar tu carrera legal",
-      summerProgramTitle: "Pasantía de Verano",
+      summerProgramTitle: "Pasantía de verano",
       summerProgramDescription: "Nuestro programa de pasantías de verano se desarrolla de junio a agosto, ofreciendo a los estudiantes de derecho una experiencia intensiva durante su receso académico. Los pasantes de verano participan en asuntos activos en múltiples áreas de práctica, asisten a sesiones de capacitación y obtienen exposición a diversos aspectos de la práctica legal.",
       summerProgramDuration: "Duración: 10-12 semanas (junio - agosto)",
-      permanentProgramTitle: "Pasantía Permanente",
+      permanentProgramTitle: "Pasantía permanente",
       permanentProgramDescription: "Nuestro programa de pasantías permanentes está diseñado para estudiantes de derecho en sus últimos años que pueden dedicar horas parciales o completas durante el año académico. Los pasantes permanentes desarrollan experiencia más profunda en áreas de práctica específicas y pueden transitar a posiciones de tiempo completo como asociados al graduarse.",
       permanentProgramDuration: "Duración: 6-12 meses (horario flexible)",
 
-      whatYouLearnTitle: "Lo Que Aprenderás",
+      whatYouLearnTitle: "Lo que aprenderás",
       whatYouLearnSubtitle: "Desarrollo integral para futuros profesionales legales",
       learningAreas: [
-        { icon: Scale, title: "Dinámica de Trabajo", text: "Experimenta el trabajo legal real apoyando a socios y asociados en asuntos activos. Aprende cómo opera una firma de primer nivel día a día." },
-        { icon: Users, title: "Diversidad e Inclusión", text: "Comprende nuestro compromiso con D&I a través de sesiones de capacitación y participación en iniciativas de la firma. Experimenta un lugar de trabajo donde cada voz importa." },
-        { icon: BookOpen, title: "Investigación Legal", text: "Domina metodologías de investigación legal, análisis de casos y preparación de memorándums legales usando herramientas y bases de datos de vanguardia." },
-        { icon: Briefcase, title: "Servicio al Cliente", text: "Desarrolla habilidades de cara al cliente participando en reuniones, preparando entregables y entendiendo la gestión de relaciones." },
-        { icon: Lightbulb, title: "Ética Profesional", text: "Aprende los estándares éticos y mejores prácticas que guían la profesión legal en México e internacionalmente." },
-        { icon: Building2, title: "Cultura de la Firma", text: "Sumérgete en nuestra cultura colaborativa, establece contactos con abogados de todos los niveles y construye relaciones profesionales duraderas." },
+        { icon: Scale, title: "Dinámica de trabajo", text: "Experimenta el trabajo legal real apoyando a socios y asociados en asuntos activos. Aprende cómo opera una firma de primer nivel día a día." },
+        { icon: Users, title: "Diversidad e inclusión", text: "Comprende nuestro compromiso con D&I a través de sesiones de capacitación y participación en iniciativas de la firma. Experimenta un lugar de trabajo donde cada voz importa." },
+        { icon: BookOpen, title: "Investigación legal", text: "Domina metodologías de investigación legal, análisis de casos y preparación de memorándums legales usando herramientas y bases de datos de vanguardia." },
+        { icon: Briefcase, title: "Servicio al cliente", text: "Desarrolla habilidades de cara al cliente participando en reuniones, preparando entregables y entendiendo la gestión de relaciones." },
+        { icon: Lightbulb, title: "Ética profesional", text: "Aprende los estándares éticos y mejores prácticas que guían la profesión legal en México e internacionalmente." },
+        { icon: Building2, title: "Cultura de la firma", text: "Sumérgete en nuestra cultura colaborativa, establece contactos con abogados de todos los niveles y construye relaciones profesionales duraderas." },
       ],
 
       requirementsTitle: "Requisitos",
@@ -140,32 +144,32 @@ export default function Interns() {
         "Disponibilidad mínima de 20 horas por semana (programa permanente)",
       ],
 
-      applicationProcessTitle: "Proceso de Aplicación",
+      applicationProcessTitle: "Proceso de aplicación",
       applicationProcessSubtitle: "Cómo unirte a nuestro programa de pasantías",
       applicationSteps: [
-        { step: "1", title: "Enviar Solicitud", text: "Envía tu CV, carta de presentación, expediente académico y dos referencias profesionales o académicas a nuestro equipo de reclutamiento." },
-        { step: "2", title: "Revisión Inicial", text: "Nuestro equipo de RH revisa todas las solicitudes y selecciona candidatos para la siguiente etapa basándose en calificaciones y compatibilidad." },
-        { step: "3", title: "Proceso de Entrevistas", text: "Los candidatos seleccionados participan en entrevistas con RH y abogados de las áreas de práctica relevantes." },
-        { step: "4", title: "Oferta e Inducción", text: "Los candidatos exitosos reciben una oferta y comienzan nuestro programa integral de inducción." },
+        { step: "1", title: "Enviar solicitud", text: "Envía tu CV, carta de presentación, expediente académico y dos referencias profesionales o académicas a nuestro equipo de reclutamiento." },
+        { step: "2", title: "Revisión inicial", text: "Nuestro equipo de RH revisa todas las solicitudes y selecciona candidatos para la siguiente etapa basándose en calificaciones y compatibilidad." },
+        { step: "3", title: "Proceso de entrevistas", text: "Los candidatos seleccionados participan en entrevistas con RH y abogados de las áreas de práctica relevantes." },
+        { step: "4", title: "Oferta e inducción", text: "Los candidatos exitosos reciben una oferta y comienzan nuestro programa integral de inducción." },
       ],
 
-      benefitsTitle: "Beneficios de una Pasantía en Santos & Saucedo",
+      benefitsTitle: "Beneficios de una pasantía en Santos & Saucedo",
       benefitsSubtitle: "Invierte en tu futuro con nosotros",
       benefits: [
-        { icon: Award, title: "Experiencia Prestigiosa", text: "Agrega experiencia en una firma mexicana de primer nivel a tu currículum. Nuestra reputación abre puertas." },
-        { icon: GraduationCap, title: "Programa de Mentoría", text: "Recibe orientación de abogados experimentados que invierten en tu desarrollo profesional." },
-        { icon: TrendingUp, title: "Crecimiento Profesional", text: "Muchos de nuestros asociados comenzaron como pasantes. Los mejores desempeños pueden recibir ofertas de tiempo completo." },
-        { icon: Shield, title: "Beca Competitiva", text: "Recibe una beca mensual competitiva que reconoce el valor de tus contribuciones." },
-        { icon: Users, title: "Red Profesional", text: "Construye conexiones con profesionales legales líderes, clientes y colegas que duran toda tu carrera." },
-        { icon: HandHeart, title: "Arreglos Flexibles", text: "Trabajamos contigo para equilibrar tu pasantía con compromisos académicos." },
+        { icon: Award, title: "Experiencia prestigiosa", text: "Agrega experiencia en una firma mexicana de primer nivel a tu currículum. Nuestra reputación abre puertas." },
+        { icon: GraduationCap, title: "Programa de mentoría", text: "Recibe orientación de abogados experimentados que invierten en tu desarrollo profesional." },
+        { icon: TrendingUp, title: "Crecimiento profesional", text: "Muchos de nuestros asociados comenzaron como pasantes. Los mejores desempeños pueden recibir ofertas de tiempo completo." },
+        { icon: Shield, title: "Beca competitiva", text: "Recibe una beca mensual competitiva que reconoce el valor de tus contribuciones." },
+        { icon: Users, title: "Red profesional", text: "Construye conexiones con profesionales legales líderes, clientes y colegas que duran toda tu carrera." },
+        { icon: HandHeart, title: "Arreglos flexibles", text: "Trabajamos contigo para equilibrar tu pasantía con compromisos académicos." },
       ],
 
-      ctaTitle: "¿Listo para Iniciar tu Carrera Legal?",
+      ctaTitle: "¿Listo para iniciar tu carrera legal?",
       ctaSubtitle: "Da el primer paso para unirte a una de las firmas de abogados líderes de México",
       ctaInstructions: "Envía tus materiales de aplicación a:",
-      ctaNote: "Por favor incluye 'Solicitud de Pasantía - [Tu Nombre]' en el asunto del correo. Revisamos solicitudes de manera continua y contactaremos a los candidatos calificados para entrevistas.",
-      sendApplication: "Enviar Solicitud",
-      viewCareers: "Ver Todas las Carreras",
+      ctaNote: "Por favor incluye 'Solicitud de pasantía - [Tu nombre]' en el asunto del correo. Revisamos solicitudes de manera continua y contactaremos a los candidatos calificados para entrevistas.",
+      sendApplication: "Enviar solicitud",
+      viewCareers: "Ver todas las carreras",
       contactTitle: "¿Preguntas?",
       contactText: "¿Tienes preguntas sobre nuestro programa de pasantías? Contacta a nuestro equipo de reclutamiento.",
     },
@@ -752,7 +756,7 @@ export default function Interns() {
           >
             <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
             <h1 
-              className="text-4xl md:text-5xl font-heading font-light text-white mb-5 uppercase tracking-[0.15em]"
+              className="text-4xl md:text-5xl font-heading text-white mb-5"
               data-testid="text-interns-title"
             >
               {t.heroTitle}
@@ -763,14 +767,14 @@ export default function Interns() {
             >
               {t.heroSubtitle}
             </p>
-            {/* Enlace de texto de la marca (etiqueta, subrayado lima, flecha), sin botón con caja */}
+            {/* Enlace de texto de la marca (etiqueta, subrayado al pasar, flecha), sin botón con caja */}
             <a
               href={`mailto:${t.applyEmail}?subject=Internship Application`}
               className="ss-label group inline-flex min-h-[44px] items-center gap-3 text-white"
               data-testid="button-hero-apply"
             >
-              <span className="ss-link ss-link--lime">{t.applyNow}</span>
-              <span aria-hidden="true" className="ss-arrow text-ss-lime">
+              <span className="ss-link">{t.applyNow}</span>
+              <span aria-hidden="true" className="ss-arrow">
                 →
               </span>
             </a>
@@ -789,14 +793,14 @@ export default function Interns() {
             className="mb-20"
             data-testid="section-program-overview"
           >
-            <div className="text-center mb-12">
+            <div className="mb-12">
               <h2 
-                className="text-2xl md:text-3xl font-heading font-light text-primary mb-4 uppercase tracking-[0.12em]"
+                className={`${h2Class} mb-4`}
                 data-testid="text-program-overview-title"
               >
                 {t.programOverviewTitle}
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className={`${leadClass} max-w-2xl`}>
                 {t.programOverviewSubtitle}
               </p>
             </div>
@@ -804,17 +808,15 @@ export default function Interns() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <Card className="" data-testid="card-summer-program">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-xl font-heading font-light text-foreground">
-                    <Calendar className="w-6 h-6 text-primary" />
+                  <CardTitle className={h3Class}>
                     {t.summerProgramTitle}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground leading-relaxed mb-4">
+                  <p className="text-base text-ss-tinta leading-relaxed mb-4">
                     {t.summerProgramDescription}
                   </p>
-                  <Badge variant="secondary" className="text-sm">
-                    <Clock className="w-4 h-4 mr-1" />
+                  <Badge variant="outline">
                     {t.summerProgramDuration}
                   </Badge>
                 </CardContent>
@@ -822,17 +824,15 @@ export default function Interns() {
 
               <Card className="" data-testid="card-permanent-program">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-xl font-heading font-light text-foreground">
-                    <Briefcase className="w-6 h-6 text-primary" />
+                  <CardTitle className={h3Class}>
                     {t.permanentProgramTitle}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground leading-relaxed mb-4">
+                  <p className="text-base text-ss-tinta leading-relaxed mb-4">
                     {t.permanentProgramDescription}
                   </p>
-                  <Badge variant="secondary" className="text-sm">
-                    <Clock className="w-4 h-4 mr-1" />
+                  <Badge variant="outline">
                     {t.permanentProgramDuration}
                   </Badge>
                 </CardContent>
@@ -848,14 +848,14 @@ export default function Interns() {
             className="mb-20"
             data-testid="section-what-you-learn"
           >
-            <div className="text-center mb-12">
+            <div className="mb-12">
               <h2 
-                className="text-2xl md:text-3xl font-heading font-light text-primary mb-4 uppercase tracking-[0.12em]"
+                className={`${h2Class} mb-4`}
                 data-testid="text-what-you-learn-title"
               >
                 {t.whatYouLearnTitle}
               </h2>
-              <p className="text-lg text-muted-foreground">
+              <p className={`${leadClass} max-w-2xl`}>
                 {t.whatYouLearnSubtitle}
               </p>
             </div>
@@ -874,19 +874,12 @@ export default function Interns() {
                     data-testid={`card-learning-${index}`}
                   >
                     <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <area.icon className="w-6 h-6 text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-light uppercase tracking-[0.12em] text-foreground mb-2">
-                            {area.title}
-                          </h3>
-                          <p className="text-sm text-muted-foreground">
-                            {area.text}
-                          </p>
-                        </div>
-                      </div>
+                      <h3 className={`${h3Class} mb-2`}>
+                        {area.title}
+                      </h3>
+                      <p className="text-base text-ss-tinta leading-relaxed">
+                        {area.text}
+                      </p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -902,14 +895,14 @@ export default function Interns() {
             className="mb-20"
             data-testid="section-requirements"
           >
-            <div className="text-center mb-12">
+            <div className="mb-12">
               <h2 
-                className="text-2xl md:text-3xl font-heading font-light text-primary mb-4 uppercase tracking-[0.12em]"
+                className={`${h2Class} mb-4`}
                 data-testid="text-requirements-title"
               >
                 {t.requirementsTitle}
               </h2>
-              <p className="text-lg text-muted-foreground">
+              <p className={`${leadClass} max-w-2xl`}>
                 {t.requirementsSubtitle}
               </p>
             </div>
@@ -930,8 +923,8 @@ export default function Interns() {
                       variants={itemVariants}
                       data-testid={`requirement-${index}`}
                     >
-                      <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                      <span className="text-foreground">{requirement}</span>
+                      <span className="mt-[0.8em] h-px w-2.5 flex-shrink-0 bg-ss-medio" aria-hidden="true" />
+                      <span className="text-base text-ss-tinta">{requirement}</span>
                     </motion.li>
                   ))}
                 </motion.ul>
@@ -947,14 +940,14 @@ export default function Interns() {
             className="mb-20"
             data-testid="section-application-process"
           >
-            <div className="text-center mb-12">
+            <div className="mb-12">
               <h2 
-                className="text-2xl md:text-3xl font-heading font-light text-primary mb-4 uppercase tracking-[0.12em]"
+                className={`${h2Class} mb-4`}
                 data-testid="text-application-process-title"
               >
                 {t.applicationProcessTitle}
               </h2>
-              <p className="text-lg text-muted-foreground">
+              <p className={`${leadClass} max-w-2xl`}>
                 {t.applicationProcessSubtitle}
               </p>
             </div>
@@ -969,17 +962,17 @@ export default function Interns() {
               {t.applicationSteps.map((step, index) => (
                 <motion.div key={index} variants={itemVariants}>
                   <Card 
-                    className="h-full text-center"
+                    className="h-full"
                     data-testid={`card-step-${index}`}
                   >
                     <CardContent className="p-6">
-                      <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground text-xl font-bold flex items-center justify-center mx-auto mb-4">
+                      <div className="font-serif font-[300] text-[40px] leading-none tracking-[-0.02em] text-ss-marino [font-variant-numeric:lining-nums] mb-4" aria-hidden="true">
                         {step.step}
                       </div>
-                      <h3 className="font-light uppercase tracking-[0.12em] text-foreground mb-2">
+                      <h3 className={`${h3Class} mb-2`}>
                         {step.title}
                       </h3>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-base text-ss-tinta leading-relaxed">
                         {step.text}
                       </p>
                     </CardContent>
@@ -997,14 +990,14 @@ export default function Interns() {
             className="mb-20"
             data-testid="section-benefits"
           >
-            <div className="text-center mb-12">
+            <div className="mb-12">
               <h2 
-                className="text-2xl md:text-3xl font-heading font-light text-primary mb-4 uppercase tracking-[0.12em]"
+                className={`${h2Class} mb-4`}
                 data-testid="text-benefits-title"
               >
                 {t.benefitsTitle}
               </h2>
-              <p className="text-lg text-muted-foreground">
+              <p className={`${leadClass} max-w-2xl`}>
                 {t.benefitsSubtitle}
               </p>
             </div>
@@ -1023,19 +1016,12 @@ export default function Interns() {
                     data-testid={`card-benefit-${index}`}
                   >
                     <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <benefit.icon className="w-6 h-6 text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-light uppercase tracking-[0.12em] text-foreground mb-2">
-                            {benefit.title}
-                          </h3>
-                          <p className="text-sm text-muted-foreground">
-                            {benefit.text}
-                          </p>
-                        </div>
-                      </div>
+                      <h3 className={`${h3Class} mb-2`}>
+                        {benefit.title}
+                      </h3>
+                      <p className="text-base text-ss-tinta leading-relaxed">
+                        {benefit.text}
+                      </p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -1052,48 +1038,43 @@ export default function Interns() {
             data-testid="section-cta"
           >
             <Card className="overflow-hidden">
-              <CardContent className="p-8 lg:p-12 text-center">
-                <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
+              <CardContent className="p-8 lg:p-12">
                 <h2 
-                  className="text-xl md:text-2xl font-heading font-light mb-4 uppercase tracking-[0.12em]"
+                  className={`${h2Class} mb-4`}
                   data-testid="text-cta-title"
                 >
                   {t.ctaTitle}
                 </h2>
-                <p className="text-base text-muted-foreground max-w-2xl mx-auto mb-6">
+                <p className={`${leadClass} max-w-2xl mb-6`}>
                   {t.ctaSubtitle}
                 </p>
-                <p className="text-muted-foreground mb-2">
+                <p className="text-base text-ss-tinta mb-2">
                   {t.ctaInstructions}
                 </p>
-                <p className="text-xl font-light text-primary mb-6">
+                <p className="text-xl font-semibold text-ss-marino mb-6">
                   {t.applyEmail}
                 </p>
-                <p className="text-sm text-muted-foreground max-w-2xl mx-auto mb-8">
+                <p className="text-base text-ss-medio max-w-2xl mb-8">
                   {t.ctaNote}
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
                     variant="default"
                     size="lg"
-                    className="rounded-lg"
                     asChild
                     data-testid="button-cta-apply"
                   >
                     <a href={`mailto:${t.applyEmail}?subject=Internship Application`}>
-                      <Mail className="w-5 h-5 mr-2" />
                       {t.sendApplication}
                     </a>
                   </Button>
                   <Button 
                     variant="outline"
                     size="lg"
-                    className="rounded-lg border-primary/30 text-primary hover:bg-primary/5"
-                    asChild
+                                        asChild
                     data-testid="button-view-careers"
                   >
                     <Link href="/careers">
-                      <ArrowRight className="w-5 h-5 mr-2" />
                       {t.viewCareers}
                     </Link>
                   </Button>
@@ -1110,22 +1091,21 @@ export default function Interns() {
             data-testid="section-contact"
           >
             <Card className="" data-testid="card-contact">
-              <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+              <CardContent className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-lg font-light uppercase tracking-[0.12em] text-foreground mb-1">
+                  <h3 className={`${h3Class} mb-1`}>
                     {t.contactTitle}
                   </h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-base text-ss-tinta">
                     {t.contactText}
                   </p>
                 </div>
                 <Button 
-                  className="rounded-lg whitespace-nowrap"
+                  className="whitespace-nowrap"
                   asChild
                   data-testid="button-contact-email"
                 >
                   <a href={`mailto:${t.applyEmail}`}>
-                    <Mail className="w-4 h-4 mr-2" />
                     {t.applyEmail}
                   </a>
                 </Button>

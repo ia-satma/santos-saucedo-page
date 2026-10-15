@@ -318,23 +318,23 @@ export type ContactSubmission = typeof contactSubmissions.$inferSelect;
 
 // Practice areas list for contact form
 export const practiceAreas = [
-  { value: "corporate-ma", en: "Corporate, Mergers & Acquisitions", es: "Corporativo, Fusiones y Adquisiciones" },
-  { value: "antitrust-competition", en: "Antitrust & Competition", es: "Competencia Económica" },
+  { value: "corporate-ma", en: "Corporate, Mergers & Acquisitions", es: "Corporativo, fusiones y adquisiciones" },
+  { value: "antitrust-competition", en: "Antitrust & Competition", es: "Competencia económica" },
   { value: "arbitration", en: "Arbitration", es: "Arbitraje" },
   { value: "litigation", en: "Litigation", es: "Litigio" },
-  { value: "investigations-anticorruption", en: "Investigations, Anti-corruption & Compliance", es: "Investigaciones, Anticorrupción y Compliance" },
-  { value: "bankruptcy-restructuring", en: "Bankruptcy & Restructuring", es: "Concursos Mercantiles y Reestructuración" },
-  { value: "banking-finance", en: "Banking & Finance", es: "Bancario y Financiero" },
-  { value: "energy-natural-resources", en: "Energy & Natural Resources", es: "Energía y Recursos Naturales" },
-  { value: "esg", en: "ESG (Environmental, Social & Corporate Governance)", es: "ESG (Ambiental, Social y Gobierno Corporativo)" },
+  { value: "investigations-anticorruption", en: "Investigations, Anti-corruption & Compliance", es: "Investigaciones, anticorrupción y compliance" },
+  { value: "bankruptcy-restructuring", en: "Bankruptcy & Restructuring", es: "Concursos mercantiles y reestructuración" },
+  { value: "banking-finance", en: "Banking & Finance", es: "Bancario y financiero" },
+  { value: "energy-natural-resources", en: "Energy & Natural Resources", es: "Energía y recursos naturales" },
+  { value: "esg", en: "ESG (Environmental, Social & Corporate Governance)", es: "ESG (ambiental, social y gobierno corporativo)" },
   { value: "real-estate", en: "Real Estate", es: "Inmobiliario" },
-  { value: "intellectual-property", en: "Intellectual Property", es: "Propiedad Intelectual" },
+  { value: "intellectual-property", en: "Intellectual Property", es: "Propiedad intelectual" },
   { value: "labor-employment", en: "Labor & Employment", es: "Laboral" },
   { value: "tax", en: "Tax", es: "Fiscal" },
-  { value: "international-trade", en: "International Trade", es: "Comercio Exterior" },
-  { value: "telecommunications-media-technology", en: "Telecommunications, Media & Technology", es: "Telecomunicaciones, Medios y Tecnología" },
+  { value: "international-trade", en: "International Trade", es: "Comercio exterior" },
+  { value: "telecommunications-media-technology", en: "Telecommunications, Media & Technology", es: "Telecomunicaciones, medios y tecnología" },
   { value: "environmental", en: "Environmental", es: "Ambiental" },
-  { value: "administrative-law", en: "Administrative Law", es: "Derecho Administrativo" },
+  { value: "administrative-law", en: "Administrative Law", es: "Derecho administrativo" },
 ] as const;
 
 // ============================================
@@ -568,7 +568,7 @@ export const eventTypes = [
   { 
     value: "networking", 
     en: "Networking Event", 
-    es: "Evento de Networking", 
+    es: "Evento de networking", 
     de: "Networking-Veranstaltung", 
     zh: "社交活动", 
     ko: "네트워킹 이벤트", 
@@ -1012,16 +1012,16 @@ export type InsertJobOpening = z.infer<typeof insertJobOpeningSchema>;
 export type JobOpening = typeof jobOpenings.$inferSelect;
 
 export const jobTypes = [
-  { value: "full_time", en: "Full Time", es: "Tiempo Completo" },
-  { value: "part_time", en: "Part Time", es: "Medio Tiempo" },
+  { value: "full_time", en: "Full Time", es: "Tiempo completo" },
+  { value: "part_time", en: "Part Time", es: "Medio tiempo" },
   { value: "internship", en: "Internship", es: "Pasantía" },
   { value: "contract", en: "Contract", es: "Contrato" },
 ] as const;
 
 export const jobLevels = [
-  { value: "entry", en: "Entry Level", es: "Nivel de Entrada" },
-  { value: "mid", en: "Mid Level", es: "Nivel Medio" },
-  { value: "senior", en: "Senior Level", es: "Nivel Senior" },
+  { value: "entry", en: "Entry Level", es: "Nivel de entrada" },
+  { value: "mid", en: "Mid Level", es: "Nivel medio" },
+  { value: "senior", en: "Senior Level", es: "Nivel senior" },
   { value: "associate", en: "Associate", es: "Asociado" },
   { value: "counsel", en: "Counsel", es: "Counsel" },
   { value: "partner", en: "Partner", es: "Socio" },
@@ -1086,10 +1086,10 @@ export type InsertAlliance = z.infer<typeof insertAllianceSchema>;
 export type Alliance = typeof alliances.$inferSelect;
 
 export const allianceTypes = [
-  { value: "network", en: "International Network", es: "Red Internacional" },
+  { value: "network", en: "International Network", es: "Red internacional" },
   { value: "association", en: "Association", es: "Asociación" },
-  { value: "partnership", en: "Strategic Partnership", es: "Alianza Estratégica" },
-  { value: "correspondent", en: "Correspondent Firm", es: "Firma Corresponsal" },
+  { value: "partnership", en: "Strategic Partnership", es: "Alianza estratégica" },
+  { value: "correspondent", en: "Correspondent Firm", es: "Firma corresponsal" },
 ] as const;
 
 // ============================================
@@ -1292,8 +1292,8 @@ export type InsertLegalDocument = z.infer<typeof insertLegalDocumentSchema>;
 export type LegalDocument = typeof legalDocuments.$inferSelect;
 
 export const legalDocumentTypes = [
-  { value: "privacy_policy", en: "Privacy Policy", es: "Aviso de Privacidad" },
-  { value: "terms_of_use", en: "Terms of Use", es: "Términos de Uso" },
-  { value: "cookie_policy", en: "Cookie Policy", es: "Política de Cookies" },
+  { value: "privacy_policy", en: "Privacy Policy", es: "Aviso de privacidad" },
+  { value: "terms_of_use", en: "Terms of Use", es: "Términos de uso" },
+  { value: "cookie_policy", en: "Cookie Policy", es: "Política de cookies" },
   { value: "disclaimer", en: "Legal Disclaimer", es: "Aviso Legal" },
 ] as const;

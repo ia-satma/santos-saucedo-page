@@ -5,18 +5,20 @@ import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
   // Whitespace-nowrap: Badges should never wrap.
-  "whitespace-nowrap inline-flex items-center rounded-none border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2" +
+  // "Clásica": etiqueta en sans 400 de 14px, esquinas rectas.
+  "whitespace-nowrap inline-flex items-center rounded-none border px-2.5 py-1 font-sans text-sm font-normal leading-[1.3] transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2" +
   " hover-elevate " ,
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground shadow-xs",
+          "border-transparent bg-primary text-primary-foreground",
         secondary: "border-transparent bg-secondary text-secondary-foreground",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground shadow-xs",
+          "border-transparent bg-destructive text-destructive-foreground",
 
-        outline: " border [border-color:var(--badge-outline)] shadow-xs",
+        // Chip: filete Línea de 1px, texto Gris Tinta
+        outline: "border-ss-rule bg-transparent text-ss-tinta",
       },
     },
     defaultVariants: {

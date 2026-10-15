@@ -33,9 +33,9 @@ const content: Record<LanguageCode, ContentItem> = {
     text: "Santos & Saucedo está comprometido a brindar servicios legales a quienes más los necesitan. Nuestro programa pro bono nos permite retribuir a la comunidad y apoyar a organizaciones e individuos que no pueden costear representación legal.",
     buttonText: "VER MÁS",
     pillars: [
-      { label: "Acceso a la Justicia", desc: "Representación legal para quienes más lo necesitan, sin importar sus medios económicos." },
-      { label: "Apoyo Comunitario", desc: "Colaboración con organizaciones de la sociedad civil y sin fines de lucro." },
-      { label: "Compromiso Social", desc: "Retribuyendo a la comunidad con nuestra experiencia y dedicación." },
+      { label: "Acceso a la justicia", desc: "Representación legal para quienes más lo necesitan, sin importar sus medios económicos." },
+      { label: "Apoyo comunitario", desc: "Colaboración con organizaciones de la sociedad civil y sin fines de lucro." },
+      { label: "Compromiso social", desc: "Retribuyendo a la comunidad con nuestra experiencia y dedicación." },
     ],
   },
   de: {
@@ -160,13 +160,13 @@ export default function ProBonoSection() {
           >
             <div className="w-8 h-px bg-brand mb-5" />
             <p
-              className="text-primary text-[10px] tracking-[0.25em] uppercase mb-4"
+              className="ss-label text-primary mb-4"
               data-testid="text-pro-bono-eyebrow"
             >
               {t.eyebrow}
             </p>
             <h2
-              className="font-heading font-light text-2xl md:text-3xl lg:text-4xl text-foreground uppercase tracking-[0.12em] leading-tight mb-5"
+              className="font-heading font-normal text-2xl md:text-3xl lg:text-4xl text-ss-marino leading-tight mb-5"
               data-testid="text-pro-bono-title"
             >
               {t.title}
@@ -194,7 +194,7 @@ export default function ProBonoSection() {
                 className="border-t border-border/40 pt-4 pb-4"
                 data-testid={`pillar-probono-${i}`}
               >
-                <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-foreground mb-1">
+                <p className="ss-label text-foreground mb-1">
                   {pillar.label}
                 </p>
                 <p className="text-sm text-muted-foreground leading-relaxed">
@@ -213,7 +213,7 @@ export default function ProBonoSection() {
             <Link href="/pro-bono">
               <Button
                 variant="default"
-                className="rounded-none uppercase tracking-[0.15em] px-8"
+                className="rounded-none px-8"
                 data-testid="button-pro-bono-see-more"
               >
                 {t.buttonText}
@@ -250,12 +250,12 @@ export default function ProBonoSection() {
           <div className="absolute inset-0 flex flex-col items-center justify-center px-8 text-center">
             <div className="w-8 h-px bg-white/60 mb-4" />
             <p
-              className="font-heading font-light text-2xl lg:text-3xl xl:text-4xl text-white uppercase tracking-[0.12em] leading-tight"
+              className="font-heading font-normal text-2xl lg:text-3xl xl:text-4xl text-white leading-tight"
               data-testid="text-pro-bono-title-photo"
             >
               {t.title}
             </p>
-            <div className="w-8 h-px bg-[#1E1C92]/80 mt-4" />
+            <div className="w-8 h-px bg-ss-rule mt-4" />
           </div>
         </motion.div>
 

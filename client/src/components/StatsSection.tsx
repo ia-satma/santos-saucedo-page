@@ -143,7 +143,7 @@ export default function StatsSection({ language }: StatsSectionProps) {
   const baseT = content[language] || content.en;
   const t = {
     ...baseT,
-    title: language === "es" ? "Especialistas en Derecho Laboral" : "Labor Law Specialists",
+    title: language === "es" ? "Especialistas en derecho laboral" : "Labor Law Specialists",
     subtitle: language === "es"
       ? "Santos & Saucedo es un despacho jurídico con más de 35 años de experiencia, especializado en Derecho Laboral."
       : "Santos & Saucedo is a legal firm with more than 35 years of experience, specialized in labor law.",
@@ -177,16 +177,16 @@ export default function StatsSection({ language }: StatsSectionProps) {
       "levels": "levels",
     },
     es: {
-      "Years of Experience": "Años de Experiencia",
+      "Years of Experience": "Años de experiencia",
       "Lawyers": "Abogados",
       "Clients": "Clientes",
       "Partners": "Socios",
       "Offices": "Oficinas",
-      "Practice Areas": "Áreas de Práctica",
-      "Industry Groups": "Grupos Industriales",
+      "Practice Areas": "Áreas de práctica",
+      "Industry Groups": "Grupos industriales",
       "Countries": "Países",
-      "Team Members": "Miembros del Equipo",
-      "Success Rate": "Tasa de Éxito",
+      "Team Members": "Miembros del equipo",
+      "Success Rate": "Tasa de éxito",
       "SQUARE METERS": "METROS CUADRADOS",
       "WORKSTATIONS": "ESTACIONES DE TRABAJO",
       "MEETING ROOMS": "SALAS DE JUNTAS",
@@ -404,23 +404,23 @@ export default function StatsSection({ language }: StatsSectionProps) {
             transition={{ duration: 0.6 }}
           >
             <div className="w-12 h-px bg-brand mb-6" />
-            <p className="text-primary text-[10px] tracking-[0.25em] uppercase mb-4">
+            <p className="ss-label text-primary mb-4">
               DERECHO LABORAL
             </p>
             <h2
-              className="font-heading font-light text-2xl md:text-3xl lg:text-4xl text-foreground uppercase tracking-[0.12em] leading-tight mb-8"
+              className="font-heading font-normal text-2xl md:text-3xl lg:text-4xl text-ss-marino leading-tight mb-8"
               data-testid="text-stats-title"
             >
               {t.title}
             </h2>
             <p
-              className="text-sm text-muted-foreground leading-relaxed mb-4 text-justify"
+              className="text-sm text-muted-foreground leading-relaxed mb-4"
               data-testid="text-stats-subtitle"
             >
               {t.subtitle}
             </p>
             <p
-              className="text-sm text-muted-foreground leading-relaxed text-justify"
+              className="text-sm text-muted-foreground leading-relaxed"
               data-testid="text-stats-description"
             >
               {t.description}
@@ -452,13 +452,13 @@ export default function StatsSection({ language }: StatsSectionProps) {
                   data-testid={`stat-item-${index}`}
                 >
                   <div
-                    className="font-heading font-light text-5xl lg:text-6xl xl:text-7xl text-primary leading-none mb-3"
+                    className="font-heading font-[300] text-5xl lg:text-6xl xl:text-7xl text-ss-marino leading-none [font-variant-numeric:lining-nums] mb-3"
                     data-testid={`text-stat-value-${index}`}
                   >
                     {stat.value}
                   </div>
                   <div
-                    className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground leading-tight"
+                    className="ss-label text-muted-foreground leading-tight"
                     data-testid={`text-stat-label-${index}`}
                   >
                     {getTranslatedLabel(stat.label)}
@@ -478,7 +478,7 @@ export default function StatsSection({ language }: StatsSectionProps) {
           className="border-t border-border/40 pt-10 mt-14"
         >
           <p
-            className="text-sm text-muted-foreground leading-relaxed max-w-4xl text-justify"
+            className="text-sm text-muted-foreground leading-relaxed max-w-4xl"
             data-testid="text-stats-capacity"
           >
             {t.capacity}
@@ -576,7 +576,7 @@ export default function StatsSection({ language }: StatsSectionProps) {
             </button>
           )}
 
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/60 text-xs tracking-[0.2em] uppercase">
+          <div className="ss-label absolute bottom-4 left-1/2 -translate-x-1/2 text-white/60">
             {lightboxIndex + 1} / {galleryImages.length}
           </div>
         </div>

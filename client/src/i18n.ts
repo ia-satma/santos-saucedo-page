@@ -4,20 +4,20 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 const esCommon = {
   nav: {
-    ourFirm: "La Firma",
+    ourFirm: "La firma",
     attorneys: "Abogados",
-    capabilities: "Áreas de Práctica",
+    capabilities: "Áreas de práctica",
     publications: "Publicaciones",
     career: "Carrera en S&S",
     contact: "Contacto",
-    probono: "Pro Bono",
-    diversity: "Diversidad e Inclusión",
+    probono: "Pro bono",
+    diversity: "Diversidad e inclusión",
     partners: "Socios",
     ofCounsel: "Of Counsel",
     counsel: "Consejeros",
     associates: "Asociados",
     practices: "Prácticas",
-    industryGroups: "Grupos de Industria",
+    industryGroups: "Grupos de industria",
     news: "Noticias",
     articles: "Artículos",
     newsletter: "Boletines",
@@ -33,7 +33,7 @@ const esCommon = {
   },
   home: {
     heroTagline: "VAMOS A DONDE NUESTROS CLIENTES NOS NECESITAN",
-    seeMore: "Ver Más",
+    seeMore: "Ver más",
     experienceBanner: "Santos & Saucedo Abogados cuenta con más de tres décadas de experiencia",
     teamStats: "Equipo de más de 150 abogados (22 socios, 6 of counsel, 12 consejeros...)",
     recognitionsTitle: "RECONOCIMIENTOS",
@@ -43,13 +43,13 @@ const esCommon = {
   },
   practices: {
     title: "Prácticas",
-    subtitle: "18 Disciplinas Especializadas"
+    subtitle: "18 disciplinas especializadas"
   },
   industries: {
-    title: "Grupos de Industria",
-    subtitle: "Sectores Especializados"
+    title: "Grupos de industria",
+    subtitle: "Sectores especializados"
   },  about: {
-    title: "Acerca de Nosotros",
+    title: "Acerca de nosotros",
     vision: "Visión",
     mission: "Misión",
     values: "Valores",
@@ -61,20 +61,20 @@ const esCommon = {
   },
   footer: {
     address: "Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220, México",
-    privacyNotice: "Aviso de Privacidad",
+    privacyNotice: "Aviso de privacidad",
     copyright: "© 2025 Santos & Saucedo Abogados Todos los derechos reservados.",
-    termsOfUse: "Términos de Uso",
-    quickLinks: "Enlaces Rápidos",
+    termsOfUse: "Términos de uso",
+    quickLinks: "Enlaces rápidos",
     followUs: "Síguenos",
     contactUs: "Contáctanos"
   },
   cta: {
-    seeMore: "Ver Más",
+    seeMore: "Ver más",
     contact: "Contactar",
-    readMore: "Leer Más",
-    viewProfile: "Ver Perfil",
+    readMore: "Leer más",
+    viewProfile: "Ver perfil",
     downloadVCard: "Descargar vCard",
-    learnMore: "Saber Más",
+    learnMore: "Saber más",
     subscribe: "Suscribirse",
     submit: "Enviar",
     back: "Volver",
@@ -82,37 +82,37 @@ const esCommon = {
     previous: "Anterior"
   },
   team: {
-    title: "Nuestro Equipo",
+    title: "Nuestro equipo",
     partners: "Socios",
     ofCounsel: "Of Counsel",
     counsel: "Consejeros",
     associates: "Asociados",
-    allAttorneys: "Todos los Abogados",
+    allAttorneys: "Todos los abogados",
     searchPlaceholder: "Buscar abogado...",
-    filterByPractice: "Filtrar por Práctica",
-    filterByIndustry: "Filtrar por Industria"
+    filterByPractice: "Filtrar por práctica",
+    filterByIndustry: "Filtrar por industria"
   },
   contact: {
     title: "Contacto",
     subtitle: "Estamos para servirle",
     name: "Nombre",
-    email: "Correo Electrónico",
+    email: "Correo electrónico",
     phone: "Teléfono",
     message: "Mensaje",
-    send: "Enviar Mensaje",
+    send: "Enviar mensaje",
     success: "Mensaje enviado exitosamente",
     error: "Error al enviar el mensaje"
   },
   news: {
     title: "Noticias",
-    subtitle: "Últimas Novedades",
-    readMore: "Leer Más",
-    allNews: "Todas las Noticias",
-    recentNews: "Noticias Recientes"
+    subtitle: "Últimas novedades",
+    readMore: "Leer más",
+    allNews: "Todas las noticias",
+    recentNews: "Noticias recientes"
   },
   events: {
     title: "Eventos",
-    subtitle: "Próximos Eventos",
+    subtitle: "Próximos eventos",
     upcoming: "Próximos",
     past: "Pasados",
     register: "Registrarse",
@@ -120,17 +120,17 @@ const esCommon = {
   },
   rankings: {
     title: "Rankings",
-    subtitle: "Reconocimientos Internacionales",
+    subtitle: "Reconocimientos internacionales",
     description: "Santos & Saucedo ha sido reconocida por las principales publicaciones legales del mundo."
   },
   diversity: {
-    title: "Diversidad e Inclusión",
-    subtitle: "Nuestro Compromiso",
+    title: "Diversidad e inclusión",
+    subtitle: "Nuestro compromiso",
     description: "Promovemos un ambiente de trabajo diverso e inclusivo donde todos pueden prosperar."
   },
   probono: {
-    title: "Pro Bono",
-    subtitle: "Responsabilidad Social",
+    title: "Pro bono",
+    subtitle: "Responsabilidad social",
     description: "Brindamos servicios legales gratuitos a quienes más lo necesitan."
   },
   common: {
@@ -145,7 +145,7 @@ const esCommon = {
     open: "Abrir",
     menu: "Menú",
     language: "Idioma",
-    selectLanguage: "Seleccionar Idioma",
+    selectLanguage: "Seleccionar idioma",
     mainNav: "Navegación principal",
     mobileNav: "Navegación móvil",
     openSearch: "Abrir búsqueda",

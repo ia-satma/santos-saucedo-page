@@ -25,10 +25,10 @@ interface PracticeArea {
 }
 
 const practiceAreas: PracticeArea[] = [
-  { id: 1, nameEn: "Labor & Social Security", nameEs: "Laboral y Seguridad Social", nameDe: "Labor & Social Security", nameZh: "Labor & Social Security", nameKo: "Labor & Social Security", nameJa: "Labor & Social Security", nameAr: "Labor & Social Security", nameRu: "Labor & Social Security", nameFr: "Labor & Social Security", nameIt: "Labor & Social Security", slug: "laboral-seguridad-social", iconName: "shield-check" },
-  { id: 2, nameEn: "Corporate & Contractual", nameEs: "Corporativo y Contractual", nameDe: "Corporate & Contractual", nameZh: "Corporate & Contractual", nameKo: "Corporate & Contractual", nameJa: "Corporate & Contractual", nameAr: "Corporate & Contractual", nameRu: "Corporate & Contractual", nameFr: "Corporate & Contractual", nameIt: "Corporate & Contractual", slug: "corporativo-contractual", iconName: "building-2" },
+  { id: 1, nameEn: "Labor & Social Security", nameEs: "Laboral y seguridad social", nameDe: "Labor & Social Security", nameZh: "Labor & Social Security", nameKo: "Labor & Social Security", nameJa: "Labor & Social Security", nameAr: "Labor & Social Security", nameRu: "Labor & Social Security", nameFr: "Labor & Social Security", nameIt: "Labor & Social Security", slug: "laboral-seguridad-social", iconName: "shield-check" },
+  { id: 2, nameEn: "Corporate & Contractual", nameEs: "Corporativo y contractual", nameDe: "Corporate & Contractual", nameZh: "Corporate & Contractual", nameKo: "Corporate & Contractual", nameJa: "Corporate & Contractual", nameAr: "Corporate & Contractual", nameRu: "Corporate & Contractual", nameFr: "Corporate & Contractual", nameIt: "Corporate & Contractual", slug: "corporativo-contractual", iconName: "building-2" },
   { id: 3, nameEn: "Immigration", nameEs: "Migratorio", nameDe: "Immigration", nameZh: "Immigration", nameKo: "Immigration", nameJa: "Immigration", nameAr: "Immigration", nameRu: "Immigration", nameFr: "Immigration", nameIt: "Immigration", slug: "migratorio", iconName: "globe" },
-  { id: 4, nameEn: "Contentious Litigation", nameEs: "Litigio Contencioso", nameDe: "Contentious Litigation", nameZh: "Contentious Litigation", nameKo: "Contentious Litigation", nameJa: "Contentious Litigation", nameAr: "Contentious Litigation", nameRu: "Contentious Litigation", nameFr: "Contentious Litigation", nameIt: "Contentious Litigation", slug: "litigio-contencioso", iconName: "gavel" },
+  { id: 4, nameEn: "Contentious Litigation", nameEs: "Litigio contencioso", nameDe: "Contentious Litigation", nameZh: "Contentious Litigation", nameKo: "Contentious Litigation", nameJa: "Contentious Litigation", nameAr: "Contentious Litigation", nameRu: "Contentious Litigation", nameFr: "Contentious Litigation", nameIt: "Contentious Litigation", slug: "litigio-contencioso", iconName: "gavel" },
 ];
 
 interface PracticesContent {
@@ -190,7 +190,7 @@ export default function PracticesSection() {
 
               {/* Serif section heading — Playfair Display */}
               <h2
-                className="font-heading font-medium text-2xl md:text-3xl text-foreground uppercase tracking-[0.12em] mb-6"
+                className="font-heading font-normal text-2xl md:text-3xl text-ss-marino mb-6"
                 data-testid="text-practices-title"
               >
                 {t.title}
@@ -198,7 +198,7 @@ export default function PracticesSection() {
 
               {/* Decorative large number */}
               <div className="relative mb-6 select-none pointer-events-none">
-                <span className="text-[7rem] leading-none font-heading font-medium text-brand [text-shadow:0_1px_0_rgba(255,255,255,0.9)]">
+                <span className="text-[7rem] leading-none font-heading font-normal text-ss-marino [text-shadow:0_1px_0_rgba(255,255,255,0.9)]">
                   4
                 </span>
               </div>
@@ -213,7 +213,7 @@ export default function PracticesSection() {
                 <Link href="/contact">
                   <Button
                     variant="brand"
-                    className="uppercase tracking-wide text-xs w-full sm:w-auto shadow-[0_14px_30px_rgba(18,16,62,0.22)]"
+                    className="w-full sm:w-auto"
                     data-testid="button-practices-contact"
                   >
                     <Phone className="w-3.5 h-3.5 mr-2" />
@@ -222,7 +222,7 @@ export default function PracticesSection() {
                 </Link>
                 <Link
                   href="/practice-groups"
-                  className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.12em] uppercase text-primary/75 hover:text-primary transition-colors duration-200 group"
+                  className="ss-label inline-flex items-center gap-2 text-primary/75 hover:text-primary transition-colors duration-200 group"
                   data-testid="link-practices-see-more"
                 >
                   {t.seeMore}
@@ -246,7 +246,7 @@ export default function PracticesSection() {
                 <motion.div key={area.id} variants={itemVariants}>
                   <Link
                     href={`/practice-groups/${area.slug}`}
-                    className="group relative block overflow-hidden rounded-lg shadow-[var(--shadow-md)] hover:shadow-[var(--shadow-xl)] transition-shadow duration-300"
+                    className="group relative block overflow-hidden transition-shadow duration-300"
                     data-testid={`link-practice-${area.id}`}
                   >
                     <div className="relative aspect-[4/3] overflow-hidden">
@@ -267,13 +267,13 @@ export default function PracticesSection() {
                     </div>
                     <div className="bg-primary px-4 py-3 flex items-center justify-between gap-2">
                       <span
-                        className="text-white text-xs sm:text-[13px] font-bold uppercase tracking-[0.06em] leading-snug"
+                        className="ss-label text-white leading-snug"
                         data-testid={`text-practice-name-${area.id}`}
                       >
                         {getPracticeAreaName(area, language)}
                       </span>
                       <ArrowRight
-                        className="w-4 h-4 text-brand shrink-0 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200"
+                        className="w-4 h-4 text-white/75 shrink-0 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200"
                       />
                     </div>
                   </Link>
@@ -289,7 +289,7 @@ export default function PracticesSection() {
           <Link href="/contact">
             <Button
               variant="brand"
-              className="uppercase tracking-wide text-xs w-full"
+              className="w-full"
               data-testid="button-practices-contact-mobile"
             >
               <Phone className="w-3.5 h-3.5 mr-2" />
@@ -298,7 +298,7 @@ export default function PracticesSection() {
           </Link>
           <Link
             href="/practice-groups"
-            className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.12em] uppercase text-primary/75 hover:text-primary transition-colors duration-200 group"
+            className="ss-label inline-flex items-center gap-2 text-primary/75 hover:text-primary transition-colors duration-200 group"
             data-testid="link-practices-see-more-mobile"
           >
             {t.seeMore}
