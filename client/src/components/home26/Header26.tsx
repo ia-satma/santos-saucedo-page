@@ -94,7 +94,7 @@ export default function Header26({ localized = false }: Header26Props) {
     <>
       <header
         {...t.attrs}
-        className={`ss26 sticky top-0 z-50 bg-ss-ink text-white transition-[box-shadow] duration-300 ${
+        className={`ss26 sticky top-0 z-50 bg-ss-navy text-white transition-[box-shadow] duration-300 ${
           scrolled ? "shadow-[0_1px_0_rgba(255,255,255,0.08)]" : ""
         }`}
         data-testid="header"
@@ -185,7 +185,7 @@ export default function Header26({ localized = false }: Header26Props) {
             aria-label={t.header.menu}
             {...t.attrs}
             data-testid="modal-mobile-menu"
-            className="ss26 fixed inset-0 z-[70] flex flex-col overflow-y-auto overscroll-contain bg-ss-panel text-white lg:hidden"
+            className="ss26 fixed inset-0 z-[70] flex flex-col overflow-y-auto overscroll-contain bg-ss-navy text-white lg:hidden"
           >
             <div className="ss-container relative flex h-[68px] shrink-0 items-center justify-between">
               <img src={logoBlancoLima} alt="Santos & Saucedo" className="h-[26px] w-auto" width={159} height={26} />

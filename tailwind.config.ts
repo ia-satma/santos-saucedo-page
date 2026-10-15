@@ -5,10 +5,15 @@ export default {
   content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      // Esquinas rectas en todo el sitio (y el admin). Solo rounded-full (avatares) conserva la curva.
       borderRadius: {
-        lg: ".5rem", /* 8px — tarjetas, editorial clásico */
-        md: ".375rem", /* 6px */
-        sm: ".25rem", /* 4px — botones/inputs */
+        DEFAULT: "0px",
+        sm: "0px",
+        md: "0px",
+        lg: "0px",
+        xl: "0px",
+        "2xl": "0px",
+        "3xl": "0px",
       },
       colors: {
         // Flat / base colors (regular buttons)
@@ -79,14 +84,22 @@ export default {
           foreground: "hsl(var(--sidebar-accent-foreground) / <alpha-value>)",
           border: "var(--sidebar-accent-border)"
         },
-        // Marca 2026 (Expediente §). Hex para que funcionen los modificadores /15, /70…
+        // Paleta "Clásica" (nombres del manual 2025). Hex para que funcionen los modificadores /15, /70…
         ss: {
-          ink: "#140F4B",
-          deep: "#110C49",
-          violet: "#170D94",
-          panel: "#0A044B",
-          lime: "#B2EB3E",
-          paper: "#EEEEEE",
+          navy: "#1A1B42", // Azul Profundo: la única superficie oscura
+          marino: "#24255C", // Azul Marino: tinta de titulares, botones, enlaces
+          tinta: "#33333B", // Gris Tinta: texto corrido
+          medio: "#5F5F6B", // Gris Medio: texto secundario
+          claro: "#8A8A94", // Gris Claro: solo numerales decorativos grandes sobre blanco
+          paper: "#F3F1EA", // Hueso
+          rule: "#E1E0D7", // Línea
+          input: "#C9C8BD",
+          lime: "#B2EB3E", // solo sobre Azul Profundo (ver ss26.css)
+          // alias de transición: borrar cuando ningún componente los use
+          ink: "#24255C",
+          deep: "#1A1B42",
+          panel: "#1A1B42",
+          violet: "#1A1B42",
         },
         status: {
           online: "rgb(34 197 94)",
@@ -101,9 +114,6 @@ export default {
         heading: ["var(--font-heading)"],
         support: ["var(--font-support)"],
         mono: ["var(--font-mono)"],
-        publico: ["'Baanoo'", "Georgia", "serif"],
-        optima: ["'Outfit'", "'Segoe UI'", "Arial", "sans-serif"],
-        geomanist: ["'Outfit'", "'Segoe UI'", "Arial", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {

@@ -2,119 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ======================================================
-   CORPORATE IDENTITY FONTS — Manual de Identidad 2022
-   ====================================================== */
-
-/*
-  CORPORATE IDENTITY FONT STRATEGY (Manual de Identidad 2022)
-  ─────────────────────────────────────────────────────────────
-  • Baanoo  → headings / display / counters
-  • Outfit  → body / paragraphs / labels / buttons
-
-  Baanoo is bundled locally. Outfit is loaded from Google Fonts.
-*/
-
-@font-face {
-  font-family: 'Baanoo';
-  src: url('/fonts/Baanoo.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Italic is prohibited by the Manual de Identidad */
-* {
-  font-style: normal !important;
-}
-
-/* Exception: blockquote testimonials */
-blockquote {
-  font-style: italic !important;
-}
+/* Letras: "SS Serif" (Newsreader + Source Serif 4 para cirílico) y "SS Sans"
+   (Source Sans 3), autoalojadas en styles/ss26.css. Sin Google Fonts. */
 
 /* LIGHT MODE */
 :root {
-  /* Santos & Saucedo corporate palette */
-  --ss-blue-night: #12116E;
-  --ss-blue-base: #191884;
-  --ss-blue-accent: #1E1C92;
-  --ss-blue-soft: #D9D8F7;
-  --ss-navy: #1E1C92;
-  --ss-paper: #FFFFFF;
-  --ss-stone: #F4F4F5;
-  --ss-warm-gray: #E4E4E7;
-  --ss-ink: #18181B;
-  --ss-muted-ink: #5F6066;
-  --ss-red: #1E1C92;
-  --ss-gray-1: #F4F4F5;  /* light neutral       */
-  --ss-gray-2: #E4E4E7;  /* divider             */
-  --ss-gray-4: #A1A1AA;  /* secondary text      */
-  --ss-gray-8: #5F6066;  /* muted ink           */
-  --ss-gray-11: #18181B; /* primary ink         */
-  --ss-black: #191884;
-
   --button-outline: rgba(0,0,0, .10);
   --badge-outline: rgba(0,0,0, .05);
   --opaque-button-border-intensity: -8;
-  --elevate-1: rgba(0,0,0, .03);
-  --elevate-2: rgba(0,0,0, .08);
+  --elevate-1: rgba(36, 37, 92, .03);
+  --elevate-2: rgba(36, 37, 92, .06);
 
-  /* ── PALETA LIGHT ─────────────────────────────────────────
-     Blanco puro y grises neutros para Santos & Saucedo.
-     Navy corporativo como acento principal.
+  /* ── PALETA LIGHT ("Clásica", manual 2025) ────────────────
+     Blanco para cuerpos de página, Hueso #F3F1EA como único papel,
+     Azul Marino #24255C como tinta de titulares y acción,
+     Gris Tinta #33333B para el texto. La lima no es acento de interfaz.
   ─────────────────────────────────────────────────────────── */
   --background: 0 0% 100%;         /* #FFFFFF — blanco puro           */
-  --foreground: 243 30% 12%;        /* #18181B — tinta limpia          */
+  --foreground: 239 44% 25%;       /* #24255C — Azul Marino            */
   --card: 0 0% 100%;               /* #FFFFFF — blanco puro           */
-  --card-foreground: 243 30% 12%;
-  --card-border: 240 6% 90%;
-  --border: 240 6% 90%;
+  --card-foreground: 239 44% 25%;
+  --card-border: 54 14% 86%;       /* #E1E0D7 — Línea                 */
+  --border: 54 14% 86%;
   --sidebar: 240 5% 98%;
-  --sidebar-foreground: 243 30% 12%;
-  --sidebar-border: 240 6% 90%;
-  --sidebar-primary: 241 64% 27%;
+  --sidebar-foreground: 240 7% 22%;
+  --sidebar-border: 54 14% 86%;
+  --sidebar-primary: 239 44% 25%;
   --sidebar-primary-foreground: 0 0% 98%;
   --sidebar-accent: 240 5% 96%;
-  --sidebar-accent-foreground: 243 30% 12%;
-  --sidebar-ring: 241 64% 27%;
+  --sidebar-accent-foreground: 239 44% 25%;
+  --sidebar-ring: 239 44% 25%;
   --popover: 0 0% 100%;
-  --popover-foreground: 243 30% 12%;
-  --popover-border: 240 6% 90%;
-  --primary: 241 64% 27%;          /* #1E1C92 — navy corporativo      */
-  --primary-foreground: 0 0% 98%;
-  --secondary: 240 5% 96%;         /* #F4F4F5 — sección alterna       */
-  --secondary-foreground: 240 5% 16%;
-  --muted: 240 5% 96%;
-  --muted-foreground: 240 5% 42%;
-  --body: 0 0% 33%;                /* #545454 ≈ #555 — cuerpo respirado */
-  --accent: 240 5% 96%;
-  --accent-foreground: 243 30% 12%;
-  --brand: 79 75% 52%;             /* #A5E029 — Verde Lima (acento)    */
-  --brand-foreground: 241 64% 27%; /* #1E1C92 — Azul Noche sobre lima  */
+  --popover-foreground: 240 7% 22%;
+  --popover-border: 54 14% 86%;
+  --primary: 239 44% 25%;          /* #24255C — Azul Marino           */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 47 27% 94%;         /* #F3F1EA — Hueso                 */
+  --secondary-foreground: 239 44% 25%;
+  --muted: 47 27% 94%;
+  --muted-foreground: 240 6% 40%;  /* #5F5F6B — Gris Medio            */
+  --body: 240 7% 22%;              /* #33333B — Gris Tinta            */
+  --accent: 47 27% 94%;
+  --accent-foreground: 239 44% 25%;
+  --brand: 239 44% 25%;            /* Azul Marino: la lima deja bg-brand/text-brand */
+  --brand-foreground: 0 0% 100%;
   --destructive: 0 72% 45%;
   --destructive-foreground: 0 0% 98%;
-  --input: 240 6% 84%;
-  --ring: 241 64% 27%;
-  --chart-1: 241 64% 27%;
+  --input: 54 10% 76%;             /* #C9C8BD                         */
+  --ring: 239 44% 25%;
+  --chart-1: 239 44% 25%;
   --chart-2: 240 38% 38%;
   --chart-3: 240 4% 32%;
   --chart-4: 240 4% 52%;
   --chart-5: 240 24% 52%;
-  --font-sans: 'Outfit', 'Segoe UI', Arial, sans-serif;
-  --font-serif: 'Lora', Georgia, 'Times New Roman', serif;
-  --font-heading: 'Lora', Georgia, 'Times New Roman', serif;
-  --font-support: 'Outfit', 'Segoe UI', Arial, sans-serif;
+  --font-sans: "SS Sans", "SS Sans Fallback", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "SS Serif", "SS Serif Fallback", Georgia, "Times New Roman", serif;
+  --font-heading: var(--font-serif);
+  --font-support: var(--font-sans);
   --font-mono: Menlo, monospace;
-  --radius: .5rem;
-  --shadow-2xs: 0 1px 2px 0 hsl(240 24% 16% / 0.04);
-  --shadow-xs:  0 1px 3px 0 hsl(240 24% 16% / 0.06);
-  --shadow-sm:  0 1px 3px 0 hsl(240 24% 16% / 0.08), 0 1px 2px -1px hsl(240 24% 16% / 0.06);
-  --shadow:     0 4px 6px -1px hsl(240 24% 16% / 0.08), 0 2px 4px -2px hsl(240 24% 16% / 0.06);
-  --shadow-md:  0 8px 16px -4px hsl(240 24% 16% / 0.10), 0 4px 6px -4px hsl(240 24% 16% / 0.06);
-  --shadow-lg:  0 16px 24px -6px hsl(240 24% 16% / 0.12), 0 8px 10px -6px hsl(240 24% 16% / 0.06);
-  --shadow-xl:  0 24px 40px -8px hsl(240 24% 16% / 0.14), 0 12px 16px -8px hsl(240 24% 16% / 0.06);
-  --shadow-2xl: 0 40px 64px -12px hsl(240 24% 16% / 0.18);
+  --radius: 0px;
+  /* Sin sombras: la jerarquía la dan la letra y los filetes */
+  --shadow-2xs: none;
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-xl: none;
+  --shadow-2xl: none;
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 

@@ -61,7 +61,7 @@ export function Firma26({ lang }: { lang: Lang26 }) {
         </div>
 
         <figure className="lg:col-span-6 lg:col-start-7 xl:col-span-8 xl:col-start-5">
-          <div ref={photoRef} className="relative overflow-hidden bg-ss-ink xl:aspect-square">
+          <div ref={photoRef} className="relative overflow-hidden bg-ss-navy xl:aspect-square">
             <img
               src={edificioCerro}
               alt={t.alt}
@@ -176,7 +176,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                     →
                   </span>
                 </Link>
-                <span aria-hidden className="ss-row-rule absolute -bottom-px left-0 h-[2px] w-full bg-ss-ink" />
+                <span aria-hidden className="ss-row-rule absolute -bottom-px left-0 h-[2px] w-full bg-ss-navy" />
             </Reveal>
           ))}
         </ol>

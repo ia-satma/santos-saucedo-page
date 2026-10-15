@@ -96,7 +96,7 @@ function NewsItemTranslated({
       </h4>
       <Link 
         href={`/news/${item.slug}`}
-        className="inline-flex items-center gap-1 text-[11px] font-geomanist font-bold tracking-[0.15em] uppercase text-white hover:text-white/80 no-underline transition-colors"
+        className="inline-flex items-center gap-1 text-[11px] font-sans font-bold tracking-[0.15em] uppercase text-white hover:text-white/80 no-underline transition-colors"
         data-testid={`link-news-seemore-${item.id}`}
       >
         {seeMoreText}
@@ -143,7 +143,7 @@ function NewsPanel({ language, news }: { language: LanguageCode; news: News[] })
         <div className="flex items-center gap-3">
           <div className="w-4 h-px bg-brand" aria-hidden="true" />
           <h3
-            className="text-[11px] font-geomanist tracking-[0.3em] uppercase text-white/50"
+            className="text-[11px] font-sans tracking-[0.3em] uppercase text-white/50"
             data-testid="text-news-header"
           >
             {t.news}

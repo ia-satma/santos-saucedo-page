@@ -105,7 +105,7 @@ export function LangSwitch26({ lang, className = "" }: { lang: LanguageCode; cla
             id="ss26-lang-others"
             // Pegada al borde inferior de la cabecera (80px − 44px del botón) / 2 = 18px.
             // end-0: alineada al final del botón (a la izquierda en árabe)
-            className="absolute end-0 top-[calc(100%+18px)] z-10 min-w-[220px] border border-white/15 bg-ss-panel py-2 shadow-[0_24px_48px_-16px_rgba(0,0,0,0.55)]"
+            className="absolute end-0 top-[calc(100%+18px)] z-10 min-w-[220px] border border-white/15 bg-ss-navy py-2 shadow-[0_24px_48px_-16px_rgba(0,0,0,0.55)]"
           >
             <p id="ss26-lang-others-title" className="ss-label px-5 pb-1 pt-2 text-white/60">
               {t.others}

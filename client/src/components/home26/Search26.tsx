@@ -217,7 +217,7 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
       aria-label={t.dialog}
       {...attrs}
       data-testid="modal-search"
-      className="ss26 fixed inset-0 z-[70] flex flex-col overflow-y-auto overscroll-contain bg-ss-panel text-white"
+      className="ss26 fixed inset-0 z-[70] flex flex-col overflow-y-auto overscroll-contain bg-ss-navy text-white"
     >
       <div className="ss-container flex h-[68px] shrink-0 items-center justify-between lg:h-20">
         <img src={logoBlancoLima} alt="Santos & Saucedo" className="h-[26px] w-auto lg:h-[30px]" width={183} height={30} />

@@ -37,7 +37,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
     <footer
       id="footer"
       {...chrome.attrs}
-      className="ss26 relative isolate overflow-hidden bg-ss-ink text-white"
+      className="ss26 relative isolate overflow-hidden bg-ss-navy text-white"
       data-testid="footer"
     >
       <SectionMark className="absolute -end-[4%] -top-[30%] -z-10 h-[170%] bg-white opacity-[0.03]" />

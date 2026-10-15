@@ -1,40 +1,92 @@
 /* ======================================================
-   SANTOS & SAUCEDO 2026 — "Expediente §"
-   Marca 2026: marino + lima, titulares condensados en
-   mayúsculas, Source Sans en el texto, § como sistema.
+   SANTOS & SAUCEDO 2026 — sistema "Clásica"
+   Romana de remates (Newsreader) para titulares, cifras y
+   entradas; Source Sans 3 para texto, interfaz y etiquetas.
+   Colores del manual 2025: Azul Profundo plano para las
+   bandas oscuras, Azul Marino como tinta de titulares, Gris
+   Tinta para el texto, blanco y un solo papel Hueso.
+   Lima solo como señal sobre Azul Profundo (logo, glifo §,
+   filete del menú actual y foco).
    Fuentes OFL autoalojadas (licencias en ./fonts/OFL-*.txt).
    ====================================================== */
 
-@font-face {
-  font-family: "SS Display";
-  src: url("./fonts/BebasNeue-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "SS Sans";
-  src: url("./fonts/SourceSans3-var.woff2") format("woff2");
-  font-weight: 200 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "SS Sans";
-  src: url("./fonts/SourceSans3-Italic-var.woff2") format("woff2");
-  font-weight: 200 900;
-  font-style: italic;
-  font-display: swap;
-}
-
+/* Newsreader: opsz 12–72 y peso 300–600 (latín y latín extendido A).
+   El cirílico lo pone Source Serif 4 dentro de la misma familia. */
 @font-face {
   font-family: "SS Serif";
-  src: url("./fonts/SourceSerif4-Italic-var.woff2") format("woff2");
+  src: url("./fonts/Newsreader-Roman-latin.woff2") format("woff2");
   font-weight: 300 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-017F, U+0131, U+0152-0153, U+02BB-02DC, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "SS Serif";
+  src: url("./fonts/SourceSerif4-Roman-cyrillic.woff2") format("woff2");
+  font-weight: 300 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* Itálica estática (peso 300, opsz 60): solo la frase de "Lo que creemos" */
+@font-face {
+  font-family: "SS Serif";
+  src: url("./fonts/Newsreader-Italic300-latin.woff2") format("woff2");
+  font-weight: 300;
   font-style: italic;
   font-display: swap;
+  unicode-range: U+0000-017F, U+2000-206F;
+}
+@font-face {
+  font-family: "SS Sans";
+  src: url("./fonts/SourceSans3-r-latin.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-017F, U+0131, U+0152-0153, U+02BB-02DC, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "SS Sans";
+  src: url("./fonts/SourceSans3-r-cyrillic.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: "SS Sans";
+  src: url("./fonts/SourceSans3-i-latin.woff2") format("woff2");
+  font-weight: 400 600;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0000-017F, U+0131, U+0152-0153, U+02BB-02DC, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "SS Sans";
+  src: url("./fonts/SourceSans3-i-cyrillic.woff2") format("woff2");
+  font-weight: 400 600;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+/* Respaldos con métricas ajustadas: mientras llegan las fuentes, el texto
+   ocupa casi lo mismo y el cambio no mueve la página. */
+@font-face {
+  font-family: "SS Serif Fallback";
+  src: local("Georgia"), local("Times New Roman");
+  size-adjust: 94%;
+  ascent-override: 96%;
+  descent-override: 26%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "SS Sans Fallback";
+  src: local("Arial"), local("Helvetica");
+  size-adjust: 92%;
+  ascent-override: 103%;
+  descent-override: 29%;
+  line-gap-override: 0%;
 }
 
 /* Alto de Header26 (h-[68px] / lg:h-20). Los elementos sticky de las páginas
@@ -53,18 +105,36 @@ html:has(header.ss26) {
   scroll-padding-top: var(--ss-header-h);
 }
 
-.ss26 {
-  --ss-ink: #140f4b;
-  --ss-deep: #110c49;
-  --ss-violet: #170d94;
-  --ss-panel: #0a044b;
+/* Paleta (nombres del manual 2025). Azul Profundo es la única superficie oscura. */
+.ss26,
+.editorial-page-hero,
+[data-testid="section-news-hero"] {
+  --ss-navy: #1a1b42;
+  --ss-marino: #24255c;
+  --ss-tinta: #33333b;
+  --ss-medio: #5f5f6b;
+  --ss-claro: #8a8a94;
+  --ss-paper: #f3f1ea;
+  --ss-rule: #e1e0d7;
+  --ss-input: #c9c8bd;
   --ss-lime: #b2eb3e;
-  --ss-paper: #eeeeee;
+  --ss-on-navy: rgb(255 255 255 / 0.84);
+  --ss-on-navy-2: rgb(255 255 255 / 0.74);
+  --ss-on-navy-rule: rgb(255 255 255 / 0.14);
+  --ss-font-serif: "SS Serif", "SS Serif Fallback", Georgia, "Times New Roman", serif;
+  --ss-font-sans: "SS Sans", "SS Sans Fallback", system-ui, -apple-system, "Segoe UI", sans-serif;
   --ss-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --ss-pad: clamp(20px, 5vw, 72px);
+  /* Alias de transición (se borran cuando ningún componente los use) */
+  --ss-ink: var(--ss-marino);
+  --ss-deep: var(--ss-navy);
+  --ss-panel: var(--ss-navy);
+  --ss-violet: var(--ss-navy);
+}
 
-  font-family: "SS Sans", "Source Sans 3", system-ui, sans-serif;
-  color: var(--ss-ink);
+.ss26 {
+  font-family: var(--ss-font-sans);
+  color: var(--ss-tinta);
   background: #fff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -97,9 +167,10 @@ html:has(.ss26) body {
   font-size: inherit;
 }
 
-.ss26 ::selection {
-  background: var(--ss-lime);
-  color: var(--ss-ink);
+/* Selección: gris azulado, nunca lima */
+::selection {
+  background: #d9d8e6;
+  color: #1a1b42;
 }
 
 /* Contenedor: 1320px de contenido + márgenes laterales fluidos */
@@ -110,63 +181,79 @@ html:has(.ss26) body {
   padding-inline: var(--ss-pad);
 }
 
-/* Titulares: condensada en mayúsculas, como la presentación 2026 */
+/* Titulares: romana de remates en caja baja; el tamaño óptico lo elige la fuente */
 .ss-display {
-  font-family: "SS Display", "Bebas Neue", "Arial Narrow", sans-serif;
+  font-family: var(--ss-font-serif);
   font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 0.01em;
-  line-height: 0.88;
-  font-feature-settings: "kern", "lnum";
+  font-optical-sizing: auto;
+  text-transform: none;
+  letter-spacing: -0.018em;
+  line-height: 1.06;
+  font-feature-settings: "kern", "liga", "lnum";
   text-wrap: balance;
 }
+/* Sobre Azul Profundo la letra blanca engorda: un punto más fina */
+:is(.ss-navy, .ss-gradient, .ss-panel) .ss-display {
+  font-weight: 350;
+}
 
-/* Etiquetas y cabeceras de sección */
+/* Etiquetas: la única mayúscula del sistema (más el menú) */
 .ss-label {
-  font-family: "SS Sans", system-ui, sans-serif;
+  font-family: var(--ss-font-sans);
   font-weight: 600;
   font-size: 12px;
-  line-height: 1.35;
-  letter-spacing: 0.14em;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-/* Romana con remates, itálica, solo para la creencia y citas.
-   index.css anula las itálicas con `* { font-style: normal !important }`. */
-.ss26 .ss-serif {
-  font-family: "SS Serif", Georgia, "Times New Roman", serif;
-  font-style: italic !important;
-  font-weight: 350;
-  font-optical-sizing: auto;
+/* Itálica verdadera, la única del sitio: la frase de "Lo que creemos" */
+.ss-serif {
+  font-family: var(--ss-font-serif);
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
 }
 
 .ss-prose {
   font-size: 18px;
-  line-height: 1.68;
+  line-height: 1.65;
   text-wrap: pretty;
   hanging-punctuation: first;
+  hyphens: manual;
 }
 
+/* Entrada sobre claro: romana 400 en tamaño de texto, Gris Tinta */
 .ss-lead {
-  font-size: clamp(18px, 1.1vw + 12px, 22px);
+  font-family: var(--ss-font-serif);
+  font-optical-sizing: auto;
+  font-size: clamp(19px, 0.6vw + 14px, 22px);
   line-height: 1.55;
-  font-weight: 300;
+  font-weight: 400;
+  letter-spacing: -0.003em;
+  color: var(--ss-tinta);
   text-wrap: pretty;
+}
+/* Entrada sobre Azul Profundo: sans 400 al 84 % (la romana fina se lee débil en teléfono) */
+:is(#hero, .ss-navy, .ss-gradient, .ss-panel, .editorial-page-hero) .ss-lead {
+  font-family: var(--ss-font-sans);
+  font-size: clamp(18px, 0.5vw + 14px, 21px);
+  letter-spacing: 0;
+  color: var(--ss-on-navy);
 }
 
 .ss-num {
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-/* Fondos de la marca */
-.ss-gradient {
-  background-color: var(--ss-deep);
-  background-image: linear-gradient(148deg, #110c49 0%, #130e5b 58%, #170d94 100%);
-}
-
+/* Fondos: Azul Profundo plano; .ss-gradient queda como alias de .ss-navy */
+.ss-navy,
+.ss-gradient,
 .ss-panel {
-  background-color: var(--ss-panel);
+  background-color: var(--ss-navy);
+  background-image: none;
 }
 
 .ss-paper {
@@ -188,14 +275,20 @@ a:hover .ss-link,
 a:focus-visible .ss-link {
   background-size: 100% 1px;
 }
+/* Menú: el elemento actual lleva el filete lima de 2 px (también en subrutas,
+   aria-current="true"); al pasar el cursor, un filete blanco de 1 px. */
 .ss-link--lime {
-  background-image: linear-gradient(var(--ss-lime), var(--ss-lime));
-  background-size: 0% 2px;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
 }
 .ss-link--lime:hover,
-.ss-link--lime[aria-current="page"],
 a:hover .ss-link--lime,
 a:focus-visible .ss-link--lime {
+  background-size: 100% 1px;
+}
+.ss-link--lime[aria-current],
+[aria-current] > .ss-link--lime {
+  background-image: linear-gradient(var(--ss-lime), var(--ss-lime));
   background-size: 100% 2px;
 }
 
@@ -228,17 +321,26 @@ a:focus-visible > .ss-arrow:dir(rtl) {
    Fuera quedan los botones de idioma (lang="ja"…): su código (JA) es latino y conserva
    el espaciado, también en la interfaz en español o inglés.
    También en los encabezados de las páginas internas y de la noticia, que quedan fuera de
-   .ss26 (la fecha de la noticia y los enlaces de vuelta llevaban el espaciado en chino).
-   Especificidad 0,4,1: gana a las utilidades tracking-[…] de la cabecera y a la regla de
-   los enlaces de vuelta (0,2,0). */
+   .ss26. Especificidad 0,4,1: gana a las utilidades tracking-[…] de la cabecera y a la
+   regla de los enlaces de vuelta (0,2,0). */
 :is(.ss26, .editorial-page-hero, [data-testid="section-news-hero"]) :is(.ss-label, .ss-display, [class*="tracking-"], [data-testid^="link-back-to"]):is(:lang(ar), :lang(zh), :lang(ja), :lang(ko)):not(button[lang] *) {
   letter-spacing: 0;
 }
+/* La romana cubre latín y, con Source Serif 4, cirílico. En chino, japonés, coreano y
+   árabe los titulares pasan a la sans (con las letras del sistema), peso 500. */
+:is(.ss-display, .ss-serif, .ss-lead):is(:lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
+  font-family: var(--ss-font-sans);
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+:is(.ss-display, .ss-serif, .ss-lead):lang(ar) {
+  line-height: 1.4;
+}
 
 /* Menú de escritorio en alemán, francés y ruso: etiquetas más largas que en ES/EN.
-   Medido con el código de idioma junto al globo: a 1024 px el alemán se salía 36 px,
-   el francés 45 y el ruso 1; a 1280 px, el alemán 12 y el francés 56. Se cierran
-   espaciado entre letras y huecos solo en esos idiomas y anchos, sin recortar texto. */
+   A 1024–1279 px se cierran espaciado y huecos solo en esos idiomas, sin recortar texto. */
 @media (min-width: 1024px) and (max-width: 1279.98px) {
   #main-navigation > ul:is(:lang(de), :lang(fr), :lang(ru)) {
     gap: 12px;
@@ -247,36 +349,31 @@ a:focus-visible > .ss-arrow:dir(rtl) {
     letter-spacing: 0.06em;
   }
 }
-@media (min-width: 1280px) and (max-width: 1439.98px) {
-  #main-navigation > ul:is(:lang(de), :lang(fr)) {
-    gap: 20px;
-  }
-  #main-navigation > ul:is(:lang(de), :lang(fr)) a {
-    letter-spacing: 0.12em;
-  }
-}
 
-/* Menú móvil: Bebas solo cubre el latín. En ruso, chino, japonés, coreano y árabe los
-   enlaces usan la sans, sin mayúsculas forzadas, como los titulares de página (index.css). */
-#mobile-menu .ss-display:is(:lang(ru), :lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
-  font-family: "SS Sans", "Source Sans 3", system-ui, sans-serif;
+/* Menú móvil: romana 350 sobre Azul Profundo; en CJK y árabe, la sans */
+#mobile-menu .ss-display {
+  font-size: 34px;
+  line-height: 1.15;
+  font-weight: 350;
+}
+#mobile-menu .ss-display:is(:lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
+  font-family: var(--ss-font-sans);
   font-weight: 600;
   font-size: 32px;
   line-height: 1.2;
-  text-transform: none;
 }
 
-/* Foco visible. Fondo oscuro (por defecto): contorno lima + anillo marino.
+/* Foco visible. Fondo oscuro (por defecto): contorno lima + anillo Azul Profundo.
    Especificidad 0,3,0 para ganar a `.dark a:focus-visible` de index.css. */
 .ss26 :is(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
   outline: 3px solid var(--ss-lime);
   outline-offset: 2px;
-  box-shadow: 0 0 0 2px var(--ss-ink);
+  box-shadow: 0 0 0 2px var(--ss-navy);
 }
-/* Fondo claro (contrato: toda sección clara lleva .ss-paper): marino, sin lima
-   (lima sobre papel ≈ 1.2:1). */
-.ss-paper :is(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
-  outline: 3px solid #140f4b;
+/* Fondo claro (secciones blancas con data-surface="light" y papel .ss-paper):
+   contorno Azul Marino, sin lima (lima sobre claro ≈ 1.3:1). */
+:is(.ss-paper, [data-surface="light"]) :is(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
+  outline: 3px solid var(--ss-marino, #24255c);
   outline-offset: 2px;
   box-shadow: none;
 }
@@ -296,9 +393,12 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   transform: none;
 }
 
-/* Tratamiento común de fotografía: algo menos de color, algo más de contraste */
+/* Fotografía: retratos en escala de grises; .ss-photo--colour para el edificio */
 .ss-photo {
-  filter: saturate(0.82) contrast(1.06);
+  filter: grayscale(1) contrast(1.04);
+}
+.ss-photo--colour {
+  filter: saturate(0.85) contrast(1.02);
 }
 
 /* Foto que se asienta: escala 1.06 → 1 una vez (estado inicial solo con JS) */
@@ -314,14 +414,18 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   opacity: 1;
 }
 
-/* Barra lima que se dibuja una vez (sin JS queda dibujada) */
+/* Filete corto (24 × 1 px) que se dibuja una vez (sin JS queda dibujado).
+   Sobre Azul Profundo, blanco al 14 %; sobre claro, Línea. */
 .ss-bar {
   display: inline-block;
-  width: 28px;
-  height: 2px;
-  background: var(--ss-lime);
+  width: 24px;
+  height: 1px;
+  background: var(--ss-rule);
   transform-origin: left center;
   transition: transform 400ms var(--ss-ease) calc(var(--ss-delay, 0s) + 150ms);
+}
+:is(.ss-navy, .ss-gradient, .ss-panel, .editorial-page-hero) .ss-bar {
+  background: var(--ss-on-navy-rule);
 }
 .ss-js .ss-bar {
   transform: scaleX(0);
@@ -333,12 +437,12 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 
 /* Fila de prácticas: la subnumeración § pasa de tenue a pleno */
 .ss-row .ss-row-num {
-  color: rgb(20 15 75 / 0.65);
+  color: rgb(36 37 92 / 0.65);
   transition: color 320ms var(--ss-ease);
 }
 .ss-row:hover .ss-row-num,
 .ss-row:focus-within .ss-row-num {
-  color: var(--ss-ink);
+  color: var(--ss-marino);
 }
 .ss-row .ss-row-rule {
   transform: scaleX(0);

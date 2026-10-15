@@ -497,7 +497,7 @@ export default function NewsDetail() {
         {/* Carga con la misma banda de marca que la vista final sin foto (el caso habitual):
             degradado, mismo margen superior y marcadores de vuelta, eyebrow, titular y fecha */}
         <section className="relative" aria-busy="true">
-          <div className="ss-gradient bg-ss-deep bg-[length:100%_max(100%,56vw)] bg-left-top bg-no-repeat flex w-full">
+          <div className="ss-gradient bg-ss-navy bg-[length:100%_max(100%,56vw)] bg-left-top bg-no-repeat flex w-full">
             <div className="max-w-4xl mx-auto px-6 lg:px-12 pt-[clamp(40px,8vw,112px)] pb-[clamp(56px,7vw,96px)] w-full">
               <Skeleton className="h-4 w-36 mb-6 bg-white/10" />
               <Skeleton className="h-3 w-40 mb-5 bg-white/10" />
@@ -565,7 +565,7 @@ export default function NewsDetail() {
         {/* La banda alta con el titular abajo solo tiene sentido sobre una foto. Sin foto, el
             titular arranca arriba como en los demás encabezados y su posición ya no depende del
             alto de la ventana (a 768×900 quedaba a 248 px de la cabecera). */}
-        <div className={`ss-gradient bg-ss-deep bg-[length:100%_max(100%,56vw)] bg-left-top bg-no-repeat relative flex w-full overflow-hidden ${heroImage ? "min-h-[max(50vh,400px)] items-end" : ""}`}>
+        <div className={`ss-gradient bg-ss-navy bg-[length:100%_max(100%,56vw)] bg-left-top bg-no-repeat relative flex w-full overflow-hidden ${heroImage ? "min-h-[max(50vh,400px)] items-end" : ""}`}>
           <NewsHeroImage key={heroImage} src={heroImage} />
           
           <div className="relative w-full">
