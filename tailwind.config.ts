@@ -15,6 +15,17 @@ export default {
         "2xl": "0px",
         "3xl": "0px",
       },
+      // Sin sombras de Tailwind: la jerarquía la dan la letra y los filetes.
+      boxShadow: {
+        "2xs": "none",
+        xs: "none",
+        sm: "none",
+        DEFAULT: "none",
+        md: "none",
+        lg: "none",
+        xl: "none",
+        "2xl": "none",
+      },
       colors: {
         // Flat / base colors (regular buttons)
         background: "hsl(var(--background) / <alpha-value>)",
