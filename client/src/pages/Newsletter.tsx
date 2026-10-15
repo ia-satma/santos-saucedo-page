@@ -1,11 +1,9 @@
 import { motion } from "framer-motion";
-import { Bell, FileText, Calendar, Briefcase } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Form,
@@ -21,6 +19,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Eyebrow } from "@/components/editorial";
 
 // "Clásica": titulares en romana 400, Azul Marino, caja de oración y al inicio; texto en Gris Tinta.
 const h2Class = "font-heading font-normal text-ss-marino text-[clamp(24px,2vw,30px)] leading-[1.18] tracking-[-0.012em] [text-wrap:balance]";
@@ -112,22 +111,12 @@ export default function Newsletter() {
   const content = {
     en: {
       title: "Newsletter",
-      subtitle: "Stay informed with the latest legal insights and firm updates",
+      subtitle: "The Labor Monitor's analysis, by email",
       archivesTitle: "Past Newsletters",
       archivesSubtitle: "Access our previous editions and stay updated on our legal coverage.",
-      archiveItem1Title: "Q4 2024 Legal Update",
-      archiveItem1Date: "December 2024",
-      archiveItem1Description: "Year-end review of significant legal developments in Mexico and key regulatory changes.",
-      archiveItem2Title: "Q3 2024 Legal Update",
-      archiveItem2Date: "September 2024",
-      archiveItem2Description: "Analysis of tax reforms and corporate law amendments affecting businesses in Mexico.",
-      archiveItem3Title: "Q2 2024 Legal Update",
-      archiveItem3Date: "June 2024",
-      archiveItem3Description: "Overview of energy sector regulations and environmental compliance requirements.",
       viewArchive: "View Newsletter",
-      comingSoon: "Full archive coming soon",
       formTitle: "Subscribe to Our Newsletter",
-      formSubtitle: "Join our mailing list to receive exclusive legal updates, industry insights, and firm news directly to your inbox.",
+      formSubtitle: "Receive the Labor Monitor's analysis of labor and social security law, and the firm's news, by email.",
       emailLabel: "Email Address",
       emailPlaceholder: "Enter your email address",
       firstNameLabel: "First Name (optional)",
@@ -139,7 +128,7 @@ export default function Newsletter() {
       whatYouReceive: "What You'll Receive",
       benefit1Title: "Legal Updates",
       benefit1Description: "Stay current with important changes in Mexican law and regulations that may affect your business.",
-      benefit2Title: "Industry Insights",
+      benefit2Title: "Sector Analysis",
       benefit2Description: "In-depth analysis and commentary on legal developments across key sectors.",
       benefit3Title: "Event Invitations",
       benefit3Description: "Exclusive invitations to webinars, seminars, and networking events hosted by our firm.",
@@ -151,22 +140,12 @@ export default function Newsletter() {
     },
     es: {
       title: "Boletines",
-      subtitle: "Manténgase informado con los últimos insights legales y actualizaciones de la firma",
+      subtitle: "Los análisis del Monitor Laboral, por correo electrónico",
       archivesTitle: "Boletines anteriores",
       archivesSubtitle: "Acceda a nuestras ediciones anteriores y manténgase informado sobre nuestra cobertura legal.",
-      archiveItem1Title: "Actualización legal Q4 2024",
-      archiveItem1Date: "Diciembre 2024",
-      archiveItem1Description: "Revisión de fin de año de los desarrollos legales significativos en México y cambios regulatorios clave.",
-      archiveItem2Title: "Actualización legal Q3 2024",
-      archiveItem2Date: "Septiembre 2024",
-      archiveItem2Description: "Análisis de reformas fiscales y enmiendas de derecho corporativo que afectan a empresas en México.",
-      archiveItem3Title: "Actualización legal Q2 2024",
-      archiveItem3Date: "Junio 2024",
-      archiveItem3Description: "Visión general de regulaciones del sector energético y requisitos de cumplimiento ambiental.",
       viewArchive: "Ver boletín",
-      comingSoon: "Archivo completo próximamente",
       formTitle: "Suscríbase a nuestro boletín",
-      formSubtitle: "Únase a nuestra lista de correo para recibir actualizaciones legales exclusivas, insights de la industria y noticias de la firma directamente en su bandeja de entrada.",
+      formSubtitle: "Reciba por correo electrónico los análisis del Monitor Laboral sobre derecho laboral y seguridad social, y las noticias de la firma.",
       emailLabel: "Correo electrónico",
       emailPlaceholder: "Ingrese su correo electrónico",
       firstNameLabel: "Nombre (opcional)",
@@ -178,7 +157,7 @@ export default function Newsletter() {
       whatYouReceive: "Lo que recibirá",
       benefit1Title: "Actualizaciones legales",
       benefit1Description: "Manténgase al día con cambios importantes en la ley y regulaciones mexicanas que pueden afectar su negocio.",
-      benefit2Title: "Insights de la industria",
+      benefit2Title: "Análisis por sector",
       benefit2Description: "Análisis profundo y comentarios sobre desarrollos legales en sectores clave.",
       benefit3Title: "Invitaciones a eventos",
       benefit3Description: "Invitaciones exclusivas a webinars, seminarios y eventos de networking organizados por nuestra firma.",
@@ -193,17 +172,7 @@ export default function Newsletter() {
       subtitle: "Bleiben Sie über juristische Entwicklungen informiert",
       archivesTitle: "Frühere Newsletter",
       archivesSubtitle: "Zugriff auf unsere früheren Ausgaben und bleiben Sie über unsere rechtliche Berichterstattung auf dem Laufenden.",
-      archiveItem1Title: "Q4 2024 Rechtliches Update",
-      archiveItem1Date: "Dezember 2024",
-      archiveItem1Description: "Jahresrückblick auf bedeutende rechtliche Entwicklungen in Mexiko und wichtige regulatorische Änderungen.",
-      archiveItem2Title: "Q3 2024 Rechtliches Update",
-      archiveItem2Date: "September 2024",
-      archiveItem2Description: "Analyse von Steuerreformen und Änderungen des Gesellschaftsrechts, die Unternehmen in Mexiko betreffen.",
-      archiveItem3Title: "Q2 2024 Rechtliches Update",
-      archiveItem3Date: "Juni 2024",
-      archiveItem3Description: "Überblick über Vorschriften im Energiesektor und Anforderungen zur Umwelt-Compliance.",
       viewArchive: "Newsletter ansehen",
-      comingSoon: "Vollständiges Archiv kommt bald",
       formTitle: "Abonnieren Sie unseren Newsletter",
       formSubtitle: "Treten Sie unserer Mailingliste bei, um exklusive rechtliche Updates, Brancheneinblicke und Firmennachrichten direkt in Ihren Posteingang zu erhalten.",
       emailLabel: "E-Mail-Adresse",
@@ -232,17 +201,7 @@ export default function Newsletter() {
       subtitle: "获取法律动态资讯",
       archivesTitle: "往期通讯",
       archivesSubtitle: "访问我们的往期版本，了解我们的法律报道。",
-      archiveItem1Title: "2024年第四季度法律动态",
-      archiveItem1Date: "2024年12月",
-      archiveItem1Description: "墨西哥重要法律发展及关键监管变化的年终回顾。",
-      archiveItem2Title: "2024年第三季度法律动态",
-      archiveItem2Date: "2024年9月",
-      archiveItem2Description: "影响墨西哥企业的税收改革和公司法修订分析。",
-      archiveItem3Title: "2024年第二季度法律动态",
-      archiveItem3Date: "2024年6月",
-      archiveItem3Description: "能源行业法规和环境合规要求概述。",
       viewArchive: "查看通讯",
-      comingSoon: "完整档案即将推出",
       formTitle: "订阅我们的通讯",
       formSubtitle: "加入我们的邮件列表，直接在收件箱中接收独家法律更新、行业见解和公司新闻。",
       emailLabel: "电子邮件地址",
@@ -271,17 +230,7 @@ export default function Newsletter() {
       subtitle: "최신 법률 동향과 회사 소식을 받아보세요",
       archivesTitle: "이전 뉴스레터",
       archivesSubtitle: "이전 호에 접근하여 법률 보도를 확인하세요.",
-      archiveItem1Title: "2024년 4분기 법률 업데이트",
-      archiveItem1Date: "2024년 12월",
-      archiveItem1Description: "멕시코의 중요한 법률 발전과 주요 규제 변화에 대한 연말 검토.",
-      archiveItem2Title: "2024년 3분기 법률 업데이트",
-      archiveItem2Date: "2024년 9월",
-      archiveItem2Description: "멕시코 기업에 영향을 미치는 세제 개혁 및 회사법 개정 분석.",
-      archiveItem3Title: "2024년 2분기 법률 업데이트",
-      archiveItem3Date: "2024년 6월",
-      archiveItem3Description: "에너지 부문 규정 및 환경 준수 요구 사항 개요.",
       viewArchive: "뉴스레터 보기",
-      comingSoon: "전체 아카이브 곧 제공",
       formTitle: "뉴스레터 구독",
       formSubtitle: "메일링 리스트에 가입하여 독점 법률 업데이트, 업계 통찰력 및 회사 소식을 받아보세요.",
       emailLabel: "이메일 주소",
@@ -310,17 +259,7 @@ export default function Newsletter() {
       subtitle: "最新の法律動向とファーム情報をお届けします",
       archivesTitle: "過去のニュースレター",
       archivesSubtitle: "過去の号にアクセスして、法律関連の報道をご覧ください。",
-      archiveItem1Title: "2024年第4四半期 法律アップデート",
-      archiveItem1Date: "2024年12月",
-      archiveItem1Description: "メキシコの重要な法律動向と主要な規制変更の年末レビュー。",
-      archiveItem2Title: "2024年第3四半期 法律アップデート",
-      archiveItem2Date: "2024年9月",
-      archiveItem2Description: "メキシコのビジネスに影響を与える税制改革と会社法改正の分析。",
-      archiveItem3Title: "2024年第2四半期 法律アップデート",
-      archiveItem3Date: "2024年6月",
-      archiveItem3Description: "エネルギーセクター規制と環境コンプライアンス要件の概要。",
       viewArchive: "ニュースレターを見る",
-      comingSoon: "完全なアーカイブ近日公開",
       formTitle: "ニュースレターを購読する",
       formSubtitle: "メーリングリストに登録して、法律の最新情報、業界インサイト、ファームニュースを直接受信箱にお届けします。",
       emailLabel: "メールアドレス",
@@ -349,17 +288,7 @@ export default function Newsletter() {
       subtitle: "ابق على اطلاع بأحدث الرؤى القانونية وتحديثات المكتب",
       archivesTitle: "النشرات الإخبارية السابقة",
       archivesSubtitle: "الوصول إلى إصداراتنا السابقة ومتابعة تغطيتنا القانونية.",
-      archiveItem1Title: "تحديث قانوني للربع الرابع 2024",
-      archiveItem1Date: "ديسمبر 2024",
-      archiveItem1Description: "مراجعة نهاية العام للتطورات القانونية المهمة في المكسيك والتغييرات التنظيمية الرئيسية.",
-      archiveItem2Title: "تحديث قانوني للربع الثالث 2024",
-      archiveItem2Date: "سبتمبر 2024",
-      archiveItem2Description: "تحليل الإصلاحات الضريبية وتعديلات قانون الشركات التي تؤثر على الأعمال في المكسيك.",
-      archiveItem3Title: "تحديث قانوني للربع الثاني 2024",
-      archiveItem3Date: "يونيو 2024",
-      archiveItem3Description: "نظرة عامة على لوائح قطاع الطاقة ومتطلبات الامتثال البيئي.",
       viewArchive: "عرض النشرة الإخبارية",
-      comingSoon: "الأرشيف الكامل قريباً",
       formTitle: "اشترك في نشرتنا الإخبارية",
       formSubtitle: "انضم إلى قائمتنا البريدية لتلقي التحديثات القانونية الحصرية ورؤى الصناعة وأخبار المكتب مباشرة في بريدك الإلكتروني.",
       emailLabel: "عنوان البريد الإلكتروني",
@@ -388,17 +317,7 @@ export default function Newsletter() {
       subtitle: "Будьте в курсе последних юридических новостей и обновлений фирмы",
       archivesTitle: "Предыдущие рассылки",
       archivesSubtitle: "Доступ к нашим предыдущим выпускам и актуальная информация о правовом освещении.",
-      archiveItem1Title: "Правовое обновление за 4 квартал 2024",
-      archiveItem1Date: "Декабрь 2024",
-      archiveItem1Description: "Годовой обзор значительных правовых изменений в Мексике и ключевых регуляторных изменений.",
-      archiveItem2Title: "Правовое обновление за 3 квартал 2024",
-      archiveItem2Date: "Сентябрь 2024",
-      archiveItem2Description: "Анализ налоговых реформ и поправок к корпоративному законодательству, затрагивающих бизнес в Мексике.",
-      archiveItem3Title: "Правовое обновление за 2 квартал 2024",
-      archiveItem3Date: "Июнь 2024",
-      archiveItem3Description: "Обзор регулирования энергетического сектора и требований экологического соответствия.",
       viewArchive: "Просмотреть рассылку",
-      comingSoon: "Полный архив скоро появится",
       formTitle: "Подпишитесь на нашу рассылку",
       formSubtitle: "Присоединяйтесь к нашему списку рассылки для получения эксклюзивных правовых обновлений, отраслевых аналитических материалов и новостей фирмы.",
       emailLabel: "Адрес электронной почты",
@@ -427,17 +346,7 @@ export default function Newsletter() {
       subtitle: "Restez informé des dernières actualités juridiques et mises à jour du cabinet",
       archivesTitle: "Newsletters précédentes",
       archivesSubtitle: "Accédez à nos éditions précédentes et restez informé de notre couverture juridique.",
-      archiveItem1Title: "Mise à jour juridique T4 2024",
-      archiveItem1Date: "Décembre 2024",
-      archiveItem1Description: "Bilan de fin d'année des développements juridiques significatifs au Mexique et des changements réglementaires clés.",
-      archiveItem2Title: "Mise à jour juridique T3 2024",
-      archiveItem2Date: "Septembre 2024",
-      archiveItem2Description: "Analyse des réformes fiscales et des amendements au droit des sociétés affectant les entreprises au Mexique.",
-      archiveItem3Title: "Mise à jour juridique T2 2024",
-      archiveItem3Date: "Juin 2024",
-      archiveItem3Description: "Aperçu des réglementations du secteur énergétique et des exigences de conformité environnementale.",
       viewArchive: "Voir la newsletter",
-      comingSoon: "Archives complètes bientôt disponibles",
       formTitle: "Abonnez-vous à notre newsletter",
       formSubtitle: "Rejoignez notre liste de diffusion pour recevoir des mises à jour juridiques exclusives, des analyses sectorielles et des nouvelles du cabinet.",
       emailLabel: "Adresse e-mail",
@@ -466,17 +375,7 @@ export default function Newsletter() {
       subtitle: "Rimani informato sugli ultimi aggiornamenti legali e novità dello studio",
       archivesTitle: "Newsletter precedenti",
       archivesSubtitle: "Accedi alle nostre edizioni precedenti e rimani aggiornato sulla nostra copertura legale.",
-      archiveItem1Title: "Aggiornamento legale Q4 2024",
-      archiveItem1Date: "Dicembre 2024",
-      archiveItem1Description: "Riepilogo di fine anno degli sviluppi legali significativi in Messico e dei principali cambiamenti normativi.",
-      archiveItem2Title: "Aggiornamento legale Q3 2024",
-      archiveItem2Date: "Settembre 2024",
-      archiveItem2Description: "Analisi delle riforme fiscali e delle modifiche al diritto societario che interessano le imprese in Messico.",
-      archiveItem3Title: "Aggiornamento legale Q2 2024",
-      archiveItem3Date: "Giugno 2024",
-      archiveItem3Description: "Panoramica delle normative del settore energetico e dei requisiti di conformità ambientale.",
       viewArchive: "Visualizza newsletter",
-      comingSoon: "Archivio completo in arrivo",
       formTitle: "Iscriviti alla nostra newsletter",
       formSubtitle: "Unisciti alla nostra mailing list per ricevere aggiornamenti legali esclusivi, approfondimenti del settore e notizie dello studio.",
       emailLabel: "Indirizzo e-mail",
@@ -504,24 +403,24 @@ export default function Newsletter() {
 
   const t = content[language] || content.en;
 
+  // Ediciones vigentes del boletín para "Boletines anteriores" (fecha, título, descripción).
+  // Vacía: la sección no se muestra hasta que haya ediciones recientes que enlazar.
+  const archiveIssues: { title: string; date: string; description: string }[] = [];
+
   const benefits = [
     {
-      icon: FileText,
       title: t.benefit1Title,
       description: t.benefit1Description,
     },
     {
-      icon: Briefcase,
       title: t.benefit2Title,
       description: t.benefit2Description,
     },
     {
-      icon: Calendar,
       title: t.benefit3Title,
       description: t.benefit3Description,
     },
     {
-      icon: Bell,
       title: t.benefit4Title,
       description: t.benefit4Description,
     },
@@ -532,34 +431,35 @@ export default function Newsletter() {
       <SEOHead page="newsletter" language={language} />
       <Header />
       
+      {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo
+          salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
+          siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
+      <main id="main-content">
       <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-newsletter-hero">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="ss-container">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="text-center"
+            className="max-w-3xl"
           >
-            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
+            <Eyebrow num="04" tone="navy" className="mb-6" />
             <h1 
-              className="text-4xl md:text-5xl font-heading text-white mb-5"
+              className="mb-5"
               data-testid="text-newsletter-title"
             >
               {t.title}
             </h1>
-            <p 
-              className="text-base text-white/60 max-w-2xl mx-auto"
-              data-testid="text-newsletter-subtitle"
-            >
+            <p data-testid="text-newsletter-subtitle">
               {t.subtitle}
             </p>
           </motion.div>
         </div>
       </section>
 
-      <main id="main-content" className="py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+      <div className="py-16 lg:py-20">
+        <div className="ss-container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -568,9 +468,7 @@ export default function Newsletter() {
               transition={{ duration: 0.6, delay: 0.1 }}
               data-testid="section-newsletter-form"
             >
-              {/* Tarjeta sin borde ni sombra visibles: sin su p-8 el formulario comparte el borde del encabezado */}
-              <Card className="border-0 bg-transparent">
-                <CardContent className="p-0">
+              <div>
                   <div className="mb-8">
                     <h2 
                       className={`${h2Class} mb-4`}
@@ -662,8 +560,7 @@ export default function Newsletter() {
                       </p>
                     </form>
                   </Form>
-                </CardContent>
-              </Card>
+              </div>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -672,22 +569,21 @@ export default function Newsletter() {
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="mt-8"
               >
-                <Card className="bg-muted" data-testid="card-frequency">
-                  <CardContent className="p-6">
-                    <h3 
-                      className={`${h3Class} mb-2`}
-                      data-testid="text-frequency-title"
-                    >
-                      {t.frequency}
-                    </h3>
-                    <p 
-                      className="text-base text-ss-tinta"
-                      data-testid="text-frequency-description"
-                    >
-                      {t.frequencyDescription}
-                    </p>
-                  </CardContent>
-                </Card>
+                {/* Fila abierta con filete superior, sin caja */}
+                <div className="border-t border-ss-rule pt-6" data-testid="card-frequency">
+                  <h3 
+                    className={`${h3Class} mb-2`}
+                    data-testid="text-frequency-title"
+                  >
+                    {t.frequency}
+                  </h3>
+                  <p 
+                    className="text-base text-ss-tinta leading-[1.55]"
+                    data-testid="text-frequency-description"
+                  >
+                    {t.frequencyDescription}
+                  </p>
+                </div>
               </motion.div>
             </motion.div>
 
@@ -705,7 +601,8 @@ export default function Newsletter() {
                 {t.whatYouReceive}
               </h2>
 
-              <div className="space-y-4">
+              {/* Filas abiertas: filete superior en Línea, titular en romana y texto en la sans */}
+              <div className="border-b border-ss-rule">
                 {benefits.map((benefit, index) => (
                   <motion.div
                     key={index}
@@ -714,30 +611,32 @@ export default function Newsletter() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
                   >
-                    <Card
+                    <div
+                      className="border-t border-ss-rule py-6"
                       data-testid={`card-benefit-${index}`}
                     >
-                      <CardContent className="p-6">
-                        <h3 
-                          className={`${h3Class} mb-1`}
-                          data-testid={`text-benefit-title-${index}`}
-                        >
-                          {benefit.title}
-                        </h3>
-                        <p 
-                          className="text-base text-ss-tinta leading-relaxed"
-                          data-testid={`text-benefit-description-${index}`}
-                        >
-                          {benefit.description}
-                        </p>
-                      </CardContent>
-                    </Card>
+                      <h3 
+                        className={`${h3Class} mb-1`}
+                        data-testid={`text-benefit-title-${index}`}
+                      >
+                        {benefit.title}
+                      </h3>
+                      <p 
+                        className="text-base text-ss-tinta leading-[1.55]"
+                        data-testid={`text-benefit-description-${index}`}
+                      >
+                        {benefit.description}
+                      </p>
+                    </div>
                   </motion.div>
                 ))}
               </div>
             </motion.div>
           </div>
 
+          {/* Boletines anteriores: solo si hay ediciones vigentes. Las únicas publicadas eran de
+              2024 (energía y fiscal) con un "archivo completo próximamente": se retiraron. */}
+          {archiveIssues.length > 0 && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -761,65 +660,48 @@ export default function Newsletter() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                { title: t.archiveItem1Title, date: t.archiveItem1Date, description: t.archiveItem1Description },
-                { title: t.archiveItem2Title, date: t.archiveItem2Date, description: t.archiveItem2Description },
-                { title: t.archiveItem3Title, date: t.archiveItem3Date, description: t.archiveItem3Description },
-              ].map((archive, index) => (
-                <motion.div
+            {/* Filas abiertas: fecha en etiqueta, titular en romana */}
+            <div className="border-b border-ss-rule">
+              {archiveIssues.map((archive, index) => (
+                <article
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
+                  className="grid grid-cols-1 md:grid-cols-[12rem,1fr] gap-x-8 gap-y-2 border-t border-ss-rule py-6"
+                  data-testid={`card-archive-${index}`}
                 >
-                  <Card
-                    className="h-full"
-                    data-testid={`card-archive-${index}`}
+                  <p 
+                    className="ss-label text-ss-medio md:pt-1.5"
+                    data-testid={`text-archive-date-${index}`}
                   >
-                    <CardContent className="p-6">
-                      <div className="mb-3">
-                        <span 
-                          className="ss-label text-ss-medio"
-                          data-testid={`text-archive-date-${index}`}
-                        >
-                          {archive.date}
-                        </span>
-                      </div>
-                      <h3 
-                        className={`${h3Class} mb-2`}
-                        data-testid={`text-archive-title-${index}`}
-                      >
-                        {archive.title}
-                      </h3>
-                      <p 
-                        className="text-base text-ss-tinta leading-relaxed mb-4"
-                        data-testid={`text-archive-description-${index}`}
-                      >
-                        {archive.description}
-                      </p>
-                      <a 
-                        href={`mailto:info@santossaucedo.com?subject=${encodeURIComponent(language === 'es' ? `Solicitud de boletín: ${archive.title}` : `Newsletter Request: ${archive.title}`)}`}
-                        className="inline-flex items-center text-[15px] font-semibold text-ss-marino underline decoration-ss-rule underline-offset-4 hover:decoration-ss-marino"
-                        data-testid={`button-archive-view-${index}`}
-                      >
-                        {t.viewArchive}
-                      </a>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                    {archive.date}
+                  </p>
+                  <div>
+                    <h3 
+                      className={`${h3Class} mb-2`}
+                      data-testid={`text-archive-title-${index}`}
+                    >
+                      {archive.title}
+                    </h3>
+                    <p 
+                      className="text-base text-ss-tinta leading-[1.55] mb-4"
+                      data-testid={`text-archive-description-${index}`}
+                    >
+                      {archive.description}
+                    </p>
+                    <a 
+                      href={`mailto:info@santossaucedo.com?subject=${encodeURIComponent(language === 'es' ? `Solicitud de boletín: ${archive.title}` : `Newsletter Request: ${archive.title}`)}`}
+                      className="inline-flex items-center text-[15px] font-semibold text-ss-marino underline decoration-ss-rule underline-offset-4 hover:decoration-ss-marino"
+                      data-testid={`button-archive-view-${index}`}
+                    >
+                      {t.viewArchive}
+                    </a>
+                  </div>
+                </article>
               ))}
             </div>
-
-            <p 
-              className="text-sm text-ss-medio mt-8"
-              data-testid="text-archives-coming-soon"
-            >
-              {t.comingSoon}
-            </p>
           </motion.section>
+          )}
         </div>
+      </div>
       </main>
 
       <Footer />

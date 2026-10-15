@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation, useParams } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowLeft, Linkedin, Twitter, Mail, LinkIcon, MessageCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, Linkedin, Mail, LinkIcon, MessageCircle, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
-import { es, enUS, de, zhCN, ko, ja, arSA, ru, fr, it } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -16,7 +14,22 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { Eyebrow, LeadParagraph } from "@/components/editorial";
+import { formatNewsDate } from "@/lib/newsDate";
 import type { News, TeamMember } from "@shared/schema";
+
+// Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
+// lleva su propio idioma y dirección, para que :lang() (la romana, no la sans de CJK) y el
+// algoritmo bidi (en árabe, el punto final al final) lo traten como inglés.
+const EN_SOURCE = { lang: "en", dir: "ltr" } as const;
+
+// Marca de X (antes Twitter), en el color del texto: la lucide "Twitter" es el pájaro retirado
+function XMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+    </svg>
+  );
+}
 
 // Imagen del artículo: figura al inicio del cuerpo, bajo el encabezado de papel, sin velo.
 // Sin imagen, o si no carga, no se pinta nada (sin foto genérica de reemplazo).
@@ -197,6 +210,8 @@ export default function NewsDetail() {
     author: string;
     topics: string;
     category: string;
+    /** Rótulo del eyebrow del artículo: el nombre de la publicación, como en el menú */
+    newsLabel: string;
   }> = {
     en: {
       backToNews: "Back to News",
@@ -214,6 +229,7 @@ export default function NewsDetail() {
       author: "Author",
       topics: "Topics",
       category: "Category",
+      newsLabel: "Labor Monitor",
     },
     es: {
       backToNews: "Volver a noticias",
@@ -231,6 +247,7 @@ export default function NewsDetail() {
       author: "Autor",
       topics: "Temas",
       category: "Categoría",
+      newsLabel: "Monitor Laboral",
     },
     de: {
       backToNews: "Zurück zu Nachrichten",
@@ -248,6 +265,7 @@ export default function NewsDetail() {
       author: "Autor",
       topics: "Themen",
       category: "Kategorie",
+      newsLabel: "Nachrichten",
     },
     zh: {
       backToNews: "返回新闻",
@@ -265,6 +283,7 @@ export default function NewsDetail() {
       author: "作者",
       topics: "主题",
       category: "类别",
+      newsLabel: "新闻",
     },
     ko: {
       backToNews: "뉴스로 돌아가기",
@@ -282,6 +301,7 @@ export default function NewsDetail() {
       author: "저자",
       topics: "주제",
       category: "카테고리",
+      newsLabel: "뉴스",
     },
     ja: {
       backToNews: "ニュースに戻る",
@@ -299,6 +319,7 @@ export default function NewsDetail() {
       author: "著者",
       topics: "トピック",
       category: "カテゴリー",
+      newsLabel: "ニュース",
     },
     ar: {
       backToNews: "العودة إلى الأخبار",
@@ -316,6 +337,7 @@ export default function NewsDetail() {
       author: "المؤلف",
       topics: "المواضيع",
       category: "الفئة",
+      newsLabel: "الأخبار",
     },
     ru: {
       backToNews: "Назад к новостям",
@@ -333,6 +355,7 @@ export default function NewsDetail() {
       author: "Автор",
       topics: "Темы",
       category: "Категория",
+      newsLabel: "Новости",
     },
     fr: {
       backToNews: "Retour aux actualités",
@@ -350,6 +373,7 @@ export default function NewsDetail() {
       author: "Auteur",
       topics: "Sujets",
       category: "Catégorie",
+      newsLabel: "Actualités",
     },
     it: {
       backToNews: "Torna alle notizie",
@@ -367,50 +391,14 @@ export default function NewsDetail() {
       author: "Autore",
       topics: "Argomenti",
       category: "Categoria",
+      newsLabel: "Notizie",
     },
   };
 
   const t = content[language] || content.en;
 
-  const getDateLocale = () => {
-    const localeMap: Record<string, typeof enUS> = {
-      en: enUS,
-      es: es,
-      de: de,
-      zh: zhCN,
-      ko: ko,
-      ja: ja,
-      ar: arSA,
-      ru: ru,
-      fr: fr,
-      it: it,
-    };
-    return localeMap[language] || enUS;
-  };
-
-  const getDateFormatPattern = () => {
-    const formatMap: Record<string, string> = {
-      en: "MMMM d, yyyy",
-      es: "d 'de' MMMM, yyyy",
-      de: "d. MMMM yyyy",
-      zh: "yyyy'年'M'月'd'日'",
-      ko: "yyyy'년' M'월' d'일'",
-      ja: "yyyy'年'M'月'd'日'",
-      ar: "d MMMM yyyy",
-      ru: "d MMMM yyyy 'г.'",
-      fr: "d MMMM yyyy",
-      it: "d MMMM yyyy",
-    };
-    return formatMap[language] || "MMMM d, yyyy";
-  };
-
-  const formatDate = (date: Date | string | null) => {
-    if (!date) return "";
-    const dateObj = typeof date === "string" ? new Date(date) : date;
-    return format(dateObj, getDateFormatPattern(), {
-      locale: getDateLocale(),
-    });
-  };
+  // Formato único de fecha del Monitor (lib/newsDate): el mismo que el listado de /news
+  const formatDate = (date: Date | string | null) => formatNewsDate(date, language);
 
   const handleShare = (platform: "linkedin" | "twitter" | "whatsapp" | "email") => {
     const url = window.location.href;
@@ -419,7 +407,7 @@ export default function NewsDetail() {
     
     const shareUrls = {
       linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-      twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareTitle || "")}`,
+      twitter: `https://x.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareTitle || "")}`,
       whatsapp: `https://wa.me/?text=${encodeURIComponent(`${shareTitle} - ${url}`)}`,
       email: `mailto:?subject=${encodeURIComponent(shareTitle || "")}&body=${encodeURIComponent(`${shareExcerpt || ""}\n\n${url}`)}`,
     };
@@ -490,24 +478,26 @@ export default function NewsDetail() {
         <Header />
         {/* Carga con el mismo encabezado de papel que la vista final: mismo margen superior
             y marcadores de vuelta, eyebrow, titular y fecha */}
-        <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" aria-busy="true">
-          <div className="max-w-4xl mx-auto px-6 lg:px-12 w-full">
-            <Skeleton className="h-4 w-36 mb-6 bg-ss-rule" />
-            <Skeleton className="h-3 w-40 mb-5 bg-ss-rule" />
-            <Skeleton className="h-12 w-full mb-3 bg-ss-rule" />
-            <Skeleton className="h-12 w-2/3 bg-ss-rule" />
-            <Skeleton className="h-3 w-32 mt-6 bg-ss-rule" />
-          </div>
-        </section>
-        <main id="main-content" className="py-16 lg:py-20">
-          <div className="max-w-4xl mx-auto px-6 lg:px-12">
-            <Skeleton className="h-4 w-32 mb-4" />
-            <Skeleton className="h-10 w-full mb-2" />
-            <Skeleton className="h-10 w-3/4 mb-8" />
-            <Skeleton className="h-6 w-full mb-4" />
-            <Skeleton className="h-6 w-full mb-4" />
-            <Skeleton className="h-6 w-5/6 mb-4" />
-            <Skeleton className="h-6 w-full mb-4" />
+        <main id="main-content">
+          <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" aria-busy="true">
+            <div className="max-w-4xl mx-auto px-6 lg:px-12 w-full">
+              <Skeleton className="h-4 w-36 mb-6 bg-ss-rule" />
+              <Skeleton className="h-3 w-40 mb-5 bg-ss-rule" />
+              <Skeleton className="h-12 w-full mb-3 bg-ss-rule" />
+              <Skeleton className="h-12 w-2/3 bg-ss-rule" />
+              <Skeleton className="h-3 w-32 mt-6 bg-ss-rule" />
+            </div>
+          </section>
+          <div className="py-16 lg:py-20">
+            <div className="max-w-4xl mx-auto px-6 lg:px-12">
+              <Skeleton className="h-4 w-32 mb-4" />
+              <Skeleton className="h-10 w-full mb-2" />
+              <Skeleton className="h-10 w-3/4 mb-8" />
+              <Skeleton className="h-6 w-full mb-4" />
+              <Skeleton className="h-6 w-full mb-4" />
+              <Skeleton className="h-6 w-5/6 mb-4" />
+              <Skeleton className="h-6 w-full mb-4" />
+            </div>
           </div>
         </main>
         <Footer />
@@ -517,6 +507,12 @@ export default function NewsDetail() {
 
   const displayTitle = translatedFields.title || newsArticle?.title;
   const displayContent = translatedFields.content || translatedFields.excerpt || newsArticle?.content || newsArticle?.excerpt;
+  // Fuera de ES/EN, sin traducción se muestra el inglés de origen (y los relacionados siempre)
+  const isOtherLanguage = language !== "es" && language !== "en";
+  const titleSource = isOtherLanguage && !!displayTitle && displayTitle === newsArticle?.title ? EN_SOURCE : undefined;
+  const contentSource = isOtherLanguage && !!displayContent &&
+    (displayContent === newsArticle?.content || displayContent === newsArticle?.excerpt) ? EN_SOURCE : undefined;
+  const relatedSource = isOtherLanguage ? EN_SOURCE : undefined;
   const heroImage = newsArticle?.imageUrl || "";
 
   const primaryAuthor = relatedAuthors && relatedAuthors.length > 0 ? relatedAuthors[0] : null;
@@ -551,243 +547,249 @@ export default function NewsDetail() {
       
       {/* Encabezado de papel ("memorándum impreso"): Hueso, titular Azul Marino, etiquetas en
           Gris Medio y § en Azul Marino (index.css, .editorial-page-hero--paper). La foto del
-          artículo, si la hay, abre el cuerpo. */}
-      <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" data-testid="section-news-hero">
-        {/* Columna del artículo (max-w-4xl, ≈800 px útiles): vuelta, titular y cuerpo sobre el mismo borde */}
-        <div className="max-w-4xl mx-auto px-6 lg:px-12 w-full">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <button
-              onClick={goToNewsList}
-              className="inline-flex items-center gap-2 mb-6 cursor-pointer"
-              data-testid="link-back-to-news"
+          artículo, si la hay, abre el cuerpo. Va dentro de <main> (el salto al contenido no se
+          salta el h1); el relleno del cuerpo va en su propio envoltorio. */}
+      <main id="main-content">
+        <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" data-testid="section-news-hero">
+          {/* Columna del artículo (max-w-4xl, ≈800 px útiles): vuelta, titular y cuerpo sobre el mismo borde */}
+          <div className="max-w-4xl mx-auto px-6 lg:px-12 w-full">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
             >
-              <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-              {t.backToNews}
-            </button>
+              <button
+                onClick={goToNewsList}
+                className="inline-flex items-center gap-2 mb-6 cursor-pointer"
+                data-testid="link-back-to-news"
+              >
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                {t.backToNews}
+              </button>
 
-            {/* Eyebrow del expediente, como los encabezados internos: "§ 04 —— Noticia" */}
-            <Eyebrow
-              num="04"
-              tone="paper"
-              label={language === 'es' ? 'Noticia' : language === 'de' ? 'Nachrichten' : language === 'fr' ? 'Actualité' : language === 'it' ? 'Notizie' : 'News'}
-              className="mb-4"
-              testId="eyebrow-news"
-            />
+              {/* Eyebrow del expediente, como los encabezados internos: "§ 04 —— Monitor Laboral"
+                  (rótulo de la tabla de textos, en los 10 idiomas) */}
+              <Eyebrow
+                num="04"
+                tone="paper"
+                label={t.newsLabel}
+                className="mb-4"
+                testId="eyebrow-news"
+              />
 
-            <h1
-              className="ss-news-title"
-              data-testid="text-news-title"
-            >
-              {displayTitle}
-              {isTranslating && (
-                <Loader2 className="inline-block w-5 h-5 ml-3 animate-spin text-ss-medio" aria-hidden="true" />
+              <h1
+                className="ss-news-title"
+                data-testid="text-news-title"
+                {...titleSource}
+              >
+                {displayTitle}
+                {isTranslating && (
+                  <Loader2 className="inline-block w-5 h-5 ml-3 animate-spin text-ss-medio" aria-hidden="true" />
+                )}
+              </h1>
+
+              {/* Fecha bajo el titular, como en prensa */}
+              {newsArticle?.date && (
+                <p className="ss-label ss-num mt-6 text-ss-medio">
+                  <time
+                    // Instante completo, como datePublished del JSON-LD: no cambia con la zona del visitante
+                    dateTime={new Date(newsArticle.date).toISOString()}
+                    data-testid="text-news-date"
+                  >
+                    {formatDate(newsArticle.date)}
+                  </time>
+                </p>
               )}
-            </h1>
+            </motion.div>
+          </div>
+        </section>
 
-            {/* Fecha bajo el titular, como en prensa */}
-            {newsArticle?.date && (
-              <p className="ss-label ss-num mt-6 text-ss-medio">
-                <time
-                  // Instante completo, como datePublished del JSON-LD: no cambia con la zona del visitante
-                  dateTime={new Date(newsArticle.date).toISOString()}
-                  data-testid="text-news-date"
-                >
-                  {formatDate(newsArticle.date)}
-                </time>
-              </p>
-            )}
-          </motion.div>
-        </div>
-      </section>
-
-      <main id="main-content" className="py-16 lg:py-20">
-        <div className="max-w-4xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <NewsHeroImage key={heroImage} src={heroImage} />
-
-            <div
-              className="mb-12 relative"
-              data-testid="container-news-content"
+        <div className="py-16 lg:py-20">
+          <div className="max-w-4xl mx-auto px-6 lg:px-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
             >
-              {isTranslating && !displayContent && (
-                <div className="space-y-4">
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-6 w-5/6" />
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-6 w-4/5" />
-                </div>
-              )}
-              {displayContent && (() => {
-                const paragraphs = displayContent.split('\n');
-                const firstIdx = paragraphs.findIndex((p) => p.trim().length > 0);
-                if (firstIdx === -1) return null;
-                const first = paragraphs[firstIdx];
-                const rest = paragraphs.slice(firstIdx + 1);
-                return (
-                  <div className={isTranslating ? "opacity-70" : ""}>
-                    <LeadParagraph
-                      firstParagraph={first}
-                      restParagraphs={rest}
-                      testId="lead-news-content"
-                    />
+              <NewsHeroImage key={heroImage} src={heroImage} />
+
+              <div
+                className="mb-12 relative"
+                data-testid="container-news-content"
+              >
+                {isTranslating && !displayContent && (
+                  <div className="space-y-4">
+                    <Skeleton className="h-6 w-full" />
+                    <Skeleton className="h-6 w-full" />
+                    <Skeleton className="h-6 w-5/6" />
+                    <Skeleton className="h-6 w-full" />
+                    <Skeleton className="h-6 w-4/5" />
                   </div>
-                );
-              })()}
-              {isTranslating && displayContent && (
-                <div className="absolute top-0 right-0">
-                  <Loader2 className="w-4 h-4 animate-spin text-ss-medio" aria-hidden="true" />
-                </div>
-              )}
-            </div>
-
-            {/* Compartir: botones de solo icono, funcionales, con nombre accesible */}
-            <div
-              className="pt-8 mb-16 border-t border-ss-rule"
-              data-testid="section-share"
-            >
-              <div className="flex flex-wrap items-center gap-4">
-                <span className="ss-label text-ss-medio">{t.share}</span>
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="text-ss-marino"
-                    onClick={() => handleShare("linkedin")}
-                    data-testid="button-share-linkedin"
-                    title="LinkedIn"
-                    aria-label="LinkedIn"
-                  >
-                    <Linkedin className="w-4 h-4" aria-hidden="true" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="text-ss-marino"
-                    onClick={() => handleShare("twitter")}
-                    data-testid="button-share-twitter"
-                    title="Twitter/X"
-                    aria-label="Twitter/X"
-                  >
-                    <Twitter className="w-4 h-4" aria-hidden="true" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="text-ss-marino"
-                    onClick={() => handleShare("whatsapp")}
-                    data-testid="button-share-whatsapp"
-                    title="WhatsApp"
-                    aria-label="WhatsApp"
-                  >
-                    <MessageCircle className="w-4 h-4" aria-hidden="true" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="text-ss-marino"
-                    onClick={() => handleShare("email")}
-                    data-testid="button-share-email"
-                    title="Email"
-                    aria-label="Email"
-                  >
-                    <Mail className="w-4 h-4" aria-hidden="true" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="text-ss-marino"
-                    onClick={handleCopyLink}
-                    data-testid="button-share-copy-link"
-                    title={t.copyLink}
-                    aria-label={t.copyLink}
-                  >
-                    <LinkIcon className="w-4 h-4" aria-hidden="true" />
-                  </Button>
-                </div>
+                )}
+                {displayContent && (() => {
+                  const paragraphs = displayContent.split('\n');
+                  const firstIdx = paragraphs.findIndex((p) => p.trim().length > 0);
+                  if (firstIdx === -1) return null;
+                  const first = paragraphs[firstIdx];
+                  const rest = paragraphs.slice(firstIdx + 1);
+                  return (
+                    <div className={isTranslating ? "opacity-70" : ""} {...contentSource}>
+                      <LeadParagraph
+                        firstParagraph={first}
+                        restParagraphs={rest}
+                        testId="lead-news-content"
+                      />
+                    </div>
+                  );
+                })()}
+                {isTranslating && displayContent && (
+                  <div className="absolute top-0 right-0">
+                    <Loader2 className="w-4 h-4 animate-spin text-ss-medio" aria-hidden="true" />
+                  </div>
+                )}
               </div>
-            </div>
-          </motion.div>
 
-          {relatedAuthors && relatedAuthors.length > 0 && (
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.25 }}
-              className="mb-16"
-              data-testid="section-related-authors"
-            >
-              <h2 
-                className="ss-h2-sm mb-6"
-                data-testid="text-authors-title"
+              {/* Compartir: botones de solo icono, funcionales, con nombre accesible */}
+              <div
+                className="pt-8 mb-16 border-t border-ss-rule"
+                data-testid="section-share"
               >
-                {relatedAuthors.length === 1 ? t.aboutTheAuthor : t.aboutTheAuthors}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                {relatedAuthors.map((author) => (
-                  <AuthorCard 
-                    key={author.id}
-                    author={author}
-                    getInitials={getInitials}
-                    truncateBio={truncateBio}
-                  />
-                ))}
+                <div className="flex flex-wrap items-center gap-4">
+                  <span className="ss-label text-ss-medio">{t.share}</span>
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="text-ss-marino"
+                      onClick={() => handleShare("linkedin")}
+                      data-testid="button-share-linkedin"
+                      title="LinkedIn"
+                      aria-label="LinkedIn"
+                    >
+                      <Linkedin className="w-4 h-4" aria-hidden="true" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="text-ss-marino"
+                      onClick={() => handleShare("twitter")}
+                      data-testid="button-share-twitter"
+                      title="X"
+                      aria-label="X"
+                    >
+                      <XMark className="w-3.5 h-3.5" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="text-ss-marino"
+                      onClick={() => handleShare("whatsapp")}
+                      data-testid="button-share-whatsapp"
+                      title="WhatsApp"
+                      aria-label="WhatsApp"
+                    >
+                      <MessageCircle className="w-4 h-4" aria-hidden="true" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="text-ss-marino"
+                      onClick={() => handleShare("email")}
+                      data-testid="button-share-email"
+                      title="Email"
+                      aria-label="Email"
+                    >
+                      <Mail className="w-4 h-4" aria-hidden="true" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="text-ss-marino"
+                      onClick={handleCopyLink}
+                      data-testid="button-share-copy-link"
+                      title={t.copyLink}
+                      aria-label={t.copyLink}
+                    >
+                      <LinkIcon className="w-4 h-4" aria-hidden="true" />
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </motion.section>
-          )}
+            </motion.div>
 
-          {relatedNews && relatedNews.length > 0 && (
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              data-testid="section-related-news"
-            >
-              <h2 
-                className="ss-h2-sm mb-6"
-                data-testid="text-related-news-title"
+            {relatedAuthors && relatedAuthors.length > 0 && (
+              <motion.section
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.25 }}
+                className="mb-16"
+                data-testid="section-related-authors"
               >
-                {t.relatedNews}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-10">
-                {relatedNews.map((item) => (
-                  <Link 
-                    key={item.id} 
-                    href={`/news/${item.slug}`}
-                    className="group block"
-                  >
-                    {/* Sin caja: imagen (o Hueso con §), fecha como etiqueta y titular en la romana */}
-                    <article data-testid={`card-related-news-${item.id}`}>
-                      <div className="aspect-[16/10] overflow-hidden">
-                        <NewsCardImage
-                          src={item.imageUrl || ""}
-                          alt={language === "es" ? item.titleEs : item.title}
-                          className="ss-photo--colour w-full h-full object-cover"
-                        />
-                      </div>
-                      <p className="ss-label ss-num text-ss-medio mt-4 mb-2" data-testid={`text-related-news-date-${item.id}`}>
-                        {formatDate(item.date)}
-                      </p>
-                      <h3 
-                        className="ss-h3 text-[20px] line-clamp-3 group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1"
-                        data-testid={`text-related-news-title-${item.id}`}
-                      >
-                        {language === "es" ? item.titleEs : item.title}
-                      </h3>
-                    </article>
-                  </Link>
-                ))}
-              </div>
-            </motion.section>
-          )}
+                <h2 
+                  className="ss-h2-sm mb-6"
+                  data-testid="text-authors-title"
+                >
+                  {relatedAuthors.length === 1 ? t.aboutTheAuthor : t.aboutTheAuthors}
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                  {relatedAuthors.map((author) => (
+                    <AuthorCard 
+                      key={author.id}
+                      author={author}
+                      getInitials={getInitials}
+                      truncateBio={truncateBio}
+                    />
+                  ))}
+                </div>
+              </motion.section>
+            )}
+
+            {relatedNews && relatedNews.length > 0 && (
+              <motion.section
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                data-testid="section-related-news"
+              >
+                <h2 
+                  className="ss-h2-sm mb-6"
+                  data-testid="text-related-news-title"
+                >
+                  {t.relatedNews}
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-10">
+                  {relatedNews.map((item) => (
+                    <Link 
+                      key={item.id} 
+                      href={`/news/${item.slug}`}
+                      className="group block"
+                    >
+                      {/* Sin caja: imagen (o Hueso con §), fecha como etiqueta y titular en la romana */}
+                      <article data-testid={`card-related-news-${item.id}`}>
+                        <div className="aspect-[16/10] overflow-hidden">
+                          <NewsCardImage
+                            src={item.imageUrl || ""}
+                            alt={language === "es" ? item.titleEs : item.title}
+                            className="ss-photo--colour w-full h-full object-cover"
+                          />
+                        </div>
+                        <p className="ss-label ss-num text-ss-medio mt-4 mb-2" data-testid={`text-related-news-date-${item.id}`}>
+                          {formatDate(item.date)}
+                        </p>
+                        <h3 
+                          className="ss-h3 text-[20px] line-clamp-3 group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1"
+                          data-testid={`text-related-news-title-${item.id}`}
+                          {...relatedSource}
+                        >
+                          {language === "es" ? item.titleEs : item.title}
+                        </h3>
+                      </article>
+                    </Link>
+                  ))}
+                </div>
+              </motion.section>
+            )}
+          </div>
         </div>
       </main>
 

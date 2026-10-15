@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Eyebrow } from "@/components/editorial";
 
 export default function NotFound() {
   const { language } = useLanguage();
@@ -79,11 +80,10 @@ export default function NotFound() {
       {/* Mismo encabezado de marca que las páginas internas (Azul Profundo, eyebrow §, titular en romana),
           con enlaces de texto en vez de botones */}
       <main id="main-content" className="flex-1 pt-36 pb-20 editorial-page-hero" data-testid="section-not-found-hero">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <p className="flex items-center gap-4 mb-6">
-            <span className="h-0.5 w-12 bg-brand" aria-hidden="true" />
-            <span className="ss-label text-white/75">Error 404</span>
-          </p>
+        {/* ss-container: mismo borde izquierdo que logotipo y pie. Eyebrow "§ —— Error 404"
+            (§ solo, sin número de menú) con el mismo marcado que las demás páginas */}
+        <div className="ss-container">
+          <Eyebrow num="" tone="navy" label="Error 404" className="mb-6" />
 
           <h1 className="mb-5" data-testid="text-404-title">
             {t.title}

@@ -267,7 +267,7 @@ export default function About() {
       stats: [
         { value: "35+", label: "Years of Experience" },
         { value: String(teamMembers?.length || 24), label: "Attorneys" },
-        { value: String(practiceGroups?.length || 6), label: "Labor Practice Areas" },
+        { value: String(practiceGroups?.length || 6), label: "Practices" },
         { value: "100%", label: "Labor-focused" },
       ],
       rankingsTitle: "Rankings & Recognition",
@@ -292,7 +292,7 @@ export default function About() {
       title: "Acerca de la firma",
       subtitle: "Más de 35 años de experiencia en derecho laboral empresarial",
       historyTitle: "Nuestra historia",
-      historyText1: "Santos & Saucedo es un despacho boutique especializado en Derecho Laboral, con más de 35 años acompañando a empresas nacionales e internacionales. Desde San Pedro Garza García, Nuevo León, asesoramos a la dirección, a recursos humanos y a los equipos legales internos de nuestros clientes.",
+      historyText1: "Santos & Saucedo es un despacho boutique especializado en derecho laboral, con más de 35 años acompañando a empresas nacionales e internacionales. Desde San Pedro Garza García, Nuevo León, asesoramos a la dirección, a recursos humanos y a los equipos legales internos de nuestros clientes.",
       historyText2: "Nuestro trabajo combina prevención, consultoría, auditoría, capacitación y defensa en conflictos laborales individuales y colectivos. Ayudamos a las empresas a ordenar su administración laboral, reducir riesgos y tomar mejores decisiones antes, durante y después de un conflicto.",
       valuesTitle: "Nuestros valores",
       values: [
@@ -372,7 +372,7 @@ export default function About() {
       stats: [
         { value: "35+", label: "Años de experiencia" },
         { value: String(teamMembers?.length || 24), label: "Abogados" },
-        { value: String(practiceGroups?.length || 6), label: "Áreas laborales" },
+        { value: String(practiceGroups?.length || 6), label: "Prácticas" },
         { value: "100%", label: "Enfoque laboral" },
       ],
       rankingsTitle: "Rankings y reconocimientos",
@@ -391,7 +391,7 @@ export default function About() {
       careersText: "Únase a uno de los principales despachos de abogados de México y construya su carrera con los mejores. Ofrecemos oportunidades excepcionales de crecimiento y desarrollo.",
       learnMore: "Conocer más",
       viewTeam: "Ver nuestro equipo",
-      viewPractices: "Ver áreas de práctica",
+      viewPractices: "Ver prácticas",
     },
     de: {
       title: "Über die Kanzlei",
@@ -477,7 +477,7 @@ export default function About() {
       stats: [
         { value: "35+", label: "Jahre Erfahrung" },
         { value: String(teamMembers?.length || 24), label: "Anwälte" },
-        { value: String(practiceGroups?.length || 6), label: "Arbeitsrechtsbereiche" },
+        { value: String(practiceGroups?.length || 6), label: "Praxisbereiche" },
         { value: "100%", label: "Fokus Arbeitsrecht" },
       ],
       rankingsTitle: "Rankings und Auszeichnungen",
@@ -496,7 +496,7 @@ export default function About() {
       careersText: "Werden Sie Teil einer der führenden Anwaltskanzleien Mexikos und bauen Sie Ihre Karriere mit den Besten auf. Wir bieten außergewöhnliche Möglichkeiten für Wachstum und Entwicklung.",
       learnMore: "Mehr Erfahren",
       viewTeam: "Unser Team Ansehen",
-      viewPractices: "Praxisbereiche Ansehen",
+      viewPractices: "Praxisbereiche ansehen",
     },
     zh: {
       title: "关于律所",
@@ -582,7 +582,7 @@ export default function About() {
       stats: [
         { value: "35+", label: "年经验" },
         { value: String(teamMembers?.length || 24), label: "律师" },
-        { value: String(practiceGroups?.length || 6), label: "劳动法领域" },
+        { value: String(practiceGroups?.length || 6), label: "业务领域" },
         { value: "100%", label: "专注劳动法" },
       ],
       rankingsTitle: "排名与认可",
@@ -687,7 +687,7 @@ export default function About() {
       stats: [
         { value: "35+", label: "년의 경험" },
         { value: String(teamMembers?.length || 24), label: "변호사" },
-        { value: String(practiceGroups?.length || 6), label: "노동 실무 분야" },
+        { value: String(practiceGroups?.length || 6), label: "업무 분야" },
         { value: "100%", label: "노동법 전문" },
       ],
       rankingsTitle: "순위 및 인정",
@@ -792,7 +792,7 @@ export default function About() {
       stats: [
         { value: "35+", label: "年の経験" },
         { value: String(teamMembers?.length || 24), label: "弁護士" },
-        { value: String(practiceGroups?.length || 6), label: "労働法分野" },
+        { value: String(practiceGroups?.length || 6), label: "取扱分野" },
         { value: "100%", label: "労働法に特化" },
       ],
       rankingsTitle: "ランキングと評価",
@@ -897,7 +897,7 @@ export default function About() {
       stats: [
         { value: "35+", label: "سنوات من الخبرة" },
         { value: String(teamMembers?.length || 24), label: "محامي" },
-        { value: String(practiceGroups?.length || 6), label: "مجالات قانون العمل" },
+        { value: String(practiceGroups?.length || 6), label: "مجالات الممارسة" },
         { value: "100%", label: "تركيز على قانون العمل" },
       ],
       rankingsTitle: "التصنيفات والتقدير",
@@ -1002,7 +1002,7 @@ export default function About() {
       stats: [
         { value: "35+", label: "Лет опыта" },
         { value: String(teamMembers?.length || 24), label: "Юристов" },
-        { value: String(practiceGroups?.length || 6), label: "Направлений трудового права" },
+        { value: String(practiceGroups?.length || 6), label: "Практики" },
         { value: "100%", label: "Фокус на трудовом праве" },
       ],
       rankingsTitle: "Рейтинги и признание",
@@ -1107,7 +1107,7 @@ export default function About() {
       stats: [
         { value: "35+", label: "Années d'expérience" },
         { value: String(teamMembers?.length || 24), label: "Avocats" },
-        { value: String(practiceGroups?.length || 6), label: "Domaines du droit du travail" },
+        { value: String(practiceGroups?.length || 6), label: "Domaines de pratique" },
         { value: "100%", label: "Axé sur le droit du travail" },
       ],
       rankingsTitle: "Classements et reconnaissance",
@@ -1212,7 +1212,7 @@ export default function About() {
       stats: [
         { value: "35+", label: "Anni di esperienza" },
         { value: String(teamMembers?.length || 24), label: "Avvocati" },
-        { value: String(practiceGroups?.length || 6), label: "Aree di diritto del lavoro" },
+        { value: String(practiceGroups?.length || 6), label: "Aree di pratica" },
         { value: "100%", label: "Focus sul lavoro" },
       ],
       rankingsTitle: "Classifiche e riconoscimenti",
@@ -1246,7 +1246,7 @@ export default function About() {
       : "Strategic labor law for companies",
     historyTitle: isSpanish ? "Santos & Saucedo Abogados" : "Santos & Saucedo Abogados",
     historyText1: isSpanish
-      ? "Santos & Saucedo es una firma especializada en Derecho Laboral con más de 35 años de experiencia asesorando a empresas nacionales e internacionales."
+      ? "Santos & Saucedo es una firma especializada en derecho laboral con más de 35 años de experiencia asesorando a empresas nacionales e internacionales."
       : "Santos & Saucedo is a labor-law boutique firm with more than 35 years of experience advising national and international companies.",
     historyText2: isSpanish
       ? "Diagnosticamos, prevenimos, corregimos, capacitamos y defendemos la operación laboral de la empresa mediante asesoría preventiva, administración laboral, auditorías, capacitación y atención de conflictos individuales y colectivos."
@@ -1274,11 +1274,11 @@ export default function About() {
     stats: [
       { value: "35+", label: isSpanish ? "Años de experiencia" : "Years of Experience" },
       { value: String(teamMembers?.length || 24), label: isSpanish ? "Integrantes del equipo" : "Team Members" },
-      { value: String(practiceGroups?.length || 6), label: isSpanish ? "Áreas laborales" : "Labor Practice Areas" },
+      { value: String(practiceGroups?.length || 6), label: isSpanish ? "Prácticas" : "Practices" },
       { value: "1", label: isSpanish ? "Oficina en Nuevo León" : "Office in Nuevo Leon" },
     ],
     viewTeam: isSpanish ? "Ver equipo" : "View team",
-    viewPractices: isSpanish ? "Ver áreas laborales" : "View labor areas",
+    viewPractices: isSpanish ? "Ver prácticas" : "View practices",
   };
 
   // Los otros 8 idiomas: título, subtítulo, historia, valores y botones de content[lang]
@@ -1328,160 +1328,167 @@ export default function About() {
     <div className="min-h-screen bg-background" data-testid="page-about">
       <SEOHead page="about" language={language} />
       <Header />
-      
-      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-about-hero">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="max-w-3xl"
-          >
-            <Eyebrow num="01" tone="navy" className="mb-6" />
-            <h1 className="mb-5" data-testid="text-about-title">
-              {t.title}
-            </h1>
-            <p data-testid="text-about-subtitle">
-              {t.subtitle}
-            </p>
-          </motion.div>
-        </div>
-      </section>
 
-      <main id="main-content" className="py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-20 lg:mb-24"
-            data-testid="section-history"
-          >
-            <h2 className="ss-h2 mb-6">
-              {t.historyTitle}
-            </h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-5">
-              <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]">
-                {t.historyText1}
-              </p>
-              <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]">
-                {t.historyText2}
-              </p>
-            </div>
-          </motion.section>
-
-          <motion.section
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="mb-20 lg:mb-24"
-            data-testid="section-values"
-          >
-            <h2 className="ss-h2 mb-8">
-              {t.valuesTitle}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
-              {t.values.map((value, index) => (
-                <motion.div key={index} variants={itemVariants}>
-                  <NumberedCard
-                    index={index}
-                    title={value.title}
-                    body={value.text}
-                    dataTestid={`card-value-${index}`}
-                  />
-                </motion.div>
-              ))}
-            </div>
-          </motion.section>
-
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mb-20 lg:mb-24"
-            data-testid="section-culture"
-          >
-            <div className="max-w-3xl mb-10">
-              <h2 className="ss-h2 mb-5">
-                {t.cultureTitle}
-              </h2>
-              <p className="ss-lead mb-5" data-testid="text-culture-subtitle">
-                {t.cultureSubtitle}
-              </p>
-              <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]" data-testid="text-culture-intro">
-                {t.cultureIntro}
-              </p>
-            </div>
-
+      {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo
+          salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
+          siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
+      <main id="main-content">
+        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-about-hero">
+          <div className="ss-container">
             <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="max-w-3xl"
+            >
+              <Eyebrow num="01" tone="navy" className="mb-6" />
+              <h1 className="mb-5" data-testid="text-about-title">
+                {t.title}
+              </h1>
+              <p data-testid="text-about-subtitle">
+                {t.subtitle}
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        <div className="py-16 lg:py-24">
+          <div className="ss-container">
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="mb-20 lg:mb-24"
+              data-testid="section-history"
+            >
+              <h2 className="ss-h2 mb-6">
+                {t.historyTitle}
+              </h2>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-5">
+                <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]">
+                  {t.historyText1}
+                </p>
+                <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]">
+                  {t.historyText2}
+                </p>
+              </div>
+            </motion.section>
+
+            <motion.section
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10"
+              className="mb-20 lg:mb-24"
+              data-testid="section-values"
             >
-              {t.cultureAspects.map((aspect, index) => (
-                <motion.div key={index} variants={itemVariants}>
-                  <NumberedCard
-                    index={index}
-                    title={aspect.title}
-                    body={aspect.text}
-                    dataTestid={`card-culture-${index}`}
-                  />
-                </motion.div>
-              ))}
+              <h2 className="ss-h2 mb-8">
+                {t.valuesTitle}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
+                {t.values.map((value, index) => (
+                  <motion.div key={index} variants={itemVariants}>
+                    <NumberedCard
+                      index={index}
+                      title={value.title}
+                      body={value.text}
+                      dataTestid={`card-value-${index}`}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
+
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="mb-20 lg:mb-24"
+              data-testid="section-culture"
+            >
+              <div className="max-w-3xl mb-10">
+                <h2 className="ss-h2 mb-5">
+                  {t.cultureTitle}
+                </h2>
+                <p className="ss-lead mb-5" data-testid="text-culture-subtitle">
+                  {t.cultureSubtitle}
+                </p>
+                <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]" data-testid="text-culture-intro">
+                  {t.cultureIntro}
+                </p>
+              </div>
+
+              {/* Misma rejilla de 4 columnas que "Nuestro enfoque" y las cifras: los bordes de
+                  columna coinciden entre secciones (tres filas y una celda vacía) */}
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10"
+              >
+                {t.cultureAspects.map((aspect, index) => (
+                  <motion.div key={index} variants={itemVariants}>
+                    <NumberedCard
+                      index={index}
+                      title={aspect.title}
+                      body={aspect.text}
+                      dataTestid={`card-culture-${index}`}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.section>
+
+            {/* Cifras con el estilo de cifra de la portada (romana 300, Azul Marino),
+                filetes de 1 px y sin panel */}
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="mb-20 lg:mb-24"
+              data-testid="section-stats"
+            >
+              <h2 className="ss-h2 mb-8">
+                {t.statsTitle}
+              </h2>
+              <dl className="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
+                {t.stats.map((stat, index) => (
+                  <div key={index} className="flex flex-col border-t border-ss-rule pt-6" data-testid={`stat-${index}`}>
+                    {/* Etiquetas equilibradas (sin huérfanas en teléfono) y, como red, corte de
+                        compuestos largos (alemán) dentro de su media columna */}
+                    <dt className="ss-label text-ss-medio order-2 mt-3 text-balance hyphens-auto [overflow-wrap:anywhere]">
+                      {stat.label}
+                    </dt>
+                    <dd className="ss-figure order-1">
+                      {stat.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </motion.section>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+              className="flex flex-col sm:flex-row gap-4"
+            >
+              {/* Un solo elemento enfocable por acción (el enlace con aspecto de botón) y el
+                  mismo ancho cuando se apilan en teléfono */}
+              <Button asChild className="w-full sm:w-auto" data-testid="button-view-team">
+                <Link href="/team">{t.viewTeam}</Link>
+              </Button>
+              <Button asChild variant="outline" className="w-full sm:w-auto" data-testid="button-view-practices">
+                <Link href="/practice-groups">{t.viewPractices}</Link>
+              </Button>
             </motion.div>
-          </motion.section>
-
-          {/* Cifras con el estilo de cifra de la portada (romana 300, Azul Marino),
-              filetes de 1 px y sin panel */}
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mb-20 lg:mb-24"
-            data-testid="section-stats"
-          >
-            <h2 className="ss-h2 mb-8">
-              {t.statsTitle}
-            </h2>
-            <dl className="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
-              {t.stats.map((stat, index) => (
-                <div key={index} className="flex flex-col border-t border-ss-rule pt-6" data-testid={`stat-${index}`}>
-                  <dt className="ss-label text-ss-medio order-2 mt-3">
-                    {stat.label}
-                  </dt>
-                  <dd className="ss-figure order-1">
-                    {stat.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </motion.section>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="flex flex-col sm:flex-row gap-4"
-          >
-            <Link href="/team">
-              <Button data-testid="button-view-team">
-                {t.viewTeam}
-              </Button>
-            </Link>
-            <Link href="/practice-groups">
-              <Button variant="outline" data-testid="button-view-practices">
-                {t.viewPractices}
-              </Button>
-            </Link>
-          </motion.div>
+          </div>
         </div>
       </main>
 

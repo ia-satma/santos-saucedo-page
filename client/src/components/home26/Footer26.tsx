@@ -39,13 +39,16 @@ export default function Footer26({ localized = false }: Footer26Props) {
     <footer
       id="footer"
       {...chrome.attrs}
-      className="ss26 relative isolate overflow-hidden bg-ss-navy text-white"
+      className="ss26 relative isolate overflow-hidden border-t border-white/[.14] bg-ss-navy text-white"
       data-testid="footer"
     >
-      {/* El § del logotipo como marca de agua tonal (blanco al 3 %, sin opacidad ni filtros) */}
-      <SectionMark className="absolute -end-[4%] -top-[30%] -z-10 h-[170%] bg-white/[.03]" />
+      {/* Filete superior de 1 px (blanco al 14 %, border-t): separa el pie de un bloque Azul
+          Profundo que lo preceda, como el 404; junto a un cuerpo blanco apenas se nota.
+          El § del logotipo como marca de agua tonal (blanco al 3 %, sin opacidad ni filtros).
+          Solo desde lg: en el pie alto del teléfono solo asomaban fragmentos sueltos del glifo. */}
+      <SectionMark className="absolute -end-[4%] -top-[30%] -z-10 hidden h-[170%] bg-white/[.03] lg:block" />
 
-      <div className="ss-container grid grid-cols-2 gap-x-6 gap-y-14 pb-14 pt-20 md:grid-cols-3 lg:grid-cols-12 lg:pb-16 lg:pt-28">
+      <div className="ss-container grid grid-cols-2 gap-x-6 gap-y-14 pb-10 pt-14 md:grid-cols-3 lg:grid-cols-12 lg:pb-12 lg:pt-20">
         <div className="col-span-2 md:col-span-3 lg:col-span-4">
           <img src={logoBlancoLima} alt="Santos & Saucedo" className="h-[34px] w-auto lg:h-[40px]" width={244} height={40} />
         </div>

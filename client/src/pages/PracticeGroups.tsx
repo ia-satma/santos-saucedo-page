@@ -9,17 +9,31 @@ import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
-import { getPracticeImage } from "@/lib/practiceIndustryImages";
 import { Eyebrow } from "@/components/editorial";
 import type { PracticeGroup } from "@shared/schema";
 
-interface PracticeGroupCardProps {
+// Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
+// lleva su propio idioma y dirección, para que :lang() y el algoritmo bidi lo traten como inglés.
+const EN_SOURCE = { lang: "en", dir: "ltr" } as const;
+
+const rowVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4 },
+  },
+};
+
+interface PracticeGroupRowProps {
   group: PracticeGroup;
   index: number;
-  learnMoreText: string;
 }
 
-function PracticeGroupCard({ group, index, learnMoreText }: PracticeGroupCardProps) {
+// Fila de filete como #practicas de la portada: subnumeración § 2.n (sección 02 del menú),
+// nombre en romana Azul Marino, descripción completa (sin recorte) y flecha. Sin foto: la
+// lista tipográfica sustituye a las fotos de archivo. Toda la fila es el enlace.
+function PracticeGroupRow({ group, index }: PracticeGroupRowProps) {
   const { language } = useLanguage();
 
   const { translatedFields, isLoading, isTranslating } = useTranslatedContent({
@@ -38,54 +52,57 @@ function PracticeGroupCard({ group, index, learnMoreText }: PracticeGroupCardPro
   const displayDescription = translatedFields.description || group.description;
   const showTranslatingIndicator = isLoading || isTranslating;
 
-  const imageUrl = getPracticeImage(group.slug, group.imageUrl);
+  const isOtherLanguage = language !== "es" && language !== "en";
+  const nameSource = isOtherLanguage && displayName === group.name ? EN_SOURCE : undefined;
+  const descriptionSource = isOtherLanguage && displayDescription === group.description ? EN_SOURCE : undefined;
 
-  // Fila abierta "Clásica": filete superior, foto en escala de grises (sin color al pasar el
-  // cursor ni velo marino), titular en romana Azul Marino, texto de 16 px y enlace de texto.
+  const nameId = `practice-name-${group.slug}`;
+  const descriptionId = `practice-desc-${group.slug}`;
+
   return (
-    <Link href={`/practice-groups/${group.slug}`}>
-      <article
-        className="group relative h-full cursor-pointer flex flex-col border-t border-ss-rule pt-6"
-        data-testid={`card-practice-group-${group.slug}`}
+    <motion.li
+      variants={rowVariants}
+      className="ss-row relative border-b border-ss-rule"
+      data-testid={`card-practice-group-${group.slug}`}
+    >
+      {/* inline-link: fuera de la regla móvil de index.css que vuelve inline-flex todo <a>.
+          Nombre del enlace = título; la descripción va como descripción accesible. */}
+      <Link
+        href={`/practice-groups/${group.slug}`}
+        aria-labelledby={nameId}
+        aria-describedby={descriptionId}
+        className="inline-link grid grid-cols-1 gap-y-3 py-8 sm:grid-cols-[88px_minmax(0,1fr)_auto] sm:items-baseline sm:gap-x-8 lg:grid-cols-[88px_minmax(0,5fr)_minmax(0,7fr)_auto] lg:gap-x-12 lg:py-10"
+        data-testid={`link-practice-group-${group.slug}`}
       >
-        <div className="relative aspect-[4/3] overflow-hidden bg-ss-paper mb-5">
-          <img
-            src={imageUrl}
-            alt=""
-            loading="lazy"
-            aria-hidden="true"
-            className="ss-photo absolute inset-0 w-full h-full object-cover pointer-events-none transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).style.display = "none";
-            }}
-          />
-          {showTranslatingIndicator && (
-            <div className="absolute top-3 end-3 z-10 flex items-center px-2 py-1 bg-ss-navy/80 text-white">
-              <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" />
-            </div>
-          )}
-        </div>
-        <h3
-          className="ss-h3 mb-2"
+        <span aria-hidden="true" className="ss-row-num ss-label ss-num sm:col-start-1 sm:row-start-1">
+          § 2.{index + 1}
+        </span>
+        {/* h2 bajo el h1 de la página; aspecto de fila de prácticas de la portada */}
+        <h2
+          id={nameId}
+          className="ss-display text-[clamp(26px,2.3vw,34px)] font-[420] leading-[1.15] tracking-[-0.012em] text-ss-marino sm:col-start-2 sm:row-start-1"
           data-testid={`text-practice-group-name-${group.slug}`}
+          {...nameSource}
         >
           {displayName}
-        </h3>
+          {showTranslatingIndicator && (
+            <Loader2 className="inline-block w-4 h-4 ms-3 align-middle animate-spin text-ss-medio" aria-hidden="true" />
+          )}
+        </h2>
         <p
-          className="text-base leading-[1.55] text-ss-tinta mb-4 line-clamp-3 flex-1"
+          id={descriptionId}
+          className="ss-prose max-w-[60ch] text-[17px] text-ss-tinta sm:col-start-2 sm:row-start-2 lg:col-start-3 lg:row-start-1"
           data-testid={`text-practice-group-desc-${group.slug}`}
+          {...descriptionSource}
         >
           {displayDescription}
         </p>
-        <span
-          className="inline-flex items-center gap-2 text-[15px] font-semibold text-ss-marino"
-          data-testid={`link-practice-group-${group.slug}`}
-        >
-          <span className="text-[15px] group-hover:underline decoration-1 underline-offset-4">{learnMoreText}</span>
-          <span aria-hidden="true" className="text-[15px] inline-block transition-transform duration-300 group-hover:translate-x-1 rtl:-scale-x-100 rtl:group-hover:-translate-x-1">→</span>
+        <span aria-hidden="true" className="ss-arrow hidden text-[22px] text-ss-marino sm:block sm:col-start-3 sm:row-start-1 lg:col-start-4">
+          →
         </span>
-      </article>
-    </Link>
+      </Link>
+      <span aria-hidden="true" className="ss-row-rule absolute -bottom-px left-0 h-[2px] w-full bg-ss-marino" />
+    </motion.li>
   );
 }
 
@@ -96,10 +113,12 @@ export default function PracticeGroups() {
     queryKey: ["/api/practice-groups"],
   });
 
+  // Subtítulo: de la redacción aprobada (Nuestra firma): una práctica laboral central y
+  // tres complementarias. Sustituye a "cubre todas las principales áreas legales".
   const content: Record<string, { title: string; subtitle: string; errorMessage: string; learnMore: string; searchPlaceholder: string; viewAll: string; noResults: string }> = {
     en: {
       title: "Practice Groups",
-      subtitle: "Our expertise covers all major legal areas",
+      subtitle: "Around its labor practice, the firm has developed three complementary practices: corporate and contractual, immigration, and litigation.",
       errorMessage: "Failed to load practice groups",
       learnMore: "Learn More",
       searchPlaceholder: "Search...",
@@ -108,7 +127,7 @@ export default function PracticeGroups() {
     },
     es: {
       title: "Áreas de práctica",
-      subtitle: "Nuestra experiencia cubre todas las principales áreas legales",
+      subtitle: "Alrededor de su práctica laboral, la firma desarrolló tres prácticas complementarias: corporativa y contractual, migratoria y contenciosa.",
       errorMessage: "Error al cargar las áreas de práctica",
       learnMore: "Más información",
       searchPlaceholder: "Buscar...",
@@ -117,7 +136,7 @@ export default function PracticeGroups() {
     },
     de: {
       title: "Praxisbereiche",
-      subtitle: "Unsere Expertise deckt alle wichtigen Rechtsgebiete ab",
+      subtitle: "Rund um ihre arbeitsrechtliche Praxis hat die Kanzlei drei ergänzende Praxisbereiche aufgebaut: Gesellschafts- und Vertragsrecht, Migrationsrecht und Prozessführung.",
       errorMessage: "Fehler beim Laden der Praxisbereiche",
       learnMore: "Mehr erfahren",
       searchPlaceholder: "Suchen...",
@@ -126,7 +145,7 @@ export default function PracticeGroups() {
     },
     zh: {
       title: "业务领域",
-      subtitle: "我们的专业覆盖所有主要法律领域",
+      subtitle: "围绕劳动法这一核心业务，本所发展了三个互补的业务领域：公司与合同、移民以及诉讼。",
       errorMessage: "加载业务领域失败",
       learnMore: "了解更多",
       searchPlaceholder: "搜索...",
@@ -135,7 +154,7 @@ export default function PracticeGroups() {
     },
     ko: {
       title: "업무 분야",
-      subtitle: "우리의 전문성은 모든 주요 법률 분야를 아우릅니다",
+      subtitle: "법인은 노동법 업무를 중심으로 회사·계약, 이민, 소송의 세 가지 보완 업무 분야를 갖추고 있습니다.",
       errorMessage: "업무 분야 로드 실패",
       learnMore: "자세히 알아보기",
       searchPlaceholder: "검색...",
@@ -144,7 +163,7 @@ export default function PracticeGroups() {
     },
     ja: {
       title: "取扱分野",
-      subtitle: "当事務所の専門性はすべての主要な法律分野をカバーしています",
+      subtitle: "当事務所は労働法を中核に、会社法・契約、移民、訴訟の三つの補完的な分野を展開しています。",
       errorMessage: "取扱分野の読み込みに失敗しました",
       learnMore: "詳しく見る",
       searchPlaceholder: "検索...",
@@ -153,7 +172,7 @@ export default function PracticeGroups() {
     },
     ar: {
       title: "مجالات الممارسة",
-      subtitle: "خبرتنا تغطي جميع المجالات القانونية الرئيسية",
+      subtitle: "حول ممارسته في قانون العمل، طوّر المكتب ثلاث ممارسات مكمّلة: الشركات والعقود، والهجرة، والتقاضي.",
       errorMessage: "فشل تحميل مجالات الممارسة",
       learnMore: "اعرف المزيد",
       searchPlaceholder: "بحث...",
@@ -162,7 +181,7 @@ export default function PracticeGroups() {
     },
     ru: {
       title: "Практики",
-      subtitle: "Наша экспертиза охватывает все основные области права",
+      subtitle: "Вокруг практики трудового права фирма развила три дополняющие её практики: корпоративную и договорную, миграционную и судебную.",
       errorMessage: "Не удалось загрузить практики",
       learnMore: "Подробнее",
       searchPlaceholder: "Поиск...",
@@ -171,7 +190,7 @@ export default function PracticeGroups() {
     },
     fr: {
       title: "Domaines de pratique",
-      subtitle: "Notre expertise couvre tous les principaux domaines juridiques",
+      subtitle: "Autour de sa pratique en droit du travail, le cabinet a développé trois pratiques complémentaires : droit des sociétés et des contrats, immigration et contentieux.",
       errorMessage: "Échec du chargement des domaines de pratique",
       learnMore: "En savoir plus",
       searchPlaceholder: "Rechercher...",
@@ -180,7 +199,7 @@ export default function PracticeGroups() {
     },
     it: {
       title: "Aree di pratica",
-      subtitle: "La nostra competenza copre tutte le principali aree legali",
+      subtitle: "Attorno alla sua pratica giuslavoristica, lo studio ha sviluppato tre aree complementari: societario e contrattuale, immigrazione e contenzioso.",
       errorMessage: "Impossibile caricare le aree di pratica",
       learnMore: "Scopri di più",
       searchPlaceholder: "Cerca...",
@@ -201,84 +220,80 @@ export default function PracticeGroups() {
     },
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.4 },
-    },
-  };
-
   return (
     <div className="min-h-screen bg-background" data-testid="page-practice-groups">
       <SEOHead page="practiceGroups" language={language} />
       <Header />
-      
-      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-practice-groups-hero">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="max-w-3xl"
-          >
-            <Eyebrow num="02" tone="navy" className="mb-6" />
-            <h1
-              className="mb-5"
-              data-testid="text-practice-groups-title"
-            >
-              {t.title}
-            </h1>
-            <p
-              data-testid="text-practice-groups-subtitle"
-            >
-              {t.subtitle}
-            </p>
-          </motion.div>
-        </div>
-      </section>
 
-      <main id="main-content" className="py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          {error ? (
-            <div className="py-12" data-testid="container-practice-groups-error">
-              <p className="text-base text-ss-medio" data-testid="text-practice-groups-error">
-                {t.errorMessage}
-              </p>
-            </div>
-          ) : isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12 max-w-4xl">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="border-t border-ss-rule pt-6"
-                  data-testid={`skeleton-practice-group-${i}`}
-                >
-                  <Skeleton className="aspect-[4/3] w-full bg-ss-paper mb-5" />
-                  <Skeleton className="h-6 w-3/4 mb-3 bg-ss-rule" />
-                  <Skeleton className="h-4 w-full mb-2 bg-ss-rule" />
-                  <Skeleton className="h-4 w-5/6 mb-4 bg-ss-rule" />
-                  <Skeleton className="h-4 w-24 bg-ss-rule" />
-                </div>
-              ))}
-            </div>
-          ) : (
+      {/* Encabezado dentro de <main> (el salto al contenido no se salta el h1); el relleno
+          del cuerpo va en su propio envoltorio. ss-container: borde de logotipo y pie. */}
+      <main id="main-content">
+        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-practice-groups-hero">
+          <div className="ss-container">
             <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-            viewport={{ once: true }}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12 max-w-4xl"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="max-w-3xl"
             >
-              {practiceGroups?.map((group, idx) => (
-                <motion.div key={group.id} variants={itemVariants}>
-                  <PracticeGroupCard group={group} index={idx} learnMoreText={t.learnMore} />
-                </motion.div>
-              ))}
+              <Eyebrow num="02" tone="navy" className="mb-6" />
+              <h1
+                className="mb-5"
+                data-testid="text-practice-groups-title"
+              >
+                {t.title}
+              </h1>
+              <p
+                data-testid="text-practice-groups-subtitle"
+              >
+                {t.subtitle}
+              </p>
             </motion.div>
-          )}
+          </div>
+        </section>
+
+        <div className="py-16 lg:py-20">
+          {/* Lista a todo el ancho del contenedor: en escritorio, nombre y descripción en
+              columnas; en teléfono, apilados */}
+          <div className="ss-container">
+            {error ? (
+              <div className="py-12" data-testid="container-practice-groups-error">
+                <p className="text-base text-ss-medio" data-testid="text-practice-groups-error">
+                  {t.errorMessage}
+                </p>
+              </div>
+            ) : isLoading ? (
+              <div className="border-t border-ss-rule">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="grid grid-cols-1 gap-y-3 border-b border-ss-rule py-8 sm:grid-cols-[88px_minmax(0,1fr)] sm:gap-x-8 lg:py-10"
+                    data-testid={`skeleton-practice-group-${i}`}
+                  >
+                    <Skeleton className="h-3 w-10 bg-ss-rule" />
+                    <div>
+                      <Skeleton className="h-8 w-2/3 max-w-sm mb-4 bg-ss-rule" />
+                      <Skeleton className="h-4 w-full max-w-xl mb-2 bg-ss-rule" />
+                      <Skeleton className="h-4 w-5/6 max-w-lg bg-ss-rule" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <motion.ol
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="border-t border-ss-rule"
+              >
+                {practiceGroups?.map((group, idx) => (
+                  <PracticeGroupRow key={group.id} group={group} index={idx} />
+                ))}
+              </motion.ol>
+            )}
+          </div>
         </div>
       </main>
 

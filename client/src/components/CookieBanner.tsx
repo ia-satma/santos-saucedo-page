@@ -543,7 +543,7 @@ export default function CookieBanner({ language }: CookieBannerProps) {
             dir={dir}
             data-testid="banner-cookie-consent"
           >
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div className="text-[15px] leading-relaxed text-white/85 flex-1">
                 <p>
                   {t.message}

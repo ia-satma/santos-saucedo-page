@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 // Los iconos solo quedan en los datos de cada sección; la página ya no los dibuja.
 import { Shield, FileText, Database, Eye, Lock, Cookie, AlertCircle, Phone, Globe, Users, Building2 } from "lucide-react";
@@ -7,6 +8,45 @@ import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContact } from "@/components/home26/useSiteContact";
 import { Eyebrow } from "@/components/editorial";
+
+// Texto de una sección: párrafos separados por línea en blanco; las líneas que empiezan por
+// "• " pasan a una lista real con sangría francesa (al partirse, el texto queda alineado y no
+// bajo la viñeta). El resto conserva sus saltos de línea (direcciones, horarios).
+function renderLegalText(text: string): ReactNode[] {
+  return text.split(/\n{2,}/).map((block, blockIndex) => {
+    const parts: ReactNode[] = [];
+    let lines: string[] = [];
+    let items: string[] = [];
+    const flushLines = () => {
+      if (lines.length) {
+        parts.push(<p key={`p${parts.length}`} className="whitespace-pre-line">{lines.join("\n")}</p>);
+        lines = [];
+      }
+    };
+    const flushItems = () => {
+      if (items.length) {
+        parts.push(
+          <ul key={`u${parts.length}`} className="list-disc ps-6 space-y-1 marker:text-ss-marino/50">
+            {items.map((item, i) => <li key={i} className="ps-1">{item}</li>)}
+          </ul>
+        );
+        items = [];
+      }
+    };
+    for (const line of block.split("\n")) {
+      if (line.startsWith("• ")) {
+        flushLines();
+        items.push(line.slice(2));
+      } else {
+        flushItems();
+        lines.push(line);
+      }
+    }
+    flushLines();
+    flushItems();
+    return <div key={blockIndex} className="space-y-2">{parts}</div>;
+  });
+}
 
 type SupportedLanguage = 'en' | 'es' | 'de' | 'zh' | 'ko' | 'ja' | 'ar' | 'ru' | 'fr' | 'it';
 
@@ -35,9 +75,9 @@ export default function PrivacyPolicy() {
           id: "introduction",
           icon: Shield,
           title: "1. Introduction",
-          content: `Santos & Saucedo Abogados ("S&S", "we", "us", or "our") is committed to protecting your privacy and ensuring the security of your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website www.santossaucedo.com (the "Website") or interact with our services.
+          content: `Santos & Saucedo Abogados (“S&S”, “we”, “us”, or “our”) is committed to protecting your privacy and ensuring the security of your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website www.santossaucedo.com (the “Website”) or interact with our services.
 
-This Privacy Policy complies with the Federal Law on Protection of Personal Data Held by Private Parties (Ley Federal de Protección de Datos Personales en Posesión de los Particulares, "LFPDPPP") and its Regulations, as well as other applicable Mexican data protection laws and international best practices.
+This Privacy Policy complies with the Federal Law on Protection of Personal Data Held by Private Parties (Ley Federal de Protección de Datos Personales en Posesión de los Particulares, “LFPDPPP”) and its Regulations, as well as other applicable Mexican data protection laws and international best practices.
 
 By accessing or using our Website, you acknowledge that you have read, understood, and agree to be bound by this Privacy Policy. If you do not agree with our policies and practices, please do not use our Website.`
         },
@@ -49,7 +89,6 @@ By accessing or using our Website, you acknowledge that you have read, understoo
 
 Santos & Saucedo Abogados
 Río Tamazunchale 205 Norte
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 For privacy-related inquiries:
@@ -182,7 +221,6 @@ To Exercise Your Rights:
 Submit a written request to:
 Email: privacidad@santossaucedo.com
 Address: Río Tamazunchale 205 Norte
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 Response Times:
@@ -296,7 +334,6 @@ Santos & Saucedo Abogados
 
 Address:
 Río Tamazunchale 205 Norte
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 Email: privacidad@santossaucedo.com
@@ -313,15 +350,15 @@ Website: www.santossaucedo.com`
     es: {
       title: "Aviso de privacidad",
       subtitle: "Cómo recopilamos, utilizamos y protegemos sus datos personales",
-      lastUpdated: "Última actualización: Diciembre 2024",
+      lastUpdated: "Última actualización: diciembre de 2024",
       sections: [
         {
           id: "introduction",
           icon: Shield,
           title: "1. Introducción",
-          content: `Santos & Saucedo Abogados ("S&S", "nosotros" o "nuestro") se compromete a proteger su privacidad y garantizar la seguridad de sus datos personales. Este Aviso de Privacidad explica cómo recopilamos, utilizamos, divulgamos y protegemos su información cuando visita nuestro sitio web www.santossaucedo.com (el "Sitio Web") o interactúa con nuestros servicios.
+          content: `Santos & Saucedo Abogados («S&S», «nosotros» o «nuestro») se compromete a proteger su privacidad y garantizar la seguridad de sus datos personales. Este Aviso de Privacidad explica cómo recopilamos, utilizamos, divulgamos y protegemos su información cuando visita nuestro sitio web www.santossaucedo.com (el «Sitio Web») o interactúa con nuestros servicios.
 
-Este Aviso de Privacidad cumple con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares ("LFPDPPP") y su Reglamento, así como con otras leyes mexicanas de protección de datos aplicables y las mejores prácticas internacionales.
+Este Aviso de Privacidad cumple con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares («LFPDPPP») y su Reglamento, así como con otras leyes mexicanas de protección de datos aplicables y las mejores prácticas internacionales.
 
 Al acceder o utilizar nuestro Sitio Web, usted reconoce que ha leído, comprendido y acepta estar sujeto a este Aviso de Privacidad.`
         },
@@ -333,7 +370,6 @@ Al acceder o utilizar nuestro Sitio Web, usted reconoce que ha leído, comprendi
 
 Santos & Saucedo Abogados
 Río Tamazunchale 205 Norte
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 Para consultas relacionadas con privacidad:
@@ -346,18 +382,18 @@ Teléfono: +52 81 8335 2086`
           title: "3. Datos personales que recopilamos",
           content: `Podemos recopilar y tratar las siguientes categorías de datos personales:
 
-Datos de Identificación:
+Datos de identificación:
 • Nombre completo, título y cargo profesional
 • Información de contacto (correo electrónico, teléfono, dirección postal)
 • Nombre de la empresa u organización
 • Credenciales y afiliaciones profesionales
 
-Datos de Comunicación:
+Datos de comunicación:
 • Correspondencia y comunicaciones con S&S
 • Consultas enviadas a través de nuestros formularios de contacto
 • Preferencias de suscripción a boletines y publicaciones
 
-Datos Técnicos:
+Datos técnicos:
 • Dirección IP e información del dispositivo
 • Tipo y versión del navegador
 • Sistema operativo
@@ -369,13 +405,13 @@ Datos Técnicos:
           title: "4. Uso de sus datos",
           content: `Utilizamos sus datos personales para los siguientes fines:
 
-Finalidades Primarias (no requieren consentimiento adicional):
+Finalidades primarias (no requieren consentimiento adicional):
 • Para proporcionar servicios legales y asesoría profesional
 • Para responder a sus consultas y comunicaciones
 • Para gestionar nuestras relaciones con clientes
 • Para cumplir con obligaciones legales y regulatorias
 
-Finalidades Secundarias (pueden requerir consentimiento):
+Finalidades secundarias (pueden requerir consentimiento):
 • Para enviar boletines, publicaciones y actualizaciones legales
 • Para invitarlo a eventos, seminarios y conferencias
 • Para realizar encuestas y recopilar comentarios sobre nuestros servicios
@@ -389,7 +425,7 @@ Puede optar por no recibir comunicaciones para finalidades secundarias contactá
           title: "5. Conservación de datos",
           content: `Conservamos sus datos personales solo durante el tiempo necesario para cumplir con los fines para los que fueron recopilados, a menos que la ley exija o permita un período de retención más largo.
 
-Períodos de Retención:
+Períodos de retención:
 • Expedientes de clientes y asuntos legales: 10 años después del cierre del caso
 • Consultas generales y comunicaciones: 3 años desde el último contacto
 • Suscripciones a boletines: Hasta que se dé de baja
@@ -427,11 +463,10 @@ Cancelación: Puede solicitar la eliminación de sus datos personales cuando ya 
 
 Oposición: Puede oponerse al tratamiento de sus datos personales para fines específicos.
 
-Para Ejercer sus Derechos:
+Para ejercer sus derechos:
 Envíe una solicitud por escrito a:
 Correo electrónico: privacidad@santossaucedo.com
 Dirección: Río Tamazunchale 205 Norte
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México`
         },
         {
@@ -459,13 +494,13 @@ Cuando sus datos sean transferidos a países fuera de México, nos aseguramos de
 
 Tipos de cookies que utilizamos:
 
-Cookies Esenciales: Necesarias para que el sitio web funcione correctamente.
+Cookies esenciales: Necesarias para que el sitio web funcione correctamente.
 
-Cookies de Análisis: Nos ayudan a entender cómo los visitantes interactúan con nuestro sitio web.
+Cookies de análisis: Nos ayudan a entender cómo los visitantes interactúan con nuestro sitio web.
 
-Cookies de Funcionalidad: Recuerdan sus preferencias como configuración de idioma.
+Cookies de funcionalidad: Recuerdan sus preferencias como configuración de idioma.
 
-Cookies de Marketing: Se utilizan para mostrar anuncios relevantes.
+Cookies de marketing: Se utilizan para mostrar anuncios relevantes.
 
 Gestión de cookies:
 Puede controlar y gestionar las cookies a través de la configuración de su navegador.`
@@ -513,7 +548,6 @@ Santos & Saucedo Abogados
 
 Dirección:
 Río Tamazunchale 205 Norte
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 Correo electrónico: privacidad@santossaucedo.com
@@ -532,7 +566,7 @@ Horario de atención: Lunes a viernes, 9:00 AM a 6:00 PM (hora de la Ciudad de M
           id: "introduction",
           icon: Shield,
           title: "1. Einleitung",
-          content: `Santos & Saucedo Abogados („S&S", „wir", „uns" oder „unser") verpflichtet sich, Ihre Privatsphäre zu schützen und die Sicherheit Ihrer personenbezogenen Daten zu gewährleisten. Diese Datenschutzrichtlinie erläutert, wie wir Ihre Informationen erfassen, verwenden, offenlegen und schützen, wenn Sie unsere Website www.santossaucedo.com (die „Website") besuchen oder mit unseren Diensten interagieren.
+          content: `Santos & Saucedo Abogados („S&S“, „wir“, „uns“ oder „unser“) verpflichtet sich, Ihre Privatsphäre zu schützen und die Sicherheit Ihrer personenbezogenen Daten zu gewährleisten. Diese Datenschutzrichtlinie erläutert, wie wir Ihre Informationen erfassen, verwenden, offenlegen und schützen, wenn Sie unsere Website www.santossaucedo.com (die „Website“) besuchen oder mit unseren Diensten interagieren.
 
 Diese Datenschutzrichtlinie entspricht dem Bundesgesetz zum Schutz personenbezogener Daten in Privatbesitz (LFPDPPP) und seinen Vorschriften sowie anderen anwendbaren mexikanischen Datenschutzgesetzen und internationalen Best Practices.
 
@@ -546,7 +580,6 @@ Durch den Zugriff auf oder die Nutzung unserer Website erkennen Sie an, dass Sie
 
 Santos & Saucedo Abogados
 Río Tamazunchale 205 Norte
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 Für datenschutzbezogene Anfragen:
@@ -652,7 +685,7 @@ Sie können der Verarbeitung Ihrer personenbezogenen Daten für bestimmte Zwecke
 
 Zur Ausübung Ihrer Rechte:
 E-Mail: privacidad@santossaucedo.com
-Adresse: Río Tamazunchale 205 Norte, Mexiko-Stadt`
+Adresse: Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220`
         },
         {
           id: "transfers",
@@ -739,7 +772,6 @@ Santos & Saucedo Abogados
 
 Adresse:
 Río Tamazunchale 205 Norte
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 E-Mail: privacidad@santossaucedo.com
@@ -762,7 +794,7 @@ Website: www.santossaucedo.com`
           id: "introduction",
           icon: Shield,
           title: "1. 简介",
-          content: `Santos & Saucedo Abogados（"S&S"、"我们"或"我们的"）致力于保护您的隐私并确保您个人数据的安全。本隐私政策解释了当您访问我们的网站www.santossaucedo.com（"网站"）或与我们的服务互动时，我们如何收集、使用、披露和保护您的信息。
+          content: `Santos & Saucedo Abogados（“S&S”、“我们”或“我们的”）致力于保护您的隐私并确保您个人数据的安全。本隐私政策解释了当您访问我们的网站www.santossaucedo.com（“网站”）或与我们的服务互动时，我们如何收集、使用、披露和保护您的信息。
 
 本隐私政策符合《私人持有个人数据保护联邦法》（LFPDPPP）及其条例，以及其他适用的墨西哥数据保护法律和国际最佳实践。
 
@@ -776,7 +808,6 @@ Website: www.santossaucedo.com`
 
 Santos & Saucedo Abogados
 Río Tamazunchale 205 Norte, 18楼
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 隐私相关咨询：
@@ -888,7 +919,7 @@ San Pedro Garza García, Nuevo León, México
 行使您的权利：
 请将书面请求提交至：
 电子邮件：privacidad@santossaucedo.com
-地址：Río Tamazunchale 205 Norte, 18楼，墨西哥城
+地址：Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220
 
 如果您对我们的回复不满意，可以向国家透明度、信息获取和个人数据保护研究所（INAI）提出投诉：www.inai.org.mx`
         },
@@ -981,7 +1012,6 @@ Santos & Saucedo Abogados
 
 地址：
 Río Tamazunchale 205 Norte, 18楼
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 电子邮件：privacidad@santossaucedo.com
@@ -1004,7 +1034,7 @@ San Pedro Garza García, Nuevo León, México
           id: "introduction",
           icon: Shield,
           title: "1. 소개",
-          content: `Santos & Saucedo Abogados("S&S", "당사", "저희" 또는 "우리의")는 귀하의 개인정보를 보호하고 개인 데이터의 보안을 보장하기 위해 노력합니다. 이 개인정보 처리방침은 귀하가 당사 웹사이트 www.santossaucedo.com("웹사이트")을 방문하거나 당사 서비스와 상호작용할 때 귀하의 정보를 수집, 사용, 공개 및 보호하는 방법을 설명합니다.
+          content: `Santos & Saucedo Abogados(“S&S”, “당사”, “저희” 또는 “우리의”)는 귀하의 개인정보를 보호하고 개인 데이터의 보안을 보장하기 위해 노력합니다. 이 개인정보 처리방침은 귀하가 당사 웹사이트 www.santossaucedo.com(“웹사이트”)을 방문하거나 당사 서비스와 상호작용할 때 귀하의 정보를 수집, 사용, 공개 및 보호하는 방법을 설명합니다.
 
 이 개인정보 처리방침은 개인정보 보호에 관한 연방법(LFPDPPP) 및 그 규정, 기타 적용 가능한 멕시코 데이터 보호법 및 국제 모범 사례를 준수합니다.
 
@@ -1018,7 +1048,6 @@ San Pedro Garza García, Nuevo León, México
 
 Santos & Saucedo Abogados
 Río Tamazunchale 205 Norte, 18층
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 개인정보 관련 문의:
@@ -1130,7 +1159,7 @@ S&S 내부:
 권리 행사:
 서면 요청을 제출하세요:
 이메일: privacidad@santossaucedo.com
-주소: Río Tamazunchale 205 Norte, 18층, 멕시코시티
+주소: Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220
 
 당사의 응답에 만족하지 못하시면 국가 투명성, 정보 접근 및 개인 데이터 보호 연구소(INAI)에 불만을 제기할 수 있습니다: www.inai.org.mx`
         },
@@ -1223,7 +1252,6 @@ Santos & Saucedo Abogados
 
 주소:
 Río Tamazunchale 205 Norte, 18층
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 이메일: privacidad@santossaucedo.com
@@ -1260,7 +1288,6 @@ San Pedro Garza García, Nuevo León, México
 
 Santos & Saucedo Abogados
 Río Tamazunchale 205 Norte, 18階
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 プライバシーに関するお問い合わせ：
@@ -1372,7 +1399,7 @@ S&S内：
 権利の行使：
 書面による要求を以下に提出してください：
 メール：privacidad@santossaucedo.com
-住所：Río Tamazunchale 205 Norte, 18階、メキシコシティ
+住所：Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220
 
 当社の対応にご満足いただけない場合は、国立透明性・情報アクセス・個人データ保護研究所（INAI）に苦情を申し立てることができます：www.inai.org.mx`
         },
@@ -1465,7 +1492,6 @@ Santos & Saucedo Abogados
 
 住所：
 Río Tamazunchale 205 Norte, 18階
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 メール：privacidad@santossaucedo.com
@@ -1488,7 +1514,7 @@ San Pedro Garza García, Nuevo León, México
           id: "introduction",
           icon: Shield,
           title: "1. مقدمة",
-          content: `تلتزم Santos & Saucedo Abogados ("S&S" أو "نحن" أو "لنا") بحماية خصوصيتك وضمان أمان بياناتك الشخصية. توضح سياسة الخصوصية هذه كيف نجمع ونستخدم ونفصح ونحمي معلوماتك عند زيارة موقعنا الإلكتروني www.santossaucedo.com ("الموقع الإلكتروني") أو التفاعل مع خدماتنا.
+          content: `تلتزم Santos & Saucedo Abogados («S&S» أو «نحن» أو «لنا») بحماية خصوصيتك وضمان أمان بياناتك الشخصية. توضح سياسة الخصوصية هذه كيف نجمع ونستخدم ونفصح ونحمي معلوماتك عند زيارة موقعنا الإلكتروني www.santossaucedo.com («الموقع الإلكتروني») أو التفاعل مع خدماتنا.
 
 تتوافق سياسة الخصوصية هذه مع القانون الفيدرالي لحماية البيانات الشخصية المملوكة للجهات الخاصة (LFPDPPP) ولوائحه، بالإضافة إلى قوانين حماية البيانات المكسيكية الأخرى المعمول بها وأفضل الممارسات الدولية.
 
@@ -1502,8 +1528,7 @@ San Pedro Garza García, Nuevo León, México
 
 Santos & Saucedo Abogados
 Río Tamazunchale 205 Norte، الطابق 18
-San Pedro Garza García, N.L.
-San Pedro Garza García, Nuevo León، مدينة مكسيكو، المكسيك
+San Pedro Garza García, Nuevo León، المكسيك
 
 للاستفسارات المتعلقة بالخصوصية:
 البريد الإلكتروني: privacidad@santossaucedo.com
@@ -1614,7 +1639,7 @@ San Pedro Garza García, Nuevo León، مدينة مكسيكو، المكسيك
 لممارسة حقوقك:
 قدم طلباً كتابياً إلى:
 البريد الإلكتروني: privacidad@santossaucedo.com
-العنوان: Río Tamazunchale 205 Norte، الطابق 18، مدينة مكسيكو
+العنوان: Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220
 
 إذا لم تكن راضياً عن ردنا، يمكنك تقديم شكوى إلى المعهد الوطني للشفافية والوصول إلى المعلومات وحماية البيانات الشخصية (INAI) على www.inai.org.mx`
         },
@@ -1707,8 +1732,7 @@ Santos & Saucedo Abogados
 
 العنوان:
 Río Tamazunchale 205 Norte، الطابق 18
-San Pedro Garza García, N.L.
-San Pedro Garza García, Nuevo León، مدينة مكسيكو، المكسيك
+San Pedro Garza García, Nuevo León، المكسيك
 
 البريد الإلكتروني: privacidad@santossaucedo.com
 الهاتف: +52 81 8335 2086
@@ -1744,7 +1768,6 @@ San Pedro Garza García, Nuevo León، مدينة مكسيكو، المكسيك
 
 Santos & Saucedo Abogados
 Río Tamazunchale 205 Norte, 18 этаж
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 По вопросам конфиденциальности:
@@ -1856,7 +1879,7 @@ San Pedro Garza García, Nuevo León, México
 Для осуществления своих прав:
 Отправьте письменный запрос по адресу:
 Электронная почта: privacidad@santossaucedo.com
-Адрес: Río Tamazunchale 205 Norte, 18 этаж, Мехико
+Адрес: Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220
 
 Если вы не удовлетворены нашим ответом, вы можете подать жалобу в Национальный институт прозрачности, доступа к информации и защиты персональных данных (INAI): www.inai.org.mx`
         },
@@ -1949,7 +1972,6 @@ Santos & Saucedo Abogados
 
 Адрес:
 Río Tamazunchale 205 Norte, 18 этаж
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 Электронная почта: privacidad@santossaucedo.com
@@ -1986,8 +2008,7 @@ En accédant à notre Site Web ou en l'utilisant, vous reconnaissez avoir lu, co
 
 Santos & Saucedo Abogados
 Río Tamazunchale 205 Norte, 18e étage
-San Pedro Garza García, N.L.
-San Pedro Garza García, Nuevo León, MéxicoMexique
+San Pedro Garza García, Nuevo León, Mexique
 
 Pour les demandes liées à la confidentialité :
 E-mail : privacidad@santossaucedo.com
@@ -2098,7 +2119,7 @@ Vous pouvez vous opposer au traitement de vos données personnelles pour des fin
 Pour exercer vos droits :
 Soumettez une demande écrite à :
 E-mail : privacidad@santossaucedo.com
-Adresse : Río Tamazunchale 205 Norte, 18e étage, Mexico
+Adresse : Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220
 
 Si vous n'êtes pas satisfait de notre réponse, vous pouvez déposer une plainte auprès de l'Institut national de transparence, d'accès à l'information et de protection des données personnelles (INAI) : www.inai.org.mx`
         },
@@ -2191,8 +2212,7 @@ Santos & Saucedo Abogados
 
 Adresse :
 Río Tamazunchale 205 Norte, 18e étage
-San Pedro Garza García, N.L.
-San Pedro Garza García, Nuevo León, MéxicoMexique
+San Pedro Garza García, Nuevo León, Mexique
 
 E-mail : privacidad@santossaucedo.com
 Téléphone : +52 81 8335 2086
@@ -2214,7 +2234,7 @@ Site web : www.santossaucedo.com`
           id: "introduction",
           icon: Shield,
           title: "1. Introduzione",
-          content: `Santos & Saucedo Abogados ("S&S", "noi", "ci" o "nostro") si impegna a proteggere la tua privacy e a garantire la sicurezza dei tuoi dati personali. Questa Informativa sulla privacy spiega come raccogliamo, utilizziamo, divulghiamo e proteggiamo le tue informazioni quando visiti il nostro sito web www.santossaucedo.com (il "Sito Web") o interagisci con i nostri servizi.
+          content: `Santos & Saucedo Abogados («S&S», «noi», «ci» o «nostro») si impegna a proteggere la tua privacy e a garantire la sicurezza dei tuoi dati personali. Questa Informativa sulla privacy spiega come raccogliamo, utilizziamo, divulghiamo e proteggiamo le tue informazioni quando visiti il nostro sito web www.santossaucedo.com (il «Sito Web») o interagisci con i nostri servizi.
 
 Questa Informativa sulla privacy è conforme alla Legge federale sulla protezione dei dati personali (LFPDPPP) e ai suoi regolamenti, nonché ad altre leggi messicane applicabili in materia di protezione dei dati e alle migliori pratiche internazionali.
 
@@ -2228,8 +2248,7 @@ Accedendo o utilizzando il nostro Sito Web, riconosci di aver letto, compreso e 
 
 Santos & Saucedo Abogados
 Río Tamazunchale 205 Norte
-San Pedro Garza García, N.L.
-San Pedro Garza García, Nuevo León, MéxicoMessico
+San Pedro Garza García, Nuevo León, Messico
 
 Per richieste relative alla privacy:
 E-mail: privacidad@santossaucedo.com
@@ -2340,7 +2359,7 @@ Puoi opporti al trattamento dei tuoi dati personali per finalità specifiche, in
 Per esercitare i tuoi diritti:
 Invia una richiesta scritta a:
 E-mail: privacidad@santossaucedo.com
-Indirizzo: Río Tamazunchale 205 Norte, Città del Messico
+Indirizzo: Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220
 
 Se non sei soddisfatto della nostra risposta, puoi presentare un reclamo all'Istituto nazionale per la trasparenza, l'accesso alle informazioni e la protezione dei dati personali (INAI): www.inai.org.mx`
         },
@@ -2433,8 +2452,7 @@ Santos & Saucedo Abogados
 
 Indirizzo:
 Río Tamazunchale 205 Norte
-San Pedro Garza García, N.L.
-San Pedro Garza García, Nuevo León, MéxicoMessico
+San Pedro Garza García, Nuevo León, Messico
 
 E-mail: privacidad@santossaucedo.com
 Telefono: +52 81 8335 2086
@@ -2488,40 +2506,43 @@ Sito web: www.santossaucedo.com`
       <SEOHead page="privacyPolicy" language={language} />
       <Header />
       
-      {/* Encabezado de papel ("memorándum impreso"), como los artículos: Hueso, h1 Azul Marino */}
-      <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" data-testid="section-privacy-hero">
-        {/* Columna del documento (max-w-4xl): titular, subtítulo y fecha sobre su borde */}
-        <div className="max-w-4xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            <Eyebrow num="" tone="paper" className="mb-6" />
-            <h1
-              className="mb-5"
-              data-testid="text-privacy-title"
+      {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo salta.
+          El relleno del cuerpo va en su propio envoltorio. */}
+      <main id="main-content">
+        {/* Encabezado de papel ("memorándum impreso"), como los artículos: Hueso, h1 Azul Marino */}
+        <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" data-testid="section-privacy-hero">
+          {/* Columna del documento (max-w-4xl): titular, subtítulo y fecha sobre su borde */}
+          <div className="max-w-4xl mx-auto px-6 lg:px-12">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
             >
-              {t.title}
-            </h1>
-            <p
-              className="mb-4"
-              data-testid="text-privacy-subtitle"
-            >
-              {t.subtitle}
-            </p>
-            <p
-              className="text-sm"
-              data-testid="text-privacy-updated"
-            >
-              {t.lastUpdated}
-            </p>
-          </motion.div>
-        </div>
-      </section>
+              <Eyebrow num="" tone="paper" className="mb-6" />
+              <h1
+                className="mb-5"
+                data-testid="text-privacy-title"
+              >
+                {t.title}
+              </h1>
+              <p
+                className="mb-4"
+                data-testid="text-privacy-subtitle"
+              >
+                {t.subtitle}
+              </p>
+              <p
+                className="text-sm"
+                data-testid="text-privacy-updated"
+              >
+                {t.lastUpdated}
+              </p>
+            </motion.div>
+          </div>
+        </section>
 
-      <main id="main-content" className="py-16 lg:py-20">
+        <div className="py-16 lg:py-20">
         <div className="max-w-4xl mx-auto px-6 lg:px-12">
           {/* Secciones abiertas: filete superior, h2 en romana y texto corrido. Sin cajas ni iconos. */}
           <motion.div
@@ -2545,10 +2566,10 @@ Sito web: www.santossaucedo.com`
                   {section.title}
                 </h2>
                 <div
-                  className="ss-prose text-ss-tinta text-[17px] md:text-[18px] whitespace-pre-line"
+                  className="ss-prose text-ss-tinta text-[17px] md:text-[18px] space-y-5"
                   data-testid={`text-section-content-${section.id}`}
                 >
-                  {section.content}
+                  {renderLegalText(section.content)}
                 </div>
               </motion.div>
             ))}
@@ -2582,6 +2603,7 @@ Sito web: www.santossaucedo.com`
               </a>
             </div>
           </motion.div>
+        </div>
         </div>
       </main>
 

@@ -106,11 +106,6 @@ export default {
           rule: "#E1E0D7", // Línea
           input: "#C9C8BD",
           lime: "#B2EB3E", // solo sobre Azul Profundo (ver ss26.css)
-          // alias de transición: borrar cuando ningún componente los use
-          ink: "#24255C",
-          deep: "#1A1B42",
-          panel: "#1A1B42",
-          violet: "#1A1B42",
         },
         status: {
           online: "rgb(34 197 94)",

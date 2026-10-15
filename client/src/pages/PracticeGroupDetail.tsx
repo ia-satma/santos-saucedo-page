@@ -1,5 +1,5 @@
 import { Link, useParams } from "wouter";
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -13,6 +13,20 @@ import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { Eyebrow, LeadParagraph, RankingsList, type RankingItem } from "@/components/editorial";
 import type { PracticeGroup, TeamMember, RepresentativeMatterDb } from "@shared/schema";
+
+// Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
+// lleva su propio idioma y dirección, para que :lang() y el algoritmo bidi lo traten como inglés.
+const EN_SOURCE = { lang: "en", dir: "ltr" } as const;
+
+// Columna de lectura (≈800 px) al borde izquierdo del contenedor de cabecera y pie
+// (ss-container), no centrada: encabezado y cuerpo empiezan bajo el logotipo.
+function Column({ children }: { children: ReactNode }) {
+  return (
+    <div className="ss-container">
+      <div className="max-w-[50rem]">{children}</div>
+    </div>
+  );
+}
 
 interface PracticeRanking {
   publication: string;
@@ -117,8 +131,9 @@ function TranslatedMatterCard({ matter, language, t }: TranslatedMatterCardProps
 
 export default function PracticeGroupDetail() {
   const { language, displayLanguage } = useLanguage();
-  // "Llamar" marca el teléfono del pie (/api/site-content)
-  const { phoneHref } = useSiteContact(displayLanguage);
+  // Bloque de contacto: dirección y teléfono del pie (/api/site-content), como datos;
+  // "Llamar" marca ese teléfono
+  const { address, phone, phoneHref } = useSiteContact(displayLanguage);
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
 
@@ -136,7 +151,7 @@ export default function PracticeGroupDetail() {
     enabled: !!slug,
   });
 
-  const { translatedFields, isTranslating } = useTranslatedContent({
+  const { translatedFields, isTranslating, isLoading: isTranslationLoading } = useTranslatedContent({
     contentType: 'practice_group',
     entityId: practiceGroup?.id?.toString() || '',
     fields: {
@@ -154,7 +169,6 @@ export default function PracticeGroupDetail() {
     backToAll: string;
     contactUs: string;
     contactCta: string;
-    contactSubtitle: string;
     emailUs: string;
     callUs: string;
     ourTeam: string;
@@ -180,8 +194,7 @@ export default function PracticeGroupDetail() {
     en: {
       backToAll: "All Practice Groups",
       contactUs: "Contact Us",
-      contactCta: "Contact our team",
-      contactSubtitle: "Let our experienced attorneys help you navigate your legal challenges.",
+      contactCta: "Contact",
       emailUs: "Email Us",
       callUs: "Call Us",
       ourTeam: "Our Team",
@@ -207,8 +220,7 @@ export default function PracticeGroupDetail() {
     es: {
       backToAll: "Todas las áreas de práctica",
       contactUs: "Contáctenos",
-      contactCta: "Contacte a nuestro equipo",
-      contactSubtitle: "Permita que nuestros abogados experimentados le ayuden a navegar sus desafíos legales.",
+      contactCta: "Contacto",
       emailUs: "Enviar correo",
       callUs: "Llamar",
       ourTeam: "Nuestro equipo",
@@ -234,8 +246,7 @@ export default function PracticeGroupDetail() {
     de: {
       backToAll: "Zurück zu Praxisbereichen",
       contactUs: "Kontakt",
-      contactCta: "Kontaktieren Sie unser Team",
-      contactSubtitle: "Lassen Sie unsere erfahrenen Anwälte Ihnen bei Ihren rechtlichen Herausforderungen helfen.",
+      contactCta: "Kontakt",
       emailUs: "E-Mail senden",
       callUs: "Anrufen",
       ourTeam: "Unser Team",
@@ -261,8 +272,7 @@ export default function PracticeGroupDetail() {
     zh: {
       backToAll: "返回业务领域",
       contactUs: "联系我们",
-      contactCta: "联系我们的团队",
-      contactSubtitle: "让我们经验丰富的律师帮助您应对法律挑战。",
+      contactCta: "联系方式",
       emailUs: "发送邮件",
       callUs: "致电",
       ourTeam: "我们的团队",
@@ -288,8 +298,7 @@ export default function PracticeGroupDetail() {
     ko: {
       backToAll: "업무 분야로 돌아가기",
       contactUs: "문의하기",
-      contactCta: "팀에 연락하기",
-      contactSubtitle: "경험 풍부한 변호사가 법적 문제 해결을 도와드립니다.",
+      contactCta: "연락처",
       emailUs: "이메일 보내기",
       callUs: "전화하기",
       ourTeam: "우리 팀",
@@ -315,8 +324,7 @@ export default function PracticeGroupDetail() {
     ja: {
       backToAll: "取扱分野に戻る",
       contactUs: "お問い合わせ",
-      contactCta: "チームにお問い合わせ",
-      contactSubtitle: "経験豊富な弁護士が法的課題の解決をお手伝いします。",
+      contactCta: "連絡先",
       emailUs: "メールを送る",
       callUs: "電話する",
       ourTeam: "私たちのチーム",
@@ -342,8 +350,7 @@ export default function PracticeGroupDetail() {
     ar: {
       backToAll: "العودة إلى مجالات الممارسة",
       contactUs: "اتصل بنا",
-      contactCta: "تواصل مع فريقنا",
-      contactSubtitle: "دع محامينا ذوي الخبرة يساعدونك في تحدياتك القانونية.",
+      contactCta: "معلومات الاتصال",
       emailUs: "راسلنا",
       callUs: "اتصل بنا",
       ourTeam: "فريقنا",
@@ -369,8 +376,7 @@ export default function PracticeGroupDetail() {
     ru: {
       backToAll: "Назад к практикам",
       contactUs: "Свяжитесь с нами",
-      contactCta: "Связаться с командой",
-      contactSubtitle: "Позвольте нашим опытным юристам помочь вам с вашими правовыми вопросами.",
+      contactCta: "Контакты",
       emailUs: "Написать",
       callUs: "Позвонить",
       ourTeam: "Наша команда",
@@ -396,8 +402,7 @@ export default function PracticeGroupDetail() {
     fr: {
       backToAll: "Retour aux domaines de pratique",
       contactUs: "Contactez-nous",
-      contactCta: "Contactez notre équipe",
-      contactSubtitle: "Laissez nos avocats expérimentés vous aider dans vos défis juridiques.",
+      contactCta: "Contact",
       emailUs: "Envoyer un email",
       callUs: "Appeler",
       ourTeam: "Notre équipe",
@@ -423,8 +428,7 @@ export default function PracticeGroupDetail() {
     it: {
       backToAll: "Torna alle aree di pratica",
       contactUs: "Contattaci",
-      contactCta: "Contatta il nostro team",
-      contactSubtitle: "Lascia che i nostri avvocati esperti ti aiutino con le tue sfide legali.",
+      contactCta: "Contatti",
       emailUs: "Invia email",
       callUs: "Chiama",
       ourTeam: "Il nostro team",
@@ -491,16 +495,14 @@ export default function PracticeGroupDetail() {
         <Header />
         {/* Cabecera sticky en flujo: ya no hace falta compensar el header fijo */}
         <main id="main-content" className="pt-16 pb-20 lg:pt-20">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <Column>
             <h2 className="ss-h2 mb-6" data-testid="text-error-title">
               {t.errorMessage}
             </h2>
-            <Link href="/practice-groups">
-              <Button variant="outline" data-testid="button-back-to-practice-groups">
-                {t.backToAll}
-              </Button>
-            </Link>
-          </div>
+            <Button asChild variant="outline" data-testid="button-back-to-practice-groups">
+              <Link href="/practice-groups">{t.backToAll}</Link>
+            </Button>
+          </Column>
         </main>
         <Footer />
       </div>
@@ -511,18 +513,20 @@ export default function PracticeGroupDetail() {
     return (
       <div className="min-h-screen bg-background" data-testid="page-practice-group-loading">
         <Header />
-        <section className="pt-36 pb-20 editorial-page-hero">
-          <div className="max-w-4xl mx-auto px-6 lg:px-12">
-            <Skeleton className="h-5 w-48 bg-white/10 mb-6" />
-            <Skeleton className="h-12 w-64 bg-white/10" />
-          </div>
-        </section>
-        <main id="main-content" className="py-16 lg:py-20">
-          <div className="max-w-4xl mx-auto px-6 lg:px-12">
-            <Skeleton className="h-6 w-full mb-4" />
-            <Skeleton className="h-6 w-full mb-4" />
-            <Skeleton className="h-6 w-3/4 mb-4" />
-            <Skeleton className="h-6 w-5/6 mb-4" />
+        <main id="main-content">
+          <section className="pt-36 pb-20 editorial-page-hero">
+            <Column>
+              <Skeleton className="h-5 w-48 bg-white/10 mb-6" />
+              <Skeleton className="h-12 w-64 bg-white/10" />
+            </Column>
+          </section>
+          <div className="py-16 lg:py-20">
+            <Column>
+              <Skeleton className="h-6 w-full mb-4" />
+              <Skeleton className="h-6 w-full mb-4" />
+              <Skeleton className="h-6 w-3/4 mb-4" />
+              <Skeleton className="h-6 w-5/6 mb-4" />
+            </Column>
           </div>
         </main>
         <Footer />
@@ -530,6 +534,11 @@ export default function PracticeGroupDetail() {
     );
   }
 
+  // Otros idiomas: la traducción automática. Si no llega (o en el sitio estático), el inglés de
+  // origen, marcado como inglés (EN_SOURCE); mientras se traduce, el aviso de carga.
+  const isOtherLanguage = language !== 'es' && language !== 'en';
+  const translationPending = isTranslating || isTranslationLoading;
+  const sourceDescription = practiceGroup?.fullDescription || practiceGroup?.description;
   const displayName = language === 'es' 
     ? (practiceGroup?.nameEs || practiceGroup?.name)
     : language === 'en'
@@ -538,8 +547,12 @@ export default function PracticeGroupDetail() {
   const displayDescription = language === 'es'
     ? (practiceGroup?.fullDescriptionEs || practiceGroup?.descriptionEs || practiceGroup?.fullDescription || practiceGroup?.description)
     : language === 'en'
-      ? (practiceGroup?.fullDescription || practiceGroup?.description)
-      : (translatedFields.fullDescription || translatedFields.description || null);
+      ? sourceDescription
+      : (translatedFields.fullDescription || translatedFields.description || (translationPending ? null : sourceDescription));
+  const shownName = displayName || (translationPending ? null : practiceGroup?.name);
+  const nameSource = isOtherLanguage && !!shownName && shownName === practiceGroup?.name ? EN_SOURCE : undefined;
+  const descriptionSource = isOtherLanguage && !!displayDescription &&
+    (displayDescription === practiceGroup?.fullDescription || displayDescription === practiceGroup?.description);
 
   const MAX_ASSOCIATES_DISPLAY = 6;
   const displayedAssociates = filteredAndGroupedMembers.associates.slice(0, MAX_ASSOCIATES_DISPLAY);
@@ -593,49 +606,51 @@ export default function PracticeGroupDetail() {
   return (
     <div className="min-h-screen bg-background" data-testid="page-practice-group-detail">
       <Header />
-      
-      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-practice-group-hero">
-        {/* Columna de lectura del cuerpo (max-w-4xl): vuelta y titular sobre el mismo borde */}
-        <div className="max-w-4xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            <Link href="/practice-groups">
-              <span
-                className="inline-flex items-center gap-2 mb-6 cursor-pointer"
-                data-testid="link-back-to-practice-groups"
-              >
-                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-                {t.backToAll}
-              </span>
-            </Link>
-            <Eyebrow num="02" tone="navy" className="mb-4" />
-            <div>
-              <h1
-                className="ss-hero-detail"
-                data-testid="text-practice-group-title"
-              >
-                {displayName || (isTranslating ? (
-                  <span className="flex items-center gap-2">
-                    <Loader2 className="w-5 h-5 animate-spin text-white/60" />
-                  </span>
-                ) : practiceGroup?.name)}
-                {displayName && isTranslating && (
-                  <Loader2 className="inline-block w-5 h-5 ml-3 animate-spin text-white/60" />
-                )}
-              </h1>
-            </div>
-          </motion.div>
-        </div>
-      </section>
 
+      {/* Encabezado dentro de <main> (el salto al contenido no se salta el h1). Encabezado y
+          cuerpo en la misma columna (Column), al borde izquierdo del logotipo y del pie. */}
       <main id="main-content">
+        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-practice-group-hero">
+          <Column>
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+            >
+              <Link href="/practice-groups">
+                <span
+                  className="inline-flex items-center gap-2 mb-6 cursor-pointer"
+                  data-testid="link-back-to-practice-groups"
+                >
+                  <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                  {t.backToAll}
+                </span>
+              </Link>
+              <Eyebrow num="02" tone="navy" className="mb-4" />
+              <div>
+                <h1
+                  className="ss-hero-detail"
+                  data-testid="text-practice-group-title"
+                  {...nameSource}
+                >
+                  {shownName || (translationPending && (
+                    <span className="flex items-center gap-2">
+                      <Loader2 className="w-5 h-5 animate-spin text-white/60" aria-hidden="true" />
+                    </span>
+                  ))}
+                  {displayName && isTranslating && (
+                    <Loader2 className="inline-block w-5 h-5 ml-3 animate-spin text-white/60" aria-hidden="true" />
+                  )}
+                </h1>
+              </div>
+            </motion.div>
+          </Column>
+        </section>
+
         {/* Description — light band with editorial lead paragraph */}
         <section className="bg-background py-16 lg:py-20">
-          <div className="max-w-4xl mx-auto px-6 lg:px-12">
+          <Column>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -646,17 +661,20 @@ export default function PracticeGroupDetail() {
                 {displayDescription ? (() => {
                   const paragraphs = displayDescription.split(/\n\s*\n/).filter(Boolean);
                   const [first, ...rest] = paragraphs.length ? paragraphs : [displayDescription];
+                  // Texto de origen en inglés: el bloque entero (rótulo incluido) va en inglés
                   return (
-                    <LeadParagraph
-                      eyebrow={t.overview}
-                      firstParagraph={first}
-                      restParagraphs={rest}
-                      testId="lead-practice-group"
-                    />
+                    <div {...(descriptionSource ? EN_SOURCE : {})}>
+                      <LeadParagraph
+                        eyebrow={descriptionSource ? translations.en.overview : t.overview}
+                        firstParagraph={first}
+                        restParagraphs={rest}
+                        testId="lead-practice-group"
+                      />
+                    </div>
                   );
-                })() : (practiceGroup?.descriptionEs || practiceGroup?.description) && isTranslating ? (
-                  <div className="flex items-center gap-2 text-muted-foreground italic">
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                })() : (practiceGroup?.descriptionEs || practiceGroup?.description) && translationPending ? (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                     <span data-testid="text-translation-pending">
                       {language === 'de' ? 'Übersetzung lädt...' :
                        language === 'zh' ? '翻译加载中...' :
@@ -672,13 +690,13 @@ export default function PracticeGroupDetail() {
                 ) : null}
               </div>
             </motion.div>
-          </div>
+          </Column>
         </section>
 
         {/* Casos de éxito: blanco, filete de sección y filas abiertas */}
         {representativeMatters && representativeMatters.length > 0 && (
           <section className="bg-background border-t border-ss-rule py-16 lg:py-20" data-testid="section-representative-matters">
-            <div className="max-w-4xl mx-auto px-6 lg:px-12">
+            <Column>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -714,14 +732,14 @@ export default function PracticeGroupDetail() {
                     ))}
                 </div>
               </motion.div>
-            </div>
+            </Column>
           </section>
         )}
 
         {/* Rankings: lista de filetes */}
         {practiceRankings.length > 0 && (
           <section className="bg-background border-t border-ss-rule py-16 lg:py-20" data-testid="section-rankings">
-            <div className="max-w-4xl mx-auto px-6 lg:px-12">
+            <Column>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -749,7 +767,7 @@ export default function PracticeGroupDetail() {
                   testIdPrefix="ranking"
                 />
               </motion.div>
-            </div>
+            </Column>
           </section>
         )}
 
@@ -758,7 +776,7 @@ export default function PracticeGroupDetail() {
           filteredAndGroupedMembers.ofCounsel.length > 0 ||
           filteredAndGroupedMembers.associates.length > 0) && (
           <section className="bg-background border-t border-ss-rule py-16 lg:py-20" data-testid="section-team-members">
-            <div className="max-w-4xl mx-auto px-6 lg:px-12">
+            <Column>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -822,26 +840,28 @@ export default function PracticeGroupDetail() {
                     </div>
                     {hasMoreAssociates && (
                       <div className="mt-6">
-                        <Link href={`/team?practice=${slug}`}>
-                          <Button
-                            variant="outline"
-                            data-testid="button-view-all-associates"
-                          >
+                        <Button
+                          asChild
+                          variant="outline"
+                          data-testid="button-view-all-associates"
+                        >
+                          <Link href={`/team?practice=${slug}`}>
                             {t.viewAll} ({filteredAndGroupedMembers.associates.length})
-                          </Button>
-                        </Link>
+                          </Link>
+                        </Button>
                       </div>
                     )}
                   </div>
                 )}
               </motion.div>
-            </div>
+            </Column>
           </section>
         )}
 
-        {/* Contacto: bloque Hueso, sin iconos */}
+        {/* Contacto: bloque Hueso, sin iconos. Dirección y teléfono como datos (sin texto de
+            venta); un solo elemento enfocable por acción y el mismo ancho apilados en teléfono */}
         <section className="bg-background pb-16 lg:pb-24">
-          <div className="max-w-4xl mx-auto px-6 lg:px-12">
+          <Column>
             <motion.section
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -860,24 +880,26 @@ export default function PracticeGroupDetail() {
                 className="text-base text-ss-tinta mb-6 max-w-2xl"
                 data-testid="text-contact-cta-subtitle"
               >
-                {t.contactSubtitle}
+                {/* Cada parte de la dirección sin cortes internos ("C.P. 66220") */}
+                {address.map((part, i) => (
+                  <span key={i}>
+                    {i > 0 && ", "}
+                    <span className="whitespace-nowrap">{part}</span>
+                  </span>
+                ))}
+                <br />
+                <span dir="ltr">T. {phone}</span>
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/contact">
-                  <Button data-testid="button-email-us">
-                    {t.emailUs}
-                  </Button>
-                </Link>
-                <Button
-                  variant="outline"
-                  data-testid="button-call-us"
-                  onClick={() => window.location.href = phoneHref}
-                >
-                  {t.callUs}
+                <Button asChild className="w-full sm:w-auto" data-testid="button-email-us">
+                  <Link href="/contact">{t.emailUs}</Link>
+                </Button>
+                <Button asChild variant="outline" className="w-full sm:w-auto" data-testid="button-call-us">
+                  <a href={phoneHref}>{t.callUs}</a>
                 </Button>
               </div>
             </motion.section>
-          </div>
+          </Column>
         </section>
       </main>
 

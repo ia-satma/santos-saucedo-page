@@ -128,11 +128,6 @@ html:has(header.ss26) {
   --ss-font-sans: "SS Sans", "SS Sans Fallback", system-ui, -apple-system, "Segoe UI", sans-serif;
   --ss-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --ss-pad: clamp(20px, 5vw, 72px);
-  /* Alias de transición (se borran cuando ningún componente los use) */
-  --ss-ink: var(--ss-marino);
-  --ss-deep: var(--ss-navy);
-  --ss-panel: var(--ss-navy);
-  --ss-violet: var(--ss-navy);
 }
 
 .ss26 {
@@ -196,7 +191,7 @@ html:has(.ss26) body {
   text-wrap: balance;
 }
 /* Sobre Azul Profundo la letra blanca engorda: un punto más fina */
-:is(.ss-navy, .ss-gradient, .ss-panel) .ss-display {
+.ss-navy .ss-display {
   font-weight: 350;
 }
 /* Titular del héroe de la portada (86 px a 1440): 340, un pelo más fino que los h2 sobre
@@ -219,7 +214,7 @@ html:has(.ss26) body {
   font-variant-numeric: lining-nums proportional-nums;
   color: var(--ss-marino);
 }
-:is(.ss-navy, .ss-gradient, .ss-panel, .editorial-page-hero) .ss-figure {
+:is(.ss-navy, .editorial-page-hero) .ss-figure {
   color: #fff;
 }
 
@@ -264,7 +259,7 @@ html:has(.ss26) body {
   text-wrap: pretty;
 }
 /* Entrada sobre Azul Profundo: sans 400 al 84 % (la romana fina se lee débil en teléfono) */
-:is(#hero, .ss-navy, .ss-gradient, .ss-panel, .editorial-page-hero) .ss-lead {
+:is(#hero, .ss-navy, .editorial-page-hero) .ss-lead {
   font-family: var(--ss-font-sans);
   font-size: clamp(18px, 0.5vw + 14px, 21px);
   letter-spacing: 0;
@@ -275,10 +270,8 @@ html:has(.ss26) body {
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-/* Fondos: Azul Profundo plano; .ss-gradient queda como alias de .ss-navy */
-.ss-navy,
-.ss-gradient,
-.ss-panel {
+/* Fondos: Azul Profundo plano */
+.ss-navy {
   background-color: var(--ss-navy);
   background-image: none;
 }
@@ -345,25 +338,38 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 
 /* Árabe, chino, japonés y coreano: sin espaciado entre letras en etiquetas y titulares
    (en árabe rompe la unión de las letras; en CJK abre huecos ajenos a la escritura).
-   Fuera quedan los botones de idioma (lang="ja"…): su código (JA) es latino y conserva
-   el espaciado, también en la interfaz en español o inglés.
-   También en los encabezados de las páginas internas y de la noticia, que quedan fuera de
-   .ss26. Especificidad 0,4,1: gana a las utilidades tracking-[…] de la cabecera y a la
-   regla de los enlaces de vuelta (0,2,0). */
-:is(.ss26, .editorial-page-hero, [data-testid="section-news-hero"]) :is(.ss-label, .ss-display, [class*="tracking-"], [data-testid^="link-back-to"]):is(:lang(ar), :lang(zh), :lang(ja), :lang(ko)):not(button[lang] *) {
+   En todo el sitio: portada, cabecera y pie, encabezados y cuerpos de las páginas internas.
+   En el eyebrow (.ss-eyebrow) solo la etiqueta: el § y las cifras (aria-hidden) son
+   latinos y conservan el espaciado. Fuera quedan los botones de idioma (lang="ja"…):
+   su código (JA) es latino y conserva el espaciado, también en la interfaz en español o
+   inglés. Especificidad 0,4,1: gana a las utilidades tracking-[…] (0,1,0) y a la regla de
+   los enlaces de vuelta del encabezado (0,2,0). */
+:is(.ss-label, .ss-display, .ss-eyebrow > :not([aria-hidden="true"]), [class*="tracking-"], [data-testid^="link-back-to"]):is(:lang(ar), :lang(zh), :lang(ja), :lang(ko)):not(button[lang] *) {
   letter-spacing: 0;
 }
 /* La romana cubre latín y, con Source Serif 4, cirílico. En chino, japonés, coreano y
-   árabe los titulares pasan a la sans (con las letras del sistema), peso 500. */
-:is(.ss-display, .ss-serif, .ss-lead):is(:lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
+   árabe los titulares pasan a la sans (con las letras del sistema), peso 500. El resto de
+   titulares (h1–h6, .ss-h2, .ss-h3…) sigue la misma regla en index.css. */
+:is(.ss-display, .ss-serif):is(:lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
   font-family: var(--ss-font-sans);
   font-style: normal;
   font-weight: 500;
   letter-spacing: 0;
   line-height: 1.25;
 }
-:is(.ss-display, .ss-serif, .ss-lead):lang(ar) {
+:is(.ss-display, .ss-serif):lang(ar) {
   line-height: 1.4;
+}
+/* La entrada es texto, no titular: sans 400 con más interlínea que el latín
+   (los párrafos CJK y árabes la necesitan). */
+.ss-lead:is(:lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
+  font-family: var(--ss-font-sans);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.75;
+}
+.ss-lead:lang(ar) {
+  line-height: 1.8;
 }
 
 /* Menú de escritorio en alemán y francés: etiquetas más largas que en ES/EN. Medido con el
@@ -456,7 +462,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   transform-origin: left center;
   transition: transform 400ms var(--ss-ease) calc(var(--ss-delay, 0s) + 150ms);
 }
-:is(.ss-navy, .ss-gradient, .ss-panel, .editorial-page-hero) .ss-bar {
+:is(.ss-navy, .editorial-page-hero) .ss-bar {
   background: rgb(255 255 255 / 0.35);
 }
 .ss-js .ss-bar {

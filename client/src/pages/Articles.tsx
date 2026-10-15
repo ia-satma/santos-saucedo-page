@@ -12,20 +12,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { Eyebrow } from "@/components/editorial";
+import { formatNewsDate } from "@/lib/newsDate";
 import { type News } from "@shared/schema";
-
-const languageToLocale: Record<string, string> = {
-  en: 'en-US',
-  es: 'es-MX',
-  de: 'de-DE',
-  zh: 'zh-CN',
-  ko: 'ko-KR',
-  ja: 'ja-JP',
-  ar: 'ar-SA',
-  ru: 'ru-RU',
-  fr: 'fr-FR',
-  it: 'it-IT',
-};
 
 function ArticleImageWithFallback({ 
   src, 
@@ -87,17 +75,6 @@ function ArticleCard({ article, readMoreText }: ArticleCardProps) {
     ? (article.excerptEs || article.excerpt)
     : (translatedFields.excerpt || article.excerptEs || article.excerpt);
   
-  const formatDate = (date: string | Date | null) => {
-    if (!date) return '';
-    const d = new Date(date);
-    const locale = languageToLocale[language] || 'en-US';
-    return d.toLocaleDateString(locale, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
   const showTranslatingIndicator = isLoading || isTranslating;
 
   // Fila abierta: foto sin velo, fecha como etiqueta, titular en romana Azul Marino,
@@ -122,15 +99,16 @@ function ArticleCard({ article, readMoreText }: ArticleCardProps) {
         </div>
         <p className="ss-label text-ss-medio mb-2">
           <span className="ss-label" data-testid={`text-article-date-${article.slug}`}>
-            {formatDate(article.date)}
+            {formatNewsDate(article.date, language)}
           </span>
         </p>
-        <h3
+        {/* h2 con el aspecto de h3: bajo el h1 de la página no hay otro nivel intermedio */}
+        <h2
           className="ss-h3 text-[20px] mb-2 line-clamp-3 group-hover:underline decoration-1 underline-offset-4"
           data-testid={`text-article-title-${article.slug}`}
         >
           {displayTitle}
-        </h3>
+        </h2>
         <p
           className="text-base leading-[1.55] text-ss-tinta line-clamp-3 mb-4"
           data-testid={`text-article-excerpt-${article.slug}`}
@@ -157,7 +135,7 @@ export default function ArticlesPage() {
   const content = {
     en: {
       title: "Articles",
-      subtitle: "Legal insights and publications from Santos & Saucedo",
+      subtitle: "Analysis and publications from the Santos & Saucedo Labor Monitor",
       errorMessage: "Failed to load articles",
       searchPlaceholder: "Search articles...",
       readMore: "Read More",
@@ -168,7 +146,7 @@ export default function ArticlesPage() {
     },
     es: {
       title: "Artículos",
-      subtitle: "Insights legales y publicaciones de Santos & Saucedo",
+      subtitle: "Análisis y publicaciones del Monitor Laboral de Santos & Saucedo",
       errorMessage: "Error al cargar los artículos",
       searchPlaceholder: "Buscar artículos...",
       readMore: "Leer más",
@@ -314,129 +292,133 @@ export default function ArticlesPage() {
     <div className="min-h-screen bg-background" data-testid="page-articles">
       <SEOHead page="articles" language={language} />
       <Header />
-      
-      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-articles-hero">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="max-w-3xl"
-          >
-            <Eyebrow num="04" tone="navy" className="mb-6" />
-            <h1
-              className="mb-5"
-              data-testid="text-articles-title"
+
+      {/* Encabezado dentro de <main> (el salto al contenido no se salta el h1); el relleno
+          del cuerpo va en su propio envoltorio. ss-container: borde de logotipo y pie. */}
+      <main id="main-content">
+        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-articles-hero">
+          <div className="ss-container">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="max-w-3xl"
             >
-              {t.title}
-            </h1>
-            <p
-              data-testid="text-articles-subtitle"
-            >
-              {t.subtitle}
-            </p>
-            {translationBanner && (
-              <p
-                className="mt-4 text-sm"
-                data-testid="text-translation-banner"
+              <Eyebrow num="04" tone="navy" className="mb-6" />
+              <h1
+                className="mb-5"
+                data-testid="text-articles-title"
               >
-                {translationBanner}
+                {t.title}
+              </h1>
+              <p
+                data-testid="text-articles-subtitle"
+              >
+                {t.subtitle}
               </p>
-            )}
-          </motion.div>
-        </div>
-      </section>
-
-      <main id="main-content" className="py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-            className="mb-10"
-          >
-            <div className="relative max-w-md">
-              <Search aria-hidden="true" className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ss-medio" />
-              <Input
-                type="text"
-                placeholder={t.searchPlaceholder}
-                aria-label={t.searchPlaceholder}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="ps-9 bg-white border-ss-input text-ss-tinta placeholder:text-ss-medio focus-visible:ring-ss-marino focus-visible:border-ss-marino"
-                data-testid="input-search-articles"
-              />
-            </div>
-          </motion.div>
-
-          {error ? (
-            <div className="py-12" data-testid="container-articles-error">
-              <p className="text-base text-ss-medio" data-testid="text-articles-error">
-                {t.errorMessage}
-              </p>
-            </div>
-          ) : isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div
-                  key={i}
-                  data-testid={`skeleton-article-${i}`}
+              {translationBanner && (
+                <p
+                  className="mt-4 text-sm"
+                  data-testid="text-translation-banner"
                 >
-                  <Skeleton className="aspect-[16/10] w-full bg-ss-paper mb-5" />
-                  <Skeleton className="h-4 w-24 mb-3 bg-ss-rule" />
-                  <Skeleton className="h-6 w-full mb-2 bg-ss-rule" />
-                  <Skeleton className="h-4 w-full mb-1 bg-ss-rule" />
-                  <Skeleton className="h-4 w-3/4 bg-ss-rule" />
-                </div>
-              ))}
-            </div>
-          ) : !filteredArticles || filteredArticles.length === 0 ? (
-            searchQuery ? (
-              <div className="py-12" data-testid="container-articles-empty">
-                <p className="text-base text-ss-medio">
-                  {t.noResults}
+                  {translationBanner}
+                </p>
+              )}
+            </motion.div>
+          </div>
+        </section>
+
+        <div className="py-16 lg:py-20">
+          <div className="ss-container">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4 }}
+              className="mb-10"
+            >
+              <div className="relative max-w-md">
+                <Search aria-hidden="true" className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ss-medio" />
+                <Input
+                  type="text"
+                  placeholder={t.searchPlaceholder}
+                  aria-label={t.searchPlaceholder}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="ps-9 bg-white border-ss-input text-ss-tinta placeholder:text-ss-medio focus-visible:ring-ss-marino focus-visible:border-ss-marino"
+                  data-testid="input-search-articles"
+                />
+              </div>
+            </motion.div>
+
+            {error ? (
+              <div className="py-12" data-testid="container-articles-error">
+                <p className="text-base text-ss-medio" data-testid="text-articles-error">
+                  {t.errorMessage}
                 </p>
               </div>
-            ) : (
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="py-16 border-t border-ss-rule"
-                data-testid="container-articles-coming-soon"
-              >
-                <h2
-                  className="ss-h2-sm mb-4"
-                  data-testid="text-coming-soon-title"
+            ) : isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div
+                    key={i}
+                    data-testid={`skeleton-article-${i}`}
+                  >
+                    <Skeleton className="aspect-[16/10] w-full bg-ss-paper mb-5" />
+                    <Skeleton className="h-4 w-24 mb-3 bg-ss-rule" />
+                    <Skeleton className="h-6 w-full mb-2 bg-ss-rule" />
+                    <Skeleton className="h-4 w-full mb-1 bg-ss-rule" />
+                    <Skeleton className="h-4 w-3/4 bg-ss-rule" />
+                  </div>
+                ))}
+              </div>
+            ) : !filteredArticles || filteredArticles.length === 0 ? (
+              searchQuery ? (
+                <div className="py-12" data-testid="container-articles-empty">
+                  <p className="text-base text-ss-medio">
+                    {t.noResults}
+                  </p>
+                </div>
+              ) : (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                  className="py-16 border-t border-ss-rule"
+                  data-testid="container-articles-coming-soon"
                 >
-                  {t.comingSoon}
-                </h2>
-                <p
-                  className="text-base text-ss-tinta max-w-md"
-                  data-testid="text-coming-soon-message"
-                >
-                  {t.comingSoonMessage}
-                </p>
-              </motion.div>
-            )
-          ) : (
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-            viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12"
-            >
-              {filteredArticles?.map((article) => (
-                <motion.div key={article.id} variants={itemVariants}>
-                  <ArticleCard article={article} readMoreText={t.readMore} />
+                  <h2
+                    className="ss-h2-sm mb-4"
+                    data-testid="text-coming-soon-title"
+                  >
+                    {t.comingSoon}
+                  </h2>
+                  <p
+                    className="text-base text-ss-tinta max-w-md"
+                    data-testid="text-coming-soon-message"
+                  >
+                    {t.comingSoonMessage}
+                  </p>
                 </motion.div>
-              ))}
-            </motion.div>
-          )}
+              )
+            ) : (
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12"
+              >
+                {filteredArticles?.map((article) => (
+                  <motion.div key={article.id} variants={itemVariants}>
+                    <ArticleCard article={article} readMoreText={t.readMore} />
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </div>
         </div>
       </main>
 

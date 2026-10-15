@@ -13,6 +13,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { Eyebrow } from "@/components/editorial";
+import { formatNewsDate } from "@/lib/newsDate";
 import { newsCategories, type News } from "@shared/schema";
 
 function NewsImageWithFallback({ 
@@ -45,25 +46,14 @@ function NewsImageWithFallback({
   );
 }
 
-const languageToLocale: Record<string, string> = {
-  en: 'en-US',
-  es: 'es-MX',
-  de: 'de-DE',
-  zh: 'zh-CN',
-  ko: 'ko-KR',
-  ja: 'ja-JP',
-  ar: 'ar-SA',
-  ru: 'ru-RU',
-  fr: 'fr-FR',
-  it: 'it-IT',
-};
-
 interface NewsCardProps {
   article: News;
   readMoreText: string;
+  /** Categorías en el idioma de la página (las mismas de los filtros) */
+  categoryLabels: Record<string, string>;
 }
 
-function NewsCard({ article, readMoreText }: NewsCardProps) {
+function NewsCard({ article, readMoreText, categoryLabels }: NewsCardProps) {
   const { language } = useLanguage();
   const isSpanish = language === 'es';
   
@@ -86,19 +76,11 @@ function NewsCard({ article, readMoreText }: NewsCardProps) {
     ? (article.excerptEs || article.excerpt)
     : (translatedFields.excerpt || article.excerptEs || article.excerpt);
   
-  const formatDate = (date: string | Date | null) => {
-    if (!date) return '';
-    const d = new Date(date);
-    const locale = languageToLocale[language] || 'en-US';
-    return d.toLocaleDateString(locale, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
   const getCategoryLabel = () => {
     if (!article.category) return null;
+    if (categoryLabels[article.category]) {
+      return categoryLabels[article.category];
+    }
     if (language === "es" && article.categoryEs) {
       return article.categoryEs;
     }
@@ -137,15 +119,16 @@ function NewsCard({ article, readMoreText }: NewsCardProps) {
             </span>
           )}
           <span className="ss-label text-ss-medio" data-testid={`text-news-date-${article.slug}`}>
-            {formatDate(article.date)}
+            {formatNewsDate(article.date, language)}
           </span>
         </div>
-        <h3
+        {/* h2 con el aspecto de h3: bajo el h1 de la página no hay otro nivel intermedio */}
+        <h2
           className="ss-h3 text-[20px] mb-2 line-clamp-3 group-hover:underline decoration-1 underline-offset-4"
           data-testid={`text-news-title-${article.slug}`}
         >
           {displayTitle}
-        </h3>
+        </h2>
         <p
           className="text-base leading-[1.55] text-ss-tinta line-clamp-3 mb-4"
           data-testid={`text-news-excerpt-${article.slug}`}
@@ -189,8 +172,8 @@ export default function NewsPage() {
     allCategories: string;
   }> = {
     en: {
-      title: "News & Insights",
-      subtitle: "News and insights",
+      title: "Labor Monitor",
+      subtitle: "News and analysis",
       errorMessage: "Failed to load news",
       searchPlaceholder: "Search...",
       readMore: "Read More",
@@ -198,7 +181,7 @@ export default function NewsPage() {
       published: "Published",
       all: "All",
       press: "Press",
-      insights: "Insights",
+      insights: "Analysis",
       rankings: "Rankings",
       events: "Events",
       alerts: "Alerts",
@@ -207,8 +190,9 @@ export default function NewsPage() {
       allCategories: "All Categories",
     },
     es: {
-      title: "Noticias e insights",
-      subtitle: "Noticias y perspectivas",
+      // El nombre de la publicación, como en el menú (conserva sus mayúsculas)
+      title: "Monitor Laboral",
+      subtitle: "Noticias y análisis",
       errorMessage: "Error al cargar las noticias",
       searchPlaceholder: "Buscar...",
       readMore: "Leer más",
@@ -216,7 +200,7 @@ export default function NewsPage() {
       published: "Publicado",
       all: "Todos",
       press: "Prensa",
-      insights: "Insights",
+      insights: "Análisis",
       rankings: "Rankings",
       events: "Eventos",
       alerts: "Alertas",
@@ -333,8 +317,8 @@ export default function NewsPage() {
       allCategories: "Все категории",
     },
     fr: {
-      title: "Actualités et perspectives",
-      subtitle: "Actualités et perspectives",
+      title: "Actualités",
+      subtitle: "Actualités et analyses",
       errorMessage: "Échec du chargement des actualités",
       searchPlaceholder: "Rechercher...",
       readMore: "Lire la suite",
@@ -342,7 +326,7 @@ export default function NewsPage() {
       published: "Publié",
       all: "Tout",
       press: "Presse",
-      insights: "Perspectives",
+      insights: "Analyses",
       rankings: "Classements",
       events: "Événements",
       alerts: "Alertes",
@@ -385,11 +369,20 @@ export default function NewsPage() {
   const isNonNativeLanguage = language !== 'es';
   const translationBanner = isNonNativeLanguage ? (translationBannerMessages[language] || (language === 'en' ? "Content is automatically translated from Spanish." : null)) : null;
 
+  // Categorías en el idioma de la página (antes solo ES/EN, con "Insights" en ambos)
+  const categoryLabels: Record<string, string> = {
+    press: t.press,
+    insights: t.insights,
+    rankings: t.rankings,
+    events: t.events,
+    alerts: t.alerts,
+  };
+
   const categoryFilters = [
-    { value: "all", label: language === "es" ? "Todos" : "All" },
+    { value: "all", label: t.all },
     ...newsCategories.map(cat => ({
       value: cat.value,
-      label: language === "es" ? cat.es : cat.en,
+      label: categoryLabels[cat.value] || cat.en,
     })),
   ];
 
@@ -429,125 +422,129 @@ export default function NewsPage() {
     <div className="min-h-screen bg-background" data-testid="page-news">
       <SEOHead page="news" language={language} />
       <Header />
-      
-      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-news-hero">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="max-w-3xl"
-          >
-            <Eyebrow num="04" tone="navy" className="mb-6" />
-            <h1
-              className="mb-5"
-              data-testid="text-news-title"
-            >
-              {t.title}
-            </h1>
-            <p
-              data-testid="text-news-subtitle"
-            >
-              {t.subtitle}
-            </p>
-            {translationBanner && (
-              <p
-                className="mt-4 text-sm"
-                data-testid="text-translation-banner"
-              >
-                {translationBanner}
-              </p>
-            )}
-          </motion.div>
-        </div>
-      </section>
 
-      <main id="main-content" className="py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-            className="mb-10 space-y-6"
-          >
-            <div className="flex flex-wrap items-center gap-2" data-testid="container-category-filters">
-              {categoryFilters.map((cat) => (
-                <Button
-                  key={cat.value}
-                  variant={selectedCategory === cat.value ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedCategory(cat.value)}
-                  aria-pressed={selectedCategory === cat.value}
-                  className={
-                    selectedCategory === cat.value
-                      ? "text-sm"
-                      : "text-sm font-normal border-ss-input text-ss-tinta hover:border-ss-marino hover:text-ss-marino"
-                  }
-                  data-testid={`button-filter-${cat.value}`}
-                >
-                  {cat.label}
-                </Button>
-              ))}
-            </div>
-
-            <div className="relative max-w-md">
-              <Search aria-hidden="true" className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ss-medio" />
-              <Input
-                type="text"
-                placeholder={t.searchPlaceholder}
-                aria-label={t.searchPlaceholder}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="ps-9 bg-white border-ss-input text-ss-tinta placeholder:text-ss-medio focus-visible:ring-ss-marino focus-visible:border-ss-marino"
-                data-testid="input-search-news"
-              />
-            </div>
-          </motion.div>
-
-          {error ? (
-            <div className="py-12" data-testid="container-news-error">
-              <p className="text-base text-ss-medio" data-testid="text-news-error">
-                {t.errorMessage}
-              </p>
-            </div>
-          ) : isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div
-                  key={i}
-                  data-testid={`skeleton-news-${i}`}
-                >
-                  <Skeleton className="aspect-[16/10] w-full bg-ss-paper mb-5" />
-                  <Skeleton className="h-4 w-24 mb-3 bg-ss-rule" />
-                  <Skeleton className="h-6 w-full mb-2 bg-ss-rule" />
-                  <Skeleton className="h-4 w-full mb-1 bg-ss-rule" />
-                  <Skeleton className="h-4 w-3/4 bg-ss-rule" />
-                </div>
-              ))}
-            </div>
-          ) : filteredNews && filteredNews.length === 0 ? (
-            <div className="py-12" data-testid="container-news-empty">
-              <p className="text-base text-ss-medio">
-                {t.noResults}
-              </p>
-            </div>
-          ) : (
+      {/* Encabezado dentro de <main> (el salto al contenido no se salta el h1); el relleno
+          del cuerpo va en su propio envoltorio. ss-container: borde de logotipo y pie. */}
+      <main id="main-content">
+        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-news-hero">
+          <div className="ss-container">
             <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-            viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="max-w-3xl"
             >
-              {filteredNews?.map((article) => (
-                <motion.div key={article.id} variants={itemVariants}>
-                  <NewsCard article={article} readMoreText={t.readMore} />
-                </motion.div>
-              ))}
+              <Eyebrow num="04" tone="navy" className="mb-6" />
+              <h1
+                className="mb-5"
+                data-testid="text-news-title"
+              >
+                {t.title}
+              </h1>
+              <p
+                data-testid="text-news-subtitle"
+              >
+                {t.subtitle}
+              </p>
+              {translationBanner && (
+                <p
+                  className="mt-4 text-sm"
+                  data-testid="text-translation-banner"
+                >
+                  {translationBanner}
+                </p>
+              )}
             </motion.div>
-          )}
+          </div>
+        </section>
+
+        <div className="py-16 lg:py-20">
+          <div className="ss-container">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4 }}
+              className="mb-10 space-y-6"
+            >
+              <div className="flex flex-wrap items-center gap-2" data-testid="container-category-filters">
+                {categoryFilters.map((cat) => (
+                  <Button
+                    key={cat.value}
+                    variant={selectedCategory === cat.value ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedCategory(cat.value)}
+                    aria-pressed={selectedCategory === cat.value}
+                    className={
+                      selectedCategory === cat.value
+                        ? "text-sm"
+                        : "text-sm font-normal border-ss-input text-ss-tinta hover:border-ss-marino hover:text-ss-marino"
+                    }
+                    data-testid={`button-filter-${cat.value}`}
+                  >
+                    {cat.label}
+                  </Button>
+                ))}
+              </div>
+
+              <div className="relative max-w-md">
+                <Search aria-hidden="true" className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ss-medio" />
+                <Input
+                  type="text"
+                  placeholder={t.searchPlaceholder}
+                  aria-label={t.searchPlaceholder}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="ps-9 bg-white border-ss-input text-ss-tinta placeholder:text-ss-medio focus-visible:ring-ss-marino focus-visible:border-ss-marino"
+                  data-testid="input-search-news"
+                />
+              </div>
+            </motion.div>
+
+            {error ? (
+              <div className="py-12" data-testid="container-news-error">
+                <p className="text-base text-ss-medio" data-testid="text-news-error">
+                  {t.errorMessage}
+                </p>
+              </div>
+            ) : isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div
+                    key={i}
+                    data-testid={`skeleton-news-${i}`}
+                  >
+                    <Skeleton className="aspect-[16/10] w-full bg-ss-paper mb-5" />
+                    <Skeleton className="h-4 w-24 mb-3 bg-ss-rule" />
+                    <Skeleton className="h-6 w-full mb-2 bg-ss-rule" />
+                    <Skeleton className="h-4 w-full mb-1 bg-ss-rule" />
+                    <Skeleton className="h-4 w-3/4 bg-ss-rule" />
+                  </div>
+                ))}
+              </div>
+            ) : filteredNews && filteredNews.length === 0 ? (
+              <div className="py-12" data-testid="container-news-empty">
+                <p className="text-base text-ss-medio">
+                  {t.noResults}
+                </p>
+              </div>
+            ) : (
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12"
+              >
+                {filteredNews?.map((article) => (
+                  <motion.div key={article.id} variants={itemVariants}>
+                    <NewsCard article={article} readMoreText={t.readMore} categoryLabels={categoryLabels} />
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </div>
         </div>
       </main>
 

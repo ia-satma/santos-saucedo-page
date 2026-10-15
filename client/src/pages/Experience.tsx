@@ -1,9 +1,8 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Search, AlertCircle } from "lucide-react";
+import { Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +17,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Eyebrow } from "@/components/editorial";
 import type { RepresentativeMatterDb, PracticeGroup, IndustryGroup } from "@shared/schema";
 
 // "Clásica": titulares en romana 400, Azul Marino, caja de oración y al inicio; texto en Gris Tinta.
@@ -64,7 +64,7 @@ export default function Experience() {
   }> = {
     en: {
       title: "Experience",
-      subtitle: "A proven track record of excellence across every practice area",
+      subtitle: "A selection of matters in which the firm has acted",
       heroDescription: "For over three decades, Santos & Saucedo has represented leading national and multinational companies in their most complex and high-stakes legal matters. Our experience spans landmark transactions, groundbreaking disputes, and strategic advisory mandates.",
       featuredTitle: "Featured Matters",
       featuredSubtitle: "High-profile cases that showcase our expertise",
@@ -83,7 +83,7 @@ export default function Experience() {
     },
     es: {
       title: "Experiencia",
-      subtitle: "Una trayectoria comprobada de excelencia en todas las áreas de práctica",
+      subtitle: "Una selección de asuntos en los que ha participado la firma",
       heroDescription: "Durante más de tres décadas, Santos & Saucedo ha representado a empresas nacionales y multinacionales líderes en sus asuntos legales más complejos y de alto perfil. Nuestra experiencia abarca transacciones históricas, disputas pioneras y mandatos de asesoría estratégica.",
       featuredTitle: "Asuntos destacados",
       featuredSubtitle: "Casos de alto perfil que demuestran nuestra experiencia",
@@ -102,7 +102,7 @@ export default function Experience() {
     },
     de: {
       title: "Erfahrung",
-      subtitle: "Unsere Erfolgsbilanz",
+      subtitle: "Eine Auswahl von Mandaten, in denen die Kanzlei tätig war",
       heroDescription: "Seit über drei Jahrzehnten vertritt Santos & Saucedo führende nationale und multinationale Unternehmen in ihren komplexesten und wichtigsten Rechtsangelegenheiten. Unsere Erfahrung umfasst wegweisende Transaktionen, bahnbrechende Streitigkeiten und strategische Beratungsmandate.",
       featuredTitle: "Ausgewählte Mandate",
       featuredSubtitle: "Hochkarätige Fälle, die unsere Expertise zeigen",
@@ -121,7 +121,7 @@ export default function Experience() {
     },
     zh: {
       title: "经验",
-      subtitle: "我们的业绩记录",
+      subtitle: "本所参与办理的部分案件",
       heroDescription: "三十多年来，Santos & Saucedo一直代表领先的国内和跨国公司处理其最复杂和最重要的法律事务。我们的经验涵盖里程碑式的交易、开创性的争议和战略咨询任务。",
       featuredTitle: "精选案例",
       featuredSubtitle: "展示我们专业知识的高端案例",
@@ -140,7 +140,7 @@ export default function Experience() {
     },
     ko: {
       title: "경험",
-      subtitle: "모든 업무 분야에서 입증된 우수성",
+      subtitle: "법인이 수행한 사건 중 일부",
       heroDescription: "30년 이상 Santos & Saucedo는 국내외 선도 기업들의 가장 복잡하고 중요한 법률 문제를 대리해 왔습니다. 우리의 경험은 획기적인 거래, 선구적인 분쟁 및 전략적 자문 업무를 포함합니다.",
       featuredTitle: "주요 사건",
       featuredSubtitle: "우리의 전문성을 보여주는 고급 사건들",
@@ -159,7 +159,7 @@ export default function Experience() {
     },
     ja: {
       title: "実績",
-      subtitle: "すべての業務分野における卓越性の実績",
+      subtitle: "当事務所が関与した案件の一部",
       heroDescription: "30年以上にわたり、Santos & Saucedoは、国内外の大手企業の最も複雑で重要な法的問題を代理してきました。私たちの経験は、画期的な取引、先駆的な紛争、戦略的アドバイザリー業務を網羅しています。",
       featuredTitle: "注目の案件",
       featuredSubtitle: "私たちの専門知識を示す重要な案件",
@@ -178,7 +178,7 @@ export default function Experience() {
     },
     ar: {
       title: "الخبرة",
-      subtitle: "سجل حافل بالتميز في جميع مجالات الممارسة",
+      subtitle: "مختارات من القضايا التي شارك فيها المكتب",
       heroDescription: "على مدى أكثر من ثلاثة عقود، مثّلت Santos & Saucedo الشركات الوطنية والدولية الرائدة في أكثر قضاياها القانونية تعقيدًا وأهمية. تشمل خبرتنا معاملات بارزة ونزاعات رائدة ومهام استشارية استراتيجية.",
       featuredTitle: "القضايا المميزة",
       featuredSubtitle: "قضايا بارزة تعرض خبرتنا",
@@ -197,7 +197,7 @@ export default function Experience() {
     },
     ru: {
       title: "Опыт",
-      subtitle: "Наши достижения",
+      subtitle: "Избранные дела, в которых участвовала фирма",
       heroDescription: "Более трех десятилетий Santos & Saucedo представляет ведущие национальные и международные компании в их наиболее сложных и важных юридических вопросах. Наш опыт охватывает знаковые сделки, прорывные споры и стратегические консультационные мандаты.",
       featuredTitle: "Избранные дела",
       featuredSubtitle: "Громкие дела, демонстрирующие нашу экспертизу",
@@ -216,7 +216,7 @@ export default function Experience() {
     },
     fr: {
       title: "Expérience",
-      subtitle: "Un bilan d'excellence dans tous les domaines de pratique",
+      subtitle: "Une sélection d'affaires dans lesquelles le cabinet est intervenu",
       heroDescription: "Depuis plus de trois décennies, Santos & Saucedo représente des entreprises nationales et multinationales de premier plan dans leurs affaires juridiques les plus complexes et les plus importantes. Notre expérience couvre des transactions historiques, des litiges novateurs et des mandats de conseil stratégique.",
       featuredTitle: "Affaires en vedette",
       featuredSubtitle: "Des affaires de haut niveau qui démontrent notre expertise",
@@ -235,7 +235,7 @@ export default function Experience() {
     },
     it: {
       title: "Esperienza",
-      subtitle: "Il nostro track record",
+      subtitle: "Una selezione di incarichi seguiti dallo studio",
       heroDescription: "Da oltre tre decenni, Santos & Saucedo rappresenta aziende nazionali e multinazionali leader nelle loro questioni legali più complesse e importanti. La nostra esperienza comprende transazioni storiche, controversie pionieristiche e mandati di consulenza strategica.",
       featuredTitle: "Casi in evidenza",
       featuredSubtitle: "Casi di alto profilo che dimostrano la nostra competenza",
@@ -320,51 +320,44 @@ export default function Experience() {
       <SEOHead page="experience" language={language} />
       <Header />
       
+      {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo
+          salta. ss-container: mismo borde izquierdo que logotipo y pie. */}
+      <main id="main-content">
       <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-experience-hero">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="ss-container">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="text-center"
+            className="max-w-3xl"
           >
-            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
+            <Eyebrow num="01" tone="navy" className="mb-6" />
             <h1 
-              className="text-4xl md:text-5xl font-heading text-white mb-5"
+              className="mb-5"
               data-testid="text-experience-title"
             >
               {t.title}
             </h1>
-            <p 
-              className="text-base text-white/60 max-w-2xl mx-auto mb-6"
-              data-testid="text-experience-subtitle"
-            >
+            {/* Un solo subtítulo. heroDescription (con la cifra de "más de tres décadas",
+                pendiente de confirmar con el cliente) ya no se muestra. */}
+            <p data-testid="text-experience-subtitle">
               {t.subtitle}
-            </p>
-            <p 
-              className="text-sm text-white/50 max-w-3xl mx-auto"
-              data-testid="text-experience-description"
-            >
-              {t.heroDescription}
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Destino del skip link; sin clases para no cambiar el layout */}
-      <main id="main-content">
       {mattersError ? (
-        <div className="text-center py-20" data-testid="container-experience-error">
-          <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground" data-testid="text-experience-error">
+        <div className="ss-container py-16 lg:py-20" data-testid="container-experience-error">
+          <p className="border-t border-ss-rule pt-6 text-base text-ss-tinta" data-testid="text-experience-error">
             {t.errorMessage}
           </p>
         </div>
       ) : (
         <>
-          <section className="py-16 bg-muted" data-testid="section-featured-matters">
-            <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <section className="py-16 bg-ss-paper" data-testid="section-featured-matters">
+            <div className="ss-container">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -384,19 +377,17 @@ export default function Experience() {
               </motion.div>
 
               {mattersLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
                   {Array.from({ length: 6 }).map((_, i) => (
-                    <Card key={i}>
-                      <CardContent className="p-6">
-                        <Skeleton className="h-6 w-3/4 mb-3" />
-                        <Skeleton className="h-4 w-full mb-2" />
-                        <Skeleton className="h-4 w-5/6 mb-4" />
-                        <div className="flex gap-2">
-                          <Skeleton className="h-5 w-16" />
-                          <Skeleton className="h-5 w-20" />
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <div key={i} className="border-t border-ss-input pt-6">
+                      <Skeleton className="h-6 w-3/4 mb-3" />
+                      <Skeleton className="h-4 w-full mb-2" />
+                      <Skeleton className="h-4 w-5/6 mb-4" />
+                      <div className="flex gap-2">
+                        <Skeleton className="h-5 w-16" />
+                        <Skeleton className="h-5 w-20" />
+                      </div>
+                    </div>
                   ))}
                 </div>
               ) : (
@@ -405,26 +396,26 @@ export default function Experience() {
                   initial="hidden"
                   whileInView="visible"
             viewport={{ once: true }}
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10"
                 >
                   {highlightedMatters.map((matter) => (
                     <motion.div key={matter.id} variants={itemVariants}>
-                      <Card
-                        className="h-full"
+                      {/* Fila abierta: filete superior, sin caja; título y descripción completos (sin line-clamp) */}
+                      <article
+                        className="h-full border-t border-ss-input pt-6"
                         data-testid={`card-featured-matter-${matter.id}`}
                       >
-                        <CardContent className="p-6">
                           <div className="ss-label text-ss-medio mb-3">
                             <span data-testid={`text-featured-year-${matter.id}`}>{matter.year}</span>
                           </div>
                           <h3 
-                            className={`${h3Class} mb-3 line-clamp-2`}
+                            className={`${h3Class} mb-3`}
                             data-testid={`text-featured-title-${matter.id}`}
                           >
                             {language === "es" ? matter.titleEs : matter.title}
                           </h3>
                           <p 
-                            className="text-ss-tinta text-base leading-relaxed mb-4 line-clamp-3"
+                            className="text-ss-tinta text-base leading-[1.55] mb-4"
                             data-testid={`text-featured-description-${matter.id}`}
                           >
                             {language === "es" ? matter.descriptionEs : matter.description}
@@ -459,8 +450,7 @@ export default function Experience() {
                               </Badge>
                             )}
                           </div>
-                        </CardContent>
-                      </Card>
+                      </article>
                     </motion.div>
                   ))}
                 </motion.div>
@@ -468,8 +458,8 @@ export default function Experience() {
             </div>
           </section>
 
-          <section className="py-16" data-testid="section-all-matters">
-            <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <section className="py-16 lg:py-20" data-testid="section-all-matters">
+            <div className="ss-container">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -490,6 +480,7 @@ export default function Experience() {
                     <Input
                       type="text"
                       placeholder={t.searchPlaceholder}
+                      aria-label={t.searchPlaceholder.replace(/\s*(\.\.\.|…)$/, "")}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-10"
@@ -540,30 +531,27 @@ export default function Experience() {
               </motion.div>
 
               {mattersLoading ? (
-                <div className="space-y-4">
+                <div className="border-b border-ss-rule">
                   {Array.from({ length: 6 }).map((_, i) => (
-                    <Card key={i} className="bg-muted">
-                      <CardContent className="p-6">
-                        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                          <div className="flex-1">
-                            <Skeleton className="h-5 w-24 mb-2" />
-                            <Skeleton className="h-6 w-3/4 mb-2" />
-                            <Skeleton className="h-4 w-full mb-2" />
-                            <Skeleton className="h-4 w-5/6" />
-                          </div>
-                          <div className="flex gap-2">
-                            <Skeleton className="h-5 w-20" />
-                            <Skeleton className="h-5 w-24" />
-                          </div>
+                    <div key={i} className="border-t border-ss-rule py-8">
+                      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                        <div className="flex-1">
+                          <Skeleton className="h-5 w-24 mb-2" />
+                          <Skeleton className="h-6 w-3/4 mb-2" />
+                          <Skeleton className="h-4 w-full mb-2" />
+                          <Skeleton className="h-4 w-5/6" />
                         </div>
-                      </CardContent>
-                    </Card>
+                        <div className="flex gap-2">
+                          <Skeleton className="h-5 w-20" />
+                          <Skeleton className="h-5 w-24" />
+                        </div>
+                      </div>
+                    </div>
                   ))}
                 </div>
               ) : filteredMatters.length === 0 ? (
-                <div className="text-center py-12" data-testid="container-no-results">
-                  <Search className="w-12 h-12 text-ss-rule mx-auto mb-4" aria-hidden="true" />
-                  <p className="text-muted-foreground" data-testid="text-no-results">
+                <div className="border-t border-ss-rule pt-6" data-testid="container-no-results">
+                  <p className="text-base text-ss-tinta" data-testid="text-no-results">
                     {t.noResults}
                   </p>
                 </div>
@@ -573,14 +561,15 @@ export default function Experience() {
                   initial="hidden"
                   whileInView="visible"
             viewport={{ once: true }}
-                  className="space-y-4"
+                  className="border-b border-ss-rule"
                 >
                   {filteredMatters.map((matter) => (
                     <motion.div key={matter.id} variants={itemVariants}>
-                      <Card
+                      {/* Fila abierta con filete superior, sin caja */}
+                      <article
+                        className="border-t border-ss-rule py-8"
                         data-testid={`card-matter-${matter.id}`}
                       >
-                        <CardContent className="p-6">
                           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                             <div className="flex-1">
                               <div className="flex items-center gap-4 mb-3">
@@ -602,7 +591,7 @@ export default function Experience() {
                                 {language === "es" ? matter.titleEs : matter.title}
                               </h3>
                               <p 
-                                className="text-ss-tinta text-base leading-relaxed"
+                                className="text-ss-tinta text-base leading-[1.55] max-w-[48rem]"
                                 data-testid={`text-matter-description-${matter.id}`}
                               >
                                 {language === "es" ? matter.descriptionEs : matter.description}
@@ -633,8 +622,7 @@ export default function Experience() {
                               )}
                             </div>
                           </div>
-                        </CardContent>
-                      </Card>
+                      </article>
                     </motion.div>
                   ))}
                 </motion.div>

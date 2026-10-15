@@ -1,36 +1,30 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { 
-  MapPin, 
-  Phone, 
-  Mail, 
-  Clock, 
-  Building2, 
-  Accessibility, 
-  Video, 
-  Coffee, 
-  Wifi,
-  ParkingCircle,
-} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Eyebrow } from "@/components/editorial";
 import type { OfficeImage } from "@shared/schema";
 
 // "Clásica": titulares en romana 400, Azul Marino, caja de oración y al inicio; texto en Gris Tinta.
 const h2Class = "font-heading font-normal text-ss-marino text-[clamp(28px,2.6vw,38px)] leading-[1.12] tracking-[-0.012em] [text-wrap:balance]";
 const h3Class = "font-heading font-normal text-ss-marino text-[22px] leading-[1.25] tracking-[-0.01em]";
 const h4Class = "font-heading font-normal text-ss-marino text-[20px] leading-[1.25] tracking-[-0.01em]";
+// Lista de datos de la oficina: filas con filete superior; etiqueta (dt) en la sans
+// versal espaciada, Gris Medio; dato (dd) en la sans de 17 px, Gris Tinta.
+const rowClass = "grid grid-cols-1 gap-y-1 border-t border-ss-rule py-4 sm:grid-cols-[11rem,1fr] sm:gap-x-6";
+const dtClass = "ss-label text-ss-medio sm:pt-1";
+const ddClass = "text-[17px] leading-[1.55] text-ss-tinta";
+const ddLinkClass = "hover:text-ss-marino hover:underline underline-offset-4 transition-colors";
+// Filas abiertas (instalaciones, transporte): filete superior, titular en romana, texto en la sans
+const openRowClass = "h-full border-t border-ss-rule pt-6";
 const leadClass = "font-serif font-normal text-ss-tinta text-[clamp(19px,0.6vw_+_14px,22px)] leading-[1.55] tracking-[-0.003em] [text-wrap:pretty]";
 
 interface AmenityItem {
-  icon: typeof Building2;
   text: string;
 }
 
@@ -45,8 +39,11 @@ interface OfficeContent {
   postalCode: string;
   city: string;
   phone: string;
-  fax: string;
   email: string;
+  addressLabel: string;
+  phoneLabel: string;
+  emailLabel: string;
+  mapTitle: string;
   officeHoursTitle: string;
   officeHours: string;
   saturdayHours: string;
@@ -77,10 +74,9 @@ interface OfficeContent {
   parkingDesc: string;
   taxiTitle: string;
   taxiDesc: string;
-  contactCtaTitle: string;
   contactCtaSubtitle: string;
   contactButton: string;
-  scheduleButton: string;
+  teamLink: string;
   headquarters: string;
   viewOnMap: string;
 }
@@ -96,8 +92,8 @@ export default function Offices() {
   const content: Record<string, OfficeContent> = {
     en: {
       heroTitle: "Our Offices",
-      heroSubtitle: "Visit us at our offices in San Pedro Garza García",
-      mainOfficeTitle: "San Pedro Garza García Headquarters",
+      heroSubtitle: "Our office is in San Pedro Garza García, Nuevo León.",
+      mainOfficeTitle: "Main Office in San Pedro Garza García",
       buildingName: "Río Tamazunchale 205 Norte",
       floor: "",
       address: "San Pedro Garza García, N.L.",
@@ -105,21 +101,24 @@ export default function Offices() {
       postalCode: "San Pedro Garza García, Nuevo León",
       city: "San Pedro Garza García, Nuevo León, C.P. 66220, México",
       phone: "+52 81 8335 2086",
-      fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
+      mapTitle: "Map of the Santos & Saucedo office in San Pedro Garza García",
+      emailLabel: "Email",
+      phoneLabel: "Telephone",
+      addressLabel: "Address",
       officeHoursTitle: "Office Hours",
-      officeHours: "Monday - Friday: 9:00 AM - 7:00 PM (CST)",
-      saturdayHours: "Saturday - Sunday: Closed",
+      officeHours: "Monday to Friday, 9:00–19:00",
+      saturdayHours: "Saturday and Sunday: closed",
       getDirections: "Get Directions",
       amenitiesTitle: "Building Amenities",
       amenities: [
-        { icon: Building2, text: "Premium Class A office building" },
-        { icon: Wifi, text: "High-speed fiber optic connectivity" },
-        { icon: Coffee, text: "Executive cafeteria and lounge areas" },
-        { icon: ParkingCircle, text: "Underground parking with 24/7 security" },
+        { text: "Premium Class A office building" },
+        { text: "High-speed fiber optic connectivity" },
+        { text: "Executive cafeteria and lounge areas" },
+        { text: "Underground parking with 24/7 security" },
       ],
       directionsTitle: "How to Get There",
-      directionsText: "Río Tamazunchale 205 Norte is located in San Pedro Garza García, one of Nuevo León.s key business districts. The building is easily accessible from all major highways and public transportation.",
+      directionsText: "The office is located in Colonia del Valle, San Pedro Garza García, Nuevo León. Use the map link for the most direct route from your location.",
       landmarksTitle: "Nearby Landmarks",
       landmarks: [
         "Chapultepec Castle (2 min drive)",
@@ -147,17 +146,16 @@ export default function Offices() {
       parkingDesc: "Parking information is available upon scheduling your visit. Please contact our team before arrival.",
       taxiTitle: "Taxi / Uber",
       taxiDesc: "Request your ride to 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'. Please confirm arrival details with our team before your visit.",
-      contactCtaTitle: "Ready to Visit?",
-      contactCtaSubtitle: "Schedule a meeting with our team or contact us for more information about our legal services.",
-      contactButton: "Contact Us",
-      scheduleButton: "Schedule a Meeting",
+      contactCtaSubtitle: "Each partner's contact details appear on their profile.",
+      contactButton: "Contact",
+      teamLink: "Partners",
       headquarters: "Headquarters",
       viewOnMap: "View on Map",
     },
     es: {
       heroTitle: "Nuestras oficinas",
-      heroSubtitle: "Visítenos en nuestras oficinas en San Pedro Garza García",
-      mainOfficeTitle: "Oficinas centrales en San Pedro Garza García",
+      heroSubtitle: "Nuestra oficina está en San Pedro Garza García, Nuevo León.",
+      mainOfficeTitle: "Oficina principal en San Pedro Garza García",
       buildingName: "Río Tamazunchale 205 Norte",
       floor: "",
       address: "San Pedro Garza García, N.L.",
@@ -165,21 +163,24 @@ export default function Offices() {
       postalCode: "San Pedro Garza García, Nuevo León",
       city: "San Pedro Garza García, Nuevo León, C.P. 66220, México",
       phone: "+52 81 8335 2086",
-      fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
+      mapTitle: "Mapa de la oficina de Santos & Saucedo en San Pedro Garza García",
+      emailLabel: "Correo electrónico",
+      phoneLabel: "Teléfono",
+      addressLabel: "Dirección",
       officeHoursTitle: "Horario de oficina",
-      officeHours: "Lunes - Viernes: 9:00 AM - 7:00 PM (CST)",
-      saturdayHours: "Sábado - Domingo: Cerrado",
+      officeHours: "Lunes a viernes, 9:00–19:00 h",
+      saturdayHours: "Sábado y domingo: cerrado",
       getDirections: "Cómo llegar",
       amenitiesTitle: "Amenidades del edificio",
       amenities: [
-        { icon: Building2, text: "Edificio de oficinas Clase A Premium" },
-        { icon: Wifi, text: "Conectividad de fibra óptica de alta velocidad" },
-        { icon: Coffee, text: "Cafetería ejecutiva y áreas de descanso" },
-        { icon: ParkingCircle, text: "Estacionamiento subterráneo con seguridad 24/7" },
+        { text: "Edificio de oficinas Clase A Premium" },
+        { text: "Conectividad de fibra óptica de alta velocidad" },
+        { text: "Cafetería ejecutiva y áreas de descanso" },
+        { text: "Estacionamiento subterráneo con seguridad 24/7" },
       ],
       directionsTitle: "Cómo llegar",
-      directionsText: "Río Tamazunchale 205 Norte está ubicada en San Pedro Garza García, uno de los distritos empresariales clave de Nuevo León. El edificio es fácilmente accesible desde todas las principales autopistas y transporte público.",
+      directionsText: "La oficina se ubica en la Colonia del Valle, San Pedro Garza García, Nuevo León. Use el enlace del mapa para obtener la ruta más directa desde su ubicación.",
       landmarksTitle: "Puntos de referencia cercanos",
       landmarks: [
         "Castillo de Chapultepec (2 min en auto)",
@@ -207,39 +208,41 @@ export default function Offices() {
       parkingDesc: "La información de estacionamiento está disponible al programar su visita. Por favor contacte a nuestro equipo antes de llegar.",
       taxiTitle: "Taxi / Uber",
       taxiDesc: "Solicite su viaje a 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'. Por favor confirme los detalles de llegada con nuestro equipo antes de su visita.",
-      contactCtaTitle: "¿Listo para visitarnos?",
-      contactCtaSubtitle: "Programe una reunión con nuestro equipo o contáctenos para más información sobre nuestros servicios legales.",
-      contactButton: "Contáctenos",
-      scheduleButton: "Programar una reunión",
+      contactCtaSubtitle: "Los datos de contacto de cada socio aparecen en su ficha.",
+      contactButton: "Contacto",
+      teamLink: "Socios",
       headquarters: "Sede central",
       viewOnMap: "Ver en el mapa",
     },
     de: {
       heroTitle: "Unsere Büros",
-      heroSubtitle: "Besuchen Sie uns in unseren Büros in San Pedro Garza García",
-      mainOfficeTitle: "Hauptsitz San Pedro Garza García",
+      heroSubtitle: "Unser Büro befindet sich in San Pedro Garza García, Nuevo León.",
+      mainOfficeTitle: "Hauptsitz in San Pedro Garza García",
       buildingName: "Río Tamazunchale 205 Norte",
       floor: "",
       address: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
       postalCode: "San Pedro Garza García, Nuevo León",
-      city: "San Pedro Garza García, Mexiko",
+      city: "San Pedro Garza García, Nuevo León, Mexiko",
       phone: "+52 81 8335 2086",
-      fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
+      mapTitle: "Karte des Büros von Santos & Saucedo in San Pedro Garza García",
+      emailLabel: "E-Mail",
+      phoneLabel: "Telefon",
+      addressLabel: "Adresse",
       officeHoursTitle: "Öffnungszeiten",
-      officeHours: "Montag - Freitag: 9:00 - 19:00 Uhr (CST)",
-      saturdayHours: "Samstag - Sonntag: Geschlossen",
+      officeHours: "Montag bis Freitag, 9:00–19:00 Uhr",
+      saturdayHours: "Samstag und Sonntag: geschlossen",
       getDirections: "Anfahrt",
       amenitiesTitle: "Gebäudeausstattung",
       amenities: [
-        { icon: Building2, text: "Premium Klasse A Bürogebäude" },
-        { icon: Wifi, text: "Hochgeschwindigkeits-Glasfaserverbindung" },
-        { icon: Coffee, text: "Executive-Cafeteria und Loungebereiche" },
-        { icon: ParkingCircle, text: "Tiefgarage mit 24/7-Sicherheit" },
+        { text: "Premium Klasse A Bürogebäude" },
+        { text: "Hochgeschwindigkeits-Glasfaserverbindung" },
+        { text: "Executive-Cafeteria und Loungebereiche" },
+        { text: "Tiefgarage mit 24/7-Sicherheit" },
       ],
       directionsTitle: "Anfahrt",
-      directionsText: "Río Tamazunchale 205 Norte befindet sich im Herzen von Nuevo León, einem der prestigeträchtigsten Geschäfts- und Wohnviertel von San Pedro Garza García. Das Gebäude ist leicht von allen Hauptautobahnen und öffentlichen Verkehrsmitteln erreichbar.",
+      directionsText: "Das Büro befindet sich in der Colonia del Valle, San Pedro Garza García, Nuevo León. Über den Kartenlink erhalten Sie die direkte Route von Ihrem Standort.",
       landmarksTitle: "Sehenswürdigkeiten in der Nähe",
       landmarks: [
         "Schloss Chapultepec (2 Min. Fahrt)",
@@ -267,39 +270,41 @@ export default function Offices() {
       parkingDesc: "Parkinformationen erhalten Sie bei der Terminvereinbarung. Bitte kontaktieren Sie unser Team vor Ihrer Ankunft.",
       taxiTitle: "Taxi / Uber",
       taxiDesc: "Bestellen Sie Ihre Fahrt zu 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'. Bitte bestätigen Sie die Ankunftsdetails vor Ihrem Besuch mit unserem Team.",
-      contactCtaTitle: "Bereit für einen Besuch?",
-      contactCtaSubtitle: "Vereinbaren Sie ein Treffen mit unserem Team oder kontaktieren Sie uns für weitere Informationen über unsere Rechtsdienstleistungen.",
-      contactButton: "Kontaktieren Sie uns",
-      scheduleButton: "Termin vereinbaren",
+      contactCtaSubtitle: "Die Kontaktdaten der einzelnen Partner stehen in ihrem jeweiligen Profil.",
+      contactButton: "Kontakt",
+      teamLink: "Unser Team",
       headquarters: "Hauptsitz",
       viewOnMap: "Auf Karte anzeigen",
     },
     zh: {
       heroTitle: "我们的办公室",
-      heroSubtitle: "欢迎访问我们在墨西哥城的现代化设施",
-      mainOfficeTitle: "墨西哥城总部",
+      heroSubtitle: "我们的办公室位于新莱昂州圣佩德罗加尔萨加西亚（San Pedro Garza García）。",
+      mainOfficeTitle: "圣佩德罗加尔萨加西亚总部",
       buildingName: "Río Tamazunchale 205 Norte",
       floor: "18层",
       address: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
       postalCode: "San Pedro Garza García, Nuevo León",
-      city: "墨西哥城，墨西哥",
+      city: "San Pedro Garza García, Nuevo León, México",
       phone: "+52 81 8335 2086",
-      fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
+      mapTitle: "Santos & Saucedo San Pedro Garza García 办公室地图",
+      emailLabel: "电子邮件",
+      phoneLabel: "电话",
+      addressLabel: "地址",
       officeHoursTitle: "办公时间",
-      officeHours: "周一至周五：上午9:00 - 下午7:00 (CST)",
-      saturdayHours: "周六至周日：休息",
+      officeHours: "周一至周五 9:00–19:00",
+      saturdayHours: "周六、周日休息",
       getDirections: "获取路线",
       amenitiesTitle: "大楼设施",
       amenities: [
-        { icon: Building2, text: "高端A级办公楼" },
-        { icon: Wifi, text: "高速光纤连接" },
-        { icon: Coffee, text: "行政餐厅和休息区" },
-        { icon: ParkingCircle, text: "24/7安保地下停车场" },
+        { text: "高端A级办公楼" },
+        { text: "高速光纤连接" },
+        { text: "行政餐厅和休息区" },
+        { text: "24/7安保地下停车场" },
       ],
       directionsTitle: "如何到达",
-      directionsText: "Río Tamazunchale 205 Norte位于Nuevo León中心地带，这是墨西哥城最负盛名的商业和住宅区之一。从所有主要高速公路和公共交通均可轻松到达该建筑。",
+      directionsText: "办公室位于新莱昂州圣佩德罗加尔萨加西亚的 Colonia del Valle。请使用地图链接查看从您所在位置出发的最佳路线。",
       landmarksTitle: "附近地标",
       landmarks: [
         "查普尔特佩克城堡（车程2分钟）",
@@ -327,39 +332,41 @@ export default function Offices() {
       parkingDesc: "请在预约访问时确认停车信息。到达前请联系我们的团队。",
       taxiTitle: "出租车 / Uber",
       taxiDesc: "请将目的地设为'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'。到访前请与我们的团队确认抵达细节。",
-      contactCtaTitle: "准备好访问了吗？",
-      contactCtaSubtitle: "与我们的团队安排会议，或联系我们了解更多关于我们法律服务的信息。",
+      contactCtaSubtitle: "各合伙人的联系方式见其个人页面。",
       contactButton: "联系我们",
-      scheduleButton: "安排会议",
+      teamLink: "我们的团队",
       headquarters: "总部",
       viewOnMap: "在地图上查看",
     },
     ko: {
       heroTitle: "사무실",
-      heroSubtitle: "멕시코시티의 현대적인 시설을 방문해 주세요",
-      mainOfficeTitle: "멕시코시티 본사",
+      heroSubtitle: "사무소는 누에보레온주 산페드로가르사가르시아(San Pedro Garza García)에 있습니다.",
+      mainOfficeTitle: "산페드로가르사가르시아 본사",
       buildingName: "Río Tamazunchale 205 Norte",
       floor: "18층",
       address: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
       postalCode: "San Pedro Garza García, Nuevo León",
-      city: "멕시코시티, 멕시코",
+      city: "San Pedro Garza García, Nuevo León, México",
       phone: "+52 81 8335 2086",
-      fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
+      mapTitle: "San Pedro Garza García에 있는 Santos & Saucedo 사무소 지도",
+      emailLabel: "이메일",
+      phoneLabel: "전화",
+      addressLabel: "주소",
       officeHoursTitle: "영업 시간",
-      officeHours: "월요일 - 금요일: 오전 9:00 - 오후 7:00 (CST)",
-      saturdayHours: "토요일 - 일요일: 휴무",
+      officeHours: "월요일–금요일 9:00–19:00",
+      saturdayHours: "토요일·일요일 휴무",
       getDirections: "길 찾기",
       amenitiesTitle: "건물 편의시설",
       amenities: [
-        { icon: Building2, text: "프리미엄 A급 오피스 빌딩" },
-        { icon: Wifi, text: "초고속 광섬유 연결" },
-        { icon: Coffee, text: "임원 카페테리아 및 라운지" },
-        { icon: ParkingCircle, text: "24시간 보안 지하 주차장" },
+        { text: "프리미엄 A급 오피스 빌딩" },
+        { text: "초고속 광섬유 연결" },
+        { text: "임원 카페테리아 및 라운지" },
+        { text: "24시간 보안 지하 주차장" },
       ],
       directionsTitle: "오시는 길",
-      directionsText: "Río Tamazunchale 205 Norte은 멕시코시티에서 가장 권위 있는 비즈니스 및 주거 지구 중 하나인 Nuevo León의 중심부에 위치해 있습니다. 모든 주요 고속도로와 대중교통에서 쉽게 접근할 수 있습니다.",
+      directionsText: "사무소는 누에보레온주 산페드로가르사가르시아의 Colonia del Valle에 있습니다. 지도 링크에서 현재 위치로부터의 가장 빠른 경로를 확인하실 수 있습니다.",
       landmarksTitle: "인근 랜드마크",
       landmarks: [
         "차풀테펙 성 (차로 2분)",
@@ -387,39 +394,41 @@ export default function Offices() {
       parkingDesc: "방문 일정을 잡을 때 주차 정보를 확인해 주세요. 도착 전 저희 팀에 문의해 주세요.",
       taxiTitle: "택시 / Uber",
       taxiDesc: "'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'로 차량을 요청하세요. 방문 전 도착 세부 사항을 저희 팀과 확인해 주세요.",
-      contactCtaTitle: "방문 준비가 되셨나요?",
-      contactCtaSubtitle: "저희 팀과의 미팅을 예약하거나 법률 서비스에 대한 자세한 정보를 문의해 주세요.",
+      contactCtaSubtitle: "각 파트너의 연락처는 해당 프로필에 있습니다.",
       contactButton: "문의하기",
-      scheduleButton: "미팅 예약",
+      teamLink: "우리 팀",
       headquarters: "본사",
       viewOnMap: "지도에서 보기",
     },
     ja: {
       heroTitle: "オフィス",
-      heroSubtitle: "メキシコシティの最新設備でお待ちしております",
-      mainOfficeTitle: "メキシコシティ本社",
+      heroSubtitle: "事務所はヌエボ・レオン州サン・ペドロ・ガルサ・ガルシア（San Pedro Garza García）にあります。",
+      mainOfficeTitle: "サン・ペドロ・ガルサ・ガルシア本社",
       buildingName: "Río Tamazunchale 205 Norte",
       floor: "18階",
       address: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
       postalCode: "San Pedro Garza García, Nuevo León",
-      city: "メキシコシティ、メキシコ",
+      city: "San Pedro Garza García, Nuevo León, México",
       phone: "+52 81 8335 2086",
-      fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
+      mapTitle: "San Pedro Garza García の Santos & Saucedo 事務所の地図",
+      emailLabel: "メール",
+      phoneLabel: "電話",
+      addressLabel: "所在地",
       officeHoursTitle: "営業時間",
-      officeHours: "月曜日〜金曜日：午前9:00〜午後7:00（CST）",
-      saturdayHours: "土曜日〜日曜日：休業",
+      officeHours: "月曜日〜金曜日 9:00–19:00",
+      saturdayHours: "土曜日・日曜日休業",
       getDirections: "道順を見る",
       amenitiesTitle: "ビル設備",
       amenities: [
-        { icon: Building2, text: "プレミアムクラスAオフィスビル" },
-        { icon: Wifi, text: "高速光ファイバー接続" },
-        { icon: Coffee, text: "エグゼクティブカフェテリアとラウンジエリア" },
-        { icon: ParkingCircle, text: "24時間セキュリティ付き地下駐車場" },
+        { text: "プレミアムクラスAオフィスビル" },
+        { text: "高速光ファイバー接続" },
+        { text: "エグゼクティブカフェテリアとラウンジエリア" },
+        { text: "24時間セキュリティ付き地下駐車場" },
       ],
       directionsTitle: "アクセス",
-      directionsText: "Río Tamazunchale 205 Norteは、メキシコシティで最も権威あるビジネス・住宅地区の一つであるポランコの中心部に位置しています。主要高速道路および公共交通機関から簡単にアクセスできます。",
+      directionsText: "事務所はヌエボ・レオン州サン・ペドロ・ガルサ・ガルシアの Colonia del Valle にあります。現在地からの経路は地図のリンクでご確認いただけます。",
       landmarksTitle: "近くのランドマーク",
       landmarks: [
         "チャプルテペック城（車で2分）",
@@ -447,39 +456,41 @@ export default function Offices() {
       parkingDesc: "駐車場情報は訪問予約時にご確認ください。到着前に当チームまでお問い合わせください。",
       taxiTitle: "タクシー / Uber",
       taxiDesc: "'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'へ配車を依頼してください。訪問前に到着の詳細を当チームにご確認ください。",
-      contactCtaTitle: "訪問の準備はできましたか？",
-      contactCtaSubtitle: "私たちのチームとのミーティングをスケジュールするか、法的サービスの詳細についてお問い合わせください。",
+      contactCtaSubtitle: "各パートナーの連絡先は、それぞれのプロフィールに掲載しています。",
       contactButton: "お問い合わせ",
-      scheduleButton: "ミーティングを予約",
+      teamLink: "私たちのチーム",
       headquarters: "本社",
       viewOnMap: "地図で見る",
     },
     ar: {
       heroTitle: "مكاتبنا",
-      heroSubtitle: "زورونا في مرافقنا الحديثة في مدينة مكسيكو",
-      mainOfficeTitle: "المقر الرئيسي في مدينة مكسيكو",
+      heroSubtitle: "يقع مكتبنا في San Pedro Garza García بولاية نويفو ليون.",
+      mainOfficeTitle: "المقر الرئيسي في San Pedro Garza García",
       buildingName: "Río Tamazunchale 205 Norte",
       floor: "الطابق 18",
       address: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
       postalCode: "San Pedro Garza García, Nuevo León",
-      city: "مدينة مكسيكو، المكسيك",
+      city: "San Pedro Garza García, Nuevo León, México",
       phone: "+52 81 8335 2086",
-      fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
+      mapTitle: "خريطة مكتب Santos & Saucedo في San Pedro Garza García",
+      emailLabel: "البريد الإلكتروني",
+      phoneLabel: "الهاتف",
+      addressLabel: "العنوان",
       officeHoursTitle: "ساعات العمل",
-      officeHours: "الاثنين - الجمعة: 9:00 صباحاً - 7:00 مساءً (CST)",
-      saturdayHours: "السبت - الأحد: مغلق",
+      officeHours: "من الاثنين إلى الجمعة، 9:00–19:00",
+      saturdayHours: "السبت والأحد: مغلق",
       getDirections: "احصل على الاتجاهات",
       amenitiesTitle: "مرافق المبنى",
       amenities: [
-        { icon: Building2, text: "مبنى مكاتب من الدرجة الأولى" },
-        { icon: Wifi, text: "اتصال ألياف ضوئية عالي السرعة" },
-        { icon: Coffee, text: "كافيتريا تنفيذية ومناطق صالة" },
-        { icon: ParkingCircle, text: "موقف سيارات تحت الأرض مع أمن على مدار الساعة" },
+        { text: "مبنى مكاتب من الدرجة الأولى" },
+        { text: "اتصال ألياف ضوئية عالي السرعة" },
+        { text: "كافيتريا تنفيذية ومناطق صالة" },
+        { text: "موقف سيارات تحت الأرض مع أمن على مدار الساعة" },
       ],
       directionsTitle: "كيفية الوصول",
-      directionsText: "يقع Río Tamazunchale 205 Norte في قلب San Pedro Garza García، أحد أرقى المناطق التجارية والسكنية في مدينة مكسيكو. يمكن الوصول إلى المبنى بسهولة من جميع الطرق السريعة الرئيسية ووسائل النقل العام.",
+      directionsText: "يقع المكتب في Colonia del Valle بمدينة San Pedro Garza García في ولاية نويفو ليون. استخدم رابط الخريطة للحصول على أقصر طريق من موقعك.",
       landmarksTitle: "المعالم القريبة",
       landmarks: [
         "قلعة تشابولتيبيك (دقيقتان بالسيارة)",
@@ -507,39 +518,41 @@ export default function Offices() {
       parkingDesc: "تتوفر معلومات مواقف السيارات عند جدولة زيارتك. يرجى التواصل مع فريقنا قبل الوصول.",
       taxiTitle: "تاكسي / أوبر",
       taxiDesc: "اطلب رحلتك إلى 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'. يرجى تأكيد تفاصيل الوصول مع فريقنا قبل زيارتك.",
-      contactCtaTitle: "مستعد للزيارة؟",
-      contactCtaSubtitle: "حدد موعداً لاجتماع مع فريقنا أو اتصل بنا للحصول على مزيد من المعلومات حول خدماتنا القانونية.",
+      contactCtaSubtitle: "تظهر بيانات الاتصال بكل شريك في صفحته الشخصية.",
       contactButton: "اتصل بنا",
-      scheduleButton: "جدولة اجتماع",
+      teamLink: "فريقنا",
       headquarters: "المقر الرئيسي",
       viewOnMap: "عرض على الخريطة",
     },
     ru: {
       heroTitle: "Наши офисы",
-      heroSubtitle: "Посетите нас в наших современных помещениях в Мехико",
-      mainOfficeTitle: "Штаб-квартира в Мехико",
+      heroSubtitle: "Наш офис находится в Сан-Педро-Гарса-Гарсия (штат Нуэво-Леон).",
+      mainOfficeTitle: "Главный офис в Сан-Педро-Гарса-Гарсия",
       buildingName: "Río Tamazunchale 205 Norte",
       floor: "Этаж 18",
       address: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
       postalCode: "San Pedro Garza García, Nuevo León",
-      city: "Мехико, Мексика",
+      city: "San Pedro Garza García, Nuevo León, México",
       phone: "+52 81 8335 2086",
-      fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
+      mapTitle: "Карта офиса Santos & Saucedo в Сан-Педро-Гарса-Гарсия",
+      emailLabel: "Эл. почта",
+      phoneLabel: "Телефон",
+      addressLabel: "Адрес",
       officeHoursTitle: "Часы работы",
-      officeHours: "Понедельник - Пятница: 9:00 - 19:00 (CST)",
-      saturdayHours: "Суббота - Воскресенье: Закрыто",
+      officeHours: "Понедельник — пятница, 9:00–19:00",
+      saturdayHours: "Суббота и воскресенье: выходной",
       getDirections: "Как добраться",
       amenitiesTitle: "Удобства здания",
       amenities: [
-        { icon: Building2, text: "Офисное здание премиум-класса А" },
-        { icon: Wifi, text: "Высокоскоростное оптоволоконное соединение" },
-        { icon: Coffee, text: "Кафетерий и лаунж-зоны для руководителей" },
-        { icon: ParkingCircle, text: "Подземная парковка с охраной 24/7" },
+        { text: "Офисное здание премиум-класса А" },
+        { text: "Высокоскоростное оптоволоконное соединение" },
+        { text: "Кафетерий и лаунж-зоны для руководителей" },
+        { text: "Подземная парковка с охраной 24/7" },
       ],
       directionsTitle: "Как добраться",
-      directionsText: "Río Tamazunchale 205 Norte расположен в самом сердце San Pedro Garza García, одного из самых престижных деловых и жилых районов Мехико. До здания легко добраться со всех основных автомагистралей и на общественном транспорте.",
+      directionsText: "Офис находится в районе Колония-дель-Валье, Сан-Педро-Гарса-Гарсия, штат Нуэво-Леон. Кратчайший маршрут от вашего местоположения можно построить по ссылке на карту.",
       landmarksTitle: "Ближайшие достопримечательности",
       landmarks: [
         "Замок Чапультепек (2 мин на машине)",
@@ -567,39 +580,41 @@ export default function Offices() {
       parkingDesc: "Подземная парковка в Río Tamazunchale с валидацией для клиентов. Дополнительная публичная парковка рядом в Antara Fashion Hall и Palacio de Hierro Nuevo León.",
       taxiTitle: "Такси / Uber",
       taxiDesc: "Укажите адрес 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'. Пожалуйста, подтвердите детали прибытия с нашей командой до визита.",
-      contactCtaTitle: "Готовы посетить нас?",
-      contactCtaSubtitle: "Запланируйте встречу с нашей командой или свяжитесь с нами для получения дополнительной информации о наших юридических услугах.",
-      contactButton: "Связаться с нами",
-      scheduleButton: "Запланировать встречу",
+      contactCtaSubtitle: "Контактные данные каждого партнёра указаны в его профиле.",
+      contactButton: "Контакты",
+      teamLink: "Наша команда",
       headquarters: "Штаб-квартира",
       viewOnMap: "На карте",
     },
     fr: {
       heroTitle: "Nos Bureaux",
-      heroSubtitle: "Visitez-nous dans nos installations modernes à Mexico",
-      mainOfficeTitle: "Siège social de Mexico",
+      heroSubtitle: "Notre bureau se trouve à San Pedro Garza García, dans l'État de Nuevo León.",
+      mainOfficeTitle: "Siège à San Pedro Garza García",
       buildingName: "Río Tamazunchale 205 Norte",
       floor: "Étage 18",
       address: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
       postalCode: "San Pedro Garza García, Nuevo León",
-      city: "Mexico, Mexique",
+      city: "San Pedro Garza García, Nuevo León, Mexique",
       phone: "+52 81 8335 2086",
-      fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
+      mapTitle: "Plan d'accès au bureau de Santos & Saucedo à San Pedro Garza García",
+      emailLabel: "E-mail",
+      phoneLabel: "Téléphone",
+      addressLabel: "Adresse",
       officeHoursTitle: "Heures d'ouverture",
-      officeHours: "Lundi - Vendredi : 9h00 - 19h00 (CST)",
-      saturdayHours: "Samedi - Dimanche : Fermé",
+      officeHours: "Du lundi au vendredi, de 9 h à 19 h",
+      saturdayHours: "Samedi et dimanche : fermé",
       getDirections: "Obtenir l'itinéraire",
       amenitiesTitle: "Équipements du bâtiment",
       amenities: [
-        { icon: Building2, text: "Immeuble de bureaux Premium Classe A" },
-        { icon: Wifi, text: "Connectivité fibre optique haut débit" },
-        { icon: Coffee, text: "Cafétéria exécutive et espaces lounge" },
-        { icon: ParkingCircle, text: "Parking souterrain avec sécurité 24h/24" },
+        { text: "Immeuble de bureaux Premium Classe A" },
+        { text: "Connectivité fibre optique haut débit" },
+        { text: "Cafétéria exécutive et espaces lounge" },
+        { text: "Parking souterrain avec sécurité 24h/24" },
       ],
       directionsTitle: "Comment s'y rendre",
-      directionsText: "Río Tamazunchale 205 Norte est situé au cœur de Nuevo León, l'un des quartiers d'affaires et résidentiels les plus prestigieux de Mexico. Le bâtiment est facilement accessible depuis toutes les principales autoroutes et transports en commun.",
+      directionsText: "Le bureau se trouve dans la Colonia del Valle, à San Pedro Garza García (Nuevo León). Le lien vers la carte indique l'itinéraire le plus direct depuis votre position.",
       landmarksTitle: "Points de repère à proximité",
       landmarks: [
         "Château de Chapultepec (2 min en voiture)",
@@ -627,39 +642,41 @@ export default function Offices() {
       parkingDesc: "Les informations de stationnement sont disponibles lors de la planification de votre visite. Veuillez contacter notre équipe avant votre arrivée.",
       taxiTitle: "Taxi / Uber",
       taxiDesc: "Demandez votre course vers 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'. Veuillez confirmer les détails d.arrivée avec notre équipe avant votre visite.",
-      contactCtaTitle: "Prêt à nous rendre visite ?",
-      contactCtaSubtitle: "Planifiez une réunion avec notre équipe ou contactez-nous pour plus d'informations sur nos services juridiques.",
-      contactButton: "Contactez-nous",
-      scheduleButton: "Planifier une réunion",
+      contactCtaSubtitle: "Les coordonnées de chaque associé figurent sur sa fiche.",
+      contactButton: "Contact",
+      teamLink: "Notre équipe",
       headquarters: "Siège social",
       viewOnMap: "Voir sur la carte",
     },
     it: {
       heroTitle: "I Nostri Uffici",
-      heroSubtitle: "Visitateci nelle nostre strutture moderne a Città del Messico",
-      mainOfficeTitle: "Sede centrale di Città del Messico",
+      heroSubtitle: "Il nostro ufficio si trova a San Pedro Garza García, nello stato di Nuevo León.",
+      mainOfficeTitle: "Sede principale a San Pedro Garza García",
       buildingName: "Río Tamazunchale 205 Norte",
       floor: "Piano 18",
       address: "San Pedro Garza García, N.L.",
       colony: "Nuevo León",
       postalCode: "San Pedro Garza García, Nuevo León",
-      city: "Città del Messico, Messico",
+      city: "San Pedro Garza García, Nuevo León, Messico",
       phone: "+52 81 8335 2086",
-      fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
+      mapTitle: "Mappa dell'ufficio di Santos & Saucedo a San Pedro Garza García",
+      emailLabel: "E-mail",
+      phoneLabel: "Telefono",
+      addressLabel: "Indirizzo",
       officeHoursTitle: "Orari di ufficio",
-      officeHours: "Lunedì - Venerdì: 9:00 - 19:00 (CST)",
-      saturdayHours: "Sabato - Domenica: Chiuso",
+      officeHours: "Dal lunedì al venerdì, 9:00–19:00",
+      saturdayHours: "Sabato e domenica: chiuso",
       getDirections: "Ottieni indicazioni",
       amenitiesTitle: "Servizi dell'edificio",
       amenities: [
-        { icon: Building2, text: "Edificio per uffici Premium Classe A" },
-        { icon: Wifi, text: "Connettività in fibra ottica ad alta velocità" },
-        { icon: Coffee, text: "Caffetteria executive e aree lounge" },
-        { icon: ParkingCircle, text: "Parcheggio sotterraneo con sicurezza 24/7" },
+        { text: "Edificio per uffici Premium Classe A" },
+        { text: "Connettività in fibra ottica ad alta velocità" },
+        { text: "Caffetteria executive e aree lounge" },
+        { text: "Parcheggio sotterraneo con sicurezza 24/7" },
       ],
       directionsTitle: "Come arrivare",
-      directionsText: "Río Tamazunchale 205 Norte si trova nel cuore di Nuevo León, uno dei quartieri commerciali e residenziali più prestigiosi di Città del Messico. L'edificio è facilmente raggiungibile da tutte le principali autostrade e trasporti pubblici.",
+      directionsText: "L'ufficio si trova nella Colonia del Valle, a San Pedro Garza García (Nuevo León). Il link alla mappa indica il percorso più diretto dalla vostra posizione.",
       landmarksTitle: "Punti di riferimento nelle vicinanze",
       landmarks: [
         "Castello di Chapultepec (2 min in auto)",
@@ -687,10 +704,9 @@ export default function Offices() {
       parkingDesc: "Le informazioni sul parcheggio sono disponibili al momento della pianificazione della visita. Contatta il nostro team prima dell.arrivo.",
       taxiTitle: "Taxi / Uber",
       taxiDesc: "Richiedi la tua corsa a 'Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220'. Conferma i dettagli di arrivo con il nostro team prima della visita.",
-      contactCtaTitle: "Pronti a visitarci?",
-      contactCtaSubtitle: "Programmate un incontro con il nostro team o contattateci per maggiori informazioni sui nostri servizi legali.",
-      contactButton: "Contattaci",
-      scheduleButton: "Programma un incontro",
+      contactCtaSubtitle: "I recapiti di ciascun socio sono indicati nella sua scheda.",
+      contactButton: "Contatti",
+      teamLink: "Il nostro team",
       headquarters: "Sede centrale",
       viewOnMap: "Vedi sulla mappa",
     },
@@ -699,16 +715,12 @@ export default function Offices() {
   const baseT = content[language] || content.en;
   const t = {
     ...baseT,
-    mainOfficeTitle: language === "es" ? "Oficina principal en San Pedro Garza García" : "San Pedro Garza García Office",
     buildingName: "Río Tamazunchale 205 Norte",
     floor: "",
     address: "Río Tamazunchale 205 Norte",
-    colony: "Colonia Del Valle",
+    colony: "Col. del Valle",
     postalCode: "San Pedro Garza García, N.L.",
     city: "C.P. 66220, México",
-    directionsText: language === "es"
-      ? "La oficina se ubica en Colonia Del Valle, San Pedro Garza García, Nuevo León. Use el enlace de mapa para obtener la ruta más directa desde su ubicación."
-      : "The office is located in Colonia Del Valle, San Pedro Garza García, Nuevo León. Use the map link for the most direct route from your location.",
     landmarks: language === "es"
       ? ["Colonia Del Valle", "San Pedro Garza García", "Zona corporativa de Nuevo León", "Río Tamazunchale"]
       : ["Colonia Del Valle", "San Pedro Garza García", "Nuevo León business district", "Río Tamazunchale"],
@@ -749,35 +761,36 @@ export default function Offices() {
     <div className="min-h-screen bg-background" data-testid="page-offices">
       <SEOHead page="offices" language={language} />
       <Header />
-      
+
+      {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo
+          salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
+          siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
+      <main id="main-content">
       <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-offices-hero">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="ss-container">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="text-center"
+            className="max-w-3xl"
           >
-            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
+            <Eyebrow num="06" tone="navy" className="mb-6" />
             <h1 
-              className="text-4xl md:text-5xl font-heading text-white mb-5"
+              className="mb-5"
               data-testid="text-offices-title"
             >
               {t.heroTitle}
             </h1>
-            <p 
-              className="text-base text-white/60 max-w-2xl mx-auto"
-              data-testid="text-offices-subtitle"
-            >
+            <p data-testid="text-offices-subtitle">
               {t.heroSubtitle}
             </p>
           </motion.div>
         </div>
       </section>
 
-      <main id="main-content" className="py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+      <div className="py-16 lg:py-20">
+        <div className="ss-container">
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -790,117 +803,97 @@ export default function Offices() {
               {t.mainOfficeTitle}
             </h2>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="order-2 lg:order-1">
-                <Card className="h-full" data-testid="card-office-info">
-                  <CardContent className="p-6 lg:p-8 space-y-6">
-                    <div>
-                      <div>
-                        <h3 className={`${h3Class} mb-1`} data-testid="text-building-name">
-                          {t.buildingName}
-                        </h3>
-                        <p className="text-ss-medio" data-testid="text-floor">{t.floor}</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3 pt-6">
-                      <div className="flex items-start gap-3" data-testid="text-full-address">
-                        <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                        <div className="text-ss-tinta">
-                          <p>{t.address}</p>
-                          <p>{t.colony}</p>
-                          <p>{t.postalCode}</p>
-                          <p>{t.city}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3">
-                        <Phone className="w-5 h-5 text-primary flex-shrink-0" />
-                        <div className="text-ss-tinta">
-                          <a 
-                            href={`tel:${t.phone.replace(/\s/g, "")}`} 
-                            className="hover:text-ss-marino hover:underline underline-offset-4 transition-colors"
-                            data-testid="link-phone"
-                          >
-                            {t.phone}
-                          </a>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3">
-                        <Phone className="w-5 h-5 text-ss-medio flex-shrink-0" />
-                        <div className="text-ss-tinta">
-                          <span className="text-ss-medio">Fax: </span>
-                          <span data-testid="text-fax">{t.fax}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3">
-                        <Mail className="w-5 h-5 text-primary flex-shrink-0" />
-                        <a 
-                          href={`mailto:${t.email}`}
-                          className="text-ss-tinta hover:text-ss-marino hover:underline underline-offset-4 transition-colors"
-                          data-testid="link-email"
-                        >
-                          {t.email}
-                        </a>
-                      </div>
-                    </div>
-
-                    <div className="pt-6">
-                      <div className="flex items-start gap-3 mb-2">
-                        <Clock className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                        <div>
-                          <h4 className={`${h4Class} mb-1`}>{t.officeHoursTitle}</h4>
-                          <p className="text-ss-tinta" data-testid="text-office-hours">{t.officeHours}</p>
-                          <p className="text-ss-medio">{t.saturdayHours}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-6">
-                      <h4 className={`${h4Class} mb-4`}>{t.amenitiesTitle}</h4>
-                      <div className="space-y-3">
-                        {t.amenities.map((amenity, index) => (
-                          <div key={index} className="flex items-center gap-3" data-testid={`amenity-${index}`}>
-                            <span className="h-px w-2.5 flex-shrink-0 bg-ss-medio" aria-hidden="true" />
-                            <span className="text-ss-tinta">{amenity.text}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <Button 
-                      className="w-full mt-4" 
-                      asChild
-                      data-testid="button-directions"
-                    >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
+              {/* Datos de la oficina: lista con filetes, sin tarjeta ni iconos. Sin el fax
+                  (repetía el teléfono) ni el nombre de la calle repetido como título. */}
+              <div className="order-2 lg:order-1" data-testid="card-office-info">
+                <dl className="border-b border-ss-rule">
+                  <div className={rowClass}>
+                    <dt className={dtClass}>{t.addressLabel}</dt>
+                    <dd className={ddClass} data-testid="text-full-address">
+                      <span className="block" data-testid="text-building-name">{t.address}</span>
+                      <span className="block">{t.colony}</span>
+                      <span className="block">{t.postalCode}</span>
+                      <span className="block">{t.city}</span>
+                    </dd>
+                  </div>
+                  <div className={rowClass}>
+                    <dt className={dtClass}>{t.phoneLabel}</dt>
+                    <dd className={ddClass}>
                       <a 
-                        href={googleMapsDirectionsUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
+                        href={`tel:${t.phone.replace(/\s/g, "")}`} 
+                        className={ddLinkClass}
+                        data-testid="link-phone"
                       >
-                        {t.getDirections}
+                        <span dir="ltr">{t.phone}</span>
                       </a>
-                    </Button>
-                  </CardContent>
-                </Card>
+                    </dd>
+                  </div>
+                  <div className={rowClass}>
+                    <dt className={dtClass}>{t.emailLabel}</dt>
+                    <dd className={ddClass}>
+                      <a 
+                        href={`mailto:${t.email}`}
+                        className={ddLinkClass}
+                        data-testid="link-email"
+                      >
+                        {t.email}
+                      </a>
+                    </dd>
+                  </div>
+                  <div className={rowClass}>
+                    <dt className={dtClass}>{t.officeHoursTitle}</dt>
+                    <dd className={ddClass}>
+                      <span className="block" data-testid="text-office-hours">{t.officeHours}</span>
+                      <span className="block text-ss-medio">{t.saturdayHours}</span>
+                    </dd>
+                  </div>
+                </dl>
+
+                <div className="pt-8">
+                  <h3 className={`${h4Class} mb-4`}>{t.amenitiesTitle}</h3>
+                  {/* Raya de 10 px alineada con la primera línea (items-start + mt-[0.75em]) */}
+                  <ul className="space-y-3">
+                    {t.amenities.map((amenity, index) => (
+                      <li key={index} className="flex items-start gap-3" data-testid={`amenity-${index}`}>
+                        <span className="mt-[0.75em] h-px w-2.5 flex-shrink-0 bg-ss-medio" aria-hidden="true" />
+                        <span className="text-ss-tinta">{amenity.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Enlace de texto de la marca (etiqueta, subrayado al pasar, flecha), sin botón con caja */}
+                <a 
+                  href={googleMapsDirectionsUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="ss-label group mt-8 inline-flex min-h-[44px] items-center gap-3 text-ss-marino"
+                  data-testid="button-directions"
+                >
+                  <span className="ss-link">{t.getDirections}</span>
+                  <span aria-hidden="true" className="ss-arrow">
+                    →
+                  </span>
+                </a>
               </div>
 
+              {/* Mapa en gris, sin marco ni esquinas; Hueso de fondo mientras carga */}
               <div className="order-1 lg:order-2">
                 <div 
-                  className="w-full h-[400px] lg:h-full min-h-[400px] overflow-hidden"
+                  className="w-full h-[360px] lg:h-full min-h-[360px] lg:min-h-[480px] bg-ss-paper"
                   data-testid="container-map"
                 >
                   <iframe
                     src={googleMapsEmbedUrl}
                     width="100%"
                     height="100%"
-                    style={{ border: 0 }}
+                    className="block h-full w-full"
+                    style={{ border: 0, filter: "grayscale(1) contrast(.95)" }}
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    title="Santos & Saucedo Office Location"
+                    title={t.mapTitle}
                     data-testid="iframe-google-maps"
                   />
                 </div>
@@ -916,12 +909,12 @@ export default function Offices() {
             className="mb-20 bg-ss-paper p-8 lg:p-12"
             data-testid="section-directions"
           >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
               <div>
                 <h3 className={`${h3Class} mb-4`}>
                   {t.directionsTitle}
                 </h3>
-                <p className="text-ss-tinta leading-relaxed mb-6">
+                <p className="text-ss-tinta leading-relaxed">
                   {t.directionsText}
                 </p>
               </div>
@@ -929,10 +922,11 @@ export default function Offices() {
                 <h4 className={`${h4Class} mb-4`}>
                   {t.landmarksTitle}
                 </h4>
+                {/* Raya de 10 px alineada con la primera línea (items-start + mt-[0.75em]) */}
                 <ul className="space-y-2">
                   {t.landmarks.map((landmark, index) => (
-                    <li key={index} className="flex items-center gap-3 text-ss-tinta" data-testid={`landmark-${index}`}>
-                      <span className="h-px w-2.5 flex-shrink-0 bg-ss-medio" aria-hidden="true" />
+                    <li key={index} className="flex items-start gap-3 text-ss-tinta" data-testid={`landmark-${index}`}>
+                      <span className="mt-[0.75em] h-px w-2.5 flex-shrink-0 bg-ss-medio" aria-hidden="true" />
                       {landmark}
                     </li>
                   ))}
@@ -941,6 +935,9 @@ export default function Offices() {
             </div>
           </motion.section>
 
+          {/* Galería: solo mientras carga o si hay imágenes (/api/office-images devuelve [] hoy);
+              sin ellas el titular invitaba a explorar una banda vacía */}
+          {(imagesLoading || (officeImages?.length ?? 0) > 0) && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -980,7 +977,7 @@ export default function Offices() {
                     <img
                       src={image.imageUrl}
                       alt={language === "es" ? image.altEs : image.alt}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="ss-photo w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       loading="lazy"
                     />
                   </motion.div>
@@ -988,6 +985,7 @@ export default function Offices() {
               </div>
             )}
           </motion.section>
+          )}
 
           <motion.section
             variants={containerVariants}
@@ -1006,58 +1004,24 @@ export default function Offices() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <motion.div variants={itemVariants}>
-                <Card className="h-full" data-testid="card-meeting-rooms">
-                  <CardContent className="p-6">
-                    <h3 className={`${h3Class} mb-4`}>
-                      {t.meetingRoomsTitle}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
+              {([
+                ["card-meeting-rooms", t.meetingRoomsTitle, t.meetingRoomsDesc],
+                ["card-video-conferencing", t.videoConferencingTitle, t.videoConferencingDesc],
+                ["card-client-hospitality", t.clientHospitalityTitle, t.clientHospitalityDesc],
+                ["card-accessibility", t.accessibilityTitle, t.accessibilityDesc],
+              ] as const).map(([testId, title, desc]) => (
+                <motion.div key={testId} variants={itemVariants}>
+                  <div className={openRowClass} data-testid={testId}>
+                    <h3 className={`${h3Class} mb-3`}>
+                      {title}
                     </h3>
-                    <p className="text-ss-tinta leading-relaxed">
-                      {t.meetingRoomsDesc}
+                    <p className="text-base text-ss-tinta leading-[1.55]">
+                      {desc}
                     </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <Card className="h-full" data-testid="card-video-conferencing">
-                  <CardContent className="p-6">
-                    <h3 className={`${h3Class} mb-4`}>
-                      {t.videoConferencingTitle}
-                    </h3>
-                    <p className="text-ss-tinta leading-relaxed">
-                      {t.videoConferencingDesc}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <Card className="h-full" data-testid="card-client-hospitality">
-                  <CardContent className="p-6">
-                    <h3 className={`${h3Class} mb-4`}>
-                      {t.clientHospitalityTitle}
-                    </h3>
-                    <p className="text-ss-tinta leading-relaxed">
-                      {t.clientHospitalityDesc}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <Card className="h-full" data-testid="card-accessibility">
-                  <CardContent className="p-6">
-                    <h3 className={`${h3Class} mb-4`}>
-                      {t.accessibilityTitle}
-                    </h3>
-                    <p className="text-ss-tinta leading-relaxed">
-                      {t.accessibilityDesc}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </motion.section>
 
@@ -1078,78 +1042,62 @@ export default function Offices() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="" data-testid="card-metro">
-                <CardContent className="p-6">
-                  <h3 className={`${h3Class} mb-4`}>
-                    {t.metroTitle}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-10">
+              {([
+                ["card-metro", t.metroTitle, t.metroDesc],
+                ["card-parking", t.parkingTitle, t.parkingDesc],
+                ["card-taxi", t.taxiTitle, t.taxiDesc],
+              ] as const).map(([testId, title, desc]) => (
+                <div key={testId} className={openRowClass} data-testid={testId}>
+                  <h3 className={`${h3Class} mb-3`}>
+                    {title}
                   </h3>
-                  <p className="text-ss-tinta leading-relaxed">
-                    {t.metroDesc}
+                  <p className="text-base text-ss-tinta leading-[1.55]">
+                    {desc}
                   </p>
-                </CardContent>
-              </Card>
-
-              <Card className="" data-testid="card-parking">
-                <CardContent className="p-6">
-                  <h3 className={`${h3Class} mb-4`}>
-                    {t.parkingTitle}
-                  </h3>
-                  <p className="text-ss-tinta leading-relaxed">
-                    {t.parkingDesc}
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="" data-testid="card-taxi">
-                <CardContent className="p-6">
-                  <h3 className={`${h3Class} mb-4`}>
-                    {t.taxiTitle}
-                  </h3>
-                  <p className="text-ss-tinta leading-relaxed">
-                    {t.taxiDesc}
-                  </p>
-                </CardContent>
-              </Card>
+                </div>
+              ))}
             </div>
           </motion.section>
 
+          {/* Cierre: el dato (las fichas de los socios) y dos enlaces de texto, uno por acción.
+              Sin "¿Listo para visitarnos?" ni botones dentro de enlaces. */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="bg-ss-paper p-8 lg:p-12"
+            className="border-t border-ss-rule pt-8"
             data-testid="section-contact-cta"
           >
-            <h2 className={`${h2Class} mb-4`}>
-              {t.contactCtaTitle}
-            </h2>
-            <p className={`${leadClass} max-w-2xl mb-8`}>
+            <p className="text-base text-ss-tinta leading-[1.55] max-w-2xl mb-6">
               {t.contactCtaSubtitle}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/contact">
-                <Button 
-                  variant="default" 
-                  size="lg" 
-                  data-testid="button-contact"
-                >
-                  {t.contactButton}
-                </Button>
+            <div className="flex flex-wrap items-center gap-x-10 gap-y-4">
+              <Link
+                href="/contact"
+                className="ss-label group relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3"
+                data-testid="button-contact"
+              >
+                <span className="ss-link">{t.contactButton}</span>
+                <span aria-hidden="true" className="ss-arrow">
+                  →
+                </span>
               </Link>
-              <Link href="/contact">
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  data-testid="button-schedule"
-                >
-                  {t.scheduleButton}
-                </Button>
+              <Link
+                href="/team"
+                className="ss-label group relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3"
+                data-testid="button-schedule"
+              >
+                <span className="ss-link">{t.teamLink}</span>
+                <span aria-hidden="true" className="ss-arrow">
+                  →
+                </span>
               </Link>
             </div>
           </motion.section>
         </div>
+      </div>
       </main>
 
       {selectedImage && (

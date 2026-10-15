@@ -101,7 +101,8 @@ export const home26 = {
       body:
         "Nuevo León recibe cada año nuevas plantas de capital asiático, estadounidense y europeo. Para estas empresas, las prácticas corporativa, migratoria y laboral de la firma trabajan en conjunto, desde la constitución de la sociedad hasta la contratación del primer turno.",
       steps: ["Constitución de la sociedad", "Permisos migratorios", "Contratación del primer turno"],
-      link: "Empresas extranjeras en México",
+      // Lleva a /practice-groups: las tres prácticas que nombra el texto
+      link: "Ver las prácticas",
       alt: "Sala de juntas de Santos & Saucedo con el tríptico abstracto de la firma",
     },
     monitor: {
@@ -135,11 +136,11 @@ export const home26 = {
     socios: {
       label: "Socios",
       title: "Socios",
-      // Cargos tomados del panel (team_members.title_es).
+      // Nombres, cargos (team_members.title_es) y orden ("order") tomados del panel, como en /team.
       people: [
-        { name: "Enrique Hernán Santos Arce", photo: "santos-arce", role: "Socio fundador" },
-        { name: "Enrique Hernán Santos Guzmán", photo: "santos-guzman", role: "Socio director" },
         { name: "Mario Saucedo Montemayor", photo: "saucedo-montemayor", role: "Socio director" },
+        { name: "Enrique Santos Guzmán", photo: "santos-guzman", role: "Socio director" },
+        { name: "Enrique Santos Arce", photo: "santos-arce", role: "Socio fundador" },
       ],
       link: "Conozca al equipo",
     },
@@ -219,7 +220,7 @@ export const home26 = {
       body:
         "Every year Nuevo León receives new plants backed by Asian, American and European capital. For these companies, the firm's corporate, immigration and labor practices work together, from incorporation to hiring the first shift.",
       steps: ["Incorporation", "Immigration permits", "Hiring the first shift"],
-      link: "Foreign companies in Mexico",
+      link: "See the practices",
       alt: "Santos & Saucedo boardroom with the firm's abstract triptych",
     },
     monitor: {
@@ -252,9 +253,9 @@ export const home26 = {
       label: "Partners",
       title: "Partners",
       people: [
-        { name: "Enrique Hernán Santos Arce", photo: "santos-arce", role: "Founding partner" },
-        { name: "Enrique Hernán Santos Guzmán", photo: "santos-guzman", role: "Managing partner" },
         { name: "Mario Saucedo Montemayor", photo: "saucedo-montemayor", role: "Managing partner" },
+        { name: "Enrique Santos Guzmán", photo: "santos-guzman", role: "Managing partner" },
+        { name: "Enrique Santos Arce", photo: "santos-arce", role: "Founding partner" },
       ],
       link: "Meet the team",
     },

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, type SyntheticEvent } from "react";
 import { Link, useParams } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -15,16 +15,40 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isStaticSite } from "@/lib/queryClient";
 import { getTeamPhotoObjectPosition } from "@/lib/teamPhotoPosition";
+import { fallbackToOriginalSrc, getTeamPhotoSrcSet, getTeamPhotoThumb, highFetchPriority } from "@/lib/teamPhotoSources";
 import { Eyebrow, LeadParagraph } from "@/components/editorial";
 import type { TeamMember, PracticeGroup, IndustryGroup, Education, Affiliation, Ranking, Publication, RepresentativeMatter, BarAdmission, News, LanguageCode } from "@shared/schema";
 
 // Retícula del encabezado del perfil, compartida por la vista y su carga para que no se
 // desalineen. Móvil: nombre, foto y contacto en ese orden. Desde md: foto en la columna 1
 // (dos filas, al menos cuadrada), filete de 1px y el texto en la 3 alineado con la foto.
-const PROFILE_GRID = "grid grid-cols-1 md:grid-cols-[280px_1px_minmax(0,1fr)] md:grid-rows-[auto_1fr] lg:grid-cols-[320px_1px_minmax(0,1fr)]";
-const PROFILE_PHOTO_CELL = "aspect-square w-full md:col-start-1 md:row-span-2 md:row-start-1 md:aspect-auto md:min-h-[280px] lg:min-h-[320px]";
+// Retrato de 240 px (md) y 260 px (lg): la banda Azul Profundo no pasa de lo que piden
+// el nombre y los botones (con 320 px medía 542 px de alto a 1440).
+const PROFILE_GRID = "grid grid-cols-1 md:grid-cols-[240px_1px_minmax(0,1fr)] md:grid-rows-[auto_1fr] lg:grid-cols-[260px_1px_minmax(0,1fr)]";
+const PROFILE_PHOTO_CELL = "aspect-square w-full md:col-start-1 md:row-span-2 md:row-start-1 md:aspect-auto md:min-h-[240px] lg:min-h-[260px]";
+// Ancho del retrato en cada tramo, para que srcset elija la variante WebP adecuada
+const PROFILE_PHOTO_SIZES = "(min-width: 1024px) 260px, (min-width: 768px) 240px, 100vw";
 const PROFILE_IDENTITY_CELL = "pb-8 md:col-start-3 md:row-start-1 md:px-10 md:pb-6";
 const PROFILE_ACTIONS_CELL = "pt-8 md:col-start-3 md:row-start-2 md:px-10 md:pb-10 md:pt-0";
+
+// Texto sin traducción (la traducción automática falló o no llegó): se muestra el original
+// en inglés, marcado lang="en" dir="ltr"; si tampoco hay inglés, el español (lang="es").
+type LocalizedText = { text: string | null | undefined; lang?: "en" | "es" };
+function pickLocalized(
+  language: LanguageCode,
+  translated: string | null | undefined,
+  en: string | null | undefined,
+  es: string | null | undefined,
+): LocalizedText {
+  if (language === "es") return { text: es || en };
+  if (language === "en") return en ? { text: en } : { text: es, lang: es ? "es" : undefined };
+  if (translated) return { text: translated };
+  if (en) return { text: en, lang: "en" };
+  return { text: es, lang: es ? "es" : undefined };
+}
+function langProps(lang?: "en" | "es") {
+  return lang ? { lang, dir: "ltr" as const } : {};
+}
 
 function NewsImageWithFallback({ 
   src, 
@@ -71,25 +95,33 @@ function RelatedTeamMemberCard({
     contentType: 'team_member',
     entityId: relatedMember.id.toString(),
     fields: { title: relatedMember.titleEs || relatedMember.title, titleEs: relatedMember.titleEs },
-    enabled: language !== 'es',
+    // En inglés basta el campo inglés; solo se pide traducción si falta
+    enabled: language !== 'es' && !(language === 'en' && relatedMember.title),
   });
 
-  const displayTitle = language === 'es'
-    ? relatedMember.titleEs
-    : (translatedFields.title || relatedMember.titleEs || relatedMember.title);
+  // Inglés: title tal cual. Otros idiomas: traducción, o el inglés antes que el español
+  const displayTitle = pickLocalized(language, translatedFields.title, relatedMember.title, relatedMember.titleEs);
+
+  // Miniatura WebP de 128 px; si no existe donde se sirven las fotos, el original
+  const originalSrc = relatedMember.imageUrl || undefined;
+  const [avatarSrc, setAvatarSrc] = useState(() => getTeamPhotoThumb(originalSrc));
 
   return (
-    <Link href={`/team/${relatedMember.slug}`}>
-      {/* Fila con filete superior; retrato en grises como todos los retratos */}
+    <Link href={`/team/${relatedMember.slug}`} className="block w-full">
+      {/* Fila con filete superior a todo lo ancho; retrato en grises como todos los retratos */}
       <div
-        className="group flex items-center gap-4 py-4 border-t border-ss-rule cursor-pointer"
+        className="group flex w-full items-center gap-4 py-4 border-t border-ss-rule cursor-pointer"
         data-testid={`card-related-member-${relatedMember.slug}`}
       >
         <Avatar className="w-12 h-12 shrink-0">
           <AvatarImage
-            src={relatedMember.imageUrl || undefined}
-            alt={relatedMember.name}
+            src={avatarSrc}
+            // alt vacío: el nombre ya es el texto del enlace (antes se leía dos veces)
+            alt=""
             className="ss-photo"
+            onLoadingStatusChange={(status) => {
+              if (status === "error" && avatarSrc !== originalSrc) setAvatarSrc(originalSrc);
+            }}
           />
           <AvatarFallback className="bg-ss-paper text-ss-marino text-sm font-heading">
             {getInitials(relatedMember.name)}
@@ -99,8 +131,9 @@ function RelatedTeamMemberCard({
           <p className="font-heading text-[17px] leading-[1.2] tracking-[-0.01em] text-ss-marino truncate group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1">
             {relatedMember.name}
           </p>
+          {/* Sin traducción, el cargo en inglés va en <bdi>: aislado del árabe sin cambiar la alineación */}
           <p className="ss-label text-ss-medio truncate mt-1">
-            {displayTitle}
+            {displayTitle.lang ? <bdi {...langProps(displayTitle.lang)}>{displayTitle.text}</bdi> : displayTitle.text}
           </p>
         </div>
       </div>
@@ -162,12 +195,11 @@ function PracticeGroupBadge({
     contentType: 'practice_group',
     entityId: group.id.toString(),
     fields: { name: group.nameEs || group.name, nameEs: group.nameEs },
-    enabled: language !== 'es',
+    enabled: language !== 'es' && !(language === 'en' && group.name),
   });
 
-  const displayName = language === 'es'
-    ? (group.nameEs || group.name)
-    : (translatedFields.name || group.nameEs || group.name);
+  // Inglés: name tal cual. Otros idiomas: traducción, o el inglés antes que el español
+  const displayName = pickLocalized(language, translatedFields.name, group.name, group.nameEs);
 
   return (
     <Link href={`/practice-groups/${group.slug}`}>
@@ -176,8 +208,9 @@ function PracticeGroupBadge({
         variant="outline"
         className="cursor-pointer px-3 py-1.5 no-default-hover-elevate no-default-active-elevate transition-colors duration-200 hover:border-ss-marino hover:text-ss-marino"
         data-testid={`badge-practice-group-${group.slug}`}
+        {...langProps(displayName.lang)}
       >
-        {displayName}
+        {displayName.text}
       </Badge>
     </Link>
   );
@@ -194,12 +227,10 @@ function IndustryGroupBadge({
     contentType: 'industry_group',
     entityId: group.id.toString(),
     fields: { name: group.nameEs || group.name, nameEs: group.nameEs },
-    enabled: language !== 'es',
+    enabled: language !== 'es' && !(language === 'en' && group.name),
   });
 
-  const displayName = language === 'es'
-    ? (group.nameEs || group.name)
-    : (translatedFields.name || group.nameEs || group.name);
+  const displayName = pickLocalized(language, translatedFields.name, group.name, group.nameEs);
 
   // Sin enlace: el sitio no tiene páginas públicas de industrias (rutas retiradas en 4f995a6)
   return (
@@ -207,8 +238,9 @@ function IndustryGroupBadge({
       variant="outline"
       className="px-3 py-1.5 no-default-hover-elevate no-default-active-elevate"
       data-testid={`badge-industry-group-${group.slug}`}
+      {...langProps(displayName.lang)}
     >
-      {displayName}
+      {displayName.text}
     </Badge>
   );
 }
@@ -1160,7 +1192,7 @@ export default function TeamMemberDetail() {
         <Header />
         {/* Cabecera sticky en flujo: ya no hace falta compensar el header fijo */}
         <main id="main-content" className="pt-16 pb-20 lg:pt-20">
-          <div className="max-w-6xl mx-auto px-6 lg:px-12">
+          <div className="ss-container">
             <h2 className="ss-h2 mb-6" data-testid="text-error-title">
               {t.errorMessage}
             </h2>
@@ -1180,29 +1212,33 @@ export default function TeamMemberDetail() {
     return (
       <div className="min-h-screen bg-background" data-testid="page-team-member-loading">
         <Header />
-        <section className="pt-36 pb-20 editorial-page-hero" aria-busy="true">
-          <div className="max-w-6xl mx-auto px-6 lg:px-12">
-            <Skeleton className="h-4 w-44 bg-white/10 mb-6" />
-            <div className={PROFILE_GRID}>
-              <div className={PROFILE_IDENTITY_CELL}>
-                <Skeleton className="h-3 w-28 bg-white/10 mb-4" />
-                <Skeleton className="h-12 w-4/5 bg-white/10 mb-3" />
-                <Skeleton className="h-12 w-3/5 bg-white/10 mb-4" />
-                <Skeleton className="h-5 w-40 bg-white/10" />
-              </div>
-              <Skeleton className={`${PROFILE_PHOTO_CELL} rounded-none bg-white/10`} />
-              <div className={PROFILE_ACTIONS_CELL}>
-                <Skeleton className="h-10 w-56 bg-white/10" />
+        <main id="main-content">
+          <section className="pt-36 pb-20 editorial-page-hero" aria-busy="true">
+            <div className="ss-container">
+              <Skeleton className="h-4 w-44 bg-white/10 mb-6" />
+              <div className={PROFILE_GRID}>
+                <div className={PROFILE_IDENTITY_CELL}>
+                  <Skeleton className="h-3 w-28 bg-white/10 mb-4" />
+                  <Skeleton className="h-12 w-4/5 bg-white/10 mb-3" />
+                  <Skeleton className="h-12 w-3/5 bg-white/10 mb-4" />
+                  <Skeleton className="h-5 w-40 bg-white/10" />
+                </div>
+                <Skeleton className={`${PROFILE_PHOTO_CELL} rounded-none bg-white/10`} />
+                <div className={PROFILE_ACTIONS_CELL}>
+                  <Skeleton className="h-10 w-56 bg-white/10" />
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-        <main id="main-content" className="py-16 lg:py-20">
-          <div className="max-w-4xl mx-auto px-6 lg:px-12">
-            <Skeleton className="h-6 w-full mb-4" />
-            <Skeleton className="h-6 w-full mb-4" />
-            <Skeleton className="h-6 w-3/4 mb-4" />
-            <Skeleton className="h-6 w-5/6 mb-4" />
+          </section>
+          <div className="py-16 lg:py-20">
+            <div className="ss-container">
+              <div className="max-w-[44rem]">
+                <Skeleton className="h-6 w-full mb-4" />
+                <Skeleton className="h-6 w-full mb-4" />
+                <Skeleton className="h-6 w-3/4 mb-4" />
+                <Skeleton className="h-6 w-5/6 mb-4" />
+              </div>
+            </div>
           </div>
         </main>
         <Footer />
@@ -1210,23 +1246,15 @@ export default function TeamMemberDetail() {
     );
   }
 
-  const displayTitle = language === 'es'
-    ? (member?.titleEs || member?.title)
-    : language === 'en'
-      ? member?.title
-      : (translatedFields.title || null);
-  
-  const displayRole = language === 'es'
-    ? (member?.roleEs || member?.role)
-    : language === 'en'
-      ? member?.role
-      : (translatedFields.role || null);
-  
-  const displayBio = language === 'es'
-    ? (member?.bioEs || member?.bio)
-    : language === 'en'
-      ? member?.bio
-      : (translatedFields.bio || null);
+  // Sin traducción (falló o no llegó), el original en inglés marcado lang="en" dir="ltr";
+  // antes quedaba null y desaparecían el cargo, la práctica y la biografía.
+  const localizedTitle = pickLocalized(language, translatedFields.title, member?.title, member?.titleEs);
+  const localizedRole = pickLocalized(language, translatedFields.role, member?.role, member?.roleEs);
+  const localizedBio = pickLocalized(language, translatedFields.bio, member?.bio, member?.bioEs);
+  const displayTitle = localizedTitle.text;
+  const displayRole = localizedRole.text;
+  const displayBio = localizedBio.text;
+  const profilePhotoSrcSet = getTeamPhotoSrcSet(member?.imageUrl);
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-team-member-detail">
@@ -1258,763 +1286,786 @@ export default function TeamMemberDetail() {
         </>
       )}
       
-      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-team-member-hero">
-        {/* Mismo ancho que la biografía (max-w-6xl): foto y vuelta alineadas con el cuerpo */}
-        <div className="max-w-6xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            <Link href="/team">
-              <span 
-                className="inline-flex items-center gap-2 mb-6 cursor-pointer"
-                data-testid="link-back-to-team"
-              >
-                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-                {t.backToAll}
-              </span>
-            </Link>
-            {/* Móvil (y lectores de pantalla): nombre, foto y contacto, en ese orden; antes la
-                foto a todo lo ancho empujaba el nombre bajo el primer pantallazo. Desde md cada
-                bloque va a su celda: foto a la izquierda en las dos filas y el texto alineado
-                con su borde superior. */}
-            <div className={PROFILE_GRID}>
-              {/* Sin padding lateral en móvil: el texto arranca en el borde de la foto y de la vuelta */}
-              <div className={`min-w-0 text-center md:text-left ${PROFILE_IDENTITY_CELL}`}>
-                {/* Eyebrow del expediente: "§ 03 —— Socio" (glifo § en lima, components/editorial).
-                    La categoría va aquí y no en una píldora junto al nombre. */}
-                <Eyebrow
-                  num="03"
-                  tone="navy"
-                  label={getSeniorityLabel()}
-                  labelTestId="badge-seniority"
-                  className="mb-4"
-                />
-                <h1 
-                  className="ss-hero-detail mb-3"
-                  data-testid="text-team-member-name"
+      {/* El encabezado va dentro de main (el h1 queda en el landmark y en "Saltar al contenido");
+          el relleno vertical está en el envoltorio del cuerpo, no en main, para que la banda
+          Azul Profundo siga pegada a la cabecera. */}
+      <main id="main-content">
+        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-team-member-hero">
+          {/* Mismo contenedor que la cabecera y el cuerpo: la foto arranca en el borde del logo */}
+          <div className="ss-container">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+            >
+              <Link href="/team">
+                <span 
+                  className="inline-flex items-center gap-2 mb-6 cursor-pointer"
+                  data-testid="link-back-to-team"
                 >
-                  {member?.name}
-                </h1>
-                {(() => {
-                  const normalize = (s: string) =>
-                    s
-                      .normalize("NFD")
-                      .replace(/[\u0300-\u036f]/g, "")
-                      .trim()
-                      .toLowerCase();
-                  const seniorityLabel = getSeniorityLabel();
-                  const titleMatchesSeniority =
-                    displayTitle &&
-                    seniorityLabel &&
-                    normalize(displayTitle) === normalize(seniorityLabel);
-                  if (titleMatchesSeniority) return null;
-                  return (
-                    <p
-                      className="mb-1"
-                      data-testid="text-team-member-title"
-                    >
-                      {displayTitle}
-                      {isTranslating && (
-                        <Loader2 className="inline-block w-4 h-4 ml-2 animate-spin text-white/60" />
-                      )}
-                    </p>
-                  );
-                })()}
-                <p 
-                  data-testid="text-team-member-role"
-                >
-                  {displayRole}
-                </p>
-              </div>
-
-              <div
-                className={`group relative overflow-hidden ${PROFILE_PHOTO_CELL}`}
-                data-testid="container-profile-photo"
-              >
-                {member?.imageUrl ? (
-                  <>
-                    <img
-                      src={member.imageUrl}
-                      // alt vacío: el nombre ya está en el h1 de al lado (antes se leía dos veces)
-                      alt=""
-                      // En grises, como todos los retratos del sitio; sin velo marino encima
-                      className="ss-photo absolute inset-0 h-full w-full object-cover object-top"
-                      style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }}
-                      loading="eager"
-                      decoding="async"
-                      data-testid="img-profile-photo"
-                    />
-                  </>
-                ) : (
-                  <div
-                    className="absolute inset-0 flex items-center justify-center bg-white/10 text-white text-6xl font-heading font-normal"
-                    data-testid="avatar-fallback"
+                  <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                  {t.backToAll}
+                </span>
+              </Link>
+              {/* Móvil (y lectores de pantalla): nombre, foto y contacto, en ese orden; antes la
+                  foto a todo lo ancho empujaba el nombre bajo el primer pantallazo. Desde md cada
+                  bloque va a su celda: foto a la izquierda en las dos filas y el texto alineado
+                  con su borde superior. */}
+              <div className={PROFILE_GRID}>
+                {/* Sin padding lateral en móvil: el texto arranca en el borde de la foto y de la vuelta */}
+                <div className={`min-w-0 text-center md:text-left ${PROFILE_IDENTITY_CELL}`}>
+                  {/* Eyebrow del expediente: "§ 03 —— Socio" (glifo § en lima, components/editorial).
+                      La categoría va aquí y no en una píldora junto al nombre. */}
+                  <Eyebrow
+                    num="03"
+                    tone="navy"
+                    label={getSeniorityLabel()}
+                    labelTestId="badge-seniority"
+                    className="mb-4"
+                  />
+                  <h1 
+                    className="ss-hero-detail mb-3"
+                    data-testid="text-team-member-name"
                   >
-                    {member?.name ? getInitials(member.name) : ''}
-                  </div>
-                )}
-              </div>
-              <div
-                aria-hidden="true"
-                className="hidden md:col-start-2 md:row-span-2 md:row-start-1 md:block bg-white/[0.14]"
-              />
-              {/* Tres botones iguales de contorno blanco, sin iconos: ninguno pesa más que el nombre.
-                  El número de teléfono (dir="ltr") y LinkedIn están en el bloque de contacto. */}
-              <div className={`flex flex-col sm:flex-row sm:flex-wrap content-start justify-start gap-3 ${PROFILE_ACTIONS_CELL}`}>
-                {member?.email && (
-                  <Button 
-                    variant="outline"
-                    className="min-h-11 sm:min-w-[12rem] border-white/45 text-white hover:border-white"
-                    asChild
-                    data-testid="button-email"
-                  >
-                    <a href={`mailto:${member.email}`}>
-                      {t.emailUs}
-                    </a>
-                  </Button>
-                )}
-                {member?.phone && (
-                  <Button 
-                    variant="outline"
-                    className="min-h-11 sm:min-w-[12rem] border-white/45 text-white hover:border-white"
-                    asChild
-                    data-testid="button-phone"
-                  >
-                    <a href={`tel:${member.phone}`}>
-                      {t.callUs}
-                    </a>
-                  </Button>
-                )}
-                <Button 
-                  variant="outline"
-                  className="min-h-11 sm:min-w-[12rem] border-white/45 text-white hover:border-white"
-                  onClick={handleDownloadVCard}
-                  data-testid="button-download-vcard"
-                >
-                  {t.downloadVCard}
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      <main id="main-content" className="py-16 lg:py-20">
-        <div className="max-w-6xl mx-auto px-6 lg:px-12">
-          {/* Biografía en 8 columnas con "Áreas de práctica" debajo; contacto y equipo en 4 */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            <div className="lg:col-span-8 space-y-12">
-              {(displayBio || ((member?.bio || member?.bioEs) && isTranslating)) && (
-                <motion.section
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  data-testid="section-biography"
-                >
-                  <h2 
-                    className="ss-h3 mb-6 flex items-center gap-3"
-                    data-testid="text-biography-title"
-                  >
-                    {t.biography}
-                    {isTranslating && (
-                      <Loader2 className="w-4 h-4 animate-spin text-ss-medio" aria-hidden="true" />
-                    )}
-                  </h2>
-                  <div data-testid="container-biography">
-                    {displayBio ? (() => {
-                      const paragraphs = displayBio.split(/\n\s*\n/).map((p: string) => p.trim()).filter(Boolean);
-                      const [first, ...rest] = paragraphs.length ? paragraphs : [displayBio];
-                      return (
-                        <LeadParagraph
-                          firstParagraph={first}
-                          restParagraphs={rest}
-                          testId="lead-biography"
-                        />
-                      );
-                    })() : (
-                      <div className="flex items-center gap-2 text-ss-medio">
-                        <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                        <span data-testid="text-translation-pending">
-                          {language === 'de' ? 'Übersetzung lädt...' :
-                           language === 'zh' ? '翻译加载中...' :
-                           language === 'ko' ? '번역 로딩 중...' :
-                           language === 'ja' ? '翻訳を読み込み中...' :
-                           language === 'ar' ? 'جاري تحميل الترجمة...' :
-                           language === 'ru' ? 'Загрузка перевода...' :
-                           language === 'fr' ? 'Traduction en cours...' :
-                           language === 'it' ? 'Caricamento traduzione...' :
-                           'Loading translation...'}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </motion.section>
-              )}
-
-              {processedRankings && (
-                <motion.section
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.25 }}
-                  data-testid="section-rankings"
-                >
-                  <div>
-                    <div className="mb-6">
-                      <h2
-                        className="ss-h3 flex items-baseline gap-3"
-                        data-testid="text-rankings-title"
+                    {member?.name}
+                  </h1>
+                  {(() => {
+                    const normalize = (s: string) =>
+                      s
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "")
+                        .trim()
+                        .toLowerCase();
+                    const seniorityLabel = getSeniorityLabel();
+                    const titleMatchesSeniority =
+                      displayTitle &&
+                      seniorityLabel &&
+                      normalize(displayTitle) === normalize(seniorityLabel);
+                    if (titleMatchesSeniority) return null;
+                    return (
+                      <p
+                        className="mb-1"
+                        data-testid="text-team-member-title"
+                        {...langProps(localizedTitle.lang)}
                       >
-                        <span>{t.rankings}</span>
-                        <span
-                          className="ms-auto ss-label ss-num text-ss-medio"
-                          data-testid="badge-rankings-count"
-                        >
-                          {processedRankings.totalCount}
-                        </span>
-                      </h2>
-                    </div>
-
-                    {processedRankings.tieredRankings.length > 0 && (
-                      <div className="mb-6" data-testid="container-tiered-rankings">
-                        <h3 className="ss-label text-ss-medio mb-2">
-                          {t.tieredRankings}
-                        </h3>
-                        <div>
-                          {processedRankings.tieredRankings.map((ranking, index) => (
-                            <RankingItemTranslated
-                              key={index}
-                              ranking={ranking}
-                              index={index}
-                              language={language}
-                              memberId={member?.id?.toString() || ''}
-                              isTiered={true}
-                              getPublicationIcon={getPublicationIcon}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {processedRankings.simpleRankings.length > 0 && (
-                      <div data-testid="container-simple-rankings">
-                        {processedRankings.tieredRankings.length > 0 && (
-                          <h3 className="ss-label text-ss-medio mb-2">
-                            {t.otherRecognitions}
-                          </h3>
+                        {displayTitle}
+                        {isTranslating && (
+                          <Loader2 className="inline-block w-4 h-4 ml-2 animate-spin text-white/60" />
                         )}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-                          {processedRankings.simpleRankings.map((ranking, index) => (
-                            <RankingItemTranslated
-                              key={index}
-                              ranking={ranking}
-                              index={processedRankings.tieredRankings.length + index}
-                              language={language}
-                              memberId={member?.id?.toString() || ''}
-                              isTiered={false}
-                              getPublicationIcon={getPublicationIcon}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </motion.section>
-              )}
+                      </p>
+                    );
+                  })()}
+                  <p
+                    data-testid="text-team-member-role"
+                    {...langProps(localizedRole.lang)}
+                  >
+                    {displayRole}
+                  </p>
+                </div>
 
-              {practiceGroups && practiceGroups.length > 0 && (
+                <div
+                  className={`group relative overflow-hidden ${PROFILE_PHOTO_CELL}`}
+                  data-testid="container-profile-photo"
+                >
+                  {member?.imageUrl ? (
+                    <>
+                      <img
+                        src={member.imageUrl}
+                        // WebP de 360/652 px en vez del PNG de 0,5–1 MB; si la variante no
+                        // existe donde se sirven las fotos, onError vuelve al original (src)
+                        {...(profilePhotoSrcSet ? { srcSet: profilePhotoSrcSet, sizes: PROFILE_PHOTO_SIZES } : {})}
+                        // alt vacío: el nombre ya está en el h1 de al lado (antes se leía dos veces)
+                        alt=""
+                        // En grises, como todos los retratos del sitio; sin velo marino encima
+                        className="ss-photo absolute inset-0 h-full w-full object-cover object-top"
+                        style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }}
+                        loading="eager"
+                        {...highFetchPriority}
+                        decoding="async"
+                        onError={(e: SyntheticEvent<HTMLImageElement>) => {
+                          if (!fallbackToOriginalSrc(e)) e.currentTarget.style.display = "none";
+                        }}
+                        data-testid="img-profile-photo"
+                      />
+                    </>
+                  ) : (
+                    <div
+                      className="absolute inset-0 flex items-center justify-center bg-white/10 text-white text-6xl font-heading font-normal"
+                      data-testid="avatar-fallback"
+                    >
+                      {member?.name ? getInitials(member.name) : ''}
+                    </div>
+                  )}
+                </div>
+                <div
+                  aria-hidden="true"
+                  className="hidden md:col-start-2 md:row-span-2 md:row-start-1 md:block bg-white/[0.14]"
+                />
+                {/* Tres botones iguales de contorno blanco, sin iconos: ninguno pesa más que el nombre.
+                    Retícula de columnas iguales: una fila de tres desde sm (también a 1024); entre md
+                    y lg, junto al retrato, dos y uno alineados a la retícula; en el teléfono, uno
+                    debajo de otro. El número de teléfono (dir="ltr") y LinkedIn están en el bloque
+                    de contacto. */}
+                <div className={`grid grid-cols-1 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 lg:max-w-[48rem] content-start gap-3 ${PROFILE_ACTIONS_CELL}`}>
+                  {member?.email && (
+                    <Button
+                      variant="outline"
+                      className="min-h-11 w-full whitespace-normal text-center leading-[1.2] border-white/45 text-white hover:border-white"
+                      asChild
+                      data-testid="button-email"
+                    >
+                      <a href={`mailto:${member.email}`}>
+                        {t.emailUs}
+                      </a>
+                    </Button>
+                  )}
+                  {member?.phone && (
+                    <Button
+                      variant="outline"
+                      className="min-h-11 w-full whitespace-normal text-center leading-[1.2] border-white/45 text-white hover:border-white"
+                      asChild
+                      data-testid="button-phone"
+                    >
+                      <a href={`tel:${member.phone}`}>
+                        {t.callUs}
+                      </a>
+                    </Button>
+                  )}
+                  <Button
+                    variant="outline"
+                    className="min-h-11 w-full whitespace-normal text-center leading-[1.2] border-white/45 text-white hover:border-white"
+                    onClick={handleDownloadVCard}
+                    data-testid="button-download-vcard"
+                  >
+                    {t.downloadVCard}
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Relleno vertical del cuerpo (antes en main, que ahora también contiene el encabezado) */}
+        <div className="py-16 lg:py-20">
+          <div className="ss-container">
+            {/* Biografía en 8 columnas, con medida de lectura de 44rem, y "Áreas de práctica"
+                debajo; contacto en 4. "Equipo relacionado" va debajo de las dos columnas, a todo lo
+                ancho: en la barra lateral la alargaba unos 450 px por debajo de la biografía. */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+              <div className="lg:col-span-8 space-y-12 max-w-[44rem]">
+                {(displayBio || ((member?.bio || member?.bioEs) && isTranslating)) && (
+                  <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    data-testid="section-biography"
+                  >
+                    <h2 
+                      className="ss-h3 mb-6 flex items-center gap-3"
+                      data-testid="text-biography-title"
+                    >
+                      {t.biography}
+                      {isTranslating && (
+                        <Loader2 className="w-4 h-4 animate-spin text-ss-medio" aria-hidden="true" />
+                      )}
+                    </h2>
+                    <div data-testid="container-biography" {...langProps(localizedBio.lang)}>
+                      {displayBio ? (() => {
+                        const paragraphs = displayBio.split(/\n\s*\n/).map((p: string) => p.trim()).filter(Boolean);
+                        const [first, ...rest] = paragraphs.length ? paragraphs : [displayBio];
+                        return (
+                          <LeadParagraph
+                            firstParagraph={first}
+                            restParagraphs={rest}
+                            testId="lead-biography"
+                          />
+                        );
+                      })() : (
+                        <div className="flex items-center gap-2 text-ss-medio">
+                          <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                          <span data-testid="text-translation-pending">
+                            {language === 'de' ? 'Übersetzung lädt...' :
+                             language === 'zh' ? '翻译加载中...' :
+                             language === 'ko' ? '번역 로딩 중...' :
+                             language === 'ja' ? '翻訳を読み込み中...' :
+                             language === 'ar' ? 'جاري تحميل الترجمة...' :
+                             language === 'ru' ? 'Загрузка перевода...' :
+                             language === 'fr' ? 'Traduction en cours...' :
+                             language === 'it' ? 'Caricamento traduzione...' :
+                             'Loading translation...'}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </motion.section>
+                )}
+
+                {processedRankings && (
+                  <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.25 }}
+                    data-testid="section-rankings"
+                  >
+                    <div>
+                      <div className="mb-6">
+                        <h2
+                          className="ss-h3 flex items-baseline gap-3"
+                          data-testid="text-rankings-title"
+                        >
+                          <span>{t.rankings}</span>
+                          <span
+                            className="ms-auto ss-label ss-num text-ss-medio"
+                            data-testid="badge-rankings-count"
+                          >
+                            {processedRankings.totalCount}
+                          </span>
+                        </h2>
+                      </div>
+
+                      {processedRankings.tieredRankings.length > 0 && (
+                        <div className="mb-6" data-testid="container-tiered-rankings">
+                          <h3 className="ss-label text-ss-medio mb-2">
+                            {t.tieredRankings}
+                          </h3>
+                          <div>
+                            {processedRankings.tieredRankings.map((ranking, index) => (
+                              <RankingItemTranslated
+                                key={index}
+                                ranking={ranking}
+                                index={index}
+                                language={language}
+                                memberId={member?.id?.toString() || ''}
+                                isTiered={true}
+                                getPublicationIcon={getPublicationIcon}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {processedRankings.simpleRankings.length > 0 && (
+                        <div data-testid="container-simple-rankings">
+                          {processedRankings.tieredRankings.length > 0 && (
+                            <h3 className="ss-label text-ss-medio mb-2">
+                              {t.otherRecognitions}
+                            </h3>
+                          )}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                            {processedRankings.simpleRankings.map((ranking, index) => (
+                              <RankingItemTranslated
+                                key={index}
+                                ranking={ranking}
+                                index={processedRankings.tieredRankings.length + index}
+                                language={language}
+                                memberId={member?.id?.toString() || ''}
+                                isTiered={false}
+                                getPublicationIcon={getPublicationIcon}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </motion.section>
+                )}
+
+                {practiceGroups && practiceGroups.length > 0 && (
+                  <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                    data-testid="section-practice-areas"
+                  >
+                    <h2 
+                      className="ss-h3 mb-5"
+                      data-testid="text-practice-areas-title"
+                    >
+                      {t.practiceAreas}
+                    </h2>
+                    <div className="flex flex-wrap gap-2">
+                      {practiceGroups.slice(0, 8).map((group) => (
+                        <PracticeGroupBadge
+                          key={group.id}
+                          group={group}
+                          language={language}
+                        />
+                      ))}
+                    </div>
+                  </motion.section>
+                )}
+
+                {industryGroups && industryGroups.length > 0 && (
+                  <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.35 }}
+                    data-testid="section-industry-groups"
+                  >
+                    <h2 
+                      className="ss-h3 mb-5"
+                      data-testid="text-industry-groups-title"
+                    >
+                      {t.industryGroups}
+                    </h2>
+                    <div className="flex flex-wrap gap-2">
+                      {industryGroups.slice(0, 6).map((group) => (
+                        <IndustryGroupBadge
+                          key={group.id}
+                          group={group}
+                          language={language}
+                        />
+                      ))}
+                    </div>
+                  </motion.section>
+                )}
+
+                {member?.education && member.education.length > 0 && (
+                  <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                    data-testid="section-education"
+                  >
+                    <h2 
+                      className="ss-h3 mb-5"
+                      data-testid="text-education-title"
+                    >
+                      {t.education}
+                    </h2>
+                    <div className="space-y-4">
+                      {(member.education as Education[]).map((edu, index) => (
+                        <EducationItemTranslated
+                          key={index}
+                          edu={edu}
+                          index={index}
+                          language={language}
+                          memberId={member.id.toString()}
+                        />
+                      ))}
+                    </div>
+                  </motion.section>
+                )}
+
+                {member?.barAdmissions && member.barAdmissions.length > 0 && (
+                  <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.45 }}
+                    data-testid="section-bar-admissions"
+                  >
+                    <h2 
+                      className="ss-h3 mb-5"
+                      data-testid="text-bar-admissions-title"
+                    >
+                      {t.barAdmissions}
+                    </h2>
+                    <div className="flex flex-wrap gap-3">
+                      {(member.barAdmissions as BarAdmission[]).map((admission, index) => (
+                        <BarAdmissionItemTranslated
+                          key={index}
+                          admission={admission}
+                          index={index}
+                          language={language}
+                          memberId={member.id.toString()}
+                        />
+                      ))}
+                    </div>
+                  </motion.section>
+                )}
+
+                {member?.languages && member.languages.length > 0 && (
+                  <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                    data-testid="section-languages"
+                  >
+                    <h2 
+                      className="ss-h3 mb-5"
+                      data-testid="text-languages-title"
+                    >
+                      {t.languages}
+                    </h2>
+                    <div className="flex flex-wrap gap-3">
+                      {(member.languages as string[]).map((lang, index) => (
+                        <LanguageItemTranslated
+                          key={index}
+                          lang={lang}
+                          index={index}
+                          language={language}
+                          memberId={member.id.toString()}
+                        />
+                      ))}
+                    </div>
+                  </motion.section>
+                )}
+
+                {member?.affiliations && member.affiliations.length > 0 && (
+                  <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.55 }}
+                    data-testid="section-affiliations"
+                  >
+                    <h2 
+                      className="ss-h3 mb-5"
+                      data-testid="text-affiliations-title"
+                    >
+                      {t.affiliations}
+                    </h2>
+                    <div className="space-y-3">
+                      {(member.affiliations as Affiliation[]).map((affiliation, index) => (
+                        <AffiliationItemTranslated
+                          key={index}
+                          affiliation={affiliation}
+                          index={index}
+                          language={language}
+                          memberId={member.id.toString()}
+                        />
+                      ))}
+                    </div>
+                  </motion.section>
+                )}
+
+                {member?.publications && member.publications.length > 0 && (
+                  <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.65 }}
+                    data-testid="section-publications"
+                  >
+                    <h2 
+                      className="ss-h3 mb-5"
+                      data-testid="text-publications-title"
+                    >
+                      {t.publications}
+                    </h2>
+                    <div className="space-y-4">
+                      {(member.publications as Publication[]).map((pub, index) => (
+                        <PublicationItemTranslated
+                          key={index}
+                          pub={pub}
+                          index={index}
+                          language={language}
+                          memberId={member.id.toString()}
+                          viewPublicationText={t.viewPublication}
+                        />
+                      ))}
+                    </div>
+                  </motion.section>
+                )}
+
+                {member?.representativeMatters && member.representativeMatters.length > 0 && (
+                  <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.7 }}
+                    data-testid="section-representative-matters"
+                  >
+                    <h2 
+                      className="ss-h3 mb-5"
+                      data-testid="text-representative-matters-title"
+                    >
+                      {t.representativeMatters}
+                    </h2>
+                    <div className="space-y-3">
+                      {(member.representativeMatters as RepresentativeMatter[]).map((matter, index) => (
+                        <RepresentativeMatterTranslated
+                          key={index}
+                          matter={matter}
+                          index={index}
+                          language={language}
+                          memberId={member.id.toString()}
+                        />
+                      ))}
+                    </div>
+                  </motion.section>
+                )}
+
+                {member?.experience && member.experience.length > 0 && (
+                  <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.75 }}
+                    data-testid="section-experience"
+                  >
+                    <h2 
+                      className="ss-h3 mb-5"
+                      data-testid="text-experience-title"
+                    >
+                      {t.experience}
+                    </h2>
+                    <div className="space-y-4">
+                      {(member.experience as any[]).map((exp, index) => (
+                        <div 
+                          key={index}
+                          className="border-s border-ss-rule ps-4 py-1"
+                          data-testid={`item-experience-${index}`}
+                        >
+                          <p className="font-semibold text-ss-tinta">
+                            {language === "es" && exp.positionEs ? exp.positionEs : exp.position}
+                          </p>
+                          <p className="text-ss-medio">
+                            {exp.company}
+                            {(exp.startYear || exp.endYear) && (
+                              <span className="ml-2 text-sm">
+                                ({exp.startYear}{exp.endYear ? ` - ${exp.endYear}` : ' - Present'})
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.section>
+                )}
+              </div>
+
+              <div className="lg:col-span-4 space-y-10">
+                {/* Contacto: bloque Hueso con un solo botón principal y dos enlaces de texto */}
                 <motion.section
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.3 }}
-                  data-testid="section-practice-areas"
+                  className="bg-ss-paper p-6 lg:p-8"
+                  data-testid="section-contact-cta"
                 >
                   <h2 
-                    className="ss-h3 mb-5"
-                    data-testid="text-practice-areas-title"
+                    className="ss-h3 text-[20px] mb-3"
+                    data-testid="text-contact-cta-title"
                   >
-                    {t.practiceAreas}
+                    {t.contactCta}
                   </h2>
-                  <div className="flex flex-wrap gap-2">
-                    {practiceGroups.slice(0, 8).map((group) => (
-                      <PracticeGroupBadge
-                        key={group.id}
-                        group={group}
-                        language={language}
-                      />
-                    ))}
-                  </div>
-                </motion.section>
-              )}
-
-              {industryGroups && industryGroups.length > 0 && (
-                <motion.section
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.35 }}
-                  data-testid="section-industry-groups"
-                >
-                  <h2 
-                    className="ss-h3 mb-5"
-                    data-testid="text-industry-groups-title"
+                  <p 
+                    className="text-base leading-[1.55] text-ss-tinta mb-6"
+                    data-testid="text-contact-cta-subtitle"
                   >
-                    {t.industryGroups}
-                  </h2>
-                  <div className="flex flex-wrap gap-2">
-                    {industryGroups.slice(0, 6).map((group) => (
-                      <IndustryGroupBadge
-                        key={group.id}
-                        group={group}
-                        language={language}
-                      />
-                    ))}
-                  </div>
-                </motion.section>
-              )}
-
-              {member?.education && member.education.length > 0 && (
-                <motion.section
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
-                  data-testid="section-education"
-                >
-                  <h2 
-                    className="ss-h3 mb-5"
-                    data-testid="text-education-title"
-                  >
-                    {t.education}
-                  </h2>
-                  <div className="space-y-4">
-                    {(member.education as Education[]).map((edu, index) => (
-                      <EducationItemTranslated
-                        key={index}
-                        edu={edu}
-                        index={index}
-                        language={language}
-                        memberId={member.id.toString()}
-                      />
-                    ))}
-                  </div>
-                </motion.section>
-              )}
-
-              {member?.barAdmissions && member.barAdmissions.length > 0 && (
-                <motion.section
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.45 }}
-                  data-testid="section-bar-admissions"
-                >
-                  <h2 
-                    className="ss-h3 mb-5"
-                    data-testid="text-bar-admissions-title"
-                  >
-                    {t.barAdmissions}
-                  </h2>
-                  <div className="flex flex-wrap gap-3">
-                    {(member.barAdmissions as BarAdmission[]).map((admission, index) => (
-                      <BarAdmissionItemTranslated
-                        key={index}
-                        admission={admission}
-                        index={index}
-                        language={language}
-                        memberId={member.id.toString()}
-                      />
-                    ))}
-                  </div>
-                </motion.section>
-              )}
-
-              {member?.languages && member.languages.length > 0 && (
-                <motion.section
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.5 }}
-                  data-testid="section-languages"
-                >
-                  <h2 
-                    className="ss-h3 mb-5"
-                    data-testid="text-languages-title"
-                  >
-                    {t.languages}
-                  </h2>
-                  <div className="flex flex-wrap gap-3">
-                    {(member.languages as string[]).map((lang, index) => (
-                      <LanguageItemTranslated
-                        key={index}
-                        lang={lang}
-                        index={index}
-                        language={language}
-                        memberId={member.id.toString()}
-                      />
-                    ))}
-                  </div>
-                </motion.section>
-              )}
-
-              {member?.affiliations && member.affiliations.length > 0 && (
-                <motion.section
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.55 }}
-                  data-testid="section-affiliations"
-                >
-                  <h2 
-                    className="ss-h3 mb-5"
-                    data-testid="text-affiliations-title"
-                  >
-                    {t.affiliations}
-                  </h2>
-                  <div className="space-y-3">
-                    {(member.affiliations as Affiliation[]).map((affiliation, index) => (
-                      <AffiliationItemTranslated
-                        key={index}
-                        affiliation={affiliation}
-                        index={index}
-                        language={language}
-                        memberId={member.id.toString()}
-                      />
-                    ))}
-                  </div>
-                </motion.section>
-              )}
-
-              {member?.publications && member.publications.length > 0 && (
-                <motion.section
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.65 }}
-                  data-testid="section-publications"
-                >
-                  <h2 
-                    className="ss-h3 mb-5"
-                    data-testid="text-publications-title"
-                  >
-                    {t.publications}
-                  </h2>
-                  <div className="space-y-4">
-                    {(member.publications as Publication[]).map((pub, index) => (
-                      <PublicationItemTranslated
-                        key={index}
-                        pub={pub}
-                        index={index}
-                        language={language}
-                        memberId={member.id.toString()}
-                        viewPublicationText={t.viewPublication}
-                      />
-                    ))}
-                  </div>
-                </motion.section>
-              )}
-
-              {member?.representativeMatters && member.representativeMatters.length > 0 && (
-                <motion.section
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.7 }}
-                  data-testid="section-representative-matters"
-                >
-                  <h2 
-                    className="ss-h3 mb-5"
-                    data-testid="text-representative-matters-title"
-                  >
-                    {t.representativeMatters}
-                  </h2>
-                  <div className="space-y-3">
-                    {(member.representativeMatters as RepresentativeMatter[]).map((matter, index) => (
-                      <RepresentativeMatterTranslated
-                        key={index}
-                        matter={matter}
-                        index={index}
-                        language={language}
-                        memberId={member.id.toString()}
-                      />
-                    ))}
-                  </div>
-                </motion.section>
-              )}
-
-              {member?.experience && member.experience.length > 0 && (
-                <motion.section
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.75 }}
-                  data-testid="section-experience"
-                >
-                  <h2 
-                    className="ss-h3 mb-5"
-                    data-testid="text-experience-title"
-                  >
-                    {t.experience}
-                  </h2>
-                  <div className="space-y-4">
-                    {(member.experience as any[]).map((exp, index) => (
-                      <div 
-                        key={index}
-                        className="border-s border-ss-rule ps-4 py-1"
-                        data-testid={`item-experience-${index}`}
+                    {t.contactSubtitle}
+                  </p>
+                  {member?.email && (
+                    <Button 
+                      className="w-full min-h-11"
+                      asChild
+                      data-testid="button-email-contact"
+                    >
+                      <a href={`mailto:${member.email}`}>
+                        {t.emailUs}
+                      </a>
+                    </Button>
+                  )}
+                  <ul className="mt-5 space-y-3 text-[15px] font-semibold">
+                    {member?.phone && (
+                      <li>
+                        <a
+                          href={`tel:${member.phone}`}
+                          className="gap-1.5 text-ss-marino underline-offset-4 hover:underline"
+                          data-testid="button-call-contact"
+                        >
+                          {t.callUs}{" "}
+                          {/* dir="ltr": en árabe el número se leía "2086 8335 81 52+" */}
+                          <span dir="ltr" className="font-normal text-ss-tinta">{member.phone}</span>
+                        </a>
+                      </li>
+                    )}
+                    <li>
+                      <button
+                        type="button"
+                        onClick={handleDownloadVCard}
+                        className="text-ss-marino underline-offset-4 hover:underline"
+                        data-testid="button-download-vcard-sidebar"
                       >
-                        <p className="font-semibold text-ss-tinta">
-                          {language === "es" && exp.positionEs ? exp.positionEs : exp.position}
-                        </p>
-                        <p className="text-ss-medio">
-                          {exp.company}
-                          {(exp.startYear || exp.endYear) && (
-                            <span className="ml-2 text-sm">
-                              ({exp.startYear}{exp.endYear ? ` - ${exp.endYear}` : ' - Present'})
-                            </span>
-                          )}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+                        {t.downloadVCard}
+                      </button>
+                    </li>
+                    {member?.linkedinUrl && (
+                      <li>
+                        <a
+                          href={member.linkedinUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-ss-marino underline-offset-4 hover:underline"
+                          data-testid="button-linkedin"
+                        >
+                          LinkedIn
+                        </a>
+                      </li>
+                    )}
+                  </ul>
                 </motion.section>
-              )}
+
+                {processedRankings && (
+                  <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.35 }}
+                    className="border-t border-ss-rule pt-6"
+                    data-testid="section-featured-recognition"
+                  >
+                    <h2 
+                      className="ss-h3 text-[20px] mb-4"
+                      data-testid="text-featured-recognition-title"
+                    >
+                      {t.featuredRecognition}
+                    </h2>
+                  
+                    <div className="flex items-baseline gap-3 mb-5">
+                      <span 
+                        className="ss-figure text-[44px]"
+                        data-testid="text-total-recognitions-count"
+                      >
+                        {processedRankings.totalCount}
+                      </span>
+                      <span className="ss-label text-ss-medio">
+                        {t.totalRecognitions}
+                      </span>
+                    </div>
+                  
+                    {processedRankings.topPublications.length > 0 && (
+                      <div data-testid="container-top-publications">
+                        <p className="ss-label text-ss-medio mb-2">
+                          {t.topPublications}
+                        </p>
+                        <div className="space-y-2">
+                          {processedRankings.topPublications.map((pub, index) => (
+                            <div 
+                              key={index}
+                              className="text-base text-ss-tinta"
+                              data-testid={`item-top-publication-${index}`}
+                            >
+                              <span className="block truncate">{pub}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </motion.section>
+                )}
+              </div>
             </div>
 
-            <div className="lg:col-span-4 space-y-10">
-              {/* Contacto: bloque Hueso con un solo botón principal y dos enlaces de texto */}
+            {/* Equipo relacionado: fila de cuatro con filete superior en cada persona, debajo de
+                las dos columnas; una columna con filete final en el teléfono */}
+            {relatedMembers && relatedMembers.length > 0 && (
               <motion.section
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="bg-ss-paper p-6 lg:p-8"
-                data-testid="section-contact-cta"
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="mt-16"
+                data-testid="section-related-team"
               >
-                <h2 
-                  className="ss-h3 text-[20px] mb-3"
-                  data-testid="text-contact-cta-title"
+                <h2
+                  className="ss-h3 mb-5"
+                  data-testid="text-related-team-title"
                 >
-                  {t.contactCta}
+                  {t.relatedTeam}
                 </h2>
-                <p 
-                  className="text-base leading-[1.55] text-ss-tinta mb-6"
-                  data-testid="text-contact-cta-subtitle"
-                >
-                  {t.contactSubtitle}
-                </p>
-                {member?.email && (
-                  <Button 
-                    className="w-full min-h-11"
-                    asChild
-                    data-testid="button-email-contact"
-                  >
-                    <a href={`mailto:${member.email}`}>
-                      {t.emailUs}
-                    </a>
-                  </Button>
-                )}
-                <ul className="mt-5 space-y-3 text-[15px] font-semibold">
-                  {member?.phone && (
-                    <li>
-                      <a
-                        href={`tel:${member.phone}`}
-                        className="text-ss-marino underline-offset-4 hover:underline"
-                        data-testid="button-call-contact"
-                      >
-                        {t.callUs}{" "}
-                        {/* dir="ltr": en árabe el número se leía "2086 8335 81 52+" */}
-                        <span dir="ltr" className="font-normal text-ss-tinta">{member.phone}</span>
-                      </a>
-                    </li>
-                  )}
-                  <li>
-                    <button
-                      type="button"
-                      onClick={handleDownloadVCard}
-                      className="text-ss-marino underline-offset-4 hover:underline"
-                      data-testid="button-download-vcard-sidebar"
-                    >
-                      {t.downloadVCard}
-                    </button>
-                  </li>
-                  {member?.linkedinUrl && (
-                    <li>
-                      <a
-                        href={member.linkedinUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-ss-marino underline-offset-4 hover:underline"
-                        data-testid="button-linkedin"
-                      >
-                        LinkedIn
-                      </a>
-                    </li>
-                  )}
-                </ul>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 border-b border-ss-rule sm:border-b-0">
+                  {relatedMembers.map((relatedMember) => (
+                    <RelatedTeamMemberCard
+                      key={relatedMember.id}
+                      relatedMember={relatedMember}
+                      language={language}
+                      getInitials={getInitials}
+                    />
+                  ))}
+                </div>
               </motion.section>
-
-              {processedRankings && (
-                <motion.section
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.35 }}
-                  className="border-t border-ss-rule pt-6"
-                  data-testid="section-featured-recognition"
-                >
-                  <h2 
-                    className="ss-h3 text-[20px] mb-4"
-                    data-testid="text-featured-recognition-title"
-                  >
-                    {t.featuredRecognition}
-                  </h2>
-                  
-                  <div className="flex items-baseline gap-3 mb-5">
-                    <span 
-                      className="ss-figure text-[44px]"
-                      data-testid="text-total-recognitions-count"
-                    >
-                      {processedRankings.totalCount}
-                    </span>
-                    <span className="ss-label text-ss-medio">
-                      {t.totalRecognitions}
-                    </span>
-                  </div>
-                  
-                  {processedRankings.topPublications.length > 0 && (
-                    <div data-testid="container-top-publications">
-                      <p className="ss-label text-ss-medio mb-2">
-                        {t.topPublications}
-                      </p>
-                      <div className="space-y-2">
-                        {processedRankings.topPublications.map((pub, index) => (
-                          <div 
-                            key={index}
-                            className="text-base text-ss-tinta"
-                            data-testid={`item-top-publication-${index}`}
-                          >
-                            <span className="block truncate">{pub}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </motion.section>
-              )}
-
-              {relatedMembers && relatedMembers.length > 0 && (
-                <motion.section
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.5 }}
-                  data-testid="section-related-team"
-                >
-                  <h2
-                    className="ss-h3 text-[20px] mb-4"
-                    data-testid="text-related-team-title"
-                  >
-                    {t.relatedTeam}
-                  </h2>
-                  <div className="border-b border-ss-rule">
-                    {relatedMembers.map((relatedMember) => (
-                      <RelatedTeamMemberCard
-                        key={relatedMember.id}
-                        relatedMember={relatedMember}
-                        language={language}
-                        getInitials={getInitials}
-                      />
-                    ))}
-                  </div>
-                </motion.section>
-              )}
-            </div>
+            )}
           </div>
-        </div>
 
-        {relatedNews && relatedNews.length > 0 && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="mt-16 pt-12"
-            data-testid="section-related-news"
-          >
-            <div className="max-w-6xl mx-auto px-6 lg:px-12">
-              <h2 
-                className="ss-h2-sm mb-8"
-                data-testid="text-related-news-title"
-              >
-                {t.relatedNews}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-                {relatedNews.map((article) => (
-                  <motion.div 
-                    key={article.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4 }}
-                  >
-                    <Link href={`/news/${article.slug}`}>
-                      {/* Sin caja: imagen sin velo, categoría y fecha como etiquetas, titular en la romana */}
-                      <article
-                        className="group h-full cursor-pointer"
-                        data-testid={`card-related-news-${article.slug}`}
-                      >
-                        <div className="relative h-48 overflow-hidden bg-ss-paper">
-                          <NewsImageWithFallback
-                            src={article.imageUrl || ""}
-                            alt={language === "es" ? article.titleEs : article.title}
-                            className="ss-photo--colour w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="pt-5">
-                          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-2">
-                            {article.category && (
-                              <span 
-                                className="ss-label text-ss-marino"
-                                data-testid={`badge-news-category-${article.slug}`}
-                              >
-                                {language === "es" ? article.categoryEs : article.category?.charAt(0).toUpperCase() + article.category?.slice(1)}
+          {relatedNews && relatedNews.length > 0 && (
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+              className="mt-16 pt-12"
+              data-testid="section-related-news"
+            >
+              <div className="ss-container">
+                <h2 
+                  className="ss-h2-sm mb-8"
+                  data-testid="text-related-news-title"
+                >
+                  {t.relatedNews}
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                  {relatedNews.map((article) => (
+                    <motion.div 
+                      key={article.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4 }}
+                    >
+                      <Link href={`/news/${article.slug}`}>
+                        {/* Sin caja: imagen sin velo, categoría y fecha como etiquetas, titular en la romana */}
+                        <article
+                          className="group h-full cursor-pointer"
+                          data-testid={`card-related-news-${article.slug}`}
+                        >
+                          <div className="relative h-48 overflow-hidden bg-ss-paper">
+                            <NewsImageWithFallback
+                              src={article.imageUrl || ""}
+                              alt={language === "es" ? article.titleEs : article.title}
+                              className="ss-photo--colour w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="pt-5">
+                            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-2">
+                              {article.category && (
+                                <span 
+                                  className="ss-label text-ss-marino"
+                                  data-testid={`badge-news-category-${article.slug}`}
+                                >
+                                  {language === "es" ? article.categoryEs : article.category?.charAt(0).toUpperCase() + article.category?.slice(1)}
+                                </span>
+                              )}
+                              <span className="ss-label ss-num text-ss-medio" data-testid={`text-news-date-${article.slug}`}>
+                                {formatDate(article.date)}
                               </span>
-                            )}
-                            <span className="ss-label ss-num text-ss-medio" data-testid={`text-news-date-${article.slug}`}>
-                              {formatDate(article.date)}
+                            </p>
+                            <h3 
+                              className="ss-h3 text-[20px] mb-3 line-clamp-3 group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1"
+                              data-testid={`text-news-title-${article.slug}`}
+                            >
+                              {language === "es" ? article.titleEs : article.title}
+                            </h3>
+                            <p 
+                              className="text-base leading-[1.55] text-ss-tinta line-clamp-3 mb-4"
+                              data-testid={`text-news-excerpt-${article.slug}`}
+                            >
+                              {language === "es" ? article.excerptEs : article.excerpt}
+                            </p>
+                            <span className="inline-flex items-center gap-2 text-[15px] font-semibold text-ss-marino">
+                              {t.readMore}
+                              <span aria-hidden="true" className="ss-arrow">→</span>
                             </span>
-                          </p>
-                          <h3 
-                            className="ss-h3 text-[20px] mb-3 line-clamp-3 group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1"
-                            data-testid={`text-news-title-${article.slug}`}
-                          >
-                            {language === "es" ? article.titleEs : article.title}
-                          </h3>
-                          <p 
-                            className="text-base leading-[1.55] text-ss-tinta line-clamp-3 mb-4"
-                            data-testid={`text-news-excerpt-${article.slug}`}
-                          >
-                            {language === "es" ? article.excerptEs : article.excerpt}
-                          </p>
-                          <span className="inline-flex items-center gap-2 text-[15px] font-semibold text-ss-marino">
-                            {t.readMore}
-                            <span aria-hidden="true" className="ss-arrow">→</span>
-                          </span>
-                        </div>
-                      </article>
-                    </Link>
-                  </motion.div>
-                ))}
+                          </div>
+                        </article>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
-            </div>
-          </motion.section>
-        )}
+            </motion.section>
+          )}
+        </div>
       </main>
 
       <Footer />

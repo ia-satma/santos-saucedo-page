@@ -426,10 +426,12 @@
     text-decoration: none;
   }
 
+  /* Aparece sobre la cabecera Azul Profundo: caja blanca con texto Azul Profundo y el
+     contorno lima de 3 px del foco sobre oscuro (el Azul Marino de --ring no se ve ahí) */
   .skip-link:focus {
     position: fixed;
-    top: 0.5rem;
-    left: 0.5rem;
+    top: 12px;
+    left: 12px;
     width: auto;
     height: auto;
     padding: 0.75rem 1.5rem;
@@ -438,15 +440,17 @@
     clip: auto;
     white-space: normal;
     border-radius: 0;
+    background-color: #fff;
+    color: var(--ss-navy);
     box-shadow: none;
-    outline: 2px solid hsl(var(--ring));
+    outline: 3px solid var(--ss-lime);
     outline-offset: 2px;
     z-index: 99999;
   }
 
   .skip-link:focus:nth-child(2) {
     left: auto;
-    right: 0.5rem;
+    right: 12px;
   }
 
   /* Enhanced focus indicators for accessibility */
@@ -1115,7 +1119,6 @@ html, body {
    ====================================================== */
 .editorial-page-hero {
   /* Tokens que usan ss-link, ss-arrow y el eyebrow */
-  --ss-ink: #24255c;
   --ss-navy: #1a1b42;
   --ss-lime: #b2eb3e;
   position: relative;
@@ -1186,6 +1189,9 @@ html, body {
 }
 .editorial-page-hero :is(.h-0\.5, .h-px).bg-brand::after {
   content: var(--ss-index, "");
+  /* Sin --ss-index (404, legales, pro bono…) el contenido queda vacío: stretch le da el alto
+     de la línea del § para que el filete de fondo se pinte igual ("§ ——", como <Eyebrow num="">) */
+  align-self: stretch;
   white-space: pre;
   color: rgb(255 255 255 / 0.74);
   padding-inline-end: 40px;
@@ -1283,6 +1289,51 @@ html, body {
 }
 .editorial-page-hero h1:lang(ar) {
   line-height: 1.4;
+}
+/* A 46 px o más el titular pasa a 600 (4.2vw llega a 46 px a 1096 px de ancho); en teléfono
+   y en la noticia (máx. 46 px) se queda en 500. */
+@media (min-width: 1096px) {
+  .editorial-page-hero h1:not(.ss-news-title):is(:lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
+    font-weight: 600;
+  }
+}
+
+/* El resto de titulares en chino, japonés, coreano y árabe: la romana no cubre esas letras
+   y el navegador las tomaría de su serif del sistema (Songti, Mincho, Batang, Times).
+   Pasan a la sans, peso 500, sin espaciado, interlínea 1.25 (1.4 en árabe), como el titular
+   del encabezado. Las cifras latinas (.ss-numeral, .ss-figure) conservan la romana; las
+   etiquetas (.ss-label) y los titulares ya en la sans conservan su peso. Fuera de @layer y
+   con especificidad 0,2,0: gana a .ss-h2, .ss-h2-sm, .ss-h3 y a las utilidades font-*,
+   leading-* y tracking-*; las reglas del encabezado (.editorial-page-hero h1…, 0,2,1) mandan. */
+:is(h1, h2, h3, h4, h5, h6, .ss-h2, .ss-h2-sm, .ss-h3):where(:not(.ss-numeral, .ss-figure, .ss-label, .font-sans)):is(:lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+:is(h1, h2, h3, h4, h5, h6, .ss-h2, .ss-h2-sm, .ss-h3):where(:not(.ss-numeral, .ss-figure, .ss-label, .font-sans)):lang(ar) {
+  line-height: 1.4;
+}
+/* Texto en la romana fuera de los titulares (nombres, citas, entradas font-serif): la sans,
+   sin espaciado; peso e interlínea los pone cada pieza. Fuera quedan las cifras y los
+   signos decorativos (aria-hidden), que son latinos. */
+:is(.font-heading, .font-serif):where(:not(.ss-numeral, .ss-figure, [class*="lining-nums"], [aria-hidden="true"])):is(:lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
+  font-family: var(--font-sans);
+  font-style: normal;
+  letter-spacing: 0;
+}
+
+/* Corte de línea en coreano y japonés: nunca dentro de una palabra (경|력, キャ|リア).
+   Coreano: entre palabras (keep-all), con overflow-wrap de red si una no cabe. Japonés:
+   por frases (auto-phrase, Chrome 119+); los demás navegadores ignoran el valor y cortan
+   como hasta ahora. */
+:is(h1, h2, h3, h4, h5, h6, .ss-display, .ss-label):lang(ko) {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+:is(h1, h2, h3, h4, h5, h6, .ss-display):lang(ja) {
+  word-break: auto-phrase;
 }
 
 /* Subtítulo y notas bajo el titular: sans 400 al 84 % (la fecha .ss-label conserva su estilo) */
@@ -1420,14 +1471,16 @@ html:has(.editorial-page-hero--paper) header.ss26 {
   background: hsl(var(--card));
 }
 
-/* Velo neutro (sin tinte marino ni violeta) bajo los nombres de los retratos */
+/* Velo neutro (sin tinte marino ni violeta) bajo los nombres de los retratos.
+   Tramo inferior reforzado: cuando el nombre ocupa dos líneas, el cargo (11 px, blanco
+   al 75 %) sube y debe seguir por encima de 4.5:1 sobre una chaqueta gris. */
 .navy-photo-scrim,
 .navy-photo-scrim-strong {
   background: linear-gradient(
     to top,
-    rgb(20 20 32 / 0.72) 0%,
-    rgb(20 20 32 / 0.12) 42%,
-    transparent 100%
+    rgb(20 20 32 / 0.8) 0%,
+    rgb(20 20 32 / 0.45) 30%,
+    transparent 60%
   );
 }
 

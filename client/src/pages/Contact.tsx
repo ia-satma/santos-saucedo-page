@@ -1,12 +1,9 @@
 import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -30,6 +27,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Eyebrow } from "@/components/editorial";
 import type { SiteContent, ContactFormData, LanguageCode } from "@shared/schema";
 import { practiceAreas } from "@shared/schema";
 
@@ -37,6 +35,17 @@ import { practiceAreas } from "@shared/schema";
 // no se muestra (antes enlazaba a /contact en otra pestaña). Para activarlo, poner aquí
 // la URL externa (https://www.linkedin.com/company/…).
 const FIRM_LINKEDIN_URL: string | null = null;
+
+// Ciudad de la oficina: nombre propio, igual en todos los idiomas (título de la ficha;
+// "Oficina principal" va encima como etiqueta y el nombre ya no se parte tras un guion).
+const OFFICE_CITY = "San Pedro Garza García";
+
+// Lista de datos de la oficina: filas con filete superior; etiqueta (dt) en la sans
+// versal espaciada, Gris Medio; dato (dd) en la sans de 17 px, Gris Tinta.
+const rowClass = "grid grid-cols-1 gap-y-1 border-t border-ss-rule py-4 sm:grid-cols-[11rem,1fr] sm:gap-x-6";
+const dtClass = "ss-label text-ss-medio sm:pt-1";
+const ddClass = "text-[17px] leading-[1.55] text-ss-tinta";
+const ddLinkClass = "hover:text-ss-marino hover:underline underline-offset-4 transition-colors";
 
 // "Clásica": titulares en romana 400, Azul Marino, caja de oración y al inicio; texto en Gris Tinta.
 const h2Class = "font-heading font-normal text-ss-marino text-[clamp(24px,2vw,30px)] leading-[1.18] tracking-[-0.012em] [text-wrap:balance]";
@@ -130,16 +139,16 @@ const toastMessages: Record<LanguageCode, {
   errorDescription: string;
 }> = {
   en: {
-    successTitle: "Message sent!",
-    successDescription: "We will get back to you soon.",
+    successTitle: "Message sent",
+    successDescription: "We have received your message.",
     errorTitle: "Error",
-    errorDescription: "Failed to send message. Please try again.",
+    errorDescription: "The message could not be sent. Please try again later.",
   },
   es: {
-    successTitle: "¡Mensaje enviado!",
-    successDescription: "Nos pondremos en contacto con usted pronto.",
+    successTitle: "Mensaje enviado",
+    successDescription: "Recibimos su mensaje.",
     errorTitle: "Error",
-    errorDescription: "No se pudo enviar el mensaje. Por favor intente de nuevo.",
+    errorDescription: "No fue posible enviar el mensaje. Intente de nuevo más tarde.",
   },
   de: {
     successTitle: "Nachricht erfolgreich gesendet!",
@@ -255,7 +264,7 @@ export default function Contact() {
       toast({
         title: language === "es" ? "Enviar por correo" : "Send by email",
         description: language === "es"
-          ? "GitHub Pages no tiene backend; se abrió tu cliente de correo para enviar el mensaje."
+          ? "GitHub Pages no tiene backend; se abrió su cliente de correo para enviar el mensaje."
           : "GitHub Pages has no backend; your email client was opened to send the message.",
       });
       return;
@@ -280,13 +289,9 @@ export default function Contact() {
     hours: string;
     hoursDetails: string;
     getDirections: string;
-    connectTitle: string;
-    connectSubtitle: string;
-    linkedinText: string;
-    websiteText: string;
-    contactUs: string;
-    sendEmail: string;
-    callUs: string;
+    addressLabel: string;
+    telLabel: string;
+    mapTitle: string;
     formTitle: string;
     formSubtitle: string;
     fullName: string;
@@ -305,10 +310,10 @@ export default function Contact() {
     submitting: string;
   }> = {
     en: {
-      title: "Contact Us",
-      subtitle: "Get in touch with our team of legal experts",
+      title: "Contact",
+      subtitle: "Each partner's contact details appear on their profile.",
       officesTitle: "Our Offices",
-      mainOffice: "Main Office - San Pedro Garza García",
+      mainOffice: "Main office",
       building: "Río Tamazunchale 205 Norte",
       floor: "",
       street: "San Pedro Garza García, N.L.",
@@ -318,17 +323,13 @@ export default function Contact() {
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
       hours: "Office Hours",
-      hoursDetails: "Monday - Friday: 9:00 AM - 7:00 PM (CST)",
+      hoursDetails: "Monday to Friday, 9:00–19:00",
       getDirections: "Get Directions",
-      connectTitle: "Connect With Us",
-      connectSubtitle: "Follow us on social media and stay updated on the latest legal developments",
-      linkedinText: "Follow us on LinkedIn",
-      websiteText: "Visit our website",
-      contactUs: "Contact Us",
-      sendEmail: "Send Email",
-      callUs: "Call Us",
+      mapTitle: "Map of the Santos & Saucedo office in San Pedro Garza García",
+      telLabel: "Telephone",
+      addressLabel: "Address",
       formTitle: "Send Us a Message",
-      formSubtitle: "Fill out the form below and we will get back to you as soon as possible.",
+      formSubtitle: "Submitting this form does not create an attorney-client relationship.",
       fullName: "Full Name",
       fullNamePlaceholder: "Enter your full name",
       emailLabel: "Email",
@@ -345,10 +346,10 @@ export default function Contact() {
       submitting: "Sending...",
     },
     es: {
-      title: "Contáctenos",
-      subtitle: "Póngase en contacto con nuestro equipo de expertos legales",
+      title: "Contacto",
+      subtitle: "Los datos de contacto de cada socio aparecen en su ficha.",
       officesTitle: "Nuestras oficinas",
-      mainOffice: "Oficina principal - San Pedro Garza García",
+      mainOffice: "Oficina principal",
       building: "Río Tamazunchale 205 Norte",
       floor: "",
       street: "San Pedro Garza García, N.L.",
@@ -358,17 +359,13 @@ export default function Contact() {
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
       hours: "Horario de oficina",
-      hoursDetails: "Lunes - Viernes: 9:00 AM - 7:00 PM (CST)",
+      hoursDetails: "Lunes a viernes, 9:00–19:00 h",
       getDirections: "Cómo llegar",
-      connectTitle: "Conéctese con nosotros",
-      connectSubtitle: "Síganos en redes sociales y manténgase informado sobre los últimos desarrollos legales",
-      linkedinText: "Síguenos en LinkedIn",
-      websiteText: "Visite nuestro sitio web",
-      contactUs: "Contáctenos",
-      sendEmail: "Enviar correo",
-      callUs: "Llámenos",
+      mapTitle: "Mapa de la oficina de Santos & Saucedo en San Pedro Garza García",
+      telLabel: "Teléfono",
+      addressLabel: "Dirección",
       formTitle: "Envíenos un mensaje",
-      formSubtitle: "Complete el formulario a continuación y nos pondremos en contacto con usted lo antes posible.",
+      formSubtitle: "El envío de este formulario no crea una relación abogado-cliente.",
       fullName: "Nombre completo",
       fullNamePlaceholder: "Ingrese su nombre completo",
       emailLabel: "Correo electrónico",
@@ -386,9 +383,9 @@ export default function Contact() {
     },
     de: {
       title: "Kontakt",
-      subtitle: "Nehmen Sie Kontakt mit unserem Team von Rechtsexperten auf",
+      subtitle: "Die Kontaktdaten der einzelnen Partner stehen in ihrem jeweiligen Profil.",
       officesTitle: "Unsere Büros",
-      mainOffice: "Hauptsitz San Pedro Garza García",
+      mainOffice: "Hauptsitz",
       building: "Río Tamazunchale 205 Norte",
       floor: "18. Stock",
       street: "San Pedro Garza García, N.L.",
@@ -398,17 +395,13 @@ export default function Contact() {
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
       hours: "Öffnungszeiten",
-      hoursDetails: "Montag - Freitag: 9:00 - 19:00 Uhr (CST)",
+      hoursDetails: "Montag bis Freitag, 9:00–19:00 Uhr",
       getDirections: "Anfahrt",
-      connectTitle: "Verbinden Sie sich mit uns",
-      connectSubtitle: "Folgen Sie uns in den sozialen Medien und bleiben Sie über die neuesten rechtlichen Entwicklungen informiert",
-      linkedinText: "Folgen Sie uns auf LinkedIn",
-      websiteText: "Besuchen Sie unsere Website",
-      contactUs: "Kontakt",
-      sendEmail: "E-Mail senden",
-      callUs: "Rufen Sie uns an",
+      mapTitle: "Karte des Büros von Santos & Saucedo in San Pedro Garza García",
+      telLabel: "Telefon",
+      addressLabel: "Adresse",
       formTitle: "Senden Sie uns eine Nachricht",
-      formSubtitle: "Füllen Sie das Formular aus und wir werden uns so schnell wie möglich bei Ihnen melden.",
+      formSubtitle: "Die Übermittlung dieses Formulars begründet kein Mandatsverhältnis.",
       fullName: "Name",
       fullNamePlaceholder: "Geben Sie Ihren vollständigen Namen ein",
       emailLabel: "E-Mail",
@@ -426,9 +419,9 @@ export default function Contact() {
     },
     zh: {
       title: "联系我们",
-      subtitle: "与我们的法律专家团队取得联系",
+      subtitle: "各合伙人的联系方式见其个人页面。",
       officesTitle: "我们的办公室",
-      mainOffice: "墨西哥城总部",
+      mainOffice: "总部",
       building: "Río Tamazunchale 205 Norte",
       floor: "18层",
       street: "San Pedro Garza García, N.L.",
@@ -438,17 +431,13 @@ export default function Contact() {
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
       hours: "办公时间",
-      hoursDetails: "周一至周五: 9:00 AM - 7:00 PM (CST)",
+      hoursDetails: "周一至周五 9:00–19:00",
       getDirections: "获取路线",
-      connectTitle: "与我们联系",
-      connectSubtitle: "关注我们的社交媒体，了解最新的法律动态",
-      linkedinText: "在LinkedIn上关注我们",
-      websiteText: "访问我们的网站",
-      contactUs: "联系我们",
-      sendEmail: "发送电子邮件",
-      callUs: "致电我们",
+      mapTitle: "Santos & Saucedo San Pedro Garza García 办公室地图",
+      telLabel: "电话",
+      addressLabel: "地址",
       formTitle: "给我们留言",
-      formSubtitle: "填写以下表格，我们会尽快与您联系。",
+      formSubtitle: "提交本表格并不构成律师与客户之间的委托关系。",
       fullName: "姓名",
       fullNamePlaceholder: "请输入您的姓名",
       emailLabel: "电子邮件",
@@ -466,9 +455,9 @@ export default function Contact() {
     },
     ko: {
       title: "문의하기",
-      subtitle: "법률 전문가 팀에 문의하세요",
+      subtitle: "각 파트너의 연락처는 해당 프로필에 있습니다.",
       officesTitle: "사무소 위치",
-      mainOffice: "멕시코시티 본사",
+      mainOffice: "본사",
       building: "Río Tamazunchale 205 Norte",
       floor: "18층",
       street: "San Pedro Garza García, N.L.",
@@ -478,17 +467,13 @@ export default function Contact() {
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
       hours: "업무 시간",
-      hoursDetails: "월요일 - 금요일: 오전 9:00 - 오후 7:00 (CST)",
+      hoursDetails: "월요일–금요일 9:00–19:00",
       getDirections: "길찾기",
-      connectTitle: "소셜 미디어",
-      connectSubtitle: "소셜 미디어를 팔로우하고 최신 법률 동향을 확인하세요",
-      linkedinText: "LinkedIn에서 팔로우",
-      websiteText: "웹사이트 방문",
-      contactUs: "문의하기",
-      sendEmail: "이메일 보내기",
-      callUs: "전화하기",
+      mapTitle: "San Pedro Garza García에 있는 Santos & Saucedo 사무소 지도",
+      telLabel: "전화",
+      addressLabel: "주소",
       formTitle: "메시지 보내기",
-      formSubtitle: "아래 양식을 작성해 주시면 최대한 빨리 연락드리겠습니다.",
+      formSubtitle: "이 양식을 제출하는 것만으로 변호사와 의뢰인 관계가 성립하지는 않습니다.",
       fullName: "이름",
       fullNamePlaceholder: "성함을 입력하세요",
       emailLabel: "이메일",
@@ -506,9 +491,9 @@ export default function Contact() {
     },
     ja: {
       title: "お問い合わせ",
-      subtitle: "法律専門家チームにお問い合わせください",
+      subtitle: "各パートナーの連絡先は、それぞれのプロフィールに掲載しています。",
       officesTitle: "オフィス",
-      mainOffice: "メキシコシティ本社",
+      mainOffice: "本社",
       building: "Río Tamazunchale 205 Norte",
       floor: "18階",
       street: "San Pedro Garza García, N.L.",
@@ -518,17 +503,13 @@ export default function Contact() {
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
       hours: "営業時間",
-      hoursDetails: "月曜日〜金曜日: 9:00 AM - 7:00 PM (CST)",
+      hoursDetails: "月曜日〜金曜日 9:00–19:00",
       getDirections: "アクセス",
-      connectTitle: "ソーシャルメディア",
-      connectSubtitle: "ソーシャルメディアをフォローして、最新の法務情報をご確認ください",
-      linkedinText: "LinkedInでフォロー",
-      websiteText: "ウェブサイトを訪問",
-      contactUs: "お問い合わせ",
-      sendEmail: "メールを送信",
-      callUs: "電話する",
+      mapTitle: "San Pedro Garza García の Santos & Saucedo 事務所の地図",
+      telLabel: "電話",
+      addressLabel: "所在地",
       formTitle: "メッセージを送信",
-      formSubtitle: "以下のフォームにご記入ください。できるだけ早くご連絡いたします。",
+      formSubtitle: "本フォームの送信によって、弁護士と依頼者の関係が成立するものではありません。",
       fullName: "氏名",
       fullNamePlaceholder: "氏名を入力してください",
       emailLabel: "メールアドレス",
@@ -546,9 +527,9 @@ export default function Contact() {
     },
     ar: {
       title: "اتصل بنا",
-      subtitle: "تواصل مع فريقنا من الخبراء القانونيين",
+      subtitle: "تظهر بيانات الاتصال بكل شريك في صفحته الشخصية.",
       officesTitle: "مكاتبنا",
-      mainOffice: "المقر الرئيسي - مكسيكو سيتي",
+      mainOffice: "المقر الرئيسي",
       building: "Río Tamazunchale 205 Norte",
       floor: "الطابق 18",
       street: "San Pedro Garza García, N.L.",
@@ -558,17 +539,13 @@ export default function Contact() {
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
       hours: "ساعات العمل",
-      hoursDetails: "الإثنين - الجمعة: 9:00 صباحًا - 7:00 مساءً (CST)",
+      hoursDetails: "من الاثنين إلى الجمعة، 9:00–19:00",
       getDirections: "الحصول على الاتجاهات",
-      connectTitle: "تواصل معنا",
-      connectSubtitle: "تابعنا على وسائل التواصل الاجتماعي وابق على اطلاع بآخر التطورات القانونية",
-      linkedinText: "تابعنا على LinkedIn",
-      websiteText: "زيارة موقعنا",
-      contactUs: "اتصل بنا",
-      sendEmail: "إرسال بريد إلكتروني",
-      callUs: "اتصل بنا",
+      mapTitle: "خريطة مكتب Santos & Saucedo في San Pedro Garza García",
+      telLabel: "الهاتف",
+      addressLabel: "العنوان",
       formTitle: "أرسل لنا رسالة",
-      formSubtitle: "املأ النموذج أدناه وسنتواصل معك في أقرب وقت ممكن.",
+      formSubtitle: "إرسال هذا النموذج لا يُنشئ علاقة بين محامٍ وموكّل.",
       fullName: "الاسم الكامل",
       fullNamePlaceholder: "أدخل اسمك الكامل",
       emailLabel: "البريد الإلكتروني",
@@ -586,9 +563,9 @@ export default function Contact() {
     },
     ru: {
       title: "Контакты",
-      subtitle: "Свяжитесь с нашей командой юридических экспертов",
+      subtitle: "Контактные данные каждого партнёра указаны в его профиле.",
       officesTitle: "Наши офисы",
-      mainOffice: "Штаб-квартира в Мехико",
+      mainOffice: "Главный офис",
       building: "Río Tamazunchale 205 Norte",
       floor: "18 этаж",
       street: "San Pedro Garza García, N.L.",
@@ -598,17 +575,13 @@ export default function Contact() {
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
       hours: "Часы работы",
-      hoursDetails: "Понедельник - Пятница: 9:00 - 19:00 (CST)",
+      hoursDetails: "Понедельник — пятница, 9:00–19:00",
       getDirections: "Как добраться",
-      connectTitle: "Связаться с нами",
-      connectSubtitle: "Подписывайтесь на нас в социальных сетях и будьте в курсе последних юридических новостей",
-      linkedinText: "Подписаться в LinkedIn",
-      websiteText: "Посетить наш сайт",
-      contactUs: "Связаться с нами",
-      sendEmail: "Отправить письмо",
-      callUs: "Позвонить нам",
+      mapTitle: "Карта офиса Santos & Saucedo в Сан-Педро-Гарса-Гарсия",
+      telLabel: "Телефон",
+      addressLabel: "Адрес",
       formTitle: "Напишите нам",
-      formSubtitle: "Заполните форму ниже, и мы свяжемся с вами как можно скорее.",
+      formSubtitle: "Отправка этой формы не устанавливает отношений адвоката и клиента.",
       fullName: "Имя",
       fullNamePlaceholder: "Введите ваше полное имя",
       emailLabel: "Эл. почта",
@@ -625,10 +598,10 @@ export default function Contact() {
       submitting: "Отправка...",
     },
     fr: {
-      title: "Contactez-nous",
-      subtitle: "Entrez en contact avec notre équipe d'experts juridiques",
+      title: "Contact",
+      subtitle: "Les coordonnées de chaque associé figurent sur sa fiche.",
       officesTitle: "Nos bureaux",
-      mainOffice: "Siège social - Mexico",
+      mainOffice: "Siège",
       building: "Río Tamazunchale 205 Norte",
       floor: "18ème étage",
       street: "San Pedro Garza García, N.L.",
@@ -638,17 +611,13 @@ export default function Contact() {
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
       hours: "Heures d'ouverture",
-      hoursDetails: "Lundi - Vendredi: 9h00 - 19h00 (CST)",
+      hoursDetails: "Du lundi au vendredi, de 9 h à 19 h",
       getDirections: "Itinéraire",
-      connectTitle: "Restez connectés",
-      connectSubtitle: "Suivez-nous sur les réseaux sociaux et restez informés des dernières évolutions juridiques",
-      linkedinText: "Suivez-nous sur LinkedIn",
-      websiteText: "Visitez notre site web",
-      contactUs: "Contactez-nous",
-      sendEmail: "Envoyer un e-mail",
-      callUs: "Appelez-nous",
+      mapTitle: "Plan d'accès au bureau de Santos & Saucedo à San Pedro Garza García",
+      telLabel: "Téléphone",
+      addressLabel: "Adresse",
       formTitle: "Envoyez-nous un message",
-      formSubtitle: "Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.",
+      formSubtitle: "L'envoi de ce formulaire ne crée pas de relation avocat-client.",
       fullName: "Nom complet",
       fullNamePlaceholder: "Entrez votre nom complet",
       emailLabel: "E-mail",
@@ -666,9 +635,9 @@ export default function Contact() {
     },
     it: {
       title: "Contatti",
-      subtitle: "Mettiti in contatto con il nostro team di esperti legali",
+      subtitle: "I recapiti di ciascun socio sono indicati nella sua scheda.",
       officesTitle: "I nostri uffici",
-      mainOffice: "Sede centrale Città del Messico",
+      mainOffice: "Sede principale",
       building: "Río Tamazunchale 205 Norte",
       floor: "18° piano",
       street: "San Pedro Garza García, N.L.",
@@ -678,17 +647,13 @@ export default function Contact() {
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
       hours: "Orari di apertura",
-      hoursDetails: "Lunedì - Venerdì: 9:00 - 19:00 (CST)",
+      hoursDetails: "Dal lunedì al venerdì, 9:00–19:00",
       getDirections: "Indicazioni stradali",
-      connectTitle: "Connettiti con noi",
-      connectSubtitle: "Seguici sui social media e rimani aggiornato sugli ultimi sviluppi legali",
-      linkedinText: "Seguici su LinkedIn",
-      websiteText: "Visita il nostro sito web",
-      contactUs: "Contattaci",
-      sendEmail: "Invia e-mail",
-      callUs: "Chiamaci",
+      mapTitle: "Mappa dell'ufficio di Santos & Saucedo a San Pedro Garza García",
+      telLabel: "Telefono",
+      addressLabel: "Indirizzo",
       formTitle: "Inviaci un messaggio",
-      formSubtitle: "Compila il modulo sottostante e ti risponderemo il prima possibile.",
+      formSubtitle: "L'invio di questo modulo non costituisce un rapporto avvocato-cliente.",
       fullName: "Nome",
       fullNamePlaceholder: "Inserisci il tuo nome completo",
       emailLabel: "E-mail",
@@ -709,10 +674,9 @@ export default function Contact() {
   const baseT = content[language] || content.en;
   const t = {
     ...baseT,
-    mainOffice: language === "es" ? "Oficina principal - San Pedro Garza García" : baseT.mainOffice,
     floor: "",
     street: "Río Tamazunchale 205 Norte",
-    colony: "Colonia Del Valle",
+    colony: "Col. del Valle",
     city: "San Pedro Garza García, N.L., C.P. 66220, México",
   };
 
@@ -722,388 +686,307 @@ export default function Contact() {
     <div className="min-h-screen bg-background" data-testid="page-contact">
       <SEOHead page="contact" language={language} />
       <Header />
-      
-      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-contact-hero">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="text-center"
-          >
-            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
-            <h1 
-              className="text-4xl md:text-5xl font-heading text-white mb-5"
-              data-testid="text-contact-title"
+
+      {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo
+          salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
+          siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
+      <main id="main-content">
+        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-contact-hero">
+          <div className="ss-container">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="max-w-3xl"
             >
-              {t.title}
-            </h1>
-            <p 
-              className="text-base text-white/60 max-w-2xl mx-auto"
-              data-testid="text-contact-subtitle"
+              <Eyebrow num="06" tone="navy" className="mb-6" />
+              <h1 className="mb-5" data-testid="text-contact-title">
+                {t.title}
+              </h1>
+              <p data-testid="text-contact-subtitle">
+                {t.subtitle}
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        <div className="py-16 lg:py-20">
+          <div className="ss-container">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="mb-16 lg:mb-20 max-w-4xl"
+              data-testid="section-contact-form"
             >
-              {t.subtitle}
-            </p>
-          </motion.div>
-        </div>
-      </section>
+              <div className="mb-8">
+                <h2 
+                  className={`${h2Class} mb-3`}
+                  data-testid="text-form-title"
+                >
+                  {t.formTitle}
+                </h2>
+                <p 
+                  className="text-base text-ss-tinta leading-relaxed max-w-2xl"
+                  data-testid="text-form-subtitle"
+                >
+                  {t.formSubtitle}
+                </p>
+              </div>
 
-      <main id="main-content" className="py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-16"
-            data-testid="section-contact-form"
-          >
-            {/* Tarjeta sin borde ni sombra visibles: sin su p-8 el formulario comparte el borde del encabezado */}
-            <Card className="border-0 bg-transparent">
-              <CardContent className="p-0">
-                <div className="mb-8">
-                  <h2 
-                    className={`${h2Class} mb-3`}
-                    data-testid="text-form-title"
-                  >
-                    {t.formTitle}
-                  </h2>
-                  <p 
-                    className="text-base text-ss-tinta leading-relaxed max-w-2xl"
-                    data-testid="text-form-subtitle"
-                  >
-                    {t.formSubtitle}
-                  </p>
-                </div>
-
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-testid="form-contact">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="fullName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel data-testid="label-fullname">{t.fullName}</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder={t.fullNamePlaceholder} 
-                                {...field} 
-                                data-testid="input-fullname"
-                              />
-                            </FormControl>
-                            <FormMessage data-testid="error-fullname" />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel data-testid="label-email">{t.emailLabel}</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="email"
-                                placeholder={t.emailPlaceholder} 
-                                {...field} 
-                                data-testid="input-email"
-                              />
-                            </FormControl>
-                            <FormMessage data-testid="error-email" />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel data-testid="label-phone">{t.phoneLabel}</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="tel"
-                                placeholder={t.phonePlaceholder} 
-                                {...field} 
-                                data-testid="input-phone"
-                              />
-                            </FormControl>
-                            <FormMessage data-testid="error-phone" />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="company"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel data-testid="label-company">{t.companyLabel}</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder={t.companyPlaceholder} 
-                                {...field} 
-                                data-testid="input-company"
-                              />
-                            </FormControl>
-                            <FormMessage data-testid="error-company" />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-testid="form-contact">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
-                      name="practiceArea"
+                      name="fullName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel data-testid="label-practice-area">{t.practiceAreaLabel}</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger data-testid="select-practice-area">
-                                <SelectValue placeholder={t.practiceAreaPlaceholder} />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent data-testid="select-practice-area-content">
-                              {practiceAreas.map((area) => (
-                                <SelectItem 
-                                  key={area.value} 
-                                  value={area.value}
-                                  data-testid={`option-practice-area-${area.value}`}
-                                >
-                                  {language === "es" ? area.es : area.en}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage data-testid="error-practice-area" />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="message"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel data-testid="label-message">{t.messageLabel}</FormLabel>
+                          <FormLabel data-testid="label-fullname">{t.fullName}</FormLabel>
                           <FormControl>
-                            <Textarea 
-                              placeholder={t.messagePlaceholder} 
-                              className="min-h-[120px]"
+                            <Input 
+                              placeholder={t.fullNamePlaceholder} 
                               {...field} 
-                              data-testid="textarea-message"
+                              data-testid="input-fullname"
                             />
                           </FormControl>
-                          <FormMessage data-testid="error-message" />
+                          <FormMessage data-testid="error-fullname" />
                         </FormItem>
                       )}
                     />
 
-                    <Button 
-                      type="submit" 
-                      className="w-full md:w-auto"
-                      disabled={contactMutation.isPending}
-                      data-testid="button-submit-contact"
-                    >
-                      {contactMutation.isPending ? t.submitting : t.submit}
-                    </Button>
-                  </form>
-                </Form>
-              </CardContent>
-            </Card>
-          </motion.div>
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel data-testid="label-email">{t.emailLabel}</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="email"
+                              placeholder={t.emailPlaceholder} 
+                              {...field} 
+                              data-testid="input-email"
+                            />
+                          </FormControl>
+                          <FormMessage data-testid="error-email" />
+                        </FormItem>
+                      )}
+                    />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel data-testid="label-phone">{t.phoneLabel}</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="tel"
+                              placeholder={t.phonePlaceholder} 
+                              {...field} 
+                              data-testid="input-phone"
+                            />
+                          </FormControl>
+                          <FormMessage data-testid="error-phone" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="company"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel data-testid="label-company">{t.companyLabel}</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder={t.companyPlaceholder} 
+                              {...field} 
+                              data-testid="input-company"
+                            />
+                          </FormControl>
+                          <FormMessage data-testid="error-company" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="practiceArea"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel data-testid="label-practice-area">{t.practiceAreaLabel}</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger data-testid="select-practice-area">
+                              <SelectValue placeholder={t.practiceAreaPlaceholder} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent data-testid="select-practice-area-content">
+                            {practiceAreas.map((area) => (
+                              <SelectItem 
+                                key={area.value} 
+                                value={area.value}
+                                data-testid={`option-practice-area-${area.value}`}
+                              >
+                                {language === "es" ? area.es : area.en}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage data-testid="error-practice-area" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="message"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel data-testid="label-message">{t.messageLabel}</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder={t.messagePlaceholder} 
+                            className="min-h-[120px]"
+                            {...field} 
+                            data-testid="textarea-message"
+                          />
+                        </FormControl>
+                        <FormMessage data-testid="error-message" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <Button 
+                    type="submit" 
+                    className="w-full md:w-auto"
+                    disabled={contactMutation.isPending}
+                    data-testid="button-submit-contact"
+                  >
+                    {contactMutation.isPending ? t.submitting : t.submit}
+                  </Button>
+                </form>
+              </Form>
+            </motion.div>
+
+            {/* Oficina: lista de datos con filetes (sin tarjeta ni iconos) junto al mapa en gris.
+                Sin la tarjeta "Contáctenos" (repetía el h1) ni "Conéctese con nosotros" (enlazaba
+                a este mismo sitio). */}
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
+              data-testid="section-contact-office"
             >
               <h2 
-                className={`${h2Class} mb-6`}
+                className={`${h2Class} mb-8`}
                 data-testid="text-offices-title"
               >
                 {t.officesTitle}
               </h2>
-              
-              <Card className="overflow-hidden" data-testid="card-main-office">
-                <div className="aspect-video w-full">
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
+                <div data-testid="card-main-office">
+                  <p className="ss-label text-ss-medio mb-2">{t.mainOffice}</p>
+                  <h3 className={`${h3Class} mb-6`} data-testid="text-office-name">
+                    {OFFICE_CITY}
+                  </h3>
+
+                  <dl className="border-b border-ss-rule">
+                    <div className={rowClass}>
+                      <dt className={dtClass}>{t.addressLabel}</dt>
+                      <dd className={ddClass} data-testid="text-office-address">
+                        <span className="block">{t.street}</span>
+                        <span className="block">{t.colony}</span>
+                        <span className="block">{t.city}</span>
+                      </dd>
+                    </div>
+                    <div className={rowClass}>
+                      <dt className={dtClass}>{t.telLabel}</dt>
+                      <dd className={ddClass}>
+                        <a 
+                          href={`tel:${t.phone.replace(/\s/g, '')}`}
+                          className={ddLinkClass}
+                          data-testid="link-office-phone"
+                        >
+                          <span dir="ltr">{t.phone}</span>
+                        </a>
+                      </dd>
+                    </div>
+                    <div className={rowClass}>
+                      <dt className={dtClass}>{t.emailLabel}</dt>
+                      <dd className={ddClass}>
+                        <a 
+                          href={`mailto:${t.email}`}
+                          className={ddLinkClass}
+                          data-testid="link-office-email"
+                        >
+                          {t.email}
+                        </a>
+                      </dd>
+                    </div>
+                    <div className={rowClass}>
+                      <dt className={dtClass}>{t.hours}</dt>
+                      <dd className={ddClass} data-testid="text-office-hours">
+                        {t.hoursDetails}
+                      </dd>
+                    </div>
+                    {FIRM_LINKEDIN_URL && (
+                      <div className={rowClass}>
+                        <dt className={dtClass}>LinkedIn</dt>
+                        <dd className={ddClass}>
+                          <a
+                            href={FIRM_LINKEDIN_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={ddLinkClass}
+                            data-testid="button-linkedin"
+                          >
+                            Santos &amp; Saucedo
+                          </a>
+                        </dd>
+                      </div>
+                    )}
+                  </dl>
+
+                  {/* Enlace de texto de la marca (etiqueta, subrayado al pasar, flecha), sin botón con caja */}
+                  <a 
+                    href="https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Colonia+Del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ss-label group mt-6 inline-flex min-h-[44px] items-center gap-3 text-ss-marino"
+                    data-testid="button-get-directions"
+                  >
+                    <span className="ss-link">{t.getDirections}</span>
+                    <span aria-hidden="true" className="ss-arrow">
+                      →
+                    </span>
+                  </a>
+                </div>
+
+                {/* Mapa en gris, sin marco ni esquinas; Hueso de fondo mientras carga */}
+                <div className="aspect-[4/3] w-full bg-ss-paper lg:aspect-auto lg:h-full lg:min-h-[420px]">
                   <iframe
                     src={googleMapsUrl}
                     width="100%"
                     height="100%"
-                    style={{ border: 0 }}
+                    className="block h-full w-full"
+                    style={{ border: 0, filter: "grayscale(1) contrast(.95)" }}
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    title="Santos & Saucedo Office Location"
+                    title={t.mapTitle}
                     data-testid="iframe-google-map"
                   />
                 </div>
-                <CardContent className="p-6">
-                  <div className="mb-5">
-                    <div>
-                      <h3 className={`${h3Class} mb-1`} data-testid="text-office-name">
-                        {t.mainOffice}
-                      </h3>
-                      <p className="text-base text-ss-medio">
-                        {t.building}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-start gap-3">
-                      <MapPin className="w-4 h-4 text-primary flex-shrink-0 mt-1" />
-                      <div className="text-base text-ss-tinta" data-testid="text-office-address">
-                        <p>{t.street}</p>
-                        <p>{t.colony}</p>
-                        <p>{t.city}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-3">
-                      <Phone className="w-4 h-4 text-primary flex-shrink-0" />
-                      <a 
-                        href={`tel:${t.phone.replace(/\s/g, '')}`}
-                        className="text-base text-ss-tinta hover:text-ss-marino hover:underline underline-offset-4 transition-colors"
-                        data-testid="link-office-phone"
-                      >
-                        {t.phone}
-                      </a>
-                    </div>
-                    
-                    <div className="flex items-center gap-3">
-                      <Mail className="w-4 h-4 text-primary flex-shrink-0" />
-                      <a 
-                        href={`mailto:${t.email}`}
-                        className="text-base text-ss-tinta hover:text-ss-marino hover:underline underline-offset-4 transition-colors"
-                        data-testid="link-office-email"
-                      >
-                        {t.email}
-                      </a>
-                    </div>
-                    
-                    <div className="flex items-start gap-3">
-                      <Clock className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                      <div className="text-base text-ss-tinta" data-testid="text-office-hours">
-                        <p className="font-semibold">{t.hours}</p>
-                        <p>{t.hoursDetails}</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    variant="outline"
-                    className="w-full"
-                    asChild
-                    data-testid="button-get-directions"
-                  >
-                    <a 
-                      href="https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Colonia+Del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {t.getDirections}
-                    </a>
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="space-y-8"
-            >
-              <Card className="bg-muted" data-testid="card-contact-cta">
-                <CardContent className="p-8">
-                  <h3 
-                    className={`${h3Class} mb-5`}
-                    data-testid="text-contact-cta-title"
-                  >
-                    {t.contactUs}
-                  </h3>
-                  <div className="flex flex-col gap-3">
-                    <Button 
-                      className="w-full"
-                      asChild
-                      data-testid="button-send-email"
-                    >
-                      <a href={`mailto:${t.email}`}>
-                        {t.sendEmail}
-                      </a>
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      className="w-full"
-                      asChild
-                      data-testid="button-call-us"
-                    >
-                      <a href={`tel:${t.phone.replace(/\s/g, '')}`}>
-                        {t.callUs}
-                      </a>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="" data-testid="card-connect">
-                <CardContent className="p-8">
-                  <h3 
-                    className={`${h3Class} mb-2`}
-                    data-testid="text-connect-title"
-                  >
-                    {t.connectTitle}
-                  </h3>
-                  <p 
-                    className="text-base text-ss-tinta mb-6"
-                    data-testid="text-connect-subtitle"
-                  >
-                    {t.connectSubtitle}
-                  </p>
-                  <div className="flex flex-col gap-3">
-                    {FIRM_LINKEDIN_URL && (
-                      <Button
-                        variant="outline"
-                        className="w-full"
-                        asChild
-                        data-testid="button-linkedin"
-                      >
-                        <a
-                          href={FIRM_LINKEDIN_URL}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {t.linkedinText}
-                        </a>
-                      </Button>
-                    )}
-                    <Button 
-                      variant="outline"
-                      className="w-full"
-                      asChild
-                      data-testid="button-website"
-                    >
-                      <a 
-                        href="https://www.santossaucedo.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {t.websiteText}
-                      </a>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+              </div>
+            </motion.section>
           </div>
         </div>
       </main>

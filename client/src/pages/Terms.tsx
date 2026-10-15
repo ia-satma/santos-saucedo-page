@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 // Los iconos solo quedan en los datos de cada sección; la página ya no los dibuja.
 import { FileText, Scale, Globe, AlertTriangle, Users, Shield, Gavel, BookOpen, Bell, Phone } from "lucide-react";
@@ -7,6 +8,45 @@ import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContact } from "@/components/home26/useSiteContact";
 import { Eyebrow } from "@/components/editorial";
+
+// Texto de una sección: párrafos separados por línea en blanco; las líneas que empiezan por
+// "• " pasan a una lista real con sangría francesa (al partirse, el texto queda alineado y no
+// bajo la viñeta). El resto conserva sus saltos de línea (direcciones, horarios).
+function renderLegalText(text: string): ReactNode[] {
+  return text.split(/\n{2,}/).map((block, blockIndex) => {
+    const parts: ReactNode[] = [];
+    let lines: string[] = [];
+    let items: string[] = [];
+    const flushLines = () => {
+      if (lines.length) {
+        parts.push(<p key={`p${parts.length}`} className="whitespace-pre-line">{lines.join("\n")}</p>);
+        lines = [];
+      }
+    };
+    const flushItems = () => {
+      if (items.length) {
+        parts.push(
+          <ul key={`u${parts.length}`} className="list-disc ps-6 space-y-1 marker:text-ss-marino/50">
+            {items.map((item, i) => <li key={i} className="ps-1">{item}</li>)}
+          </ul>
+        );
+        items = [];
+      }
+    };
+    for (const line of block.split("\n")) {
+      if (line.startsWith("• ")) {
+        flushLines();
+        items.push(line.slice(2));
+      } else {
+        flushItems();
+        lines.push(line);
+      }
+    }
+    flushLines();
+    flushItems();
+    return <div key={blockIndex} className="space-y-2">{parts}</div>;
+  });
+}
 
 type SupportedLanguage = 'en' | 'es' | 'de' | 'zh' | 'ko' | 'ja' | 'ar' | 'ru' | 'fr' | 'it';
 
@@ -35,11 +75,11 @@ export default function Terms() {
           id: "acceptance",
           icon: FileText,
           title: "1. Acceptance of Terms",
-          content: `By accessing and using the website of Santos & Saucedo Abogados (hereinafter "S&S," "the Firm," "we," "us," or "our"), located at www.santossaucedo.com (hereinafter "the Website"), you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions of Use (hereinafter "Terms").
+          content: `By accessing and using the website of Santos & Saucedo Abogados (hereinafter “S&S,” “the Firm,” “we,” “us,” or “our”), located at www.santossaucedo.com (hereinafter “the Website”), you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions of Use (hereinafter “Terms”).
 
 If you do not agree with any part of these Terms, you must immediately discontinue use of the Website. Your continued use of the Website constitutes your acceptance of these Terms and any modifications thereto.
 
-These Terms constitute a legally binding agreement between you (hereinafter "User," "you," or "your") and S&S. We reserve the right to modify, update, or change these Terms at any time without prior notice.
+These Terms constitute a legally binding agreement between you (hereinafter “User,” “you,” or “your”) and S&S. We reserve the right to modify, update, or change these Terms at any time without prior notice.
 
 By using this Website, you represent and warrant that:
 • You are at least 18 years of age or the legal age of majority in your jurisdiction
@@ -77,7 +117,7 @@ S&S reserves the right to terminate or restrict your access to the Website for a
           id: "intellectual-property",
           icon: BookOpen,
           title: "3. Intellectual Property Rights",
-          content: `All content on this Website, including but not limited to text, graphics, logos, images, photographs, videos, audio clips, data compilations, software, icons, and the selection and arrangement thereof (collectively, "Content"), is the exclusive property of Santos & Saucedo Abogados or its content suppliers and is protected by Mexican and international copyright, trademark, patent, trade secret, and other intellectual property laws.
+          content: `All content on this Website, including but not limited to text, graphics, logos, images, photographs, videos, audio clips, data compilations, software, icons, and the selection and arrangement thereof (collectively, “Content”), is the exclusive property of Santos & Saucedo Abogados or its content suppliers and is protected by Mexican and international copyright, trademark, patent, trade secret, and other intellectual property laws.
 
 Trademarks:
 The S&S name, logo, and all related names, logos, product and service names, designs, and slogans are trademarks of Santos & Saucedo Abogados or its affiliates. You may not use such marks without the prior written permission of S&S. All other names, logos, product and service names, designs, and slogans on this Website are the trademarks of their respective owners.
@@ -159,7 +199,7 @@ If you are considering engaging S&S for legal representation, please contact us 
           content: `TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW:
 
 Disclaimer of Warranties:
-THE WEBSITE AND ALL CONTENT ARE PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTY OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE. S&S SPECIFICALLY DISCLAIMS ALL IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
+THE WEBSITE AND ALL CONTENT ARE PROVIDED “AS IS” AND “AS AVAILABLE” WITHOUT WARRANTY OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE. S&S SPECIFICALLY DISCLAIMS ALL IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
 
 S&S does not warrant that:
 • The Website will be available, uninterrupted, timely, secure, or error-free
@@ -241,7 +281,7 @@ You agree that any claims shall be brought in your individual capacity and not a
           content: `Santos & Saucedo Abogados reserves the right, at its sole discretion, to modify, amend, or update these Terms and Conditions at any time without prior notice.
 
 How Changes Are Communicated:
-• Material changes will be indicated by updating the "Last updated" date at the top of this page
+• Material changes will be indicated by updating the “Last updated” date at the top of this page
 • Significant modifications may be announced through a notice on the Website's homepage
 • For registered users or subscribers, we may send email notifications of important changes
 
@@ -270,7 +310,6 @@ Santos & Saucedo Abogados
 
 Mailing Address:
 Río Tamazunchale 205 Norte
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 Telephone:
@@ -297,17 +336,17 @@ For inquiries related to potential legal representation, please contact us by te
     es: {
       title: "Términos y condiciones",
       subtitle: "Por favor lea estos términos cuidadosamente antes de usar nuestro sitio web",
-      lastUpdated: "Última actualización: Diciembre 2024",
+      lastUpdated: "Última actualización: diciembre de 2024",
       sections: [
         {
           id: "acceptance",
           icon: FileText,
           title: "1. Aceptación de los términos",
-          content: `Al acceder y utilizar el sitio web de Santos & Saucedo Abogados (en adelante "S&S," "la Firma," "nosotros" o "nuestro"), ubicado en www.santossaucedo.com (en adelante "el Sitio Web"), usted reconoce que ha leído, comprendido y acepta estar obligado por estos Términos y Condiciones de Uso (en adelante "Términos").
+          content: `Al acceder y utilizar el sitio web de Santos & Saucedo Abogados (en adelante «S&S», «la Firma», «nosotros» o «nuestro»), ubicado en www.santossaucedo.com (en adelante «el Sitio Web»), usted reconoce que ha leído, comprendido y acepta estar obligado por estos Términos y Condiciones de Uso (en adelante «Términos»).
 
 Si no está de acuerdo con alguna parte de estos Términos, debe dejar de usar el Sitio Web inmediatamente. Su uso continuado del Sitio Web constituye su aceptación de estos Términos y cualquier modificación a los mismos.
 
-Estos Términos constituyen un acuerdo legalmente vinculante entre usted (en adelante "Usuario," "usted" o "su") y S&S. Nos reservamos el derecho de modificar, actualizar o cambiar estos Términos en cualquier momento sin previo aviso.
+Estos Términos constituyen un acuerdo legalmente vinculante entre usted (en adelante «Usuario», «usted» o «su») y S&S. Nos reservamos el derecho de modificar, actualizar o cambiar estos Términos en cualquier momento sin previo aviso.
 
 Al usar este Sitio Web, usted declara y garantiza que:
 • Tiene al menos 18 años de edad o la mayoría de edad legal en su jurisdicción
@@ -321,13 +360,13 @@ Al usar este Sitio Web, usted declara y garantiza que:
           title: "2. Uso del sitio web",
           content: `El Sitio Web se proporciona únicamente con fines informativos. El contenido de este Sitio Web tiene como objetivo proporcionar información general sobre S&S, sus servicios legales, áreas de práctica y equipo profesional.
 
-Usos Permitidos:
+Usos permitidos:
 • Navegar y ver contenido para fines informativos personales y no comerciales
 • Contactar a S&S a través de los formularios de contacto e información proporcionados
 • Descargar materiales públicamente disponibles para referencia personal
 • Compartir enlaces al contenido del Sitio Web a través de medios legítimos
 
-Usos Prohibidos:
+Usos prohibidos:
 Usted acepta NO usar el Sitio Web para:
 • Violar cualquier ley o regulación local, estatal, nacional o internacional aplicable
 • Transmitir cualquier material que sea difamatorio, ofensivo o de otro modo objetable
@@ -345,15 +384,15 @@ S&S se reserva el derecho de terminar o restringir su acceso al Sitio Web por cu
           id: "intellectual-property",
           icon: BookOpen,
           title: "3. Derechos de propiedad intelectual",
-          content: `Todo el contenido de este Sitio Web, incluyendo pero no limitado a texto, gráficos, logotipos, imágenes, fotografías, videos, clips de audio, compilaciones de datos, software, íconos, y la selección y disposición de los mismos (colectivamente, "Contenido"), es propiedad exclusiva de Santos & Saucedo Abogados o sus proveedores de contenido y está protegido por las leyes de derechos de autor, marcas registradas, patentes, secretos comerciales y otras leyes de propiedad intelectual mexicanas e internacionales.
+          content: `Todo el contenido de este Sitio Web, incluyendo pero no limitado a texto, gráficos, logotipos, imágenes, fotografías, videos, clips de audio, compilaciones de datos, software, íconos, y la selección y disposición de los mismos (colectivamente, «Contenido»), es propiedad exclusiva de Santos & Saucedo Abogados o sus proveedores de contenido y está protegido por las leyes de derechos de autor, marcas registradas, patentes, secretos comerciales y otras leyes de propiedad intelectual mexicanas e internacionales.
 
-Marcas Registradas:
+Marcas registradas:
 El nombre S&S, el logotipo y todos los nombres, logotipos, nombres de productos y servicios, diseños y eslóganes relacionados son marcas registradas de Santos & Saucedo Abogados o sus afiliados. No puede usar dichas marcas sin el permiso previo por escrito de S&S.
 
-Licencia Limitada:
+Licencia limitada:
 Sujeto a estos Términos, S&S le otorga una licencia limitada, no exclusiva, intransferible y revocable para acceder y usar el Sitio Web y su Contenido únicamente para su uso personal y no comercial.
 
-Infracción de Derechos de Autor:
+Infracción de derechos de autor:
 Si cree que algún Contenido del Sitio Web infringe sus derechos de autor, comuníquese con nosotros en info@santossaucedo.com.`
         },
         {
@@ -397,13 +436,13 @@ Si está considerando contratar a S&S para representación legal, comuníquese c
           title: "6. Limitación de responsabilidad",
           content: `EN LA MÁXIMA MEDIDA PERMITIDA POR LA LEY APLICABLE:
 
-Descargo de Garantías:
-EL SITIO WEB Y TODO EL CONTENIDO SE PROPORCIONAN "TAL CUAL" Y "SEGÚN DISPONIBILIDAD" SIN GARANTÍA DE NINGÚN TIPO, YA SEA EXPRESA, IMPLÍCITA, LEGAL O DE OTRO TIPO.
+Descargo de garantías:
+EL SITIO WEB Y TODO EL CONTENIDO SE PROPORCIONAN «TAL CUAL» Y «SEGÚN DISPONIBILIDAD» SIN GARANTÍA DE NINGÚN TIPO, YA SEA EXPRESA, IMPLÍCITA, LEGAL O DE OTRO TIPO.
 
-Limitación de Responsabilidad:
+Limitación de responsabilidad:
 EN NINGÚN CASO SANTOS & SAUCEDO ABOGADOS, SUS SOCIOS, ABOGADOS, EMPLEADOS, AFILIADOS, AGENTES O LICENCIANTES SERÁN RESPONSABLES POR CUALQUIER DAÑO INDIRECTO, INCIDENTAL, ESPECIAL, CONSECUENTE, PUNITIVO O EJEMPLAR.
 
-Responsabilidad Máxima:
+Responsabilidad máxima:
 EN LA MÁXIMA MEDIDA PERMITIDA POR LA LEY, LA RESPONSABILIDAD TOTAL DE S&S NO EXCEDERÁ CIEN PESOS MEXICANOS (MXN $100.00).`
         },
         {
@@ -412,14 +451,14 @@ EN LA MÁXIMA MEDIDA PERMITIDA POR LA LEY, LA RESPONSABILIDAD TOTAL DE S&S NO EX
           title: "7. Ley aplicable",
           content: `Estos Términos y Condiciones serán regidos e interpretados de acuerdo con las leyes de los Estados Unidos Mexicanos (México), sin tener en cuenta sus disposiciones sobre conflictos de leyes.
 
-Ley Aplicable:
+Ley aplicable:
 Las siguientes leyes y regulaciones mexicanas se aplican a estos Términos:
 • Código Civil Federal
 • Código de Comercio
 • Ley Federal de Protección al Consumidor
 • Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP)
 
-Usuarios Internacionales:
+Usuarios internacionales:
 Si accede al Sitio Web desde fuera de México, lo hace bajo su propio riesgo y es responsable del cumplimiento de las leyes locales.`
         },
         {
@@ -434,7 +473,7 @@ Las partes acuerdan intentar de buena fe resolver cualquier disputa a través de
 Mediación:
 Si las negociaciones no logran resolver la disputa dentro de treinta (30) días calendario, cualquiera de las partes puede solicitar mediación.
 
-Jurisdicción y Competencia:
+Jurisdicción y competencia:
 Cualquier acción legal se presentará exclusivamente ante los tribunales federales o locales competentes ubicados en la Ciudad de México, México.`
         },
         {
@@ -443,8 +482,8 @@ Cualquier acción legal se presentará exclusivamente ante los tribunales federa
           title: "9. Modificaciones a los términos",
           content: `Santos & Saucedo Abogados se reserva el derecho de modificar estos Términos y Condiciones en cualquier momento sin previo aviso.
 
-Cómo se Comunican los Cambios:
-• Los cambios materiales se indicarán actualizando la fecha de "Última actualización"
+Cómo se comunican los cambios:
+• Los cambios materiales se indicarán actualizando la fecha de «Última actualización»
 • Las modificaciones significativas pueden anunciarse mediante un aviso en la página de inicio del Sitio Web
 
 Es su responsabilidad revisar estos Términos periódicamente para mantenerse informado de las actualizaciones.`
@@ -457,16 +496,15 @@ Es su responsabilidad revisar estos Términos periódicamente para mantenerse in
 
 Santos & Saucedo Abogados
 
-Dirección Postal:
+Dirección postal:
 Río Tamazunchale 205 Norte
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 Teléfono: +52 81 8335 2086
-Correo Electrónico: info@santossaucedo.com
+Correo electrónico: info@santossaucedo.com
 Sitio Web: www.santossaucedo.com
 
-Horario de Atención:
+Horario de atención:
 Lunes a viernes: 9:00 AM a 6:00 PM (hora de la Ciudad de México)`
         }
       ]
@@ -480,11 +518,11 @@ Lunes a viernes: 9:00 AM a 6:00 PM (hora de la Ciudad de México)`
           id: "acceptance",
           icon: FileText,
           title: "1. Annahme der Bedingungen",
-          content: `Durch den Zugriff auf und die Nutzung der Website von Santos & Saucedo Abogados (nachfolgend "S&S", "die Kanzlei", "wir", "uns" oder "unser") unter www.santossaucedo.com (nachfolgend "die Website") bestätigen Sie, dass Sie diese Nutzungsbedingungen (nachfolgend "Bedingungen") gelesen und verstanden haben und sich an diese gebunden fühlen.
+          content: `Durch den Zugriff auf und die Nutzung der Website von Santos & Saucedo Abogados (nachfolgend „S&S“, „die Kanzlei“, „wir“, „uns“ oder „unser“) unter www.santossaucedo.com (nachfolgend „die Website“) bestätigen Sie, dass Sie diese Nutzungsbedingungen (nachfolgend „Bedingungen“) gelesen und verstanden haben und sich an diese gebunden fühlen.
 
 Wenn Sie mit einem Teil dieser Bedingungen nicht einverstanden sind, müssen Sie die Nutzung der Website sofort einstellen. Ihre fortgesetzte Nutzung der Website stellt Ihre Zustimmung zu diesen Bedingungen und etwaigen Änderungen dar.
 
-Diese Bedingungen stellen eine rechtsverbindliche Vereinbarung zwischen Ihnen (nachfolgend "Nutzer", "Sie" oder "Ihr") und S&S dar. Wir behalten uns das Recht vor, diese Bedingungen jederzeit ohne vorherige Ankündigung zu ändern, zu aktualisieren oder zu modifizieren.
+Diese Bedingungen stellen eine rechtsverbindliche Vereinbarung zwischen Ihnen (nachfolgend „Nutzer“, „Sie“ oder „Ihr“) und S&S dar. Wir behalten uns das Recht vor, diese Bedingungen jederzeit ohne vorherige Ankündigung zu ändern, zu aktualisieren oder zu modifizieren.
 
 Mit der Nutzung dieser Website erklären und garantieren Sie, dass:
 • Sie mindestens 18 Jahre alt sind oder das gesetzliche Volljährigkeitsalter in Ihrer Rechtsordnung erreicht haben
@@ -518,7 +556,7 @@ S&S behält sich das Recht vor, Ihren Zugang zur Website bei Verstößen gegen d
           id: "intellectual-property",
           icon: BookOpen,
           title: "3. Geistiges Eigentum",
-          content: `Alle Inhalte auf dieser Website, einschließlich, aber nicht beschränkt auf Texte, Grafiken, Logos, Bilder, Fotografien, Videos, Audioclips, Datenzusammenstellungen, Software, Icons und deren Auswahl und Anordnung (zusammenfassend "Inhalte"), sind das ausschließliche Eigentum von Santos & Saucedo Abogados oder ihrer Inhaltslieferanten und sind durch mexikanische und internationale Urheberrechts-, Marken-, Patent-, Geschäftsgeheimnis- und andere geistige Eigentumsgesetze geschützt.
+          content: `Alle Inhalte auf dieser Website, einschließlich, aber nicht beschränkt auf Texte, Grafiken, Logos, Bilder, Fotografien, Videos, Audioclips, Datenzusammenstellungen, Software, Icons und deren Auswahl und Anordnung (zusammenfassend „Inhalte“), sind das ausschließliche Eigentum von Santos & Saucedo Abogados oder ihrer Inhaltslieferanten und sind durch mexikanische und internationale Urheberrechts-, Marken-, Patent-, Geschäftsgeheimnis- und andere geistige Eigentumsgesetze geschützt.
 
 Marken:
 Der Name S&S, das Logo und alle verwandten Namen, Logos, Produkt- und Servicenamen, Designs und Slogans sind Marken von Santos & Saucedo Abogados oder ihren verbundenen Unternehmen. Sie dürfen diese Marken nicht ohne vorherige schriftliche Genehmigung von S&S verwenden.
@@ -573,7 +611,7 @@ Bei Interesse an einer rechtlichen Vertretung durch S&S kontaktieren Sie uns bit
           content: `IM GRÖSSTMÖGLICHEN UMFANG, DER NACH GELTENDEM RECHT ZULÄSSIG IST:
 
 Gewährleistungsausschluss:
-DIE WEBSITE UND ALLE INHALTE WERDEN "WIE BESEHEN" UND "WIE VERFÜGBAR" OHNE JEGLICHE GEWÄHRLEISTUNG BEREITGESTELLT, SEI ES AUSDRÜCKLICH, STILLSCHWEIGEND, GESETZLICH ODER ANDERWEITIG.
+DIE WEBSITE UND ALLE INHALTE WERDEN „WIE BESEHEN“ UND „WIE VERFÜGBAR“ OHNE JEGLICHE GEWÄHRLEISTUNG BEREITGESTELLT, SEI ES AUSDRÜCKLICH, STILLSCHWEIGEND, GESETZLICH ODER ANDERWEITIG.
 
 S&S gewährleistet nicht, dass:
 • Die Website verfügbar, ununterbrochen, rechtzeitig, sicher oder fehlerfrei sein wird
@@ -627,7 +665,7 @@ Sie stimmen zu, dass alle Ansprüche in Ihrer individuellen Eigenschaft und nich
           content: `Santos & Saucedo Abogados behält sich das Recht vor, diese Nutzungsbedingungen nach eigenem Ermessen jederzeit ohne vorherige Ankündigung zu ändern, zu ergänzen oder zu aktualisieren.
 
 Wie Änderungen mitgeteilt werden:
-• Wesentliche Änderungen werden durch Aktualisierung des Datums "Zuletzt aktualisiert" am oberen Rand dieser Seite angezeigt
+• Wesentliche Änderungen werden durch Aktualisierung des Datums „Zuletzt aktualisiert“ am oberen Rand dieser Seite angezeigt
 • Bedeutende Änderungen können durch einen Hinweis auf der Startseite der Website angekündigt werden
 
 Ihre Verantwortlichkeiten:
@@ -646,7 +684,6 @@ Santos & Saucedo Abogados
 
 Postanschrift:
 Río Tamazunchale 205 Norte
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 Telefon: +52 81 8335 2086
@@ -668,11 +705,11 @@ Außer an mexikanischen Feiertagen`
           id: "acceptance",
           icon: FileText,
           title: "1. 接受条款",
-          content: `通过访问和使用Santos & Saucedo Abogados（以下简称"S&S"、"本所"、"我们"或"我们的"）的网站www.santossaucedo.com（以下简称"本网站"），您确认已阅读、理解并同意受这些使用条款（以下简称"条款"）的约束。
+          content: `通过访问和使用Santos & Saucedo Abogados（以下简称“S&S”、“本所”、“我们”或“我们的”）的网站www.santossaucedo.com（以下简称“本网站”），您确认已阅读、理解并同意受这些使用条款（以下简称“条款”）的约束。
 
 如果您不同意这些条款的任何部分，您必须立即停止使用本网站。您继续使用本网站即表示您接受这些条款及其任何修改。
 
-这些条款构成您（以下简称"用户"、"您"或"您的"）与S&S之间具有法律约束力的协议。我们保留随时修改、更新或更改这些条款的权利，恕不另行通知。
+这些条款构成您（以下简称“用户”、“您”或“您的”）与S&S之间具有法律约束力的协议。我们保留随时修改、更新或更改这些条款的权利，恕不另行通知。
 
 使用本网站，即表示您声明并保证：
 • 您已年满18周岁或达到您所在司法管辖区的法定成年年龄
@@ -707,7 +744,7 @@ S&S保留在您违反这些条款时终止或限制您访问本网站的权利�
           id: "intellectual-property",
           icon: BookOpen,
           title: "3. 知识产权",
-          content: `本网站上的所有内容，包括但不限于文本、图形、徽标、图像、照片、视频、音频剪辑、数据汇编、软件、图标及其选择和排列（统称"内容"），均为Santos & Saucedo Abogados或其内容供应商的专有财产，受墨西哥和国际版权、商标、专利、商业秘密和其他知识产权法律的保护。
+          content: `本网站上的所有内容，包括但不限于文本、图形、徽标、图像、照片、视频、音频剪辑、数据汇编、软件、图标及其选择和排列（统称“内容”），均为Santos & Saucedo Abogados或其内容供应商的专有财产，受墨西哥和国际版权、商标、专利、商业秘密和其他知识产权法律的保护。
 
 商标：
 S&S名称、徽标及所有相关名称、徽标、产品和服务名称、设计和标语均为Santos & Saucedo Abogados或其关联公司的商标。未经S&S事先书面许可，您不得使用此类商标。
@@ -762,7 +799,7 @@ S&S名称、徽标及所有相关名称、徽标、产品和服务名称、设�
           content: `在适用法律允许的最大范围内：
 
 保证免责声明：
-本网站和所有内容均按"原样"和"可用"基础提供，不提供任何形式的保证，无论是明示的、暗示的、法定的还是其他形式的。
+本网站和所有内容均按“原样”和“可用”基础提供，不提供任何形式的保证，无论是明示的、暗示的、法定的还是其他形式的。
 
 S&S不保证：
 • 本网站将可用、不间断、及时、安全或无错误
@@ -816,7 +853,7 @@ S&S不保证：
           content: `Santos & Saucedo Abogados保留自行决定随时修改、修订或更新这些条款的权利，恕不另行通知。
 
 变更通知方式：
-• 重大变更将通过更新本页顶部的"最后更新"日期来表示
+• 重大变更将通过更新本页顶部的“最后更新”日期来表示
 • 重要修改可能会通过网站主页上的通知公布
 
 您的责任：
@@ -835,7 +872,6 @@ Santos & Saucedo Abogados
 
 邮寄地址：
 Río Tamazunchale 205 Norte, 18楼
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 电话：+52 81 8335 2086
@@ -857,11 +893,11 @@ San Pedro Garza García, Nuevo León, México
           id: "acceptance",
           icon: FileText,
           title: "1. 약관 동의",
-          content: `Santos & Saucedo Abogados(이하 "S&S", "본 법인", "당사" 또는 "당사의")의 웹사이트 www.santossaucedo.com(이하 "웹사이트")에 접속하고 사용함으로써, 귀하는 이 이용약관(이하 "약관")을 읽고 이해했으며 이에 구속되는 것에 동의합니다.
+          content: `Santos & Saucedo Abogados(이하 “S&S”, “본 법인”, “당사” 또는 “당사의”)의 웹사이트 www.santossaucedo.com(이하 “웹사이트”)에 접속하고 사용함으로써, 귀하는 이 이용약관(이하 “약관”)을 읽고 이해했으며 이에 구속되는 것에 동의합니다.
 
 이 약관의 어떤 부분에도 동의하지 않는 경우, 즉시 웹사이트 사용을 중단해야 합니다. 웹사이트를 계속 사용하면 이 약관 및 그 수정사항에 대한 동의를 의미합니다.
 
-이 약관은 귀하(이하 "사용자", "귀하" 또는 "귀하의")와 S&S 간의 법적 구속력이 있는 계약을 구성합니다. 당사는 사전 통지 없이 언제든지 이 약관을 수정, 업데이트 또는 변경할 권리를 보유합니다.
+이 약관은 귀하(이하 “사용자”, “귀하” 또는 “귀하의”)와 S&S 간의 법적 구속력이 있는 계약을 구성합니다. 당사는 사전 통지 없이 언제든지 이 약관을 수정, 업데이트 또는 변경할 권리를 보유합니다.
 
 이 웹사이트를 사용함으로써 귀하는 다음을 진술하고 보증합니다:
 • 귀하는 최소 18세 이상이거나 관할 지역의 법정 성인 연령에 도달했습니다
@@ -895,7 +931,7 @@ S&S는 이 약관 위반 시 귀하의 웹사이트 접근을 종료하거나 �
           id: "intellectual-property",
           icon: BookOpen,
           title: "3. 지적 재산권",
-          content: `텍스트, 그래픽, 로고, 이미지, 사진, 비디오, 오디오 클립, 데이터 편집물, 소프트웨어, 아이콘 및 그 선택과 배열을 포함하되 이에 국한되지 않는 이 웹사이트의 모든 콘텐츠(총칭하여 "콘텐츠")는 Santos & Saucedo Abogados 또는 그 콘텐츠 공급업체의 독점 재산이며 멕시코 및 국제 저작권, 상표, 특허, 영업 비밀 및 기타 지적 재산권법에 의해 보호됩니다.
+          content: `텍스트, 그래픽, 로고, 이미지, 사진, 비디오, 오디오 클립, 데이터 편집물, 소프트웨어, 아이콘 및 그 선택과 배열을 포함하되 이에 국한되지 않는 이 웹사이트의 모든 콘텐츠(총칭하여 “콘텐츠”)는 Santos & Saucedo Abogados 또는 그 콘텐츠 공급업체의 독점 재산이며 멕시코 및 국제 저작권, 상표, 특허, 영업 비밀 및 기타 지적 재산권법에 의해 보호됩니다.
 
 상표:
 S&S 이름, 로고 및 모든 관련 이름, 로고, 제품 및 서비스 이름, 디자인 및 슬로건은 Santos & Saucedo Abogados 또는 그 계열사의 상표입니다. S&S의 사전 서면 허가 없이 이러한 상표를 사용할 수 없습니다.
@@ -950,7 +986,7 @@ S&S의 법적 대리를 고려하고 있다면 +52 81 8335 2086으로 직접 전
           content: `관련 법률이 허용하는 최대 범위 내에서:
 
 보증의 부인:
-웹사이트 및 모든 콘텐츠는 명시적, 묵시적, 법적 또는 기타 어떠한 종류의 보증도 없이 "있는 그대로" 및 "이용 가능한 대로" 제공됩니다.
+웹사이트 및 모든 콘텐츠는 명시적, 묵시적, 법적 또는 기타 어떠한 종류의 보증도 없이 “있는 그대로” 및 “이용 가능한 대로” 제공됩니다.
 
 S&S는 다음을 보증하지 않습니다:
 • 웹사이트가 이용 가능하고, 중단 없이, 적시에, 안전하게 또는 오류 없이 작동할 것
@@ -1004,7 +1040,7 @@ SANTOS & SAUCEDO ABOGADOS, 그 파트너, 변호사, 직원, 계열사, 대리�
           content: `Santos & Saucedo Abogados는 단독 재량으로 사전 통지 없이 언제든지 이 약관을 수정, 개정 또는 업데이트할 권리를 보유합니다.
 
 변경 사항 통지 방법:
-• 중요한 변경 사항은 이 페이지 상단의 "최종 업데이트" 날짜를 업데이트하여 표시됩니다
+• 중요한 변경 사항은 이 페이지 상단의 “최종 업데이트” 날짜를 업데이트하여 표시됩니다
 • 중요한 수정 사항은 웹사이트 홈페이지의 공지를 통해 발표될 수 있습니다
 
 귀하의 책임:
@@ -1023,7 +1059,6 @@ Santos & Saucedo Abogados
 
 우편 주소:
 Río Tamazunchale 205 Norte, 18층
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 전화: +52 81 8335 2086
@@ -1211,7 +1246,6 @@ Santos & Saucedo Abogados
 
 郵送先住所：
 Río Tamazunchale 205 Norte, 18階
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 電話：+52 81 8335 2086
@@ -1233,11 +1267,11 @@ San Pedro Garza García, Nuevo León, México
           id: "acceptance",
           icon: FileText,
           title: "1. قبول الشروط",
-          content: `من خلال الوصول إلى واستخدام موقع Santos & Saucedo Abogados (المشار إليها فيما بعد بـ "S&S" أو "الشركة" أو "نحن" أو "لنا") الموجود على www.santossaucedo.com (المشار إليه فيما بعد بـ "الموقع الإلكتروني")، فإنك تقر بأنك قد قرأت وفهمت ووافقت على الالتزام بشروط وأحكام الاستخدام هذه (المشار إليها فيما بعد بـ "الشروط").
+          content: `من خلال الوصول إلى واستخدام موقع Santos & Saucedo Abogados (المشار إليها فيما بعد بـ «S&S» أو «الشركة» أو «نحن» أو «لنا») الموجود على www.santossaucedo.com (المشار إليه فيما بعد بـ «الموقع الإلكتروني»)، فإنك تقر بأنك قد قرأت وفهمت ووافقت على الالتزام بشروط وأحكام الاستخدام هذه (المشار إليها فيما بعد بـ «الشروط»).
 
 إذا كنت لا توافق على أي جزء من هذه الشروط، يجب عليك التوقف فوراً عن استخدام الموقع الإلكتروني. يعتبر استمرارك في استخدام الموقع الإلكتروني بمثابة موافقتك على هذه الشروط وأي تعديلات عليها.
 
-تشكل هذه الشروط اتفاقية ملزمة قانونياً بينك (المشار إليك فيما بعد بـ "المستخدم" أو "أنت" أو "الخاص بك") وبين S&S. نحتفظ بالحق في تعديل أو تحديث أو تغيير هذه الشروط في أي وقت دون إشعار مسبق.
+تشكل هذه الشروط اتفاقية ملزمة قانونياً بينك (المشار إليك فيما بعد بـ «المستخدم» أو «أنت» أو «الخاص بك») وبين S&S. نحتفظ بالحق في تعديل أو تحديث أو تغيير هذه الشروط في أي وقت دون إشعار مسبق.
 
 باستخدام هذا الموقع الإلكتروني، فإنك تقر وتضمن أنك:
 • تبلغ من العمر 18 عاماً على الأقل أو سن الرشد القانوني في ولايتك القضائية
@@ -1271,7 +1305,7 @@ San Pedro Garza García, Nuevo León, México
           id: "intellectual-property",
           icon: BookOpen,
           title: "3. حقوق الملكية الفكرية",
-          content: `جميع المحتويات الموجودة على هذا الموقع الإلكتروني، بما في ذلك على سبيل المثال لا الحصر النصوص والرسومات والشعارات والصور والفيديوهات ومقاطع الصوت وتجميعات البيانات والبرامج والأيقونات واختيارها وترتيبها (يُشار إليها مجتمعة بـ "المحتوى")، هي ملكية حصرية لـ Santos & Saucedo Abogados أو موردي محتواها ومحمية بموجب قوانين حقوق النشر والعلامات التجارية وبراءات الاختراع والأسرار التجارية وغيرها من قوانين الملكية الفكرية المكسيكية والدولية.
+          content: `جميع المحتويات الموجودة على هذا الموقع الإلكتروني، بما في ذلك على سبيل المثال لا الحصر النصوص والرسومات والشعارات والصور والفيديوهات ومقاطع الصوت وتجميعات البيانات والبرامج والأيقونات واختيارها وترتيبها (يُشار إليها مجتمعة بـ «المحتوى»)، هي ملكية حصرية لـ Santos & Saucedo Abogados أو موردي محتواها ومحمية بموجب قوانين حقوق النشر والعلامات التجارية وبراءات الاختراع والأسرار التجارية وغيرها من قوانين الملكية الفكرية المكسيكية والدولية.
 
 العلامات التجارية:
 اسم S&S والشعار وجميع الأسماء والشعارات وأسماء المنتجات والخدمات والتصاميم والشعارات ذات الصلة هي علامات تجارية مملوكة لـ Santos & Saucedo Abogados أو الشركات التابعة لها. لا يجوز لك استخدام هذه العلامات دون الحصول على إذن كتابي مسبق من S&S.
@@ -1326,7 +1360,7 @@ San Pedro Garza García, Nuevo León, México
           content: `إلى أقصى حد يسمح به القانون المعمول به:
 
 إخلاء المسؤولية من الضمانات:
-يتم تقديم الموقع الإلكتروني وجميع المحتويات "كما هي" و"كما هي متاحة" دون أي ضمان من أي نوع، سواء كان صريحاً أو ضمنياً أو قانونياً أو غير ذلك.
+يتم تقديم الموقع الإلكتروني وجميع المحتويات «كما هي» و«كما هي متاحة» دون أي ضمان من أي نوع، سواء كان صريحاً أو ضمنياً أو قانونياً أو غير ذلك.
 
 لا تضمن S&S أن:
 • سيكون الموقع الإلكتروني متاحاً ومستمراً وفي الوقت المناسب وآمناً أو خالياً من الأخطاء
@@ -1380,7 +1414,7 @@ San Pedro Garza García, Nuevo León, México
           content: `تحتفظ Santos & Saucedo Abogados بالحق، وفقاً لتقديرها الخاص، في تعديل أو تغيير أو تحديث هذه الشروط والأحكام في أي وقت دون إشعار مسبق.
 
 كيفية الإبلاغ عن التغييرات:
-• ستتم الإشارة إلى التغييرات الجوهرية من خلال تحديث تاريخ "آخر تحديث" في أعلى هذه الصفحة
+• ستتم الإشارة إلى التغييرات الجوهرية من خلال تحديث تاريخ «آخر تحديث» في أعلى هذه الصفحة
 • قد يتم الإعلان عن التعديلات الهامة من خلال إشعار على الصفحة الرئيسية للموقع الإلكتروني
 
 مسؤولياتك:
@@ -1399,8 +1433,7 @@ Santos & Saucedo Abogados
 
 العنوان البريدي:
 Río Tamazunchale 205 Norte، الطابق 18
-San Pedro Garza García, N.L.
-San Pedro Garza García, Nuevo León، مدينة مكسيكو، المكسيك
+San Pedro Garza García, Nuevo León، المكسيك
 
 الهاتف: +52 81 8335 2086
 البريد الإلكتروني: info@santossaucedo.com
@@ -1587,7 +1620,6 @@ Santos & Saucedo Abogados
 
 Почтовый адрес:
 Río Tamazunchale 205 Norte, 18 этаж
-San Pedro Garza García, N.L.
 San Pedro Garza García, Nuevo León, México
 
 Телефон: +52 81 8335 2086
@@ -1775,8 +1807,7 @@ Santos & Saucedo Abogados
 
 Adresse postale :
 Río Tamazunchale 205 Norte, 18e étage
-San Pedro Garza García, N.L.
-San Pedro Garza García, Nuevo León, MéxicoMexique
+San Pedro Garza García, Nuevo León, Mexique
 
 Téléphone : +52 81 8335 2086
 E-mail : info@santossaucedo.com
@@ -1797,11 +1828,11 @@ Hors jours fériés fédéraux mexicains`
           id: "acceptance",
           icon: FileText,
           title: "1. Accettazione dei termini",
-          content: `Accedendo e utilizzando il sito web di Santos & Saucedo Abogados (di seguito "S&S", "lo Studio", "noi", "ci" o "nostro"), situato su www.santossaucedo.com (di seguito "il Sito Web"), riconosci di aver letto, compreso e di accettare di essere vincolato da questi Termini e Condizioni d'uso (di seguito "Termini").
+          content: `Accedendo e utilizzando il sito web di Santos & Saucedo Abogados (di seguito «S&S», «lo Studio», «noi», «ci» o «nostro»), situato su www.santossaucedo.com (di seguito «il Sito Web»), riconosci di aver letto, compreso e di accettare di essere vincolato da questi Termini e Condizioni d'uso (di seguito «Termini»).
 
 Se non sei d'accordo con qualsiasi parte di questi Termini, devi interrompere immediatamente l'uso del Sito Web. L'uso continuato del Sito Web costituisce la tua accettazione di questi Termini e di eventuali modifiche.
 
-Questi Termini costituiscono un accordo legalmente vincolante tra te (di seguito "Utente", "tu" o "tuo") e S&S. Ci riserviamo il diritto di modificare, aggiornare o cambiare questi Termini in qualsiasi momento senza preavviso.
+Questi Termini costituiscono un accordo legalmente vincolante tra te (di seguito «Utente», «tu» o «tuo») e S&S. Ci riserviamo il diritto di modificare, aggiornare o cambiare questi Termini in qualsiasi momento senza preavviso.
 
 Utilizzando questo Sito Web, dichiari e garantisci che:
 • Hai almeno 18 anni o l'età legale della maggiore età nella tua giurisdizione
@@ -1835,7 +1866,7 @@ S&S si riserva il diritto di terminare o limitare il tuo accesso al Sito Web per
           id: "intellectual-property",
           icon: BookOpen,
           title: "3. Proprietà intellettuale",
-          content: `Tutti i contenuti di questo Sito Web, inclusi ma non limitati a testi, grafica, loghi, immagini, fotografie, video, clip audio, compilazioni di dati, software, icone e la loro selezione e disposizione (collettivamente, "Contenuto"), sono proprietà esclusiva di Santos & Saucedo Abogados o dei suoi fornitori di contenuti e sono protetti dalle leggi messicane e internazionali sul diritto d'autore, marchi, brevetti, segreti commerciali e altre leggi sulla proprietà intellettuale.
+          content: `Tutti i contenuti di questo Sito Web, inclusi ma non limitati a testi, grafica, loghi, immagini, fotografie, video, clip audio, compilazioni di dati, software, icone e la loro selezione e disposizione (collettivamente, «Contenuto»), sono proprietà esclusiva di Santos & Saucedo Abogados o dei suoi fornitori di contenuti e sono protetti dalle leggi messicane e internazionali sul diritto d'autore, marchi, brevetti, segreti commerciali e altre leggi sulla proprietà intellettuale.
 
 Marchi:
 Il nome S&S, il logo e tutti i nomi, loghi, nomi di prodotti e servizi, design e slogan correlati sono marchi di Santos & Saucedo Abogados o delle sue affiliate. Non puoi utilizzare tali marchi senza il previo consenso scritto di S&S.
@@ -1890,7 +1921,7 @@ Se stai considerando di incaricare S&S per la rappresentanza legale, contattaci 
           content: `NELLA MISURA MASSIMA CONSENTITA DALLA LEGGE APPLICABILE:
 
 Esclusione di garanzie:
-IL SITO WEB E TUTTI I CONTENUTI SONO FORNITI "COSÌ COME SONO" E "COME DISPONIBILI" SENZA GARANZIE DI ALCUN TIPO, SIANO ESSE ESPLICITE, IMPLICITE, LEGALI O DI ALTRO TIPO.
+IL SITO WEB E TUTTI I CONTENUTI SONO FORNITI «COSÌ COME SONO» E «COME DISPONIBILI» SENZA GARANZIE DI ALCUN TIPO, SIANO ESSE ESPLICITE, IMPLICITE, LEGALI O DI ALTRO TIPO.
 
 S&S non garantisce che:
 • Il Sito Web sarà disponibile, ininterrotto, tempestivo, sicuro o privo di errori
@@ -1944,7 +1975,7 @@ Accetti che qualsiasi reclamo sarà presentato nella tua capacità individuale e
           content: `Santos & Saucedo Abogados si riserva il diritto, a sua esclusiva discrezione, di modificare, emendare o aggiornare questi Termini e Condizioni in qualsiasi momento senza preavviso.
 
 Come vengono comunicati i cambiamenti:
-• I cambiamenti materiali saranno indicati aggiornando la data "Ultimo aggiornamento" in cima a questa pagina
+• I cambiamenti materiali saranno indicati aggiornando la data «Ultimo aggiornamento» in cima a questa pagina
 • Modifiche significative possono essere annunciate tramite un avviso sulla homepage del Sito Web
 
 Le tue responsabilità:
@@ -1963,8 +1994,7 @@ Santos & Saucedo Abogados
 
 Indirizzo postale:
 Río Tamazunchale 205 Norte
-San Pedro Garza García, N.L.
-San Pedro Garza García, Nuevo León, MéxicoMessico
+San Pedro Garza García, Nuevo León, Messico
 
 Telefono: +52 81 8335 2086
 E-mail: info@santossaucedo.com
@@ -2008,7 +2038,7 @@ Escluse le festività federali messicane`
     ja: "これらの規約に関するお問い合わせ：",
     ar: "للاستفسارات حول هذه الشروط والأحكام:",
     ru: "По вопросам об этих условиях:",
-    fr: "Pour toute question sur ces conditions:",
+    fr: "Pour toute question sur ces conditions :",
     it: "Per domande su questi termini:"
   };
 
@@ -2017,40 +2047,43 @@ Escluse le festività federali messicane`
       <SEOHead page="terms" language={language} />
       <Header />
       
-      {/* Encabezado de papel ("memorándum impreso"), como los artículos: Hueso, h1 Azul Marino */}
-      <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" data-testid="section-terms-hero">
-        {/* Columna del documento (max-w-4xl): titular, subtítulo y fecha sobre su borde */}
-        <div className="max-w-4xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            <Eyebrow num="" tone="paper" className="mb-6" />
-            <h1
-              className="mb-5"
-              data-testid="text-terms-title"
+      {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo salta.
+          El relleno del cuerpo va en su propio envoltorio. */}
+      <main id="main-content">
+        {/* Encabezado de papel ("memorándum impreso"), como los artículos: Hueso, h1 Azul Marino */}
+        <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" data-testid="section-terms-hero">
+          {/* Columna del documento (max-w-4xl): titular, subtítulo y fecha sobre su borde */}
+          <div className="max-w-4xl mx-auto px-6 lg:px-12">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
             >
-              {t.title}
-            </h1>
-            <p
-              className="mb-4"
-              data-testid="text-terms-subtitle"
-            >
-              {t.subtitle}
-            </p>
-            <p
-              className="text-sm"
-              data-testid="text-terms-updated"
-            >
-              {t.lastUpdated}
-            </p>
-          </motion.div>
-        </div>
-      </section>
+              <Eyebrow num="" tone="paper" className="mb-6" />
+              <h1
+                className="mb-5"
+                data-testid="text-terms-title"
+              >
+                {t.title}
+              </h1>
+              <p
+                className="mb-4"
+                data-testid="text-terms-subtitle"
+              >
+                {t.subtitle}
+              </p>
+              <p
+                className="text-sm"
+                data-testid="text-terms-updated"
+              >
+                {t.lastUpdated}
+              </p>
+            </motion.div>
+          </div>
+        </section>
 
-      <main id="main-content" className="py-16 lg:py-20">
+        <div className="py-16 lg:py-20">
         <div className="max-w-4xl mx-auto px-6 lg:px-12">
           {/* Secciones abiertas: filete superior, h2 en romana y texto corrido. Sin cajas ni iconos. */}
           <motion.div
@@ -2074,10 +2107,10 @@ Escluse le festività federali messicane`
                   {section.title}
                 </h2>
                 <div
-                  className="ss-prose text-ss-tinta text-[17px] md:text-[18px] whitespace-pre-line"
+                  className="ss-prose text-ss-tinta text-[17px] md:text-[18px] space-y-5"
                   data-testid={`text-section-content-${section.id}`}
                 >
-                  {section.content}
+                  {renderLegalText(section.content)}
                 </div>
               </motion.div>
             ))}
@@ -2111,6 +2144,7 @@ Escluse le festività federali messicane`
               </a>
             </div>
           </motion.div>
+        </div>
         </div>
       </main>
 

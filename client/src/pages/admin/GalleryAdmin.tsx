@@ -172,9 +172,9 @@ export default function GalleryAdmin() {
               Back to Dashboard
             </a>
           </Link>
-          <div className="w-12 h-px bg-[#1E1C92] mb-3" />
-          <h1 className="font-heading font-light text-foreground text-3xl uppercase tracking-[0.12em]">
-            OFFICE GALLERY
+          <div className="w-12 h-px bg-ss-marino mb-3" />
+          <h1 className="font-heading text-foreground text-3xl">
+            Office gallery
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
             Manage office photo gallery — upload, reorder, and delete images.
@@ -185,7 +185,7 @@ export default function GalleryAdmin() {
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-sm uppercase tracking-[0.1em]">
-              <PlusCircle className="w-4 h-4 text-[#1E1C92]" />
+              <PlusCircle className="w-4 h-4 text-ss-marino" />
               Add New Image
             </CardTitle>
           </CardHeader>

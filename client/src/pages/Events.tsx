@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { AlertCircle, MapPin, Calendar, CalendarDays } from "lucide-react";
+import { MapPin, Calendar } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
+import { Eyebrow } from "@/components/editorial";
+import { TextLink } from "@/components/home26/primitives";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import type { Event } from "@shared/schema";
 import { eventTypes } from "@shared/schema";
@@ -143,10 +145,11 @@ export default function EventsPage() {
     past: string;
     register: string;
     noEvents: string;
+    monitorLink: string;
   }> = {
     en: {
       title: "Events",
-      subtitle: "Join us at conferences, webinars, and networking events",
+      subtitle: "Upcoming and past events of the firm",
       errorMessage: "Failed to load events",
       noResults: "No events match your filter",
       learnMore: "Learn More",
@@ -155,10 +158,11 @@ export default function EventsPage() {
       past: "Past",
       register: "Register",
       noEvents: "No events scheduled",
+      monitorLink: "Labor Monitor",
     },
     es: {
       title: "Eventos",
-      subtitle: "Únase a nosotros en conferencias, webinars y eventos de networking",
+      subtitle: "Próximos eventos y eventos anteriores de la firma",
       errorMessage: "Error al cargar los eventos",
       noResults: "No hay eventos que coincidan con su filtro",
       learnMore: "Más información",
@@ -167,6 +171,7 @@ export default function EventsPage() {
       past: "Pasados",
       register: "Registrarse",
       noEvents: "No hay eventos programados",
+      monitorLink: "Monitor Laboral",
     },
     de: {
       title: "Veranstaltungen",
@@ -179,6 +184,7 @@ export default function EventsPage() {
       past: "Vergangene Veranstaltungen",
       register: "Anmelden",
       noEvents: "Keine Veranstaltungen geplant",
+      monitorLink: "Nachrichten",
     },
     zh: {
       title: "活动",
@@ -191,10 +197,11 @@ export default function EventsPage() {
       past: "过往活动",
       register: "注册",
       noEvents: "暂无活动",
+      monitorLink: "新闻",
     },
     ko: {
       title: "이벤트",
-      subtitle: "컨퍼런스, 웨비나 및 네트워킹 이벤트",
+      subtitle: "예정된 행사 및 지난 행사",
       errorMessage: "이벤트 로드 실패",
       noResults: "필터와 일치하는 이벤트가 없습니다",
       learnMore: "자세히 보기",
@@ -203,10 +210,11 @@ export default function EventsPage() {
       past: "지난 이벤트",
       register: "등록",
       noEvents: "예정된 이벤트가 없습니다",
+      monitorLink: "뉴스 및 인사이트",
     },
     ja: {
       title: "イベント",
-      subtitle: "カンファレンス、ウェビナー、ネットワーキングイベント",
+      subtitle: "今後のイベントと過去のイベント",
       errorMessage: "イベントの読み込みに失敗しました",
       noResults: "フィルターに一致するイベントがありません",
       learnMore: "詳細を見る",
@@ -215,6 +223,7 @@ export default function EventsPage() {
       past: "過去のイベント",
       register: "登録",
       noEvents: "予定されているイベントはありません",
+      monitorLink: "ニュースとインサイト",
     },
     ar: {
       title: "الفعاليات",
@@ -227,6 +236,7 @@ export default function EventsPage() {
       past: "الفعاليات السابقة",
       register: "سجّل",
       noEvents: "لا توجد فعاليات مجدولة",
+      monitorLink: "الأخبار والرؤى",
     },
     ru: {
       title: "Мероприятия",
@@ -239,6 +249,7 @@ export default function EventsPage() {
       past: "Прошедшие",
       register: "Зарегистрироваться",
       noEvents: "Нет мероприятий",
+      monitorLink: "Новости",
     },
     fr: {
       title: "Événements",
@@ -251,6 +262,7 @@ export default function EventsPage() {
       past: "Passés",
       register: "S'inscrire",
       noEvents: "Aucun événement prévu",
+      monitorLink: "Actualités",
     },
     it: {
       title: "Eventi",
@@ -263,6 +275,7 @@ export default function EventsPage() {
       past: "Eventi passati",
       register: "Registrati",
       noEvents: "Nessun evento",
+      monitorLink: "Notizie",
     },
   };
 
@@ -331,34 +344,37 @@ export default function EventsPage() {
       <SEOHead page="events" language={language} />
       <Header />
       
+      {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo
+          salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
+          siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
+      <main id="main-content">
       <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-events-hero">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="ss-container">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="text-center"
+            className="max-w-3xl"
           >
-            <div className="h-0.5 w-12 bg-brand mx-auto mb-6" />
+            <Eyebrow num="04" tone="navy" className="mb-6" />
             <h1 
-              className="text-4xl md:text-5xl font-heading text-white mb-5"
+              className="mb-5"
               data-testid="text-events-title"
             >
               {t.title}
             </h1>
-            <p 
-              className="text-base text-white/60 max-w-2xl mx-auto"
-              data-testid="text-events-subtitle"
-            >
+            <p data-testid="text-events-subtitle">
               {t.subtitle}
             </p>
           </motion.div>
         </div>
       </section>
 
-      <main id="main-content" className="py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+      <div className="py-16 lg:py-20">
+        <div className="ss-container">
+          {/* Filtros solo si hay eventos: seis botones sobre una lista vacía parecen una plantilla sin llenar */}
+          {events && events.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -385,11 +401,11 @@ export default function EventsPage() {
               ))}
             </div>
           </motion.div>
+          )}
 
           {error ? (
-            <div className="text-center py-12" data-testid="container-events-error">
-              <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground" data-testid="text-events-error">
+            <div className="border-t border-ss-rule pt-6" data-testid="container-events-error">
+              <p className="text-base text-ss-tinta" data-testid="text-events-error">
                 {t.errorMessage}
               </p>
             </div>
@@ -413,11 +429,15 @@ export default function EventsPage() {
               ))}
             </div>
           ) : filteredEvents && filteredEvents.length === 0 ? (
-            <div className="text-center py-12" data-testid="container-events-empty">
-              <CalendarDays className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">
-                {t.noResults}
+            /* Vacío: una línea en la sans, al inicio, sin icono. Sin eventos en absoluto, "No hay
+               eventos programados" y el enlace al Monitor; si solo el filtro no da resultados, noResults. */
+            <div className="border-t border-ss-rule pt-6" data-testid="container-events-empty">
+              <p className="text-base text-ss-tinta mb-4" data-testid="text-events-empty">
+                {events && events.length > 0 ? t.noResults : `${t.noEvents}.`}
               </p>
+              {(!events || events.length === 0) && (
+                <TextLink href="/news">{t.monitorLink}</TextLink>
+              )}
             </div>
           ) : (
             <motion.div
@@ -441,6 +461,7 @@ export default function EventsPage() {
             </motion.div>
           )}
         </div>
+      </div>
       </main>
 
       <Footer />

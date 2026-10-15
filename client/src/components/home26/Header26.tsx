@@ -9,9 +9,12 @@ import Search26 from "./Search26";
 import { LangList26, LangSwitch26 } from "./LangMenu26";
 
 // Rutas que también marcan una sección del menú, además de sus propias subrutas
-// (/articles estaba bajo Publicaciones junto a /news en el Header anterior)
+// (/articles estaba bajo Publicaciones junto a /news en el Header anterior). Siguen el
+// número § de su encabezado (index.css): experiencia 01, eventos y boletín 04, oficinas 06.
 const alsoActive: Record<string, string[]> = {
-  "/news": ["/articles"],
+  "/about": ["/experience"],
+  "/news": ["/articles", "/events", "/newsletter"],
+  "/contact": ["/offices"],
 };
 
 // Un solo panel abierto a la vez: menú móvil o buscador, nunca los dos
@@ -212,7 +215,7 @@ export default function Header26({ localized = false }: Header26Props) {
                       onClick={() => closePanel("menu")}
                       className="flex items-baseline gap-5 py-4"
                     >
-                      <span aria-hidden="true" className="ss-label ss-num w-8 text-white/[.66]">
+                      <span aria-hidden="true" className="ss-label ss-num w-8 shrink-0 text-white/[.66]">
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       {/* Romana 350 a 34 px (ss26.css, #mobile-menu) */}

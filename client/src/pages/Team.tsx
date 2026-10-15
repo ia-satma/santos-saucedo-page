@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, type SyntheticEvent } from "react";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import { Link } from "wouter";
@@ -16,9 +16,10 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
-import { equipoPhotos } from "@/lib/equipoPhotos";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getTeamPhotoObjectPosition } from "@/lib/teamPhotoPosition";
+import { equipoMosaicPhotos as equipoPhotos } from "@/lib/equipoMosaicPhotos";
+import { fallbackToOriginalSrc, getTeamPhotoSrcSet, highFetchPriority } from "@/lib/teamPhotoSources";
 import { Eyebrow } from "@/components/editorial";
 import type { TeamMember, PracticeGroup, IndustryGroup } from "@shared/schema";
 
@@ -131,6 +132,11 @@ export default function Team() {
     clearFilters: string;
     noResults: string;
     teamMembers: string;
+    associatesTitle: string;
+    categoryLabel: string;
+    initialLabel: string;
+    allLetters: string;
+    mosaicNote: string;
     positions: {
       foundingPartner: string;
       partner: string;
@@ -158,6 +164,11 @@ export default function Team() {
       clearFilters: "Clear filters",
       noResults: "No team members match your criteria",
       teamMembers: "team members",
+      associatesTitle: "Team members",
+      categoryLabel: "Category",
+      initialLabel: "Initial",
+      allLetters: "All",
+      mosaicNote: "Portraits of {n} team members.",
       positions: {
         foundingPartner: "Founding Partner",
         partner: "Partner",
@@ -185,6 +196,11 @@ export default function Team() {
       clearFilters: "Limpiar filtros",
       noResults: "No hay miembros que coincidan con los criterios",
       teamMembers: "miembros del equipo",
+      associatesTitle: "Integrantes del equipo",
+      categoryLabel: "Categoría",
+      initialLabel: "Inicial",
+      allLetters: "Todas",
+      mosaicNote: "Retratos de {n} integrantes del equipo.",
       positions: {
         foundingPartner: "Socio fundador",
         partner: "Socio",
@@ -212,6 +228,11 @@ export default function Team() {
       clearFilters: "Filter löschen",
       noResults: "Keine Ergebnisse gefunden",
       teamMembers: "Teammitglieder",
+      associatesTitle: "Teammitglieder",
+      categoryLabel: "Kategorie",
+      initialLabel: "Buchstabe",
+      allLetters: "Alle",
+      mosaicNote: "Porträts von {n} Teammitgliedern.",
       positions: {
         foundingPartner: "Gründungspartner",
         partner: "Partner",
@@ -239,6 +260,11 @@ export default function Team() {
       clearFilters: "清除筛选",
       noResults: "未找到结果",
       teamMembers: "团队成员",
+      associatesTitle: "团队成员",
+      categoryLabel: "类别",
+      initialLabel: "首字母",
+      allLetters: "全部",
+      mosaicNote: "{n} 位团队成员的肖像。",
       positions: {
         foundingPartner: "创始合伙人",
         partner: "合伙人",
@@ -266,6 +292,11 @@ export default function Team() {
       clearFilters: "필터 초기화",
       noResults: "결과 없음",
       teamMembers: "팀원",
+      associatesTitle: "팀 구성원",
+      categoryLabel: "구분",
+      initialLabel: "이니셜",
+      allLetters: "전체",
+      mosaicNote: "팀 구성원 {n}명의 사진.",
       positions: {
         foundingPartner: "창립 파트너",
         partner: "파트너",
@@ -293,6 +324,11 @@ export default function Team() {
       clearFilters: "フィルターをクリア",
       noResults: "結果が見つかりません",
       teamMembers: "チームメンバー",
+      associatesTitle: "チームメンバー",
+      categoryLabel: "区分",
+      initialLabel: "頭文字",
+      allLetters: "すべて",
+      mosaicNote: "チームメンバー{n}名の写真。",
       positions: {
         foundingPartner: "創立パートナー",
         partner: "パートナー",
@@ -320,6 +356,11 @@ export default function Team() {
       clearFilters: "مسح الفلاتر",
       noResults: "لم يتم العثور على نتائج",
       teamMembers: "أعضاء الفريق",
+      associatesTitle: "أعضاء الفريق",
+      categoryLabel: "الفئة",
+      initialLabel: "الحرف الأول",
+      allLetters: "الكل",
+      mosaicNote: "صور {n} من أعضاء الفريق.",
       positions: {
         foundingPartner: "شريك مؤسس",
         partner: "شريك",
@@ -347,6 +388,11 @@ export default function Team() {
       clearFilters: "Сбросить фильтры",
       noResults: "Результаты не найдены",
       teamMembers: "членов команды",
+      associatesTitle: "Сотрудники",
+      categoryLabel: "Категория",
+      initialLabel: "Первая буква",
+      allLetters: "Все",
+      mosaicNote: "Портреты сотрудников: {n}.",
       positions: {
         foundingPartner: "Партнёр-основатель",
         partner: "Партнёр",
@@ -374,6 +420,11 @@ export default function Team() {
       clearFilters: "Effacer les filtres",
       noResults: "Aucun résultat trouvé",
       teamMembers: "membres de l'équipe",
+      associatesTitle: "Membres de l'équipe",
+      categoryLabel: "Catégorie",
+      initialLabel: "Initiale",
+      allLetters: "Toutes",
+      mosaicNote: "Portraits de {n} membres de l'équipe.",
       positions: {
         foundingPartner: "Associé fondateur",
         partner: "Associé",
@@ -401,6 +452,11 @@ export default function Team() {
       clearFilters: "Cancella filtri",
       noResults: "Nessun risultato trovato",
       teamMembers: "membri del team",
+      associatesTitle: "Membri del team",
+      categoryLabel: "Categoria",
+      initialLabel: "Iniziale",
+      allLetters: "Tutte",
+      mosaicNote: "Ritratti di {n} membri del team.",
       positions: {
         foundingPartner: "Partner fondatore",
         partner: "Partner",
@@ -475,91 +531,124 @@ export default function Team() {
 
   const getPhotoSrc = (member: TeamMember) => member.imageUrl || null;
 
+  // Retratos de socios: WebP con srcset (mismo sizes en las dos variantes, así el navegador
+  // elige el mismo archivo y lo descarga una vez); si la variante falla, vuelve al original.
+  const photoSrcSetProps = (member: TeamMember) => {
+    const srcSet = getTeamPhotoSrcSet(getPhotoSrc(member));
+    return srcSet ? { srcSet, sizes: "50vw" } : {};
+  };
+  const handlePhotoError = (e: SyntheticEvent<HTMLImageElement>) => {
+    if (!fallbackToOriginalSrc(e)) e.currentTarget.style.display = "none";
+  };
+
+  // Cargo de cada persona en su retrato (no la etiqueta plural de la sección): titleEs en
+  // español; en los demás idiomas, title. Fuera de en ese título es inglés: va en <bdi lang="en">
+  // (aislado del árabe sin cambiar la alineación del pie de foto).
+  const renderMemberRole = (member: TeamMember, fallback: string, className: string) => {
+    const englishFallback = language !== "es" && language !== "en" && !!member.title;
+    const text = language === "es" ? (member.titleEs || member.title || fallback) : (member.title || fallback);
+    return (
+      <p className={`ss-label text-[11px] text-white/75 ${className}`}>
+        {englishFallback ? <bdi lang="en" dir="ltr">{text}</bdi> : text}
+      </p>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-background" data-testid="page-team">
       <SEOHead page="team" language={language} />
       <Header />
-      
-      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-team-hero">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            <Eyebrow num="03" tone="navy" className="mb-6" />
-            <h1 
-              className="mb-5"
-              data-testid="text-team-title"
-            >
-              {t.title}
-            </h1>
-            <p 
-              data-testid="text-team-subtitle"
-            >
-              {t.subtitle}
-            </p>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* Filter bar: se pega bajo la cabecera sticky (z-40 < z-50 del header). Blanca y opaca,
-          con filete inferior en Línea que la separa de las fotos que pasan debajo. */}
-      <div className="bg-white sticky top-[var(--ss-header-h)] z-40 border-b border-ss-rule">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-4">
-          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-            <div className="relative flex-1">
-              <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ss-medio" aria-hidden="true" />
-              {/* Campo recto con el filete de campo (--ss-input); foco Azul Marino */}
-              <Input
-                type="text"
-                placeholder={t.searchPlaceholder}
-                aria-label={t.searchPlaceholder}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="ps-9 bg-white border-ss-input text-ss-tinta placeholder:text-ss-medio focus-visible:ring-ss-marino focus-visible:border-ss-marino"
-                data-testid="input-search"
-              />
-            </div>
-            <div className="flex flex-wrap gap-2 items-center">
-              <Select value={filterSeniority} onValueChange={setFilterSeniority}>
-                <SelectTrigger className="w-40 bg-white border-ss-input text-ss-tinta text-sm" aria-label={t.seniority} data-testid="select-seniority">
-                  <SelectValue placeholder={t.seniority} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t.all}</SelectItem>
-                  <SelectItem value="partners">{t.partnersOnly}</SelectItem>
-                  <SelectItem value="ofcounsel">{t.ofCounsel}</SelectItem>
-                  <SelectItem value="associates">{language === "es" ? "Nuestro equipo" : "Our Team"}</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={filterLetter} onValueChange={setFilterLetter}>
-                <SelectTrigger className="w-28 bg-white border-ss-input text-ss-tinta text-sm" aria-label={t.alphabetic} data-testid="select-alphabetic">
-                  <SelectValue placeholder={t.alphabetic} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t.all}</SelectItem>
-                  {alphabet.map(letter => (
-                    <SelectItem key={letter} value={letter}>{letter}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+      {/* El encabezado va dentro de main: "Saltar al contenido" y el landmark incluyen el h1 */}
+      <main id="main-content" data-testid="section-team-main">
+        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-team-hero">
+          <div className="ss-container">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+            >
+              <Eyebrow num="03" tone="navy" className="mb-6" />
+              <h1 
+                className="mb-5"
+                data-testid="text-team-title"
+              >
+                {t.title}
+              </h1>
+              <p 
+                data-testid="text-team-subtitle"
+              >
+                {t.subtitle}
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Filter bar: desde sm se pega bajo la cabecera sticky (z-40 < z-50 del header); en el
+            teléfono no, porque taparía casi una cuarta parte de la pantalla sobre los retratos.
+            Blanca y opaca, con filete inferior en Línea que la separa de las fotos. */}
+        <div className="bg-white sm:sticky sm:top-[var(--ss-header-h)] z-40 border-b border-ss-rule">
+          <div className="ss-container py-4">
+            {/* Teléfono: búsqueda a todo lo ancho y debajo los dos filtros en dos columnas iguales.
+                Cada filtro lleva su etiqueta visible (encima; al lado desde lg). */}
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 items-stretch sm:items-end lg:items-center">
+              <div className="relative w-full sm:flex-1 sm:min-w-[12rem]">
+                <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ss-medio" aria-hidden="true" />
+                {/* Campo recto con el filete de campo (--ss-input); foco Azul Marino. 44 px en el
+                    teléfono, como los selectores */}
+                <Input
+                  type="text"
+                  placeholder={t.searchPlaceholder}
+                  aria-label={t.searchPlaceholder}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="h-11 sm:h-9 ps-9 bg-white border-ss-input text-ss-tinta placeholder:text-ss-medio focus-visible:ring-ss-marino focus-visible:border-ss-marino"
+                  data-testid="input-search"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:flex sm:gap-4 lg:gap-6">
+                <div className="flex min-w-0 flex-col gap-1 lg:flex-row lg:items-center lg:gap-2">
+                  <span id="team-filter-category" className="ss-label text-ss-medio">{t.categoryLabel}</span>
+                  <Select value={filterSeniority} onValueChange={setFilterSeniority}>
+                    <SelectTrigger className="w-full sm:w-48 bg-white border-ss-input text-ss-tinta text-sm" aria-labelledby="team-filter-category" data-testid="select-seniority">
+                      <SelectValue placeholder={t.seniority} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t.all}</SelectItem>
+                      <SelectItem value="partners">{t.partnersOnly}</SelectItem>
+                      <SelectItem value="ofcounsel">{t.ofCounsel}</SelectItem>
+                      <SelectItem value="associates">{t.associatesTitle}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex min-w-0 flex-col gap-1 lg:flex-row lg:items-center lg:gap-2">
+                  <span id="team-filter-initial" className="ss-label text-ss-medio">{t.initialLabel}</span>
+                  <Select value={filterLetter} onValueChange={setFilterLetter}>
+                    <SelectTrigger className="w-full sm:w-24 bg-white border-ss-input text-ss-tinta text-sm" aria-labelledby="team-filter-initial" data-testid="select-alphabetic">
+                      <SelectValue placeholder={t.alphabetic} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t.allLetters}</SelectItem>
+                      {alphabet.map(letter => (
+                        <SelectItem key={letter} value={letter}>{letter}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
               {hasActiveFilters && (
-                <Button variant="ghost" size="default" onClick={clearFilters} className="text-ss-marino underline-offset-4 hover:underline" data-testid="button-clear-filters">
+                <Button variant="ghost" size="default" onClick={clearFilters} className="self-start sm:self-auto text-ss-marino underline-offset-4 hover:underline" data-testid="button-clear-filters">
                   {t.clearFilters}
                 </Button>
               )}
-              <span className="text-ss-medio text-sm ms-2 hidden sm:inline" data-testid="text-results-count">{totalVisible} {t.teamMembers}</span>
+              <span className="text-ss-medio text-sm hidden lg:inline" data-testid="text-results-count">{totalVisible} {t.teamMembers}</span>
             </div>
           </div>
         </div>
-      </div>
-
-      <main id="main-content" data-testid="section-team-main">
 
         {errorAll ? (
-          <div className="max-w-7xl mx-auto px-6 lg:px-12 py-24" data-testid="container-team-error">
+          <div className="ss-container py-24" data-testid="container-team-error">
             <p className="text-ss-tinta" data-testid="text-team-error">{t.errorMessage}</p>
           </div>
         ) : isLoadingAll ? (
@@ -571,7 +660,7 @@ export default function Team() {
             ))}
           </div>
         ) : totalVisible === 0 ? (
-          <div className="max-w-7xl mx-auto px-6 lg:px-12 py-24" data-testid="container-team-empty">
+          <div className="ss-container py-24" data-testid="container-team-empty">
             <p className="text-ss-tinta">{t.noResults}</p>
             {hasActiveFilters && (
               <Button variant="outline" onClick={clearFilters} className="mt-6" data-testid="button-clear-empty">
@@ -584,7 +673,7 @@ export default function Team() {
             {/* ─── SOCIOS ──────────────────────────────────────── */}
             {showPartners && groupedMembers.partners.length > 0 && (
               <section data-testid="section-partners">
-                <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-10 pb-4">
+                <div className="ss-container pt-10 pb-4">
                   <h2 className="ss-h2-sm">
                     {t.partnersOnly}
                   </h2>
@@ -615,7 +704,7 @@ export default function Team() {
                             </div>
                             {/* Retrato siempre en grises (también al pasar el cursor) y velo neutro único */}
                             {getPhotoSrc(member) && (
-                              <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug), transform: isActive ? "scale(1.01)" : "scale(1)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                              <img src={getPhotoSrc(member) || undefined} {...photoSrcSetProps(member)} alt="" aria-hidden="true" loading="eager" {...highFetchPriority} decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug), transform: isActive ? "scale(1.01)" : "scale(1)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)" }} onError={handlePhotoError} />
                             )}
                             <div className="absolute inset-0 navy-photo-scrim" />
                             <div className="absolute top-0 right-0 w-px h-full bg-white/10" />
@@ -624,7 +713,7 @@ export default function Team() {
                             </div>
                             <div className="absolute bottom-5 left-4 right-4" style={{ opacity: isActive ? 1 : 0, transform: isActive ? "translateY(0)" : "translateY(6px)", transition: "opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s" }}>
                               <p className="font-heading text-[18px] leading-[1.2] tracking-[-0.005em] mb-1 text-white whitespace-nowrap overflow-hidden text-ellipsis">{member.name}</p>
-                              <p className="ss-label text-[11px] text-white/75 mb-3">{t.partnersOnly}</p>
+                              {renderMemberRole(member, t.positions.partner, "mb-3")}
                               <p className="ss-label text-[11px] text-white/75 flex items-center gap-2">
                                 <span>{t.viewProfile}</span>
                                 <span aria-hidden="true">→</span>
@@ -644,12 +733,13 @@ export default function Team() {
                         <span className="text-2xl font-heading text-ss-marino/50 select-none">{getInitials(member.name)}</span>
                       </div>
                       {getPhotoSrc(member) && (
-                        <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                        <img src={getPhotoSrc(member) || undefined} {...photoSrcSetProps(member)} alt="" aria-hidden="true" loading="eager" {...highFetchPriority} decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }} onError={handlePhotoError} />
                       )}
                       <div className="absolute inset-0 navy-photo-scrim" />
+                      {/* Nombre y, debajo, el cargo de cada socio, al pie del velo (donde es más denso) */}
                       <div className="absolute bottom-0 left-0 right-0 px-3 pb-3">
-                        <p className="ss-label text-[11px] text-white/75 mb-1">{t.partnersOnly}</p>
                         <p className="font-heading text-[16px] leading-[1.2] text-white line-clamp-2">{member.name}</p>
+                        {renderMemberRole(member, t.positions.partner, "mt-1")}
                       </div>
                     </Link>
                   ))}
@@ -660,7 +750,7 @@ export default function Team() {
             {/* ─── OF COUNSEL ──────────────────────────────────── */}
             {showOfCounsel && groupedMembers.ofCounsel.length > 0 && (
               <section data-testid="section-ofcounsel">
-                <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-10 pb-4">
+                <div className="ss-container pt-10 pb-4">
                   <h2 className="ss-h2-sm">
                     {t.ofCounsel}
                   </h2>
@@ -683,7 +773,7 @@ export default function Team() {
                           <span className="text-4xl font-heading text-ss-marino/50 select-none">{getInitials(member.name)}</span>
                         </div>
                         {getPhotoSrc(member) && (
-                          <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug), transform: isActive ? "scale(1.04)" : "scale(1)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)" }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                          <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug), transform: isActive ? "scale(1.04)" : "scale(1)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)" }} onError={handlePhotoError} />
                         )}
                         <div className="absolute inset-0 navy-photo-scrim" />
                         <div className="absolute top-0 right-0 w-px h-full bg-white/10" />
@@ -692,7 +782,7 @@ export default function Team() {
                         </div>
                         <div className="absolute bottom-6 left-5 right-5" style={{ opacity: isActive ? 1 : 0, transform: isActive ? "translateY(0)" : "translateY(8px)", transition: "opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s" }}>
                           <p className="font-heading text-[18px] leading-[1.2] tracking-[-0.005em] mb-1 text-white">{member.name}</p>
-                          <p className="ss-label text-[11px] text-white/75 mb-3">{member.title}</p>
+                          {renderMemberRole(member, t.ofCounsel, "mb-3")}
                           <p className="ss-label text-[11px] text-white/75 flex items-center gap-2">
                             <span>{t.viewProfile}</span>
                             <span aria-hidden="true">→</span>
@@ -710,12 +800,12 @@ export default function Team() {
                         <span className="text-3xl font-heading text-ss-marino/50 select-none">{getInitials(member.name)}</span>
                       </div>
                       {getPhotoSrc(member) && (
-                        <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+                        <img src={getPhotoSrc(member) || undefined} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }} onError={handlePhotoError} />
                       )}
                       <div className="absolute inset-0 navy-photo-scrim" />
                       <div className="absolute bottom-0 left-0 right-0 px-3 pb-3">
-                        <p className="ss-label text-[11px] text-white/75 mb-1">{member.title}</p>
                         <p className="font-heading text-[16px] leading-[1.2] text-white line-clamp-2">{member.name}</p>
+                        {renderMemberRole(member, t.ofCounsel, "mt-1")}
                       </div>
                     </Link>
                   ))}
@@ -723,15 +813,20 @@ export default function Team() {
               </section>
             )}
 
-            {/* ─── NUESTRO EQUIPO (anonymous photo mosaic — no name mapping yet) ── */}
+            {/* ─── INTEGRANTES DEL EQUIPO (mosaico anónimo: aún sin nombres) ─────── */}
             {showAssociates && equipoPhotos.length > 0 && (
               <section data-testid="section-associates">
-                <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-10 pb-4">
+                <div className="ss-container pt-10 pb-4">
+                  {/* No repite el h1 "Nuestro equipo": "Integrantes del equipo", como en la redacción */}
                   <h2 className="ss-h2-sm">
-                    {language === "es" ? "Nuestro equipo" : "Our Team"}
+                    {t.associatesTitle}
                   </h2>
+                  {/* Los retratos son decorativos (alt vacío) hasta que exista la relación de nombres */}
+                  <p className="sr-only">{t.mosaicNote.replace("{n}", String(equipoPhotos.length))}</p>
                 </div>
-                {/* Desktop: expanding panels — multiple rows */}
+                {/* Desktop: filas que se expanden al pasar el cursor. Sin cursor de enlace: no llevan
+                    a ninguna parte. La última fila se completa con huecos para que cada retrato
+                    conserve el mismo ancho y los bordes de las columnas no se desplacen. */}
                 <div className="hidden lg:block">
                   {chunkArray(equipoPhotos, equipoDesktopColumns).map((row, rowIdx) => (
                     <div
@@ -746,7 +841,7 @@ export default function Team() {
                           <div
                             key={panelKey}
                             data-testid={`img-equipo-${rowIdx}-${colIdx}`}
-                            className="relative overflow-hidden cursor-pointer block"
+                            className="relative overflow-hidden block"
                             style={{ flex: isActive ? 4 : 1, transition: "flex 0.45s cubic-bezier(0.22, 1, 0.36, 1)", minWidth: 0 }}
                             onMouseEnter={() => setAssocPanels(prev => ({ ...prev, [rowIdx]: panelKey }))}
                           >
@@ -756,14 +851,18 @@ export default function Team() {
                           </div>
                         );
                       })}
+                      {Array.from({ length: equipoDesktopColumns - row.length }).map((_, padIdx) => (
+                        <div key={`pad-${padIdx}`} aria-hidden="true" style={{ flex: 1, minWidth: 0 }} />
+                      ))}
                     </div>
                   ))}
                 </div>
-                {/* Mobile: 2-column portrait grid */}
-                <div className="lg:hidden grid grid-cols-2 gap-px">
+                {/* Teléfono y tableta: retícula de columnas iguales (3 en el teléfono: un tercio menos
+                    de recorrido y menos ampliación de los originales de 295 px) */}
+                <div className="lg:hidden grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-px">
                   {equipoPhotos.map((photo, idx) => (
-                    <div key={idx} className="relative overflow-hidden group block cursor-pointer" style={{ aspectRatio: "3/4" }} data-testid={`img-equipo-mob-${idx}`}>
-                      <img src={photo} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" />
+                    <div key={idx} className="relative overflow-hidden block" style={{ aspectRatio: "3/4" }} data-testid={`img-equipo-mob-${idx}`}>
+                      <img src={photo} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top" />
                     </div>
                   ))}
                 </div>
