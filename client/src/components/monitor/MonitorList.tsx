@@ -327,8 +327,8 @@ export function MonitorList({
   // Solo lo publicado, del más reciente al más antiguo
   const items = useMemo(() => {
     const published = (data ?? []).filter((item) => item.published !== false && item.id !== excludeId);
-    return [...published].sort((a, b) => new Date(b.date ?? 0).getTime() - new Date(a.date ?? 0).getTime());
-  }, [data, excludeId]);
+    return [...published].sort((a, b) => (limit ? Number(b.featuredHome===true)-Number(a.featuredHome===true) : 0) || new Date(b.date ?? 0).getTime() - new Date(a.date ?? 0).getTime());
+  }, [data, excludeId, limit]);
 
   // Categorías con notas, en el orden del esquema; los filtros solo si hay al menos dos
   const presentCategories = useMemo(

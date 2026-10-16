@@ -92,6 +92,11 @@ export const news = pgTable("news", {
   slug: text("slug").notNull().unique(),
   imageUrl: text("image_url"),
   date: timestamp("date").defaultNow(),
+  documentUrl: text("document_url"),
+  documentUrlEs: text("document_url_es"),
+  sourceUrl: text("source_url"),
+  tags: jsonb("tags").$type<string[]>(),
+  featuredHome: boolean("featured_home").default(false),
   published: boolean("published").default(true),
   category: text("category").default("press"),
   categoryEs: text("category_es").default("Prensa"),
@@ -115,7 +120,7 @@ export const newsCategories = [
   { value: "alerts", en: "Alerts", es: "Alertas" },
 ] as const;
 
-export const insertNewsSchema = createInsertSchema(news).omit({ id: true, date: true });
+export const insertNewsSchema = createInsertSchema(news).omit({ id: true });
 export type InsertNews = z.infer<typeof insertNewsSchema>;
 export type News = typeof news.$inferSelect;
 
@@ -426,6 +431,7 @@ export const blogPostTags = pgTable("blog_post_tags", {
 
 // Media Library
 export const mediaItems = pgTable("media_items", {
+  archivedAt: timestamp("archived_at"),
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   filename: text("filename").notNull(),
   originalName: text("original_name").notNull(),

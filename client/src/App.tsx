@@ -1,3 +1,4 @@
+import { AdminShell } from "@/features/admin/AdminShell";
 import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from "wouter";
 import { useEffect, lazy, Suspense } from "react";
 import { MotionConfig } from "framer-motion";
@@ -38,6 +39,13 @@ const Interns = lazy(() => import("@/pages/Interns"));
 const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
 const Terms = lazy(() => import("@/pages/Terms"));
 const Newsletter = lazy(() => import("@/pages/Newsletter"));
+const AdminOverview = lazy(() => import("@/pages/admin/AdminOverview"));
+const AdminContentHub = lazy(() => import("@/pages/admin/AdminContentHub"));
+const AdminMedia = lazy(() => import("@/pages/admin/AdminMedia"));
+const AdminOrder = lazy(() => import("@/pages/admin/AdminOrder"));
+const AdminNewsForm = lazy(() => import("@/pages/admin/AdminNewsForm"));
+const AdminManual = lazy(() => import("@/pages/admin/AdminManual"));
+const ContentPreview = lazy(() => import("@/features/admin/ContentPreview"));
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
 const AdminSiteConfig = lazy(() => import("@/pages/admin/AdminSiteConfig"));
 const AdminJobs = lazy(() => import("@/pages/admin/AdminJobs"));
@@ -67,6 +75,8 @@ const GalleryAdmin = lazy(() => import("@/pages/admin/GalleryAdmin"));
 
 function SkipLinks() {
   const { language } = useLanguage();
+  const [location] = useLocation();
+  if(location.startsWith("/admin")&&!location.startsWith("/admin/preview/"))return null;
   
   const labels = {
     en: {
@@ -177,7 +187,7 @@ function Router() {
     return <StaticAdminUnavailable />;
   }
 
-  return (
+  const routes = (
     <Suspense fallback={null}>
       <Switch>
         <Route path="/" component={Home} />
@@ -210,11 +220,20 @@ function Router() {
         <Route path="/admin/inbox" component={AdminInbox} />
         <Route path="/admin/login" component={AdminLogin} />
         <Route path="/admin/setup" component={AdminSetup} />
-        <Route path="/admin/dashboard" component={AdminDashboard} />
+        <Route path="/admin/dashboard" component={AdminOverview} />
+        <Route path="/admin" component={AdminOverview} />
+        <Route path="/admin/content" component={AdminContentHub} />
+        <Route path="/admin/media" component={AdminMedia} />
+        <Route path="/admin/order" component={AdminOrder} />
+        <Route path="/admin/manual" component={AdminManual} />
+        <Route path="/admin/operations" component={AdminDashboard} />
+        <Route path="/admin/preview/:kind/:slug" component={ContentPreview} />
         <Route path="/admin/posts" component={AdminPosts} />
         <Route path="/admin/posts/new" component={AdminPostForm} />
         <Route path="/admin/posts/:id/edit" component={AdminPostForm} />
         <Route path="/admin/categories" component={AdminCategories} />
+        <Route path="/admin/news/new" component={AdminNewsForm} />
+        <Route path="/admin/news/:id/edit" component={AdminNewsForm} />
         <Route path="/admin/news" component={AdminNews} />
         <Route path="/admin/news/:id" component={AdminArticleDetail} />
         <Route path="/admin/agents" component={AdminAgents} />
@@ -237,6 +256,8 @@ function Router() {
       </Switch>
     </Suspense>
   );
+  const administrative = location.startsWith("/admin") && !["/admin/login","/admin/setup"].includes(location) && !location.startsWith("/admin/preview/");
+  return administrative ? <AdminShell>{routes}</AdminShell> : routes;
 }
 
 // reducedMotion="user": con "reducir movimiento" del sistema, framer-motion deja de mover

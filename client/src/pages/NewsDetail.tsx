@@ -1,3 +1,4 @@
+import { useContentEntity, useContentPreview } from "@/features/admin/ContentPreview";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useState } from "react";
 import { Link, useParams } from "wouter";
@@ -132,10 +133,7 @@ export default function NewsDetail() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
 
-  const { data: newsArticle, isLoading, error } = useQuery<News>({
-    queryKey: [`/api/news/${slug}`],
-    enabled: !!slug,
-  });
+  const { data: newsArticle, isLoading, error } = useContentEntity<News>("news",slug);
 
   const { data: allNews } = useQuery<News[]>({
     queryKey: ["/api/news"],
@@ -513,6 +511,8 @@ export default function NewsDetail() {
             <div>
               <NewsHeroImage key={heroImage} src={heroImage} />
 
+              {(newsArticle?.documentUrl || newsArticle?.documentUrlEs) && <div className="mb-10 border-y border-ss-rule py-5"><a href={(language==='es'?newsArticle?.documentUrlEs||newsArticle?.documentUrl:newsArticle?.documentUrl||newsArticle?.documentUrlEs)!} target="_blank" rel="noopener noreferrer" className="text-sm underline underline-offset-4">{language==='es'?'Consultar documento PDF':'Read PDF document'}</a></div>}
+              {newsArticle?.sourceUrl && <p className="text-xs text-ss-medio mb-8"><a href={newsArticle?.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline">{language==='es'?'Fuente original':'Original source'}</a></p>}
               <div
                 className="mb-12 relative"
                 data-testid="container-news-content"

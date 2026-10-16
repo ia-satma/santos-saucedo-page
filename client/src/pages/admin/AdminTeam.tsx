@@ -1,3 +1,4 @@
+import { isNamedOnTeamPage } from "@shared/teamVisibility";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -350,16 +351,18 @@ export default function AdminTeam() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [page, setPage] = useState(1);
+  const [visibility,setVisibility]=useState("all");
   const limit = 20;
 
   const { data, isLoading } = useQuery<TeamResponse>({
-    queryKey: ["/api/admin/team", { search, role: roleFilter, page, limit }],
+    queryKey: ["/api/admin/team", { search, role: roleFilter, visibility, page, limit }],
     queryFn: async () => {
       const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
         search,
         role: roleFilter,
+        visibility,
       });
       const response = await adminApiRequest("GET", `/api/admin/team?${params}`);
       return response.json();
@@ -440,6 +443,7 @@ export default function AdminTeam() {
               <h1 className="text-3xl font-bold">{t.title}</h1>
             </div>
           </div>
+          <Link href="/admin/order" className="underline text-sm">Ordenar abogados</Link>
           <Link href="/admin/team/new">
             <Button data-testid="button-add-member">
               <UserPlus className="w-4 h-4 mr-2" />
@@ -493,6 +497,7 @@ export default function AdminTeam() {
                   data-testid="input-search"
                 />
               </div>
+              <Select value={visibility} onValueChange={value=>{setVisibility(value);setPage(1);}}><SelectTrigger className="w-full md:w-[180px]" aria-label="Filtrar visibilidad"><SelectValue/></SelectTrigger><SelectContent><SelectItem value="all">Todos los estados</SelectItem><SelectItem value="visible">Visibles en el sitio</SelectItem><SelectItem value="hidden">Ocultos</SelectItem></SelectContent></Select>
               <Select
                 value={roleFilter}
                 onValueChange={(value) => {
@@ -527,7 +532,7 @@ export default function AdminTeam() {
                       <TableHead className="w-[300px]">{t.name}</TableHead>
                       <TableHead>{t.role}</TableHead>
                       <TableHead>{t.email}</TableHead>
-                      <TableHead className="text-right">{t.actions}</TableHead>
+                      <TableHead>Estado</TableHead><TableHead className="text-right">{t.actions}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -555,7 +560,7 @@ export default function AdminTeam() {
                         <TableCell>{member.email || "-"}</TableCell>
                         <TableCell>
                           <div className="flex items-center justify-end gap-2">
-                            <Link href={`/team/${member.slug}`}>
+                            <Link href={`/admin/preview/team/${member.id}`}>
                               <Button
                                 variant="ghost"
                                 size="icon"

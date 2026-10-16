@@ -1,3 +1,4 @@
+import { useContentEntity, useContentPreview } from "@/features/admin/ContentPreview";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { Link, useParams } from "wouter";
 import { useMemo, useState, type ReactNode } from "react";
@@ -199,10 +200,7 @@ export default function PracticeGroupDetail() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
 
-  const { data: practiceGroup, isLoading, error } = useQuery<PracticeGroup>({
-    queryKey: [`/api/practice-groups/${slug}`],
-    enabled: !!slug,
-  });
+  const { data: practiceGroup, isLoading, error } = useContentEntity<PracticeGroup>("practices",slug);
 
   const { data: allTeamMembers } = useQuery<TeamMember[]>({
     queryKey: ["/api/team"],

@@ -1,3 +1,4 @@
+import { inlineText, FormattedText } from './FormattedText';
 interface LeadParagraphProps {
   eyebrow?: string;
   firstParagraph: string;
@@ -68,6 +69,8 @@ export function LeadParagraph({
   className = "",
   testId,
 }: LeadParagraphProps) {
+  const complete=[firstParagraph,...restParagraphs].join('\n\n');
+  if(/(^|\n)\s*(?:#{1,3}\s|[-*]\s)/.test(complete))return <div className={className} data-testid={testId}><FormattedText text={complete}/></div>;
   const [lead, firstBody] = splitLead(firstParagraph);
   const body = [firstBody, ...restParagraphs].filter((p) => p.trim().length > 0);
   const quote = variant === "quote" ? "md:border-s md:border-ss-rule md:ps-8" : "";
@@ -82,13 +85,13 @@ export function LeadParagraph({
           {eyebrow}
         </p>
       )}
-      {lead && <p className="ss-lead">{lead}</p>}
+      {lead && <p className="ss-lead">{inlineText(lead)}</p>}
       {body.map((p, i) => (
         <p
           key={i}
           className={`ss-prose text-ss-tinta text-[17px] md:text-[18px] ${lead || i > 0 ? "mt-5" : ""}`}
         >
-          {p}
+          {inlineText(p)}
         </p>
       ))}
     </div>

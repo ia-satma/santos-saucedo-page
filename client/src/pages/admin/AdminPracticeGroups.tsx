@@ -1,3 +1,4 @@
+import { TextEditor } from "@/features/admin/TextEditor";
 import { MediaField } from "@/features/site-config/MediaField";
 import type { TeamMember } from "@shared/schema";
 import { useEffect, useState } from "react";
@@ -759,7 +760,7 @@ export default function AdminPracticeGroups() {
               </Link>
               <div className="flex items-center gap-2">
                 <Briefcase className="h-5 w-5 text-primary" />
-                <h1 className="text-xl font-semibold" data-testid="text-page-title">
+                <Link href="/admin/order?catalog=practices" className="text-sm underline mr-4">Ordenar catálogo</Link><h1 className="text-xl font-semibold" data-testid="text-page-title">
                   {t.title}
                 </h1>
               </div>
@@ -885,12 +886,7 @@ export default function AdminPracticeGroups() {
                           <FormItem>
                             <FormLabel>{t.fullDescriptionEn}</FormLabel>
                             <FormControl>
-                              <Textarea
-                                {...field}
-                                placeholder={t.fullDescriptionEnPlaceholder}
-                                rows={4}
-                                data-testid="input-full-description-en"
-                              />
+                              <TextEditor id="practices-fullDescription" value={field.value || ""} onChange={field.onChange}/>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -904,12 +900,7 @@ export default function AdminPracticeGroups() {
                           <FormItem>
                             <FormLabel>{t.fullDescriptionEs}</FormLabel>
                             <FormControl>
-                              <Textarea
-                                {...field}
-                                placeholder={t.fullDescriptionEsPlaceholder}
-                                rows={4}
-                                data-testid="input-full-description-es"
-                              />
+                              <TextEditor id="practices-fullDescriptionEs" value={field.value || ""} onChange={field.onChange}/>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
