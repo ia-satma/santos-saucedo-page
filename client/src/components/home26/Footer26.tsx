@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { Settings } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SUPPORTED_LANGUAGES } from "@shared/schema";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
@@ -154,9 +155,20 @@ export default function Footer26({ localized = false }: Footer26Props) {
       <div className="ss-container">
         <div className="flex flex-col gap-4 border-t border-white/15 py-8 text-[13px] leading-relaxed text-white/65 md:flex-row md:items-center md:justify-between md:gap-10">
           <p>{t.disclaimer}</p>
-          <p className="ss-num shrink-0" data-testid="text-copyright">
-            © {year} {t.rights}
-          </p>
+          <div className="flex shrink-0 items-center gap-3">
+            <p className="ss-num" data-testid="text-copyright">
+              © {year} {t.rights}
+            </p>
+            {/* Acceso discreto al panel del despacho, como en el pie anterior: solo icono, tenue */}
+            <Link
+              href="/admin/login"
+              className="inline-flex h-6 w-6 items-center justify-center text-white/30 transition-colors hover:text-white/70"
+              data-testid="link-admin"
+              aria-label="Admin"
+            >
+              <Settings aria-hidden="true" className="h-3 w-3" />
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
