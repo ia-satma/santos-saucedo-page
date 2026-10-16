@@ -279,9 +279,10 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
           enterKeyHint="search"
           aria-describedby="ss26-search-hint"
           data-testid="input-global-search"
-          // Sin radio, filete blanco al 30 %; el foco de teclado sobre Azul Profundo es lima.
+          // Sin radio, filete blanco al 45 % (4.36:1 sobre Azul Profundo, WCAG 1.4.11); el foco de
+          // teclado sobre Azul Profundo es lima.
           // La romana display 350, como los titulares (en CJK y árabe, la sans: ss26.css)
-          className="ss-display mt-4 w-full appearance-none rounded-none border-0 border-b border-white/30 bg-transparent pb-3 text-[clamp(28px,2.4vw+16px,40px)] leading-tight text-white caret-white placeholder:text-white/50 focus:border-transparent focus-visible:!shadow-[inset_0_-2px_0_0_var(--ss-lime)] focus-visible:!outline-none"
+          className="ss-display mt-4 w-full appearance-none rounded-none border-0 border-b border-white/45 bg-transparent pb-3 text-[clamp(28px,2.4vw+16px,40px)] leading-tight text-white caret-white placeholder:text-white/50 focus:border-transparent focus-visible:!shadow-[inset_0_-2px_0_0_var(--ss-lime)] focus-visible:!outline-none"
         />
         {/* Con la consulta ya escrita la pista sobra a la vista; sigue para aria-describedby */}
         <p

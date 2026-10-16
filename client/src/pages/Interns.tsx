@@ -20,7 +20,7 @@ export default function Interns() {
   const content = {
     en: {
       heroTitle: "Semillero S&S",
-      heroSubtitle: "Semillero S&S is the firm's internship program.",
+      heroSubtitle: "Semillero S&S is the firm’s internship program.",
       applyEmail: "reclutamiento@santossaucedo.com",
       ctaTitle: "How to apply",
       ctaIntro: "If there is no vacancy for your profile today, you can leave your details with the Semillero. We review the profiles every time a position opens.",

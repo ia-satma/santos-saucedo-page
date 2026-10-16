@@ -66,23 +66,38 @@ export function log(message: string, source = "express") {
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
+// Registro de peticiones /api (L12). En producción solo método, ruta, estado y duración: el
+// cuerpo de la respuesta puede llevar datos del CMS, de contactos o de la sesión. En desarrollo
+// se añade el cuerpo recortado a 200 caracteres, con tokens y contraseñas tapados.
+const LOG_RESPONSE_BODY = process.env.NODE_ENV !== "production";
+const LOG_BODY_MAX_CHARS = 200;
+const SECRET_LOG_KEY = /token|password|secret|hash/i;
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
+  if (LOG_RESPONSE_BODY) {
+    const originalResJson = res.json;
+    res.json = function (bodyJson, ...args) {
+      capturedJsonResponse = bodyJson;
+      return originalResJson.apply(res, [bodyJson, ...args]);
+    };
+  }
 
   res.on("finish", () => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      if (LOG_RESPONSE_BODY && capturedJsonResponse !== undefined) {
+        let body = JSON.stringify(capturedJsonResponse, (key, value) =>
+          key && SECRET_LOG_KEY.test(key) ? "[oculto]" : value,
+        );
+        if (body && body.length > LOG_BODY_MAX_CHARS) {
+          body = `${body.slice(0, LOG_BODY_MAX_CHARS - 1)}…`;
+        }
+        logLine += ` :: ${body}`;
       }
 
       log(logLine);

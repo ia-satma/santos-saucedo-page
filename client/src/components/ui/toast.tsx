@@ -83,7 +83,8 @@ const ToastClose = React.forwardRef<
     toast-close=""
     {...props}
   >
-    <X className="h-4 w-4" />
+    {/* Solo gráfico: el nombre accesible lo da aria-label, en el idioma activo (Toaster) */}
+    <X aria-hidden="true" className="h-4 w-4" />
   </ToastPrimitives.Close>
 ))
 ToastClose.displayName = ToastPrimitives.Close.displayName

@@ -296,7 +296,7 @@ const seoConfig: Record<string, SEOConfig> = {
       it: "Iscrizione alle notizie | Santos & Saucedo",
     },
     description: {
-      en: "The Santos & Saucedo Labor Monitor's analysis of labor and social security law, by email.",
+      en: "The Santos & Saucedo Labor Monitor’s analysis of labor and social security law, by email.",
       es: "Los análisis del Monitor Laboral de Santos & Saucedo sobre derecho laboral y seguridad social, por correo electrónico.",
       de: "Die Analysen von Santos & Saucedo zum Arbeits- und Sozialversicherungsrecht, per E-Mail.",
       zh: "Santos & Saucedo关于劳动法和社会保障法的分析，以电子邮件发送。",

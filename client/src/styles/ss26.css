@@ -147,8 +147,8 @@ html:has(header.ss26) {
 /* index.css corta el desborde horizontal con `hidden`, que convierte a body en
    contenedor de scroll y anula `position: sticky`. En toda página con Header26 o
    Footer26 (.ss26: Inicio y páginas públicas; no el admin) se usa `clip` (recorta
-   igual, sin contenedor de scroll): el encabezado, la columna de Prácticas y los
-   filtros sticky quedan fijos. Especificidad 0,1,1 / 0,1,2: gana a `html, body`. */
+   igual, sin contenedor de scroll): el encabezado y los elementos sticky de las páginas
+   quedan fijos. Especificidad 0,1,1 / 0,1,2: gana a `html, body`. */
 html:has(.ss26),
 html:has(.ss26) body {
   overflow-x: clip;
@@ -418,12 +418,16 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   box-shadow: none;
 }
 
-/* Fotografía: personas en gris, lugares en color suave.
-   Retratos en escala de grises (.ss-photo o, explícito, .ss-photo--mono). Las fotos de la
-   oficina (ss26/oficina: /offices, portada, /about, /contact, /careers) en color suave
-   (.ss-photo--soft, K1): el gris aplanaba la madera, el latón, la piel y la obra. La fachada,
-   con el cielo, un poco más apagada (.ss-photo--sky). Con o sin .ss-photo al lado, --soft
-   manda (0,2,0 gana a .ss-photo--mono). .ss-photo--colour: la imagen de cabecera de la nota. */
+/* Fotografía: personas en gris; lugares en color suave, salvo en la portada, donde todo va
+   en gris.
+   Retratos en escala de grises (.ss-photo o, explícito, .ss-photo--mono). En la portada, la
+   fachada de La firma y la sala de Empresas extranjeras llevan el mismo gris (M1, prueba a
+   ciegas 3 a 0: una sola voz fotográfica; el color de la sala chocaba con el Azul Profundo).
+   Las fotos de la oficina en /offices, /about, /contact y /careers van en color suave
+   (.ss-photo--soft, K1; en /offices ganó 5 a 0): el gris aplanaba la madera, el latón, la piel
+   y la obra. La fachada, con el cielo, un poco más apagada (.ss-photo--sky). Con o sin
+   .ss-photo al lado, --soft manda (0,2,0 gana a .ss-photo--mono). .ss-photo--colour: la
+   imagen de cabecera de la nota. */
 .ss-photo,
 .ss-photo--mono {
   filter: grayscale(1) contrast(1.04);

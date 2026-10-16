@@ -7,9 +7,13 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast"
+import { useChrome26 } from "@/components/home26/chrome26"
 
 export function Toaster() {
   const { toasts } = useToast()
+  // Nombre del botón de cerrar en el idioma activo, el mismo "Cerrar" de la cabecera
+  // (chrome26, uno de los 10 idiomas, como los mensajes de los avisos)
+  const { t } = useChrome26(true)
 
   return (
     <ToastProvider>
@@ -23,7 +27,7 @@ export function Toaster() {
               )}
             </div>
             {action}
-            <ToastClose />
+            <ToastClose aria-label={t.header.close} />
           </Toast>
         )
       })}

@@ -475,7 +475,7 @@ export const SECURITY_INFRASTRUCTURE: SystemFeature[] = [
     category: 'security',
     name: 'Canal Seguro de Comunicación en Tiempo Real',
     technicalName: 'WebSocketSecurityLayer',
-    technicalDetail: 'WebSocket server en /ws/pipeline, heartbeat cada 30 segundos para detección de conexiones obsoletas, limpieza automática de clientes desconectados, broadcast a todos los clientes conectados, confirmación de conexión con clientId único.',
+    technicalDetail: 'WebSocket server en /ws/pipeline, solo con sesión válida del panel y origen admitido, heartbeat cada 30 segundos para detección de conexiones obsoletas, limpieza automática de clientes desconectados, broadcast a todos los clientes conectados, confirmación de conexión con clientId único.',
     userBenefit: 'Comunicación bidireccional segura para actualizaciones de progreso de pipeline en tiempo real. Experiencia de usuario fluida sin polling.',
     status: 'production',
     keyCapabilities: [
@@ -656,11 +656,11 @@ export const CORE_INFRASTRUCTURE: SystemFeature[] = [
     category: 'infrastructure',
     name: 'Servidor de Assets Estáticos Optimizado',
     technicalName: 'StaticAssetMiddleware',
-    technicalDetail: 'Rutas estáticas para /partner_photos, /associate_photos, /of_counsel_photos, /generated-images, servicio desde attached_assets y public, generación de rutas con path.join seguro.',
-    userBenefit: 'Entrega rápida de imágenes de equipo y assets generados. Estructura organizada por categoría de miembro.',
+    technicalDetail: 'Rutas de imágenes: /team_photos (solo los retratos de quien el sitio nombra) y /generated-images (solo un nombre de archivo simple, resuelto dentro de su carpeta), servicio desde attached_assets y public.',
+    userBenefit: 'Entrega rápida de los retratos del equipo y de las imágenes generadas, sin exponer otros archivos del servidor.',
     status: 'production',
     keyCapabilities: [
-      '4 rutas de fotos',
+      '1 ruta de retratos',
       'Imágenes generadas por IA',
       'Path seguro',
       'Estructura categorizada',

@@ -1,5 +1,5 @@
+// Solo los 4 socios que el sitio nombra (L10): ningún otro slug llega al JS público
 const teamPhotoObjectPositions: Record<string, string> = {
-  "rubi-quintanilla-martinez": "62% 0%",
   // 2026 presentation founder photos are square (652x652) with more headroom
   // above the head than the old rectangular headshots. In the very wide
   // expanded hover panel (Socios grid), the default top-anchor (Y 0%) leaves

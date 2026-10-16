@@ -1,5 +1,5 @@
 import type { Express, Request, Response } from "express";
-import { createServer, type Server } from "http";
+import { createServer, type IncomingMessage, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { seed, teamMembersData } from "./seed";
@@ -79,6 +79,7 @@ import {
   recordLoginAttempt,
   authMiddleware,
   requireRole,
+  validateSessionToken,
 } from "./auth";
 
 function apiError(res: Response, status: number, message: string, details?: unknown): void {
@@ -193,9 +194,10 @@ export async function registerRoutes(
         hint: "Set ENABLE_APP_AGENTS=true after the CMS schema and AI Secrets are validated.",
       });
     };
-    app.use("/api/agents", disabledAgentService);
-    app.use("/api/audits", disabledAgentService);
-    app.use("/api/health-check", disabledAgentService);
+    // Con o sin agentes, sin sesión del panel: 401 (L2); el estado de los agentes no es público
+    app.use("/api/agents", authMiddleware, disabledAgentService);
+    app.use("/api/audits", authMiddleware, disabledAgentService);
+    app.use("/api/health-check", authMiddleware, disabledAgentService);
   }
 
   // Rutas retiradas (D4, E4): redirección permanente que conserva la consulta. /experience
@@ -215,8 +217,51 @@ export async function registerRoutes(
     });
   }
 
-  // Setup WebSocket server for pipeline progress updates
-  const wss = new WebSocketServer({ server: httpServer, path: '/ws/pipeline' });
+  // Orígenes admitidos: los de la lista de CORS (CORS_ORIGIN, la misma que server/index.ts) o el
+  // propio sitio (mismo host, también detrás del proxy). Los usan los formularios públicos y el
+  // WebSocket del proceso de notas.
+  const allowedOrigins = (process.env.CORS_ORIGIN || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+  const isAllowedOrigin = (origin: string, req: IncomingMessage): boolean => {
+    if (allowedOrigins.includes(origin)) return true;
+    try {
+      const { host } = new URL(origin);
+      const forwardedHost = String(req.headers["x-forwarded-host"] ?? "").split(",")[0].trim();
+      return host === req.headers.host || (!!forwardedHost && host === forwardedHost);
+    } catch {
+      return false;
+    }
+  };
+
+  // WebSocket del proceso de notas (L7): manda pasos, estados y errores de cada nota, también de
+  // los borradores, así que solo acepta una sesión válida del panel (?token=, validado como en
+  // authMiddleware) desde un origen admitido. Sin token, con otro Origin o sin Origin: 401/403
+  // antes de abrir la conexión.
+  const wss = new WebSocketServer({
+    server: httpServer,
+    path: '/ws/pipeline',
+    verifyClient: (info, done) => {
+      const origin = info.origin;
+      if (!origin || !isAllowedOrigin(origin, info.req)) {
+        done(false, 403, 'Forbidden');
+        return;
+      }
+      let token: string | null = null;
+      try {
+        token = new URL(info.req.url ?? '', 'http://localhost').searchParams.get('token');
+      } catch {
+        token = null;
+      }
+      validateSessionToken(token)
+        .then((result) => done(result.ok, result.ok ? undefined : 401, result.ok ? undefined : 'Unauthorized'))
+        .catch((error) => {
+          console.error('[WebSocket] Session check failed:', error);
+          done(false, 500, 'Internal Server Error');
+        });
+    },
+  });
   
   // Heartbeat to detect stale connections
   const heartbeatInterval = setInterval(() => {
@@ -261,17 +306,14 @@ export async function registerRoutes(
     ws.send(JSON.stringify({ type: 'connected', clientId }));
   });
 
-  // Serve partner photos from attached_assets/partner_photos
-  app.use('/partner_photos', express.static(path.join(process.cwd(), 'attached_assets', 'partner_photos'), {
-    maxAge: '7d',
-    immutable: true,
-  }));
-  
-  // Serve associate photos from attached_assets/associate_photos
-  app.use('/associate_photos', express.static(path.join(process.cwd(), 'attached_assets', 'associate_photos'), {
-    maxAge: '7d',
-    immutable: true,
-  }));
+  // /partner_photos, /associate_photos y /of_counsel_photos ya no existen (L3): eran retratos de
+  // la plantilla de otra firma y ninguna página los usaba. Los retratos salen solo de /team_photos.
+  // Sus rutas dan 404 (no la página del sitio con 200), como /team_photos con un nombre no permitido.
+  for (const retiredPhotoPath of ['/partner_photos', '/associate_photos', '/of_counsel_photos']) {
+    app.use(retiredPhotoPath, (_req, res) => {
+      res.status(404).end();
+    });
+  }
 
   // /team_photos (J1): solo los retratos de quien el sitio nombra (isNamedOnTeamPage: socios
   // confirmados y Of Counsel); los de asociados, staff y socios sin confirmar dan 404, igual que
@@ -309,32 +351,40 @@ export async function registerRoutes(
     immutable: true,
   }));
   
-  // Serve Of Counsel photos from attached_assets/of_counsel_photos
-  app.use('/of_counsel_photos', express.static(path.join(process.cwd(), 'attached_assets', 'of_counsel_photos'), {
-    maxAge: '7d',
-    immutable: true,
-  }));
-
-  // Serve AI-generated images with Santos & Saucedo branding
-  const generatedImagesDir = path.join(process.cwd(), 'public', 'generated-images');
+  // Portadas que genera el proceso de notas (SmartImageGenerator: "article-<id>-gemini-<ms>.png").
+  // L1: solo un nombre simple con extensión de imagen, sin carpetas ni "..", resuelto dentro de
+  // public/generated-images. Cualquier otra petición (%2f, %5c, doble codificación, espacios,
+  // subcarpetas, otro método) da 404 JSON sin leer nada fuera de esta carpeta. Un solo
+  // manejador para todo el prefijo, también para que no caiga en la página del sitio.
+  const generatedImagesDir = path.resolve(process.cwd(), 'public', 'generated-images');
   if (!fs.existsSync(generatedImagesDir)) {
     fs.mkdirSync(generatedImagesDir, { recursive: true });
   }
+  const GENERATED_IMAGE_NAME = /^[A-Za-z0-9][A-Za-z0-9_.-]*\.(png|jpe?g|webp|gif)$/i;
 
-  // Explicit route handler — belt-and-suspenders vs SPA catch-all
-  app.get('/generated-images/:filename', (req, res) => {
-    const filePath = path.join(generatedImagesDir, req.params.filename);
-    if (fs.existsSync(filePath)) {
-      res.set('Cache-Control', 'public, max-age=31536000, immutable');
-      return res.sendFile(filePath);
+  app.use('/generated-images', (req, res) => {
+    const notFound = () => {
+      if (!res.headersSent) res.status(404).json({ error: 'Image not found' });
+    };
+    if (req.method !== 'GET' && req.method !== 'HEAD') return notFound();
+    let name: string;
+    try {
+      name = decodeURIComponent(req.path.slice(1));
+    } catch {
+      return notFound();
     }
-    res.status(404).json({ error: 'Image not found' });
+    if (!GENERATED_IMAGE_NAME.test(name) || name.includes('..')) return notFound();
+    const filePath = path.resolve(generatedImagesDir, name);
+    if (!filePath.startsWith(generatedImagesDir + path.sep)) return notFound();
+    fs.stat(filePath, (statError, stats) => {
+      if (statError || !stats.isFile()) return notFound();
+      res.set('Cache-Control', 'public, max-age=31536000, immutable');
+      res.set('X-Content-Type-Options', 'nosniff');
+      res.sendFile(filePath, (sendError) => {
+        if (sendError) notFound();
+      });
+    });
   });
-
-  app.use('/generated-images', express.static(generatedImagesDir, {
-    maxAge: '365d',
-    immutable: true,
-  }));
 
   // Detección del idioma en la primera visita: solo la cabecera Accept-Language del
   // navegador, sin terceros (antes se enviaba la IP del visitante a ipapi.co). Si ningún
@@ -625,51 +675,42 @@ export async function registerRoutes(
     return raw?.split(",")[0]?.trim() || req.ip || req.socket.remoteAddress || "unknown";
   };
 
-  // Origen: si el navegador manda Origin, debe ser el propio sitio (mismo host) o uno de la
-  // lista de CORS (CORS_ORIGIN, la misma que server/index.ts); si no, 403. Sin Origin (curl,
-  // formularios antiguos) se deja pasar: lo frenan el límite y la trampa.
-  const formOrigins = (process.env.CORS_ORIGIN || "")
-    .split(",")
-    .map((origin) => origin.trim())
-    .filter(Boolean);
+  // Origen: si el navegador manda Origin, debe ser el propio sitio o uno de la lista de CORS
+  // (isAllowedOrigin); si no, 403. Sin Origin (curl, formularios antiguos) se deja pasar: lo
+  // frenan el límite y la trampa.
   const isAllowedFormOrigin = (req: Request): boolean => {
     const origin = req.headers.origin;
-    if (!origin) return true;
-    if (formOrigins.includes(origin)) return true;
-    try {
-      const { host } = new URL(origin);
-      const forwardedHost = String(req.headers["x-forwarded-host"] ?? "").split(",")[0].trim();
-      return host === req.headers.host || (!!forwardedHost && host === forwardedHost);
-    } catch {
-      return false;
-    }
+    return !origin || isAllowedOrigin(origin, req);
   };
 
-  // Límite en memoria: 5 envíos por IP cada 10 minutos en cada formulario, y un tope global de
-  // 50 por formulario en esa ventana (X-Forwarded-For lo escribe el cliente: el tope acota a
-  // quien cambie de IP declarada). Respuesta 429 con mensaje genérico.
+  // Límite en memoria: 5 envíos por IP cada 10 minutos en cada formulario; respuesta 429 con
+  // mensaje genérico. Sin tope global (L5): con unos 50 envíos basura cualquiera bloqueaba los
+  // formularios para todos durante 10 minutos.
+  // Es un límite de mejor esfuerzo: la clave es la primera entrada de X-Forwarded-For (la
+  // escribe el cliente) o, sin ella, la dirección del socket. No se usa "trust proxy" con
+  // req.ip porque no se sabe cuántos proxies pone Replit delante, y con un número equivocado
+  // todos los visitantes compartirían la misma clave (el proxy) y se bloquearían entre sí.
   const FORM_WINDOW_MS = 10 * 60 * 1000;
   const FORM_MAX_PER_IP = 5;
-  const FORM_MAX_GLOBAL = 50;
   const createFormLimiter = () => {
     const perIp = new Map<string, { count: number; resetAt: number }>();
-    let global = { count: 0, resetAt: 0 };
     return (ip: string): boolean => {
       const now = Date.now();
       if (perIp.size > 5000) {
         perIp.forEach((entry, key) => {
           if (entry.resetAt <= now) perIp.delete(key);
         });
+        // Claves inventadas en masa (X-Forwarded-For distinto en cada envío): se vacía el mapa
+        // antes que dejarlo crecer sin límite en memoria
+        if (perIp.size > 20000) perIp.clear();
       }
-      if (global.resetAt <= now) global = { count: 0, resetAt: now + FORM_WINDOW_MS };
       let entry = perIp.get(ip);
       if (!entry || entry.resetAt <= now) {
         entry = { count: 0, resetAt: now + FORM_WINDOW_MS };
         perIp.set(ip, entry);
       }
-      if (entry.count >= FORM_MAX_PER_IP || global.count >= FORM_MAX_GLOBAL) return false;
+      if (entry.count >= FORM_MAX_PER_IP) return false;
       entry.count += 1;
-      global.count += 1;
       return true;
     };
   };
@@ -2912,30 +2953,43 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // so anonymous visitors cannot spend the AI budget on arbitrary text.
   // Solo contenido público (J1–J3): una persona que el sitio no nombra, una nota no pública y
   // los eventos y asuntos retirados no se traducen ni devuelven traducciones guardadas.
+  // L6: se devuelve lo que el sitio publica, no el registro entero: el DTO público de la nota
+  // (toPublicNews) y el perfil público de la persona (toPublicTeamProfile); las prácticas e
+  // industrias ya se publican completas en /api/practice-groups y /api/industry-groups.
   async function getEntity(contentType: string, entityId: string): Promise<Record<string, unknown> | undefined> {
-    let entity: Record<string, unknown> | undefined;
     switch (contentType) {
       case "team_member": {
         const member = await storage.getTeamMemberById(entityId);
-        entity = member && isNamedOnTeamPage(member) ? member : undefined;
-        break;
+        return member && isNamedOnTeamPage(member) ? toPublicTeamProfile(member) : undefined;
       }
-      case "practice_group": entity = await storage.getPracticeGroupById(entityId); break;
-      case "industry_group": entity = await storage.getIndustryGroupById(entityId); break;
+      case "practice_group": return await storage.getPracticeGroupById(entityId);
+      case "industry_group": return await storage.getIndustryGroupById(entityId);
       case "news": {
         const item = await storage.getNewsById(entityId);
-        entity = item && isPublicNews(item) ? item : undefined;
-        break;
+        return item && isPublicNews(item) ? toPublicNews(item) : undefined;
       }
     }
-    return entity;
+    return undefined;
   }
 
-  async function getEntityTextValues(contentType: string, entityId: string, entity?: Record<string, unknown>): Promise<Set<string> | null> {
-    entity ??= await getEntity(contentType, entityId);
-    if (!entity) return null;
+  // Campos que se traducen de cada tipo, en /api/translate-content y /api/translate-entity (L6)
+  const validFieldsByContentType: Record<string, readonly string[]> = {
+    team_member: ['title', 'role', 'bio', 'degree'],
+    practice_group: ['name', 'description', 'fullDescription'],
+    industry_group: ['name', 'description', 'fullDescription'],
+    news: ['title', 'excerpt', 'content'],
+    event: ['title', 'description', 'location'],
+    representative_matter: ['title', 'description', 'client'],
+  };
+
+  // Textos de origen admitidos para un campo (L6): su valor público y el de su gemelo en
+  // español ("title" y "titleEs"), tal como los publica el sitio. Ni otros campos ni valores
+  // internos: nadie puede probar si un texto cualquiera está en el registro, ni guardar la
+  // traducción de un campo bajo el nombre de otro.
+  function allowedSourceTexts(entity: Record<string, unknown>, field: string): Set<string> {
     const values = new Set<string>();
-    for (const value of Object.values(entity)) {
+    for (const key of [field, `${field}Es`]) {
+      const value = entity[key];
       if (typeof value === "string" && value.trim()) values.add(value);
     }
     return values;
@@ -2957,8 +3011,15 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         return res.status(400).json({ error: "Invalid language code" });
       }
 
-      const entityTexts = await getEntityTextValues(contentType, entityId);
-      if (!entityTexts || !entityTexts.has(sourceText)) {
+      const validFields = Object.hasOwn(validFieldsByContentType, contentType)
+        ? validFieldsByContentType[contentType]
+        : [];
+      if (!validFields.includes(field)) {
+        return res.status(400).json({ error: "Invalid field name" });
+      }
+
+      const entity = await getEntity(contentType, entityId);
+      if (!entity || typeof sourceText !== "string" || !allowedSourceTexts(entity, field).has(sourceText)) {
         return res.status(400).json({ error: "Source text does not match published content" });
       }
       const existingTranslation = await storage.getTranslation(contentType, entityId, field, targetLanguage);
@@ -3021,15 +3082,6 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         });
       }
 
-      const validFieldsByContentType: Record<string, readonly string[]> = {
-        team_member: ['title', 'role', 'bio', 'degree'],
-        practice_group: ['name', 'description', 'fullDescription'],
-        industry_group: ['name', 'description', 'fullDescription'],
-        news: ['title', 'excerpt', 'content'],
-        event: ['title', 'description', 'location'],
-        representative_matter: ['title', 'description', 'client'],
-      };
-
       const validFields = validFieldsByContentType[contentType] || [];
       const submittedFields = Object.keys(fields as Record<string, string>);
       const invalidFields = submittedFields.filter(f => !validFields.includes(f));
@@ -3046,8 +3098,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       }
 
       const entity = await getEntity(contentType, entityId);
-      const entityTexts = await getEntityTextValues(contentType, entityId, entity);
-      if (!entity || !entityTexts) {
+      if (!entity) {
         return res.status(404).json({ error: "Content not found" });
       }
       const fieldsToTranslate: { key: string; text: string }[] = [];
@@ -3055,7 +3106,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
       for (const [fieldName, text] of Object.entries(fields as Record<string, string>)) {
         if (!text || typeof text !== 'string' || !text.trim()) continue;
-        if (!entityTexts.has(text)) continue;
+        if (!allowedSourceTexts(entity, fieldName).has(text)) continue;
 
         // The CMS already stores English in the base field next to its *Es twin; serve it without calling the AI.
         const englishText = entity[fieldName];
@@ -3570,8 +3621,9 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
     }
   });
 
-  // System Chronicler API - Nerve Center data
-  app.get("/api/system/chronicler", async (req: Request, res: Response) => {
+  // System Chronicler API - Nerve Center data. Solo con sesión del panel (L4): son datos
+  // internos del proceso de notas y del CMS que ninguna página pública lee.
+  app.get("/api/system/chronicler", authMiddleware, async (req: Request, res: Response) => {
     try {
       const { systemChronicler } = await import('./agents/SystemChronicler');
       
@@ -3725,10 +3777,10 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
     }
   });
 
-  // System Health Check - Deep Audit API
-  // NOTE: Health check is intentionally public (read-only diagnostic).
-  // Destructive operations like reset-zombies require auth.
-  app.get("/api/health-check/run", async (req: Request, res: Response) => {
+  // System Health Check - Deep Audit API. Solo con sesión del panel (L2): el informe nombra
+  // personas, borradores y el estado de las traducciones. Mismos roles que reset-zombies; para
+  // saber si el servidor está vivo sin sesión queda /healthz.
+  app.get("/api/health-check/run", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
       const { systemHealthCheck } = await import('./agents/SystemHealthCheck');
       const report = await systemHealthCheck.runDeepAudit();
@@ -3743,7 +3795,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
     }
   });
 
-  app.post("/api/health-check/reset-zombies", authMiddleware, async (req: Request, res: Response) => {
+  app.post("/api/health-check/reset-zombies", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
       const { systemHealthCheck } = await import('./agents/SystemHealthCheck');
       const resetCount = await systemHealthCheck.resetZombieJobs();

@@ -91,9 +91,9 @@ export function Firma26({ lang }: { lang: Lang26 }) {
             </h2>
           </Reveal>
           <Reveal delay={0.12}>
-            {/* Bajo lg, la columna ocupa todo el contenedor: medida máxima de 40rem (unos 70
-                caracteres) para que las líneas no pasen de lo legible; desde lg manda la columna */}
-            <div className="ss-prose mt-10 max-w-[40rem] space-y-6 text-ss-tinta lg:max-w-none">
+            {/* Bajo lg, la columna ocupa todo el contenedor: medida máxima de 34rem (entre 60 y 75
+                caracteres por línea a 18 px, medido en es y en a 768 y 1023); desde lg manda la columna */}
+            <div className="ss-prose mt-10 max-w-[34rem] space-y-6 text-ss-tinta lg:max-w-none">
               {/* "Santos & Saucedo" sin partirse entre líneas */}
               {t.body.map((p) => (
                 <p key={p.slice(0, 24)}>{keepFirmName(p)}</p>
@@ -126,9 +126,10 @@ export function Firma26({ lang }: { lang: Lang26 }) {
               decoding="async"
               width={1159}
               height={900}
-              // Lugar: color suave (K1), con el cielo de la fachada algo más apagado; los retratos
-              // siguen en gris. Sin entrada al aparecer (G3)
-              className="ss-photo--soft ss-photo--sky block h-auto w-full"
+              // En la portada todo va en gris (M1): el mismo tratamiento que los retratos de
+              // Socios; /offices, /about, /careers y /contact siguen en color suave. Sin entrada al
+              // aparecer (G3)
+              className="ss-photo ss-photo--mono block h-auto w-full"
             />
           </div>
           {/* Junto al pie, el enlace a la página de la oficina (su nombre en officeLabel) */}
@@ -185,10 +186,11 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
       className={`bg-white ${Y.practicas}`}
       aria-labelledby="ss26-practicas"
     >
-      <div className="ss-container grid grid-cols-1 gap-x-6 gap-y-12 lg:grid-cols-12">
-        <div className="lg:col-span-4">
-          {/* Pegada bajo la cabecera (alto en --ss-header-h, ss26.css) con 2rem de aire */}
-          <div className="lg:sticky lg:top-[calc(var(--ss-header-h)+2rem)]">
+      <div className="ss-container">
+        {/* Cabecera como en Socios y Monitor Laboral (M3): § y h2 a la izquierda y el enlace a
+            Prácticas al final de la fila, no apilado bajo un h2 con el mismo nombre */}
+        <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-8">
+          <div>
             <Reveal>
               <SectionHead num="02" />
             </Reveal>
@@ -197,16 +199,16 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                 {t.title}
               </h2>
             </Reveal>
-            <Reveal delay={0.12}>
-              <TextLink href="/practice-groups" className="mt-10">
-                {navLabel(lang, "practicas")}
-              </TextLink>
-            </Reveal>
           </div>
+          <Reveal delay={0.1}>
+            <TextLink href="/practice-groups">{navLabel(lang, "practicas")}</TextLink>
+          </Reveal>
         </div>
 
-        {/* Las reglas entre filas se quedan: llevan el trazo del hover */}
-        <ol className="border-t border-ss-rule lg:col-span-8">
+        {/* Índice con filetes Línea al ancho del contenedor, como el del Monitor Laboral: desde lg,
+            el número en las columnas 1–4 y el texto desde la 5 (el borde de La firma, Socios y el
+            pie). Las reglas entre filas se quedan: llevan el trazo del hover */}
+        <ol className="mt-14 border-t border-ss-rule lg:mt-16">
           {t.items.map((item, i) => (
             <Reveal as="li" key={item.slug} delay={i * 0.06} className="ss-row relative border-b border-ss-rule">
                 {/* inline-link: fuera de la regla móvil de index.css que vuelve inline-flex todo <a>.
@@ -215,14 +217,15 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                   href={`/practice-groups/${item.slug}`}
                   aria-labelledby={`ss26-pr-${item.slug}`}
                   aria-describedby={`ss26-prd-${item.slug}`}
-                  className="inline-link grid grid-cols-1 gap-y-3 py-8 sm:grid-cols-[88px_1fr_auto] sm:gap-x-8 lg:py-10"
+                  className="inline-link grid grid-cols-1 gap-y-3 py-8 sm:grid-cols-[88px_1fr_auto] sm:gap-x-8 lg:grid-cols-12 lg:items-baseline lg:gap-x-6 lg:py-10"
                 >
                   {/* 01–04 simples, como las filas de /practice-groups; la lista ya numera para
-                      lectores de pantalla */}
-                  <span aria-hidden className="ss-row-num ss-label ss-num">
+                      lectores de pantalla. Desde lg, número, titular y flecha sobre la misma línea
+                      base (la primera del titular), a cualquier tamaño del titular */}
+                  <span aria-hidden className="ss-row-num ss-label ss-num lg:col-span-4">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span>
+                  <span className="lg:col-span-7 lg:col-start-5">
                     <span
                       id={`ss26-pr-${item.slug}`}
                       className="ss-display block text-[clamp(26px,2.3vw,34px)] font-normal leading-[1.15] tracking-[-0.012em] text-ss-marino"
@@ -233,7 +236,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                       {item.body}
                     </span>
                   </span>
-                  <span aria-hidden className="ss-arrow hidden pt-1 text-[22px] text-ss-marino sm:block">
+                  <span aria-hidden className="ss-arrow hidden pt-1 text-[22px] text-ss-marino sm:block lg:col-start-12 lg:justify-self-end">
                     →
                   </span>
                 </Link>
@@ -262,7 +265,7 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
           (en pantallas mayores, Azul Profundo a la izquierda). */}
       <div className={`grid grid-cols-1 xl:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] ${GAP_X}`}>
         <div className="relative min-h-[300px] overflow-hidden sm:min-h-[420px] xl:min-h-[600px]">
-          {/* Lugar: el mismo color suave que la fachada de La firma (.ss-photo--soft), sin velo */}
+          {/* Lugar en la portada: el gris de los retratos y de la fachada de La firma (M1), sin velo */}
           <img
             src={salaJuntas768}
             srcSet={`${salaJuntas768} 768w, ${salaJuntas1536} 1536w`}
@@ -272,7 +275,7 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
             decoding="async"
             width={1536}
             height={1024}
-            className="ss-photo--soft absolute inset-y-0 right-0 h-full w-full max-w-[1536px] object-cover object-[50%_42%]"
+            className="ss-photo ss-photo--mono absolute inset-y-0 right-0 h-full w-full max-w-[1536px] object-cover object-[50%_42%]"
           />
         </div>
         <div className="flex items-center px-[var(--ss-pad)] py-20 xl:pl-0 xl:pr-[clamp(48px,6vw,104px)]">

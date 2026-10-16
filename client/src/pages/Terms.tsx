@@ -290,7 +290,7 @@ You agree that any claims shall be brought in your individual capacity and not a
 
 How changes are communicated:
 • Material changes will be indicated by updating the “Last updated” date at the top of this page
-• Significant modifications may be announced through a notice on the Website's homepage
+• Significant modifications may be announced through a notice on the Website’s homepage
 • For registered users or subscribers, we may send email notifications of important changes
 
 Your responsibilities:

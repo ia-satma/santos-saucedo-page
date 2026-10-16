@@ -27,10 +27,12 @@ interface AgentVote {
   reasoning: string;
 }
 
+// Viene de la columna jsonb councilVerdict tal como la guardó el proceso: cualquier campo puede
+// faltar o llegar con otro tipo (L11), y la ficha se pinta igual.
 interface CouncilVerdict {
-  overallStatus: 'approved' | 'rejected' | 'pending_revision' | 'escalated' | 'deadlocked';
-  riskFlag: 'none' | 'low' | 'medium' | 'high' | 'critical';
-  consolidatedFeedback: string;
+  overallStatus?: 'approved' | 'rejected' | 'pending_revision' | 'escalated' | 'deadlocked';
+  riskFlag?: 'none' | 'low' | 'medium' | 'high' | 'critical';
+  consolidatedFeedback?: string;
   agentVotes?: AgentVote[];
   averageScore?: number;
 }
@@ -415,14 +417,15 @@ export function CouncilSafetyCard({ verdict, onValidate, isValidating, isAdmin }
     }
   };
 
-  const getAgentIcon = (name: string) => {
+  const getAgentIcon = (name: unknown) => {
+    if (typeof name !== 'string') return <Shield className="w-4 h-4" />;
     if (name.includes('Scholar')) return <Scale className="w-4 h-4" />;
     if (name.includes('Risk')) return <ShieldAlert className="w-4 h-4" />;
     if (name.includes('Brand')) return <Eye className="w-4 h-4" />;
     return <Shield className="w-4 h-4" />;
   };
 
-  if (!verdict) {
+  if (!verdict || typeof verdict !== 'object') {
     return (
       <Card className="border-dashed border-2 border-gray-300 dark:border-gray-700" data-testid="card-council-empty">
         <CardContent className="py-8 text-center">
@@ -438,8 +441,18 @@ export function CouncilSafetyCard({ verdict, onValidate, isValidating, isAdmin }
     return match ? parseFloat(match[1]) : null;
   };
   
-  const score = verdict.averageScore ?? extractScoreFallback(verdict.consolidatedFeedback);
-  const checksPassed = verdict.overallStatus === 'approved' || verdict.overallStatus === 'pending_revision';
+  // Campos opcionales normalizados: sin notas, sin votos o sin puntuación, la ficha no falla
+  const feedback = typeof verdict.consolidatedFeedback === 'string' ? verdict.consolidatedFeedback : '';
+  const agentVotes = Array.isArray(verdict.agentVotes)
+    ? verdict.agentVotes.filter((vote): vote is AgentVote => !!vote && typeof vote === 'object')
+    : [];
+  const averageScore =
+    typeof verdict.averageScore === 'number' && Number.isFinite(verdict.averageScore) ? verdict.averageScore : null;
+  const score = averageScore ?? extractScoreFallback(feedback);
+  const overallStatus = typeof verdict.overallStatus === 'string' ? verdict.overallStatus : '';
+  const riskFlag = typeof verdict.riskFlag === 'string' ? verdict.riskFlag : '';
+  const checksPassed = overallStatus === 'approved' || overallStatus === 'pending_revision';
+  const asText = (value: unknown): string => (typeof value === 'string' ? value : '');
 
   return (
     <Card className="border-2 border-primary/20 bg-gradient-to-br from-background to-primary/5" data-testid="card-council-safety">
@@ -462,20 +475,20 @@ export function CouncilSafetyCard({ verdict, onValidate, isValidating, isAdmin }
           )}
 
           <div className="flex items-center gap-2">
-            {getStatusIcon(verdict.overallStatus)}
-            <Badge className={`${getStatusColor(verdict.overallStatus)}`} data-testid="badge-council-status">
-              {getStatusLabel(verdict.overallStatus)}
+            {getStatusIcon(overallStatus)}
+            <Badge className={`${getStatusColor(overallStatus)}`} data-testid="badge-council-status">
+              {getStatusLabel(overallStatus) || '—'}
             </Badge>
           </div>
 
-          <Badge className={`${getRiskColor(verdict.riskFlag)}`} data-testid="badge-council-risk">
-            {getRiskLabel(verdict.riskFlag)}
+          <Badge className={`${getRiskColor(riskFlag)}`} data-testid="badge-council-risk">
+            {getRiskLabel(riskFlag) || '—'}
           </Badge>
         </div>
 
-        {verdict.agentVotes && verdict.agentVotes.length > 0 && (
+        {agentVotes.length > 0 && (
           <div className="space-y-2" data-testid="section-agent-votes">
-            {verdict.agentVotes.map((vote, index) => (
+            {agentVotes.map((vote, index) => (
               <div 
                 key={index}
                 className={`flex items-start gap-3 p-3 rounded-none ${getScoreBgColor(vote.score)}`}
@@ -483,19 +496,21 @@ export function CouncilSafetyCard({ verdict, onValidate, isValidating, isAdmin }
               >
                 <div className="flex items-center gap-2 min-w-[140px]">
                   {getAgentIcon(vote.agentName)}
-                  <span className="font-medium text-sm">{vote.agentName}</span>
+                  <span className="font-medium text-sm">{asText(vote.agentName)}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  {getDecisionIcon(vote.decision)}
+                  {getDecisionIcon(asText(vote.decision))}
                   <Badge variant="outline" className="text-xs">
-                    {getDecisionLabel(vote.decision)}
+                    {getDecisionLabel(asText(vote.decision))}
                   </Badge>
                 </div>
-                <div className={`font-bold ${getScoreColor(vote.score)}`}>
-                  {vote.score}/100
-                </div>
+                {typeof vote.score === 'number' && (
+                  <div className={`font-bold ${getScoreColor(vote.score)}`}>
+                    {vote.score}/100
+                  </div>
+                )}
                 <p className="text-xs text-muted-foreground flex-1 line-clamp-2">
-                  {vote.reasoning}
+                  {asText(vote.reasoning)}
                 </p>
               </div>
             ))}
@@ -513,19 +528,19 @@ export function CouncilSafetyCard({ verdict, onValidate, isValidating, isAdmin }
           </Badge>
           <Badge 
             variant="outline" 
-            className={verdict.riskFlag === 'none' || verdict.riskFlag === 'low' ? 'border-green-500 text-green-600' : 'border-yellow-500 text-yellow-600'}
+            className={riskFlag === 'none' || riskFlag === 'low' ? 'border-green-500 text-green-600' : 'border-yellow-500 text-yellow-600'}
             data-testid="badge-risk-check"
           >
             <ShieldCheck className="w-3 h-3 mr-1" />
-            {t.riskCheck}: {verdict.riskFlag === 'none' || verdict.riskFlag === 'low' ? t.passed : t.review}
+            {t.riskCheck}: {riskFlag === 'none' || riskFlag === 'low' ? t.passed : t.review}
           </Badge>
           <Badge 
             variant="outline" 
-            className={verdict.overallStatus !== 'rejected' ? 'border-green-500 text-green-600' : 'border-red-500 text-red-600'}
+            className={overallStatus !== 'rejected' ? 'border-green-500 text-green-600' : 'border-red-500 text-red-600'}
             data-testid="badge-brand-check"
           >
             <Eye className="w-3 h-3 mr-1" />
-            {t.brandCheck}: {verdict.overallStatus !== 'rejected' ? t.passed : t.failed}
+            {t.brandCheck}: {overallStatus !== 'rejected' ? t.passed : t.failed}
           </Badge>
         </div>
 
@@ -541,7 +556,7 @@ export function CouncilSafetyCard({ verdict, onValidate, isValidating, isAdmin }
               className="mt-2 p-4 bg-muted/50 rounded-none text-sm whitespace-pre-wrap font-mono"
               data-testid="text-council-feedback"
             >
-              {verdict.consolidatedFeedback}
+              {feedback || '—'}
             </div>
           </CollapsibleContent>
         </Collapsible>
@@ -549,7 +564,7 @@ export function CouncilSafetyCard({ verdict, onValidate, isValidating, isAdmin }
         {isAdmin && onValidate && (
           <Button 
             onClick={onValidate}
-            disabled={isValidating || verdict.overallStatus === 'rejected'}
+            disabled={isValidating || overallStatus === 'rejected'}
             className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3"
             size="lg"
             data-testid="button-validate-publish"

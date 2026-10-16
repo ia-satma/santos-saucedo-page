@@ -756,7 +756,7 @@ export default function AdminTeamForm() {
                                       type="email" 
                                       {...field} 
                                       className="rounded-none border-[#D9D8D7] focus:border-ss-marino focus:ring-ss-marino"
-                                      placeholder="mgarcia@vfrlaw.com"
+                                      placeholder="nombre@santossaucedo.com"
                                       data-testid="input-email" 
                                     />
                                   </FormControl>
@@ -777,7 +777,7 @@ export default function AdminTeamForm() {
                                     <Input 
                                       {...field} 
                                       className="rounded-none border-[#D9D8D7] focus:border-ss-marino focus:ring-ss-marino"
-                                      placeholder="+52 55 1234 5678"
+                                      placeholder="+52 81 0000 0000"
                                       data-testid="input-phone" 
                                     />
                                   </FormControl>

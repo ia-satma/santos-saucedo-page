@@ -114,6 +114,28 @@ declare global {
   }
 }
 
+// Valida un token de sesión del panel: el de la cabecera Bearer (authMiddleware) o el de la
+// consulta del WebSocket /ws/pipeline (L7). Devuelve el usuario activo o el motivo del rechazo,
+// con los mismos mensajes de siempre; una sesión vencida se borra.
+export async function validateSessionToken(
+  token: string | null | undefined
+): Promise<{ ok: true; user: AdminUser } | { ok: false; error: string }> {
+  if (!token) return { ok: false, error: "Authentication required" };
+
+  const session = await storage.getAdminSession(token);
+  if (!session) return { ok: false, error: "Invalid session" };
+
+  if (new Date() > session.expiresAt) {
+    await storage.deleteAdminSession(token);
+    return { ok: false, error: "Session expired" };
+  }
+
+  const adminUser = await storage.getAdminUser(session.userId);
+  if (!adminUser || !adminUser.isActive) return { ok: false, error: "User not found or inactive" };
+
+  return { ok: true, user: adminUser };
+}
+
 export async function authMiddleware(
   req: Request,
   res: Response,
@@ -122,39 +144,20 @@ export async function authMiddleware(
   try {
     // Get token from Authorization header
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       res.status(401).json({ error: "Authentication required" });
       return;
     }
 
-    const token = authHeader.substring(7);
-
-    // Validate session
-    const session = await storage.getAdminSession(token);
-    
-    if (!session) {
-      res.status(401).json({ error: "Invalid session" });
-      return;
-    }
-
-    // Check expiry
-    if (new Date() > session.expiresAt) {
-      await storage.deleteAdminSession(token);
-      res.status(401).json({ error: "Session expired" });
-      return;
-    }
-
-    // Get admin user
-    const adminUser = await storage.getAdminUser(session.userId);
-    
-    if (!adminUser || !adminUser.isActive) {
-      res.status(401).json({ error: "User not found or inactive" });
+    const result = await validateSessionToken(authHeader.substring(7));
+    if (!result.ok) {
+      res.status(401).json({ error: result.error });
       return;
     }
 
     // Attach user to request
-    req.adminUser = adminUser;
+    req.adminUser = result.user;
     next();
   } catch (error) {
     console.error("Auth middleware error:", error);
@@ -168,7 +171,9 @@ export function requireRole(...roles: string[]) {
       res.status(401).json({ error: "Authentication required" });
       return;
     }
-    if (!roles.includes(req.adminUser.role)) {
+    // super_admin (el rol que crean el seed y /api/admin/init) pasa cualquier control de rol:
+    // con requireRole("editor", "admin") solo, el administrador principal recibía 403
+    if (req.adminUser.role !== "super_admin" && !roles.includes(req.adminUser.role)) {
       res.status(403).json({ error: "Insufficient permissions" });
       return;
     }

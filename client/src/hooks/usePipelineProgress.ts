@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef, useSyncExternalStore } from 'react';
+import { getToken } from '@/lib/adminAuth';
 
 export interface PipelineProgressEvent {
   articleId: string;
@@ -65,8 +66,15 @@ class PipelineWebSocketManager {
       this.reconnectTimeout = null;
     }
 
+    // El servidor solo acepta la conexión con la sesión del panel (L7): sin token no se intenta
+    const token = getToken();
+    if (!token) {
+      this.scheduleReconnect();
+      return;
+    }
+
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws/pipeline`;
+    const wsUrl = `${protocol}//${window.location.host}/ws/pipeline?token=${encodeURIComponent(token)}`;
     
     try {
       this.ws = new WebSocket(wsUrl);

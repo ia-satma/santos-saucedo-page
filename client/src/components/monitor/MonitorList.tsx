@@ -281,10 +281,10 @@ function MonitorRow({
           </Link>
         </Heading>
         {/* Índice: bajo lg la fila ocupa todo el contenedor; la entradilla con medida máxima de
-            40rem para no pasar de lo legible. Desde lg la acota su columna */}
+            30rem (entre 60 y 75 caracteres por línea a 16 px). Desde lg la acota su columna */}
         {excerpt && (
           <p
-            className={`mt-3 text-[16px] leading-[1.55] text-ss-tinta [text-wrap:pretty] ${index ? "max-w-[40rem] lg:max-w-none" : ""}`}
+            className={`mt-3 text-[16px] leading-[1.55] text-ss-tinta [text-wrap:pretty] ${index ? "max-w-[30rem] lg:max-w-none" : ""}`}
             data-testid={testIds.excerpt?.(item)}
             lang={excerptIsSource ? "en" : undefined}
           >

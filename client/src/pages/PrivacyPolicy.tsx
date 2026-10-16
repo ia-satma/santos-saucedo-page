@@ -257,7 +257,7 @@ Transfers not requiring consent (as permitted by Article 37 of LFPDPPP):
 • In emergency cases where your vital interests are at stake
 
 International transfers:
-When your data is transferred to countries outside Mexico, we ensure appropriate safeguards are in place, including contractual clauses and the recipient's commitment to privacy principles equivalent to Mexican law.`
+When your data is transferred to countries outside Mexico, we ensure appropriate safeguards are in place, including contractual clauses and the recipient’s commitment to privacy principles equivalent to Mexican law.`
         },
         {
           id: "cookies",

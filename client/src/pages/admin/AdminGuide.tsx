@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { adminApiRequest } from "@/lib/adminAuth";
 import { NerveCenter } from "@/components/admin/NerveCenter";
 import { EvolutionTimeline } from "@/components/admin/EvolutionTimeline";
 import { Brain, Cpu, Shield, Activity, Zap, TrendingUp } from "lucide-react";
@@ -413,8 +414,14 @@ export default function AdminGuide() {
   const { language } = useLanguage();
   const t = translations[language as keyof typeof translations] || translations.en;
 
+  // Con el token del panel (L4), como las demás pantallas: la ruta responde 401 sin sesión
   const { data, isLoading, isError } = useQuery<ChroniclerResponse>({
     queryKey: ["/api/system/chronicler"],
+    queryFn: async () => {
+      const res = await adminApiRequest("GET", "/api/system/chronicler");
+      if (!res.ok) throw new Error("Failed to fetch system chronicler");
+      return res.json();
+    },
     refetchInterval: 30000
   });
 
