@@ -112,7 +112,7 @@ npm run test:editorial
 
 Las suites requieren PostgreSQL **local** y rechazan una URL de base remota. Crean fixtures propios, prueban persistencia real y limpian cuentas, documentos de prueba y orden original al terminar. El reordenador se prueba con dos peticiones concurrentes: una debe guardar y la otra responder 409.
 
-El driver de transacciones usa una conexión PostgreSQL fijada durante el guardado; se conserva el driver HTTP Neon para los flujos existentes. La comprobación en el runtime Replit/Neon real queda pendiente, porque el cliente pidió no operar allí por ahora. Una compilación local correcta no sustituye esa comprobación.
+El driver de transacciones usa una conexión PostgreSQL fijada durante el guardado; se conserva el driver HTTP Neon para los flujos existentes. Tras la autorización del cliente para actualizar Replit el 16 de octubre, se verificó una transacción de solo lectura con el driver editorial dentro del runtime real de Replit. El servidor respondió correctamente a `/readyz`, a la configuración pública y a la lectura de un logo desde App Storage. La prueba concurrente de escrituras se mantiene limitada a la base local de pruebas.
 
 ## Orden de cierre para una réplica exhaustiva
 
@@ -123,10 +123,12 @@ El driver de transacciones usa una conexión PostgreSQL fijada durante el guarda
 5. Completar newsletter y, si el cliente adopta ese flujo, postulaciones/CV privados.
 6. Replicar permisos granulares, administración de usuarios, MFA, sesiones y auditoría durable.
 7. Auditar y adaptar individualmente agentes y salidas generadas. Mantener integraciones de tracking desactivadas hasta definir su uso.
-8. Sólo después de levantar la restricción del cliente: sincronizar código con Replit, verificar migraciones aditivas y conexión de transacciones, recorrer Preview y acordar la publicación pública.
+8. La restricción sobre Replit se levantó el 16 de octubre mediante una petición explícita de actualización. El código se sincronizó conservando el commit de publicación existente; TypeScript y build pasaron en Replit. Se revisó y aplicó una migración exclusivamente aditiva de seis columnas para medios y noticias. Los pendientes funcionales anteriores siguen abiertos.
 
 Este orden permite distinguir las mejoras ya utilizables de las funciones pendientes. El panel no debe presentarse como una copia completa de Von Wobeser hasta cerrar y probar las filas pendientes aplicables.
 
 ## Resultado de aceptación de este corte
 
-Los cuatro comandos anteriores terminaron correctamente en local. Se comprobó también el rechazo de raster truncado, la biblioteca del material aprobado, archivo/restauración, escape de HTML y bloqueo de enlaces ejecutables en el texto formateado. La revisión visual interactiva quedó pendiente: la conexión de control de Brave reportó pérdida de debugger/captura de una página anterior. Se conserva la pestaña local para continuar cuando se restablezca la conexión. No se presenta una captura de la versión anterior como evidencia del panel nuevo.
+Los cuatro comandos anteriores terminaron correctamente en local. Se comprobó también el rechazo de raster truncado, la biblioteca del material aprobado, archivo/restauración, escape de HTML y bloqueo de enlaces ejecutables en el texto formateado.
+
+La conexión de Brave se restableció y se recorrió Preview de Replit con la sesión del cliente: resumen con 25 perfiles y cuatro visibles, cuatro prácticas, tres publicaciones y 86 medios; 84 miniaturas de imagen cargadas sin errores y dos videos en su filtro; listado completo de orden; directorio de las 33 secciones; campos de contacto y editor bilingüe con vista previa del cuerpo. El apartado de agentes cargó nueve agentes registrados y su estado. Se revisaron el resumen y el menú a 390 × 844, y se ajustaron el encabezado del menú, el nombre accesible de búsqueda y la búsqueda de contacto. Esta aceptación visual de navegación no sustituye una ejecución integral de cada agente ni las funciones pendientes de la matriz. No se modificó contenido editorial real durante el recorrido.

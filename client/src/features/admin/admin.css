@@ -1,4 +1,5 @@
-.admin-shell {
+.admin-shell,
+.admin-mobile-panel {
   --admin-ink: #172b39;
   --admin-muted: #68757c;
   --admin-line: #e0e6e7;
@@ -64,10 +65,12 @@
   flex-direction: column;
   z-index: 30;
 }
-.admin-brand {
+.admin-sidebar .admin-brand,
+.admin-mobile-panel .admin-brand {
   padding: 29px 24px 24px;
   border-bottom: 1px solid var(--admin-line);
   display: block;
+  flex-shrink: 0;
 }
 .admin-brand img {
   width: 173px;
