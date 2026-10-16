@@ -73,8 +73,12 @@ function staleFields(
 
 export async function syncSeedContent() {
   const { db } = await import("./db");
-  const { eq } = await import("drizzle-orm");
+  const { and, eq } = await import("drizzle-orm");
   const { practiceGroups, teamMembers } = await import("@shared/schema");
+
+  // Condición "el campo aún tiene el valor que se leyó", por cada campo que se cambia
+  const unchanged = (table: object, row: Record<string, unknown>, changes: Record<string, string>) =>
+    Object.keys(changes).map((field) => eq((table as Record<string, any>)[field], row[field] as string));
 
   let updated = 0;
 
@@ -84,7 +88,9 @@ export async function syncSeedContent() {
     if (!row) continue;
     const changes = staleFields(row, item, PREVIOUS_PRACTICE[item.slug], PRACTICE_FIELDS);
     if (Object.keys(changes).length === 0) continue;
-    await db.update(practiceGroups).set(changes).where(eq(practiceGroups.id, row.id));
+    // Solo si la fila sigue con los valores leídos: una edición del panel entre la lectura y
+    // la escritura no se pisa
+    await db.update(practiceGroups).set(changes).where(and(eq(practiceGroups.id, row.id), ...unchanged(practiceGroups, row, changes)));
     updated++;
   }
 
@@ -94,7 +100,7 @@ export async function syncSeedContent() {
     if (!row) continue;
     const changes = staleFields(row, item, PREVIOUS_TEAM[item.slug], TEAM_FIELDS);
     if (Object.keys(changes).length === 0) continue;
-    await db.update(teamMembers).set(changes).where(eq(teamMembers.id, row.id));
+    await db.update(teamMembers).set(changes).where(and(eq(teamMembers.id, row.id), ...unchanged(teamMembers, row, changes)));
     updated++;
   }
 

@@ -1,6 +1,9 @@
 import { useEffect, useState, useCallback, useRef, useSyncExternalStore } from 'react';
 import { getToken } from '@/lib/adminAuth';
 
+// Subprotocolo del socket del panel; el servidor lo elige y lee el token del segundo valor
+const PIPELINE_WS_PROTOCOL = 'ss-pipeline';
+
 export interface PipelineProgressEvent {
   articleId: string;
   step: string;
@@ -74,10 +77,11 @@ class PipelineWebSocketManager {
     }
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws/pipeline?token=${encodeURIComponent(token)}`;
+    // El token va como subprotocolo, no en la URL: así no queda en registros de proxies
+    const wsUrl = `${protocol}//${window.location.host}/ws/pipeline`;
     
     try {
-      this.ws = new WebSocket(wsUrl);
+      this.ws = new WebSocket(wsUrl, [PIPELINE_WS_PROTOCOL, token]);
     } catch (error) {
       console.error('[Pipeline WS] Failed to create WebSocket:', error);
       this.scheduleReconnect();

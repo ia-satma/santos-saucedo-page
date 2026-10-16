@@ -107,12 +107,12 @@ function auditLog(
   console.log("[AUDIT]", JSON.stringify(entry));
 }
 
-// Error de los formularios públicos para el registro (N4): nombre, código y mensaje, sin el
-// objeto entero (el error de Postgres trae en "detail" los valores, p. ej. el correo).
+// Error de los formularios públicos para el registro (N4): solo nombre y código, sin el
+// mensaje ni el objeto (un error de Postgres puede traer los valores, p. ej. el correo).
 function describeErrorForLog(error: unknown): string {
   if (!(error instanceof Error)) return String(typeof error);
   const code = (error as { code?: unknown }).code;
-  return `${error.name}${typeof code === "string" ? ` ${code}` : ""}: ${error.message}`;
+  return `${error.name}${typeof code === "string" ? ` ${code}` : ""}`;
 }
 
 const uploadsDir = path.join(process.cwd(), "uploads");
@@ -254,21 +254,24 @@ export async function registerRoutes(
   // los borradores, así que solo acepta una sesión válida del panel (?token=, validado como en
   // authMiddleware) desde un origen admitido. Sin token, con otro Origin o sin Origin: 401/403
   // antes de abrir la conexión.
+  const PIPELINE_WS_PROTOCOL = 'ss-pipeline';
   const wss = new WebSocketServer({
     server: httpServer,
     path: '/ws/pipeline',
+    handleProtocols: (protocols) => (protocols.has(PIPELINE_WS_PROTOCOL) ? PIPELINE_WS_PROTOCOL : false),
     verifyClient: (info, done) => {
       const origin = info.origin;
       if (!origin || !isAllowedOrigin(origin, info.req)) {
         done(false, 403, 'Forbidden');
         return;
       }
-      let token: string | null = null;
-      try {
-        token = new URL(info.req.url ?? '', 'http://localhost').searchParams.get('token');
-      } catch {
-        token = null;
-      }
+      // Token como subprotocolo ("ss-pipeline", token), no en la URL: la URL queda en los
+      // registros de los proxies. El servidor responde solo con "ss-pipeline" (handleProtocols).
+      const offered = String(info.req.headers['sec-websocket-protocol'] ?? '')
+        .split(',')
+        .map((value) => value.trim())
+        .filter(Boolean);
+      const token = offered[0] === PIPELINE_WS_PROTOCOL && offered.length === 2 ? offered[1] : null;
       validateSessionToken(token)
         .then((result) => done(result.ok, result.ok ? undefined : 401, result.ok ? undefined : 'Unauthorized'))
         .catch((error) => {
@@ -2928,7 +2931,8 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       }
 
       // Solo de contenido público (getEntity): nada de notas no públicas ni personas sin ficha
-      if (!(await getEntity(contentType, entityId))) {
+      const entity = await getEntity(contentType, entityId);
+      if (!entity) {
         return res.json({ translations: {}, contentType, entityId, targetLanguage });
       }
 
@@ -2957,9 +2961,18 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       // Fall back to translationCache lookup
       const translations = await storage.getTranslations(contentType, entityId, targetLanguage);
       
+      // Solo los campos públicos del tipo (validFieldsByContentType) y solo si la traducción es
+      // del texto publicado hoy: la caché puede guardar otros campos o textos ya cambiados
+      // (p. ej. tras actualizar los textos de la semilla o editar en el panel)
+      const publicFields = validFieldsByContentType[contentType] ?? [];
       const translationsMap: Record<string, string> = {};
       for (const t of translations) {
-        if (t.field && t.translatedText) {
+        if (
+          t.field &&
+          t.translatedText &&
+          publicFields.includes(t.field) &&
+          isPublicSourceText(entity, t.field, t.sourceText)
+        ) {
           translationsMap[t.field] = t.translatedText;
         }
       }
@@ -3004,13 +3017,13 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
     representative_matter: ['title', 'description', 'client'],
   };
 
-  // Texto de origen admitido para un campo (L6, N1): solo su valor público, entity[field], el
-  // que manda el cliente (useTranslatedContent quita los *Es). Ya no el gemelo en español: la
-  // caché compara el texto de origen y cada guardado lo sustituye, así que alternar "title" y
-  // "titleEs" fallaba la caché en cada petición y cada una pagaba una llamada a la IA.
-  function publicSourceText(entity: Record<string, unknown>, field: string): string | undefined {
-    const value = entity[field];
-    return typeof value === "string" && value.trim() ? value : undefined;
+  // Texto de origen admitido para un campo (L6): su valor publicado, entity[field], o el de su
+  // gemelo en español (field + "Es"): varias pantallas mandan el español bajo la clave inglesa
+  // (NewsSection, la ficha del equipo). Ni otros campos ni valores internos. Alternar los dos
+  // textos falla la caché, pero cada fallo gasta una llamada del límite por dirección (N1).
+  function isPublicSourceText(entity: Record<string, unknown>, field: string, text: unknown): text is string {
+    if (typeof text !== "string" || !text.trim()) return false;
+    return entity[field] === text || entity[`${field}Es`] === text;
   }
 
   // Gasto de IA de las rutas públicas de traducción (N1).
@@ -3072,7 +3085,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       }
 
       const entity = await getEntity(contentType, entityId);
-      if (!entity || typeof sourceText !== "string" || publicSourceText(entity, field) !== sourceText) {
+      if (!entity || !isPublicSourceText(entity, field, sourceText)) {
         return res.status(400).json({ error: "Source text does not match published content" });
       }
       const existingTranslation = await storage.getTranslation(contentType, entityId, field, targetLanguage);
@@ -3170,7 +3183,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
       for (const [fieldName, text] of Object.entries(fields as Record<string, string>)) {
         if (!text || typeof text !== 'string' || !text.trim()) continue;
-        if (publicSourceText(entity, fieldName) !== text) continue;
+        if (!isPublicSourceText(entity, fieldName, text)) continue;
 
         // The CMS already stores English in the base field next to its *Es twin; serve it without calling the AI.
         const englishText = entity[fieldName];
@@ -3252,7 +3265,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // =============================================
 
   // Generate image for article
-  app.post("/api/agents/generate-image/:articleId", authMiddleware, async (req: Request, res: Response) => {
+  app.post("/api/agents/generate-image/:articleId", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
       const { articleId } = req.params;
       
@@ -3288,7 +3301,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
   // Process single article - FULL RAG AGENTIC PIPELINE
   // Runs ALL agents in sequence: Format → Categorize → Link Metadata → SEO → Translate → Image
-  app.post("/api/agents/pipeline/:articleId", authMiddleware, async (req: Request, res: Response) => {
+  app.post("/api/agents/pipeline/:articleId", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
       const { articleId } = req.params;
       const { generateImage = false } = req.body;
@@ -3522,7 +3535,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   });
 
   // Process all articles - FULL RAG AGENTIC PIPELINE for all articles
-  app.post("/api/agents/pipeline/process-all", authMiddleware, async (req: Request, res: Response) => {
+  app.post("/api/agents/pipeline/process-all", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
       const allNews = await storage.getNews();
       
@@ -3658,7 +3671,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   });
 
   // Auto-Recovery Agent - Repairs failed articles with smart retry logic
-  app.post("/api/agents/recover", authMiddleware, async (req: Request, res: Response) => {
+  app.post("/api/agents/recover", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
       console.log('[Recovery] Starting auto-recovery for failed articles...');
       const { recoverFailedItems, getFailedArticlesSummary } = await import('./agents/AutoRecoveryAgent');

@@ -50,7 +50,8 @@ const PUBLIC_MEMBER_FIELDS = [
 ] as const satisfies readonly (keyof TeamMember)[];
 
 // Ficha (/api/team/:slug) y autores de una nota: además, biografía, LinkedIn y las secciones
-// de la ficha que se pintan si el registro las trae.
+// de la ficha que se pintan si el registro las trae. Sin representativeMatters: los asuntos
+// no se publican (los de la importación eran de plantilla) y la ficha no los pinta sin dato.
 const PUBLIC_PROFILE_FIELDS = [
   ...PUBLIC_MEMBER_FIELDS,
   "bio",
@@ -62,7 +63,6 @@ const PUBLIC_PROFILE_FIELDS = [
   "affiliations",
   "rankings",
   "publications",
-  "representativeMatters",
   "experience",
 ] as const satisfies readonly (keyof TeamMember)[];
 

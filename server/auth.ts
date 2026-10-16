@@ -86,12 +86,16 @@ export function recordLoginAttempt(identifier: string, success: boolean): void {
 
   if (!entry) {
     // Claves inventadas en masa (otra dirección o usuario en cada intento): se quitan las
-    // vencidas y, si aún sobran, se vacía el mapa antes que dejarlo crecer sin límite
+    // vencidas y, si aún sobran, las que no están bloqueadas; los bloqueos vigentes se conservan
     if (loginAttempts.size > 20000) {
       loginAttempts.forEach((old, key) => {
         if (now - old.lastAttempt > WINDOW_MS && old.blockedUntil < now) loginAttempts.delete(key);
       });
-      if (loginAttempts.size > 20000) loginAttempts.clear();
+      if (loginAttempts.size > 20000) {
+        loginAttempts.forEach((old, key) => {
+          if (old.blockedUntil < now) loginAttempts.delete(key);
+        });
+      }
     }
     loginAttempts.set(identifier, {
       attempts: 1,
