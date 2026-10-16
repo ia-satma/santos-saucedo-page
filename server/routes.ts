@@ -1,3 +1,9 @@
+import { registerAgentReportRoutes } from "./routes/agentReportRoutes";
+import { servePersistentManagedMedia } from "./routes/managedMedia";
+import { registerAgentUsageRoutes } from "./routes/agentUsageRoutes";
+import { registerAgentAssetHistoryRoutes } from "./routes/agentAssetHistoryRoutes";
+import { registerAgentPipelineRoutes } from "./routes/agentPipelineRoutes";
+import { registerAdminKnowledgeRoutes } from "./routes/adminKnowledgeRoutes";
 import sharp from "sharp";
 import { saveTeamMember, teamPracticeIds, validatePracticeRoster } from "./cms/teamEditor";
 import { registerContentPreview } from "./cms/preview";
@@ -219,6 +225,9 @@ export async function registerRoutes(
 ): Promise<Server> {
   await ensureCmsSchema();
   registerAdminUsers(app);
+  registerAgentUsageRoutes(app);
+  registerAgentReportRoutes(app);
+  registerAgentAssetHistoryRoutes(app);
   registerCmsRoutes(app);
   registerCatalogOrder(app);
   registerMediaLibrary(app);
@@ -425,35 +434,26 @@ export async function registerRoutes(
   // public/generated-images. Cualquier otra petición (%2f, %5c, doble codificación, espacios,
   // subcarpetas, otro método) da 404 JSON sin leer nada fuera de esta carpeta. Un solo
   // manejador para todo el prefijo, también para que no caiga en la página del sitio.
-  const generatedImagesDir = path.resolve(process.cwd(), 'public', 'generated-images');
-  if (!fs.existsSync(generatedImagesDir)) {
-    fs.mkdirSync(generatedImagesDir, { recursive: true });
-  }
-  const GENERATED_IMAGE_NAME = /^[A-Za-z0-9][A-Za-z0-9_.-]*\.(png|jpe?g|webp|gif)$/i;
-
-  app.use('/generated-images', (req, res) => {
-    const notFound = () => {
-      if (!res.headersSent) res.status(404).json({ error: 'Image not found' });
-    };
-    if (req.method !== 'GET' && req.method !== 'HEAD') return notFound();
-    let name: string;
-    try {
-      name = decodeURIComponent(req.path.slice(1));
-    } catch {
-      return notFound();
-    }
-    if (!GENERATED_IMAGE_NAME.test(name) || name.includes('..')) return notFound();
-    const filePath = path.resolve(generatedImagesDir, name);
-    if (!filePath.startsWith(generatedImagesDir + path.sep)) return notFound();
-    fs.stat(filePath, (statError, stats) => {
-      if (statError || !stats.isFile()) return notFound();
-      res.set('Cache-Control', 'public, max-age=31536000, immutable');
-      res.set('X-Content-Type-Options', 'nosniff');
-      res.sendFile(filePath, (sendError) => {
-        if (sendError) notFound();
+  for (const [prefix, extensions] of [["generated-images", "png|jpe?g|webp|gif"], ["generated-audio", "mp3|wav|ogg|m4a"]] as const) {
+    const root = path.resolve(process.cwd(), "public", prefix);
+    fs.mkdirSync(root, {recursive:true});
+    const validName = new RegExp(`^[A-Za-z0-9][A-Za-z0-9_.-]*\\.(${extensions})$`,"i");
+    app.use(`/${prefix}`, async (req,res) => {
+      const missing=()=>{if(!res.headersSent)res.status(404).json({error:"File not found"});};
+      if(!["GET","HEAD"].includes(req.method))return missing();
+      let name:string;
+      try {name=decodeURIComponent(req.path.slice(1));}catch{return missing();}
+      if(!validName.test(name)||name.includes(".."))return missing();
+      try {if(await servePersistentManagedMedia(req,res,`/${prefix}/${name}`))return;}catch{return missing();}
+      const file=path.resolve(root,name);
+      fs.stat(file,(error,stat)=>{
+        if(error||!stat.isFile())return missing();
+        res.set({"Cache-Control":"public, max-age=31536000, immutable","X-Content-Type-Options":"nosniff","Content-Security-Policy":"sandbox"});
+        if(req.query.download!==undefined)res.attachment(name);
+        res.sendFile(file,error=>{if(error)missing();});
       });
     });
-  });
+  }
 
   // Detección del idioma en la primera visita: solo la cabecera Accept-Language del
   // navegador, sin terceros (antes se enviaba la IP del visitante a ipapi.co). Si ningún
@@ -1378,7 +1378,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // Create blog post
   app.post("/api/admin/posts", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
-      const validation = insertBlogPostSchema.safeParse({
+      const validation = insertBlogPostSchema.omit({authorId:true,deletedAt:true}).extend({publishedAt:z.coerce.date().nullable().optional(),status:z.enum(["draft","published","trash"]).default("draft")}).safeParse({
         ...req.body,
         authorId: req.adminUser!.id,
       });
@@ -1396,7 +1396,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         return res.status(400).json({ error: "Slug already exists" });
       }
 
-      const post = await storage.createBlogPost(validation.data);
+      const post = await storage.createBlogPost({...validation.data,authorId:req.adminUser!.id});
       res.status(201).json(post);
     } catch (error) {
       console.error("Create post error:", error);
@@ -1420,7 +1420,9 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         }
       }
 
-      const post = await storage.updateBlogPost(req.params.id, req.body);
+      const parsed=insertBlogPostSchema.omit({authorId:true,deletedAt:true}).extend({publishedAt:z.coerce.date().nullable().optional(),status:z.enum(["draft","published","trash"])}).partial().safeParse(req.body);
+      if(!parsed.success)return res.status(400).json({error:"Validation failed",details:parsed.error.errors});
+      const post = await storage.updateBlogPost(req.params.id, parsed.data);
       res.json(post);
     } catch (error) {
       console.error("Update post error:", error);
@@ -1830,6 +1832,10 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   });
 
   // Get single team member (admin)
+  app.get("/api/admin/team/options", authMiddleware, async (_req,res) => {
+    try {res.json((await storage.getTeamMembers()).map(({id,name})=>({id,name})));}
+    catch {res.status(503).json({error:"No se pudo cargar el equipo relacionado."});}
+  });
   app.get("/api/admin/team/:id", authMiddleware, async (req: Request, res: Response) => {
     try {
       const member = await storage.getTeamMemberById(req.params.id);
@@ -2041,7 +2047,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
   app.post("/api/admin/events", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
-      const validatedData = insertEventSchema.parse(req.body);
+      const validatedData = insertEventSchema.extend({date:z.coerce.date(),endDate:z.coerce.date().nullable().optional()}).parse(req.body);
       const event = await storage.createEvent(validatedData);
       res.json(event);
     } catch (error) {
@@ -2055,7 +2061,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
   app.put("/api/admin/events/:id", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
-      const validatedData = insertEventSchema.partial().parse(req.body);
+      const validatedData = insertEventSchema.extend({date:z.coerce.date(),endDate:z.coerce.date().nullable().optional()}).partial().parse(req.body);
       const updated = await storage.updateEvent(req.params.id, validatedData);
       if (!updated) {
         return res.status(404).json({ error: "Event not found" });
@@ -2592,103 +2598,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // AGENT KNOWLEDGE CRUD (Admin)
   // =============================================
 
-  app.get("/api/admin/knowledge", authMiddleware, async (_req: Request, res: Response) => {
-    try {
-      const { dbPersistence } = await import('./agents/storage/DatabasePersistence');
-      const documents = await dbPersistence.getAllKnowledge();
-      res.json(documents);
-    } catch (error) {
-      console.error("Get knowledge error:", error);
-      res.status(500).json({ error: "Failed to fetch knowledge documents" });
-    }
-  });
-
-  app.post("/api/admin/knowledge", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
-    try {
-      const { category, title, content, agentType, metadata } = req.body;
-      if (!category || !title || !content || !agentType) {
-        return res.status(400).json({ error: "Missing required fields: category, title, content, agentType" });
-      }
-      const { dbPersistence } = await import('./agents/storage/DatabasePersistence');
-      const document = await dbPersistence.createKnowledge({
-        category,
-        title,
-        content,
-        agentType,
-        metadata: metadata || {},
-      });
-      res.status(201).json(document);
-    } catch (error) {
-      console.error("Create knowledge error:", error);
-      res.status(500).json({ error: "Failed to create knowledge document" });
-    }
-  });
-
-  app.put("/api/admin/knowledge/:id", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      const { category, title, content, agentType, metadata } = req.body;
-      const { dbPersistence } = await import('./agents/storage/DatabasePersistence');
-      const existing = await dbPersistence.getKnowledge(id);
-      if (!existing) {
-        return res.status(404).json({ error: "Knowledge document not found" });
-      }
-      const updated = await dbPersistence.updateKnowledge(id, {
-        ...(category && { category }),
-        ...(title && { title }),
-        ...(content && { content }),
-        ...(agentType && { agentType }),
-        ...(metadata && { metadata }),
-      });
-      res.json(updated);
-    } catch (error) {
-      console.error("Update knowledge error:", error);
-      res.status(500).json({ error: "Failed to update knowledge document" });
-    }
-  });
-
-  app.delete("/api/admin/knowledge/:id", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      const { dbPersistence } = await import('./agents/storage/DatabasePersistence');
-      const existing = await dbPersistence.getKnowledge(id);
-      if (!existing) {
-        return res.status(404).json({ error: "Knowledge document not found" });
-      }
-      await dbPersistence.deleteKnowledge(id);
-      res.json({ success: true });
-    } catch (error) {
-      console.error("Delete knowledge error:", error);
-      res.status(500).json({ error: "Failed to delete knowledge document" });
-    }
-  });
-
-  app.post("/api/admin/knowledge/bulk", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
-    try {
-      const { items } = req.body;
-      if (!Array.isArray(items) || items.length === 0) {
-        return res.status(400).json({ error: "Items array is required" });
-      }
-      const { dbPersistence } = await import('./agents/storage/DatabasePersistence');
-      let created = 0;
-      for (const item of items) {
-        if (item.category && item.title && item.content && item.agentType) {
-          await dbPersistence.createKnowledge({
-            category: item.category,
-            title: item.title,
-            content: item.content,
-            agentType: item.agentType,
-            metadata: item.metadata || {},
-          });
-          created++;
-        }
-      }
-      res.status(201).json({ created, total: items.length });
-    } catch (error) {
-      console.error("Bulk create knowledge error:", error);
-      res.status(500).json({ error: "Failed to bulk create knowledge documents" });
-    }
-  });
+  registerAdminKnowledgeRoutes(app);
 
   // =============================================
   // MEDIA ITEMS CRUD
@@ -3372,461 +3282,8 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // =============================================
 
   // Generate image for article
-  app.post("/api/agents/generate-image/:articleId", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
-    try {
-      const { articleId } = req.params;
-      
-      const article = await storage.getNewsById(articleId);
-      if (!article) {
-        return res.status(404).json({ error: "Article not found" });
-      }
+  registerAgentPipelineRoutes(app, broadcastPipelineProgress);
 
-      // Use ImageSuggestionAgent
-      const { imageSuggestionAgent } = await import('./agents');
-      const context = {
-        jobId: `img-${articleId}-${Date.now()}`,
-        agentType: 'image_suggestion' as any,
-        startTime: new Date(),
-        metadata: { articleId },
-      };
-
-      const result = await imageSuggestionAgent.execute(context, { articleId });
-
-      if (result.success && result.data) {
-        res.json({
-          success: true,
-          ...result.data,
-        });
-      } else {
-        res.status(500).json({ error: result.error || "Failed to generate image" });
-      }
-    } catch (error) {
-      console.error("Image generation error:", error);
-      res.status(500).json({ error: "Failed to generate image" });
-    }
-  });
-
-  // Process single article - FULL RAG AGENTIC PIPELINE
-  // Runs ALL agents in sequence: Format → Categorize → Link Metadata → SEO → Translate → Image
-  app.post("/api/agents/pipeline/:articleId", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
-    try {
-      const { articleId } = req.params;
-      const { generateImage = false } = req.body;
-      
-      const article = await storage.getNewsById(articleId);
-      if (!article) {
-        return res.status(404).json({ error: "Article not found" });
-      }
-
-      const { 
-        formatterAgent, 
-        categoryAgent, 
-        metadataLinkerAgent, 
-        seoOptimizerAgent, 
-        polyglotTranslatorAgent,
-        imageSuggestionAgent 
-      } = await import('./agents');
-
-      const createContext = (agentType: string) => ({
-        jobId: `${agentType}-${articleId}-${Date.now()}`,
-        agentType: agentType as any,
-        startTime: new Date(),
-        metadata: { articleId },
-      });
-
-      const pipelineResults: Record<string, any> = {
-        articleId,
-        steps: {},
-        success: true,
-        errors: [],
-      };
-
-      const totalSteps = generateImage ? 6 : 5;
-      const completedSteps = new Set<string>();
-
-      // Helper to broadcast progress - only count unique step completions
-      const emitProgress = (step: string, status: 'running' | 'completed' | 'error', language?: string, message?: string) => {
-        let progress = 0;
-        if (status === 'completed' && !completedSteps.has(step)) {
-          completedSteps.add(step);
-        }
-        progress = Math.round((completedSteps.size / totalSteps) * 100);
-        
-        broadcastPipelineProgress(articleId, {
-          step,
-          status,
-          language,
-          progress,
-          message,
-        });
-      };
-
-      // Step 1: FORMAT - Clean and structure the article text
-      console.log(`[Pipeline] Step 1: Formatting article ${articleId}`);
-      emitProgress('format', 'running', undefined, 'Cleaning article text...');
-      try {
-        const formatResult = await formatterAgent.execute(
-          createContext('formatter'),
-          { articleId }
-        );
-        pipelineResults.steps.format = { 
-          success: formatResult.success, 
-          data: formatResult.data,
-          error: formatResult.error 
-        };
-        emitProgress('format', formatResult.success ? 'completed' : 'error', undefined, formatResult.success ? 'Article formatted' : formatResult.error);
-      } catch (err: any) {
-        pipelineResults.steps.format = { success: false, error: err.message };
-        pipelineResults.errors.push(`Format: ${err.message}`);
-        emitProgress('format', 'error', undefined, err.message);
-      }
-
-      // Step 2: CATEGORIZE - Automatically categorize for SEO
-      console.log(`[Pipeline] Step 2: Categorizing article ${articleId}`);
-      emitProgress('categorize', 'running', undefined, 'Categorizing article...');
-      try {
-        const categoryResult = await categoryAgent.execute(
-          createContext('category_agent'),
-          { articleId }
-        );
-        pipelineResults.steps.categorize = { 
-          success: categoryResult.success, 
-          data: categoryResult.data,
-          error: categoryResult.error 
-        };
-        emitProgress('categorize', categoryResult.success ? 'completed' : 'error', undefined, 
-          categoryResult.success ? `Category: ${(categoryResult.data as any)?.primaryCategory || 'assigned'}` : categoryResult.error);
-      } catch (err: any) {
-        pipelineResults.steps.categorize = { success: false, error: err.message };
-        pipelineResults.errors.push(`Categorize: ${err.message}`);
-        emitProgress('categorize', 'error', undefined, err.message);
-      }
-
-      // Step 3: LINK METADATA - Connect to authors, practice areas, industries
-      console.log(`[Pipeline] Step 3: Linking metadata for article ${articleId}`);
-      emitProgress('metadata', 'running', undefined, 'Linking authors and practice areas...');
-      try {
-        const metadataResult = await metadataLinkerAgent.execute(
-          createContext('metadata_linker'),
-          { articleId }
-        );
-        pipelineResults.steps.metadata = { 
-          success: metadataResult.success, 
-          data: metadataResult.data,
-          error: metadataResult.error 
-        };
-        emitProgress('metadata', metadataResult.success ? 'completed' : 'error', undefined, 
-          metadataResult.success ? 'Metadata linked' : metadataResult.error);
-      } catch (err: any) {
-        pipelineResults.steps.metadata = { success: false, error: err.message };
-        pipelineResults.errors.push(`Metadata: ${err.message}`);
-        emitProgress('metadata', 'error', undefined, err.message);
-      }
-
-      // Step 4: SEO OPTIMIZE - Improve titles, descriptions, slugs
-      console.log(`[Pipeline] Step 4: SEO optimizing article ${articleId}`);
-      emitProgress('seo', 'running', undefined, 'Optimizing for SEO...');
-      try {
-        const seoResult = await seoOptimizerAgent.execute(
-          createContext('seo_optimizer'),
-          { articleId }
-        );
-        pipelineResults.steps.seo = { 
-          success: seoResult.success, 
-          data: seoResult.data,
-          error: seoResult.error 
-        };
-        emitProgress('seo', seoResult.success ? 'completed' : 'error', undefined, 
-          seoResult.success ? 'SEO optimized' : seoResult.error);
-      } catch (err: any) {
-        pipelineResults.steps.seo = { success: false, error: err.message };
-        pipelineResults.errors.push(`SEO: ${err.message}`);
-        emitProgress('seo', 'error', undefined, err.message);
-      }
-
-      // Step 5: TRANSLATE - Translate to all 9 target languages (source is Spanish)
-      const targetLanguages = ['en', 'de', 'zh', 'ko', 'ja', 'ar', 'ru', 'fr', 'it'];
-      console.log(`[Pipeline] Step 5: Translating article ${articleId} to ${targetLanguages.length} languages`);
-      emitProgress('translate', 'running', undefined, `Translating to ${targetLanguages.length} languages...`);
-      
-      try {
-        const translateResult = await polyglotTranslatorAgent.execute(
-          createContext('polyglot_translator'),
-          { articleId }
-        );
-        pipelineResults.steps.translate = { 
-          success: translateResult.success, 
-          data: translateResult.data,
-          error: translateResult.error 
-        };
-        
-        const translatedCount = (translateResult.data as any)?.translatedCount || 0;
-        const cachedCount = (translateResult.data as any)?.cachedCount || 0;
-        emitProgress('translate', translateResult.success ? 'completed' : 'error', undefined, 
-          translateResult.success 
-            ? `Translated: ${translatedCount} new, ${cachedCount} cached` 
-            : translateResult.error);
-      } catch (err: any) {
-        pipelineResults.steps.translate = { success: false, error: err.message };
-        pipelineResults.errors.push(`Translate: ${err.message}`);
-        emitProgress('translate', 'error', undefined, err.message);
-      }
-
-      // Step 6: GENERATE IMAGE (optional)
-      if (generateImage) {
-        console.log(`[Pipeline] Step 6: Generating image for article ${articleId}`);
-        emitProgress('image', 'running', undefined, 'Generating article image with DALL-E...');
-        try {
-          const imageResult = await imageSuggestionAgent.execute(
-            createContext('image_suggestion'),
-            { articleId }
-          );
-          pipelineResults.steps.image = { 
-            success: imageResult.success, 
-            data: imageResult.data,
-            error: imageResult.error 
-          };
-          emitProgress('image', imageResult.success ? 'completed' : 'error', undefined, 
-            imageResult.success ? 'Image generated' : imageResult.error);
-        } catch (err: any) {
-          pipelineResults.steps.image = { success: false, error: err.message };
-          pipelineResults.errors.push(`Image: ${err.message}`);
-          emitProgress('image', 'error', undefined, err.message);
-        }
-      }
-
-      // Calculate overall success - IMAGE FAILURES DO NOT FAIL THE PIPELINE
-      // Core steps: format, categorize, metadata, seo, translate
-      // Optional step: image (failure = warning, not error)
-      const coreStepKeys = ['format', 'categorize', 'metadata', 'seo', 'translate'];
-      const coreSteps = coreStepKeys
-        .filter(key => pipelineResults.steps[key])
-        .map(key => ({ key, ...pipelineResults.steps[key] }));
-      
-      const successfulCoreSteps = coreSteps.filter(s => s.success).length;
-      const totalCoreSteps = coreSteps.length;
-      
-      // Image is optional - its failure is a warning, not an error
-      const imageStep = pipelineResults.steps.image;
-      const imageWarning = imageStep && !imageStep.success;
-      
-      const stepResults = Object.values(pipelineResults.steps) as any[];
-      const successfulSteps = stepResults.filter(s => s.success).length;
-      pipelineResults.successfulSteps = successfulSteps;
-      pipelineResults.totalSteps = stepResults.length;
-      
-      // SUCCESS = all core steps passed (image failure is acceptable)
-      pipelineResults.success = successfulCoreSteps === totalCoreSteps;
-      pipelineResults.partialSuccess = pipelineResults.success && imageWarning;
-      pipelineResults.imageWarning = imageWarning ? (imageStep?.error || 'Image generation failed') : null;
-
-      console.log(`[Pipeline] Completed: ${successfulCoreSteps}/${totalCoreSteps} core steps successful${imageWarning ? ' (image warning)' : ''}`);
-      
-      // Broadcast completion
-      broadcastPipelineProgress(articleId, {
-        step: 'complete',
-        status: 'completed',
-        progress: 100,
-        message: `Pipeline complete: ${successfulSteps}/${stepResults.length} steps successful`,
-        data: pipelineResults,
-      });
-
-      res.json(pipelineResults);
-    } catch (error: any) {
-      console.error("Pipeline error:", error);
-      res.status(500).json({ 
-        success: false, 
-        error: error.message || "Failed to process article pipeline" 
-      });
-    }
-  });
-
-  // Process all articles - FULL RAG AGENTIC PIPELINE for all articles
-  app.post("/api/agents/pipeline/process-all", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
-    try {
-      const allNews = await storage.getNews();
-      
-      if (!allNews || allNews.length === 0) {
-        return res.json({ success: true, total: 0, successful: 0, message: "No articles to process" });
-      }
-
-      const { generateImage = false } = req.body;
-      const { 
-        formatterAgent, 
-        categoryAgent, 
-        metadataLinkerAgent, 
-        seoOptimizerAgent, 
-        polyglotTranslatorAgent,
-        imageSuggestionAgent 
-      } = await import('./agents');
-
-      const createContext = (agentType: string, articleId: string) => ({
-        jobId: `${agentType}-${articleId}-${Date.now()}`,
-        agentType: agentType as any,
-        startTime: new Date(),
-        metadata: { articleId },
-      });
-
-      let successfulCount = 0;
-      const results: Record<string, any>[] = [];
-
-      for (const article of allNews) {
-        console.log(`[Pipeline] Processing article ${article.id}: ${article.titleEs?.substring(0, 50)}...`);
-        const articleResult: Record<string, any> = { 
-          articleId: article.id, 
-          title: article.titleEs,
-          steps: {},
-          success: false 
-        };
-
-        try {
-          // Step 1: FORMAT
-          try {
-            const formatResult = await formatterAgent.execute(
-              createContext('formatter', article.id),
-              { articleId: article.id }
-            );
-            articleResult.steps.format = { success: formatResult.success };
-          } catch (err: any) {
-            console.error(`[Pipeline] Format error for ${article.id}:`, err.message);
-            articleResult.steps.format = { success: false, error: err.message };
-          }
-
-          // Step 2: CATEGORIZE
-          try {
-            const categoryResult = await categoryAgent.execute(
-              createContext('category_agent', article.id),
-              { articleId: article.id }
-            );
-            articleResult.steps.categorize = { success: categoryResult.success };
-          } catch (err: any) {
-            console.error(`[Pipeline] Categorize error for ${article.id}:`, err.message);
-            articleResult.steps.categorize = { success: false, error: err.message };
-          }
-
-          // Step 3: METADATA
-          try {
-            const metadataResult = await metadataLinkerAgent.execute(
-              createContext('metadata_linker', article.id),
-              { articleId: article.id }
-            );
-            articleResult.steps.metadata = { success: metadataResult.success };
-          } catch (err: any) {
-            console.error(`[Pipeline] Metadata error for ${article.id}:`, err.message);
-            articleResult.steps.metadata = { success: false, error: err.message };
-          }
-
-          // Step 4: SEO
-          try {
-            const seoResult = await seoOptimizerAgent.execute(
-              createContext('seo_optimizer', article.id),
-              { articleId: article.id }
-            );
-            articleResult.steps.seo = { success: seoResult.success };
-          } catch (err: any) {
-            console.error(`[Pipeline] SEO error for ${article.id}:`, err.message);
-            articleResult.steps.seo = { success: false, error: err.message };
-          }
-
-          // Step 5: TRANSLATE
-          try {
-            const translateResult = await polyglotTranslatorAgent.execute(
-              createContext('polyglot_translator', article.id),
-              { articleId: article.id }
-            );
-            articleResult.steps.translate = { success: translateResult.success };
-          } catch (err: any) {
-            console.error(`[Pipeline] Translate error for ${article.id}:`, err.message);
-            articleResult.steps.translate = { success: false, error: err.message };
-          }
-
-          // Step 6: IMAGE (optional)
-          if (generateImage) {
-            try {
-              console.log(`[Pipeline] Starting image generation for ${article.id}...`);
-              const imageResult = await imageSuggestionAgent.execute(
-                createContext('image_suggestion', article.id),
-                { articleId: article.id }
-              );
-              console.log(`[Pipeline] Image result for ${article.id}:`, imageResult.success ? 'SUCCESS' : imageResult.error);
-              articleResult.steps.image = { success: imageResult.success, error: imageResult.error };
-            } catch (err: any) {
-              console.error(`[Pipeline] Image generation error for ${article.id}:`, err.message);
-              articleResult.steps.image = { success: false, error: err.message };
-            }
-          }
-
-          articleResult.success = true;
-          successfulCount++;
-        } catch (error) {
-          console.error(`Error processing article ${article.id}:`, error);
-        }
-
-        results.push(articleResult);
-      }
-
-      res.json({
-        success: true,
-        total: allNews.length,
-        successful: successfulCount,
-        message: `Processed ${successfulCount} of ${allNews.length} articles`,
-      });
-    } catch (error) {
-      console.error("Batch processing error:", error);
-      res.status(500).json({ error: "Failed to process articles" });
-    }
-  });
-
-  // Auto-Recovery Agent - Repairs failed articles with smart retry logic
-  app.post("/api/agents/recover", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
-    try {
-      console.log('[Recovery] Starting auto-recovery for failed articles...');
-      const { recoverFailedItems, getFailedArticlesSummary } = await import('./agents/AutoRecoveryAgent');
-      
-      const summary = await getFailedArticlesSummary();
-      console.log(`[Recovery] Found ${summary.total} failed articles`);
-      
-      if (summary.total === 0) {
-        return res.json({
-          success: true,
-          message: 'No failed articles to recover',
-          recovered: 0,
-          stillFailed: 0
-        });
-      }
-      
-      const report = await recoverFailedItems();
-      
-      res.json({
-        success: true,
-        message: `Recovery complete: ${report.totalRecovered}/${report.totalFailed} articles recovered`,
-        recovered: report.totalRecovered,
-        stillFailed: report.totalStillFailed,
-        results: report.results
-      });
-    } catch (error: any) {
-      console.error('[Recovery] Error:', error);
-      res.status(500).json({ 
-        success: false, 
-        error: error.message || 'Recovery failed' 
-      });
-    }
-  });
-
-  // Get failed articles summary for diagnostics
-  app.get("/api/agents/failed-summary", authMiddleware, async (req: Request, res: Response) => {
-    try {
-      const { getFailedArticlesSummary } = await import('./agents/AutoRecoveryAgent');
-      const summary = await getFailedArticlesSummary();
-      res.json({ success: true, ...summary });
-    } catch (error: any) {
-      console.error('[FailedSummary] Error:', error);
-      res.status(500).json({ success: false, error: error.message });
-    }
-  });
-
-  // System Chronicler API - Nerve Center data. Solo con sesión del panel (L4): son datos
-  // internos del proceso de notas y del CMS que ninguna página pública lee.
   app.get("/api/system/chronicler", authMiddleware, async (req: Request, res: Response) => {
     try {
       const { systemChronicler } = await import('./agents/SystemChronicler');

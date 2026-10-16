@@ -3,12 +3,12 @@ import { agentKnowledge } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import * as fs from "fs";
 import * as path from "path";
-import { 
-  AGENT_CATEGORIES, 
-  AGENT_IDS, 
+import {
+  AGENT_CATEGORIES,
+  AGENT_DEFINITIONS,
   EXPECTED_AGENT_COUNTS,
   validateAgentInventory,
-  type AgentCategory 
+  type AgentCategory
 } from "@shared/agentConstants";
 
 export interface AgentCapabilityCard {
@@ -34,7 +34,7 @@ export interface SystemEvolutionEntry {
   category: "intelligence" | "security" | "performance" | "capability";
 }
 
-const AGENT_REGISTRY: AgentCapabilityCard[] = [
+const LEGACY_AGENT_REGISTRY: AgentCapabilityCard[] = [
   {
     id: "orchestrator",
     technicalName: "AgentOrchestrator",
@@ -58,7 +58,7 @@ const AGENT_REGISTRY: AgentCapabilityCard[] = [
     businessName: "The Self-Healing Auditor",
     role: "Guardian of Integrity",
     category: "shield",
-    description: "Unlike standard websites, this agent proactively scans for 'zombie processes' and incomplete data 24/7. It autonomously repairs broken links, retries failed translations, and recovers crashed pipelines without human intervention.",
+    description: "Unlike standard websites, this agent proactively scans for 'zombie processes' and incomplete data 24/7. It autonomously retries failed translations, SEO, and image generation for stuck processing jobs, and assigns a placeholder when an item truly can't be recovered — without human intervention.",
     capabilities: [
       "Continuous failed-item detection",
       "Autonomous error diagnosis with error codes",
@@ -97,7 +97,7 @@ const AGENT_REGISTRY: AgentCapabilityCard[] = [
       "DALL-E 3 primary generation engine",
       "Gemini 2.5 Flash automatic fallback",
       "Legal prompt sanitization (abstracts sensitive topics)",
-      "Brand-compliant #202058 color injection",
+      "Brand-compliant #AA1A2E color injection",
       "Automatic Santos & Saucedo logo overlay"
     ],
     status: "active",
@@ -211,7 +211,7 @@ const AGENT_REGISTRY: AgentCapabilityCard[] = [
     businessName: "The Deep Reader",
     role: "Content Intelligence",
     category: "brain",
-    description: "Performs comprehensive GPT-4o analysis of articles: SEO recommendations, spelling corrections, lawyer identification, legal branch classification, and quality scoring from 0-100.",
+    description: "Performs comprehensive GPT-5.4-mini analysis of articles: SEO recommendations, spelling corrections, lawyer identification, legal branch classification, and quality scoring from 0-100.",
     capabilities: [
       "SEO recommendation generation",
       "Spelling & grammar analysis",
@@ -225,14 +225,14 @@ const AGENT_REGISTRY: AgentCapabilityCard[] = [
   {
     id: "legal_council",
     technicalName: "LegalCouncilService",
-    businessName: "The Digital Governance Council",
-    role: "Quality Arbiter",
+    businessName: "Automated Legal-Risk Review",
+    role: "Decision Support",
     category: "brain",
-    description: "A tribunal of three specialized AI agents (Legal Scholar, Risk Analyst, Brand Guardian) that evaluate every article before publication. Uses Promise.allSettled for fault-isolated voting with score 0-100 and majority consensus.",
+    description: "Three specialized AI agents evaluate each article and provide risk signals before publication. This automated review is not legal advice or an independent legal opinion; an authorized human remains responsible for the final decision.",
     capabilities: [
-      "3-agent evaluation council",
+      "Automated evaluation by 3 agents",
       "Institutional risk scoring",
-      "Individual votes with reasoning",
+      "Individual signals with reasoning",
       "Consolidated editor feedback",
       "Fault-tolerant isolation"
     ],
@@ -274,6 +274,21 @@ const AGENT_REGISTRY: AgentCapabilityCard[] = [
     evolutionLevel: 2
   }
 ];
+
+// The live registry is derived from the same runnable inventory used by the
+// orchestrator and the admin manifest. The legacy cards above remain only as
+// historical copy and are deliberately not exposed as live status.
+const AGENT_REGISTRY: AgentCapabilityCard[] = AGENT_DEFINITIONS.map((agent) => ({
+  id: agent.id,
+  technicalName: agent.technicalName,
+  businessName: agent.name,
+  role: agent.role,
+  category: agent.category,
+  description: agent.description,
+  capabilities: [...agent.capabilities],
+  status: "active",
+  evolutionLevel: 1,
+}));
 
 const EVOLUTION_FILE_PATH = path.join(process.cwd(), "system_evolution.json");
 
@@ -357,7 +372,7 @@ export class SystemChronicler {
       {
         date: "2025-12-05",
         title: "Content Analysis Engine",
-        description: "Deep Reader agent now provides comprehensive GPT-4o analysis with quality scoring, spelling review, and legal classification.",
+        description: "Deep Reader agent now provides comprehensive GPT-5.4-mini analysis with quality scoring, spelling review, and legal classification.",
         agentId: "content_analyzer",
         impact: "major",
         category: "intelligence"
@@ -386,7 +401,7 @@ export class SystemChronicler {
   }
 
   getEvolutionTimeline(): SystemEvolutionEntry[] {
-    return [...this.evolutionTimeline].sort((a, b) => 
+    return [...this.evolutionTimeline].sort((a, b) =>
       new Date(b.date).getTime() - new Date(a.date).getTime()
     );
   }
@@ -431,7 +446,7 @@ export class SystemChronicler {
   validateInventory(): { valid: boolean; errors: string[] } {
     const agents = this.getAllAgents().map(a => ({ id: a.id, category: a.category }));
     const result = validateAgentInventory(agents);
-    
+
     if (!result.valid) {
       const errorMsg = `[SystemChronicler] AGENT INVENTORY VALIDATION FAILED: ${result.errors.join('; ')}`;
       console.error(errorMsg);
@@ -439,7 +454,7 @@ export class SystemChronicler {
     } else {
       console.log(`[SystemChronicler] Inventory validated: ${EXPECTED_AGENT_COUNTS.TOTAL} agents (${EXPECTED_AGENT_COUNTS[AGENT_CATEGORIES.BRAIN]} brain, ${EXPECTED_AGENT_COUNTS[AGENT_CATEGORIES.HANDS]} hands, ${EXPECTED_AGENT_COUNTS[AGENT_CATEGORIES.SHIELD]} shield)`);
     }
-    
+
     return result;
   }
 

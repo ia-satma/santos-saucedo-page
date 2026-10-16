@@ -638,7 +638,7 @@ export default function AdminPracticeGroups() {
     enabled: isAuthenticated,
   });
 
-  const teamQuery = useQuery<TeamMember[]>({queryKey:["/api/admin/team"],enabled:isAuthenticated,queryFn:async()=>{const res=await adminApiRequest("GET","/api/admin/team");if(!res.ok)throw new Error("No se pudo cargar el equipo");return res.json();}});
+  const teamQuery = useQuery<TeamMember[]>({queryKey:["/api/admin/team","options"],enabled:isAuthenticated,queryFn:async()=>{const res=await adminApiRequest("GET","/api/admin/team/options");if(!res.ok)throw new Error("No se pudo cargar el equipo");return res.json();}});
 
   const saveMutation = useMutation({
     mutationFn: async (data: PracticeGroupFormData) => {

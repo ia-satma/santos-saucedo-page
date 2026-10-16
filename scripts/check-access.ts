@@ -350,6 +350,8 @@ try {
     (await call("GET", "/api/admin/team", undefined, "viewer")).status,
     200,
   );
+  assert.equal((await call("GET","/api/system/chronicler",undefined,"viewer")).status,403);
+  assert.equal((await call("POST","/api/system/chronicler/evolution",{},"viewer")).status,403);
   const log = await call("GET", "/api/admin/access-events");
   assert.equal(log.status, 200);
   assert(

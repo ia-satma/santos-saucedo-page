@@ -1,3 +1,4 @@
+import { ensureAgentSchema } from "./agentSchema";
 import type { Express } from 'express';
 import { getBundledMediaMap, mapBundledMedia } from './bundledMediaMap';
 import { createHash } from 'node:crypto';
@@ -19,6 +20,7 @@ function decode(raw: string | null | undefined): Stored | undefined {
 
 // Idempotent compatibility migration. It adds no content and never changes existing rows.
 export async function ensureCmsSchema() {
+  await ensureAgentSchema();
   await db.execute(sql`ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS permissions jsonb DEFAULT '[]'::jsonb, ADD COLUMN IF NOT EXISTS updated_at timestamp DEFAULT now()`);
   await db.execute(sql`CREATE TABLE IF NOT EXISTS admin_access_events (
     id varchar PRIMARY KEY DEFAULT gen_random_uuid(), user_id varchar, actor_id varchar,

@@ -160,6 +160,8 @@ export function registerNewsEditor(app: Express) {
                 memberIds.map((teamMemberId) => ({
                   newsId: item.id,
                   teamMemberId,
+                  verificationStatus:"verified_manual" as const,
+                  relationshipRole:"author" as const,
                 })),
               );
         }

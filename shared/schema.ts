@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp, integer, boolean, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, timestamp, integer, boolean, jsonb, index, uniqueIndex, doublePrecision } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -110,6 +110,9 @@ export const news = pgTable("news", {
   publishAt: timestamp("publish_at"),
   // Legal Council AI evaluation
   councilVerdict: jsonb("council_verdict"), // Stores CouncilVerdict: { overallStatus, riskFlag, consolidatedFeedback }
+
+discoveryVisibility: text("discovery_visibility").notNull().default("listed"),
+legacyId: text("legacy_id"),
 });
 
 export const newsCategories = [
@@ -120,7 +123,7 @@ export const newsCategories = [
   { value: "alerts", en: "Alerts", es: "Alertas" },
 ] as const;
 
-export const insertNewsSchema = createInsertSchema(news).omit({ id: true });
+export const insertNewsSchema = createInsertSchema(news, { tags:z.array(z.string()).nullable().optional() }).omit({ id: true });
 export type InsertNews = z.infer<typeof insertNewsSchema>;
 export type News = typeof news.$inferSelect;
 
@@ -169,9 +172,11 @@ export const practiceGroups = pgTable("practice_groups", {
   iconName: text("icon_name"),
   imageUrl: text("image_url"),
   order: integer("order").default(0),
+
+slugEs: text("slug_es").unique(),
 });
 
-export const insertPracticeGroupSchema = createInsertSchema(practiceGroups).omit({ id: true });
+export const insertPracticeGroupSchema = createInsertSchema(practiceGroups, {teamMemberIds:z.array(z.string()).nullable().optional()}).omit({ id: true });
 export type InsertPracticeGroup = z.infer<typeof insertPracticeGroupSchema>;
 export type PracticeGroup = typeof practiceGroups.$inferSelect;
 
@@ -187,6 +192,9 @@ export const industryGroups = pgTable("industry_groups", {
   iconName: text("icon_name"),
   imageUrl: text("image_url"),
   order: integer("order").default(0),
+
+slugEs: text("slug_es").unique(),
+published: boolean("published").default(true),
 });
 
 export const insertIndustryGroupSchema = createInsertSchema(industryGroups).omit({ id: true });
@@ -220,9 +228,33 @@ export const teamMembers = pgTable("team_members", {
   publications: jsonb("publications").$type<Publication[]>(),
   representativeMatters: jsonb("representative_matters").$type<RepresentativeMatter[]>(),
   experience: jsonb("experience").$type<Experience[]>(),
+
+givenNames: text("given_names"),
+firstSurname: text("first_surname"),
+secondSurname: text("second_surname"),
+bioIntro: text("bio_intro"),
+bioIntroEs: text("bio_intro_es"),
+biographyDisplayMode: text("biography_display_mode")
+    .$type<BiographyDisplayMode>()
+    .notNull()
+    .default("expanded"),
+partnerSinceYear: integer("partner_since_year"),
+showPartnerSince: boolean("show_partner_since").notNull().default(true),
+published: boolean("published").default(true),
+languagesEs: jsonb("languages_es").$type<string[]>(),
 });
 
-export const insertTeamMemberSchema = createInsertSchema(teamMembers).omit({ id: true });
+export const insertTeamMemberSchema = createInsertSchema(teamMembers, {biographyDisplayMode:z.enum(["auto","expanded","collapsed"]).optional(),
+education:z.array(z.object({school:z.string(),schoolEs:z.string().optional(),degree:z.string(),degreeEs:z.string().optional(),year:z.string().optional()})).nullable().optional(),
+barAdmissions:z.array(z.object({jurisdiction:z.string(),jurisdictionEs:z.string().optional(),year:z.string().optional()})).nullable().optional(),
+languages:z.array(z.string()).nullable().optional(),
+languagesEs:z.array(z.string()).nullable().optional(),
+affiliations:z.array(z.object({organization:z.string(),organizationEs:z.string().optional(),role:z.string().optional(),roleEs:z.string().optional()})).nullable().optional(),
+rankings:z.array(z.object({publication:z.string(),ranking:z.string(),rankingEs:z.string().optional(),year:z.string().optional(),area:z.string().optional(),areaEs:z.string().optional()})).nullable().optional(),
+publications:z.array(z.object({title:z.string(),titleEs:z.string().optional(),journal:z.string().optional(),year:z.string().optional(),url:z.string().optional()})).nullable().optional(),
+representativeMatters:z.array(z.object({description:z.string(),descriptionEs:z.string().optional(),client:z.string().optional(),year:z.string().optional()})).nullable().optional(),
+experience:z.array(z.object({company:z.string(),position:z.string(),positionEs:z.string().optional(),startYear:z.string().optional(),endYear:z.string().optional()})).nullable().optional()
+}).omit({ id: true });
 export type InsertTeamMember = z.infer<typeof insertTeamMemberSchema>;
 export type TeamMember = typeof teamMembers.$inferSelect;
 
@@ -242,6 +274,9 @@ export const newsTeamMembers = pgTable("news_team_members", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   newsId: varchar("news_id").notNull(),
   teamMemberId: varchar("team_member_id").notNull(),
+
+verificationStatus: text("verification_status").$type<AuthorVerificationStatus>().notNull().default("legacy_unverified"),
+relationshipRole: text("relationship_role").$type<NewsTeamMemberRelationshipRole>().notNull().default("related"),
 });
 
 export const insertNewsTeamMemberSchema = createInsertSchema(newsTeamMembers).omit({ id: true });
@@ -364,7 +399,7 @@ export const adminUsers = pgTable("admin_users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const insertAdminUserSchema = createInsertSchema(adminUsers).omit({ id: true, createdAt: true, lastLogin: true });
+export const insertAdminUserSchema = createInsertSchema(adminUsers, {permissions:z.array(z.string()).nullable().optional()}).omit({ id: true, createdAt: true, lastLogin: true });
 export type InsertAdminUser = z.infer<typeof insertAdminUserSchema>;
 export type AdminUser = typeof adminUsers.$inferSelect;
 
@@ -753,6 +788,10 @@ export const agentKnowledge = pgTable("agent_knowledge", {
   usageCount: integer("usage_count").default(0),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+
+dataClassification: text("data_classification").notNull().default("unclassified"),
+approvedForAiAt: timestamp("approved_for_ai_at"),
+approvedForAiBy: varchar("approved_for_ai_by"),
 });
 
 export const insertAgentKnowledgeSchema = createInsertSchema(agentKnowledge).omit({ id: true, createdAt: true, updatedAt: true, usageCount: true });
@@ -1318,3 +1357,181 @@ export const legalDocumentTypes = [
   { value: "cookie_policy", en: "Cookie Policy", es: "Política de cookies" },
   { value: "disclaimer", en: "Legal Disclaimer", es: "Aviso Legal" },
 ] as const;
+
+
+// CMS agent runtime, generated assets and governance (adapted from the supplied reference).
+export const generatedImages = pgTable("generated_images", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  imageUrl: text("image_url").notNull(),
+  prompt: text("prompt"),
+  sanitizedPrompt: text("sanitized_prompt"),
+  engine: text("engine").notNull(),
+  articleId: varchar("article_id").references(() => news.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const apiUsage = pgTable("api_usage", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  kind: text("kind").notNull(),                    // 'chat' | 'translation' | 'image' | 'tts'
+  model: text("model"),
+  promptTokens: integer("prompt_tokens").default(0),
+  completionTokens: integer("completion_tokens").default(0),
+  images: integer("images").default(0),
+  costUsd: doublePrecision("cost_usd").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (t) => ({ createdIdx: index("api_usage_created_idx").on(t.createdAt) }));
+
+export const insertGeneratedImageSchema = createInsertSchema(generatedImages).omit({ id: true, createdAt: true });
+
+export type InsertGeneratedImage = z.infer<typeof insertGeneratedImageSchema>;
+
+export type GeneratedImage = typeof generatedImages.$inferSelect;
+
+export const generatedAudio = pgTable("generated_audio", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  audioUrl: text("audio_url").notNull(),
+  sourceText: text("source_text"),
+  voiceId: text("voice_id"),
+  engine: text("engine").notNull(),
+  sourceType: text("source_type").notNull(), // newsletter | social_media | legal_alerts
+  articleId: varchar("article_id").references(() => news.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertGeneratedAudioSchema = createInsertSchema(generatedAudio).omit({ id: true, createdAt: true });
+
+export type InsertGeneratedAudio = z.infer<typeof insertGeneratedAudioSchema>;
+
+export type GeneratedAudio = typeof generatedAudio.$inferSelect;
+
+export const generatedPresentations = pgTable("generated_presentations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  topic: text("topic"),
+  template: text("template").notNull().default("santossaucedo"),
+  branding: text("branding").notNull().default("santossaucedo"),
+  lang: text("lang").notNull().default("es"),
+  slideCount: integer("slide_count").default(0),
+  pptxUrl: text("pptx_url"),
+  pdfUrl: text("pdf_url"),
+  pngUrls: jsonb("png_urls").$type<string[]>().default([]),
+  sourceDocs: jsonb("source_docs").$type<string[]>().default([]),
+  engine: text("engine").notNull(),
+  status: text("status").notNull().default("active"),
+  archivedAt: timestamp("archived_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  statusCreatedIdx: index("generated_presentations_status_created_idx").on(table.status, table.createdAt),
+}));
+
+export const insertGeneratedPresentationSchema = createInsertSchema(generatedPresentations, {
+  // Refina los jsonb a arreglos de strings (drizzle-zod infiere unknown[] por defecto).
+  pngUrls: z.array(z.string()).optional(),
+  sourceDocs: z.array(z.string()).optional(),
+}).omit({ id: true, createdAt: true, status: true, archivedAt: true });
+
+export type InsertGeneratedPresentation = z.infer<typeof insertGeneratedPresentationSchema>;
+
+export type GeneratedPresentation = typeof generatedPresentations.$inferSelect;
+
+export const mediaDeletionRequests = pgTable("media_deletion_requests", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  mediaItemId: varchar("media_item_id").notNull(),
+  publicPath: text("public_path").notNull(),
+  objectName: text("object_name"),
+  status: text("status").notNull().default("pending"),
+  requestedBy: varchar("requested_by").notNull(),
+  requestedAt: timestamp("requested_at").notNull().defaultNow(),
+  processedAt: timestamp("processed_at"),
+  attempts: integer("attempts").notNull().default(0),
+  lastError: text("last_error"),
+}, (table) => ({
+  mediaItemUnique: uniqueIndex("media_deletion_requests_media_item_idx").on(table.mediaItemId),
+  statusRequestedIdx: index("media_deletion_requests_status_requested_idx").on(table.status, table.requestedAt),
+}));
+
+export const insertMediaDeletionRequestSchema = createInsertSchema(mediaDeletionRequests)
+  .omit({ id: true, requestedAt: true, processedAt: true, attempts: true, lastError: true, status: true });
+
+export type InsertMediaDeletionRequest = z.infer<typeof insertMediaDeletionRequestSchema>;
+
+export type MediaDeletionRequest = typeof mediaDeletionRequests.$inferSelect;
+
+export const agentCopyHistory = pgTable("agent_copy_history", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sourceJobId: varchar("source_job_id"),
+  agentType: text("agent_type").notNull(),
+  copyType: text("copy_type").notNull(),
+  title: text("title").notNull(),
+  excerpt: text("excerpt"),
+  content: jsonb("content").$type<Record<string, unknown>>().notNull(),
+  searchText: text("search_text").notNull(),
+  language: text("language").notNull().default("multi"),
+  articleId: varchar("article_id").references(() => news.id, { onDelete: "set null" }),
+  status: text("status").notNull().default("proposal"), // proposal | applied | draft | recovered
+  origin: text("origin").notNull().default("manual"), // manual | pipeline | scheduled | recovered
+  actorId: varchar("actor_id").references(() => adminUsers.id, { onDelete: "set null" }),
+  archived: boolean("archived").notNull().default(false),
+  archivedAt: timestamp("archived_at"),
+  archivedBy: varchar("archived_by").references(() => adminUsers.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (t) => ({
+  sourceJobIdx: uniqueIndex("agent_copy_history_source_job_unique").on(t.sourceJobId),
+  createdIdx: index("agent_copy_history_created_idx").on(t.createdAt),
+  agentStatusIdx: index("agent_copy_history_agent_status_idx").on(t.agentType, t.status),
+  articleIdx: index("agent_copy_history_article_idx").on(t.articleId),
+  archivedCreatedIdx: index("agent_copy_history_archived_created_idx").on(t.archived, t.createdAt),
+}));
+
+export type AgentCopyHistory = typeof agentCopyHistory.$inferSelect;
+
+export const aiGovernanceEvents = pgTable("ai_governance_events", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  provider: text("provider").notNull(),
+  operation: text("operation").notNull(),
+  purpose: text("purpose").notNull(),
+  agentType: text("agent_type"),
+  classification: text("classification").notNull(),
+  decision: text("decision").notNull(),
+  reasonCodes: jsonb("reason_codes").$type<string[]>().notNull().default(sql`'[]'::jsonb`),
+  contentSha256: varchar("content_sha256", { length: 64 }).notNull(),
+  contentBytes: integer("content_bytes").notNull(),
+  policyVersion: text("policy_version").notNull(),
+  actorId: varchar("actor_id"),
+  jobId: varchar("job_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => ({
+  createdIdx: index("ai_governance_events_created_idx").on(table.createdAt),
+  decisionCreatedIdx: index("ai_governance_events_decision_created_idx").on(table.decision, table.createdAt),
+}));
+
+export type AiGovernanceEvent = typeof aiGovernanceEvents.$inferSelect;
+
+export const protectedFieldEnvelopes = pgTable("protected_field_envelopes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  resourceType: text("resource_type").notNull(),
+  resourceId: varchar("resource_id").notNull(),
+  fieldName: text("field_name").notNull(),
+  ciphertext: text("ciphertext").notNull(),
+  keyId: text("key_id").notNull(),
+  encryptionVersion: integer("encryption_version").notNull().default(1),
+  contentSha256: varchar("content_sha256", { length: 64 }).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => ({
+  resourceIdx: index("protected_field_envelopes_resource_idx").on(table.resourceType, table.resourceId),
+  versionUnique: uniqueIndex("protected_field_envelopes_version_idx").on(
+    table.resourceType,
+    table.resourceId,
+    table.fieldName,
+    table.encryptionVersion,
+  ),
+}));
+
+export type ProtectedFieldEnvelope = typeof protectedFieldEnvelopes.$inferSelect;
+
+export const biographyDisplayModes = ["auto", "expanded", "collapsed"] as const;
+export type BiographyDisplayMode = typeof biographyDisplayModes[number];
+export const authorVerificationStatuses = ["verified_historic", "verified_editorial_2026", "verified_manual", "legacy_unverified"] as const;
+export type AuthorVerificationStatus = typeof authorVerificationStatuses[number];
+export const newsTeamMemberRelationshipRoles = ["author", "related"] as const;
+export type NewsTeamMemberRelationshipRole = typeof newsTeamMemberRelationshipRoles[number];

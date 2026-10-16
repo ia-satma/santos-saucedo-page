@@ -1,11 +1,11 @@
 import { db } from '../db';
-import { 
-  news, 
-  newsTranslations, 
-  teamMembers, 
-  agentJobs, 
+import {
+  news,
+  newsTranslations,
+  teamMembers,
+  agentJobs,
   mediaItems,
-  translationCache 
+  translationCache
 } from '@shared/schema';
 import { eq, lt, and, isNull, or, sql } from 'drizzle-orm';
 
@@ -56,29 +56,29 @@ const GERMAN_INDICATORS = [
 
 function detectLanguage(text: string): 'es' | 'de' | 'en' | 'unknown' {
   if (!text || text.trim().length < 20) return 'unknown';
-  
+
   const lowerText = text.toLowerCase();
-  
+
   let spanishScore = 0;
   let germanScore = 0;
-  
+
   for (const pattern of SPANISH_INDICATORS) {
     const matches = lowerText.match(pattern);
     if (matches) spanishScore += matches.length;
   }
-  
+
   for (const pattern of GERMAN_INDICATORS) {
     const matches = lowerText.match(pattern);
     if (matches) germanScore += matches.length;
   }
-  
+
   const textLength = text.length;
   const spanishDensity = spanishScore / (textLength / 100);
   const germanDensity = germanScore / (textLength / 100);
-  
+
   if (spanishDensity > 2 && spanishDensity > germanDensity * 1.5) return 'es';
   if (germanDensity > 1 && germanDensity > spanishDensity * 1.5) return 'de';
-  
+
   return 'en';
 }
 
@@ -116,10 +116,10 @@ export class SystemHealthCheck {
     };
 
     const maxPossibleIssues = 100;
-    const weightedIssues = 
-      summary.criticalCount * 10 + 
-      summary.highCount * 5 + 
-      summary.mediumCount * 2 + 
+    const weightedIssues =
+      summary.criticalCount * 10 +
+      summary.highCount * 5 +
+      summary.mediumCount * 2 +
       summary.lowCount * 1;
     const healthScore = Math.max(0, Math.round(100 - (weightedIssues / maxPossibleIssues) * 100));
 
@@ -143,9 +143,9 @@ export class SystemHealthCheck {
 
   private async checkZombieProcesses(): Promise<void> {
     console.log('[SystemHealthCheck] Checking for zombie processes...');
-    
+
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
-    
+
     try {
       const stuckJobs = await db.select()
         .from(agentJobs)
@@ -157,10 +157,10 @@ export class SystemHealthCheck {
         );
 
       for (const job of stuckJobs) {
-        const stuckMinutes = job.startedAt 
+        const stuckMinutes = job.startedAt
           ? Math.round((Date.now() - new Date(job.startedAt).getTime()) / 60000)
           : 'unknown';
-        
+
         this.issues.push({
           id: `zombie-${job.id}`,
           type: 'zombie_process',
@@ -180,25 +180,25 @@ export class SystemHealthCheck {
 
   private async checkIncompleteSuccess(): Promise<void> {
     console.log('[SystemHealthCheck] Checking for incomplete success states...');
-    
+
     try {
       const articles = await db.select().from(news);
-      
+
       for (const article of articles) {
         const issues: string[] = [];
-        
+
         if (!article.imageUrl || article.imageUrl.trim() === '') {
           issues.push('missing imageUrl');
         }
-        
+
         if (!article.content || article.content.trim() === '') {
           issues.push('missing English content');
         }
-        
+
         if (!article.title || article.title.trim() === '') {
           issues.push('missing English title');
         }
-        
+
         if (issues.length > 0) {
           this.issues.push({
             id: `incomplete-${article.id}`,
@@ -208,7 +208,7 @@ export class SystemHealthCheck {
             entityId: article.id,
             title: article.title || article.titleEs || 'Unknown article',
             details: `Article marked as ready but has: ${issues.join(', ')}`,
-            suggestedAction: issues.includes('missing imageUrl') 
+            suggestedAction: issues.includes('missing imageUrl')
               ? 'Run ImageSuggestionAgent to generate image'
               : 'Review article content and fill missing fields',
             detectedAt: new Date(),
@@ -222,14 +222,14 @@ export class SystemHealthCheck {
 
   private async checkLocalizationLeakage(): Promise<void> {
     console.log('[SystemHealthCheck] Checking for localization leakage...');
-    
+
     try {
       const members = await db.select().from(teamMembers);
-      
+
       for (const member of members) {
         if (member.bio) {
           const detectedLang = detectLanguage(member.bio);
-          
+
           if (detectedLang === 'es') {
             this.issues.push({
               id: `leakage-bio-${member.id}`,
@@ -244,10 +244,10 @@ export class SystemHealthCheck {
             });
           }
         }
-        
+
         if (member.bioEs) {
           const detectedLang = detectLanguage(member.bioEs);
-          
+
           if (detectedLang === 'en') {
             this.issues.push({
               id: `leakage-bioEs-${member.id}`,
@@ -279,11 +279,11 @@ export class SystemHealthCheck {
       }
 
       const cachedTranslations = await db.select().from(translationCache);
-      
+
       for (const cache of cachedTranslations) {
         if (cache.targetLanguage === 'de' && cache.translatedText) {
           const detectedLang = detectLanguage(cache.translatedText);
-          
+
           if (detectedLang === 'es') {
             this.issues.push({
               id: `cache-leakage-${cache.id}`,
@@ -306,29 +306,29 @@ export class SystemHealthCheck {
 
   private async checkOrphanedAssets(): Promise<void> {
     console.log('[SystemHealthCheck] Checking for orphaned assets...');
-    
+
     try {
       const allMedia = await db.select().from(mediaItems);
       const allArticles = await db.select({
         imageUrl: news.imageUrl,
       }).from(news);
-      
+
       const usedUrls = new Set(
         allArticles
           .map((a: { imageUrl: string | null }) => a.imageUrl)
           .filter(Boolean)
       );
-      
+
       for (const media of allMedia) {
-        const isUsed = usedUrls.has(media.path) || 
+        const isUsed = usedUrls.has(media.path) ||
                        usedUrls.has(`/uploads/${media.filename}`) ||
                        usedUrls.has(media.filename);
-        
+
         if (!isUsed) {
-          const ageHours = media.createdAt 
+          const ageHours = media.createdAt
             ? Math.round((Date.now() - new Date(media.createdAt).getTime()) / 3600000)
             : 0;
-          
+
           if (ageHours > 24) {
             this.issues.push({
               id: `orphan-${media.id}`,
@@ -351,13 +351,13 @@ export class SystemHealthCheck {
 
   private async checkMissingTranslations(): Promise<void> {
     console.log('[SystemHealthCheck] Checking for missing translations...');
-    
+
     const REQUIRED_LANGUAGES = ['en', 'es', 'de', 'zh', 'ko', 'ja', 'ar', 'ru', 'fr', 'it'];
-    
+
     try {
       const articles = await db.select().from(news);
       const translations = await db.select().from(newsTranslations);
-      
+
       const translationMap = new Map<string, Set<string>>();
       for (const t of translations) {
         if (!translationMap.has(t.newsId)) {
@@ -365,16 +365,16 @@ export class SystemHealthCheck {
         }
         translationMap.get(t.newsId)!.add(t.language);
       }
-      
+
       for (const article of articles) {
         const articleTranslations = translationMap.get(article.id) || new Set();
-        
+
         const missingLangs = REQUIRED_LANGUAGES.filter(lang => {
           if (lang === 'en') return !article.content || article.content.trim() === '';
           if (lang === 'es') return !article.contentEs || article.contentEs.trim() === '';
           return !articleTranslations.has(lang);
         });
-        
+
         if (missingLangs.length > 3) {
           this.issues.push({
             id: `translation-${article.id}`,
@@ -396,9 +396,9 @@ export class SystemHealthCheck {
 
   async resetZombieJobs(): Promise<number> {
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
-    
+
     const result = await db.update(agentJobs)
-      .set({ 
+      .set({
         status: 'failed',
         error: 'Auto-cancelled: stuck in processing for >10 minutes',
         completedAt: new Date(),
@@ -410,23 +410,23 @@ export class SystemHealthCheck {
         )
       )
       .returning({ id: agentJobs.id });
-    
+
     console.log(`[SystemHealthCheck] Reset ${result.length} zombie jobs`);
     return result.length;
   }
 
   generateHumanReport(report: AuditReport): string {
     const lines: string[] = [];
-    
+
     lines.push(`\n${'='.repeat(60)}`);
     lines.push(`SYSTEM HEALTH AUDIT REPORT`);
     lines.push(`Run ID: ${report.runId}`);
     lines.push(`Time: ${report.runAt.toISOString()}`);
     lines.push(`Duration: ${report.durationMs}ms`);
     lines.push(`${'='.repeat(60)}\n`);
-    
+
     lines.push(`HEALTH SCORE: ${report.healthScore}% ${report.healthScore >= 80 ? '✓' : report.healthScore >= 50 ? '⚠' : '✗'}\n`);
-    
+
     lines.push(`SUMMARY:`);
     lines.push(`  Total Issues: ${report.summary.totalIssues}`);
     lines.push(`  - Critical: ${report.summary.criticalCount}`);
@@ -441,11 +441,11 @@ export class SystemHealthCheck {
     lines.push(`  - Orphaned Assets: ${report.summary.orphanedAssets}`);
     lines.push(`  - Missing Translations: ${report.summary.missingTranslations}`);
     lines.push('');
-    
+
     if (report.issues.length > 0) {
       lines.push(`DETAILED ISSUES (showing first 20):`);
       lines.push(`${'-'.repeat(60)}`);
-      
+
       for (const issue of report.issues.slice(0, 20)) {
         const severityEmoji = {
           critical: '[CRITICAL]',
@@ -453,23 +453,23 @@ export class SystemHealthCheck {
           medium: '[MEDIUM]',
           low: '[LOW]',
         }[issue.severity];
-        
+
         lines.push(`${severityEmoji} ${issue.title}`);
         lines.push(`   Type: ${issue.type} | Entity: ${issue.entityType}`);
         lines.push(`   ${issue.details}`);
         lines.push(`   Action: ${issue.suggestedAction}`);
         lines.push('');
       }
-      
+
       if (report.issues.length > 20) {
         lines.push(`... and ${report.issues.length - 20} more issues`);
       }
     } else {
       lines.push(`No issues found! System is healthy.`);
     }
-    
+
     lines.push(`\n${'='.repeat(60)}`);
-    
+
     return lines.join('\n');
   }
 }

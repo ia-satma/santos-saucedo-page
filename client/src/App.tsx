@@ -58,7 +58,7 @@ const AdminPosts = lazy(() => import("@/pages/admin/AdminPosts"));
 const AdminPostForm = lazy(() => import("@/pages/admin/AdminPostForm"));
 const AdminCategories = lazy(() => import("@/pages/admin/AdminCategories"));
 const AdminNews = lazy(() => import("@/pages/admin/AdminNews"));
-const AdminAgents = lazy(() => import("@/pages/AdminAgents"));
+const AdminAgents = lazy(() => import("@/pages/admin/AdminAgents"));
 const AdminArticleProcessing = lazy(() => import("@/pages/admin/AdminArticleProcessing"));
 const AdminAudits = lazy(() => import("@/pages/admin/AdminAudits"));
 const AdminTeam = lazy(() => import("@/pages/admin/AdminTeam"));
@@ -67,6 +67,10 @@ const AdminGuide = lazy(() => import("@/pages/admin/AdminGuide"));
 const AdminPerformance = lazy(() => import("@/pages/admin/AdminPerformance"));
 const AdminPracticeGroups = lazy(() => import("@/pages/admin/AdminPracticeGroups"));
 const AdminIndustryGroups = lazy(() => import("@/pages/admin/AdminIndustryGroups"));
+const AdminGeneratedImages = lazy(() => import("@/pages/admin/AdminGeneratedImages"));
+const AdminGeneratedAudio = lazy(() => import("@/pages/admin/AdminGeneratedAudio"));
+const AdminPresentations = lazy(() => import("@/pages/admin/AdminPresentations"));
+const AdminCopyHistory = lazy(() => import("@/pages/admin/AdminCopyHistory"));
 const AdminKnowledge = lazy(() => import("@/pages/admin/AdminKnowledge"));
 const AdminTranslations = lazy(() => import("@/pages/admin/AdminTranslations"));
 const AdminEvents = lazy(() => import("@/pages/admin/AdminEvents"));
@@ -241,6 +245,10 @@ function Router() {
         <Route path="/admin/news" component={AdminNews} />
         <Route path="/admin/news/:id" component={AdminArticleDetail} />
         <Route path="/admin/agents" component={AdminAgents} />
+        <Route path="/admin/generated-images" component={AdminGeneratedImages} />
+        <Route path="/admin/generated-audio" component={AdminGeneratedAudio} />
+        <Route path="/admin/presentations" component={AdminPresentations} />
+        <Route path="/admin/copies-ai" component={AdminCopyHistory} />
         <Route path="/admin/processing" component={AdminArticleProcessing} />
         <Route path="/admin/audits" component={AdminAudits} />
         <Route path="/admin/team" component={AdminTeam} />

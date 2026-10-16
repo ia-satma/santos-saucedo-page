@@ -94,7 +94,15 @@ export function adminPermissionForPath(
 ): AdminPermission | "users" | null {
   const path = raw.split("?")[0].replace(/\/$/, "");
   if (/^\/api\/(agents|pipeline)(\/|$)/.test(path)) return "agents";
-  if (/^\/api\/(audits|health-check)(\/|$)/.test(path)) return "advanced";
+  if (/^\/api\/(audits|health-check|system)(\/|$)/.test(path))
+    return "advanced";
+  if (
+    /^\/api\/translate(\/|$)/.test(path) ||
+    /^\/api\/news\/[^/]+\/(team-members|validate|council-review)(\/|$)/.test(
+      path,
+    )
+  )
+    return "editorial";
   if (!path.startsWith("/api/admin") && !path.startsWith("/admin")) return null;
   const route = path.replace(/^\/(?:api\/)?admin\/?/, "");
   if (
@@ -123,7 +131,12 @@ export function adminPermissionForPath(
   if (/^jobs(\/|$)/.test(route)) return "jobs";
   if (/^(inbox|contact-submissions|newsletter-subscribers)(\/|$)/.test(route))
     return "inbox";
-  if (/^(agents|knowledge|processing)(\/|$)/.test(route)) return "agents";
+  if (
+    /^(agents|knowledge|processing|generated-images|generated-audio|generated-presentations|presentations|copies-ai)(\/|$)/.test(
+      route,
+    )
+  )
+    return "agents";
   return "advanced";
 }
 export function canVisitAdminPath(

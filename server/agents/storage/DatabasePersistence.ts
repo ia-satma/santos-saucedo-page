@@ -1,5 +1,5 @@
-import { db } from '../../db';
-import { eq, and, desc, inArray } from 'drizzle-orm';
+import { editorialDb as db } from '../../db';
+import { eq, and, desc, inArray, isNotNull, lt, sql } from 'drizzle-orm';
 import {
   agentJobs,
   agentEvents,
@@ -19,6 +19,42 @@ import {
 } from '@shared/schema';
 
 export class DatabasePersistence {
+  /**
+   * Serializa la siembra editorial entre instancias de Autoscale. La consulta y
+   * las inserciones comparten la misma transacción y el mismo advisory lock, por
+   * lo que dos procesos que arrancan a la vez no pueden crear copias duplicadas.
+   */
+  async seedKnowledgeDocuments(
+    lockName: string,
+    documents: InsertAgentKnowledge[],
+  ): Promise<number> {
+    return db.transaction(async (tx) => {
+      await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${lockName}))`);
+      let added = 0;
+
+      for (const document of documents) {
+        const seedKey = String((document.metadata as Record<string, unknown> | null)?.seedKey || '');
+        if (!seedKey) throw new Error('A seeded knowledge document requires metadata.seedKey');
+
+        const [existing] = await tx
+          .select({ id: agentKnowledge.id })
+          .from(agentKnowledge)
+          .where(and(
+            eq(agentKnowledge.agentType, document.agentType),
+            eq(agentKnowledge.category, document.category),
+            sql`${agentKnowledge.metadata} ->> 'seedKey' = ${seedKey}`,
+          ))
+          .limit(1);
+
+        if (existing) continue;
+        await tx.insert(agentKnowledge).values(document);
+        added++;
+      }
+
+      return added;
+    });
+  }
+
   async createJob(job: InsertAgentJob): Promise<DbAgentJob> {
     const [created] = await db.insert(agentJobs).values(job).returning();
     return created;
@@ -37,6 +73,22 @@ export class DatabasePersistence {
     return job || null;
   }
 
+  /**
+   * Atomically claims a pending job. When multiple application instances see
+   * the same row, only one update can succeed because the status predicate is
+   * evaluated inside PostgreSQL.
+   */
+  async claimPendingJob(id: string, startedAt = new Date()): Promise<DbAgentJob | null> {
+    const [claimed] = await db.update(agentJobs)
+      .set({ status: 'in_progress', startedAt })
+      .where(and(
+        eq(agentJobs.id, id),
+        eq(agentJobs.status, 'pending'),
+      ))
+      .returning();
+    return claimed || null;
+  }
+
   async getPendingJobs(agentType?: string): Promise<DbAgentJob[]> {
     if (agentType) {
       return db.select().from(agentJobs)
@@ -51,10 +103,13 @@ export class DatabasePersistence {
       .orderBy(desc(agentJobs.createdAt));
   }
 
-  async resetInProgressJobsToPending(): Promise<number> {
+  async resetInProgressJobsToPending(staleBefore = new Date(Date.now() - 15 * 60 * 1000)): Promise<number> {
     const result = await db.update(agentJobs)
-      .set({ status: 'pending' })
-      .where(eq(agentJobs.status, 'in_progress'))
+      .set({ status: 'pending', startedAt: null })
+      .where(and(
+        eq(agentJobs.status, 'in_progress'),
+        lt(agentJobs.startedAt, staleBefore),
+      ))
       .returning();
     return result.length;
   }
@@ -67,33 +122,35 @@ export class DatabasePersistence {
   }
 
   async getJobStatsByAgentType(): Promise<Record<string, { total: number; completed: number; failed: number; pending: number }>> {
-    const allJobs = await db.select().from(agentJobs);
+    // GROUP BY (agentType, status) en SQL en vez de traer TODOS los jobs y contar en JS.
+    const rows = await db
+      .select({ agentType: agentJobs.agentType, status: agentJobs.status, count: sql<number>`count(*)::int` })
+      .from(agentJobs)
+      .groupBy(agentJobs.agentType, agentJobs.status);
     const stats: Record<string, { total: number; completed: number; failed: number; pending: number }> = {};
-    
-    for (const job of allJobs) {
-      if (!stats[job.agentType]) {
-        stats[job.agentType] = { total: 0, completed: 0, failed: 0, pending: 0 };
-      }
-      stats[job.agentType].total++;
-      if (job.status === 'completed') stats[job.agentType].completed++;
-      else if (job.status === 'failed') stats[job.agentType].failed++;
-      else if (job.status === 'pending') stats[job.agentType].pending++;
+    for (const r of rows) {
+      if (!stats[r.agentType]) stats[r.agentType] = { total: 0, completed: 0, failed: 0, pending: 0 };
+      stats[r.agentType].total += r.count;
+      if (r.status === 'completed') stats[r.agentType].completed += r.count;
+      else if (r.status === 'failed') stats[r.agentType].failed += r.count;
+      else if (r.status === 'pending') stats[r.agentType].pending += r.count;
     }
-    
     return stats;
   }
 
   async getJobCounts(): Promise<{ pending: number; inProgress: number; completed: number; failed: number }> {
-    const allJobs = await db.select().from(agentJobs);
+    // GROUP BY status en SQL en vez de traer TODOS los jobs y contar en JS.
+    const rows = await db
+      .select({ status: agentJobs.status, count: sql<number>`count(*)::int` })
+      .from(agentJobs)
+      .groupBy(agentJobs.status);
     const counts = { pending: 0, inProgress: 0, completed: 0, failed: 0 };
-    
-    for (const job of allJobs) {
-      if (job.status === 'pending') counts.pending++;
-      else if (job.status === 'in_progress') counts.inProgress++;
-      else if (job.status === 'completed') counts.completed++;
-      else if (job.status === 'failed') counts.failed++;
+    for (const r of rows) {
+      if (r.status === 'pending') counts.pending = r.count;
+      else if (r.status === 'in_progress') counts.inProgress = r.count;
+      else if (r.status === 'completed') counts.completed = r.count;
+      else if (r.status === 'failed') counts.failed = r.count;
     }
-    
     return counts;
   }
 
@@ -106,6 +163,21 @@ export class DatabasePersistence {
       .where(eq(agentJobs.status, status))
       .orderBy(desc(agentJobs.createdAt))
       .limit(limit);
+  }
+
+  async getJobs(options: { agentType?: string; status?: string; limit?: number }): Promise<DbAgentJob[]> {
+    const conditions = [];
+    if (options.agentType) conditions.push(eq(agentJobs.agentType, options.agentType));
+    if (options.status) conditions.push(eq(agentJobs.status, options.status));
+
+    const base = db.select().from(agentJobs);
+    const filtered = conditions.length > 0
+      ? base.where(and(...conditions))
+      : base;
+
+    return filtered
+      .orderBy(desc(agentJobs.createdAt))
+      .limit(Math.min(Math.max(options.limit || 100, 1), 200));
   }
 
   async getRecentJobs(limit = 50): Promise<DbAgentJob[]> {
@@ -121,14 +193,14 @@ export class DatabasePersistence {
 
   async getEvents(options: { jobId?: string; agentType?: string; limit?: number }): Promise<DbAgentEvent[]> {
     let query = db.select().from(agentEvents);
-    
+
     if (options.jobId) {
       query = query.where(eq(agentEvents.jobId, options.jobId)) as any;
     }
     if (options.agentType) {
       query = query.where(eq(agentEvents.agentType, options.agentType)) as any;
     }
-    
+
     return query.orderBy(desc(agentEvents.timestamp)).limit(options.limit || 100);
   }
 
@@ -163,10 +235,20 @@ export class DatabasePersistence {
       .orderBy(desc(agentKnowledge.updatedAt));
   }
 
+  async getApprovedKnowledgeByAgent(agentType: string): Promise<DbAgentKnowledge[]> {
+    return db.select().from(agentKnowledge)
+      .where(and(
+        eq(agentKnowledge.agentType, agentType),
+        inArray(agentKnowledge.dataClassification, ['public', 'internal']),
+        isNotNull(agentKnowledge.approvedForAiAt),
+      ))
+      .orderBy(desc(agentKnowledge.updatedAt));
+  }
+
   async searchKnowledge(agentType: string, query: string, category?: string, limit = 10): Promise<DbAgentKnowledge[]> {
-    const docs = await this.getKnowledgeByAgent(agentType);
+    const docs = await this.getApprovedKnowledgeByAgent(agentType);
     const queryLower = query.toLowerCase();
-    
+
     let filtered = docs.filter(doc =>
       doc.content.toLowerCase().includes(queryLower) ||
       doc.title.toLowerCase().includes(queryLower)
@@ -184,8 +266,9 @@ export class DatabasePersistence {
   }
 
   async deleteKnowledge(id: string): Promise<boolean> {
-    const result = await db.delete(agentKnowledge).where(eq(agentKnowledge.id, id));
-    return true;
+    // Devuelve si realmente se borró algo (antes retornaba true incondicionalmente).
+    const result = await db.delete(agentKnowledge).where(eq(agentKnowledge.id, id)).returning();
+    return result.length > 0;
   }
 
   async getAllKnowledge(): Promise<DbAgentKnowledge[]> {
@@ -217,9 +300,9 @@ export class DatabasePersistence {
         eq(agentSkills.agentType, agentType),
         eq(agentSkills.name, name)
       ));
-    
+
     if (existing) return existing;
-    
+
     return this.createSkill({ agentType, name, description });
   }
 
@@ -243,7 +326,7 @@ export class DatabasePersistence {
 
   async getProposals(options: { agentType?: string; status?: string; limit?: number }): Promise<DbAgentEvolutionProposal[]> {
     let conditions = [];
-    
+
     if (options.agentType) {
       conditions.push(eq(agentEvolutionProposals.agentType, options.agentType));
     }
@@ -269,7 +352,7 @@ export class DatabasePersistence {
     byCategory: Record<string, number>;
     mostUsed: DbAgentKnowledge[];
   }> {
-    const allDocs = agentType 
+    const allDocs = agentType
       ? await this.getKnowledgeByAgent(agentType)
       : await this.getAllKnowledge();
 

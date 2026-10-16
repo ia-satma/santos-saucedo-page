@@ -10,7 +10,7 @@ export class AgentEvolutionTracker {
 
   async initialize(): Promise<void> {
     if (this.initialized) return;
-    
+
     try {
       await this.loadStatsFromDatabase();
       this.initialized = true;
@@ -48,7 +48,7 @@ export class AgentEvolutionTracker {
         knowledgeDocuments: knowledgeStats.byAgent[agentType] || 0,
         evolutionProposals: proposalsByAgent[agentType] || 0,
       };
-      
+
       this.agentStats.set(agentType as AgentType, agentStats);
     }
 
@@ -78,7 +78,7 @@ export class AgentEvolutionTracker {
     });
 
     console.log(`[Evolution] New proposal: ${dbProposal.title} (${dbProposal.agentType})`);
-    
+
     const result: EvolutionProposal = {
       id: dbProposal.id,
       agentType: dbProposal.agentType as AgentType,
@@ -144,11 +144,11 @@ export class AgentEvolutionTracker {
     afterMetrics?: Record<string, number>
   ): Promise<EvolutionProposal | null> {
     const updates: Record<string, unknown> = { status };
-    
+
     if (status === 'approved' || status === 'rejected') {
       updates.reviewedAt = new Date();
     }
-    
+
     if (status === 'implemented') {
       updates.implementedAt = new Date();
       if (afterMetrics) {
@@ -208,8 +208,8 @@ export class AgentEvolutionTracker {
     }
 
     if (stats.averageExecutionTime) {
-      updated.averageExecutionTime = 
-        (existing.averageExecutionTime * existing.totalJobs + stats.averageExecutionTime) / 
+      updated.averageExecutionTime =
+        (existing.averageExecutionTime * existing.totalJobs + stats.averageExecutionTime) /
         (existing.totalJobs + 1);
     }
 
@@ -238,7 +238,7 @@ export class AgentEvolutionTracker {
     for (const stats of allStats) {
       if (stats.successRate < 0.8) {
         insights.push(`${stats.agentType} has low success rate (${(stats.successRate * 100).toFixed(1)}%)`);
-        
+
         await this.addProposal({
           agentType: stats.agentType,
           proposalType: 'skill_improvement',
@@ -286,7 +286,7 @@ export class AgentEvolutionTracker {
     recentCycles: LearningCycleEntry[];
   }> {
     const proposals = await this.getProposals({ limit: 1000 });
-    
+
     const byStatus: Record<string, number> = {};
     const byImpact: Record<string, number> = {};
 
@@ -310,14 +310,6 @@ export class AgentEvolutionTracker {
       stats: Array.from(this.agentStats.values()),
       history: this.learningCycleHistory,
     };
-  }
-
-  async fromJSON(data: { stats?: AgentStats[]; history?: LearningCycleEntry[] }): Promise<void> {
-    this.agentStats = new Map((data.stats || []).map((stats) => [stats.agentType, stats]));
-    this.learningCycleHistory = (data.history || []).map((entry) => ({
-      ...entry,
-      timestamp: new Date(entry.timestamp),
-    }));
   }
 }
 

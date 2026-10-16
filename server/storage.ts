@@ -1,4 +1,6 @@
-import { eq, desc, asc, and, isNull, gte, sql } from "drizzle-orm";
+import { GeneratedAssetsRepository } from "./storage/generatedAssets";
+import { isPublicNews } from "@shared/publicNews";
+import { eq, desc, asc, and, isNull, gte, sql, ne, inArray } from "drizzle-orm";
 import { db } from "./db";
 import {
   type User,
@@ -272,7 +274,16 @@ export interface IStorage {
   markContactSubmissionRead(id: string): Promise<boolean>;
 }
 
-export class DatabaseStorage implements IStorage {
+export class DatabaseStorage extends GeneratedAssetsRepository implements IStorage {
+  async getRecentPublishedNews(limit = 10): Promise<News[]> {
+    const rows = await this.getNews();
+    return rows.filter(item => isPublicNews(item)).sort((a,b)=>new Date(b.date ?? 0).getTime()-new Date(a.date ?? 0).getTime()).slice(0,limit);
+  }
+  async supersedeOpenWebsiteAuditFindings(auditId: string, categories: string[]) {
+    if (!categories.length) return 0;
+    const rows = await db.update(websiteAuditFindings).set({ status:'resolved', resolvedAt:new Date(), resolvedBy:`superseded:${auditId}` }).where(and(ne(websiteAuditFindings.auditId,auditId),eq(websiteAuditFindings.status,'open'),inArray(websiteAuditFindings.category,categories))).returning({id:websiteAuditFindings.id});
+    return rows.length;
+  }
   async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;

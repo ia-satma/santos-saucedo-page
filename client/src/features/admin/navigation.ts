@@ -169,6 +169,30 @@ export const adminNavigation = [
         icon: ReaderIcon,
       },
       {
+        href: "/admin/copies-ai",
+        label: "Historial de textos IA",
+        hint: "Propuestas, resultados y archivo",
+        icon: ReaderIcon,
+      },
+      {
+        href: "/admin/generated-images",
+        label: "Imágenes IA",
+        hint: "Historial de portadas generadas",
+        icon: ImageIcon,
+      },
+      {
+        href: "/admin/generated-audio",
+        label: "Audio IA",
+        hint: "Locuciones generadas",
+        icon: Component2Icon,
+      },
+      {
+        href: "/admin/presentations",
+        label: "Presentaciones",
+        hint: "Generar y descargar PPTX, PDF y diapositivas",
+        icon: LayersIcon,
+      },
+      {
         href: "/admin/health-check",
         label: "Salud del sistema",
         hint: "Diagnóstico técnico",

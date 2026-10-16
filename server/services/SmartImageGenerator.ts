@@ -1,13 +1,25 @@
 import { GoogleGenAI, Modality } from "@google/genai";
-import { openai } from '../openai';
+import type { AiDataClassification } from '@shared/aiGovernance';
+import { getImageClient, hasDedicatedImageClient } from '../openai';
+import { AiGovernanceBlockedError } from '../ai/dataGovernance';
+import { executeAiProviderCall } from '../ai/gateway';
 import sharp from 'sharp';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as https from 'https';
+import { storage } from '../storage';
+import { getConfigMap } from '../mirror/siteConfig';
+import { recordImageUsage } from './usageTracker';
+import { AsyncLocalStorage } from 'node:async_hooks';
+import {
+  deletePersistentMediaObjects,
+  persistPublicMediaFiles,
+  PersistentMediaUnavailableError,
+} from '../media/persistentMedia';
 
 const SANTOS_SAUCEDO_BRAND = {
   primaryColor: '#202058',
-  colorName: 'deep burgundy red',
+  colorName: 'deep navy blue',
   style: 'professional corporate legal',
   aesthetics: 'sophisticated, elegant, minimalist with sharp edges',
 };
@@ -53,7 +65,7 @@ const ABSTRACT_REPLACEMENTS: Record<string, string> = {
 export interface ImageGenerationResult {
   success: boolean;
   imageUrl?: string;
-  engine: 'dalle3' | 'gemini' | 'placeholder';
+  engine: 'cloudflare' | 'gptimage2' | 'gptimage' | 'dalle3' | 'gemini' | 'placeholder';
   originalPrompt: string;
   sanitizedPrompt?: string;
   promptWasSanitized: boolean;
@@ -65,7 +77,11 @@ export interface ImageGenerationResult {
 }
 
 export class SmartImageGenerator {
-  private transparencyLog: string[] = [];
+  private readonly logStorage = new AsyncLocalStorage<string[]>();
+
+  private get transparencyLog(): string[] {
+    return this.logStorage.getStore() || [];
+  }
 
   private log(message: string): void {
     const timestamp = new Date().toISOString();
@@ -89,7 +105,7 @@ export class SmartImageGenerator {
     }
 
     if (wasSanitized) {
-      sanitized = `Abstract professional visualization: ${sanitized}. Modern corporate office environment with elegant burgundy red (#202058) accents, scales of justice symbolism, clean geometric shapes, sophisticated lighting, no people in distress, peaceful and professional atmosphere.`;
+      sanitized = `Realistic documentary photograph: ${sanitized}. Neutral real-world editorial scene, natural lighting, no people in distress, calm and professional atmosphere. Photojournalism, not an illustration.`;
     } else {
       sanitized = prompt;
     }
@@ -184,80 +200,260 @@ export class SmartImageGenerator {
     const errorMessage = error?.message || error?.error?.message || '';
     const status = error?.status || error?.response?.status;
 
+    const msg = errorMessage.toLowerCase();
     return {
       code: errorCode,
-      isContentPolicy: errorCode === 'content_policy_violation' || 
-                       status === 400 || 
-                       errorMessage.toLowerCase().includes('safety') ||
-                       errorMessage.toLowerCase().includes('content policy'),
+      // OJO: NO tratar cualquier 400 como content policy — un 400 puede ser tamaño/param
+      // inválido (p.ej. size no soportado por el modelo) y eso NO debe abortar el fallback.
+      isContentPolicy: errorCode === 'content_policy_violation' ||
+                       msg.includes('safety') ||
+                       msg.includes('content policy') ||
+                       msg.includes('content_policy') ||
+                       msg.includes('moderation'),
       isRateLimit: errorCode === 'rate_limit_exceeded' || status === 429,
       isTimeout: errorCode === 'timeout' || status === 504 || status === 503 ||
                  errorMessage.toLowerCase().includes('timeout'),
     };
   }
 
-  private async callDalle3(prompt: string, maxRetries: number = 3): Promise<{ url?: string; error?: string; errorCode?: string }> {
+  // Tamaños que aceptan los modelos GPT Image (son distintos a DALL-E 3):
+  // 1024x1024/1536x1024/1024x1536 (no 1792); dall-e-3 usa 1024x1024/1792x1024/1024x1792.
+  private gptImageSize(aspect: string): '1024x1024' | '1536x1024' | '1024x1536' {
+    const a = (aspect || '1:1').trim();
+    return a === '16:9' ? '1536x1024' : a === '9:16' ? '1024x1536' : '1024x1024';
+  }
+  private dalleSize(aspect: string): '1024x1024' | '1792x1024' | '1024x1792' {
+    const a = (aspect || '1:1').trim();
+    return a === '16:9' ? '1792x1024' : a === '9:16' ? '1024x1792' : '1024x1024';
+  }
+
+  /**
+   * Genera una imagen con OpenAI y devuelve el BUFFER final (no una URL).
+   * Modelo primario: gpt-image-2 en calidad media. Es el modelo vigente de mayor calidad y
+   * `medium` evita el costo/latencia de `high` para imágenes editoriales de redes. Si la cuenta
+   * todavía no tiene acceso, se intenta gpt-image-1 y finalmente DALL-E 3.
+   */
+  private async callOpenAIImage(
+    prompt: string,
+    maxRetries: number,
+    aspect: string,
+    classification: AiDataClassification,
+  ): Promise<{ buffer?: Buffer; name?: 'gptimage2' | 'gptimage' | 'dalle3'; error?: string; errorCode?: string }> {
+    // La integración actual de Replit admite imágenes; requiere su credencial y base URL.
+    if (!hasDedicatedImageClient()) {
+      return {
+        error: 'Falta una API key directa de OpenAI para generar imágenes',
+        errorCode: 'openai_image_key_missing',
+      };
+    }
     let lastError: any = null;
     const backoffTimes = [0, 5000, 10000, 20000];
+    const modelFallbacks = ['gpt-image-2', 'gpt-image-1', 'dall-e-3'] as const;
+    let modelIndex = 0;
+    let model: (typeof modelFallbacks)[number] = modelFallbacks[modelIndex];
+    const IMAGE_QUALITY: 'low' | 'medium' | 'high' = 'medium';
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       if (attempt > 0) {
         const waitTime = backoffTimes[attempt] || 20000;
-        this.log(`DALL-E retry ${attempt}/${maxRetries - 1}, waiting ${waitTime / 1000}s...`);
+        this.log(`OpenAI image retry ${attempt}/${maxRetries - 1}, waiting ${waitTime / 1000}s...`);
         await this.sleep(waitTime);
       }
 
       try {
-        const image = await openai.images.generate({
-          model: 'dall-e-3',
-          prompt,
-          n: 1,
-          size: '1024x1024',
-          quality: 'standard',
-        });
-
-        const imageUrl = image.data?.[0]?.url;
-        if (imageUrl) {
-          this.log(`DALL-E 3 generated image successfully on attempt ${attempt + 1}`);
-          return { url: imageUrl };
+        // Cliente dedicado (api.openai.com con OPENAI_IMAGE_API_KEY). El proxy de Replit NO
+        // soporta imágenes, por eso se usa getImageClient() apuntado al OpenAI real.
+        if (model !== 'dall-e-3') {
+          const request = {
+            model,
+            prompt,
+            n: 1,
+            size: this.gptImageSize(aspect),
+            quality: IMAGE_QUALITY,
+            // JPEG reduce el tiempo y el tamaño de la respuesta. El archivo se normaliza con
+            // Sharp antes de persistirlo, igual que el resto de imágenes del panel.
+            output_format: 'jpeg',
+            output_compression: 88,
+          } as any;
+          const res = await executeAiProviderCall({
+            context: {
+              classification,
+              purpose: 'editorial_image',
+              source: 'agent',
+              agentId: 'image_suggestion',
+            },
+            payload: prompt,
+            provider: 'openai',
+            operation: 'image',
+            invoke: () => getImageClient().images.generate(request),
+          });
+          const b64 = (res.data?.[0] as any)?.b64_json as string | undefined;
+          if (b64) {
+            this.log(`${model} generó imagen (intento ${attempt + 1}, quality ${IMAGE_QUALITY})`);
+            recordImageUsage(this.gptImageSize(aspect), model, IMAGE_QUALITY);
+            return {
+              buffer: Buffer.from(b64, 'base64'),
+              name: model === 'gpt-image-2' ? 'gptimage2' : 'gptimage',
+            };
+          }
+          lastError = new Error(`${model} no devolvió b64_json`);
+        } else {
+          const request = {
+            model: 'dall-e-3',
+            prompt,
+            n: 1,
+            size: this.dalleSize(aspect),
+            quality: 'standard' as const,
+          };
+          const res = await executeAiProviderCall({
+            context: {
+              classification,
+              purpose: 'editorial_image',
+              source: 'agent',
+              agentId: 'image_suggestion',
+            },
+            payload: prompt,
+            provider: 'openai',
+            operation: 'image',
+            invoke: () => getImageClient().images.generate(request),
+          });
+          const url = res.data?.[0]?.url;
+          if (url) {
+            this.log(`dall-e-3 generó imagen (intento ${attempt + 1})`);
+            recordImageUsage(this.dalleSize(aspect), 'dall-e-3');
+            return { buffer: await this.downloadImage(url), name: 'dalle3' };
+          }
+          lastError = new Error('dall-e-3 no devolvió url');
         }
-        lastError = new Error('No image URL returned');
       } catch (err: any) {
+        if (err instanceof AiGovernanceBlockedError) throw err;
         lastError = err;
         const parsed = this.parseOpenAIError(err);
-        
-        this.log(`DALL-E attempt ${attempt + 1} failed: ${parsed.code} - ${err.message}`);
+        const status = err?.status ?? err?.response?.status;
+        const msg = (err?.message || err?.error?.message || '').toLowerCase();
+        this.log(`OpenAI image (${model}) intento ${attempt + 1} falló: ${parsed.code} / ${status || "unknown"}`);
+
+        // Modelo no disponible para la cuenta → intenta el siguiente sin aplicar backoff.
+        if (
+          model !== 'dall-e-3' &&
+          (status === 403 ||
+            msg.includes('must be verified') ||
+            msg.includes('verify your organization') ||
+            msg.includes('not have access') ||
+            parsed.code === 'model_not_found' ||
+            msg.includes('does not exist') ||
+            msg.includes('unsupported'))
+        ) {
+          modelIndex += 1;
+          model = modelFallbacks[modelIndex];
+          this.log(`Modelo de imagen no disponible; usando respaldo ${model}.`);
+          attempt--; // que este intento no consuma un reintento
+          continue;
+        }
 
         if (parsed.isContentPolicy) {
           return { error: 'Content policy violation', errorCode: 'content_policy_violation' };
         }
-
-        if (err?.code === 'billing_hard_limit_reached') {
-          return { error: 'OpenAI billing limit reached', errorCode: 'billing_limit' };
+        if (err?.code === 'billing_hard_limit_reached' || msg.includes('billing')) {
+          return { error: 'OpenAI billing/credit limit', errorCode: 'billing_limit' };
         }
-
         if (!parsed.isRateLimit && !parsed.isTimeout) {
           break;
         }
       }
     }
 
-    return { 
-      error: lastError?.message || 'DALL-E generation failed after retries',
-      errorCode: lastError?.code || 'unknown'
+    return {
+      error: 'OpenAI image generation failed after retries',
+      errorCode: 'openai_generation_failed',
     };
   }
 
-  private async callGeminiImageGen(prompt: string): Promise<{ buffer?: Buffer; error?: string; errorCode?: string }> {
+  // Motor gratuito (Cloudflare Workers AI, free tier: 10,000 Neurons/día, sin tarjeta,
+  // sin cobro automático al agotarse — las solicitudes solo fallan hasta el reinicio
+  // diario a las 00:00 UTC). Se intenta primero para minimizar el uso de Gemini/DALL-E de pago.
+  private async callCloudflareFlux(
+    prompt: string,
+    classification: AiDataClassification,
+  ): Promise<{ buffer?: Buffer; error?: string; errorCode?: string }> {
+    const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+    const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+    if (!accountId || !apiToken) {
+      return { error: 'Cloudflare no está configurado (faltan credenciales)', errorCode: 'cloudflare_not_configured' };
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 20000);
+    try {
+      const res = await executeAiProviderCall({
+        context: {
+          classification,
+          purpose: 'editorial_image',
+          source: 'agent',
+          agentId: 'image_suggestion',
+        },
+        payload: prompt,
+        provider: 'cloudflare',
+        operation: 'image',
+        metered: false,
+        invoke: () => fetch(
+          `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/@cf/black-forest-labs/flux-1-schnell`,
+          {
+            method: 'POST',
+            signal: controller.signal,
+            headers: { Authorization: `Bearer ${apiToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt, num_steps: 4 }),
+          },
+        ),
+      });
+
+      if (res.status === 429) {
+        return { error: 'Cuota diaria gratuita de Cloudflare agotada', errorCode: 'cloudflare_quota_exhausted' };
+      }
+      if (!res.ok) {
+        return { error: `Cloudflare HTTP ${res.status}`, errorCode: 'cloudflare_http_error' };
+      }
+
+      const data: any = await res.json();
+      if (!data?.success || !data?.result?.image) {
+        return { error: 'Cloudflare no devolvió una imagen', errorCode: 'cloudflare_no_image' };
+      }
+
+      this.log('Cloudflare Workers AI (flux-1-schnell) generó la imagen correctamente');
+      return { buffer: Buffer.from(data.result.image, 'base64') };
+    } catch (err: any) {
+      if (err instanceof AiGovernanceBlockedError) throw err;
+      const isTimeout = err?.name === 'AbortError';
+      return { error: isTimeout ? 'Cloudflare timeout' : 'Cloudflare image generation failed', errorCode: isTimeout ? 'cloudflare_timeout' : 'cloudflare_error' };
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  private async callGeminiImageGen(
+    prompt: string,
+    classification: AiDataClassification,
+  ): Promise<{ buffer?: Buffer; error?: string; errorCode?: string }> {
     try {
       this.log('Attempting Gemini image generation...');
-      
-      const response = await geminiAI.models.generateContent({
+      const request = {
         model: "gemini-2.5-flash-image",
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         config: {
           responseModalities: [Modality.TEXT, Modality.IMAGE],
         },
+      };
+      const response = await executeAiProviderCall({
+        context: {
+          classification,
+          purpose: 'editorial_image',
+          source: 'agent',
+          agentId: 'image_suggestion',
+        },
+        payload: prompt,
+        provider: 'gemini',
+        operation: 'image',
+        invoke: () => geminiAI.models.generateContent(request),
       });
 
       const candidate = response.candidates?.[0];
@@ -271,13 +467,30 @@ export class SmartImageGenerator {
       this.log('Gemini image generation successful');
       return { buffer: imageBuffer };
     } catch (err: any) {
-      this.log(`Gemini image generation failed: ${err.message}`);
-      return { error: err.message, errorCode: 'gemini_error' };
+      if (err instanceof AiGovernanceBlockedError) throw err;
+      this.log("Gemini image generation failed");
+      return { error: 'Gemini image generation failed', errorCode: 'gemini_error' };
     }
   }
 
-  async generateImage(originalPrompt: string, articleId: string): Promise<ImageGenerationResult> {
-    this.transparencyLog = [];
+  async generateImage(
+    originalPrompt: string,
+    articleId: string,
+    aspectOverride?: string,
+    classification: AiDataClassification = 'internal',
+  ): Promise<ImageGenerationResult> {
+    return this.logStorage.run(
+      [],
+      () => this.generateImageInternal(originalPrompt, articleId, aspectOverride, classification),
+    );
+  }
+
+  private async generateImageInternal(
+    originalPrompt: string,
+    articleId: string,
+    aspectOverride: string | undefined,
+    classification: AiDataClassification,
+  ): Promise<ImageGenerationResult> {
     this.log(`Starting smart image generation for article ${articleId}`);
     
     const result: ImageGenerationResult = {
@@ -289,66 +502,116 @@ export class SmartImageGenerator {
       transparencyLog: [],
     };
 
-    const brandEnhancedPrompt = `${originalPrompt}. Style: Professional corporate legal, color scheme featuring deep burgundy red (#202058) with white and dark gray accents. Sharp geometric edges, no rounded corners. Sophisticated and elegant composition suitable for a prestigious law firm.`;
+    const brandEnhancedPrompt = `${originalPrompt}. Style: realistic editorial documentary photograph, photojournalism, natural lighting, candid real-world scene, high detail, DSLR photo. NOT an illustration, NOT a cartoon, NOT a drawing, NOT a 3D render, NOT digital art. No text, no watermark, no logo, no captions.`;
 
-    // Step 1: Gemini (primary)
-    this.log('Step 1: Attempting Gemini image generation (primary)...');
-    const geminiResult = await this.callGeminiImageGen(brandEnhancedPrompt);
-    result.retryCount++;
+    // Motor elegible por config (site_config.image_engine): 'openai' (GPT Image 2, principal por
+    // defecto) o 'cloudflare' (gratis, requiere credenciales CLOUDFLARE_*). Se intenta el elegido
+    // primero y el otro como respaldo. Gemini se retiró del flujo.
+    const config = await getConfigMap();
+    const primary = (config.image_engine?.value || 'openai').trim().toLowerCase() === 'cloudflare'
+      ? 'cloudflare'
+      : 'openai';
+    const order: Array<'openai' | 'cloudflare'> =
+      primary === 'cloudflare' ? ['cloudflare', 'openai'] : ['openai', 'cloudflare'];
 
-    if (geminiResult.buffer) {
-      try {
-        const filename = `article-${articleId}-gemini-${Date.now()}.png`;
-        const outputPath = path.join(OUTPUT_DIR, filename);
+    // Proporción elegida (1:1 / 16:9 / 9:16). Cada motor la mapea a su tamaño soportado
+    // internamente (gpt-image-1 y dall-e-3 aceptan tamaños distintos).
+    const aspect = (aspectOverride || config.image_aspect?.value || '1:1').trim();
 
-        await this.overlayLogo(geminiResult.buffer, outputPath);
-
-        result.success = true;
-        result.engine = 'gemini';
-        result.imageUrl = `/generated-images/${filename}`;
-        this.log(`SUCCESS: Gemini image saved with logo overlay: ${result.imageUrl}`);
-      } catch (saveErr: any) {
-        this.log(`Gemini image save failed: ${saveErr.message}`);
+    // Ejecuta un motor y devuelve un buffer.
+    const runEngine = async (
+      engine: 'openai' | 'cloudflare',
+      prompt: string,
+    ): Promise<{ buffer?: Buffer; name?: 'gptimage2' | 'gptimage' | 'dalle3' | 'cloudflare'; error?: string; errorCode?: string }> => {
+      if (engine === 'openai') {
+        // callOpenAIImage ya devuelve el buffer final (GPT Image en base64 o fallback descargado).
+        const r = await this.callOpenAIImage(prompt, 1, aspect, classification);
+        return r.buffer ? { buffer: r.buffer, name: r.name } : { error: r.error, errorCode: r.errorCode };
       }
-    } else {
-      this.log(`Gemini failed: ${geminiResult.error}. Trying with sanitized prompt...`);
+      const r = await this.callCloudflareFlux(prompt, classification);
+      return r.buffer ? { buffer: r.buffer, name: 'cloudflare' } : { error: r.error, errorCode: r.errorCode };
+    };
 
-      const { sanitized, wasSanitized, changes } = this.sanitizePromptForContentPolicy(originalPrompt);
-      if (wasSanitized) {
-        result.sanitizedPrompt = sanitized;
-        result.promptWasSanitized = true;
-        this.log(`Prompt sanitized. Changes: ${changes.join(', ')}`);
+    let lastError = '';
+    let savedOutputPath = '';
+    let persistedObjectNames: string[] = [];
+    for (const engine of order) {
+      this.log(`Intentando motor de imágenes: ${engine}${engine === primary ? ' (principal)' : ' (respaldo)'}...`);
+      let attempt = await runEngine(engine, brandEnhancedPrompt);
+      result.retryCount++;
 
-        const sanitizedBrandPrompt = `${sanitized}. Style: Professional corporate legal, color scheme featuring deep burgundy red (#202058) with white and dark gray accents. Sharp geometric edges, sophisticated composition.`;
-        const sanitizedResult = await this.callGeminiImageGen(sanitizedBrandPrompt);
-        result.retryCount++;
-
-        if (sanitizedResult.buffer) {
-          try {
-            const filename = `article-${articleId}-gemini-${Date.now()}.png`;
-            const outputPath = path.join(OUTPUT_DIR, filename);
-
-            await this.overlayLogo(sanitizedResult.buffer, outputPath);
-
-            result.success = true;
-            result.engine = 'gemini';
-            result.imageUrl = `/generated-images/${filename}`;
-            this.log(`SUCCESS: Gemini image (sanitized) saved: ${result.imageUrl}`);
-          } catch (saveErr: any) {
-            this.log(`Gemini sanitized image save failed: ${saveErr.message}`);
-          }
+      // Reintento con prompt saneado si el motor rechaza por política de contenido (términos legales sensibles).
+      if (!attempt.buffer && attempt.errorCode === 'content_policy_violation') {
+        const { sanitized, wasSanitized, changes } = this.sanitizePromptForContentPolicy(originalPrompt);
+        if (wasSanitized) {
+          result.sanitizedPrompt = sanitized;
+          result.promptWasSanitized = true;
+          this.log(`Prompt saneado para ${engine}. Cambios: ${changes.join(', ')}`);
+          const sanitizedBrandPrompt = `${sanitized}. Style: realistic editorial documentary photograph, photojournalism, natural lighting. NOT an illustration, NOT a cartoon, NOT a 3D render. No text, no watermark, no logo.`;
+          attempt = await runEngine(engine, sanitizedBrandPrompt);
+          result.retryCount++;
         }
+      }
+
+      if (attempt.buffer) {
+        let outputPath = "";
+        try {
+          const filename = `article-${articleId}-${attempt.name}-${Date.now()}.png`;
+          outputPath = path.join(OUTPUT_DIR, filename);
+          // Por defecto NO se estampa el logo (el usuario pidió imágenes de fotoperiodismo sin
+          // branding). Reactivable poniendo site_config.image_overlay_logo = 'true'.
+          const stampLogo = (config.image_overlay_logo?.value || '').trim().toLowerCase() === 'true';
+          if (stampLogo) {
+            await this.overlayLogo(attempt.buffer, outputPath);
+          } else {
+            await sharp(attempt.buffer).png().toFile(outputPath);
+          }
+          const persistence = await persistPublicMediaFiles([{
+            absolutePath: outputPath,
+            publicPath: `/generated-images/${filename}`,
+          }]);
+          savedOutputPath = outputPath;
+          persistedObjectNames = persistence.objectNames;
+          result.success = true;
+          result.engine = attempt.name!;
+          result.imageUrl = `/generated-images/${filename}`;
+          this.log(`SUCCESS: imagen de ${attempt.name} guardada${stampLogo ? ' con logo' : ' (sin logo, foto realista)'}: ${result.imageUrl}`);
+          break;
+        } catch (saveErr: any) {
+          if (outputPath) {
+            try {
+              fs.unlinkSync(outputPath);
+            } catch {
+              // El archivo quizá no llegó a crearse.
+            }
+          }
+          if (saveErr instanceof PersistentMediaUnavailableError) {
+            this.log('App Storage no está disponible; la imagen no se publicó para evitar pérdida de datos.');
+            lastError = 'El almacenamiento persistente de imágenes no está disponible';
+            break;
+          }
+          this.log(`Guardado de ${engine} falló: ${saveErr.message}`);
+          lastError = saveErr.message;
+        }
+      } else {
+        this.log(`${engine} falló: ${attempt.error}. Probando el siguiente motor...`);
+        lastError = attempt.error || lastError;
       }
     }
 
-    // Step 2: Placeholder SVG fallback
+    // Fallback final: placeholder SVG.
     if (!result.success) {
-      this.log('Step 2: Gemini failed. Assigning placeholder image.');
+      // Pista accionable: la causa #1 en Replit es pedir imágenes contra el proxy de
+      // AI Integrations (solo chat) sin una key real de OpenAI para imágenes.
+      const hint = !hasDedicatedImageClient()
+        ? ' — Falta configurar la integración de IA de Replit para imágenes.'
+        : ' — Hay una credencial configurada, pero la generación falló; revise el acceso al modelo y los créditos de la integración.';
+      this.log(`Todos los motores fallaron. Asignando placeholder.${hint}`);
       result.engine = 'placeholder';
       result.imageUrl = '/placeholder-article.svg';
       result.success = true;
       result.fallbackUsed = true;
-      result.errorMessage = geminiResult.error || 'All image generation engines failed';
+      result.errorMessage = (lastError || 'Todos los motores de imagen fallaron') + hint;
     }
 
     result.transparencyLog = [...this.transparencyLog];
@@ -358,6 +621,62 @@ export class SmartImageGenerator {
       : `Image generation failed, placeholder assigned: ${result.errorMessage}`;
 
     this.log(summaryLog);
+
+    // Registra la imagen en el historial reutilizable (galería del panel) — solo assets reales,
+    // no el placeholder de fallback, que no sirve para reutilizarse en otro artículo.
+    if (result.success && result.engine !== 'placeholder' && result.imageUrl) {
+      // articleId es FK a news.id (UUID). Los llamadores de presentaciones ("presentation-…")
+      // y del editor manual ("manual-…") pasan ids SINTÉTICOS que NO existen en news → el INSERT
+      // violaba la FK (23503) y se tragaba en el catch → la imagen NUNCA entraba a la galería.
+      // Fix: si el articleId no tiene forma de UUID, guardar NULL (la columna es nullable con
+      // onDelete:set null, y getGeneratedImages usa leftJoin, así que igual aparece en la galería).
+      const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const safeArticleId = articleId && UUID_RE.test(articleId) ? articleId : null;
+      const row = {
+        imageUrl: result.imageUrl,
+        prompt: result.originalPrompt,
+        sanitizedPrompt: result.sanitizedPrompt,
+        engine: result.engine,
+        articleId: safeArticleId,
+      };
+      let historySaved = false;
+      try {
+        await storage.createGeneratedImage(row);
+        historySaved = true;
+      } catch (err: any) {
+        // Red de seguridad: si aun con UUID el INSERT falla por FK (noticia borrada entre la
+        // generación y el guardado), reintentar con articleId NULL para no perder el asset.
+        if (/foreign key|23503/i.test(err?.message || err?.code || '')) {
+          try {
+            await storage.createGeneratedImage({ ...row, articleId: null });
+            historySaved = true;
+          } catch (err2: any) {
+            this.log(`Failed to record generated image in gallery history (retry): ${err2.message}`);
+          }
+        } else {
+          this.log("Failed to record generated image in gallery history");
+        }
+      }
+      if (!historySaved) {
+        // Nunca se reporta una generación como exitosa si el archivo no quedó
+        // asociado a su historial permanente. La limpieza es compensatoria de
+        // una operación incompleta; no elimina ningún registro ya confirmado.
+        await deletePersistentMediaObjects(persistedObjectNames);
+        if (savedOutputPath) {
+          try {
+            fs.unlinkSync(savedOutputPath);
+          } catch {
+            // El archivo local puede no existir en un deployment efímero.
+          }
+        }
+        result.success = false;
+        result.engine = 'placeholder';
+        result.imageUrl = undefined;
+        result.errorCode = 'history_save_failed';
+        result.errorMessage = 'La imagen no pudo registrarse en el historial permanente.';
+        this.log('La imagen se descartó porque no pudo registrarse en el historial permanente.');
+      }
+    }
 
     return result;
   }

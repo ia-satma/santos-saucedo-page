@@ -2,9 +2,33 @@ import { BaseAgent } from '../core/BaseAgent';
 import { AgentConfig, AgentResult, ExecutionContext } from '../core/types';
 import { db } from '../../db';
 import { news, translationCache, newsTeamMembers } from '../../../shared/schema';
-import { eq, sql } from 'drizzle-orm';
+import { getConfigMap } from '../../mirror/siteConfig';
 
 const LANGUAGES = ['en', 'es', 'de', 'zh', 'ko', 'ja', 'ar', 'ru', 'fr', 'it'] as const;
+
+async function getActiveLanguages(): Promise<Set<string>> {
+  const config = await getConfigMap();
+  const raw = config.active_languages?.value || 'es,en';
+  const active = raw
+    .split(',')
+    .map((language) => language.trim())
+    .filter((language) => (LANGUAGES as readonly string[]).includes(language));
+  return new Set(active.length > 0 ? active : ['es', 'en']);
+}
+
+export interface ContentAuditorDependencies {
+  loadArticles: () => Promise<Array<typeof news.$inferSelect>>;
+  loadTranslationCache: () => Promise<Array<typeof translationCache.$inferSelect>>;
+  loadAuthorLinks: () => Promise<Array<typeof newsTeamMembers.$inferSelect>>;
+  loadActiveLanguages: () => Promise<Set<string>>;
+}
+
+const defaultDependencies: ContentAuditorDependencies = {
+  loadArticles: () => db.select().from(news),
+  loadTranslationCache: () => db.select().from(translationCache),
+  loadAuthorLinks: () => db.select().from(newsTeamMembers),
+  loadActiveLanguages: getActiveLanguages,
+};
 
 interface ContentGap {
   articleId: string;
@@ -27,7 +51,7 @@ const AUDITOR_CONFIG: AgentConfig = {
 4. Generate tasks for other agents to fix issues
 
 Be thorough but efficient. Focus on issues that impact user experience.`,
-  model: 'gpt-4o',
+  model: 'structural-no-llm',
   temperature: 0.2,
   maxTokens: 4000,
   skills: ['content_analysis', 'gap_detection', 'quality_assessment'],
@@ -37,13 +61,16 @@ Be thorough but efficient. Focus on issues that impact user experience.`,
 };
 
 export class ContentAuditorAgent extends BaseAgent {
-  constructor() {
+  private readonly dependencies: ContentAuditorDependencies;
+
+  constructor(dependencies: Partial<ContentAuditorDependencies> = {}) {
     super(AUDITOR_CONFIG);
+    this.dependencies = { ...defaultDependencies, ...dependencies };
   }
 
   async execute(context: ExecutionContext, payload: Record<string, unknown>): Promise<AgentResult> {
     const { scanType } = payload as { scanType?: 'full' | 'translations' | 'metadata' | 'formatting' };
-    
+
     const gaps: ContentGap[] = [];
     const stats = {
       articlesScanned: 0,
@@ -54,18 +81,36 @@ export class ContentAuditorAgent extends BaseAgent {
     };
 
     try {
-      const articles = await db.select().from(news);
+      const [articles, activeLanguages, translations, authorLinks] = await Promise.all([
+        this.dependencies.loadArticles(),
+        this.dependencies.loadActiveLanguages(),
+        this.dependencies.loadTranslationCache(),
+        this.dependencies.loadAuthorLinks(),
+      ]);
       stats.articlesScanned = articles.length;
+
+      // Pre-cargar traducciones y autores UNA vez (evita N+1: con miles de artículos,
+      // una query por artículo satura a Neon y provoca timeout).
+      const langsByEntity = new Map<string, Set<string>>();
+      for (const c of translations) {
+        if (!langsByEntity.has(c.entityId)) langsByEntity.set(c.entityId, new Set());
+        langsByEntity.get(c.entityId)!.add(c.targetLanguage);
+      }
+      const newsWithAuthors = new Set(authorLinks.map((link) => link.newsId));
 
       for (const article of articles) {
         if (!scanType || scanType === 'full' || scanType === 'translations') {
-          const translationGaps = await this.checkTranslations(article);
+          const translationGaps = this.checkTranslations(
+            article,
+            langsByEntity.get(article.id) ?? new Set(),
+            activeLanguages,
+          );
           gaps.push(...translationGaps);
           stats.translationGaps += translationGaps.length;
         }
 
         if (!scanType || scanType === 'full' || scanType === 'metadata') {
-          const authorGaps = await this.checkAuthors(article);
+          const authorGaps = this.checkAuthors(article, newsWithAuthors.has(article.id));
           gaps.push(...authorGaps);
           stats.authorGaps += authorGaps.length;
         }
@@ -107,17 +152,16 @@ export class ContentAuditorAgent extends BaseAgent {
     }
   }
 
-  private async checkTranslations(article: typeof news.$inferSelect): Promise<ContentGap[]> {
+  private checkTranslations(
+    article: typeof news.$inferSelect,
+    cachedLanguages: Set<string>,
+    activeLanguages: Set<string>,
+  ): ContentGap[] {
     const gaps: ContentGap[] = [];
-
-    const cached = await db.select()
-      .from(translationCache)
-      .where(eq(translationCache.entityId, article.id));
-
-    const cachedLanguages = new Set(cached.map((c: typeof translationCache.$inferSelect) => c.targetLanguage));
 
     for (const lang of LANGUAGES) {
       if (lang === 'en' || lang === 'es') continue;
+      if (!activeLanguages.has(lang)) continue;
 
       if (!cachedLanguages.has(lang)) {
         gaps.push({
@@ -134,14 +178,10 @@ export class ContentAuditorAgent extends BaseAgent {
     return gaps;
   }
 
-  private async checkAuthors(article: typeof news.$inferSelect): Promise<ContentGap[]> {
+  private checkAuthors(article: typeof news.$inferSelect, hasAuthor: boolean): ContentGap[] {
     const gaps: ContentGap[] = [];
 
-    const authors = await db.select()
-      .from(newsTeamMembers)
-      .where(eq(newsTeamMembers.newsId, article.id));
-
-    if (authors.length === 0) {
+    if (!hasAuthor) {
       gaps.push({
         articleId: article.id,
         articleTitle: article.title || article.titleEs || 'Unknown',

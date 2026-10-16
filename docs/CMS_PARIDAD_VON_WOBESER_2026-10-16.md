@@ -1,8 +1,11 @@
 # Comparación del CMS de Von Wobeser y Santos & Saucedo
 
-Fecha: 16 de octubre de 2026. Estado de esta entrega: implementación y pruebas locales; **sin sincronización, migración ni publicación nuevas en Replit**, por instrucción del cliente.
+Fecha: 16 de octubre de 2026. Corte actualizado tras la adaptación del ZIP de Von Wobeser. **Los cambios de usuarios y los 14 agentes están implementados y probados localmente; este nuevo corte aún no está desplegado en Replit.** La versión publicada anterior corresponde a `296072d`. El cliente mantiene la restricción de no usar Replit Agent y acepta dejar pendiente la prueba de IA real.
 
 ## Referencia comprobada
+
+La referencia principal de este corte es el ZIP proporcionado por el cliente: `Webpage-Von-Wobeser-main.zip`. Se extrajo en una carpeta temporal separada y se contrastaron CMS, rutas, contratos, orquestador y generación de archivos. Se adaptó código funcional, sin copiar datos, cuentas, medios ni secretos de Von Wobeser.
+
 
 - Von Wobeser: código local en `MIRROR VON WOBESER PAGE/Webpage-Von-Wobeser`, HEAD `9081d5b7a1d63013b389d8833113aeaf284699de`. El HEAD remoto de `main` coincide, consultado en modo lectura.
 - Documentación del cerebro Obsidian: índice CMS, arquitectura, módulos editoriales, configuración, catálogos, medios, publicación/preview, abogados, permisos y operación. La documentación extensa está congelada en `1d818c34`; se contrastó con los dos cambios posteriores: antigüedad de socios y visibilidad editorial `unlisted`.
@@ -35,7 +38,7 @@ El resumen usa conteos reales de la API. No contiene actividad ficticia ni métr
 | Portada con textos y switches | Implementado | Secciones, titulares, llamadas, orden de menú y cantidad de notas; perfiles y prácticas proceden de catálogos |
 | Configuración global por registro de secciones | Implementado | 33 secciones adaptadas al diseño Santos, claves conocidas y validación de servidor |
 | Español e inglés independientes | Implementado | Formularios de perfiles, prácticas y Monitor; selector de idioma en configuración |
-| Idiomas adicionales | Parcial | Textos globales editables y traductor heredado; no equivale al flujo editorial completo de Von |
+| Idiomas adicionales | Parcial | Panel de cobertura real y traductor conectado al agente canónico, limitado a borradores. Calidad de traducción con proveedor real pendiente |
 | Proteger cambios sin guardar | Implementado en los editores nuevos y perfil/configuración | Navegación por enlaces y cierre de pestaña; algunos diálogos heredados mantienen sus controles específicos |
 | Concurrencia de configuración global | Implementado | Revisión SHA-256, conflicto 409 y versión anterior como borrador |
 | Configuración con historial completo | Parcial | Una versión anterior por sección; no es un historial ilimitado de todas las entidades |
@@ -61,7 +64,7 @@ El resumen usa conteos reales de la API. No contiene actividad ficticia ni métr
 | PDF por idioma y fuente independiente | Implementado en esta entrega | Carga/biblioteca, campos dedicados y CTA pública con fallback de idioma |
 | Etiquetas del Monitor | Implementado en esta entrega | Hasta 12, únicas, con límites de longitud |
 | Selección manual de autores | Implementado en esta entrega | IDs explícitos guardados en la misma transacción que la nota; un perfil oculto no aparece públicamente |
-| Autoría/relación y evidencia de verificación | Parcial | La relación heredada no distingue `author` de `related`; falta la pantalla de revisión de autorías de Von |
+| Autoría/relación y evidencia de verificación | Parcial | Esquema adaptado; la selección manual registra `author` y `verified_manual`. Falta la pantalla especializada de revisión de autorías de Von |
 | Integridad de enlaces de artículos | Pendiente | No existe aún el verificador de fuentes y estados detallados de Von |
 | Visibilidad `listed/unlisted` | Pendiente | Santos tiene borrador/publicada/programada; no tiene el nuevo modo no listado de Von |
 | Preview privado de registros guardados | Implementado en esta entrega | Perfiles, prácticas, noticias e industrias; API autenticada, cache privado y noindex; reutiliza componentes públicos |
@@ -83,12 +86,12 @@ El resumen usa conteos reales de la API. No contiene actividad ficticia ni métr
 | Cookies y textos legales | Parcial | Textos editables y aviso del sitio; sin el sistema de categorías, versiones y consentimiento de tracking de Von |
 | GA4, Search Console y Leadinfo | No incorporado | El SEO actual cubre textos por página; no se activó ningún rastreador adicional |
 | SEO por página y favicon | Implementado en la base anterior | Edición de metadatos y marca; no equivale a toda la infraestructura de SEO del mirror de Von |
-| Usuarios, permisos granulares, MFA y sesiones | Parcial | Sesiones Bearer y roles existentes; falta la administración completa de accesos y MFA de Von |
-| Auditoría administrativa durable | Parcial | Eventos de cambios en logs; no se replica `admin_audit_events` y su cobertura de Von |
+| Usuarios, permisos granulares, MFA y sesiones | Implementado salvo MFA | Altas, edición, roles, módulos, activación, revocación de sesiones, restablecimiento y cambio de contraseña; protección concurrente del último administrador. MFA sigue pendiente |
+| Auditoría administrativa durable | Parcial, ampliada | `admin_access_events` registra operaciones de acceso y administración; `ai_governance_events` registra decisiones de IA. No se afirma cobertura idéntica de todas las acciones de Von |
 | Testimonios, alianzas y logos de reconocimientos | Fuera del diseño Santos | Von tiene CRUD; no se habilitaron superficies públicas ficticias en Santos |
 | Pro Bono, diversidad, Alumni | Fuera del diseño Santos | Requerirían contenido y alcance propios del cliente |
 | Eventos con galería, video, PDF y profesionales | Fuera de la navegación pública actual | Santos redirige Eventos al Monitor; la herramienta heredada no tiene paridad editorial con Von |
-| Agentes, audio, presentaciones y salidas generadas | Parcial, módulo avanzado heredado | No se certifica por la sola presencia del panel; exige revisar cada agente, credenciales y contrato por separado |
+| Agentes, audio, presentaciones y salidas generadas | Adaptados y probados localmente | 14 agentes, contratos, colas, historial de textos, imágenes/audio, conocimiento aprobado y generación/descarga privada de PPTX/PDF/PNG. IA real y persistencia de los nuevos archivos en App Storage requieren aceptación en Replit |
 
 ## Implementación y pruebas locales de esta entrega
 
@@ -121,14 +124,20 @@ El driver de transacciones usa una conexión PostgreSQL fijada durante el guarda
 3. Completar autorías/relaciones verificadas, `unlisted` e integridad de enlaces.
 4. Portar el pipeline de medios grandes: sesiones fragmentadas, hashes, cuarentena, ffprobe, antivirus y variantes de video.
 5. Completar newsletter y, si el cliente adopta ese flujo, postulaciones/CV privados.
-6. Replicar permisos granulares, administración de usuarios, MFA, sesiones y auditoría durable.
-7. Auditar y adaptar individualmente agentes y salidas generadas. Mantener integraciones de tracking desactivadas hasta definir su uso.
+6. Administración de usuarios, permisos y sesiones implementados en este corte; queda MFA y ampliar la cobertura de auditoría donde proceda.
+7. Los 14 agentes y sus salidas ya están adaptados y probados localmente. Falta ejecutar IA real y validar persistencia de nuevos archivos en Replit. No usar Replit Agent; pendiente aceptado por el cliente. Mantener tracking desactivado.
 8. La restricción sobre Replit se levantó el 16 de octubre mediante una petición explícita de actualización. El código se sincronizó conservando el commit de publicación existente; TypeScript y build pasaron en Replit. Se revisó y aplicó una migración exclusivamente aditiva de seis columnas para medios y noticias. Los pendientes funcionales anteriores siguen abiertos.
 
 Este orden permite distinguir las mejoras ya utilizables de las funciones pendientes. El panel no debe presentarse como una copia completa de Von Wobeser hasta cerrar y probar las filas pendientes aplicables.
 
-## Resultado de aceptación de este corte
+## Resultado de aceptación del corte anterior (ya publicado)
 
 Los cuatro comandos anteriores terminaron correctamente en local. Se comprobó también el rechazo de raster truncado, la biblioteca del material aprobado, archivo/restauración, escape de HTML y bloqueo de enlaces ejecutables en el texto formateado.
 
 La conexión de Brave se restableció y se recorrió Preview de Replit con la sesión del cliente: resumen con 25 perfiles y cuatro visibles, cuatro prácticas, tres publicaciones y 86 medios; 84 miniaturas de imagen cargadas sin errores y dos videos en su filtro; listado completo de orden; directorio de las 33 secciones; campos de contacto y editor bilingüe con vista previa del cuerpo. El apartado de agentes cargó nueve agentes registrados y su estado. Se revisaron el resumen y el menú a 390 × 844, y se ajustaron el encabezado del menú, el nombre accesible de búsqueda y la búsqueda de contacto. Esta aceptación visual de navegación no sustituye una ejecución integral de cada agente ni las funciones pendientes de la matriz. No se modificó contenido editorial real durante el recorrido.
+
+## Resultado del nuevo corte local
+
+La aceptación actual se detalla en [CMS_PRUEBAS_2026-10-16.md](CMS_PRUEBAS_2026-10-16.md): 202 comprobaciones HTTP, 48 pruebas de comportamiento/transporte, suites de CMS/editorial/accesos, TypeScript y build correctos. Se recorrieron 38 rutas, 19 pestañas y seis vistas móviles en Brave. No hubo llamadas de IA externas. Los archivos PPTX/PDF/PNG se generaron realmente con esquema determinista; no se certifica calidad generativa ni operación de todos los proveedores.
+
+Los cambios de esquema se aplican mediante DDL aditivo e idempotente al arrancar el CMS, dentro de una transacción con bloqueo; no requieren borrar ni recrear tablas existentes. En producción, las nuevas cargas privadas de documentos requieren antivirus disponible; esa infraestructura todavía debe validarse antes de publicar este corte.
