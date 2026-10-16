@@ -24,6 +24,13 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { adminNavigation, allAdminLinks, activeAdminLink } from "./navigation";
+import {
+  adminRoleLabels,
+  canVisitAdminPath,
+  isReadOnlyAdmin,
+  type AccessUser,
+} from "@shared/adminAccess";
+import { adminLinkTone } from "./appearance";
 import "./admin.css";
 
 export function AdminShell({ children }: { children: ReactNode }) {
@@ -31,9 +38,39 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const { isAuthenticated, isLoading, requireAuth, logout } = useAdminAuth();
   const media = useCmsMedia();
   const [mobile, setMobile] = useState(false);
+  const [expanded, setExpanded] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem("ss-admin-open-groups");
+      return new Set(
+        saved ? JSON.parse(saved) : adminNavigation.map((g) => g.id),
+      );
+    } catch {
+      return new Set(adminNavigation.map((g) => g.id));
+    }
+  });
+  const toggleGroup = (id: string) =>
+    setExpanded((old) => {
+      const next = new Set(old);
+      next.has(id) ? next.delete(id) : next.add(id);
+      try {
+        localStorage.setItem(
+          "ss-admin-open-groups",
+          JSON.stringify(Array.from(next)),
+        );
+      } catch {}
+      return next;
+    });
+  useEffect(() => {
+    const active = activeAdminLink(path);
+    const group = adminNavigation.find((g) =>
+      g.items.some((i) => i.href === active?.href),
+    );
+    if (group) setExpanded((old) => new Set(Array.from(old).concat(group.id)));
+  }, [path]);
+
   const [searchOpen, setSearchOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const me = useQuery<{ role: string }>({
+  const me = useQuery<AccessUser>({
     queryKey: ["/api/admin/me"],
     enabled: isAuthenticated,
     staleTime: 60000,
@@ -61,6 +98,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("keydown", key);
   }, []);
   const active = activeAdminLink(path);
+  const activeGroup = adminNavigation.find(g => g.items.some(i => i.href === active?.href));
+  const pageTone = adminLinkTone(active?.href || path, activeGroup?.tone);
   const signOut = async () => {
     if (!window.confirm("¿Cerrar la sesión del panel?")) return;
     try {
@@ -79,14 +118,27 @@ export function AdminShell({ children }: { children: ReactNode }) {
         <img src={media.brand.logoDark} alt="Santos & Saucedo" />
         <span>Administración del sitio</span>
       </Link>
+      <button
+        type="button"
+        className="admin-sidebar-search"
+        onClick={() => setSearchOpen(true)}
+      >
+        <MagnifyingGlassIcon />
+        <span>¿Qué quiere hacer?</span>
+        <kbd>⌘ K</kbd>
+      </button>
       <nav
         aria-label="Navegación de administración"
         className="admin-navigation"
       >
         {adminNavigation.map((group) => {
+          const visibleItems = group.items.filter((item) =>
+            canVisitAdminPath(me.data, item.href),
+          );
+          if (!visibleItems.length) return null;
           const items = (
             <ul>
-              {group.items.map((item) => {
+              {visibleItems.map((item) => {
                 const Icon = item.icon;
                 const selected = active?.href === item.href;
                 return (
@@ -94,6 +146,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                     <Link
                       href={item.href}
                       className={`admin-nav-link ${selected ? "is-active" : ""}`}
+                      data-tone={adminLinkTone(item.href, group.tone)}
                       aria-current={selected ? "page" : undefined}
                     >
                       <Icon aria-hidden="true" />
@@ -104,22 +157,29 @@ export function AdminShell({ children }: { children: ReactNode }) {
               })}
             </ul>
           );
-          return group.advanced ? (
-            <details
-              key={group.label}
-              open={group.items.some((x) => x.href === active?.href)}
-              className="admin-advanced"
-            >
-              <summary>
-                {group.label}
-                <ChevronRightIcon />
-              </summary>
-              {items}
-            </details>
-          ) : (
-            <section key={group.label}>
-              <h2>{group.label}</h2>
-              {items}
+          return (
+            <section key={group.id} className="admin-nav-group" data-tone={group.tone}>
+              <button
+                type="button"
+                className="admin-nav-group-heading"
+                aria-expanded={expanded.has(group.id)}
+                onClick={() => toggleGroup(group.id)}
+              >
+                <span className="admin-group-name"><span className="admin-group-dot" aria-hidden="true" />{group.label}</span>
+                <ChevronRightIcon
+                  className={expanded.has(group.id) ? "rotate-90" : ""}
+                />
+              </button>
+              {expanded.has(group.id) && (
+                <>
+                  {group.description && (
+                    <p className="admin-nav-group-description">
+                      {group.description}
+                    </p>
+                  )}
+                  {items}
+                </>
+              )}
             </section>
           );
         })}
@@ -129,11 +189,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         <div>
           <strong>Equipo editorial</strong>
           <span>
-            {me.data?.role === "super_admin"
-              ? "Administración principal"
-              : me.data?.role === "editor"
-                ? "Edición de contenido"
-                : "Sesión de administración"}
+            {adminRoleLabels[me.data?.role || ""] || "Sesión de administración"}
           </span>
         </div>
         <button
@@ -146,33 +202,35 @@ export function AdminShell({ children }: { children: ReactNode }) {
       </div>
     </>
   );
-  if (isLoading)
+  if (isLoading || me.isLoading)
     return (
       <div className="admin-shell">
         <div className="admin-loading">Cargando el espacio de trabajo…</div>
       </div>
     );
   if (!isAuthenticated) return null;
-  const matches = allAdminLinks.filter((x) =>
-    `${x.label} ${x.hint}`
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLocaleLowerCase()
-      .includes(
-        search
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .toLocaleLowerCase(),
-      ),
+  const matches = allAdminLinks.filter(
+    (x) =>
+      canVisitAdminPath(me.data, x.href) &&
+      `${x.label} ${x.hint}`
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLocaleLowerCase()
+        .includes(
+          search
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLocaleLowerCase(),
+        ),
   );
   return (
-    <div className="admin-shell">
+    <div className="admin-shell" data-tone={pageTone}>
       <a className="admin-skip" href="#admin-main">
         Saltar al contenido
       </a>
       <aside className="admin-sidebar">{navigation}</aside>
       <Sheet open={mobile} onOpenChange={setMobile}>
-        <SheetContent side="left" className="admin-mobile-panel p-0">
+        <SheetContent side="left" className="admin-mobile-panel p-0" data-tone={pageTone}>
           <SheetTitle className="sr-only">Navegación del panel</SheetTitle>
           <SheetDescription className="sr-only">
             Secciones de administración del sitio
@@ -215,7 +273,26 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </div>
         </header>
         <div className="admin-workspace" id="admin-main" tabIndex={-1}>
-          <AdminLanguageScope>{children}</AdminLanguageScope>
+          {me.data && isReadOnlyAdmin(me.data) && (
+            <p className="admin-users-notice mx-6 mt-6" role="status">
+              Modo consulta: puede revisar las secciones habilitadas. Su cuenta
+              no permite guardar cambios ni ejecutar procesos.
+            </p>
+          )}
+          <AdminLanguageScope>
+            {canVisitAdminPath(me.data, path) ? (
+              children
+            ) : (
+              <main className="admin-management-page">
+                <h1>Acceso restringido</h1>
+                <p>
+                  Su cuenta no tiene permiso para esta sección. Solicite acceso
+                  al administrador principal.
+                </p>
+                <Link href="/admin/dashboard">Volver al resumen</Link>
+              </main>
+            )}
+          </AdminLanguageScope>
         </div>
         <footer className="admin-workspace-footer">
           <span>Santos &amp; Saucedo · Gestión de contenido</span>

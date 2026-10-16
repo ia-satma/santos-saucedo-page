@@ -60,7 +60,7 @@ export async function importBundledMedia(){
   for(const note of notes)if(note.imageUrl)add(note.imageUrl);
   for(const image of gallery)add(image.imageUrl);
   for(const item of items)add(item.path);
-  for(const c of configs.filter((r:any)=>r.key.startsWith('editorial.')&&r.value)){const data=JSON.parse(c.value).content;visit(data,add);}
+  for(const c of configs.filter((r:any)=>r.key.startsWith('editorial.')&&r.value)){const data=JSON.parse(c.value!).content;visit(data,add);}
   const sources=new Map<string,string>();
   for(const url of Array.from(urls)){const file=await resolveSource(url);if(file)sources.set(url,file);else state.skipped.push(url);}
   state.total=sources.size;await persistStatus();
@@ -91,11 +91,11 @@ export async function importBundledMedia(){
   const nextMedia=replace(currentMedia,paths);
   const errors=validateCmsValue('media',nextMedia);if(errors.length)throw new Error(errors.join(' '));
   const raw=JSON.stringify({content:nextMedia,previous:currentMedia});
-  const changed=mediaRow?await db.update(siteConfig).set({value:raw,updatedAt:new Date()}).where(and(eq(siteConfig.key,'editorial.media'),eq(siteConfig.value,mediaRow.value))).returning():await db.insert(siteConfig).values({key:'editorial.media',type:'json',category:'editorial',value:raw}).onConflictDoNothing().returning();
+  const changed=mediaRow?await db.update(siteConfig).set({value:raw,updatedAt:new Date()}).where(and(eq(siteConfig.key,'editorial.media'),eq(siteConfig.value,mediaRow.value!))).returning():await db.insert(siteConfig).values({key:'editorial.media',type:'json',category:'editorial',value:raw}).onConflictDoNothing().returning();
   if(!changed.length)throw new Error('La configuración de medios cambió durante la importación; vuelva a ejecutarla para conservar las ediciones.');
   for(const [table,rows,column]of [[teamMembers,people,'imageUrl'],[practiceGroups,practices,'imageUrl'],[industryGroups,industries,'imageUrl'],[news,notes,'imageUrl'],[officeImages,gallery,'imageUrl'],[mediaItems,items,'path']] as const){for(const row of rows){const old=(row as any)[column];const target=paths.get(old);if(target)await db.update(table).set({[column]:target}).where(and(eq((table as any).id,row.id),eq((table as any)[column],old)));}}
   for(const c of configs.filter((r:any)=>r.key.startsWith('editorial.')&&r.key!=='editorial.media'&&r.value)){
-   const key=c.key.slice(10);if(!isCmsSection(key))continue;const parsed=JSON.parse(c.value);const next=replace(parsed.content,paths);if(JSON.stringify(next)!==JSON.stringify(parsed.content))await db.update(siteConfig).set({value:JSON.stringify({content:next,previous:parsed.content}),updatedAt:new Date()}).where(and(eq(siteConfig.id,c.id),eq(siteConfig.value,c.value)));
+   const key=c.key.slice(10);if(!isCmsSection(key))continue;const parsed=JSON.parse(c.value!);const next=replace(parsed.content,paths);if(JSON.stringify(next)!==JSON.stringify(parsed.content))await db.update(siteConfig).set({value:JSON.stringify({content:next,previous:parsed.content}),updatedAt:new Date()}).where(and(eq(siteConfig.id,c.id),eq(siteConfig.value,c.value!)));
   }
   state={...state,state:'complete',finishedAt:new Date().toISOString()};await persistStatus();return state;
  }catch(error){state={...state,state:'failed',error:(error as Error).message,finishedAt:new Date().toISOString()};await persistStatus();throw error;}

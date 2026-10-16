@@ -1,0 +1,188 @@
+import sanitizeHtml from "sanitize-html";
+import * as cheerio from "cheerio";
+import { isLegacyFirmPublicationUrl } from "../newsPublicationPolicy";
+
+// Sanitiza contenido HTML del CMS antes de inyectarlo en las páginas públicas.
+// Conserva el formato legítimo (párrafos, enlaces, listas, énfasis) pero elimina
+// <script>, manejadores on*, iframes, y URLs javascript: — cierra el XSS almacenado.
+const OPTS: sanitizeHtml.IOptions = {
+  allowedTags: ["p", "br", "strong", "b", "em", "i", "u", "span", "a", "ul", "ol", "li", "blockquote", "h2", "h3", "h4", "h5", "h6", "img", "hr", "sub", "sup", "table", "thead", "tbody", "tr", "th", "td"],
+  allowedAttributes: {
+    a: ["href", "target", "rel", "title"],
+    img: ["src", "alt", "title"],
+    // Marca cerrada del editor para las dos familias institucionales. Nunca
+    // se acepta `font-family` ni una clase/estilo arbitrario.
+    span: ["style", "data-vw-font"],
+    p: ["style"],
+  },
+  allowedSchemes: ["http", "https", "mailto", "tel"],
+  allowedSchemesByTag: { img: ["http", "https", "data"] },
+  // Bloquea url()/expression() y deja solo estilos inocuos.
+  allowedStyles: {
+    "*": {
+      "font-size": [/^\d+(?:\.\d+)?(?:px|rem|em|%)$/],
+      "text-align": [/^(left|right|center|justify)$/],
+      color: [
+        /^#[0-9a-fA-F]{3,8}$/,
+        /^rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}(?:\s*,\s*(?:0|1|0?\.\d+))?\s*\)$/,
+      ],
+    },
+  },
+  disallowedTagsMode: "discard",
+  enforceHtmlBoundary: true,
+  // target="_blank" sin rel="noopener" permite que la pestaña abierta controle window.opener
+  // de la pestaña original (reverse tabnabbing) — se fuerza siempre, sin importar qué rel
+  // haya puesto quien escribió el HTML.
+  transformTags: {
+    a: (tagName, attribs) => {
+      if (attribs.target === "_blank") {
+        attribs.rel = "noopener noreferrer";
+      }
+      return { tagName, attribs };
+    },
+    img: (tagName, attribs) => {
+      // Los data URI SVG/HTML pueden incorporar contenido activo. Solo se admiten
+      // formatos raster base64 cuando el editor necesita una imagen embebida.
+      if (attribs.src?.startsWith("data:")
+        && !/^data:image\/(?:png|jpe?g|gif|webp);base64,[a-z0-9+/=\s]+$/i.test(attribs.src)) {
+        delete attribs.src;
+      }
+      return { tagName, attribs };
+    },
+    span: (tagName, attribs) => {
+      if (attribs["data-vw-font"] !== "gelasio" && attribs["data-vw-font"] !== "inter") {
+        delete attribs["data-vw-font"];
+      }
+      return { tagName, attribs };
+    },
+  },
+};
+
+export function sanitizeCms(html: string | null | undefined): string {
+  if (!html) return "";
+  return sanitizeHtml(String(html), OPTS);
+}
+
+function esc(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// Texto plano (guardado antes del editor de texto enriquecido, con doble salto = párrafo
+// nuevo y salto simple = <br>) a HTML — mismo comportamiento que ya tenían `toParagraphs()`/
+// `textToHtml()`, duplicadas antes en renderPage.ts/renderDesk.ts/renderAttorney.ts/
+// renderSingle.ts.
+function plainTextToHtml(text: string): string {
+  return text
+    .replace(/\r\n/g, "\n")
+    .split(/\n{2,}/)
+    .map((p) => `<p>${esc(p).replace(/\n/g, "<br>")}</p>`)
+    .join("");
+}
+
+const LOOKS_LIKE_HTML = /<\/?[a-z][\s\S]*>/i;
+
+/**
+ * Convierte valores antiguos creados por el editor enriquecido a texto simple.
+ * Se usa para títulos, etiquetas, direcciones y descripciones breves: esos campos
+ * nunca deben publicar etiquetas HTML, pero pueden conservarlas en instalaciones
+ * que los editaron antes de separar ambos tipos de control.
+ */
+export function plainTextFromCms(text: string | null | undefined): string {
+  if (!text) return "";
+  const value = String(text);
+  if (!LOOKS_LIKE_HTML.test(value)) return value;
+
+  const $ = cheerio.load(`<div data-cms-plain-root>${sanitizeCms(value)}</div>`, null, false);
+  const $root = $("[data-cms-plain-root]").first();
+  $root.find("br").replaceWith("\n");
+  $root.find("p,div,li,blockquote,h1,h2,h3,h4,h5,h6,tr").each((_index, element) => {
+    $(element).after("\n");
+  });
+  return $root
+    .text()
+    .replace(/\u00a0/g, " ")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n[ \t]+/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+/**
+ * Convierte un campo de texto largo del CMS (noticias, biografías, descripciones, textos de
+ * página) a HTML seguro para inyectar en la plantilla pública. Detecta si el valor ya es HTML
+ * (guardado desde el editor de texto enriquecido) o texto plano legado (nunca reeditado desde
+ * que existía solo el <Textarea>) y trata cada caso apropiadamente — así el contenido viejo
+ * sigue viéndose igual sin necesidad de una migración masiva.
+ */
+function normalizedLinkUrl(value: string): string | null {
+  const raw = String(value ?? "").trim();
+  if (raw.startsWith("/") && !raw.startsWith("//") && !raw.includes("\\")) {
+    try {
+      const parsed = new URL(raw, "https://article-link.local");
+      const pathname = decodeURIComponent(parsed.pathname);
+      if (pathname.startsWith("/") && !pathname.split("/").some((part) => part === "." || part === "..")) return pathname;
+    } catch {
+      return null;
+    }
+  }
+  try {
+    const url = new URL(raw);
+    if (!/^https?:$/.test(url.protocol) || url.username || url.password) return null;
+    url.hash = "";
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Un enlace marcado como inactivo conserva su texto editorial, pero deja de
+ * ser clicable. Así una cita histórica no desaparece ni puede enviar al lector
+ * a un 404 mientras el equipo la revisa desde Administración.
+ */
+function removeDisabledExternalLinks(html: string, disabledExternalUrls: readonly string[]): string {
+  const disabled = new Set(disabledExternalUrls.map(normalizedLinkUrl).filter((url): url is string => Boolean(url)));
+  const $ = cheerio.load(html, null, false);
+  $("a[href]").each((_index, anchor) => {
+    const rawHref = String($(anchor).attr("href") ?? "");
+    const href = normalizedLinkUrl(rawHref);
+    // Defensa en profundidad: incluso si una ficha legada aún no hubiera sido
+    // auditada, jamás exponemos un hipervínculo a la plataforma anterior.
+    if (isLegacyFirmPublicationUrl(rawHref) || (href && disabled.has(href))) {
+      $(anchor).replaceWith($(anchor).contents());
+    }
+  });
+  return $.root().html() || "";
+}
+
+export function renderRichText(text: string | null | undefined, options: { disabledExternalUrls?: readonly string[] } = {}): string {
+  if (!text) return "";
+  const s = String(text);
+  const clean = sanitizeCms(LOOKS_LIKE_HTML.test(s) ? s : plainTextToHtml(s));
+  return removeDisabledExternalLinks(clean, options.disabledExternalUrls ?? []);
+}
+
+/**
+ * Sanitiza in-place las claves de texto enriquecido de un payload ya validado por Zod, ANTES
+ * de guardarlo — para no confiar únicamente en la sanitización al renderizar (defensa en
+ * profundidad: cualquier lectura futura del campo, no solo el mirror público, queda limpia).
+ * Solo toca las claves indicadas; el resto del objeto no se modifica.
+ */
+export function sanitizeFields<T extends Record<string, any>>(obj: T, keys: (keyof T)[]): T {
+  for (const key of keys) {
+    if (typeof obj[key] === "string") {
+      (obj as any)[key] = sanitizeCms(obj[key] as string);
+    }
+  }
+  return obj;
+}
+
+/**
+ * Fuente única de verdad para los campos enriquecidos de Noticias y Artículos.
+ * Ambos tipos comparten la tabla `news`; centralizar la lista evita que una ruta,
+ * agente o integración futura persista estilos tipográficos pegados desde Word,
+ * correo u otra página. Los títulos son texto plano y se escapan al renderizar.
+ */
+export function sanitizeNewsFields<T extends Record<string, any>>(obj: T): T {
+  return sanitizeFields(obj, ["content", "contentEs", "excerpt", "excerptEs"] as (keyof T)[]);
+}

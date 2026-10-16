@@ -13,4 +13,9 @@ export const editorialDb = drizzlePostgres(editorialPool, { schema });
 
 export const db = (isNeon
   ? drizzleNeon(neon(databaseUrl), { schema })
-  : editorialDb) as any;
+  : editorialDb) as unknown as typeof editorialDb;
+
+export type DatabasePoolMetrics = { totalConnections: number; idleConnections: number; waitingRequests: number };
+export function getDatabasePoolMetrics(): DatabasePoolMetrics {
+  return { totalConnections:editorialPool.totalCount,idleConnections:editorialPool.idleCount,waitingRequests:editorialPool.waitingCount };
+}

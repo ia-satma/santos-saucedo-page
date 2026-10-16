@@ -3,6 +3,11 @@ import crypto from "crypto";
 import type { Request, Response, NextFunction } from "express";
 import { storage } from "./storage";
 import type { AdminUser } from "@shared/schema";
+import {
+  adminPermissionForPath,
+  hasAdminPermission,
+  isReadOnlyAdmin,
+} from "@shared/adminAccess";
 
 const SALT_ROUNDS = 12;
 const TOKEN_BYTES = 32;
@@ -12,7 +17,10 @@ export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, SALT_ROUNDS);
 }
 
-export async function comparePassword(password: string, hash: string): Promise<boolean> {
+export async function comparePassword(
+  password: string,
+  hash: string,
+): Promise<boolean> {
   return bcrypt.compare(password, hash);
 }
 
@@ -40,7 +48,10 @@ const MAX_ATTEMPTS = 5;
 const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 const BLOCK_DURATION_MS = 30 * 60 * 1000; // 30 minutes
 
-export function checkRateLimit(identifier: string): { allowed: boolean; retryAfter?: number } {
+export function checkRateLimit(identifier: string): {
+  allowed: boolean;
+  retryAfter?: number;
+} {
   const now = Date.now();
   const entry = loginAttempts.get(identifier);
 
@@ -50,9 +61,9 @@ export function checkRateLimit(identifier: string): { allowed: boolean; retryAft
 
   // Check if blocked
   if (entry.blockedUntil > now) {
-    return { 
-      allowed: false, 
-      retryAfter: Math.ceil((entry.blockedUntil - now) / 1000) 
+    return {
+      allowed: false,
+      retryAfter: Math.ceil((entry.blockedUntil - now) / 1000),
     };
   }
 
@@ -65,9 +76,9 @@ export function checkRateLimit(identifier: string): { allowed: boolean; retryAft
   // Check attempts
   if (entry.attempts >= MAX_ATTEMPTS) {
     entry.blockedUntil = now + BLOCK_DURATION_MS;
-    return { 
-      allowed: false, 
-      retryAfter: Math.ceil(BLOCK_DURATION_MS / 1000) 
+    return {
+      allowed: false,
+      retryAfter: Math.ceil(BLOCK_DURATION_MS / 1000),
     };
   }
 
@@ -76,7 +87,7 @@ export function checkRateLimit(identifier: string): { allowed: boolean; retryAft
 
 export function recordLoginAttempt(identifier: string, success: boolean): void {
   const now = Date.now();
-  
+
   if (success) {
     loginAttempts.delete(identifier);
     return;
@@ -89,7 +100,8 @@ export function recordLoginAttempt(identifier: string, success: boolean): void {
     // vencidas y, si aún sobran, las que no están bloqueadas; los bloqueos vigentes se conservan
     if (loginAttempts.size > 20000) {
       loginAttempts.forEach((old, key) => {
-        if (now - old.lastAttempt > WINDOW_MS && old.blockedUntil < now) loginAttempts.delete(key);
+        if (now - old.lastAttempt > WINDOW_MS && old.blockedUntil < now)
+          loginAttempts.delete(key);
       });
       if (loginAttempts.size > 20000) {
         loginAttempts.forEach((old, key) => {
@@ -132,7 +144,7 @@ declare global {
 // consulta del WebSocket /ws/pipeline (L7). Devuelve el usuario activo o el motivo del rechazo,
 // con los mismos mensajes de siempre; una sesión vencida se borra.
 export async function validateSessionToken(
-  token: string | null | undefined
+  token: string | null | undefined,
 ): Promise<{ ok: true; user: AdminUser } | { ok: false; error: string }> {
   if (!token) return { ok: false, error: "Authentication required" };
 
@@ -145,7 +157,8 @@ export async function validateSessionToken(
   }
 
   const adminUser = await storage.getAdminUser(session.userId);
-  if (!adminUser || !adminUser.isActive) return { ok: false, error: "User not found or inactive" };
+  if (!adminUser || !adminUser.isActive)
+    return { ok: false, error: "User not found or inactive" };
 
   return { ok: true, user: adminUser };
 }
@@ -153,7 +166,7 @@ export async function validateSessionToken(
 export async function authMiddleware(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     // Get token from Authorization header
@@ -172,6 +185,19 @@ export async function authMiddleware(
 
     // Attach user to request
     req.adminUser = result.user;
+    const permission = adminPermissionForPath(req.originalUrl);
+    if (
+      permission &&
+      (!hasAdminPermission(result.user, permission) ||
+        (isReadOnlyAdmin(result.user) &&
+          !["GET", "HEAD", "OPTIONS"].includes(req.method)))
+    ) {
+      res
+        .status(403)
+        .json({ error: "Su cuenta no tiene permiso para esta acción." });
+      return;
+    }
+    res.setHeader("Cache-Control", "private, no-store");
     next();
   } catch (error) {
     console.error("Auth middleware error:", error);
@@ -187,7 +213,18 @@ export function requireRole(...roles: string[]) {
     }
     // super_admin (el rol que crean el seed y /api/admin/init) pasa cualquier control de rol:
     // con requireRole("editor", "admin") solo, el administrador principal recibía 403
-    if (req.adminUser.role !== "super_admin" && !roles.includes(req.adminUser.role)) {
+    const permission = adminPermissionForPath(req.originalUrl);
+    const moduleGrant =
+      roles.includes("editor") &&
+      permission &&
+      permission !== "users" &&
+      hasAdminPermission(req.adminUser, permission) &&
+      (!isReadOnlyAdmin(req.adminUser) || ["GET", "HEAD"].includes(req.method));
+    if (
+      req.adminUser.role !== "super_admin" &&
+      !roles.includes(req.adminUser.role) &&
+      !moduleGrant
+    ) {
       res.status(403).json({ error: "Insufficient permissions" });
       return;
     }
@@ -196,13 +233,63 @@ export function requireRole(...roles: string[]) {
 }
 
 // Clean up expired entries periodically (every hour)
-setInterval(() => {
-  const now = Date.now();
-  const keys = Array.from(loginAttempts.keys());
-  keys.forEach(key => {
-    const entry = loginAttempts.get(key);
-    if (entry && now - entry.lastAttempt > WINDOW_MS && entry.blockedUntil < now) {
-      loginAttempts.delete(key);
+setInterval(
+  () => {
+    const now = Date.now();
+    const keys = Array.from(loginAttempts.keys());
+    keys.forEach((key) => {
+      const entry = loginAttempts.get(key);
+      if (
+        entry &&
+        now - entry.lastAttempt > WINDOW_MS &&
+        entry.blockedUntil < now
+      ) {
+        loginAttempts.delete(key);
+      }
+    });
+  },
+  60 * 60 * 1000,
+).unref();
+
+// Compatibility with the reference CMS; the Santos module policy remains authoritative.
+export function requirePermission(permission: string) {
+  const aliases: Record<
+    string,
+    import("@shared/adminAccess").AdminPermission | "users"
+  > = {
+    content: "content",
+    editorial_content: "editorial",
+    editorial_publish: "editorial",
+    media: "media",
+    job_openings: "jobs",
+    agents: "agents",
+    agent_knowledge_admin: "agents",
+    config: "config",
+    advanced: "advanced",
+    users: "users",
+    contact_submissions: "inbox",
+    career_applications: "applications",
+    newsletter: "inbox",
+    exports: "inbox",
+    private_downloads: "agents",
+  };
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const mapped = aliases[permission];
+    if (!req.adminUser) {
+      res.status(401).json({ error: "Authentication required" });
+      return;
     }
-  });
-}, 60 * 60 * 1000);
+    if (
+      !mapped ||
+      !hasAdminPermission(req.adminUser, mapped) ||
+      (isReadOnlyAdmin(req.adminUser) &&
+        !["GET", "HEAD", "OPTIONS"].includes(req.method))
+    ) {
+      res
+        .status(403)
+        .json({ error: "Su cuenta no tiene permiso para esta acción." });
+      return;
+    }
+    next();
+  };
+}

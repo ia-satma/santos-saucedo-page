@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
-import { Link } from "wouter";
+import { SiteLink as Link } from "./SiteLink";
+import { useCmsContent } from "@/hooks/useCmsContent";
+import defaults from "@shared/cms-defaults.json";
 import seccionUrl from "@assets/ss26/seccion.svg";
 
 /** Envoltorio simple, sin entrada al aparecer (G3): el contenido se ve completo desde el
@@ -133,10 +135,13 @@ export function TextLink({
   /** Para conservar el data-testid del botón o enlace al que sustituye */
   "data-testid"?: string;
 }) {
+  const links=useCmsContent("links",defaults.links);
+  const key=Object.keys(defaults.links).find(key=>defaults.links[key as keyof typeof links]===href) as keyof typeof links|undefined;
+  const destination=key?links[key]:href;
   const dark = tone === "dark";
   return (
     <Link
-      href={href}
+      href={destination}
       data-testid={testId}
       // before: amplía el área táctil a ~42px sin mover el diseño (index.css ya no fuerza 44px en .ss26)
       className={`ss-label group relative inline-flex items-center gap-3 before:absolute before:inset-x-0 before:-inset-y-3 ${dark ? "text-white" : "text-ss-marino"} ${className}`}

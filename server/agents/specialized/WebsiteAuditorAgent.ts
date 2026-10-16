@@ -1,13 +1,49 @@
+import { isNamedOnTeamPage } from "@shared/teamVisibility";
 import { BaseAgent } from '../core/BaseAgent';
-import { AgentResult, ExecutionContext } from '../core/types';
+import { AgentResult, ExecutionContext, AgentType } from '../core/types';
+import { orchestrator } from '../core/AgentOrchestrator';
 import { storage } from '../../storage';
-import type { InsertWebsiteAuditFinding, TeamMember, PracticeGroup, IndustryGroup, News } from '@shared/schema';
+import { getConfigMap } from '../../mirror/siteConfig';
+import { fetchStatusWithPolicy } from '../../security/network';
+import type { InsertWebsiteAuditFinding, WebsiteAuditFinding, TeamMember, PracticeGroup, IndustryGroup, News } from '@shared/schema';
+import { capabilityPath } from '@shared/localizedPublicUrls';
+import { publicImageAssetExists } from './websiteAuditMedia';
+import {
+  industryGroupContentIssues,
+  isPublishedEntity,
+  isPublicNews,
+  newsSeoIssues,
+  practiceGroupContentIssues,
+  teamMemberContentIssues,
+} from './websiteAuditPolicy';
 
 const SUPPORTED_LANGUAGES = ['en', 'es', 'de', 'zh', 'ko', 'ja', 'ar', 'ru', 'fr', 'it'];
+
+// Lee `active_languages` de site_config (default "es,en") — solo se piden/reportan hallazgos
+// de traducción faltante para los idiomas realmente en uso, no los 10 soportados por el
+// traductor. Ver [[santossaucedo-cobertura-idioma]]: sin este filtro, el auditor re-encolaba
+// miles de trabajos de polyglot_translator para idiomas que el cliente no usa.
+async function getActiveLanguages(): Promise<string[]> {
+  const config = await getConfigMap();
+  const raw = config.active_languages?.value || 'es,en';
+  const active = raw.split(',').map((s) => s.trim()).filter((c) => SUPPORTED_LANGUAGES.includes(c));
+  return active.length > 0 ? active : ['es', 'en'];
+}
+
+// Fallback usado en toda la app cuando una imagen no carga (server/agents/AutoRecoveryAgent.ts,
+// SmartImageGenerator.ts) — mismo asset, así el auto-fix no introduce un placeholder distinto.
+const FALLBACK_IMAGE = '/placeholder-article.svg';
+
+// polyglot_translator / seo_optimizer / metadata_linker SOLO operan sobre `news` (esperan
+// `{articleId}` y hacen `db.select().from(news)`). Los findings de team_member/practice_group/
+// industry_group traen el mismo `ownerAgent` mnemónico pero esos agentes NO los pueden procesar
+// hoy — encolarlos fallaría en silencio. Por eso el auto-encolado se limita a entityType 'news'.
+const AUTO_ENQUEUE_ENTITY_TYPE = 'news';
 
 interface AuditConfig {
   runType: 'full' | 'delta' | 'links_only' | 'translations_only' | 'seo_only' | 'content_only';
   skipModules?: string[];
+  applyChanges?: boolean;
 }
 
 interface AuditMetrics {
@@ -31,6 +67,9 @@ interface FindingData {
   details: Record<string, unknown>;
   recommendation?: string;
   ownerAgent?: string;
+  /** Cuando el auto-fix ya se aplicó al detectar (p.ej. imagen rota -> fallback). */
+  status?: 'open' | 'resolved';
+  resolvedBy?: string;
 }
 
 export class WebsiteAuditorAgent extends BaseAgent {
@@ -43,6 +82,7 @@ export class WebsiteAuditorAgent extends BaseAgent {
     contentItemsChecked: 0,
   };
   private findings: FindingData[] = [];
+  private allowChanges = false;
 
   constructor() {
     super({
@@ -53,7 +93,7 @@ export class WebsiteAuditorAgent extends BaseAgent {
 Your role is to identify issues that affect user experience, SEO, and content quality.
 Focus on: broken links, missing translations, incomplete lawyer profiles, SEO gaps, and content issues.
 Be thorough but prioritize critical issues that directly impact users.`,
-      model: 'gpt-4o',
+      model: 'structural-no-llm',
       temperature: 0.3,
       maxTokens: 4096,
       skills: ['link_checking', 'translation_validation', 'content_analysis', 'seo_audit', 'performance_monitoring'],
@@ -71,7 +111,9 @@ Be thorough but prioritize critical issues that directly impact users.`,
     const config: AuditConfig = {
       runType: (payload.runType as AuditConfig['runType']) || 'full',
       skipModules: payload.skipModules as string[] | undefined,
+      applyChanges: payload.applyChanges === true,
     };
+    this.allowChanges = config.applyChanges === true;
 
     console.log(`[WebsiteAuditor] Starting ${config.runType} audit...`);
     this.metrics = {
@@ -93,18 +135,20 @@ Be thorough but prioritize critical issues that directly impact users.`,
       console.log(`[WebsiteAuditor] Created audit record: ${this.auditId}`);
 
       const modulesToRun = this.getModulesToRun(config);
+      const completedModules: string[] = [];
       console.log(`[WebsiteAuditor] Running modules: ${modulesToRun.join(', ')}`);
 
       for (const module of modulesToRun) {
         try {
           await this.runModule(module);
+          completedModules.push(module);
         } catch (error) {
           console.error(`[WebsiteAuditor] Module ${module} failed:`, error);
           this.addFinding({
             category: 'system',
             issueType: 'module_error',
             severity: 'medium',
-            details: { module, error: String(error) },
+            details: { module, error: "Module execution failed" },
             recommendation: `Review ${module} module for errors`,
           });
         }
@@ -114,6 +158,19 @@ Be thorough but prioritize critical issues that directly impact users.`,
       this.metrics.executionTimeMs = this.metrics.endTime - this.metrics.startTime;
 
       const savedFindings = await this.saveFindings();
+      const supersededCount = await storage.supersedeOpenWebsiteAuditFindings(
+        this.auditId,
+        completedModules,
+      );
+      if (supersededCount > 0) {
+        console.log(`[WebsiteAuditor] Superseded ${supersededCount} findings from earlier audits.`);
+      }
+      // Un diagnóstico debe limitarse a registrar hallazgos. Encolar agentes consume
+      // recursos y crea trabajo persistente, por lo que solo está permitido cuando la
+      // ejecución recibió autorización explícita para aplicar cambios.
+      if (this.allowChanges) {
+        await this.autoEnqueueNewsFixers(savedFindings);
+      }
 
       const severityCounts = this.countBySeverity();
       await storage.updateWebsiteAudit(this.auditId, {
@@ -143,7 +200,7 @@ Be thorough but prioritize critical issues that directly impact users.`,
       };
     } catch (error) {
       console.error(`[WebsiteAuditor] Audit failed:`, error);
-      
+
       if (this.auditId) {
         await storage.updateWebsiteAudit(this.auditId, {
           status: 'failed',
@@ -153,7 +210,7 @@ Be thorough but prioritize critical issues that directly impact users.`,
 
       return {
         success: false,
-        error: String(error),
+        error: "Website audit failed",
       };
     }
   }
@@ -180,7 +237,7 @@ Be thorough but prioritize critical issues that directly impact users.`,
 
   private async runModule(module: string): Promise<void> {
     console.log(`[WebsiteAuditor] Running ${module} module...`);
-    
+
     switch (module) {
       case 'translations':
         await this.auditTranslations();
@@ -201,13 +258,17 @@ Be thorough but prioritize critical issues that directly impact users.`,
 
   private async auditTranslations(): Promise<void> {
     console.log('[WebsiteAuditor] Auditing translations...');
-    
-    const [teamMembers, practiceGroups, industryGroups, newsItems] = await Promise.all([
+
+    const [allTeamMembers, allPracticeGroups, allIndustryGroups, allNewsItems] = await Promise.all([
       storage.getTeamMembers(),
       storage.getPracticeGroups(),
       storage.getIndustryGroups(),
       storage.getNews(),
     ]);
+    const teamMembers = allTeamMembers.filter(isPublishedEntity);
+    const practiceGroups = allPracticeGroups.filter(isPublishedEntity);
+    const industryGroups = allIndustryGroups.filter(isPublishedEntity);
+    const newsItems = allNewsItems.filter((item) => isPublicNews(item));
 
     for (const member of teamMembers) {
       this.metrics.translationsChecked++;
@@ -224,9 +285,10 @@ Be thorough but prioritize critical issues that directly impact users.`,
       await this.checkIndustryGroupTranslations(ig);
     }
 
+    const activeLanguages = await getActiveLanguages();
     for (const news of newsItems) {
       this.metrics.translationsChecked++;
-      await this.checkNewsTranslations(news);
+      await this.checkNewsTranslations(news, activeLanguages);
     }
 
     console.log(`[WebsiteAuditor] Checked ${this.metrics.translationsChecked} items for translations`);
@@ -234,7 +296,7 @@ Be thorough but prioritize critical issues that directly impact users.`,
 
   private async checkTeamMemberTranslations(member: TeamMember): Promise<void> {
     const requiredFields = ['bio', 'title', 'role'];
-    
+
     for (const field of requiredFields) {
       const esField = `${field}Es` as keyof TeamMember;
       const enValue = member[field as keyof TeamMember];
@@ -282,6 +344,7 @@ Be thorough but prioritize critical issues that directly impact users.`,
     const fields = [
       { en: 'name', es: 'nameEs' },
       { en: 'description', es: 'descriptionEs' },
+      { en: 'fullDescription', es: 'fullDescriptionEs' },
     ];
 
     for (const { en, es } of fields) {
@@ -308,6 +371,7 @@ Be thorough but prioritize critical issues that directly impact users.`,
     const fields = [
       { en: 'name', es: 'nameEs' },
       { en: 'description', es: 'descriptionEs' },
+      { en: 'fullDescription', es: 'fullDescriptionEs' },
     ];
 
     for (const { en, es } of fields) {
@@ -330,17 +394,17 @@ Be thorough but prioritize critical issues that directly impact users.`,
     }
   }
 
-  private async checkNewsTranslations(newsItem: News): Promise<void> {
+  private async checkNewsTranslations(newsItem: News, activeLanguages: string[]): Promise<void> {
     const translations = await storage.getNewsTranslations(newsItem.id);
     const translatedLanguages = new Set(translations.map(t => t.language));
-    
-    const missingLanguages = SUPPORTED_LANGUAGES.filter(
+
+    const missingLanguages = activeLanguages.filter(
       lang => lang !== 'es' && !translatedLanguages.has(lang)
     );
 
     if (missingLanguages.length > 0) {
       const severity = missingLanguages.length >= 5 ? 'high' : 'medium';
-      
+
       this.addFinding({
         category: 'translations',
         issueType: 'missing_translation',
@@ -352,7 +416,7 @@ Be thorough but prioritize critical issues that directly impact users.`,
           slug: newsItem.slug,
           missingLanguages,
           translatedCount: translatedLanguages.size,
-          totalRequired: SUPPORTED_LANGUAGES.length,
+          totalRequired: activeLanguages.length,
         },
         recommendation: `Translate news article "${newsItem.title}" to: ${missingLanguages.join(', ')}`,
         ownerAgent: 'polyglot_translator',
@@ -362,12 +426,15 @@ Be thorough but prioritize critical issues that directly impact users.`,
 
   private async auditContent(): Promise<void> {
     console.log('[WebsiteAuditor] Auditing content completeness...');
-    
-    const [teamMembers, practiceGroups, industryGroups] = await Promise.all([
+
+    const [allTeamMembers, allPracticeGroups, allIndustryGroups] = await Promise.all([
       storage.getTeamMembers(),
       storage.getPracticeGroups(),
       storage.getIndustryGroups(),
     ]);
+    const teamMembers = allTeamMembers.filter(isPublishedEntity);
+    const practiceGroups = allPracticeGroups.filter(isPublishedEntity);
+    const industryGroups = allIndustryGroups.filter(isPublishedEntity);
 
     for (const member of teamMembers) {
       this.metrics.contentItemsChecked++;
@@ -388,48 +455,23 @@ Be thorough but prioritize critical issues that directly impact users.`,
   }
 
   private async checkTeamMemberContent(member: TeamMember): Promise<void> {
-    const issues: string[] = [];
-
-    if (!member.bio || member.bio.length < 50) {
-      issues.push('Missing or short biography');
-    }
-
-    if (!member.imageUrl) {
-      issues.push('Missing profile photo');
-    }
-
-    if (!member.email) {
-      issues.push('Missing email');
-    }
-
-    if (!member.phone) {
-      issues.push('Missing phone number');
-    }
-
-
-    if (!member.education || (member.education as any[]).length === 0) {
-      issues.push('No education listed');
-    }
-
-    if (!member.barAdmissions || (member.barAdmissions as any[]).length === 0) {
-      issues.push('No bar admissions listed');
-    }
+    const issues = teamMemberContentIssues(member);
 
     if (issues.length > 0) {
       const severity = issues.length >= 3 ? 'high' : 'medium';
-      
+
       this.addFinding({
         category: 'content',
         issueType: 'incomplete_profile',
         severity,
         entityType: 'team_member',
         entityId: member.id,
-        url: `/equipo/${member.slug}`,
+        url: `/abogado/${member.slug}`,
         details: {
           name: member.name,
           role: member.role,
           issues,
-          completionScore: Math.round((1 - issues.length / 7) * 100),
+          completionScore: Math.max(0, Math.round((1 - issues.length / 5) * 100)),
         },
         recommendation: `Complete profile for ${member.name}: ${issues.join(', ')}`,
         ownerAgent: 'metadata_linker',
@@ -438,11 +480,7 @@ Be thorough but prioritize critical issues that directly impact users.`,
   }
 
   private async checkPracticeGroupContent(pg: PracticeGroup): Promise<void> {
-    const issues: string[] = [];
-
-    if (!pg.description || pg.description.length < 100) {
-      issues.push('Missing or short description');
-    }
+    const issues = practiceGroupContentIssues(pg);
 
     if (issues.length > 0) {
       this.addFinding({
@@ -451,7 +489,7 @@ Be thorough but prioritize critical issues that directly impact users.`,
         severity: 'high',
         entityType: 'practice_group',
         entityId: pg.id,
-        url: `/practica/${pg.slug}`,
+        url: capabilityPath("practice", pg, "es"),
         details: {
           name: pg.name,
           issues,
@@ -463,11 +501,7 @@ Be thorough but prioritize critical issues that directly impact users.`,
   }
 
   private async checkIndustryGroupContent(ig: IndustryGroup): Promise<void> {
-    const issues: string[] = [];
-
-    if (!ig.description || ig.description.length < 100) {
-      issues.push('Missing or short description');
-    }
+    const issues = industryGroupContentIssues(ig);
 
     if (issues.length > 0) {
       this.addFinding({
@@ -476,7 +510,7 @@ Be thorough but prioritize critical issues that directly impact users.`,
         severity: 'high',
         entityType: 'industry_group',
         entityId: ig.id,
-        url: `/industria/${ig.slug}`,
+        url: capabilityPath("industry", ig, "es"),
         details: {
           name: ig.name,
           issues,
@@ -489,15 +523,15 @@ Be thorough but prioritize critical issues that directly impact users.`,
 
   private async auditSEO(): Promise<void> {
     console.log('[WebsiteAuditor] Auditing SEO...');
-    
-    const newsItems = await storage.getNews();
+
+    const newsItems = (await storage.getNews()).filter((item) => isPublicNews(item));
 
     for (const news of newsItems) {
       this.metrics.pagesScanned++;
       await this.checkNewsSEO(news);
     }
 
-    const teamMembers = await storage.getTeamMembers();
+    const teamMembers = (await storage.getTeamMembers()).filter(isNamedOnTeamPage);
     for (const member of teamMembers) {
       this.metrics.pagesScanned++;
       await this.checkTeamMemberSEO(member);
@@ -507,40 +541,22 @@ Be thorough but prioritize critical issues that directly impact users.`,
   }
 
   private async checkNewsSEO(news: News): Promise<void> {
-    const issues: string[] = [];
-
-    if (!news.title || news.title.length < 20) {
-      issues.push('Title too short for SEO');
-    }
-
-    if (!news.excerpt || news.excerpt.length < 50) {
-      issues.push('Excerpt/meta description too short');
-    }
-
-    if (!news.slug) {
-      issues.push('Missing SEO-friendly slug');
-    }
-
-    if (!news.imageUrl) {
-      issues.push('Missing featured image');
-    }
-
-    if (issues.length > 0) {
+    for (const seoIssue of newsSeoIssues(news)) {
       this.addFinding({
         category: 'seo',
-        issueType: 'missing_description',
-        severity: 'medium',
+        issueType: seoIssue.issueType,
+        severity: seoIssue.severity,
         entityType: 'news',
         entityId: news.id,
-        url: `/noticias/${news.slug}`,
+        url: `/news/${news.slug}`,
         details: {
           title: news.title,
-          issues,
+          issues: [seoIssue.issue],
           titleLength: news.title?.length || 0,
           excerptLength: news.excerpt?.length || 0,
         },
-        recommendation: `Improve SEO for article "${news.title}": ${issues.join(', ')}`,
-        ownerAgent: 'seo_optimizer',
+        recommendation: seoIssue.recommendation,
+        ownerAgent: seoIssue.ownerAgent,
       });
     }
   }
@@ -563,7 +579,7 @@ Be thorough but prioritize critical issues that directly impact users.`,
         severity: 'low',
         entityType: 'team_member',
         entityId: member.id,
-        url: `/equipo/${member.slug}`,
+        url: `/abogado/${member.slug}`,
         details: {
           name: member.name,
           issues,
@@ -576,53 +592,65 @@ Be thorough but prioritize critical issues that directly impact users.`,
 
   private async auditLinks(): Promise<void> {
     console.log('[WebsiteAuditor] Auditing links...');
-    
-    const teamMembers = await storage.getTeamMembers();
+
+    const teamMembers = (await storage.getTeamMembers()).filter(isNamedOnTeamPage);
 
     for (const member of teamMembers) {
       if (member.imageUrl) {
         this.metrics.linksChecked++;
         const isValid = await this.checkImageUrl(member.imageUrl);
-        
+
         if (!isValid) {
+          const autoFixed = await this.tryApplyImageFallback('team_member', member.id, member.imageUrl);
           this.addFinding({
             category: 'links',
             issueType: 'broken_link',
             severity: 'critical',
             entityType: 'team_member',
             entityId: member.id,
-            url: member.imageUrl,
+            url: `/abogado/${member.slug}`,
             details: {
               name: member.name,
               imageUrl: member.imageUrl,
               type: 'profile_photo',
+              autoFixed,
+              ...(autoFixed ? { appliedFallback: FALLBACK_IMAGE } : {}),
             },
-            recommendation: `Fix broken profile photo for ${member.name}`,
+            recommendation: autoFixed
+              ? `Foto de perfil rota reemplazada automáticamente por el placeholder para ${member.name}; sube una foto real cuando puedas.`
+              : `Fix broken profile photo for ${member.name}`,
+            ...(autoFixed ? { status: 'resolved', resolvedBy: 'auto' } : {}),
           });
         }
       }
     }
 
-    const newsItems = await storage.getNews();
+    const newsItems = (await storage.getNews()).filter((item) => isPublicNews(item));
     for (const news of newsItems) {
       if (news.imageUrl) {
         this.metrics.linksChecked++;
         const isValid = await this.checkImageUrl(news.imageUrl);
-        
+
         if (!isValid) {
+          const autoFixed = await this.tryApplyImageFallback('news', news.id, news.imageUrl);
           this.addFinding({
             category: 'links',
             issueType: 'broken_link',
             severity: 'high',
             entityType: 'news',
             entityId: news.id,
-            url: news.imageUrl,
+            url: `/news/${news.slug}`,
             details: {
               title: news.title,
               imageUrl: news.imageUrl,
               type: 'featured_image',
+              autoFixed,
+              ...(autoFixed ? { appliedFallback: FALLBACK_IMAGE } : {}),
             },
-            recommendation: `Fix broken featured image for article "${news.title}"`,
+            recommendation: autoFixed
+              ? `Imagen destacada rota reemplazada automáticamente por el placeholder en "${news.title}"; sube una imagen real cuando puedas.`
+              : `Fix broken featured image for article "${news.title}"`,
+            ...(autoFixed ? { status: 'resolved', resolvedBy: 'auto' } : {}),
           });
         }
       }
@@ -633,26 +661,19 @@ Be thorough but prioritize critical issues that directly impact users.`,
 
   private async checkImageUrl(url: string): Promise<boolean> {
     try {
-      if (url.startsWith('/')) return true;
-      if (url.startsWith('http://') || url.startsWith('https://')) {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 5000);
-        try {
-          const response = await fetch(url, {
-            method: 'HEAD',
-            signal: controller.signal,
-            redirect: 'follow',
-          });
-          clearTimeout(timeout);
-          return response.ok;
-        } catch {
-          clearTimeout(timeout);
-          return false;
-        }
+      if (url.startsWith('/')) {
+        return publicImageAssetExists(url);
       }
-      return false;
-    } catch (error) {
-      console.error('[WebsiteAuditorAgent] Error checking image URL:', url, error);
+      const status = await fetchStatusWithPolicy({
+        url,
+        // Las imágenes editoriales pueden vivir en distintos CDN públicos. La
+        // política común valida DNS/IP antes de cada destino y redirección.
+        isAllowedHostname: () => true,
+        timeoutMs: 5_000,
+        maxRedirects: 2,
+      });
+      return (status >= 200 && status < 400);
+    } catch {
       return false;
     }
   }
@@ -661,15 +682,42 @@ Be thorough but prioritize critical issues that directly impact users.`,
     this.findings.push(finding);
   }
 
-  private async saveFindings(): Promise<InsertWebsiteAuditFinding[]> {
+  /**
+   * Auto-fix seguro #1: reemplaza una imagen caída (team_member/news) por el placeholder
+   * estándar de la app. Es reversible (el editor solo tiene que subir la foto real) y no
+   * requiere ningún juicio editorial, a diferencia de reescribir un enlace roto. Devuelve
+   * true si el reemplazo se aplicó.
+   */
+  private async tryApplyImageFallback(
+    entityType: 'team_member' | 'news',
+    entityId: string,
+    brokenUrl: string,
+  ): Promise<boolean> {
+    if (!this.allowChanges) return false;
+    if (brokenUrl === FALLBACK_IMAGE) return false; // ya es el placeholder, nada que hacer
+    try {
+      if (entityType === 'team_member') {
+        await storage.updateTeamMember(entityId, { imageUrl: FALLBACK_IMAGE });
+      } else {
+        await storage.updateNews(entityId, { imageUrl: FALLBACK_IMAGE });
+      }
+      return true;
+    } catch (e) {
+      console.warn('[WebsiteAuditor] No se pudo aplicar el fallback de imagen', entityType, entityId, e);
+      return false;
+    }
+  }
+
+  private async saveFindings(): Promise<WebsiteAuditFinding[]> {
     if (this.findings.length === 0) return [];
 
+    const now = new Date();
     const insertFindings: InsertWebsiteAuditFinding[] = this.findings.map(f => ({
       auditId: this.auditId,
       category: f.category,
       issueType: f.issueType,
       severity: f.severity,
-      status: 'open',
+      status: f.status || 'open',
       entityType: f.entityType,
       entityId: f.entityId,
       language: f.language,
@@ -677,10 +725,46 @@ Be thorough but prioritize critical issues that directly impact users.`,
       details: f.details,
       recommendation: f.recommendation,
       ownerAgent: f.ownerAgent,
+      ...(f.status === 'resolved' ? { resolvedAt: now, resolvedBy: f.resolvedBy } : {}),
     }));
 
-    await storage.createWebsiteAuditFindings(insertFindings);
-    return insertFindings;
+    // Insertar por lotes: con miles de hallazgos, un solo insert excede el límite de Neon.
+    const saved: WebsiteAuditFinding[] = [];
+    for (let i = 0; i < insertFindings.length; i += 200) {
+      saved.push(...(await storage.createWebsiteAuditFindings(insertFindings.slice(i, i + 200))));
+    }
+    return saved;
+  }
+
+  /**
+   * Auto-fix seguro #2: para findings de noticias que ya nombran al agente responsable
+   * (polyglot_translator/seo_optimizer), los encola en el orquestador existente y guarda el
+   * job id en `remediationJobId`. Se limita a entityType 'news' porque esos 3 agentes solo
+   * saben procesar noticias (esperan {articleId} y hacen SELECT sobre la tabla news) — encolar
+   * para team_member/practice_group/industry_group fallaría en silencio (no encontrarían la
+   * fila), así que esos quedan como findings manuales, igual que antes.
+   */
+  private async autoEnqueueNewsFixers(saved: WebsiteAuditFinding[]): Promise<void> {
+    const candidates = saved.filter(
+      (f) => f.entityType === AUTO_ENQUEUE_ENTITY_TYPE && f.ownerAgent && f.status === 'open' && f.entityId,
+    );
+    if (!candidates.length) return;
+
+    const jobIdByKey = new Map<string, string>();
+    for (const finding of candidates) {
+      const key = `${finding.ownerAgent}:${finding.entityId}`;
+      try {
+        let jobId = jobIdByKey.get(key);
+        if (!jobId) {
+          const job = await orchestrator.enqueueJob(finding.ownerAgent as AgentType, { articleId: finding.entityId });
+          jobId = job.id;
+          jobIdByKey.set(key, jobId);
+        }
+        await storage.updateWebsiteAuditFinding(finding.id, { remediationJobId: jobId, status: 'in_progress' });
+      } catch (e) {
+        console.warn('[WebsiteAuditor] No se pudo encolar el agente dueño', finding.ownerAgent, finding.entityId, e);
+      }
+    }
   }
 
   private countBySeverity(): { critical: number; high: number; medium: number; low: number } {

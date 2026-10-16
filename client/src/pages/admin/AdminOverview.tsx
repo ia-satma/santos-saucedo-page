@@ -1,3 +1,8 @@
+import { AiUsageCard } from "@/components/admin/AiUsageCard";
+import { adminLinkTone } from "@/features/admin/appearance";
+import { allAdminLinks } from "@/features/admin/navigation";
+import { useMyPermissions } from "@/lib/adminAuth";
+import { canVisitAdminPath, hasAdminPermission } from "@shared/adminAccess";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -61,6 +66,7 @@ const destinations = [
   ],
 ] as const;
 export default function AdminOverview() {
+  const access=useQuery<{role:string;permissions:string[]}>({queryKey:["/api/admin/me"],queryFn:async()=>{const r=await adminApiRequest("GET","/api/admin/me");if(!r.ok)throw new Error("Sesión no disponible");return r.json();}});
   const query = useQuery<Overview>({
     queryKey: ["/api/admin/overview"],
     queryFn: async () => {
@@ -97,8 +103,8 @@ export default function AdminOverview() {
     <main className="admin-overview">
       <div className="admin-overview-heading">
         <div>
-          <p className="admin-page-kicker">Su espacio de trabajo</p>
-          <h1>Todo el sitio, en un solo lugar.</h1>
+          <p className="admin-page-kicker">Santos & Saucedo</p>
+          <h1>Panel de administración</h1>
           <p className="admin-page-description">
             Actualice el contenido de Santos &amp; Saucedo. Elija una sección
             para empezar.
@@ -122,7 +128,7 @@ export default function AdminOverview() {
       )}
       <section className="admin-metrics" aria-label="Estado del contenido">
         {metrics.map((m) => (
-          <div className="admin-metric" key={m.label}>
+          <div className="admin-metric" key={m.label} data-tone={m.label === "Perfiles del equipo" ? "blue" : m.label === "Áreas de práctica" ? "teal" : m.label === "Publicaciones" ? "green" : "orange"}>
             <span className="admin-metric-label">{m.label}</span>
             {query.isLoading ? (
               <Skeleton className="h-9 w-16 my-3" />
@@ -135,6 +141,7 @@ export default function AdminOverview() {
           </div>
         ))}
       </section>
+      <section className="my-8 grid gap-6 lg:grid-cols-[minmax(250px,.7fr)_minmax(0,1.3fr)]"><div>{hasAdminPermission(access.data,"advanced")?<AiUsageCard/>:<p className="border bg-white p-5">Use los accesos disponibles para su función.</p>}</div><div className="border bg-white p-6"><h2 className="text-xl font-semibold mb-5">Creación con IA y accesos</h2><div className="grid sm:grid-cols-2 gap-3">{allAdminLinks.filter(item=>['/admin/agents','/admin/presentations','/admin/generated-images','/admin/generated-audio','/admin/users','/admin/integrations','/admin/cookie-consent'].includes(item.href)&&canVisitAdminPath(access.data,item.href)).map(item=><Link key={item.href} href={item.href} className="admin-shortcut border p-4" data-tone={adminLinkTone(item.href, item.href.includes("users") || item.href.includes("integrations") || item.href.includes("cookie-consent") ? "amber" : "teal")}><span className="admin-shortcut-icon"><item.icon /></span><strong>{item.label}</strong><span className="block text-sm text-muted-foreground mt-1">{item.hint}</span></Link>)}</div></div></section>
       <div className="admin-overview-grid">
         <section>
           <div className="admin-section-heading">

@@ -68,6 +68,12 @@ export async function recoverFailedItems(): Promise<RecoveryReport> {
     };
     
     try {
+      if (article.published !== false) {
+        result.message = 'Published content requires manual recovery approval';
+        results.push(result);
+        continue;
+      }
+
       const failedStep = article.failedStep || 'unknown';
       
       if (failedStep === 'image' || failedStep === 'unknown') {
@@ -82,10 +88,13 @@ export async function recoverFailedItems(): Promise<RecoveryReport> {
               console.log(`[AutoRecovery] Retrying image generation for ${article.id}`);
               const imageResult = await imageSuggestionAgent.execute(
                 createContext('image_suggestion'),
-                { articleId: article.id }
+                { articleId: article.id, applyChanges: true }
               );
               
-              if (imageResult.success) {
+              if (
+                imageResult.success &&
+                (imageResult.data as Record<string, unknown> | undefined)?.changesApplied === true
+              ) {
                 await db.update(news).set({
                   processingStatus: 'ready',
                   lastError: null,
@@ -97,28 +106,10 @@ export async function recoverFailedItems(): Promise<RecoveryReport> {
                 result.newStatus = 'ready';
                 result.message = 'Image generated successfully';
               } else {
-                await db.update(news).set({
-                  processingStatus: 'partial_success',
-                  imageUrl: '/placeholder-article.svg',
-                  lastError: `Image retry failed: ${imageResult.error}`,
-                  lastProcessedAt: new Date()
-                }).where(eq(news.id, article.id));
-                
-                result.recoverySuccess = true;
-                result.newStatus = 'partial_success';
-                result.message = 'Assigned placeholder image - content is ready';
+                result.message = `Image retry needs manual review: ${imageResult.error || 'no image candidate applied'}`;
               }
             } catch (imgErr: any) {
-              await db.update(news).set({
-                processingStatus: 'partial_success',
-                imageUrl: '/placeholder-article.svg',
-                lastError: `Image error: ${imgErr.message}`,
-                lastProcessedAt: new Date()
-              }).where(eq(news.id, article.id));
-              
-              result.recoverySuccess = true;
-              result.newStatus = 'partial_success';
-              result.message = 'Assigned placeholder - image service unavailable';
+              result.message = `Image service unavailable; manual review required: ${imgErr.message}`;
             }
           } else {
             await db.update(news).set({
@@ -142,7 +133,7 @@ export async function recoverFailedItems(): Promise<RecoveryReport> {
         try {
           const translateResult = await polyglotTranslatorAgent.execute(
             createContext('polyglot_translator'),
-            { articleId: article.id }
+            { articleId: article.id, applyChanges: true }
           );
           
           if (translateResult.success) {
@@ -169,10 +160,13 @@ export async function recoverFailedItems(): Promise<RecoveryReport> {
         try {
           const seoResult = await seoOptimizerAgent.execute(
             createContext('seo_optimizer'),
-            { articleId: article.id }
+            { articleId: article.id, applyChanges: true }
           );
           
-          if (seoResult.success) {
+          if (
+            seoResult.success &&
+            (seoResult.data as Record<string, unknown> | undefined)?.changesApplied === true
+          ) {
             await db.update(news).set({
               processingStatus: 'ready',
               lastError: null,
@@ -184,7 +178,7 @@ export async function recoverFailedItems(): Promise<RecoveryReport> {
             result.newStatus = 'ready';
             result.message = 'SEO optimization completed';
           } else {
-            result.message = `SEO retry failed: ${seoResult.error}`;
+            result.message = `SEO retry needs manual review: ${seoResult.error || 'no safe improvement applied'}`;
           }
         } catch (err: any) {
           result.message = `SEO error: ${err.message}`;
@@ -226,12 +220,12 @@ export async function markAsPartialSuccess(articleIds?: string[]): Promise<numbe
   if (articleIds && articleIds.length > 0) {
     let updated = 0;
     for (const id of articleIds) {
-      await db.update(news).set({
+      const changed = await db.update(news).set({
         processingStatus: 'partial_success',
         imageUrl: '/placeholder-article.svg',
         lastProcessedAt: new Date()
-      }).where(eq(news.id, id));
-      updated++;
+      }).where(and(eq(news.id, id), eq(news.published, false))).returning({ id: news.id });
+      updated += changed.length;
     }
     return updated;
   }
@@ -249,12 +243,14 @@ export async function markAsPartialSuccess(articleIds?: string[]): Promise<numbe
       or(
         eq(news.failedStep, 'image'),
         isNull(news.failedStep)
-      )
+      ),
+      eq(news.published, false)
     )
-  );
-  
-  console.log(`[AutoRecovery] Bulk update completed`);
-  return 0;
+  ).returning({ id: news.id });
+
+  // Devuelve cuántos artículos se actualizaron (antes retornaba 0 siempre).
+  console.log(`[AutoRecovery] Bulk update completed: ${result.length} artículos`);
+  return result.length;
 }
 
 export async function getFailedArticlesSummary(): Promise<{

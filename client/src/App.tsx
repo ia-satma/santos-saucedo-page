@@ -1,3 +1,4 @@
+import CookieBanner from "@/components/CookieBanner";
 import { AdminShell } from "@/features/admin/AdminShell";
 import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from "wouter";
 import { useEffect, lazy, Suspense } from "react";
@@ -38,10 +39,13 @@ const Careers = lazy(() => import("@/pages/Careers"));
 const Interns = lazy(() => import("@/pages/Interns"));
 const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
 const Terms = lazy(() => import("@/pages/Terms"));
+const NewsletterUnsubscribe = lazy(() => import("@/pages/NewsletterUnsubscribe"));
 const Newsletter = lazy(() => import("@/pages/Newsletter"));
 const AdminOverview = lazy(() => import("@/pages/admin/AdminOverview"));
 const AdminContentHub = lazy(() => import("@/pages/admin/AdminContentHub"));
 const AdminMedia = lazy(() => import("@/pages/admin/AdminMedia"));
+const AdminUsers = lazy(() => import("@/pages/admin/AdminUsers"));
+const AdminAccount = lazy(() => import("@/pages/admin/AdminAccount"));
 const AdminOrder = lazy(() => import("@/pages/admin/AdminOrder"));
 const AdminNewsForm = lazy(() => import("@/pages/admin/AdminNewsForm"));
 const AdminManual = lazy(() => import("@/pages/admin/AdminManual"));
@@ -49,6 +53,7 @@ const ContentPreview = lazy(() => import("@/features/admin/ContentPreview"));
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
 const AdminSiteConfig = lazy(() => import("@/pages/admin/AdminSiteConfig"));
 const AdminJobs = lazy(() => import("@/pages/admin/AdminJobs"));
+const AdminApplications = lazy(() => import("@/pages/admin/AdminApplications"));
 const AdminInbox = lazy(() => import("@/pages/admin/AdminInbox"));
 const AdminSetup = lazy(() => import("@/pages/admin/AdminSetup"));
 const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
@@ -56,7 +61,7 @@ const AdminPosts = lazy(() => import("@/pages/admin/AdminPosts"));
 const AdminPostForm = lazy(() => import("@/pages/admin/AdminPostForm"));
 const AdminCategories = lazy(() => import("@/pages/admin/AdminCategories"));
 const AdminNews = lazy(() => import("@/pages/admin/AdminNews"));
-const AdminAgents = lazy(() => import("@/pages/AdminAgents"));
+const AdminAgents = lazy(() => import("@/pages/admin/AdminAgents"));
 const AdminArticleProcessing = lazy(() => import("@/pages/admin/AdminArticleProcessing"));
 const AdminAudits = lazy(() => import("@/pages/admin/AdminAudits"));
 const AdminTeam = lazy(() => import("@/pages/admin/AdminTeam"));
@@ -65,6 +70,10 @@ const AdminGuide = lazy(() => import("@/pages/admin/AdminGuide"));
 const AdminPerformance = lazy(() => import("@/pages/admin/AdminPerformance"));
 const AdminPracticeGroups = lazy(() => import("@/pages/admin/AdminPracticeGroups"));
 const AdminIndustryGroups = lazy(() => import("@/pages/admin/AdminIndustryGroups"));
+const AdminGeneratedImages = lazy(() => import("@/pages/admin/AdminGeneratedImages"));
+const AdminGeneratedAudio = lazy(() => import("@/pages/admin/AdminGeneratedAudio"));
+const AdminPresentations = lazy(() => import("@/pages/admin/AdminPresentations"));
+const AdminCopyHistory = lazy(() => import("@/pages/admin/AdminCopyHistory"));
 const AdminKnowledge = lazy(() => import("@/pages/admin/AdminKnowledge"));
 const AdminTranslations = lazy(() => import("@/pages/admin/AdminTranslations"));
 const AdminEvents = lazy(() => import("@/pages/admin/AdminEvents"));
@@ -145,6 +154,8 @@ function SkipLinks() {
   );
 }
 
+function PublicCookiePreferences(){const {language}=useLanguage();return <CookieBanner language={language}/>;}
+
 function StaticAdminUnavailable() {
   return (
     <main className="min-h-screen bg-[#111110] text-white flex items-center justify-center px-6">
@@ -210,23 +221,30 @@ function Router() {
         <Route path="/articles/*?">
           <RedirectKeepingQuery to="/news" />
         </Route>
+        <Route path="/newsletter/unsubscribe" component={NewsletterUnsubscribe} />
         <Route path="/newsletter" component={Newsletter} />
         <Route path="/events/*?">
           <RedirectKeepingQuery to="/news" />
         </Route>
-        <Route path="/admin/site-config/:section" component={AdminSiteConfig} />
-        <Route path="/admin/site-config" component={AdminSiteConfig} />
+        <Route path="/admin/navigation"><AdminSiteConfig fixedSection="navigation"/></Route>
+        <Route path="/admin/integrations"><AdminSiteConfig fixedSection="integrations"/></Route>
+        <Route path="/admin/cookie-consent"><AdminSiteConfig fixedSection="consent"/></Route>
+        <Route path="/admin/site-config/:section"><AdminSiteConfig/></Route>
+        <Route path="/admin/site-config"><AdminSiteConfig/></Route>
         <Route path="/admin/jobs" component={AdminJobs} />
         <Route path="/admin/inbox" component={AdminInbox} />
+        <Route path="/admin/applications" component={AdminApplications} />
         <Route path="/admin/login" component={AdminLogin} />
         <Route path="/admin/setup" component={AdminSetup} />
         <Route path="/admin/dashboard" component={AdminOverview} />
         <Route path="/admin" component={AdminOverview} />
         <Route path="/admin/content" component={AdminContentHub} />
         <Route path="/admin/media" component={AdminMedia} />
+        <Route path="/admin/users" component={AdminUsers} />
+        <Route path="/admin/account" component={AdminAccount} />
         <Route path="/admin/order" component={AdminOrder} />
         <Route path="/admin/manual" component={AdminManual} />
-        <Route path="/admin/operations" component={AdminDashboard} />
+        <Route path="/admin/operations"><Redirect to="/admin/dashboard"/></Route>
         <Route path="/admin/preview/:kind/:slug" component={ContentPreview} />
         <Route path="/admin/posts" component={AdminPosts} />
         <Route path="/admin/posts/new" component={AdminPostForm} />
@@ -237,6 +255,10 @@ function Router() {
         <Route path="/admin/news" component={AdminNews} />
         <Route path="/admin/news/:id" component={AdminArticleDetail} />
         <Route path="/admin/agents" component={AdminAgents} />
+        <Route path="/admin/generated-images" component={AdminGeneratedImages} />
+        <Route path="/admin/generated-audio" component={AdminGeneratedAudio} />
+        <Route path="/admin/presentations" component={AdminPresentations} />
+        <Route path="/admin/copies-ai" component={AdminCopyHistory} />
         <Route path="/admin/processing" component={AdminArticleProcessing} />
         <Route path="/admin/audits" component={AdminAudits} />
         <Route path="/admin/team" component={AdminTeam} />
@@ -274,6 +296,7 @@ function App() {
               <SkipLinks />
               <Toaster />
               <Router />
+              <PublicCookiePreferences/>
             </WouterRouter>
           </LanguageProvider>
         </TooltipProvider>

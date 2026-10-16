@@ -1,3 +1,4 @@
+import defaults from "@shared/cms-defaults.json";
 import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useEffect, useMemo } from "react";
@@ -393,6 +394,7 @@ export default function SEOHead({
   const liveChrome = useCmsContent("chrome", chrome26);
   const officeName = useCmsContent("officeLabels", OFFICE_LABEL);
   const media = useCmsMedia();
+  const integrations=useCmsContent("integrations",defaults.integrations);
   const seoFallback = useMemo(() => {
     const navigation: Record<string,number> = {about:0,practiceGroups:1,team:2,news:3,careers:4,contact:5};
     return Object.fromEntries(Object.entries(seoConfig).map(([key,config]) => [key, { ...config, title: Object.fromEntries(LANGS.map(lang => {
@@ -411,8 +413,8 @@ export default function SEOHead({
     // Canonical por página: la ruta propia (las fichas /team/slug, /news/slug… incluidas)
     const rawPath = customPath || (location.startsWith("/") ? location : config.path) || "/";
     const path = rawPath.length > 1 ? rawPath.replace(/\/+$/, "") : rawPath;
-    const image = customImage || DEFAULT_IMAGE;
-    const url = `${BASE_URL}${path}`;
+    const image = customImage || `${integrations.siteUrl.replace(/\/$/,'')}/logo-color.png`;
+    const url = `${integrations.siteUrl.replace(/\/$/,'')}${path}`;
 
     document.title = title;
     let favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
@@ -467,7 +469,7 @@ export default function SEOHead({
       }
       canonical.setAttribute("href", url);
     }
-  }, [page, language, customTitle, customDescription, customImage, customPath, location, liveSEO, liveChrome, officeName, media.brand.favicon]);
+  }, [page, language, customTitle, customDescription, customImage, customPath, location, integrations.siteUrl, liveSEO, liveChrome, officeName, media.brand.favicon]);
 
   return null;
 }

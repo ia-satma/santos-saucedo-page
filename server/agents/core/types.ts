@@ -1,16 +1,8 @@
+import type { AgentId } from '@shared/agentConstants';
+
 export type AgentStatus = 'idle' | 'running' | 'completed' | 'failed' | 'paused';
 
-export type AgentType = 
-  | 'formatter'
-  | 'metadata_linker'
-  | 'polyglot_translator'
-  | 'content_auditor'
-  | 'seo_optimizer'
-  | 'content_analyzer'
-  | 'image_suggestion'
-  | 'category_agent'
-  | 'website_auditor'
-  | 'orchestrator';
+export type AgentType = AgentId;
 
 export type JobStatus = 'pending' | 'in_progress' | 'completed' | 'failed' | 'cancelled';
 
@@ -71,6 +63,9 @@ export interface KnowledgeDocument {
   title: string;
   content: string;
   metadata: Record<string, unknown>;
+  dataClassification?: string;
+  approvedForAiAt?: Date | null;
+  approvedForAiBy?: string | null;
   embedding?: number[];
   usageCount: number;
   createdAt: Date;
@@ -139,6 +134,8 @@ export interface AgentResult<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
+  /** Identificador del copy editorial inmutable, cuando el agente produjo texto reutilizable. */
+  copyHistoryId?: string;
   learnings?: SkillLearning[];
   evolutionProposals?: Omit<EvolutionProposal, 'id' | 'createdAt'>[];
   metrics?: Record<string, number>;

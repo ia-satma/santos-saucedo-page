@@ -1,5 +1,6 @@
+import { useSiteNavigation } from "./useSiteNavigation";
 import { useCmsMedia } from "@/lib/cmsMedia";
-import { Link } from "wouter";
+import { SiteLink as Link } from "./SiteLink";
 import { Settings } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SUPPORTED_LANGUAGES } from "@shared/schema";
@@ -37,12 +38,14 @@ export default function Footer26({ localized = false }: Footer26Props) {
   const activeOther = language !== "es" && language !== "en" ? SUPPORTED_LANGUAGES.find((l) => l.code === language) : undefined;
   const t = chrome.footer;
   // Columna Firma: el menú y, después de Nuestra firma (§ 01), la página de la oficina
-  const items = [chrome.nav[0], { label: officeNameFor(code), href: "/offices" }, ...chrome.nav.slice(1)].filter(item => !("visible" in item) || item.visible !== false);
+  const navigation = useSiteNavigation(code,chrome);
+  const items = navigation.footerItems;
   const year = new Date().getFullYear();
 
   // Misma consulta que el pie anterior; lo estático de content.ts (ES/EN) queda como respaldo.
   const { address, phone, phoneHref, email } = useSiteContact(base);
 
+  if (!navigation.footer.enabled) return null;
   return (
     <footer
       id="footer"
@@ -58,7 +61,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
           <img src={media.brand.logoLight} alt={media.brand.name} className="h-[34px] w-auto lg:h-[40px]" width={244} height={40} />
         </div>
 
-        <address className="col-span-2 not-italic md:col-span-1 lg:col-span-3" data-testid="text-footer-address">
+        {navigation.footer.officeEnabled&&<address className="col-span-2 not-italic md:col-span-1 lg:col-span-3" data-testid="text-footer-address">
           <p className={headCls}>{t.office}</p>
           <p className="mt-5 text-[16px] leading-[1.6] text-white/80">
             {/* bdi: en árabe (RTL) el punto final de "N.L." no salta al principio de la línea */}
@@ -77,9 +80,9 @@ export default function Footer26({ localized = false }: Footer26Props) {
               <span className="ss-link">{email}</span>
             </a>
           </div>
-        </address>
+        </address>}
 
-        <nav aria-labelledby="ss26-footer-firm" className="lg:col-span-2">
+        {navigation.footer.linksEnabled&&<nav aria-labelledby="ss26-footer-firm" className="lg:col-span-2">
           <p id="ss26-footer-firm" className={headCls}>
             {t.firm}
           </p>
@@ -92,24 +95,15 @@ export default function Footer26({ localized = false }: Footer26Props) {
               </li>
             ))}
           </ul>
-        </nav>
+        </nav>}
 
         <div className="flex flex-col gap-12 lg:col-span-3">
-          <nav aria-labelledby="ss26-footer-legal">
+          {navigation.footer.legalEnabled&&<nav aria-labelledby="ss26-footer-legal">
             <p id="ss26-footer-legal" className={headCls}>
               {t.legal}
             </p>
             <ul className={listCls}>
-              <li>
-                <Link href="/privacy-policy" className={`${linkCls} text-white/80 hover:text-white`} data-testid="link-privacy">
-                  <span className="ss-link">{t.privacy}</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className={`${linkCls} text-white/80 hover:text-white`} data-testid="link-terms">
-                  <span className="ss-link">{t.terms}</span>
-                </Link>
-              </li>
+              {navigation.legalItems.map(item=><li key={item.id}><Link href={item.href} className={`${linkCls} text-white/80 hover:text-white`} data-testid={`link-${item.id}`}><span className="ss-link">{item.label}</span></Link></li>)}
               <li>
                 <button
                   type="button"
@@ -121,9 +115,9 @@ export default function Footer26({ localized = false }: Footer26Props) {
                 </button>
               </li>
             </ul>
-          </nav>
+          </nav>}
 
-          <div role="group" aria-labelledby="ss26-footer-lang">
+          {navigation.footer.languagesEnabled&&<div role="group" aria-labelledby="ss26-footer-lang">
             <p id="ss26-footer-lang" className={headCls}>
               {chrome.langs.label}
             </p>
@@ -151,7 +145,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
                 </button>
               )}
             </div>
-          </div>
+          </div>}
         </div>
       </div>
 
@@ -163,14 +157,14 @@ export default function Footer26({ localized = false }: Footer26Props) {
               © {year} {t.rights}
             </p>
             {/* Acceso discreto al panel del despacho, como en el pie anterior: solo icono, tenue */}
-            <Link
+            {navigation.footer.adminEnabled&&<Link
               href="/admin/login"
               className="inline-flex h-6 w-6 items-center justify-center text-white/30 transition-colors hover:text-white/70"
               data-testid="link-admin"
               aria-label="Admin"
             >
               <Settings aria-hidden="true" className="h-3 w-3" />
-            </Link>
+            </Link>}
           </div>
         </div>
       </div>

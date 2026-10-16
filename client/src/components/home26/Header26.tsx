@@ -1,7 +1,9 @@
+import { useSiteNavigation } from "./useSiteNavigation";
 import { useCmsMedia } from "@/lib/cmsMedia";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
+import { SiteLink as Link } from "./SiteLink";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import { useChrome26 } from "./chrome26";
 import { useSiteContact } from "./useSiteContact";
@@ -44,7 +46,8 @@ interface Header26Props {
 export default function Header26({ localized = false, overlay = false }: Header26Props) {
   const media = useCmsMedia();
   const { code, t, base } = useChrome26(localized);
-  const items = t.nav.filter(item => item.visible !== false).slice().sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
+  const navigation = useSiteNavigation(code,t);
+  const items = navigation.items;
   const { phone, phoneHref } = useSiteContact(base);
   const [location] = useLocation();
   const [panel, setPanel] = useState<Panel>(null);
@@ -102,6 +105,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
   // degradado superior da el contraste del menú); al hacer scroll, Azul Profundo sólido.
   const solid = !overlay || scrolled;
 
+  if (!navigation.header.enabled) return null;
   return (
     <>
       <header
@@ -137,7 +141,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
                 // flex + pt-[2px] (compensa el padding-bottom de .ss-link): mismo centro que Buscar y ES/EN.
                 // Elemento actual (página o subruta): blanco y filete lima de 2 px (.ss-link--lime);
                 // al pasar el cursor, filete blanco de 1 px.
-                <li key={item.href} className="flex">
+                <li key={item.href} className="relative flex items-center gap-2">
                   <Link
                     href={item.href}
                     aria-current={currentFor(item.href)}
@@ -145,13 +149,14 @@ export default function Header26({ localized = false, overlay = false }: Header2
                   >
                     {item.label}
                   </Link>
+                  {item.children.length>0&&<details className="relative"><summary className="cursor-pointer p-2 text-white" aria-label={`${t.header.menu}: ${item.label}`}>⌄</summary><ul className="absolute end-0 top-full min-w-56 max-w-80 border border-white/20 bg-ss-navy p-3 shadow-lg">{item.children.map(child=><li key={child.id}><Link href={child.href} className="block px-3 py-3 text-base text-white/90 hover:bg-white/10">{child.label}</Link></li>)}</ul></details>}
                 </li>
               ))}
             </ul>
 
             {/* Buscador: icono con nombre accesible; el texto se ve desde 1280px.
                 Márgenes negativos: área táctil de 44px sin ensanchar la fila */}
-            <button
+            {navigation.header.searchEnabled&&<button
               ref={searchButtonRef}
               type="button"
               aria-haspopup="dialog"
@@ -163,7 +168,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
             >
               <SearchIcon />
               <span className="sr-only xl:not-sr-only">{t.search.open}</span>
-            </button>
+            </button>}
 
             <button
               ref={menuButtonRef}
@@ -183,7 +188,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
             </button>
           </nav>
 
-          <LangSwitch26 lang={code} className="hidden lg:flex" />
+          {navigation.header.languageEnabled&&<LangSwitch26 lang={code} className="hidden lg:flex" />}
         </div>
       </header>
 
@@ -231,16 +236,17 @@ export default function Header26({ localized = false, overlay = false }: Header2
                       {/* Romana 350 a 34 px (ss26.css, #mobile-menu) */}
                       <span className="ss-display">{item.label}</span>
                     </Link>
+                    {item.children.length>0&&<details className="pb-4 ps-12"><summary className="cursor-pointer min-h-11 py-3">{t.header.menu}: {item.label}</summary><ul className="space-y-1">{item.children.map(child=><li key={child.id}><Link href={child.href} onClick={()=>closePanel("menu")} className="block py-3 text-lg text-white/90">{child.label}</Link></li>)}</ul></details>}
                   </li>
                 ))}
               </ol>
             </nav>
             <div className="ss-container relative space-y-4 py-8">
-              <LangList26 lang={code} />
+              {navigation.header.languageEnabled&&<LangList26 lang={code} />}
               {/* dir="ltr": en árabe los grupos de cifras del teléfono se invertían */}
-              <a href={phoneHref} dir="ltr" className="ss-label ss-num inline-flex min-h-[44px] items-center text-white/75">
+              {navigation.header.phoneEnabled&&<a href={phoneHref} dir="ltr" className="ss-label ss-num inline-flex min-h-[44px] items-center text-white/75">
                 {phone}
-              </a>
+              </a>}
             </div>
           </div>,
           document.body,

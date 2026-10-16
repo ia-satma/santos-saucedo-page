@@ -1,7 +1,8 @@
+import { uploadAdminMedia } from "@/lib/adminMediaUpload";
 import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { useAdminAuth, adminApiRequest, getAuthHeaders } from "@/lib/adminAuth";
+import { useAdminAuth, adminApiRequest } from "@/lib/adminAuth";
 import { queryClient } from "@/lib/queryClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -86,20 +87,7 @@ export default function GalleryAdmin() {
   const handleFileUpload = async (file: File) => {
     setUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      if (altEn) formData.append("alt", altEn);
-      if (altEs) formData.append("altEs", altEs);
-
-      const res = await fetch("/api/admin/media/upload", {
-        method: "POST",
-        headers: getAuthHeaders(),
-        credentials: "include",
-        body: formData,
-      });
-
-      if (!res.ok) throw new Error("No se pudo cargar el archivo");
-      const mediaItem = await res.json();
+      const mediaItem=await uploadAdminMedia(file);
 
       await createMutation.mutateAsync({
         imageUrl: mediaItem.path,
@@ -107,8 +95,8 @@ export default function GalleryAdmin() {
         altEs: altEs,
         order: parseInt(orderInput) || 0,
       });
-    } catch {
-      toast({ title: "No se pudo cargar el archivo", variant: "destructive" });
+    } catch (error) {
+      toast({ title: (error as Error).message || "No se pudo cargar el archivo", variant: "destructive" });
     } finally {
       setUploading(false);
     }

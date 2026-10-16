@@ -60,3 +60,10 @@ export async function verifyAppStorage() {
   finally { await deleteAppStorageObject(key); }
   return { connected:true };
 }
+
+export async function uploadAppStorageFile(name: string, source: string) {
+  assertKey(name);
+  const client=await getClient();
+  if(client){const r=await client.uploadFromFilename(name,source,{compress:false});if(!r.ok)throw new Error('App Storage no pudo guardar el archivo.');return;}
+  const target=objectPath(name);await fs.mkdir(path.dirname(target),{recursive:true});await fs.copyFile(source,target);
+}

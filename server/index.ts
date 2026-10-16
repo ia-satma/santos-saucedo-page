@@ -149,7 +149,7 @@ app.use((req, res, next) => {
       if (agentsEnabled) {
         try {
           await orchestrator.initialize();
-          orchestrator.start(2000); // Process jobs every 2 seconds
+          if (process.env.AGENT_AUTO_PROCESSING !== "false") orchestrator.start(2000);
           log("Agent orchestrator initialized and started", "agents");
         } catch (error) {
           log(`Failed to initialize agent orchestrator: ${error}`, "agents");

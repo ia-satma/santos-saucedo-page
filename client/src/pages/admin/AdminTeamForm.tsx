@@ -527,6 +527,7 @@ export default function AdminTeamForm() {
 
       {/* Main Content */}
       <div className="container mx-auto px-6 py-8 max-w-6xl">
+        <h1 className="text-3xl font-semibold mb-6">{isEditMode ? t.editTitle : t.createTitle}</h1>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Form Section */}
           <div className="lg:col-span-2">

@@ -1,8 +1,9 @@
+import { ensureAgentSchema } from "./agentSchema";
 import type { Express } from 'express';
 import { getBundledMediaMap, mapBundledMedia } from './bundledMediaMap';
 import { createHash } from 'node:crypto';
 import { and, eq, sql } from 'drizzle-orm';
-import { db } from '../db';
+import { db, editorialDb } from '../db';
 import { siteConfig } from '@shared/schema';
 import { cmsDefaults, cmsSections, isCmsSection, mergeCms, validateCmsValue, type CmsSection, type CmsValue } from '@shared/cms';
 import { authMiddleware, requireRole } from '../auth';
@@ -19,6 +20,16 @@ function decode(raw: string | null | undefined): Stored | undefined {
 
 // Idempotent compatibility migration. It adds no content and never changes existing rows.
 export async function ensureCmsSchema() {
+  await ensureAgentSchema();
+  await editorialDb.transaction(async tx=>{await tx.execute(sql`SELECT pg_advisory_xact_lock(14703261)`);
+  await tx.execute(sql`CREATE TABLE IF NOT EXISTS career_applications (id varchar PRIMARY KEY DEFAULT gen_random_uuid(),full_name text NOT NULL,email text NOT NULL,phone text,interest text,message text,cv_path text NOT NULL,cv_original_name text NOT NULL,preferred_language text DEFAULT 'es',consented_at timestamp DEFAULT now(),submitted_at timestamp DEFAULT now(),read boolean DEFAULT false,status text DEFAULT 'received',archived_at timestamp)`);
+  });
+  await db.execute(sql`ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS permissions jsonb DEFAULT '[]'::jsonb, ADD COLUMN IF NOT EXISTS updated_at timestamp DEFAULT now()`);
+  await db.execute(sql`CREATE TABLE IF NOT EXISTS admin_access_events (
+    id varchar PRIMARY KEY DEFAULT gen_random_uuid(), user_id varchar, actor_id varchar,
+    action text NOT NULL, details jsonb, created_at timestamp DEFAULT now()
+  )`);
+  await db.execute(sql`CREATE INDEX IF NOT EXISTS admin_access_events_created_idx ON admin_access_events (created_at DESC)`);
   await db.execute(sql`CREATE TABLE IF NOT EXISTS site_config (
     id varchar PRIMARY KEY DEFAULT gen_random_uuid(), key text NOT NULL UNIQUE,
     value text, value_es text, type text NOT NULL DEFAULT 'text',
@@ -47,6 +58,21 @@ export async function getCmsOverrides(): Promise<Record<string, CmsValue>> {
   const paths=await getBundledMediaMap();
   if(Object.keys(paths).length) result.media=mapBundledMedia(mergeCms(cmsDefaults.media,result.media),paths);
   return result;
+}
+
+export async function getCmsVoice() {
+ const [row]=await db.select().from(siteConfig).where(eq(siteConfig.key,prefix+'voice'));
+ return mergeCms(cmsDefaults.voice,decode(row?.value)?.content) as typeof import('@shared/cms-defaults.json')['voice'];
+}
+
+export async function getCmsIntegrations() {
+ const [row]=await db.select().from(siteConfig).where(eq(siteConfig.key,prefix+'integrations'));
+ return mergeCms(cmsDefaults.integrations,decode(row?.value)?.content) as typeof import('@shared/cms-defaults.json')['integrations'];
+}
+
+export async function getCmsFormControls() {
+  const [row]=await db.select().from(siteConfig).where(eq(siteConfig.key,prefix+'forms'));
+  return mergeCms(cmsDefaults.forms,decode(row?.value)?.content) as typeof import('@shared/cms-defaults.json')['forms'];
 }
 
 export async function getCmsContact() {

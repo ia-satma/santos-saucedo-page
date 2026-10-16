@@ -1,3 +1,4 @@
+import cmsDefaults from "@shared/cms-defaults.json";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -276,6 +277,7 @@ export default function Newsletter() {
   // build estático
   const firmEmail = useSiteContact(language === "en" ? "en" : "es").email;
 
+  const formSettings = useCmsContent("forms",cmsDefaults.forms).newsletter;
   const form = useForm<NewsletterFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -367,7 +369,7 @@ export default function Newsletter() {
                 <p className="ss-lead mb-8" data-testid="text-newsletter-subtitle">
                   {t.subtitle}
                 </p>
-                <Form {...form}>
+                {!formSettings.enabled?<p role="status" className="border-t border-ss-rule py-6">{formSettings.disabledMessage[language as "es"|"en"]||formSettings.disabledMessage.en}</p>:<Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-testid="form-newsletter">
                     <FormField
                       control={form.control}
@@ -427,7 +429,7 @@ export default function Newsletter() {
                               {t.consentAfter}
                             </FormLabel>
                           </div>
-                          <FormMessage data-testid="error-consent" />
+                          {form.formState.submitCount>0&&<FormMessage data-testid="error-consent" />}
                         </FormItem>
                       )}
                     />
@@ -455,7 +457,7 @@ export default function Newsletter() {
                       {newsletterMutation.isPending ? t.submitting : t.submit}
                     </Button>
                   </form>
-                </Form>
+                </Form>}
               </div>
             </SplitSection>
           </section>

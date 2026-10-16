@@ -21,9 +21,11 @@ preflight/provisión y esta guía.
 10. Solo después de validar Preview, crea la base de producción.
 11. Provisiona explícitamente el esquema de producción y después publica.
 
-El proyecto no ejecuta migraciones automáticamente al hacer pull o merge. `scripts/post-merge.sh`
-solo instala dependencias y ejecuta TypeScript; cualquier cambio de esquema se aplica manualmente y
-contra la base correcta.
+Al hacer pull o merge, `scripts/post-merge.sh` solo instala dependencias y ejecuta TypeScript.
+Al arrancar el servidor, `ensureCmsSchema` sí aplica las ampliaciones versionadas del CMS: DDL
+aditivo e idempotente, dentro de una transacción y con bloqueo asesor. La provisión inicial completa
+sigue siendo explícita. Revisar siempre el entorno y la migración antes de arrancar una actualización;
+no ejecutar `db:push` a ciegas sobre una base con datos.
 
 ## Secrets
 
@@ -49,8 +51,14 @@ Configura estos valores en Replit Secrets. Nunca los guardes en `.replit`, GitHu
 - `AI_INTEGRATIONS_OPENAI_BASE_URL`
 - `AI_INTEGRATIONS_GEMINI_API_KEY`
 - `AI_INTEGRATIONS_GEMINI_BASE_URL`
-- `PCLOUD_USERNAME`
-- `PCLOUD_PASSWORD`
+- `REPLIT_APP_STORAGE_BUCKET_ID`: bucket de Santos ya conectado.
+- `PUBLIC_SITE_URL`: origen público del sitio.
+- `AGENT_AUTO_PROCESSING`: `false` para probar agentes manualmente con la cola automática pausada.
+
+El par de clave y base URL de IA gestionada debe ser suministrado por Replit. Texto, imágenes
+y audio usan ese transporte; el audio gestionado utiliza Chat Completions, no el endpoint de TTS
+directo. Nunca reutilizar un token gestionado contra el host público de OpenAI. El cliente decidió
+no usar Replit Agent y dejar la activación/prueba real de IA pendiente.
 
 Los agentes internos de la aplicación pueden quedar desactivados mientras se valida el CMS. No se
 requiere Replit Agent para ejecutar, probar o publicar este proyecto.
@@ -72,11 +80,19 @@ provisión de Production se ejecuta de forma controlada desde el entorno que ten
 CONFIRM_REPLIT_PRODUCTION_SCHEMA=1 npm run replit:provision-production
 ```
 
-Revisa el destino antes de ejecutar el comando. Después de crear la primera base, los cambios de
-esquema deben migrarse a un runner versionado antes de automatizar despliegues posteriores.
+Revisa el destino antes de ejecutar el comando. Las ampliaciones actuales del CMS se encuentran
+en `ensureCmsSchema` y `server/cms/agentSchema.ts`; no constituyen un ledger general de migraciones
+para cualquier modificación futura del esquema.
 
-La carpeta `uploads/` actual es un fallback local heredado. Antes de aceptar cargas reales del CMS,
-hay que conectar App Storage de Santos y dejar los objetos públicos y privados en namespaces separados.
+App Storage de Santos ya fue conectado en el corte anterior. El nuevo código separa objetos
+públicos (`santos-saucedo/public/`) y documentos/presentaciones privados
+(`santos-saucedo/private/`), exige persistir antes de confirmar y protege las descargas privadas.
+Los nuevos tipos de archivo aún necesitan una prueba de ida y vuelta en Replit con este corte.
+El almacenamiento de archivos local solo sirve para desarrollo y pruebas.
+
+La carga privada de documentos usa ClamAV y lo exige por defecto en producción. Antes de publicar
+este corte, provisionar el ejecutable y las firmas y comprobar el escaneo en Replit; no desactivar
+el requisito para superar la validación. La configuración actual aún no acredita esa disponibilidad.
 
 ## Alcance CMS inicial Santos
 
@@ -103,3 +119,23 @@ npm run build
 npm run replit:provision-production  # requiere CONFIRM_REPLIT_PRODUCTION_SCHEMA=1 y DATABASE_URL de Production
 npm run start:deploy  # solo en Deployment, después de publicar el artefacto
 ```
+
+## Aceptación antes de publicar el nuevo corte
+
+1. Sincronizar el commit revisado y ejecutar `npm ci`, `npm run check` y `npm run build`.
+2. Revisar el DDL aditivo y arrancar Preview con la base de Development correcta.
+3. Validar usuarios/permisos sin alterar el administrador existente.
+4. Verificar escáner y cargas/descargas públicas y privadas con App Storage; reiniciar y comprobar persistencia.
+5. Mantener la prueba de IA real pendiente y no usar Replit Agent, como indicó el cliente.
+6. Publicar después de cerrar los puntos de infraestructura; verificar `/readyz`, sitio y acceso al CMS.
+
+Las suites `test:cms`, `test:editorial`, `test:access` y `test:panel` crean datos desechables y
+rechazan bases remotas. No ejecutarlas contra Development compartido ni Production de Replit.
+
+## Archivos, formularios y medición — nuevo corte
+
+El build publicado ahora es `npm run build:deploy`. Incluye `replit:prepare-uploads`, que descarga las firmas oficiales de ClamAV en `dist/clamav` y prueba el escaneo. La configuración Nix incluye `ffmpeg` y `clamav`; no publicar si esa preparación falla. El runtime usa `CLAMAV_DATABASE_DIR` si se define, o las firmas incluidas en `dist/clamav`.
+
+`SESSION_SECRET` firma las sesiones fragmentadas; utilice un valor aleatorio de al menos 32 caracteres para disponer también de enlaces firmados de baja del newsletter. No imprimir ni guardar ese valor en Git. Los fragmentos y CV usan namespaces privados propios de Santos.
+
+Google, cookies y voz corporativa se administran desde sus accesos del menú. No es necesario editar código para introducir IDs de GA4 o verificación de Search Console. Mantener apagados los proveedores hasta configurar los datos del cliente.

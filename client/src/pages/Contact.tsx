@@ -1,3 +1,4 @@
+import cmsDefaults from "@shared/cms-defaults.json";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
 import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
@@ -322,6 +323,7 @@ export default function Contact() {
 
   const formSchema = getContactFormSchema(language);
 
+  const formSettings = useCmsContent("forms",cmsDefaults.forms).contact;
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -865,7 +867,7 @@ export default function Contact() {
                 {t.formTitle}
               </h2>
 
-              <Form {...form}>
+              {!formSettings.enabled?<p role="status" className="border-t border-ss-rule py-6">{formSettings.disabledMessage[language as "es"|"en"]||formSettings.disabledMessage.en}</p>:<Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-testid="form-contact">
                   {/* Dos campos por fila solo en tableta (formulario a todo el ancho): Nombre | Correo y
                       Empresa | Práctica; en escritorio, columna de 6/12: un campo por fila. Campos y
@@ -1021,7 +1023,7 @@ export default function Contact() {
                             {consentT.after}
                           </FormLabel>
                         </div>
-                        <FormMessage data-testid="error-consent" />
+                        {form.formState.submitCount>0&&<FormMessage data-testid="error-consent" />}
                       </FormItem>
                     )}
                   />
@@ -1057,7 +1059,7 @@ export default function Contact() {
                     {t.formSubtitle}
                   </p>
                 </form>
-              </Form>
+              </Form>}
             </section>
 
             {/* La fachada (oficina/fachada, 1159 × 900, sin el estacionamiento): la misma de la

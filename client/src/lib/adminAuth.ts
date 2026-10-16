@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
+import { hasAdminPermission, type AdminPermission } from "@shared/adminAccess";
 import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 
@@ -42,31 +44,34 @@ export function getAuthHeaders(): Record<string, string> {
 export async function adminApiRequest(
   method: string,
   url: string,
-  data?: unknown
+  data?: unknown,
 ): Promise<Response> {
   const headers: Record<string, string> = {
     ...getAuthHeaders(),
   };
-  
+
   if (data) {
     headers["Content-Type"] = "application/json";
   }
-  
+
   const res = await fetch(url, {
     method,
     headers,
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
-  
+
   // Handle expired/invalid session - clear token and redirect to login
   if (res.status === 401) {
     clearToken();
-    if (typeof window !== "undefined" && !window.location.pathname.includes("/admin/login")) {
+    if (
+      typeof window !== "undefined" &&
+      !window.location.pathname.includes("/admin/login")
+    ) {
       window.location.href = "/admin/login";
     }
   }
-  
+
   if (res.ok && method !== "GET") {
     window.dispatchEvent(new Event("ss:cms-catalog-saved"));
   }
@@ -129,4 +134,34 @@ export function useAdminAuth() {
     logout,
     requireAuth,
   };
+}
+
+export async function readAdminJson<T>(
+  response: Response,
+  fallback: string,
+): Promise<T> {
+  const body = await response.json().catch(() => null);
+  if (!response.ok) throw new Error(body?.error || fallback);
+  return body as T;
+}
+export function useMyPermissions() {
+  const { data: user } = useQuery<{ role: string; permissions?: string[] }>({
+    queryKey: ["/api/admin/me"],
+    queryFn: async () =>
+      readAdminJson(
+        await adminApiRequest("GET", "/api/admin/me"),
+        "No se pudo verificar su acceso.",
+      ),
+  });
+  return {
+    has: (p: AdminPermission | "users" | "agent_knowledge_admin") =>
+      hasAdminPermission(user, p === "agent_knowledge_admin" ? "agents" : p),
+  };
+}
+
+export async function loadAdminSession(_refresh = false) {
+  return readAdminJson(
+    await adminApiRequest("GET", "/api/admin/me"),
+    "Su sesión no está disponible.",
+  );
 }

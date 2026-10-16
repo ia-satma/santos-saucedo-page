@@ -118,10 +118,12 @@ try {
       });
   }
   assert.equal((await call("GET", "/api/admin/site-config/home")).status, 401);
+  // The new consultation role may read configuration, but cannot write it.
+  assert.equal((await call("PUT", "/api/admin/site-config/home", {}, "viewer")).status, 403);
   assert.equal(
     (await call("GET", "/api/admin/site-config/home", undefined, "viewer"))
       .status,
-    403,
+    200,
   );
   assert.equal(
     (

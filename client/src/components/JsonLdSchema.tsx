@@ -1,3 +1,5 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
+import defaults from "@shared/cms-defaults.json";
 import type { LanguageCode } from "@shared/schema";
 import { CONFIRMED_PARTNER_SLUGS } from "@shared/teamVisibility";
 
@@ -68,6 +70,7 @@ export function ArticleJsonLd({
   url: string;
   language?: LanguageCode;
 }) {
+  const siteUrl=useCmsContent("integrations",defaults.integrations).siteUrl;
   const schema = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -93,7 +96,7 @@ export function ArticleJsonLd({
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).split(SITE_URL).join(siteUrl.replace(/\/$/,'')).replace(/</g, "\\u003c") }}
     />
   );
 }
@@ -143,6 +146,7 @@ export function PersonJsonLd({
     "description": edu.degree
   })) || [];
 
+  const siteUrl=useCmsContent("integrations",defaults.integrations).siteUrl;
   const schema = {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -176,7 +180,7 @@ export function PersonJsonLd({
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(cleanSchema).replace(/</g, "\\u003c") }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(cleanSchema).split(SITE_URL).join(siteUrl.replace(/\/$/,'')).replace(/</g, "\\u003c") }}
     />
   );
 }
@@ -188,6 +192,7 @@ export function BreadcrumbJsonLd({
   items: Array<{ name: string; url: string }>;
   language?: LanguageCode;
 }) {
+  const siteUrl=useCmsContent("integrations",defaults.integrations).siteUrl;
   const schema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -202,7 +207,7 @@ export function BreadcrumbJsonLd({
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).split(SITE_URL).join(siteUrl.replace(/\/$/,'')).replace(/</g, "\\u003c") }}
     />
   );
 }

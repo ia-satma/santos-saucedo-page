@@ -1,3 +1,4 @@
+import { siteLink } from "@shared/siteControls";
 import type { Express } from "express";
 import { createHash } from "node:crypto";
 import { z } from "zod";
@@ -5,13 +6,7 @@ import { eq, inArray, sql } from "drizzle-orm";
 import { editorialDb } from "../db";
 import { news, newsTeamMembers, teamMembers } from "@shared/schema";
 import { authMiddleware, requireRole } from "../auth";
-const mediaUrl = z
-  .string()
-  .max(2048)
-  .refine(
-    (v) => !v || /^https:\/\//.test(v) || /^\/(?!\/)/.test(v),
-    "Use una URL HTTPS o un archivo de la biblioteca.",
-  );
+const mediaUrl = siteLink.or(z.literal(""));
 export const newsEditorSchema = z
   .object({
     title: z.string().trim().min(1).max(300),
@@ -160,6 +155,8 @@ export function registerNewsEditor(app: Express) {
                 memberIds.map((teamMemberId) => ({
                   newsId: item.id,
                   teamMemberId,
+                  verificationStatus:"verified_manual" as const,
+                  relationshipRole:"author" as const,
                 })),
               );
         }
