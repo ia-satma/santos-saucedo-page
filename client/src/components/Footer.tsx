@@ -1,6 +1,4 @@
 import Footer26 from "@/components/home26/Footer26";
-import CookieBanner from "@/components/CookieBanner";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 // Envoltorio: las páginas públicas siguen importando "@/components/Footer"
 // y reciben el pie de la marca 2026. El pie anterior queda en el historial de git.
@@ -10,11 +8,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 // Home monta Footer26 y CookieBanner por su cuenta, sin este envoltorio: no se duplica.
 // `localized`: el pie de las páginas internas sigue el idioma elegido (10 idiomas).
 export default function Footer(_props: Record<string, unknown> = {}) {
-  const { language } = useLanguage();
   return (
     <>
       <Footer26 localized />
-      <CookieBanner language={language} />
     </>
   );
 }

@@ -25,6 +25,11 @@ export const adminPermissions = [
     hint: "Crear y administrar convocatorias.",
   },
   {
+    key: "applications",
+    label: "Candidaturas y CV privados",
+    hint: "Consultar solicitudes, descargar CV y administrar seguimiento.",
+  },
+  {
     key: "inbox",
     label: "Mensajes y suscripciones",
     hint: "Consultar los datos recibidos por formularios.",
@@ -66,7 +71,7 @@ export const rolePermissions: Record<string, readonly AdminPermission[]> = {
   editor: all,
   admin: all,
   sistemas: ["content", "media", "agents", "advanced"],
-  recursos_humanos: ["jobs"],
+  recursos_humanos: ["jobs", "applications"],
   redactor: ["editorial", "media"],
   viewer: ["content", "editorial", "media", "config", "jobs"],
   author: ["editorial", "media"],
@@ -116,7 +121,7 @@ export function adminPermissionForPath(
     return route.startsWith("preview/news/") ? "editorial" : "content";
   if (/^(media|media-archive|storage|office-images|gallery)(\/|$)/.test(route))
     return "media";
-  if (/^(content|site-config)(\/|$)/.test(route)) return "config";
+  if (/^(content|site-config|navigation|integrations|cookie-consent)(\/|$)/.test(route)) return "config";
   if (
     /^(team|practice-groups|industry-groups|clients|testimonials|rankings|awards|desks|alliances|offices)(\/|$)/.test(
       route,
@@ -128,6 +133,7 @@ export function adminPermissionForPath(
   if (/^catalog-order\//.test(route))
     return route.endsWith("/gallery") ? "media" : "content";
   if (route === "order") return "content";
+  if (/^(applications|career-applications)(\/|$)/.test(route)) return "applications";
   if (/^jobs(\/|$)/.test(route)) return "jobs";
   if (/^(inbox|contact-submissions|newsletter-subscribers)(\/|$)/.test(route))
     return "inbox";

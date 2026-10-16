@@ -268,7 +268,7 @@ export function requirePermission(permission: string) {
     advanced: "advanced",
     users: "users",
     contact_submissions: "inbox",
-    career_applications: "jobs",
+    career_applications: "applications",
     newsletter: "inbox",
     exports: "inbox",
     private_downloads: "agents",

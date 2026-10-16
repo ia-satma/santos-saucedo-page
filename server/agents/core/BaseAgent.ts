@@ -1,3 +1,4 @@
+import { getCmsVoice } from "../../cms/siteConfig";
 import {
   AgentType,
   AgentConfig,
@@ -286,9 +287,10 @@ Return JSON: { "learnings": [{ "context": "...", "insight": "...", "confidence":
     if (cached && Date.now() - cached.ts < KB_TTL_MS) return cached.text || null;
     let text = '';
     try {
-      const docs = await knowledgeStore.getApprovedDocuments(this.config.agentType);
-      if (docs.length) {
-        const body = docs
+      const [docs,voice] = await Promise.all([knowledgeStore.getApprovedDocuments(this.config.agentType),getCmsVoice()]);
+      const corporateStyle=`<<<EDITORIAL_STYLE_REFERENCE>>>\n${voice.guidance.es}\n${voice.guidance.en}\n<<<END_EDITORIAL_STYLE_REFERENCE>>>`;
+      if (docs.length || corporateStyle) {
+        const body = corporateStyle+'\n'+docs
           .slice(0, KB_DOCUMENT_LIMIT)
           .map((d) => `<<<REFERENCE_DOCUMENT>>>\nTítulo: ${d.title}\n${String(d.content).slice(0, 800)}\n<<<END_REFERENCE_DOCUMENT>>>`)
           .join('\n');

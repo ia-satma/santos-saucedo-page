@@ -51,6 +51,8 @@ import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AgentUseCenter } from "@/components/admin/AgentUseCenter";
 import { AiUsageCard } from "@/components/admin/AiUsageCard";
 
+import { agentTone } from "@/features/admin/appearance";
+
 interface AgentStats {
   agentType: string;
   totalJobs: number;
@@ -164,7 +166,7 @@ const AGENT_DESCRIPTIONS: Record<string, string> = {
   formatter:
     "Limpia y estructura el texto de un borrador sin copiar un idioma sobre el otro. → Dónde: la propuesta aparece en el trabajo; solo se guarda en la noticia cuando se ejecuta con aplicación de cambios. (usa IA)",
   metadata_linker:
-    "Detecta coincidencias exactas de abogados y sugiere prácticas e industrias de la taxonomía vigente. → Dónde: los candidatos aparecen en el resultado; en borradores puede vincular autores confirmados. (usa IA)",
+    "Propone autores con coincidencia exacta y prácticas e industrias de la taxonomía vigente. → Dónde: resultado del trabajo; un editor confirma la autoría en la noticia. (usa IA)",
   polyglot_translator:
     "Traduce la noticia a los idiomas solicitados manteniendo terminología legal, con caché ligada a la versión exacta del texto fuente. → Dónde: las traducciones aprobadas se ven en 'Traducciones' y en el sitio público. (usa IA)",
   content_auditor:
@@ -579,7 +581,8 @@ export default function AdminAgents() {
                   return (
                     <Icon
                       key={agent}
-                      className="w-4 h-4 text-muted-foreground"
+                      className="admin-agent-mini w-4 h-4"
+                      data-tone={agentTone(agent)}
                       title={AGENT_NAMES[agent] || agent}
                     />
                   );
@@ -672,7 +675,7 @@ export default function AdminAgents() {
                     : 0;
 
                 return (
-                  <Card key={agentType} data-testid={`card-agent-${agentType}`}>
+                  <Card key={agentType} className="admin-agent-card" data-tone={agentTone(agentType)} data-testid={`card-agent-${agentType}`}>
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg flex items-center gap-2">
                         <Icon className="w-5 h-5 text-primary" />

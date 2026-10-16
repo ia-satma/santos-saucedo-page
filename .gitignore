@@ -14,3 +14,6 @@ vite.config.ts.*
 /private_uploads/
 /public/generated-images/
 /public/generated-audio/
+
+# Official antivirus definitions are prepared in the deployment build artifact.
+/dist/clamav/

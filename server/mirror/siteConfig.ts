@@ -32,6 +32,8 @@ export async function getConfigMap(): Promise<ConfigMap> {
         type: row.type || "text",
       };
   }
+  const voiceRow=rows.find(row=>row.key==="editorial.voice");
+  if(voiceRow?.value){try{const voice=JSON.parse(voiceRow.value).content;config.tts_voice=text(voice.ttsVoice);config.editorial_voice={value:voice.guidance.en,valueEs:voice.guidance.es,type:"text"};}catch{}}
   return config;
 }
 export function cfg(

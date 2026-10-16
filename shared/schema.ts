@@ -333,12 +333,12 @@ export type RepresentativeMatterDb = typeof representativeMatters.$inferSelect;
 
 // Contact form schema
 export const contactFormSchema = z.object({
-  fullName: z.string().min(1, "Full name is required"),
-  email: z.string().min(1, "Email is required").email("Invalid email address"),
-  phone: z.string().optional(),
-  company: z.string().optional(),
-  practiceArea: z.string().optional(),
-  message: z.string().min(1, "Message is required"),
+  fullName: z.string().trim().min(1, "Full name is required").max(200),
+  email: z.string().trim().max(254).min(1, "Email is required").email("Invalid email address"),
+  phone: z.string().trim().max(60).optional(),
+  company: z.string().trim().max(250).optional(),
+  practiceArea: z.string().trim().max(180).optional(),
+  message: z.string().trim().min(1, "Message is required").max(12000),
 });
 
 export type ContactFormData = z.infer<typeof contactFormSchema>;
@@ -1535,3 +1535,9 @@ export const authorVerificationStatuses = ["verified_historic", "verified_editor
 export type AuthorVerificationStatus = typeof authorVerificationStatuses[number];
 export const newsTeamMemberRelationshipRoles = ["author", "related"] as const;
 export type NewsTeamMemberRelationshipRole = typeof newsTeamMemberRelationshipRoles[number];
+
+// Private recruitment submissions. CV paths are opaque and never part of public DTOs.
+export const careerApplications=pgTable('career_applications',{
+ id:varchar('id').primaryKey().default(sql`gen_random_uuid()`),fullName:text('full_name').notNull(),email:text('email').notNull(),phone:text('phone'),interest:text('interest'),message:text('message'),cvPath:text('cv_path').notNull(),cvOriginalName:text('cv_original_name').notNull(),preferredLanguage:text('preferred_language').default('es'),consentedAt:timestamp('consented_at').defaultNow(),submittedAt:timestamp('submitted_at').defaultNow(),read:boolean('read').default(false),status:text('status').default('received'),archivedAt:timestamp('archived_at')
+});
+export type CareerApplication=typeof careerApplications.$inferSelect;

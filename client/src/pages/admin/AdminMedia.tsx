@@ -38,6 +38,8 @@ export default function AdminMedia() {
   const [alt, setAlt] = useState("");
   const [altEs, setAltEs] = useState("");
   const input = useRef<HTMLInputElement>(null);
+  const controller=useRef<AbortController>();
+  const [progress,setProgress]=useState(0);
   const url =
     kind === "archive" ? "/api/admin/media-archive" : "/api/admin/media";
   const query = useQuery<MediaItem[]>({
@@ -61,10 +63,11 @@ export default function AdminMedia() {
     setError("");
     setNotice("");
     let done = 0;
+    controller.current=new AbortController();
     try {
       for (const file of Array.from(files)) {
         setNotice(`Cargando ${done + 1} de ${files.length}: ${file.name}`);
-        await uploadAdminMedia(file);
+        await uploadAdminMedia(file,{onProgress:setProgress,signal:controller.current.signal});
         done++;
       }
       setNotice(
@@ -127,14 +130,15 @@ export default function AdminMedia() {
           onClick={() => input.current?.click()}
         >
           <PlusIcon />
-          {busy ? "Cargando…" : "Subir archivos"}
+          {busy ? `Cargando ${progress}%…` : "Subir archivos"}
         </button>
+        {busy&&controller.current&&<Button variant="outline" onClick={()=>controller.current?.abort()}>Cancelar carga</Button>}
         <input
           ref={input}
           hidden
           type="file"
           multiple
-          accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,application/pdf"
+          accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime,video/ogg,.m4v,.mov,.ogv,application/pdf"
           onChange={(e) => {
             if (e.target.files?.length) void upload(e.target.files);
           }}
@@ -194,7 +198,7 @@ export default function AdminMedia() {
         <>
           <p className="text-xs text-muted-foreground mb-4">
             {filtered.length} {filtered.length === 1 ? "archivo" : "archivos"} ·
-            JPG, PNG, WebP, GIF, MP4, WebM y PDF · máximo 50 MB por archivo
+            JPG, PNG, WebP, GIF, MP4, WebM y PDF · máximo 200 MB por archivo
           </p>
           <div className="admin-media-grid">
             {filtered.map((m) => (

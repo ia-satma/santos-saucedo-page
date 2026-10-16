@@ -1,3 +1,4 @@
+import { siteLink } from "@shared/siteControls";
 import { z } from "zod";
 import { eq, inArray, sql } from "drizzle-orm";
 import { editorialDb } from "../db";
@@ -12,13 +13,7 @@ import {
 const text = z.string().max(10000);
 const short = z.string().max(500);
 const optional = short.optional();
-const url = z
-  .string()
-  .max(2048)
-  .refine(
-    (v) => !v || /^https:\/\//.test(v) || /^\/(?!\/)/.test(v),
-    "Use una URL HTTPS o una imagen de la biblioteca.",
-  );
+const url = siteLink.or(z.literal(""));
 export const teamEditorSchema = insertTeamMemberSchema.extend({
   name: short.trim().min(1),
   slug: z

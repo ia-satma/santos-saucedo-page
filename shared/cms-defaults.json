@@ -5394,9 +5394,18 @@
       "practicas": true,
       "extranjeras": true,
       "socios": true,
-      "monitor": true
+      "monitor": true,
+      "hero": true
     },
-    "monitorLimit": 3
+    "monitorLimit": 3,
+    "homeOrder": [
+      "firma",
+      "creemos",
+      "practicas",
+      "extranjeras",
+      "socios",
+      "monitor"
+    ]
   },
   "cookies": {
     "es": {
@@ -5746,6 +5755,449 @@
       "ru": "Судебные споры",
       "fr": "Contentieux",
       "it": "Contenzioso"
+    }
+  },
+  "navigation": {
+    "header": {
+      "enabled": true,
+      "searchEnabled": true,
+      "phoneEnabled": true,
+      "languageEnabled": true
+    },
+    "footer": {
+      "enabled": true,
+      "officeEnabled": true,
+      "linksEnabled": true,
+      "legalEnabled": true,
+      "languagesEnabled": true,
+      "adminEnabled": true
+    },
+    "items": [
+      {
+        "id": "about",
+        "href": "/about",
+        "labels": {
+          "es": "Nuestra firma",
+          "en": "The firm",
+          "de": "Über die Kanzlei",
+          "zh": "关于律所",
+          "ko": "회사 소개",
+          "ja": "事務所について",
+          "ar": "عن الشركة",
+          "ru": "О фирме",
+          "fr": "Le cabinet",
+          "it": "Chi siamo"
+        },
+        "visible": true,
+        "order": 0,
+        "children": []
+      },
+      {
+        "id": "practices",
+        "href": "/practice-groups",
+        "labels": {
+          "es": "Prácticas",
+          "en": "Practices",
+          "de": "Praxisbereiche",
+          "zh": "业务领域",
+          "ko": "업무 분야",
+          "ja": "取扱分野",
+          "ar": "مجالات الممارسة",
+          "ru": "Практики",
+          "fr": "Domaines de pratique",
+          "it": "Aree di pratica"
+        },
+        "visible": true,
+        "order": 1,
+        "children": []
+      },
+      {
+        "id": "team",
+        "href": "/team",
+        "labels": {
+          "es": "Socios",
+          "en": "Partners",
+          "de": "Partner",
+          "zh": "合伙人",
+          "ko": "파트너",
+          "ja": "パートナー",
+          "ar": "الشركاء",
+          "ru": "Партнёры",
+          "fr": "Associés",
+          "it": "Soci"
+        },
+        "visible": true,
+        "order": 2,
+        "children": []
+      },
+      {
+        "id": "news",
+        "href": "/news",
+        "labels": {
+          "es": "Monitor Laboral",
+          "en": "Labor Monitor",
+          "de": "Nachrichten",
+          "zh": "新闻",
+          "ko": "뉴스",
+          "ja": "ニュース",
+          "ar": "الأخبار",
+          "ru": "Новости",
+          "fr": "Actualités",
+          "it": "Notizie"
+        },
+        "visible": true,
+        "order": 3,
+        "children": []
+      },
+      {
+        "id": "careers",
+        "href": "/careers",
+        "labels": {
+          "es": "Carreras",
+          "en": "Careers",
+          "de": "Karriere",
+          "zh": "职业发展",
+          "ko": "채용",
+          "ja": "採用情報",
+          "ar": "الوظائف",
+          "ru": "Карьера",
+          "fr": "Carrières",
+          "it": "Carriere"
+        },
+        "visible": true,
+        "order": 4,
+        "children": []
+      },
+      {
+        "id": "contact",
+        "href": "/contact",
+        "labels": {
+          "es": "Contacto",
+          "en": "Contact",
+          "de": "Kontakt",
+          "zh": "联系我们",
+          "ko": "문의하기",
+          "ja": "お問い合わせ",
+          "ar": "اتصل بنا",
+          "ru": "Контакты",
+          "fr": "Contact",
+          "it": "Contatti"
+        },
+        "visible": true,
+        "order": 5,
+        "children": []
+      }
+    ],
+    "footerItems": [
+      {
+        "id": "about",
+        "href": "/about",
+        "labels": {
+          "es": "Nuestra firma",
+          "en": "The firm",
+          "de": "Über die Kanzlei",
+          "zh": "关于律所",
+          "ko": "회사 소개",
+          "ja": "事務所について",
+          "ar": "عن الشركة",
+          "ru": "О фирме",
+          "fr": "Le cabinet",
+          "it": "Chi siamo"
+        },
+        "visible": true,
+        "order": 0
+      },
+      {
+        "id": "offices",
+        "href": "/offices",
+        "labels": {
+          "es": "La oficina",
+          "en": "The office",
+          "de": "Das Büro",
+          "fr": "Le bureau",
+          "it": "La sede",
+          "ru": "Офис",
+          "zh": "办公室",
+          "ja": "オフィス",
+          "ko": "사무실",
+          "ar": "المكتب"
+        },
+        "visible": true,
+        "order": 1
+      },
+      {
+        "id": "practices",
+        "href": "/practice-groups",
+        "labels": {
+          "es": "Prácticas",
+          "en": "Practices",
+          "de": "Praxisbereiche",
+          "zh": "业务领域",
+          "ko": "업무 분야",
+          "ja": "取扱分野",
+          "ar": "مجالات الممارسة",
+          "ru": "Практики",
+          "fr": "Domaines de pratique",
+          "it": "Aree di pratica"
+        },
+        "visible": true,
+        "order": 2
+      },
+      {
+        "id": "team",
+        "href": "/team",
+        "labels": {
+          "es": "Socios",
+          "en": "Partners",
+          "de": "Partner",
+          "zh": "合伙人",
+          "ko": "파트너",
+          "ja": "パートナー",
+          "ar": "الشركاء",
+          "ru": "Партнёры",
+          "fr": "Associés",
+          "it": "Soci"
+        },
+        "visible": true,
+        "order": 3
+      },
+      {
+        "id": "news",
+        "href": "/news",
+        "labels": {
+          "es": "Monitor Laboral",
+          "en": "Labor Monitor",
+          "de": "Nachrichten",
+          "zh": "新闻",
+          "ko": "뉴스",
+          "ja": "ニュース",
+          "ar": "الأخبار",
+          "ru": "Новости",
+          "fr": "Actualités",
+          "it": "Notizie"
+        },
+        "visible": true,
+        "order": 4
+      },
+      {
+        "id": "careers",
+        "href": "/careers",
+        "labels": {
+          "es": "Carreras",
+          "en": "Careers",
+          "de": "Karriere",
+          "zh": "职业发展",
+          "ko": "채용",
+          "ja": "採用情報",
+          "ar": "الوظائف",
+          "ru": "Карьера",
+          "fr": "Carrières",
+          "it": "Carriere"
+        },
+        "visible": true,
+        "order": 5
+      },
+      {
+        "id": "contact",
+        "href": "/contact",
+        "labels": {
+          "es": "Contacto",
+          "en": "Contact",
+          "de": "Kontakt",
+          "zh": "联系我们",
+          "ko": "문의하기",
+          "ja": "お問い合わせ",
+          "ar": "اتصل بنا",
+          "ru": "Контакты",
+          "fr": "Contact",
+          "it": "Contatti"
+        },
+        "visible": true,
+        "order": 6
+      }
+    ],
+    "legalItems": [
+      {
+        "id": "privacy",
+        "href": "/privacy-policy",
+        "labels": {
+          "es": "Aviso de privacidad",
+          "en": "Privacy notice",
+          "de": "Datenschutz­hinweis",
+          "zh": "隐私声明",
+          "ko": "개인정보 처리방침",
+          "ja": "プライバシー​ポリシー",
+          "ar": "إشعار الخصوصية",
+          "ru": "Политика конфиденци­альности",
+          "fr": "Politique de confidentialité",
+          "it": "Informativa sulla privacy"
+        },
+        "visible": true,
+        "order": 0
+      },
+      {
+        "id": "terms",
+        "href": "/terms",
+        "labels": {
+          "es": "Términos de uso",
+          "en": "Terms of use",
+          "de": "Nutzungs­bedingungen",
+          "zh": "使用条款",
+          "ko": "이용 약관",
+          "ja": "利用規約",
+          "ar": "شروط الاستخدام",
+          "ru": "Условия использования",
+          "fr": "Conditions d’utilisation",
+          "it": "Termini di utilizzo"
+        },
+        "visible": true,
+        "order": 1
+      }
+    ]
+  },
+  "forms": {
+    "contact": {
+      "enabled": true,
+      "disabledMessage": {
+        "es": "Este formulario no está disponible temporalmente. Puede comunicarse con el despacho por correo.",
+        "en": "This form is temporarily unavailable. Please contact the firm by email."
+      }
+    },
+    "newsletter": {
+      "enabled": true,
+      "disabledMessage": {
+        "es": "Este formulario no está disponible temporalmente. Puede comunicarse con el despacho por correo.",
+        "en": "This form is temporarily unavailable. Please contact the firm by email."
+      }
+    },
+    "unsubscribe": {
+      "es": {
+        "title": "Cancelar suscripción",
+        "body": "Confirme si desea dejar de recibir el Monitor Laboral.",
+        "submit": "Confirmar baja",
+        "success": "Su suscripción ha sido cancelada.",
+        "error": "No se pudo cancelar la suscripción. Compruebe el enlace y vuelva a intentarlo."
+      },
+      "en": {
+        "title": "Unsubscribe",
+        "body": "Confirm that you no longer want to receive the Labor Monitor.",
+        "submit": "Confirm unsubscribe",
+        "success": "Your subscription has been cancelled.",
+        "error": "Unable to unsubscribe. Check the link and try again."
+      }
+    },
+    "careers": {
+      "enabled": true,
+      "disabledMessage": {
+        "es": "Este formulario no está disponible temporalmente. Puede comunicarse con el despacho por correo.",
+        "en": "This form is temporarily unavailable. Please contact the firm by email."
+      },
+      "labels": {
+        "es": {
+          "title": "Enviar candidatura",
+          "name": "Nombre completo",
+          "email": "Correo electrónico",
+          "phone": "Teléfono",
+          "interest": "Área de interés",
+          "message": "Mensaje",
+          "cv": "Currículum en PDF (máximo 10 MB)",
+          "consent": "He leído y acepto el aviso de privacidad",
+          "submit": "Enviar candidatura",
+          "sending": "Enviando…",
+          "success": "Recibimos su candidatura. El equipo de reclutamiento podrá revisarla.",
+          "error": "No se pudo enviar. Revise los campos y el PDF e inténtelo de nuevo."
+        },
+        "en": {
+          "title": "Submit an application",
+          "name": "Full name",
+          "email": "Email address",
+          "phone": "Phone",
+          "interest": "Area of interest",
+          "message": "Message",
+          "cv": "CV as PDF (maximum 10 MB)",
+          "consent": "I have read and accept the privacy notice",
+          "submit": "Send application",
+          "sending": "Sending…",
+          "success": "We received your application. Our recruitment team can now review it.",
+          "error": "Unable to submit. Check the fields and PDF, then try again."
+        }
+      }
+    }
+  },
+  "links": {
+    "about": "/about",
+    "practices": "/practice-groups",
+    "team": "/team",
+    "news": "/news",
+    "careers": "/careers",
+    "interns": "/careers/interns",
+    "contact": "/contact",
+    "office": "/offices",
+    "newsletter": "/newsletter"
+  },
+  "integrations": {
+    "siteUrl": "https://santos-saucedo.replit.app",
+    "ga4": {
+      "enabled": false,
+      "measurementId": ""
+    },
+    "searchConsole": {
+      "verification": ""
+    },
+    "leadinfo": {
+      "enabled": false,
+      "siteId": "",
+      "disclosureReviewed": false
+    }
+  },
+  "consent": {
+    "enabled": true,
+    "version": "1",
+    "validityMonths": 6,
+    "labels": {
+      "es": {
+        "title": "Preferencias de cookies",
+        "body": "Usamos almacenamiento necesario para el sitio. Puede aceptar o rechazar la analítica y otros servicios opcionales. Puede cambiar su elección desde el pie de página.",
+        "acceptAll": "Aceptar todas",
+        "rejectOptional": "Rechazar opcionales",
+        "configure": "Configurar",
+        "save": "Guardar preferencias",
+        "close": "Cerrar",
+        "essential": "Necesarias",
+        "essentialDescription": "Sesión administrativa, seguridad y preferencias básicas del sitio. Siempre activas.",
+        "analytics": "Analítica",
+        "analyticsDescription": "Estadísticas de uso mediante Google Analytics, cuando el despacho lo configure y active.",
+        "external": "Contenido externo",
+        "externalDescription": "Permite cargar contenido integrado de servicios externos cuando lo solicite.",
+        "leadinfo": "Identificación de empresas",
+        "leadinfoDescription": "Permite analítica de visitas empresariales mediante Leadinfo, si el despacho lo activa.",
+        "policy": "Aviso de privacidad"
+      },
+      "en": {
+        "title": "Cookie preferences",
+        "body": "We use storage required to operate this site. You can accept or reject optional analytics and services. Change your choice in the footer at any time.",
+        "acceptAll": "Accept all",
+        "rejectOptional": "Reject optional",
+        "configure": "Configure",
+        "save": "Save preferences",
+        "close": "Close",
+        "essential": "Essential",
+        "essentialDescription": "Administrative sessions, security and basic site preferences. Always active.",
+        "analytics": "Analytics",
+        "analyticsDescription": "Usage statistics through Google Analytics, when configured and enabled by the firm.",
+        "external": "External content",
+        "externalDescription": "Allows embedded content from external services when requested.",
+        "leadinfo": "Business identification",
+        "leadinfoDescription": "Allows business visit analytics through Leadinfo, if enabled by the firm.",
+        "policy": "Privacy notice"
+      }
+    }
+  },
+  "voice": {
+    "ttsVoice": "alloy",
+    "guidance": {
+      "es": "Lenguaje claro, preciso y profesional. No inventar datos ni conclusiones. Conservar los términos jurídicos y nombres del despacho.",
+      "en": "Use clear, precise and professional language. Do not invent facts or conclusions. Preserve legal terminology and the firm name."
     }
   }
 }

@@ -1,10 +1,13 @@
+import { siteLink } from "@shared/siteControls";
+import { registerCareerApplications } from "./routes/careerApplications";
+import { registerMediaUploads } from "./routes/mediaUploads";
+import { registerSubmissionManagement } from "./routes/submissionManagement";
 import { registerAgentReportRoutes } from "./routes/agentReportRoutes";
 import { servePersistentManagedMedia } from "./routes/managedMedia";
 import { registerAgentUsageRoutes } from "./routes/agentUsageRoutes";
 import { registerAgentAssetHistoryRoutes } from "./routes/agentAssetHistoryRoutes";
 import { registerAgentPipelineRoutes } from "./routes/agentPipelineRoutes";
 import { registerAdminKnowledgeRoutes } from "./routes/adminKnowledgeRoutes";
-import sharp from "sharp";
 import { saveTeamMember, teamPracticeIds, validatePracticeRoster } from "./cms/teamEditor";
 import { registerContentPreview } from "./cms/preview";
 import { connectDesignCatalogs } from "./cms/designCatalogs";
@@ -12,7 +15,7 @@ import { registerCatalogOrder } from "./cms/catalogOrder";
 import { mediaInventory, persistentMediaItem, registerMediaLibrary } from "./cms/mediaLibrary";
 import { registerNewsEditor } from "./cms/newsEditor";
 import { getBundledMediaMap } from "./cms/bundledMediaMap";
-import { ensureCmsSchema, registerCmsRoutes, getCmsContact } from "./cms/siteConfig";
+import { ensureCmsSchema, registerCmsRoutes, getCmsContact, getCmsFormControls } from "./cms/siteConfig";
 import { registerAdminUsers } from "./cms/adminUsers";
 import { recordAccessEvent } from "./cms/accessAudit";
 import { hasAdminPermission } from "@shared/adminAccess";
@@ -29,7 +32,6 @@ import express from "express";
 import path from "path";
 import fs from "fs";
 import crypto from "crypto";
-import multer from "multer";
 import {
   appStorageObjectKeyFromPath,
   isPublicMediaKey,
@@ -142,34 +144,7 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 50 * 1024 * 1024, // Videos and documents share the persistent media library
-  },
-  fileFilter: (_req, file, cb) => {
-    const allowedMimes = [
-      "image/jpeg",
-      "image/png",
-      "image/gif",
-      "image/webp",
-      "video/mp4",
-      "video/webm",
-      "application/pdf",
-    ];
-    if (allowedMimes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error("Invalid file type"));
-    }
-  },
-});
-
-const receiveMedia:express.RequestHandler=(req,res,next)=>upload.single('file')(req,res,(error:any)=>{
-  if(error)return res.status(error.code==='LIMIT_FILE_SIZE'?413:415).json({error:error.code==='LIMIT_FILE_SIZE'?'El archivo supera 50 MB.':'Formato no admitido. Use JPG, PNG, WebP, GIF, MP4, WebM o PDF.'});
-  next();
-});
-const safeMediaUrl=z.string().max(2048).refine(v=>!v||/^https:\/\//.test(v)||/^\/(?!\/)/.test(v),'Use una URL HTTPS o un archivo del sitio.');
+const safeMediaUrl=siteLink.or(z.literal(""));
 const safeNewsWrite=insertNewsSchema.extend({
  slug:z.string().min(1).max(180).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
  imageUrl:safeMediaUrl.nullable().optional(),documentUrl:safeMediaUrl.nullable().optional(),documentUrlEs:safeMediaUrl.nullable().optional(),sourceUrl:z.string().url().startsWith('https://').or(z.literal('')).nullable().optional(),
@@ -225,6 +200,7 @@ export async function registerRoutes(
 ): Promise<Server> {
   await ensureCmsSchema();
   registerAdminUsers(app);
+  registerSubmissionManagement(app);
   registerAgentUsageRoutes(app);
   registerAgentReportRoutes(app);
   registerAgentAssetHistoryRoutes(app);
@@ -804,12 +780,15 @@ export async function registerRoutes(
     };
   };
 
+  registerCareerApplications(app,publicFormGuard({success:true}));
+
   const contactSuccess = { success: true, message: "Contact form submitted successfully" };
   // La casilla del aviso de privacidad también se exige aquí, no solo en el formulario
   const contactRequestSchema = contactFormSchema.extend({ consent: z.literal(true) });
 
   app.post("/api/contact", publicFormGuard(contactSuccess), async (req, res) => {
     try {
+      if (!(await getCmsFormControls()).contact.enabled) return res.status(503).json({error:"FORM_DISABLED"});
       const validationResult = contactRequestSchema.safeParse(req.body);
 
       if (!validationResult.success) {
@@ -865,6 +844,7 @@ export async function registerRoutes(
   const newsletterSuccess = { success: true };
 
   app.post("/api/newsletter", publicFormGuard(newsletterSuccess), async (req, res) => {
+    try { if (!(await getCmsFormControls()).newsletter.enabled) return res.status(503).json({error:"FORM_DISABLED"}); } catch { return res.status(503).json({error:"Formulario temporalmente no disponible."}); }
     const parsed = newsletterSchema.safeParse(req.body ?? {});
     if (!parsed.success) {
       return res.status(400).json({ error: "Validation failed" });
@@ -1106,11 +1086,14 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         '.ico': 'image/x-icon',
         '.mp4': 'video/mp4',
         '.webm': 'video/webm',
+        '.mov': 'video/quicktime',
+        '.ogv': 'video/ogg',
         '.pdf': 'application/pdf',
       };
       res.setHeader('Content-Type', mimeByExtension[extension] || 'application/octet-stream');
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
       res.setHeader('X-Content-Type-Options', 'nosniff');
+      if (['.pdf','.svg'].includes(extension)) res.setHeader('Content-Security-Policy','sandbox');
       res.setHeader('Accept-Ranges', 'bytes');
       if (req.headers.range) {
         const ranges = req.range(contents.length);
@@ -2346,7 +2329,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
   app.post("/api/admin/jobs", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
-      const validatedData = insertJobOpeningSchema.extend({ expiresAt: z.coerce.date().nullable().optional() }).parse(req.body);
+      const validatedData = insertJobOpeningSchema.extend({ expiresAt: z.coerce.date().nullable().optional(), applicationEmail:z.string().email().or(z.literal('')).nullable().optional(), applicationUrl:siteLink.refine(v=>v.startsWith('https://'),'Use HTTPS.').or(z.literal('')).nullable().optional() }).parse(req.body);
       const job = await storage.createJobOpening(validatedData);
       res.json(job);
     } catch (error) {
@@ -2360,7 +2343,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
   app.put("/api/admin/jobs/:id", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
-      const validatedData = insertJobOpeningSchema.extend({ expiresAt: z.coerce.date().nullable().optional() }).partial().parse(req.body);
+      const validatedData = insertJobOpeningSchema.extend({ expiresAt: z.coerce.date().nullable().optional(), applicationEmail:z.string().email().or(z.literal('')).nullable().optional(), applicationUrl:siteLink.refine(v=>v.startsWith('https://'),'Use HTTPS.').or(z.literal('')).nullable().optional() }).partial().parse(req.body);
       const updated = await storage.updateJobOpening(req.params.id, validatedData);
       if (!updated) {
         return res.status(404).json({ error: "Job not found" });
@@ -2618,66 +2601,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
     }
   });
 
-  // Upload media
-  app.post("/api/admin/media/upload", authMiddleware, requireRole("editor", "admin"), receiveMedia, async (req: Request, res: Response) => {
-    let objectName: string | null = null;
-    try {
-      if (!req.file) {
-        return res.status(400).json({ error: "No file uploaded" });
-      }
-
-      const uniqueSuffix = crypto.randomBytes(8).toString("hex");
-      const extensions: Record<string,string> = { 'image/jpeg':'.jpg', 'image/png':'.png', 'image/gif':'.gif', 'image/webp':'.webp', 'video/mp4':'.mp4', 'video/webm':'.webm', 'application/pdf':'.pdf' };
-      const ext = extensions[req.file.mimetype];
-      const b = req.file.buffer;
-      const valid = ext === '.jpg' ? b[0]===0xff && b[1]===0xd8 && b[2]===0xff
-        : ext === '.png' ? b.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]))
-        : ext === '.webp' ? b.toString('ascii',0,4)==='RIFF' && b.toString('ascii',8,12)==='WEBP'
-        : ext === '.gif' ? /^GIF8[79]a$/.test(b.toString('ascii',0,6))
-        : ext === '.pdf' ? b.toString('ascii',0,5)==='%PDF-'
-        : ext === '.mp4' ? b.toString('ascii',4,8)==='ftyp'
-        : ext === '.webm' ? b.subarray(0,4).equals(Buffer.from([0x1a,0x45,0xdf,0xa3])) : false;
-      if (!valid) return res.status(400).json({error:'El contenido del archivo no coincide con su tipo. Use PNG, JPEG, WebP, GIF, MP4, WebM o PDF.'});
-      let contents=req.file.buffer;
-      let dimensions:{width?:number;height?:number}={};
-      if(req.file.mimetype.startsWith('image/')){
-        try{
-          const image=sharp(contents,{animated:ext==='.gif',limitInputPixels:40000000}).rotate();
-          await image.metadata();
-          contents=await (ext==='.jpg'?image.jpeg({quality:92}):ext==='.webp'?image.webp({quality:92}):ext==='.gif'?image.gif():image.png()).toBuffer();
-          const resultMetadata=await sharp(contents,{animated:ext==='.gif'}).metadata();
-          dimensions={width:resultMetadata.width,height:resultMetadata.pageHeight??resultMetadata.height};
-        }catch{return res.status(400).json({error:'La imagen no se puede leer. Exporte un JPG, PNG, WebP o GIF válido y vuelva a intentarlo.'});}
-      }
-      const filename = `${Date.now()}-${uniqueSuffix}${ext}`;
-      objectName = `public/media/${filename}`;
-      await uploadAppStorageObject(objectName, contents);
-
-      const mediaItem = await storage.createMediaItem({
-        filename,
-        originalName: req.file.originalname,
-        path: `/media/${objectName}`,
-        mimeType: req.file.mimetype,
-        size: contents.length,
-        ...dimensions,
-        uploadedBy: req.adminUser!.id,
-        alt: req.body.alt || null,
-        altEs: req.body.altEs || null,
-      });
-
-      res.status(201).json(mediaItem);
-    } catch (error) {
-      if (objectName) {
-        try {
-          await deleteAppStorageObject(objectName);
-        } catch (cleanupError) {
-          console.error("Upload cleanup error:", cleanupError);
-        }
-      }
-      console.error("Upload media error:", error);
-      res.status(500).json({ error: "Failed to upload file" });
-    }
-  });
+  registerMediaUploads(app);
 
   // Delete media item
   app.delete("/api/admin/media/:id", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {

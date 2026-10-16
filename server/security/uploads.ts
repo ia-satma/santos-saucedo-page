@@ -432,12 +432,18 @@ export async function validatePresentationInput(filePath: string, originalName: 
   return false;
 }
 
-function runClamScan(
+async function clamDatabaseArgs():Promise<string[]> {
+  const directory=process.env.CLAMAV_DATABASE_DIR||path.resolve("dist/clamav");
+  try {await fs.access(directory);return [`--database=${directory}`];}catch{return [];}
+}
+
+async function runClamScan(
   filePath: string,
   timeoutMs = 60_000,
 ): Promise<"clean" | "infected" | "unavailable"> {
+  const database=await clamDatabaseArgs();
   return new Promise((resolve) => {
-    execFile("clamscan", ["--no-summary", "--infected", filePath], {
+    execFile("clamscan", [...database,"--no-summary", "--infected", filePath], {
       timeout: timeoutMs,
       windowsHide: true,
     }, (error) => {

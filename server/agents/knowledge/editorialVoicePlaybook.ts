@@ -11,8 +11,8 @@ export type EditorialKnowledgeSeed = {
 };
 
 /**
- * Guía destilada del corpus público del sitio: 1,814 publicaciones y 4 eventos
- * disponibles al momento de la auditoría. Los bloques se mantienen debajo del
+ * Guía editorial del CMS de referencia, adaptada a la marca Santos.
+ * No representa un análisis del corpus público de Santos. Los bloques se mantienen debajo del
  * límite de inyección por documento de BaseAgent para que lleguen completos al LLM.
  */
 export const EDITORIAL_KNOWLEDGE_SEEDS: readonly EditorialKnowledgeSeed[] = [

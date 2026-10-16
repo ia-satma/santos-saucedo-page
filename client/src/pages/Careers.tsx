@@ -1,3 +1,4 @@
+import { CareerForm } from "@/features/public-forms/CareerForm";
 import { useQuery } from "@tanstack/react-query";
 import { jobTypes, type JobOpening } from "@shared/schema";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
@@ -471,6 +472,7 @@ export default function Careers() {
                 </a>
               </div>
             </SplitSection>
+            <CareerForm source="careers"/>
           </section>
 
         </div>

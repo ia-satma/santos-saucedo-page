@@ -71,11 +71,13 @@ function HeroVideo({
   paused,
   videoRef: ref,
   onBlocked,
+  onFailed,
 }: {
   media: ReturnType<typeof useCmsMedia>["hero"];
   paused: boolean;
   videoRef: RefObject<HTMLVideoElement>;
   onBlocked: () => void;
+  onFailed: () => void;
 }) {
   const pausedRef = useRef(paused);
   // Siempre el último aviso, sin volver a crear el observador
@@ -84,7 +86,7 @@ function HeroVideo({
   const reportBlocked = () => {
     if (!pausedRef.current) onBlockedRef.current();
   };
-  const src = window.matchMedia(SMALL_SCREEN).matches ? media.videoMobile : media.videoDesktop;
+  const src = window.matchMedia(SMALL_SCREEN).matches ? media.videoMobile||media.videoDesktop : media.videoDesktop||media.videoMobile;
 
   useEffect(() => {
     const video = ref.current;
@@ -117,6 +119,7 @@ function HeroVideo({
       ref={ref}
       className="absolute inset-0 h-full w-full object-cover"
       src={src}
+      onError={onFailed}
       poster={media.poster}
       // Si se vuelve a montar ya en pausa (al quitar el movimiento reducido), no arranca solo
       autoPlay={!paused}
@@ -150,7 +153,9 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
   const [startPaused] = useState(() => typeof window !== "undefined" && (readPausedPref() || savesData()));
   const [paused, setPaused] = useState(startPaused);
   const [mounted, setMounted] = useState(!startPaused);
-  const still = reduced || !mounted || !media.hero.videoEnabled;
+  const [videoFailed,setVideoFailed]=useState(false);
+  useEffect(()=>setVideoFailed(false),[media.hero.videoDesktop,media.hero.videoMobile]);
+  const still = videoFailed || reduced || !mounted || !media.hero.videoEnabled;
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // El navegador rechazó la reproducción (K6): el botón pasa a "Reproducir" sin guardar
@@ -176,7 +181,7 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
         {still ? (
           <img src={media.hero.poster} alt="" width={1920} height={872} decoding="async" className="absolute inset-0 h-full w-full object-cover" />
         ) : (
-          <HeroVideo media={media.hero} paused={paused} videoRef={videoRef} onBlocked={onBlocked} />
+          <HeroVideo media={media.hero} paused={paused} videoRef={videoRef} onBlocked={onBlocked} onFailed={()=>setVideoFailed(true)} />
         )}
         <div className="ss-hero-veil absolute inset-0" />
       </div>

@@ -18,9 +18,13 @@
     "test:cms": "node --import tsx scripts/check-cms.ts",
     "test:editorial": "node --import tsx scripts/check-editorial.ts",
     "test:access": "node --import tsx scripts/check-access.ts",
-    "test:agents": "node --import tsx --test server/security/agentExecution.test.ts server/security/agentOrchestratorRuntime.test.ts server/security/presentationGeneratorRuntime.test.ts server/security/replitAiTransport.test.ts",
+    "test:agents": "node --import tsx --test server/security/agentExecution.test.ts server/security/agentPositiveFlows.test.ts server/security/agentOrchestratorRuntime.test.ts server/security/presentationGeneratorRuntime.test.ts server/security/replitAiTransport.test.ts",
     "test:panel": "node --import tsx scripts/check-panel.ts",
-    "preview:cms": "node --import tsx scripts/preview-cms.ts"
+    "preview:cms": "node --import tsx scripts/preview-cms.ts",
+    "test:public-flows": "node --import tsx scripts/check-public-flows.ts",
+    "test:privacy": "node --import tsx --test server/security/siteConsent.test.ts",
+    "replit:prepare-uploads": "node scripts/prepare-upload-runtime.mjs",
+    "build:deploy": "npm run build && npm run replit:prepare-uploads"
   },
   "dependencies": {
     "@google/genai": "^1.32.0",

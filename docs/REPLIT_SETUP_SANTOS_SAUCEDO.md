@@ -131,3 +131,11 @@ npm run start:deploy  # solo en Deployment, después de publicar el artefacto
 
 Las suites `test:cms`, `test:editorial`, `test:access` y `test:panel` crean datos desechables y
 rechazan bases remotas. No ejecutarlas contra Development compartido ni Production de Replit.
+
+## Archivos, formularios y medición — nuevo corte
+
+El build publicado ahora es `npm run build:deploy`. Incluye `replit:prepare-uploads`, que descarga las firmas oficiales de ClamAV en `dist/clamav` y prueba el escaneo. La configuración Nix incluye `ffmpeg` y `clamav`; no publicar si esa preparación falla. El runtime usa `CLAMAV_DATABASE_DIR` si se define, o las firmas incluidas en `dist/clamav`.
+
+`SESSION_SECRET` firma las sesiones fragmentadas; utilice un valor aleatorio de al menos 32 caracteres para disponer también de enlaces firmados de baja del newsletter. No imprimir ni guardar ese valor en Git. Los fragmentos y CV usan namespaces privados propios de Santos.
+
+Google, cookies y voz corporativa se administran desde sus accesos del menú. No es necesario editar código para introducir IDs de GA4 o verificación de Search Console. Mantener apagados los proveedores hasta configurar los datos del cliente.

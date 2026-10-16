@@ -1,3 +1,6 @@
+import { getCmsVoice } from "../cms/siteConfig";
+import cmsDefaults from "@shared/cms-defaults.json";
+import { mergeCms } from "@shared/cms";
 import { requestSpeechAudio, speechModel } from "./speechProvider";
 import * as fs from "fs";
 import * as path from "path";
@@ -140,7 +143,8 @@ export class VoiceGenerator {
       dataClassification?: AiDataClassification;
     },
   ): Promise<AudioGenerationResult> {
-    const voice = opts.voiceId?.trim() || DEFAULT_VOICE;
+    const configured=await getCmsVoice();
+    const voice = opts.voiceId?.trim() || configured.ttsVoice || DEFAULT_VOICE;
     this.log(`Iniciando generación de audio (fuente: ${opts.sourceType})`);
 
     const result: AudioGenerationResult = {

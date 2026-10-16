@@ -1,3 +1,4 @@
+import { AgentCreator } from "@/components/admin/AgentCreator";
 import { useEffect } from "react";
 import { AdminPageHelp } from "@/components/admin/AdminPageHelp";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -81,6 +82,7 @@ export default function AdminGeneratedImages() {
           Cada vez que el agente de imágenes genera una imagen para una noticia (no cuenta el placeholder de respaldo), queda guardada aquí.
           Este historial es permanente y ningún usuario puede borrarlo. Copia la URL para reutilizar una imagen sin gastar créditos de nuevo.
         </AdminPageHelp>
+        <AgentCreator agent="image_suggestion"/>
 
         <div>
           <h2 className="text-sm uppercase tracking-[0.12em] text-muted-foreground mb-4">

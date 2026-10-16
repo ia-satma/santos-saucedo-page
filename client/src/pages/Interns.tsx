@@ -1,3 +1,4 @@
+import { CareerForm } from "@/features/public-forms/CareerForm";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import Header from "@/components/Header";
@@ -197,6 +198,7 @@ export default function Interns() {
                 </div>
               </div>
             </SplitSection>
+            <CareerForm source="interns"/>
           </section>
 
         </div>

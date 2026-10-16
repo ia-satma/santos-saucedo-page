@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { adminApiRequest } from "@/lib/adminAuth";
-import { uploadAdminMedia } from "@/lib/adminMediaUpload";
+import { uploadAdminMedia, browserMediaMime } from "@/lib/adminMediaUpload";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { siteLink } from "@shared/siteControls";
 import type { MediaItem } from "@shared/schema";
 
 export function MediaField({
@@ -21,6 +22,8 @@ export function MediaField({
 }) {
   const [open, setOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [progress,setProgress]=useState(0);
+  const controller=useRef<AbortController>();
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const input = useRef<HTMLInputElement>(null);
@@ -47,7 +50,7 @@ export function MediaField({
     setError("");
     setUploading(true);
     try {
-      if (!file.type.startsWith(prefix))
+      if (!browserMediaMime(file).startsWith(prefix))
         throw new Error(
           document
             ? "Elija un PDF."
@@ -55,7 +58,8 @@ export function MediaField({
               ? "Elija un video MP4 o WebM."
               : "Elija una imagen PNG, JPG, WebP o GIF.",
         );
-      const saved = await uploadAdminMedia(file);
+      controller.current=new AbortController();
+      const saved = await uploadAdminMedia(file,{onProgress:setProgress,signal:controller.current.signal});
       onChange(saved.path);
       void media.refetch();
     } catch (e) {
@@ -65,6 +69,7 @@ export function MediaField({
       if (input.current) input.current.value = "";
     }
   };
+  const validReference=Boolean(value)&&siteLink.safeParse(value).success;
   return (
     <div className="space-y-3">
       <Input
@@ -73,7 +78,7 @@ export function MediaField({
         onChange={(e) => onChange(e.target.value)}
         placeholder="Elija un archivo o escriba una URL HTTPS"
       />
-      {value && !video && !document && (
+      {validReference && !video && !document && (
         <img
           src={value}
           alt="Vista previa del archivo seleccionado"
@@ -81,7 +86,7 @@ export function MediaField({
           loading="lazy"
         />
       )}
-      {value && video && (
+      {validReference && video && (
         <video
           src={value}
           controls
@@ -89,7 +94,7 @@ export function MediaField({
           className="max-h-40 max-w-full"
         />
       )}
-      {value && (
+      {validReference && (
         <a
           href={value}
           target="_blank"
@@ -115,8 +120,9 @@ export function MediaField({
           disabled={uploading}
           onClick={() => input.current?.click()}
         >
-          {uploading ? "Subiendo…" : "Subir archivo"}
+          {uploading ? `Subiendo ${progress}%…` : "Subir archivo"}
         </Button>
+        {uploading&&<Button type="button" variant="outline" size="sm" onClick={()=>controller.current?.abort()}>Cancelar carga</Button>}
         {value && (
           <Button
             type="button"
@@ -135,7 +141,7 @@ export function MediaField({
             document
               ? "application/pdf"
               : video
-                ? "video/mp4,video/webm"
+                ? "video/mp4,video/webm,video/quicktime,video/ogg,.m4v,.mov,.ogv"
                 : "image/png,image/jpeg,image/webp,image/gif"
           }
           onChange={(e) => {
@@ -144,6 +150,7 @@ export function MediaField({
           }}
         />
       </div>
+      <p className="text-sm text-muted-foreground">Hasta 200 MB. La referencia actual cambia solo cuando termina la carga.</p>
       {error && (
         <p role="alert" className="text-sm text-red-700">
           {error}

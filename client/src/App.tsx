@@ -1,3 +1,4 @@
+import CookieBanner from "@/components/CookieBanner";
 import { AdminShell } from "@/features/admin/AdminShell";
 import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from "wouter";
 import { useEffect, lazy, Suspense } from "react";
@@ -38,6 +39,7 @@ const Careers = lazy(() => import("@/pages/Careers"));
 const Interns = lazy(() => import("@/pages/Interns"));
 const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
 const Terms = lazy(() => import("@/pages/Terms"));
+const NewsletterUnsubscribe = lazy(() => import("@/pages/NewsletterUnsubscribe"));
 const Newsletter = lazy(() => import("@/pages/Newsletter"));
 const AdminOverview = lazy(() => import("@/pages/admin/AdminOverview"));
 const AdminContentHub = lazy(() => import("@/pages/admin/AdminContentHub"));
@@ -51,6 +53,7 @@ const ContentPreview = lazy(() => import("@/features/admin/ContentPreview"));
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
 const AdminSiteConfig = lazy(() => import("@/pages/admin/AdminSiteConfig"));
 const AdminJobs = lazy(() => import("@/pages/admin/AdminJobs"));
+const AdminApplications = lazy(() => import("@/pages/admin/AdminApplications"));
 const AdminInbox = lazy(() => import("@/pages/admin/AdminInbox"));
 const AdminSetup = lazy(() => import("@/pages/admin/AdminSetup"));
 const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
@@ -151,6 +154,8 @@ function SkipLinks() {
   );
 }
 
+function PublicCookiePreferences(){const {language}=useLanguage();return <CookieBanner language={language}/>;}
+
 function StaticAdminUnavailable() {
   return (
     <main className="min-h-screen bg-[#111110] text-white flex items-center justify-center px-6">
@@ -216,14 +221,19 @@ function Router() {
         <Route path="/articles/*?">
           <RedirectKeepingQuery to="/news" />
         </Route>
+        <Route path="/newsletter/unsubscribe" component={NewsletterUnsubscribe} />
         <Route path="/newsletter" component={Newsletter} />
         <Route path="/events/*?">
           <RedirectKeepingQuery to="/news" />
         </Route>
-        <Route path="/admin/site-config/:section" component={AdminSiteConfig} />
-        <Route path="/admin/site-config" component={AdminSiteConfig} />
+        <Route path="/admin/navigation"><AdminSiteConfig fixedSection="navigation"/></Route>
+        <Route path="/admin/integrations"><AdminSiteConfig fixedSection="integrations"/></Route>
+        <Route path="/admin/cookie-consent"><AdminSiteConfig fixedSection="consent"/></Route>
+        <Route path="/admin/site-config/:section"><AdminSiteConfig/></Route>
+        <Route path="/admin/site-config"><AdminSiteConfig/></Route>
         <Route path="/admin/jobs" component={AdminJobs} />
         <Route path="/admin/inbox" component={AdminInbox} />
+        <Route path="/admin/applications" component={AdminApplications} />
         <Route path="/admin/login" component={AdminLogin} />
         <Route path="/admin/setup" component={AdminSetup} />
         <Route path="/admin/dashboard" component={AdminOverview} />
@@ -234,7 +244,7 @@ function Router() {
         <Route path="/admin/account" component={AdminAccount} />
         <Route path="/admin/order" component={AdminOrder} />
         <Route path="/admin/manual" component={AdminManual} />
-        <Route path="/admin/operations" component={AdminDashboard} />
+        <Route path="/admin/operations"><Redirect to="/admin/dashboard"/></Route>
         <Route path="/admin/preview/:kind/:slug" component={ContentPreview} />
         <Route path="/admin/posts" component={AdminPosts} />
         <Route path="/admin/posts/new" component={AdminPostForm} />
@@ -286,6 +296,7 @@ function App() {
               <SkipLinks />
               <Toaster />
               <Router />
+              <PublicCookiePreferences/>
             </WouterRouter>
           </LanguageProvider>
         </TooltipProvider>

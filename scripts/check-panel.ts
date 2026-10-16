@@ -475,7 +475,7 @@ try {
     "history immutable",
   );
   console.log(
-    `PANEL ACCEPTANCE PASSED: ${count} HTTP checks, ${reads.length} private read endpoints, 33 config sections, 14 agent contracts, 12 catalog CRUD flows, knowledge approval, copy archive/restore, private document upload and PPTX/PDF/PNG generation/download. No external AI call.`,
+    `PANEL ACCEPTANCE PASSED: ${count} HTTP checks, ${reads.length} private read endpoints, ${(await import("../shared/cms")).cmsSections.length} config sections, 14 agent contracts, 12 catalog CRUD flows, knowledge approval, copy archive/restore, private document upload and PPTX/PDF/PNG generation/download. No external AI call.`,
   );
 } catch (error) {
   console.error(error);

@@ -1,3 +1,7 @@
+import { IntegrationFields } from "@/features/site-config/IntegrationFields";
+import type { SiteIntegrations } from "@shared/siteIntegrations";
+import { NavigationFields } from '@/features/site-config/NavigationFields';
+import type { SiteNavigation } from '@shared/siteControls';
 import { useRef } from "react";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { useEffect, useState } from 'react';
@@ -13,8 +17,9 @@ import { notifyCmsSaved } from '@/hooks/useCmsContent';
 import { useToast } from '@/hooks/use-toast';
 
 type SectionResponse = { section: CmsSection; content: CmsValue; revision: string; previous: CmsValue | null };
-export default function AdminSiteConfig() {
-  const { section: selected = 'home' } = useParams<{section?: string}>();
+export default function AdminSiteConfig({fixedSection}:{fixedSection?:CmsSection}={}) {
+  const { section: routeSection } = useParams<{section?: string}>();
+  const selected=(fixedSection||routeSection)==='cookies'?'consent':fixedSection||routeSection||'home';
   const [, navigate] = useLocation();
   const section = cmsSections.find(s=>s.key===selected) ?? cmsSections[0];
   const { isAuthenticated, isLoading, requireAuth } = useAdminAuth();
@@ -53,7 +58,7 @@ export default function AdminSiteConfig() {
         {langs.length>0&&<div className="mb-6"><label htmlFor="cms-language" className="text-sm mr-3">Idioma</label><select id="cms-language" className="border p-2 bg-background" value={selectedLang} onChange={e=>setLang(e.target.value)}>{langs.map(l=><option key={l.code} value={l.code}>{l.nameNative}</option>)}</select></div>}
         {error&&<div role="alert" className="border border-red-300 bg-red-50 text-red-800 whitespace-pre-line p-4 mb-5">{error}<Button variant="outline" size="sm" className="mt-3" onClick={()=>{if(!dirty||window.confirm('¿Descartar el borrador y cargar la última versión?')){setDraft(undefined);void query.refetch();}}}>Recargar versión guardada</Button></div>}
         {query.isLoading&&<p role="status">Cargando contenido…</p>}{query.isError&&<p role="alert">{query.error.message} <Button variant="outline" onClick={()=>query.refetch()}>Reintentar</Button></p>}
-        {value!==undefined&&<div className="border bg-background p-5 md:p-8" key={`${section.key}-${selectedLang??'all'}`}><ConfigFields value={value} media={section.key==='media'} path={selectedLang?[selectedLang]:[]} onChange={next=>setDraft(selectedLang&&obj?{...obj,[selectedLang]:next}:next)}/></div>}
+        {value!==undefined&&<div className="border bg-background p-5 md:p-8" key={`${section.key}-${selectedLang??'all'}`}>{section.key==='integrations'?<IntegrationFields value={value as unknown as SiteIntegrations} onChange={next=>setDraft(next as unknown as CmsValue)}/>:section.key==='navigation'?<NavigationFields value={value as unknown as SiteNavigation} onChange={next=>setDraft(next as unknown as CmsValue)}/>:<ConfigFields value={value} media={section.key==='media'} path={selectedLang?[selectedLang]:[]} onChange={next=>setDraft(selectedLang&&obj?{...obj,[selectedLang]:next}:next)}/>}</div>}
         {query.data?.previous&&<div className="mt-6"><Button variant="outline" onClick={()=>{if(window.confirm('¿Cargar la versión anterior como borrador? Tendrá que guardar para aplicarla.'))setDraft(query.data!.previous!);}}>Cargar versión anterior</Button></div>}
         {showPreview&&<div className="border mt-8 bg-background"><p className="p-3 text-sm">Vista del sitio guardado. El borrador se muestra después de guardar.</p><iframe key={query.data?.revision} title={`Vista de ${section.label}`} src={`${section.path}?cms-preview=1`} className="w-full h-[700px] border-t"/></div>}
       </section>

@@ -1,3 +1,4 @@
+import { AgentCreator } from "@/components/admin/AgentCreator";
 import { useEffect } from "react";
 import { AdminPageHelp } from "@/components/admin/AdminPageHelp";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -85,6 +86,7 @@ export default function AdminGeneratedAudio() {
           Cada vez que usas "Generar audio" desde el boletín, un post de redes o una alerta legal, el archivo queda guardado aquí.
           El historial es permanente y ningún usuario puede borrarlo. Copia la URL para reutilizarlo.
         </AdminPageHelp>
+        <AgentCreator agent="voice_agent"/>
 
         <div>
           <h2 className="text-sm uppercase tracking-[0.12em] text-muted-foreground mb-4">

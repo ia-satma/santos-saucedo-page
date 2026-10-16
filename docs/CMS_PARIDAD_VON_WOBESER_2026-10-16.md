@@ -141,3 +141,7 @@ La conexión de Brave se restableció y se recorrió Preview de Replit con la se
 La aceptación actual se detalla en [CMS_PRUEBAS_2026-10-16.md](CMS_PRUEBAS_2026-10-16.md): 202 comprobaciones HTTP, 48 pruebas de comportamiento/transporte, suites de CMS/editorial/accesos, TypeScript y build correctos. Se recorrieron 38 rutas, 19 pestañas y seis vistas móviles en Brave. No hubo llamadas de IA externas. Los archivos PPTX/PDF/PNG se generaron realmente con esquema determinista; no se certifica calidad generativa ni operación de todos los proveedores.
 
 Los cambios de esquema se aplican mediante DDL aditivo e idempotente al arrancar el CMS, dentro de una transacción con bloqueo; no requieren borrar ni recrear tablas existentes. En producción, las nuevas cargas privadas de documentos requieren antivirus disponible; esa infraestructura todavía debe validarse antes de publicar este corte.
+
+## Ampliación: formularios, navegación y medición
+
+El corte posterior se describe en [CMS_FORMULARIOS_NAVEGACION_2026-10-16.md](CMS_FORMULARIOS_NAVEGACION_2026-10-16.md). Sustituye los pendientes anteriores de administración de usuarios, submenús, carga fragmentada hasta 200 MB, recepción de CV privados, gestión de suscripciones, GA4/Search Console y categorías de cookies con implementaciones y pruebas locales. Las variantes automáticas de video, MFA y módulos institucionales ajenos al diseño no se declaran completos. La aceptación en Replit se registra por separado y la IA real permanece pendiente.
