@@ -2670,7 +2670,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   });
 
   // POST /api/translate - Translate single text
-  app.post("/api/translate", async (req: Request, res: Response) => {
+  app.post("/api/translate", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
       const { text, sourceLanguage, targetLanguage } = req.body;
 
@@ -2699,7 +2699,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   });
 
   // POST /api/translate/batch - Translate multiple texts
-  app.post("/api/translate/batch", async (req: Request, res: Response) => {
+  app.post("/api/translate/batch", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
       const { texts, sourceLanguage, targetLanguage } = req.body;
 
@@ -2728,7 +2728,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   });
 
   // POST /api/translate/suggest - Suggest translation for blog post
-  app.post("/api/translate/suggest", async (req: Request, res: Response) => {
+  app.post("/api/translate/suggest", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
       const { originalText, existingTranslations, targetLanguage } = req.body;
 
@@ -2809,6 +2809,28 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
     }
   });
 
+  // Public translation endpoints only translate text that already exists in the CMS,
+  // so anonymous visitors cannot spend the AI budget on arbitrary text.
+  async function getEntityTextValues(contentType: string, entityId: string): Promise<Set<string> | null> {
+    let entity: Record<string, unknown> | undefined;
+    switch (contentType) {
+      case "team_member": entity = await storage.getTeamMemberById(entityId); break;
+      case "practice_group": entity = await storage.getPracticeGroupById(entityId); break;
+      case "industry_group": entity = await storage.getIndustryGroupById(entityId); break;
+      case "news": entity = await storage.getNewsById(entityId); break;
+      case "event": entity = await storage.getEventById(entityId); break;
+      case "representative_matter":
+        entity = (await storage.getRepresentativeMatters()).find((m) => m.id === entityId);
+        break;
+    }
+    if (!entity) return null;
+    const values = new Set<string>();
+    for (const value of Object.values(entity)) {
+      if (typeof value === "string" && value.trim()) values.add(value);
+    }
+    return values;
+  }
+
   // POST /api/translate-content - Translate single content and cache it
   app.post("/api/translate-content", async (req: Request, res: Response) => {
     try {
@@ -2825,6 +2847,10 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         return res.status(400).json({ error: "Invalid language code" });
       }
 
+      const entityTexts = await getEntityTextValues(contentType, entityId);
+      if (!entityTexts || !entityTexts.has(sourceText)) {
+        return res.status(400).json({ error: "Source text does not match published content" });
+      }
       const existingTranslation = await storage.getTranslation(contentType, entityId, field, targetLanguage);
       if (existingTranslation && existingTranslation.sourceText === sourceText) {
         return res.json({ 
@@ -2909,11 +2935,16 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         return res.status(400).json({ error: "Invalid language code" });
       }
 
+      const entityTexts = await getEntityTextValues(contentType, entityId);
+      if (!entityTexts) {
+        return res.status(404).json({ error: "Content not found" });
+      }
       const fieldsToTranslate: { key: string; text: string }[] = [];
       const cachedTranslations: Record<string, string> = {};
 
       for (const [fieldName, text] of Object.entries(fields as Record<string, string>)) {
         if (!text || typeof text !== 'string' || !text.trim()) continue;
+        if (!entityTexts.has(text)) continue;
 
         const existingTranslation = await storage.getTranslation(contentType, entityId, fieldName, targetLanguage);
         if (existingTranslation && existingTranslation.sourceText === text && existingTranslation.translatedText) {
