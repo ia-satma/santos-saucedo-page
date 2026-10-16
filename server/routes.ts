@@ -2811,7 +2811,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
   // Public translation endpoints only translate text that already exists in the CMS,
   // so anonymous visitors cannot spend the AI budget on arbitrary text.
-  async function getEntityTextValues(contentType: string, entityId: string): Promise<Set<string> | null> {
+  async function getEntity(contentType: string, entityId: string): Promise<Record<string, unknown> | undefined> {
     let entity: Record<string, unknown> | undefined;
     switch (contentType) {
       case "team_member": entity = await storage.getTeamMemberById(entityId); break;
@@ -2823,6 +2823,11 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         entity = (await storage.getRepresentativeMatters()).find((m) => m.id === entityId);
         break;
     }
+    return entity;
+  }
+
+  async function getEntityTextValues(contentType: string, entityId: string, entity?: Record<string, unknown>): Promise<Set<string> | null> {
+    entity ??= await getEntity(contentType, entityId);
     if (!entity) return null;
     const values = new Set<string>();
     for (const value of Object.values(entity)) {
@@ -2935,8 +2940,9 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         return res.status(400).json({ error: "Invalid language code" });
       }
 
-      const entityTexts = await getEntityTextValues(contentType, entityId);
-      if (!entityTexts) {
+      const entity = await getEntity(contentType, entityId);
+      const entityTexts = await getEntityTextValues(contentType, entityId, entity);
+      if (!entity || !entityTexts) {
         return res.status(404).json({ error: "Content not found" });
       }
       const fieldsToTranslate: { key: string; text: string }[] = [];
@@ -2945,6 +2951,13 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       for (const [fieldName, text] of Object.entries(fields as Record<string, string>)) {
         if (!text || typeof text !== 'string' || !text.trim()) continue;
         if (!entityTexts.has(text)) continue;
+
+        // The CMS already stores English in the base field next to its *Es twin; serve it without calling the AI.
+        const englishText = entity[fieldName];
+        if (targetLanguage === 'en' && typeof englishText === 'string' && englishText.trim() && entity[`${fieldName}Es`]) {
+          cachedTranslations[fieldName] = englishText;
+          continue;
+        }
 
         const existingTranslation = await storage.getTranslation(contentType, entityId, fieldName, targetLanguage);
         if (existingTranslation && existingTranslation.sourceText === text && existingTranslation.translatedText) {
