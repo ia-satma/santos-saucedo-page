@@ -1,19 +1,19 @@
-import { useState, useMemo, type SyntheticEvent } from "react";
+import { useState, useMemo, type ReactNode, type SyntheticEvent } from "react";
 import { Link, useParams } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEOHead, { detailTitle, metaDescription } from "@/components/SEOHead";
 import { PersonJsonLd, BreadcrumbJsonLd } from "@/components/JsonLdSchema";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isStaticSite } from "@/lib/queryClient";
+import { formatNewsDate } from "@/lib/newsDate";
 import { getTeamPhotoObjectPosition } from "@/lib/teamPhotoPosition";
 import { fallbackToOriginalSrc, getTeamPhotoSrcSet, getTeamPhotoThumb, highFetchPriority, isNamedOnTeamPage } from "@/lib/teamPhotoSources";
 import { Eyebrow, LeadParagraph } from "@/components/editorial";
@@ -55,42 +55,27 @@ function pickLocalized(
   if (en) return { text: en, lang: "en" };
   return { text: es, lang: es ? "es" : undefined };
 }
-// Solo el texto de respaldo va aislado en <bdi lang>: el bloque conserva la dirección de la
-// página (en árabe, alineado a la derecha como el eyebrow y el nombre) y <bdi> toma la
-// dirección de su propio texto, así que el punto final no salta al otro extremo.
+// Textos cortos de respaldo (cargo, práctica): aislados en <bdi lang dir="ltr">, como en las
+// prácticas. El bloque conserva la dirección de la página (en árabe, alineado a la derecha
+// como el eyebrow y el nombre) y el punto final no salta al otro extremo.
 function LocalizedRun({ value }: { value: LocalizedText }) {
-  return value.lang ? <bdi lang={value.lang}>{value.text}</bdi> : <>{value.text}</>;
+  return value.lang ? <bdi lang={value.lang} dir="ltr">{value.text}</bdi> : <>{value.text}</>;
 }
 
-function NewsImageWithFallback({ 
-  src, 
-  alt, 
-  className 
-}: { 
-  src: string; 
-  alt: string; 
-  className?: string;
-}) {
-  const [hasError, setHasError] = useState(false);
-  
-  if (hasError || !src) {
-    return (
-      // Sin imagen: Hueso con un § tonal en Línea (en vez del "S&S")
-      <div aria-hidden="true" className={`bg-ss-paper flex items-center justify-center ${className}`}>
-        <span className="font-heading font-normal text-5xl text-ss-rule leading-none">§</span>
-      </div>
-    );
-  }
-  
+// Enlace de vuelta con el lenguaje de TextLink (home26/primitives): etiqueta y flecha, sin
+// botón. La flecha apunta hacia atrás (en árabe, a la derecha). inline-link: fuera de la regla
+// móvil que vuelve inline-flex todo <a>; el área táctil la amplía before (~44 px). [&_span]: la
+// regla móvil que pone todo span a 16 px no agranda la etiqueta.
+function BackTextLink({ href, children, testId }: { href: string; children: ReactNode; testId?: string }) {
   return (
-    <img
-      src={src}
-      alt={alt}
-      className={className}
-      loading="lazy"
-      decoding="async"
-      onError={() => setHasError(true)}
-    />
+    <Link
+      href={href}
+      className="inline-link ss-label relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3 [&_span]:[font-size:inherit]"
+      data-testid={testId}
+    >
+      <span aria-hidden="true" className="inline-block rtl:-scale-x-100">←</span>
+      <span className="ss-link">{children}</span>
+    </Link>
   );
 }
 
@@ -114,31 +99,40 @@ function RelatedTeamMemberCard({
   // Inglés: title tal cual. Otros idiomas: traducción, o el inglés antes que el español
   const displayTitle = pickLocalized(language, translatedFields.title, relatedMember.title, relatedMember.titleEs);
 
-  // Miniatura WebP de 128 px; si no existe donde se sirven las fotos, el original
+  // Miniatura WebP de 128 px; si no existe donde se sirven las fotos, el original; si tampoco,
+  // quedan las iniciales sobre Hueso
   const originalSrc = relatedMember.imageUrl || undefined;
   const [avatarSrc, setAvatarSrc] = useState(() => getTeamPhotoThumb(originalSrc));
 
   return (
-    <Link href={`/team/${relatedMember.slug}`} className="block w-full">
-      {/* Fila con filete superior a todo lo ancho; retrato en grises como todos los retratos */}
+    <Link href={`/team/${relatedMember.slug}`} className="inline-link block w-full">
+      {/* Fila con filete superior a todo lo ancho; retrato cuadrado de 56 px (sin círculo), en
+          grises como todos los retratos */}
       <div
         className="group flex w-full items-center gap-4 py-4 border-t border-ss-rule cursor-pointer"
         data-testid={`card-related-member-${relatedMember.slug}`}
       >
-        <Avatar className="w-12 h-12 shrink-0">
-          <AvatarImage
-            src={avatarSrc}
-            // alt vacío: el nombre ya es el texto del enlace (antes se leía dos veces)
-            alt=""
-            className="ss-photo"
-            onLoadingStatusChange={(status) => {
-              if (status === "error" && avatarSrc !== originalSrc) setAvatarSrc(originalSrc);
-            }}
-          />
-          <AvatarFallback className="bg-ss-paper text-ss-marino text-sm font-heading">
+        <span className="relative block h-14 w-14 shrink-0 overflow-hidden bg-ss-paper">
+          <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center font-heading text-sm text-ss-marino">
             {getInitials(relatedMember.name)}
-          </AvatarFallback>
-        </Avatar>
+          </span>
+          {avatarSrc && (
+            <img
+              src={avatarSrc}
+              // alt vacío: el nombre ya es el texto del enlace (antes se leía dos veces)
+              alt=""
+              width={56}
+              height={56}
+              loading="lazy"
+              decoding="async"
+              className="ss-photo absolute inset-0 h-full w-full object-cover object-top"
+              onError={(e) => {
+                if (avatarSrc !== originalSrc) setAvatarSrc(originalSrc);
+                else e.currentTarget.style.display = "none";
+              }}
+            />
+          )}
+        </span>
         <div className="flex-1 min-w-0">
           {/* Nombre y cargo completos: si no caben, pasan a una segunda línea (antes "Mario Saucedo M…") */}
           <p className="font-heading text-[17px] leading-[1.2] tracking-[-0.01em] text-ss-marino group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1">
@@ -641,7 +635,6 @@ export default function TeamMemberDetail() {
     relatedTeam: string;
     viewProfile: string;
     relatedNews: string;
-    readMore: string;
     featuredRecognition: string;
     totalRecognitions: string;
     topPublications: string;
@@ -658,47 +651,46 @@ export default function TeamMemberDetail() {
     };
   }> = {
     en: {
-      backToAll: "All Team Members",
+      backToAll: "All team members",
       partner: "Partner",
       ofCounsel: "Of Counsel",
       associate: "Associate",
-      contactInfo: "Contact Information",
-      practiceAreas: "Practice Areas",
-      industryGroups: "Industry Groups",
+      contactInfo: "Contact information",
+      practiceAreas: "Practice areas",
+      industryGroups: "Industry groups",
       biography: "Biography",
       education: "Education",
-      barAdmissions: "Bar Admissions",
+      barAdmissions: "Bar admissions",
       languages: "Languages",
-      affiliations: "Professional Affiliations",
-      rankings: "Rankings & Recognition",
+      affiliations: "Professional affiliations",
+      rankings: "Rankings and recognition",
       publications: "Publications",
-      representativeMatters: "Representative Matters",
-      experience: "Professional Experience",
+      representativeMatters: "Representative matters",
+      experience: "Professional experience",
       contactCta: "Contact",
       officeLabel: "Office",
       phoneLabel: "Telephone",
       emailLabel: "Email",
-      emailUs: "Send Email",
+      emailUs: "Send email",
       callUs: "Call",
       downloadVCard: "Download vCard",
       errorMessage: "Team member not found",
       loading: "Loading...",
-      relatedTeam: "Related Team Members",
-      viewProfile: "View Profile",
-      relatedNews: "Latest News & Articles",
-      readMore: "Read More",
-      featuredRecognition: "Featured Recognition",
-      totalRecognitions: "Total Recognitions",
-      topPublications: "Top Publications",
-      tieredRankings: "Tiered Rankings",
-      otherRecognitions: "Other Recognitions",
+      relatedTeam: "Related team members",
+      viewProfile: "View profile",
+      relatedNews: "Latest news and articles",
+      featuredRecognition: "Featured recognition",
+      totalRecognitions: "Total recognitions",
+      topPublications: "Top publications",
+      tieredRankings: "Tiered rankings",
+      otherRecognitions: "Other recognitions",
       band: "Band",
-      viewPublication: "View Publication",
+      viewPublication: "View publication",
       positions: {
-        foundingPartner: "Founding Partner",
+        foundingPartner: "Founding partner",
         partner: "Partner",
         ofCounsel: "Of Counsel",
-        seniorAssociate: "Senior Associate",
+        seniorAssociate: "Senior associate",
         associate: "Associate",
       },
     },
@@ -731,7 +723,6 @@ export default function TeamMemberDetail() {
       relatedTeam: "Equipo relacionado",
       viewProfile: "Ver perfil",
       relatedNews: "Últimas noticias y artículos",
-      readMore: "Leer más",
       featuredRecognition: "Reconocimiento destacado",
       totalRecognitions: "Total de reconocimientos",
       topPublications: "Publicaciones principales",
@@ -770,13 +761,12 @@ export default function TeamMemberDetail() {
       emailLabel: "E-Mail",
       emailUs: "E-Mail senden",
       callUs: "Anrufen",
-      downloadVCard: "VCard herunterladen",
+      downloadVCard: "vCard herunterladen",
       errorMessage: "Teammitglied nicht gefunden",
       loading: "Wird geladen...",
       relatedTeam: "Weitere Teammitglieder",
       viewProfile: "Profil anzeigen",
       relatedNews: "Aktuelle Nachrichten & Artikel",
-      readMore: "Mehr lesen",
       featuredRecognition: "Hervorgehobene Anerkennung",
       totalRecognitions: "Gesamte Anerkennungen",
       topPublications: "Top-Publikationen",
@@ -821,7 +811,6 @@ export default function TeamMemberDetail() {
       relatedTeam: "相关团队成员",
       viewProfile: "查看简介",
       relatedNews: "最新新闻与文章",
-      readMore: "阅读更多",
       featuredRecognition: "重点认可",
       totalRecognitions: "认可总数",
       topPublications: "主要出版物",
@@ -866,7 +855,6 @@ export default function TeamMemberDetail() {
       relatedTeam: "관련 팀원",
       viewProfile: "프로필 보기",
       relatedNews: "최신 뉴스 및 기사",
-      readMore: "더 읽기",
       featuredRecognition: "주요 인정",
       totalRecognitions: "총 인정",
       topPublications: "주요 출판물",
@@ -911,7 +899,6 @@ export default function TeamMemberDetail() {
       relatedTeam: "関連チームメンバー",
       viewProfile: "プロフィールを見る",
       relatedNews: "最新ニュース・記事",
-      readMore: "続きを読む",
       featuredRecognition: "注目の評価",
       totalRecognitions: "評価総数",
       topPublications: "主要出版物",
@@ -956,7 +943,6 @@ export default function TeamMemberDetail() {
       relatedTeam: "أعضاء الفريق ذوو الصلة",
       viewProfile: "عرض الملف الشخصي",
       relatedNews: "آخر الأخبار والمقالات",
-      readMore: "اقرأ المزيد",
       featuredRecognition: "التقدير المميز",
       totalRecognitions: "إجمالي التقديرات",
       topPublications: "أهم المنشورات",
@@ -1001,7 +987,6 @@ export default function TeamMemberDetail() {
       relatedTeam: "Связанные члены команды",
       viewProfile: "Посмотреть профиль",
       relatedNews: "Последние новости и статьи",
-      readMore: "Читать далее",
       featuredRecognition: "Главное признание",
       totalRecognitions: "Всего признаний",
       topPublications: "Ведущие публикации",
@@ -1046,7 +1031,6 @@ export default function TeamMemberDetail() {
       relatedTeam: "Membres de l'équipe associés",
       viewProfile: "Voir le profil",
       relatedNews: "Dernières actualités et articles",
-      readMore: "Lire la suite",
       featuredRecognition: "Reconnaissance mise en avant",
       totalRecognitions: "Total des reconnaissances",
       topPublications: "Principales publications",
@@ -1091,7 +1075,6 @@ export default function TeamMemberDetail() {
       relatedTeam: "Membri del team correlati",
       viewProfile: "Visualizza profilo",
       relatedNews: "Ultime notizie e articoli",
-      readMore: "Leggi di più",
       featuredRecognition: "Riconoscimento in evidenza",
       totalRecognitions: "Riconoscimenti totali",
       topPublications: "Pubblicazioni principali",
@@ -1111,27 +1094,8 @@ export default function TeamMemberDetail() {
 
   const t = content[language] || content.en;
 
-  const formatDate = (date: string | Date | null) => {
-    if (!date) return '';
-    const d = new Date(date);
-    const localeMap: Record<string, string> = {
-      en: 'en-US',
-      es: 'es-MX',
-      de: 'de-DE',
-      zh: 'zh-CN',
-      ko: 'ko-KR',
-      ja: 'ja-JP',
-      ar: 'ar-SA',
-      ru: 'ru-RU',
-      fr: 'fr-FR',
-      it: 'it-IT',
-    };
-    return d.toLocaleDateString(localeMap[language] || 'en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
+  // Fecha de las notas: el formateador compartido del Monitor Laboral (lib/newsDate)
+  const formatDate = (date: string | Date | null) => formatNewsDate(date, language);
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
@@ -1150,13 +1114,29 @@ export default function TeamMemberDetail() {
     }
   };
 
-  // Misma regla que /team (isNamedOnTeamPage): un socio sin foto confirmada tampoco aparece aquí
+  // Misma regla que /team (isNamedOnTeamPage): un socio sin foto confirmada tampoco aparece aquí.
+  // Tres como máximo: una fila de tres desde md, sin celdas vacías.
   const relatedMembers = allTeamMembers?.filter(m => 
     m.id !== member?.id && 
     isNamedOnTeamPage(m) &&
     ((m.isPartner && member?.isPartner) || 
      (m.title === member?.title))
-  ).slice(0, 4);
+  ).slice(0, 3);
+
+  // Áreas de práctica e industrias de la persona: solo las que trae su propio registro (ids o
+  // slugs en practiceGroupIds / industryGroupIds, de la tabla team_member_practice_groups). Hoy
+  // ningún registro las trae y las secciones no se pintan: antes cada ficha listaba todas las
+  // prácticas de la firma, una afirmación sin confirmar sobre cada persona.
+  const memberRecord = member as (TeamMember & { practiceGroupIds?: string[] | null; industryGroupIds?: string[] | null }) | undefined;
+  const memberPracticeRefs = memberRecord?.practiceGroupIds ?? [];
+  const memberIndustryRefs = memberRecord?.industryGroupIds ?? [];
+  const memberPracticeGroups = (practiceGroups ?? []).filter(g => memberPracticeRefs.includes(g.id) || memberPracticeRefs.includes(g.slug));
+  const memberIndustryGroups = (industryGroups ?? []).filter(g => memberIndustryRefs.includes(g.id) || memberIndustryRefs.includes(g.slug));
+
+  // Sin correo ni teléfono (el socio fundador in memoriam) no hay botones ni vCard, como no hay
+  // bloque de contacto
+  const isInMemoriam = /in memoriam/i.test(member?.title ?? "");
+  const showActions = !!(member?.email || member?.phone) && !isInMemoriam;
 
   // Sin viñeta: la jerarquía la dan la letra y los filetes
   const getPublicationIcon = (_publication: string): JSX.Element | null => null;
@@ -1211,19 +1191,17 @@ export default function TeamMemberDetail() {
     }));
   };
 
+  // knowsAbout del JSON-LD: las prácticas de la propia persona, no todas las de la firma
   const getMemberKnowsAbout = () => {
-    const areas: string[] = [];
-    if (practiceGroups && member) {
-      practiceGroups.forEach(pg => {
-        areas.push(language === "es" ? pg.nameEs : pg.name);
-      });
-    }
+    const areas = memberPracticeGroups.map(pg => (language === "es" ? pg.nameEs : pg.name));
     return areas.length > 0 ? areas.slice(0, 10) : undefined;
   };
 
   if (error) {
     return (
       <div className="min-h-screen bg-background" data-testid="page-team-member-error">
+        {/* Ficha inexistente: título y descripción de la 404 (noindex) */}
+        <SEOHead page="notFound" language={language} />
         <Header />
         {/* Cabecera sticky en flujo: ya no hace falta compensar el header fijo */}
         <main id="main-content" className="pt-16 pb-20 lg:pt-20">
@@ -1231,11 +1209,10 @@ export default function TeamMemberDetail() {
             <h2 className="ss-h2 mb-6" data-testid="text-error-title">
               {t.errorMessage}
             </h2>
-            <Link href="/team">
-              <Button variant="outline" data-testid="button-back-to-team">
-                {t.backToAll}
-              </Button>
-            </Link>
+            {/* Navegación: enlace de texto, no botón (antes un botón dentro del enlace) */}
+            <BackTextLink href="/team" testId="button-back-to-team">
+              {t.backToAll}
+            </BackTextLink>
           </div>
         </main>
         <Footer />
@@ -1290,12 +1267,26 @@ export default function TeamMemberDetail() {
   const displayTitle = localizedTitle.text;
   const displayBio = localizedBio.text;
   const profilePhotoSrcSet = getTeamPhotoSrcSet(member?.imageUrl);
+  // Descripción: la primera oración de la biografía en el idioma de la página; si solo hay el
+  // texto de respaldo en otro idioma, la descripción general del equipo en este idioma
+  const seoDescription = !localizedBio.lang ? metaDescription(displayBio) || undefined : undefined;
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-team-member-detail">
+      {member && (
+        <SEOHead
+          page="team"
+          language={language}
+          customTitle={detailTitle(member.name)}
+          customDescription={seoDescription}
+          customPath={`/team/${member.slug}`}
+        />
+      )}
       <Header />
       
-      {member && (
+      {/* JSON-LD solo de quien el sitio nombra (isNamedOnTeamPage): ni socios sin confirmar ni
+          asociados */}
+      {member && isNamedOnTeamPage(member) && (
         <>
           <PersonJsonLd
             name={member.name}
@@ -1336,15 +1327,12 @@ export default function TeamMemberDetail() {
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
             >
-              <Link href="/team">
-                <span 
-                  className="inline-flex items-center gap-2 mb-6 cursor-pointer"
-                  data-testid="link-back-to-team"
-                >
-                  <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+              {/* Vuelta a /team: enlace de texto (etiqueta con flecha), como toda navegación */}
+              <div className="mb-6">
+                <BackTextLink href="/team" testId="link-back-to-team">
                   {t.backToAll}
-                </span>
-              </Link>
+                </BackTextLink>
+              </div>
               {/* Móvil (y lectores de pantalla): nombre, foto y contacto, en ese orden; antes la
                   foto a todo lo ancho empujaba el nombre bajo el primer pantallazo. Desde md cada
                   bloque va a su celda: foto a la izquierda en las dos filas y el texto alineado
@@ -1406,41 +1394,44 @@ export default function TeamMemberDetail() {
                     nombre. Teléfono: uno debajo de otro, antes del retrato. Desde sm, una fila de tres
                     columnas iguales (en md, a todo lo ancho bajo el retrato y el nombre; desde lg, al
                     pie de la columna del texto). El número de teléfono (dir="ltr") está en el bloque
-                    de contacto. */}
-                <div className={`grid grid-cols-1 sm:grid-cols-3 lg:max-w-[48rem] content-start gap-3 ${PROFILE_ACTIONS_CELL}`}>
-                  {member?.email && (
+                    de contacto. Sin correo ni teléfono (in memoriam), ni botones ni vCard. */}
+                {showActions && (
+                  <div className={`grid grid-cols-1 sm:grid-cols-3 lg:max-w-[48rem] content-start gap-3 ${PROFILE_ACTIONS_CELL}`}>
+                    {member?.email && (
+                      <Button
+                        variant="outline"
+                        className={PROFILE_BUTTON}
+                        asChild
+                        data-testid="button-email"
+                      >
+                        <a href={`mailto:${member.email}`}>
+                          {t.emailUs}
+                        </a>
+                      </Button>
+                    )}
+                    {member?.phone && (
+                      <Button
+                        variant="outline"
+                        className={PROFILE_BUTTON}
+                        asChild
+                        data-testid="button-phone"
+                      >
+                        {/* Sin espacios (RFC 3966): el mismo href que el del bloque de contacto */}
+                        <a href={`tel:${member.phone.replace(/\s+/g, "")}`}>
+                          {t.callUs}
+                        </a>
+                      </Button>
+                    )}
                     <Button
                       variant="outline"
                       className={PROFILE_BUTTON}
-                      asChild
-                      data-testid="button-email"
+                      onClick={handleDownloadVCard}
+                      data-testid="button-download-vcard"
                     >
-                      <a href={`mailto:${member.email}`}>
-                        {t.emailUs}
-                      </a>
+                      {t.downloadVCard}
                     </Button>
-                  )}
-                  {member?.phone && (
-                    <Button
-                      variant="outline"
-                      className={PROFILE_BUTTON}
-                      asChild
-                      data-testid="button-phone"
-                    >
-                      <a href={`tel:${member.phone}`}>
-                        {t.callUs}
-                      </a>
-                    </Button>
-                  )}
-                  <Button
-                    variant="outline"
-                    className={PROFILE_BUTTON}
-                    onClick={handleDownloadVCard}
-                    data-testid="button-download-vcard"
-                  >
-                    {t.downloadVCard}
-                  </Button>
-                </div>
+                  </div>
+                )}
                 <div
                   className={`group relative overflow-hidden ${PROFILE_PHOTO_CELL}`}
                   data-testid="container-profile-photo"
@@ -1501,7 +1492,7 @@ export default function TeamMemberDetail() {
                     data-testid="section-biography"
                   >
                     <h2 
-                      className="ss-h3 mb-6 flex items-center gap-3"
+                      className="ss-h2-sm mb-6 flex items-center gap-3"
                       data-testid="text-biography-title"
                     >
                       {t.biography}
@@ -1509,13 +1500,13 @@ export default function TeamMemberDetail() {
                         <Loader2 className="w-4 h-4 animate-spin text-ss-medio" aria-hidden="true" />
                       )}
                     </h2>
-                    {/* Biografía sin traducción: lang="en" en el bloque, que conserva la dirección de la
-                        página (filete y alineación a la derecha en árabe); cada párrafo toma la dirección
-                        de su texto (unicode-bidi: plaintext), así el punto final no salta al inicio. */}
+                    {/* Biografía sin traducción: bloque largo en el idioma de origen, marcado lang y
+                        dir="ltr" (en árabe, alineado a la izquierda, como el resumen de las prácticas
+                        y el cuerpo de las notas); los textos cortos de respaldo van en <bdi>. */}
                     <div
                       data-testid="container-biography"
                       lang={localizedBio.lang}
-                      className={localizedBio.lang ? "rtl:text-right [&_p]:[unicode-bidi:plaintext]" : undefined}
+                      dir={localizedBio.lang ? "ltr" : undefined}
                     >
                       {displayBio ? (() => {
                         const paragraphs = displayBio.split(/\n\s*\n/).map((p: string) => p.trim()).filter(Boolean);
@@ -1558,7 +1549,7 @@ export default function TeamMemberDetail() {
                     <div>
                       <div className="mb-6">
                         <h2
-                          className="ss-h3 flex items-baseline gap-3"
+                          className="ss-h2-sm flex items-baseline gap-3"
                           data-testid="text-rankings-title"
                         >
                           <span>{t.rankings}</span>
@@ -1618,7 +1609,7 @@ export default function TeamMemberDetail() {
                   </motion.section>
                 )}
 
-                {practiceGroups && practiceGroups.length > 0 && (
+                {memberPracticeGroups.length > 0 && (
                   <motion.section
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -1627,13 +1618,13 @@ export default function TeamMemberDetail() {
                     data-testid="section-practice-areas"
                   >
                     <h2 
-                      className="ss-h3 mb-5"
+                      className="ss-h2-sm mb-5"
                       data-testid="text-practice-areas-title"
                     >
                       {t.practiceAreas}
                     </h2>
                     <div className="flex flex-wrap gap-2">
-                      {practiceGroups.slice(0, 8).map((group) => (
+                      {memberPracticeGroups.map((group) => (
                         <PracticeGroupBadge
                           key={group.id}
                           group={group}
@@ -1644,7 +1635,7 @@ export default function TeamMemberDetail() {
                   </motion.section>
                 )}
 
-                {industryGroups && industryGroups.length > 0 && (
+                {memberIndustryGroups.length > 0 && (
                   <motion.section
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -1653,13 +1644,13 @@ export default function TeamMemberDetail() {
                     data-testid="section-industry-groups"
                   >
                     <h2 
-                      className="ss-h3 mb-5"
+                      className="ss-h2-sm mb-5"
                       data-testid="text-industry-groups-title"
                     >
                       {t.industryGroups}
                     </h2>
                     <div className="flex flex-wrap gap-2">
-                      {industryGroups.slice(0, 6).map((group) => (
+                      {memberIndustryGroups.map((group) => (
                         <IndustryGroupBadge
                           key={group.id}
                           group={group}
@@ -1679,7 +1670,7 @@ export default function TeamMemberDetail() {
                     data-testid="section-education"
                   >
                     <h2 
-                      className="ss-h3 mb-5"
+                      className="ss-h2-sm mb-5"
                       data-testid="text-education-title"
                     >
                       {t.education}
@@ -1707,7 +1698,7 @@ export default function TeamMemberDetail() {
                     data-testid="section-bar-admissions"
                   >
                     <h2 
-                      className="ss-h3 mb-5"
+                      className="ss-h2-sm mb-5"
                       data-testid="text-bar-admissions-title"
                     >
                       {t.barAdmissions}
@@ -1735,7 +1726,7 @@ export default function TeamMemberDetail() {
                     data-testid="section-languages"
                   >
                     <h2 
-                      className="ss-h3 mb-5"
+                      className="ss-h2-sm mb-5"
                       data-testid="text-languages-title"
                     >
                       {t.languages}
@@ -1763,7 +1754,7 @@ export default function TeamMemberDetail() {
                     data-testid="section-affiliations"
                   >
                     <h2 
-                      className="ss-h3 mb-5"
+                      className="ss-h2-sm mb-5"
                       data-testid="text-affiliations-title"
                     >
                       {t.affiliations}
@@ -1791,7 +1782,7 @@ export default function TeamMemberDetail() {
                     data-testid="section-publications"
                   >
                     <h2 
-                      className="ss-h3 mb-5"
+                      className="ss-h2-sm mb-5"
                       data-testid="text-publications-title"
                     >
                       {t.publications}
@@ -1820,7 +1811,7 @@ export default function TeamMemberDetail() {
                     data-testid="section-representative-matters"
                   >
                     <h2 
-                      className="ss-h3 mb-5"
+                      className="ss-h2-sm mb-5"
                       data-testid="text-representative-matters-title"
                     >
                       {t.representativeMatters}
@@ -1848,7 +1839,7 @@ export default function TeamMemberDetail() {
                     data-testid="section-experience"
                   >
                     <h2 
-                      className="ss-h3 mb-5"
+                      className="ss-h2-sm mb-5"
                       data-testid="text-experience-title"
                     >
                       {t.experience}
@@ -1989,9 +1980,9 @@ export default function TeamMemberDetail() {
               </div>
             </div>
 
-            {/* Equipo relacionado: filete superior en cada persona, debajo de las dos columnas; dos
-                columnas desde sm y cuatro desde xl (en lg las celdas cortaban nombres y cargos); una
-                columna con filete final en el teléfono */}
+            {/* Equipo relacionado: filete superior en cada persona, debajo de las dos columnas; una
+                columna con filete final en el teléfono y tres iguales desde md (como mucho tres
+                personas: la fila se llena; nombres y cargos pasan a otra línea si no caben) */}
             {relatedMembers && relatedMembers.length > 0 && (
               <motion.section
                 initial={{ opacity: 0, y: 20 }}
@@ -2002,12 +1993,12 @@ export default function TeamMemberDetail() {
                 data-testid="section-related-team"
               >
                 <h2
-                  className="ss-h3 mb-5"
+                  className="ss-h2 mb-6"
                   data-testid="text-related-team-title"
                 >
                   {t.relatedTeam}
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-8 border-b border-ss-rule sm:border-b-0">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 border-b border-ss-rule md:border-b-0">
                   {relatedMembers.map((relatedMember) => (
                     <RelatedTeamMemberCard
                       key={relatedMember.id}
@@ -2032,69 +2023,62 @@ export default function TeamMemberDetail() {
             >
               <div className="ss-container">
                 <h2 
-                  className="ss-h2-sm mb-8"
+                  className="ss-h2 mb-8"
                   data-testid="text-related-news-title"
                 >
                   {t.relatedNews}
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-                  {relatedNews.map((article) => (
-                    <motion.div 
-                      key={article.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4 }}
-                    >
-                      <Link href={`/news/${article.slug}`}>
-                        {/* Sin caja: imagen sin velo, categoría y fecha como etiquetas, titular en la romana */}
-                        <article
-                          className="group h-full cursor-pointer"
-                          data-testid={`card-related-news-${article.slug}`}
-                        >
-                          <div className="relative h-48 overflow-hidden bg-ss-paper">
-                            <NewsImageWithFallback
-                              src={article.imageUrl || ""}
-                              alt={language === "es" ? article.titleEs : article.title}
-                              className="ss-photo--colour w-full h-full object-cover"
-                            />
-                          </div>
-                          <div className="pt-5">
-                            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-2">
-                              {article.category && (
-                                <span 
-                                  className="ss-label text-ss-marino"
-                                  data-testid={`badge-news-category-${article.slug}`}
-                                >
-                                  {language === "es" ? article.categoryEs : article.category?.charAt(0).toUpperCase() + article.category?.slice(1)}
-                                </span>
-                              )}
-                              <span className="ss-label ss-num text-ss-medio" data-testid={`text-news-date-${article.slug}`}>
-                                {formatDate(article.date)}
-                              </span>
-                            </p>
-                            <h3 
-                              className="ss-h3 text-[20px] mb-3 line-clamp-3 group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1"
-                              data-testid={`text-news-title-${article.slug}`}
+                {/* Filas de filete, como la lista del Monitor Laboral: categoría y fecha en etiqueta,
+                    titular en la romana que es el enlace y entradilla; sin foto, loseta ni "Leer más" */}
+                <ul className="border-t border-ss-rule">
+                  {relatedNews.map((article) => {
+                    const headline = language === "es" ? article.titleEs : article.title;
+                    const category = article.category
+                      ? (language === "es" ? article.categoryEs : article.category.charAt(0).toUpperCase() + article.category.slice(1))
+                      : null;
+                    const date = formatDate(article.date);
+                    return (
+                      <li
+                        key={article.id}
+                        className="grid grid-cols-1 gap-y-3 border-b border-ss-rule py-8 lg:grid-cols-12 lg:gap-x-6"
+                        data-testid={`card-related-news-${article.slug}`}
+                      >
+                        <p className="ss-label ss-num lg:col-span-4 lg:pt-2 [&_span]:[font-size:inherit]">
+                          {category && (
+                            <span className="text-ss-marino" data-testid={`badge-news-category-${article.slug}`}>
+                              {category}
+                            </span>
+                          )}
+                          {category && date && <span aria-hidden="true" className="text-ss-medio"> · </span>}
+                          <span className="text-ss-medio" data-testid={`text-news-date-${article.slug}`}>
+                            {date}
+                          </span>
+                        </p>
+                        <div className="lg:col-span-7 lg:col-start-5 xl:col-span-6">
+                          <h3
+                            className="ss-display text-[clamp(22px,1.7vw,25px)] font-[450] leading-[1.25] tracking-[-0.01em] text-ss-marino"
+                            data-testid={`text-news-title-${article.slug}`}
+                          >
+                            <Link
+                              href={`/news/${article.slug}`}
+                              className="inline-link hover:underline decoration-1 underline-offset-4"
                             >
-                              {language === "es" ? article.titleEs : article.title}
-                            </h3>
-                            <p 
-                              className="text-base leading-[1.55] text-ss-tinta line-clamp-3 mb-4"
+                              {headline}
+                            </Link>
+                          </h3>
+                          {(language === "es" ? article.excerptEs : article.excerpt) && (
+                            <p
+                              className="mt-3 text-[16px] leading-[1.55] text-ss-tinta [text-wrap:pretty]"
                               data-testid={`text-news-excerpt-${article.slug}`}
                             >
                               {language === "es" ? article.excerptEs : article.excerpt}
                             </p>
-                            <span className="inline-flex items-center gap-2 text-[15px] font-semibold text-ss-marino">
-                              {t.readMore}
-                              <span aria-hidden="true" className="ss-arrow">→</span>
-                            </span>
-                          </div>
-                        </article>
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
               </div>
             </motion.section>
           )}

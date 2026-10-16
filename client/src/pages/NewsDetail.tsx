@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation, useParams } from "wouter";
+import { Link, useParams } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowLeft, Linkedin, Mail, LinkIcon, MessageCircle, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -9,12 +9,15 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/JsonLdSchema";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { Eyebrow, LeadParagraph } from "@/components/editorial";
 import { formatNewsDate } from "@/lib/newsDate";
+import { MonitorList } from "@/components/monitor/MonitorList";
+import { chrome26 } from "@/components/home26/chrome26";
 import type { News, TeamMember } from "@shared/schema";
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
@@ -52,38 +55,6 @@ function NewsHeroImage({ src }: { src: string }) {
         data-testid="img-news-hero"
       />
     </figure>
-  );
-}
-
-function NewsCardImage({ 
-  src, 
-  alt, 
-  className 
-}: { 
-  src: string; 
-  alt: string; 
-  className?: string;
-}) {
-  const [hasError, setHasError] = useState(false);
-  
-  if (hasError || !src) {
-    return (
-      // Sin imagen: Hueso con un § tonal en Línea (en vez del "S&S")
-      <div aria-hidden="true" className={`bg-ss-paper flex items-center justify-center ${className}`}>
-        <span className="font-heading font-normal text-5xl text-ss-rule leading-none">§</span>
-      </div>
-    );
-  }
-  
-  return (
-    <img
-      src={src}
-      alt={alt}
-      className={className}
-      loading="lazy"
-      decoding="async"
-      onError={() => setHasError(true)}
-    />
   );
 }
 
@@ -177,6 +148,8 @@ export default function NewsDetail() {
   const { data: allNews } = useQuery<News[]>({
     queryKey: ["/api/news"],
   });
+  // "Más del Monitor Laboral" solo si hay otras notas publicadas
+  const hasRelatedNews = !!allNews?.some((item) => item.id !== newsArticle?.id && item.published !== false);
 
   const { data: relatedAuthors } = useQuery<TeamMember[]>({
     queryKey: ['/api/news', slug, 'authors'],
@@ -197,9 +170,9 @@ export default function NewsDetail() {
     enabled: !!newsArticle,
   });
 
-  // Vuelta y relacionados con el nombre de la publicación, como el eyebrow (newsLabel) y el
-  // menú: "Monitor Laboral" en español, "Labor Monitor" en inglés; en los demás idiomas, el
-  // rótulo del menú (chrome26.ts).
+  // Vuelta y relacionados con el nombre de la publicación, como el eyebrow y el menú:
+  // "Monitor Laboral" en español, "Labor Monitor" en inglés; en los demás idiomas, el rótulo
+  // del menú (chrome26.ts). Inglés en minúscula inicial, como el español.
   const content: Record<string, {
     /** Primer paso de las migas (JSON-LD) */
     home: string;
@@ -207,19 +180,10 @@ export default function NewsDetail() {
     share: string;
     relatedNews: string;
     errorMessage: string;
-    loading: string;
-    readMore: string;
     copyLink: string;
     linkCopied: string;
-    shareVia: string;
     aboutTheAuthor: string;
     aboutTheAuthors: string;
-    publishedOn: string;
-    author: string;
-    topics: string;
-    category: string;
-    /** Rótulo del eyebrow del artículo: el nombre de la publicación, como en el menú */
-    newsLabel: string;
   }> = {
     en: {
       home: "Home",
@@ -227,18 +191,10 @@ export default function NewsDetail() {
       share: "Share this article",
       relatedNews: "More from the Labor Monitor",
       errorMessage: "Article not found",
-      loading: "Loading...",
-      readMore: "Read More",
-      copyLink: "Copy Link",
-      linkCopied: "Link copied to clipboard!",
-      shareVia: "Share via",
-      aboutTheAuthor: "About the Author",
-      aboutTheAuthors: "About the Authors",
-      publishedOn: "Published on",
-      author: "Author",
-      topics: "Topics",
-      category: "Category",
-      newsLabel: "Labor Monitor",
+      copyLink: "Copy link",
+      linkCopied: "Link copied.",
+      aboutTheAuthor: "About the author",
+      aboutTheAuthors: "About the authors",
     },
     es: {
       home: "Inicio",
@@ -246,18 +202,10 @@ export default function NewsDetail() {
       share: "Compartir este artículo",
       relatedNews: "Más del Monitor Laboral",
       errorMessage: "Artículo no encontrado",
-      loading: "Cargando...",
-      readMore: "Leer más",
       copyLink: "Copiar enlace",
-      linkCopied: "¡Enlace copiado al portapapeles!",
-      shareVia: "Compartir vía",
+      linkCopied: "Enlace copiado.",
       aboutTheAuthor: "Acerca del autor",
       aboutTheAuthors: "Acerca de los autores",
-      publishedOn: "Publicado el",
-      author: "Autor",
-      topics: "Temas",
-      category: "Categoría",
-      newsLabel: "Monitor Laboral",
     },
     de: {
       home: "Startseite",
@@ -265,18 +213,10 @@ export default function NewsDetail() {
       share: "Artikel teilen",
       relatedNews: "Weitere Nachrichten",
       errorMessage: "Nachricht nicht gefunden",
-      loading: "Wird geladen...",
-      readMore: "Weiterlesen",
       copyLink: "Link kopieren",
-      linkCopied: "Link in die Zwischenablage kopiert!",
-      shareVia: "Teilen über",
+      linkCopied: "Link kopiert.",
       aboutTheAuthor: "Über den Autor",
       aboutTheAuthors: "Über die Autoren",
-      publishedOn: "Veröffentlicht am",
-      author: "Autor",
-      topics: "Themen",
-      category: "Kategorie",
-      newsLabel: "Nachrichten",
     },
     zh: {
       home: "首页",
@@ -284,18 +224,10 @@ export default function NewsDetail() {
       share: "分享文章",
       relatedNews: "更多新闻",
       errorMessage: "未找到新闻",
-      loading: "加载中...",
-      readMore: "阅读更多",
       copyLink: "复制链接",
-      linkCopied: "链接已复制到剪贴板！",
-      shareVia: "分享至",
+      linkCopied: "链接已复制。",
       aboutTheAuthor: "关于作者",
       aboutTheAuthors: "关于作者们",
-      publishedOn: "发布日期",
-      author: "作者",
-      topics: "主题",
-      category: "类别",
-      newsLabel: "新闻",
     },
     ko: {
       home: "홈",
@@ -303,18 +235,10 @@ export default function NewsDetail() {
       share: "기사 공유",
       relatedNews: "뉴스 더 보기",
       errorMessage: "뉴스를 찾을 수 없습니다",
-      loading: "로딩 중...",
-      readMore: "더 읽기",
       copyLink: "링크 복사",
-      linkCopied: "링크가 클립보드에 복사되었습니다!",
-      shareVia: "공유하기",
+      linkCopied: "링크가 복사되었습니다.",
       aboutTheAuthor: "저자 소개",
       aboutTheAuthors: "저자들 소개",
-      publishedOn: "게시일",
-      author: "저자",
-      topics: "주제",
-      category: "카테고리",
-      newsLabel: "뉴스",
     },
     ja: {
       home: "ホーム",
@@ -322,18 +246,10 @@ export default function NewsDetail() {
       share: "記事を共有",
       relatedNews: "その他のニュース",
       errorMessage: "ニュースが見つかりません",
-      loading: "読み込み中...",
-      readMore: "続きを読む",
       copyLink: "リンクをコピー",
-      linkCopied: "リンクがクリップボードにコピーされました！",
-      shareVia: "共有する",
+      linkCopied: "リンクをコピーしました。",
       aboutTheAuthor: "著者について",
       aboutTheAuthors: "著者たちについて",
-      publishedOn: "公開日",
-      author: "著者",
-      topics: "トピック",
-      category: "カテゴリー",
-      newsLabel: "ニュース",
     },
     ar: {
       home: "الرئيسية",
@@ -341,18 +257,10 @@ export default function NewsDetail() {
       share: "مشاركة المقال",
       relatedNews: "المزيد من الأخبار",
       errorMessage: "الخبر غير موجود",
-      loading: "جاري التحميل...",
-      readMore: "اقرأ المزيد",
       copyLink: "نسخ الرابط",
-      linkCopied: "تم نسخ الرابط!",
-      shareVia: "مشاركة عبر",
+      linkCopied: "تم نسخ الرابط.",
       aboutTheAuthor: "عن الكاتب",
       aboutTheAuthors: "عن الكتاب",
-      publishedOn: "نُشر في",
-      author: "المؤلف",
-      topics: "المواضيع",
-      category: "الفئة",
-      newsLabel: "الأخبار",
     },
     ru: {
       home: "Главная",
@@ -360,18 +268,10 @@ export default function NewsDetail() {
       share: "Поделиться статьёй",
       relatedNews: "Другие новости",
       errorMessage: "Новость не найдена",
-      loading: "Загрузка...",
-      readMore: "Читать далее",
       copyLink: "Скопировать ссылку",
-      linkCopied: "Ссылка скопирована в буфер обмена!",
-      shareVia: "Поделиться через",
+      linkCopied: "Ссылка скопирована.",
       aboutTheAuthor: "Об авторе",
       aboutTheAuthors: "Об авторах",
-      publishedOn: "Опубликовано",
-      author: "Автор",
-      topics: "Темы",
-      category: "Категория",
-      newsLabel: "Новости",
     },
     fr: {
       home: "Accueil",
@@ -379,18 +279,10 @@ export default function NewsDetail() {
       share: "Partager l'article",
       relatedNews: "Autres actualités",
       errorMessage: "Actualité non trouvée",
-      loading: "Chargement...",
-      readMore: "Lire la suite",
       copyLink: "Copier le lien",
-      linkCopied: "Lien copié dans le presse-papiers!",
-      shareVia: "Partager via",
+      linkCopied: "Lien copié.",
       aboutTheAuthor: "À propos de l'auteur",
       aboutTheAuthors: "À propos des auteurs",
-      publishedOn: "Publié le",
-      author: "Auteur",
-      topics: "Sujets",
-      category: "Catégorie",
-      newsLabel: "Actualités",
     },
     it: {
       home: "Home",
@@ -398,22 +290,16 @@ export default function NewsDetail() {
       share: "Condividi articolo",
       relatedNews: "Altre notizie",
       errorMessage: "Notizia non trovata",
-      loading: "Caricamento...",
-      readMore: "Leggi di più",
       copyLink: "Copia link",
-      linkCopied: "Link copiato negli appunti!",
-      shareVia: "Condividi tramite",
+      linkCopied: "Link copiato.",
       aboutTheAuthor: "Sull'autore",
       aboutTheAuthors: "Sugli autori",
-      publishedOn: "Pubblicato il",
-      author: "Autore",
-      topics: "Argomenti",
-      category: "Categoria",
-      newsLabel: "Notizie",
     },
   };
 
   const t = content[language] || content.en;
+  // Nombre de la publicación: el rótulo del menú en cada idioma (h1 de /news, pestaña, eyebrow)
+  const newsLabel = (chrome26[language as keyof typeof chrome26] ?? chrome26.en).nav[3].label;
 
   // Formato único de fecha del Monitor (lib/newsDate): el mismo que el listado de /news
   const formatDate = (date: Date | string | null) => formatNewsDate(date, language);
@@ -449,13 +335,6 @@ export default function NewsDetail() {
     }
   };
 
-  // Al listado del Monitor (/news) con el router: respeta la base de GitHub Pages
-  // (/santos-saucedo-page/). Antes iba a "/#news" de la portada anterior.
-  const [, navigate] = useLocation();
-  const goToNewsList = () => navigate("/news");
-
-  const relatedNews = allNews?.filter((item) => item.id !== newsArticle?.id).slice(0, 3);
-
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
   };
@@ -476,13 +355,15 @@ export default function NewsDetail() {
             <h2 className="ss-h2 mb-6" data-testid="text-error-title">
               {t.errorMessage}
             </h2>
-            <Button 
-              variant="outline" 
-              onClick={goToNewsList}
+            {/* Navegación: enlace del router (respeta la base de GitHub Pages), no botón */}
+            <Link
+              href="/news"
+              className="ss-label inline-flex items-center gap-2 text-ss-marino hover:underline decoration-1 underline-offset-4"
               data-testid="button-back-to-news"
             >
+              <ArrowLeft className="w-4 h-4 rtl:-scale-x-100" aria-hidden="true" />
               {t.backToNews}
-            </Button>
+            </Link>
           </div>
         </main>
         <Footer />
@@ -534,12 +415,30 @@ export default function NewsDetail() {
 
   const primaryAuthor = relatedAuthors && relatedAuthors.length > 0 ? relatedAuthors[0] : null;
 
+  // Pestaña y descripción en el idioma de la página: el titular que muestra el h1 y la
+  // entradilla traducida; sin traducción (fuera de ES/EN), la descripción general del Monitor
+  // en ese idioma (SEOHead) en lugar del inglés de origen.
+  const seoExcerpt = language === "es"
+    ? newsArticle?.excerptEs || newsArticle?.excerpt
+    : language === "en"
+      ? newsArticle?.excerpt
+      : translatedFields.excerpt && translatedFields.excerpt !== newsArticle?.excerpt
+        ? translatedFields.excerpt
+        : undefined;
+
   return (
     <div className="min-h-screen bg-background" data-testid="page-news-detail">
       <Header />
       
       {newsArticle && (
         <>
+          <SEOHead
+            page="news"
+            language={language}
+            customTitle={displayTitle ? `${displayTitle} | ${newsLabel}` : undefined}
+            customDescription={seoExcerpt || undefined}
+            customPath={`/news/${newsArticle.slug}`}
+          />
           <ArticleJsonLd
             headline={language === "es" ? newsArticle.titleEs : newsArticle.title}
             description={language === "es" ? newsArticle.excerptEs : newsArticle.excerpt}
@@ -555,7 +454,7 @@ export default function NewsDetail() {
             items={[
               { name: t.home, url: "https://www.santossaucedo.com" },
               // La publicación, con el nombre del eyebrow y del menú, y su listado (/news)
-              { name: t.newsLabel, url: "https://www.santossaucedo.com/news" },
+              { name: newsLabel, url: "https://www.santossaucedo.com/news" },
               { name: language === "es" ? newsArticle.titleEs : newsArticle.title, url: `https://www.santossaucedo.com/news/${newsArticle.slug}` }
             ]}
             language={language}
@@ -578,21 +477,22 @@ export default function NewsDetail() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <button
-                onClick={goToNewsList}
-                className="inline-flex items-center gap-2 mb-6 cursor-pointer"
+              {/* Al listado del Monitor (/news) con el router: respeta la base de GitHub Pages */}
+              <Link
+                href="/news"
+                className="inline-flex items-center gap-2 mb-6"
                 data-testid="link-back-to-news"
               >
-                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                <ArrowLeft className="w-4 h-4 rtl:-scale-x-100" aria-hidden="true" />
                 {t.backToNews}
-              </button>
+              </Link>
 
               {/* Eyebrow del expediente, como los encabezados internos: "§ 04 —— Monitor Laboral"
                   (rótulo de la tabla de textos, en los 10 idiomas) */}
               <Eyebrow
                 num="04"
                 tone="paper"
-                label={t.newsLabel}
+                label={newsLabel}
                 className="mb-4"
                 testId="eyebrow-news"
               />
@@ -764,7 +664,7 @@ export default function NewsDetail() {
               </motion.section>
             )}
 
-            {relatedNews && relatedNews.length > 0 && (
+            {hasRelatedNews && (
               <motion.section
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -777,38 +677,17 @@ export default function NewsDetail() {
                 >
                   {t.relatedNews}
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-10">
-                  {relatedNews.map((item) => (
-                    <Link 
-                      key={item.id} 
-                      href={`/news/${item.slug}`}
-                      className="group block"
-                    >
-                      {/* Sin caja: imagen (o Hueso con §), fecha como etiqueta y titular en la romana */}
-                      <article data-testid={`card-related-news-${item.id}`}>
-                        <div className="aspect-[16/10] overflow-hidden">
-                          <NewsCardImage
-                            src={item.imageUrl || ""}
-                            alt={language === "es" ? item.titleEs : item.title}
-                            className="ss-photo--colour w-full h-full object-cover"
-                          />
-                        </div>
-                        <p className="ss-label ss-num text-ss-medio mt-4 mb-2" data-testid={`text-related-news-date-${item.id}`}>
-                          {formatDate(item.date)}
-                        </p>
-                        <h3 
-                          className="ss-h3 text-[20px] line-clamp-3 group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1"
-                          data-testid={`text-related-news-title-${item.id}`}
-                          lang={isOtherLanguage ? "en" : undefined}
-                        >
-                          {isOtherLanguage
-                            ? <bdi lang="en" dir="ltr">{item.title}</bdi>
-                            : (language === "es" ? item.titleEs : item.title)}
-                        </h3>
-                      </article>
-                    </Link>
-                  ))}
-                </div>
+                <MonitorList
+                  limit={3}
+                  excludeId={newsArticle?.id}
+                  headingLevel="h3"
+                  layout="stacked"
+                  testIds={{
+                    row: (item) => `card-related-news-${item.id}`,
+                    date: (item) => `text-related-news-date-${item.id}`,
+                    title: (item) => `text-related-news-title-${item.id}`,
+                  }}
+                />
               </motion.section>
             )}
           </div>

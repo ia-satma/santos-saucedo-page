@@ -1,28 +1,8 @@
 import type { SyntheticEvent } from "react";
 import type { TeamMember } from "@shared/schema";
 
-// Socios con retrato 2026 confirmado por nombre (la página "Socios Fundadores" de la
-// presentación pone el nombre bajo cada uno). Los demás socios (Jaime Herrera de Herrera,
-// David Martínez Saucedo) no se nombran con foto hasta que se identifique su archivo.
-export const CONFIRMED_PARTNER_SLUGS = new Set([
-  "mario-saucedo-montemayor",
-  "enrique-santos-guzman",
-  "enrique-santos-arce",
-  "mario-saucedo-rodriguez",
-]);
-
-export function isOfCounselMember(member: Pick<TeamMember, "title">): boolean {
-  return member.title?.toLowerCase() === "of counsel";
-}
-
-/**
- * Quién aparece con nombre y foto en /team: los socios confirmados y los Of Counsel (los
- * asociados van en el mosaico sin nombres). "Equipo relacionado" de la ficha usa la misma regla.
- */
-export function isNamedOnTeamPage(member: Pick<TeamMember, "slug" | "isPartner" | "title">): boolean {
-  if (member.isPartner) return CONFIRMED_PARTNER_SLUGS.has(member.slug);
-  return isOfCounselMember(member);
-}
+// La regla de quién aparece con nombre vive en shared/teamVisibility.ts (también la usa el servidor).
+export { CONFIRMED_PARTNER_SLUGS, isOfCounselMember, isNamedOnTeamPage } from "@shared/teamVisibility";
 
 // Variantes WebP de los retratos (q80, sin metadatos), generadas junto a los originales de
 // attached_assets/team_photos. server/routes.ts sirve esa carpeta en /team_photos y el build
@@ -37,7 +17,7 @@ const PORTRAIT_SLUGS = new Set([
   "mario-saucedo-rodriguez",
 ]);
 
-// Retratos con miniatura <slug>-128.webp (avatares de 48 px de "Equipo relacionado")
+// Retratos con miniatura <slug>-128.webp (miniaturas cuadradas de 56 px de "Equipo relacionado")
 const THUMB_SLUGS = new Set([
   "ancella-reynoso-pamanes",
   "carlos-a-cerda-ramos",

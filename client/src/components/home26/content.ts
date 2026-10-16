@@ -42,10 +42,11 @@ export const home26 = {
       lead:
         "Santos & Saucedo asesora a empresas nacionales y multinacionales en la administración de su capital humano y las representa en asuntos laborales, corporativos, migratorios y contenciosos. Desde San Pedro Garza García, con presencia en más de 72 ciudades del país.",
     },
+    // Solo cifras con dato: fuera "4 prácticas" (las cuatro se listan abajo). "72+" en cifra,
+    // "más de 72" en prosa.
     facts: [
       { value: "2010", label: "Año de fundación" },
-      { value: "+72", label: "Ciudades con presencia" },
-      { value: "4", label: "Prácticas" },
+      { value: "72+", label: "Ciudades con presencia" },
     ],
     firma: {
       title: "Una práctica dedicada a\u00a0las empresas",
@@ -101,32 +102,11 @@ export const home26 = {
       link: "Ver las prácticas",
       alt: "Sala de juntas de Santos & Saucedo con el tríptico abstracto de la firma",
     },
+    // Las filas son las notas publicadas en /api/news (Sections26, MonitorList)
     monitor: {
       title: "Monitor Laboral",
       intro: "Análisis de la firma sobre los cambios que afectan a las empresas.",
-      items: [
-        // Sin fecha mientras los análisis no estén publicados: en el índice, una sola fila
-        // con fecha hacía parecer que a las otras les faltaba el dato.
-        {
-          date: "",
-          tag: "Jornada",
-          title: "Registro electrónico de jornada: lo que establece la reforma y lo que aún está pendiente",
-          body: "La obligación entra en vigor el 1 de enero de 2027. Los lineamientos técnicos de la Secretaría del Trabajo todavía no se publican.",
-        },
-        {
-          date: "",
-          tag: "Jornada",
-          title: "Jornada de 40 horas: el calendario de reducción de 2027 a 2030",
-          body: "La jornada máxima baja dos horas cada 1 de enero hasta llegar a 40 horas semanales en 2030.",
-        },
-        {
-          date: "",
-          tag: "Seguridad social",
-          title: "TIP Digital: la tarjeta de identificación patronal del IMSS pasa al Buzón IMSS",
-          body: "El acuerdo publicado el 8 de septiembre de 2026 permite generar la tarjeta en formato digital con la e.firma. Está vigente desde el 23 de septiembre.",
-        },
-      ],
-      link: "Ver todos los análisis",
+      link: "Ver todo el Monitor Laboral",
     },
     socios: {
       title: "Socios",
@@ -137,7 +117,7 @@ export const home26 = {
         { name: "Enrique Santos Guzmán", photo: "enrique-santos-guzman", role: "Socio director" },
         { name: "Enrique Santos Arce", photo: "enrique-santos-arce", role: "Socio fundador" },
       ],
-      link: "Conozca al equipo",
+      link: "Ver el equipo",
     },
     footer: {
       address: ["Río Tamazunchale 205 Norte", "Col. del Valle", "San Pedro Garza García, N.L.", "C.P. 66220, México"],
@@ -160,8 +140,7 @@ export const home26 = {
     },
     facts: [
       { value: "2010", label: "Founded" },
-      { value: "+72", label: "Cities with presence" },
-      { value: "4", label: "Practices" },
+      { value: "72+", label: "Cities with presence" },
     ],
     firma: {
       title: "A practice devoted to\u00a0employers",
@@ -217,27 +196,7 @@ export const home26 = {
     monitor: {
       title: "Labor Monitor",
       intro: "The firm's analysis of the changes that affect employers.",
-      items: [
-        {
-          date: "",
-          tag: "Working hours",
-          title: "Electronic time records: what the reform requires and what is still pending",
-          body: "The obligation takes effect on January 1, 2027. The Labor Ministry has not yet published the technical guidelines.",
-        },
-        {
-          date: "",
-          tag: "Working hours",
-          title: "The 40-hour week: the 2027–2030 reduction schedule",
-          body: "The maximum working week drops two hours every January 1 until it reaches 40 hours in 2030.",
-        },
-        {
-          date: "",
-          tag: "Social security",
-          title: "Digital TIP: the IMSS employer ID card moves to the IMSS Mailbox",
-          body: "The agreement published on September 8, 2026 allows the card to be issued digitally with the e.firma. It has been in force since September 23.",
-        },
-      ],
-      link: "All analysis",
+      link: "View the full Labor Monitor",
     },
     socios: {
       title: "Partners",
@@ -246,7 +205,7 @@ export const home26 = {
         { name: "Enrique Santos Guzmán", photo: "enrique-santos-guzman", role: "Managing partner" },
         { name: "Enrique Santos Arce", photo: "enrique-santos-arce", role: "Founding partner" },
       ],
-      link: "Meet the team",
+      link: "View the team",
     },
     footer: {
       address: ["Río Tamazunchale 205 Norte", "Col. del Valle", "San Pedro Garza García, N.L.", "C.P. 66220, México"],

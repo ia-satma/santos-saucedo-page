@@ -6,11 +6,11 @@ import {
   newsData,
   officeImagesData,
   practiceGroupsData,
-  representativeMattersData,
   siteContentData,
   statsData,
   teamMembersData,
 } from "../server/seed";
+import { isNamedOnTeamPage } from "../shared/teamVisibility";
 
 const outDir = path.resolve("dist/public");
 const apiDir = path.join(outDir, "static-api");
@@ -32,7 +32,10 @@ function withDefaults<T extends Record<string, any>>(prefix: string, item: T) {
 
 const practiceGroups = practiceGroupsData.map((raw) => withDefaults("practice", raw as any));
 const industryGroups = industryGroupsData.map((raw) => withDefaults("industry", raw as any));
-const teamMembers = teamMembersData.map((raw) => {
+// Socios sin confirmar (D17): fuera del API estático, del índice de búsqueda y del mapa del
+// sitio; sus fichas no se generan. Asociados y staff siguen en team.json (el mosaico de /team
+// no los nombra) pero no en el buscador ni en el mapa: ahí solo va quien /team nombra.
+const allTeamMembers = teamMembersData.map((raw) => {
   const item = raw as any;
   return {
   id: stableId("team", item.slug),
@@ -49,6 +52,8 @@ const teamMembers = teamMembersData.map((raw) => {
   ...item,
   };
 });
+const teamMembers = allTeamMembers.filter((m) => !m.isPartner || isNamedOnTeamPage(m));
+const namedTeamMembers = teamMembers.filter((m) => isNamedOnTeamPage(m));
 const news = newsData.map((raw) => {
   const item = raw as any;
   return {
@@ -69,17 +74,12 @@ const news = newsData.map((raw) => {
   };
 });
 const officeImages = officeImagesData.map((raw) => withDefaults("office-image", raw as any));
-const representativeMatters = representativeMattersData.map((raw) => {
-  const item = raw as any;
-  return {
-  id: stableId("matter", item.order),
-  ...item,
-  };
-});
 const events = eventsData.map((item: any, index: number) => ({
   id: item.id ?? stableId("event", item.slug ?? item.order ?? index + 1),
   ...item,
 }));
+
+const publishedNews = news.filter((item) => item.published);
 
 async function writeJson(relativePath: string, value: JsonValue) {
   const target = path.join(apiDir, relativePath);
@@ -94,7 +94,7 @@ function search(query: string) {
   }
 
   return {
-    team: teamMembers
+    team: namedTeamMembers
       .filter((m) =>
         [
           m.name,
@@ -121,7 +121,7 @@ function search(query: string) {
         ),
       )
       .slice(0, 5),
-    news: news
+    news: publishedNews
       .filter((n) =>
         [n.title, n.titleEs, n.excerpt, n.excerptEs, n.content, n.contentEs].some((value) =>
           String(value ?? "").toLowerCase().includes(normalized),
@@ -131,23 +131,71 @@ function search(query: string) {
   };
 }
 
+// Mapa del sitio del build estático: las mismas URL que /sitemap.xml del servidor (sin
+// /experience ni /offices, que redirigen; fichas solo de quien /team nombra; notas publicadas).
+// Sustituye a la copia de public/sitemap.xml que deja Vite en dist/public.
+const SITE_URL = "https://www.santossaucedo.com";
+const SITEMAP_PAGES = [
+  { loc: "/", changefreq: "weekly", priority: "1.0" },
+  { loc: "/about", changefreq: "monthly", priority: "0.8" },
+  { loc: "/team", changefreq: "weekly", priority: "0.9" },
+  { loc: "/practice-groups", changefreq: "monthly", priority: "0.8" },
+  { loc: "/news", changefreq: "daily", priority: "0.9" },
+  { loc: "/contact", changefreq: "monthly", priority: "0.7" },
+  { loc: "/careers", changefreq: "weekly", priority: "0.7" },
+  { loc: "/careers/interns", changefreq: "monthly", priority: "0.5" },
+  { loc: "/privacy-policy", changefreq: "yearly", priority: "0.3" },
+  { loc: "/terms", changefreq: "yearly", priority: "0.3" },
+];
+
+async function writeSitemap() {
+  const day = (value: unknown) => {
+    const d = value ? new Date(value as string) : new Date(snapshotDate);
+    return (Number.isNaN(d.getTime()) ? new Date(snapshotDate) : d).toISOString().split("T")[0];
+  };
+  const today = day(new Date().toISOString());
+  const entries = [
+    ...SITEMAP_PAGES.map((page) => ({ ...page, lastmod: today })),
+    ...namedTeamMembers.map((m) => ({ loc: `/team/${m.slug}`, changefreq: "monthly", priority: "0.6", lastmod: today })),
+    ...practiceGroups.map((g) => ({ loc: `/practice-groups/${g.slug}`, changefreq: "monthly", priority: "0.7", lastmod: today })),
+    ...publishedNews.map((n) => ({ loc: `/news/${n.slug}`, changefreq: "monthly", priority: "0.6", lastmod: day(n.date) })),
+  ];
+  const body = entries
+    .map(
+      (e) => `  <url>
+    <loc>${SITE_URL}${e.loc}</loc>
+    <lastmod>${e.lastmod}</lastmod>
+    <changefreq>${e.changefreq}</changefreq>
+    <priority>${e.priority}</priority>
+  </url>`,
+    )
+    .join("\n");
+  await writeFile(
+    path.join(outDir, "sitemap.xml"),
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`,
+    "utf8",
+  );
+}
+
 async function generate() {
   await mkdir(apiDir, { recursive: true });
 
-  await writeJson("detect-language.json", { language: "es", country: "MX" });
+  // Mismo formato que /api/detect-language (solo Accept-Language; en Pages no se consulta)
+  await writeJson("detect-language.json", { language: "es", source: "default" });
   await writeJson("site-content.json", siteContentData);
   await writeJson("stats.json", statsData);
   await writeJson("news.json", news);
-  await writeJson("news/published.json", news.filter((item) => item.published));
+  await writeJson("news/published.json", publishedNews);
   await writeJson("office-images.json", officeImages);
   await writeJson("practice-groups.json", practiceGroups);
   await writeJson("industry-groups.json", industryGroups);
   await writeJson("team.json", teamMembers);
   await writeJson("team/partners.json", teamMembers.filter((item) => item.isPartner));
-  await writeJson("representative-matters.json", representativeMatters);
+  // /experience redirige a /practice-groups (D4): sus asuntos (sin confirmar) no se publican.
+  // Los datos siguen en server/seed.ts.
   await writeJson("events.json", events);
   await writeJson("events/upcoming.json", events.slice(0, 4));
-  await writeJson("search-index.json", { team: teamMembers, practiceGroups, industryGroups, news });
+  await writeJson("search-index.json", { team: namedTeamMembers, practiceGroups, industryGroups, news: publishedNews });
 
   for (const item of news) {
     await writeJson(`news/${item.slug}.json`, item);
@@ -158,10 +206,8 @@ async function generate() {
   for (const item of practiceGroups) {
     await writeJson(`practice-groups/${item.slug}.json`, item);
     await writeJson(`practice-groups/${item.id}.json`, item);
-    await writeJson(
-      `practice-groups/${item.slug}/representative-matters.json`,
-      representativeMatters.filter((matter) => matter.practiceAreaSlug === item.slug),
-    );
+    // Sin asuntos representativos publicados (los del seed no están confirmados)
+    await writeJson(`practice-groups/${item.slug}/representative-matters.json`, []);
   }
 
   for (const item of industryGroups) {
@@ -193,6 +239,11 @@ async function generate() {
     }
   }
 
+  await writeSitemap();
+
+  // Respaldo de GitHub Pages para rutas del SPA: se sirve con estado 404, así que ninguna
+  // ruta sin archivo propio (tampoco /experience ni /offices, que el cliente redirige) queda
+  // como página indexable.
   await copyFile(path.join(outDir, "index.html"), path.join(outDir, "404.html"));
 }
 

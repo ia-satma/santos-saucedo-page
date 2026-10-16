@@ -13,7 +13,7 @@ interface NumberedCardProps {
 }
 
 /**
- * Fila abierta numerada: filete superior en Línea, numeral 01–04 en romana 300 Gris Claro,
+ * Fila abierta numerada: filete superior en Línea, numeral 01–04 en romana 350 Gris Claro,
  * titular en romana 400 Azul Marino y descripción de 16 px en Gris Tinta. Sin caja, sombra,
  * icono ni barra.
  */

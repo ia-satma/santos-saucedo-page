@@ -236,11 +236,16 @@
    En @layer components: las utilidades de Tailwind pueden ajustarlas.
 --------------------------------------------------------------------------- */
 @layer components {
+  /* Escala de titulares de las páginas internas (una sola para todo el sitio):
+     h1 del encabezado 40–64 px (fichas de socio, práctica y nota, un paso menos: 32–52 px),
+     .ss-h2 32–40 px para toda sección de página, .ss-h2-sm 24–28 px para sub-bloques,
+     .ss-h3 22 px para filas y tarjetas. Dos pesos de la romana: 350 en display (h1 y
+     .ss-display) y 400 en texto (h2, h3, entradas y nombres). */
   /* h2 de las páginas internas: romana 400, Azul Marino, alineado al inicio */
   .ss-h2 {
     font-family: var(--font-heading);
     font-weight: 400;
-    font-size: clamp(28px, 2.6vw, 38px);
+    font-size: clamp(32px, 2.8vw, 40px);
     line-height: 1.12;
     letter-spacing: -0.012em;
     color: var(--ss-marino);
@@ -253,7 +258,7 @@
   .ss-h2-sm {
     font-family: var(--font-heading);
     font-weight: 400;
-    font-size: clamp(24px, 2vw, 30px);
+    font-size: clamp(24px, 1.9vw, 28px);
     line-height: 1.18;
     letter-spacing: -0.012em;
     color: var(--ss-marino);
@@ -278,10 +283,10 @@
     font-feature-settings: "kern", "liga", "lnum";
   }
   /* Cifras: .ss-figure está en styles/ss26.css (romana 300, Azul Marino; blanco sobre Azul Profundo) */
-  /* Numerales decorativos 01–04 de las filas: romana 300 en Gris Claro (solo sobre blanco) */
+  /* Numerales decorativos 01–04 de las filas: romana 350 (display) en Gris Claro (solo sobre blanco) */
   .ss-numeral {
     font-family: var(--font-heading);
-    font-weight: 300;
+    font-weight: 350;
     font-size: clamp(30px, 2.4vw, 36px);
     line-height: 1;
     letter-spacing: 0;
@@ -1145,13 +1150,6 @@ html, body {
 .editorial-page-hero.pb-20 {
   padding-bottom: clamp(40px, 3.6vw, 56px);
 }
-/* Ficha de socio: conserva su medida (su encabezado, con foto y datos, va por separado) */
-.editorial-page-hero.pt-36[data-testid="section-team-member-hero"] {
-  padding-top: clamp(56px, 6vw, 96px);
-}
-.editorial-page-hero.pb-20[data-testid="section-team-member-hero"] {
-  padding-bottom: clamp(40px, 4.5vw, 64px);
-}
 
 /* Todo al inicio (izquierda; derecha en árabe). El contenedor .max-w-7xl.mx-auto
    es ancestro de .text-center: sigue centrando la caja. */
@@ -1194,13 +1192,14 @@ html, body {
   transform: scaleX(-1);
 }
 
-/* Titular: romana 350 en caja baja (la portada, a 86 px, sigue mandando) */
+/* Titular: romana 350 en caja baja, un solo tamaño en todas las páginas internas
+   (la portada, a 86 px, sigue mandando) */
 .editorial-page-hero h1 {
   min-width: 0;
   color: #fff;
   font-family: var(--font-heading);
   font-weight: 350;
-  font-size: clamp(40px, 4.6vw, 68px);
+  font-size: clamp(40px, 4.4vw, 64px);
   line-height: 1.06;
   letter-spacing: -0.02em;
   text-transform: none;
@@ -1211,15 +1210,13 @@ html, body {
   /* Red de seguridad: una palabra más ancha que la columna se parte en vez de desbordar */
   overflow-wrap: break-word;
 }
-/* Fichas (práctica, industria, socio): titular junto a foto o icono, un punto menor */
-.editorial-page-hero :is(.flex > h1, h1.ss-hero-detail) {
-  font-size: clamp(36px, 4.2vw, 62px);
+/* Fichas (práctica, industria, socio) y nota del Monitor: el mismo paso menor */
+.editorial-page-hero :is(.flex > h1, h1.ss-hero-detail, h1.ss-news-title) {
+  font-size: clamp(32px, 3.6vw, 52px);
 }
-/* Titular del artículo: romana 400 y medida de 20em (≈3 líneas a 1440 px) */
+/* Titular del artículo: medida de 20em (≈3 líneas a 1440 px) */
 .editorial-page-hero h1.ss-news-title {
   max-width: 20em;
-  font-weight: 400;
-  font-size: clamp(32px, 3.4vw, 52px);
   line-height: 1.1;
   letter-spacing: -0.018em;
 }
@@ -1243,16 +1240,17 @@ html, body {
   line-height: 1.25;
   letter-spacing: 0;
 }
-.editorial-page-hero h1.ss-news-title:is(:lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
+/* Fichas y nota en chino, japonés, coreano y árabe: el mismo paso menor */
+.editorial-page-hero :is(.flex > h1, h1.ss-hero-detail, h1.ss-news-title):is(:lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
   font-size: clamp(28px, 3vw, 46px);
 }
 .editorial-page-hero h1:lang(ar) {
   line-height: 1.4;
 }
 /* A 46 px o más el titular pasa a 600 (4.2vw llega a 46 px a 1096 px de ancho); en teléfono
-   y en la noticia (máx. 46 px) se queda en 500. */
+   y en las fichas y la noticia (máx. 46 px) se queda en 500. */
 @media (min-width: 1096px) {
-  .editorial-page-hero h1:not(.ss-news-title):is(:lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
+  .editorial-page-hero h1:not(.ss-news-title, .ss-hero-detail, .flex > h1):is(:lang(zh), :lang(ja), :lang(ko), :lang(ar)) {
     font-weight: 600;
   }
 }
@@ -1293,6 +1291,17 @@ html, body {
 }
 :is(h1, h2, h3, h4, h5, h6, .ss-display, .ss-label):lang(ja) {
   word-break: auto-phrase;
+}
+/* Pie (medido a 320 y 390 px): en coreano, enlaces y aviso cortan entre palabras
+   ("개인정보 처리방 | 침", "해당하 | 지 않습니다"); en japonés, los enlaces solo en el
+   corte marcado (U+200B de "プライバシー​ポリシー" en chrome26). Las listas del pie
+   conservan overflow-wrap:anywhere como red si una palabra no cabe en la columna. */
+footer.ss26:lang(ko) {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+footer.ss26:lang(ja) :is(a, button) {
+  word-break: keep-all;
 }
 
 /* Subtítulo y notas bajo el titular: sans 400 al 84 % (la fecha .ss-label conserva su estilo) */
@@ -1363,7 +1372,7 @@ html, body {
 }
 
 /* Variante papel ("memorándum impreso"): artículos del Monitor y páginas legales.
-   Hueso, h1 Azul Marino 400, etiquetas en Gris Medio, § en Azul Marino, filete inferior
+   Hueso, h1 Azul Marino (350, como el oscuro), etiquetas en Gris Medio, § en Azul Marino, filete inferior
    en Línea y foco Azul Marino. Va después de las reglas oscuras: les gana a igual especificidad. */
 .editorial-page-hero--paper {
   --ring: 239 44% 25%;
@@ -1373,7 +1382,6 @@ html, body {
 }
 .editorial-page-hero--paper h1 {
   color: var(--ss-marino);
-  font-weight: 400;
 }
 .editorial-page-hero--paper h1 ~ p:not(.ss-label) {
   color: var(--ss-tinta);

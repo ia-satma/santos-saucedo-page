@@ -28,16 +28,13 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
+import edificioCerro from "@assets/ss26/edificio-cerro.webp";
 import type { SiteContent, ContactFormData, LanguageCode } from "@shared/schema";
 
 // Perfil de LinkedIn del despacho. Sin URL confirmada el botón "Síguenos en LinkedIn"
 // no se muestra (antes enlazaba a /contact en otra pestaña). Para activarlo, poner aquí
 // la URL externa (https://www.linkedin.com/company/…).
 const FIRM_LINKEDIN_URL: string | null = null;
-
-// Ciudad de la oficina: nombre propio, igual en todos los idiomas (título de la ficha;
-// "Oficina principal" va encima como etiqueta y el nombre ya no se parte tras un guion).
-const OFFICE_CITY = "San Pedro Garza García";
 
 // Prácticas de la firma (las cuatro de /practice-groups, con sus nombres) y "Otro". Antes el
 // formulario usaba la lista heredada de @shared/schema (fusiones, competencia, energía…), que
@@ -66,15 +63,15 @@ const PRACTICE_OPTIONS: { value: string; label: Record<LanguageCode, string> }[]
 ];
 
 // Lista de datos de la oficina: filas con filete superior; etiqueta (dt) en la sans
-// versal espaciada, Gris Medio; dato (dd) en la sans de 17 px, Gris Tinta.
-const rowClass = "grid grid-cols-1 gap-y-1 border-t border-ss-rule py-4 sm:grid-cols-[11rem,1fr] sm:gap-x-6";
-const dtClass = "ss-label text-ss-medio sm:pt-1";
+// versal espaciada, Gris Medio; dato (dd) en la sans de 17 px, Gris Tinta. Etiqueta al lado
+// del dato solo con la ficha a todo el ancho (sm–md); en la columna de 5/12 del escritorio,
+// encima (a 1024 px la dirección se partía en seis líneas y el correo salía del filete).
+const rowClass = "grid grid-cols-1 gap-y-1 border-t border-ss-rule py-4 sm:grid-cols-[11rem,1fr] sm:gap-x-6 lg:grid-cols-1";
+const dtClass = "ss-label text-ss-medio sm:pt-1 lg:pt-0";
 const ddClass = "text-[17px] leading-[1.55] text-ss-tinta";
 const ddLinkClass = "hover:text-ss-marino hover:underline underline-offset-4 transition-colors";
 
-// "Clásica": titulares en romana 400, Azul Marino, caja de oración y al inicio; texto en Gris Tinta.
-const h2Class = "font-heading font-normal text-ss-marino text-[clamp(24px,2vw,30px)] leading-[1.18] tracking-[-0.012em] [text-wrap:balance]";
-const h3Class = "font-heading font-normal text-ss-marino text-[22px] leading-[1.25] tracking-[-0.01em]";
+// Titulares: .ss-h2 (index.css), la escala única de las secciones de página.
 
 const validationMessages: Record<LanguageCode, {
   fullNameRequired: string;
@@ -288,11 +285,12 @@ export default function Contact() {
       );
 
       window.location.href = `mailto:${siteContent?.email || "info@santossaucedo.com"}?subject=${subject}&body=${body}`;
+      // Sitio estático (sin servidor): el mensaje sale por el programa de correo del visitante
       toast({
         title: language === "es" ? "Enviar por correo" : "Send by email",
         description: language === "es"
-          ? "GitHub Pages no tiene backend; se abrió su cliente de correo para enviar el mensaje."
-          : "GitHub Pages has no backend; your email client was opened to send the message.",
+          ? "Se abrió su programa de correo para enviar el mensaje."
+          : "Your email program was opened to send the message.",
       });
       return;
     }
@@ -304,7 +302,6 @@ export default function Contact() {
     title: string;
     subtitle: string;
     officesTitle: string;
-    mainOffice: string;
     building: string;
     floor: string;
     street: string;
@@ -316,21 +313,17 @@ export default function Contact() {
     hours: string;
     hoursDetails: string;
     getDirections: string;
+    photoAlt: string;
+    newTab: string;
     addressLabel: string;
     telLabel: string;
-    mapTitle: string;
     formTitle: string;
     formSubtitle: string;
     fullName: string;
-    fullNamePlaceholder: string;
     emailLabel: string;
-    emailPlaceholder: string;
     phoneLabel: string;
-    phonePlaceholder: string;
     companyLabel: string;
-    companyPlaceholder: string;
     practiceAreaLabel: string;
-    practiceAreaPlaceholder: string;
     messageLabel: string;
     submit: string;
     submitting: string;
@@ -338,8 +331,7 @@ export default function Contact() {
     en: {
       title: "Contact",
       subtitle: "Each partner's contact details appear on their profile.",
-      officesTitle: "Our Offices",
-      mainOffice: "Main office",
+      officesTitle: "Office",
       building: "Río Tamazunchale 205 Norte",
       floor: "",
       street: "San Pedro Garza García, N.L.",
@@ -348,33 +340,28 @@ export default function Contact() {
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
-      hours: "Office Hours",
+      hours: "Office hours",
       hoursDetails: "Monday to Friday, 9:00–19:00",
-      getDirections: "Get Directions",
-      mapTitle: "Map of the Santos & Saucedo office in San Pedro Garza García",
+      getDirections: "Get directions",
+      photoAlt: "Glass facade of the Santos & Saucedo offices reflecting the Cerro de la Silla",
+      newTab: "(opens in a new tab)",
       telLabel: "Telephone",
       addressLabel: "Address",
-      formTitle: "Send Us a Message",
+      formTitle: "Message",
       formSubtitle: "Submitting this form does not create an attorney-client relationship.",
-      fullName: "Full Name",
-      fullNamePlaceholder: "Enter your full name",
+      fullName: "Full name",
       emailLabel: "Email",
-      emailPlaceholder: "Enter your email address",
       phoneLabel: "Phone (optional)",
-      phonePlaceholder: "Enter your phone number",
-      companyLabel: "Company/Organization (optional)",
-      companyPlaceholder: "Enter your company name",
-      practiceAreaLabel: "Practice Area of Interest (optional)",
-      practiceAreaPlaceholder: "Select a practice area",
+      companyLabel: "Company (optional)",
+      practiceAreaLabel: "Practice area of interest (optional)",
       messageLabel: "Message",
-      submit: "Send Message",
+      submit: "Send message",
       submitting: "Sending...",
     },
     es: {
       title: "Contacto",
       subtitle: "Los datos de contacto de cada socio aparecen en su ficha.",
-      officesTitle: "Nuestras oficinas",
-      mainOffice: "Oficina principal",
+      officesTitle: "Oficina",
       building: "Río Tamazunchale 205 Norte",
       floor: "",
       street: "San Pedro Garza García, N.L.",
@@ -386,21 +373,17 @@ export default function Contact() {
       hours: "Horario de oficina",
       hoursDetails: "Lunes a viernes, 9:00–19:00 h",
       getDirections: "Cómo llegar",
-      mapTitle: "Mapa de la oficina de Santos & Saucedo en San Pedro Garza García",
+      photoAlt: "Fachada de cristal de las oficinas de Santos & Saucedo con el Cerro de la Silla reflejado",
+      newTab: "(se abre en otra pestaña)",
       telLabel: "Teléfono",
       addressLabel: "Dirección",
-      formTitle: "Envíenos un mensaje",
+      formTitle: "Mensaje",
       formSubtitle: "El envío de este formulario no crea una relación abogado-cliente.",
       fullName: "Nombre completo",
-      fullNamePlaceholder: "Ingrese su nombre completo",
       emailLabel: "Correo electrónico",
-      emailPlaceholder: "Ingrese su correo electrónico",
       phoneLabel: "Teléfono (opcional)",
-      phonePlaceholder: "Ingrese su número de teléfono",
-      companyLabel: "Empresa/Organización (opcional)",
-      companyPlaceholder: "Ingrese el nombre de su empresa",
+      companyLabel: "Empresa (opcional)",
       practiceAreaLabel: "Área de práctica de interés (opcional)",
-      practiceAreaPlaceholder: "Seleccione un área de práctica",
       messageLabel: "Mensaje",
       submit: "Enviar mensaje",
       submitting: "Enviando...",
@@ -408,8 +391,7 @@ export default function Contact() {
     de: {
       title: "Kontakt",
       subtitle: "Die Kontaktdaten der einzelnen Partner stehen in ihrem jeweiligen Profil.",
-      officesTitle: "Unsere Büros",
-      mainOffice: "Hauptsitz",
+      officesTitle: "Büro",
       building: "Río Tamazunchale 205 Norte",
       floor: "18. Stock",
       street: "San Pedro Garza García, N.L.",
@@ -421,21 +403,17 @@ export default function Contact() {
       hours: "Öffnungszeiten",
       hoursDetails: "Montag bis Freitag, 9:00–19:00 Uhr",
       getDirections: "Anfahrt",
-      mapTitle: "Karte des Büros von Santos & Saucedo in San Pedro Garza García",
+      photoAlt: "Glasfassade des Büros von Santos & Saucedo, in der sich der Cerro de la Silla spiegelt",
+      newTab: "(öffnet in einem neuen Tab)",
       telLabel: "Telefon",
       addressLabel: "Adresse",
-      formTitle: "Senden Sie uns eine Nachricht",
+      formTitle: "Nachricht",
       formSubtitle: "Die Übermittlung dieses Formulars begründet kein Mandatsverhältnis.",
       fullName: "Name",
-      fullNamePlaceholder: "Geben Sie Ihren vollständigen Namen ein",
       emailLabel: "E-Mail",
-      emailPlaceholder: "Geben Sie Ihre E-Mail-Adresse ein",
       phoneLabel: "Telefon (optional)",
-      phonePlaceholder: "Geben Sie Ihre Telefonnummer ein",
       companyLabel: "Unternehmen (optional)",
-      companyPlaceholder: "Geben Sie Ihren Firmennamen ein",
       practiceAreaLabel: "Praxisbereich (optional)",
-      practiceAreaPlaceholder: "Wählen Sie einen Praxisbereich",
       messageLabel: "Nachricht",
       submit: "Nachricht senden",
       submitting: "Wird gesendet...",
@@ -443,8 +421,7 @@ export default function Contact() {
     zh: {
       title: "联系我们",
       subtitle: "各合伙人的联系方式见其个人页面。",
-      officesTitle: "我们的办公室",
-      mainOffice: "总部",
+      officesTitle: "办公地址",
       building: "Río Tamazunchale 205 Norte",
       floor: "18层",
       street: "San Pedro Garza García, N.L.",
@@ -456,21 +433,17 @@ export default function Contact() {
       hours: "办公时间",
       hoursDetails: "周一至周五 9:00–19:00",
       getDirections: "获取路线",
-      mapTitle: "Santos & Saucedo San Pedro Garza García 办公室地图",
+      photoAlt: "Santos & Saucedo 办公室的玻璃外墙，映出 Cerro de la Silla",
+      newTab: "（在新标签页中打开）",
       telLabel: "电话",
       addressLabel: "地址",
-      formTitle: "给我们留言",
+      formTitle: "留言",
       formSubtitle: "提交本表格并不构成律师与客户之间的委托关系。",
       fullName: "姓名",
-      fullNamePlaceholder: "请输入您的姓名",
       emailLabel: "电子邮件",
-      emailPlaceholder: "请输入您的电子邮件地址",
       phoneLabel: "电话 (可选)",
-      phonePlaceholder: "请输入您的电话号码",
       companyLabel: "公司 (可选)",
-      companyPlaceholder: "请输入您的公司名称",
       practiceAreaLabel: "业务领域 (可选)",
-      practiceAreaPlaceholder: "选择业务领域",
       messageLabel: "留言",
       submit: "发送消息",
       submitting: "发送中...",
@@ -478,8 +451,7 @@ export default function Contact() {
     ko: {
       title: "문의하기",
       subtitle: "각 파트너의 연락처는 해당 프로필에 있습니다.",
-      officesTitle: "사무소 위치",
-      mainOffice: "본사",
+      officesTitle: "사무소",
       building: "Río Tamazunchale 205 Norte",
       floor: "18층",
       street: "San Pedro Garza García, N.L.",
@@ -491,21 +463,17 @@ export default function Contact() {
       hours: "업무 시간",
       hoursDetails: "월요일–금요일 9:00–19:00",
       getDirections: "길찾기",
-      mapTitle: "San Pedro Garza García에 있는 Santos & Saucedo 사무소 지도",
+      photoAlt: "Cerro de la Silla가 비치는 Santos & Saucedo 사무소의 유리 외벽",
+      newTab: "(새 탭에서 열림)",
       telLabel: "전화",
       addressLabel: "주소",
-      formTitle: "메시지 보내기",
+      formTitle: "메시지",
       formSubtitle: "이 양식을 제출하는 것만으로 변호사와 의뢰인 관계가 성립하지는 않습니다.",
       fullName: "이름",
-      fullNamePlaceholder: "성함을 입력하세요",
       emailLabel: "이메일",
-      emailPlaceholder: "이메일 주소를 입력하세요",
       phoneLabel: "전화번호 (선택사항)",
-      phonePlaceholder: "전화번호를 입력하세요",
       companyLabel: "회사명 (선택사항)",
-      companyPlaceholder: "회사명을 입력하세요",
       practiceAreaLabel: "관심 업무 분야 (선택사항)",
-      practiceAreaPlaceholder: "업무 분야를 선택하세요",
       messageLabel: "메시지",
       submit: "메시지 전송",
       submitting: "전송 중...",
@@ -513,8 +481,7 @@ export default function Contact() {
     ja: {
       title: "お問い合わせ",
       subtitle: "各パートナーの連絡先は、それぞれのプロフィールに掲載しています。",
-      officesTitle: "オフィス",
-      mainOffice: "本社",
+      officesTitle: "所在地",
       building: "Río Tamazunchale 205 Norte",
       floor: "18階",
       street: "San Pedro Garza García, N.L.",
@@ -526,21 +493,17 @@ export default function Contact() {
       hours: "営業時間",
       hoursDetails: "月曜日〜金曜日 9:00–19:00",
       getDirections: "アクセス",
-      mapTitle: "San Pedro Garza García の Santos & Saucedo 事務所の地図",
+      photoAlt: "Cerro de la Silla が映る Santos & Saucedo のオフィスのガラス張りの外観",
+      newTab: "（新しいタブで開きます）",
       telLabel: "電話",
       addressLabel: "所在地",
-      formTitle: "メッセージを送信",
+      formTitle: "メッセージ",
       formSubtitle: "本フォームの送信によって、弁護士と依頼者の関係が成立するものではありません。",
       fullName: "氏名",
-      fullNamePlaceholder: "氏名を入力してください",
       emailLabel: "メールアドレス",
-      emailPlaceholder: "メールアドレスを入力してください",
       phoneLabel: "電話番号 (任意)",
-      phonePlaceholder: "電話番号を入力してください",
       companyLabel: "会社名 (任意)",
-      companyPlaceholder: "会社名を入力してください",
       practiceAreaLabel: "ご関心のある業務分野 (任意)",
-      practiceAreaPlaceholder: "業務分野を選択してください",
       messageLabel: "メッセージ",
       submit: "メッセージを送信",
       submitting: "送信中...",
@@ -548,8 +511,7 @@ export default function Contact() {
     ar: {
       title: "اتصل بنا",
       subtitle: "تظهر بيانات الاتصال بكل شريك في صفحته الشخصية.",
-      officesTitle: "مكاتبنا",
-      mainOffice: "المقر الرئيسي",
+      officesTitle: "المكتب",
       building: "Río Tamazunchale 205 Norte",
       floor: "الطابق 18",
       street: "San Pedro Garza García, N.L.",
@@ -559,23 +521,19 @@ export default function Contact() {
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
       hours: "ساعات العمل",
-      hoursDetails: "من الاثنين إلى الجمعة، 9:00–19:00",
-      getDirections: "الحصول على الاتجاهات",
-      mapTitle: "خريطة مكتب Santos & Saucedo في San Pedro Garza García",
+      hoursDetails: "من الاثنين إلى الجمعة، \u20669:00–19:00\u2069", // horario aislado (LRI…PDI): sin él se leía "19:00–9:00"
+      getDirections: "كيفية الوصول",
+      photoAlt: "الواجهة الزجاجية لمكتب Santos & Saucedo وينعكس عليها جبل Cerro de la Silla",
+      newTab: "(يُفتح في علامة تبويب جديدة)",
       telLabel: "الهاتف",
       addressLabel: "العنوان",
-      formTitle: "أرسل لنا رسالة",
+      formTitle: "الرسالة",
       formSubtitle: "إرسال هذا النموذج لا يُنشئ علاقة بين محامٍ وموكّل.",
       fullName: "الاسم الكامل",
-      fullNamePlaceholder: "أدخل اسمك الكامل",
       emailLabel: "البريد الإلكتروني",
-      emailPlaceholder: "أدخل عنوان بريدك الإلكتروني",
       phoneLabel: "الهاتف (اختياري)",
-      phonePlaceholder: "أدخل رقم هاتفك",
       companyLabel: "الشركة (اختياري)",
-      companyPlaceholder: "أدخل اسم شركتك",
       practiceAreaLabel: "مجال الممارسة (اختياري)",
-      practiceAreaPlaceholder: "اختر مجال الممارسة",
       messageLabel: "الرسالة",
       submit: "إرسال الرسالة",
       submitting: "جاري الإرسال...",
@@ -583,8 +541,7 @@ export default function Contact() {
     ru: {
       title: "Контакты",
       subtitle: "Контактные данные каждого партнёра указаны в его профиле.",
-      officesTitle: "Наши офисы",
-      mainOffice: "Главный офис",
+      officesTitle: "Офис",
       building: "Río Tamazunchale 205 Norte",
       floor: "18 этаж",
       street: "San Pedro Garza García, N.L.",
@@ -596,21 +553,17 @@ export default function Contact() {
       hours: "Часы работы",
       hoursDetails: "Понедельник — пятница, 9:00–19:00",
       getDirections: "Как добраться",
-      mapTitle: "Карта офиса Santos & Saucedo в Сан-Педро-Гарса-Гарсия",
+      photoAlt: "Стеклянный фасад офиса Santos & Saucedo, в котором отражается гора Серро-де-ла-Силья",
+      newTab: "(откроется в новой вкладке)",
       telLabel: "Телефон",
       addressLabel: "Адрес",
-      formTitle: "Напишите нам",
+      formTitle: "Сообщение",
       formSubtitle: "Отправка этой формы не устанавливает отношений адвоката и клиента.",
       fullName: "Имя",
-      fullNamePlaceholder: "Введите ваше полное имя",
       emailLabel: "Эл. почта",
-      emailPlaceholder: "Введите ваш адрес электронной почты",
       phoneLabel: "Телефон (необязательно)",
-      phonePlaceholder: "Введите ваш номер телефона",
       companyLabel: "Компания (необязательно)",
-      companyPlaceholder: "Введите название вашей компании",
       practiceAreaLabel: "Область практики (необязательно)",
-      practiceAreaPlaceholder: "Выберите область практики",
       messageLabel: "Сообщение",
       submit: "Отправить сообщение",
       submitting: "Отправка...",
@@ -618,8 +571,7 @@ export default function Contact() {
     fr: {
       title: "Contact",
       subtitle: "Les coordonnées de chaque associé figurent sur sa fiche.",
-      officesTitle: "Nos bureaux",
-      mainOffice: "Siège",
+      officesTitle: "Bureau",
       building: "Río Tamazunchale 205 Norte",
       floor: "18ème étage",
       street: "San Pedro Garza García, N.L.",
@@ -631,21 +583,17 @@ export default function Contact() {
       hours: "Heures d'ouverture",
       hoursDetails: "Du lundi au vendredi, de 9 h à 19 h",
       getDirections: "Itinéraire",
-      mapTitle: "Plan d'accès au bureau de Santos & Saucedo à San Pedro Garza García",
+      photoAlt: "Façade vitrée des bureaux de Santos & Saucedo, où se reflète le Cerro de la Silla",
+      newTab: "(s’ouvre dans un nouvel onglet)",
       telLabel: "Téléphone",
       addressLabel: "Adresse",
-      formTitle: "Envoyez-nous un message",
+      formTitle: "Message",
       formSubtitle: "L'envoi de ce formulaire ne crée pas de relation avocat-client.",
       fullName: "Nom complet",
-      fullNamePlaceholder: "Entrez votre nom complet",
       emailLabel: "E-mail",
-      emailPlaceholder: "Entrez votre adresse e-mail",
       phoneLabel: "Téléphone (facultatif)",
-      phonePlaceholder: "Entrez votre numéro de téléphone",
       companyLabel: "Entreprise (facultatif)",
-      companyPlaceholder: "Entrez le nom de votre entreprise",
       practiceAreaLabel: "Domaine de pratique (facultatif)",
-      practiceAreaPlaceholder: "Sélectionnez un domaine de pratique",
       messageLabel: "Message",
       submit: "Envoyer le message",
       submitting: "Envoi en cours...",
@@ -653,8 +601,7 @@ export default function Contact() {
     it: {
       title: "Contatti",
       subtitle: "I recapiti di ciascun socio sono indicati nella sua scheda.",
-      officesTitle: "I nostri uffici",
-      mainOffice: "Sede principale",
+      officesTitle: "Sede",
       building: "Río Tamazunchale 205 Norte",
       floor: "18° piano",
       street: "San Pedro Garza García, N.L.",
@@ -666,21 +613,17 @@ export default function Contact() {
       hours: "Orari di apertura",
       hoursDetails: "Dal lunedì al venerdì, 9:00–19:00",
       getDirections: "Indicazioni stradali",
-      mapTitle: "Mappa dell'ufficio di Santos & Saucedo a San Pedro Garza García",
+      photoAlt: "Facciata in vetro degli uffici di Santos & Saucedo con il Cerro de la Silla riflesso",
+      newTab: "(si apre in una nuova scheda)",
       telLabel: "Telefono",
       addressLabel: "Indirizzo",
-      formTitle: "Inviaci un messaggio",
+      formTitle: "Messaggio",
       formSubtitle: "L'invio di questo modulo non costituisce un rapporto avvocato-cliente.",
       fullName: "Nome",
-      fullNamePlaceholder: "Inserisci il tuo nome completo",
       emailLabel: "E-mail",
-      emailPlaceholder: "Inserisci il tuo indirizzo e-mail",
       phoneLabel: "Telefono (opzionale)",
-      phonePlaceholder: "Inserisci il tuo numero di telefono",
       companyLabel: "Azienda (opzionale)",
-      companyPlaceholder: "Inserisci il nome della tua azienda",
       practiceAreaLabel: "Area di pratica (opzionale)",
-      practiceAreaPlaceholder: "Seleziona un'area di pratica",
       messageLabel: "Messaggio",
       submit: "Invia messaggio",
       submitting: "Invio in corso...",
@@ -696,7 +639,10 @@ export default function Contact() {
     city: "San Pedro Garza García, N.L., C.P. 66220, México",
   };
 
-  const googleMapsUrl = "https://www.google.com/maps?q=R%C3%ADo+Tamazunchale+205+Norte,+Colonia+Del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220&output=embed";
+  // "Cómo llegar": las indicaciones de Google Maps en otra pestaña. Sin mapa incrustado: al
+  // cargarse, el iframe de Google podía fijar cookies y recibir la IP del visitante (el sitio
+  // público ya no carga terceros).
+  const directionsUrl = "https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Colonia+Del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220";
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-contact">
@@ -728,33 +674,119 @@ export default function Contact() {
         </section>
 
         <div className="py-16 lg:py-20">
-          <div className="ss-container">
-            <motion.div
+          {/* Ficha de la oficina a la izquierda y formulario a la derecha. En el teléfono, por
+              orden del documento: ficha, formulario y, al final, la foto del edificio. En
+              escritorio la foto va bajo la ficha (fila 2) y el formulario ocupa las dos filas. */}
+          <div className="ss-container grid grid-cols-1 gap-y-16 lg:grid-cols-12 lg:grid-rows-[auto_1fr] lg:gap-x-12 lg:gap-y-12">
+            {/* Oficina: lista de datos con filetes (sin tarjeta ni iconos) y el enlace "Cómo llegar" */}
+            <motion.section
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="mb-16 lg:mb-20 max-w-4xl"
+              className="lg:col-span-5"
+              data-testid="section-contact-office"
+            >
+              <h2 className="ss-h2 mb-8" data-testid="text-offices-title">
+                {t.officesTitle}
+              </h2>
+
+              <div data-testid="card-main-office">
+                <dl className="border-b border-ss-rule">
+                  <div className={rowClass}>
+                    <dt className={dtClass}>{t.addressLabel}</dt>
+                    {/* Líneas en <div> y teléfono con el tamaño del dd: la regla móvil de
+                        index.css lleva los <span> a 16 px y la lista quedaba con dos tamaños */}
+                    <dd className={ddClass} data-testid="text-office-address">
+                      <div>{t.street}</div>
+                      <div>{t.colony}</div>
+                      <div>{t.city}</div>
+                    </dd>
+                  </div>
+                  <div className={rowClass}>
+                    <dt className={dtClass}>{t.telLabel}</dt>
+                    <dd className={ddClass}>
+                      <a
+                        href={`tel:${t.phone.replace(/\s/g, '')}`}
+                        className={ddLinkClass}
+                        data-testid="link-office-phone"
+                      >
+                        <span dir="ltr" className="[font-size:inherit]">{t.phone}</span>
+                      </a>
+                    </dd>
+                  </div>
+                  <div className={rowClass}>
+                    <dt className={dtClass}>{t.emailLabel}</dt>
+                    <dd className={ddClass}>
+                      <a
+                        href={`mailto:${t.email}`}
+                        className={ddLinkClass}
+                        data-testid="link-office-email"
+                      >
+                        {t.email}
+                      </a>
+                    </dd>
+                  </div>
+                  <div className={rowClass}>
+                    <dt className={dtClass}>{t.hours}</dt>
+                    <dd className={ddClass} data-testid="text-office-hours">
+                      {t.hoursDetails}
+                    </dd>
+                  </div>
+                  {FIRM_LINKEDIN_URL && (
+                    <div className={rowClass}>
+                      <dt className={dtClass}>LinkedIn</dt>
+                      <dd className={ddClass}>
+                        <a
+                          href={FIRM_LINKEDIN_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={ddLinkClass}
+                          data-testid="button-linkedin"
+                        >
+                          Santos&nbsp;&amp;&nbsp;Saucedo
+                        </a>
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+
+                {/* Mismo aspecto que TextLink (etiqueta, subrayado, flecha y área táctil ampliada);
+                    <a> propio porque TextLink es un Link de wouter y este destino es externo */}
+                <a
+                  href={directionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ss-label group relative mt-8 inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3"
+                  data-testid="button-get-directions"
+                >
+                  <span className="ss-link">{t.getDirections}</span>
+                  <span className="sr-only">{` ${t.newTab}`}</span>
+                  <span aria-hidden="true" className="ss-arrow">
+                    →
+                  </span>
+                </a>
+              </div>
+            </motion.section>
+
+            {/* Formulario: sin llamada en el título ni marcadores que repitan la etiqueta */}
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1"
               data-testid="section-contact-form"
             >
-              <div className="mb-8">
-                <h2 
-                  className={`${h2Class} mb-3`}
-                  data-testid="text-form-title"
-                >
-                  {t.formTitle}
-                </h2>
-                <p 
-                  className="text-base text-ss-tinta leading-relaxed max-w-2xl"
-                  data-testid="text-form-subtitle"
-                >
-                  {t.formSubtitle}
-                </p>
-              </div>
+              <h2 className="ss-h2 mb-8" data-testid="text-form-title">
+                {t.formTitle}
+              </h2>
 
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-testid="form-contact">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Dos campos por fila solo en tableta (formulario a todo el ancho); en escritorio,
+                      columna de 6/12: un campo por fila */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
                     <FormField
                       control={form.control}
                       name="fullName"
@@ -762,9 +794,9 @@ export default function Contact() {
                         <FormItem>
                           <FormLabel data-testid="label-fullname">{t.fullName}</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder={t.fullNamePlaceholder} 
-                              {...field} 
+                            <Input
+                              autoComplete="name"
+                              {...field}
                               data-testid="input-fullname"
                             />
                           </FormControl>
@@ -780,10 +812,10 @@ export default function Contact() {
                         <FormItem>
                           <FormLabel data-testid="label-email">{t.emailLabel}</FormLabel>
                           <FormControl>
-                            <Input 
+                            <Input
                               type="email"
-                              placeholder={t.emailPlaceholder} 
-                              {...field} 
+                              autoComplete="email"
+                              {...field}
                               data-testid="input-email"
                             />
                           </FormControl>
@@ -799,10 +831,10 @@ export default function Contact() {
                         <FormItem>
                           <FormLabel data-testid="label-phone">{t.phoneLabel}</FormLabel>
                           <FormControl>
-                            <Input 
+                            <Input
                               type="tel"
-                              placeholder={t.phonePlaceholder} 
-                              {...field} 
+                              autoComplete="tel"
+                              {...field}
                               data-testid="input-phone"
                             />
                           </FormControl>
@@ -818,9 +850,9 @@ export default function Contact() {
                         <FormItem>
                           <FormLabel data-testid="label-company">{t.companyLabel}</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder={t.companyPlaceholder} 
-                              {...field} 
+                            <Input
+                              autoComplete="organization"
+                              {...field}
                               data-testid="input-company"
                             />
                           </FormControl>
@@ -836,16 +868,22 @@ export default function Contact() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel data-testid="label-practice-area">{t.practiceAreaLabel}</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        {/* Radix no hereda la dirección del documento: en árabe, valor a la
+                            derecha y flecha a la izquierda, como los campos de texto vecinos */}
+                        <Select
+                          dir={language === "ar" ? "rtl" : "ltr"}
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger data-testid="select-practice-area">
-                              <SelectValue placeholder={t.practiceAreaPlaceholder} />
+                              <SelectValue />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent data-testid="select-practice-area-content">
                             {PRACTICE_OPTIONS.map((area) => (
-                              <SelectItem 
-                                key={area.value} 
+                              <SelectItem
+                                key={area.value}
                                 value={area.value}
                                 data-testid={`option-practice-area-${area.value}`}
                               >
@@ -866,9 +904,9 @@ export default function Contact() {
                       <FormItem>
                         <FormLabel data-testid="label-message">{t.messageLabel}</FormLabel>
                         <FormControl>
-                          <Textarea 
-                            className="min-h-[120px]"
-                            {...field} 
+                          <Textarea
+                            className="min-h-[160px]"
+                            {...field}
                             data-testid="textarea-message"
                           />
                         </FormControl>
@@ -877,133 +915,43 @@ export default function Contact() {
                     )}
                   />
 
-                  <Button 
-                    type="submit" 
-                    className="w-full md:w-auto"
+                  {/* Enviar: el único botón Azul Marino lleno, 44 px de alto */}
+                  <Button
+                    type="submit"
+                    className="min-h-[44px] w-full px-6 sm:w-auto"
                     disabled={contactMutation.isPending}
                     data-testid="button-submit-contact"
                   >
                     {contactMutation.isPending ? t.submitting : t.submit}
                   </Button>
+
+                  {/* Aviso tras el botón, como en la redacción */}
+                  <p
+                    className="max-w-xl text-[15px] leading-[1.5] text-ss-medio"
+                    data-testid="text-form-subtitle"
+                  >
+                    {t.formSubtitle}
+                  </p>
                 </form>
               </Form>
-            </motion.div>
-
-            {/* Oficina: lista de datos con filetes (sin tarjeta ni iconos) junto al mapa en gris.
-                Sin la tarjeta "Contáctenos" (repetía el h1) ni "Conéctese con nosotros" (enlazaba
-                a este mismo sitio). */}
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              data-testid="section-contact-office"
-            >
-              <h2 
-                className={`${h2Class} mb-8`}
-                data-testid="text-offices-title"
-              >
-                {t.officesTitle}
-              </h2>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
-                <div data-testid="card-main-office">
-                  <p className="ss-label text-ss-medio mb-2">{t.mainOffice}</p>
-                  <h3 className={`${h3Class} mb-6`} data-testid="text-office-name">
-                    {OFFICE_CITY}
-                  </h3>
-
-                  <dl className="border-b border-ss-rule">
-                    <div className={rowClass}>
-                      <dt className={dtClass}>{t.addressLabel}</dt>
-                      {/* Líneas en <div> y teléfono con el tamaño del dd: la regla móvil de
-                          index.css lleva los <span> a 16 px y la lista quedaba con dos tamaños */}
-                      <dd className={ddClass} data-testid="text-office-address">
-                        <div>{t.street}</div>
-                        <div>{t.colony}</div>
-                        <div>{t.city}</div>
-                      </dd>
-                    </div>
-                    <div className={rowClass}>
-                      <dt className={dtClass}>{t.telLabel}</dt>
-                      <dd className={ddClass}>
-                        <a 
-                          href={`tel:${t.phone.replace(/\s/g, '')}`}
-                          className={ddLinkClass}
-                          data-testid="link-office-phone"
-                        >
-                          <span dir="ltr" className="[font-size:inherit]">{t.phone}</span>
-                        </a>
-                      </dd>
-                    </div>
-                    <div className={rowClass}>
-                      <dt className={dtClass}>{t.emailLabel}</dt>
-                      <dd className={ddClass}>
-                        <a 
-                          href={`mailto:${t.email}`}
-                          className={ddLinkClass}
-                          data-testid="link-office-email"
-                        >
-                          {t.email}
-                        </a>
-                      </dd>
-                    </div>
-                    <div className={rowClass}>
-                      <dt className={dtClass}>{t.hours}</dt>
-                      <dd className={ddClass} data-testid="text-office-hours">
-                        {t.hoursDetails}
-                      </dd>
-                    </div>
-                    {FIRM_LINKEDIN_URL && (
-                      <div className={rowClass}>
-                        <dt className={dtClass}>LinkedIn</dt>
-                        <dd className={ddClass}>
-                          <a
-                            href={FIRM_LINKEDIN_URL}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={ddLinkClass}
-                            data-testid="button-linkedin"
-                          >
-                            Santos &amp; Saucedo
-                          </a>
-                        </dd>
-                      </div>
-                    )}
-                  </dl>
-
-                  {/* Enlace de texto de la marca (etiqueta, subrayado al pasar, flecha), sin botón con caja */}
-                  <a 
-                    href="https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Colonia+Del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ss-label group mt-6 inline-flex min-h-[44px] items-center gap-3 text-ss-marino"
-                    data-testid="button-get-directions"
-                  >
-                    <span className="ss-link">{t.getDirections}</span>
-                    <span aria-hidden="true" className="ss-arrow">
-                      →
-                    </span>
-                  </a>
-                </div>
-
-                {/* Mapa en gris, sin marco ni esquinas; Hueso de fondo mientras carga */}
-                <div className="aspect-[4/3] w-full bg-ss-paper lg:aspect-auto lg:h-full lg:min-h-[420px]">
-                  <iframe
-                    src={googleMapsUrl}
-                    width="100%"
-                    height="100%"
-                    className="block h-full w-full"
-                    style={{ border: 0, filter: "grayscale(1) contrast(.95)" }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title={t.mapTitle}
-                    data-testid="iframe-google-map"
-                  />
-                </div>
-              </div>
             </motion.section>
+
+            {/* El edificio (la foto de la portada), en gris y en 3:4 desde el borde izquierdo:
+                el cuadro deja fuera el letrero del estacionamiento (x 712–918 de 952) */}
+            <figure className="sm:max-w-[26rem] lg:col-span-5 lg:row-start-2 lg:self-start" data-testid="figure-contact-building">
+              <div className="overflow-hidden bg-ss-rule">
+                <img
+                  src={edificioCerro}
+                  alt={t.photoAlt}
+                  loading="lazy"
+                  decoding="async"
+                  width={952}
+                  height={937}
+                  className="ss-photo block aspect-[3/4] h-auto w-full object-cover object-[0%_50%]"
+                  data-testid="img-contact-building"
+                />
+              </div>
+            </figure>
           </div>
         </div>
       </main>

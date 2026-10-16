@@ -99,7 +99,8 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       empty: (q) => `Sin resultados para «${q}».`,
       count: (n) => (n === 1 ? "1 resultado" : `${n} resultados`),
       close: "Cerrar",
-      // /api/search devuelve a todo el equipo (socios, asociados y staff), no solo socios
+      // /api/search devuelve solo a quien se nombra en /team (isNamedOnTeamPage): socios
+      // confirmados y Of Counsel
       groups: { team: "Equipo", practiceGroups: "Prácticas", industryGroups: "Industrias", news: "Análisis" },
     },
     langs: { group: "Idioma / Language", others: "Otros idiomas", label: "Idioma" },
@@ -111,7 +112,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       terms: "Términos de uso",
       cookies: "Preferencias de cookies",
       disclaimer: "La información de este sitio es de carácter general y no constituye asesoría legal.",
-      rights: "Santos & Saucedo",
+      rights: "Santos\u00a0&\u00a0Saucedo",
     },
   },
   en: {
@@ -141,7 +142,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       terms: "Terms of use",
       cookies: "Cookie preferences",
       disclaimer: "The information on this site is general in nature and does not constitute legal advice.",
-      rights: "Santos & Saucedo",
+      rights: "Santos\u00a0&\u00a0Saucedo",
     },
   },
   de: {
@@ -172,7 +173,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       terms: "Nutzungs\u00adbedingungen",
       cookies: "Cookie-Einstellungen",
       disclaimer: "Die Informationen auf dieser Website sind allgemeiner Natur und stellen keine Rechtsberatung dar.",
-      rights: "Santos & Saucedo",
+      rights: "Santos\u00a0&\u00a0Saucedo",
     },
   },
   zh: {
@@ -202,7 +203,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       terms: "使用条款",
       cookies: "Cookie 偏好设置",
       disclaimer: "本网站所载信息仅供一般参考，不构成法律意见。",
-      rights: "Santos & Saucedo",
+      rights: "Santos\u00a0&\u00a0Saucedo",
     },
   },
   ko: {
@@ -232,7 +233,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       terms: "이용 약관",
       cookies: "쿠키 환경설정",
       disclaimer: "본 웹사이트의 정보는 일반적인 내용이며 법률 자문에 해당하지 않습니다.",
-      rights: "Santos & Saucedo",
+      rights: "Santos\u00a0&\u00a0Saucedo",
     },
   },
   ja: {
@@ -258,11 +259,12 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       office: "所在地",
       firm: "事務所",
       legal: "法的情報",
-      privacy: "プライバシーポリシー",
+      // U+200B: único corte permitido en el pie (keep-all en index.css); a 320 px partía "プライバシーポ | リシー"
+      privacy: "プライバシー\u200bポリシー",
       terms: "利用規約",
       cookies: "Cookie設定",
       disclaimer: "本サイトの情報は一般的な内容であり、法的助言を構成するものではありません。",
-      rights: "Santos & Saucedo",
+      rights: "Santos\u00a0&\u00a0Saucedo",
     },
   },
   ar: {
@@ -293,7 +295,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       terms: "شروط الاستخدام",
       cookies: "تفضيلات ملفات تعريف الارتباط",
       disclaimer: "المعلومات الواردة في هذا الموقع ذات طابع عام ولا تُعدّ استشارة قانونية.",
-      rights: "Santos & Saucedo",
+      rights: "Santos\u00a0&\u00a0Saucedo",
     },
   },
   ru: {
@@ -323,7 +325,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       terms: "Условия использования",
       cookies: "Настройки cookie",
       disclaimer: "Информация на этом сайте носит общий характер и не является юридической консультацией.",
-      rights: "Santos & Saucedo",
+      rights: "Santos\u00a0&\u00a0Saucedo",
     },
   },
   fr: {
@@ -356,7 +358,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       terms: "Conditions d’utilisation",
       cookies: "Préférences des cookies",
       disclaimer: "Les informations publiées sur ce site sont de nature générale et ne constituent pas un avis juridique.",
-      rights: "Santos & Saucedo",
+      rights: "Santos\u00a0&\u00a0Saucedo",
     },
   },
   it: {
@@ -386,7 +388,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       terms: "Termini di utilizzo",
       cookies: "Preferenze dei cookie",
       disclaimer: "Le informazioni contenute in questo sito hanno carattere generale e non costituiscono consulenza legale.",
-      rights: "Santos & Saucedo",
+      rights: "Santos\u00a0&\u00a0Saucedo",
     },
   },
 };

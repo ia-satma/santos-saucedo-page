@@ -1,4 +1,9 @@
 import type { LanguageCode } from "@shared/schema";
+import { CONFIRMED_PARTNER_SLUGS } from "@shared/teamVisibility";
+
+// Datos estructurados sin datos no confirmados: fuera rango de precios, monedas y medios de
+// pago, coordenadas, horario, "Latin America", la foto de oficina sin archivo y la búsqueda
+// (/search no existe). La descripción con los 35 años se conserva tal cual.
 
 interface JsonLdSchemaProps {
   language: LanguageCode;
@@ -49,18 +54,19 @@ export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
   const safeDescription = isSpanish
     ? "Santos & Saucedo Abogados es una firma legal para empresas -laboral, corporativo, migratorio y litigio-, con raíz en el derecho laboral y más de 35 años de experiencia asesorando empresas nacionales y multinacionales. Parte de una alianza con presencia en más de 72 ciudades de México."
     : "Santos & Saucedo Abogados is a law firm for companies -labor, corporate, immigration and litigation-, rooted in labor law with more than 35 years of experience advising national and multinational companies. Part of an alliance with presence in more than 72 cities across Mexico.";
+  // Las cuatro prácticas, con el nombre del documento de redacción
   const laborServices = isSpanish
     ? [
         "Laboral y seguridad social",
         "Corporativo y contractual",
         "Migratorio",
-        "Litigio contencioso (civil, mercantil y penal)",
+        "Litigio",
       ]
     : [
-        "Labor & Social Security",
-        "Corporate & Contractual",
+        "Labor and social security",
+        "Corporate and contractual",
         "Immigration",
-        "Contentious Litigation (Civil, Commercial & Criminal)",
+        "Litigation",
       ];
   const langDescriptions = {
     legalService: safeDescription,
@@ -123,9 +129,6 @@ export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
     "logo": "https://santossaucedo.com/images/santossaucedo_2025.png",
     "image": "https://santossaucedo.com/images/santossaucedo_2025.png",
     "description": langDescriptions.legalService,
-    "priceRange": "$$$",
-    "currenciesAccepted": "MXN, USD",
-    "paymentAccepted": "Bank Transfer, Wire Transfer",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Río Tamazunchale 205 Norte",
@@ -133,34 +136,15 @@ export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
       "addressRegion": "Nuevo León",
       "addressCountry": "MX"
     },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": "25.6510",
-      "longitude": "-100.3673"
-    },
     "telephone": "+52 81 8335 2086",
     "email": "info@santossaucedo.com",
-    "areaServed": [
-      {
-        "@type": "Country",
-        "name": "Mexico"
-      },
-      {
-        "@type": "AdministrativeArea",
-        "name": "Latin America"
-      }
-    ],
-    "openingHoursSpecification": [
-      {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        "opens": "09:00",
-        "closes": "19:00"
-      }
-    ],
+    "areaServed": {
+      "@type": "Country",
+      "name": "Mexico"
+    },
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
-      "name": isSpanish ? "Áreas de especialidad" : "Areas of specialty",
+      "name": isSpanish ? "Prácticas" : "Practices",
       "itemListElement": laborServices.map((name) => ({
         "@type": "Offer",
         "itemOffered": {
@@ -185,11 +169,10 @@ export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
     "@id": "https://www.santossaucedo.com/#localbusiness",
     "name": "Santos & Saucedo Abogados",
     "description": safeDescription,
-    "image": "https://santossaucedo.com/images/office.jpg",
+    "image": "https://santossaucedo.com/images/santossaucedo_2025.png",
     "url": "https://www.santossaucedo.com",
     "telephone": "+52 81 8335 2086",
     "email": "info@santossaucedo.com",
-    "priceRange": "$$$",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Río Tamazunchale 205 Norte",
@@ -197,19 +180,6 @@ export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
       "addressRegion": "Nuevo León",
       "addressCountry": "MX"
     },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": "25.6510",
-      "longitude": "-100.3673"
-    },
-    "openingHoursSpecification": [
-      {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        "opens": "09:00",
-        "closes": "19:00"
-      }
-    ],
     "hasMap": "https://www.google.com/maps/search/?api=1&query=R%C3%ADo+Tamazunchale+205+Norte%2C+San+Pedro+Garza+Garc%C3%ADa%2C+N.L."
   };
 
@@ -223,14 +193,6 @@ export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
     "description": safeDescription,
     "publisher": {
       "@id": "https://www.santossaucedo.com/#organization"
-    },
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": "https://www.santossaucedo.com/search?q={search_term_string}"
-      },
-      "query-input": "required name=search_term_string"
     }
   };
 
@@ -352,6 +314,7 @@ export function PersonJsonLd({
   education,
   languages,
   knowsAbout,
+  named,
   language = "en"
 }: {
   name: string;
@@ -364,8 +327,18 @@ export function PersonJsonLd({
   education?: Array<{ school: string; degree: string; year?: string }>;
   languages?: string[];
   knowsAbout?: string[];
+  /**
+   * Si la persona se nombra en el sitio (isNamedOnTeamPage de shared/teamVisibility.ts).
+   * Sin el dato, solo los socios confirmados (por el slug de `url`) y los Of Counsel.
+   */
+  named?: boolean;
   language?: LanguageCode;
 }) {
+  // D17: sin datos estructurados de quien /team no nombra (socios sin confirmar, asociados)
+  const slug = url.replace(/\/+$/, "").split("/").pop() ?? "";
+  const isNamed = named ?? (CONFIRMED_PARTNER_SLUGS.has(slug) || jobTitle.trim().toLowerCase() === "of counsel");
+  if (!isNamed) return null;
+
   const sameAs = [];
   if (linkedinUrl) sameAs.push(linkedinUrl);
 

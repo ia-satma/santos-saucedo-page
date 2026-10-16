@@ -33,8 +33,8 @@ export default function Home() {
         <Creemos26 lang={lang} />
         <Practicas26 lang={lang} />
         <Extranjeras26 lang={lang} />
-        <Monitor26 lang={lang} />
         <Socios26 lang={lang} />
+        <Monitor26 lang={lang} />
       </main>
 
       <Footer26 />

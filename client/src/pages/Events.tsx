@@ -144,7 +144,9 @@ export default function EventsPage() {
     upcoming: string;
     past: string;
     register: string;
+    /** Frase completa, con su punto ("。" en chino y japonés) */
     noEvents: string;
+    /** Enlace a la publicación: la etiqueta del menú en cada idioma (sin "insights") */
     monitorLink: string;
   }> = {
     en: {
@@ -152,12 +154,12 @@ export default function EventsPage() {
       subtitle: "Upcoming and past events of the firm",
       errorMessage: "Failed to load events",
       noResults: "No events match your filter",
-      learnMore: "Learn More",
+      learnMore: "Learn more",
       all: "All",
       upcoming: "Upcoming",
       past: "Past",
       register: "Register",
-      noEvents: "No events scheduled",
+      noEvents: "No events scheduled.",
       monitorLink: "Labor Monitor",
     },
     es: {
@@ -170,7 +172,7 @@ export default function EventsPage() {
       upcoming: "Próximos",
       past: "Pasados",
       register: "Registrarse",
-      noEvents: "No hay eventos programados",
+      noEvents: "No hay eventos programados.",
       monitorLink: "Monitor Laboral",
     },
     de: {
@@ -183,7 +185,7 @@ export default function EventsPage() {
       upcoming: "Kommende Veranstaltungen",
       past: "Vergangene Veranstaltungen",
       register: "Anmelden",
-      noEvents: "Keine Veranstaltungen geplant",
+      noEvents: "Keine Veranstaltungen geplant.",
       monitorLink: "Nachrichten",
     },
     zh: {
@@ -196,7 +198,7 @@ export default function EventsPage() {
       upcoming: "即将举行的活动",
       past: "过往活动",
       register: "注册",
-      noEvents: "暂无活动",
+      noEvents: "暂无活动。",
       monitorLink: "新闻",
     },
     ko: {
@@ -209,8 +211,8 @@ export default function EventsPage() {
       upcoming: "예정된 이벤트",
       past: "지난 이벤트",
       register: "등록",
-      noEvents: "예정된 이벤트가 없습니다",
-      monitorLink: "뉴스 및 인사이트",
+      noEvents: "예정된 이벤트가 없습니다.",
+      monitorLink: "뉴스",
     },
     ja: {
       title: "イベント",
@@ -222,8 +224,8 @@ export default function EventsPage() {
       upcoming: "今後のイベント",
       past: "過去のイベント",
       register: "登録",
-      noEvents: "予定されているイベントはありません",
-      monitorLink: "ニュースとインサイト",
+      noEvents: "予定されているイベントはありません。",
+      monitorLink: "ニュース",
     },
     ar: {
       title: "الفعاليات",
@@ -235,8 +237,8 @@ export default function EventsPage() {
       upcoming: "الفعاليات القادمة",
       past: "الفعاليات السابقة",
       register: "سجّل",
-      noEvents: "لا توجد فعاليات مجدولة",
-      monitorLink: "الأخبار والرؤى",
+      noEvents: "لا توجد فعاليات مجدولة.",
+      monitorLink: "الأخبار",
     },
     ru: {
       title: "Мероприятия",
@@ -248,7 +250,7 @@ export default function EventsPage() {
       upcoming: "Предстоящие",
       past: "Прошедшие",
       register: "Зарегистрироваться",
-      noEvents: "Нет мероприятий",
+      noEvents: "Нет мероприятий.",
       monitorLink: "Новости",
     },
     fr: {
@@ -261,7 +263,7 @@ export default function EventsPage() {
       upcoming: "À venir",
       past: "Passés",
       register: "S'inscrire",
-      noEvents: "Aucun événement prévu",
+      noEvents: "Aucun événement prévu.",
       monitorLink: "Actualités",
     },
     it: {
@@ -274,7 +276,7 @@ export default function EventsPage() {
       upcoming: "Prossimi eventi",
       past: "Eventi passati",
       register: "Registrati",
-      noEvents: "Nessun evento",
+      noEvents: "Nessun evento.",
       monitorLink: "Notizie",
     },
   };
@@ -382,21 +384,24 @@ export default function EventsPage() {
             transition={{ duration: 0.4 }}
             className="mb-10"
           >
+            {/* Filtros: botones de contorno de 44 px (el Azul Marino lleno queda para enviar
+                formularios); el activo, con filete Azul Marino y aria-pressed. Etiquetas en el
+                idioma de la página. */}
             <div className="flex flex-wrap items-center gap-2" data-testid="container-type-filters">
               {typeFilters.map((type) => (
                 <Button
                   key={type.value}
-                  variant={selectedType === type.value ? "default" : "outline"}
-                  size="sm"
+                  variant="outline"
+                  aria-pressed={selectedType === type.value}
                   onClick={() => setSelectedType(type.value)}
-                  className={`transition-all ${
+                  className={`min-h-[44px] px-4 transition-colors ${
                     selectedType === type.value 
-                      ? "bg-primary text-primary-foreground" 
+                      ? "border-ss-marino text-ss-marino" 
                       : "border-ss-rule text-ss-tinta hover:border-ss-marino"
                   }`}
                   data-testid={`button-filter-${type.value}`}
                 >
-                  {language === "es" ? type.es : type.en}
+                  {type.value === "all" ? t.all : getEventTypeLabel(type.value, language)}
                 </Button>
               ))}
             </div>
@@ -433,7 +438,7 @@ export default function EventsPage() {
                eventos programados" y el enlace al Monitor; si solo el filtro no da resultados, noResults. */
             <div className="border-t border-ss-rule pt-6" data-testid="container-events-empty">
               <p className="text-base text-ss-tinta mb-4" data-testid="text-events-empty">
-                {events && events.length > 0 ? t.noResults : `${t.noEvents}.`}
+                {events && events.length > 0 ? t.noResults : t.noEvents}
               </p>
               {(!events || events.length === 0) && (
                 <TextLink href="/news">{t.monitorLink}</TextLink>

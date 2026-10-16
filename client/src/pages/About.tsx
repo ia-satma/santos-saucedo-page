@@ -1,4 +1,3 @@
-import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { 
   Building2, 
@@ -15,138 +14,33 @@ import {
   UsersRound,
   HeartHandshake
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow, NumberedCard } from "@/components/editorial";
-import type { TeamMember, PracticeGroup, IndustryGroup, LanguageCode } from "@shared/schema";
+import { TextLink } from "@/components/home26/primitives";
+import { chrome26 } from "@/components/home26/chrome26";
+import type { LanguageCode } from "@shared/schema";
 
-// Metodología laboral de /about (en ES/EN va en el propio componente) y dos cifras:
-// integrantes del equipo (no solo abogados) y la oficina en Nuevo León.
-const laborMethod: Partial<Record<LanguageCode, {
-  title: string;
-  subtitle: string;
-  intro: string;
-  /** Prevención, Diagnóstico, Capacitación: [título, texto] */
-  aspects: [string, string][];
-  team: string;
-  office: string;
-}>> = {
-  de: {
-    title: "Arbeitsrechtliche Methodik",
-    subtitle: "Prävention, Personalverwaltung und Verteidigung im Arbeitsrecht",
-    intro: "Die Arbeit der Kanzlei konzentriert sich darauf, den täglichen Betrieb der Unternehmen zu schützen: Risiken prüfen, interne Abläufe ordnen, die verantwortlichen Teams stärken und strategisch reagieren, wenn ein Konflikt entsteht.",
-    aspects: [
-      ["Prävention", "Wir erkennen arbeitsrechtliche Risiken, bevor sie zu Streitfällen werden."],
-      ["Diagnose", "Wir prüfen Personalverwaltung, Dokumentation und Arbeitsbeziehungen."],
-      ["Schulung", "Wir bereiten Führungskräfte und Personalabteilungen darauf vor, mit rechtlichem Urteilsvermögen zu handeln."],
-    ],
-    team: "Teammitglieder",
-    office: "Büro in Nuevo León",
-  },
-  zh: {
-    title: "劳动法工作方法",
-    subtitle: "预防、劳动管理与劳动争议辩护",
-    intro: "本所的工作重点是保护企业的日常运营：评估风险、梳理内部流程、加强相关负责团队，并在冲突发生时以策略应对。",
-    aspects: [
-      ["预防", "我们在劳动风险演变为纠纷之前予以识别。"],
-      ["诊断", "我们审查劳动管理、相关文件和劳动关系。"],
-      ["培训", "我们帮助管理层和人力资源团队以稳健的法律判断行事。"],
-    ],
-    team: "团队成员",
-    office: "新莱昂州办公室",
-  },
-  ko: {
-    title: "노동법 방법론",
-    subtitle: "예방, 노무 관리, 노동 분쟁 방어",
-    intro: "법인의 업무는 기업의 일상적인 운영을 보호하는 데 집중합니다. 위험을 검토하고, 내부 절차를 정비하며, 담당 팀을 강화하고, 분쟁이 생기면 전략적으로 대응합니다.",
-    aspects: [
-      ["예방", "노동 위험이 분쟁으로 번지기 전에 파악합니다."],
-      ["진단", "노무 관리, 관련 문서, 근로 관계를 검토합니다."],
-      ["교육", "관리자와 인사팀이 법적 판단에 근거해 행동할 수 있도록 준비시킵니다."],
-    ],
-    team: "팀 구성원",
-    office: "누에보레온 사무소",
-  },
-  ja: {
-    title: "労働法の方法論",
-    subtitle: "予防、労務管理、労働紛争での防御",
-    intro: "当事務所の業務は、企業の日々の事業運営を守ることに重点を置いています。リスクを検証し、社内プロセスを整え、担当チームを強化し、紛争が生じた際には戦略的に対応します。",
-    aspects: [
-      ["予防", "労働リスクが紛争に発展する前に特定します。"],
-      ["診断", "労務管理、関連書類、労使関係を見直します。"],
-      ["研修", "管理職と人事チームが法的に適切な判断で行動できるよう支援します。"],
-    ],
-    team: "チームメンバー",
-    office: "ヌエボ・レオン州の事務所",
-  },
-  ar: {
-    title: "منهجية العمل في قانون العمل",
-    subtitle: "الوقاية والإدارة العمالية والدفاع في النزاعات العمالية",
-    intro: "يتركز عمل المكتب على حماية العمليات اليومية للشركات: مراجعة المخاطر، وتنظيم الإجراءات الداخلية، وتعزيز الفرق المسؤولة، والاستجابة باستراتيجية عند نشوء أي نزاع.",
-    aspects: [
-      ["الوقاية", "نحدد المخاطر العمالية قبل أن تتحول إلى نزاعات."],
-      ["التشخيص", "نراجع الإدارة العمالية والوثائق وعلاقات العمل."],
-      ["التدريب", "نُعدّ المديرين وفرق الموارد البشرية للتصرف وفق تقدير قانوني سليم."],
-    ],
-    team: "أعضاء الفريق",
-    office: "مكتب في نويفو ليون",
-  },
-  ru: {
-    title: "Методология в трудовом праве",
-    subtitle: "Профилактика, кадровое администрирование и защита в трудовых спорах",
-    intro: "Работа фирмы направлена на защиту повседневной деятельности компаний: оценку рисков, упорядочение внутренних процессов, укрепление ответственных команд и стратегический ответ при возникновении конфликта.",
-    aspects: [
-      ["Профилактика", "Мы выявляем трудовые риски до того, как они перерастут в споры."],
-      ["Диагностика", "Мы проверяем кадровое администрирование, документацию и трудовые отношения."],
-      ["Обучение", "Мы готовим руководителей и кадровые службы принимать юридически обоснованные решения."],
-    ],
-    team: "Сотрудников",
-    office: "Офис в Нуэво-Леоне",
-  },
-  fr: {
-    title: "Méthodologie en droit du travail",
-    subtitle: "Prévention, administration du personnel et défense en droit du travail",
-    intro: "Le travail du cabinet vise à protéger l'activité quotidienne des entreprises : examiner les risques, structurer les processus internes, renforcer les équipes responsables et répondre avec stratégie lorsqu'un conflit survient.",
-    aspects: [
-      ["Prévention", "Nous identifions les risques sociaux avant qu'ils ne se transforment en litiges."],
-      ["Diagnostic", "Nous examinons l'administration du personnel, la documentation et les relations de travail."],
-      ["Formation", "Nous préparons les dirigeants et les équipes RH à agir avec discernement juridique."],
-    ],
-    team: "Membres de l'équipe",
-    office: "Bureau à Nuevo León",
-  },
-  it: {
-    title: "Metodologia giuslavoristica",
-    subtitle: "Prevenzione, amministrazione del personale e difesa in materia di lavoro",
-    intro: "Il lavoro dello studio si concentra sulla tutela dell'operatività quotidiana delle aziende: valutare i rischi, ordinare i processi interni, rafforzare i team responsabili e rispondere con strategia quando sorge un conflitto.",
-    aspects: [
-      ["Prevenzione", "Individuiamo i rischi giuslavoristici prima che si trasformino in contenziosi."],
-      ["Diagnosi", "Esaminiamo l'amministrazione del personale, la documentazione e i rapporti di lavoro."],
-      ["Formazione", "Prepariamo dirigenti e team delle risorse umane ad agire con criterio giuridico."],
-    ],
-    team: "Membri del team",
-    office: "Sede a Nuevo León",
-  },
+// Cifras de /about: "35+" (sin tocar) y "72+" ciudades con presencia, la forma en cifras de
+// "más de 72" (redacción aprobada de la portada: "Ciudades con presencia"). Fuera el conteo de
+// integrantes, el número de prácticas y "1 oficina".
+const citiesLabel: Record<LanguageCode, string> = {
+  es: "Ciudades con presencia",
+  en: "Cities with presence",
+  de: "Städte mit Präsenz",
+  zh: "覆盖城市",
+  ko: "진출 도시",
+  ja: "展開都市",
+  ar: "مدينة نتواجد فيها",
+  ru: "Городов присутствия",
+  fr: "Villes de présence",
+  it: "Città con presenza",
 };
 
 export default function About() {
   const { language } = useLanguage();
-
-  const { data: teamMembers } = useQuery<TeamMember[]>({
-    queryKey: ["/api/team"],
-  });
-
-  const { data: practiceGroups } = useQuery<PracticeGroup[]>({
-    queryKey: ["/api/practice-groups"],
-  });
-
-  const { data: industryGroups } = useQuery<IndustryGroup[]>({
-    queryKey: ["/api/industry-groups"],
-  });
 
   const content: Record<LanguageCode, {
     title: string;
@@ -263,9 +157,6 @@ export default function About() {
       statsTitle: "Our Firm in Numbers",
       stats: [
         { value: "35+", label: "Years of Experience" },
-        { value: String(teamMembers?.length || 24), label: "Attorneys" },
-        { value: String(practiceGroups?.length || 6), label: "Practices" },
-        { value: "100%", label: "Labor-focused" },
       ],
       rankingsTitle: "Rankings & Recognition",
       rankingsText: "Santos & Saucedo is consistently recognized as one of the leading law firms in Mexico by the most prestigious legal directories worldwide.",
@@ -368,9 +259,6 @@ export default function About() {
       statsTitle: "Nuestra firma en números",
       stats: [
         { value: "35+", label: "Años de experiencia" },
-        { value: String(teamMembers?.length || 24), label: "Abogados" },
-        { value: String(practiceGroups?.length || 6), label: "Prácticas" },
-        { value: "100%", label: "Enfoque laboral" },
       ],
       rankingsTitle: "Rankings y reconocimientos",
       rankingsText: "Santos & Saucedo es consistentemente reconocido como uno de los principales despachos de abogados en México por los directorios legales más prestigiosos del mundo.",
@@ -473,9 +361,6 @@ export default function About() {
       statsTitle: "Unsere Kanzlei in Zahlen",
       stats: [
         { value: "35+", label: "Jahre Erfahrung" },
-        { value: String(teamMembers?.length || 24), label: "Anwälte" },
-        { value: String(practiceGroups?.length || 6), label: "Praxisbereiche" },
-        { value: "100%", label: "Fokus Arbeitsrecht" },
       ],
       rankingsTitle: "Rankings und Auszeichnungen",
       rankingsText: "Santos & Saucedo wird von den renommiertesten Rechtsverzeichnissen weltweit durchgehend als eine der führenden Anwaltskanzleien in Mexiko anerkannt.",
@@ -578,9 +463,6 @@ export default function About() {
       statsTitle: "事务所数据",
       stats: [
         { value: "35+", label: "年经验" },
-        { value: String(teamMembers?.length || 24), label: "律师" },
-        { value: String(practiceGroups?.length || 6), label: "业务领域" },
-        { value: "100%", label: "专注劳动法" },
       ],
       rankingsTitle: "排名与认可",
       rankingsText: "Santos & Saucedo被全球最负盛名的法律目录持续评为墨西哥领先的律师事务所之一。",
@@ -683,9 +565,6 @@ export default function About() {
       statsTitle: "숫자로 보는 우리 법인",
       stats: [
         { value: "35+", label: "년의 경험" },
-        { value: String(teamMembers?.length || 24), label: "변호사" },
-        { value: String(practiceGroups?.length || 6), label: "업무 분야" },
-        { value: "100%", label: "노동법 전문" },
       ],
       rankingsTitle: "순위 및 인정",
       rankingsText: "Santos & Saucedo는 전 세계에서 가장 권위 있는 법률 디렉토리에 의해 멕시코의 선도적인 로펌 중 하나로 지속적으로 인정받고 있습니다.",
@@ -788,9 +667,6 @@ export default function About() {
       statsTitle: "数字で見る当事務所",
       stats: [
         { value: "35+", label: "年の経験" },
-        { value: String(teamMembers?.length || 24), label: "弁護士" },
-        { value: String(practiceGroups?.length || 6), label: "取扱分野" },
-        { value: "100%", label: "労働法に特化" },
       ],
       rankingsTitle: "ランキングと評価",
       rankingsText: "Santos & Saucedoは、世界で最も権威ある法律ディレクトリによってメキシコの主要な法律事務所の一つとして一貫して認められています。",
@@ -893,9 +769,6 @@ export default function About() {
       statsTitle: "شركتنا بالأرقام",
       stats: [
         { value: "35+", label: "سنوات من الخبرة" },
-        { value: String(teamMembers?.length || 24), label: "محامي" },
-        { value: String(practiceGroups?.length || 6), label: "مجالات الممارسة" },
-        { value: "100%", label: "تركيز على قانون العمل" },
       ],
       rankingsTitle: "التصنيفات والتقدير",
       rankingsText: "يتم الاعتراف بـ Santos & Saucedo باستمرار كواحدة من مكاتب المحاماة الرائدة في المكسيك من قبل أعرق الأدلة القانونية في العالم.",
@@ -998,9 +871,6 @@ export default function About() {
       statsTitle: "Наша фирма в цифрах",
       stats: [
         { value: "35+", label: "Лет опыта" },
-        { value: String(teamMembers?.length || 24), label: "Юристов" },
-        { value: String(practiceGroups?.length || 6), label: "Практики" },
-        { value: "100%", label: "Фокус на трудовом праве" },
       ],
       rankingsTitle: "Рейтинги и признание",
       rankingsText: "Santos & Saucedo неизменно признается одной из ведущих юридических фирм Мексики самыми престижными юридическими справочниками мира.",
@@ -1103,9 +973,6 @@ export default function About() {
       statsTitle: "Notre cabinet en chiffres",
       stats: [
         { value: "35+", label: "Années d'expérience" },
-        { value: String(teamMembers?.length || 24), label: "Avocats" },
-        { value: String(practiceGroups?.length || 6), label: "Domaines de pratique" },
-        { value: "100%", label: "Axé sur le droit du travail" },
       ],
       rankingsTitle: "Classements et reconnaissance",
       rankingsText: "Santos & Saucedo est constamment reconnu comme l'un des principaux cabinets d'avocats au Mexique par les annuaires juridiques les plus prestigieux du monde.",
@@ -1208,9 +1075,6 @@ export default function About() {
       statsTitle: "Il nostro studio in numeri",
       stats: [
         { value: "35+", label: "Anni di esperienza" },
-        { value: String(teamMembers?.length || 24), label: "Avvocati" },
-        { value: String(practiceGroups?.length || 6), label: "Aree di pratica" },
-        { value: "100%", label: "Focus sul lavoro" },
       ],
       rankingsTitle: "Classifiche e riconoscimenti",
       rankingsText: "Santos & Saucedo è costantemente riconosciuto come uno dei principali studi legali in Messico dalle directory legali più prestigiose del mondo.",
@@ -1237,7 +1101,8 @@ export default function About() {
   // ES/EN: textos del reposicionamiento laboral
   const labor: typeof baseT = {
     ...baseT,
-    title: isSpanish ? "La firma" : "The Firm",
+    // h1 como el rótulo del menú (chrome26.ts)
+    title: isSpanish ? "Nuestra firma" : "The firm",
     subtitle: isSpanish
       ? "Derecho laboral estratégico para empresas"
       : "Strategic labor law for companies",
@@ -1267,40 +1132,23 @@ export default function About() {
           { icon: BarChart3, title: "Diagnosis", text: "We review labor administration, documentation, and workplace relations." },
           { icon: GraduationCap, title: "Training", text: "We prepare management and HR teams to act with sound legal judgment." },
         ],
-    statsTitle: isSpanish ? "La firma en números" : "The Firm in Numbers",
+    statsTitle: isSpanish ? "La firma en números" : "The firm in numbers",
     stats: [
       { value: "35+", label: isSpanish ? "Años de experiencia" : "Years of Experience" },
-      { value: String(teamMembers?.length || 24), label: isSpanish ? "Integrantes del equipo" : "Team Members" },
-      { value: String(practiceGroups?.length || 6), label: isSpanish ? "Prácticas" : "Practices" },
-      { value: "1", label: isSpanish ? "Oficina en Nuevo León" : "Office in Nuevo Leon" },
+      { value: "72+", label: citiesLabel[language] },
     ],
     viewTeam: isSpanish ? "Ver equipo" : "View team",
     viewPractices: isSpanish ? "Ver prácticas" : "View practices",
   };
 
-  // Los otros 8 idiomas: título, subtítulo, historia, valores y botones de content[lang]
-  // (el h1 coincide con el menú y el pie, chrome26.ts); la metodología laboral y las
-  // cifras de ES/EN, traducidas aquí.
-  const method = laborMethod[language];
-  const t: typeof baseT = method
-    ? {
-        ...baseT,
-        cultureTitle: method.title,
-        cultureSubtitle: method.subtitle,
-        cultureIntro: method.intro,
-        cultureAspects: [Shield, BarChart3, GraduationCap].map((icon, i) => ({
-          icon,
-          title: method.aspects[i][0],
-          text: method.aspects[i][1],
-        })),
-        stats: [
-          baseT.stats[0],
-          { value: String(teamMembers?.length || 24), label: method.team },
-          baseT.stats[2],
-          { value: "1", label: method.office },
-        ],
-      }
-    : labor;
+  // Los otros 8 idiomas: título, subtítulo, historia y valores de content[lang] (el h1
+  // coincide con el menú y el pie, chrome26.ts); las cifras, las mismas de ES/EN.
+  const t: typeof baseT = isSpanish || language === "en"
+    ? labor
+    : { ...baseT, stats: [baseT.stats[0], { value: "72+", label: citiesLabel[language] }] };
+  // Enlaces finales (redacción aprobada: "Socios → Prácticas → Monitor Laboral →"), con los
+  // rótulos del menú en cada idioma
+  const nav = (chrome26[language] ?? chrome26.en).nav;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -1360,9 +1208,6 @@ export default function About() {
               className="mb-20 lg:mb-24"
               data-testid="section-history"
             >
-              <h2 className="ss-h2 mb-6">
-                {t.historyTitle}
-              </h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-5">
                 <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]">
                   {t.historyText1}
@@ -1398,48 +1243,6 @@ export default function About() {
               </div>
             </motion.section>
 
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="mb-20 lg:mb-24"
-              data-testid="section-culture"
-            >
-              <div className="max-w-3xl mb-10">
-                <h2 className="ss-h2 mb-5">
-                  {t.cultureTitle}
-                </h2>
-                <p className="ss-lead mb-5" data-testid="text-culture-subtitle">
-                  {t.cultureSubtitle}
-                </p>
-                <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]" data-testid="text-culture-intro">
-                  {t.cultureIntro}
-                </p>
-              </div>
-
-              {/* Misma rejilla de 4 columnas que "Cómo trabajamos" y las cifras: los bordes de
-                  columna coinciden entre secciones (tres filas y una celda vacía) */}
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10"
-              >
-                {t.cultureAspects.map((aspect, index) => (
-                  <motion.div key={index} variants={itemVariants}>
-                    <NumberedCard
-                      index={index}
-                      title={aspect.title}
-                      body={aspect.text}
-                      dataTestid={`card-culture-${index}`}
-                    />
-                  </motion.div>
-                ))}
-              </motion.div>
-            </motion.section>
-
             {/* Cifras con el estilo de cifra de la portada (romana 300, Azul Marino),
                 filetes de 1 px y sin panel */}
             <motion.section
@@ -1469,21 +1272,23 @@ export default function About() {
               </dl>
             </motion.section>
 
+            {/* Navegación como enlaces de texto (sin botones): Socios, Prácticas y Monitor */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-              className="flex flex-col sm:flex-row gap-4"
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="flex flex-wrap gap-x-10 gap-y-6"
             >
-              {/* Un solo elemento enfocable por acción (el enlace con aspecto de botón) y el
-                  mismo ancho cuando se apilan en teléfono */}
-              <Button asChild className="w-full sm:w-auto" data-testid="button-view-team">
-                <Link href="/team">{t.viewTeam}</Link>
-              </Button>
-              <Button asChild variant="outline" className="w-full sm:w-auto" data-testid="button-view-practices">
-                <Link href="/practice-groups">{t.viewPractices}</Link>
-              </Button>
+              <span data-testid="button-view-team">
+                <TextLink href="/team">{nav[2].label}</TextLink>
+              </span>
+              <span data-testid="button-view-practices">
+                <TextLink href="/practice-groups">{nav[1].label}</TextLink>
+              </span>
+              <span data-testid="link-view-news">
+                <TextLink href="/news">{nav[3].label}</TextLink>
+              </span>
             </motion.div>
           </div>
         </div>

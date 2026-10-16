@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { Reveal, SectionHead, SectionMark } from "./primitives";
+import { Reveal, SectionMark } from "./primitives";
 import { home26, langAttrs, type Lang26 } from "./content";
 
 const EASE = [0.2, 0.7, 0.2, 1] as const;
@@ -14,8 +14,10 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
           el § no se muestra y la altura la da el texto: sin hueco vacío entre entrada y cifras. */}
       <div className="ss-container grid grid-cols-1 items-center gap-x-6 gap-y-10 pt-12 lg:min-h-[min(calc(100svh-240px),660px)] lg:grid-cols-12 lg:pb-20 lg:pt-16">
         <div className="relative z-10 lg:col-span-7">
+          {/* Solo la ubicación, sin "§ 00": los números de sección son los del menú y el héroe
+              no es una sección del menú. La § del héroe es la marca de agua de la derecha. */}
           <Reveal>
-            <SectionHead num="00" label={t.hero.kicker} tone="dark" />
+            <p className="ss-label text-white/75">{t.hero.kicker}</p>
           </Reveal>
 
           <h1
@@ -55,9 +57,10 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
         </div>
       </div>
 
-      {/* Cifras: dato, no promesa. Bajo lg, 48 px después de la entrada */}
+      {/* Cifras: dato, no promesa. Bajo lg, 48 px después de la entrada. Dos cifras (fundación
+          y ciudades) en los dos primeros tercios desde lg; el filete sigue al ancho del contenedor */}
       <div className="ss-container relative z-10 mt-12 pb-12 lg:mt-0 lg:pb-16">
-        <dl className="grid grid-cols-3 border-t border-white/15">
+        <dl className="grid grid-cols-2 border-t border-white/15 lg:grid-cols-3">
           {t.facts.map((fact, i) => (
             <Reveal
               key={fact.label}

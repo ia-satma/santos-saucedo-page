@@ -10,11 +10,10 @@ import { LangList26, LangSwitch26 } from "./LangMenu26";
 
 // Rutas que también marcan una sección del menú, además de sus propias subrutas
 // (/articles estaba bajo Publicaciones junto a /news en el Header anterior). Siguen el
-// número § de su encabezado (index.css): experiencia 01, eventos y boletín 04, oficinas 06.
+// número § de su sección en el menú: artículos, eventos y boletín, 04 Monitor Laboral.
+// /experience y /offices ya no se pintan: redirigen a /practice-groups y /contact (App.tsx).
 const alsoActive: Record<string, string[]> = {
-  "/about": ["/experience"],
   "/news": ["/articles", "/events", "/newsletter"],
-  "/contact": ["/offices"],
 };
 
 // Un solo panel abierto a la vez: menú móvil o buscador, nunca los dos
@@ -215,6 +214,8 @@ export default function Header26({ localized = false }: Header26Props) {
                       onClick={() => closePanel("menu")}
                       className="flex items-baseline gap-5 py-4"
                     >
+                      {/* Número = posición en el menú (01 Nuestra firma … 06 Contacto), el mismo § de
+                          cada encabezado interno y de la portada */}
                       <span aria-hidden="true" className="ss-label ss-num w-8 shrink-0 text-white/[.66]">
                         {String(i + 1).padStart(2, "0")}
                       </span>

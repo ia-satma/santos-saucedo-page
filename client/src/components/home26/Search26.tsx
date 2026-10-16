@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import type { TeamMember, PracticeGroup, IndustryGroup, News, LanguageCode } from "@shared/schema";
+import { isNamedOnTeamPage } from "@shared/teamVisibility";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import { chrome26 } from "./chrome26";
 import { useDialog26 } from "./useDialog26";
@@ -69,7 +70,8 @@ function toGroups(data: SearchResults, lang: LanguageCode): { id: GroupId; rows:
   const groups: { id: GroupId; rows: Row[] }[] = [
     {
       id: "team",
-      rows: (data.team ?? []).map((m) => ({
+      // El servidor y el índice estático ya filtran; esto cubre una respuesta antigua en caché
+      rows: (data.team ?? []).filter(isNamedOnTeamPage).map((m) => ({
         key: m.slug,
         href: `/team/${m.slug}`,
         title: m.name,

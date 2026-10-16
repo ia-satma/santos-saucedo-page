@@ -1,17 +1,18 @@
 import { Link, useParams } from "wouter";
-import { useMemo, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useSiteContact } from "@/components/home26/useSiteContact";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
+import { getTeamPhotoThumb } from "@/lib/teamPhotoSources";
 import { Eyebrow, LeadParagraph, RankingsList, type RankingItem } from "@/components/editorial";
+import { isNamedOnTeamPage } from "@shared/teamVisibility";
 import type { PracticeGroup, TeamMember, RepresentativeMatterDb } from "@shared/schema";
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
@@ -39,25 +40,79 @@ interface PracticeRanking {
   badgeType: "band" | "tier" | "star" | "recommended";
 }
 
+// Quién figura en cada práctica: solo lo que dice el registro de cada persona (campo role).
+// Hoy todos los registros dicen "Labor Law"; ninguno vincula a una persona con las prácticas
+// corporativa, migratoria o contenciosa, así que esas páginas no muestran nombres.
 const practiceAreaRoleMapping: Record<string, string[]> = {
-  "corporate-ma": ["Corporate & M&A", "Corporate, M&A & Pharmaceutical Co-Leader"],
-  "antitrust-competition": ["Antitrust & Competition"],
-  "arbitration": ["Arbitration", "Arbitration & Energy", "Founding Partner, Arbitration & Litigation Expert"],
-  "litigation": ["Litigation"],
-  "investigations-anticorruption": ["Investigations, Anti-corruption & Compliance"],
-  "bankruptcy-restructuring": ["Bankruptcy & Restructuring"],
-  "banking-finance": ["Banking & Finance"],
-  "energy-natural-resources": ["Energy & Natural Resources", "Arbitration & Energy"],
-  "esg": ["ESG"],
-  "real-estate": ["Real Estate"],
-  "intellectual-property": ["Intellectual Property"],
-  "labor-employment": ["Labor & Employment"],
-  "tax": ["Tax", "Tax Practice"],
-  "international-trade": ["International Trade"],
-  "telecommunications-media-technology": ["Telecommunications, Media & Technology"],
-  "environmental": ["Environmental"],
-  "administrative-law": ["Administrative Law"],
+  "laboral-seguridad-social": ["Labor Law"],
+  "corporativo-contractual": [],
+  "migratorio": [],
+  "litigio-contencioso": [],
 };
+
+// Texto de una práctica (full_description): párrafos separados por una línea en blanco.
+// Un bloque que empieza con "# " es el lema (subtítulo del encabezado) y cada "## " abre un
+// servicio de la lista de dos columnas; lo que va antes del primer servicio es la entrada.
+// Sin marcas (p. ej. una traducción que las pierda), todo es entrada.
+interface PracticeText {
+  tagline: string | null;
+  intro: string[];
+  services: { title: string; paragraphs: string[] }[];
+}
+
+function parsePracticeText(text: string): PracticeText {
+  const result: PracticeText = { tagline: null, intro: [], services: [] };
+  const blocks = text.split(/\n\s*\n/).map((block) => block.trim()).filter(Boolean);
+  for (const block of blocks) {
+    const [firstLine, ...restLines] = block.split("\n");
+    const rest = restLines.join(" ").trim();
+    if (/^##\s/.test(firstLine)) {
+      result.services.push({ title: firstLine.replace(/^##\s+/, "").trim(), paragraphs: rest ? [rest] : [] });
+    } else if (/^#\s/.test(firstLine) && !result.tagline && !result.intro.length && !result.services.length) {
+      result.tagline = firstLine.replace(/^#\s+/, "").trim();
+      if (rest) result.intro.push(rest);
+    } else if (result.services.length) {
+      result.services[result.services.length - 1].paragraphs.push(block);
+    } else {
+      result.intro.push(block);
+    }
+  }
+  return result;
+}
+
+// Cargo bajo el nombre (en inglés, en minúscula inicial como el resto del sitio)
+function memberTitle(member: TeamMember, language: string): { text: string; source: boolean } {
+  if (language === "es") return { text: member.titleEs || member.title, source: false };
+  const en = member.title ? member.title.charAt(0) + member.title.slice(1).toLowerCase() : member.titleEs;
+  return { text: en, source: language !== "en" };
+}
+
+// Retrato cuadrado pequeño (miniatura WebP de 128 px; si falta, el original)
+function MemberThumb({ member }: { member: TeamMember }) {
+  const [src, setSrc] = useState(() => getTeamPhotoThumb(member.imageUrl));
+  const initials = member.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+  return (
+    <div
+      className="relative h-14 w-14 shrink-0 overflow-hidden bg-ss-paper"
+      data-testid={`img-team-member-${member.slug}`}
+    >
+      {src ? (
+        <img
+          src={src}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="ss-photo absolute inset-0 h-full w-full object-cover object-top"
+          onError={() => setSrc(src !== member.imageUrl ? member.imageUrl || undefined : undefined)}
+        />
+      ) : (
+        <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center font-heading text-[18px] text-ss-marino">
+          {initials}
+        </span>
+      )}
+    </div>
+  );
+}
 
 interface TranslatedMatterCardProps {
   matter: RepresentativeMatterDb;
@@ -133,10 +188,7 @@ function TranslatedMatterCard({ matter, language, t }: TranslatedMatterCardProps
 }
 
 export default function PracticeGroupDetail() {
-  const { language, displayLanguage } = useLanguage();
-  // Bloque de contacto: dirección y teléfono del pie (/api/site-content), como datos;
-  // "Llamar" marca ese teléfono
-  const { address, phone, phoneHref } = useSiteContact(displayLanguage);
+  const { language } = useLanguage();
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
 
@@ -170,287 +222,133 @@ export default function PracticeGroupDetail() {
 
   const translations: Record<string, {
     backToAll: string;
-    contactUs: string;
-    contactCta: string;
-    emailUs: string;
-    callUs: string;
     ourTeam: string;
     partners: string;
-    ofCounsel: string;
-    associates: string;
-    viewAll: string;
-    viewProfile: string;
     rankingsTitle: string;
     rankingsSubtitle: string;
     successCasesTitle: string;
     successCasesSubtitle: string;
     errorMessage: string;
-    loading: string;
-    overview: string;
-    keyContacts: string;
-    relatedIndustries: string;
-    relatedPractices: string;
-    representativeMatters: string;
     featured: string;
     client: string;
   }> = {
     en: {
-      backToAll: "All Practice Groups",
-      contactUs: "Contact Us",
-      contactCta: "Contact",
-      emailUs: "Email Us",
-      callUs: "Call Us",
-      ourTeam: "Our Team",
+      backToAll: "All practice areas",
+      ourTeam: "Our team",
       partners: "Partners",
-      ofCounsel: "Of Counsel",
-      associates: "Associates",
-      viewAll: "View all",
-      viewProfile: "View Profile",
-      rankingsTitle: "Rankings & Recognition",
+      rankingsTitle: "Rankings and recognition",
       rankingsSubtitle: "Our practice has been recognized by leading legal directories worldwide.",
-      successCasesTitle: "Success Cases",
+      successCasesTitle: "Success cases",
       successCasesSubtitle: "Representative matters successfully handled by our practice.",
-      errorMessage: "Practice group not found",
-      loading: "Loading...",
-      overview: "Overview",
-      keyContacts: "Key Contacts",
-      relatedIndustries: "Related Industries",
-      relatedPractices: "Related Practice Areas",
-      representativeMatters: "Representative Matters",
+      errorMessage: "Practice area not found",
       featured: "Featured",
       client: "Client:",
     },
     es: {
       backToAll: "Todas las áreas de práctica",
-      contactUs: "Contáctenos",
-      contactCta: "Contacto",
-      emailUs: "Enviar correo",
-      callUs: "Llamar",
       ourTeam: "Nuestro equipo",
       partners: "Socios",
-      ofCounsel: "Of Counsel",
-      associates: "Asociados",
-      viewAll: "Ver todos",
-      viewProfile: "Ver perfil",
       rankingsTitle: "Rankings y reconocimientos",
       rankingsSubtitle: "Nuestra práctica ha sido reconocida por los principales directorios legales a nivel mundial.",
       successCasesTitle: "Casos de éxito",
       successCasesSubtitle: "Casos representativos manejados exitosamente por nuestra práctica.",
       errorMessage: "Área de práctica no encontrada",
-      loading: "Cargando...",
-      overview: "Resumen",
-      keyContacts: "Contactos clave",
-      relatedIndustries: "Industrias relacionadas",
-      relatedPractices: "Áreas de práctica relacionadas",
-      representativeMatters: "Casos representativos",
       featured: "Destacado",
       client: "Cliente:",
     },
     de: {
       backToAll: "Zurück zu Praxisbereichen",
-      contactUs: "Kontakt",
-      contactCta: "Kontakt",
-      emailUs: "E-Mail senden",
-      callUs: "Anrufen",
       ourTeam: "Unser Team",
       partners: "Partner",
-      ofCounsel: "Of Counsel",
-      associates: "Associates",
-      viewAll: "Alle anzeigen",
-      viewProfile: "Profil anzeigen",
       rankingsTitle: "Rankings & Anerkennung",
       rankingsSubtitle: "Unsere Praxis wurde von führenden Rechtsverzeichnissen weltweit anerkannt.",
       successCasesTitle: "Erfolgsfälle",
       successCasesSubtitle: "Repräsentative Mandate, die von unserer Praxis erfolgreich bearbeitet wurden.",
       errorMessage: "Praxisbereich nicht gefunden",
-      loading: "Wird geladen...",
-      overview: "Übersicht",
-      keyContacts: "Hauptkontakte",
-      relatedIndustries: "Verwandte Branchen",
-      relatedPractices: "Verwandte Praxisbereiche",
-      representativeMatters: "Beispielmandate",
       featured: "Empfohlen",
       client: "Mandant:",
     },
     zh: {
       backToAll: "返回业务领域",
-      contactUs: "联系我们",
-      contactCta: "联系方式",
-      emailUs: "发送邮件",
-      callUs: "致电",
       ourTeam: "我们的团队",
       partners: "合伙人",
-      ofCounsel: "顾问律师",
-      associates: "律师助理",
-      viewAll: "查看全部",
-      viewProfile: "查看简介",
       rankingsTitle: "排名与认可",
       rankingsSubtitle: "我们的业务获得了全球领先法律目录的认可。",
       successCasesTitle: "成功案例",
       successCasesSubtitle: "我们业务成功处理的代表性案件。",
       errorMessage: "未找到业务领域",
-      loading: "加载中...",
-      overview: "概述",
-      keyContacts: "主要联系人",
-      relatedIndustries: "相关行业",
-      relatedPractices: "相关业务领域",
-      representativeMatters: "代表性案例",
       featured: "精选",
       client: "客户：",
     },
     ko: {
       backToAll: "업무 분야로 돌아가기",
-      contactUs: "문의하기",
-      contactCta: "연락처",
-      emailUs: "이메일 보내기",
-      callUs: "전화하기",
       ourTeam: "우리 팀",
       partners: "파트너",
-      ofCounsel: "고문 변호사",
-      associates: "어소시에이트",
-      viewAll: "모두 보기",
-      viewProfile: "프로필 보기",
       rankingsTitle: "순위 및 인정",
       rankingsSubtitle: "세계 주요 법률 디렉토리에서 인정받은 업무 분야입니다.",
       successCasesTitle: "성공 사례",
       successCasesSubtitle: "성공적으로 처리한 대표적인 사건들입니다.",
       errorMessage: "업무 분야를 찾을 수 없습니다",
-      loading: "로딩 중...",
-      overview: "개요",
-      keyContacts: "주요 연락처",
-      relatedIndustries: "관련 산업",
-      relatedPractices: "관련 업무 분야",
-      representativeMatters: "대표 사례",
       featured: "추천",
       client: "의뢰인:",
     },
     ja: {
       backToAll: "取扱分野に戻る",
-      contactUs: "お問い合わせ",
-      contactCta: "連絡先",
-      emailUs: "メールを送る",
-      callUs: "電話する",
       ourTeam: "私たちのチーム",
       partners: "パートナー",
-      ofCounsel: "オブカウンセル",
-      associates: "アソシエイト",
-      viewAll: "すべて表示",
-      viewProfile: "プロフィールを見る",
       rankingsTitle: "ランキングと評価",
       rankingsSubtitle: "当事務所の業務は世界の主要な法律ディレクトリで評価されています。",
       successCasesTitle: "成功事例",
       successCasesSubtitle: "当事務所が成功裏に処理した代表的な案件です。",
       errorMessage: "取扱分野が見つかりません",
-      loading: "読み込み中...",
-      overview: "概要",
-      keyContacts: "主要連絡先",
-      relatedIndustries: "関連業界",
-      relatedPractices: "関連取扱分野",
-      representativeMatters: "代表的な案件",
       featured: "注目",
       client: "クライアント：",
     },
     ar: {
       backToAll: "العودة إلى مجالات الممارسة",
-      contactUs: "اتصل بنا",
-      contactCta: "معلومات الاتصال",
-      emailUs: "راسلنا",
-      callUs: "اتصل بنا",
       ourTeam: "فريقنا",
       partners: "الشركاء",
-      ofCounsel: "مستشار قانوني",
-      associates: "محامون مساعدون",
-      viewAll: "عرض الكل",
-      viewProfile: "عرض الملف الشخصي",
       rankingsTitle: "التصنيفات والاعتراف",
       rankingsSubtitle: "تم الاعتراف بممارستنا من قبل أبرز الدلائل القانونية في العالم.",
       successCasesTitle: "قضايا ناجحة",
       successCasesSubtitle: "قضايا تمثيلية تمت معالجتها بنجاح.",
       errorMessage: "مجال الممارسة غير موجود",
-      loading: "جاري التحميل...",
-      overview: "نظرة عامة",
-      keyContacts: "جهات الاتصال الرئيسية",
-      relatedIndustries: "القطاعات ذات الصلة",
-      relatedPractices: "مجالات الممارسة ذات الصلة",
-      representativeMatters: "قضايا تمثيلية",
       featured: "مميز",
       client: "العميل:",
     },
     ru: {
       backToAll: "Назад к практикам",
-      contactUs: "Свяжитесь с нами",
-      contactCta: "Контакты",
-      emailUs: "Написать",
-      callUs: "Позвонить",
       ourTeam: "Наша команда",
       partners: "Партнёры",
-      ofCounsel: "Of Counsel",
-      associates: "Ассоциаты",
-      viewAll: "Показать все",
-      viewProfile: "Посмотреть профиль",
       rankingsTitle: "Рейтинги и признание",
       rankingsSubtitle: "Наша практика признана ведущими юридическими справочниками мира.",
       successCasesTitle: "Успешные дела",
       successCasesSubtitle: "Показательные дела, успешно проведённые нашей практикой.",
       errorMessage: "Практика не найдена",
-      loading: "Загрузка...",
-      overview: "Обзор",
-      keyContacts: "Ключевые контакты",
-      relatedIndustries: "Связанные отрасли",
-      relatedPractices: "Связанные практики",
-      representativeMatters: "Типичные дела",
       featured: "Рекомендовано",
       client: "Клиент:",
     },
     fr: {
       backToAll: "Retour aux domaines de pratique",
-      contactUs: "Contactez-nous",
-      contactCta: "Contact",
-      emailUs: "Envoyer un email",
-      callUs: "Appeler",
       ourTeam: "Notre équipe",
       partners: "Associés",
-      ofCounsel: "Of Counsel",
-      associates: "Collaborateurs",
-      viewAll: "Voir tout",
-      viewProfile: "Voir le profil",
       rankingsTitle: "Classements et reconnaissance",
       rankingsSubtitle: "Notre pratique a été reconnue par les principaux annuaires juridiques mondiaux.",
       successCasesTitle: "Affaires réussies",
       successCasesSubtitle: "Affaires représentatives traitées avec succès par notre cabinet.",
       errorMessage: "Domaine de pratique non trouvé",
-      loading: "Chargement...",
-      overview: "Aperçu",
-      keyContacts: "Contacts clés",
-      relatedIndustries: "Industries connexes",
-      relatedPractices: "Domaines de pratique connexes",
-      representativeMatters: "Dossiers représentatifs",
       featured: "En vedette",
-      client: "Client :",
+      client: "Client\u202f:",
     },
     it: {
       backToAll: "Torna alle aree di pratica",
-      contactUs: "Contattaci",
-      contactCta: "Contatti",
-      emailUs: "Invia email",
-      callUs: "Chiama",
       ourTeam: "Il nostro team",
       partners: "Soci",
-      ofCounsel: "Of Counsel",
-      associates: "Associati",
-      viewAll: "Vedi tutto",
-      viewProfile: "Vedi profilo",
       rankingsTitle: "Classifiche e riconoscimenti",
       rankingsSubtitle: "La nostra pratica è stata riconosciuta dalle principali directory legali a livello mondiale.",
       successCasesTitle: "Casi di successo",
       successCasesSubtitle: "Casi rappresentativi gestiti con successo dalla nostra pratica.",
       errorMessage: "Area di pratica non trovata",
-      loading: "Caricamento...",
-      overview: "Panoramica",
-      keyContacts: "Contatti principali",
-      relatedIndustries: "Settori correlati",
-      relatedPractices: "Aree di pratica correlate",
-      representativeMatters: "Casi rappresentativi",
       featured: "In evidenza",
       client: "Cliente:",
     },
@@ -458,30 +356,20 @@ export default function PracticeGroupDetail() {
 
   const t = translations[language] || translations.en;
 
-  const filteredAndGroupedMembers = useMemo(() => {
-    if (!allTeamMembers || !slug) return { partners: [], ofCounsel: [], associates: [] };
-
-    const roleMatches = practiceAreaRoleMapping[slug] || [];
-    
-    const matchingMembers = allTeamMembers.filter(member => {
-      return roleMatches.some(role => 
-        member.role.toLowerCase().includes(role.toLowerCase()) ||
-        role.toLowerCase().includes(member.role.toLowerCase())
-      );
-    });
-
-    const partners = matchingMembers.filter(m => m.isPartner);
-    const ofCounsel = matchingMembers.filter(m => m.title === "Of Counsel");
-    const associates = matchingMembers.filter(m => m.title === "Associate");
-
-    return { partners, ofCounsel, associates };
+  // Personas de la práctica: su registro la menciona (role) y la regla de quién aparece con
+  // nombre en el sitio (isNamedOnTeamPage: socios confirmados y Of Counsel). El fundador in
+  // memoriam no figura como integrante de una práctica.
+  const practiceMembers = useMemo(() => {
+    if (!allTeamMembers || !slug) return [];
+    const roles = (practiceAreaRoleMapping[slug] || []).map((role) => role.toLowerCase());
+    return allTeamMembers
+      .filter((member) => roles.includes(member.role.toLowerCase()))
+      .filter((member) => isNamedOnTeamPage(member))
+      .filter((member) => !/memoriam/i.test(member.title))
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   }, [allTeamMembers, slug]);
 
   const practiceRankings: PracticeRanking[] = [];
-
-  const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
-  };
 
   const getBadgeStyles = (badgeType: string) => {
     if (badgeType === "band" || badgeType === "tier" || badgeType === "star") {
@@ -502,9 +390,14 @@ export default function PracticeGroupDetail() {
             <h2 className="ss-h2 mb-6" data-testid="text-error-title">
               {t.errorMessage}
             </h2>
-            <Button asChild variant="outline" data-testid="button-back-to-practice-groups">
-              <Link href="/practice-groups">{t.backToAll}</Link>
-            </Button>
+            <Link
+              href="/practice-groups"
+              className="ss-label inline-flex items-center gap-2 text-ss-marino hover:underline decoration-1 underline-offset-4"
+              data-testid="button-back-to-practice-groups"
+            >
+              <ArrowLeft className="w-4 h-4 rtl:-scale-x-100" aria-hidden="true" />
+              {t.backToAll}
+            </Link>
           </Column>
         </main>
         <Footer />
@@ -557,65 +450,38 @@ export default function PracticeGroupDetail() {
   const descriptionSource = isOtherLanguage && !!displayDescription &&
     (displayDescription === practiceGroup?.fullDescription || displayDescription === practiceGroup?.description);
 
-  const MAX_ASSOCIATES_DISPLAY = 6;
-  const displayedAssociates = filteredAndGroupedMembers.associates.slice(0, MAX_ASSOCIATES_DISPLAY);
-  const hasMoreAssociates = filteredAndGroupedMembers.associates.length > MAX_ASSOCIATES_DISPLAY;
+  const practiceText = displayDescription ? parsePracticeText(displayDescription) : null;
+  // Bloque largo en inglés de origen (fuera de ES/EN): LTR y lang="en", también en árabe
+  const sourceAttrs = descriptionSource ? EN_SOURCE : {};
+  const allPartners = practiceMembers.every((member) => member.isPartner);
 
-  // Fila abierta: retrato en escala de grises, nombre en romana Azul Marino y cargo como etiqueta
-  const renderMemberCard = (member: TeamMember) => (
-    <Link key={member.id} href={`/team/${member.slug}`}>
-      <article
-        className="group flex items-center gap-4 border-t border-ss-rule py-4 cursor-pointer"
-        data-testid={`card-team-member-${member.slug}`}
-      >
-        <div
-          className="relative w-16 h-20 shrink-0 overflow-hidden bg-ss-paper"
-          data-testid={`img-team-member-${member.slug}`}
-        >
-          {member.imageUrl ? (
-            <img
-              src={member.imageUrl}
-              alt={member.name}
-              loading="lazy"
-              className="ss-photo absolute inset-0 h-full w-full object-cover object-top"
-            />
-          ) : (
-            <span
-              aria-hidden="true"
-              className="absolute inset-0 flex items-center justify-center font-heading text-[20px] text-ss-marino"
-            >
-              {getInitials(member.name)}
-            </span>
-          )}
-        </div>
-        <div className="min-w-0">
-          <h3
-            className="font-heading text-[18px] leading-[1.25] text-ss-marino truncate group-hover:underline decoration-1 underline-offset-4"
-            data-testid={`text-team-member-name-${member.slug}`}
-          >
-            {member.name}
-          </h3>
-          <p
-            className="ss-label text-ss-medio mt-1 truncate"
-            data-testid={`text-team-member-role-${member.slug}`}
-            lang={isOtherLanguage ? "en" : undefined}
-          >
-            {/* Fuera de ES/EN el cargo es el inglés de origen: marcado como el titular */}
-            {isOtherLanguage
-              ? <bdi lang="en" dir="ltr">{member.role}</bdi>
-              : (language === "es" ? member.roleEs : member.role)}
-          </p>
-        </div>
-      </article>
-    </Link>
-  );
+  // Pestaña "Práctica | Santos & Saucedo" y descripción en el idioma de la página: el resumen
+  // de la práctica; sin traducción (fuera de ES/EN), la descripción general de Prácticas en
+  // ese idioma (SEOHead) en lugar del inglés de origen.
+  const seoDescription = language === "es"
+    ? practiceGroup?.descriptionEs || practiceGroup?.description
+    : language === "en"
+      ? practiceGroup?.description
+      : translatedFields.description && translatedFields.description !== practiceGroup?.description
+        ? translatedFields.description
+        : undefined;
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-practice-group-detail">
+      {practiceGroup && (
+        <SEOHead
+          page="practiceGroups"
+          language={language}
+          customTitle={shownName ? `${shownName} | Santos & Saucedo` : undefined}
+          customDescription={seoDescription || undefined}
+          customPath={`/practice-groups/${practiceGroup.slug}`}
+        />
+      )}
       <Header />
 
-      {/* Encabezado dentro de <main> (el salto al contenido no se salta el h1). Encabezado y
-          cuerpo en la misma columna (Column), al borde izquierdo del logotipo y del pie. */}
+      {/* Encabezado dentro de <main> (el salto al contenido no se salta el h1). Encabezado en la
+          columna de lectura (Column) y cuerpo en ss-container: mismo borde izquierdo que el
+          logotipo y el pie. */}
       <main id="main-content">
         <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-practice-group-hero">
           <Column>
@@ -650,36 +516,38 @@ export default function PracticeGroupDetail() {
                     <Loader2 className="inline-block w-5 h-5 ml-3 animate-spin text-white/60" aria-hidden="true" />
                   )}
                 </h1>
+                {practiceText?.tagline && (
+                  <p data-testid="text-practice-group-tagline" lang={descriptionSource ? "en" : undefined}>
+                    {descriptionSource ? <bdi lang="en" dir="ltr">{practiceText.tagline}</bdi> : practiceText.tagline}
+                  </p>
+                )}
               </div>
             </motion.div>
           </Column>
         </section>
 
-        {/* Description — light band with editorial lead paragraph */}
+        {/* Entrada a la izquierda (≈ 8 columnas) y, a la derecha, los socios de la práctica
+            (solo si su registro la menciona). Debajo, los servicios en una lista de filetes de
+            dos columnas a todo el ancho del contenedor. */}
         <section className="bg-background py-16 lg:py-20">
-          <Column>
+          <div className="ss-container">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
+              className="grid grid-cols-1 gap-y-12 lg:grid-cols-12 lg:gap-x-12"
             >
-              <div data-testid="container-practice-group-description">
-                {displayDescription ? (() => {
-                  const paragraphs = displayDescription.split(/\n\s*\n/).filter(Boolean);
-                  const [first, ...rest] = paragraphs.length ? paragraphs : [displayDescription];
-                  // Texto de origen en inglés: el bloque entero (rótulo incluido) va en inglés
-                  return (
-                    <div {...(descriptionSource ? EN_SOURCE : {})}>
-                      <LeadParagraph
-                        eyebrow={descriptionSource ? translations.en.overview : t.overview}
-                        firstParagraph={first}
-                        restParagraphs={rest}
-                        testId="lead-practice-group"
-                      />
-                    </div>
-                  );
-                })() : (practiceGroup?.descriptionEs || practiceGroup?.description) && translationPending ? (
+              <div className="lg:col-span-8 xl:col-span-7" data-testid="container-practice-group-description">
+                {practiceText && practiceText.intro.length > 0 ? (
+                  <div {...sourceAttrs}>
+                    <LeadParagraph
+                      firstParagraph={practiceText.intro[0]}
+                      restParagraphs={practiceText.intro.slice(1)}
+                      testId="lead-practice-group"
+                    />
+                  </div>
+                ) : !displayDescription && (practiceGroup?.descriptionEs || practiceGroup?.description) && translationPending ? (
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                     <span data-testid="text-translation-pending">
@@ -696,8 +564,82 @@ export default function PracticeGroupDetail() {
                   </div>
                 ) : null}
               </div>
+
+              {/* Socios de la práctica: retrato cuadrado pequeño, nombre y cargo. Sin nadie
+                  confirmado, la columna no se pinta. */}
+              {practiceMembers.length > 0 && (
+                <aside
+                  className="lg:col-span-4 lg:col-start-9"
+                  aria-labelledby="practice-people-title"
+                  data-testid="section-team-members"
+                >
+                  {/* Encabezado de columna lateral: romana de 20 px, no etiqueta */}
+                  <h2
+                    id="practice-people-title"
+                    className="ss-h3 text-[20px] mb-4"
+                    data-testid="text-our-team-title"
+                  >
+                    {allPartners ? t.partners : t.ourTeam}
+                  </h2>
+                  <ul className="border-b border-ss-rule" data-testid="section-partners">
+                    {practiceMembers.map((member) => {
+                      const role = memberTitle(member, language);
+                      return (
+                        <li key={member.id} className="border-t border-ss-rule" data-testid={`card-team-member-${member.slug}`}>
+                          <Link
+                            href={`/team/${member.slug}`}
+                            className="inline-link group flex items-center gap-4 py-4"
+                          >
+                            <MemberThumb member={member} />
+                            <span className="min-w-0">
+                              <span
+                                className="block font-heading text-[18px] leading-[1.25] text-ss-marino group-hover:underline decoration-1 underline-offset-4"
+                                data-testid={`text-team-member-name-${member.slug}`}
+                              >
+                                {member.name}
+                              </span>
+                              <span
+                                className="ss-label block mt-1 text-ss-medio"
+                                data-testid={`text-team-member-role-${member.slug}`}
+                                lang={role.source ? "en" : undefined}
+                              >
+                                {/* Fuera de ES/EN el cargo es el inglés de origen, aislado */}
+                                {role.source ? <bdi lang="en" dir="ltr">{role.text}</bdi> : role.text}
+                              </span>
+                            </span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </aside>
+              )}
             </motion.div>
-          </Column>
+
+            {practiceText && practiceText.services.length > 0 && (
+              <ul
+                className="mt-16 grid grid-cols-1 gap-x-12 md:grid-cols-2 lg:mt-20"
+                data-testid="list-practice-services"
+                {...sourceAttrs}
+              >
+                {practiceText.services.map((service, index) => (
+                  <li
+                    key={index}
+                    className="border-t border-ss-rule pt-6 pb-10"
+                    data-testid={`item-practice-service-${index}`}
+                  >
+                    {/* h2 con el aspecto de h3: cada servicio es una sección de la práctica */}
+                    <h2 className="ss-h3 mb-3">{service.title}</h2>
+                    {service.paragraphs.map((paragraph, i) => (
+                      <p key={i} className={`ss-prose text-[16px] leading-[1.6] text-ss-tinta ${i > 0 ? "mt-4" : ""}`}>
+                        {paragraph}
+                      </p>
+                    ))}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </section>
 
         {/* Casos de éxito: blanco, filete de sección y filas abiertas */}
@@ -711,7 +653,7 @@ export default function PracticeGroupDetail() {
                 transition={{ duration: 0.6, delay: 0.22 }}
               >
                 <h2
-                  className="ss-h2-sm mb-3"
+                  className="ss-h2 mb-3"
                   data-testid="text-success-cases-title"
                 >
                   {t.successCasesTitle}
@@ -755,7 +697,7 @@ export default function PracticeGroupDetail() {
               >
                 <Eyebrow label={t.rankingsTitle} className="mb-4" testId="eyebrow-rankings" />
                 <h2
-                  className="ss-h2-sm mb-3"
+                  className="ss-h2 mb-3"
                   data-testid="text-rankings-title"
                 >
                   {t.rankingsTitle}
@@ -777,137 +719,6 @@ export default function PracticeGroupDetail() {
             </Column>
           </section>
         )}
-
-        {/* Nuestro equipo: blanco, filas abiertas con retrato */}
-        {(filteredAndGroupedMembers.partners.length > 0 ||
-          filteredAndGroupedMembers.ofCounsel.length > 0 ||
-          filteredAndGroupedMembers.associates.length > 0) && (
-          <section className="bg-background border-t border-ss-rule py-16 lg:py-20" data-testid="section-team-members">
-            <Column>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                <h2
-                  className="ss-h2-sm mb-8"
-                  data-testid="text-our-team-title"
-                >
-                  {t.ourTeam}
-                </h2>
-
-                {filteredAndGroupedMembers.partners.length > 0 && (
-                  <div className="mb-10" data-testid="section-partners">
-                    <h3
-                      className="ss-label text-ss-medio mb-2 flex items-baseline gap-3"
-                      data-testid="text-partners-title"
-                    >
-                      {t.partners}
-                      <span className="ss-label text-ss-marino">
-                        {filteredAndGroupedMembers.partners.length}
-                      </span>
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                      {filteredAndGroupedMembers.partners.map(renderMemberCard)}
-                    </div>
-                  </div>
-                )}
-
-                {filteredAndGroupedMembers.ofCounsel.length > 0 && (
-                  <div className="mb-10" data-testid="section-of-counsel">
-                    <h3
-                      className="ss-label text-ss-medio mb-2 flex items-baseline gap-3"
-                      data-testid="text-of-counsel-title"
-                    >
-                      {t.ofCounsel}
-                      <span className="ss-label text-ss-marino">
-                        {filteredAndGroupedMembers.ofCounsel.length}
-                      </span>
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                      {filteredAndGroupedMembers.ofCounsel.map(renderMemberCard)}
-                    </div>
-                  </div>
-                )}
-
-                {displayedAssociates.length > 0 && (
-                  <div data-testid="section-associates">
-                    <h3
-                      className="ss-label text-ss-medio mb-2 flex items-baseline gap-3"
-                      data-testid="text-associates-title"
-                    >
-                      {t.associates}
-                      <span className="ss-label text-ss-marino">
-                        {filteredAndGroupedMembers.associates.length}
-                      </span>
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                      {displayedAssociates.map(renderMemberCard)}
-                    </div>
-                    {hasMoreAssociates && (
-                      <div className="mt-6">
-                        <Button
-                          asChild
-                          variant="outline"
-                          data-testid="button-view-all-associates"
-                        >
-                          <Link href={`/team?practice=${slug}`}>
-                            {t.viewAll} ({filteredAndGroupedMembers.associates.length})
-                          </Link>
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </motion.div>
-            </Column>
-          </section>
-        )}
-
-        {/* Contacto: bloque Hueso, sin iconos. Dirección y teléfono como datos (sin texto de
-            venta); un solo elemento enfocable por acción y el mismo ancho apilados en teléfono */}
-        <section className="bg-background pb-16 lg:pb-24">
-          <Column>
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="bg-ss-paper p-8 lg:p-12"
-              data-testid="section-contact-cta"
-            >
-              <h2
-                className="ss-h2-sm mb-3"
-                data-testid="text-contact-cta-title"
-              >
-                {t.contactCta}
-              </h2>
-              <p
-                className="text-base text-ss-tinta mb-6 max-w-2xl"
-                data-testid="text-contact-cta-subtitle"
-              >
-                {/* Cada parte de la dirección sin cortes internos ("C.P. 66220") */}
-                {address.map((part, i) => (
-                  <span key={i}>
-                    {i > 0 && ", "}
-                    <span className="whitespace-nowrap">{part}</span>
-                  </span>
-                ))}
-                <br />
-                <span dir="ltr">T. {phone}</span>
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button asChild className="w-full sm:w-auto" data-testid="button-email-us">
-                  <Link href="/contact">{t.emailUs}</Link>
-                </Button>
-                <Button asChild variant="outline" className="w-full sm:w-auto" data-testid="button-call-us">
-                  <a href={phoneHref}>{t.callUs}</a>
-                </Button>
-              </div>
-            </motion.section>
-          </Column>
-        </section>
       </main>
 
       <Footer />

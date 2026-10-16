@@ -7,7 +7,14 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContact } from "@/components/home26/useSiteContact";
-import { Eyebrow } from "@/components/editorial";
+
+// Teléfonos aislados de izquierda a derecha (<bdi dir="ltr">): en árabe, dentro del texto
+// corrido, los grupos de cifras salían invertidos ("2086 8335 81 52+").
+function isolatePhones(text: string): ReactNode[] {
+  return text
+    .split(/(\+\d[\d ]{6,}\d)/)
+    .map((part, i) => (i % 2 === 1 ? <bdi key={i} dir="ltr">{part}</bdi> : part));
+}
 
 // Texto de una sección: párrafos separados por línea en blanco; las líneas que empiezan por
 // "• " pasan a una lista real con sangría francesa (al partirse, el texto queda alineado y no
@@ -19,7 +26,7 @@ function renderLegalText(text: string): ReactNode[] {
     let items: string[] = [];
     const flushLines = () => {
       if (lines.length) {
-        parts.push(<p key={`p${parts.length}`} className="whitespace-pre-line">{lines.join("\n")}</p>);
+        parts.push(<p key={`p${parts.length}`} className="whitespace-pre-line">{isolatePhones(lines.join("\n"))}</p>);
         lines = [];
       }
     };
@@ -27,7 +34,7 @@ function renderLegalText(text: string): ReactNode[] {
       if (items.length) {
         parts.push(
           <ul key={`u${parts.length}`} className="list-disc ps-6 space-y-1 marker:text-ss-marino/50">
-            {items.map((item, i) => <li key={i} className="ps-1">{item}</li>)}
+            {items.map((item, i) => <li key={i} className="ps-1">{isolatePhones(item)}</li>)}
           </ul>
         );
         items = [];
@@ -67,7 +74,7 @@ export default function PrivacyPolicy() {
     }>;
   }> = {
     en: {
-      title: "Privacy Policy",
+      title: "Privacy policy",
       subtitle: "How we collect, use, and protect your personal data",
       lastUpdated: "Last updated: December 2024",
       sections: [
@@ -84,7 +91,7 @@ By accessing or using our Website, you acknowledge that you have read, understoo
         {
           id: "data-controller",
           icon: Building2,
-          title: "2. Data Controller",
+          title: "2. Data controller",
           content: `The data controller responsible for your personal data is:
 
 Santos & Saucedo Abogados
@@ -100,7 +107,7 @@ Our Data Protection Officer can be contacted at the above address for any questi
         {
           id: "data-collected",
           icon: Database,
-          title: "3. Personal Data We Collect",
+          title: "3. Personal data we collect",
           content: `We may collect and process the following categories of personal data:
 
 Identification Data:
@@ -131,7 +138,7 @@ We do not intentionally collect sensitive personal data (such as racial or ethni
         {
           id: "data-use",
           icon: Eye,
-          title: "4. How We Use Your Data",
+          title: "4. How we use your data",
           content: `We use your personal data for the following purposes:
 
 Primary Purposes (require no additional consent):
@@ -160,7 +167,7 @@ You may opt out of secondary purposes at any time by contacting us at privacidad
         {
           id: "data-retention",
           icon: FileText,
-          title: "5. Data Retention",
+          title: "5. Data retention",
           content: `We retain your personal data only for as long as necessary to fulfill the purposes for which it was collected, unless a longer retention period is required or permitted by law.
 
 Retention Periods:
@@ -177,7 +184,7 @@ Upon termination of the attorney-client relationship, we may retain certain info
         {
           id: "data-sharing",
           icon: Users,
-          title: "6. Data Sharing and Disclosure",
+          title: "6. Data sharing and disclosure",
           content: `We may share your personal data with the following categories of recipients:
 
 Within S&S:
@@ -233,7 +240,7 @@ If you are not satisfied with our response, you may file a complaint with the Na
         {
           id: "transfers",
           icon: Globe,
-          title: "8. Third-Party Transfers",
+          title: "8. Third-party transfers",
           content: `S&S may transfer your personal data to third parties in the following circumstances:
 
 Transfers Requiring Consent:
@@ -254,36 +261,13 @@ When your data is transferred to countries outside Mexico, we ensure appropriate
         {
           id: "cookies",
           icon: Cookie,
-          title: "9. Cookies Policy",
-          content: `Our Website uses cookies and similar technologies to enhance your browsing experience. Cookies are small text files stored on your device that help us analyze website traffic, remember your preferences, and improve functionality.
-
-Types of Cookies We Use:
-
-Essential Cookies: Necessary for the Website to function properly. These cannot be disabled.
-
-Analytics Cookies: Help us understand how visitors interact with our Website by collecting anonymous information (e.g., Google Analytics).
-
-Functionality Cookies: Remember your preferences such as language settings and display options.
-
-Marketing Cookies: Used to track visitors across websites to display relevant advertisements.
-
-Managing Cookies:
-You can control and manage cookies through your browser settings. Note that disabling certain cookies may affect the functionality of our Website.
-
-For more information about cookies and how to manage them, visit www.allaboutcookies.org.
-
-Third-Party Cookies:
-We may use third-party services that set their own cookies, including:
-• Google Analytics for website traffic analysis
-• LinkedIn for social media integration
-• Other analytics and marketing platforms
-
-These third parties have their own privacy policies governing the use of their cookies.`
+          title: "9. Cookie policy",
+          content: `This site stores in your browser the chosen language and the preference indicated in the cookie notice. It does not use cookies or analytics or advertising services.`
         },
         {
           id: "security",
           icon: Lock,
-          title: "10. Security Measures",
+          title: "10. Security measures",
           content: `S&S implements comprehensive administrative, technical, and physical security measures to protect your personal data against loss, unauthorized access, damage, alteration, or disclosure.
 
 Administrative Measures:
@@ -311,7 +295,7 @@ Despite our best efforts, no method of transmission over the Internet or electro
         {
           id: "changes",
           icon: AlertCircle,
-          title: "11. Changes to This Privacy Policy",
+          title: "11. Changes to this privacy policy",
           content: `S&S reserves the right to modify this Privacy Policy at any time to reflect changes in our data processing practices, legal requirements, or other operational or legal reasons.
 
 How We Notify You of Changes:
@@ -326,7 +310,7 @@ This Privacy Policy was last updated in December 2024 and supersedes all previou
         {
           id: "contact",
           icon: Phone,
-          title: "12. Contact Information",
+          title: "12. Contact information",
           content: `For any questions, concerns, or requests related to this Privacy Policy or our data protection practices, please contact:
 
 Data Protection Officer
@@ -490,20 +474,7 @@ Cuando sus datos sean transferidos a países fuera de México, nos aseguramos de
           id: "cookies",
           icon: Cookie,
           title: "9. Política de cookies",
-          content: `Nuestro sitio web utiliza cookies y tecnologías similares para mejorar su experiencia de navegación.
-
-Tipos de cookies que utilizamos:
-
-Cookies esenciales: Necesarias para que el sitio web funcione correctamente.
-
-Cookies de análisis: Nos ayudan a entender cómo los visitantes interactúan con nuestro sitio web.
-
-Cookies de funcionalidad: Recuerdan sus preferencias como configuración de idioma.
-
-Cookies de marketing: Se utilizan para mostrar anuncios relevantes.
-
-Gestión de cookies:
-Puede controlar y gestionar las cookies a través de la configuración de su navegador.`
+          content: `Este sitio guarda en su navegador el idioma elegido y la preferencia indicada en el aviso de cookies. No usa cookies ni servicios de analítica o publicidad.`
         },
         {
           id: "security",
@@ -708,20 +679,7 @@ Bei der Übertragung Ihrer Daten in Länder außerhalb Mexikos stellen wir siche
           id: "cookies",
           icon: Cookie,
           title: "9. Cookie-Richtlinie",
-          content: `Unsere Website verwendet Cookies und ähnliche Technologien, um Ihr Browsing-Erlebnis zu verbessern. Cookies sind kleine Textdateien, die auf Ihrem Gerät gespeichert werden.
-
-Arten von Cookies, die wir verwenden:
-
-Essentielle Cookies: Notwendig für die ordnungsgemäße Funktion der Website.
-
-Analyse-Cookies: Helfen uns zu verstehen, wie Besucher mit unserer Website interagieren.
-
-Funktions-Cookies: Merken sich Ihre Präferenzen wie Spracheinstellungen.
-
-Marketing-Cookies: Werden verwendet, um relevante Werbung anzuzeigen.
-
-Cookie-Verwaltung:
-Sie können Cookies über Ihre Browsereinstellungen kontrollieren und verwalten. Beachten Sie, dass das Deaktivieren bestimmter Cookies die Funktionalität unserer Website beeinträchtigen kann.`
+          content: `Diese Website speichert in Ihrem Browser die gewählte Sprache und die im Cookie-Hinweis angegebene Einstellung. Sie verwendet keine Cookies und keine Analyse- oder Werbedienste.`
         },
         {
           id: "security",
@@ -946,20 +904,7 @@ San Pedro Garza García, Nuevo León, México
           id: "cookies",
           icon: Cookie,
           title: "9. Cookie政策",
-          content: `我们的网站使用Cookie和类似技术来增强您的浏览体验。Cookie是存储在您设备上的小型文本文件，帮助我们分析网站流量、记住您的偏好并改进功能。
-
-我们使用的Cookie类型：
-
-必要Cookie：网站正常运行所必需的。这些不能被禁用。
-
-分析Cookie：通过收集匿名信息帮助我们了解访问者如何与我们的网站互动（例如Google Analytics）。
-
-功能Cookie：记住您的偏好，如语言设置和显示选项。
-
-营销Cookie：用于跨网站跟踪访问者以显示相关广告。
-
-管理Cookie：
-您可以通过浏览器设置控制和管理Cookie。请注意，禁用某些Cookie可能会影响我们网站的功能。`
+          content: `本网站在您的浏览器中保存所选语言以及您在 Cookie 声明中所作的设置。本网站不使用 Cookie，也不使用分析或广告服务。`
         },
         {
           id: "security",
@@ -1186,20 +1131,7 @@ S&S 내부:
           id: "cookies",
           icon: Cookie,
           title: "9. 쿠키 정책",
-          content: `당사 웹사이트는 브라우징 경험을 향상시키기 위해 쿠키 및 유사한 기술을 사용합니다. 쿠키는 장치에 저장되는 작은 텍스트 파일로, 웹사이트 트래픽 분석, 선호도 기억 및 기능 개선에 도움이 됩니다.
-
-사용하는 쿠키 유형:
-
-필수 쿠키: 웹사이트가 제대로 작동하는 데 필요합니다. 비활성화할 수 없습니다.
-
-분석 쿠키: 익명 정보를 수집하여 방문자가 웹사이트와 상호작용하는 방식을 이해하는 데 도움이 됩니다(예: Google Analytics).
-
-기능 쿠키: 언어 설정 및 표시 옵션과 같은 선호도를 기억합니다.
-
-마케팅 쿠키: 관련 광고를 표시하기 위해 웹사이트 전체에서 방문자를 추적하는 데 사용됩니다.
-
-쿠키 관리:
-브라우저 설정을 통해 쿠키를 제어하고 관리할 수 있습니다. 특정 쿠키를 비활성화하면 웹사이트 기능에 영향을 줄 수 있습니다.`
+          content: `이 사이트는 선택한 언어와 쿠키 안내에서 선택한 설정을 브라우저에 저장합니다. 쿠키나 분석 또는 광고 서비스는 사용하지 않습니다.`
         },
         {
           id: "security",
@@ -1428,20 +1360,7 @@ S&S内：
           id: "cookies",
           icon: Cookie,
           title: "9. Cookieポリシー",
-          content: `当社のウェブサイトは、ブラウジング体験を向上させるためにCookieおよび類似の技術を使用しています。Cookieは、ウェブサイトのトラフィックを分析し、設定を記憶し、機能を向上させるのに役立つ、お客様のデバイスに保存される小さなテキストファイルです。
-
-使用するCookieの種類：
-
-必須Cookie：ウェブサイトが正しく機能するために必要です。これらは無効にできません。
-
-分析Cookie：匿名情報を収集することで、訪問者がウェブサイトとどのようにやり取りしているかを理解するのに役立ちます。
-
-機能Cookie：言語設定や表示オプションなどの設定を記憶します。
-
-マーケティングCookie：関連する広告を表示するためにウェブサイト全体で訪問者を追跡するために使用されます。
-
-Cookieの管理：
-ブラウザの設定を通じてCookieを制御および管理できます。特定のCookieを無効にすると、ウェブサイトの機能に影響を与える場合があることにご注意ください。`
+          content: `このサイトは、選択された言語と「Cookieについて」で選択された設定をお使いのブラウザに保存します。Cookie、アクセス解析サービス、広告サービスは使用していません。`
         },
         {
           id: "security",
@@ -1668,20 +1587,7 @@ San Pedro Garza García, Nuevo León، المكسيك
           id: "cookies",
           icon: Cookie,
           title: "9. سياسة ملفات تعريف الارتباط",
-          content: `يستخدم موقعنا الإلكتروني ملفات تعريف الارتباط والتقنيات المماثلة لتحسين تجربة التصفح الخاصة بك. ملفات تعريف الارتباط هي ملفات نصية صغيرة مخزنة على جهازك تساعدنا في تحليل حركة مرور الموقع وتذكر تفضيلاتك وتحسين الوظائف.
-
-أنواع ملفات تعريف الارتباط التي نستخدمها:
-
-ملفات تعريف الارتباط الأساسية: ضرورية لعمل الموقع بشكل صحيح. لا يمكن تعطيلها.
-
-ملفات تعريف الارتباط التحليلية: تساعدنا على فهم كيفية تفاعل الزوار مع موقعنا من خلال جمع معلومات مجهولة الهوية.
-
-ملفات تعريف الارتباط الوظيفية: تتذكر تفضيلاتك مثل إعدادات اللغة وخيارات العرض.
-
-ملفات تعريف الارتباط التسويقية: تستخدم لتتبع الزوار عبر المواقع لعرض الإعلانات ذات الصلة.
-
-إدارة ملفات تعريف الارتباط:
-يمكنك التحكم في ملفات تعريف الارتباط وإدارتها من خلال إعدادات متصفحك. لاحظ أن تعطيل ملفات تعريف الارتباط معينة قد يؤثر على وظائف موقعنا.`
+          content: `يحفظ هذا الموقع في متصفحك اللغة المختارة والتفضيل المحدد في إشعار ملفات تعريف الارتباط. ولا يستخدم ملفات تعريف الارتباط ولا خدمات التحليل أو الإعلان.`
         },
         {
           id: "security",
@@ -1908,20 +1814,7 @@ San Pedro Garza García, Nuevo León, México
           id: "cookies",
           icon: Cookie,
           title: "9. Политика в отношении файлов cookie",
-          content: `Наш Веб-сайт использует файлы cookie и аналогичные технологии для улучшения вашего опыта просмотра. Файлы cookie — это небольшие текстовые файлы, сохраняемые на вашем устройстве, которые помогают нам анализировать трафик веб-сайта, запоминать ваши предпочтения и улучшать функциональность.
-
-Типы используемых файлов cookie:
-
-Необходимые файлы cookie: Необходимы для правильной работы Веб-сайта. Их нельзя отключить.
-
-Аналитические файлы cookie: Помогают нам понять, как посетители взаимодействуют с нашим Веб-сайтом, собирая анонимную информацию.
-
-Функциональные файлы cookie: Запоминают ваши предпочтения, такие как языковые настройки и параметры отображения.
-
-Маркетинговые файлы cookie: Используются для отслеживания посетителей на веб-сайтах с целью показа релевантной рекламы.
-
-Управление файлами cookie:
-Вы можете контролировать и управлять файлами cookie через настройки браузера. Обратите внимание, что отключение определённых файлов cookie может повлиять на функциональность нашего Веб-сайта.`
+          content: `Этот сайт сохраняет в вашем браузере выбранный язык и настройку, указанную в уведомлении о файлах cookie. Он не использует файлы cookie и сервисы аналитики или рекламы.`
         },
         {
           id: "security",
@@ -1990,13 +1883,13 @@ San Pedro Garza García, Nuevo León, México
     fr: {
       title: "Politique de confidentialité",
       subtitle: "Comment nous collectons, utilisons et protégeons vos données personnelles",
-      lastUpdated: "Dernière mise à jour : Décembre 2024",
+      lastUpdated: "Dernière mise à jour\u202f: Décembre 2024",
       sections: [
         {
           id: "introduction",
           icon: Shield,
           title: "1. Introduction",
-          content: `Santos & Saucedo Abogados (« S&S », « nous », « notre » ou « nos ») s'engage à protéger votre vie privée et à assurer la sécurité de vos données personnelles. Cette Politique de confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous visitez notre site web www.santossaucedo.com (le « Site Web ») ou interagissez avec nos services.
+          content: `Santos & Saucedo Abogados («\u202fS&S\u202f», «\u202fnous\u202f», «\u202fnotre\u202f» ou «\u202fnos\u202f») s'engage à protéger votre vie privée et à assurer la sécurité de vos données personnelles. Cette Politique de confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous visitez notre site web www.santossaucedo.com (le «\u202fSite Web\u202f») ou interagissez avec nos services.
 
 Cette Politique de confidentialité est conforme à la Loi fédérale sur la protection des données personnelles (LFPDPPP) et à ses règlements, ainsi qu'aux autres lois mexicaines applicables en matière de protection des données et aux meilleures pratiques internationales.
 
@@ -2006,15 +1899,15 @@ En accédant à notre Site Web ou en l'utilisant, vous reconnaissez avoir lu, co
           id: "data-controller",
           icon: Building2,
           title: "2. Responsable du traitement",
-          content: `Le responsable du traitement de vos données personnelles est :
+          content: `Le responsable du traitement de vos données personnelles est\u202f:
 
 Santos & Saucedo Abogados
 Río Tamazunchale 205 Norte, 18e étage
 San Pedro Garza García, Nuevo León, Mexique
 
-Pour les demandes liées à la confidentialité :
-E-mail : privacidad@santossaucedo.com
-Téléphone : +52 81 8335 2086
+Pour les demandes liées à la confidentialité\u202f:
+E-mail\u202f: privacidad@santossaucedo.com
+Téléphone\u202f: +52 81 8335 2086
 
 Notre Délégué à la protection des données peut être contacté à l'adresse ci-dessus pour toute question concernant cette Politique de confidentialité ou l'exercice de vos droits en matière de protection des données.`
         },
@@ -2022,20 +1915,20 @@ Notre Délégué à la protection des données peut être contacté à l'adresse
           id: "data-collected",
           icon: Database,
           title: "3. Données collectées",
-          content: `Nous pouvons collecter et traiter les catégories suivantes de données personnelles :
+          content: `Nous pouvons collecter et traiter les catégories suivantes de données personnelles\u202f:
 
-Données d'identification :
+Données d'identification\u202f:
 • Nom complet, titre et poste professionnel
 • Coordonnées (adresse e-mail, numéro de téléphone, adresse postale)
 • Nom de l'entreprise ou de l'organisation
 • Qualifications et affiliations professionnelles
 
-Données de communication :
+Données de communication\u202f:
 • Correspondance et communications avec S&S
 • Demandes soumises via nos formulaires de contact
 • Préférences d'abonnement aux newsletters et publications
 
-Données techniques :
+Données techniques\u202f:
 • Adresse IP et informations sur l'appareil
 • Type et version du navigateur
 • Système d'exploitation
@@ -2047,16 +1940,16 @@ Nous ne collectons pas intentionnellement de données personnelles sensibles sau
           id: "data-use",
           icon: Eye,
           title: "4. Utilisation des données",
-          content: `Nous utilisons vos données personnelles aux fins suivantes :
+          content: `Nous utilisons vos données personnelles aux fins suivantes\u202f:
 
-Finalités primaires (ne nécessitent pas de consentement supplémentaire) :
+Finalités primaires (ne nécessitent pas de consentement supplémentaire)\u202f:
 • Pour fournir des services juridiques et des conseils professionnels
 • Pour répondre à vos demandes et communications
 • Pour gérer nos relations avocat-client
 • Pour respecter les obligations légales et réglementaires
 • Pour administrer et protéger notre Site Web et nos systèmes
 
-Finalités secondaires (peuvent nécessiter un consentement) :
+Finalités secondaires (peuvent nécessiter un consentement)\u202f:
 • Pour envoyer des newsletters, publications et mises à jour juridiques
 • Pour vous inviter à des événements, séminaires et conférences
 • Pour mener des enquêtes et recueillir des commentaires sur nos services
@@ -2070,12 +1963,12 @@ Vous pouvez vous désinscrire des finalités secondaires à tout moment en nous 
           title: "5. Conservation des données",
           content: `Nous conservons vos données personnelles uniquement pendant la durée nécessaire à la réalisation des finalités pour lesquelles elles ont été collectées, sauf si une période de conservation plus longue est requise ou permise par la loi.
 
-Périodes de conservation :
-• Dossiers clients et affaires juridiques : 10 ans après la clôture du dossier
-• Demandes générales et communications : 3 ans à compter du dernier contact
-• Abonnements aux newsletters : Jusqu'à votre désabonnement
-• Données d'analyse du site web : 2 ans
-• Documents comptables et de facturation : Selon les exigences fiscales
+Périodes de conservation\u202f:
+• Dossiers clients et affaires juridiques\u202f: 10 ans après la clôture du dossier
+• Demandes générales et communications\u202f: 3 ans à compter du dernier contact
+• Abonnements aux newsletters\u202f: Jusqu'à votre désabonnement
+• Données d'analyse du site web\u202f: 2 ans
+• Documents comptables et de facturation\u202f: Selon les exigences fiscales
 
 Après l'expiration de la période de conservation applicable, nous supprimerons ou anonymiserons vos données personnelles de manière sécurisée.`
         },
@@ -2083,19 +1976,19 @@ Après l'expiration de la période de conservation applicable, nous supprimerons
           id: "data-sharing",
           icon: Users,
           title: "6. Partage des données",
-          content: `Nous pouvons partager vos données personnelles avec les catégories suivantes de destinataires :
+          content: `Nous pouvons partager vos données personnelles avec les catégories suivantes de destinataires\u202f:
 
-Au sein de S&S :
+Au sein de S&S\u202f:
 • Associés, avocats et personnel professionnel impliqués dans votre affaire
 • Personnel administratif et de support selon les besoins
 • Autres bureaux de S&S pour la coordination des services
 
-Tiers :
+Tiers\u202f:
 • Tribunaux et autorités réglementaires (selon les exigences des procédures judiciaires)
 • Autres cabinets d'avocats ou professionnels collaborant sur votre affaire (avec votre consentement)
 • Prestataires de services sous accords de confidentialité stricts
 
-Transferts internationaux :
+Transferts internationaux\u202f:
 Lorsque nous transférons vos données en dehors du Mexique, nous nous assurons que des garanties appropriées sont en place.
 
 Nous ne vendons jamais vos données personnelles à des tiers à des fins marketing.`
@@ -2104,64 +1997,51 @@ Nous ne vendons jamais vos données personnelles à des tiers à des fins market
           id: "arco-rights",
           icon: Shield,
           title: "7. Vos droits",
-          content: `En vertu de la loi mexicaine, vous disposez des droits suivants concernant vos données personnelles (droits ARCO) :
+          content: `En vertu de la loi mexicaine, vous disposez des droits suivants concernant vos données personnelles (droits ARCO)\u202f:
 
-Accès (Acceso) :
+Accès (Acceso)\u202f:
 Vous pouvez demander la confirmation du traitement de vos données personnelles et y accéder.
 
-Rectification (Rectificación) :
+Rectification (Rectificación)\u202f:
 Vous pouvez demander la correction de données personnelles inexactes ou incomplètes.
 
-Suppression (Cancelación) :
+Suppression (Cancelación)\u202f:
 Vous pouvez demander la suppression de vos données personnelles lorsqu'elles ne sont plus nécessaires aux fins pour lesquelles elles ont été collectées.
 
-Opposition (Oposición) :
+Opposition (Oposición)\u202f:
 Vous pouvez vous opposer au traitement de vos données personnelles pour des finalités spécifiques, notamment le marketing.
 
-Pour exercer vos droits :
-Soumettez une demande écrite à :
-E-mail : privacidad@santossaucedo.com
-Adresse : Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220
+Pour exercer vos droits\u202f:
+Soumettez une demande écrite à\u202f:
+E-mail\u202f: privacidad@santossaucedo.com
+Adresse\u202f: Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220
 
-Si vous n'êtes pas satisfait de notre réponse, vous pouvez déposer une plainte auprès de l'Institut national de transparence, d'accès à l'information et de protection des données personnelles (INAI) : www.inai.org.mx`
+Si vous n'êtes pas satisfait de notre réponse, vous pouvez déposer une plainte auprès de l'Institut national de transparence, d'accès à l'information et de protection des données personnelles (INAI)\u202f: www.inai.org.mx`
         },
         {
           id: "transfers",
           icon: Globe,
           title: "8. Transferts à des tiers",
-          content: `S&S peut transférer vos données personnelles à des tiers dans les circonstances suivantes :
+          content: `S&S peut transférer vos données personnelles à des tiers dans les circonstances suivantes\u202f:
 
-Transferts nécessitant un consentement :
+Transferts nécessitant un consentement\u202f:
 • Aux cabinets d'avocats affiliés ou correspondants dans d'autres juridictions pour la fourniture de services juridiques
 • Aux prestataires de services marketing et communication pour des activités promotionnelles
 • Aux organisateurs d'événements lors de votre inscription à des événements parrainés par S&S
 
-Transferts ne nécessitant pas de consentement (conformément à l'article 37 de la LFPDPPP) :
+Transferts ne nécessitant pas de consentement (conformément à l'article 37 de la LFPDPPP)\u202f:
 • Aux tribunaux et autorités gouvernementales lorsque la loi l'exige
 • Aux organismes de réglementation et associations professionnelles dans le cadre de nos obligations de conformité
 • Aux sociétés mères, filiales ou affiliées sous contrôle commun
 
-Transferts internationaux :
+Transferts internationaux\u202f:
 Lorsque vos données sont transférées vers des pays en dehors du Mexique, nous nous assurons que des garanties appropriées sont en place, y compris des clauses contractuelles et l'engagement du destinataire à respecter des principes de confidentialité équivalents à la loi mexicaine.`
         },
         {
           id: "cookies",
           icon: Cookie,
           title: "9. Politique des cookies",
-          content: `Notre Site Web utilise des cookies et des technologies similaires pour améliorer votre expérience de navigation. Les cookies sont de petits fichiers texte stockés sur votre appareil qui nous aident à analyser le trafic du site web, à mémoriser vos préférences et à améliorer les fonctionnalités.
-
-Types de cookies que nous utilisons :
-
-Cookies essentiels : Nécessaires au bon fonctionnement du Site Web. Ils ne peuvent pas être désactivés.
-
-Cookies analytiques : Nous aident à comprendre comment les visiteurs interagissent avec notre Site Web en collectant des informations anonymes.
-
-Cookies de fonctionnalité : Mémorisent vos préférences telles que les paramètres de langue et les options d'affichage.
-
-Cookies marketing : Utilisés pour suivre les visiteurs sur les sites web afin d'afficher des publicités pertinentes.
-
-Gestion des cookies :
-Vous pouvez contrôler et gérer les cookies via les paramètres de votre navigateur. Notez que la désactivation de certains cookies peut affecter la fonctionnalité de notre Site Web.`
+          content: `Ce site enregistre dans votre navigateur la langue choisie et la préférence indiquée dans l’avis sur les cookies. Il n’utilise ni cookies ni services d’analyse ou de publicité.`
         },
         {
           id: "security",
@@ -2169,20 +2049,20 @@ Vous pouvez contrôler et gérer les cookies via les paramètres de votre naviga
           title: "10. Mesures de sécurité",
           content: `S&S met en œuvre des mesures de sécurité administratives, techniques et physiques complètes pour protéger vos données personnelles contre la perte, l'accès non autorisé, les dommages, l'altération ou la divulgation.
 
-Mesures administratives :
+Mesures administratives\u202f:
 • Désignation d'un Délégué à la protection des données
 • Politiques et procédures internes pour le traitement des données
 • Formation du personnel sur la protection des données et la confidentialité
 • Audits réguliers et examens de conformité
 • Procédures de réponse aux incidents
 
-Mesures techniques :
+Mesures techniques\u202f:
 • Chiffrement des données sensibles en transit et au repos
 • Contrôles d'accès sécurisés et mécanismes d'authentification
 • Pare-feu et systèmes de détection d'intrusion
 • Mises à jour de sécurité régulières et évaluations des vulnérabilités
 
-Mesures physiques :
+Mesures physiques\u202f:
 • Accès restreint aux installations hébergeant des données personnelles
 • Systèmes de sécurité incluant la surveillance et les journaux d'accès
 
@@ -2194,7 +2074,7 @@ Malgré nos meilleurs efforts, aucune méthode de transmission sur Internet ou d
           title: "11. Modifications de la politique",
           content: `S&S se réserve le droit de modifier cette Politique de confidentialité à tout moment pour refléter les changements dans nos pratiques de traitement des données, les exigences légales ou d'autres raisons opérationnelles ou juridiques.
 
-Comment nous vous informons des changements :
+Comment nous vous informons des changements\u202f:
 • Les changements significatifs seront communiqués par e-mail à nos clients et contacts
 • Les mises à jour seront publiées sur notre Site Web avec la nouvelle date d'entrée en vigueur
 • Pour les changements matériels affectant vos droits, nous pouvons demander un consentement renouvelé
@@ -2207,23 +2087,23 @@ Cette Politique de confidentialité a été mise à jour pour la dernière fois 
           id: "contact",
           icon: Phone,
           title: "12. Contact",
-          content: `Pour toute question, préoccupation ou demande relative à cette Politique de confidentialité ou à nos pratiques de protection des données, veuillez contacter :
+          content: `Pour toute question, préoccupation ou demande relative à cette Politique de confidentialité ou à nos pratiques de protection des données, veuillez contacter\u202f:
 
 Délégué à la protection des données
 Santos & Saucedo Abogados
 
-Adresse :
+Adresse\u202f:
 Río Tamazunchale 205 Norte, 18e étage
 San Pedro Garza García, Nuevo León, Mexique
 
-E-mail : privacidad@santossaucedo.com
-Téléphone : +52 81 8335 2086
+E-mail\u202f: privacidad@santossaucedo.com
+Téléphone\u202f: +52 81 8335 2086
 
-Heures d'ouverture : Lundi au vendredi, 9h00 à 18h00 (heure de Mexico)
+Heures d'ouverture\u202f: Lundi au vendredi, 9h00 à 18h00 (heure de Mexico)
 
-Pour les demandes générales concernant nos services juridiques :
-E-mail : info@santossaucedo.com
-Site web : www.santossaucedo.com`
+Pour les demandes générales concernant nos services juridiques\u202f:
+E-mail\u202f: info@santossaucedo.com
+Site web\u202f: www.santossaucedo.com`
         }
       ]
     },
@@ -2388,20 +2268,7 @@ Quando i tuoi dati vengono trasferiti in paesi al di fuori del Messico, ci assic
           id: "cookies",
           icon: Cookie,
           title: "9. Politica sui cookie",
-          content: `Il nostro Sito Web utilizza cookie e tecnologie simili per migliorare la tua esperienza di navigazione. I cookie sono piccoli file di testo memorizzati sul tuo dispositivo che ci aiutano ad analizzare il traffico del sito web, ricordare le tue preferenze e migliorare la funzionalità.
-
-Tipi di cookie che utilizziamo:
-
-Cookie essenziali: Necessari per il corretto funzionamento del Sito Web. Non possono essere disabilitati.
-
-Cookie analitici: Ci aiutano a capire come i visitatori interagiscono con il nostro Sito Web raccogliendo informazioni anonime.
-
-Cookie di funzionalità: Ricordano le tue preferenze come le impostazioni della lingua e le opzioni di visualizzazione.
-
-Cookie di marketing: Utilizzati per tracciare i visitatori sui siti web per visualizzare annunci pertinenti.
-
-Gestione dei cookie:
-Puoi controllare e gestire i cookie tramite le impostazioni del tuo browser. Tieni presente che la disabilitazione di alcuni cookie potrebbe influire sulla funzionalità del nostro Sito Web.`
+          content: `Questo sito memorizza nel browser la lingua scelta e la preferenza indicata nell’informativa sui cookie. Non utilizza cookie né servizi di analisi o pubblicità.`
         },
         {
           id: "security",
@@ -2499,7 +2366,7 @@ Sito web: www.santossaucedo.com`
     ja: "ARCO権利の行使またはプライバシーに関するお問い合わせ：",
     ar: "لممارسة حقوق ARCO الخاصة بك أو الاستفسارات المتعلقة بالخصوصية:",
     ru: "Для осуществления прав ARCO или запросов о конфиденциальности:",
-    fr: "Pour exercer vos droits ARCO ou faire des demandes de confidentialité :",
+    fr: "Pour exercer vos droits ARCO ou faire des demandes de confidentialité\u202f:",
     it: "Per esercitare i tuoi diritti ARCO o fare richieste sulla privacy:"
   };
 
@@ -2522,7 +2389,7 @@ Sito web: www.santossaucedo.com`
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
             >
-              <Eyebrow num="" tone="paper" className="mb-6" />
+              {/* Sin cejilla: las páginas legales no están en el menú y no llevan "§" */}
               <h1
                 className="mb-5"
                 data-testid="text-privacy-title"

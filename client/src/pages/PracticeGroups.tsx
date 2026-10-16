@@ -15,7 +15,7 @@ import type { PracticeGroup } from "@shared/schema";
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
 // el bloque lleva lang="en" (para :lang(): la romana, no la sans de CJK y árabe) y conserva la
-// dirección de la página (en árabe, alineado a la derecha junto al número § 2.n); el texto va
+// dirección de la página (en árabe, alineado a la derecha junto al número de fila); el texto va
 // aislado en <bdi lang="en" dir="ltr">, como en Team.tsx.
 function EnglishSource({ children }: { children: ReactNode }) {
   return <bdi lang="en" dir="ltr">{children}</bdi>;
@@ -35,7 +35,7 @@ interface PracticeGroupRowProps {
   index: number;
 }
 
-// Fila de filete como #practicas de la portada: subnumeración § 2.n (sección 02 del menú),
+// Fila de filete como #practicas de la portada: numeración simple 01–04 (sin § 2.n),
 // nombre en romana Azul Marino, descripción completa (sin recorte) y flecha. Sin foto: la
 // lista tipográfica sustituye a las fotos de archivo. Toda la fila es el enlace.
 function PracticeGroupRow({ group, index }: PracticeGroupRowProps) {
@@ -80,7 +80,7 @@ function PracticeGroupRow({ group, index }: PracticeGroupRowProps) {
         data-testid={`link-practice-group-${group.slug}`}
       >
         <span aria-hidden="true" className="ss-row-num ss-label ss-num sm:col-start-1 sm:row-start-1">
-          § 2.{index + 1}
+          {String(index + 1).padStart(2, "0")}
         </span>
         {/* h2 bajo el h1 de la página; aspecto de fila de prácticas de la portada */}
         <h2
@@ -120,96 +120,57 @@ export default function PracticeGroups() {
 
   // Subtítulo: de la redacción aprobada (Nuestra firma): una práctica laboral central y
   // tres complementarias. Sustituye a "cubre todas las principales áreas legales".
-  const content: Record<string, { title: string; subtitle: string; errorMessage: string; learnMore: string; searchPlaceholder: string; viewAll: string; noResults: string }> = {
+  const content: Record<string, { title: string; subtitle: string; errorMessage: string }> = {
     en: {
-      title: "Practice Groups",
+      // Un solo nombre para /practice-groups en inglés, en minúscula inicial: "Practice areas"
+      title: "Practice areas",
       subtitle: "Around its labor practice, the firm has developed three complementary practices: corporate and contractual, immigration, and litigation.",
-      errorMessage: "Failed to load practice groups",
-      learnMore: "Learn More",
-      searchPlaceholder: "Search...",
-      viewAll: "View All",
-      noResults: "No results found",
+      errorMessage: "Failed to load practice areas",
     },
     es: {
       title: "Áreas de práctica",
       subtitle: "Alrededor de su práctica laboral, la firma desarrolló tres prácticas complementarias: corporativa y contractual, migratoria y contenciosa.",
       errorMessage: "Error al cargar las áreas de práctica",
-      learnMore: "Más información",
-      searchPlaceholder: "Buscar...",
-      viewAll: "Ver todo",
-      noResults: "No se encontraron resultados",
     },
     de: {
       title: "Praxisbereiche",
       subtitle: "Rund um ihre arbeitsrechtliche Praxis hat die Kanzlei drei ergänzende Praxisbereiche aufgebaut: Gesellschafts- und Vertragsrecht, Migrationsrecht und Prozessführung.",
       errorMessage: "Fehler beim Laden der Praxisbereiche",
-      learnMore: "Mehr erfahren",
-      searchPlaceholder: "Suchen...",
-      viewAll: "Alle anzeigen",
-      noResults: "Keine Ergebnisse gefunden",
     },
     zh: {
       title: "业务领域",
       subtitle: "围绕劳动法这一核心业务，本所发展了三个互补的业务领域：公司与合同、移民以及诉讼。",
       errorMessage: "加载业务领域失败",
-      learnMore: "了解更多",
-      searchPlaceholder: "搜索...",
-      viewAll: "查看全部",
-      noResults: "未找到结果",
     },
     ko: {
       title: "업무 분야",
       subtitle: "법인은 노동법 업무를 중심으로 회사·계약, 이민, 소송의 세 가지 보완 업무 분야를 갖추고 있습니다.",
       errorMessage: "업무 분야 로드 실패",
-      learnMore: "자세히 알아보기",
-      searchPlaceholder: "검색...",
-      viewAll: "전체 보기",
-      noResults: "결과를 찾을 수 없습니다",
     },
     ja: {
       title: "取扱分野",
       subtitle: "当事務所は労働法を中核に、会社法・契約、移民、訴訟の三つの補完的な分野を展開しています。",
       errorMessage: "取扱分野の読み込みに失敗しました",
-      learnMore: "詳しく見る",
-      searchPlaceholder: "検索...",
-      viewAll: "すべて表示",
-      noResults: "結果が見つかりません",
     },
     ar: {
       title: "مجالات الممارسة",
       subtitle: "حول ممارسته في قانون العمل، طوّر المكتب ثلاث ممارسات مكمّلة: الشركات والعقود، والهجرة، والتقاضي.",
       errorMessage: "فشل تحميل مجالات الممارسة",
-      learnMore: "اعرف المزيد",
-      searchPlaceholder: "بحث...",
-      viewAll: "عرض الكل",
-      noResults: "لم يتم العثور على نتائج",
     },
     ru: {
       title: "Практики",
       subtitle: "Вокруг практики трудового права фирма развила три дополняющие её практики: корпоративную и договорную, миграционную и судебную.",
       errorMessage: "Не удалось загрузить практики",
-      learnMore: "Подробнее",
-      searchPlaceholder: "Поиск...",
-      viewAll: "Смотреть все",
-      noResults: "Результаты не найдены",
     },
     fr: {
       title: "Domaines de pratique",
-      subtitle: "Autour de sa pratique en droit du travail, le cabinet a développé trois pratiques complémentaires : droit des sociétés et des contrats, immigration et contentieux.",
+      subtitle: "Autour de sa pratique en droit du travail, le cabinet a développé trois pratiques complémentaires\u202f: droit des sociétés et des contrats, immigration et contentieux.",
       errorMessage: "Échec du chargement des domaines de pratique",
-      learnMore: "En savoir plus",
-      searchPlaceholder: "Rechercher...",
-      viewAll: "Voir tout",
-      noResults: "Aucun résultat trouvé",
     },
     it: {
       title: "Aree di pratica",
       subtitle: "Attorno alla sua pratica giuslavoristica, lo studio ha sviluppato tre aree complementari: societario e contrattuale, immigrazione e contenzioso.",
       errorMessage: "Impossibile caricare le aree di pratica",
-      learnMore: "Scopri di più",
-      searchPlaceholder: "Cerca...",
-      viewAll: "Vedi tutto",
-      noResults: "Nessun risultato trovato",
     },
   };
 

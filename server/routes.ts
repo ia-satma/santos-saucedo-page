@@ -56,6 +56,7 @@ import {
   insertSpecializedDeskSchema,
   insertOfficeImageSchema,
 } from "@shared/schema";
+import { isNamedOnTeamPage } from "@shared/teamVisibility";
 import { ZodError } from "zod";
 import {
   SUPPORTED_LANGUAGES,
@@ -192,6 +193,21 @@ export async function registerRoutes(
     app.use("/api/health-check", disabledAgentService);
   }
 
+  // Rutas retiradas (D4, D5): redirección permanente que conserva la consulta. /experience
+  // listaba asuntos sin confirmar; /offices repetía /contact. Las páginas siguen en el código
+  // sin ruta, y el cliente (App.tsx) redirige igual en GitHub Pages, donde no hay servidor.
+  const RETIRED_ROUTES: Record<string, string> = {
+    "/experience": "/practice-groups",
+    "/offices": "/contact",
+  };
+  for (const [from, to] of Object.entries(RETIRED_ROUTES)) {
+    app.get([from, `${from}/*`], (req, res) => {
+      const queryStart = req.originalUrl.indexOf("?");
+      const query = queryStart >= 0 ? req.originalUrl.slice(queryStart) : "";
+      res.redirect(301, `${to}${query}`);
+    });
+  }
+
   // Setup WebSocket server for pipeline progress updates
   const wss = new WebSocketServer({ server: httpServer, path: '/ws/pipeline' });
   
@@ -283,125 +299,35 @@ export async function registerRoutes(
     immutable: true,
   }));
 
-  // Geolocation endpoint for automatic language detection
-  const COUNTRY_TO_LANGUAGE: Record<string, string> = {
-    // Spanish-speaking countries.
-    // BR→es is a deliberate fallback: Portuguese ("pt") is not yet a supported UI language.
-    // When Portuguese translations are added, remap BR to "pt".
-    MX: "es", ES: "es", AR: "es", CO: "es", PE: "es", VE: "es", CL: "es", EC: "es",
-    GT: "es", CU: "es", BO: "es", DO: "es", HN: "es", PY: "es", SV: "es", NI: "es",
-    CR: "es", PA: "es", UY: "es", PR: "es", BR: "es",
-    // German-speaking countries
-    DE: "de", AT: "de", CH: "de", LI: "de",
-    // Chinese-speaking regions
-    CN: "zh", TW: "zh", HK: "zh",
-    // Korean
-    KR: "ko",
-    // Japanese
-    JP: "ja",
-    // Arabic-speaking countries
-    SA: "ar", AE: "ar", EG: "ar", IQ: "ar", MA: "ar", DZ: "ar", SD: "ar", SY: "ar",
-    TN: "ar", YE: "ar", JO: "ar", LY: "ar", LB: "ar", OM: "ar", KW: "ar", QA: "ar", BH: "ar",
-    // Russian-speaking countries
-    RU: "ru", BY: "ru", KZ: "ru", KG: "ru",
-    // French-speaking countries
-    FR: "fr", BE: "fr", MC: "fr", LU: "fr", SN: "fr", CI: "fr", ML: "fr",
-    // Italian-speaking countries
-    IT: "it", SM: "it", VA: "it",
-    // English-speaking countries (CA corrected from fr → en)
-    US: "en", GB: "en", AU: "en", NZ: "en", IE: "en", ZA: "en", NG: "en", GH: "en", KE: "en",
-    CA: "en", IN: "en", PH: "en", SG: "en", MY: "en",
-    PT: "en", // PT→en fallback: "pt" is not yet a supported UI language; remap when Portuguese translations are added
-  };
-
-  // In-memory cache for geolocation results (TTL: 1 hour)
-  const geoCache = new Map<string, { language: string; country: string; timestamp: number }>();
-  const GEO_CACHE_TTL = 60 * 60 * 1000;
+  // Detección del idioma en la primera visita: solo la cabecera Accept-Language del
+  // navegador, sin terceros (antes se enviaba la IP del visitante a ipapi.co). Si ningún
+  // idioma de la cabecera está entre los 10 del sitio, español.
+  const SUPPORTED_UI_LANGUAGES = ["es", "en", "de", "zh", "ko", "ja", "ar", "ru", "fr", "it"];
 
   function parseAcceptLanguage(header: string | undefined): string | null {
     if (!header) return null;
-    const supported = ["es", "en", "de", "zh", "ko", "ja", "ar", "ru", "fr", "it"];
-    const languages = header.split(",").map(part => {
-      const [lang, q] = part.trim().split(";q=");
-      return { lang: lang.split("-")[0].toLowerCase(), q: q ? parseFloat(q) : 1.0 };
-    }).sort((a, b) => b.q - a.q);
+    const languages = header
+      .split(",")
+      .map((part) => {
+        const [tag, ...params] = part.trim().split(";");
+        const qParam = params.map((p) => p.trim()).find((p) => p.startsWith("q="));
+        const q = qParam ? Number.parseFloat(qParam.slice(2)) : 1;
+        return { lang: tag.split("-")[0].toLowerCase(), q: Number.isFinite(q) ? q : 0 };
+      })
+      // q=0: el navegador declara que no acepta ese idioma
+      .filter(({ q }) => q > 0)
+      .sort((a, b) => b.q - a.q);
     for (const { lang } of languages) {
-      if (supported.includes(lang)) return lang;
+      if (SUPPORTED_UI_LANGUAGES.includes(lang)) return lang;
     }
     return null;
   }
 
-  function isPrivateIp(ip: string): boolean {
-    // Normalize IPv6-mapped IPv4 addresses (e.g. ::ffff:127.0.0.1 → 127.0.0.1)
-    const normalized = ip.startsWith("::ffff:") ? ip.slice(7) : ip;
-    return (
-      normalized === "::1" ||
-      normalized === "127.0.0.1" ||
-      normalized.startsWith("192.168.") ||
-      normalized.startsWith("10.") ||
-      normalized.startsWith("172.16.") || normalized.startsWith("172.17.") || normalized.startsWith("172.18.") ||
-      normalized.startsWith("172.19.") || normalized.startsWith("172.20.") || normalized.startsWith("172.21.") ||
-      normalized.startsWith("172.22.") || normalized.startsWith("172.23.") || normalized.startsWith("172.24.") ||
-      normalized.startsWith("172.25.") || normalized.startsWith("172.26.") || normalized.startsWith("172.27.") ||
-      normalized.startsWith("172.28.") || normalized.startsWith("172.29.") || normalized.startsWith("172.30.") ||
-      normalized.startsWith("172.31.") ||
-      normalized.startsWith("fe80:") || // IPv6 link-local
-      normalized === "::1"              // IPv6 loopback (explicit for normalized form)
-    );
-  }
-
-  app.get("/api/detect-language", async (req, res) => {
-    try {
-      const forwardedFor = req.headers["x-forwarded-for"];
-      const clientIp = forwardedFor
-        ? (Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor.split(",")[0].trim())
-        : req.socket.remoteAddress || req.ip;
-
-      // Skip geolocation for localhost/private IPs — use Accept-Language then English
-      if (!clientIp || isPrivateIp(clientIp)) {
-        const fromHeader = parseAcceptLanguage(req.headers["accept-language"]);
-        return res.json({ language: fromHeader || "en", country: null, source: fromHeader ? "accept-language" : "fallback" });
-      }
-
-      // Check cache first
-      const cached = geoCache.get(clientIp);
-      if (cached && Date.now() - cached.timestamp < GEO_CACHE_TTL) {
-        return res.json({ language: cached.language, country: cached.country, source: "cache" });
-      }
-
-      // HTTPS geolocation via ipapi.co (free tier, no key required)
-      const geoResponse = await fetch(`https://ipapi.co/${clientIp}/json/`, {
-        signal: AbortSignal.timeout(3000),
-      });
-
-      if (!geoResponse.ok) {
-        const fromHeader = parseAcceptLanguage(req.headers["accept-language"]);
-        return res.json({ language: fromHeader || "en", country: null, source: fromHeader ? "accept-language" : "fallback" });
-      }
-
-      const geoData = await geoResponse.json() as { country_code?: string; error?: boolean };
-
-      if (geoData.error || !geoData.country_code) {
-        const fromHeader = parseAcceptLanguage(req.headers["accept-language"]);
-        return res.json({ language: fromHeader || "en", country: null, source: fromHeader ? "accept-language" : "fallback" });
-      }
-
-      const countryCode = geoData.country_code.toUpperCase();
-      const mapped = COUNTRY_TO_LANGUAGE[countryCode];
-      if (!mapped) {
-        // Unknown country — fall back to Accept-Language then English
-        const fromHeader = parseAcceptLanguage(req.headers["accept-language"]);
-        return res.json({ language: fromHeader || "en", country: countryCode, source: fromHeader ? "accept-language" : "fallback" });
-      }
-
-      geoCache.set(clientIp, { language: mapped, country: countryCode, timestamp: Date.now() });
-
-      res.json({ language: mapped, country: countryCode, source: "geolocation" });
-    } catch (error) {
-      console.error("Language detection error:", error);
-      const fromHeader = parseAcceptLanguage(req.headers["accept-language"]);
-      res.json({ language: fromHeader || "en", country: null, source: fromHeader ? "accept-language" : "error" });
-    }
+  app.get("/api/detect-language", (req, res) => {
+    const fromHeader = parseAcceptLanguage(req.headers["accept-language"]);
+    // Varía según la cabecera: una caché intermedia no debe servir el idioma de otro visitante
+    res.set("Vary", "Accept-Language");
+    res.json({ language: fromHeader ?? "es", source: fromHeader ? "accept-language" : "default" });
   });
 
   app.get("/api/news", async (_req, res) => {
@@ -753,7 +679,10 @@ export async function registerRoutes(
         storage.getNews(),
       ]);
       
-      const filteredTeam = team.filter(m => 
+      // Solo quien aparece con nombre en /team (socios confirmados y Of Counsel) y solo notas
+      // publicadas, como /api/news/published
+      const now = new Date();
+      const filteredTeam = team.filter(m => isNamedOnTeamPage(m)).filter(m => 
         m.name.toLowerCase().includes(query) ||
         m.title.toLowerCase().includes(query) ||
         m.titleEs.toLowerCase().includes(query) ||
@@ -777,7 +706,7 @@ export async function registerRoutes(
         g.descriptionEs.toLowerCase().includes(query)
       ).slice(0, 5);
       
-      const filteredNews = news.filter(n =>
+      const filteredNews = news.filter(n => n.published && (!n.publishAt || new Date(n.publishAt) <= now)).filter(n =>
         n.title.toLowerCase().includes(query) ||
         n.titleEs.toLowerCase().includes(query) ||
         n.excerpt.toLowerCase().includes(query) ||
@@ -825,8 +754,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         { loc: '/news', changefreq: 'daily', priority: '0.9' },
         { loc: '/contact', changefreq: 'monthly', priority: '0.7' },
         { loc: '/careers', changefreq: 'weekly', priority: '0.7' },
-        { loc: '/offices', changefreq: 'monthly', priority: '0.7' },
-        { loc: '/experience', changefreq: 'monthly', priority: '0.7' },
+        { loc: '/careers/interns', changefreq: 'monthly', priority: '0.5' },
         { loc: '/privacy-policy', changefreq: 'yearly', priority: '0.3' },
         { loc: '/terms', changefreq: 'yearly', priority: '0.3' },
       ];
@@ -849,7 +777,8 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   </url>`;
       }
 
-      for (const member of teamMembers) {
+      // Fichas: solo quien aparece con nombre en /team (shared/teamVisibility.ts)
+      for (const member of teamMembers.filter(m => isNamedOnTeamPage(m))) {
         urlEntries += `
   <url>
     <loc>${baseUrl}/team/${member.slug}</loc>
@@ -869,7 +798,10 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   </url>`;
       }
 
-      for (const newsItem of newsItems) {
+      // Solo notas publicadas (mismo criterio que /api/news/published)
+      const now = new Date();
+      const publishedNews = newsItems.filter(n => n.published && (!n.publishAt || new Date(n.publishAt) <= now));
+      for (const newsItem of publishedNews) {
         const lastmod = newsItem.date ? new Date(newsItem.date).toISOString().split('T')[0] : today;
         urlEntries += `
   <url>

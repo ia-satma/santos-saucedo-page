@@ -1,11 +1,14 @@
 import { Fragment } from "react";
 import { Link } from "wouter";
-import edificioCerro from "@assets/ss26/edificio-cerro.webp";
+import { useQuery } from "@tanstack/react-query";
+import edificioCerro from "@assets/ss26/edificio-cerro-recorte.webp";
 import salaJuntas from "@assets/ss26/sala-juntas.webp";
 import socioSantosArce from "@assets/ss26/socio-enrique-hernan-santos-arce.webp";
 import socioSantosGuzman from "@assets/ss26/socio-enrique-hernan-santos-guzman.webp";
 import socioSaucedoMontemayor from "@assets/ss26/socio-mario-saucedo-montemayor.webp";
 import { fallbackToOriginalSrc, getTeamPhotoSrcSet } from "@/lib/teamPhotoSources";
+import { MonitorList } from "@/components/monitor/MonitorList";
+import type { News } from "@shared/schema";
 import { Reveal, SectionHead, TextLink, useInView } from "./primitives";
 import { home26, langAttrs, type Lang26 } from "./content";
 
@@ -19,12 +22,33 @@ const Y = {
   socios: "py-[72px] md:py-[96px] lg:py-[128px]",
 } as const;
 
-/* Separación entre foto y texto en Extranjeras */
-const GAP_X = "lg:gap-x-[clamp(32px,6vw,96px)]";
+/* Fondos (versión C del juicio a ciegas): Azul Profundo solo en el héroe y en Empresas
+   extranjeras; el manifiesto sobre Hueso; La firma, Prácticas, Socios y Monitor Laboral en
+   blanco (data-surface="light": foco Azul Marino, ss26.css).
+   Dos secciones blancas seguidas (Socios y Monitor Laboral): entre ambas, un solo filete Línea
+   al ancho del contenedor (JoinRule) con el mismo aire arriba y abajo, en lugar de dos py
+   completos. Lo dibuja la sección que sigue a otra blanca, que pierde su padding superior; la
+   anterior recorta el inferior (:has). Vale para cualquier orden de las secciones. */
+const JOIN_AFTER = "[[data-surface=light]+&]:pt-0";
+const JOIN_BEFORE =
+  "[&:has(+[data-surface=light])]:pb-[64px] md:[&:has(+[data-surface=light])]:pb-[80px] lg:[&:has(+[data-surface=light])]:pb-[96px]";
 
-/* h2 de la portada: romana 400 (350 sobre Azul Profundo, ss26.css). El color lo pone cada
-   sección: Azul Marino sobre claro, blanco sobre Azul Profundo. */
-const H2 = "ss-display mt-8 text-[clamp(36px,3.7vw,56px)] leading-[1.07]";
+function JoinRule() {
+  return (
+    <div
+      aria-hidden="true"
+      className="mb-[64px] hidden h-px bg-ss-rule md:mb-[80px] lg:mb-[96px] [[data-surface=light]+section_&]:block"
+    />
+  );
+}
+
+/* Separación entre foto y texto en Extranjeras */
+const GAP_X = "xl:gap-x-[clamp(32px,6vw,96px)]";
+
+/* h2 de sección: la escala única del sitio (.ss-h2, 32–40 px, romana 400, Azul Marino;
+   index.css). Sobre Azul Profundo se añade text-white. El manifiesto es la excepción: la
+   única itálica del sitio. */
+const H2 = "ss-h2 mt-8";
 
 /* Retratos de socios, por slug de /team. El WebP de la portada (652 px) queda como src de
    respaldo; el navegador elige del srcset de team_photos (360w y 652w, el de /team) según
@@ -44,17 +68,17 @@ export function Firma26({ lang }: { lang: Lang26 }) {
   const t = home26[lang].firma;
   const [photoRef, photoIn] = useInView<HTMLDivElement>();
   return (
-    <section id="firma" {...langAttrs[lang]} className={`ss-paper ${Y.firma}`} aria-labelledby="ss26-firma">
-      {/* Retícula de 12. Desde 1280: texto en 4 columnas y foto de la 5 a la 12 (el borde de
-          la columna 5 es el mismo de Prácticas, Socios y el pie). Entre 1024 y 1279 las 4
-          columnas dejaban ~35 caracteres por línea: texto en 5 y foto vertical en 6. */}
+    <section id="firma" {...langAttrs[lang]} data-surface="light" className={`bg-white ${Y.firma}`} aria-labelledby="ss26-firma">
+      {/* Retícula de 12. Desde 1280: texto en 4 columnas y foto desde la 5 (el borde de la
+          columna 5 es el mismo de Prácticas, Socios y el pie). Entre 1024 y 1279 las 4
+          columnas dejaban ~35 caracteres por línea: texto en 5 y foto en 6. */}
       <div className="ss-container grid grid-cols-1 gap-y-14 lg:grid-cols-12 lg:gap-x-6">
         <div className="lg:col-span-5 xl:col-span-4">
           <Reveal>
             <SectionHead num="01" />
           </Reveal>
           <Reveal delay={0.06}>
-            <h2 id="ss26-firma" className={`${H2} text-ss-marino`}>
+            <h2 id="ss26-firma" className={H2}>
               {t.title}
             </h2>
           </Reveal>
@@ -72,23 +96,22 @@ export function Firma26({ lang }: { lang: Lang26 }) {
           </Reveal>
         </div>
 
-        <figure className="lg:col-span-6 lg:col-start-7 xl:col-span-8 xl:col-start-5">
-          {/* Fondo Línea mientras carga: sin bloque Azul Profundo sobre el papel */}
-          <div ref={photoRef} className="relative overflow-hidden bg-ss-rule xl:aspect-square">
+        {/* A su tamaño nativo (708 × 684), nunca más grande: la figura no pasa de 708 px y
+            arranca en la columna 5 (el borde de Prácticas, Socios y el pie). */}
+        <figure className="w-full max-w-[708px] lg:col-span-6 lg:col-start-7 xl:col-span-8 xl:col-start-5">
+          {/* Fondo Línea mientras carga */}
+          <div ref={photoRef} className="overflow-hidden bg-ss-rule">
             <img
               src={edificioCerro}
               alt={t.alt}
               loading="lazy"
               decoding="async"
-              width={952}
-              height={937}
-              // 3:4 desde el borde izquierdo: deja fuera el letrero del estacionamiento
-              // (x 712–918 de 952) y conserva la entrada y el cerro reflejado.
-              // Desde 1280, 8 columnas: cuadrado (en 3:4 la foto pasaba del alto de la
-              // ventana). Imagen al 136% (952/700) del ancho: el cuadro muestra x 0–700,
-              // sin el letrero, anclado abajo para no cortar la entrada.
-              // El edificio va en color (contenido); los retratos, en grises
-              className={`ss-photo ss-photo--colour ss-settle aspect-[3/4] w-full object-cover object-[0%_50%] xl:absolute xl:inset-y-0 xl:left-0 xl:aspect-auto xl:h-full xl:w-[136%] xl:max-w-none xl:object-[0%_100%] ${photoIn ? "is-in" : ""}`}
+              width={708}
+              height={684}
+              // edificio-cerro-recorte.webp: x 0–708, y 0–684 del original (952 × 937), sin el
+              // letrero del estacionamiento (desde x 711) ni el estacionamiento reflejado bajo
+              // el cerro (desde y 688). En grises, como la sala de juntas y los retratos.
+              className={`ss-photo ss-photo--mono ss-settle block h-auto w-full ${photoIn ? "is-in" : ""}`}
             />
           </div>
           <figcaption className="mt-4 flex gap-4 text-[14px] leading-snug text-ss-medio">
@@ -101,27 +124,24 @@ export function Firma26({ lang }: { lang: Lang26 }) {
   );
 }
 
-/* § 02 — Lo que creemos */
+/* Manifiesto — Lo que creemos (sin numeral: no es una sección del menú) */
 export function Creemos26({ lang }: { lang: Lang26 }) {
   const t = home26[lang].creemos;
   return (
-    <section
-      {...langAttrs[lang]}
-      className={`ss-navy relative isolate overflow-hidden text-white ${Y.creemos}`}
-      aria-labelledby="ss26-creemos"
-    >
+    // Banda Hueso: titular Azul Marino, texto Gris Tinta, § Azul Marino (sin lima sobre claro)
+    <section {...langAttrs[lang]} className={`ss-paper ${Y.creemos}`} aria-labelledby="ss26-creemos">
       <div className="ss-container grid grid-cols-1 gap-x-6 lg:grid-cols-12">
         <Reveal className="lg:col-span-12">
-          <SectionHead num="02" tone="dark" />
+          <SectionHead />
         </Reveal>
         <Reveal delay={0.08} className="mt-12 lg:col-span-11 lg:mt-16">
           {/* La única itálica del sitio (romana 300 estática); en una línea a 1440 px */}
-          <h2 id="ss26-creemos" className="ss-serif text-[clamp(42px,5.6vw,88px)] text-white [text-wrap:balance]">
+          <h2 id="ss26-creemos" className="ss-serif text-[clamp(42px,5.6vw,88px)] text-ss-marino [text-wrap:balance]">
             {t.quote}
           </h2>
         </Reveal>
         {/* 1024–1279: una sola columna (dos de ~290px quedaban apretadas) */}
-        <div className="mt-14 grid gap-8 text-white/80 md:grid-cols-2 lg:col-span-8 lg:col-start-5 lg:mt-20 lg:grid-cols-1 lg:gap-10 xl:grid-cols-2">
+        <div className="mt-14 grid gap-8 text-ss-tinta md:grid-cols-2 lg:col-span-8 lg:col-start-5 lg:mt-20 lg:grid-cols-1 lg:gap-10 xl:grid-cols-2">
           {t.body.map((p, i) => (
             <Reveal key={p.slice(0, 24)} delay={0.14 + i * 0.06}>
               <p className="ss-prose text-[17px]">{p}</p>
@@ -133,7 +153,7 @@ export function Creemos26({ lang }: { lang: Lang26 }) {
   );
 }
 
-/* § 03 — Prácticas */
+/* § 02 — Prácticas */
 export function Practicas26({ lang }: { lang: Lang26 }) {
   const t = home26[lang].practicas;
   return (
@@ -149,10 +169,10 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
           {/* Pegada bajo la cabecera (alto en --ss-header-h, ss26.css) con 2rem de aire */}
           <div className="lg:sticky lg:top-[calc(var(--ss-header-h)+2rem)]">
             <Reveal>
-              <SectionHead num="03" />
+              <SectionHead num="02" />
             </Reveal>
             <Reveal delay={0.06}>
-              <h2 id="ss26-practicas" className={`${H2} text-ss-marino`}>
+              <h2 id="ss26-practicas" className={H2}>
                 {t.title.map((line, i) => (
                   <Fragment key={line}>
                     {i > 0 && " "}
@@ -181,14 +201,15 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                   aria-describedby={`ss26-prd-${item.slug}`}
                   className="inline-link grid grid-cols-1 gap-y-3 py-8 sm:grid-cols-[88px_1fr_auto] sm:gap-x-8 lg:py-10"
                 >
-                  {/* Subnumeración del expediente (§ 3.1…); la lista ya numera para lectores de pantalla */}
+                  {/* 01–04 simples, como las filas de /practice-groups; la lista ya numera para
+                      lectores de pantalla */}
                   <span aria-hidden className="ss-row-num ss-label ss-num">
-                    § 3.{i + 1}
+                    {String(i + 1).padStart(2, "0")}
                   </span>
                   <span>
                     <span
                       id={`ss26-pr-${item.slug}`}
-                      className="ss-display block text-[clamp(26px,2.3vw,34px)] font-[420] leading-[1.15] tracking-[-0.012em] text-ss-marino"
+                      className="ss-display block text-[clamp(26px,2.3vw,34px)] font-normal leading-[1.15] tracking-[-0.012em] text-ss-marino"
                     >
                       {item.title}
                     </span>
@@ -209,7 +230,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
   );
 }
 
-/* § 04 — Empresas extranjeras en México */
+/* Empresas extranjeras en México (sin numeral: no es una sección del menú) */
 export function Extranjeras26({ lang }: { lang: Lang26 }) {
   const t = home26[lang].extranjeras;
   return (
@@ -218,11 +239,13 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
       className="ss-navy relative isolate overflow-hidden text-white"
       aria-labelledby="ss26-extranjeras"
     >
-      {/* Foto / texto 7fr / 5fr */}
-      <div className={`grid grid-cols-1 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] ${GAP_X}`}>
-        <div className="relative min-h-[300px] overflow-hidden sm:min-h-[420px] lg:min-h-[600px]">
-          {/* Grises algo aclarados y un velo Azul Profundo al 20 % en mezcla normal: la sala
-              se lee sin hundirse en negro (antes, violeta al 50 % en multiplicar) */}
+      {/* Foto / texto 7fr / 5fr desde 1280; antes, apilados. La sala (1280 × 720) nunca se
+          dibuja más grande que su tamaño nativo: apilada, el hueco mide como mucho 1279 × 420;
+          desde 1280, el panel (py-20) deja la fila en ~690–700 px y el hueco de la foto no pasa
+          de 1280 de ancho (en pantallas mayores, Azul Profundo a la izquierda). */}
+      <div className={`grid grid-cols-1 xl:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] ${GAP_X}`}>
+        <div className="relative min-h-[300px] overflow-hidden sm:min-h-[420px] xl:min-h-[600px]">
+          {/* El mismo gris que el edificio de La firma y los retratos (.ss-photo--mono), sin velo */}
           <img
             src={salaJuntas}
             alt={t.alt}
@@ -230,17 +253,16 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
             decoding="async"
             width={1280}
             height={720}
-            className="absolute inset-0 h-full w-full object-cover object-[50%_42%] brightness-[1.08] contrast-[.96] grayscale"
+            className="ss-photo ss-photo--mono absolute inset-y-0 right-0 h-full w-full max-w-[1280px] object-cover object-[50%_42%]"
           />
-          <span aria-hidden className="absolute inset-0 bg-ss-navy/20" />
         </div>
-        <div className="flex items-center px-[var(--ss-pad)] py-20 lg:py-24 lg:pl-0 lg:pr-[clamp(48px,6vw,104px)]">
+        <div className="flex items-center px-[var(--ss-pad)] py-20 xl:pl-0 xl:pr-[clamp(48px,6vw,104px)]">
           <div className="max-w-[560px]">
             <Reveal>
-              <SectionHead num="04" tone="dark" />
+              <SectionHead tone="dark" />
             </Reveal>
             <Reveal delay={0.06}>
-              <h2 id="ss26-extranjeras" className={H2}>
+              <h2 id="ss26-extranjeras" className={`${H2} text-white`}>
                 {t.title}
               </h2>
             </Reveal>
@@ -270,106 +292,80 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
   );
 }
 
-/* § 05 — Monitor Laboral */
-// "Tema: desarrollo" → tema y desarrollo en bloques separados desde tableta, sin cambiar el texto
-function splitAtColon(title: string): [string, string] | null {
-  const i = title.indexOf(": ");
-  return i < 0 ? null : [title.slice(0, i + 1), title.slice(i + 2)];
-}
-
+/* § 04 — Monitor Laboral */
 export function Monitor26({ lang }: { lang: Lang26 }) {
   const t = home26[lang].monitor;
+  // La misma consulta (y caché) que MonitorList. Sin notas publicadas, o si /api/news
+  // falla, la sección queda en su título y el enlace al Monitor: sin filas ni avisos.
+  const { data, error } = useQuery<News[]>({ queryKey: ["/api/news"] });
+  const hasItems = !error && !!data?.some((item) => item.published !== false);
   return (
-    <section id="news" {...langAttrs[lang]} className={`ss-paper ${Y.monitor}`} aria-labelledby="ss26-monitor">
+    <section
+      id="news"
+      {...langAttrs[lang]}
+      data-surface="light"
+      className={`bg-white ${Y.monitor} ${JOIN_AFTER} ${JOIN_BEFORE}`}
+      aria-labelledby="ss26-monitor"
+    >
       <div className="ss-container">
+        <JoinRule />
         {/* Cabecera acotada a 60rem con el enlace al Monitor a la derecha, como en Socios */}
         <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-8">
           <div className="max-w-[60rem]">
             <Reveal>
-              <SectionHead num="05" />
+              <SectionHead num="04" />
             </Reveal>
             <Reveal delay={0.06}>
-              <h2 id="ss26-monitor" className={`${H2} text-ss-marino`}>
+              <h2 id="ss26-monitor" className={H2}>
                 {t.title}
               </h2>
             </Reveal>
-            <Reveal delay={0.1}>
-              <p className="ss-lead mt-5 max-w-[38em]">{t.intro}</p>
-            </Reveal>
+            {hasItems && (
+              <Reveal delay={0.1}>
+                <p className="ss-lead mt-5 max-w-[38em]">{t.intro}</p>
+              </Reveal>
+            )}
           </div>
           <Reveal delay={0.1}>
             <TextLink href="/news">{t.link}</TextLink>
           </Reveal>
         </div>
 
-        {/* Propuestas de análisis: todavía no son artículos, así que no enlazan.
-            Índice con filetes a todo el ancho del contenedor (turno 3 con Codex: lo eligieron
-            5 de 5 jueces frente al ancho completo y al tope de 60rem). Desde lg: tema en las
-            columnas 1–4 y texto desde la 5, la misma línea que la foto de la Firma y la
-            segunda tarjeta de Socios; una sola medida para titular y resumen (5 columnas
-            desde xl, ≈ 70 caracteres). Sobre Hueso, el filete Línea apenas se ve: Azul Marino al 15 %. */}
-        <ul className="mt-14 border-t border-ss-marino/15 lg:mt-16">
-          {t.items.map((item, i) => {
-            const lead = i === 0;
-            const parts = lead ? splitAtColon(item.title) : null;
-            return (
-              <Reveal
-                as="li"
-                key={item.title}
-                delay={i * 0.06}
-                className="grid grid-cols-1 gap-y-4 border-b border-ss-marino/15 py-8 lg:grid-cols-12 lg:gap-x-6 lg:py-10"
-              >
-                <p className="ss-label ss-num flex flex-col gap-1 lg:col-span-4 lg:pt-2">
-                  {item.date && <span className="text-ss-medio">{item.date}</span>}
-                  <span className="text-ss-marino">{item.tag}</span>
-                </p>
-                <div className="lg:col-span-7 lg:col-start-5 xl:col-span-5">
-                  {lead ? (
-                    <>
-                      <h3 className="ss-display text-[clamp(28px,2.5vw,36px)] leading-[1.14] tracking-[-0.01em] text-ss-marino">
-                        {/* Dos bloques desde md: cada uno se equilibra por separado
-                            (con <br> Chrome no equilibra y deja una palabra sola) */}
-                        {parts ? (
-                          <>
-                            <span className="md:block">{parts[0]}</span> <span className="md:block">{parts[1]}</span>
-                          </>
-                        ) : (
-                          item.title
-                        )}
-                      </h3>
-                      <p className="ss-prose mt-5 text-ss-tinta">{item.body}</p>
-                    </>
-                  ) : (
-                    <>
-                      <h3 className="ss-display text-[clamp(22px,1.7vw,25px)] font-[450] leading-[1.25] tracking-[-0.01em] text-ss-marino">
-                        {item.title}
-                      </h3>
-                      <p className="mt-3 text-[16px] leading-[1.55] text-ss-tinta [text-wrap:pretty]">{item.body}</p>
-                    </>
-                  )}
-                </div>
-              </Reveal>
-            );
-          })}
-        </ul>
+        {/* Las tres notas publicadas más recientes, con la lista única del Monitor (la de
+            /news): categoría y fecha en etiqueta, titular que enlaza a /news/<slug>, entradilla.
+            Índice con filetes Línea al ancho del contenedor; texto desde la columna 5. Si una
+            sección blanca viniera después, el filete de cierre de la lista se omite: el de
+            unión (JoinRule) ya separa y no quedan dos filetes seguidos. */}
+        {hasItems && (
+          <Reveal delay={0.12} className="mt-14 lg:mt-16 [section:has(+[data-surface=light])_&_li:last-child]:border-b-0">
+            <MonitorList limit={3} headingLevel="h3" layout="index" tone="light" />
+          </Reveal>
+        )}
       </div>
     </section>
   );
 }
 
-/* § 06 — Socios fundadores */
+/* § 03 — Socios */
 export function Socios26({ lang }: { lang: Lang26 }) {
   const t = home26[lang].socios;
   return (
-    <section id="socios" {...langAttrs[lang]} data-surface="light" className={`bg-white ${Y.socios}`} aria-labelledby="ss26-socios">
+    <section
+      id="socios"
+      {...langAttrs[lang]}
+      data-surface="light"
+      className={`bg-white ${Y.socios} ${JOIN_AFTER} ${JOIN_BEFORE}`}
+      aria-labelledby="ss26-socios"
+    >
       <div className="ss-container">
+        <JoinRule />
         <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-8">
           <div>
             <Reveal>
-              <SectionHead num="06" />
+              <SectionHead num="03" />
             </Reveal>
             <Reveal delay={0.06}>
-              <h2 id="ss26-socios" className={`${H2} text-ss-marino`}>
+              <h2 id="ss26-socios" className={H2}>
                 {t.title}
               </h2>
             </Reveal>
@@ -400,7 +396,7 @@ export function Socios26({ lang }: { lang: Lang26 }) {
                     />
                   </div>
                   <figcaption className="sm:mt-5">
-                    <span className="ss-display block text-[clamp(24px,1.9vw,28px)] font-[420] leading-[1.15] tracking-[-0.01em] text-ss-marino">
+                    <span className="ss-display block text-[clamp(24px,1.9vw,28px)] font-normal leading-[1.15] tracking-[-0.01em] text-ss-marino">
                       {person.name}
                     </span>
                     <span className="ss-label mt-3 block text-ss-medio">{person.role}</span>

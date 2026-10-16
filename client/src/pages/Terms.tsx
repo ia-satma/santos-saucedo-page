@@ -7,7 +7,14 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContact } from "@/components/home26/useSiteContact";
-import { Eyebrow } from "@/components/editorial";
+
+// Teléfonos aislados de izquierda a derecha (<bdi dir="ltr">): en árabe, dentro del texto
+// corrido, los grupos de cifras salían invertidos ("2086 8335 81 52+").
+function isolatePhones(text: string): ReactNode[] {
+  return text
+    .split(/(\+\d[\d ]{6,}\d)/)
+    .map((part, i) => (i % 2 === 1 ? <bdi key={i} dir="ltr">{part}</bdi> : part));
+}
 
 // Texto de una sección: párrafos separados por línea en blanco; las líneas que empiezan por
 // "• " pasan a una lista real con sangría francesa (al partirse, el texto queda alineado y no
@@ -19,7 +26,7 @@ function renderLegalText(text: string): ReactNode[] {
     let items: string[] = [];
     const flushLines = () => {
       if (lines.length) {
-        parts.push(<p key={`p${parts.length}`} className="whitespace-pre-line">{lines.join("\n")}</p>);
+        parts.push(<p key={`p${parts.length}`} className="whitespace-pre-line">{isolatePhones(lines.join("\n"))}</p>);
         lines = [];
       }
     };
@@ -27,7 +34,7 @@ function renderLegalText(text: string): ReactNode[] {
       if (items.length) {
         parts.push(
           <ul key={`u${parts.length}`} className="list-disc ps-6 space-y-1 marker:text-ss-marino/50">
-            {items.map((item, i) => <li key={i} className="ps-1">{item}</li>)}
+            {items.map((item, i) => <li key={i} className="ps-1">{isolatePhones(item)}</li>)}
           </ul>
         );
         items = [];
@@ -67,14 +74,14 @@ export default function Terms() {
     }>;
   }> = {
     en: {
-      title: "Terms and Conditions",
-      subtitle: "Please read these terms carefully before using our website",
+      title: "Terms and conditions",
+      subtitle: "Please read these terms carefully before using our website.",
       lastUpdated: "Last updated: December 2024",
       sections: [
         {
           id: "acceptance",
           icon: FileText,
-          title: "1. Acceptance of Terms",
+          title: "1. Acceptance of terms",
           content: `By accessing and using the website of Santos & Saucedo Abogados (hereinafter “S&S,” “the Firm,” “we,” “us,” or “our”), located at www.santossaucedo.com (hereinafter “the Website”), you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions of Use (hereinafter “Terms”).
 
 If you do not agree with any part of these Terms, you must immediately discontinue use of the Website. Your continued use of the Website constitutes your acceptance of these Terms and any modifications thereto.
@@ -90,7 +97,7 @@ By using this Website, you represent and warrant that:
         {
           id: "website-use",
           icon: Globe,
-          title: "2. Use of Website",
+          title: "2. Use of website",
           content: `The Website is provided for informational purposes only. The content on this Website is intended to provide general information about S&S, its legal services, practice areas, and professional team.
 
 Permitted Uses:
@@ -116,7 +123,7 @@ S&S reserves the right to terminate or restrict your access to the Website for a
         {
           id: "intellectual-property",
           icon: BookOpen,
-          title: "3. Intellectual Property Rights",
+          title: "3. Intellectual property rights",
           content: `All content on this Website, including but not limited to text, graphics, logos, images, photographs, videos, audio clips, data compilations, software, icons, and the selection and arrangement thereof (collectively, “Content”), is the exclusive property of Santos & Saucedo Abogados or its content suppliers and is protected by Mexican and international copyright, trademark, patent, trade secret, and other intellectual property laws.
 
 Trademarks:
@@ -140,7 +147,7 @@ If you believe that any Content on the Website infringes your copyright, please 
         {
           id: "no-legal-advice",
           icon: AlertTriangle,
-          title: "4. Disclaimer of Legal Advice",
+          title: "4. Disclaimer of legal advice",
           content: `IMPORTANT NOTICE: The information contained on this Website is provided for general informational and educational purposes only and does NOT constitute legal advice.
 
 Nothing on this Website should be construed as:
@@ -165,7 +172,7 @@ We strongly encourage you to consult with a qualified attorney who can evaluate 
         {
           id: "no-attorney-client",
           icon: Users,
-          title: "5. No Attorney-Client Relationship",
+          title: "5. No attorney-client relationship",
           content: `Your use of this Website, including browsing Content, submitting contact forms, sending emails, or downloading materials, does NOT create an attorney-client relationship between you and Santos & Saucedo Abogados or any of its attorneys.
 
 An attorney-client relationship with S&S is only established when:
@@ -195,7 +202,7 @@ If you are considering engaging S&S for legal representation, please contact us 
         {
           id: "limitation-liability",
           icon: Shield,
-          title: "6. Limitation of Liability",
+          title: "6. Limitation of liability",
           content: `TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW:
 
 Disclaimer of Warranties:
@@ -224,7 +231,7 @@ TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE AGGREGATE LIABILITY OF S&S ARISING O
         {
           id: "governing-law",
           icon: Gavel,
-          title: "7. Governing Law",
+          title: "7. Governing law",
           content: `These Terms and Conditions, and any dispute or claim arising out of or in connection with them or their subject matter or formation (including non-contractual disputes or claims), shall be governed by and construed in accordance with the laws of the United Mexican States (Mexico), without regard to its conflict of law provisions.
 
 Applicable Law:
@@ -250,7 +257,7 @@ You agree to comply with all applicable laws, statutes, ordinances, and regulati
         {
           id: "dispute-resolution",
           icon: Scale,
-          title: "8. Dispute Resolution",
+          title: "8. Dispute resolution",
           content: `Any dispute, controversy, or claim arising out of or relating to these Terms or the breach, termination, or validity thereof shall be resolved in accordance with the following provisions:
 
 Negotiation:
@@ -277,7 +284,7 @@ You agree that any claims shall be brought in your individual capacity and not a
         {
           id: "modifications",
           icon: Bell,
-          title: "9. Modifications to Terms",
+          title: "9. Modifications to terms",
           content: `Santos & Saucedo Abogados reserves the right, at its sole discretion, to modify, amend, or update these Terms and Conditions at any time without prior notice.
 
 How Changes Are Communicated:
@@ -303,7 +310,7 @@ These Terms, together with the Privacy Policy and any other legal notices publis
         {
           id: "contact",
           icon: Phone,
-          title: "10. Contact Information",
+          title: "10. Contact information",
           content: `If you have any questions, concerns, or comments regarding these Terms and Conditions or the Website, please contact us through the following means:
 
 Santos & Saucedo Abogados
@@ -335,7 +342,7 @@ For inquiries related to potential legal representation, please contact us by te
     },
     es: {
       title: "Términos y condiciones",
-      subtitle: "Por favor lea estos términos cuidadosamente antes de usar nuestro sitio web",
+      subtitle: "Por favor lea estos términos cuidadosamente antes de usar nuestro sitio web.",
       lastUpdated: "Última actualización: diciembre de 2024",
       sections: [
         {
@@ -510,8 +517,8 @@ Lunes a viernes: 9:00 AM a 6:00 PM (hora de la Ciudad de México)`
       ]
     },
     de: {
-      title: "Nutzungsbedingungen",
-      subtitle: "Bitte lesen Sie diese Bedingungen sorgfältig durch, bevor Sie unsere Website nutzen",
+      title: "Nutzungs\u00adbedingungen",
+      subtitle: "Bitte lesen Sie diese Bedingungen sorgfältig durch, bevor Sie unsere Website nutzen.",
       lastUpdated: "Zuletzt aktualisiert: Dezember 2024",
       sections: [
         {
@@ -698,7 +705,7 @@ Außer an mexikanischen Feiertagen`
     },
     zh: {
       title: "使用条款",
-      subtitle: "在使用我们的网站之前，请仔细阅读这些条款",
+      subtitle: "在使用我们的网站之前，请仔细阅读这些条款。",
       lastUpdated: "最后更新：2024年12月",
       sections: [
         {
@@ -886,7 +893,7 @@ San Pedro Garza García, Nuevo León, México
     },
     ko: {
       title: "이용약관",
-      subtitle: "웹사이트를 사용하기 전에 이 약관을 주의 깊게 읽어주세요",
+      subtitle: "웹사이트를 사용하기 전에 이 약관을 주의 깊게 읽어주세요.",
       lastUpdated: "최종 업데이트: 2024년 12월",
       sections: [
         {
@@ -1073,7 +1080,7 @@ San Pedro Garza García, Nuevo León, México
     },
     ja: {
       title: "利用規約",
-      subtitle: "ウェブサイトをご利用になる前に、これらの規約をよくお読みください",
+      subtitle: "ウェブサイトをご利用になる前に、これらの規約をよくお読みください。",
       lastUpdated: "最終更新：2024年12月",
       sections: [
         {
@@ -1260,7 +1267,7 @@ San Pedro Garza García, Nuevo León, México
     },
     ar: {
       title: "الشروط والأحكام",
-      subtitle: "يرجى قراءة هذه الشروط بعناية قبل استخدام موقعنا الإلكتروني",
+      subtitle: "يرجى قراءة هذه الشروط بعناية قبل استخدام موقعنا الإلكتروني.",
       lastUpdated: "آخر تحديث: ديسمبر 2024",
       sections: [
         {
@@ -1447,7 +1454,7 @@ San Pedro Garza García, Nuevo León، المكسيك
     },
     ru: {
       title: "Условия использования",
-      subtitle: "Пожалуйста, внимательно прочитайте эти условия перед использованием нашего веб-сайта",
+      subtitle: "Пожалуйста, внимательно прочитайте эти условия перед использованием нашего веб-сайта.",
       lastUpdated: "Последнее обновление: Декабрь 2024",
       sections: [
         {
@@ -1634,20 +1641,20 @@ San Pedro Garza García, Nuevo León, México
     },
     fr: {
       title: "Conditions d'utilisation",
-      subtitle: "Veuillez lire attentivement ces conditions avant d'utiliser notre site web",
-      lastUpdated: "Dernière mise à jour : Décembre 2024",
+      subtitle: "Veuillez lire attentivement ces conditions avant d'utiliser notre site web.",
+      lastUpdated: "Dernière mise à jour\u202f: Décembre 2024",
       sections: [
         {
           id: "acceptance",
           icon: FileText,
           title: "1. Acceptation des conditions",
-          content: `En accédant et en utilisant le site web de Santos & Saucedo Abogados (ci-après « S&S », « le Cabinet », « nous », « notre » ou « nos »), situé à www.santossaucedo.com (ci-après « le Site Web »), vous reconnaissez avoir lu, compris et accepté d'être lié par les présentes Conditions d'utilisation (ci-après « Conditions »).
+          content: `En accédant et en utilisant le site web de Santos & Saucedo Abogados (ci-après «\u202fS&S\u202f», «\u202fle Cabinet\u202f», «\u202fnous\u202f», «\u202fnotre\u202f» ou «\u202fnos\u202f»), situé à www.santossaucedo.com (ci-après «\u202fle Site Web\u202f»), vous reconnaissez avoir lu, compris et accepté d'être lié par les présentes Conditions d'utilisation (ci-après «\u202fConditions\u202f»).
 
 Si vous n'êtes pas d'accord avec une partie de ces Conditions, vous devez immédiatement cesser d'utiliser le Site Web. Votre utilisation continue du Site Web constitue votre acceptation de ces Conditions et de toute modification y apportée.
 
-Ces Conditions constituent un accord juridiquement contraignant entre vous (ci-après « Utilisateur », « vous » ou « votre ») et S&S. Nous nous réservons le droit de modifier, mettre à jour ou changer ces Conditions à tout moment sans préavis.
+Ces Conditions constituent un accord juridiquement contraignant entre vous (ci-après «\u202fUtilisateur\u202f», «\u202fvous\u202f» ou «\u202fvotre\u202f») et S&S. Nous nous réservons le droit de modifier, mettre à jour ou changer ces Conditions à tout moment sans préavis.
 
-En utilisant ce Site Web, vous déclarez et garantissez que :
+En utilisant ce Site Web, vous déclarez et garantissez que\u202f:
 • Vous avez au moins 18 ans ou l'âge légal de la majorité dans votre juridiction
 • Vous avez la capacité juridique de conclure des accords contraignants
 • Vous respecterez toutes les lois et réglementations applicables lors de l'utilisation de ce Site Web
@@ -1659,14 +1666,14 @@ En utilisant ce Site Web, vous déclarez et garantissez que :
           title: "2. Utilisation du site web",
           content: `Le Site Web est fourni uniquement à des fins d'information. Le contenu de ce Site Web est destiné à fournir des informations générales sur S&S, ses services juridiques, ses domaines de pratique et son équipe professionnelle.
 
-Utilisations autorisées :
+Utilisations autorisées\u202f:
 • Naviguer et consulter le contenu à des fins d'information personnelle et non commerciale
 • Contacter S&S via les formulaires de contact et les informations fournis
 • Télécharger des documents publiquement disponibles pour référence personnelle
 • Partager des liens vers le contenu du Site Web par des moyens légitimes
 
-Utilisations interdites :
-Vous acceptez de NE PAS utiliser le Site Web pour :
+Utilisations interdites\u202f:
+Vous acceptez de NE PAS utiliser le Site Web pour\u202f:
 • Violer toute loi ou réglementation locale, étatique, nationale ou internationale applicable
 • Transmettre tout matériel diffamatoire, offensant ou autrement répréhensible
 • Usurper l'identité d'une personne ou d'une entité ou déformer votre affiliation avec une personne ou une entité
@@ -1679,33 +1686,33 @@ S&S se réserve le droit de mettre fin ou de restreindre votre accès au Site We
           id: "intellectual-property",
           icon: BookOpen,
           title: "3. Propriété intellectuelle",
-          content: `Tout le contenu de ce Site Web, y compris mais sans s'y limiter les textes, graphiques, logos, images, photographies, vidéos, clips audio, compilations de données, logiciels, icônes, et leur sélection et arrangement (collectivement, le « Contenu »), est la propriété exclusive de Santos & Saucedo Abogados ou de ses fournisseurs de contenu et est protégé par les lois mexicaines et internationales sur le droit d'auteur, les marques, les brevets, les secrets commerciaux et autres droits de propriété intellectuelle.
+          content: `Tout le contenu de ce Site Web, y compris mais sans s'y limiter les textes, graphiques, logos, images, photographies, vidéos, clips audio, compilations de données, logiciels, icônes, et leur sélection et arrangement (collectivement, le «\u202fContenu\u202f»), est la propriété exclusive de Santos & Saucedo Abogados ou de ses fournisseurs de contenu et est protégé par les lois mexicaines et internationales sur le droit d'auteur, les marques, les brevets, les secrets commerciaux et autres droits de propriété intellectuelle.
 
-Marques :
+Marques\u202f:
 Le nom S&S, le logo et tous les noms, logos, noms de produits et services, designs et slogans associés sont des marques de Santos & Saucedo Abogados ou de ses affiliés. Vous ne pouvez pas utiliser ces marques sans l'autorisation écrite préalable de S&S.
 
-Licence limitée :
+Licence limitée\u202f:
 Sous réserve de ces Conditions, S&S vous accorde une licence limitée, non exclusive, non transférable et révocable pour accéder et utiliser le Site Web et son Contenu uniquement pour votre usage personnel et non commercial.`
         },
         {
           id: "no-legal-advice",
           icon: AlertTriangle,
           title: "4. Exclusion de conseil juridique",
-          content: `AVIS IMPORTANT : Les informations contenues sur ce Site Web sont fournies uniquement à des fins d'information générale et d'éducation et NE constituent PAS un conseil juridique.
+          content: `AVIS IMPORTANT\u202f: Les informations contenues sur ce Site Web sont fournies uniquement à des fins d'information générale et d'éducation et NE constituent PAS un conseil juridique.
 
-Rien sur ce Site Web ne doit être interprété comme :
+Rien sur ce Site Web ne doit être interprété comme\u202f:
 • Un conseil juridique ou un avis juridique sur des faits ou des circonstances spécifiques
 • Une offre ou une invitation à fournir des services juridiques
 • Une sollicitation pour une représentation juridique
 • Une garantie ou une prédiction d'un résultat juridique particulier
 
-Les informations juridiques fournies sur ce Site Web :
+Les informations juridiques fournies sur ce Site Web\u202f:
 • Peuvent ne pas être applicables à votre situation particulière ou à votre juridiction
 • Peuvent ne pas refléter les développements juridiques les plus récents
 • Ne doivent pas être utilisées comme substitut aux conseils juridiques d'un avocat qualifié
 • Ne créent pas de relation avocat-client entre vous et S&S
 
-IMPORTANT : N'envoyez pas d'informations confidentielles ou sensibles à S&S via ce Site Web ou par e-mail tant que vous n'avez pas reçu une confirmation écrite qu'une relation avocat-client a été établie.`
+IMPORTANT\u202f: N'envoyez pas d'informations confidentielles ou sensibles à S&S via ce Site Web ou par e-mail tant que vous n'avez pas reçu une confirmation écrite qu'une relation avocat-client a été établie.`
         },
         {
           id: "no-attorney-client",
@@ -1713,14 +1720,14 @@ IMPORTANT : N'envoyez pas d'informations confidentielles ou sensibles à S&S via
           title: "5. Absence de relation avocat-client",
           content: `Votre utilisation de ce Site Web, y compris la navigation dans le Contenu, la soumission de formulaires de contact, l'envoi d'e-mails ou le téléchargement de documents, NE crée PAS de relation avocat-client entre vous et Santos & Saucedo Abogados ou l'un de ses avocats.
 
-Une relation avocat-client avec S&S n'est établie que lorsque :
+Une relation avocat-client avec S&S n'est établie que lorsque\u202f:
 • S&S a formellement accepté par écrit de vous représenter
 • Une lettre d'engagement ou un contrat de représentation signé a été exécuté
 • Les vérifications appropriées des conflits d'intérêts ont été effectuées
 • Les modalités de paiement ont été convenues (le cas échéant)
 • S&S a confirmé par écrit qu'elle a entrepris la représentation de votre affaire
 
-Jusqu'à cet engagement formel :
+Jusqu'à cet engagement formel\u202f:
 • Aucun privilège avocat-client n'existe entre vous et S&S
 • Aucune obligation de confidentialité ne s'applique aux communications
 • S&S n'a aucune obligation de fournir des conseils juridiques ou une représentation
@@ -1731,20 +1738,20 @@ Si vous envisagez d'engager S&S pour une représentation juridique, veuillez nou
           id: "limitation-liability",
           icon: Shield,
           title: "6. Limitation de responsabilité",
-          content: `DANS TOUTE LA MESURE PERMISE PAR LA LOI APPLICABLE :
+          content: `DANS TOUTE LA MESURE PERMISE PAR LA LOI APPLICABLE\u202f:
 
-Exclusion de garanties :
-LE SITE WEB ET TOUT LE CONTENU SONT FOURNIS « EN L'ÉTAT » ET « SELON DISPONIBILITÉ » SANS GARANTIE D'AUCUNE SORTE, QU'ELLE SOIT EXPRESSE, IMPLICITE, LÉGALE OU AUTRE.
+Exclusion de garanties\u202f:
+LE SITE WEB ET TOUT LE CONTENU SONT FOURNIS «\u202fEN L'ÉTAT\u202f» ET «\u202fSELON DISPONIBILITÉ\u202f» SANS GARANTIE D'AUCUNE SORTE, QU'ELLE SOIT EXPRESSE, IMPLICITE, LÉGALE OU AUTRE.
 
-S&S ne garantit pas que :
+S&S ne garantit pas que\u202f:
 • Le Site Web sera disponible, ininterrompu, ponctuel, sécurisé ou exempt d'erreurs
 • Les résultats qui peuvent être obtenus de l'utilisation du Site Web seront exacts ou fiables
 • La qualité de toute information ou Contenu obtenu via le Site Web répondra à vos attentes
 
-Limitation de responsabilité :
+Limitation de responsabilité\u202f:
 EN AUCUN CAS SANTOS & SAUCEDO ABOGADOS, SES ASSOCIÉS, AVOCATS, EMPLOYÉS, AFFILIÉS, AGENTS OU CONCÉDANTS DE LICENCE NE SERONT RESPONSABLES DE TOUT DOMMAGE INDIRECT, ACCESSOIRE, SPÉCIAL, CONSÉCUTIF, PUNITIF OU EXEMPLAIRE.
 
-Responsabilité maximale :
+Responsabilité maximale\u202f:
 DANS TOUTE LA MESURE PERMISE PAR LA LOI, LA RESPONSABILITÉ TOTALE DE S&S NE DÉPASSERA PAS CENT PESOS MEXICAINS (MXN $100.00).`
         },
         {
@@ -1753,32 +1760,32 @@ DANS TOUTE LA MESURE PERMISE PAR LA LOI, LA RESPONSABILITÉ TOTALE DE S&S NE DÉ
           title: "7. Loi applicable",
           content: `Ces Conditions et tout litige ou réclamation en découlant ou s'y rapportant, leur objet ou leur formation (y compris les litiges ou réclamations non contractuels), seront régis et interprétés conformément aux lois des États-Unis du Mexique (Mexique), sans tenir compte de ses dispositions relatives aux conflits de lois.
 
-Loi applicable :
-Les lois et règlements mexicains suivants s'appliquent à ces Conditions et à l'utilisation du Site Web :
+Loi applicable\u202f:
+Les lois et règlements mexicains suivants s'appliquent à ces Conditions et à l'utilisation du Site Web\u202f:
 • Code civil fédéral
 • Code de commerce fédéral
 • Loi fédérale sur la protection des consommateurs
 • Loi fédérale sur la protection des données personnelles (LFPDPPP)
 
-Utilisateurs internationaux :
+Utilisateurs internationaux\u202f:
 Si vous accédez au Site Web depuis l'extérieur du Mexique, vous le faites à vos propres risques et êtes responsable du respect des lois locales.`
         },
         {
           id: "dispute-resolution",
           icon: Scale,
           title: "8. Résolution des litiges",
-          content: `Tout litige, controverse ou réclamation découlant de ces Conditions ou s'y rapportant, ou à leur violation, résiliation ou validité, sera résolu conformément aux dispositions suivantes :
+          content: `Tout litige, controverse ou réclamation découlant de ces Conditions ou s'y rapportant, ou à leur violation, résiliation ou validité, sera résolu conformément aux dispositions suivantes\u202f:
 
-Négociation :
+Négociation\u202f:
 Avant d'engager toute procédure formelle de résolution des litiges, les parties conviennent de tenter de bonne foi de résoudre tout litige par négociation directe.
 
-Médiation :
+Médiation\u202f:
 Si les négociations ne parviennent pas à résoudre le litige dans un délai de trente (30) jours calendaires, l'une ou l'autre des parties peut demander une médiation.
 
-Juridiction et lieu :
+Juridiction et lieu\u202f:
 Toute action en justice ou procédure sera engagée exclusivement devant les tribunaux fédéraux ou locaux compétents situés à Mexico (Ciudad de México), Mexique.
 
-Renonciation aux recours collectifs :
+Renonciation aux recours collectifs\u202f:
 Vous acceptez que toute réclamation soit présentée en votre capacité individuelle et non en tant que plaignant ou membre de tout prétendu recours collectif ou représentatif.`
         },
         {
@@ -1787,41 +1794,41 @@ Vous acceptez que toute réclamation soit présentée en votre capacité individ
           title: "9. Modifications des conditions",
           content: `Santos & Saucedo Abogados se réserve le droit, à sa seule discrétion, de modifier, amender ou mettre à jour ces Conditions à tout moment sans préavis.
 
-Comment les changements sont communiqués :
-• Les changements importants seront indiqués par la mise à jour de la date « Dernière mise à jour » en haut de cette page
+Comment les changements sont communiqués\u202f:
+• Les changements importants seront indiqués par la mise à jour de la date «\u202fDernière mise à jour\u202f» en haut de cette page
 • Les modifications significatives peuvent être annoncées par un avis sur la page d'accueil du Site Web
 
-Vos responsabilités :
+Vos responsabilités\u202f:
 Il est de votre responsabilité de consulter périodiquement ces Conditions pour rester informé des mises à jour.
 
-Effet de l'utilisation continue :
+Effet de l'utilisation continue\u202f:
 Votre utilisation continue du Site Web après la publication des Conditions révisées signifie que vous acceptez et êtes d'accord avec les changements. Si vous n'acceptez pas les nouvelles Conditions, vous devez cesser d'utiliser le Site Web.`
         },
         {
           id: "contact",
           icon: Phone,
           title: "10. Contact",
-          content: `Si vous avez des questions, des préoccupations ou des commentaires concernant ces Conditions ou le Site Web, veuillez nous contacter :
+          content: `Si vous avez des questions, des préoccupations ou des commentaires concernant ces Conditions ou le Site Web, veuillez nous contacter\u202f:
 
 Santos & Saucedo Abogados
 
-Adresse postale :
+Adresse postale\u202f:
 Río Tamazunchale 205 Norte, 18e étage
 San Pedro Garza García, Nuevo León, Mexique
 
-Téléphone : +52 81 8335 2086
-E-mail : info@santossaucedo.com
-Site web : www.santossaucedo.com
+Téléphone\u202f: +52 81 8335 2086
+E-mail\u202f: info@santossaucedo.com
+Site web\u202f: www.santossaucedo.com
 
-Heures d'ouverture :
-Lundi au vendredi : 9h00 à 18h00 (heure de Mexico)
+Heures d'ouverture\u202f:
+Lundi au vendredi\u202f: 9h00 à 18h00 (heure de Mexico)
 Hors jours fériés fédéraux mexicains`
         }
       ]
     },
     it: {
-      title: "Termini e Condizioni",
-      subtitle: "Si prega di leggere attentamente questi termini prima di utilizzare il nostro sito web",
+      title: "Termini e condizioni",
+      subtitle: "Si prega di leggere attentamente questi termini prima di utilizzare il nostro sito web.",
       lastUpdated: "Ultimo aggiornamento: Dicembre 2024",
       sections: [
         {
@@ -2061,7 +2068,7 @@ Escluse le festività federali messicane`
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
             >
-              <Eyebrow num="" tone="paper" className="mb-6" />
+              {/* Sin cejilla: las páginas legales no están en el menú y no llevan "§" */}
               <h1
                 className="mb-5"
                 data-testid="text-terms-title"

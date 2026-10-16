@@ -1,4 +1,4 @@
-import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
+import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from "wouter";
 import { useEffect, lazy, Suspense } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -32,10 +32,8 @@ const Contact = lazy(() => import("@/pages/Contact"));
 const About = lazy(() => import("@/pages/About"));
 const Careers = lazy(() => import("@/pages/Careers"));
 const Interns = lazy(() => import("@/pages/Interns"));
-const Experience = lazy(() => import("@/pages/Experience"));
 const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
 const Terms = lazy(() => import("@/pages/Terms"));
-const Offices = lazy(() => import("@/pages/Offices"));
 const Articles = lazy(() => import("@/pages/Articles"));
 const Newsletter = lazy(() => import("@/pages/Newsletter"));
 const Events = lazy(() => import("@/pages/Events"));
@@ -155,6 +153,15 @@ function StaticAdminUnavailable() {
   );
 }
 
+// Rutas retiradas (D4, D5): /experience pasa a /practice-groups y /offices a /contact.
+// El servidor responde 301 (server/routes.ts); en GitHub Pages no hay servidor y la
+// redirección es del cliente: Redirect antepone la base del router (/santos-saucedo-page)
+// y se conservan la consulta y el ancla. Las páginas Experience y Offices quedan en el
+// código, sin ruta.
+function RedirectKeepingQuery({ to }: { to: string }) {
+  return <Redirect to={`${to}${window.location.search}${window.location.hash}`} replace />;
+}
+
 function Router() {
   const [location] = useLocation();
 
@@ -176,10 +183,14 @@ function Router() {
         <Route path="/contact" component={Contact} />
         <Route path="/careers" component={Careers} />
         <Route path="/careers/interns" component={Interns} />
-        <Route path="/experience" component={Experience} />
+        <Route path="/experience/*?">
+          <RedirectKeepingQuery to="/practice-groups" />
+        </Route>
         <Route path="/privacy-policy" component={PrivacyPolicy} />
         <Route path="/terms" component={Terms} />
-        <Route path="/offices" component={Offices} />
+        <Route path="/offices/*?">
+          <RedirectKeepingQuery to="/contact" />
+        </Route>
         <Route path="/articles" component={Articles} />
         <Route path="/newsletter" component={Newsletter} />
         <Route path="/events" component={Events} />

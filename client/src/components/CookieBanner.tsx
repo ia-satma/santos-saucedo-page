@@ -2,122 +2,184 @@ import { useState, useEffect, useId, useRef, type KeyboardEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Switch } from '@/components/ui/switch';
-import { X, Shield, BarChart3, Settings2, Megaphone } from 'lucide-react';
+import { X } from 'lucide-react';
 import { FOCUSABLE, useDialog26 } from '@/components/home26/useDialog26';
 
 interface CookieBannerProps {
   language: "en" | "es" | "de" | "zh" | "ko" | "ja" | "ar" | "ru" | "fr" | "it";
 }
 
-interface CookiePreferences {
-  essential: boolean;
-  analytics: boolean;
-  functionality: boolean;
-  marketing: boolean;
-}
-
+// Aviso de cookies verdadero (inventario de almacenamiento, ronda 3): el sitio público no
+// usa cookies propias ni de terceros, ni analítica ni publicidad. Solo guarda en
+// localStorage el idioma (ss_language, ss_language_detected) y esta elección
+// (ss_cookie_preferences). Un solo botón, "Entendido"; sin categorías. El enlace
+// "Preferencias de cookies" del pie vuelve a abrir el mismo aviso como diálogo modal.
 const STORAGE_KEY = 'ss_cookie_preferences';
 
-const DEFAULT_PREFERENCES: CookiePreferences = {
-  essential: true,
-  analytics: false,
-  functionality: false,
-  marketing: false,
-};
-
-// Lo guardado en localStorage (o los valores por defecto si no hay nada o no se puede leer)
-function readSavedPreferences(): CookiePreferences {
+function readAcknowledged(): boolean {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return { ...DEFAULT_PREFERENCES, ...JSON.parse(saved), essential: true };
-  } catch {}
-  return DEFAULT_PREFERENCES;
+    return localStorage.getItem(STORAGE_KEY) !== null;
+  } catch {
+    return false;
+  }
 }
 
-// Quién abrió el panel: el botón "Configurar" del banner (se desmonta mientras el panel
-// está abierto) o el elemento que tenía el foco (p. ej. "Preferencias de cookies" del pie)
-type Opener = 'banner' | HTMLElement | null;
+function saveAcknowledged() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ acknowledged: true }));
+  } catch {}
+}
+
+const content: Record<CookieBannerProps['language'], {
+  /** Mismo sentido en los 10 idiomas que el texto del inventario en español */
+  message: string;
+  /** Enlace al Aviso de privacidad (el nombre del pie en cada idioma) */
+  privacy: string;
+  /** Cierre tras el enlace: punto latino; en chino y japonés, nada (el enlace es un título) */
+  end: string;
+  accept: string;
+  /** Título del diálogo y nombre del banner */
+  title: string;
+  close: string;
+}> = {
+  es: {
+    message: "Este sitio guarda en su navegador el idioma elegido y esta preferencia. No usa cookies ni servicios de analítica o publicidad.",
+    privacy: "Aviso de privacidad",
+    end: ".",
+    accept: "Entendido",
+    title: "Aviso de cookies",
+    close: "Cerrar",
+  },
+  en: {
+    message: "This site stores the chosen language and this preference in your browser. It does not use cookies or analytics or advertising services.",
+    privacy: "Privacy notice",
+    end: ".",
+    accept: "Understood",
+    title: "Cookie notice",
+    close: "Close",
+  },
+  de: {
+    message: "Diese Website speichert in Ihrem Browser die gewählte Sprache und diese Einstellung. Sie verwendet keine Cookies und keine Analyse- oder Werbedienste.",
+    privacy: "Datenschutzhinweis",
+    end: ".",
+    accept: "Verstanden",
+    title: "Cookie-Hinweis",
+    close: "Schließen",
+  },
+  zh: {
+    message: "本网站在您的浏览器中保存所选语言和此项设置。本网站不使用 Cookie，也不使用分析或广告服务。",
+    privacy: "隐私声明",
+    end: "",
+    accept: "知道了",
+    title: "Cookie 声明",
+    close: "关闭",
+  },
+  ko: {
+    message: "이 사이트는 선택한 언어와 이 설정을 브라우저에 저장합니다. 쿠키나 분석 또는 광고 서비스는 사용하지 않습니다.",
+    privacy: "개인정보 처리방침",
+    end: ".",
+    accept: "확인",
+    title: "쿠키 안내",
+    close: "닫기",
+  },
+  ja: {
+    message: "このサイトは、選択された言語とこの設定をお使いのブラウザに保存します。Cookie、アクセス解析サービス、広告サービスは使用していません。",
+    privacy: "プライバシーポリシー",
+    end: "",
+    accept: "了解しました",
+    title: "Cookieについて",
+    close: "閉じる",
+  },
+  ar: {
+    message: "يحفظ هذا الموقع في متصفحك اللغة المختارة وهذا التفضيل. ولا يستخدم ملفات تعريف الارتباط ولا خدمات التحليل أو الإعلان.",
+    privacy: "إشعار الخصوصية",
+    end: ".",
+    accept: "حسنًا",
+    title: "إشعار ملفات تعريف الارتباط",
+    close: "إغلاق",
+  },
+  ru: {
+    message: "Этот сайт сохраняет в вашем браузере выбранный язык и эту настройку. Он не использует файлы cookie и сервисы аналитики или рекламы.",
+    privacy: "Политика конфиденциальности",
+    end: ".",
+    accept: "Понятно",
+    title: "Уведомление о файлах cookie",
+    close: "Закрыть",
+  },
+  fr: {
+    message: "Ce site enregistre dans votre navigateur la langue choisie et cette préférence. Il n’utilise ni cookies ni services d’analyse ou de publicité.",
+    privacy: "Politique de confidentialité",
+    end: ".",
+    accept: "Compris",
+    title: "Avis sur les cookies",
+    close: "Fermer",
+  },
+  it: {
+    message: "Questo sito memorizza nel browser la lingua scelta e questa preferenza. Non utilizza cookie né servizi di analisi o pubblicità.",
+    privacy: "Informativa sulla privacy",
+    end: ".",
+    accept: "Ho capito",
+    title: "Informativa sui cookie",
+    close: "Chiudi",
+  },
+};
+
+// Quién abrió el diálogo (p. ej. "Preferencias de cookies" del pie): ahí vuelve el foco
+type Opener = HTMLElement | null;
+
+const buttonCls =
+  "min-h-[44px] px-5 py-2 font-sans text-[15px] font-semibold leading-none tracking-[0.01em] transition-colors touch-manipulation border border-white bg-white text-ss-navy hover:bg-white/90";
 
 export default function CookieBanner({ language }: CookieBannerProps) {
   const [visible, setVisible] = useState(false);
-  const [showPreferences, setShowPreferences] = useState(false);
-  const [preferences, setPreferences] = useState<CookiePreferences>({
-    essential: true,
-    analytics: false,
-    functionality: false,
-    marketing: false,
-  });
+  const [dialogOpen, setDialogOpen] = useState(false);
   const openRef = useRef(false);
-  openRef.current = showPreferences;
+  openRef.current = dialogOpen;
   const openerRef = useRef<Opener>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const configureRef = useRef<HTMLButtonElement>(null);
   const bannerRef = useRef<HTMLDivElement>(null);
-  const bannerShown = visible && !showPreferences;
+  const bannerShown = visible && !dialogOpen;
   const uid = useId();
   const titleId = `${uid}-title`;
   const descriptionId = `${uid}-description`;
   const dir = language === 'ar' ? 'rtl' : 'ltr';
+  const t = content[language] || content.en;
+  // Tras 。 (chino, japonés) no va espacio antes del enlace
+  const sep = language === 'zh' || language === 'ja' ? '' : ' ';
 
+  // Primera visita (nada guardado): el aviso aparece abajo a los 2 s
   useEffect(() => {
-    const savedPreferences = localStorage.getItem(STORAGE_KEY);
-    if (!savedPreferences) {
-      const timer = setTimeout(() => setVisible(true), 2000);
-      return () => clearTimeout(timer);
-    } else {
-      try {
-        const parsed = JSON.parse(savedPreferences);
-        setPreferences({ ...parsed, essential: true });
-      } catch {
-        setVisible(true);
-      }
-    }
+    if (readAcknowledged()) return;
+    const timer = setTimeout(() => setVisible(true), 2000);
+    return () => clearTimeout(timer);
   }, []);
 
-  const openPreferences = (opener: Opener) => {
+  const openDialog = (opener: Opener) => {
     if (openRef.current) return;
     openRef.current = true;
     openerRef.current = opener;
-    setShowPreferences(true);
+    setDialogOpen(true);
   };
 
-  // Abre el panel de preferencias desde fuera (enlace "Preferencias de cookies" del pie)
+  // Abre el aviso como diálogo desde fuera (enlace "Preferencias de cookies" del pie)
   useEffect(() => {
     const open = () =>
-      openPreferences(document.activeElement instanceof HTMLElement ? document.activeElement : null);
+      openDialog(document.activeElement instanceof HTMLElement ? document.activeElement : null);
     window.addEventListener('ss:open-cookie-preferences', open);
     return () => window.removeEventListener('ss:open-cookie-preferences', open);
   }, []);
 
-  const savePreferences = (prefs: CookiePreferences) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
-    // Al reabrir (p. ej. desde el pie), los interruptores muestran lo guardado
-    setPreferences(prefs);
+  // "Entendido": se guarda la elección y se cierran banner y diálogo
+  const acknowledge = () => {
+    saveAcknowledged();
     setVisible(false);
-    setShowPreferences(false);
+    setDialogOpen(false);
   };
 
-  const acceptAll = () => {
-    const allAccepted: CookiePreferences = {
-      essential: true,
-      analytics: true,
-      functionality: true,
-      marketing: true,
-    };
-    savePreferences(allAccepted);
-  };
-
-  const saveCustomPreferences = () => {
-    savePreferences(preferences);
-  };
-
-  // Cerrar sin guardar (Escape, X o clic en el velo) descarta los cambios: vuelve lo guardado
-  const closePreferences = () => {
-    setPreferences(readSavedPreferences());
-    setShowPreferences(false);
-  };
+  // Escape, X o clic en el velo: cierra el diálogo sin más (si el banner seguía pendiente,
+  // vuelve a verse)
+  const closeDialog = () => setDialogOpen(false);
 
   // Mientras el banner está a la vista, el foco del teclado no debe quedar debajo de él
   // (WCAG 2.4.11): <html> reserva su alto abajo en scroll-padding (el navegador sube el
@@ -141,34 +203,29 @@ export default function CookieBanner({ language }: CookieBannerProps) {
     };
   }, [bannerShown]);
 
-  // Al cerrar (o desmontar) el panel, el foco vuelve a quien lo abrió
+  // Al cerrar (o desmontar) el diálogo, el foco vuelve a quien lo abrió
   const restoreFocus = () => {
     const opener = openerRef.current;
     openerRef.current = null;
-    if (opener === 'banner') {
-      // Cerrado sin guardar: el banner vuelve y el foco va a su botón "Configurar"
-      if (visible && configureRef.current) {
-        configureRef.current.focus();
-        return;
-      }
-    } else if (opener && opener.isConnected && opener !== document.body) {
+    if (opener && opener.isConnected && opener !== document.body) {
       opener.focus();
       return;
     }
-    // Sin destino (se guardó desde el banner): el foco sale del panel, que se va
+    // Sin destino: el foco sale del diálogo, que se va
     if (dialogRef.current?.contains(document.activeElement)) {
       (document.activeElement as HTMLElement).blur();
     }
   };
 
-  useDialog26(showPreferences, dialogRef, {
+  // Diálogo modal: #root inerte, foco atrapado, Escape cierra, el foco vuelve al cerrar
+  useDialog26(dialogOpen, dialogRef, {
     initialFocus: () => titleRef.current,
-    onEscape: closePreferences,
+    onEscape: closeDialog,
     onClosed: restoreFocus,
   });
 
   // El título (tabIndex -1) no está en la trampa de useDialog26: Shift+Tab desde él
-  // saldría del documento, así que salta al último control del panel
+  // saldría del documento, así que salta al último control del diálogo
   const onDialogKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key !== 'Tab' || !e.shiftKey || e.target !== titleRef.current) return;
     const nodes = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? []).filter(
@@ -180,349 +237,22 @@ export default function CookieBanner({ language }: CookieBannerProps) {
     last.focus();
   };
 
-  const togglePreference = (key: keyof CookiePreferences) => {
-    if (key === 'essential') return;
-    setPreferences(prev => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  const content: Record<string, {
-    message: string;
-    privacy: string;
-    configure: string;
-    accept: string;
-    preferencesTitle: string;
-    preferencesDescription: string;
-    savePreferences: string;
-    acceptAllButton: string;
-    close: string;
-    bannerLabel: string;
-    categories: {
-      essential: { title: string; description: string; alwaysOn: string };
-      analytics: { title: string; description: string };
-      functionality: { title: string; description: string };
-      marketing: { title: string; description: string };
-    };
-  }> = {
-    en: {
-      message: "We use our own and third-party cookies to improve our services and show you advertising related to your preferences by analyzing your browsing habits.",
-      privacy: "View privacy policy",
-      configure: "Configure",
-      accept: "Accept all",
-      preferencesTitle: "Cookie preferences",
-      preferencesDescription: "Manage your cookie preferences below. You can enable or disable different types of cookies. Essential cookies are always active as they are necessary for the website to function properly.",
-      savePreferences: "Save preferences",
-      acceptAllButton: "Accept all",
-      close: "Close",
-      bannerLabel: "Cookie notice",
-      categories: {
-        essential: {
-          title: "Essential cookies",
-          description: "These cookies are strictly necessary for the website to function properly. They enable basic functions like page navigation, secure access, and session management. The website cannot function properly without these cookies.",
-          alwaysOn: "Always active",
-        },
-        analytics: {
-          title: "Analytics cookies",
-          description: "These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously. They help us measure traffic, identify popular pages, and improve user experience.",
-        },
-        functionality: {
-          title: "Functionality cookies",
-          description: "These cookies enable enhanced functionality and personalization, such as remembering your language preferences, region settings, and customized layouts. Without these cookies, some features may not be available.",
-        },
-        marketing: {
-          title: "Marketing cookies",
-          description: "These cookies are used to deliver advertisements more relevant to you and your interests. They may be used to limit the number of times you see an advertisement and help measure the effectiveness of advertising campaigns.",
-        },
-      },
-    },
-    es: {
-      message: "Utilizamos cookies propias y de terceros para mejorar nuestros servicios y mostrarle publicidad relacionada con sus preferencias mediante el análisis de sus hábitos de navegación.",
-      privacy: "Ver política de privacidad",
-      configure: "Configurar",
-      accept: "Aceptar todas",
-      preferencesTitle: "Preferencias de cookies",
-      preferencesDescription: "Gestione sus preferencias de cookies a continuación. Puede habilitar o deshabilitar diferentes tipos de cookies. Las cookies esenciales siempre están activas ya que son necesarias para el correcto funcionamiento del sitio web.",
-      savePreferences: "Guardar preferencias",
-      acceptAllButton: "Aceptar todas",
-      close: "Cerrar",
-      bannerLabel: "Aviso de cookies",
-      categories: {
-        essential: {
-          title: "Cookies esenciales",
-          description: "Estas cookies son estrictamente necesarias para el funcionamiento del sitio web. Permiten funciones básicas como la navegación de páginas, acceso seguro y gestión de sesiones. El sitio web no puede funcionar correctamente sin estas cookies.",
-          alwaysOn: "Siempre activas",
-        },
-        analytics: {
-          title: "Cookies de análisis",
-          description: "Estas cookies nos ayudan a entender cómo los visitantes interactúan con nuestro sitio web recopilando información de forma anónima. Nos ayudan a medir el tráfico, identificar páginas populares y mejorar la experiencia del usuario.",
-        },
-        functionality: {
-          title: "Cookies de funcionalidad",
-          description: "Estas cookies permiten funcionalidades mejoradas y personalización, como recordar sus preferencias de idioma, configuración regional y diseños personalizados. Sin estas cookies, algunas funciones pueden no estar disponibles.",
-        },
-        marketing: {
-          title: "Cookies de marketing",
-          description: "Estas cookies se utilizan para mostrar anuncios más relevantes para usted y sus intereses. Pueden usarse para limitar el número de veces que ve un anuncio y ayudar a medir la efectividad de las campañas publicitarias.",
-        },
-      },
-    },
-    de: {
-      message: "Wir verwenden eigene Cookies und Cookies von Drittanbietern, um unsere Dienste zu verbessern und Ihnen auf Grundlage der Analyse Ihres Surfverhaltens Werbung zu zeigen, die Ihren Präferenzen entspricht.",
-      privacy: "Mehr erfahren",
-      configure: "Einstellungen",
-      accept: "Akzeptieren",
-      preferencesTitle: "Cookie-Einstellungen",
-      preferencesDescription: "Verwalten Sie unten Ihre Cookie-Einstellungen. Sie können verschiedene Arten von Cookies aktivieren oder deaktivieren. Essentielle Cookies sind immer aktiv, da sie für das ordnungsgemäße Funktionieren der Website erforderlich sind.",
-      savePreferences: "Einstellungen speichern",
-      acceptAllButton: "Alle akzeptieren",
-      close: "Schließen",
-      bannerLabel: "Cookie-Hinweis",
-      categories: {
-        essential: {
-          title: "Essentielle Cookies",
-          description: "Diese Cookies sind für das ordnungsgemäße Funktionieren der Website unbedingt erforderlich. Sie ermöglichen grundlegende Funktionen wie Seitennavigation, sicheren Zugang und Sitzungsverwaltung. Die Website kann ohne diese Cookies nicht ordnungsgemäß funktionieren.",
-          alwaysOn: "Immer aktiv",
-        },
-        analytics: {
-          title: "Analyse-Cookies",
-          description: "Diese Cookies helfen uns zu verstehen, wie Besucher mit unserer Website interagieren, indem sie Informationen anonym sammeln und melden. Sie helfen uns, den Traffic zu messen, beliebte Seiten zu identifizieren und die Benutzererfahrung zu verbessern.",
-        },
-        functionality: {
-          title: "Funktionalitäts-Cookies",
-          description: "Diese Cookies ermöglichen erweiterte Funktionalität und Personalisierung, wie das Speichern Ihrer Spracheinstellungen, regionalen Einstellungen und benutzerdefinierten Layouts. Ohne diese Cookies sind einige Funktionen möglicherweise nicht verfügbar.",
-        },
-        marketing: {
-          title: "Marketing-Cookies",
-          description: "Diese Cookies werden verwendet, um Ihnen und Ihren Interessen relevantere Werbung zu liefern. Sie können verwendet werden, um die Häufigkeit der Werbeanzeigen zu begrenzen und die Wirksamkeit von Werbekampagnen zu messen.",
-        },
-      },
-    },
-    zh: {
-      message: "我们使用自有及第三方 Cookie 来改进我们的服务，并通过分析您的浏览习惯向您展示与您偏好相关的广告。",
-      privacy: "了解更多",
-      configure: "设置",
-      accept: "接受",
-      preferencesTitle: "Cookie 偏好设置",
-      preferencesDescription: "在下方管理您的 Cookie 偏好设置。您可以启用或禁用不同类型的 Cookie。必要 Cookie 始终处于活动状态，因为它们对于网站正常运行是必需的。",
-      savePreferences: "保存偏好设置",
-      acceptAllButton: "全部接受",
-      close: "关闭",
-      bannerLabel: "Cookie 通知",
-      categories: {
-        essential: {
-          title: "必要 Cookie",
-          description: "这些 Cookie 对于网站正常运行是绝对必要的。它们支持基本功能，如页面导航、安全访问和会话管理。没有这些 Cookie，网站无法正常运行。",
-          alwaysOn: "始终活动",
-        },
-        analytics: {
-          title: "分析 Cookie",
-          description: "这些 Cookie 通过匿名收集和报告信息，帮助我们了解访问者如何与我们的网站互动。它们帮助我们衡量流量、识别热门页面并改善用户体验。",
-        },
-        functionality: {
-          title: "功能 Cookie",
-          description: "这些 Cookie 支持增强的功能和个性化，例如记住您的语言偏好、地区设置和自定义布局。没有这些 Cookie，某些功能可能不可用。",
-        },
-        marketing: {
-          title: "营销 Cookie",
-          description: "这些 Cookie 用于向您投放与您和您的兴趣更相关的广告。它们可用于限制您看到广告的次数，并帮助衡量广告活动的效果。",
-        },
-      },
-    },
-    ko: {
-      message: "당사는 서비스를 개선하고 귀하의 브라우징 습관을 분석하여 선호도에 맞는 광고를 보여 드리기 위해 자사 및 제3자 쿠키를 사용합니다.",
-      privacy: "자세히 알아보기",
-      configure: "설정",
-      accept: "수락",
-      preferencesTitle: "쿠키 환경설정",
-      preferencesDescription: "아래에서 쿠키 환경설정을 관리하세요. 다양한 유형의 쿠키를 활성화하거나 비활성화할 수 있습니다. 필수 쿠키는 웹사이트가 제대로 작동하는 데 필요하므로 항상 활성화되어 있습니다.",
-      savePreferences: "환경설정 저장",
-      acceptAllButton: "모두 수락",
-      close: "닫기",
-      bannerLabel: "쿠키 알림",
-      categories: {
-        essential: {
-          title: "필수 쿠키",
-          description: "이 쿠키는 웹사이트가 제대로 작동하는 데 반드시 필요합니다. 페이지 탐색, 보안 액세스, 세션 관리와 같은 기본 기능을 지원합니다. 이 쿠키가 없으면 웹사이트가 제대로 작동하지 않습니다.",
-          alwaysOn: "항상 활성",
-        },
-        analytics: {
-          title: "분석 쿠키",
-          description: "이 쿠키는 익명으로 정보를 수집하고 보고하여 방문자가 웹사이트와 어떻게 상호작용하는지 이해하는 데 도움을 줍니다. 트래픽을 측정하고, 인기 페이지를 식별하고, 사용자 경험을 개선하는 데 도움이 됩니다.",
-        },
-        functionality: {
-          title: "기능 쿠키",
-          description: "이 쿠키는 언어 기본 설정, 지역 설정, 맞춤 레이아웃 기억과 같은 향상된 기능 및 개인화를 가능하게 합니다. 이 쿠키가 없으면 일부 기능을 사용할 수 없을 수 있습니다.",
-        },
-        marketing: {
-          title: "마케팅 쿠키",
-          description: "이 쿠키는 귀하와 귀하의 관심사에 더 관련성 있는 광고를 제공하는 데 사용됩니다. 광고를 보는 횟수를 제한하고 광고 캠페인의 효과를 측정하는 데 사용될 수 있습니다.",
-        },
-      },
-    },
-    ja: {
-      message: "当サイトでは、サービスの向上と、閲覧傾向の分析に基づくお客様の嗜好に合わせた広告の表示のために、自社およびサードパーティのCookieを使用しています。",
-      privacy: "詳しく見る",
-      configure: "設定",
-      accept: "同意する",
-      preferencesTitle: "Cookie設定",
-      preferencesDescription: "以下でCookieの設定を管理できます。さまざまな種類のCookieを有効または無効にできます。必須Cookieは、ウェブサイトが正常に機能するために必要なため、常に有効です。",
-      savePreferences: "設定を保存",
-      acceptAllButton: "すべて同意",
-      close: "閉じる",
-      bannerLabel: "Cookieに関するお知らせ",
-      categories: {
-        essential: {
-          title: "必須Cookie",
-          description: "これらのCookieは、ウェブサイトが正常に機能するために厳密に必要です。ページナビゲーション、安全なアクセス、セッション管理などの基本機能を有効にします。これらのCookieがないと、ウェブサイトは正常に機能しません。",
-          alwaysOn: "常に有効",
-        },
-        analytics: {
-          title: "分析Cookie",
-          description: "これらのCookieは、匿名で情報を収集・報告することで、訪問者がウェブサイトとどのようにやり取りしているかを理解するのに役立ちます。トラフィックの測定、人気ページの特定、ユーザー体験の向上に役立ちます。",
-        },
-        functionality: {
-          title: "機能Cookie",
-          description: "これらのCookieは、言語設定、地域設定、カスタマイズされたレイアウトの記憶など、拡張機能とパーソナライゼーションを可能にします。これらのCookieがないと、一部の機能が利用できない場合があります。",
-        },
-        marketing: {
-          title: "マーケティングCookie",
-          description: "これらのCookieは、お客様とお客様の興味に関連性の高い広告を配信するために使用されます。広告の表示回数を制限し、広告キャンペーンの効果を測定するために使用される場合があります。",
-        },
-      },
-    },
-    ar: {
-      message: "نستخدم ملفات تعريف الارتباط الخاصة بنا وملفات الجهات الخارجية لتحسين خدماتنا وعرض إعلانات تتعلق بتفضيلاتك من خلال تحليل عادات التصفح لديك.",
-      privacy: "اعرف المزيد",
-      configure: "الإعدادات",
-      accept: "قبول",
-      preferencesTitle: "تفضيلات ملفات تعريف الارتباط",
-      preferencesDescription: "قم بإدارة تفضيلات ملفات تعريف الارتباط أدناه. يمكنك تفعيل أو تعطيل أنواع مختلفة من ملفات تعريف الارتباط. ملفات تعريف الارتباط الأساسية نشطة دائمًا لأنها ضرورية لعمل الموقع بشكل صحيح.",
-      savePreferences: "حفظ التفضيلات",
-      acceptAllButton: "قبول الكل",
-      close: "إغلاق",
-      bannerLabel: "إشعار ملفات تعريف الارتباط",
-      categories: {
-        essential: {
-          title: "ملفات تعريف الارتباط الأساسية",
-          description: "هذه الملفات ضرورية للغاية لعمل الموقع بشكل صحيح. إنها تتيح الوظائف الأساسية مثل التنقل بين الصفحات والوصول الآمن وإدارة الجلسات. لا يمكن للموقع العمل بشكل صحيح بدون هذه الملفات.",
-          alwaysOn: "نشط دائمًا",
-        },
-        analytics: {
-          title: "ملفات تعريف الارتباط التحليلية",
-          description: "تساعدنا هذه الملفات على فهم كيفية تفاعل الزوار مع موقعنا من خلال جمع المعلومات والإبلاغ عنها بشكل مجهول. تساعدنا في قياس حركة المرور وتحديد الصفحات الشائعة وتحسين تجربة المستخدم.",
-        },
-        functionality: {
-          title: "ملفات تعريف الارتباط الوظيفية",
-          description: "تتيح هذه الملفات وظائف محسنة وتخصيصًا، مثل تذكر تفضيلات اللغة وإعدادات المنطقة والتخطيطات المخصصة. بدون هذه الملفات، قد لا تتوفر بعض الميزات.",
-        },
-        marketing: {
-          title: "ملفات تعريف الارتباط التسويقية",
-          description: "تُستخدم هذه الملفات لتقديم إعلانات أكثر صلة بك وباهتماماتك. يمكن استخدامها للحد من عدد مرات مشاهدة الإعلان والمساعدة في قياس فعالية الحملات الإعلانية.",
-        },
-      },
-    },
-    ru: {
-      message: "Мы используем собственные и сторонние файлы cookie, чтобы улучшать наши услуги и показывать вам рекламу, соответствующую вашим предпочтениям, на основе анализа ваших привычек в интернете.",
-      privacy: "Узнать больше",
-      configure: "Настроить",
-      accept: "Принять",
-      preferencesTitle: "Настройки cookie",
-      preferencesDescription: "Управляйте своими предпочтениями cookie ниже. Вы можете включить или отключить различные типы cookie. Необходимые cookie всегда активны, так как они необходимы для правильной работы сайта.",
-      savePreferences: "Сохранить настройки",
-      acceptAllButton: "Принять все",
-      close: "Закрыть",
-      bannerLabel: "Уведомление о файлах cookie",
-      categories: {
-        essential: {
-          title: "Необходимые cookie",
-          description: "Эти cookie строго необходимы для правильной работы сайта. Они обеспечивают базовые функции, такие как навигация по страницам, безопасный доступ и управление сессией. Сайт не может правильно работать без этих cookie.",
-          alwaysOn: "Всегда активны",
-        },
-        analytics: {
-          title: "Аналитические cookie",
-          description: "Эти cookie помогают нам понять, как посетители взаимодействуют с нашим сайтом, собирая и сообщая информацию анонимно. Они помогают нам измерять трафик, определять популярные страницы и улучшать пользовательский опыт.",
-        },
-        functionality: {
-          title: "Функциональные cookie",
-          description: "Эти cookie обеспечивают расширенную функциональность и персонализацию, такую как запоминание ваших языковых предпочтений, региональных настроек и пользовательских макетов. Без этих cookie некоторые функции могут быть недоступны.",
-        },
-        marketing: {
-          title: "Маркетинговые cookie",
-          description: "Эти cookie используются для показа более релевантной рекламы вам и вашим интересам. Они могут использоваться для ограничения количества показов рекламы и измерения эффективности рекламных кампаний.",
-        },
-      },
-    },
-    fr: {
-      message: "Nous utilisons des cookies propres et tiers pour améliorer nos services et vous montrer des publicités liées à vos préférences grâce à l'analyse de vos habitudes de navigation.",
-      privacy: "En savoir plus",
-      configure: "Personnaliser",
-      accept: "Accepter",
-      preferencesTitle: "Préférences des cookies",
-      preferencesDescription: "Gérez vos préférences de cookies ci-dessous. Vous pouvez activer ou désactiver différents types de cookies. Les cookies essentiels sont toujours actifs car ils sont nécessaires au bon fonctionnement du site.",
-      savePreferences: "Enregistrer les préférences",
-      acceptAllButton: "Tout accepter",
-      close: "Fermer",
-      bannerLabel: "Avis relatif aux cookies",
-      categories: {
-        essential: {
-          title: "Cookies essentiels",
-          description: "Ces cookies sont strictement nécessaires au bon fonctionnement du site. Ils permettent des fonctions de base comme la navigation, l'accès sécurisé et la gestion des sessions. Le site ne peut pas fonctionner correctement sans ces cookies.",
-          alwaysOn: "Toujours actifs",
-        },
-        analytics: {
-          title: "Cookies analytiques",
-          description: "Ces cookies nous aident à comprendre comment les visiteurs interagissent avec notre site en collectant et rapportant des informations de manière anonyme. Ils nous aident à mesurer le trafic, identifier les pages populaires et améliorer l'expérience utilisateur.",
-        },
-        functionality: {
-          title: "Cookies de fonctionnalité",
-          description: "Ces cookies permettent des fonctionnalités améliorées et une personnalisation, comme mémoriser vos préférences de langue, paramètres régionaux et mises en page personnalisées. Sans ces cookies, certaines fonctionnalités peuvent ne pas être disponibles.",
-        },
-        marketing: {
-          title: "Cookies marketing",
-          description: "Ces cookies sont utilisés pour diffuser des publicités plus pertinentes pour vous et vos intérêts. Ils peuvent être utilisés pour limiter le nombre de fois où vous voyez une publicité et aider à mesurer l'efficacité des campagnes publicitaires.",
-        },
-      },
-    },
-    it: {
-      message: "Utilizziamo cookie propri e di terze parti per migliorare i nostri servizi e mostrarti pubblicità in linea con le tue preferenze, mediante l'analisi delle tue abitudini di navigazione.",
-      privacy: "Scopri di più",
-      configure: "Personalizza",
-      accept: "Accetta",
-      preferencesTitle: "Preferenze dei cookie",
-      preferencesDescription: "Gestisci le tue preferenze sui cookie qui sotto. Puoi abilitare o disabilitare diversi tipi di cookie. I cookie essenziali sono sempre attivi poiché sono necessari per il corretto funzionamento del sito.",
-      savePreferences: "Salva preferenze",
-      acceptAllButton: "Accetta tutti",
-      close: "Chiudi",
-      bannerLabel: "Informativa sui cookie",
-      categories: {
-        essential: {
-          title: "Cookie essenziali",
-          description: "Questi cookie sono strettamente necessari per il corretto funzionamento del sito. Abilitano funzioni di base come la navigazione, l'accesso sicuro e la gestione delle sessioni. Il sito non può funzionare correttamente senza questi cookie.",
-          alwaysOn: "Sempre attivi",
-        },
-        analytics: {
-          title: "Cookie analitici",
-          description: "Questi cookie ci aiutano a capire come i visitatori interagiscono con il nostro sito raccogliendo e riportando informazioni in modo anonimo. Ci aiutano a misurare il traffico, identificare le pagine popolari e migliorare l'esperienza utente.",
-        },
-        functionality: {
-          title: "Cookie di funzionalità",
-          description: "Questi cookie consentono funzionalità avanzate e personalizzazione, come ricordare le tue preferenze linguistiche, impostazioni regionali e layout personalizzati. Senza questi cookie, alcune funzionalità potrebbero non essere disponibili.",
-        },
-        marketing: {
-          title: "Cookie di marketing",
-          description: "Questi cookie vengono utilizzati per fornire pubblicità più pertinenti a te e ai tuoi interessi. Possono essere utilizzati per limitare il numero di volte in cui vedi un annuncio e aiutare a misurare l'efficacia delle campagne pubblicitarie.",
-        },
-      },
-    },
-  };
-
-  const t = content[language] || content.en;
-
-  const categoryConfig = [
-    { key: 'essential' as const, icon: Shield, disabled: true },
-    { key: 'analytics' as const, icon: BarChart3, disabled: false },
-    { key: 'functionality' as const, icon: Settings2, disabled: false },
-    { key: 'marketing' as const, icon: Megaphone, disabled: false },
-  ];
+  // Texto y enlace al Aviso de privacidad (Link de wouter: respeta la base del router,
+  // /santos-saucedo-page/ en Pages). En el diálogo, seguir el enlace lo cierra.
+  const notice = (testId: string, onNavigate?: () => void) => (
+    <>
+      {t.message}{sep}
+      <Link
+        href="/privacy-policy"
+        onClick={onNavigate}
+        className="underline underline-offset-4 decoration-white/40 text-white hover:decoration-white transition-colors"
+        data-testid={testId}
+      >
+        {t.privacy}
+      </Link>
+      {t.end}
+    </>
+  );
 
   return (
     <>
@@ -539,61 +269,43 @@ export default function CookieBanner({ language }: CookieBannerProps) {
             transition={{ duration: 0.4, ease: "easeOut" }}
             className="ss26 fixed bottom-0 left-0 w-full bg-ss-navy text-white py-5 z-[60] border-t border-white/15"
             role="region"
-            aria-label={t.bannerLabel}
+            aria-label={t.title}
+            lang={language}
             dir={dir}
             data-testid="banner-cookie-consent"
           >
             {/* Mismo contenedor que cabecera, páginas y pie (.ss-container): bordes alineados con el logotipo */}
             <div className="ss-container flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <div className="text-[15px] leading-relaxed text-white/85 flex-1">
-                <p>
-                  {t.message}
-                  {/* Link de wouter: respeta la base del router (/santos-saucedo-page/ en Pages) */}
-                  <Link
-                    href="/privacy-policy"
-                    className="underline underline-offset-4 decoration-white/40 text-white ms-1 hover:decoration-white transition-colors"
-                    data-testid="link-privacy-policy"
-                  >
-                    {t.privacy}
-                  </Link>.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-3 shrink-0">
-                <button
-                  ref={configureRef}
-                  onClick={() => openPreferences('banner')}
-                  className="min-h-[44px] px-5 py-2 font-sans text-[15px] font-semibold leading-none tracking-[0.01em] transition-colors touch-manipulation border border-white/45 text-white hover:border-white"
-                  data-testid="button-cookie-configure"
-                >
-                  {t.configure}
-                </button>
-                <button
-                  onClick={acceptAll}
-                  className="min-h-[44px] px-5 py-2 font-sans text-[15px] font-semibold leading-none tracking-[0.01em] transition-colors touch-manipulation border border-white bg-white text-ss-navy hover:bg-white/90"
-                  data-testid="button-cookie-accept"
-                >
-                  {t.accept}
-                </button>
-              </div>
+              <p className="text-[15px] leading-relaxed text-white/85 flex-1">
+                {notice('link-privacy-policy')}
+              </p>
+              <button
+                type="button"
+                onClick={acknowledge}
+                className={`${buttonCls} shrink-0`}
+                data-testid="button-cookie-accept"
+              >
+                {t.accept}
+              </button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Panel de preferencias: diálogo modal en body (useDialog26 deja #root inerte).
-          .ss26 da la tipografía y el foco visible del sistema 2026 fuera de la página. */}
+      {/* El mismo aviso como diálogo modal en body (lo abre el pie). .ss26 da la tipografía
+          y el foco visible del sistema 2026 fuera de la página. */}
       {createPortal(
         <AnimatePresence>
-          {showPreferences && (
+          {dialogOpen && (
             <motion.div
-              key="preferences"
+              key="dialog"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="ss26 fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+              className="ss26 fixed inset-0 z-[70] flex items-center justify-center bg-black/60 p-4"
               data-testid="modal-cookie-preferences-overlay"
-              onClick={closePreferences}
+              onClick={closeDialog}
             >
               <motion.div
                 ref={dialogRef}
@@ -601,17 +313,18 @@ export default function CookieBanner({ language }: CookieBannerProps) {
                 aria-modal="true"
                 aria-labelledby={titleId}
                 aria-describedby={descriptionId}
+                lang={language}
                 dir={dir}
-                initial={{ scale: 0.95, opacity: 0, y: 20 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 12 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                className="bg-ss-navy text-white w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border border-white/15"
+                className="bg-ss-navy text-white w-full max-w-xl max-h-[90vh] overflow-y-auto border border-white/15"
                 data-testid="modal-cookie-preferences"
                 onClick={(e) => e.stopPropagation()}
                 onKeyDown={onDialogKeyDown}
               >
-                <div className="flex items-center justify-between p-6 border-b border-white/10">
+                <div className="flex items-center justify-between gap-4 p-6 border-b border-white/10">
                   {/* Recibe el foco al abrir; no es un control, así que sin contorno */}
                   <h2
                     ref={titleRef}
@@ -620,10 +333,11 @@ export default function CookieBanner({ language }: CookieBannerProps) {
                     className="font-heading text-2xl font-normal leading-tight tracking-[-0.01em] text-white outline-none focus-visible:!outline-none focus-visible:!shadow-none"
                     data-testid="text-preferences-title"
                   >
-                    {t.preferencesTitle}
+                    {t.title}
                   </h2>
                   <button
-                    onClick={closePreferences}
+                    type="button"
+                    onClick={closeDialog}
                     className="min-w-[44px] min-h-[44px] p-2 flex items-center justify-center hover:bg-white/10 transition-colors touch-manipulation"
                     data-testid="button-close-preferences"
                     aria-label={t.close}
@@ -632,83 +346,17 @@ export default function CookieBanner({ language }: CookieBannerProps) {
                   </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-6">
-                  <p id={descriptionId} className="text-[15px] leading-relaxed text-white/75 mb-6" data-testid="text-preferences-description">
-                    {t.preferencesDescription}
+                <div className="p-6">
+                  <p id={descriptionId} className="text-[15px] leading-relaxed text-white/85" data-testid="text-preferences-description">
+                    {notice('link-privacy-policy-dialog', closeDialog)}
                   </p>
-
-                  <div className="space-y-4">
-                    {categoryConfig.map(({ key, disabled }) => {
-                      const category = t.categories[key];
-                      const categoryTitleId = `${uid}-${key}-title`;
-                      const categoryDescriptionId = `${uid}-${key}-description`;
-                      return (
-                        <div
-                          key={key}
-                          className="border border-white/10 p-4 hover:border-white/20 transition-colors"
-                          data-testid={`card-cookie-${key}`}
-                        >
-                          <div className="flex items-start gap-4">
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between gap-4 mb-2">
-                                <h3 id={categoryTitleId} className="font-semibold text-white" data-testid={`text-cookie-title-${key}`}>
-                                  {category.title}
-                                </h3>
-                                <div className="shrink-0 flex items-center gap-2">
-                                  {disabled ? (
-                                    <span
-                                      className="ss-label text-white/75"
-                                      data-testid={`text-cookie-always-on-${key}`}
-                                    >
-                                      {(category as typeof t.categories.essential).alwaysOn}
-                                    </span>
-                                  ) : (
-                                    // Nombre accesible: el título de la categoría; descripción: su texto.
-                                    // En RTL el pulgar parte de la derecha: activo, se mueve a la izquierda.
-                                    // Contraste sobre el panel: inactivo, pista oscura con borde claro y
-                                    // pulgar blanco; activo, pista blanca con pulgar Azul Profundo (la lima
-                                    // queda para el § y el foco).
-                                    <Switch
-                                      checked={preferences[key]}
-                                      onCheckedChange={() => togglePreference(key)}
-                                      disabled={disabled}
-                                      aria-labelledby={categoryTitleId}
-                                      aria-describedby={categoryDescriptionId}
-                                      data-testid={`switch-cookie-${key}`}
-                                      className="border-white/60 data-[state=unchecked]:bg-transparent data-[state=checked]:border-white data-[state=checked]:bg-white [&>span]:bg-white [&[data-state=checked]>span]:bg-ss-navy rtl:[&[data-state=checked]>span]:-translate-x-5"
-                                    />
-                                  )}
-                                </div>
-                              </div>
-                              <p
-                                id={categoryDescriptionId}
-                                className="text-[15px] text-white/75 leading-relaxed"
-                                data-testid={`text-cookie-description-${key}`}
-                              >
-                                {category.description}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 p-6 border-t border-white/10">
                   <button
-                    onClick={saveCustomPreferences}
-                    className="flex-1 min-h-[44px] px-5 py-2 font-sans text-[15px] font-semibold leading-none tracking-[0.01em] transition-colors touch-manipulation border border-white/45 text-white hover:border-white"
-                    data-testid="button-save-preferences"
-                  >
-                    {t.savePreferences}
-                  </button>
-                  <button
-                    onClick={acceptAll}
-                    className="flex-1 min-h-[44px] px-5 py-2 font-sans text-[15px] font-semibold leading-none tracking-[0.01em] transition-colors touch-manipulation border border-white bg-white text-ss-navy hover:bg-white/90"
+                    type="button"
+                    onClick={acknowledge}
+                    className={`${buttonCls} mt-6`}
                     data-testid="button-accept-all-preferences"
                   >
-                    {t.acceptAllButton}
+                    {t.accept}
                   </button>
                 </div>
               </motion.div>

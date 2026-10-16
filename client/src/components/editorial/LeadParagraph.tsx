@@ -2,6 +2,12 @@ interface LeadParagraphProps {
   eyebrow?: string;
   firstParagraph: string;
   restParagraphs?: string[];
+  /**
+   * "text" (por defecto): el texto propio de la firma (biografía, resumen, cuerpo de la nota),
+   * alineado con el eje del titular, sin filete. "quote": solo para citas reales; lleva el
+   * filete de 1 px en Línea al inicio y su sangría, desde md.
+   */
+  variant?: "text" | "quote";
   className?: string;
   testId?: string;
 }
@@ -50,22 +56,25 @@ function splitLead(text: string): [lead: string, body: string] {
 }
 
 /**
- * Entrada de texto sobre fondo claro: romana 400 en Gris Tinta (.ss-lead), sin capitular,
- * y el resto en el texto corrido (.ss-prose). Filete de 1 px en Línea al inicio, solo en escritorio.
+ * Entrada de texto sobre fondo claro: solo el primer párrafo (o su primera oración, si es
+ * largo) va en la romana grande 400 en Gris Tinta (.ss-lead), sin capitular; el resto, en el
+ * texto corrido (.ss-prose). Sin filete por defecto: el texto se alinea con el titular.
  */
 export function LeadParagraph({
   eyebrow,
   firstParagraph,
   restParagraphs = [],
+  variant = "text",
   className = "",
   testId,
 }: LeadParagraphProps) {
   const [lead, firstBody] = splitLead(firstParagraph);
   const body = [firstBody, ...restParagraphs].filter((p) => p.trim().length > 0);
+  const quote = variant === "quote" ? "md:border-s md:border-ss-rule md:ps-8" : "";
 
   return (
     <div
-      className={`md:border-s md:border-ss-rule md:ps-8 ${className}`}
+      className={`${quote} ${className}`.trim()}
       data-testid={testId}
     >
       {eyebrow && (

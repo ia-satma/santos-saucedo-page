@@ -4,16 +4,20 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
+import { TextLink } from "@/components/home26/primitives";
 
-// "Clásica": titulares en romana 400, Azul Marino, caja de oración y al inicio;
-// entradillas en romana 400 Gris Tinta; texto en sans 400 Gris Tinta.
-const h2Class = "font-heading font-normal text-ss-marino text-[clamp(28px,2.6vw,38px)] leading-[1.12] tracking-[-0.012em] [text-wrap:balance]";
-const h3Class = "font-heading font-normal text-ss-marino text-[22px] leading-[1.25] tracking-[-0.01em]";
+// "Clásica": titulares con la escala única de index.css (.ss-h2 para las secciones, .ss-h2-sm
+// para los sub-bloques, .ss-h3 para filas); entrada en romana 400 Gris Tinta (solo el primer
+// párrafo); texto en sans 400 Gris Tinta.
 const leadClass = "font-serif font-normal text-ss-tinta text-[clamp(19px,0.6vw_+_14px,22px)] leading-[1.55] tracking-[-0.003em] [text-wrap:pretty]";
 
 // Vacantes abiertas. La redacción aprobada dice que hoy no hay ninguna: la lista va vacía en
 // cada idioma y la página muestra esa frase. Para publicar una, añadir su ficha aquí.
 type Position = { title: string; department: string; location: string; type: string; description: string };
+
+// "Santos & Saucedo" con espacios duros al pintarlo: el nombre no se parte al final de línea.
+// Para la frase de los 35 años, que no se edita en el texto (pendiente con el cliente).
+const keepFirmName = (text: string) => text.replace(/Santos & Saucedo/g, "Santos\u00a0&\u00a0Saucedo");
 
 export default function Careers() {
   const { language } = useLanguage();
@@ -21,11 +25,13 @@ export default function Careers() {
   // Textos de la redacción aprobada (sección "Carreras"; la única página en tú). Sin valores
   // genéricos, prestaciones, salarios ni requisitos que la firma no haya confirmado. La frase
   // de los 35 años se conserva tal cual (pendiente de confirmar con el cliente).
+  // h1 = la etiqueta del menú en cada idioma; "Tu carrera en Santos & Saucedo." es la entrada.
+  // "Santos & Saucedo" con espacios duros: no se parte al final de línea (coreano, árabe).
   const content = {
     en: {
-      heroTitle: "Build your career with us",
-      heroSubtitle: "At Santos & Saucedo, interns and associates work on real matters from the start, alongside the partners: on-site audits, reviews of collective bargaining agreements, conciliation hearings and trials.",
-      whyJoinTitle: "Your career at Santos & Saucedo",
+      heroTitle: "Careers",
+      heroSubtitle: "Your career at Santos\u00a0&\u00a0Saucedo.",
+      introText: "At Santos\u00a0&\u00a0Saucedo, interns and associates work on real matters from the start, alongside the partners: on-site audits, reviews of collective bargaining agreements, conciliation hearings and trials.",
       whyJoinSubtitle: "We look for students and lawyers interested in employer-side labor law, and administrative staff who want to grow in a partner-led firm. We value rigor, discretion and an interest in understanding how a business works from the inside.",
       cultureTitle: "What you will learn",
       cultureText: "In a firm of our size, your work is reviewed directly by a partner. You will learn to prepare a case file, to negotiate and to hold a position before the authorities, and you will see at close range how companies in many sectors operate.",
@@ -45,9 +51,9 @@ export default function Careers() {
       sendApplication: "Send application",
     },
     es: {
-      heroTitle: "Construye tu carrera con nosotros",
-      heroSubtitle: "En Santos & Saucedo, los pasantes y asociados trabajan desde el principio en asuntos reales, junto a los socios: auditorías en planta, revisiones de contratos colectivos, audiencias de conciliación y juicios.",
-      whyJoinTitle: "Tu carrera en Santos & Saucedo",
+      heroTitle: "Carreras",
+      heroSubtitle: "Tu carrera en Santos\u00a0&\u00a0Saucedo.",
+      introText: "En Santos\u00a0&\u00a0Saucedo, los pasantes y asociados trabajan desde el principio en asuntos reales, junto a los socios: auditorías en planta, revisiones de contratos colectivos, audiencias de conciliación y juicios.",
       whyJoinSubtitle: "Buscamos estudiantes y abogados interesados en el derecho laboral de empresa, y personal administrativo que quiera crecer en una firma de socios. Valoramos el rigor, la discreción y el interés por entender cómo funciona una empresa por dentro.",
       cultureTitle: "Lo que aprenderás",
       cultureText: "En una firma de nuestro tamaño, tu trabajo lo revisa directamente un socio. Aprenderás a preparar un expediente, a negociar y a sostener una postura frente a la autoridad, y conocerás de cerca la operación de empresas de muchos sectores.",
@@ -67,9 +73,9 @@ export default function Careers() {
       sendApplication: "Enviar solicitud",
     },
     de: {
-      heroTitle: "Gestalten Sie Ihre Karriere bei uns",
-      heroSubtitle: "Bei Santos & Saucedo arbeiten Praktikanten und Associates von Anfang an an echten Mandaten, an der Seite der Partner: Audits vor Ort, Prüfung von Tarifverträgen, Schlichtungsverhandlungen und Gerichtsverfahren.",
-      whyJoinTitle: "Ihre Karriere bei Santos & Saucedo",
+      heroTitle: "Karriere",
+      heroSubtitle: "Ihre Karriere bei Santos\u00a0&\u00a0Saucedo.",
+      introText: "Bei Santos\u00a0&\u00a0Saucedo arbeiten Praktikanten und Associates von Anfang an an echten Mandaten, an der Seite der Partner: Audits vor Ort, Prüfung von Tarifverträgen, Schlichtungsverhandlungen und Gerichtsverfahren.",
       whyJoinSubtitle: "Wir suchen Studierende und Juristen mit Interesse am Arbeitsrecht auf Unternehmensseite sowie Verwaltungspersonal, das sich in einer partnergeführten Kanzlei weiterentwickeln möchte. Wir schätzen Sorgfalt, Diskretion und das Interesse daran, wie ein Unternehmen von innen funktioniert.",
       cultureTitle: "Was Sie lernen",
       cultureText: "In einer Kanzlei unserer Größe prüft ein Partner Ihre Arbeit direkt. Sie lernen, eine Akte vorzubereiten, zu verhandeln und eine Position gegenüber den Behörden zu vertreten, und Sie lernen den Betrieb von Unternehmen aus vielen Branchen aus der Nähe kennen.",
@@ -89,9 +95,9 @@ export default function Careers() {
       sendApplication: "Bewerbung senden",
     },
     zh: {
-      heroTitle: "与我们共创事业",
-      heroSubtitle: "在 Santos & Saucedo，实习生和律师从一开始就与合伙人一起处理真实案件：现场审计、集体合同审查、调解听证和诉讼。",
-      whyJoinTitle: "在 Santos & Saucedo 的职业发展",
+      heroTitle: "职业发展",
+      heroSubtitle: "在 Santos\u00a0&\u00a0Saucedo 的职业发展。",
+      introText: "在 Santos\u00a0&\u00a0Saucedo，实习生和律师从一开始就与合伙人一起处理真实案件：现场审计、集体合同审查、调解听证和诉讼。",
       whyJoinSubtitle: "我们寻找对企业方劳动法感兴趣的学生和律师，以及希望在合伙制律所中成长的行政人员。我们看重严谨、审慎，以及深入了解企业内部运作的兴趣。",
       cultureTitle: "您将学到什么",
       cultureText: "在我们这样规模的律所，您的工作由合伙人直接审阅。您将学习如何准备案卷、进行谈判、在主管机关面前坚持立场，并近距离了解众多行业企业的运营。",
@@ -111,9 +117,9 @@ export default function Careers() {
       sendApplication: "发送申请",
     },
     ko: {
-      heroTitle: "우리와 함께 경력을 쌓으세요",
-      heroSubtitle: "Santos & Saucedo에서는 인턴과 어소시에이트가 처음부터 파트너와 함께 실제 사건을 담당합니다. 현장 감사, 단체협약 검토, 조정 심리와 소송 등입니다.",
-      whyJoinTitle: "Santos & Saucedo에서의 경력",
+      heroTitle: "채용",
+      heroSubtitle: "Santos\u00a0&\u00a0Saucedo에서의 경력.",
+      introText: "Santos\u00a0&\u00a0Saucedo에서는 인턴과 어소시에이트가 처음부터 파트너와 함께 실제 사건을 담당합니다. 현장 감사, 단체협약 검토, 조정 심리와 소송 등입니다.",
       whyJoinSubtitle: "기업 측 노동법에 관심 있는 학생과 변호사, 그리고 파트너 중심의 법인에서 성장하고자 하는 행정 직원을 찾습니다. 엄격함과 신중함, 그리고 기업이 내부에서 어떻게 움직이는지 이해하려는 관심을 중시합니다.",
       cultureTitle: "배우게 될 것",
       cultureText: "우리 규모의 법인에서는 파트너가 여러분의 업무를 직접 검토합니다. 사건 기록을 준비하고, 협상하고, 당국 앞에서 입장을 지키는 법을 배우며, 여러 업종 기업의 운영을 가까이에서 알게 됩니다.",
@@ -133,9 +139,9 @@ export default function Careers() {
       sendApplication: "지원서 보내기",
     },
     ja: {
-      heroTitle: "私たちと一緒にキャリアを築きましょう",
-      heroSubtitle: "Santos & Saucedo では、インターンとアソシエイトが最初からパートナーとともに実際の案件に携わります。現場での監査、労働協約の見直し、調停期日、訴訟などです。",
-      whyJoinTitle: "Santos & Saucedo でのキャリア",
+      heroTitle: "採用情報",
+      heroSubtitle: "Santos\u00a0&\u00a0Saucedo でのキャリア。",
+      introText: "Santos\u00a0&\u00a0Saucedo では、インターンとアソシエイトが最初からパートナーとともに実際の案件に携わります。現場での監査、労働協約の見直し、調停期日、訴訟などです。",
       whyJoinSubtitle: "企業側の労働法に関心のある学生と弁護士、そしてパートナー主導の事務所で成長したい事務職員を求めています。厳密さ、慎重さ、そして企業が内側からどう動いているかを理解しようとする姿勢を大切にしています。",
       cultureTitle: "学べること",
       cultureText: "当事務所の規模では、あなたの仕事はパートナーが直接確認します。記録の準備、交渉、当局に対して立場を貫くことを学び、さまざまな業種の企業の業務を間近で知ることができます。",
@@ -155,9 +161,9 @@ export default function Careers() {
       sendApplication: "応募書類を送信",
     },
     ar: {
-      heroTitle: "ابنِ مسيرتك المهنية معنا",
-      heroSubtitle: "في Santos & Saucedo، يعمل المتدربون والمحامون المساعدون منذ البداية على قضايا حقيقية إلى جانب الشركاء: عمليات تدقيق في المصانع، ومراجعة عقود العمل الجماعية، وجلسات التوفيق، والدعاوى القضائية.",
-      whyJoinTitle: "مسيرتك المهنية في Santos & Saucedo",
+      heroTitle: "الوظائف",
+      heroSubtitle: "مسيرتك المهنية في Santos\u00a0&\u00a0Saucedo.",
+      introText: "في Santos\u00a0&\u00a0Saucedo، يعمل المتدربون والمحامون المساعدون منذ البداية على قضايا حقيقية إلى جانب الشركاء: عمليات تدقيق في المصانع، ومراجعة عقود العمل الجماعية، وجلسات التوفيق، والدعاوى القضائية.",
       whyJoinSubtitle: "نبحث عن طلاب ومحامين مهتمين بقانون العمل من جانب أصحاب العمل، وعن موظفين إداريين يرغبون في النمو داخل مكتب يقوده الشركاء. نقدّر الدقة والتكتم والاهتمام بفهم كيفية عمل المؤسسة من الداخل.",
       cultureTitle: "ما ستتعلمه",
       cultureText: "في مكتب بحجمنا، يراجع أحد الشركاء عملك مباشرة. ستتعلم إعداد الملف والتفاوض والدفاع عن موقف أمام السلطات، وستتعرف عن قرب على طريقة عمل شركات من قطاعات كثيرة.",
@@ -177,9 +183,9 @@ export default function Careers() {
       sendApplication: "إرسال الطلب",
     },
     ru: {
-      heroTitle: "Постройте свою карьеру вместе с нами",
-      heroSubtitle: "В Santos & Saucedo стажёры и юристы с первого дня работают над реальными делами вместе с партнёрами: проверки на предприятиях, анализ коллективных договоров, примирительные слушания и судебные процессы.",
-      whyJoinTitle: "Карьера в Santos & Saucedo",
+      heroTitle: "Карьера",
+      heroSubtitle: "Карьера в Santos\u00a0&\u00a0Saucedo.",
+      introText: "В Santos\u00a0&\u00a0Saucedo стажёры и юристы с первого дня работают над реальными делами вместе с партнёрами: проверки на предприятиях, анализ коллективных договоров, примирительные слушания и судебные процессы.",
       whyJoinSubtitle: "Мы ищем студентов и юристов, интересующихся трудовым правом на стороне работодателя, а также административных сотрудников, которые хотят расти в партнёрской фирме. Мы ценим тщательность, сдержанность и стремление понять, как компания устроена изнутри.",
       cultureTitle: "Чему вы научитесь",
       cultureText: "В фирме нашего размера вашу работу напрямую проверяет партнёр. Вы научитесь готовить дело, вести переговоры и отстаивать позицию перед органами власти, а также близко познакомитесь с работой компаний из многих отраслей.",
@@ -199,9 +205,9 @@ export default function Careers() {
       sendApplication: "Отправить заявку",
     },
     fr: {
-      heroTitle: "Construisez votre carrière avec nous",
-      heroSubtitle: "Chez Santos & Saucedo, les stagiaires et les collaborateurs travaillent dès le départ sur de vrais dossiers, aux côtés des associés : audits sur site, révision de conventions collectives, audiences de conciliation et procès.",
-      whyJoinTitle: "Votre carrière chez Santos & Saucedo",
+      heroTitle: "Carrières",
+      heroSubtitle: "Votre carrière chez Santos\u00a0&\u00a0Saucedo.",
+      introText: "Chez Santos\u00a0&\u00a0Saucedo, les stagiaires et les collaborateurs travaillent dès le départ sur de vrais dossiers, aux côtés des associés : audits sur site, révision de conventions collectives, audiences de conciliation et procès.",
       whyJoinSubtitle: "Nous recherchons des étudiants et des juristes intéressés par le droit du travail côté employeur, ainsi que du personnel administratif souhaitant évoluer dans un cabinet d'associés. Nous apprécions la rigueur, la discrétion et l'envie de comprendre le fonctionnement d'une entreprise de l'intérieur.",
       cultureTitle: "Ce que vous apprendrez",
       cultureText: "Dans un cabinet de notre taille, votre travail est relu directement par un associé. Vous apprendrez à préparer un dossier, à négocier et à défendre une position face à l'administration, et vous découvrirez de près le fonctionnement d'entreprises de nombreux secteurs.",
@@ -221,9 +227,9 @@ export default function Careers() {
       sendApplication: "Envoyer la candidature",
     },
     it: {
-      heroTitle: "Costruisci la tua carriera con noi",
-      heroSubtitle: "In Santos & Saucedo, tirocinanti e collaboratori lavorano fin dall'inizio su incarichi reali, al fianco dei soci: audit negli stabilimenti, revisione dei contratti collettivi, udienze di conciliazione e giudizi.",
-      whyJoinTitle: "La tua carriera in Santos & Saucedo",
+      heroTitle: "Carriere",
+      heroSubtitle: "La tua carriera in Santos\u00a0&\u00a0Saucedo.",
+      introText: "In Santos\u00a0&\u00a0Saucedo, tirocinanti e collaboratori lavorano fin dall'inizio su incarichi reali, al fianco dei soci: audit negli stabilimenti, revisione dei contratti collettivi, udienze di conciliazione e giudizi.",
       whyJoinSubtitle: "Cerchiamo studenti e avvocati interessati al diritto del lavoro dal lato dell'impresa, e personale amministrativo che voglia crescere in uno studio di soci. Apprezziamo il rigore, la discrezione e l'interesse a capire come funziona un'impresa dall'interno.",
       cultureTitle: "Cosa imparerai",
       cultureText: "In uno studio delle nostre dimensioni, il tuo lavoro viene rivisto direttamente da un socio. Imparerai a preparare un fascicolo, a negoziare e a sostenere una posizione davanti all'autorità, e conoscerai da vicino l'attività di imprese di molti settori.",
@@ -265,8 +271,11 @@ export default function Careers() {
     },
   };
 
-  // Enlace de texto de la marca (etiqueta, subrayado al pasar, flecha), sin botón con caja
-  const textLinkClass = "ss-label group inline-flex min-h-[44px] items-center gap-3 text-ss-marino";
+  // Enlace de texto con el aspecto de TextLink (etiqueta, subrayado, flecha y área táctil
+  // ampliada); propio porque es mailto y conserva su data-testid
+  const textLinkClass = "ss-label group relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3";
+  // Correo de reclutamiento en dos piezas: se parte tras la arroba si la columna es estrecha
+  const [emailUser, emailDomain] = t.applyEmail.split("@");
   // Filas abiertas, como "Nuestro enfoque" en /about: filete superior, titular en romana,
   // texto en la sans. Sin tarjeta, píldora, icono ni sombra.
   const rowClass = "border-t border-ss-rule pt-6";
@@ -296,23 +305,9 @@ export default function Careers() {
             >
               {t.heroTitle}
             </h1>
-            <p 
-              className="mb-8"
-              data-testid="text-careers-subtitle"
-            >
+            <p data-testid="text-careers-subtitle">
               {t.heroSubtitle}
             </p>
-            {/* Enlace de texto de la marca (etiqueta, subrayado al pasar, flecha), sin botón con caja */}
-            <a
-              href={`mailto:${t.applyEmail}`}
-              className="ss-label group inline-flex min-h-[44px] items-center gap-3 text-white"
-              data-testid="button-hero-apply"
-            >
-              <span className="ss-link">{t.sendApplication}</span>
-              <span aria-hidden="true" className="ss-arrow">
-                →
-              </span>
-            </a>
           </motion.div>
         </div>
       </section>
@@ -320,8 +315,9 @@ export default function Careers() {
       <div className="py-16 lg:py-20">
         <div className="ss-container">
           
-          {/* Tu carrera en Santos & Saucedo: entradilla y dos filas abiertas (lo que se aprende
-              y la firma). Sin valores genéricos ni prestaciones sin confirmar. */}
+          {/* Tu carrera en Santos & Saucedo (la entrada del encabezado): los párrafos de la
+              redacción, el primero en romana, y dos sub-bloques abiertos (lo que se aprende y la
+              firma). Sin valores genéricos ni prestaciones sin confirmar. */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -331,41 +327,38 @@ export default function Careers() {
             data-testid="section-why-join"
           >
             <div className="max-w-3xl mb-12">
-              <h2 
-                className={`${h2Class} mb-4`}
-                data-testid="text-why-join-title"
-              >
-                {t.whyJoinTitle}
-              </h2>
-              <p className={leadClass}>
+              <p className={leadClass} data-testid="text-careers-intro">
+                {t.introText}
+              </p>
+              <p className="mt-6 text-[17px] md:text-[18px] text-ss-tinta leading-[1.65] [text-wrap:pretty]">
                 {t.whyJoinSubtitle}
               </p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
               <div className={rowClass} data-testid="card-culture">
-                <h3 className={`${h3Class} mb-3`}>
+                <h2 className="ss-h2-sm mb-3">
                   {t.cultureTitle}
-                </h3>
+                </h2>
                 <p className="text-base text-ss-tinta leading-[1.55]">
                   {t.cultureText}
                 </p>
               </div>
 
               <div className={rowClass} data-testid="card-environment">
-                <h3 className={`${h3Class} mb-3`}>
+                <h2 className="ss-h2-sm mb-3">
                   {t.environmentTitle}
-                </h3>
+                </h2>
                 <p className="text-base text-ss-tinta leading-[1.55]">
-                  {t.environmentText}
+                  {keepFirmName(t.environmentText)}
                 </p>
               </div>
             </div>
           </motion.section>
 
           {/* Semillero S&S (el programa de pasantes), antes que las vacantes como en la
-              redacción: la frase de las vacantes remite a él. Sin duración, requisitos ni
-              temario que la firma no haya confirmado. */}
+              redacción: la frase de las vacantes remite a él. Enlaza a su página
+              (/careers/interns); sin duración, requisitos ni temario sin confirmar. */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -376,7 +369,7 @@ export default function Careers() {
           >
             <div className="max-w-3xl mb-12">
               <h2 
-                className={`${h2Class} mb-4`}
+                className="ss-h2 mb-4"
                 data-testid="text-internship-title"
               >
                 {t.internshipTitle}
@@ -394,16 +387,7 @@ export default function Careers() {
                 {t.internshipOverviewText}
               </p>
               <div className="mt-6" data-testid="card-internship-cta">
-                <a
-                  href={`mailto:reclutamiento@santossaucedo.com?subject=${encodeURIComponent(t.internshipTitle)}`}
-                  className={textLinkClass}
-                  data-testid="button-internship-apply"
-                >
-                  <span className="ss-link">{t.sendApplication}</span>
-                  <span aria-hidden="true" className="ss-arrow">
-                    →
-                  </span>
-                </a>
+                <TextLink href="/careers/interns">{t.internshipTitle}</TextLink>
               </div>
             </div>
           </motion.section>
@@ -418,7 +402,7 @@ export default function Careers() {
           >
             <div className="max-w-3xl">
               <h2 
-                className={`${h2Class} mb-4`}
+                className="ss-h2 mb-4"
                 data-testid="text-positions-title"
               >
                 {t.positionsTitle}
@@ -430,8 +414,9 @@ export default function Careers() {
               )}
             </div>
 
-            {/* Vacantes en filas abiertas: tipo, área y ciudad en etiqueta (sin píldora ni iconos),
-                titular en romana y un enlace de texto por vacante. Solo si hay alguna. */}
+            {/* Vacantes en filas abiertas: tipo, área y ciudad en etiqueta (sin píldora ni iconos)
+                y titular en romana. Solo si hay alguna; la solicitud se envía desde "Cómo
+                postularse" (un solo "Enviar solicitud" en la página). */}
             {t.positions.length > 0 && (
             <motion.div 
               className="mt-12 border-b border-ss-rule"
@@ -443,32 +428,18 @@ export default function Careers() {
               {t.positions.map((position, index) => (
                 <motion.div key={index} variants={itemVariants}>
                   <article
-                    className="grid grid-cols-1 lg:grid-cols-[1fr,auto] gap-x-12 gap-y-4 border-t border-ss-rule py-8"
+                    className="border-t border-ss-rule py-8"
                     data-testid={`card-position-${index}`}
                   >
-                    <div>
-                      <p className="ss-label text-ss-medio mb-3">
-                        {position.type} · {position.department} · {position.location}
-                      </p>
-                      <h3 className={`${h3Class} mb-3`}>
-                        {position.title}
-                      </h3>
-                      <p className="text-base text-ss-tinta leading-[1.55] max-w-[48rem]">
-                        {position.description}
-                      </p>
-                    </div>
-                    <div className="lg:pt-7">
-                      <a
-                        href={`mailto:reclutamiento@santossaucedo.com?subject=${encodeURIComponent(position.title)}`}
-                        className={textLinkClass}
-                        data-testid={`button-apply-position-${index}`}
-                      >
-                        <span className="ss-link">{t.sendApplication}</span>
-                        <span aria-hidden="true" className="ss-arrow">
-                          →
-                        </span>
-                      </a>
-                    </div>
+                    <p className="ss-label text-ss-medio mb-3">
+                      {position.type} · {position.department} · {position.location}
+                    </p>
+                    <h3 className="ss-h3 mb-3">
+                      {position.title}
+                    </h3>
+                    <p className="text-base text-ss-tinta leading-[1.55] max-w-[48rem]">
+                      {position.description}
+                    </p>
                   </article>
                 </motion.div>
               ))}
@@ -486,7 +457,7 @@ export default function Careers() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-12 gap-y-10">
               <div className="lg:col-span-2" data-testid="card-apply-instructions">
                 <h2 
-                  className={`${h2Class} mb-5`}
+                  className="ss-h2 mb-5"
                   data-testid="text-apply-title"
                 >
                   {t.applyTitle}
@@ -494,13 +465,14 @@ export default function Careers() {
                 <p className="text-base text-ss-tinta leading-[1.55] max-w-2xl mb-3">
                   {t.applyInstructions}
                 </p>
-                {/* El correo como enlace de texto, no dentro de un botón */}
+                {/* El correo como enlace de texto, no dentro de un botón. A 320 px no cabía en la
+                    columna: corte tras la arroba (<wbr>) y, por si acaso, overflow-wrap:anywhere */}
                 <a 
                   href={`mailto:${t.applyEmail}`}
-                  className="inline-block text-[19px] text-ss-marino underline decoration-ss-input underline-offset-4 hover:decoration-ss-marino mb-4"
+                  className="inline-block max-w-full text-[19px] text-ss-marino underline decoration-ss-input underline-offset-4 [overflow-wrap:anywhere] hover:decoration-ss-marino mb-4"
                   data-testid="link-apply-email"
                 >
-                  {t.applyEmail}
+                  {emailUser}@<wbr />{emailDomain}
                 </a>
                 <p className="text-base text-ss-medio leading-[1.55] max-w-2xl">
                   {t.applyNote}
@@ -508,16 +480,16 @@ export default function Careers() {
               </div>
 
               <div className={rowClass} data-testid="card-careers-contact">
-                <h3 className={`${h3Class} mb-4`}>
+                <h3 className="ss-h3 mb-4">
                   {t.contactCardTitle}
                 </h3>
                 <p className="text-base text-ss-tinta leading-[1.55]">
                   <a 
                     href={`mailto:${t.applyEmail}`}
-                    className="hover:text-ss-marino hover:underline underline-offset-4 transition-colors"
+                    className="[overflow-wrap:anywhere] hover:text-ss-marino hover:underline underline-offset-4 transition-colors"
                     data-testid="link-contact-email"
                   >
-                    {t.applyEmail}
+                    {emailUser}@<wbr />{emailDomain}
                   </a>
                 </p>
                 <p className="text-base text-ss-tinta leading-[1.55]">

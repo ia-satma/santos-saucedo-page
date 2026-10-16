@@ -3,8 +3,10 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -20,74 +22,257 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
+import type { LanguageCode } from "@shared/schema";
 
-// "Clásica": titulares en romana 400, Azul Marino, caja de oración y al inicio; texto en Gris Tinta.
-const h2Class = "font-heading font-normal text-ss-marino text-[clamp(24px,2vw,30px)] leading-[1.18] tracking-[-0.012em] [text-wrap:balance]";
-const h3Class = "font-heading font-normal text-ss-marino text-[22px] leading-[1.25] tracking-[-0.01em]";
+// Boletín (redacción, "Al pie del Monitor"): una frase, el correo, la casilla del aviso de
+// privacidad y "Suscribirme". Sin beneficios, frecuencia ni "nunca será compartida", y sin
+// marcadores que repitan la etiqueta. La publicación se nombra como en el menú de cada idioma
+// (Monitor Laboral, Labor Monitor; en los demás, las noticias de la firma).
 
 interface NewsletterFormData {
   email: string;
-  firstName?: string;
-  lastName?: string;
+  consent: boolean;
 }
 
-const getNewsletterFormSchema = (language: "es" | "en") => {
-  const messages = {
-    en: {
-      emailRequired: "Email is required",
-      emailInvalid: "Please enter a valid email address",
-    },
-    es: {
-      emailRequired: "El correo electrónico es requerido",
-      emailInvalid: "Por favor ingrese una dirección de correo válida",
-    },
-  };
+interface NewsletterStrings {
+  title: string;
+  /** Frase única del encabezado (con su punto; "。" en chino y japonés) */
+  subtitle: string;
+  emailLabel: string;
+  /** Casilla: texto antes del enlace, el enlace (nombre del aviso en el pie) y el cierre */
+  consentBefore: string;
+  consentLink: string;
+  consentAfter: string;
+  submit: string;
+  submitting: string;
+  emailRequired: string;
+  emailInvalid: string;
+  consentRequired: string;
+  successTitle: string;
+  errorTitle: string;
+  errorDescription: string;
+  unavailableTitle: string;
+  unavailableDescription: string;
+}
 
-  const t = messages[language];
-
-  return z.object({
-    email: z.string().min(1, t.emailRequired).email(t.emailInvalid),
-    firstName: z.string().optional(),
-    lastName: z.string().optional(),
-  });
+const content: Record<LanguageCode, NewsletterStrings> = {
+  es: {
+    title: "Boletines",
+    subtitle: "Recibir el Monitor Laboral por correo.",
+    emailLabel: "Correo electrónico",
+    consentBefore: "He leído y acepto el ",
+    consentLink: "aviso de privacidad",
+    consentAfter: ".",
+    submit: "Suscribirme",
+    submitting: "Enviando…",
+    emailRequired: "El correo electrónico es requerido",
+    emailInvalid: "Por favor ingrese una dirección de correo válida",
+    consentRequired: "Es necesario aceptar el aviso de privacidad.",
+    successTitle: "Suscripción registrada",
+    errorTitle: "Error",
+    errorDescription: "No fue posible completar la suscripción. Intente de nuevo más tarde.",
+    unavailableTitle: "Suscripción no disponible",
+    unavailableDescription: "Por ahora no es posible suscribirse desde este sitio.",
+  },
+  en: {
+    title: "Newsletter",
+    subtitle: "Receive the Labor Monitor by email.",
+    emailLabel: "Email address",
+    consentBefore: "I have read and accept the ",
+    consentLink: "privacy notice",
+    consentAfter: ".",
+    submit: "Subscribe",
+    submitting: "Sending…",
+    emailRequired: "Email is required",
+    emailInvalid: "Please enter a valid email address",
+    consentRequired: "You must accept the privacy notice.",
+    successTitle: "Subscription registered",
+    errorTitle: "Error",
+    errorDescription: "The subscription could not be completed. Please try again later.",
+    unavailableTitle: "Subscription unavailable",
+    unavailableDescription: "Subscribing from this site is not available for now.",
+  },
+  de: {
+    title: "Newsletter",
+    subtitle: "Die Nachrichten der Kanzlei per E-Mail erhalten.",
+    emailLabel: "E-Mail-Adresse",
+    consentBefore: "Ich habe den ",
+    consentLink: "Datenschutzhinweis",
+    consentAfter: " gelesen und akzeptiere ihn.",
+    submit: "Abonnieren",
+    submitting: "Wird gesendet…",
+    emailRequired: "E-Mail ist erforderlich",
+    emailInvalid: "Ungültige E-Mail-Adresse",
+    consentRequired: "Bitte akzeptieren Sie den Datenschutzhinweis.",
+    successTitle: "Anmeldung gespeichert",
+    errorTitle: "Fehler",
+    errorDescription: "Die Anmeldung konnte nicht abgeschlossen werden. Bitte versuchen Sie es später erneut.",
+    unavailableTitle: "Anmeldung nicht verfügbar",
+    unavailableDescription: "Eine Anmeldung über diese Website ist derzeit nicht möglich.",
+  },
+  zh: {
+    title: "电子通讯",
+    subtitle: "通过电子邮件接收本所新闻。",
+    emailLabel: "电子邮件地址",
+    consentBefore: "我已阅读并接受",
+    consentLink: "隐私声明",
+    consentAfter: "。",
+    submit: "订阅",
+    submitting: "发送中…",
+    emailRequired: "电子邮件是必填项",
+    emailInvalid: "请输入有效的电子邮件地址",
+    consentRequired: "请接受隐私声明。",
+    successTitle: "订阅已登记",
+    errorTitle: "错误",
+    errorDescription: "无法完成订阅。请稍后再试。",
+    unavailableTitle: "暂不提供订阅",
+    unavailableDescription: "目前无法通过本网站订阅。",
+  },
+  ko: {
+    title: "뉴스레터",
+    subtitle: "법인의 뉴스를 이메일로 받아 보실 수 있습니다.",
+    emailLabel: "이메일 주소",
+    consentBefore: "",
+    consentLink: "개인정보 처리방침",
+    consentAfter: "을 읽었으며 이에 동의합니다.",
+    submit: "구독",
+    submitting: "전송 중…",
+    emailRequired: "이메일은 필수입니다",
+    emailInvalid: "유효한 이메일 주소를 입력하세요",
+    consentRequired: "개인정보 처리방침에 동의해야 합니다.",
+    successTitle: "구독이 등록되었습니다",
+    errorTitle: "오류",
+    errorDescription: "구독을 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+    unavailableTitle: "구독 불가",
+    unavailableDescription: "현재 이 사이트에서는 구독할 수 없습니다.",
+  },
+  ja: {
+    title: "ニュースレター",
+    subtitle: "事務所のニュースをメールでお受け取りいただけます。",
+    emailLabel: "メールアドレス",
+    consentBefore: "",
+    consentLink: "プライバシーポリシー",
+    consentAfter: "を読み、同意します。",
+    submit: "購読",
+    submitting: "送信中…",
+    emailRequired: "メールアドレスは必須です",
+    emailInvalid: "有効なメールアドレスを入力してください",
+    consentRequired: "プライバシーポリシーへの同意が必要です。",
+    successTitle: "購読を登録しました",
+    errorTitle: "エラー",
+    errorDescription: "購読を完了できませんでした。しばらくしてからもう一度お試しください。",
+    unavailableTitle: "購読はご利用いただけません",
+    unavailableDescription: "現在、このサイトから購読することはできません。",
+  },
+  ar: {
+    title: "النشرة الإخبارية",
+    subtitle: "تلقّي أخبار المكتب عبر البريد الإلكتروني.",
+    emailLabel: "عنوان البريد الإلكتروني",
+    consentBefore: "قرأتُ ",
+    consentLink: "إشعار الخصوصية",
+    consentAfter: " وأوافق عليه.",
+    submit: "اشترك",
+    submitting: "جارٍ الإرسال…",
+    emailRequired: "البريد الإلكتروني مطلوب",
+    emailInvalid: "يرجى إدخال عنوان بريد إلكتروني صالح",
+    consentRequired: "يجب الموافقة على إشعار الخصوصية.",
+    successTitle: "تم تسجيل الاشتراك",
+    errorTitle: "خطأ",
+    errorDescription: "تعذّر إتمام الاشتراك. يرجى المحاولة مرة أخرى لاحقًا.",
+    unavailableTitle: "الاشتراك غير متاح",
+    unavailableDescription: "لا يمكن الاشتراك من هذا الموقع حاليًا.",
+  },
+  ru: {
+    title: "Рассылка",
+    subtitle: "Получать новости фирмы по электронной почте.",
+    emailLabel: "Адрес электронной почты",
+    consentBefore: "Я прочитал(а) ",
+    consentLink: "политику конфиденциальности",
+    consentAfter: " и принимаю её.",
+    submit: "Подписаться",
+    submitting: "Отправка…",
+    emailRequired: "Электронная почта обязательна",
+    emailInvalid: "Пожалуйста, введите действительный адрес электронной почты",
+    consentRequired: "Необходимо принять политику конфиденциальности.",
+    successTitle: "Подписка оформлена",
+    errorTitle: "Ошибка",
+    errorDescription: "Не удалось оформить подписку. Попробуйте позже.",
+    unavailableTitle: "Подписка недоступна",
+    unavailableDescription: "Сейчас оформить подписку на этом сайте нельзя.",
+  },
+  fr: {
+    title: "Newsletter",
+    subtitle: "Recevoir les actualités du cabinet par e-mail.",
+    emailLabel: "Adresse e-mail",
+    consentBefore: "J’ai lu et j’accepte la ",
+    consentLink: "politique de confidentialité",
+    consentAfter: ".",
+    submit: "S’abonner",
+    submitting: "Envoi en cours…",
+    emailRequired: "L’e-mail est requis",
+    emailInvalid: "Veuillez entrer une adresse e-mail valide",
+    consentRequired: "Vous devez accepter la politique de confidentialité.",
+    successTitle: "Abonnement enregistré",
+    errorTitle: "Erreur",
+    errorDescription: "L’abonnement n’a pas pu être enregistré. Veuillez réessayer plus tard.",
+    unavailableTitle: "Abonnement indisponible",
+    unavailableDescription: "Il n’est pas possible de s’abonner depuis ce site pour le moment.",
+  },
+  it: {
+    title: "Newsletter",
+    subtitle: "Ricevere le notizie dello studio via e-mail.",
+    emailLabel: "Indirizzo e-mail",
+    consentBefore: "Ho letto e accetto l’",
+    consentLink: "informativa sulla privacy",
+    consentAfter: ".",
+    submit: "Iscriviti",
+    submitting: "Invio in corso…",
+    emailRequired: "L’e-mail è obbligatoria",
+    emailInvalid: "Inserisci un indirizzo e-mail valido",
+    consentRequired: "È necessario accettare l’informativa sulla privacy.",
+    successTitle: "Iscrizione registrata",
+    errorTitle: "Errore",
+    errorDescription: "Non è stato possibile completare l’iscrizione. Riprova più tardi.",
+    unavailableTitle: "Iscrizione non disponibile",
+    unavailableDescription: "Al momento non è possibile iscriversi da questo sito.",
+  },
 };
+
+const getNewsletterFormSchema = (t: NewsletterStrings) =>
+  z.object({
+    email: z.string().min(1, t.emailRequired).email(t.emailInvalid),
+    consent: z.boolean().refine((value) => value, { message: t.consentRequired }),
+  });
 
 export default function Newsletter() {
   const { language } = useLanguage();
   const { toast } = useToast();
 
-  const formLanguage = language === "es" ? "es" : "en";
-  const formSchema = getNewsletterFormSchema(formLanguage);
+  const t = content[language] || content.en;
+  const formSchema = getNewsletterFormSchema(t);
 
   const form = useForm<NewsletterFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      firstName: "",
-      lastName: "",
+      consent: false,
     },
   });
 
   const newsletterMutation = useMutation({
+    // Solo el correo: la aceptación del aviso es requisito del formulario, no un dato que se guarde
     mutationFn: async (data: NewsletterFormData) => {
-      const response = await apiRequest("POST", "/api/newsletter", data);
+      const response = await apiRequest("POST", "/api/newsletter", { email: data.email });
       return response.json();
     },
     onSuccess: () => {
-      toast({
-        title: language === "es" ? "¡Suscripción exitosa!" : "Successfully subscribed!",
-        description: language === "es" 
-          ? "Gracias por suscribirse a nuestro boletín." 
-          : "Thank you for subscribing to our newsletter.",
-      });
+      toast({ title: t.successTitle });
       form.reset();
     },
     onError: () => {
       toast({
-        title: language === "es" ? "Error" : "Error",
-        description: language === "es" 
-          ? "No se pudo completar la suscripción. Por favor intente de nuevo." 
-          : "Failed to subscribe. Please try again.",
+        title: t.errorTitle,
+        description: t.errorDescription,
         variant: "destructive",
       });
     },
@@ -96,10 +281,8 @@ export default function Newsletter() {
   const onSubmit = (data: NewsletterFormData) => {
     if (isStaticSite) {
       toast({
-        title: language === "es" ? "Suscripción no disponible" : "Subscription unavailable",
-        description: language === "es"
-          ? "GitHub Pages no tiene backend para guardar suscripciones."
-          : "GitHub Pages has no backend to save newsletter subscriptions.",
+        title: t.unavailableTitle,
+        description: t.unavailableDescription,
         variant: "destructive",
       });
       return;
@@ -108,329 +291,11 @@ export default function Newsletter() {
     newsletterMutation.mutate(data);
   };
 
-  const content = {
-    en: {
-      title: "Newsletter",
-      subtitle: "The Labor Monitor's analysis, by email",
-      archivesTitle: "Past Newsletters",
-      archivesSubtitle: "Access our previous editions and stay updated on our legal coverage.",
-      viewArchive: "View Newsletter",
-      formTitle: "Subscribe to Our Newsletter",
-      formSubtitle: "Receive the Labor Monitor's analysis of labor and social security law, and the firm's news, by email.",
-      emailLabel: "Email Address",
-      emailPlaceholder: "Enter your email address",
-      firstNameLabel: "First Name (optional)",
-      firstNamePlaceholder: "Enter your first name",
-      lastNameLabel: "Last Name (optional)",
-      lastNamePlaceholder: "Enter your last name",
-      submit: "Subscribe",
-      submitting: "Subscribing...",
-      whatYouReceive: "What You'll Receive",
-      benefit1Title: "Legal Updates",
-      benefit1Description: "Stay current with important changes in Mexican law and regulations that may affect your business.",
-      benefit2Title: "Sector Analysis",
-      benefit2Description: "In-depth analysis and commentary on legal developments across key sectors.",
-      benefit3Title: "Rulings and Obligations",
-      benefit3Description: "Notes on amendments, court rulings and employment obligations that affect companies.",
-      benefit4Title: "Firm News",
-      benefit4Description: "Learn about our latest achievements, new team members, and community involvement.",
-      privacyNote: "We respect your privacy. Your information will never be shared with third parties. You can unsubscribe at any time.",
-      frequency: "Newsletter Frequency",
-      frequencyDescription: "Our newsletter is sent monthly, with occasional special editions for urgent legal developments.",
-    },
-    es: {
-      title: "Boletines",
-      subtitle: "Los análisis del Monitor Laboral, por correo electrónico",
-      archivesTitle: "Boletines anteriores",
-      archivesSubtitle: "Acceda a nuestras ediciones anteriores y manténgase informado sobre nuestra cobertura legal.",
-      viewArchive: "Ver boletín",
-      formTitle: "Suscríbase a nuestro boletín",
-      formSubtitle: "Reciba por correo electrónico los análisis del Monitor Laboral sobre derecho laboral y seguridad social, y las noticias de la firma.",
-      emailLabel: "Correo electrónico",
-      emailPlaceholder: "Ingrese su correo electrónico",
-      firstNameLabel: "Nombre (opcional)",
-      firstNamePlaceholder: "Ingrese su nombre",
-      lastNameLabel: "Apellido (opcional)",
-      lastNamePlaceholder: "Ingrese su apellido",
-      submit: "Suscribirse",
-      submitting: "Suscribiendo...",
-      whatYouReceive: "Lo que recibirá",
-      benefit1Title: "Actualizaciones legales",
-      benefit1Description: "Manténgase al día con cambios importantes en la ley y regulaciones mexicanas que pueden afectar su negocio.",
-      benefit2Title: "Análisis por sector",
-      benefit2Description: "Análisis profundo y comentarios sobre desarrollos legales en sectores clave.",
-      benefit3Title: "Criterios y obligaciones",
-      benefit3Description: "Notas sobre reformas, criterios y obligaciones laborales que afectan a las empresas.",
-      benefit4Title: "Noticias de la firma",
-      benefit4Description: "Conozca nuestros últimos logros, nuevos miembros del equipo e involucramiento comunitario.",
-      privacyNote: "Respetamos su privacidad. Su información nunca será compartida con terceros. Puede darse de baja en cualquier momento.",
-      frequency: "Frecuencia del boletín",
-      frequencyDescription: "Nuestro boletín se envía mensualmente, con ediciones especiales ocasionales para desarrollos legales urgentes.",
-    },
-    de: {
-      title: "Newsletter",
-      subtitle: "Bleiben Sie über juristische Entwicklungen informiert",
-      archivesTitle: "Frühere Newsletter",
-      archivesSubtitle: "Zugriff auf unsere früheren Ausgaben und bleiben Sie über unsere rechtliche Berichterstattung auf dem Laufenden.",
-      viewArchive: "Newsletter ansehen",
-      formTitle: "Abonnieren Sie unseren Newsletter",
-      formSubtitle: "Treten Sie unserer Mailingliste bei, um exklusive rechtliche Updates, Brancheneinblicke und Firmennachrichten direkt in Ihren Posteingang zu erhalten.",
-      emailLabel: "E-Mail-Adresse",
-      emailPlaceholder: "Geben Sie Ihre E-Mail-Adresse ein",
-      firstNameLabel: "Vorname (optional)",
-      firstNamePlaceholder: "Geben Sie Ihren Vornamen ein",
-      lastNameLabel: "Nachname (optional)",
-      lastNamePlaceholder: "Geben Sie Ihren Nachnamen ein",
-      submit: "Abonnieren",
-      submitting: "Wird abonniert...",
-      whatYouReceive: "Was Sie erhalten werden",
-      benefit1Title: "Rechtliche Updates",
-      benefit1Description: "Bleiben Sie über wichtige Änderungen im mexikanischen Recht und Vorschriften auf dem Laufenden, die Ihr Geschäft betreffen könnten.",
-      benefit2Title: "Brancheneinblicke",
-      benefit2Description: "Tiefgehende Analysen und Kommentare zu rechtlichen Entwicklungen in Schlüsselbranchen.",
-      benefit3Title: "Rechtsprechung und Pflichten",
-      benefit3Description: "Hinweise zu Reformen, Rechtsprechung und arbeitsrechtlichen Pflichten, die Unternehmen betreffen.",
-      benefit4Title: "Firmennachrichten",
-      benefit4Description: "Erfahren Sie von unseren neuesten Erfolgen, neuen Teammitgliedern und unserem gesellschaftlichen Engagement.",
-      privacyNote: "Wir respektieren Ihre Privatsphäre. Ihre Daten werden niemals an Dritte weitergegeben. Sie können sich jederzeit abmelden.",
-      frequency: "Newsletter-Häufigkeit",
-      frequencyDescription: "Unser Newsletter wird monatlich versendet, mit gelegentlichen Sonderausgaben für dringende rechtliche Entwicklungen.",
-    },
-    zh: {
-      title: "电子通讯",
-      subtitle: "获取法律动态资讯",
-      archivesTitle: "往期通讯",
-      archivesSubtitle: "访问我们的往期版本，了解我们的法律报道。",
-      viewArchive: "查看通讯",
-      formTitle: "订阅我们的通讯",
-      formSubtitle: "加入我们的邮件列表，直接在收件箱中接收独家法律更新、行业见解和公司新闻。",
-      emailLabel: "电子邮件地址",
-      emailPlaceholder: "输入您的电子邮件地址",
-      firstNameLabel: "名字（可选）",
-      firstNamePlaceholder: "输入您的名字",
-      lastNameLabel: "姓氏（可选）",
-      lastNamePlaceholder: "输入您的姓氏",
-      submit: "订阅",
-      submitting: "订阅中...",
-      whatYouReceive: "您将收到的内容",
-      benefit1Title: "法律动态",
-      benefit1Description: "了解可能影响您业务的墨西哥法律和法规的重要变化。",
-      benefit2Title: "行业见解",
-      benefit2Description: "对关键行业法律发展的深入分析和评论。",
-      benefit3Title: "裁判标准与义务",
-      benefit3Description: "关于影响企业的法律改革、裁判标准和劳动义务的说明。",
-      benefit4Title: "公司新闻",
-      benefit4Description: "了解我们的最新成就、新团队成员和社区参与。",
-      privacyNote: "我们尊重您的隐私。您的信息绝不会与第三方共享。您可以随时取消订阅。",
-      frequency: "通讯频率",
-      frequencyDescription: "我们的通讯每月发送一次，偶尔会为紧急法律发展推出特别版。",
-    },
-    ko: {
-      title: "뉴스레터",
-      subtitle: "최신 법률 동향과 회사 소식을 받아보세요",
-      archivesTitle: "이전 뉴스레터",
-      archivesSubtitle: "이전 호에 접근하여 법률 보도를 확인하세요.",
-      viewArchive: "뉴스레터 보기",
-      formTitle: "뉴스레터 구독",
-      formSubtitle: "메일링 리스트에 가입하여 독점 법률 업데이트, 업계 통찰력 및 회사 소식을 받아보세요.",
-      emailLabel: "이메일 주소",
-      emailPlaceholder: "이메일 주소를 입력하세요",
-      firstNameLabel: "이름 (선택사항)",
-      firstNamePlaceholder: "이름을 입력하세요",
-      lastNameLabel: "성 (선택사항)",
-      lastNamePlaceholder: "성을 입력하세요",
-      submit: "구독",
-      submitting: "구독 중...",
-      whatYouReceive: "받으실 내용",
-      benefit1Title: "법률 업데이트",
-      benefit1Description: "비즈니스에 영향을 미칠 수 있는 멕시코 법률 및 규정의 중요한 변경 사항을 파악하세요.",
-      benefit2Title: "업계 통찰력",
-      benefit2Description: "주요 분야의 법률 발전에 대한 심층 분석과 논평.",
-      benefit3Title: "판례와 의무",
-      benefit3Description: "기업에 영향을 미치는 법 개정, 판례 기준과 노동 의무에 관한 해설.",
-      benefit4Title: "회사 소식",
-      benefit4Description: "최신 성과, 새 팀원 및 커뮤니티 참여에 대해 알아보세요.",
-      privacyNote: "귀하의 개인정보를 존중합니다. 귀하의 정보는 제3자와 절대 공유되지 않습니다. 언제든지 구독을 취소할 수 있습니다.",
-      frequency: "뉴스레터 빈도",
-      frequencyDescription: "뉴스레터는 매월 발송되며, 긴급한 법률 발전에 대한 특별판이 가끔 발행됩니다.",
-    },
-    ja: {
-      title: "ニュースレター",
-      subtitle: "最新の法律動向とファーム情報をお届けします",
-      archivesTitle: "過去のニュースレター",
-      archivesSubtitle: "過去の号にアクセスして、法律関連の報道をご覧ください。",
-      viewArchive: "ニュースレターを見る",
-      formTitle: "ニュースレターを購読する",
-      formSubtitle: "メーリングリストに登録して、法律の最新情報、業界インサイト、ファームニュースを直接受信箱にお届けします。",
-      emailLabel: "メールアドレス",
-      emailPlaceholder: "メールアドレスを入力",
-      firstNameLabel: "名（任意）",
-      firstNamePlaceholder: "名前を入力",
-      lastNameLabel: "姓（任意）",
-      lastNamePlaceholder: "姓を入力",
-      submit: "購読",
-      submitting: "購読中...",
-      whatYouReceive: "お届けする内容",
-      benefit1Title: "法律アップデート",
-      benefit1Description: "ビジネスに影響を与える可能性のあるメキシコの法律・規制の重要な変更について最新情報をお届けします。",
-      benefit2Title: "業界インサイト",
-      benefit2Description: "主要セクターの法律動向に関する詳細な分析と解説。",
-      benefit3Title: "判断基準と義務",
-      benefit3Description: "企業に影響する法改正、裁判所の判断基準、労働上の義務に関する解説。",
-      benefit4Title: "ファームニュース",
-      benefit4Description: "最新の実績、新しいチームメンバー、コミュニティへの参加についてご紹介します。",
-      privacyNote: "プライバシーを尊重します。お客様の情報は第三者と共有されることはありません。いつでも購読解除できます。",
-      frequency: "ニュースレターの頻度",
-      frequencyDescription: "ニュースレターは毎月配信され、緊急の法律動向については臨時特別号を発行することがあります。",
-    },
-    ar: {
-      title: "النشرة الإخبارية",
-      subtitle: "ابق على اطلاع بأحدث الرؤى القانونية وتحديثات المكتب",
-      archivesTitle: "النشرات الإخبارية السابقة",
-      archivesSubtitle: "الوصول إلى إصداراتنا السابقة ومتابعة تغطيتنا القانونية.",
-      viewArchive: "عرض النشرة الإخبارية",
-      formTitle: "اشترك في نشرتنا الإخبارية",
-      formSubtitle: "انضم إلى قائمتنا البريدية لتلقي التحديثات القانونية الحصرية ورؤى الصناعة وأخبار المكتب مباشرة في بريدك الإلكتروني.",
-      emailLabel: "عنوان البريد الإلكتروني",
-      emailPlaceholder: "أدخل عنوان بريدك الإلكتروني",
-      firstNameLabel: "الاسم الأول (اختياري)",
-      firstNamePlaceholder: "أدخل اسمك الأول",
-      lastNameLabel: "اسم العائلة (اختياري)",
-      lastNamePlaceholder: "أدخل اسم عائلتك",
-      submit: "اشترك",
-      submitting: "جارٍ الاشتراك...",
-      whatYouReceive: "ما ستتلقاه",
-      benefit1Title: "التحديثات القانونية",
-      benefit1Description: "ابق على اطلاع بالتغييرات المهمة في القانون واللوائح المكسيكية التي قد تؤثر على عملك.",
-      benefit2Title: "رؤى الصناعة",
-      benefit2Description: "تحليل معمق وتعليقات حول التطورات القانونية في القطاعات الرئيسية.",
-      benefit3Title: "المعايير القضائية والالتزامات",
-      benefit3Description: "ملاحظات حول التعديلات التشريعية والمعايير القضائية والالتزامات العمالية التي تمس الشركات.",
-      benefit4Title: "أخبار المكتب",
-      benefit4Description: "تعرف على أحدث إنجازاتنا وأعضاء الفريق الجدد ومشاركتنا المجتمعية.",
-      privacyNote: "نحترم خصوصيتك. لن تتم مشاركة معلوماتك مع أطراف ثالثة أبداً. يمكنك إلغاء الاشتراك في أي وقت.",
-      frequency: "تكرار النشرة الإخبارية",
-      frequencyDescription: "يتم إرسال نشرتنا الإخبارية شهرياً، مع إصدارات خاصة عرضية للتطورات القانونية العاجلة.",
-    },
-    ru: {
-      title: "Рассылка",
-      subtitle: "Будьте в курсе последних юридических новостей и обновлений фирмы",
-      archivesTitle: "Предыдущие рассылки",
-      archivesSubtitle: "Доступ к нашим предыдущим выпускам и актуальная информация о правовом освещении.",
-      viewArchive: "Просмотреть рассылку",
-      formTitle: "Подпишитесь на нашу рассылку",
-      formSubtitle: "Присоединяйтесь к нашему списку рассылки для получения эксклюзивных правовых обновлений, отраслевых аналитических материалов и новостей фирмы.",
-      emailLabel: "Адрес электронной почты",
-      emailPlaceholder: "Введите ваш адрес электронной почты",
-      firstNameLabel: "Имя (необязательно)",
-      firstNamePlaceholder: "Введите ваше имя",
-      lastNameLabel: "Фамилия (необязательно)",
-      lastNamePlaceholder: "Введите вашу фамилию",
-      submit: "Подписаться",
-      submitting: "Подписка...",
-      whatYouReceive: "Что вы получите",
-      benefit1Title: "Правовые обновления",
-      benefit1Description: "Будьте в курсе важных изменений в мексиканском законодательстве и регулировании, которые могут повлиять на ваш бизнес.",
-      benefit2Title: "Отраслевая аналитика",
-      benefit2Description: "Углублённый анализ и комментарии по правовым изменениям в ключевых секторах.",
-      benefit3Title: "Судебная практика и обязанности",
-      benefit3Description: "Комментарии к реформам, судебной практике и трудовым обязанностям, которые касаются компаний.",
-      benefit4Title: "Новости фирмы",
-      benefit4Description: "Узнайте о наших последних достижениях, новых членах команды и участии в общественной деятельности.",
-      privacyNote: "Мы уважаем вашу конфиденциальность. Ваша информация никогда не будет передана третьим лицам. Вы можете отписаться в любое время.",
-      frequency: "Частота рассылки",
-      frequencyDescription: "Наша рассылка отправляется ежемесячно, со случайными специальными выпусками для срочных правовых изменений.",
-    },
-    fr: {
-      title: "Newsletter",
-      subtitle: "Restez informé des dernières actualités juridiques et mises à jour du cabinet",
-      archivesTitle: "Newsletters précédentes",
-      archivesSubtitle: "Accédez à nos éditions précédentes et restez informé de notre couverture juridique.",
-      viewArchive: "Voir la newsletter",
-      formTitle: "Abonnez-vous à notre newsletter",
-      formSubtitle: "Rejoignez notre liste de diffusion pour recevoir des mises à jour juridiques exclusives, des analyses sectorielles et des nouvelles du cabinet.",
-      emailLabel: "Adresse e-mail",
-      emailPlaceholder: "Entrez votre adresse e-mail",
-      firstNameLabel: "Prénom (optionnel)",
-      firstNamePlaceholder: "Entrez votre prénom",
-      lastNameLabel: "Nom (optionnel)",
-      lastNamePlaceholder: "Entrez votre nom",
-      submit: "S'abonner",
-      submitting: "Abonnement en cours...",
-      whatYouReceive: "Ce que vous recevrez",
-      benefit1Title: "Mises à jour juridiques",
-      benefit1Description: "Restez informé des changements importants dans la loi et la réglementation mexicaines qui peuvent affecter votre entreprise.",
-      benefit2Title: "Analyses sectorielles",
-      benefit2Description: "Analyses approfondies et commentaires sur les développements juridiques dans les secteurs clés.",
-      benefit3Title: "Jurisprudence et obligations",
-      benefit3Description: "Notes sur les réformes, la jurisprudence et les obligations en droit du travail qui concernent les entreprises.",
-      benefit4Title: "Actualités du cabinet",
-      benefit4Description: "Découvrez nos dernières réalisations, les nouveaux membres de l'équipe et notre engagement communautaire.",
-      privacyNote: "Nous respectons votre vie privée. Vos informations ne seront jamais partagées avec des tiers. Vous pouvez vous désabonner à tout moment.",
-      frequency: "Fréquence de la newsletter",
-      frequencyDescription: "Notre newsletter est envoyée mensuellement, avec des éditions spéciales occasionnelles pour les développements juridiques urgents.",
-    },
-    it: {
-      title: "Newsletter",
-      subtitle: "Rimani informato sugli ultimi aggiornamenti legali e novità dello studio",
-      archivesTitle: "Newsletter precedenti",
-      archivesSubtitle: "Accedi alle nostre edizioni precedenti e rimani aggiornato sulla nostra copertura legale.",
-      viewArchive: "Visualizza newsletter",
-      formTitle: "Iscriviti alla nostra newsletter",
-      formSubtitle: "Unisciti alla nostra mailing list per ricevere aggiornamenti legali esclusivi, approfondimenti del settore e notizie dello studio.",
-      emailLabel: "Indirizzo e-mail",
-      emailPlaceholder: "Inserisci il tuo indirizzo e-mail",
-      firstNameLabel: "Nome (opzionale)",
-      firstNamePlaceholder: "Inserisci il tuo nome",
-      lastNameLabel: "Cognome (opzionale)",
-      lastNamePlaceholder: "Inserisci il tuo cognome",
-      submit: "Iscriviti",
-      submitting: "Iscrizione in corso...",
-      whatYouReceive: "Cosa riceverai",
-      benefit1Title: "Aggiornamenti legali",
-      benefit1Description: "Rimani aggiornato sui cambiamenti importanti nella legge e nelle normative messicane che potrebbero influenzare la tua attività.",
-      benefit2Title: "Approfondimenti di settore",
-      benefit2Description: "Analisi approfondite e commenti sugli sviluppi legali nei settori chiave.",
-      benefit3Title: "Orientamenti e obblighi",
-      benefit3Description: "Note su riforme, orientamenti giurisprudenziali e obblighi in materia di lavoro che riguardano le imprese.",
-      benefit4Title: "Notizie dello studio",
-      benefit4Description: "Scopri i nostri ultimi successi, i nuovi membri del team e il coinvolgimento nella comunità.",
-      privacyNote: "Rispettiamo la tua privacy. Le tue informazioni non saranno mai condivise con terzi. Puoi annullare l'iscrizione in qualsiasi momento.",
-      frequency: "Frequenza della newsletter",
-      frequencyDescription: "La nostra newsletter viene inviata mensilmente, con edizioni speciali occasionali per sviluppi legali urgenti.",
-    },
-  };
-
-  const t = content[language] || content.en;
-
-  // Ediciones vigentes del boletín para "Boletines anteriores" (fecha, título, descripción).
-  // Vacía: la sección no se muestra hasta que haya ediciones recientes que enlazar.
-  const archiveIssues: { title: string; date: string; description: string }[] = [];
-
-  const benefits = [
-    {
-      title: t.benefit1Title,
-      description: t.benefit1Description,
-    },
-    {
-      title: t.benefit2Title,
-      description: t.benefit2Description,
-    },
-    {
-      title: t.benefit3Title,
-      description: t.benefit3Description,
-    },
-    {
-      title: t.benefit4Title,
-      description: t.benefit4Description,
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-background" data-testid="page-newsletter">
       <SEOHead page="newsletter" language={language} />
       <Header />
-      
+
       {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo
           salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
           siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
@@ -445,7 +310,8 @@ export default function Newsletter() {
             className="max-w-3xl"
           >
             <Eyebrow num="04" tone="navy" className="mb-6" />
-            <h1 
+            <h1
+              id="newsletter-title"
               className="mb-5"
               data-testid="text-newsletter-title"
             >
@@ -460,246 +326,89 @@ export default function Newsletter() {
 
       <div className="py-16 lg:py-20">
         <div className="ss-container">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              data-testid="section-newsletter-form"
-            >
-              <div>
-                  <div className="mb-8">
-                    <h2 
-                      className={`${h2Class} mb-4`}
-                      data-testid="text-form-title"
-                    >
-                      {t.formTitle}
-                    </h2>
-                    <p 
-                      className="text-base text-ss-tinta leading-relaxed"
-                      data-testid="text-form-subtitle"
-                    >
-                      {t.formSubtitle}
-                    </p>
-                  </div>
-
-                  <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-testid="form-newsletter">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="firstName"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel data-testid="label-firstname">{t.firstNameLabel}</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  placeholder={t.firstNamePlaceholder} 
-                                  {...field} 
-                                  data-testid="input-firstname"
-                                />
-                              </FormControl>
-                              <FormMessage data-testid="error-firstname" />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="lastName"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel data-testid="label-lastname">{t.lastNameLabel}</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  placeholder={t.lastNamePlaceholder} 
-                                  {...field} 
-                                  data-testid="input-lastname"
-                                />
-                              </FormControl>
-                              <FormMessage data-testid="error-lastname" />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel data-testid="label-email">{t.emailLabel}</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="email"
-                                placeholder={t.emailPlaceholder} 
-                                {...field} 
-                                data-testid="input-email"
-                              />
-                            </FormControl>
-                            <FormMessage data-testid="error-email" />
-                          </FormItem>
-                        )}
-                      />
-
-                      <Button
-                        type="submit"
-                        className="w-full"
-                        disabled={newsletterMutation.isPending}
-                        data-testid="button-subscribe"
-                      >
-                        {newsletterMutation.isPending ? t.submitting : t.submit}
-                      </Button>
-
-                      <p 
-                        className="text-sm text-ss-medio"
-                        data-testid="text-privacy-note"
-                      >
-                        {t.privacyNote}
-                      </p>
-                    </form>
-                  </Form>
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="mt-8"
-              >
-                {/* Fila abierta con filete superior, sin caja */}
-                <div className="border-t border-ss-rule pt-6" data-testid="card-frequency">
-                  <h3 
-                    className={`${h3Class} mb-2`}
-                    data-testid="text-frequency-title"
-                  >
-                    {t.frequency}
-                  </h3>
-                  <p 
-                    className="text-base text-ss-tinta leading-[1.55]"
-                    data-testid="text-frequency-description"
-                  >
-                    {t.frequencyDescription}
-                  </p>
-                </div>
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="space-y-6"
-            >
-              <h2 
-                className={`${h2Class} mb-6`}
-                data-testid="text-benefits-title"
-              >
-                {t.whatYouReceive}
-              </h2>
-
-              {/* Filas abiertas: filete superior en Línea, titular en romana y texto en la sans */}
-              <div className="border-b border-ss-rule">
-                {benefits.map((benefit, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-                  >
-                    <div
-                      className="border-t border-ss-rule py-6"
-                      data-testid={`card-benefit-${index}`}
-                    >
-                      <h3 
-                        className={`${h3Class} mb-1`}
-                        data-testid={`text-benefit-title-${index}`}
-                      >
-                        {benefit.title}
-                      </h3>
-                      <p 
-                        className="text-base text-ss-tinta leading-[1.55]"
-                        data-testid={`text-benefit-description-${index}`}
-                      >
-                        {benefit.description}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Boletines anteriores: solo si hay ediciones vigentes. Las únicas publicadas eran de
-              2024 (energía y fiscal) con un "archivo completo próximamente": se retiraron. */}
-          {archiveIssues.length > 0 && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="mt-16"
-            data-testid="section-newsletter-archives"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="max-w-xl"
+            aria-labelledby="newsletter-title"
+            data-testid="section-newsletter-form"
           >
-            <div className="mb-10">
-              <h2 
-                className={`${h2Class} mb-4`}
-                data-testid="text-archives-title"
-              >
-                {t.archivesTitle}
-              </h2>
-              <p 
-                className="text-base text-ss-tinta leading-relaxed max-w-2xl"
-                data-testid="text-archives-subtitle"
-              >
-                {t.archivesSubtitle}
-              </p>
-            </div>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-testid="form-newsletter">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel data-testid="label-email">{t.emailLabel}</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          autoComplete="email"
+                          {...field}
+                          data-testid="input-email"
+                        />
+                      </FormControl>
+                      <FormMessage data-testid="error-email" />
+                    </FormItem>
+                  )}
+                />
 
-            {/* Filas abiertas: fecha en etiqueta, titular en romana */}
-            <div className="border-b border-ss-rule">
-              {archiveIssues.map((archive, index) => (
-                <article
-                  key={index}
-                  className="grid grid-cols-1 md:grid-cols-[12rem,1fr] gap-x-8 gap-y-2 border-t border-ss-rule py-6"
-                  data-testid={`card-archive-${index}`}
+                {/* Casilla del aviso de privacidad: el ::before amplía el área táctil a 44 px
+                    (min-h-0: en teléfono, index.css da 44 px de alto a todo botón y la casilla
+                    salía estirada); la etiqueta entera también la marca (el enlace no: navega).
+                    inline-link: el enlace sigue en la línea, sin el alto mínimo de los enlaces. */}
+                <FormField
+                  control={form.control}
+                  name="consent"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-start gap-3">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={(checked) => field.onChange(checked === true)}
+                            onBlur={field.onBlur}
+                            name={field.name}
+                            ref={field.ref}
+                            className="relative mt-[3px] h-5 min-h-0 w-5 border-ss-input data-[state=checked]:border-primary before:absolute before:-inset-3"
+                            data-testid="checkbox-consent"
+                          />
+                        </FormControl>
+                        <FormLabel
+                          className="text-[16px] font-normal leading-[1.5] text-ss-tinta"
+                          data-testid="label-consent"
+                        >
+                          {t.consentBefore}
+                          <Link
+                            href="/privacy-policy"
+                            className="inline-link text-ss-marino underline decoration-ss-input underline-offset-4 hover:decoration-ss-marino"
+                            data-testid="link-consent-privacy"
+                          >
+                            {t.consentLink}
+                          </Link>
+                          {t.consentAfter}
+                        </FormLabel>
+                      </div>
+                      <FormMessage data-testid="error-consent" />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Enviar: el único botón Azul Marino lleno, 44 px de alto */}
+                <Button
+                  type="submit"
+                  className="min-h-[44px] w-full px-6 sm:w-auto"
+                  disabled={newsletterMutation.isPending}
+                  data-testid="button-subscribe"
                 >
-                  <p 
-                    className="ss-label text-ss-medio md:pt-1.5"
-                    data-testid={`text-archive-date-${index}`}
-                  >
-                    {archive.date}
-                  </p>
-                  <div>
-                    <h3 
-                      className={`${h3Class} mb-2`}
-                      data-testid={`text-archive-title-${index}`}
-                    >
-                      {archive.title}
-                    </h3>
-                    <p 
-                      className="text-base text-ss-tinta leading-[1.55] mb-4"
-                      data-testid={`text-archive-description-${index}`}
-                    >
-                      {archive.description}
-                    </p>
-                    <a 
-                      href={`mailto:info@santossaucedo.com?subject=${encodeURIComponent(language === 'es' ? `Solicitud de boletín: ${archive.title}` : `Newsletter Request: ${archive.title}`)}`}
-                      className="inline-flex items-center text-[15px] font-semibold text-ss-marino underline decoration-ss-rule underline-offset-4 hover:decoration-ss-marino"
-                      data-testid={`button-archive-view-${index}`}
-                    >
-                      {t.viewArchive}
-                    </a>
-                  </div>
-                </article>
-              ))}
-            </div>
+                  {newsletterMutation.isPending ? t.submitting : t.submit}
+                </Button>
+              </form>
+            </Form>
           </motion.section>
-          )}
         </div>
       </div>
       </main>

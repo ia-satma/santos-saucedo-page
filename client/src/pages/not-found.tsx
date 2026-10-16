@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import { Eyebrow } from "@/components/editorial";
 
 export default function NotFound() {
@@ -9,62 +10,62 @@ export default function NotFound() {
 
   const content = {
     en: {
-      title: "Page Not Found",
-      subtitle: "The page you are looking for does not exist or has been moved",
-      goHome: "Go to Home",
-      goBack: "Go Back"
+      title: "Page not found",
+      subtitle: "The page you are looking for does not exist or has been moved.",
+      goHome: "Go to the home page",
+      goBack: "Go back"
     },
     es: {
       title: "Página no encontrada",
-      subtitle: "La página que busca no existe o ha sido movida",
+      subtitle: "La página que busca no existe o ha sido movida.",
       goHome: "Ir al inicio",
       goBack: "Volver"
     },
     de: {
       title: "Seite nicht gefunden",
-      subtitle: "Die gesuchte Seite existiert nicht oder wurde verschoben",
+      subtitle: "Die gesuchte Seite existiert nicht oder wurde verschoben.",
       goHome: "Zur Startseite",
       goBack: "Zurück"
     },
     zh: {
       title: "页面未找到",
-      subtitle: "您访问的页面不存在或已被移动",
+      subtitle: "您访问的页面不存在或已被移动。",
       goHome: "返回首页",
       goBack: "返回"
     },
     ko: {
       title: "페이지를 찾을 수 없습니다",
-      subtitle: "찾고 계신 페이지가 존재하지 않거나 이동되었습니다",
+      subtitle: "찾고 계신 페이지가 존재하지 않거나 이동되었습니다.",
       goHome: "홈으로 가기",
       goBack: "뒤로 가기"
     },
     ja: {
       title: "ページが見つかりません",
-      subtitle: "お探しのページは存在しないか、移動されました",
+      subtitle: "お探しのページは存在しないか、移動されました。",
       goHome: "ホームに戻る",
       goBack: "戻る"
     },
     ar: {
       title: "الصفحة غير موجودة",
-      subtitle: "الصفحة التي تبحث عنها غير موجودة أو تم نقلها",
+      subtitle: "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
       goHome: "الذهاب إلى الرئيسية",
       goBack: "رجوع"
     },
     ru: {
       title: "Страница не найдена",
-      subtitle: "Запрошенная страница не существует или была перемещена",
+      subtitle: "Запрошенная страница не существует или была перемещена.",
       goHome: "На главную",
       goBack: "Назад"
     },
     fr: {
       title: "Page non trouvée",
-      subtitle: "La page que vous recherchez n'existe pas ou a été déplacée",
+      subtitle: "La page que vous recherchez n'existe pas ou a été déplacée.",
       goHome: "Aller à l'accueil",
       goBack: "Retour"
     },
     it: {
       title: "Pagina non trovata",
-      subtitle: "La pagina che stai cercando non esiste o è stata spostata",
+      subtitle: "La pagina che stai cercando non esiste o è stata spostata.",
       goHome: "Vai alla home",
       goBack: "Indietro"
     }
@@ -75,6 +76,8 @@ export default function NotFound() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col" dir={isRTL ? "rtl" : "ltr"} data-testid="page-not-found">
+      {/* Título de pestaña y descripción propios en el idioma de la página; noindex (SEOHead) */}
+      <SEOHead page="notFound" language={language} />
       <Header />
 
       {/* Mismo encabezado de marca que las páginas internas (Azul Profundo, eyebrow §, titular en romana),

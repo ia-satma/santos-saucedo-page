@@ -179,10 +179,12 @@ html:has(.ss26) body {
   padding-inline: var(--ss-pad);
 }
 
-/* Titulares: romana de remates en caja baja; el tamaño óptico lo elige la fuente */
+/* Titulares: romana de remates en caja baja; el tamaño óptico lo elige la fuente.
+   Dos pesos en todo el sitio (index.css, escala de titulares): 350 en display, sobre
+   claro y sobre Azul Profundo, y 400 en texto (h2 internos, h3, entradas, nombres). */
 .ss-display {
   font-family: var(--ss-font-serif);
-  font-weight: 400;
+  font-weight: 350;
   font-optical-sizing: auto;
   text-transform: none;
   letter-spacing: -0.018em;
@@ -190,22 +192,13 @@ html:has(.ss26) body {
   font-feature-settings: "kern", "liga", "lnum";
   text-wrap: balance;
 }
-/* Sobre Azul Profundo la letra blanca engorda: un punto más fina */
-.ss-navy .ss-display {
-  font-weight: 350;
-}
-/* Titular del héroe de la portada (86 px a 1440): 340, un pelo más fino que los h2 sobre
-   Azul Profundo. Tamaño, interlínea y espaciado van en Hero26. */
-#hero h1.ss-display {
-  font-weight: 340;
-}
 
-/* Cifras (héroe de la portada; sirve también para "La firma en números"): romana 300 con
-   cifras de caja alta proporcionales. Azul Marino sobre claro, blanco sobre Azul Profundo.
-   Nunca lima. */
+/* Cifras (héroe de la portada; sirve también para "La firma en números"): romana 350, el
+   peso display, con cifras de caja alta proporcionales. Azul Marino sobre claro, blanco
+   sobre Azul Profundo. Nunca lima. */
 .ss-figure {
   font-family: var(--ss-font-serif);
-  font-weight: 300;
+  font-weight: 350;
   font-optical-sizing: auto;
   font-size: clamp(40px, 4.2vw, 64px);
   line-height: 1;
@@ -477,7 +470,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   transform: scaleX(1);
 }
 
-/* Fila de prácticas: la subnumeración § pasa de tenue a pleno */
+/* Fila de prácticas: el número (01–04) pasa de tenue a pleno */
 .ss-row .ss-row-num {
   color: rgb(36 37 92 / 0.65);
   transition: color 320ms var(--ss-ease);

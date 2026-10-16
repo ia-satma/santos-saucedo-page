@@ -15,7 +15,9 @@ interface LanguageContextType {
 
 const STORAGE_KEY = "ss_language";
 const DETECTION_KEY = "ss_language_detected";
-const DEFAULT_LANGUAGE: LanguageCode = isStaticSite ? "es" : "en";
+// Español por defecto (también lo que responde /api/detect-language si Accept-Language
+// no trae ninguno de los 10 idiomas del sitio)
+const DEFAULT_LANGUAGE: LanguageCode = "es";
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
@@ -93,13 +95,18 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
     return langInfo || SUPPORTED_LANGUAGES[0];
   }, [language]);
 
-  // Geolocation-based language detection (runs once on first visit)
+  // Detección en la primera visita: el servidor solo mira la cabecera Accept-Language
+  // del navegador (sin geolocalización ni terceros)
   useEffect(() => {
     if (!ready || detectionRef.current) return;
     detectionRef.current = true;
     
     const stored = getStoredLanguage();
-    const alreadyDetected = localStorage.getItem(DETECTION_KEY);
+    let alreadyDetected: string | null = null;
+    try {
+      alreadyDetected = localStorage.getItem(DETECTION_KEY);
+    } catch {
+    }
     
     // Only detect if no stored preference AND we haven't detected before
     if (stored || alreadyDetected || isStaticSite) return;
@@ -115,13 +122,19 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
           if (isValidLanguageCode(detectedLang) && detectedLang !== DEFAULT_LANGUAGE) {
             setLanguageState(detectedLang);
             i18nInstance.changeLanguage(detectedLang);
-            localStorage.setItem(STORAGE_KEY, detectedLang);
+            try {
+              localStorage.setItem(STORAGE_KEY, detectedLang);
+            } catch {
+            }
           }
         }
       } catch {
         // Silently fail - user can manually select language
       } finally {
-        localStorage.setItem(DETECTION_KEY, "true");
+        try {
+          localStorage.setItem(DETECTION_KEY, "true");
+        } catch {
+        }
         setIsDetecting(false);
       }
     };
@@ -144,7 +157,10 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
         i18nInstance.changeLanguage(stored);
       }
     } else {
-      localStorage.setItem(STORAGE_KEY, language);
+      try {
+        localStorage.setItem(STORAGE_KEY, language);
+      } catch {
+      }
       if (i18nInstance.language !== language) {
         i18nInstance.changeLanguage(language);
       }
