@@ -61,7 +61,8 @@ Las pruebas cubren contratos, rechazo de solicitudes inválidas, ejecución sele
 3. **Nuevos archivos en App Storage:** la biblioteca del corte previo ya usa el bucket de Santos. Falta comprobar en Replit la persistencia tras reinicio de documentos privados, audio, imágenes generadas y presentaciones del nuevo corte.
 4. **Antivirus de documentos privados:** producción exige ClamAV por defecto; falta verificar ejecutable y firmas en Replit. No se desactivó el requisito.
 5. **Contenido incompleto:** la revisión local detecta seis advertencias de datos iniciales (tres registros incompletos y tres con traducción opcional faltante); requieren contenido editorial, no equivalen a fallos de navegación.
-6. **Paridad total de Von:** MFA, cargas fragmentadas grandes, variantes automáticas de video y otros módulos específicos siguen documentados en la matriz de paridad. Esta entrega no los certifica.
+6. **Dependencias:** `npm ci` terminó correctamente. `npm audit` detectó 44 avisos totales (23 altos); `npm audit --omit=dev` detectó 35 (20 altos, 13 moderados y dos bajos, ninguno crítico). Incluye dependencias directas y transitivas. No se aplicó una actualización masiva con cambios incompatibles. Revisar exposición y corregir versiones en una ronda dedicada antes de aprobar producción; pasar pruebas funcionales no acredita seguridad de dependencias.
+7. **Paridad total de Von:** MFA, cargas fragmentadas grandes, variantes automáticas de video y otros módulos específicos siguen documentados en la matriz de paridad. Esta entrega no los certifica.
 
 ## Reproducción
 
