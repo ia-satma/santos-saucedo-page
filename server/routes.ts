@@ -7,6 +7,11 @@ import { mediaInventory, persistentMediaItem, registerMediaLibrary } from "./cms
 import { registerNewsEditor } from "./cms/newsEditor";
 import { getBundledMediaMap } from "./cms/bundledMediaMap";
 import { ensureCmsSchema, registerCmsRoutes, getCmsContact } from "./cms/siteConfig";
+import { registerAdminUsers } from "./cms/adminUsers";
+import { recordAccessEvent } from "./cms/accessAudit";
+import { hasAdminPermission } from "@shared/adminAccess";
+import { editorialDb } from "./db";
+import { adminUsers as accessUsers, adminSessions as accessSessions } from "@shared/schema";
 import type { Express, Request, Response } from "express";
 import { createServer, type IncomingMessage, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
@@ -213,6 +218,7 @@ export async function registerRoutes(
   app: Express
 ): Promise<Server> {
   await ensureCmsSchema();
+  registerAdminUsers(app);
   registerCmsRoutes(app);
   registerCatalogOrder(app);
   registerMediaLibrary(app);
@@ -222,7 +228,7 @@ export async function registerRoutes(
     try {
       const [people,practices,notes,media,contacts]=await Promise.all([storage.getTeamMembers(),storage.getAllPracticeGroups(),storage.getNews(),mediaInventory(),storage.getContactSubmissions()]);
       res.set('Cache-Control','private, no-store');
-      res.json({team:{total:people.length,visible:people.filter(isNamedOnTeamPage).length},practices:{total:practices.length,visible:practices.filter(g=>g.published!==false).length},news:{total:notes.length,visible:notes.filter(n=>isPublicNews(n)).length},media:{total:media.length},unread:contacts.filter(c=>!c.read).length,recent:notes.slice(0,5).map(n=>({id:n.id,title:n.titleEs||n.title,category:n.categoryEs||n.category,date:n.date,visible:isPublicNews(n)}))});
+      res.json({team:{total:people.length,visible:people.filter(isNamedOnTeamPage).length},practices:{total:practices.length,visible:practices.filter(g=>g.published!==false).length},news:{total:notes.length,visible:notes.filter(n=>isPublicNews(n)).length},media:{total:media.length},unread:hasAdminPermission(_req.adminUser,"inbox")?contacts.filter(c=>!c.read).length:0,recent:hasAdminPermission(_req.adminUser,"editorial")?notes.slice(0,5).map(n=>({id:n.id,title:n.titleEs||n.title,category:n.categoryEs||n.category,date:n.date,visible:isPublicNews(n)})):[]});
     }catch{res.status(503).json({error:'No se pudo cargar el resumen del sitio.'});}
   });
   // Existing public asset URLs retain compatibility while bytes live in App Storage.
@@ -317,7 +323,7 @@ export async function registerRoutes(
         .filter(Boolean);
       const token = offered[0] === PIPELINE_WS_PROTOCOL && offered.length === 2 ? offered[1] : null;
       validateSessionToken(token)
-        .then((result) => done(result.ok, result.ok ? undefined : 401, result.ok ? undefined : 'Unauthorized'))
+        .then((result) => {const allowed=result.ok&&hasAdminPermission(result.user,"agents");done(allowed,allowed?undefined:403,allowed?undefined:'Forbidden');})
         .catch((error) => {
           console.error('[WebSocket] Session check failed:', error);
           done(false, 500, 'Internal Server Error');
@@ -1225,12 +1231,14 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       if (!user) {
         await comparePassword(password, "$2b$12$InvalidHashToPreventTimingAttackXXXXXXXXXXXX");
         recordLoginAttempt(rateKey, false);
+        await recordAccessEvent("login.failed", null);
         return res.status(401).json({ error: "Invalid credentials" });
       }
 
       // Check if user is active
       if (!user.isActive) {
         recordLoginAttempt(rateKey, false);
+        await recordAccessEvent("login.failed", user.id);
         return res.status(401).json({ error: "Account is disabled" });
       }
 
@@ -1238,6 +1246,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       const validPassword = await comparePassword(password, user.passwordHash);
       if (!validPassword) {
         recordLoginAttempt(rateKey, false);
+        await recordAccessEvent("login.failed", user.id);
         return res.status(401).json({ error: "Invalid credentials" });
       }
 
@@ -1246,16 +1255,16 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
       // Create session
       const token = generateToken();
-      const session = await storage.createAdminSession({
-        userId: user.id,
-        token,
-        expiresAt: getSessionExpiry(),
-        ipAddress: ip,
-        userAgent: req.headers["user-agent"] || null,
+      const session = await editorialDb.transaction(async tx => {
+        const [current] = await tx.select().from(accessUsers).where(eq(accessUsers.id,user.id)).for("update");
+        if(!current?.isActive||current.passwordHash!==user.passwordHash) return null;
+        const [session]=await tx.insert(accessSessions).values({userId:user.id,token,expiresAt:getSessionExpiry(),ipAddress:ip,userAgent:req.headers["user-agent"]||null}).returning();
+        await tx.update(accessUsers).set({lastLogin:new Date()}).where(eq(accessUsers.id,user.id));
+        return session;
       });
-
-      // Update last login
-      await storage.updateAdminUserLogin(user.id);
+      if(!session)return res.status(401).json({error:"La cuenta cambió. Inicie sesión de nuevo."});
+      await recordAccessEvent("login.succeeded",user.id);
+      res.setHeader("Cache-Control","no-store");
 
       res.json({
         token: session.token,
@@ -1264,6 +1273,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
           username: user.username,
           email: user.email,
           role: user.role,
+          permissions: user.permissions || [],
         },
       });
     } catch (error) {
@@ -1296,6 +1306,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         username: user.username,
         email: user.email,
         role: user.role,
+        permissions: user.permissions || [],
         createdAt: user.createdAt,
         lastLogin: user.lastLogin,
       });

@@ -19,6 +19,12 @@ function decode(raw: string | null | undefined): Stored | undefined {
 
 // Idempotent compatibility migration. It adds no content and never changes existing rows.
 export async function ensureCmsSchema() {
+  await db.execute(sql`ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS permissions jsonb DEFAULT '[]'::jsonb, ADD COLUMN IF NOT EXISTS updated_at timestamp DEFAULT now()`);
+  await db.execute(sql`CREATE TABLE IF NOT EXISTS admin_access_events (
+    id varchar PRIMARY KEY DEFAULT gen_random_uuid(), user_id varchar, actor_id varchar,
+    action text NOT NULL, details jsonb, created_at timestamp DEFAULT now()
+  )`);
+  await db.execute(sql`CREATE INDEX IF NOT EXISTS admin_access_events_created_idx ON admin_access_events (created_at DESC)`);
   await db.execute(sql`CREATE TABLE IF NOT EXISTS site_config (
     id varchar PRIMARY KEY DEFAULT gen_random_uuid(), key text NOT NULL UNIQUE,
     value text, value_es text, type text NOT NULL DEFAULT 'text',

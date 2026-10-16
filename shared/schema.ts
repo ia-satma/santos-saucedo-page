@@ -360,11 +360,22 @@ export const adminUsers = pgTable("admin_users", {
   createdAt: timestamp("created_at").defaultNow(),
   lastLogin: timestamp("last_login"),
   isActive: boolean("is_active").default(true),
+  permissions: jsonb("permissions").$type<string[]>().default([]),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const insertAdminUserSchema = createInsertSchema(adminUsers).omit({ id: true, createdAt: true, lastLogin: true });
 export type InsertAdminUser = z.infer<typeof insertAdminUserSchema>;
 export type AdminUser = typeof adminUsers.$inferSelect;
+
+export const adminAccessEvents = pgTable("admin_access_events", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id"),
+  actorId: varchar("actor_id"),
+  action: text("action").notNull(),
+  details: jsonb("details").$type<Record<string, unknown>>(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
 
 // Blog Categories
 export const blogCategories = pgTable("blog_categories", {

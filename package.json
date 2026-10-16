@@ -16,7 +16,8 @@
     "db:push": "drizzle-kit push",
     "replit:import-media": "node --import tsx scripts/import-replit-media.ts",
     "test:cms": "node --import tsx scripts/check-cms.ts",
-    "test:editorial": "node --import tsx scripts/check-editorial.ts"
+    "test:editorial": "node --import tsx scripts/check-editorial.ts",
+    "test:access": "node --import tsx scripts/check-access.ts"
   },
   "dependencies": {
     "@google/genai": "^1.32.0",

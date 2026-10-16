@@ -42,6 +42,8 @@ const Newsletter = lazy(() => import("@/pages/Newsletter"));
 const AdminOverview = lazy(() => import("@/pages/admin/AdminOverview"));
 const AdminContentHub = lazy(() => import("@/pages/admin/AdminContentHub"));
 const AdminMedia = lazy(() => import("@/pages/admin/AdminMedia"));
+const AdminUsers = lazy(() => import("@/pages/admin/AdminUsers"));
+const AdminAccount = lazy(() => import("@/pages/admin/AdminAccount"));
 const AdminOrder = lazy(() => import("@/pages/admin/AdminOrder"));
 const AdminNewsForm = lazy(() => import("@/pages/admin/AdminNewsForm"));
 const AdminManual = lazy(() => import("@/pages/admin/AdminManual"));
@@ -224,6 +226,8 @@ function Router() {
         <Route path="/admin" component={AdminOverview} />
         <Route path="/admin/content" component={AdminContentHub} />
         <Route path="/admin/media" component={AdminMedia} />
+        <Route path="/admin/users" component={AdminUsers} />
+        <Route path="/admin/account" component={AdminAccount} />
         <Route path="/admin/order" component={AdminOrder} />
         <Route path="/admin/manual" component={AdminManual} />
         <Route path="/admin/operations" component={AdminDashboard} />

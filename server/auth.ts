@@ -3,6 +3,7 @@ import crypto from "crypto";
 import type { Request, Response, NextFunction } from "express";
 import { storage } from "./storage";
 import type { AdminUser } from "@shared/schema";
+import { adminPermissionForPath, hasAdminPermission, isReadOnlyAdmin } from "@shared/adminAccess";
 
 const SALT_ROUNDS = 12;
 const TOKEN_BYTES = 32;
@@ -172,6 +173,13 @@ export async function authMiddleware(
 
     // Attach user to request
     req.adminUser = result.user;
+    const permission = adminPermissionForPath(req.originalUrl);
+    if (permission && (!hasAdminPermission(result.user, permission) ||
+      (isReadOnlyAdmin(result.user) && !["GET", "HEAD", "OPTIONS"].includes(req.method)))) {
+      res.status(403).json({ error: "Su cuenta no tiene permiso para esta acción." });
+      return;
+    }
+    res.setHeader("Cache-Control", "private, no-store");
     next();
   } catch (error) {
     console.error("Auth middleware error:", error);
@@ -187,7 +195,11 @@ export function requireRole(...roles: string[]) {
     }
     // super_admin (el rol que crean el seed y /api/admin/init) pasa cualquier control de rol:
     // con requireRole("editor", "admin") solo, el administrador principal recibía 403
-    if (req.adminUser.role !== "super_admin" && !roles.includes(req.adminUser.role)) {
+    const permission = adminPermissionForPath(req.originalUrl);
+    const moduleGrant = roles.includes("editor") && permission && permission !== "users" &&
+      hasAdminPermission(req.adminUser, permission) &&
+      (!isReadOnlyAdmin(req.adminUser) || ["GET", "HEAD"].includes(req.method));
+    if (req.adminUser.role !== "super_admin" && !roles.includes(req.adminUser.role) && !moduleGrant) {
       res.status(403).json({ error: "Insufficient permissions" });
       return;
     }

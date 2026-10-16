@@ -2,6 +2,7 @@ import {
   DashboardIcon,
   FileTextIcon,
   PersonIcon,
+  LockClosedIcon,
   ImageIcon,
   ReaderIcon,
   EnvelopeClosedIcon,
@@ -89,6 +90,18 @@ export const adminNavigation = [
   {
     label: "Configuración",
     items: [
+      {
+        href: "/admin/users",
+        label: "Usuarios y permisos",
+        hint: "Crear cuentas, roles, accesos y contraseñas",
+        icon: PersonIcon,
+      },
+      {
+        href: "/admin/account",
+        label: "Mi cuenta",
+        hint: "Cambiar mi contraseña y cerrar mis sesiones",
+        icon: LockClosedIcon,
+      },
       {
         href: "/admin/site-config/chrome",
         label: "Navegación y pie",

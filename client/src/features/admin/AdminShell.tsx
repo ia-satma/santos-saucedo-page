@@ -24,6 +24,12 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { adminNavigation, allAdminLinks, activeAdminLink } from "./navigation";
+import {
+  adminRoleLabels,
+  canVisitAdminPath,
+  isReadOnlyAdmin,
+  type AccessUser,
+} from "@shared/adminAccess";
 import "./admin.css";
 
 export function AdminShell({ children }: { children: ReactNode }) {
@@ -33,7 +39,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const [mobile, setMobile] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const me = useQuery<{ role: string }>({
+  const me = useQuery<AccessUser>({
     queryKey: ["/api/admin/me"],
     enabled: isAuthenticated,
     staleTime: 60000,
@@ -84,9 +90,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
         className="admin-navigation"
       >
         {adminNavigation.map((group) => {
+          const visibleItems = group.items.filter((item) =>
+            canVisitAdminPath(me.data, item.href),
+          );
+          if (!visibleItems.length) return null;
           const items = (
             <ul>
-              {group.items.map((item) => {
+              {visibleItems.map((item) => {
                 const Icon = item.icon;
                 const selected = active?.href === item.href;
                 return (
@@ -129,11 +139,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         <div>
           <strong>Equipo editorial</strong>
           <span>
-            {me.data?.role === "super_admin"
-              ? "Administración principal"
-              : me.data?.role === "editor"
-                ? "Edición de contenido"
-                : "Sesión de administración"}
+            {adminRoleLabels[me.data?.role || ""] || "Sesión de administración"}
           </span>
         </div>
         <button
@@ -146,24 +152,26 @@ export function AdminShell({ children }: { children: ReactNode }) {
       </div>
     </>
   );
-  if (isLoading)
+  if (isLoading || me.isLoading)
     return (
       <div className="admin-shell">
         <div className="admin-loading">Cargando el espacio de trabajo…</div>
       </div>
     );
   if (!isAuthenticated) return null;
-  const matches = allAdminLinks.filter((x) =>
-    `${x.label} ${x.hint}`
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLocaleLowerCase()
-      .includes(
-        search
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .toLocaleLowerCase(),
-      ),
+  const matches = allAdminLinks.filter(
+    (x) =>
+      canVisitAdminPath(me.data, x.href) &&
+      `${x.label} ${x.hint}`
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLocaleLowerCase()
+        .includes(
+          search
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLocaleLowerCase(),
+        ),
   );
   return (
     <div className="admin-shell">
@@ -215,7 +223,26 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </div>
         </header>
         <div className="admin-workspace" id="admin-main" tabIndex={-1}>
-          <AdminLanguageScope>{children}</AdminLanguageScope>
+          {me.data && isReadOnlyAdmin(me.data) && (
+            <p className="admin-users-notice mx-6 mt-6" role="status">
+              Modo consulta: puede revisar las secciones habilitadas. Su cuenta
+              no permite guardar cambios ni ejecutar procesos.
+            </p>
+          )}
+          <AdminLanguageScope>
+            {canVisitAdminPath(me.data, path) ? (
+              children
+            ) : (
+              <main className="admin-management-page">
+                <h1>Acceso restringido</h1>
+                <p>
+                  Su cuenta no tiene permiso para esta sección. Solicite acceso
+                  al administrador principal.
+                </p>
+                <Link href="/admin/dashboard">Volver al resumen</Link>
+              </main>
+            )}
+          </AdminLanguageScope>
         </div>
         <footer className="admin-workspace-footer">
           <span>Santos &amp; Saucedo · Gestión de contenido</span>
