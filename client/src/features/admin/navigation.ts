@@ -104,7 +104,7 @@ export const adminNavigation = [
       {
         href: "/admin/site-config/contactData",
         label: "Datos del despacho",
-        hint: "Dirección, teléfonos y correos",
+        hint: "Contacto: dirección, teléfonos y correos",
         icon: EnvelopeClosedIcon,
       },
       {

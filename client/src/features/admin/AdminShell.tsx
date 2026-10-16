@@ -197,6 +197,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <div className="admin-top-actions">
             <button
               className="admin-search-trigger"
+              aria-label="Buscar sección"
               onClick={() => setSearchOpen(true)}
             >
               <MagnifyingGlassIcon />
