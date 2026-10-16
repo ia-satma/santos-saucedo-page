@@ -62,7 +62,9 @@ export class PresentationOutputPipeline {
       let pptxUrl: string | null = null;
       let pdfUrl: string | null = null;
       const pngUrls: string[] = [];
-      const needPng = formats.includes('png');
+      // Preview and individual slide downloads remain available even when the
+      // requested editable output is only PowerPoint.
+      const needPng = true;
       const needPdf = formats.includes('pdf');
       const pngBuffers: Buffer[] = [];
       const slideDirectory = deps.joinPath(presentationDirectory, 'slides');

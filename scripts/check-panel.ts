@@ -5,6 +5,7 @@ import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { createServer } from "node:http";
 import express from "express";
+import JSZip from "jszip";
 import { eq, or } from "drizzle-orm";
 import { db } from "../server/db";
 import * as schema from "../shared/schema";
@@ -375,6 +376,15 @@ try {
       "Texto QA",
     ),
   );
+  for (const format of ["txt", "html", "json"]) {
+    const url = `/api/admin/copies-ai/${copy.id}/export/${format}`;
+    const exported = await fetch(base + url, { headers: { Authorization: `Bearer ${token}` } });
+    assert.equal(exported.status, 200);
+    assert.match(exported.headers.get("content-disposition") || "", /attachment/);
+    assert.match(exported.headers.get("cache-control") || "", /private, no-store/);
+    assert.ok((await exported.text()).includes("Texto QA")); count++;
+    assert.equal((await fetch(base + url)).status, 401); count++;
+  }
   for (const archived of [true, false]) {
     const result = ok(
       await call("POST", `/api/admin/copies-ai/${copy.id}/archive`, {
@@ -466,6 +476,19 @@ try {
   });
   assert.equal(slide.status, 200);
   count++;
+  assert.match(slide.headers.get("content-disposition") || "", /inline/);
+  const pngDownload = await fetch(base + presentation.pngUrls[0] + "?download=1", { headers: { Authorization: `Bearer ${token}` } });
+  assert.equal(pngDownload.status, 200);
+  assert.match(pngDownload.headers.get("content-disposition") || "", /attachment/); count++;
+  const zipUrl = `/api/admin/generated-presentations/${presentation.id}/slides.zip`;
+  const zipDownload = await fetch(base + zipUrl, { headers: { Authorization: `Bearer ${token}` } });
+  assert.equal(zipDownload.status, 200);
+  assert.match(zipDownload.headers.get("content-type") || "", /application\/zip/);
+  const zip = await JSZip.loadAsync(await zipDownload.arrayBuffer());
+  assert.equal(Object.keys(zip.files).length, presentation.pngUrls.length);
+  for (const entry of Object.values(zip.files)) assert.ok((await entry.async("nodebuffer")).subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10])));
+  count++;
+  assert.equal((await fetch(base + zipUrl)).status, 401); count++;
   ok(
     await call(
       "DELETE",

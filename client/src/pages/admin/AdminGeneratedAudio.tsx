@@ -1,3 +1,4 @@
+import { AssetDownloadButton } from "@/components/admin/AssetFiles";
 import { AgentCreator } from "@/components/admin/AgentCreator";
 import { useEffect } from "react";
 import { AdminPageHelp } from "@/components/admin/AdminPageHelp";
@@ -131,7 +132,7 @@ export default function AdminGeneratedAudio() {
                     </div>
 
                     {audio.available ? (
-                      <audio controls src={audio.audioUrl} className="w-full" data-testid={`audio-player-${audio.id}`} />
+                      <audio controls preload="metadata" aria-label="Escuchar audio generado" src={audio.audioUrl} className="w-full" data-testid={`audio-player-${audio.id}`} />
                     ) : (
                       <div className="rounded-md border bg-muted/40 p-4 text-center text-xs text-muted-foreground" role="status">
                         El registro permanece, pero el archivo no está disponible.
@@ -159,7 +160,7 @@ export default function AdminGeneratedAudio() {
                       </Link>
                     ) : null}
 
-                    <div className="flex items-center gap-1 pt-1">
+                    <div className="flex flex-wrap items-center gap-2 pt-1">
                       <Button
                         size="sm"
                         variant="outline"
@@ -170,6 +171,7 @@ export default function AdminGeneratedAudio() {
                         <Copy className="w-3 h-3 mr-1" />
                         Copiar URL
                       </Button>
+                      {audio.available && <AssetDownloadButton url={audio.audioUrl} filename={audio.audioUrl.split("/").pop() || "audio.mp3"} testId={`button-download-audio-${audio.id}`}>Descargar audio</AssetDownloadButton>}
                     </div>
                   </CardContent>
                 </Card>

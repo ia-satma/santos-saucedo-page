@@ -448,7 +448,7 @@ test('la canalización guarda local, persiste y solo entonces crea historial', a
   assert.equal(result.presentation?.pngUrls.length, 1);
 });
 
-test('la canalización respeta formatos selectivos y no rasteriza un PPTX aislado', async () => {
+test('un PPTX aislado conserva PNG privadas para vista previa y descarga por diapositiva', async () => {
   const harness = createPipelineHarness();
   const result = await harness.pipeline.renderAndSave(
     PIPELINE_MODEL,
@@ -456,9 +456,10 @@ test('la canalización respeta formatos selectivos y no rasteriza un PPTX aislad
   );
 
   assert.equal(result.success, true);
-  assert.doesNotMatch(harness.operations.join(','), /raster|pdf|write:\.png|write:\.pdf/);
-  assert.match(harness.operations.join(','), /persist:1,history,remove:\.pptx$/);
-  assert.deepEqual(result.presentation?.pngUrls, []);
+  assert.doesNotMatch(harness.operations.join(','), /pdf|write:\.pdf/);
+  assert.match(harness.operations.join(','), /raster,write:\.png/);
+  assert.match(harness.operations.join(','), /persist:2,history,remove:\.png,remove:\.pptx$/);
+  assert.equal(result.presentation?.pngUrls.length, 1);
   assert.equal(result.presentation?.pdfUrl, null);
 });
 
