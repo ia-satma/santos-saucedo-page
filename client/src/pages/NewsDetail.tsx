@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { useState } from "react";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -125,6 +126,7 @@ function AuthorCard({
 }
 
 export default function NewsDetail() {
+  const cmsChrome = useCmsContent("chrome", chrome26);
   const { language } = useLanguage();
   const { toast } = useToast();
   const params = useParams<{ slug: string }>();
@@ -288,9 +290,10 @@ export default function NewsDetail() {
     },
   };
 
-  const t = content[language] || content.en;
+  const editableContent = useCmsContent("news-detail", content);
+  const t = editableContent[language] || editableContent.en;
   // Nombre de la publicación: el rótulo del menú en cada idioma (h1 de /news, pestaña, vuelta)
-  const newsLabel = (chrome26[language as keyof typeof chrome26] ?? chrome26.en).nav[3].label;
+  const newsLabel = (cmsChrome[language as keyof typeof chrome26] ?? cmsChrome.en).nav[3].label;
 
   // Formato único de fecha del Monitor (lib/newsDate): el mismo que el listado de /news
   const formatDate = (date: Date | string | null) => formatNewsDate(date, language);

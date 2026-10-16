@@ -1,3 +1,5 @@
+import { useCmsMedia } from "@/lib/cmsMedia";
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import fachada768 from "@assets/ss26/oficina/fachada-768.webp";
@@ -7,11 +9,11 @@ import salaJuntas1536 from "@assets/ss26/oficina/sala-juntas-1536.webp";
 import socioSantosArce from "@assets/ss26/socio-enrique-hernan-santos-arce.webp";
 import socioSantosGuzman from "@assets/ss26/socio-enrique-hernan-santos-guzman.webp";
 import socioSaucedoMontemayor from "@assets/ss26/socio-mario-saucedo-montemayor.webp";
-import { fallbackToOriginalSrc, getTeamPhotoSrcSet } from "@/lib/teamPhotoSources";
+import { isNamedOnTeamPage, fallbackToOriginalSrc, getTeamPhotoSrcSet } from "@/lib/teamPhotoSources";
 import { keepFirmName } from "@/lib/firmName";
-import { officeLabel } from "@/lib/officeLabel";
+import { useOfficeLabel } from "@/lib/officeLabel";
 import { MonitorList } from "@/components/monitor/MonitorList";
-import type { News } from "@shared/schema";
+import type { News, PracticeGroup, TeamMember } from "@shared/schema";
 import { Reveal, SectionHead, TextLink } from "./primitives";
 import { home26, langAttrs, type Lang26 } from "./content";
 import { chrome26 } from "./chrome26";
@@ -19,7 +21,10 @@ import { chrome26 } from "./chrome26";
 /* Texto de los TextLink: la etiqueta del menú de su destino (chrome26, fuente única de los
    nombres de sección), un solo texto por destino, como en /about. */
 const NAV = { firma: 0, practicas: 1, socios: 2, monitor: 3 } as const;
-const navLabel = (lang: Lang26, key: keyof typeof NAV) => chrome26[lang].nav[NAV[key]].label;
+function useNavLabel() {
+  const liveChrome = useCmsContent("chrome", chrome26);
+  return (lang: Lang26, key: keyof typeof NAV) => liveChrome[lang].nav[NAV[key]].label;
+}
 
 /* Ritmo vertical propio de cada sección. Los pares de Codex §5.2 (móvil/escritorio)
    van en md/lg; en teléfono un paso menos para no alargar la página. */
@@ -74,7 +79,11 @@ const socioSrcSetProps = (slug: string) => {
 
 /* § 01 — La firma */
 export function Firma26({ lang }: { lang: Lang26 }) {
-  const t = home26[lang].firma;
+  const officeNameFor = useOfficeLabel();
+  const navLabel = useNavLabel();
+  const liveHome = useCmsContent("home", home26);
+  const t = liveHome[lang].firma;
+  const { photos } = useCmsMedia();
   return (
     <section id="firma" {...langAttrs[lang]} data-surface="light" className={`bg-white ${Y.firma}`} aria-labelledby="ss26-firma">
       {/* Retícula de 12. Desde 1280: texto en 4 columnas y foto desde la 5 (el borde de la
@@ -118,8 +127,8 @@ export function Firma26({ lang }: { lang: Lang26 }) {
           {/* Fondo Línea mientras carga */}
           <div className="overflow-hidden bg-ss-rule">
             <img
-              src={fachada768}
-              srcSet={`${fachada768} 768w, ${fachada1536} 1159w`}
+              src={photos.fachada.url}
+              srcSet={photos.fachada.smallUrl && photos.fachada.smallUrl !== photos.fachada.url ? `${photos.fachada.smallUrl} 768w, ${photos.fachada.url} 1159w` : undefined}
               sizes="(min-width: 1280px) min(760px, 52vw), (min-width: 768px) 708px, calc(100vw - 40px)"
               alt={t.alt}
               loading="lazy"
@@ -137,7 +146,7 @@ export function Firma26({ lang }: { lang: Lang26 }) {
             <span className="ss-label shrink-0 text-ss-marino">Fig. 1</span>
             <span className="min-w-0 flex-1 basis-[16rem]">{t.caption}</span>
             <TextLink href="/offices" className="shrink-0" data-testid="link-home-offices">
-              {officeLabel(lang)}
+              {officeNameFor(lang)}
             </TextLink>
           </figcaption>
         </figure>
@@ -148,7 +157,9 @@ export function Firma26({ lang }: { lang: Lang26 }) {
 
 /* Manifiesto — Lo que creemos (sin numeral: no es una sección del menú; lleva su etiqueta) */
 export function Creemos26({ lang }: { lang: Lang26 }) {
-  const t = home26[lang].creemos;
+  const navLabel = useNavLabel();
+  const liveHome = useCmsContent("home", home26);
+  const t = liveHome[lang].creemos;
   return (
     // Banda Hueso: titular Azul Marino, texto Gris Tinta, § Azul Marino (sin lima sobre claro)
     <section {...langAttrs[lang]} className={`ss-paper ${Y.creemos}`} aria-labelledby="ss26-creemos">
@@ -177,7 +188,11 @@ export function Creemos26({ lang }: { lang: Lang26 }) {
 
 /* § 02 — Prácticas */
 export function Practicas26({ lang }: { lang: Lang26 }) {
-  const t = home26[lang].practicas;
+  const navLabel = useNavLabel();
+  const liveHome = useCmsContent("home", home26);
+  const t = liveHome[lang].practicas;
+  const { data: groups = [], isError: practicesError } = useQuery<PracticeGroup[]>({ queryKey: ["/api/practice-groups"] });
+  const items = practicesError ? [] : groups.map(group => ({ slug: group.slug, title: lang === "es" ? group.nameEs : group.name, body: lang === "es" ? group.descriptionEs : group.description }));
   return (
     <section
       id="practices"
@@ -209,7 +224,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
             el número en las columnas 1–4 y el texto desde la 5 (el borde de La firma, Socios y el
             pie). Las reglas entre filas se quedan: llevan el trazo del hover */}
         <ol className="mt-14 border-t border-ss-rule lg:mt-16">
-          {t.items.map((item, i) => (
+          {items.map((item, i) => (
             <Reveal as="li" key={item.slug} delay={i * 0.06} className="ss-row relative border-b border-ss-rule">
                 {/* inline-link: fuera de la regla móvil de index.css que vuelve inline-flex todo <a>.
                     Nombre del enlace = título; el texto va como descripción. */}
@@ -253,7 +268,10 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
 
 /* Empresas extranjeras en México (sin cabecera §: no es una sección del menú y el h2 la nombra) */
 export function Extranjeras26({ lang }: { lang: Lang26 }) {
-  const t = home26[lang].extranjeras;
+  const navLabel = useNavLabel();
+  const liveHome = useCmsContent("home", home26);
+  const t = liveHome[lang].extranjeras;
+  const { photos } = useCmsMedia();
   return (
     <section
       {...langAttrs[lang]}
@@ -269,8 +287,8 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
         <div className="relative min-h-[300px] overflow-hidden sm:min-h-[420px] xl:min-h-[600px]">
           {/* Lugar en la portada: el gris de los retratos y de la fachada de La firma (M1), sin velo */}
           <img
-            src={salaJuntas768}
-            srcSet={`${salaJuntas768} 768w, ${salaJuntas1536} 1536w`}
+            src={photos.salaJuntas.url}
+            srcSet={photos.salaJuntas.smallUrl && photos.salaJuntas.smallUrl !== photos.salaJuntas.url ? `${photos.salaJuntas.smallUrl} 768w, ${photos.salaJuntas.url} 1536w` : undefined}
             sizes="(min-width: 1280px) 58vw, 100vw"
             alt={t.alt}
             loading="lazy"
@@ -304,8 +322,10 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
 }
 
 /* § 04 — Monitor Laboral */
-export function Monitor26({ lang }: { lang: Lang26 }) {
-  const t = home26[lang].monitor;
+export function Monitor26({ lang, limit = 3 }: { lang: Lang26; limit?: number }) {
+  const navLabel = useNavLabel();
+  const liveHome = useCmsContent("home", home26);
+  const t = liveHome[lang].monitor;
   // La misma consulta (y caché) que MonitorList. Sin notas publicadas, o si /api/news
   // falla, la sección queda en su título y el enlace al Monitor: sin filas ni avisos.
   const { data, error } = useQuery<News[]>({ queryKey: ["/api/news"] });
@@ -350,7 +370,7 @@ export function Monitor26({ lang }: { lang: Lang26 }) {
         {hasItems && (
           <Reveal delay={0.12} className="mt-14 lg:mt-16 [section:has(+[data-surface=light])_&_li:last-child]:border-b-0">
             {/* En el idioma que muestra la portada (es/en): sin traducción automática */}
-            <MonitorList limit={3} headingLevel="h3" layout="index" tone="light" language={lang} />
+            <MonitorList limit={limit} headingLevel="h3" layout="index" tone="light" language={lang} />
           </Reveal>
         )}
       </div>
@@ -360,7 +380,11 @@ export function Monitor26({ lang }: { lang: Lang26 }) {
 
 /* § 03 — Socios */
 export function Socios26({ lang }: { lang: Lang26 }) {
-  const t = home26[lang].socios;
+  const navLabel = useNavLabel();
+  const liveHome = useCmsContent("home", home26);
+  const t = liveHome[lang].socios;
+  const { data: members = [], isError: teamError } = useQuery<TeamMember[]>({ queryKey: ["/api/team"] });
+  const people = teamError ? [] : members.filter(m => isNamedOnTeamPage(m) && (m.showOnHome ?? (m.isPartner && !/in memoriam/i.test(m.title)))).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)).map(m => ({ name: m.name, photo: m.slug, image: m.imageUrl || "", role: lang === "es" ? m.titleEs : m.title }));
   return (
     <section
       id="socios"
@@ -392,7 +416,7 @@ export function Socios26({ lang }: { lang: Lang26 }) {
             el retrato se acerca al 1 % y el nombre se subraya al pasar el ratón o con el foco.
             inline-link: fuera de la regla móvil de index.css que vuelve inline-flex todo <a>. */}
         <ul className="mt-14 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-3 sm:gap-y-12 lg:mt-16">
-          {t.people.map((person, i) => (
+          {people.map((person, i) => (
             <Reveal as="li" key={person.name} delay={i * 0.08}>
               <Link href={`/team/${person.photo}`} className="inline-link group block">
                 <span className="grid grid-cols-[112px_1fr] items-end gap-x-5 sm:block">
@@ -400,8 +424,8 @@ export function Socios26({ lang }: { lang: Lang26 }) {
                     {/* Fuente 652×652 (360 en teléfono) recortada a 4:5, en grises como todo
                         retrato; alt vacío: el nombre ya es el texto del enlace */}
                     <img
-                      src={socioPhotos[person.photo]}
-                      {...socioSrcSetProps(person.photo)}
+                      src={person.image}
+                      {...(getTeamPhotoSrcSet(person.image) ? { srcSet: getTeamPhotoSrcSet(person.image), sizes: "(min-width: 640px) 30vw, 112px" } : {})}
                       onError={fallbackToOriginalSrc}
                       alt=""
                       loading="lazy"

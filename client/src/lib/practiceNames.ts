@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import type { LanguageCode } from "@shared/schema";
 
 // Nombre de cada práctica por idioma, con la clave del slug de la base. Español e inglés son
@@ -145,4 +146,10 @@ export function localizedPracticeName(
   if (lang === "es") return group.nameEs || group.name;
   if (lang === "en") return group.name;
   return practiceName(group.slug, lang) ?? group.name;
+}
+
+export function usePracticeNames() {
+  const names = useCmsContent("practice-names", NAMES);
+  const short = useCmsContent("practice-short-names", SHORT_NAMES);
+  return { name: (slug: string, lang: string) => names[slug as PracticeSlug]?.[lang as LanguageCode], shortName: (slug: string, lang: string) => short[slug as PracticeSlug]?.[lang as LanguageCode] };
 }

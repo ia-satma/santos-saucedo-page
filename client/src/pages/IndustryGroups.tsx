@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
@@ -198,7 +199,8 @@ export default function IndustryGroups() {
     },
   };
 
-  const t = content[language] || content.en;
+  const editableContent = useCmsContent("industries", content);
+  const t = editableContent[language] || editableContent.en;
 
   const containerVariants = {
     hidden: { opacity: 0 },

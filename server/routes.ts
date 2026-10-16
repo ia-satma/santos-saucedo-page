@@ -1,3 +1,6 @@
+import { connectDesignCatalogs } from "./cms/designCatalogs";
+import { getBundledMediaMap } from "./cms/bundledMediaMap";
+import { ensureCmsSchema, registerCmsRoutes, getCmsContact } from "./cms/siteConfig";
 import type { Express, Request, Response } from "express";
 import { createServer, type IncomingMessage, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
@@ -12,6 +15,7 @@ import crypto from "crypto";
 import multer from "multer";
 import {
   appStorageObjectKeyFromPath,
+  isPublicMediaKey,
   deleteAppStorageObject,
   downloadAppStorageObject,
   uploadAppStorageObject,
@@ -123,7 +127,7 @@ if (!fs.existsSync(uploadsDir)) {
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
+    fileSize: 50 * 1024 * 1024, // Videos and documents share the persistent media library
   },
   fileFilter: (_req, file, cb) => {
     const allowedMimes = [
@@ -131,7 +135,8 @@ const upload = multer({
       "image/png",
       "image/gif",
       "image/webp",
-      "image/svg+xml",
+      "video/mp4",
+      "video/webm",
       "application/pdf",
     ];
     if (allowedMimes.includes(file.mimetype)) {
@@ -189,11 +194,21 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  await ensureCmsSchema();
+  registerCmsRoutes(app);
+  // Existing public asset URLs retain compatibility while bytes live in App Storage.
+  app.use(async (req,res,next) => {
+    if (!['GET','HEAD'].includes(req.method) || req.path.startsWith('/team_photos/')) return next();
+    try { const target=(await getBundledMediaMap())[req.path];if(target)return res.redirect(302,target); }
+    catch(error){console.error('[AppStorage] Media index unavailable', (error as Error).message);}
+    next();
+  });
   try {
     await seed();
   } catch (err) {
     console.error("[seed] Seeding failed, continuing without seed data:", err);
   }
+  await connectDesignCatalogs();
   // En una base ya poblada, pone al día los textos de la semilla que nadie editó (prácticas y equipo)
   try {
     await syncSeedContent();
@@ -360,6 +375,7 @@ export async function registerRoutes(
     if (!match) return res.status(404).end();
     const slugs = await getNamedPhotoSlugs();
     if (!slugs.has(match[1].toLowerCase())) return res.status(404).end();
+    try { const target=(await getBundledMediaMap())[req.originalUrl.split('?')[0]];if(target)return res.redirect(302,target); }catch{}
     next();
   });
 
@@ -534,9 +550,9 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/site-content", (_req, res) => {
+  app.get("/api/site-content", async (_req, res) => {
     try {
-      const content = storage.getSiteContent();
+      const content = { ...storage.getSiteContent(), ...await getCmsContact() };
       res.json(content);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch site content" });
@@ -569,7 +585,7 @@ export async function registerRoutes(
       if (!group) {
         group = await storage.getPracticeGroupById(param);
       }
-      if (!group) {
+      if (!group || group.published === false) {
         return res.status(404).json({ error: "Practice group not found" });
       }
       res.json(group);
@@ -1037,7 +1053,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   app.get('/media/*', async (req: Request, res: Response) => {
     try {
       const objectName = req.params[0];
-      if (!objectName || !objectName.startsWith('public/')) {
+      if (!objectName || !isPublicMediaKey(objectName)) {
         return res.status(404).end();
       }
 
@@ -1052,10 +1068,24 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         '.gif': 'image/gif',
         '.webp': 'image/webp',
         '.svg': 'image/svg+xml',
+        '.ico': 'image/x-icon',
+        '.mp4': 'video/mp4',
+        '.webm': 'video/webm',
         '.pdf': 'application/pdf',
       };
       res.setHeader('Content-Type', mimeByExtension[extension] || 'application/octet-stream');
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader('Accept-Ranges', 'bytes');
+      if (req.headers.range) {
+        const ranges = req.range(contents.length);
+        if (!ranges || ranges === -1 || ranges === -2 || ranges.length !== 1) {
+          res.setHeader('Content-Range', `bytes */${contents.length}`);return res.status(416).end();
+        }
+        const { start, end } = ranges[0];
+        res.setHeader('Content-Range', `bytes ${start}-${end}/${contents.length}`);
+        return res.status(206).send(contents.subarray(start, end + 1));
+      }
       res.send(contents);
     } catch (error) {
       console.error('Serve App Storage media error:', error);
@@ -1843,7 +1873,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // Get all practice groups (admin)
   app.get("/api/admin/practice-groups", authMiddleware, async (_req: Request, res: Response) => {
     try {
-      const groups = await storage.getPracticeGroups();
+      const groups = await storage.getAllPracticeGroups();
       res.json(groups);
     } catch (error) {
       console.error("Get practice groups error:", error);
@@ -2252,6 +2282,15 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
     }
   });
 
+  app.get("/api/jobs", async (_req, res) => {
+    try {
+      const now = new Date();
+      const jobs = (await storage.getJobOpenings()).filter(j => j.published && (!j.expiresAt || new Date(j.expiresAt) > now));
+      res.setHeader("Cache-Control", "no-store");
+      res.json(jobs.map(j => ({ id: j.id, title: j.title, titleEs: j.titleEs, department: j.department, departmentEs: j.departmentEs, location: j.location, locationEs: j.locationEs, type: j.type, description: j.description, descriptionEs: j.descriptionEs, applicationEmail: j.applicationEmail, applicationUrl: j.applicationUrl })));
+    } catch { res.status(503).json({ error: "No se pudieron cargar las vacantes." }); }
+  });
+
   // =============================================
   // ADMIN JOB OPENINGS CRUD
   // =============================================
@@ -2268,7 +2307,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
   app.post("/api/admin/jobs", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
-      const validatedData = insertJobOpeningSchema.parse(req.body);
+      const validatedData = insertJobOpeningSchema.extend({ expiresAt: z.coerce.date().nullable().optional() }).parse(req.body);
       const job = await storage.createJobOpening(validatedData);
       res.json(job);
     } catch (error) {
@@ -2282,7 +2321,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
   app.put("/api/admin/jobs/:id", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
-      const validatedData = insertJobOpeningSchema.partial().parse(req.body);
+      const validatedData = insertJobOpeningSchema.extend({ expiresAt: z.coerce.date().nullable().optional() }).partial().parse(req.body);
       const updated = await storage.updateJobOpening(req.params.id, validatedData);
       if (!updated) {
         return res.status(404).json({ error: "Job not found" });
@@ -2429,6 +2468,11 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // =============================================
   // ADMIN CONTACT SUBMISSIONS
   // =============================================
+
+  app.get("/api/admin/newsletter-subscribers", authMiddleware, requireRole("editor", "admin"), async (_req, res) => {
+    try { res.setHeader("Cache-Control", "no-store"); res.json(await db.select().from(newsletterSubscribers).orderBy(desc(newsletterSubscribers.subscribedAt))); }
+    catch { res.status(500).json({ error: "No se pudieron cargar los suscriptores." }); }
+  });
 
   app.get("/api/admin/contact-submissions", authMiddleware, async (_req: Request, res: Response) => {
     try {
@@ -2637,7 +2681,17 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       }
 
       const uniqueSuffix = crypto.randomBytes(8).toString("hex");
-      const ext = path.extname(req.file.originalname).toLowerCase();
+      const extensions: Record<string,string> = { 'image/jpeg':'.jpg', 'image/png':'.png', 'image/gif':'.gif', 'image/webp':'.webp', 'video/mp4':'.mp4', 'video/webm':'.webm', 'application/pdf':'.pdf' };
+      const ext = extensions[req.file.mimetype];
+      const b = req.file.buffer;
+      const valid = ext === '.jpg' ? b[0]===0xff && b[1]===0xd8 && b[2]===0xff
+        : ext === '.png' ? b.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]))
+        : ext === '.webp' ? b.toString('ascii',0,4)==='RIFF' && b.toString('ascii',8,12)==='WEBP'
+        : ext === '.gif' ? /^GIF8[79]a$/.test(b.toString('ascii',0,6))
+        : ext === '.pdf' ? b.toString('ascii',0,5)==='%PDF-'
+        : ext === '.mp4' ? b.toString('ascii',4,8)==='ftyp'
+        : ext === '.webm' ? b.subarray(0,4).equals(Buffer.from([0x1a,0x45,0xdf,0xa3])) : false;
+      if (!valid) return res.status(400).json({error:'El contenido del archivo no coincide con su tipo. Use PNG, JPEG, WebP, GIF, MP4, WebM o PDF.'});
       const filename = `${Date.now()}-${uniqueSuffix}${ext}`;
       objectName = `public/media/${filename}`;
       await uploadAppStorageObject(objectName, req.file.buffer);

@@ -39,6 +39,9 @@ const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
 const Terms = lazy(() => import("@/pages/Terms"));
 const Newsletter = lazy(() => import("@/pages/Newsletter"));
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
+const AdminSiteConfig = lazy(() => import("@/pages/admin/AdminSiteConfig"));
+const AdminJobs = lazy(() => import("@/pages/admin/AdminJobs"));
+const AdminInbox = lazy(() => import("@/pages/admin/AdminInbox"));
 const AdminSetup = lazy(() => import("@/pages/admin/AdminSetup"));
 const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
 const AdminPosts = lazy(() => import("@/pages/admin/AdminPosts"));
@@ -201,6 +204,10 @@ function Router() {
         <Route path="/events/*?">
           <RedirectKeepingQuery to="/news" />
         </Route>
+        <Route path="/admin/site-config/:section" component={AdminSiteConfig} />
+        <Route path="/admin/site-config" component={AdminSiteConfig} />
+        <Route path="/admin/jobs" component={AdminJobs} />
+        <Route path="/admin/inbox" component={AdminInbox} />
         <Route path="/admin/login" component={AdminLogin} />
         <Route path="/admin/setup" component={AdminSetup} />
         <Route path="/admin/dashboard" component={AdminDashboard} />

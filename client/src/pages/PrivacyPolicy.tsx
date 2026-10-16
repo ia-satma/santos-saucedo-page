@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import type { ReactNode } from "react";
 // Los iconos solo quedan en los datos de cada sección; la página ya no los dibuja.
 import { Shield, FileText, Database, Eye, Lock, Cookie, AlertCircle, Phone, Globe, Users, Building2 } from "lucide-react";
@@ -5,7 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useSiteContact } from "@/components/home26/useSiteContact";
+import { useSiteContact, useSiteDetails } from "@/components/home26/useSiteContact";
 import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
 import { SplitSection } from "@/components/home26/primitives";
@@ -61,6 +62,8 @@ function renderLegalText(text: string): ReactNode[] {
 type SupportedLanguage = 'en' | 'es' | 'de' | 'zh' | 'ko' | 'ja' | 'ar' | 'ru' | 'fr' | 'it';
 
 export default function PrivacyPolicy() {
+  const contact = useSiteDetails();
+  const cmsChrome = useCmsContent("chrome", chrome26);
   const { language, displayLanguage } = useLanguage();
   // Mismo teléfono (texto y número marcado) que el pie: /api/site-content
   const { phone, phoneHref } = useSiteContact(displayLanguage);
@@ -2328,11 +2331,12 @@ Sito web: www.santossaucedo.com`
     }
   };
 
-  const t = content[language as SupportedLanguage] || content.en;
+  const editableContent = useCmsContent("privacy", content);
+  const t = editableContent[language as SupportedLanguage] || editableContent.en;
   // h1 = el nombre del enlace del pie en cada idioma (E5), el mismo que el título de la pestaña
-  const title = (chrome26[language] ?? chrome26.en).footer.privacy;
+  const title = (cmsChrome[language] ?? cmsChrome.en).footer.privacy;
 
-  const contactText: Record<SupportedLanguage, string> = {
+  const contactText: Record<SupportedLanguage, string> = useCmsContent("privacy-contact", {
     en: "To exercise your ARCO rights or make privacy inquiries:",
     es: "Para ejercer sus derechos ARCO o hacer consultas sobre privacidad:",
     de: "Zur Ausübung Ihrer ARCO-Rechte oder für Datenschutzanfragen:",
@@ -2343,7 +2347,7 @@ Sito web: www.santossaucedo.com`
     ru: "Для осуществления прав ARCO или запросов о конфиденциальности:",
     fr: "Pour exercer vos droits ARCO ou faire des demandes de confidentialité\u202f:",
     it: "Per esercitare i tuoi diritti ARCO o fare richieste sulla privacy:"
-  };
+  });
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-privacy-policy">
@@ -2428,11 +2432,11 @@ Sito web: www.santossaucedo.com`
               </p>
               <div className="flex flex-col sm:flex-row sm:items-center gap-x-8 gap-y-2">
                 <a
-                  href="mailto:privacidad@santossaucedo.com"
+                  href={`mailto:${contact.privacyEmail}`}
                   className="font-semibold text-ss-marino underline decoration-1 underline-offset-4 hover:decoration-2"
                   data-testid="link-privacy-email"
                 >
-                  privacidad@santossaucedo.com
+                  {contact.privacyEmail}
                 </a>
                 <a
                   href={phoneHref}

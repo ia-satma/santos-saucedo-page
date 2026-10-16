@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Header from "@/components/Header";
@@ -71,7 +72,8 @@ export default function NotFound() {
     }
   };
 
-  const t = content[language as keyof typeof content] || content.en;
+  const editableContent = useCmsContent("not-found", content);
+  const t = editableContent[language as keyof typeof content] || editableContent.en;
   const isRTL = language === "ar";
 
   return (

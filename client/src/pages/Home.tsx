@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { useEffect } from "react";
 import Header26 from "@/components/home26/Header26";
 import Hero26 from "@/components/home26/Hero26";
@@ -17,6 +18,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Home() {
   const { language, displayLanguage } = useLanguage();
+  const layout = useCmsContent("layout", { home: { firma: true, creemos: true, practicas: true, extranjeras: true, socios: true, monitor: true }, monitorLimit: 3 });
   const lang = displayLanguage === "es" ? "es" : "en";
   // La portada en inglés para quien eligió otro idioma (ar, ja, de…): <html> lleva su idioma
   // (y rtl en árabe), así que la página declara el que de verdad muestra (WCAG 3.1.1).
@@ -67,12 +69,12 @@ export default function Home() {
       <main id="main-content">
         {/* Expediente §: cada sección es un § numerado */}
         <Hero26 lang={lang} />
-        <Firma26 lang={lang} />
-        <Creemos26 lang={lang} />
-        <Practicas26 lang={lang} />
-        <Extranjeras26 lang={lang} />
-        <Socios26 lang={lang} />
-        <Monitor26 lang={lang} />
+        {layout.home.firma && <Firma26 lang={lang} />}
+        {layout.home.creemos && <Creemos26 lang={lang} />}
+        {layout.home.practicas && <Practicas26 lang={lang} />}
+        {layout.home.extranjeras && <Extranjeras26 lang={lang} />}
+        {layout.home.socios && <Socios26 lang={lang} />}
+        {layout.home.monitor && <Monitor26 lang={lang} limit={layout.monitorLimit} />}
       </main>
 
       <Footer26 />

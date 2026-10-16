@@ -67,6 +67,9 @@ export async function adminApiRequest(
     }
   }
   
+  if (res.ok && method !== "GET") {
+    window.dispatchEvent(new Event("ss:cms-catalog-saved"));
+  }
   return res;
 }
 

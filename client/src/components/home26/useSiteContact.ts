@@ -21,7 +21,7 @@ function splitAddress(address: string): string[] {
  *  Pie y menú móvil comparten la consulta; React Query la hace una sola vez. */
 export function useSiteContact(lang: Lang26) {
   const t = home26[lang].footer;
-  const { data: site } = useQuery<SiteContent>({ queryKey: ["/api/site-content"] });
+  const { data: site } = useQuery<SiteContent>({ queryKey: ["/api/site-content"], staleTime: 15000, refetchOnWindowFocus: true, refetchInterval: 30000 });
   const apiAddress = site?.address?.trim();
   const apiPhone = site?.phone?.trim();
   return {
@@ -30,4 +30,9 @@ export function useSiteContact(lang: Lang26) {
     phoneHref: apiPhone ? `tel:${apiPhone.replace(/[^\d+]/g, "")}` : t.phoneHref,
     email: site?.email?.trim() || FALLBACK_EMAIL,
   };
+}
+
+export function useSiteDetails() {
+  const { data } = useQuery<SiteContent & { privacyEmail: string; recruitmentEmail: string; linkedinUrl: string; directionsUrl: string }>({ queryKey: ["/api/site-content"], staleTime: 15000, refetchOnWindowFocus: true, refetchInterval: 30000 });
+  return { privacyEmail: data?.privacyEmail ?? "privacidad@santossaucedo.com", address: data?.address ?? "", phone: data?.phone ?? "", email: data?.email ?? "info@santossaucedo.com", recruitmentEmail: data?.recruitmentEmail ?? "reclutamiento@santossaucedo.com", linkedinUrl: data?.linkedinUrl ?? "", directionsUrl: data?.directionsUrl ?? "https://www.google.com/maps/search/?api=1&query=Santos+Saucedo+San+Pedro" };
 }

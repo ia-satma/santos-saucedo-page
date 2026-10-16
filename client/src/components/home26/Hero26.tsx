@@ -1,3 +1,5 @@
+import { useCmsMedia } from "@/lib/cmsMedia";
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import { SectionMark } from "./primitives";
@@ -65,10 +67,12 @@ function useMedia(query: string) {
     visitante con el botón (o el navegador rechazó reproducirlo); entonces queda en su cuadro y el
     observador no lo reanuda. `onBlocked`: el navegador rechazó play(). */
 function HeroVideo({
+  media,
   paused,
   videoRef: ref,
   onBlocked,
 }: {
+  media: ReturnType<typeof useCmsMedia>["hero"];
   paused: boolean;
   videoRef: RefObject<HTMLVideoElement>;
   onBlocked: () => void;
@@ -80,7 +84,7 @@ function HeroVideo({
   const reportBlocked = () => {
     if (!pausedRef.current) onBlockedRef.current();
   };
-  const [src] = useState(() => `${VIDEO_DIR}portada-azul-${window.matchMedia(SMALL_SCREEN).matches ? 1280 : 1920}.mp4`);
+  const src = window.matchMedia(SMALL_SCREEN).matches ? media.videoMobile : media.videoDesktop;
 
   useEffect(() => {
     const video = ref.current;
@@ -113,7 +117,7 @@ function HeroVideo({
       ref={ref}
       className="absolute inset-0 h-full w-full object-cover"
       src={src}
-      poster={POSTER}
+      poster={media.poster}
       // Si se vuelve a montar ya en pausa (al quitar el movimiento reducido), no arranca solo
       autoPlay={!paused}
       muted
@@ -133,8 +137,11 @@ function HeroVideo({
    lima, la frase y la línea de lugar y año; a la derecha, la § del logotipo como marca de agua
    blanca al 12 %, completa. Medidas en ss26.css (.ss-hero…), en la unidad --u (1 px a 1920 × 1080). */
 export default function Hero26({ lang }: { lang: Lang26 }) {
-  const t = home26[lang].hero;
-  const labels = chrome26[lang].heroVideo;
+  const media = useCmsMedia();
+  const liveHome = useCmsContent("home", home26);
+  const liveChrome = useCmsContent("chrome", chrome26);
+  const t = liveHome[lang].hero;
+  const labels = liveChrome[lang].heroVideo;
   // Con movimiento reducido no se monta el video ni hay botón: el póster como imagen fija, mismo encuadre
   const reduced = useMedia(REDUCED_MOTION);
   // Si el visitante lo pausó en otra visita o ahorra datos, el video no se monta (ni se descarga):
@@ -143,7 +150,7 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
   const [startPaused] = useState(() => typeof window !== "undefined" && (readPausedPref() || savesData()));
   const [paused, setPaused] = useState(startPaused);
   const [mounted, setMounted] = useState(!startPaused);
-  const still = reduced || !mounted;
+  const still = reduced || !mounted || !media.hero.videoEnabled;
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // El navegador rechazó la reproducción (K6): el botón pasa a "Reproducir" sin guardar
@@ -167,9 +174,9 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
       {/* Fondo: Azul Profundo mientras carga (.ss-hero), video o póster y las capas de lectura */}
       <div aria-hidden="true" className="absolute inset-0 -z-10">
         {still ? (
-          <img src={POSTER} alt="" width={1920} height={872} decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+          <img src={media.hero.poster} alt="" width={1920} height={872} decoding="async" className="absolute inset-0 h-full w-full object-cover" />
         ) : (
-          <HeroVideo paused={paused} videoRef={videoRef} onBlocked={onBlocked} />
+          <HeroVideo media={media.hero} paused={paused} videoRef={videoRef} onBlocked={onBlocked} />
         )}
         <div className="ss-hero-veil absolute inset-0" />
       </div>
@@ -183,7 +190,7 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
       <div className="ss-hero-body">
         {/* Un solo h1: el logotipo (su alt es el nombre) y la frase. La raya es solo gráfica. */}
         <h1 id="ss26-hero-title" className="flex flex-col items-center">
-          <img src={logoBlancoLima} alt="Santos & Saucedo" width={2400} height={393} className="ss-hero-logo" />
+          <img src={media.brand.logoLight} alt={media.brand.name} width={2400} height={393} className="ss-hero-logo" />
           <span aria-hidden="true" className="ss-hero-rule" />
           <span className="ss-hero-tagline">{t.tagline}</span>
         </h1>
@@ -199,7 +206,7 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
 
       {/* Pausa del video (WCAG 2.2.2): un solo botón, solo icono, en la esquina inferior del lado
           final; la etiqueta cambia con el estado (sin aria-pressed). Fuera con movimiento reducido. */}
-      {!reduced && (
+      {!reduced && media.hero.videoEnabled && (
         <button
           type="button"
           className="ss-hero-toggle"

@@ -1,3 +1,6 @@
+import { useSiteDetails } from "@/components/home26/useSiteContact";
+import { useCmsMedia } from "@/lib/cmsMedia";
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,10 +34,10 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
 import { useSiteContact } from "@/components/home26/useSiteContact";
 import { anyPartnerHasDirectContact } from "@/lib/partnerContact";
-import { PRACTICE_SLUGS, practiceShortName } from "@/lib/practiceNames";
+import { PRACTICE_SLUGS, practiceShortName, usePracticeNames } from "@/lib/practiceNames";
 // El recorte de la portada (sin el letrero ni el estacionamiento), no el original
 import { TextLink } from "@/components/home26/primitives";
-import { officeLabel } from "@/lib/officeLabel";
+import { useOfficeLabel } from "@/lib/officeLabel";
 // La fachada de la oficina (oficina/fachada, sin el estacionamiento): la misma de la portada y de /offices
 import fachada768 from "@assets/ss26/oficina/fachada-768.webp";
 import fachada1536 from "@assets/ss26/oficina/fachada-1536.webp";
@@ -56,9 +59,7 @@ const OTHER_LABEL: Record<LanguageCode, string> = {
 };
 const PRACTICE_OPTIONS: string[] = [...PRACTICE_SLUGS, OTHER_VALUE];
 
-function practiceOptionLabel(value: string, language: LanguageCode): string {
-  return practiceShortName(value, language) ?? OTHER_LABEL[language] ?? OTHER_LABEL.en;
-}
+
 
 // Lista de datos de la oficina: filas con filete superior; etiqueta (dt) en la sans
 // versal espaciada, Gris Medio; dato (dd) en la sans de 17 px, Gris Tinta. Etiqueta al lado
@@ -293,6 +294,16 @@ const toastMessages: Record<LanguageCode, {
 };
 
 export default function Contact() {
+  const siteDetails = useSiteDetails();
+  const { shortName: practiceShortName } = usePracticeNames();
+  const { data: contactPractices = [] } = useQuery<import("@shared/schema").PracticeGroup[]>({queryKey:["/api/practice-groups"]});
+  const practiceOptions = [...contactPractices.map(p=>p.slug), OTHER_VALUE];
+
+  function practiceOptionLabel(value: string, language: LanguageCode): string {
+  return (language === "es" ? contactPractices.find(p=>p.slug===value)?.nameEs : language === "en" ? contactPractices.find(p=>p.slug===value)?.name : practiceShortName(value, language)) ?? OTHER_LABEL[language] ?? OTHER_LABEL.en;
+}
+  const { photos } = useCmsMedia();
+  const officeNameFor = useOfficeLabel();
   const { language } = useLanguage();
   const { toast } = useToast();
 
@@ -324,8 +335,10 @@ export default function Contact() {
     },
   });
 
-  const toastT = toastMessages[language] || toastMessages.en;
-  const consentT = consentText[language] || consentText.en;
+  const livetoastMessages = useCmsContent("contact-feedback", toastMessages);
+  const toastT = livetoastMessages[language] || livetoastMessages.en;
+  const liveconsentText = useCmsContent("contact-consent", consentText);
+  const consentT = liveconsentText[language] || liveconsentText.en;
 
   const contactMutation = useMutation({
     // Con consent (el servidor exige true) y el campo trampa
@@ -701,14 +714,9 @@ export default function Contact() {
     },
   };
 
-  const baseT = content[language] || content.en;
-  const t = {
-    ...baseT,
-    floor: "",
-    street: "Río Tamazunchale 205 Norte",
-    colony: "Col. del Valle",
-    city: "San Pedro Garza García, N.L., C.P. 66220, México",
-  };
+  const editableContent = useCmsContent("contact", content);
+  const baseT = editableContent[language] || editableContent.en;
+  const t = { ...baseT, phone: firmContact.phone, email: firmContact.email, street: firmContact.address[0] || "", colony: firmContact.address[1] || "", city: firmContact.address.slice(2).join(", ") };
 
   // "Cómo llegar": las indicaciones de Google Maps en otra pestaña. Sin mapa incrustado: al
   // cargarse, el iframe de Google podía fijar cookies y recibir la IP del visitante (el sitio
@@ -793,12 +801,12 @@ export default function Contact() {
                       {t.hoursDetails}
                     </dd>
                   </div>
-                  {FIRM_LINKEDIN_URL && (
+                  {siteDetails.linkedinUrl && (
                     <div className={rowClass}>
                       <dt className={dtClass}>LinkedIn</dt>
                       <dd className={ddClass}>
                         <a
-                          href={FIRM_LINKEDIN_URL}
+                          href={siteDetails.linkedinUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className={ddLinkClass}
@@ -829,7 +837,7 @@ export default function Contact() {
                   {/* Mismo aspecto que TextLink (etiqueta, subrayado, flecha y área táctil ampliada);
                       <a> propio porque TextLink es un Link de wouter y este destino es externo */}
                   <a
-                    href={directionsUrl}
+                    href={siteDetails.directionsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="ss-label group relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3"
@@ -842,7 +850,7 @@ export default function Contact() {
                     </span>
                   </a>
                   <TextLink href="/offices" data-testid="link-contact-offices">
-                    {officeLabel(language)}
+                    {officeNameFor(language)}
                   </TextLink>
                 </div>
               </div>
@@ -942,7 +950,7 @@ export default function Contact() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent data-testid="select-practice-area-content">
-                              {PRACTICE_OPTIONS.map((value) => (
+                              {practiceOptions.map((value) => (
                                 <SelectItem
                                   key={value}
                                   value={value}
@@ -1061,8 +1069,8 @@ export default function Contact() {
             <figure className="sm:max-w-[26rem] lg:col-span-5 lg:row-start-2 lg:max-w-none lg:self-start" data-testid="figure-contact-building">
               <div className="overflow-hidden bg-ss-rule">
                 <img
-                  src={fachada768}
-                  srcSet={`${fachada768} 768w, ${fachada1536} 1159w`}
+                  src={photos.fachada.url}
+                  srcSet={photos.fachada.smallUrl && photos.fachada.smallUrl !== photos.fachada.url ? `${photos.fachada.smallUrl} 768w, ${photos.fachada.url} 1159w` : undefined}
                   sizes="(min-width: 1024px) min(522px, calc(37.5vw - 28px)), (min-width: 640px) 416px, calc(100vw - 40px)"
                   alt={t.photoAlt}
                   loading="lazy"

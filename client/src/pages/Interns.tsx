@@ -1,3 +1,5 @@
+import { useSiteDetails } from "@/components/home26/useSiteContact";
+import { useCmsContent } from "@/hooks/useCmsContent";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -9,6 +11,7 @@ import { SplitSection } from "@/components/home26/primitives";
 // "Clásica": titular de sección .ss-h2 (escala única de index.css); texto en sans 400 Gris Tinta.
 
 export default function Interns() {
+  const siteDetails = useSiteDetails();
   const { language } = useLanguage();
 
   // Textos de la redacción aprobada (sección "Carreras", Semillero S&S; página en tú). Sin
@@ -110,7 +113,9 @@ export default function Interns() {
     },
   };
 
-  const t = content[language as keyof typeof content] || content.en;
+  const editableContent = useCmsContent("interns", content);
+  const baseT = editableContent[language as keyof typeof content] || editableContent.en;
+  const t = { ...baseT, applyEmail: siteDetails.recruitmentEmail };
 
   // Enlace de texto con el aspecto de TextLink (etiqueta, subrayado, flecha y área táctil
   // ampliada); propio para conservar su data-testid

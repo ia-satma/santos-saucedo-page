@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { LanguageCode } from "@shared/schema";
 import type { Lang26 } from "./content";
@@ -13,6 +14,8 @@ import type { Lang26 } from "./content";
 export interface NavItem26 {
   label: string;
   href: string;
+  visible?: boolean;
+  order?: number;
 }
 
 export interface Chrome26Strings {
@@ -71,7 +74,7 @@ export interface Chrome26Strings {
 // Rutas del menú, en el orden de la numeración § de las páginas (01–06)
 const H = ["/about", "/practice-groups", "/team", "/news", "/careers", "/contact"] as const;
 const nav = (...labels: [string, string, string, string, string, string]): NavItem26[] =>
-  labels.map((label, i) => ({ label, href: H[i] }));
+  labels.map((label, i) => ({ label, href: H[i], visible: true, order: i }));
 
 // Ruso: una, dos a cuatro, cinco o más (11–14 van con "результатов")
 function ruCount(n: number) {
@@ -430,5 +433,6 @@ export function useChrome26(localized = false) {
   const { language, displayLanguage } = useLanguage();
   const code: LanguageCode = localized ? language : displayLanguage;
   const base: Lang26 = displayLanguage;
-  return { code, t: chrome26[code], base };
+  const liveChrome = useCmsContent("chrome", chrome26);
+  return { code, t: liveChrome[code], base };
 }

@@ -13,7 +13,9 @@
     "replit:preflight": "node scripts/replit-preflight.mjs",
     "replit:provision-production": "node scripts/replit-provision-production.mjs",
     "check": "tsc",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "replit:import-media": "node --import tsx scripts/import-replit-media.ts",
+    "test:cms": "node --import tsx scripts/check-cms.ts"
   },
   "dependencies": {
     "@google/genai": "^1.32.0",

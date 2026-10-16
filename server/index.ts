@@ -47,6 +47,7 @@ declare module "http" {
 
 app.use(
   express.json({
+    limit: "1mb",
     verify: (req, _res, buf) => {
       req.rawBody = buf;
     },
@@ -118,7 +119,7 @@ app.use((req, res, next) => {
     const message = err.message || "Internal Server Error";
 
     res.status(status).json({ error: message });
-    throw err;
+    console.error("[request]", err);
   });
 
   // importantly only setup vite in development and after

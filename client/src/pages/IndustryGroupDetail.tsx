@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { Link, useParams } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -287,7 +288,8 @@ export default function IndustryGroupDetail() {
     },
   };
 
-  const t = translations[language] || translations.en;
+  const editableContent = useCmsContent("industry-detail", translations);
+  const t = editableContent[language] || editableContent.en;
 
   if (error) {
     return (

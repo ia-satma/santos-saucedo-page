@@ -70,6 +70,10 @@ if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD_HASH) {
   pass("credenciales administrativas provistas por Secrets (valores no mostrados).");
 }
 
+if (isProduction && !(process.env.REPLIT_APP_STORAGE_BUCKET_ID || process.env.APP_STORAGE_BUCKET_ID)) {
+  fail("REPLIT_APP_STORAGE_BUCKET_ID es obligatoria en producción para conservar fotos, videos y documentos.");
+}
+
 if (isProduction && process.env.ALLOW_ADMIN_INIT === "true") {
   fail("ALLOW_ADMIN_INIT=true está prohibido en producción.");
 }

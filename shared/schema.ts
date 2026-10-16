@@ -159,6 +159,8 @@ export const practiceGroups = pgTable("practice_groups", {
   descriptionEs: text("description_es").notNull(),
   fullDescription: text("full_description"),
   fullDescriptionEs: text("full_description_es"),
+  published: boolean("published").default(true),
+  teamMemberIds: jsonb("team_member_ids").$type<string[]>(),
   iconName: text("icon_name"),
   imageUrl: text("image_url"),
   order: integer("order").default(0),
@@ -201,6 +203,8 @@ export const teamMembers = pgTable("team_members", {
   imageUrl: text("image_url"),
   linkedinUrl: text("linkedin_url"),
   isPartner: boolean("is_partner").default(false),
+  isPublic: boolean("is_public"),
+  showOnHome: boolean("show_on_home"),
   order: integer("order").default(0),
   // Extended profile fields
   education: jsonb("education").$type<Education[]>(),

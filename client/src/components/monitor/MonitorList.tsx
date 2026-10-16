@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -209,7 +210,8 @@ function MonitorRow({
   testIds: MonitorListTestIds;
   onTranslated?: () => void;
 }) {
-  const s = STRINGS[language] || STRINGS.en;
+  const liveStrings = useCmsContent("monitor-ui", STRINGS);
+  const s = liveStrings[language] || liveStrings.en;
   const isSpanish = language === "es";
 
   // Sin traducción se muestra el inglés de origen. Fuera de ES/EN va marcado: lang="en" en el
@@ -313,7 +315,8 @@ export function MonitorList({
 }: MonitorListProps) {
   const { language: interfaceLanguage } = useLanguage();
   const language = languageProp ?? interfaceLanguage;
-  const s = STRINGS[language] || STRINGS.en;
+  const liveStrings = useCmsContent("monitor-ui", STRINGS);
+  const s = liveStrings[language] || liveStrings.en;
   const [category, setCategory] = useState("all");
   const [query, setQuery] = useState("");
 
@@ -487,7 +490,8 @@ export function MonitorSubscribe({
   linkTestId?: string;
 }) {
   const { language: interfaceLanguage } = useLanguage();
-  const t = SUBSCRIBE[languageProp ?? interfaceLanguage] || SUBSCRIBE.en;
+  const liveSubscribe = useCmsContent("monitor-subscribe", SUBSCRIBE);
+  const t = liveSubscribe[languageProp ?? interfaceLanguage] || liveSubscribe.en;
   if (isStaticSite) return null;
   return (
     <div

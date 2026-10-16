@@ -1,3 +1,4 @@
+import { useCmsMedia } from "@/lib/cmsMedia";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useLocation } from "wouter";
@@ -41,8 +42,9 @@ interface Header26Props {
 }
 
 export default function Header26({ localized = false, overlay = false }: Header26Props) {
+  const media = useCmsMedia();
   const { code, t, base } = useChrome26(localized);
-  const items = t.nav;
+  const items = t.nav.filter(item => item.visible !== false).slice().sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
   const { phone, phoneHref } = useSiteContact(base);
   const [location] = useLocation();
   const [panel, setPanel] = useState<Panel>(null);
@@ -115,8 +117,8 @@ export default function Header26({ localized = false, overlay = false }: Header2
         <div className="ss-container flex h-[68px] items-center justify-between gap-4 lg:h-20 lg:gap-6 xl:gap-8">
           <Link href="/" aria-label="Santos & Saucedo" className="shrink-0" data-testid="link-logo">
             <img
-              src={logoBlancoLima}
-              alt="Santos & Saucedo"
+              src={media.brand.logoLight}
+              alt={media.brand.name}
               className="h-[22px] w-auto min-[360px]:h-[26px] xl:h-[30px]"
               width={183}
               height={30}
@@ -200,7 +202,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
             className="ss26 fixed inset-0 z-[70] flex flex-col overflow-y-auto overscroll-contain bg-ss-navy text-white lg:hidden"
           >
             <div className="ss-container relative flex h-[68px] shrink-0 items-center justify-between">
-              <img src={logoBlancoLima} alt="Santos & Saucedo" className="h-[26px] w-auto" width={159} height={26} />
+              <img src={media.brand.logoLight} alt={media.brand.name} className="h-[26px] w-auto" width={159} height={26} />
               <button
                 type="button"
                 className="ss-label flex min-h-[44px] items-center text-white"

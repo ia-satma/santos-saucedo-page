@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import { useCmsMedia } from "@/lib/cmsMedia";
+import { useCmsContent } from "@/hooks/useCmsContent";
+import { useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
 import type { LanguageCode } from "@shared/schema";
 import { chrome26 } from "@/components/home26/chrome26";
-import { officeLabel } from "@/lib/officeLabel";
+import { OFFICE_LABEL, officeLabel } from "@/lib/officeLabel";
 
 const BASE_URL = "https://www.santossaucedo.com";
 // Logotipo de client/public (el build lo copia a la raíz del sitio); el de /images no existe
@@ -388,9 +390,20 @@ export default function SEOHead({
   customPath,
 }: SEOHeadProps) {
   const [location] = useLocation();
+  const liveChrome = useCmsContent("chrome", chrome26);
+  const officeName = useCmsContent("officeLabels", OFFICE_LABEL);
+  const media = useCmsMedia();
+  const seoFallback = useMemo(() => {
+    const navigation: Record<string,number> = {about:0,practiceGroups:1,team:2,news:3,careers:4,contact:5};
+    return Object.fromEntries(Object.entries(seoConfig).map(([key,config]) => [key, { ...config, title: Object.fromEntries(LANGS.map(lang => {
+      const text = key in navigation ? `${plain(liveChrome[lang].nav[navigation[key]].label)} | ${media.brand.name}` : key==='offices' ? `${officeName[lang]} | ${media.brand.name}` : key==='privacyPolicy' ? `${liveChrome[lang].footer.privacy} | ${media.brand.name}` : key==='terms' ? `${liveChrome[lang].footer.terms} | ${media.brand.name}` : config.title[lang];
+      return [lang,text];
+    })) as Record<LanguageCode,string> }])) as Record<string,SEOConfig>;
+  },[liveChrome,officeName,media.brand.name]);
+  const liveSEO = useCmsContent("seo", seoFallback);
 
   useEffect(() => {
-    const config = seoConfig[page];
+    const config = liveSEO[page];
     if (!config) return;
 
     const title = customTitle || config.title[language] || config.title.es;
@@ -402,6 +415,9 @@ export default function SEOHead({
     const url = `${BASE_URL}${path}`;
 
     document.title = title;
+    let favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+    if (!favicon) { favicon = document.createElement("link"); favicon.rel = "icon"; document.head.appendChild(favicon); }
+    favicon.href = media.brand.favicon;
 
     const updateOrCreateMeta = (name: string, content: string, isProperty = false) => {
       const selector = isProperty ? `meta[property="${name}"]` : `meta[name="${name}"]`;
@@ -451,7 +467,7 @@ export default function SEOHead({
       }
       canonical.setAttribute("href", url);
     }
-  }, [page, language, customTitle, customDescription, customImage, customPath, location]);
+  }, [page, language, customTitle, customDescription, customImage, customPath, location, liveSEO, liveChrome, officeName, media.brand.favicon]);
 
   return null;
 }

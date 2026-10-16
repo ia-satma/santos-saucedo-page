@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { Link, useParams } from "wouter";
 import { useMemo, useState, type ReactNode } from "react";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -15,7 +16,7 @@ import { chrome26 } from "@/components/home26/chrome26";
 import { TextLink } from "@/components/home26/primitives";
 import { isNamedOnTeamPage } from "@shared/teamVisibility";
 import { keepFirmName } from "@/lib/firmName";
-import { practiceName } from "@/lib/practiceNames";
+import { usePracticeNames } from "@/lib/practiceNames";
 import type { PracticeGroup, TeamMember, RepresentativeMatterDb } from "@shared/schema";
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
@@ -192,6 +193,8 @@ function TranslatedMatterCard({ matter, language, t }: TranslatedMatterCardProps
 }
 
 export default function PracticeGroupDetail() {
+  const { name: practiceName } = usePracticeNames();
+  const cmsChrome = useCmsContent("chrome", chrome26);
   const { language } = useLanguage();
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
@@ -347,9 +350,10 @@ export default function PracticeGroupDetail() {
     },
   };
 
-  const t = translations[language] || translations.en;
+  const editableContent = useCmsContent("practice-detail", translations);
+  const t = editableContent[language] || editableContent.en;
   // Vuelta a la sección con la etiqueta del menú en cada idioma (chrome26 nav[1]: "Prácticas")
-  const backToAll = (chrome26[language as keyof typeof chrome26] ?? chrome26.en).nav[1].label;
+  const backToAll = (cmsChrome[language as keyof typeof chrome26] ?? cmsChrome.en).nav[1].label;
 
   // Personas de la práctica: su registro la menciona (role) y la regla de quién aparece con
   // nombre en el sitio (isNamedOnTeamPage: socios confirmados y Of Counsel). El fundador in
@@ -358,11 +362,11 @@ export default function PracticeGroupDetail() {
     if (!allTeamMembers || !slug) return [];
     const roles = (practiceAreaRoleMapping[slug] || []).map((role) => role.toLowerCase());
     return allTeamMembers
-      .filter((member) => roles.includes(member.role.toLowerCase()))
+      .filter((member) => practiceGroup?.teamMemberIds ? practiceGroup.teamMemberIds.includes(member.id) : roles.includes(member.role.toLowerCase()))
       .filter((member) => isNamedOnTeamPage(member))
       .filter((member) => !/memoriam/i.test(member.title))
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-  }, [allTeamMembers, slug]);
+  }, [allTeamMembers, slug, practiceGroup?.teamMemberIds]);
 
   const practiceRankings: PracticeRanking[] = [];
 

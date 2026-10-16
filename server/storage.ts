@@ -106,6 +106,7 @@ export interface IStorage {
   getSiteContent(): SiteContent;
   getStats(): Stat[];
   getPracticeGroups(): Promise<PracticeGroup[]>;
+  getAllPracticeGroups(): Promise<PracticeGroup[]>;
   getPracticeGroupById(id: string): Promise<PracticeGroup | undefined>;
   getPracticeGroupBySlug(slug: string): Promise<PracticeGroup | undefined>;
   createPracticeGroup(group: InsertPracticeGroup): Promise<PracticeGroup>;
@@ -351,6 +352,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getPracticeGroups(): Promise<PracticeGroup[]> {
+    return db.select().from(practiceGroups).where(sql`${practiceGroups.published} IS DISTINCT FROM false`).orderBy(asc(practiceGroups.order));
+  }
+
+  async getAllPracticeGroups(): Promise<PracticeGroup[]> {
     return db.select().from(practiceGroups).orderBy(asc(practiceGroups.order));
   }
 

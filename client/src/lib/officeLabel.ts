@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import type { LanguageCode } from "@shared/schema";
 
 // Nombre de la página de la oficina (/offices), el mismo en h1, pestaña, pie y enlaces de cada idioma.
@@ -17,3 +18,8 @@ export const OFFICE_LABEL: Record<LanguageCode, string> = {
 
 export const officeLabel = (lang: LanguageCode | string): string =>
   OFFICE_LABEL[lang as LanguageCode] ?? OFFICE_LABEL.en;
+
+export function useOfficeLabel() {
+  const labels = useCmsContent("officeLabels", OFFICE_LABEL);
+  return (lang: string) => labels[lang as LanguageCode] ?? labels.en;
+}

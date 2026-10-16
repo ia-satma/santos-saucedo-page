@@ -1,9 +1,10 @@
+import { useCmsMedia } from "@/lib/cmsMedia";
 import { Link } from "wouter";
 import { Settings } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SUPPORTED_LANGUAGES } from "@shared/schema";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
-import { officeLabel } from "@/lib/officeLabel";
+import { useOfficeLabel } from "@/lib/officeLabel";
 import { useChrome26 } from "./chrome26";
 import { useSiteContact } from "./useSiteContact";
 
@@ -27,6 +28,8 @@ interface Footer26Props {
 }
 
 export default function Footer26({ localized = false }: Footer26Props) {
+  const media = useCmsMedia();
+  const officeNameFor = useOfficeLabel();
   const { language, setLanguage } = useLanguage();
   const { code, t: chrome, base } = useChrome26(localized);
   // Idioma real (no el de la interfaz, que en la portada cae a EN): con alemán, francés, etc.
@@ -34,7 +37,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
   const activeOther = language !== "es" && language !== "en" ? SUPPORTED_LANGUAGES.find((l) => l.code === language) : undefined;
   const t = chrome.footer;
   // Columna Firma: el menú y, después de Nuestra firma (§ 01), la página de la oficina
-  const items = [chrome.nav[0], { label: officeLabel(code), href: "/offices" }, ...chrome.nav.slice(1)];
+  const items = [chrome.nav[0], { label: officeNameFor(code), href: "/offices" }, ...chrome.nav.slice(1)].filter(item => !("visible" in item) || item.visible !== false);
   const year = new Date().getFullYear();
 
   // Misma consulta que el pie anterior; lo estático de content.ts (ES/EN) queda como respaldo.
@@ -52,7 +55,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
           Sin marca de agua: el § grande decorativo aparece una sola vez, en el héroe de la portada. */}
       <div className="ss-container grid grid-cols-2 gap-x-6 gap-y-14 pb-10 pt-14 md:grid-cols-3 lg:grid-cols-12 lg:pb-12 lg:pt-20">
         <div className="col-span-2 md:col-span-3 lg:col-span-4">
-          <img src={logoBlancoLima} alt="Santos & Saucedo" className="h-[34px] w-auto lg:h-[40px]" width={244} height={40} />
+          <img src={media.brand.logoLight} alt={media.brand.name} className="h-[34px] w-auto lg:h-[40px]" width={244} height={40} />
         </div>
 
         <address className="col-span-2 not-italic md:col-span-1 lg:col-span-3" data-testid="text-footer-address">

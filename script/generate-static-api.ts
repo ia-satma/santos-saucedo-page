@@ -1,3 +1,4 @@
+import { cmsDefaults } from "../shared/cms";
 import { copyFile, mkdir, readdir, rm, writeFile } from "fs/promises";
 import path from "path";
 import {
@@ -194,7 +195,9 @@ async function generate() {
 
   // Mismo formato que /api/detect-language (solo Accept-Language; en Pages no se consulta)
   await writeJson("detect-language.json", { language: "es", source: "default" });
-  await writeJson("site-content.json", siteContentData);
+  await writeJson("site-content.json", { ...siteContentData, ...cmsDefaults.contactData as object });
+  await writeJson("site-config.json", {});
+  await writeJson("jobs.json", []);
   await writeJson("stats.json", statsData);
   await writeJson("news.json", publishedNews);
   await writeJson("news/published.json", publishedNews);

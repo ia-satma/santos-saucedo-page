@@ -1,3 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
+import { jobTypes, type JobOpening } from "@shared/schema";
+import { useSiteDetails } from "@/components/home26/useSiteContact";
+import { useCmsMedia } from "@/lib/cmsMedia";
+import { useCmsContent } from "@/hooks/useCmsContent";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -41,6 +46,8 @@ const workAreaAlt: Record<LanguageCode, string> = {
 
 
 export default function Careers() {
+  const siteDetails = useSiteDetails();
+  const { photos } = useCmsMedia();
   const { language } = useLanguage();
 
   // Textos de la redacción aprobada (sección "Carreras"; la única página en tú). Sin valores
@@ -251,7 +258,11 @@ export default function Careers() {
     },
   };
 
-  const t = content[language as keyof typeof content] || content.en;
+  const editableContent = useCmsContent("careers", content);
+  const baseT = editableContent[language as keyof typeof content] || editableContent.en;
+  const { data: jobs = [], isError: jobsError } = useQuery<JobOpening[]>({ queryKey: ["/api/jobs"] });
+  const positions = jobs.map(j => ({ ...j, title: language === "es" ? j.titleEs : j.title, department: (language === "es" ? j.departmentEs : j.department) || "", location: (language === "es" ? j.locationEs : j.location) || "", description: language === "es" ? j.descriptionEs : j.description, type: jobTypes.find(type => type.value === j.type)?.[language === "es" ? "es" : "en"] || j.type }));
+  const t = { ...baseT, applyEmail: siteDetails.recruitmentEmail, positions };
 
   // Enlace de texto con el aspecto de TextLink (etiqueta, subrayado, flecha y área táctil
   // ampliada); propio porque es mailto y conserva su data-testid
@@ -310,8 +321,8 @@ export default function Careers() {
                 <figure className="max-w-[44rem] lg:max-w-none" data-testid="figure-careers-workspace">
                   <div className="overflow-hidden bg-ss-rule">
                     <img
-                      src={areaTrabajo768}
-                      srcSet={`${areaTrabajo768} 768w, ${areaTrabajo1536} 1536w`}
+                      src={photos.areaTrabajo.url}
+                      srcSet={photos.areaTrabajo.smallUrl && photos.areaTrabajo.smallUrl !== photos.areaTrabajo.url ? `${photos.areaTrabajo.smallUrl} 768w, ${photos.areaTrabajo.url} 1536w` : undefined}
                       sizes="(min-width: 1024px) min(424px, 28vw), 90vw"
                       alt={keepFirmName(workAreaAlt[language as LanguageCode] ?? workAreaAlt.en)}
                       loading="lazy"
@@ -381,7 +392,7 @@ export default function Careers() {
                   >
                     {t.positionsTitle}
                   </h2>
-                  {t.positions.length === 0 && (
+                  {!jobsError && t.positions.length === 0 && (
                     <p className={rowTextClass} data-testid="text-positions-empty">
                       {keepProgramName(t.positionsEmpty)}
                     </p>
@@ -390,6 +401,7 @@ export default function Careers() {
                   {/* Vacantes en filas abiertas: tipo, área y ciudad en etiqueta (sin píldora ni
                       iconos) y titular en romana. Solo si hay alguna; la solicitud se envía desde
                       "Cómo postularse" (un solo "Enviar solicitud" en la página). */}
+                  {jobsError && <p role="status">{language === "es" ? "No se pudieron cargar las vacantes. Puede postularse por correo." : "Openings could not be loaded. You can apply by email."}</p>}
                   {t.positions.length > 0 && (
                     <div className="mt-6 border-b border-ss-rule">
                       {t.positions.map((position, index) => (
@@ -407,6 +419,7 @@ export default function Careers() {
                           <p className={rowTextClass}>
                             {position.description}
                           </p>
+                          {(position.applicationEmail || position.applicationUrl) && <a className="underline text-ss-marino mt-4 inline-block" href={position.applicationUrl || `mailto:${position.applicationEmail}`}>{t.sendApplication}</a>}
                         </article>
                       ))}
                     </div>

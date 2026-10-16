@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { lazy, Suspense, useState, useMemo, type ReactNode, type SyntheticEvent } from "react";
 import { Link, useParams } from "wouter";
 import { Loader2 } from "lucide-react";
@@ -613,6 +614,7 @@ function RepresentativeMatterTranslated({
 }
 
 export default function TeamMemberDetail() {
+  const cmsChrome = useCmsContent("chrome", chrome26);
   const { language } = useLanguage();
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
@@ -1148,10 +1150,11 @@ export default function TeamMemberDetail() {
     },
   };
 
-  const t = content[language] || content.en;
+  const editableContent = useCmsContent("profile", content);
+  const t = editableContent[language] || editableContent.en;
 
   // "Socios" con el nombre del menú en cada idioma (E5): enlace de vuelta y miga de pan
-  const partnersLabel = (chrome26[language] ?? chrome26.es).nav[2].label;
+  const partnersLabel = (cmsChrome[language] ?? cmsChrome.es).nav[2].label;
 
   // Fecha de las notas: el formateador compartido del Monitor Laboral (lib/newsDate)
   const formatDate = (date: string | Date | null) => formatNewsDate(date, language);

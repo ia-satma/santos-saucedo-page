@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "wouter";
@@ -123,7 +124,8 @@ interface Search26Props {
 
 /** Buscador a pantalla completa. Se monta al abrir: cada apertura empieza vacía. */
 export default function Search26({ lang, onClose, onClosed }: Search26Props) {
-  const { attrs, search: t, nav } = chrome26[lang];
+  const liveChrome = useCmsContent("chrome", chrome26);
+  const { attrs, search: t, nav } = liveChrome[lang];
   // Un nombre por cosa (E5): cada grupo lleva la etiqueta del menú de su sección
   const groupLabel: Record<GroupId, string> = {
     team: nav[2].label,

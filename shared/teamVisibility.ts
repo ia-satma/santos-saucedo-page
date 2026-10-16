@@ -13,7 +13,7 @@ export const CONFIRMED_PARTNER_SLUGS = new Set([
   "mario-saucedo-rodriguez",
 ]);
 
-type VisibilityFields = { slug: string; isPartner?: boolean | null; title?: string | null };
+type VisibilityFields = { slug: string; isPartner?: boolean | null; title?: string | null; isPublic?: boolean | null };
 
 export function isOfCounselMember(member: Pick<VisibilityFields, "title">): boolean {
   return member.title?.toLowerCase() === "of counsel";
@@ -23,6 +23,7 @@ export function isOfCounselMember(member: Pick<VisibilityFields, "title">): bool
  * Socios confirmados y Of Counsel (los asociados van en el mosaico sin nombres).
  */
 export function isNamedOnTeamPage(member: VisibilityFields): boolean {
+  if (typeof member.isPublic === "boolean") return member.isPublic;
   if (member.isPartner) return CONFIRMED_PARTNER_SLUGS.has(member.slug);
   return isOfCounselMember(member);
 }
@@ -43,6 +44,8 @@ const PUBLIC_MEMBER_FIELDS = [
   "role",
   "roleEs",
   "isPartner",
+  "isPublic",
+  "showOnHome",
   "order",
   "imageUrl",
   "email",

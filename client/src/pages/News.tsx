@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { useCallback, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -41,8 +42,11 @@ export default function NewsPage() {
   const [translatedFor, setTranslatedFor] = useState<string | null>(null);
   const handleTranslated = useCallback(() => setTranslatedFor(language), [language]);
 
-  const title = (chrome26[language as keyof typeof chrome26] ?? chrome26.en).nav[3].label;
-  const subtitle = subtitles[language] || subtitles.en;
+  const liveChrome = useCmsContent("chrome", chrome26);
+  const title = (liveChrome[language as keyof typeof chrome26] ?? liveChrome.en).nav[3].label;
+  const liveSubtitles = useCmsContent("news-intro", subtitles);
+  const liveHome = useCmsContent("home", home26);
+  const subtitle = language === "es" || language === "en" ? liveHome[language].monitor.intro : (liveSubtitles[language] || liveSubtitles.en);
   const translationBanner = translatedFor === language ? translationBannerMessages[language] ?? null : null;
 
   return (

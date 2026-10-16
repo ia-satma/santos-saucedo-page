@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { useState, useEffect, useId, useRef, type KeyboardEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'wouter';
@@ -144,7 +145,8 @@ export default function CookieBanner({ language }: CookieBannerProps) {
   const titleId = `${uid}-title`;
   const descriptionId = `${uid}-description`;
   const dir = language === 'ar' ? 'rtl' : 'ltr';
-  const t = content[language] || content.en;
+  const liveContent = useCmsContent("cookies", content);
+  const t = liveContent[language] || liveContent.en;
   // Tras 。 (chino, japonés) no va espacio antes del enlace
   const sep = language === 'zh' || language === 'ja' ? '' : ' ';
   // "Reducir movimiento" del sistema: el aviso y el diálogo aparecen y se van en su sitio,

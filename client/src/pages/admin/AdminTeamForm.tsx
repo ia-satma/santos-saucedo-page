@@ -1,3 +1,7 @@
+import { ConfigFields } from "@/features/site-config/ConfigFields";
+import type { CmsValue } from "@shared/cms";
+import { MediaField } from "@/features/site-config/MediaField";
+import { isNamedOnTeamPage } from "@shared/teamVisibility";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link, useParams, useLocation } from "wouter";
@@ -194,10 +198,19 @@ const teamMemberFormSchema = z.object({
   email: z.string().email().optional().or(z.literal("")),
   phone: z.string().optional(),
   linkedinUrl: z.string().url().optional().or(z.literal("")),
-  imageUrl: z.string().url().optional().or(z.literal("")),
+  imageUrl: z.string().refine(v => !v || v.startsWith("/") && !v.startsWith("//") || /^https:\/\//.test(v), "Use una URL HTTPS o una ruta de Galería").optional(),
   bio: z.string().optional(),
   bioEs: z.string().optional(),
   isPartner: z.boolean().default(false),
+  isPublic: z.boolean().default(false),
+  showOnHome: z.boolean().default(false),
+  education: z.array(z.any()).default([]),
+  barAdmissions: z.array(z.any()).default([]),
+  languages: z.array(z.any()).default([]),
+  affiliations: z.array(z.any()).default([]),
+  rankings: z.array(z.any()).default([]),
+  publications: z.array(z.any()).default([]),
+  experience: z.array(z.any()).default([]),
   order: z.coerce.number().min(0).default(0),
 });
 
@@ -230,7 +243,17 @@ export default function AdminTeamForm() {
       bio: "",
       bioEs: "",
       isPartner: false,
+      isPublic: false,
+      showOnHome: false,
       order: 0,
+      education: [],
+      barAdmissions: [],
+      languages: [],
+      affiliations: [],
+      rankings: [],
+      publications: [],
+      experience: [],
+
     },
   });
 
@@ -274,7 +297,17 @@ export default function AdminTeamForm() {
         bio: member.bio || "",
         bioEs: member.bioEs || "",
         isPartner: member.isPartner || false,
+        isPublic: isNamedOnTeamPage(member),
+        showOnHome: member.showOnHome ?? (member.isPartner && !/in memoriam/i.test(member.title)) ?? false,
         order: member.order || 0,
+        education: member.education || [],
+        barAdmissions: member.barAdmissions || [],
+        languages: member.languages || [],
+        affiliations: member.affiliations || [],
+        rankings: member.rankings || [],
+        publications: member.publications || [],
+        experience: member.experience || [],
+
       });
     }
   }, [member, form]);
@@ -827,12 +860,7 @@ export default function AdminTeamForm() {
                                     {t.imageUrl}
                                   </FormLabel>
                                   <FormControl>
-                                    <Input 
-                                      {...field} 
-                                      className="rounded-none border-[#D9D8D7] focus:border-ss-marino focus:ring-ss-marino"
-                                      placeholder="https://example.com/photo.jpg"
-                                      data-testid="input-image" 
-                                    />
+                                    <MediaField value={field.value || ""} onChange={field.onChange} id="input-image" />
                                   </FormControl>
                                   <FormDescription className="text-[#878A8E] text-xs">
                                     {t.imageHint}
@@ -912,6 +940,13 @@ export default function AdminTeamForm() {
                             )}
                           />
 
+<details className="border p-4"><summary className="cursor-pointer font-medium">Formación</summary><div className="mt-4 space-y-4"><ConfigFields path={["education"]} value={form.watch("education") as CmsValue} onChange={value=>form.setValue("education",value as any[],{shouldDirty:true})}/>{form.watch("education").length===0&&<Button type="button" variant="outline" size="sm" onClick={()=>form.setValue("education",[{"school": "", "schoolEs": "", "degree": "", "degreeEs": "", "year": ""}],{shouldDirty:true})}>Añadir formación</Button>}</div></details>
+<details className="border p-4"><summary className="cursor-pointer font-medium">Admisiones</summary><div className="mt-4 space-y-4"><ConfigFields path={["barAdmissions"]} value={form.watch("barAdmissions") as CmsValue} onChange={value=>form.setValue("barAdmissions",value as any[],{shouldDirty:true})}/>{form.watch("barAdmissions").length===0&&<Button type="button" variant="outline" size="sm" onClick={()=>form.setValue("barAdmissions",[{"jurisdiction": "", "jurisdictionEs": "", "year": ""}],{shouldDirty:true})}>Añadir admisiones</Button>}</div></details>
+<details className="border p-4"><summary className="cursor-pointer font-medium">Idiomas</summary><div className="mt-4 space-y-4"><ConfigFields path={["languages"]} value={form.watch("languages") as CmsValue} onChange={value=>form.setValue("languages",value as any[],{shouldDirty:true})}/>{form.watch("languages").length===0&&<Button type="button" variant="outline" size="sm" onClick={()=>form.setValue("languages",[""],{shouldDirty:true})}>Añadir idiomas</Button>}</div></details>
+<details className="border p-4"><summary className="cursor-pointer font-medium">Afiliaciones</summary><div className="mt-4 space-y-4"><ConfigFields path={["affiliations"]} value={form.watch("affiliations") as CmsValue} onChange={value=>form.setValue("affiliations",value as any[],{shouldDirty:true})}/>{form.watch("affiliations").length===0&&<Button type="button" variant="outline" size="sm" onClick={()=>form.setValue("affiliations",[{"organization": "", "organizationEs": "", "role": "", "roleEs": ""}],{shouldDirty:true})}>Añadir afiliaciones</Button>}</div></details>
+<details className="border p-4"><summary className="cursor-pointer font-medium">Reconocimientos</summary><div className="mt-4 space-y-4"><ConfigFields path={["rankings"]} value={form.watch("rankings") as CmsValue} onChange={value=>form.setValue("rankings",value as any[],{shouldDirty:true})}/>{form.watch("rankings").length===0&&<Button type="button" variant="outline" size="sm" onClick={()=>form.setValue("rankings",[{"publication": "", "ranking": "", "rankingEs": "", "year": "", "area": "", "areaEs": ""}],{shouldDirty:true})}>Añadir reconocimientos</Button>}</div></details>
+<details className="border p-4"><summary className="cursor-pointer font-medium">Publicaciones</summary><div className="mt-4 space-y-4"><ConfigFields path={["publications"]} value={form.watch("publications") as CmsValue} onChange={value=>form.setValue("publications",value as any[],{shouldDirty:true})}/>{form.watch("publications").length===0&&<Button type="button" variant="outline" size="sm" onClick={()=>form.setValue("publications",[{"title": "", "titleEs": "", "journal": "", "year": "", "url": ""}],{shouldDirty:true})}>Añadir publicaciones</Button>}</div></details>
+<details className="border p-4"><summary className="cursor-pointer font-medium">Experiencia</summary><div className="mt-4 space-y-4"><ConfigFields path={["experience"]} value={form.watch("experience") as CmsValue} onChange={value=>form.setValue("experience",value as any[],{shouldDirty:true})}/>{form.watch("experience").length===0&&<Button type="button" variant="outline" size="sm" onClick={()=>form.setValue("experience",[{"company": "", "position": "", "positionEs": "", "startYear": "", "endYear": ""}],{shouldDirty:true})}>Añadir experiencia</Button>}</div></details>
                           {/* AI Translation hint */}
                           <div className="flex items-center gap-3 p-4 bg-[#F0F7FF] border border-[#CCE0FF]">
                             <Sparkles className="w-5 h-5 text-blue-600" />
@@ -966,6 +1001,12 @@ export default function AdminTeamForm() {
                             )}
                           />
 
+                          <FormField control={form.control} name="isPublic" render={({ field }) => (
+                            <FormItem><FormLabel>Publicar perfil en el sitio</FormLabel><FormDescription>Solo active perfiles cuya identidad y fotografía estén confirmadas. Desactivarlo retira la ficha de listados, buscador y mapa del sitio.</FormDescription><FormControl><Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-public-profile" /></FormControl></FormItem>
+                          )} />
+                          <FormField control={form.control} name="showOnHome" render={({ field }) => (
+                            <FormItem><FormLabel>Mostrar también en Inicio</FormLabel><FormDescription>Usa la misma foto, nombre, cargo y orden del perfil publicado.</FormDescription><FormControl><Switch checked={field.value} onCheckedChange={field.onChange} data-testid="switch-home-profile" /></FormControl></FormItem>
+                          )} />
                           <FormField
                             control={form.control}
                             name="order"

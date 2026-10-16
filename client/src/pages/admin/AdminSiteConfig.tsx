@@ -1,0 +1,58 @@
+import { useEffect, useState } from 'react';
+import { Link, useParams, useLocation } from 'wouter';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { useAdminAuth, adminApiRequest } from '@/lib/adminAuth';
+import { queryClient } from '@/lib/queryClient';
+import { cmsSections, type CmsSection, type CmsValue } from '@shared/cms';
+import { SUPPORTED_LANGUAGES } from '@shared/schema';
+import { Button } from '@/components/ui/button';
+import { ConfigFields } from '@/features/site-config/ConfigFields';
+import { notifyCmsSaved } from '@/hooks/useCmsContent';
+import { useToast } from '@/hooks/use-toast';
+
+type SectionResponse = { section: CmsSection; content: CmsValue; revision: string; previous: CmsValue | null };
+export default function AdminSiteConfig() {
+  const { section: selected = 'home' } = useParams<{section?: string}>();
+  const [, navigate] = useLocation();
+  const section = cmsSections.find(s=>s.key===selected) ?? cmsSections[0];
+  const { isAuthenticated, isLoading, requireAuth } = useAdminAuth();
+  const { toast } = useToast();
+  const [draft, setDraft] = useState<CmsValue | undefined>();
+  const [snapshot, setSnapshot] = useState('');
+  const [revision, setRevision] = useState('initial');
+  const [lang, setLang] = useState('es');
+  const [error, setError] = useState('');
+  const [showPreview, setShowPreview] = useState(false);
+  useEffect(()=>{requireAuth();},[requireAuth]);
+  const queryKey = ['/api/admin/site-config', section.key];
+  const query = useQuery<SectionResponse>({queryKey, enabled:isAuthenticated, refetchOnWindowFocus:false, staleTime:Infinity,
+    queryFn:async()=>{const res=await adminApiRequest('GET',`/api/admin/site-config/${section.key}`);const data=await res.json();if(!res.ok)throw new Error(data.error || 'No se pudo abrir la sección.');return data;}});
+  useEffect(()=>{ if (query.data) {setDraft(query.data.content);setSnapshot(JSON.stringify(query.data.content));setRevision(query.data.revision);setError('');} },[query.data]);
+  const dirty = draft!==undefined && JSON.stringify(draft)!==snapshot;
+  useEffect(()=>{const fn=(e:BeforeUnloadEvent)=>{if(dirty){e.preventDefault();e.returnValue='';}};window.addEventListener('beforeunload',fn);return()=>window.removeEventListener('beforeunload',fn);},[dirty]);
+  const save=useMutation({mutationFn:async()=>{const res=await adminApiRequest('PUT',`/api/admin/site-config/${section.key}`,{content:draft,revision});const data=await res.json();if(!res.ok)throw new Error([data.error,...(data.details??[])].join('\n'));return data as SectionResponse;},onSuccess:data=>{queryClient.setQueryData(queryKey,data);notifyCmsSaved();toast({title:'Cambios guardados en el sitio'});setError('');},onError:e=>setError(e.message)});
+  const storageStatus = useQuery<{configured:boolean;migration:{state:string;uploaded:number;total:number;bytes:number;error?:string;skipped?:string[]}}>({queryKey:['/api/admin/storage/status'],enabled:isAuthenticated&&section.key==='media',refetchInterval:5000,queryFn:async()=>{const r=await adminApiRequest('GET','/api/admin/storage/status');if(!r.ok)throw new Error('No se pudo consultar App Storage.');return r.json();}});
+  const [storageBusy,setStorageBusy]=useState(false);
+  const storageAction=async(action:'verify'|'import')=>{setStorageBusy(true);setError('');try{const r=await adminApiRequest('POST',`/api/admin/storage/${action}`,{});const d=await r.json();if(!r.ok)throw new Error(d.error||'No se pudo completar la operación.');if(action==='verify')toast({title:'App Storage conectado: escritura, lectura y borrado verificados'});else toast({title:'Importación iniciada; espere la verificación de los archivos'});void storageStatus.refetch();}catch(e){setError((e as Error).message);}finally{setStorageBusy(false);}};
+  const changeSection=(key:string)=>{if(key===section.key)return;if(dirty && !window.confirm('Hay cambios sin guardar. ¿Descartarlos y abrir otra sección?'))return;setDraft(undefined);setSnapshot('');setError('');navigate(`/admin/site-config/${key}`);};
+  const obj=draft && !Array.isArray(draft)&&typeof draft==='object'?draft:undefined;
+  const langs=SUPPORTED_LANGUAGES.filter(l=>obj&&l.code in obj);
+  const selectedLang=langs.some(l=>l.code===lang)?lang:langs[0]?.code;
+  const value=selectedLang&&obj?obj[selectedLang]:draft;
+  if(isLoading || !isAuthenticated)return <p className="p-8" role="status">Verificando sesión…</p>;
+  return <div className="min-h-screen bg-muted/30">
+    <header className="border-b bg-background"><div className="max-w-7xl mx-auto px-5 py-5 flex flex-wrap items-center justify-between gap-4"><div><Link href="/admin/dashboard" className="text-sm underline">← Panel</Link><h1 className="text-2xl mt-2">Contenido del sitio</h1></div><div className="flex flex-wrap gap-3"><a href={section.path} target="_blank" rel="noopener noreferrer" className="text-sm underline self-center">Abrir página ↗</a><Button variant="outline" onClick={()=>setShowPreview(!showPreview)}>{showPreview?'Cerrar vista':'Ver sitio'}</Button><Button disabled={!dirty||save.isPending} onClick={()=>save.mutate()} data-testid="button-save-site-config">{save.isPending?'Guardando…':'Guardar cambios'}</Button></div></div></header>
+    <main className="max-w-7xl mx-auto px-5 py-8 grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
+      <aside><nav aria-label="Secciones editables" className="space-y-1">{cmsSections.map(s=><button key={s.key} onClick={()=>changeSection(s.key)} aria-current={s.key===section.key?'page':undefined} className={`block w-full px-3 py-2.5 text-left text-sm border-l-2 ${s.key===section.key?'border-primary bg-background font-semibold':'border-transparent hover:bg-background'}`}>{s.label}</button>)}</nav><div className="border-t mt-6 pt-5 space-y-3 text-sm">{[['/admin/practice-groups','Catálogo de prácticas'],['/admin/team','Equipo y perfiles'],['/admin/news','Publicaciones'],['/admin/jobs','Vacantes'],['/admin/inbox','Mensajes y suscriptores'],['/admin/gallery','Galería']].map(([href,label])=><Link href={href} key={href} className="block underline">{label}</Link>)}</div></aside>
+      <section className="min-w-0"><div className="mb-6"><h2 className="text-xl">{section.label}</h2><p className="text-sm text-muted-foreground mt-2 max-w-3xl">{section.help}</p><p className="text-xs text-muted-foreground mt-3">{dirty?'Tiene cambios sin guardar.':'Los cambios guardados se reflejan en el sitio sin volver a publicar código.'}</p></div>
+        {section.key==='media'&&<div className="border bg-background p-5 mb-6 space-y-3"><h3 className="font-medium">Replit App Storage</h3><p className="text-sm">{storageStatus.data?.configured?'Bucket configurado.':'Falta configurar REPLIT_APP_STORAGE_BUCKET_ID en Replit.'}</p>{storageStatus.data&&<p className="text-sm">Importación: {storageStatus.data.migration.state} · {storageStatus.data.migration.uploaded}/{storageStatus.data.migration.total} archivos verificados</p>}{storageStatus.data?.migration.error&&<p role="alert" className="text-red-700 text-sm">{storageStatus.data.migration.error}</p>}<p className="text-sm text-muted-foreground">Carga el material del diseño actual y comprueba su integridad antes de enlazarlo. No elimina originales. Si la importación actualiza las imágenes, recargue esta sección antes de editar.</p><div className="flex flex-wrap gap-3"><Button variant="outline" disabled={storageBusy||!storageStatus.data?.configured} onClick={()=>void storageAction('verify')}>Verificar conexión</Button><Button variant="outline" disabled={storageBusy||dirty||!storageStatus.data?.configured||storageStatus.data?.migration.state==='running'} onClick={()=>void storageAction('import')}>Importar material a App Storage</Button><Button variant="outline" disabled={dirty} onClick={()=>query.refetch()}>Recargar medios guardados</Button></div></div>}
+        {langs.length>0&&<div className="mb-6"><label htmlFor="cms-language" className="text-sm mr-3">Idioma</label><select id="cms-language" className="border p-2 bg-background" value={selectedLang} onChange={e=>setLang(e.target.value)}>{langs.map(l=><option key={l.code} value={l.code}>{l.nameNative}</option>)}</select></div>}
+        {error&&<div role="alert" className="border border-red-300 bg-red-50 text-red-800 whitespace-pre-line p-4 mb-5">{error}<Button variant="outline" size="sm" className="mt-3" onClick={()=>{if(!dirty||window.confirm('¿Descartar el borrador y cargar la última versión?'))void query.refetch();}}>Recargar versión guardada</Button></div>}
+        {query.isLoading&&<p role="status">Cargando contenido…</p>}{query.isError&&<p role="alert">{query.error.message} <Button variant="outline" onClick={()=>query.refetch()}>Reintentar</Button></p>}
+        {value!==undefined&&<div className="border bg-background p-5 md:p-8" key={`${section.key}-${selectedLang??'all'}`}><ConfigFields value={value} media={section.key==='media'} path={selectedLang?[selectedLang]:[]} onChange={next=>setDraft(selectedLang&&obj?{...obj,[selectedLang]:next}:next)}/></div>}
+        {query.data?.previous&&<div className="mt-6"><Button variant="outline" onClick={()=>{if(window.confirm('¿Cargar la versión anterior como borrador? Tendrá que guardar para aplicarla.'))setDraft(query.data!.previous!);}}>Cargar versión anterior</Button></div>}
+        {showPreview&&<div className="border mt-8 bg-background"><p className="p-3 text-sm">Vista del sitio guardado. El borrador se muestra después de guardar.</p><iframe key={query.data?.revision} title={`Vista de ${section.label}`} src={`${section.path}?cms-preview=1`} className="w-full h-[700px] border-t"/></div>}
+      </section>
+    </main>
+  </div>;
+}

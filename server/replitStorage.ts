@@ -1,106 +1,62 @@
-import fs from "node:fs/promises";
-import path from "node:path";
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { createHash } from 'node:crypto';
+import type { Client } from '@replit/object-storage';
 
-type StorageClient = {
-  uploadFromBytes: (objectName: string, contents: Buffer) => Promise<StorageResult<null>>;
-  downloadAsBytes: (objectName: string) => Promise<StorageResult<unknown>>;
-  delete: (objectName: string, options?: { ignoreNotFound?: boolean }) => Promise<StorageResult<null>>;
-};
-
-type StorageResult<T> = {
-  ok: boolean;
-  value?: T;
-  error?: unknown;
-};
-
-const localStorageRoot = path.join(process.cwd(), "uploads");
-const isReplitRuntime = Boolean(
-  process.env.REPL_ID || process.env.REPLIT_DEPLOYMENT || process.env.REPLIT_DEV_DOMAIN,
-);
-
-let clientPromise: Promise<StorageClient | null> | undefined;
-
-function objectPath(objectName: string): string {
-  const normalized = objectName.replace(/^\/+/, "");
-  if (!normalized || normalized.includes("..") || path.isAbsolute(normalized)) {
-    throw new Error("Invalid App Storage object name");
-  }
-  return path.join(localStorageRoot, normalized);
+const localStorageRoot = path.join(process.cwd(), 'uploads');
+const isReplitRuntime = Boolean(process.env.REPL_ID || process.env.REPLIT_DEPLOYMENT || process.env.REPLIT_DEV_DOMAIN);
+let clientPromise: Promise<Client | null> | undefined;
+export const storageBucketId = () => process.env.REPLIT_APP_STORAGE_BUCKET_ID || process.env.APP_STORAGE_BUCKET_ID;
+export function isPublicMediaKey(name: string) {
+  return /^public\/media\/[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(name) && !name.includes('..');
 }
-
-async function getClient(): Promise<StorageClient | null> {
-  if (clientPromise) return clientPromise;
-
-  clientPromise = (async () => {
-    try {
-      const moduleName = "@replit/object-storage";
-      const { Client } = await import(moduleName);
-      const bucketId = process.env.REPLIT_APP_STORAGE_BUCKET_ID || process.env.APP_STORAGE_BUCKET_ID;
-      const ClientConstructor = Client as new (options?: { bucketId?: string }) => StorageClient;
-      const client = new ClientConstructor(bucketId ? { bucketId } : undefined);
-      return client;
-    } catch (error) {
-      if (isReplitRuntime && process.env.NODE_ENV === "production") {
-        throw new Error(`Replit App Storage is not available: ${String(error)}`);
-      }
-      console.warn("[AppStorage] SDK unavailable; using local uploads fallback.", error);
-      return null;
-    }
+function assertKey(name: string) { if (!isPublicMediaKey(name)) throw new Error('Invalid App Storage object name'); }
+function objectPath(name: string) { assertKey(name); return path.join(localStorageRoot, name); }
+async function getClient(): Promise<Client | null> {
+  if (!clientPromise) clientPromise = (async () => {
+    const bucketId = storageBucketId();
+    if (!isReplitRuntime && process.env.NODE_ENV !== 'production' && !bucketId) return null;
+    if (!bucketId) throw new Error('REPLIT_APP_STORAGE_BUCKET_ID must be configured before uploading media');
+    const { Client } = await import('@replit/object-storage');
+    return new Client({ bucketId });
   })();
-
   return clientPromise;
 }
-
-export async function uploadAppStorageObject(objectName: string, contents: Buffer): Promise<void> {
+export async function uploadAppStorageObject(name: string, contents: Buffer) {
+  assertKey(name);
   const client = await getClient();
-  if (client) {
-    const result = await client.uploadFromBytes(objectName, contents);
-    if (!result.ok) throw new Error(`App Storage upload failed: ${String(result.error)}`);
-    return;
-  }
-
-  const destination = objectPath(objectName);
-  await fs.mkdir(path.dirname(destination), { recursive: true });
-  await fs.writeFile(destination, contents);
+  if (client) { const r = await client.uploadFromBytes(name, contents); if (!r.ok) throw new Error(`App Storage upload failed: ${JSON.stringify(r.error)}`); return; }
+  const file = objectPath(name); await fs.mkdir(path.dirname(file), { recursive: true }); await fs.writeFile(file, contents);
 }
-
-export async function downloadAppStorageObject(objectName: string): Promise<Buffer | null> {
+export async function downloadAppStorageObject(name: string): Promise<Buffer | null> {
+  assertKey(name);
   const client = await getClient();
   if (client) {
-    const result = await client.downloadAsBytes(objectName);
-    if (!result.ok || result.value === undefined) return null;
-    const value = result.value;
+    const r = await client.downloadAsBytes(name);
+    if (!r.ok) { const reason = JSON.stringify(r.error); if (/404|not.?found|does not exist/i.test(reason)) return null; throw new Error(`App Storage read failed: ${reason}`); }
+    const value: unknown = r.value;
     if (Buffer.isBuffer(value)) return value;
-    if (Array.isArray(value)) return Buffer.from(value[0] as Uint8Array);
+    if (Array.isArray(value) && typeof value[0] !== 'number') return Buffer.from(value[0] as Uint8Array);
     return Buffer.from(value as Uint8Array);
   }
-
-  try {
-    return await fs.readFile(objectPath(objectName));
-  } catch (error: any) {
-    if (error?.code === "ENOENT") return null;
-    throw error;
-  }
+  try { return await fs.readFile(objectPath(name)); } catch (e: any) { if(e.code==='ENOENT') return null; throw e; }
 }
-
-export async function deleteAppStorageObject(objectName: string): Promise<void> {
+export async function deleteAppStorageObject(name: string) {
+  assertKey(name);
   const client = await getClient();
-  if (client) {
-    const result = await client.delete(objectName, { ignoreNotFound: true });
-    if (!result.ok) throw new Error(`App Storage delete failed: ${String(result.error)}`);
-    return;
-  }
-
-  try {
-    await fs.unlink(objectPath(objectName));
-  } catch (error: any) {
-    if (error?.code !== "ENOENT") throw error;
-  }
+  if (client) { const r=await client.delete(name,{ignoreNotFound:true});if(!r.ok)throw new Error(`App Storage delete failed: ${JSON.stringify(r.error)}`);return; }
+  try { await fs.unlink(objectPath(name)); } catch(e:any) { if(e.code!=='ENOENT')throw e; }
 }
-
-export function appStorageObjectKeyFromPath(mediaPath: string): string | null {
-  const prefix = "/media/";
-  if (!mediaPath.startsWith(prefix)) return null;
-  const objectName = mediaPath.slice(prefix.length);
-  return objectName.startsWith("public/") ? objectName : null;
+export function appStorageObjectKeyFromPath(mediaPath: string) {
+  const name=mediaPath.startsWith('/media/')?mediaPath.slice(7):'';
+  return isPublicMediaKey(name)?name:null;
+}
+export async function verifyAppStorage() {
+  if (!storageBucketId()) throw new Error('Configure REPLIT_APP_STORAGE_BUCKET_ID en Replit.');
+  const contents=Buffer.from('Santos & Saucedo App Storage check');
+  const key=`public/media/check-${createHash('sha256').update(String(Date.now())).digest('hex').slice(0,12)}.txt`;
+  await uploadAppStorageObject(key,contents);
+  try { const received=await downloadAppStorageObject(key);if(!received?.equals(contents))throw new Error('La lectura de verificación no coincide.'); }
+  finally { await deleteAppStorageObject(key); }
+  return { connected:true };
 }

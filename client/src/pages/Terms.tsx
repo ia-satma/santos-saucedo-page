@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import type { ReactNode } from "react";
 // Los iconos solo quedan en los datos de cada sección; la página ya no los dibuja.
 import { FileText, Scale, Globe, AlertTriangle, Users, Shield, Gavel, BookOpen, Bell, Phone } from "lucide-react";
@@ -5,7 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useSiteContact } from "@/components/home26/useSiteContact";
+import { useSiteContact, useSiteDetails } from "@/components/home26/useSiteContact";
 import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
 import { SplitSection } from "@/components/home26/primitives";
@@ -61,6 +62,8 @@ function renderLegalText(text: string): ReactNode[] {
 type SupportedLanguage = 'en' | 'es' | 'de' | 'zh' | 'ko' | 'ja' | 'ar' | 'ru' | 'fr' | 'it';
 
 export default function Terms() {
+  const contact = useSiteDetails();
+  const cmsChrome = useCmsContent("chrome", chrome26);
   const { language, displayLanguage } = useLanguage();
   // Mismo teléfono (texto y número marcado) que el pie: /api/site-content
   const { phone, phoneHref } = useSiteContact(displayLanguage);
@@ -1997,11 +2000,12 @@ Escluse le festività federali messicane`
     }
   };
 
-  const t = content[language as SupportedLanguage] || content.en;
+  const editableContent = useCmsContent("terms", content);
+  const t = editableContent[language as SupportedLanguage] || editableContent.en;
   // h1 = el nombre del enlace del pie en cada idioma (E5), el mismo que el título de la pestaña
-  const title = (chrome26[language] ?? chrome26.en).footer.terms;
+  const title = (cmsChrome[language] ?? cmsChrome.en).footer.terms;
 
-  const contactText: Record<SupportedLanguage, string> = {
+  const contactText: Record<SupportedLanguage, string> = useCmsContent("terms-contact", {
     en: "For inquiries about these terms and conditions:",
     es: "Para consultas sobre estos términos y condiciones:",
     de: "Bei Fragen zu diesen Nutzungsbedingungen:",
@@ -2012,7 +2016,7 @@ Escluse le festività federali messicane`
     ru: "По вопросам об этих условиях:",
     fr: "Pour toute question sur ces conditions :",
     it: "Per domande su questi termini:"
-  };
+  });
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-terms">
@@ -2097,11 +2101,11 @@ Escluse le festività federali messicane`
               </p>
               <div className="flex flex-col sm:flex-row sm:items-center gap-x-8 gap-y-2">
                 <a
-                  href="mailto:info@santossaucedo.com"
+                  href={`mailto:${contact.email}`}
                   className="font-semibold text-ss-marino underline decoration-1 underline-offset-4 hover:decoration-2"
                   data-testid="link-terms-email"
                 >
-                  info@santossaucedo.com
+                  {contact.email}
                 </a>
                 <a
                   href={phoneHref}

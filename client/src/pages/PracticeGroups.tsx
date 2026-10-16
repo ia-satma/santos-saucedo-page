@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import type { ReactNode } from "react";
 import { Link } from "wouter";
 import { Loader2 } from "lucide-react";
@@ -11,7 +12,7 @@ import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { Eyebrow } from "@/components/editorial";
 import { chrome26 } from "@/components/home26/chrome26";
-import { practiceName } from "@/lib/practiceNames";
+import { usePracticeNames } from "@/lib/practiceNames";
 import type { PracticeGroup } from "@shared/schema";
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
@@ -31,6 +32,7 @@ interface PracticeGroupRowProps {
 // nombre en romana Azul Marino, descripción completa (sin recorte) y flecha. Sin foto: la
 // lista tipográfica sustituye a las fotos de archivo. Toda la fila es el enlace.
 function PracticeGroupRow({ group, index }: PracticeGroupRowProps) {
+  const { name: practiceName } = usePracticeNames();
   const { language } = useLanguage();
 
   const { translatedFields, isLoading, isTranslating } = useTranslatedContent({
@@ -107,6 +109,7 @@ function PracticeGroupRow({ group, index }: PracticeGroupRowProps) {
 }
 
 export default function PracticeGroups() {
+  const cmsChrome = useCmsContent("chrome", chrome26);
   const { language } = useLanguage();
 
   const { data: practiceGroups, isLoading, error } = useQuery<PracticeGroup[]>({
@@ -159,8 +162,9 @@ export default function PracticeGroups() {
     },
   };
 
-  const t = content[language] || content.en;
-  const title = (chrome26[language as keyof typeof chrome26] ?? chrome26.en).nav[1].label;
+  const editableContent = useCmsContent("practices", content);
+  const t = editableContent[language] || editableContent.en;
+  const title = (cmsChrome[language as keyof typeof chrome26] ?? cmsChrome.en).nav[1].label;
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-practice-groups">

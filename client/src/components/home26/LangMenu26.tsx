@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SUPPORTED_LANGUAGES, type LanguageCode } from "@shared/schema";
@@ -24,7 +25,8 @@ function GlobeIcon() {
 /** Escritorio: ES / EN a la vista y un botón con los otros 8 idiomas en una lista emergente. */
 export function LangSwitch26({ lang, className = "" }: { lang: LanguageCode; className?: string }) {
   const { language, setLanguage } = useLanguage();
-  const t = chrome26[lang].langs;
+  const liveChrome = useCmsContent("chrome", chrome26);
+  const t = liveChrome[lang].langs;
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -137,11 +139,12 @@ export function LangSwitch26({ lang, className = "" }: { lang: LanguageCode; cla
 
 /** Menú móvil: ES / EN primero, como en escritorio; los otros 8 en una lista discreta de dos columnas. */
 export function LangList26({ lang }: { lang: LanguageCode }) {
+  const liveChrome = useCmsContent("chrome", chrome26);
   const { language, setLanguage } = useLanguage();
   return (
     <div role="group" aria-labelledby="ss26-menu-lang">
       <p id="ss26-menu-lang" className="ss-label text-white/75">
-        {chrome26[lang].langs.label}
+        {liveChrome[lang].langs.label}
       </p>
       <ul className="ss-label mt-1 flex items-center gap-2">
         {MAIN.map((code, i) => {

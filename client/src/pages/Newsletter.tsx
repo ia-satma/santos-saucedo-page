@@ -1,3 +1,4 @@
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -268,7 +269,8 @@ export default function Newsletter() {
   const { language } = useLanguage();
   const { toast } = useToast();
 
-  const t = content[language] || content.en;
+  const editableContent = useCmsContent("newsletter", content);
+  const t = editableContent[language] || editableContent.en;
   const formSchema = getNewsletterFormSchema(t);
   // Correo de la firma (/api/site-content, el mismo del pie y de Contacto) para el respaldo del
   // build estático

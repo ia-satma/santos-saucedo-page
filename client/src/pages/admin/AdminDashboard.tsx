@@ -663,6 +663,17 @@ export default function AdminDashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <section className="border bg-card p-6 mb-8" aria-label="Contenido y operación del sitio">
+          <h2 className="text-xl mb-2">Sitio Santos &amp; Saucedo</h2>
+          <p className="text-muted-foreground text-sm mb-5">Edite los textos, las imágenes, el video y las secciones del diseño actual. Los cambios guardados se reflejan en la página.</p>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/admin/site-config"><Button>Editar contenido del sitio</Button></Link>
+            <Link href="/admin/site-config/media"><Button variant="outline">Fotos y video</Button></Link>
+            <Link href="/admin/site-config/chrome"><Button variant="outline">Navegación y pie</Button></Link>
+            <Link href="/admin/jobs"><Button variant="outline">Vacantes</Button></Link>
+            <Link href="/admin/inbox"><Button variant="outline">Mensajes y suscriptores</Button></Link>
+          </div>
+        </section>
         <div className="flex items-center justify-between mb-8">
           <p className="text-muted-foreground" data-testid="text-welcome">
             {t.welcome}

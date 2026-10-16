@@ -1,3 +1,5 @@
+import { MediaField } from "@/features/site-config/MediaField";
+import type { TeamMember } from "@shared/schema";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -574,6 +576,8 @@ const createPracticeGroupSchema = (t: typeof translations.en) => z.object({
   fullDescriptionEs: z.string().max(5000).optional(),
   iconName: z.string().max(50).optional(),
   order: z.number().int().min(0).default(0),
+  teamMemberIds: z.array(z.string()).nullable().optional(),
+  published: z.boolean().default(true),
   imageUrl: z.string().max(500).optional(),
 });
 
@@ -617,6 +621,8 @@ export default function AdminPracticeGroups() {
       fullDescriptionEs: "",
       iconName: "",
       order: 0,
+      teamMemberIds: null,
+      published: true,
       imageUrl: "",
     },
   });
@@ -630,6 +636,8 @@ export default function AdminPracticeGroups() {
     },
     enabled: isAuthenticated,
   });
+
+  const teamQuery = useQuery<TeamMember[]>({queryKey:["/api/admin/team"],enabled:isAuthenticated,queryFn:async()=>{const res=await adminApiRequest("GET","/api/admin/team");if(!res.ok)throw new Error("No se pudo cargar el equipo");return res.json();}});
 
   const saveMutation = useMutation({
     mutationFn: async (data: PracticeGroupFormData) => {
@@ -690,6 +698,8 @@ export default function AdminPracticeGroups() {
       fullDescriptionEs: group.fullDescriptionEs || "",
       iconName: group.iconName || "",
       order: group.order || 0,
+      teamMemberIds: group.teamMemberIds ?? null,
+      published: group.published !== false,
       imageUrl: group.imageUrl || "",
     });
     setIsDialogOpen(true);
@@ -948,6 +958,8 @@ export default function AdminPracticeGroups() {
                       />
                     </div>
 
+                    <label className="flex items-center gap-3 my-5"><input type="checkbox" checked={form.watch("published")} onChange={e=>form.setValue("published",e.target.checked,{shouldDirty:true})}/> Publicar práctica en el sitio</label>
+                    <fieldset className="border p-4 space-y-3"><legend>Equipo relacionado con esta práctica</legend><p className="text-sm text-muted-foreground">Seleccione los perfiles que la atienden. Solo se mostrarán los perfiles publicados. Sin selección explícita se conserva la relación anterior.</p><div className="grid gap-2 sm:grid-cols-2">{teamQuery.data?.map(member=><label key={member.id} className="flex gap-2 text-sm"><input type="checkbox" checked={(form.watch("teamMemberIds")??[]).includes(member.id)} onChange={e=>{const ids=form.getValues("teamMemberIds")??[];form.setValue("teamMemberIds",e.target.checked?[...ids,member.id]:ids.filter(id=>id!==member.id),{shouldDirty:true});}}/>{member.name}</label>)}</div><Button type="button" variant="outline" size="sm" onClick={()=>form.setValue("teamMemberIds",[],{shouldDirty:true})}>No mostrar equipo relacionado</Button><Button type="button" variant="ghost" size="sm" onClick={()=>form.setValue("teamMemberIds",null,{shouldDirty:true})}>Usar relación anterior</Button></fieldset>
                     <div className="flex justify-end gap-2 pt-4">
                       <Button
                         type="button"
@@ -1017,7 +1029,7 @@ export default function AdminPracticeGroups() {
                       <TableCell>
                         <div className="flex items-center gap-1">
                           <GripVertical className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm text-muted-foreground">{group.order}</span>
+                          <span className="text-sm text-muted-foreground">{group.order}{group.published===false?" · Oculta":""}</span>
                         </div>
                       </TableCell>
                       <TableCell>

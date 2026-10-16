@@ -1,3 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
+import type { OfficeImage } from "@shared/schema";
+import { useSiteDetails } from "@/components/home26/useSiteContact";
+import { useCmsMedia } from "@/lib/cmsMedia";
+import { useCmsContent } from "@/hooks/useCmsContent";
 import type { ReactNode } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -8,7 +13,7 @@ import { SplitSection, TextLink } from "@/components/home26/primitives";
 import { chrome26 } from "@/components/home26/chrome26";
 import { useSiteContact } from "@/components/home26/useSiteContact";
 import { keepFirmName } from "@/lib/firmName";
-import { officeLabel } from "@/lib/officeLabel";
+import { useOfficeLabel } from "@/lib/officeLabel";
 import { highFetchPriority } from "@/lib/teamPhotoSources";
 import type { LanguageCode } from "@shared/schema";
 // Fotos de la oficina (ronda 6): dos tamaños por foto. Solo estas; el resto del folder de la
@@ -413,11 +418,13 @@ function OfficePhoto({
   className?: string;
   testId?: string;
 }) {
+  const { photos } = useCmsMedia();
   const f = PHOTOS[photo];
+  const configured = photos[photo];
   return (
     <img
-      src={f.l}
-      srcSet={`${f.s} ${f.sw}w, ${f.l} ${f.lw}w`}
+      src={configured.url}
+      srcSet={configured.smallUrl && configured.smallUrl !== configured.url ? `${configured.smallUrl} ${f.sw}w, ${configured.url} ${f.lw}w` : undefined}
       sizes={sizes}
       width={f.lw}
       height={f.lh}
@@ -459,11 +466,16 @@ function PhotoBlock({
 }
 
 export default function Offices() {
+  const siteDetails = useSiteDetails();
+  const officeNameFor = useOfficeLabel();
+  const cmsChrome = useCmsContent("chrome", chrome26);
   const { language } = useLanguage();
-  const t = content[language] ?? content.en;
-  const title = officeLabel(language);
+  const editableContent = useCmsContent("offices", content);
+  const t = editableContent[language] ?? editableContent.en;
+  const title = officeNameFor(language);
+  const { data: gallery = [] } = useQuery<OfficeImage[]>({ queryKey: ["/api/office-images"] });
   // Contacto: la etiqueta del menú (nav[5]) en cada idioma
-  const nav = (chrome26[language] ?? chrome26.en).nav;
+  const nav = (cmsChrome[language] ?? cmsChrome.en).nav;
   // Dirección, teléfono y correo de /api/site-content (los mismos del pie)
   const firm = useSiteContact(language === "en" ? "en" : "es");
 
@@ -555,6 +567,8 @@ export default function Offices() {
               </PhotoBlock>
             </div>
 
+            {gallery.length > 0 && <PhotoBlock id="offices-gallery" title={title} testId="section-office-gallery"><div className="grid gap-6 sm:grid-cols-2">{gallery.map(photo=><img key={photo.id} src={photo.imageUrl} alt={language==='es'?photo.altEs:photo.alt} className="ss-photo--soft block h-auto w-full" loading="lazy" />)}</div></PhotoBlock>}
+
             {/* Dirección: el h2 en el aside y en el cuerpo la lista de datos (los del pie) con
                 "Cómo llegar" y "Contacto". Sin límite de medida (I3): los filetes terminan en el
                 mismo borde que las fotos; el límite es solo para texto corrido. */}
@@ -616,7 +630,7 @@ export default function Offices() {
                   <div className="mt-8 flex flex-wrap gap-x-10 gap-y-6">
                     {/* Mismo aspecto que TextLink; <a> propio porque el destino es externo */}
                     <a
-                      href={DIRECTIONS_URL}
+                      href={siteDetails.directionsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="ss-label group relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3"

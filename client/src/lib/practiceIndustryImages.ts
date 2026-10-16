@@ -21,7 +21,7 @@ export const INDUSTRY_IMAGES: Record<string, string> = {};
 const FALLBACK_IMAGE = laborConflicts;
 
 export function getPracticeImage(slug: string, override?: string | null): string {
-  return PRACTICE_IMAGES[slug] || (override && override.trim().length > 0 ? override : FALLBACK_IMAGE);
+  return override && override.trim().length > 0 ? override : (PRACTICE_IMAGES[slug] || FALLBACK_IMAGE);
 }
 
 export function getIndustryImage(slug: string, override?: string | null): string {

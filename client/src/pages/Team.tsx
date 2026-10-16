@@ -1,3 +1,5 @@
+import { useCmsMedia } from "@/lib/cmsMedia";
+import { useCmsContent } from "@/hooks/useCmsContent";
 import { useMemo, type ReactNode, type SyntheticEvent } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -40,6 +42,8 @@ const CARD_GRID = "grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 sm:gap-y-12 l
 const CARD_NAME = "ss-display block text-[clamp(24px,1.9vw,28px)] font-normal leading-[1.15] tracking-[-0.01em] sm:min-h-[2.3em]";
 
 export default function Team() {
+  const { teamMosaic: equipoPhotos } = useCmsMedia();
+  const cmsChrome = useCmsContent("chrome", chrome26);
   const { language } = useLanguage();
 
   const { data: allTeamMembers, isLoading: isLoadingAll, error: errorAll } = useQuery<TeamMember[]>({
@@ -194,12 +198,13 @@ export default function Team() {
     },
   };
 
-  const t = content[language] || content.en;
+  const editableContent = useCmsContent("team", content);
+  const t = editableContent[language] || editableContent.en;
 
   // Nombres del menú en cada idioma (E5): el h1 es "Socios" (nav[2]) y la celda Hueso de
   // cierre del mosaico lleva "Carreras" (nav[4]) con el enlace al Semillero S&S (el nombre del
   // programa no se traduce)
-  const navLabels = (chrome26[language] ?? chrome26.es).nav;
+  const navLabels = (cmsChrome[language] ?? cmsChrome.es).nav;
   const pageTitle = navLabels[2].label;
   const careersLabel = navLabels[4].label;
 
