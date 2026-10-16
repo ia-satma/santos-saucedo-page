@@ -17,3 +17,5 @@ vite.config.ts.*
 
 # Official antivirus definitions are prepared in the deployment build artifact.
 /dist/clamav/
+
+.cache/clamav/
