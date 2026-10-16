@@ -1,3 +1,5 @@
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
+import { TextEditor } from "@/features/admin/TextEditor";
 import { ConfigFields } from "@/features/site-config/ConfigFields";
 import type { CmsValue } from "@shared/cms";
 import { MediaField } from "@/features/site-config/MediaField";
@@ -142,8 +144,8 @@ const translations = {
     title: "Título Profesional",
     titleHint: "Ej. 'Socio - Corporativo & Fusiones'",
     titleEs: "Título Profesional (Español)",
-    role: "Posición",
-    roleEs: "Posición (Español)",
+    role: "Especialidad o función (Inglés)",
+    roleEs: "Especialidad o función (Español)",
     email: "Correo Electrónico",
     phone: "Número Telefónico",
     phoneHint: "Incluir código de país (+52)",
@@ -204,6 +206,7 @@ const teamMemberFormSchema = z.object({
   isPartner: z.boolean().default(false),
   isPublic: z.boolean().default(false),
   showOnHome: z.boolean().default(false),
+  practiceGroupIds: z.array(z.string()).default([]),
   education: z.array(z.any()).default([]),
   barAdmissions: z.array(z.any()).default([]),
   languages: z.array(z.any()).default([]),
@@ -246,6 +249,7 @@ export default function AdminTeamForm() {
       isPublic: false,
       showOnHome: false,
       order: 0,
+      practiceGroupIds: [],
       education: [],
       barAdmissions: [],
       languages: [],
@@ -257,6 +261,8 @@ export default function AdminTeamForm() {
     },
   });
 
+  useUnsavedChanges(form.formState.isDirty);
+  const practices = useQuery<{id:string;nameEs:string;published:boolean}[]>({queryKey:["/api/admin/practice-groups"],enabled:isAuthenticated,queryFn:async()=>{const r=await adminApiRequest("GET","/api/admin/practice-groups");if(!r.ok)throw new Error("No se pudieron cargar las prácticas.");return r.json();}});
   const watchedValues = form.watch();
   const imageUrl = form.watch("imageUrl");
   const name = form.watch("name");
@@ -272,6 +278,7 @@ export default function AdminTeamForm() {
     },
     enabled: isEditMode && isAuthenticated && !!token,
     retry: 1,
+    refetchOnWindowFocus:false,
   });
 
   useEffect(() => {
@@ -282,7 +289,7 @@ export default function AdminTeamForm() {
   }, [memberError, navigate, toast, t.error]);
 
   useEffect(() => {
-    if (member) {
+    if (member && !form.formState.isDirty) {
       form.reset({
         name: member.name || "",
         slug: member.slug || "",
@@ -300,6 +307,7 @@ export default function AdminTeamForm() {
         isPublic: isNamedOnTeamPage(member),
         showOnHome: member.showOnHome ?? (member.isPartner && !/in memoriam/i.test(member.title)) ?? false,
         order: member.order || 0,
+        practiceGroupIds: (member as TeamMember & {practiceGroupIds?:string[]}).practiceGroupIds || [],
         education: member.education || [],
         barAdmissions: member.barAdmissions || [],
         languages: member.languages || [],
@@ -336,6 +344,7 @@ export default function AdminTeamForm() {
     },
     onSuccess: () => {
       toast({ title: t.createSuccess });
+      form.reset(form.getValues());
       queryClient.invalidateQueries({ queryKey: ["/api/admin/team"] });
       navigate("/admin/team");
     },
@@ -354,6 +363,7 @@ export default function AdminTeamForm() {
     },
     onSuccess: () => {
       toast({ title: t.updateSuccess });
+      form.reset(form.getValues());
       queryClient.invalidateQueries({ queryKey: ["/api/admin/team"] });
       navigate("/admin/team");
     },
@@ -478,6 +488,7 @@ export default function AdminTeamForm() {
               </nav>
             </div>
 
+            {isEditMode && <a className="text-sm underline" href={`/admin/preview/team/${params.id}`} target="_blank" rel="noopener noreferrer">Vista previa privada</a>}
             {/* Action Buttons */}
             <div className="flex items-center gap-3">
               <Link href="/admin/team">
@@ -706,20 +717,7 @@ export default function AdminTeamForm() {
                                       {t.requiredField}
                                     </Badge>
                                   </FormLabel>
-                                  <Select onValueChange={field.onChange} value={field.value}>
-                                    <FormControl>
-                                      <SelectTrigger className="rounded-none border-[#D9D8D7]" data-testid="select-role">
-                                        <SelectValue placeholder={language === "es" ? "Seleccionar..." : "Select..."} />
-                                      </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent className="rounded-none">
-                                      <SelectItem value="Partner">{t.roles.partner}</SelectItem>
-                                      <SelectItem value="Of Counsel">{t.roles.ofCounsel}</SelectItem>
-                                      <SelectItem value="Counsel">{t.roles.counsel}</SelectItem>
-                                      <SelectItem value="Senior Associate">{t.roles.seniorAssociate}</SelectItem>
-                                      <SelectItem value="Associate">{t.roles.associate}</SelectItem>
-                                    </SelectContent>
-                                  </Select>
+                                  <FormControl><Input {...field} placeholder="Labor law" data-testid="input-role"/></FormControl>
                                   <FormMessage />
                                 </FormItem>
                               )}
@@ -736,20 +734,7 @@ export default function AdminTeamForm() {
                                       {t.requiredField}
                                     </Badge>
                                   </FormLabel>
-                                  <Select onValueChange={field.onChange} value={field.value}>
-                                    <FormControl>
-                                      <SelectTrigger className="rounded-none border-[#D9D8D7]" data-testid="select-role-es">
-                                        <SelectValue placeholder={language === "es" ? "Seleccionar..." : "Select..."} />
-                                      </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent className="rounded-none">
-                                      <SelectItem value="Socio">{t.rolesEs.partner}</SelectItem>
-                                      <SelectItem value="Of Counsel">{t.rolesEs.ofCounsel}</SelectItem>
-                                      <SelectItem value="Counsel">{t.rolesEs.counsel}</SelectItem>
-                                      <SelectItem value="Asociado Senior">{t.rolesEs.seniorAssociate}</SelectItem>
-                                      <SelectItem value="Asociado">{t.rolesEs.associate}</SelectItem>
-                                    </SelectContent>
-                                  </Select>
+                                  <FormControl><Input {...field} placeholder="Derecho laboral" data-testid="input-roleEs"/></FormControl>
                                   <FormMessage />
                                 </FormItem>
                               )}
@@ -899,13 +884,7 @@ export default function AdminTeamForm() {
                                   {t.bio}
                                 </FormLabel>
                                 <FormControl>
-                                  <Textarea
-                                    {...field}
-                                    rows={8}
-                                    className="rounded-none border-[#D9D8D7] focus:border-ss-marino focus:ring-ss-marino resize-none"
-                                    placeholder="Professional experience, education, notable cases..."
-                                    data-testid="textarea-bio"
-                                  />
+                                  <TextEditor id="textarea-bio" value={field.value || ""} onChange={field.onChange}/>
                                 </FormControl>
                                 <FormDescription className="text-[#878A8E] text-xs">
                                   {t.bioHint}
@@ -927,19 +906,14 @@ export default function AdminTeamForm() {
                                   {t.bioEs}
                                 </FormLabel>
                                 <FormControl>
-                                  <Textarea
-                                    {...field}
-                                    rows={8}
-                                    className="rounded-none border-[#D9D8D7] focus:border-ss-marino focus:ring-ss-marino resize-none"
-                                    placeholder="Experiencia profesional, educación, casos notables..."
-                                    data-testid="textarea-bio-es"
-                                  />
+                                  <TextEditor id="textarea-bio-es" value={field.value || ""} onChange={field.onChange}/>
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
 
+<fieldset className="border p-4 mb-5"><legend className="font-medium px-1">Prácticas relacionadas</legend><p className="text-xs text-muted-foreground mb-4">Los vínculos se reflejan en la ficha del profesional y en el equipo de cada práctica.</p>{practices.isError&&<p role="alert">No se pudieron cargar las prácticas.</p>}<div className="space-y-3">{practices.data?.map(group=><label key={group.id} className="flex items-center gap-3 text-sm"><input type="checkbox" checked={form.watch("practiceGroupIds").includes(group.id)} onChange={e=>form.setValue("practiceGroupIds",e.target.checked?[...form.getValues("practiceGroupIds"),group.id]:form.getValues("practiceGroupIds").filter(id=>id!==group.id),{shouldDirty:true})}/>{group.nameEs}{group.published===false?" · Oculta":""}</label>)}</div></fieldset>
 <details className="border p-4"><summary className="cursor-pointer font-medium">Formación</summary><div className="mt-4 space-y-4"><ConfigFields path={["education"]} value={form.watch("education") as CmsValue} onChange={value=>form.setValue("education",value as any[],{shouldDirty:true})}/>{form.watch("education").length===0&&<Button type="button" variant="outline" size="sm" onClick={()=>form.setValue("education",[{"school": "", "schoolEs": "", "degree": "", "degreeEs": "", "year": ""}],{shouldDirty:true})}>Añadir formación</Button>}</div></details>
 <details className="border p-4"><summary className="cursor-pointer font-medium">Admisiones</summary><div className="mt-4 space-y-4"><ConfigFields path={["barAdmissions"]} value={form.watch("barAdmissions") as CmsValue} onChange={value=>form.setValue("barAdmissions",value as any[],{shouldDirty:true})}/>{form.watch("barAdmissions").length===0&&<Button type="button" variant="outline" size="sm" onClick={()=>form.setValue("barAdmissions",[{"jurisdiction": "", "jurisdictionEs": "", "year": ""}],{shouldDirty:true})}>Añadir admisiones</Button>}</div></details>
 <details className="border p-4"><summary className="cursor-pointer font-medium">Idiomas</summary><div className="mt-4 space-y-4"><ConfigFields path={["languages"]} value={form.watch("languages") as CmsValue} onChange={value=>form.setValue("languages",value as any[],{shouldDirty:true})}/>{form.watch("languages").length===0&&<Button type="button" variant="outline" size="sm" onClick={()=>form.setValue("languages",[""],{shouldDirty:true})}>Añadir idiomas</Button>}</div></details>
@@ -952,8 +926,8 @@ export default function AdminTeamForm() {
                             <Sparkles className="w-5 h-5 text-blue-600" />
                             <p className="text-sm text-blue-800">
                               {language === "es" 
-                                ? "Consejo: Nuestros agentes de IA pueden traducir automáticamente las biografías a los 10 idiomas soportados."
-                                : "Tip: Our AI agents can automatically translate biographies to all 10 supported languages."}
+                                ? "Complete y revise español e inglés antes de publicar el perfil. Las propuestas de traducción requieren revisión editorial."
+                                : "Complete and review Spanish and English before publishing. Translation proposals require editorial review."}
                             </p>
                           </div>
                         </CardContent>

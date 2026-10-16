@@ -43,7 +43,7 @@ Cada archivo se sube bajo un nombre de hash, se vuelve a descargar y se compara 
 
 El índice de referencias verificado también se guarda en el bucket (`public/media/bundled-manifest.json`). Production puede resolver los medios incluidos en el diseño desde ese mismo bucket, incluso si su base no contiene todavía las claves de configuración de Development. Las imágenes nuevas o los cambios editoriales de cada base se administran por separado.
 
-Desde «Identidad, fotos y video» puede comprobar la conexión, iniciar la importación y consultar el progreso. El backend valida las rutas de objeto y entrega rangos HTTP para videos. Las cargas nuevas aceptan PNG, JPEG, WebP, GIF, MP4, WebM y PDF, hasta 50 MB, comprobando la firma del archivo. Los SVG de marca incluidos en el diseño son material de confianza; no se admiten SVG arbitrarios en las cargas del CMS.
+Desde «Identidad, fotos y video» puede comprobar la conexión, iniciar la importación y consultar el progreso. El backend valida las rutas de objeto y entrega rangos HTTP para videos. Las cargas nuevas aceptan PNG, JPEG, WebP, GIF, MP4, WebM y PDF, hasta 50 MB, comprobando la firma del archivo y decodificando/recodificando las imágenes raster. Los SVG de marca incluidos en el diseño son material de confianza; no se admiten SVG arbitrarios en las cargas del CMS.
 
 Fuera de Replit se permite respaldo de medios en `uploads` únicamente en desarrollo. Nunca se usa como sustituto silencioso en producción.
 
@@ -55,6 +55,8 @@ npm run build
 npm run test:cms
 ```
 
-La prueba de integración exige PostgreSQL local: verifica todos los valores iniciales, sesión/roles, persistencia real, 409 por revisión vieja, campos/rutas inválidos, subida multipart, firma del archivo, integridad binaria, rangos HTTP, bandeja privada y vacantes públicas. Restaura las claves editadas y elimina los usuarios/archivos de prueba. Nunca debe ejecutarse contra una base de producción.
+La prueba de integración exige PostgreSQL local: verifica todos los valores iniciales, sesión/roles, persistencia real, 409 por revisión vieja, campos/rutas inválidos, subida multipart, firma del archivo, decodificación raster, dimensiones, rangos HTTP, bandeja privada y vacantes públicas. Restaura las claves editadas y elimina los usuarios/archivos de prueba. Nunca debe ejecutarse contra una base de producción.
 
 El build estático de Pages conserva sus respaldos, pero un CMS vivo requiere el backend Node de Replit.
+
+La comparación completa con Von Wobeser y los límites que todavía no tienen paridad se documentan en `CMS_PARIDAD_VON_WOBESER_2026-10-16.md`. La interfaz compartida y los nuevos módulos se implementaron en local; no implican sincronización ni despliegue nuevos en Replit.

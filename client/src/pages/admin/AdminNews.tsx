@@ -401,7 +401,7 @@ export default function AdminNews() {
               </Link>
               <div className="flex items-center gap-2">
                 <Newspaper className="h-5 w-5 text-primary" />
-                <h1 className="text-xl font-semibold" data-testid="text-page-title">
+                <Link href="/admin/news/new" className="underline text-sm mr-4">Nueva publicación</Link><h1 className="text-xl font-semibold" data-testid="text-page-title">
                   {t.title}
                 </h1>
               </div>
@@ -488,6 +488,7 @@ export default function AdminNews() {
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
+                            <Link href={`/admin/news/${newsItem.id}/edit`}><Button variant="outline" size="sm">Editar</Button></Link>
                             {newsItem.published && (
                               <Link href={`/news/${newsItem.slug}`}>
                                 <Button 

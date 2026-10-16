@@ -1,3 +1,5 @@
+import { MediaField } from "@/features/site-config/MediaField";
+import { TextEditor } from "@/features/admin/TextEditor";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -677,7 +679,7 @@ export default function AdminIndustryGroups() {
               </Link>
               <div className="flex items-center gap-2">
                 <Building2 className="h-5 w-5 text-primary" />
-                <h1 className="text-xl font-semibold" data-testid="text-page-title">
+                <Link href="/admin/order?catalog=industries" className="text-sm underline mr-4">Ordenar catálogo</Link><h1 className="text-xl font-semibold" data-testid="text-page-title">
                   {t.title}
                 </h1>
               </div>
@@ -803,12 +805,7 @@ export default function AdminIndustryGroups() {
                           <FormItem>
                             <FormLabel>{t.fullDescriptionEn}</FormLabel>
                             <FormControl>
-                              <Textarea
-                                {...field}
-                                placeholder={t.fullDescriptionEnPlaceholder}
-                                rows={4}
-                                data-testid="input-full-description-en"
-                              />
+                              <TextEditor id="industries-fullDescription" value={field.value || ""} onChange={field.onChange}/>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -822,12 +819,7 @@ export default function AdminIndustryGroups() {
                           <FormItem>
                             <FormLabel>{t.fullDescriptionEs}</FormLabel>
                             <FormControl>
-                              <Textarea
-                                {...field}
-                                placeholder={t.fullDescriptionEsPlaceholder}
-                                rows={4}
-                                data-testid="input-full-description-es"
-                              />
+                              <TextEditor id="industries-fullDescriptionEs" value={field.value || ""} onChange={field.onChange}/>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -876,6 +868,7 @@ export default function AdminIndustryGroups() {
                       />
                     </div>
 
+                    <FormField control={form.control} name="imageUrl" render={({field})=><FormItem><FormLabel>Imagen de la industria</FormLabel><FormControl><MediaField value={field.value||''} onChange={field.onChange}/></FormControl><FormMessage/></FormItem>}/>
                     <div className="flex justify-end gap-2 pt-4">
                       <Button
                         type="button"

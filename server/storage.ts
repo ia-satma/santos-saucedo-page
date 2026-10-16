@@ -603,7 +603,7 @@ export class DatabaseStorage implements IStorage {
 
   // Media Items CRUD
   async getMediaItems(): Promise<MediaItem[]> {
-    return db.select().from(mediaItems).orderBy(desc(mediaItems.createdAt));
+    return db.select().from(mediaItems).where(isNull(mediaItems.archivedAt)).orderBy(desc(mediaItems.createdAt));
   }
 
   async createMediaItem(item: InsertMediaItem): Promise<MediaItem> {

@@ -41,7 +41,7 @@ export default function GalleryAdmin() {
   const createMutation = useMutation({
     mutationFn: async (data: { imageUrl: string; alt: string; altEs: string; order: number }) => {
       const res = await adminApiRequest("POST", "/api/admin/office-images", data);
-      if (!res.ok) throw new Error("Failed to add image");
+      if (!res.ok) throw new Error("No se pudo añadir la imagen");
       return res.json();
     },
     onSuccess: () => {
@@ -50,37 +50,37 @@ export default function GalleryAdmin() {
       setAltEn("");
       setAltEs("");
       setOrderInput("0");
-      toast({ title: "Image added successfully" });
+      toast({ title: "Imagen añadida a la galería" });
     },
-    onError: () => toast({ title: "Failed to add image", variant: "destructive" }),
+    onError: () => toast({ title: "No se pudo añadir la imagen", variant: "destructive" }),
   });
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<OfficeImage> }) => {
       const res = await adminApiRequest("PATCH", `/api/admin/office-images/${id}`, data);
-      if (!res.ok) throw new Error("Failed to update image");
+      if (!res.ok) throw new Error("No se pudo actualizar la imagen");
       return res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/office-images"] });
       setEditingImage(null);
-      toast({ title: "Image updated" });
+      toast({ title: "Imagen actualizada" });
     },
-    onError: () => toast({ title: "Failed to update image", variant: "destructive" }),
+    onError: () => toast({ title: "No se pudo actualizar la imagen", variant: "destructive" }),
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const res = await adminApiRequest("DELETE", `/api/admin/office-images/${id}`);
-      if (!res.ok) throw new Error("Failed to delete image");
+      if (!res.ok) throw new Error("No se pudo retirar la imagen");
       return res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/office-images"] });
       setDeleteConfirmId(null);
-      toast({ title: "Image deleted" });
+      toast({ title: "Imagen retirada de la galería" });
     },
-    onError: () => toast({ title: "Failed to delete image", variant: "destructive" }),
+    onError: () => toast({ title: "No se pudo retirar la imagen", variant: "destructive" }),
   });
 
   const handleFileUpload = async (file: File) => {
@@ -98,7 +98,7 @@ export default function GalleryAdmin() {
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Upload failed");
+      if (!res.ok) throw new Error("No se pudo cargar el archivo");
       const mediaItem = await res.json();
 
       await createMutation.mutateAsync({
@@ -108,7 +108,7 @@ export default function GalleryAdmin() {
         order: parseInt(orderInput) || 0,
       });
     } catch {
-      toast({ title: "Upload failed", variant: "destructive" });
+      toast({ title: "No se pudo cargar el archivo", variant: "destructive" });
     } finally {
       setUploading(false);
     }
@@ -124,23 +124,11 @@ export default function GalleryAdmin() {
     });
   };
 
-  const handleMoveUp = (img: OfficeImage) => {
-    const sorted = [...images].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-    const idx = sorted.findIndex((i) => i.id === img.id);
-    if (idx <= 0) return;
-    const prev = sorted[idx - 1];
-    updateMutation.mutate({ id: img.id, data: { order: prev.order ?? 0 } });
-    updateMutation.mutate({ id: prev.id, data: { order: img.order ?? 0 } });
+  const moveGallery=async(img:OfficeImage,offset:number)=>{
+    try{const r=await adminApiRequest('GET','/api/admin/catalog-order/gallery');const order=await r.json();if(!r.ok)throw new Error();const ids=order.items.map((x:{id:string})=>x.id);const index=ids.indexOf(img.id);const to=index+offset;if(index<0||to<0||to>=ids.length)return;[ids[index],ids[to]]=[ids[to],ids[index]];const saved=await adminApiRequest('PUT','/api/admin/catalog-order/gallery',{ids,revision:order.revision});if(!saved.ok)throw new Error();await queryClient.invalidateQueries({queryKey:['/api/office-images']});}catch{toast({title:'No se pudo ordenar la galería. Recargue la lista y vuelva a intentarlo.',variant:'destructive'});}
   };
-
-  const handleMoveDown = (img: OfficeImage) => {
-    const sorted = [...images].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-    const idx = sorted.findIndex((i) => i.id === img.id);
-    if (idx >= sorted.length - 1) return;
-    const next = sorted[idx + 1];
-    updateMutation.mutate({ id: img.id, data: { order: next.order ?? 0 } });
-    updateMutation.mutate({ id: next.id, data: { order: img.order ?? 0 } });
-  };
+  const handleMoveUp=(img:OfficeImage)=>{void moveGallery(img,-1);};
+  const handleMoveDown=(img:OfficeImage)=>{void moveGallery(img,1);};
 
   const openEdit = (img: OfficeImage) => {
     setEditingImage(img);
@@ -169,15 +157,15 @@ export default function GalleryAdmin() {
           <Link href="/admin/dashboard">
             <a className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm mb-4 transition-colors">
               <ArrowLeft className="w-4 h-4" />
-              Back to Dashboard
+              Volver al resumen
             </a>
           </Link>
           <div className="w-12 h-px bg-ss-marino mb-3" />
           <h1 className="font-heading text-foreground text-3xl">
-            Office gallery
+            Galería de La oficina
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Manage office photo gallery — upload, reorder, and delete images.
+            Añada fotografías a La oficina, edite sus descripciones y organice la galería.
           </p>
         </div>
 
@@ -186,7 +174,7 @@ export default function GalleryAdmin() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-sm uppercase tracking-[0.1em]">
               <PlusCircle className="w-4 h-4 text-ss-marino" />
-              Add New Image
+              Añadir imagen
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -214,7 +202,7 @@ export default function GalleryAdmin() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs uppercase tracking-[0.1em] text-muted-foreground">Alt Text (EN)</label>
+                <label className="text-xs uppercase tracking-[0.1em] text-muted-foreground">Descripción en inglés</label>
                 <Input
                   value={altEn}
                   onChange={(e) => setAltEn(e.target.value)}
@@ -223,7 +211,7 @@ export default function GalleryAdmin() {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs uppercase tracking-[0.1em] text-muted-foreground">Alt Text (ES)</label>
+                <label className="text-xs uppercase tracking-[0.1em] text-muted-foreground">Descripción en español</label>
                 <Input
                   value={altEs}
                   onChange={(e) => setAltEs(e.target.value)}
@@ -234,7 +222,7 @@ export default function GalleryAdmin() {
             </div>
 
             <div className="space-y-1 max-w-[120px]">
-              <label className="text-xs uppercase tracking-[0.1em] text-muted-foreground">Order</label>
+              <label className="text-xs uppercase tracking-[0.1em] text-muted-foreground">Orden</label>
               <Input
                 type="number"
                 value={orderInput}
@@ -279,7 +267,7 @@ export default function GalleryAdmin() {
                   data-testid="button-select-file"
                 >
                   <Upload className="w-4 h-4 mr-2" />
-                  {uploading ? "Uploading…" : "Select & Upload File"}
+                  {uploading ? "Cargando…" : "Seleccionar y cargar archivo"}
                 </Button>
               </div>
             )}
@@ -304,7 +292,7 @@ export default function GalleryAdmin() {
             <Card>
               <CardContent className="py-16 flex flex-col items-center gap-3 text-muted-foreground">
                 <Image className="w-8 h-8 opacity-30" />
-                <p className="text-sm">No images yet. Add your first office photo above.</p>
+                <p className="text-sm">La galería está vacía. Añada la primera fotografía.</p>
               </CardContent>
             </Card>
           )}
@@ -343,7 +331,7 @@ export default function GalleryAdmin() {
                           variant="outline"
                           onClick={() => handleMoveUp(img)}
                           disabled={idx === 0 || updateMutation.isPending}
-                          aria-label="Move up"
+                          aria-label="Subir imagen"
                           data-testid={`button-move-up-${img.id}`}
                         >
                           <ChevronUp className="w-3 h-3" />
@@ -353,7 +341,7 @@ export default function GalleryAdmin() {
                           variant="outline"
                           onClick={() => handleMoveDown(img)}
                           disabled={idx === sortedImages.length - 1 || updateMutation.isPending}
-                          aria-label="Move down"
+                          aria-label="Bajar imagen"
                           data-testid={`button-move-down-${img.id}`}
                         >
                           <ChevronDown className="w-3 h-3" />
@@ -364,7 +352,7 @@ export default function GalleryAdmin() {
                           size="icon"
                           variant="outline"
                           onClick={() => openEdit(img)}
-                          aria-label="Edit"
+                          aria-label="Editar"
                           data-testid={`button-edit-${img.id}`}
                         >
                           <Pencil className="w-3 h-3" />
@@ -375,7 +363,7 @@ export default function GalleryAdmin() {
                           size="icon"
                           variant="outline"
                           onClick={() => setDeleteConfirmId(img.id)}
-                          aria-label="Delete"
+                          aria-label="Retirar"
                           data-testid={`button-delete-${img.id}`}
                           className="text-red-600"
                         >
@@ -395,7 +383,7 @@ export default function GalleryAdmin() {
       <Dialog open={!!editingImage} onOpenChange={(open) => !open && setEditingImage(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Image</DialogTitle>
+            <DialogTitle>Editar imagen</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             {editingImage && (
@@ -408,7 +396,7 @@ export default function GalleryAdmin() {
               </div>
             )}
             <div className="space-y-1">
-              <label className="text-xs uppercase tracking-[0.1em] text-muted-foreground">Alt Text (EN)</label>
+              <label className="text-xs uppercase tracking-[0.1em] text-muted-foreground">Descripción en inglés</label>
               <Input
                 value={editAltEn}
                 onChange={(e) => setEditAltEn(e.target.value)}
@@ -416,7 +404,7 @@ export default function GalleryAdmin() {
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs uppercase tracking-[0.1em] text-muted-foreground">Alt Text (ES)</label>
+              <label className="text-xs uppercase tracking-[0.1em] text-muted-foreground">Descripción en español</label>
               <Input
                 value={editAltEs}
                 onChange={(e) => setEditAltEs(e.target.value)}
@@ -424,7 +412,7 @@ export default function GalleryAdmin() {
               />
             </div>
             <div className="space-y-1 max-w-[120px]">
-              <label className="text-xs uppercase tracking-[0.1em] text-muted-foreground">Order</label>
+              <label className="text-xs uppercase tracking-[0.1em] text-muted-foreground">Orden</label>
               <Input
                 type="number"
                 value={editOrder}
@@ -435,7 +423,7 @@ export default function GalleryAdmin() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditingImage(null)}>
-              Cancel
+              Cancelar
             </Button>
             <Button
               onClick={() => {
@@ -462,14 +450,14 @@ export default function GalleryAdmin() {
       <Dialog open={!!deleteConfirmId} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Image</DialogTitle>
+            <DialogTitle>Retirar imagen de la galería</DialogTitle>
           </DialogHeader>
           <p className="text-muted-foreground text-sm py-2">
             Are you sure you want to delete this image? This action cannot be undone.
           </p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteConfirmId(null)}>
-              Cancel
+              Cancelar
             </Button>
             <Button
               variant="destructive"
@@ -477,7 +465,7 @@ export default function GalleryAdmin() {
               disabled={deleteMutation.isPending}
               data-testid="button-confirm-delete"
             >
-              Delete
+              Retirar
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,4 +1,10 @@
+import sharp from "sharp";
+import { saveTeamMember, teamPracticeIds, validatePracticeRoster } from "./cms/teamEditor";
+import { registerContentPreview } from "./cms/preview";
 import { connectDesignCatalogs } from "./cms/designCatalogs";
+import { registerCatalogOrder } from "./cms/catalogOrder";
+import { mediaInventory, persistentMediaItem, registerMediaLibrary } from "./cms/mediaLibrary";
+import { registerNewsEditor } from "./cms/newsEditor";
 import { getBundledMediaMap } from "./cms/bundledMediaMap";
 import { ensureCmsSchema, registerCmsRoutes, getCmsContact } from "./cms/siteConfig";
 import type { Express, Request, Response } from "express";
@@ -62,6 +68,7 @@ import {
   insertSpecializedDeskSchema,
   insertOfficeImageSchema,
   newsletterSubscribers,
+  mediaItems,
   events as eventsTable,
 } from "@shared/schema";
 import { isNamedOnTeamPage, toPublicTeamMember, toPublicTeamProfile } from "@shared/teamVisibility";
@@ -147,6 +154,17 @@ const upload = multer({
   },
 });
 
+const receiveMedia:express.RequestHandler=(req,res,next)=>upload.single('file')(req,res,(error:any)=>{
+  if(error)return res.status(error.code==='LIMIT_FILE_SIZE'?413:415).json({error:error.code==='LIMIT_FILE_SIZE'?'El archivo supera 50 MB.':'Formato no admitido. Use JPG, PNG, WebP, GIF, MP4, WebM o PDF.'});
+  next();
+});
+const safeMediaUrl=z.string().max(2048).refine(v=>!v||/^https:\/\//.test(v)||/^\/(?!\/)/.test(v),'Use una URL HTTPS o un archivo del sitio.');
+const safeNewsWrite=insertNewsSchema.extend({
+ slug:z.string().min(1).max(180).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+ imageUrl:safeMediaUrl.nullable().optional(),documentUrl:safeMediaUrl.nullable().optional(),documentUrlEs:safeMediaUrl.nullable().optional(),sourceUrl:z.string().url().startsWith('https://').or(z.literal('')).nullable().optional(),
+ tags:z.array(z.string().min(2).max(60)).max(12).nullable().optional(),date:z.coerce.date().nullable().optional(),publishAt:z.coerce.date().nullable().optional(),
+});
+
 function generateVCard(member: any, language: "es" | "en" = "es"): string {
   const title = language === "es" ? member.titleEs : member.title;
   const role = language === "es" ? member.roleEs : member.role;
@@ -196,6 +214,17 @@ export async function registerRoutes(
 ): Promise<Server> {
   await ensureCmsSchema();
   registerCmsRoutes(app);
+  registerCatalogOrder(app);
+  registerMediaLibrary(app);
+  registerNewsEditor(app);
+  registerContentPreview(app);
+  app.get('/api/admin/overview',authMiddleware,async(_req,res)=>{
+    try {
+      const [people,practices,notes,media,contacts]=await Promise.all([storage.getTeamMembers(),storage.getAllPracticeGroups(),storage.getNews(),mediaInventory(),storage.getContactSubmissions()]);
+      res.set('Cache-Control','private, no-store');
+      res.json({team:{total:people.length,visible:people.filter(isNamedOnTeamPage).length},practices:{total:practices.length,visible:practices.filter(g=>g.published!==false).length},news:{total:notes.length,visible:notes.filter(n=>isPublicNews(n)).length},media:{total:media.length},unread:contacts.filter(c=>!c.read).length,recent:notes.slice(0,5).map(n=>({id:n.id,title:n.titleEs||n.title,category:n.categoryEs||n.category,date:n.date,visible:isPublicNews(n)}))});
+    }catch{res.status(503).json({error:'No se pudo cargar el resumen del sitio.'});}
+  });
   // Existing public asset URLs retain compatibility while bytes live in App Storage.
   app.use(async (req,res,next) => {
     if (!['GET','HEAD'].includes(req.method) || req.path.startsWith('/team_photos/')) return next();
@@ -654,7 +683,7 @@ export async function registerRoutes(
       if (!member || !isNamedOnTeamPage(member)) {
         return res.status(404).json({ error: "Team member not found" });
       }
-      res.json(toPublicTeamProfile(member));
+      res.json({...toPublicTeamProfile(member),practiceGroupIds:await teamPracticeIds(member,true)});
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch team member" });
     }
@@ -1692,7 +1721,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // Create news
   app.post("/api/admin/news", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
-      const validation = insertNewsSchema.safeParse(req.body);
+      const validation = safeNewsWrite.safeParse(req.body);
       
       if (!validation.success) {
         return apiError(res, 400, "Validation failed", validation.error.errors);
@@ -1710,7 +1739,9 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // Update news
   app.put("/api/admin/news/:id", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
-      const newsItem = await storage.updateNews(req.params.id, req.body);
+      const parsed=safeNewsWrite.partial().safeParse(req.body);
+      if(!parsed.success)return apiError(res,400,"Revise los campos de la publicación.",parsed.error.errors);
+      const newsItem = await storage.updateNews(req.params.id, parsed.data);
       if (!newsItem) {
         return apiError(res, 404, "News not found");
       }
@@ -1744,12 +1775,11 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // Get all team members (admin)
   app.get("/api/admin/team", authMiddleware, async (req: Request, res: Response) => {
     try {
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 20;
-      const search = (req.query.search as string) || "";
-      const role = (req.query.role as string) || "";
-
+      const parsed=z.object({page:z.coerce.number().int().min(1).max(10000).default(1),limit:z.coerce.number().int().min(1).max(100).default(20),search:z.string().max(160).default(''),role:z.string().max(80).default(''),visibility:z.enum(['all','visible','hidden']).default('all')}).safeParse(req.query);
+      if(!parsed.success)return res.status(400).json({error:'Revise los filtros del equipo.'});
+      const {page,limit,search,role,visibility}=parsed.data;
       let members = await storage.getTeamMembers();
+      if(visibility!=='all')members=members.filter(member=>isNamedOnTeamPage(member)===(visibility==='visible'));
 
       // Filter by search term
       if (search) {
@@ -1782,6 +1812,12 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
     }
   });
 
+  // Static route must precede /:id (otherwise "stats" is treated as a member ID).
+  app.get("/api/admin/team/stats", authMiddleware, async (_req, res) => {
+    const members = await storage.getTeamMembers();
+    res.json({total:members.length,partners:members.filter(m=>m.isPartner).length,ofCounsel:members.filter(m=>m.title.toLowerCase()==='of counsel').length,associates:members.filter(m=>/associate/i.test(m.title)).length});
+  });
+
   // Get single team member (admin)
   app.get("/api/admin/team/:id", authMiddleware, async (req: Request, res: Response) => {
     try {
@@ -1789,7 +1825,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       if (!member) {
         return res.status(404).json({ error: "Team member not found" });
       }
-      res.json(member);
+      res.json({...member,practiceGroupIds:await teamPracticeIds(member)});
     } catch (error) {
       console.error("Get team member error:", error);
       res.status(500).json({ error: "Failed to fetch team member" });
@@ -1799,14 +1835,14 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // Create team member
   app.post("/api/admin/team", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
-      const validatedData = insertTeamMemberSchema.parse(req.body);
-      const member = await storage.createTeamMember(validatedData);
-      auditLog("create", "team", member.id, (req as any).adminUser?.id || "unknown");
+      const member = await saveTeamMember(req.body);
+      auditLog("create", "team", member!.id, (req as any).adminUser?.id || "unknown");
       res.status(201).json(member);
     } catch (error) {
       if (error instanceof ZodError) {
         return apiError(res, 400, "Validation failed", error.errors);
       }
+      if ((error as any)?.code === "23505" || (error as any)?.cause?.code === "23505") return res.status(409).json({error:"Ya existe un registro con ese identificador. Cambie la dirección para conservar ambos."});
       console.error("Create team member error:", error);
       return apiError(res, 500, "Failed to create team member");
     }
@@ -1815,8 +1851,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // Update team member
   app.put("/api/admin/team/:id", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
-      const validatedData = insertTeamMemberSchema.partial().parse(req.body);
-      const member = await storage.updateTeamMember(req.params.id, validatedData);
+      const member = await saveTeamMember(req.body,req.params.id);
       if (!member) {
         return apiError(res, 404, "Team member not found");
       }
@@ -1826,6 +1861,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       if (error instanceof ZodError) {
         return apiError(res, 400, "Validation failed", error.errors);
       }
+      if ((error as any)?.code === "23505" || (error as any)?.cause?.code === "23505") return res.status(409).json({error:"Ya existe un registro con ese identificador. Cambie la dirección para conservar ambos."});
       console.error("Update team member error:", error);
       return apiError(res, 500, "Failed to update team member");
     }
@@ -1843,26 +1879,6 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
     } catch (error) {
       console.error("Delete team member error:", error);
       return apiError(res, 500, "Failed to delete team member");
-    }
-  });
-
-  // Get team stats
-  app.get("/api/admin/team/stats", authMiddleware, async (_req: Request, res: Response) => {
-    try {
-      const members = await storage.getTeamMembers();
-      const partners = members.filter(m => m.title.toLowerCase().includes("partner") || m.isPartner);
-      const ofCounsel = members.filter(m => m.title.toLowerCase().includes("of counsel"));
-      const associates = members.filter(m => m.title.toLowerCase().includes("associate"));
-
-      res.json({
-        total: members.length,
-        partners: partners.length,
-        ofCounsel: ofCounsel.length,
-        associates: associates.length,
-      });
-    } catch (error) {
-      console.error("Get team stats error:", error);
-      res.status(500).json({ error: "Failed to fetch team stats" });
     }
   });
 
@@ -1884,13 +1900,15 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // Create practice group
   app.post("/api/admin/practice-groups", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
-      const validatedData = insertPracticeGroupSchema.parse(req.body);
+      const validatedData = insertPracticeGroupSchema.extend({teamMemberIds:z.array(z.string().uuid()).max(100).nullable().optional()}).parse(req.body);
+      await validatePracticeRoster(validatedData.teamMemberIds);
       const group = await storage.createPracticeGroup(validatedData);
       res.status(201).json(group);
     } catch (error) {
       if (error instanceof ZodError) {
         return res.status(400).json({ error: "Validation failed", details: error.errors });
       }
+      if ((error as any)?.code === "23505" || (error as any)?.cause?.code === "23505") return res.status(409).json({error:"Ya existe un registro con ese identificador. Cambie la dirección para conservar ambos."});
       console.error("Create practice group error:", error);
       res.status(500).json({ error: "Failed to create practice group" });
     }
@@ -1899,7 +1917,8 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // Update practice group
   app.put("/api/admin/practice-groups/:id", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
-      const validatedData = insertPracticeGroupSchema.partial().parse(req.body);
+      const validatedData = insertPracticeGroupSchema.extend({teamMemberIds:z.array(z.string().uuid()).max(100).nullable().optional()}).partial().parse(req.body);
+      await validatePracticeRoster(validatedData.teamMemberIds);
       const group = await storage.updatePracticeGroup(req.params.id, validatedData);
       if (!group) {
         return res.status(404).json({ error: "Practice group not found" });
@@ -1909,6 +1928,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       if (error instanceof ZodError) {
         return res.status(400).json({ error: "Validation failed", details: error.errors });
       }
+      if ((error as any)?.code === "23505" || (error as any)?.cause?.code === "23505") return res.status(409).json({error:"Ya existe un registro con ese identificador. Cambie la dirección para conservar ambos."});
       console.error("Update practice group error:", error);
       res.status(500).json({ error: "Failed to update practice group" });
     }
@@ -1953,6 +1973,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       if (error instanceof ZodError) {
         return res.status(400).json({ error: "Validation failed", details: error.errors });
       }
+      if ((error as any)?.code === "23505" || (error as any)?.cause?.code === "23505") return res.status(409).json({error:"Ya existe un registro con ese identificador. Cambie la dirección para conservar ambos."});
       console.error("Create industry group error:", error);
       res.status(500).json({ error: "Failed to create industry group" });
     }
@@ -1971,6 +1992,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       if (error instanceof ZodError) {
         return res.status(400).json({ error: "Validation failed", details: error.errors });
       }
+      if ((error as any)?.code === "23505" || (error as any)?.cause?.code === "23505") return res.status(409).json({error:"Ya existe un registro con ese identificador. Cambie la dirección para conservar ambos."});
       console.error("Update industry group error:", error);
       res.status(500).json({ error: "Failed to update industry group" });
     }
@@ -2662,10 +2684,13 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // =============================================
 
   // Get all media items
-  app.get("/api/admin/media", authMiddleware, async (_req: Request, res: Response) => {
+  app.get("/api/admin/media", authMiddleware, async (req: Request, res: Response) => {
     try {
-      const items = await storage.getMediaItems();
-      res.json(items);
+      const kind=req.query.kind;const prefixes:Record<string,string>={image:'image/',video:'video/',document:'application/pdf'};
+      if(kind!==undefined&&(typeof kind!=='string'||!Object.hasOwn(prefixes,kind)))return res.status(400).json({error:'Tipo de archivo desconocido.'});
+      const items = await mediaInventory();
+      res.set('Cache-Control','private, no-store');
+      res.json(typeof kind==='string'?items.filter(item=>item.mimeType.startsWith(prefixes[kind])):items);
     } catch (error) {
       console.error("Get media error:", error);
       res.status(500).json({ error: "Failed to fetch media" });
@@ -2673,7 +2698,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   });
 
   // Upload media
-  app.post("/api/admin/media/upload", authMiddleware, requireRole("editor", "admin"), upload.single("file"), async (req: Request, res: Response) => {
+  app.post("/api/admin/media/upload", authMiddleware, requireRole("editor", "admin"), receiveMedia, async (req: Request, res: Response) => {
     let objectName: string | null = null;
     try {
       if (!req.file) {
@@ -2692,16 +2717,28 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         : ext === '.mp4' ? b.toString('ascii',4,8)==='ftyp'
         : ext === '.webm' ? b.subarray(0,4).equals(Buffer.from([0x1a,0x45,0xdf,0xa3])) : false;
       if (!valid) return res.status(400).json({error:'El contenido del archivo no coincide con su tipo. Use PNG, JPEG, WebP, GIF, MP4, WebM o PDF.'});
+      let contents=req.file.buffer;
+      let dimensions:{width?:number;height?:number}={};
+      if(req.file.mimetype.startsWith('image/')){
+        try{
+          const image=sharp(contents,{animated:ext==='.gif',limitInputPixels:40000000}).rotate();
+          await image.metadata();
+          contents=await (ext==='.jpg'?image.jpeg({quality:92}):ext==='.webp'?image.webp({quality:92}):ext==='.gif'?image.gif():image.png()).toBuffer();
+          const resultMetadata=await sharp(contents,{animated:ext==='.gif'}).metadata();
+          dimensions={width:resultMetadata.width,height:resultMetadata.pageHeight??resultMetadata.height};
+        }catch{return res.status(400).json({error:'La imagen no se puede leer. Exporte un JPG, PNG, WebP o GIF válido y vuelva a intentarlo.'});}
+      }
       const filename = `${Date.now()}-${uniqueSuffix}${ext}`;
       objectName = `public/media/${filename}`;
-      await uploadAppStorageObject(objectName, req.file.buffer);
+      await uploadAppStorageObject(objectName, contents);
 
       const mediaItem = await storage.createMediaItem({
         filename,
         originalName: req.file.originalname,
         path: `/media/${objectName}`,
         mimeType: req.file.mimetype,
-        size: req.file.size,
+        size: contents.length,
+        ...dimensions,
         uploadedBy: req.adminUser!.id,
         alt: req.body.alt || null,
         altEs: req.body.altEs || null,
@@ -2724,19 +2761,15 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // Delete media item
   app.delete("/api/admin/media/:id", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
-      const mediaItem = (await storage.getMediaItems()).find((item) => item.id === req.params.id);
+      const mediaItem = await persistentMediaItem(req.params.id);
       if (!mediaItem) {
         return res.status(404).json({ error: "Media item not found" });
       }
 
-      const objectName = appStorageObjectKeyFromPath(mediaItem.path);
-      if (objectName) await deleteAppStorageObject(objectName);
-
-      const deleted = await storage.deleteMediaItem(req.params.id);
-      if (!deleted) {
-        return res.status(404).json({ error: "Media item not found" });
-      }
-      res.json({ success: true });
+      // Reversible retirement from the picker. Existing pages, older saved versions
+      // and other references retain their bytes; restoration is available in Media.
+      await db.update(mediaItems).set({archivedAt:new Date()}).where(eq(mediaItems.id,mediaItem.id));
+      res.json({ success: true, archived:true });
     } catch (error) {
       console.error("Delete media error:", error);
       res.status(500).json({ error: "Failed to delete media" });

@@ -1,3 +1,4 @@
+import { useContentEntity, useContentPreview } from "@/features/admin/ContentPreview";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { lazy, Suspense, useState, useMemo, type ReactNode, type SyntheticEvent } from "react";
 import { Link, useParams } from "wouter";
@@ -619,10 +620,7 @@ export default function TeamMemberDetail() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
 
-  const { data: member, isLoading, error } = useQuery<TeamMember>({
-    queryKey: [`/api/team/${slug}`],
-    enabled: !!slug,
-  });
+  const { data: member, isLoading, error } = useContentEntity<TeamMember>("team",slug);
 
   const { data: practiceGroups } = useQuery<PracticeGroup[]>({
     queryKey: ["/api/practice-groups"],
@@ -642,7 +640,8 @@ export default function TeamMemberDetail() {
   });
 
   // Quien el sitio no nombra (E11) recibe la 404: no se pide traducción de su ficha
-  const isNamed = !!member && isNamedOnTeamPage(member);
+  const preview = useContentPreview();
+  const isNamed = !!member && (preview || isNamedOnTeamPage(member));
 
   const { translatedFields, isTranslating, hasTranslation } = useTranslatedContent({
     contentType: 'team_member',

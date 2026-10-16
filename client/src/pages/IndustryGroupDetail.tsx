@@ -1,3 +1,4 @@
+import { useContentEntity, useContentPreview } from "@/features/admin/ContentPreview";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { Link, useParams } from "wouter";
 import { motion } from "framer-motion";
@@ -54,10 +55,7 @@ export default function IndustryGroupDetail() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
 
-  const { data: industryGroup, isLoading, error } = useQuery<IndustryGroup>({
-    queryKey: [`/api/industry-groups/${slug}`],
-    enabled: !!slug,
-  });
+  const { data: industryGroup, isLoading, error } = useContentEntity<IndustryGroup>("industries",slug);
 
   const { data: practiceGroups } = useQuery<PracticeGroup[]>({
     queryKey: ["/api/practice-groups"],

@@ -210,3 +210,9 @@ export function useLanguage(): LanguageContextType {
   }
   return context;
 }
+
+/** Keep administrative labels in Spanish without changing the visitor language. */
+export function AdminLanguageScope({children}:{children:ReactNode}) {
+ const parent=useLanguage();
+ return <LanguageContext.Provider value={{...parent,language:"es",displayLanguage:"es",getLanguageInfo:()=>SUPPORTED_LANGUAGES.find(l=>l.code==="es")!}}>{children}</LanguageContext.Provider>;
+}

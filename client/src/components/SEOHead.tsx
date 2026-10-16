@@ -435,7 +435,7 @@ export default function SEOHead({
     };
 
     updateOrCreateMeta("description", description);
-    updateOrCreateMeta("robots", config.noindex ? "noindex, follow" : "index, follow");
+    updateOrCreateMeta("robots", config.noindex || window.location.pathname.startsWith("/admin/preview/") ? "noindex, nofollow" : "index, follow");
 
     updateOrCreateMeta("og:title", title, true);
     updateOrCreateMeta("og:description", description, true);

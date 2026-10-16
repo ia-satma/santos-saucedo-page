@@ -6,7 +6,11 @@ import { Pool } from "pg";
 
 const databaseUrl = process.env.DATABASE_URL!;
 const isNeon = /\.neon\.tech|neon\.build/.test(databaseUrl);
+// Interactive editorial transactions (ordering and relationships) need a pinned
+// connection. Neon supports the same PostgreSQL connection string over TCP.
+const editorialPool = new Pool({ connectionString: databaseUrl, max: 3, allowExitOnIdle: true });
+export const editorialDb = drizzlePostgres(editorialPool, { schema });
 
 export const db = (isNeon
   ? drizzleNeon(neon(databaseUrl), { schema })
-  : drizzlePostgres(new Pool({ connectionString: databaseUrl }), { schema })) as any;
+  : editorialDb) as any;
