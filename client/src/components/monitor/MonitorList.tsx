@@ -465,7 +465,7 @@ const SUBSCRIBE: Record<LanguageCode, { line: string; cta: string }> = {
   ar: { line: "تلقّي أخبار المكتب عبر البريد الإلكتروني.", cta: "اشترك" },
   ru: { line: "Получать новости фирмы по электронной почте.", cta: "Подписаться" },
   fr: { line: "Recevoir les actualités du cabinet par e-mail.", cta: "S’abonner" },
-  it: { line: "Ricevere le notizie dello studio via e-mail.", cta: "Iscriviti" },
+  it: { line: "Ricevere le notizie dello studio via e-mail.", cta: "Iscriversi" },
 };
 
 export function MonitorSubscribe({

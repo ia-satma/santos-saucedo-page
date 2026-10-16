@@ -76,7 +76,6 @@ const socioSrcSetProps = (slug: string) => {
 /* § 01 — La firma */
 export function Firma26({ lang }: { lang: Lang26 }) {
   const t = home26[lang].firma;
-  const facts = home26[lang].facts;
   return (
     <section id="firma" {...langAttrs[lang]} data-surface="light" className={`bg-white ${Y.firma}`} aria-labelledby="ss26-firma">
       {/* Retícula de 12. Desde 1280: texto en 4 columnas y foto desde la 5 (el borde de la
@@ -92,17 +91,6 @@ export function Firma26({ lang }: { lang: Lang26 }) {
               {t.title}
             </h2>
           </Reveal>
-          {/* Las cifras que antes cerraban el héroe (fundación y ciudades), al inicio de la
-              sección: dato, no promesa. La entrada del héroe no se repite aquí: los dos párrafos
-              ya dicen lo mismo (2010, San Pedro Garza García, más de 72 ciudades). */}
-          <dl className="mt-10 grid grid-cols-2 gap-x-6" data-testid="section-home-facts">
-            {facts.map((fact) => (
-              <div key={fact.label} className="flex flex-col border-t border-ss-rule pt-6">
-                <dt className="ss-label order-2 mt-3 text-ss-medio">{fact.label}</dt>
-                <dd className="ss-figure order-1">{fact.value}</dd>
-              </div>
-            ))}
-          </dl>
           <Reveal delay={0.12}>
             <div className="ss-prose mt-10 space-y-6 text-ss-tinta">
               {/* "Santos & Saucedo" sin partirse entre líneas */}
@@ -122,8 +110,10 @@ export function Firma26({ lang }: { lang: Lang26 }) {
             nunca más grande que su tamaño nativo: hasta 708 px bajo 1280; desde 1280, las
             columnas 6–12 (746 px a 1440, 760 como máximo), con una columna de aire entre el
             texto y la foto. Siempre contra el borde derecho del contenedor, donde acaban las
-            filas de Prácticas, las columnas del manifiesto y el Monitor. */}
-        <figure className="w-full max-w-[708px] lg:col-span-6 lg:col-start-7 lg:justify-self-end xl:col-span-7 xl:col-start-6 xl:max-w-none">
+            filas de Prácticas, las columnas del manifiesto y el Monitor. Arriba, a la altura de
+            la cejilla, sin estirarse ni fijarse al hacer scroll: a 1024 el texto sigue unos
+            250 px bajo el pie de foto; a 1440 terminan a la par. */}
+        <figure className="w-full max-w-[708px] lg:col-span-6 lg:col-start-7 lg:self-start lg:justify-self-end xl:col-span-7 xl:col-start-6 xl:max-w-none">
           {/* Fondo Línea mientras carga */}
           <div className="overflow-hidden bg-ss-rule">
             <img

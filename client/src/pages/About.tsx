@@ -23,9 +23,10 @@ import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
 import { officeLabel } from "@/lib/officeLabel";
 import type { LanguageCode } from "@shared/schema";
-// La recepción de la oficina (oficina/recepcion, 1536 × 1024), después de la introducción
-import recepcion768 from "@assets/ss26/oficina/recepcion-768.webp";
-import recepcion1536 from "@assets/ss26/oficina/recepcion-1536.webp";
+// La recepción de la oficina, después de la introducción: la franja del mostrador
+// (oficina/recepcion-banda, 1522 × 694 y 761 × 347), a todo el ancho del contenedor (I5)
+import recepcionBanda768 from "@assets/ss26/oficina/recepcion-banda-768.webp";
+import recepcionBanda1536 from "@assets/ss26/oficina/recepcion-banda-1536.webp";
 
 // Cifras de /about: "35+" (sin tocar) y "72+" ciudades con presencia, la forma en cifras de
 // "más de 72" (redacción aprobada de la portada: "Ciudades con presencia"). Fuera el conteo de
@@ -1231,19 +1232,21 @@ export default function About() {
               </SplitSection>
             </section>
 
-            {/* La recepción de la oficina a lo ancho del contenedor, a su proporción (3:2), en gris
-                como las demás fotos y sin pie: la página de la oficina la enlaza al final */}
+            {/* La recepción de la oficina a todo el ancho del contenedor, a la proporción de su
+                archivo (1522 × 694; sin object-fit ni recorte por CSS), en gris como las demás
+                fotos y sin pie: la página de la oficina la enlaza al final. El contenedor mide
+                hasta 1320 px: nunca más ancha que su archivo. */}
             <figure className="mb-20 lg:mb-24" data-testid="figure-about-reception">
-              <div className="overflow-hidden bg-ss-rule">
+              <div className="bg-ss-rule">
                 <img
-                  src={recepcion1536}
-                  srcSet={`${recepcion768} 768w, ${recepcion1536} 1536w`}
+                  src={recepcionBanda1536}
+                  srcSet={`${recepcionBanda768} 761w, ${recepcionBanda1536} 1522w`}
                   sizes="(min-width: 1464px) 1320px, 90vw"
                   alt={keepFirmName(receptionAlt[language] ?? receptionAlt.en)}
                   loading="lazy"
                   decoding="async"
-                  width={1536}
-                  height={1024}
+                  width={1522}
+                  height={694}
                   className="ss-photo block h-auto w-full"
                   data-testid="img-about-reception"
                 />

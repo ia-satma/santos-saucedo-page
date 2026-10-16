@@ -244,10 +244,12 @@ export default function Team() {
 
   // Cargo de cada persona (no la etiqueta plural de la sección): titleEs en español; en los
   // demás idiomas, title. Fuera de en ese título es inglés: va en <bdi lang="en"> (aislado
-  // del árabe sin cambiar la alineación del pie).
+  // del árabe sin cambiar la alineación del pie). "(in memoriam)" con espacio duro, como en la
+  // ficha (TeamMemberDetail): no se parte entre líneas.
   const renderMemberRole = (member: TeamMember, fallback: string) => {
     const englishFallback = language !== "es" && language !== "en" && !!member.title;
-    const text = language === "es" ? (member.titleEs || member.title || fallback) : (member.title || fallback);
+    const role = language === "es" ? (member.titleEs || member.title || fallback) : (member.title || fallback);
+    const text = role.replace(/\((in)\s+(memoriam)\)/gi, "($1\u00a0$2)");
     return (
       <span className="ss-label mt-3 block text-ss-medio">
         {englishFallback ? <bdi lang="en" dir="ltr">{text}</bdi> : text}

@@ -4,7 +4,8 @@ import type { LanguageCode } from "@shared/schema";
 export const OFFICE_LABEL: Record<LanguageCode, string> = {
   es: "La oficina",
   en: "The office",
-  de: "Die Kanzlei",
+  // I6: "Das Büro" y no "Die Kanzlei", que junto a "Über die Kanzlei" se lee como la firma
+  de: "Das Büro",
   fr: "Le bureau",
   it: "La sede",
   ru: "Офис",

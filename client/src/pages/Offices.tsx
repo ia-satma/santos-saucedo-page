@@ -21,8 +21,6 @@ import vestibuloS from "@assets/ss26/oficina/vestibulo-768.webp";
 import vestibuloL from "@assets/ss26/oficina/vestibulo-1536.webp";
 import vestibulo2S from "@assets/ss26/oficina/vestibulo-2-768.webp";
 import vestibulo2L from "@assets/ss26/oficina/vestibulo-2-1536.webp";
-import salaJuntasS from "@assets/ss26/oficina/sala-juntas-768.webp";
-import salaJuntasL from "@assets/ss26/oficina/sala-juntas-1536.webp";
 import salaJuntas2S from "@assets/ss26/oficina/sala-juntas-2-768.webp";
 import salaJuntas2L from "@assets/ss26/oficina/sala-juntas-2-1536.webp";
 import areaTrabajoS from "@assets/ss26/oficina/area-trabajo-768.webp";
@@ -47,7 +45,6 @@ type PhotoKey =
   | "recepcion"
   | "vestibulo"
   | "vestibulo2"
-  | "salaJuntas"
   | "salaJuntas2"
   | "areaTrabajo"
   | "areaTrabajo2"
@@ -56,8 +53,9 @@ type PhotoKey =
   | "obraMazo";
 
 // Medidas reales de cada archivo (srcset con su ancho verdadero; width/height del grande
-// reservan el hueco y la página no se mueve al cargar). La fachada y la escultura no llegan
-// a 1536: sus archivos "-1536" miden 1159 y 1024 de ancho.
+// reservan el hueco y la página no se mueve al cargar). La fachada, la recepción y la escultura
+// no llegan a 1536: sus archivos "-1536" miden 1159, 1522 y 1024 de ancho. La obra del mazo,
+// recortada (I4), mide 1536 × 940.
 interface PhotoFile {
   s: string;
   sw: number;
@@ -68,29 +66,28 @@ interface PhotoFile {
 
 const PHOTOS: Record<PhotoKey, PhotoFile> = {
   fachada: { s: fachadaS, sw: 768, l: fachadaL, lw: 1159, lh: 900 },
-  recepcion: { s: recepcionS, sw: 768, l: recepcionL, lw: 1536, lh: 1024 },
+  recepcion: { s: recepcionS, sw: 761, l: recepcionL, lw: 1522, lh: 1024 },
   vestibulo: { s: vestibuloS, sw: 768, l: vestibuloL, lw: 1536, lh: 1024 },
   vestibulo2: { s: vestibulo2S, sw: 768, l: vestibulo2L, lw: 1536, lh: 1024 },
-  salaJuntas: { s: salaJuntasS, sw: 768, l: salaJuntasL, lw: 1536, lh: 1024 },
   salaJuntas2: { s: salaJuntas2S, sw: 768, l: salaJuntas2L, lw: 1536, lh: 1024 },
   areaTrabajo: { s: areaTrabajoS, sw: 768, l: areaTrabajoL, lw: 1536, lh: 1024 },
   areaTrabajo2: { s: areaTrabajo2S, sw: 768, l: areaTrabajo2L, lw: 1536, lh: 1024 },
   privado: { s: privadoS, sw: 768, l: privadoL, lw: 1536, lh: 1024 },
   escultura: { s: esculturaS, sw: 640, l: esculturaL, lw: 1024, lh: 1536 },
-  obraMazo: { s: obraMazoS, sw: 768, l: obraMazoL, lw: 1536, lh: 1024 },
+  obraMazo: { s: obraMazoS, sw: 768, l: obraMazoL, lw: 1536, lh: 940 },
 };
 
 // sizes según el hueco de cada foto. .ss-container: 1320 px de contenido y 5vw de margen
 // (20 px bajo 400). Desde lg el cuerpo de SplitSection (columnas 5–12) mide hasta 872 px
 // (≈ 60vw); antes, todo el contenedor (≈ 90vw). Media columna: la mitad menos el hueco de 24 px.
+// La fachada va en el mismo cuerpo (I3): mismo sizes que las anchas.
 const SIZES = {
-  // La fachada, a su tamaño: nunca más ancha que su archivo (1159 px)
-  facade: "(min-width: 1288px) 1159px, 90vw",
   wide: "(min-width: 1024px) min(872px, 60vw), 90vw",
   half: "(min-width: 1024px) min(424px, 30vw), (min-width: 640px) calc(45vw - 12px), 90vw",
-  // Obra: vertical y horizontal a la misma altura (columnas 4fr / 9fr desde sm)
-  tall: "(min-width: 1024px) min(261px, 18.5vw), (min-width: 640px) calc(27.7vw - 7px), 90vw",
-  beside: "(min-width: 1024px) min(587px, 41.5vw), (min-width: 640px) calc(62.3vw - 17px), 90vw",
+  // Obra: vertical y horizontal a la misma altura (columnas 235fr / 576fr desde sm: 29 % y 71 %
+  // de lo que queda tras el hueco)
+  tall: "(min-width: 1024px) min(246px, 17.4vw), (min-width: 640px) calc(26.1vw - 7px), 90vw",
+  beside: "(min-width: 1024px) min(603px, 42.6vw), (min-width: 640px) calc(63.9vw - 17px), 90vw",
 } as const;
 
 interface OfficesContent {
@@ -133,7 +130,6 @@ const content: Record<LanguageCode, OfficesContent> = {
       recepcion: "Recepción de la oficina de Santos & Saucedo",
       vestibulo: "Vestíbulo de la oficina de Santos & Saucedo, visto desde arriba",
       vestibulo2: "Sala de espera en el vestíbulo de la oficina de Santos & Saucedo",
-      salaJuntas: "Sala de juntas de la oficina de Santos & Saucedo",
       salaJuntas2: "Sala de juntas con estantería, en la oficina de Santos & Saucedo",
       areaTrabajo: "Área de trabajo abierta de la oficina de Santos & Saucedo",
       areaTrabajo2: "Escritorios en un área de trabajo de la oficina de Santos & Saucedo",
@@ -161,7 +157,6 @@ const content: Record<LanguageCode, OfficesContent> = {
       recepcion: "Reception at the Santos & Saucedo office",
       vestibulo: "Lobby of the Santos & Saucedo office, seen from above",
       vestibulo2: "Waiting area in the lobby of the Santos & Saucedo office",
-      salaJuntas: "Meeting room at the Santos & Saucedo office",
       salaJuntas2: "Meeting room with shelving at the Santos & Saucedo office",
       areaTrabajo: "Open work area at the Santos & Saucedo office",
       areaTrabajo2: "Desks in a work area of the Santos & Saucedo office",
@@ -189,7 +184,6 @@ const content: Record<LanguageCode, OfficesContent> = {
       recepcion: "Empfang der Kanzlei Santos & Saucedo",
       vestibulo: "Eingangshalle der Kanzlei Santos & Saucedo, von oben gesehen",
       vestibulo2: "Wartebereich in der Eingangshalle der Kanzlei Santos & Saucedo",
-      salaJuntas: "Besprechungsraum der Kanzlei Santos & Saucedo",
       salaJuntas2: "Besprechungsraum mit Regal in der Kanzlei Santos & Saucedo",
       areaTrabajo: "Offener Arbeitsbereich der Kanzlei Santos & Saucedo",
       areaTrabajo2: "Schreibtische in einem Arbeitsbereich der Kanzlei Santos & Saucedo",
@@ -217,7 +211,6 @@ const content: Record<LanguageCode, OfficesContent> = {
       recepcion: "Accueil du bureau de Santos & Saucedo",
       vestibulo: "Hall du bureau de Santos & Saucedo, vu d’en haut",
       vestibulo2: "Espace d’attente dans le hall du bureau de Santos & Saucedo",
-      salaJuntas: "Salle de réunion du bureau de Santos & Saucedo",
       salaJuntas2: "Salle de réunion avec étagères, au bureau de Santos & Saucedo",
       areaTrabajo: "Espace de travail ouvert du bureau de Santos & Saucedo",
       areaTrabajo2: "Postes de travail dans un espace du bureau de Santos & Saucedo",
@@ -245,7 +238,6 @@ const content: Record<LanguageCode, OfficesContent> = {
       recepcion: "Accoglienza della sede di Santos & Saucedo",
       vestibulo: "Atrio della sede di Santos & Saucedo, visto dall’alto",
       vestibulo2: "Area d’attesa nell’atrio della sede di Santos & Saucedo",
-      salaJuntas: "Sala riunioni della sede di Santos & Saucedo",
       salaJuntas2: "Sala riunioni con scaffalature, nella sede di Santos & Saucedo",
       areaTrabajo: "Area di lavoro aperta della sede di Santos & Saucedo",
       areaTrabajo2: "Scrivanie in un’area di lavoro della sede di Santos & Saucedo",
@@ -273,7 +265,6 @@ const content: Record<LanguageCode, OfficesContent> = {
       recepcion: "Приёмная офиса Santos & Saucedo",
       vestibulo: "Вестибюль офиса Santos & Saucedo, вид сверху",
       vestibulo2: "Зона ожидания в вестибюле офиса Santos & Saucedo",
-      salaJuntas: "Переговорная комната офиса Santos & Saucedo",
       salaJuntas2: "Переговорная комната со стеллажом в офисе Santos & Saucedo",
       areaTrabajo: "Открытая рабочая зона офиса Santos & Saucedo",
       areaTrabajo2: "Рабочие столы в одной из рабочих зон офиса Santos & Saucedo",
@@ -300,7 +291,6 @@ const content: Record<LanguageCode, OfficesContent> = {
       recepcion: "Santos & Saucedo办公室的前台",
       vestibulo: "俯瞰Santos & Saucedo办公室的大堂",
       vestibulo2: "Santos & Saucedo办公室大堂的等候区",
-      salaJuntas: "Santos & Saucedo办公室的会议室",
       salaJuntas2: "Santos & Saucedo办公室内设有书架的会议室",
       areaTrabajo: "Santos & Saucedo办公室的开放式办公区",
       areaTrabajo2: "Santos & Saucedo办公室办公区的办公桌",
@@ -329,7 +319,6 @@ const content: Record<LanguageCode, OfficesContent> = {
       recepcion: "Santos & Saucedoのオフィスの受付",
       vestibulo: "上から見たSantos & Saucedoのオフィスのロビー",
       vestibulo2: "Santos & Saucedoのオフィスのロビーにある待合スペース",
-      salaJuntas: "Santos & Saucedoのオフィスの会議室",
       salaJuntas2: "書棚のあるSantos & Saucedoのオフィスの会議室",
       areaTrabajo: "Santos & Saucedoのオフィスのオープンな執務エリア",
       areaTrabajo2: "Santos & Saucedoのオフィスの執務エリアのデスク",
@@ -357,7 +346,6 @@ const content: Record<LanguageCode, OfficesContent> = {
       recepcion: "Santos & Saucedo 사무실의 리셉션",
       vestibulo: "위에서 본 Santos & Saucedo 사무실의 로비",
       vestibulo2: "Santos & Saucedo 사무실 로비의 대기 공간",
-      salaJuntas: "Santos & Saucedo 사무실의 회의실",
       salaJuntas2: "선반이 있는 Santos & Saucedo 사무실의 회의실",
       areaTrabajo: "Santos & Saucedo 사무실의 개방형 업무 공간",
       areaTrabajo2: "Santos & Saucedo 사무실 업무 공간의 책상",
@@ -385,7 +373,6 @@ const content: Record<LanguageCode, OfficesContent> = {
       recepcion: "الاستقبال في مكتب Santos & Saucedo",
       vestibulo: "بهو مكتب Santos & Saucedo من الأعلى",
       vestibulo2: "منطقة الانتظار في بهو مكتب Santos & Saucedo",
-      salaJuntas: "قاعة اجتماعات في مكتب Santos & Saucedo",
       salaJuntas2: "قاعة اجتماعات ذات رفوف في مكتب Santos & Saucedo",
       areaTrabajo: "مساحة عمل مفتوحة في مكتب Santos & Saucedo",
       areaTrabajo2: "مكاتب في إحدى مساحات العمل بمكتب Santos & Saucedo",
@@ -512,37 +499,41 @@ export default function Offices() {
               </SplitSection>
             </section>
 
-            {/* La fachada grande, dentro del contenedor (no a sangre) y a su tamaño: nunca más
-                ancha que su archivo. Desde lg, alineada al final del contenedor (ms-auto, también
-                en árabe), en el mismo borde que las fotos de abajo, como la de La firma en la
-                portada (E19). La única foto que no se difiere. */}
-            <div className="mb-20 max-w-[1159px] lg:mb-24 lg:ms-auto">
-              <OfficePhoto
-                photo="fachada"
-                alt={t.alt.fachada}
-                sizes={SIZES.facade}
-                eager
-                testId="img-offices-facade"
-              />
+            {/* La fachada, dentro del contenedor (no a sangre): desde lg en la columna del cuerpo
+                (5–12), con el mismo borde inicial que la introducción y las fotos de abajo (I3);
+                bajo lg, a todo el ancho del contenedor. Nunca más ancha que su archivo (1159 px;
+                el cuerpo mide hasta 872). La única foto que no se difiere. */}
+            <div className="mb-20 lg:mb-24">
+              <SplitSection>
+                <OfficePhoto
+                  photo="fachada"
+                  alt={t.alt.fachada}
+                  sizes={SIZES.wide}
+                  eager
+                  testId="img-offices-facade"
+                />
+              </SplitSection>
             </div>
 
-            {/* Fotos por tema. Composición editorial: una ancha y dos a media columna, o una
-                vertical junto a una horizontal; huecos de 24 px (gap-6), sin bordes ni sombras.
-                En teléfono, una debajo de otra. Sin pie de foto: el nombre del bloque basta. */}
+            {/* Fotos por tema. Composición editorial: una ancha y dos a media columna, una sola
+                ancha, o una vertical junto a una horizontal; huecos de 24 px (gap-6), sin bordes
+                ni sombras. En teléfono, una debajo de otra. Sin pie de foto: el nombre del bloque
+                basta. */}
             <div data-testid="section-gallery">
               <PhotoBlock id="offices-reception" title={t.reception} testId="section-offices-reception">
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <OfficePhoto photo="recepcion" alt={t.alt.recepcion} sizes={SIZES.wide} className="sm:col-span-2" />
+                {/* La sala de espera ancha; debajo, recepción (1522 × 1024) y vestíbulo (1536 × 1024)
+                    en columnas 1522fr / 1536fr para que las dos tengan la misma altura */}
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-[1522fr_1536fr]">
+                  <OfficePhoto photo="vestibulo2" alt={t.alt.vestibulo2} sizes={SIZES.wide} className="sm:col-span-2" />
+                  <OfficePhoto photo="recepcion" alt={t.alt.recepcion} sizes={SIZES.half} />
                   <OfficePhoto photo="vestibulo" alt={t.alt.vestibulo} sizes={SIZES.half} />
-                  <OfficePhoto photo="vestibulo2" alt={t.alt.vestibulo2} sizes={SIZES.half} />
                 </div>
               </PhotoBlock>
 
+              {/* Una sola foto ancha: sala-juntas y sala-juntas-2 son casi la misma toma, y la
+                  primera ya está en la portada (Empresas extranjeras) */}
               <PhotoBlock id="offices-meeting-rooms" title={t.meetingRooms} testId="section-offices-meeting-rooms">
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <OfficePhoto photo="salaJuntas" alt={t.alt.salaJuntas} sizes={SIZES.half} />
-                  <OfficePhoto photo="salaJuntas2" alt={t.alt.salaJuntas2} sizes={SIZES.half} />
-                </div>
+                <OfficePhoto photo="salaJuntas2" alt={t.alt.salaJuntas2} sizes={SIZES.wide} />
               </PhotoBlock>
 
               <PhotoBlock id="offices-work-areas" title={t.workAreas} testId="section-offices-work-areas">
@@ -553,10 +544,10 @@ export default function Offices() {
                 </div>
               </PhotoBlock>
 
-              {/* Vertical junto a horizontal: columnas 4fr / 9fr para que las dos tengan la misma
-                  altura (2:3 y 3:2) */}
+              {/* Vertical junto a horizontal: a la misma altura, el ancho de cada una es su
+                  proporción (1024/1536 y 1536/940), es decir 235fr / 576fr */}
               <PhotoBlock id="offices-art" title={t.art} testId="section-offices-art">
-                <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-[4fr_9fr]">
+                <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-[235fr_576fr]">
                   <OfficePhoto photo="escultura" alt={t.alt.escultura} sizes={SIZES.tall} />
                   <OfficePhoto photo="obraMazo" alt={t.alt.obraMazo} sizes={SIZES.beside} />
                 </div>
@@ -564,7 +555,8 @@ export default function Offices() {
             </div>
 
             {/* Dirección: el h2 en el aside y en el cuerpo la lista de datos (los del pie) con
-                "Cómo llegar" y "Contacto" */}
+                "Cómo llegar" y "Contacto". Sin límite de medida (I3): los filetes terminan en el
+                mismo borde que las fotos; el límite es solo para texto corrido. */}
             <section aria-labelledby="offices-address" data-testid="section-main-office">
               <SplitSection
                 aside={
@@ -573,7 +565,7 @@ export default function Offices() {
                   </h2>
                 }
               >
-                <div className="max-w-[44rem]" data-testid="card-office-info">
+                <div data-testid="card-office-info">
                   <dl className="border-b border-ss-rule">
                     {/* La dirección ya la nombra el h2: su etiqueta solo para lectores de pantalla,
                         y la celda conserva la columna para que los datos queden alineados */}

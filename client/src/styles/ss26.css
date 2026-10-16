@@ -261,7 +261,7 @@ html:has(.ss26) body {
   text-wrap: pretty;
 }
 /* Entrada sobre Azul Profundo: sans 400 al 84 % (la romana fina se lee débil en teléfono) */
-:is(#hero, .ss-navy, .editorial-page-hero) .ss-lead {
+:is(.ss-navy, .editorial-page-hero) .ss-lead {
   font-family: var(--ss-font-sans);
   font-size: clamp(18px, 0.5vw + 14px, 21px);
   letter-spacing: 0;
@@ -554,6 +554,33 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 }
 .ss-hero-year {
   display: block;
+}
+/* Botón de pausa del video (I1, WCAG 2.2.2): 44 × 44, transparente, sin borde ni sombra; el
+   glifo de 16 px (dos barras o triángulo, trazo 1.5) en blanco al 62 %, pleno con hover y foco
+   (el anillo lima es el de .ss26). En la esquina inferior del lado final: el glifo alineado al
+   borde del contenedor (el área táctil sobresale 14 px, como los botones de la cabecera) y a
+   32 del borde inferior en el lienzo, nunca menos de 20 px. Queda bajo la § de marca de agua,
+   que termina al menos 110 --u por encima del borde inferior. */
+.ss-hero-toggle {
+  position: absolute;
+  z-index: 1;
+  inset-inline-end: calc(max(var(--ss-pad), (100% - 1320px) / 2) - 14px);
+  bottom: calc(max(20px, 32 * var(--u)) - 14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgb(255 255 255 / 0.62);
+  transition: color 200ms var(--ss-ease);
+}
+.ss-hero-toggle:hover,
+.ss-hero-toggle:focus-visible {
+  color: #fff;
 }
 @media (min-width: 640px) {
   .ss-hero-dot {

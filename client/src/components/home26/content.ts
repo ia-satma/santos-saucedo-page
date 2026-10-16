@@ -26,12 +26,6 @@ export const home26 = {
       tagline: "Derecho laboral para empresas",
       place: ["San Pedro Garza García", "Desde 2010"],
     },
-    // Cifras al inicio de La firma § 01. Solo cifras con dato: fuera "4 prácticas" (las cuatro
-    // se listan abajo). "72+" en cifra, "más de 72" en prosa.
-    facts: [
-      { value: "2010", label: "Año de fundación" },
-      { value: "72+", label: "Ciudades con presencia" },
-    ],
     firma: {
       title: "Una práctica dedicada a\u00a0las empresas",
       body: [
@@ -116,10 +110,6 @@ export const home26 = {
       tagline: "Labor law for companies",
       place: ["San Pedro Garza García", "Since 2010"],
     },
-    facts: [
-      { value: "2010", label: "Founded" },
-      { value: "72+", label: "Cities with presence" },
-    ],
     firma: {
       title: "A practice devoted to\u00a0employers",
       body: [

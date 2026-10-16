@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import { SectionMark } from "./primitives";
 import { home26, langAttrs, type Lang26 } from "./content";
+import { chrome26 } from "./chrome26";
 
 // Video de la portada (client/public/video): tomas de dron de Monterrey con el tratamiento azul
 // ya aplicado. Ruta con la base de Pages (/santos-saucedo-page/ en el build estático).
@@ -10,6 +11,32 @@ const POSTER = `${VIDEO_DIR}portada-azul-poster.jpg`;
 // 1280 hasta 1024 px de ancho (teléfono y tableta); 1920 en el resto. Se elige al montar.
 const SMALL_SCREEN = "(max-width: 1024px)";
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
+// Preferencia del visitante (I1): "paused" si pausó el video. Lectura y escritura con try/catch:
+// en modo privado o con el almacenamiento bloqueado la elección vale solo para esta visita.
+const PREF_KEY = "ss-hero-video";
+
+function readPausedPref() {
+  try {
+    return window.localStorage.getItem(PREF_KEY) === "paused";
+  } catch {
+    return false;
+  }
+}
+
+function writePausedPref(paused: boolean) {
+  try {
+    if (paused) window.localStorage.setItem(PREF_KEY, "paused");
+    else window.localStorage.removeItem(PREF_KEY);
+  } catch {
+    // Sin almacenamiento: no se recuerda
+  }
+}
+
+/** Ahorro de datos (saveData o conexión 2G): póster fijo, y el botón para reproducir si se quiere. */
+function savesData() {
+  const c = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+  return !!c && (c.saveData === true || c.effectiveType === "slow-2g" || c.effectiveType === "2g");
+}
 
 /** Consulta de medios leída al montar (la portada solo se pinta en el navegador) y seguida después. */
 function useMedia(query: string) {
@@ -24,10 +51,12 @@ function useMedia(query: string) {
   return matches;
 }
 
-/** Video de fondo: mudo, en bucle, sin controles ni audio, y en pausa mientras el héroe no se ve
-    (no gasta batería ni CPU al leer el resto de la página). */
-function HeroVideo() {
+/** Video de fondo: mudo, en bucle, sin controles nativos ni audio, y en pausa mientras el héroe
+    no se ve (no gasta batería ni CPU al leer el resto de la página). `paused`: lo pausó el
+    visitante con el botón; entonces queda en su cuadro y el observador no lo reanuda. */
+function HeroVideo({ paused }: { paused: boolean }) {
   const ref = useRef<HTMLVideoElement>(null);
+  const pausedRef = useRef(paused);
   const [src] = useState(() => `${VIDEO_DIR}portada-azul-${window.matchMedia(SMALL_SCREEN).matches ? 1280 : 1920}.mp4`);
 
   useEffect(() => {
@@ -37,13 +66,24 @@ function HeroVideo() {
     video.muted = true;
     video.defaultMuted = true;
     video.setAttribute("muted", "");
-    const play = () => video.play().catch(() => undefined);
-    play();
     if (!("IntersectionObserver" in window)) return;
-    const io = new IntersectionObserver(([entry]) => (entry.isIntersecting ? play() : video.pause()));
+    // Fuera de la vista se detiene; al volver se reanuda solo si el visitante no lo pausó
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) video.pause();
+      else if (!pausedRef.current) video.play().catch(() => undefined);
+    });
     io.observe(video);
     return () => io.disconnect();
   }, []);
+
+  // El botón del héroe: pausa o reproduce (también al montar)
+  useEffect(() => {
+    pausedRef.current = paused;
+    const video = ref.current;
+    if (!video) return;
+    if (paused) video.pause();
+    else video.play().catch(() => undefined);
+  }, [paused]);
 
   return (
     <video
@@ -51,7 +91,8 @@ function HeroVideo() {
       className="absolute inset-0 h-full w-full object-cover"
       src={src}
       poster={POSTER}
-      autoPlay
+      // Si se vuelve a montar ya en pausa (al quitar el movimiento reducido), no arranca solo
+      autoPlay={!paused}
       muted
       loop
       playsInline
@@ -70,8 +111,23 @@ function HeroVideo() {
    blanca al 12 %, completa. Medidas en ss26.css (.ss-hero…), en la unidad --u (1 px a 1920 × 1080). */
 export default function Hero26({ lang }: { lang: Lang26 }) {
   const t = home26[lang].hero;
-  // Con movimiento reducido no se monta el video: el póster como imagen fija, mismo encuadre
-  const still = useMedia(REDUCED_MOTION);
+  const labels = chrome26[lang].heroVideo;
+  // Con movimiento reducido no se monta el video ni hay botón: el póster como imagen fija, mismo encuadre
+  const reduced = useMedia(REDUCED_MOTION);
+  // Si el visitante lo pausó en otra visita o ahorra datos, el video no se monta (ni se descarga):
+  // póster fijo y el botón ofrece reproducir. Al pulsarlo se monta y se reproduce; al pausarlo
+  // después queda montado en su cuadro.
+  const [startPaused] = useState(() => typeof window !== "undefined" && (readPausedPref() || savesData()));
+  const [paused, setPaused] = useState(startPaused);
+  const [mounted, setMounted] = useState(!startPaused);
+  const still = reduced || !mounted;
+
+  const toggle = () => {
+    const next = !paused;
+    if (!next) setMounted(true);
+    setPaused(next);
+    writePausedPref(next);
+  };
 
   return (
     <section id="hero" {...langAttrs[lang]} className="ss-hero" aria-labelledby="ss26-hero-title">
@@ -80,7 +136,7 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
         {still ? (
           <img src={POSTER} alt="" width={1920} height={872} decoding="async" className="absolute inset-0 h-full w-full object-cover" />
         ) : (
-          <HeroVideo />
+          <HeroVideo paused={paused} />
         )}
         <div className="ss-hero-veil absolute inset-0" />
       </div>
@@ -107,6 +163,22 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
           <span className="ss-hero-year">{t.place[1]}</span>
         </p>
       </div>
+
+      {/* Pausa del video (WCAG 2.2.2): un solo botón, solo icono, en la esquina inferior del lado
+          final; la etiqueta cambia con el estado (sin aria-pressed). Fuera con movimiento reducido. */}
+      {!reduced && (
+        <button
+          type="button"
+          className="ss-hero-toggle"
+          aria-label={paused ? labels.play : labels.pause}
+          onClick={toggle}
+          data-testid="button-hero-video"
+        >
+          <svg aria-hidden="true" viewBox="0 0 16 16" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={1.5}>
+            {paused ? <path d="M4.75 2.75v10.5L13.25 8z" strokeLinejoin="round" /> : <path d="M5.25 2.75v10.5M10.75 2.75v10.5" />}
+          </svg>
+        </button>
+      )}
     </section>
   );
 }

@@ -232,10 +232,10 @@ export default function Careers() {
     it: {
       heroTitle: "Carriere",
       heroSubtitle: "La tua carriera in Santos\u00a0&\u00a0Saucedo.",
-      introText: "In Santos\u00a0&\u00a0Saucedo, tirocinanti e collaboratori lavorano fin dall'inizio su incarichi reali, al fianco dei soci: audit negli stabilimenti, revisione dei contratti collettivi, udienze di conciliazione e giudizi.",
-      whyJoinSubtitle: "Cerchiamo studenti e avvocati interessati al diritto del lavoro dal lato dell'impresa, e personale amministrativo che voglia crescere in uno studio di soci. Apprezziamo il rigore, la discrezione e l'interesse a capire come funziona un'impresa dall'interno.",
+      introText: "In Santos\u00a0&\u00a0Saucedo, tirocinanti e collaboratori lavorano fin dall’inizio su incarichi reali, al fianco dei soci: audit negli stabilimenti, revisione dei contratti collettivi, udienze di conciliazione e giudizi.",
+      whyJoinSubtitle: "Cerchiamo studenti e avvocati interessati al diritto del lavoro dal lato dell’impresa, e personale amministrativo che voglia crescere in uno studio di soci. Apprezziamo il rigore, la discrezione e l’interesse a capire come funziona un’impresa dall’interno.",
       cultureTitle: "Cosa imparerai",
-      cultureText: "In uno studio delle nostre dimensioni, il tuo lavoro viene rivisto direttamente da un socio. Imparerai a preparare un fascicolo, a negoziare e a sostenere una posizione davanti all'autorità, e conoscerai da vicino l'attività di imprese di molti settori.",
+      cultureText: "In uno studio delle nostre dimensioni, il tuo lavoro viene rivisto direttamente da un socio. Imparerai a preparare un fascicolo, a negoziare e a sostenere una posizione davanti all’autorità, e conoscerai da vicino l’attività di imprese di molti settori.",
       environmentTitle: "Lo studio",
       environmentText: "Con oltre 35 anni di esperienza, Santos & Saucedo assiste le imprese in materia di lavoro da San Pedro Garza García.",
       internshipTitle: "Semillero S&S",
@@ -246,7 +246,7 @@ export default function Careers() {
       applyTitle: "Come candidarsi",
       applyInstructions: "Invia il tuo CV in PDF a:",
       applyEmail: "reclutamiento@santossaucedo.com",
-      applyNote: "Nell'e-mail indica il tuo nome, il telefono con prefisso, il tuo livello (studente, tirocinante, avvocato o personale amministrativo) e l'area di interesse: lavoro, societario, immigrazione o contenzioso.",
+      applyNote: "Nell’e-mail indica il tuo nome, il telefono con prefisso, il tuo livello (studente, tirocinante, avvocato o personale amministrativo) e l’area di interesse: lavoro, societario, immigrazione o contenzioso.",
       sendApplication: "Invia candidatura",
     },
   };

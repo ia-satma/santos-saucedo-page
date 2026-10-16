@@ -104,7 +104,7 @@ export default function Interns() {
       heroSubtitle: "Il Semillero S&S è il programma di tirocinio dello studio.",
       applyEmail: "reclutamiento@santossaucedo.com",
       ctaTitle: "Come candidarsi",
-      ctaIntro: "Se oggi non c'è una posizione per il tuo profilo, puoi lasciare i tuoi dati nel Semillero. Esaminiamo i profili ogni volta che si apre una posizione.",
+      ctaIntro: "Se oggi non c’è una posizione per il tuo profilo, puoi lasciare i tuoi dati nel Semillero. Esaminiamo i profili ogni volta che si apre una posizione.",
       ctaInstructions: "Invia il tuo CV in PDF a:",
       viewCareers: "Carriere",
     },

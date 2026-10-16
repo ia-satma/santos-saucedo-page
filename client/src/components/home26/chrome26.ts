@@ -43,6 +43,8 @@ export interface Chrome26Strings {
         nav[1], nav[3]; Search26): aquí solo el de industrias, que no está en el menú */
     groups: { industryGroups: string };
   };
+  /** aria-label del botón del video de la portada (Hero26), según su estado */
+  heroVideo: { pause: string; play: string };
   langs: {
     /** aria-label del selector de la cabecera: bilingüe, para quien no lee el idioma activo */
     group: string;
@@ -106,6 +108,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       // confirmados y Of Counsel. La pista nombra los grupos con las etiquetas del menú.
       groups: { industryGroups: "Industrias" },
     },
+    heroVideo: { pause: "Pausar el video de fondo", play: "Reproducir el video de fondo" },
     langs: { group: "Idioma / Language", others: "Otros idiomas", label: "Idioma" },
     footer: {
       office: "Oficina",
@@ -136,6 +139,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       close: "Close",
       groups: { industryGroups: "Industries" },
     },
+    heroVideo: { pause: "Pause background video", play: "Play background video" },
     langs: { group: "Idioma / Language", others: "Other languages", label: "Language" },
     footer: {
       office: "Office",
@@ -166,6 +170,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       close: "Schließen",
       groups: { industryGroups: "Branchen" },
     },
+    heroVideo: { pause: "Hintergrundvideo anhalten", play: "Hintergrundvideo abspielen" },
     langs: { group: "Sprache / Language", others: "Weitere Sprachen", label: "Sprache" },
     footer: {
       office: "Büro",
@@ -197,6 +202,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       close: "关闭",
       groups: { industryGroups: "行业" },
     },
+    heroVideo: { pause: "暂停背景视频", play: "播放背景视频" },
     langs: { group: "语言 / Language", others: "其他语言", label: "语言" },
     footer: {
       office: "办公地址",
@@ -227,6 +233,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       close: "닫기",
       groups: { industryGroups: "산업" },
     },
+    heroVideo: { pause: "배경 동영상 일시 정지", play: "배경 동영상 재생" },
     langs: { group: "언어 / Language", others: "다른 언어", label: "언어" },
     footer: {
       office: "사무소",
@@ -257,6 +264,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       close: "閉じる",
       groups: { industryGroups: "業種" },
     },
+    heroVideo: { pause: "背景動画を一時停止", play: "背景動画を再生" },
     langs: { group: "言語 / Language", others: "その他の言語", label: "言語" },
     footer: {
       // 所在地 (dirección) y, para la columna de enlaces, メニュー: 事務所 es "Oficina" en /contact
@@ -290,6 +298,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       close: "إغلاق",
       groups: { industryGroups: "القطاعات" },
     },
+    heroVideo: { pause: "إيقاف فيديو الخلفية مؤقتًا", play: "تشغيل فيديو الخلفية" },
     langs: { group: "اللغة / Language", others: "لغات أخرى", label: "اللغة" },
     footer: {
       office: "المكتب",
@@ -320,6 +329,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       close: "Закрыть",
       groups: { industryGroups: "Отрасли" },
     },
+    heroVideo: { pause: "Приостановить фоновое видео", play: "Воспроизвести фоновое видео" },
     langs: { group: "Язык / Language", others: "Другие языки", label: "Язык" },
     footer: {
       office: "Офис",
@@ -352,6 +362,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       close: "Fermer",
       groups: { industryGroups: "Secteurs" },
     },
+    heroVideo: { pause: "Mettre en pause la vidéo d’arrière-plan", play: "Lire la vidéo d’arrière-plan" },
     langs: { group: "Langue / Language", others: "Autres langues", label: "Langue" },
     footer: {
       office: "Bureau",
@@ -382,6 +393,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       close: "Chiudi",
       groups: { industryGroups: "Settori" },
     },
+    heroVideo: { pause: "Mettere in pausa il video di sfondo", play: "Riprodurre il video di sfondo" },
     langs: { group: "Lingua / Language", others: "Altre lingue", label: "Lingua" },
     footer: {
       office: "Sede",
