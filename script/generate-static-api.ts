@@ -133,8 +133,8 @@ function search(query: string) {
 }
 
 // Mapa del sitio del build estático: las mismas URL que /sitemap.xml del servidor (sin
-// /experience, /offices, /articles ni /events, que redirigen; fichas solo de quien /team
-// nombra; notas publicadas).
+// /experience, /articles ni /events, que redirigen; con /offices, "La oficina"; fichas solo
+// de quien /team nombra; notas publicadas).
 // Sustituye a la copia de public/sitemap.xml que deja Vite en dist/public.
 const SITE_URL = "https://www.santossaucedo.com";
 const SITEMAP_PAGES = [
@@ -144,6 +144,7 @@ const SITEMAP_PAGES = [
   { loc: "/practice-groups", changefreq: "monthly", priority: "0.8" },
   { loc: "/news", changefreq: "daily", priority: "0.9" },
   { loc: "/contact", changefreq: "monthly", priority: "0.7" },
+  { loc: "/offices", changefreq: "monthly", priority: "0.6" },
   { loc: "/careers", changefreq: "weekly", priority: "0.7" },
   { loc: "/careers/interns", changefreq: "monthly", priority: "0.5" },
   { loc: "/privacy-policy", changefreq: "yearly", priority: "0.3" },
@@ -238,8 +239,8 @@ async function generate() {
   await writeSitemap();
 
   // Respaldo de GitHub Pages para rutas del SPA: se sirve con estado 404, así que ninguna
-  // ruta sin archivo propio (tampoco /experience, /offices, /articles ni /events, que el
-  // cliente redirige) queda como página indexable.
+  // ruta sin archivo propio (tampoco /experience, /articles ni /events, que el cliente
+  // redirige) queda como página indexable.
   await copyFile(path.join(outDir, "index.html"), path.join(outDir, "404.html"));
 }
 

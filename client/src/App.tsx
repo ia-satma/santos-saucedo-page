@@ -31,6 +31,7 @@ const TeamMemberDetail = lazy(() => import("@/pages/TeamMemberDetail"));
 const NewsDetail = lazy(() => import("@/pages/NewsDetail"));
 const News = lazy(() => import("@/pages/News"));
 const Contact = lazy(() => import("@/pages/Contact"));
+const Offices = lazy(() => import("@/pages/Offices"));
 const About = lazy(() => import("@/pages/About"));
 const Careers = lazy(() => import("@/pages/Careers"));
 const Interns = lazy(() => import("@/pages/Interns"));
@@ -155,11 +156,11 @@ function StaticAdminUnavailable() {
   );
 }
 
-// Rutas retiradas (D4, D5, E4): /experience pasa a /practice-groups, /offices a /contact,
-// y /articles (repetía /news) y /events (sin eventos) a /news. El servidor responde 301
-// (server/routes.ts); en GitHub Pages no hay servidor y la redirección es del cliente:
-// Redirect antepone la base del router (/santos-saucedo-page) y se conservan la consulta y
-// el ancla. Las páginas Experience, Offices, Articles y Events quedan en el código, sin ruta.
+// Rutas retiradas (D4, E4): /experience pasa a /practice-groups, y /articles (repetía /news)
+// y /events (sin eventos) a /news. El servidor responde 301 (server/routes.ts); en GitHub
+// Pages no hay servidor y la redirección es del cliente: Redirect antepone la base del router
+// (/santos-saucedo-page) y se conservan la consulta y el ancla. Las páginas Experience,
+// Articles y Events quedan en el código, sin ruta. /offices vuelve como "La oficina" (H1).
 function RedirectKeepingQuery({ to }: { to: string }) {
   return <Redirect to={`${to}${window.location.search}${window.location.hash}`} replace />;
 }
@@ -190,9 +191,7 @@ function Router() {
         </Route>
         <Route path="/privacy-policy" component={PrivacyPolicy} />
         <Route path="/terms" component={Terms} />
-        <Route path="/offices/*?">
-          <RedirectKeepingQuery to="/contact" />
-        </Route>
+        <Route path="/offices" component={Offices} />
         <Route path="/articles/*?">
           <RedirectKeepingQuery to="/news" />
         </Route>

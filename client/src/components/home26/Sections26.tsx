@@ -1,13 +1,16 @@
 import { Fragment } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import edificioCerro from "@assets/ss26/edificio-cerro-recorte.webp";
-import salaJuntas from "@assets/ss26/sala-juntas.webp";
+import fachada768 from "@assets/ss26/oficina/fachada-768.webp";
+import fachada1536 from "@assets/ss26/oficina/fachada-1536.webp";
+import salaJuntas768 from "@assets/ss26/oficina/sala-juntas-768.webp";
+import salaJuntas1536 from "@assets/ss26/oficina/sala-juntas-1536.webp";
 import socioSantosArce from "@assets/ss26/socio-enrique-hernan-santos-arce.webp";
 import socioSantosGuzman from "@assets/ss26/socio-enrique-hernan-santos-guzman.webp";
 import socioSaucedoMontemayor from "@assets/ss26/socio-mario-saucedo-montemayor.webp";
 import { fallbackToOriginalSrc, getTeamPhotoSrcSet } from "@/lib/teamPhotoSources";
 import { keepFirmName } from "@/lib/firmName";
+import { officeLabel } from "@/lib/officeLabel";
 import { MonitorList } from "@/components/monitor/MonitorList";
 import type { News } from "@shared/schema";
 import { Reveal, SectionHead, TextLink } from "./primitives";
@@ -73,6 +76,7 @@ const socioSrcSetProps = (slug: string) => {
 /* § 01 — La firma */
 export function Firma26({ lang }: { lang: Lang26 }) {
   const t = home26[lang].firma;
+  const facts = home26[lang].facts;
   return (
     <section id="firma" {...langAttrs[lang]} data-surface="light" className={`bg-white ${Y.firma}`} aria-labelledby="ss26-firma">
       {/* Retícula de 12. Desde 1280: texto en 4 columnas y foto desde la 5 (el borde de la
@@ -88,6 +92,17 @@ export function Firma26({ lang }: { lang: Lang26 }) {
               {t.title}
             </h2>
           </Reveal>
+          {/* Las cifras que antes cerraban el héroe (fundación y ciudades), al inicio de la
+              sección: dato, no promesa. La entrada del héroe no se repite aquí: los dos párrafos
+              ya dicen lo mismo (2010, San Pedro Garza García, más de 72 ciudades). */}
+          <dl className="mt-10 grid grid-cols-2 gap-x-6" data-testid="section-home-facts">
+            {facts.map((fact) => (
+              <div key={fact.label} className="flex flex-col border-t border-ss-rule pt-6">
+                <dt className="ss-label order-2 mt-3 text-ss-medio">{fact.label}</dt>
+                <dd className="ss-figure order-1">{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
           <Reveal delay={0.12}>
             <div className="ss-prose mt-10 space-y-6 text-ss-tinta">
               {/* "Santos & Saucedo" sin partirse entre líneas */}
@@ -103,29 +118,34 @@ export function Firma26({ lang }: { lang: Lang26 }) {
           </Reveal>
         </div>
 
-        {/* A su tamaño nativo (708 × 684), nunca más grande: la figura no pasa de 708 px y
-            termina en el borde derecho del contenedor (justify-self-end), donde acaban las filas
-            de Prácticas, las columnas del manifiesto y el Monitor. */}
-        <figure className="w-full max-w-[708px] lg:col-span-6 lg:col-start-7 lg:justify-self-end xl:col-span-8 xl:col-start-5">
+        {/* La fachada de la oficina (oficina/fachada, 1159 × 900, sin el estacionamiento),
+            nunca más grande que su tamaño nativo: hasta 708 px bajo 1280; desde 1280, las
+            columnas 6–12 (746 px a 1440, 760 como máximo), con una columna de aire entre el
+            texto y la foto. Siempre contra el borde derecho del contenedor, donde acaban las
+            filas de Prácticas, las columnas del manifiesto y el Monitor. */}
+        <figure className="w-full max-w-[708px] lg:col-span-6 lg:col-start-7 lg:justify-self-end xl:col-span-7 xl:col-start-6 xl:max-w-none">
           {/* Fondo Línea mientras carga */}
           <div className="overflow-hidden bg-ss-rule">
             <img
-              src={edificioCerro}
+              src={fachada768}
+              srcSet={`${fachada768} 768w, ${fachada1536} 1159w`}
+              sizes="(min-width: 1280px) min(760px, 52vw), (min-width: 768px) 708px, calc(100vw - 40px)"
               alt={t.alt}
               loading="lazy"
               decoding="async"
-              width={708}
-              height={684}
-              // edificio-cerro-recorte.webp: x 0–708, y 0–684 del original (952 × 937), sin el
-              // letrero del estacionamiento (desde x 711) ni el estacionamiento reflejado bajo
-              // el cerro (desde y 688). En grises, como la sala de juntas y los retratos.
-              // Sin entrada al aparecer (G3): la foto está quieta desde el inicio
+              width={1159}
+              height={900}
+              // En grises, como la sala de juntas y los retratos. Sin entrada al aparecer (G3)
               className="ss-photo ss-photo--mono block h-auto w-full"
             />
           </div>
-          <figcaption className="mt-4 flex gap-4 text-[14px] leading-snug text-ss-medio">
+          {/* Junto al pie, el enlace a la página de la oficina (su nombre en officeLabel) */}
+          <figcaption className="mt-4 flex flex-wrap items-baseline gap-x-4 gap-y-4 text-[14px] leading-snug text-ss-medio">
             <span className="ss-label shrink-0 text-ss-marino">Fig. 1</span>
-            <span>{t.caption}</span>
+            <span className="min-w-0 flex-1 basis-[16rem]">{t.caption}</span>
+            <TextLink href="/offices" className="shrink-0" data-testid="link-home-offices">
+              {officeLabel(lang)}
+            </TextLink>
           </figcaption>
         </figure>
       </div>
@@ -248,21 +268,24 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
       className="ss-navy relative isolate overflow-hidden text-white"
       aria-labelledby="ss26-extranjeras"
     >
-      {/* Foto / texto 7fr / 5fr desde 1280; antes, apilados. La sala (1280 × 720) nunca se
-          dibuja más grande que su tamaño nativo: apilada, el hueco mide como mucho 1279 × 420;
-          desde 1280, el panel (py-20) deja la fila en ~690–700 px y el hueco de la foto no pasa
-          de 1280 de ancho (en pantallas mayores, Azul Profundo a la izquierda). */}
+      {/* Foto / texto 7fr / 5fr desde 1280; antes, apilados. La sala (oficina/sala-juntas,
+          1536 × 1024) nunca se dibuja más grande que su tamaño nativo: apilada, el hueco mide
+          como mucho 1279 × 420; desde 1280, el panel (py-20) deja la fila en ~690–700 px y el
+          hueco de la foto no pasa de 1536 de ancho (en pantallas mayores, Azul Profundo a la
+          izquierda). */}
       <div className={`grid grid-cols-1 xl:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] ${GAP_X}`}>
         <div className="relative min-h-[300px] overflow-hidden sm:min-h-[420px] xl:min-h-[600px]">
           {/* El mismo gris que el edificio de La firma y los retratos (.ss-photo--mono), sin velo */}
           <img
-            src={salaJuntas}
+            src={salaJuntas768}
+            srcSet={`${salaJuntas768} 768w, ${salaJuntas1536} 1536w`}
+            sizes="(min-width: 1280px) 58vw, 100vw"
             alt={t.alt}
             loading="lazy"
             decoding="async"
-            width={1280}
-            height={720}
-            className="ss-photo ss-photo--mono absolute inset-y-0 right-0 h-full w-full max-w-[1280px] object-cover object-[50%_42%]"
+            width={1536}
+            height={1024}
+            className="ss-photo ss-photo--mono absolute inset-y-0 right-0 h-full w-full max-w-[1536px] object-cover object-[50%_42%]"
           />
         </div>
         <div className="flex items-center px-[var(--ss-pad)] py-20 xl:pl-0 xl:pr-[clamp(48px,6vw,104px)]">

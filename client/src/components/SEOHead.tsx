@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useLocation } from "wouter";
 import type { LanguageCode } from "@shared/schema";
 import { chrome26 } from "@/components/home26/chrome26";
+import { officeLabel } from "@/lib/officeLabel";
 
 const BASE_URL = "https://www.santossaucedo.com";
 // Logotipo de client/public (el build lo copia a la raíz del sitio); el de /images no existe
@@ -226,9 +227,29 @@ const seoConfig: Record<string, SEOConfig> = {
     },
     path: "/careers",
   },
-  // /experience y /offices redirigen (D4, D5): si algo los montara, título y canonical de su destino
+  // /experience redirige (D4): si algo la montara, título y canonical de su destino
   experience: { ...practiceGroupsConfig, path: "/practice-groups" },
-  offices: { ...contactConfig, path: "/contact" },
+  // "La oficina" (H1): el título es el nombre de la página en cada idioma (lib/officeLabel, el
+  // mismo del h1, el pie y los enlaces); la descripción, la dirección y lo que dice la
+  // introducción, sin cifras ni adjetivos.
+  offices: {
+    title: Object.fromEntries(
+      LANGS.map((lang) => [lang, `${officeLabel(lang)} | ${SITE_NAME}`]),
+    ) as Record<LanguageCode, string>,
+    description: {
+      en: "The Santos & Saucedo office: Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, Nuevo León, facing Cerro de la Silla.",
+      es: "La oficina de Santos & Saucedo: Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, Nuevo León, frente al Cerro de la Silla.",
+      de: "Die Kanzleiräume von Santos & Saucedo: Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, Nuevo León, gegenüber dem Cerro de la Silla.",
+      zh: "Santos & Saucedo办公室：Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, Nuevo León，面朝马鞍山（Cerro de la Silla）。",
+      ko: "Santos & Saucedo 사무실: Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, Nuevo León. 세로 데 라 시야(Cerro de la Silla)를 마주하고 있습니다.",
+      ja: "Santos & Saucedoのオフィス：Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, Nuevo León。セロ・デ・ラ・シージャ（Cerro de la Silla）に面しています。",
+      ar: "مكتب Santos & Saucedo: Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, Nuevo León، قبالة جبل سيرو دي لا سيا.",
+      ru: "Офис Santos & Saucedo: Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, Nuevo León, напротив горы Серро-де-ла-Силья.",
+      fr: "Le bureau de Santos & Saucedo : Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, Nuevo León, face au Cerro de la Silla.",
+      it: "La sede di Santos & Saucedo: Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, Nuevo León, di fronte al Cerro de la Silla.",
+    },
+    path: "/offices",
+  },
   privacyPolicy: {
     title: footerTitle("privacy"),
     description: {

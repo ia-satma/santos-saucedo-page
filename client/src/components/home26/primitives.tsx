@@ -4,8 +4,8 @@ import seccionUrl from "@assets/ss26/seccion.svg";
 
 /** Envoltorio simple, sin entrada al aparecer (G3): el contenido se ve completo desde el
     inicio. Conserva la API anterior (delay, y, duration) para no tocar a quien lo usa; esas
-    props ya no hacen nada. La única animación de entrada del sitio es la máscara del título
-    del héroe de portada (Hero26). */
+    props ya no hacen nada. El sitio no tiene animaciones de entrada; lo único que se mueve
+    es el video del héroe de portada (Hero26), y no con movimiento reducido. */
 export function Reveal({
   children,
   as = "div",
@@ -42,7 +42,8 @@ export function SplitSection({
 }) {
   return (
     <div className={`grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-6 ${className}`}>
-      <div className={`lg:col-span-4 ${asideClassName}`}>{aside}</div>
+      {/* Sin aside, la columna izquierda solo existe desde lg: en teléfono no deja una fila vacía */}
+      <div className={`lg:col-span-4 ${aside ? "" : "hidden lg:block"} ${asideClassName}`}>{aside}</div>
       <div className={`${prose ? "lg:col-span-7 lg:col-start-6" : "lg:col-span-8 lg:col-start-5"} ${bodyClassName}`}>
         {children}
       </div>

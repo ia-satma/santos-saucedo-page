@@ -12,6 +12,7 @@ import { isNativeLanguage } from "@/lib/translationUtils";
 import { getTeamPhotoThumb } from "@/lib/teamPhotoSources";
 import { Eyebrow, LeadParagraph, RankingsList, type RankingItem } from "@/components/editorial";
 import { chrome26 } from "@/components/home26/chrome26";
+import { TextLink } from "@/components/home26/primitives";
 import { isNamedOnTeamPage } from "@shared/teamVisibility";
 import { keepFirmName } from "@/lib/firmName";
 import { practiceName } from "@/lib/practiceNames";
@@ -374,25 +375,25 @@ export default function PracticeGroupDetail() {
 
   const getBadgeIcon = (_badgeType: string) => null;
 
+  // Práctica inexistente (enlace viejo o mal escrito): la misma vista 404 que la ficha de socio
+  // (not-found.tsx): SEOHead page="notFound" (título propio y noindex), encabezado azul con
+  // "Error 404" y el mensaje como h1. El enlace lleva al listado con el rótulo del menú (nav[1]).
   if (error) {
     return (
-      <div className="min-h-screen bg-background" data-testid="page-practice-group-error">
+      <div className="min-h-screen bg-background flex flex-col" data-testid="page-practice-group-error">
+        <SEOHead page="notFound" language={language} />
         <Header />
-        {/* Cabecera sticky en flujo: ya no hace falta compensar el header fijo */}
-        <main id="main-content" className="pt-16 pb-20 lg:pt-20">
-          <Column>
-            <h2 className="ss-h2 mb-6" data-testid="text-error-title">
+        <main id="main-content" className="flex-1 pt-36 pb-20 editorial-page-hero" data-testid="section-not-found-hero">
+          <div className="ss-container">
+            <Eyebrow num="" tone="navy" label="Error 404" className="mb-6" />
+            <h1 className="mb-10" data-testid="text-error-title">
               {t.errorMessage}
-            </h2>
-            <Link
-              href="/practice-groups"
-              className="ss-label inline-flex items-center gap-2 text-ss-marino hover:underline decoration-1 underline-offset-4"
-              data-testid="button-back-to-practice-groups"
-            >
-              <ArrowLeft className="w-4 h-4 rtl:-scale-x-100" aria-hidden="true" />
+            </h1>
+            {/* Enlace del router (respeta la base de GitHub Pages), no botón */}
+            <TextLink href="/practice-groups" tone="dark" data-testid="button-back-to-practice-groups">
               {backToAll}
-            </Link>
-          </Column>
+            </TextLink>
+          </div>
         </main>
         <Footer />
       </div>
@@ -532,15 +533,15 @@ export default function PracticeGroupDetail() {
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                     <span data-testid="text-translation-pending">
-                      {language === 'de' ? 'Übersetzung lädt...' :
-                       language === 'zh' ? '翻译加载中...' :
-                       language === 'ko' ? '번역 로딩 중...' :
-                       language === 'ja' ? '翻訳を読み込み中...' :
-                       language === 'ar' ? 'جاري تحميل الترجمة...' :
-                       language === 'ru' ? 'Загрузка перевода...' :
-                       language === 'fr' ? 'Traduction en cours...' :
-                       language === 'it' ? 'Caricamento traduzione...' :
-                       'Loading translation...'}
+                      {language === 'de' ? 'Übersetzung lädt…' :
+                       language === 'zh' ? '翻译加载中…' :
+                       language === 'ko' ? '번역 로딩 중…' :
+                       language === 'ja' ? '翻訳を読み込み中…' :
+                       language === 'ar' ? 'جاري تحميل الترجمة…' :
+                       language === 'ru' ? 'Загрузка перевода…' :
+                       language === 'fr' ? 'Traduction en cours…' :
+                       language === 'it' ? 'Caricamento traduzione…' :
+                       'Loading translation…'}
                     </span>
                   </div>
                 ) : null}

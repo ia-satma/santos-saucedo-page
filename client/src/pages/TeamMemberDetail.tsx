@@ -74,8 +74,13 @@ function pickLocalized(
 // Textos cortos de respaldo (cargo, práctica): aislados en <bdi lang dir="ltr">, como en las
 // prácticas. El bloque conserva la dirección de la página (en árabe, alineado a la derecha
 // como el eyebrow y el nombre) y el punto final no salta al otro extremo.
+// "(in memoriam)" sin partirse entre líneas, en todos los idiomas (espacio duro): a 320 y 390 px
+// quedaba "Socio fundador (in / memoriam)"
+const keepInMemoriam = (text: string | null | undefined) =>
+  text?.replace(/\((in)\s+(memoriam)\)/gi, "($1\u00a0$2)");
 function LocalizedRun({ value }: { value: LocalizedText }) {
-  return value.lang ? <bdi lang={value.lang} dir="ltr">{value.text}</bdi> : <>{value.text}</>;
+  const text = keepInMemoriam(value.text);
+  return value.lang ? <bdi lang={value.lang} dir="ltr">{text}</bdi> : <>{text}</>;
 }
 
 // Enlace de vuelta con el lenguaje de TextLink (home26/primitives): etiqueta y flecha, sin
@@ -724,7 +729,7 @@ export default function TeamMemberDetail() {
       callUs: "Call",
       downloadVCard: "Download vCard",
       errorMessage: "Team member not found",
-      loading: "Loading...",
+      loading: "Loading…",
       relatedTeam: "Related team members",
       viewProfile: "View profile",
       relatedNews: "Latest news and articles",
@@ -768,7 +773,7 @@ export default function TeamMemberDetail() {
       callUs: "Llamar",
       downloadVCard: "Descargar vCard",
       errorMessage: "Miembro del equipo no encontrado",
-      loading: "Cargando...",
+      loading: "Cargando…",
       relatedTeam: "Equipo relacionado",
       viewProfile: "Ver perfil",
       relatedNews: "Últimas noticias y artículos",
@@ -812,7 +817,7 @@ export default function TeamMemberDetail() {
       callUs: "Anrufen",
       downloadVCard: "vCard herunterladen",
       errorMessage: "Teammitglied nicht gefunden",
-      loading: "Wird geladen...",
+      loading: "Wird geladen…",
       relatedTeam: "Weitere Teammitglieder",
       viewProfile: "Profil anzeigen",
       relatedNews: "Aktuelle Nachrichten & Artikel",
@@ -856,7 +861,7 @@ export default function TeamMemberDetail() {
       callUs: "电话联系",
       downloadVCard: "下载名片",
       errorMessage: "未找到团队成员",
-      loading: "加载中...",
+      loading: "加载中…",
       relatedTeam: "相关团队成员",
       viewProfile: "查看简介",
       relatedNews: "最新新闻与文章",
@@ -900,7 +905,7 @@ export default function TeamMemberDetail() {
       callUs: "전화하기",
       downloadVCard: "명함 다운로드",
       errorMessage: "팀원을 찾을 수 없습니다",
-      loading: "로딩 중...",
+      loading: "로딩 중…",
       relatedTeam: "관련 팀원",
       viewProfile: "프로필 보기",
       relatedNews: "최신 뉴스 및 기사",
@@ -944,7 +949,7 @@ export default function TeamMemberDetail() {
       callUs: "電話する",
       downloadVCard: "名刺をダウンロード",
       errorMessage: "チームメンバーが見つかりません",
-      loading: "読み込み中...",
+      loading: "読み込み中…",
       // U+200B tras 関連: el corte cae ahí y no antes de la ー final (関連チームメンバ|ー a 320 px)
       relatedTeam: "関連\u200Bチームメンバー",
       viewProfile: "プロフィールを見る",
@@ -989,7 +994,7 @@ export default function TeamMemberDetail() {
       callUs: "اتصل",
       downloadVCard: "تحميل بطاقة العمل",
       errorMessage: "لم يتم العثور على عضو الفريق",
-      loading: "جاري التحميل...",
+      loading: "جاري التحميل…",
       relatedTeam: "أعضاء الفريق ذوو الصلة",
       viewProfile: "عرض الملف الشخصي",
       relatedNews: "آخر الأخبار والمقالات",
@@ -1033,7 +1038,7 @@ export default function TeamMemberDetail() {
       callUs: "Позвонить",
       downloadVCard: "Скачать визитку",
       errorMessage: "Член команды не найден",
-      loading: "Загрузка...",
+      loading: "Загрузка…",
       relatedTeam: "Связанные члены команды",
       viewProfile: "Посмотреть профиль",
       relatedNews: "Последние новости и статьи",
@@ -1077,7 +1082,7 @@ export default function TeamMemberDetail() {
       callUs: "Appeler",
       downloadVCard: "Télécharger vCard",
       errorMessage: "Membre de l’équipe introuvable",
-      loading: "Chargement...",
+      loading: "Chargement…",
       relatedTeam: "Autres membres de l’équipe",
       viewProfile: "Voir le profil",
       relatedNews: "Dernières actualités et articles",
@@ -1121,7 +1126,7 @@ export default function TeamMemberDetail() {
       callUs: "Chiama",
       downloadVCard: "Scarica vCard",
       errorMessage: "Membro del team non trovato",
-      loading: "Caricamento...",
+      loading: "Caricamento…",
       relatedTeam: "Membri del team correlati",
       viewProfile: "Visualizza profilo",
       relatedNews: "Ultime notizie e articoli",
@@ -1288,11 +1293,12 @@ export default function TeamMemberDetail() {
             </div>
           </section>
           {/* Cuerpo en la rejilla de la vista final (SplitSection): título a la izquierda desde lg;
-              biografía y las tres filas de "Equipo relacionado", para que el pie no salte */}
+              biografía y las tres filas de "Equipo relacionado", para que el pie no salte. La
+              biografía empieza en la misma columna que la lista (sin prose), con 44rem de medida */}
           <div className="py-16 lg:py-20">
             <div className="ss-container space-y-12 lg:space-y-16">
-              <SplitSection prose aside={<Skeleton className="h-7 w-40 bg-ss-rule" />}>
-                <div className="max-w-[44rem] lg:max-w-none space-y-4">
+              <SplitSection aside={<Skeleton className="h-7 w-40 bg-ss-rule" />}>
+                <div className="max-w-[44rem] space-y-4">
                   <Skeleton className="h-6 w-full" />
                   <Skeleton className="h-6 w-full" />
                   <Skeleton className="h-6 w-3/4" />
@@ -1540,14 +1546,13 @@ export default function TeamMemberDetail() {
         {/* Relleno vertical del cuerpo (antes en main, que ahora también contiene el encabezado) */}
         <div className="py-16 lg:py-20">
           {/* Rejilla editorial de la portada (SplitSection, G1): desde lg, cada h2 en las columnas
-              1–4 y su contenido desde la 5 (la biografía, en prosa, de la 6 a la 12); en teléfono
-              y tableta, apilado. Las secciones del antiguo lateral (contacto, reconocimiento
+              1–4 y su contenido desde la 5 (también la biografía, con su medida de lectura: así
+              empieza en la misma columna que "Equipo relacionado"); en teléfono y tableta, apilado. Las secciones del antiguo lateral (contacto, reconocimiento
               destacado) son filas más. Sin aparición al hacer scroll (G3). */}
           <div className="ss-container space-y-12 lg:space-y-16">
             {(displayBio || ((member?.bio || member?.bioEs) && isTranslating)) && (
               <section data-testid="section-biography">
                 <SplitSection
-                  prose
                   aside={
                     <h2
                       className="ss-h2-sm flex items-center gap-3"
@@ -1563,10 +1568,10 @@ export default function TeamMemberDetail() {
                   {/* Biografía sin traducción: bloque largo en el idioma de origen, marcado lang y
                       dir="ltr" (en árabe, alineado a la izquierda, como el resumen de las prácticas
                       y el cuerpo de las notas); los textos cortos de respaldo van en <bdi>. Medida
-                      de lectura de 44rem en tableta, donde ocupa todo el ancho; desde lg la da la
-                      columna de prosa (así el bloque en inglés no queda corrido en árabe). */}
+                      de lectura de 44rem en todos los anchos, desde el inicio de la columna del
+                      cuerpo (en árabe, a la derecha, donde empiezan las demás filas). */}
                   <div
-                    className="max-w-[44rem] lg:max-w-none"
+                    className="max-w-[44rem]"
                     data-testid="container-biography"
                     lang={localizedBio.lang}
                     dir={localizedBio.lang ? "ltr" : undefined}
@@ -1587,15 +1592,15 @@ export default function TeamMemberDetail() {
                       <div className="flex items-center gap-2 text-ss-medio">
                         <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                         <span data-testid="text-translation-pending">
-                          {language === 'de' ? 'Übersetzung lädt...' :
-                           language === 'zh' ? '翻译加载中...' :
-                           language === 'ko' ? '번역 로딩 중...' :
-                           language === 'ja' ? '翻訳を読み込み中...' :
-                           language === 'ar' ? 'جاري تحميل الترجمة...' :
-                           language === 'ru' ? 'Загрузка перевода...' :
-                           language === 'fr' ? 'Traduction en cours...' :
-                           language === 'it' ? 'Caricamento traduzione...' :
-                           'Loading translation...'}
+                          {language === 'de' ? 'Übersetzung lädt…' :
+                           language === 'zh' ? '翻译加载中…' :
+                           language === 'ko' ? '번역 로딩 중…' :
+                           language === 'ja' ? '翻訳を読み込み中…' :
+                           language === 'ar' ? 'جاري تحميل الترجمة…' :
+                           language === 'ru' ? 'Загрузка перевода…' :
+                           language === 'fr' ? 'Traduction en cours…' :
+                           language === 'it' ? 'Caricamento traduzione…' :
+                           'Loading translation…'}
                         </span>
                       </div>
                     )}

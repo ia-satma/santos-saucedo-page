@@ -9,9 +9,11 @@ import Search26 from "./Search26";
 import { LangList26, LangSwitch26 } from "./LangMenu26";
 
 // Rutas que también marcan una sección del menú, además de sus propias subrutas. Siguen el
-// número § de su sección en el menú: el boletín, 04 Monitor Laboral. /experience, /offices,
-// /articles y /events ya no se pintan: redirigen a /practice-groups, /contact y /news (App.tsx).
+// número § de su sección en el menú: la oficina, 01 Nuestra firma; el boletín, 04 Monitor
+// Laboral. /experience, /articles y /events ya no se pintan: redirigen a /practice-groups y
+// /news (App.tsx).
 const alsoActive: Record<string, string[]> = {
+  "/about": ["/offices"],
   "/news": ["/newsletter"],
 };
 
@@ -34,9 +36,11 @@ function SearchIcon() {
 interface Header26Props {
   /** Páginas internas: interfaz en los 10 idiomas. Sin él (portada) solo ES/EN, como su contenido */
   localized?: boolean;
+  /** Solo la portada: transparente sobre el video del héroe hasta que se hace scroll */
+  overlay?: boolean;
 }
 
-export default function Header26({ localized = false }: Header26Props) {
+export default function Header26({ localized = false, overlay = false }: Header26Props) {
   const { code, t, base } = useChrome26(localized);
   const items = t.nav;
   const { phone, phoneHref } = useSiteContact(base);
@@ -92,13 +96,17 @@ export default function Header26({ localized = false }: Header26Props) {
     return bases.some((b) => location === b || location.startsWith(`${b}/`)) ? "true" : undefined;
   };
 
+  // En la portada, arriba del todo, el encabezado deja ver el video (el héroe sube bajo él y su
+  // degradado superior da el contraste del menú); al hacer scroll, Azul Profundo sólido.
+  const solid = !overlay || scrolled;
+
   return (
     <>
       <header
         {...t.attrs}
-        className={`ss26 sticky top-0 z-50 bg-ss-navy text-white transition-[box-shadow] duration-300 ${
-          scrolled ? "shadow-[0_1px_0_rgba(255,255,255,0.08)]" : ""
-        }`}
+        className={`ss26 sticky top-0 z-50 text-white transition-[background-color,box-shadow] duration-300 motion-reduce:transition-none ${
+          solid ? "bg-ss-navy" : "bg-transparent"
+        } ${scrolled ? "shadow-[0_1px_0_rgba(255,255,255,0.08)]" : ""}`}
         data-testid="header"
       >
         {/* Entre 1024 y 1279px se aprietan logo, huecos y espaciado del menú para que quepan

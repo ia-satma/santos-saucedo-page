@@ -20,7 +20,7 @@ export interface Chrome26Strings {
   attrs: { lang: string; dir: "ltr" | "rtl" };
   /** Fechas de los resultados del buscador */
   locale: string;
-  /** Los 6 enlaces del menú (también la columna Firma del pie) */
+  /** Los 6 enlaces del menú (también la columna Firma del pie, que añade la oficina tras el primero) */
   nav: readonly NavItem26[];
   header: {
     /** aria-label de las dos navegaciones (el lector añade "navegación") */
@@ -259,8 +259,9 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
     },
     langs: { group: "言語 / Language", others: "その他の言語", label: "言語" },
     footer: {
+      // 所在地 (dirección) y, para la columna de enlaces, メニュー: 事務所 es "Oficina" en /contact
       office: "所在地",
-      firm: "事務所",
+      firm: "メニュー",
       legal: "法的情報",
       // U+200B: único corte permitido en el pie (keep-all en index.css); a 320 px partía "プライバシーポ | リシー"
       privacy: "プライバシー\u200bポリシー",

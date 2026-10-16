@@ -22,6 +22,7 @@ import SEOHead, { detailTitle } from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
 import { SplitSection } from "@/components/home26/primitives";
+import { useSiteContact } from "@/components/home26/useSiteContact";
 import type { LanguageCode } from "@shared/schema";
 
 // Boletín (redacción, "Al pie del Monitor"): una frase, el correo, la casilla del aviso de
@@ -53,8 +54,10 @@ interface NewsletterStrings {
   successTitle: string;
   errorTitle: string;
   errorDescription: string;
-  unavailableTitle: string;
-  unavailableDescription: string;
+  /** Build estático (sin servidor): se abre el programa de correo del visitante con la
+      solicitud, como en Contacto; aviso neutro, no de error */
+  staticTitle: string;
+  staticDescription: string;
 }
 
 const content: Record<LanguageCode, NewsletterStrings> = {
@@ -73,8 +76,8 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "Suscripción registrada",
     errorTitle: "Error",
     errorDescription: "No fue posible completar la suscripción. Intente de nuevo más tarde.",
-    unavailableTitle: "Suscripción no disponible",
-    unavailableDescription: "Por ahora no es posible suscribirse desde este sitio.",
+    staticTitle: "Enviar por correo",
+    staticDescription: "Se abrió su programa de correo para enviar la solicitud de suscripción.",
   },
   en: {
     title: "Labor Monitor subscription",
@@ -91,8 +94,8 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "Subscription registered",
     errorTitle: "Error",
     errorDescription: "The subscription could not be completed. Please try again later.",
-    unavailableTitle: "Subscription unavailable",
-    unavailableDescription: "Subscribing from this site is not available for now.",
+    staticTitle: "Send by email",
+    staticDescription: "Your email program was opened to send the subscription request.",
   },
   de: {
     title: "Nachrichten abonnieren",
@@ -109,8 +112,8 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "Anmeldung gespeichert",
     errorTitle: "Fehler",
     errorDescription: "Die Anmeldung konnte nicht abgeschlossen werden. Bitte versuchen Sie es später erneut.",
-    unavailableTitle: "Anmeldung nicht verfügbar",
-    unavailableDescription: "Eine Anmeldung über diese Website ist derzeit nicht möglich.",
+    staticTitle: "Per E-Mail senden",
+    staticDescription: "Ihr E-Mail-Programm wurde geöffnet, um die Anmeldung zu senden.",
   },
   zh: {
     title: "订阅新闻",
@@ -127,8 +130,8 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "订阅已登记",
     errorTitle: "错误",
     errorDescription: "无法完成订阅。请稍后再试。",
-    unavailableTitle: "暂不提供订阅",
-    unavailableDescription: "目前无法通过本网站订阅。",
+    staticTitle: "通过电子邮件发送",
+    staticDescription: "已打开您的电子邮件程序以发送订阅申请。",
   },
   ko: {
     title: "뉴스 구독",
@@ -145,8 +148,8 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "구독이 등록되었습니다",
     errorTitle: "오류",
     errorDescription: "구독을 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.",
-    unavailableTitle: "구독 불가",
-    unavailableDescription: "현재 이 사이트에서는 구독할 수 없습니다.",
+    staticTitle: "이메일로 보내기",
+    staticDescription: "구독 신청을 보낼 수 있도록 이메일 프로그램을 열었습니다.",
   },
   ja: {
     title: "ニュースの購読",
@@ -163,8 +166,8 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "購読を登録しました",
     errorTitle: "エラー",
     errorDescription: "購読を完了できませんでした。しばらくしてからもう一度お試しください。",
-    unavailableTitle: "購読はご利用いただけません",
-    unavailableDescription: "現在、このサイトから購読することはできません。",
+    staticTitle: "メールで送信",
+    staticDescription: "購読の申し込みを送信するため、メールソフトを開きました。",
   },
   ar: {
     title: "الاشتراك في الأخبار",
@@ -181,8 +184,8 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "تم تسجيل الاشتراك",
     errorTitle: "خطأ",
     errorDescription: "تعذّر إتمام الاشتراك. يرجى المحاولة مرة أخرى لاحقًا.",
-    unavailableTitle: "الاشتراك غير متاح",
-    unavailableDescription: "لا يمكن الاشتراك من هذا الموقع حاليًا.",
+    staticTitle: "الإرسال بالبريد الإلكتروني",
+    staticDescription: "فُتح برنامج البريد الإلكتروني لديك لإرسال طلب الاشتراك.",
   },
   ru: {
     title: "Подписка на новости",
@@ -199,8 +202,8 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "Подписка оформлена",
     errorTitle: "Ошибка",
     errorDescription: "Не удалось оформить подписку. Попробуйте позже.",
-    unavailableTitle: "Подписка недоступна",
-    unavailableDescription: "Сейчас оформить подписку на этом сайте нельзя.",
+    staticTitle: "Отправка по эл. почте",
+    staticDescription: "Открылась ваша почтовая программа для отправки заявки на подписку.",
   },
   fr: {
     title: "Abonnement aux actualités",
@@ -217,8 +220,8 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "Abonnement enregistré",
     errorTitle: "Erreur",
     errorDescription: "L’abonnement n’a pas pu être enregistré. Veuillez réessayer plus tard.",
-    unavailableTitle: "Abonnement indisponible",
-    unavailableDescription: "Il n’est pas possible de s’abonner depuis ce site pour le moment.",
+    staticTitle: "Envoyer par e-mail",
+    staticDescription: "Votre messagerie s’est ouverte pour envoyer la demande d’abonnement.",
   },
   it: {
     title: "Iscrizione alle notizie",
@@ -227,7 +230,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     consentBefore: "Ho letto e accetto l’",
     consentLink: "informativa sulla privacy",
     consentAfter: ".",
-    submit: "Iscriviti",
+    submit: "Iscriversi",
     submitting: "Invio in corso…",
     emailRequired: "Inserisca un indirizzo e-mail valido.",
     emailInvalid: "Inserisca un indirizzo e-mail valido.",
@@ -235,8 +238,8 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "Iscrizione registrata",
     errorTitle: "Errore",
     errorDescription: "Non è stato possibile completare l’iscrizione. Riprovi più tardi.",
-    unavailableTitle: "Iscrizione non disponibile",
-    unavailableDescription: "Al momento non è possibile iscriversi da questo sito.",
+    staticTitle: "Invio per e-mail",
+    staticDescription: "Si è aperto il suo programma di posta per inviare la richiesta di iscrizione.",
   },
 };
 
@@ -252,6 +255,9 @@ export default function Newsletter() {
 
   const t = content[language] || content.en;
   const formSchema = getNewsletterFormSchema(t);
+  // Correo de la firma (/api/site-content, el mismo del pie y de Contacto) para el respaldo del
+  // build estático
+  const firmEmail = useSiteContact(language === "en" ? "en" : "es").email;
 
   const form = useForm<NewsletterFormData>({
     resolver: zodResolver(formSchema),
@@ -285,11 +291,16 @@ export default function Newsletter() {
   });
 
   const onSubmit = (data: NewsletterFormData) => {
+    // Sitio estático (sin servidor): el mismo respaldo que Contacto. La solicitud sale por el
+    // programa de correo del visitante hacia la firma, con el correo y el idioma de la interfaz
+    // (el preferredLanguage que guardaría el servidor); el aviso es neutro, no de error.
     if (isStaticSite) {
+      const subject = encodeURIComponent("Suscripción al Monitor Laboral");
+      const body = encodeURIComponent([`Email: ${data.email}`, `Idioma: ${language}`].join("\n"));
+      window.location.href = `mailto:${firmEmail}?subject=${subject}&body=${body}`;
       toast({
-        title: t.unavailableTitle,
-        description: t.unavailableDescription,
-        variant: "destructive",
+        title: t.staticTitle,
+        description: t.staticDescription,
       });
       return;
     }

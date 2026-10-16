@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SUPPORTED_LANGUAGES } from "@shared/schema";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
+import { officeLabel } from "@/lib/officeLabel";
 import { useChrome26 } from "./chrome26";
 import { useSiteContact } from "./useSiteContact";
 
@@ -26,12 +27,13 @@ interface Footer26Props {
 
 export default function Footer26({ localized = false }: Footer26Props) {
   const { language, setLanguage } = useLanguage();
-  const { t: chrome, base } = useChrome26(localized);
+  const { code, t: chrome, base } = useChrome26(localized);
   // Idioma real (no el de la interfaz, que en la portada cae a EN): con alemán, francés, etc.
   // ni Español ni English quedan marcados; se añade el idioma activo como tercer botón.
   const activeOther = language !== "es" && language !== "en" ? SUPPORTED_LANGUAGES.find((l) => l.code === language) : undefined;
   const t = chrome.footer;
-  const items = chrome.nav;
+  // Columna Firma: el menú y, después de Nuestra firma (§ 01), la página de la oficina
+  const items = [chrome.nav[0], { label: officeLabel(code), href: "/offices" }, ...chrome.nav.slice(1)];
   const year = new Date().getFullYear();
 
   // Misma consulta que el pie anterior; lo estático de content.ts (ES/EN) queda como respaldo.

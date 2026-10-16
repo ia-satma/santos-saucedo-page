@@ -20,14 +20,14 @@ export const home26 = {
     skip: "Ir al contenido",
     menu: "Menú",
     close: "Cerrar",
+    // Héroe (composición aprobada, H4): el logotipo es el h1 junto con la frase; debajo, lugar
+    // y año. Las dos partes del lugar se unen con " · " (en teléfono, una debajo de la otra).
     hero: {
-      kicker: "San Pedro Garza García, Nuevo León",
-      title: ["Derecho laboral", "para empresas."],
-      lead:
-        "Santos & Saucedo asesora a empresas nacionales y multinacionales en la administración de su capital humano y las representa en asuntos laborales, corporativos, migratorios y contenciosos. Desde San Pedro Garza García, con presencia en más de 72 ciudades del país.",
+      tagline: "Derecho laboral para empresas",
+      place: ["San Pedro Garza García", "Desde 2010"],
     },
-    // Solo cifras con dato: fuera "4 prácticas" (las cuatro se listan abajo). "72+" en cifra,
-    // "más de 72" en prosa.
+    // Cifras al inicio de La firma § 01. Solo cifras con dato: fuera "4 prácticas" (las cuatro
+    // se listan abajo). "72+" en cifra, "más de 72" en prosa.
     facts: [
       { value: "2010", label: "Año de fundación" },
       { value: "72+", label: "Ciudades con presencia" },
@@ -113,10 +113,8 @@ export const home26 = {
     menu: "Menu",
     close: "Close",
     hero: {
-      kicker: "San Pedro Garza García, Nuevo León",
-      title: ["Labor law", "for employers."],
-      lead:
-        "Santos & Saucedo advises Mexican and multinational companies on the management of their workforce and represents them in labor, corporate, immigration and litigation matters. From San Pedro Garza García, with presence in more than 72 cities across Mexico.",
+      tagline: "Labor law for companies",
+      place: ["San Pedro Garza García", "Since 2010"],
     },
     facts: [
       { value: "2010", label: "Founded" },

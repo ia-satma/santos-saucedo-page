@@ -7,6 +7,10 @@ import { SplitSection, TextLink } from "@/components/home26/primitives";
 // "Santos & Saucedo" con espacios duros al pintarlo: el nombre no se parte al final de línea.
 // Para la frase de los 35 años, que no se edita en el texto (pendiente con el cliente).
 import { keepFirmName } from "@/lib/firmName";
+import type { LanguageCode } from "@shared/schema";
+// El área de trabajo de la oficina (oficina/area-trabajo, 1536 × 1024), junto a la entrada
+import areaTrabajo768 from "@assets/ss26/oficina/area-trabajo-768.webp";
+import areaTrabajo1536 from "@assets/ss26/oficina/area-trabajo-1536.webp";
 
 // "Clásica": titulares con la escala única de index.css (.ss-h2 para las secciones, .ss-h2-sm
 // para los sub-bloques, .ss-h3 para filas); entrada en romana 400 Gris Tinta (solo el primer
@@ -20,6 +24,20 @@ type Position = { title: string; department: string; location: string; type: str
 // "Semillero S&S" con espacio duro al pintarlo: el nombre del programa no se parte entre líneas
 // (en alemán quedaba "Semillero" al final de una línea y "S&S" al principio de la siguiente)
 const keepProgramName = (text: string) => text.replace(/Semillero S&S/g, "Semillero\u00a0S&S");
+
+// Texto alternativo de la foto del área de trabajo: el mismo de /offices en cada idioma
+const workAreaAlt: Record<LanguageCode, string> = {
+  es: "Área de trabajo abierta de la oficina de Santos & Saucedo",
+  en: "Open work area at the Santos & Saucedo office",
+  de: "Offener Arbeitsbereich der Kanzlei Santos & Saucedo",
+  zh: "Santos & Saucedo办公室的开放式办公区",
+  ko: "Santos & Saucedo 사무실의 개방형 업무 공간",
+  ja: "Santos & Saucedoのオフィスのオープンな執務エリア",
+  ar: "مساحة عمل مفتوحة في مكتب Santos & Saucedo",
+  ru: "Открытая рабочая зона офиса Santos & Saucedo",
+  fr: "Espace de travail ouvert du bureau de Santos & Saucedo",
+  it: "Area di lavoro aperta della sede di Santos & Saucedo",
+};
 
 
 export default function Careers() {
@@ -277,13 +295,37 @@ export default function Careers() {
         <div className="ss-container">
           
           {/* Rejilla editorial de la portada (SplitSection, G1): desde lg, el cuerpo desde la
-              columna 5; aquí el aside queda vacío (y no ocupa sitio bajo lg). La entrada (la única
-              en romana), el segundo párrafo y una rejilla de 2 × 2 con filetes y h2.ss-h2-sm: lo
-              que se aprende, la firma, el Semillero S&S (su frase y el enlace a su página) y las
-              vacantes (su frase). Sin valores genéricos ni prestaciones sin confirmar. */}
+              columna 5. Primera fila: la foto del área de trabajo en el aside (columnas 1–4,
+              alineada arriba con la entrada; antes ese tercio de la primera pantalla quedaba
+              vacío) y la entrada (la única en romana) con el segundo párrafo en el cuerpo. En
+              teléfono y tableta, la foto va después de la entrada (order-last). Segunda fila, con
+              el aside vacío (no ocupa sitio bajo lg): la rejilla de 2 × 2 con filetes y
+              h2.ss-h2-sm: lo que se aprende, la firma, el Semillero S&S (su frase y el enlace a su
+              página) y las vacantes (su frase). Sin valores genéricos ni prestaciones sin
+              confirmar, y sin texto nuevo junto a la foto. */}
           <section className="mb-20 lg:mb-24" data-testid="section-why-join">
-            <SplitSection asideClassName="hidden lg:block">
-              <div className="max-w-[44rem] mb-12">
+            <SplitSection
+              asideClassName="order-last lg:order-none"
+              aside={
+                <figure className="max-w-[44rem] lg:max-w-none" data-testid="figure-careers-workspace">
+                  <div className="overflow-hidden bg-ss-rule">
+                    <img
+                      src={areaTrabajo768}
+                      srcSet={`${areaTrabajo768} 768w, ${areaTrabajo1536} 1536w`}
+                      sizes="(min-width: 1024px) min(424px, 28vw), 90vw"
+                      alt={keepFirmName(workAreaAlt[language as LanguageCode] ?? workAreaAlt.en)}
+                      loading="lazy"
+                      decoding="async"
+                      width={1536}
+                      height={1024}
+                      className="ss-photo block h-auto w-full"
+                      data-testid="img-careers-workspace"
+                    />
+                  </div>
+                </figure>
+              }
+            >
+              <div className="max-w-[44rem]">
                 <p className={leadClass} data-testid="text-careers-intro">
                   {t.introText}
                 </p>
@@ -291,7 +333,9 @@ export default function Careers() {
                   {t.whyJoinSubtitle}
                 </p>
               </div>
+            </SplitSection>
 
+            <SplitSection className="mt-12" asideClassName="hidden lg:block">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
                 <div className={rowClass} data-testid="card-culture">
                   <h2 className="ss-h2-sm mb-3">

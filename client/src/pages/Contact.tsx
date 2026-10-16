@@ -33,7 +33,11 @@ import { useSiteContact } from "@/components/home26/useSiteContact";
 import { anyPartnerHasDirectContact } from "@/lib/partnerContact";
 import { PRACTICE_SLUGS, practiceShortName } from "@/lib/practiceNames";
 // El recorte de la portada (sin el letrero ni el estacionamiento), no el original
-import edificioCerro from "@assets/ss26/edificio-cerro-recorte.webp";
+import { TextLink } from "@/components/home26/primitives";
+import { officeLabel } from "@/lib/officeLabel";
+// La fachada de la oficina (oficina/fachada, sin el estacionamiento): la misma de la portada y de /offices
+import fachada768 from "@assets/ss26/oficina/fachada-768.webp";
+import fachada1536 from "@assets/ss26/oficina/fachada-1536.webp";
 import type { SiteContent, ContactFormData, LanguageCode, TeamMember } from "@shared/schema";
 
 // Perfil de LinkedIn del despacho. Sin URL confirmada el botón "Síguenos en LinkedIn"
@@ -413,7 +417,7 @@ export default function Contact() {
       practiceAreaLabel: "Practice (optional)",
       messageLabel: "Message",
       submit: "Send message",
-      submitting: "Sending...",
+      submitting: "Sending…",
     },
     es: {
       title: "Contacto",
@@ -442,7 +446,7 @@ export default function Contact() {
       practiceAreaLabel: "Práctica (opcional)",
       messageLabel: "Mensaje",
       submit: "Enviar mensaje",
-      submitting: "Enviando...",
+      submitting: "Enviando…",
     },
     de: {
       title: "Kontakt",
@@ -471,7 +475,7 @@ export default function Contact() {
       practiceAreaLabel: "Praxisbereich (optional)",
       messageLabel: "Nachricht",
       submit: "Nachricht senden",
-      submitting: "Wird gesendet...",
+      submitting: "Wird gesendet…",
     },
     zh: {
       title: "联系我们",
@@ -500,7 +504,7 @@ export default function Contact() {
       practiceAreaLabel: "业务领域 (可选)",
       messageLabel: "留言",
       submit: "发送消息",
-      submitting: "发送中...",
+      submitting: "发送中…",
     },
     ko: {
       title: "문의하기",
@@ -529,7 +533,7 @@ export default function Contact() {
       practiceAreaLabel: "업무 분야 (선택사항)",
       messageLabel: "메시지",
       submit: "메시지 전송",
-      submitting: "전송 중...",
+      submitting: "전송 중…",
     },
     ja: {
       title: "お問い合わせ",
@@ -558,7 +562,7 @@ export default function Contact() {
       practiceAreaLabel: "業務分野 (任意)",
       messageLabel: "メッセージ",
       submit: "メッセージを送信",
-      submitting: "送信中...",
+      submitting: "送信中…",
     },
     ar: {
       title: "اتصل بنا",
@@ -587,7 +591,7 @@ export default function Contact() {
       practiceAreaLabel: "مجال الممارسة (اختياري)",
       messageLabel: "الرسالة",
       submit: "إرسال الرسالة",
-      submitting: "جاري الإرسال...",
+      submitting: "جاري الإرسال…",
     },
     ru: {
       title: "Контакты",
@@ -616,7 +620,7 @@ export default function Contact() {
       practiceAreaLabel: "Практика (необязательно)",
       messageLabel: "Сообщение",
       submit: "Отправить сообщение",
-      submitting: "Отправка...",
+      submitting: "Отправка…",
     },
     fr: {
       title: "Contact",
@@ -645,7 +649,7 @@ export default function Contact() {
       practiceAreaLabel: "Domaine de pratique (facultatif)",
       messageLabel: "Message",
       submit: "Envoyer le message",
-      submitting: "Envoi en cours...",
+      submitting: "Envoi en cours…",
     },
     it: {
       title: "Contatti",
@@ -667,14 +671,14 @@ export default function Contact() {
       telLabel: "Telefono",
       addressLabel: "Indirizzo",
       formTitle: "Messaggio",
-      formSubtitle: "L'invio di questo modulo non costituisce un rapporto avvocato-cliente.",
+      formSubtitle: "L’invio di questo modulo non costituisce un rapporto avvocato-cliente.",
       fullName: "Nome",
       emailLabel: "E-mail",
       companyLabel: "Azienda (opzionale)",
       practiceAreaLabel: "Area di pratica (opzionale)",
       messageLabel: "Messaggio",
-      submit: "Invia messaggio",
-      submitting: "Invio in corso...",
+      submit: "Inviare il messaggio",
+      submitting: "Invio in corso…",
     },
   };
 
@@ -800,21 +804,28 @@ export default function Contact() {
                   </p>
                 )}
 
-                {/* Mismo aspecto que TextLink (etiqueta, subrayado, flecha y área táctil ampliada);
-                    <a> propio porque TextLink es un Link de wouter y este destino es externo */}
-                <a
-                  href={directionsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ss-label group relative mt-8 inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3"
-                  data-testid="button-get-directions"
-                >
-                  <span className="ss-link">{t.getDirections}</span>
-                  <span className="sr-only">{` ${t.newTab}`}</span>
-                  <span aria-hidden="true" className="ss-arrow">
-                    →
-                  </span>
-                </a>
+                {/* "Cómo llegar" y, junto a él, la página de la oficina (su nombre en officeLabel).
+                    Uno al lado del otro; si no caben, uno debajo del otro */}
+                <div className="mt-8 flex flex-wrap gap-x-10 gap-y-6">
+                  {/* Mismo aspecto que TextLink (etiqueta, subrayado, flecha y área táctil ampliada);
+                      <a> propio porque TextLink es un Link de wouter y este destino es externo */}
+                  <a
+                    href={directionsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ss-label group relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3"
+                    data-testid="button-get-directions"
+                  >
+                    <span className="ss-link">{t.getDirections}</span>
+                    <span className="sr-only">{` ${t.newTab}`}</span>
+                    <span aria-hidden="true" className="ss-arrow">
+                      →
+                    </span>
+                  </a>
+                  <TextLink href="/offices" data-testid="link-contact-offices">
+                    {officeLabel(language)}
+                  </TextLink>
+                </div>
               </div>
             </section>
 
@@ -1009,17 +1020,19 @@ export default function Contact() {
               </Form>
             </section>
 
-            {/* El edificio: el mismo recorte de la portada (sin el letrero ni el estacionamiento
-                reflejado), en gris y a su proporción propia, sin reencuadre */}
+            {/* La fachada (oficina/fachada, 1159 × 900, sin el estacionamiento): la misma de la
+                portada, en gris y a su proporción propia, sin reencuadre. Hasta 26rem de ancho */}
             <figure className="sm:max-w-[26rem] lg:col-span-5 lg:row-start-2 lg:self-start" data-testid="figure-contact-building">
               <div className="overflow-hidden bg-ss-rule">
                 <img
-                  src={edificioCerro}
+                  src={fachada768}
+                  srcSet={`${fachada768} 768w, ${fachada1536} 1159w`}
+                  sizes="(min-width: 640px) 416px, calc(100vw - 40px)"
                   alt={t.photoAlt}
                   loading="lazy"
                   decoding="async"
-                  width={708}
-                  height={684}
+                  width={1159}
+                  height={900}
                   className="ss-photo block h-auto w-full"
                   data-testid="img-contact-building"
                 />

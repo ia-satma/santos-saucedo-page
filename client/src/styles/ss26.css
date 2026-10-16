@@ -195,7 +195,7 @@ html:has(.ss26) body {
   text-wrap: balance;
 }
 
-/* Cifras (héroe de la portada; sirve también para "La firma en números"): romana 350, el
+/* Cifras (La firma § 01 de la portada, /about y ficha de socio): romana 350, el
    peso display, con cifras de caja alta proporcionales. Azul Marino sobre claro, blanco
    sobre Azul Profundo. Nunca lima. */
 .ss-figure {
@@ -425,8 +425,8 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   filter: saturate(0.85) contrast(1.02);
 }
 
-/* Filete corto (24 × 1 px), completo desde el inicio: el sitio no tiene entradas al aparecer
-   (solo la máscara del título del héroe de portada). Sobre Azul Profundo, blanco al 35 % (el
+/* Filete corto (24 × 1 px), completo desde el inicio: el sitio no tiene entradas al aparecer.
+   Sobre Azul Profundo, blanco al 35 % (el
    mismo del § de los encabezados internos; al 14 %, el de los filetes largos, un trazo tan
    corto no se ve); sobre blanco, Línea; sobre Hueso, Entrada (Línea apenas se ve en el papel),
    como el eyebrow papel de las páginas internas. */
@@ -442,6 +442,166 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 :is(.ss-navy, .editorial-page-hero) .ss-bar {
   background: rgb(255 255 255 / 0.35);
 }
+
+/* Héroe de la portada (H4): composición aprobada sobre un lienzo de 1920 × 1080
+   (video-portada/LEEME-integracion.md). --u vale 1 px de ese lienzo, escalado al menor de los
+   dos ejes, para que logotipo, textos y § guarden la proporción en cualquier pantalla de
+   escritorio. Ocupa la primera pantalla y sube bajo el encabezado (transparente en la
+   portada, Header26 overlay). Mientras carga el video, Azul Profundo. */
+.ss-hero {
+  --u: min(0.05208vw, 0.09259vh);
+  --u: min(0.05208vw, 0.09259svh);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+  margin-top: calc(-1 * var(--ss-header-h));
+  background-color: var(--ss-navy);
+  color: #fff;
+}
+/* Capas de lectura (LEEME): velo Azul Profundo al 66 %, elipse central más oscura (1600 × 760
+   en el lienzo, con la caída medida en la muestra aprobada: más densa en el centro y casi nula
+   al borde), degradado arriba para el menú y abajo hacia la sección siguiente */
+.ss-hero-veil {
+  background-color: rgb(20 21 62 / 0.66);
+  background-image:
+    linear-gradient(to bottom, rgb(14 15 40 / 0.7), rgb(14 15 40 / 0) 16%),
+    linear-gradient(to top, rgb(14 15 40 / 0.66), rgb(14 15 40 / 0) 25%),
+    radial-gradient(
+      41.67% 35.19% at 50% 50%,
+      rgb(18 19 48 / 0.45) 0%,
+      rgb(18 19 48 / 0.42) 30%,
+      rgb(18 19 48 / 0.35) 50%,
+      rgb(18 19 48 / 0.25) 70%,
+      rgb(18 19 48 / 0.12) 90%,
+      rgb(18 19 48 / 0.03) 110%,
+      rgb(18 19 48 / 0) 125%
+    );
+}
+/* La § de marca de agua: 820 de alto, a 40 del borde derecho y centrada 20 por debajo del
+   eje (x 1345, y 150 en el lienzo). Con --u limitado por los dos ejes nunca pasa del 76 % del
+   alto ni toca el logotipo: completa siempre, con su aspecto fijo (SectionMark). Bajo lg el
+   logotipo ocupa el ancho y la § se oculta. */
+.ss-hero-mark-box {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: none;
+  pointer-events: none;
+}
+.ss-hero-mark {
+  position: absolute;
+  right: calc(40 * var(--u));
+  top: calc(50% - 390 * var(--u));
+  height: calc(820 * var(--u));
+  background-color: rgb(255 255 255 / 0.12);
+}
+.ss-hero-body {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--ss-pad);
+  padding-top: calc(var(--ss-header-h) + 40px);
+  padding-bottom: 72px;
+  text-align: center;
+}
+/* Teléfono y tableta: logotipo al 80 % del ancho (hasta 480 px), textos a tamaño de lectura */
+.ss-hero-logo {
+  display: block;
+  width: min(80vw, 480px);
+  height: auto;
+}
+.ss-hero-rule {
+  display: block;
+  width: 48px;
+  height: 2px;
+  margin-top: 32px;
+  background: var(--ss-lime);
+}
+.ss-hero-tagline {
+  display: block;
+  margin-top: 24px;
+  font-family: var(--ss-font-sans);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.35;
+  letter-spacing: 0.24em;
+  /* El espaciado queda también tras la última letra: el mismo al principio centra el texto */
+  padding-inline-start: 0.24em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.88);
+  text-wrap: balance;
+}
+.ss-hero-place {
+  margin-top: 14px;
+  font-family: var(--ss-font-sans);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.24em;
+  padding-inline-start: 0.24em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.62);
+}
+.ss-hero-dot {
+  display: none;
+}
+.ss-hero-year {
+  display: block;
+}
+@media (min-width: 640px) {
+  .ss-hero-dot {
+    display: inline;
+    margin-inline: 0.9em;
+  }
+  .ss-hero-year {
+    display: inline;
+  }
+}
+/* Escritorio: las medidas del lienzo, en --u. Interlínea 1 en los textos (la caja del texto
+   empieza 0.15em sobre la mayúscula): raya 49 bajo el logotipo, mayúsculas de la frase 34 bajo
+   la raya y las de la línea de lugar 29 bajo la frase. El bloque queda centrado 11.5 por debajo
+   del eje (logotipo arriba en y 420). Espaciado algo mayor que el del lienzo (0.28 y 0.33em):
+   la sans del sitio es más estrecha que la de la muestra y así las dos líneas miden casi lo
+   mismo que en ella (91 y 90 %). Las letras no bajan de 17 y 12 px (la misma proporción
+   entre frase y lugar que en el lienzo: la línea de lugar nunca queda más ancha que la frase). */
+@media (min-width: 1024px) {
+  .ss-hero-mark-box {
+    display: block;
+  }
+  .ss-hero-body {
+    padding-top: var(--ss-header-h);
+    padding-bottom: calc(var(--ss-header-h) - 23 * var(--u));
+  }
+  .ss-hero-logo {
+    width: calc(760 * var(--u));
+  }
+  .ss-hero-rule {
+    width: max(32px, 48 * var(--u));
+    margin-top: calc(49 * var(--u));
+  }
+  .ss-hero-tagline {
+    margin-top: calc(31 * var(--u));
+    font-size: max(17px, 21 * var(--u));
+    line-height: 1;
+    letter-spacing: 0.32em;
+    padding-inline-start: 0.32em;
+  }
+  .ss-hero-place {
+    margin-top: calc(23 * var(--u));
+    font-size: max(12px, 15 * var(--u));
+    line-height: 1;
+    letter-spacing: 0.36em;
+    padding-inline-start: 0.36em;
+  }
+}
+/* Árabe, chino, japonés y coreano no llegan aquí: la portada solo existe en ES/EN */
 
 /* Fila de prácticas: el número (01–04) pasa de tenue a pleno */
 .ss-row .ss-row-num {

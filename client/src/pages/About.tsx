@@ -21,7 +21,11 @@ import { Eyebrow, NumberedCard } from "@/components/editorial";
 import { SplitSection, TextLink } from "@/components/home26/primitives";
 import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
+import { officeLabel } from "@/lib/officeLabel";
 import type { LanguageCode } from "@shared/schema";
+// La recepción de la oficina (oficina/recepcion, 1536 × 1024), después de la introducción
+import recepcion768 from "@assets/ss26/oficina/recepcion-768.webp";
+import recepcion1536 from "@assets/ss26/oficina/recepcion-1536.webp";
 
 // Cifras de /about: "35+" (sin tocar) y "72+" ciudades con presencia, la forma en cifras de
 // "más de 72" (redacción aprobada de la portada: "Ciudades con presencia"). Fuera el conteo de
@@ -37,6 +41,20 @@ const citiesLabel: Record<LanguageCode, string> = {
   ru: "Городов присутствия",
   fr: "Villes de présence",
   it: "Città con presenza",
+};
+
+// Texto alternativo de la foto de la recepción: el mismo de /offices en cada idioma
+const receptionAlt: Record<LanguageCode, string> = {
+  es: "Recepción de la oficina de Santos & Saucedo",
+  en: "Reception at the Santos & Saucedo office",
+  de: "Empfang der Kanzlei Santos & Saucedo",
+  zh: "Santos & Saucedo办公室的前台",
+  ko: "Santos & Saucedo 사무실의 리셉션",
+  ja: "Santos & Saucedoのオフィスの受付",
+  ar: "الاستقبال في مكتب Santos & Saucedo",
+  ru: "Приёмная офиса Santos & Saucedo",
+  fr: "Accueil du bureau de Santos & Saucedo",
+  it: "Accoglienza della sede di Santos & Saucedo",
 };
 
 export default function About() {
@@ -1213,6 +1231,25 @@ export default function About() {
               </SplitSection>
             </section>
 
+            {/* La recepción de la oficina a lo ancho del contenedor, a su proporción (3:2), en gris
+                como las demás fotos y sin pie: la página de la oficina la enlaza al final */}
+            <figure className="mb-20 lg:mb-24" data-testid="figure-about-reception">
+              <div className="overflow-hidden bg-ss-rule">
+                <img
+                  src={recepcion1536}
+                  srcSet={`${recepcion768} 768w, ${recepcion1536} 1536w`}
+                  sizes="(min-width: 1464px) 1320px, 90vw"
+                  alt={keepFirmName(receptionAlt[language] ?? receptionAlt.en)}
+                  loading="lazy"
+                  decoding="async"
+                  width={1536}
+                  height={1024}
+                  className="ss-photo block h-auto w-full"
+                  data-testid="img-about-reception"
+                />
+              </div>
+            </figure>
+
             {/* "Cómo trabajamos": el h2 en el aside y los cuatro principios en el cuerpo */}
             <section className="mb-20 lg:mb-24" aria-labelledby="about-values-title" data-testid="section-values">
               <SplitSection
@@ -1238,8 +1275,9 @@ export default function About() {
               </SplitSection>
             </section>
 
-            {/* Navegación como enlaces de texto (sin botones): Socios, Prácticas y Monitor, en la
-                columna del cuerpo desde lg (el aside vacío no ocupa sitio bajo lg) */}
+            {/* Navegación como enlaces de texto (sin botones): Socios, Prácticas, Monitor y la
+                oficina (su nombre en officeLabel), en la columna del cuerpo desde lg (el aside
+                vacío no ocupa sitio bajo lg) */}
             <SplitSection asideClassName="hidden lg:block">
               <div className="flex flex-wrap gap-x-10 gap-y-6">
                 <span data-testid="button-view-team">
@@ -1250,6 +1288,9 @@ export default function About() {
                 </span>
                 <span data-testid="link-view-news">
                   <TextLink href="/news">{nav[3].label}</TextLink>
+                </span>
+                <span data-testid="link-about-offices">
+                  <TextLink href="/offices">{officeLabel(language)}</TextLink>
                 </span>
               </div>
             </SplitSection>

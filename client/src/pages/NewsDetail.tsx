@@ -16,6 +16,7 @@ import { Eyebrow, LeadParagraph } from "@/components/editorial";
 import { formatNewsDate } from "@/lib/newsDate";
 import { MonitorList, MonitorSubscribe } from "@/components/monitor/MonitorList";
 import { chrome26 } from "@/components/home26/chrome26";
+import { TextLink } from "@/components/home26/primitives";
 import type { News, TeamMember } from "@shared/schema";
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
@@ -282,7 +283,7 @@ export default function NewsDetail() {
       errorMessage: "Notizia non trovata",
       copyLink: "Copia link",
       linkCopied: "Link copiato.",
-      aboutTheAuthor: "Sull'autore",
+      aboutTheAuthor: "Sull’autore",
       aboutTheAuthors: "Sugli autori",
     },
   };
@@ -330,28 +331,27 @@ export default function NewsDetail() {
   const truncateBio = (bio: string | null | undefined, maxLength: number = 150) => {
     if (!bio) return '';
     if (bio.length <= maxLength) return bio;
-    return bio.slice(0, maxLength).trim() + '...';
+    return bio.slice(0, maxLength).trim() + '…';
   };
 
+  // Nota inexistente (enlace viejo o mal escrito): la misma vista 404 que la ficha de socio
+  // (not-found.tsx): SEOHead page="notFound" (título propio y noindex), encabezado azul con
+  // "Error 404" y el mensaje como h1. El enlace lleva al listado con el rótulo del menú (nav[3]).
   if (error) {
     return (
-      <div className="min-h-screen bg-background" data-testid="page-news-error">
+      <div className="min-h-screen bg-background flex flex-col" data-testid="page-news-error">
+        <SEOHead page="notFound" language={language} />
         <Header />
-        {/* Cabecera sticky en flujo: ya no hace falta compensar el header fijo */}
-        <main id="main-content" className="pt-16 pb-20 lg:pt-20">
-          <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12">
-            <h2 className="ss-h2 mb-6" data-testid="text-error-title">
+        <main id="main-content" className="flex-1 pt-36 pb-20 editorial-page-hero" data-testid="section-not-found-hero">
+          <div className="ss-container">
+            <Eyebrow num="" tone="navy" label="Error 404" className="mb-6" />
+            <h1 className="mb-10" data-testid="text-error-title">
               {t.errorMessage}
-            </h2>
-            {/* Navegación: enlace del router (respeta la base de GitHub Pages), no botón */}
-            <Link
-              href="/news"
-              className="ss-label inline-flex items-center gap-2 text-ss-marino hover:underline decoration-1 underline-offset-4"
-              data-testid="button-back-to-news"
-            >
-              <ArrowLeft className="w-4 h-4 rtl:-scale-x-100" aria-hidden="true" />
+            </h1>
+            {/* Enlace del router (respeta la base de GitHub Pages), no botón */}
+            <TextLink href="/news" tone="dark" data-testid="button-back-to-news">
               {newsLabel}
-            </Link>
+            </TextLink>
           </div>
         </main>
         <Footer />
@@ -546,10 +546,12 @@ export default function NewsDetail() {
                 )}
               </div>
 
-              {/* Compartir y suscribirse en una sola fila bajo un solo filete. Desde md, compartir a
-                  un lado y la suscripción al otro; en teléfono, apilados sin otro filete. En el
-                  sitio estático MonitorSubscribe no se pinta y queda solo compartir. */}
-              <div className="mb-16 border-t border-ss-rule pt-8 md:flex md:flex-wrap md:items-center md:justify-between md:gap-x-10 md:gap-y-2">
+              {/* Compartir y suscribirse bajo un solo filete. Apilados hasta lg (a propósito: a 768
+                  no caben en una fila en es, fr, de, ru ni ja); desde lg, compartir a un lado y la
+                  suscripción al otro, y si no caben (ruso) la suscripción baja a su propia línea,
+                  sin otro filete. En el sitio estático MonitorSubscribe no se pinta y queda solo
+                  compartir. */}
+              <div className="mb-16 border-t border-ss-rule pt-8 lg:flex lg:flex-wrap lg:items-center lg:justify-between lg:gap-x-10 lg:gap-y-4">
                 {/* Compartir: fila de etiqueta con botones de texto (LinkedIn · Correo · Copiar
                     enlace), sin bordes ni iconos; 44 px de alto útil por el relleno. Cada "·" va
                     unido al botón que sigue (whitespace-nowrap): ninguno queda al final de una
@@ -597,7 +599,7 @@ export default function NewsDetail() {
                 {/* La suscripción al Monitor (/newsletter), sin filete propio */}
                 <MonitorSubscribe
                   rule={false}
-                  className="mt-4 md:mt-0"
+                  className="mt-4 lg:mt-0"
                   testId="section-article-subscribe"
                   linkTestId="link-article-subscribe"
                 />

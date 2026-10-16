@@ -1,349 +1,483 @@
-import { useState } from "react";
-import { Link } from "wouter";
-import { motion } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
-import { Skeleton } from "@/components/ui/skeleton";
+import type { ReactNode } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
-import type { OfficeImage } from "@shared/schema";
+import { SplitSection, TextLink } from "@/components/home26/primitives";
+import { chrome26 } from "@/components/home26/chrome26";
+import { useSiteContact } from "@/components/home26/useSiteContact";
+import { keepFirmName } from "@/lib/firmName";
+import { officeLabel } from "@/lib/officeLabel";
+import { highFetchPriority } from "@/lib/teamPhotoSources";
+import type { LanguageCode } from "@shared/schema";
+// Fotos de la oficina (ronda 6): dos tamaños por foto. Solo estas; el resto del folder de la
+// firma no se usa (varias tienen huellas de retoque).
+import fachadaS from "@assets/ss26/oficina/fachada-768.webp";
+import fachadaL from "@assets/ss26/oficina/fachada-1536.webp";
+import recepcionS from "@assets/ss26/oficina/recepcion-768.webp";
+import recepcionL from "@assets/ss26/oficina/recepcion-1536.webp";
+import vestibuloS from "@assets/ss26/oficina/vestibulo-768.webp";
+import vestibuloL from "@assets/ss26/oficina/vestibulo-1536.webp";
+import vestibulo2S from "@assets/ss26/oficina/vestibulo-2-768.webp";
+import vestibulo2L from "@assets/ss26/oficina/vestibulo-2-1536.webp";
+import salaJuntasS from "@assets/ss26/oficina/sala-juntas-768.webp";
+import salaJuntasL from "@assets/ss26/oficina/sala-juntas-1536.webp";
+import salaJuntas2S from "@assets/ss26/oficina/sala-juntas-2-768.webp";
+import salaJuntas2L from "@assets/ss26/oficina/sala-juntas-2-1536.webp";
+import areaTrabajoS from "@assets/ss26/oficina/area-trabajo-768.webp";
+import areaTrabajoL from "@assets/ss26/oficina/area-trabajo-1536.webp";
+import areaTrabajo2S from "@assets/ss26/oficina/area-trabajo-2-768.webp";
+import areaTrabajo2L from "@assets/ss26/oficina/area-trabajo-2-1536.webp";
+import privadoS from "@assets/ss26/oficina/privado-768.webp";
+import privadoL from "@assets/ss26/oficina/privado-1536.webp";
+import esculturaS from "@assets/ss26/oficina/escultura-768.webp";
+import esculturaL from "@assets/ss26/oficina/escultura-1536.webp";
+import obraMazoS from "@assets/ss26/oficina/obra-mazo-768.webp";
+import obraMazoL from "@assets/ss26/oficina/obra-mazo-1536.webp";
 
-// "Clásica": titulares en romana 400, Azul Marino, caja de oración y al inicio; texto en Gris Tinta.
-const h2Class = "font-heading font-normal text-ss-marino text-[clamp(28px,2.6vw,38px)] leading-[1.12] tracking-[-0.012em] [text-wrap:balance]";
-// Lista de datos de la oficina: filas con filete superior; etiqueta (dt) en la sans
-// versal espaciada, Gris Medio; dato (dd) en la sans de 17 px, Gris Tinta.
+// "La oficina" (H1, ronda 6), como la página de oficinas de Von Wobeser: h1, una frase de
+// introducción, la fachada y las fotos por tema, y la dirección con "Cómo llegar". Sin metros,
+// pisos, arquitecto ni adjetivos: la firma no los ha confirmado. Sin carrusel, sin visor y sin
+// animación; las fotos en gris (.ss-photo) como el resto del sitio. data-testid="page-offices"
+// en la raíz permite a un juicio comparar gris contra color solo en esta página.
+
+type PhotoKey =
+  | "fachada"
+  | "recepcion"
+  | "vestibulo"
+  | "vestibulo2"
+  | "salaJuntas"
+  | "salaJuntas2"
+  | "areaTrabajo"
+  | "areaTrabajo2"
+  | "privado"
+  | "escultura"
+  | "obraMazo";
+
+// Medidas reales de cada archivo (srcset con su ancho verdadero; width/height del grande
+// reservan el hueco y la página no se mueve al cargar). La fachada y la escultura no llegan
+// a 1536: sus archivos "-1536" miden 1159 y 1024 de ancho.
+interface PhotoFile {
+  s: string;
+  sw: number;
+  l: string;
+  lw: number;
+  lh: number;
+}
+
+const PHOTOS: Record<PhotoKey, PhotoFile> = {
+  fachada: { s: fachadaS, sw: 768, l: fachadaL, lw: 1159, lh: 900 },
+  recepcion: { s: recepcionS, sw: 768, l: recepcionL, lw: 1536, lh: 1024 },
+  vestibulo: { s: vestibuloS, sw: 768, l: vestibuloL, lw: 1536, lh: 1024 },
+  vestibulo2: { s: vestibulo2S, sw: 768, l: vestibulo2L, lw: 1536, lh: 1024 },
+  salaJuntas: { s: salaJuntasS, sw: 768, l: salaJuntasL, lw: 1536, lh: 1024 },
+  salaJuntas2: { s: salaJuntas2S, sw: 768, l: salaJuntas2L, lw: 1536, lh: 1024 },
+  areaTrabajo: { s: areaTrabajoS, sw: 768, l: areaTrabajoL, lw: 1536, lh: 1024 },
+  areaTrabajo2: { s: areaTrabajo2S, sw: 768, l: areaTrabajo2L, lw: 1536, lh: 1024 },
+  privado: { s: privadoS, sw: 768, l: privadoL, lw: 1536, lh: 1024 },
+  escultura: { s: esculturaS, sw: 640, l: esculturaL, lw: 1024, lh: 1536 },
+  obraMazo: { s: obraMazoS, sw: 768, l: obraMazoL, lw: 1536, lh: 1024 },
+};
+
+// sizes según el hueco de cada foto. .ss-container: 1320 px de contenido y 5vw de margen
+// (20 px bajo 400). Desde lg el cuerpo de SplitSection (columnas 5–12) mide hasta 872 px
+// (≈ 60vw); antes, todo el contenedor (≈ 90vw). Media columna: la mitad menos el hueco de 24 px.
+const SIZES = {
+  // La fachada, a su tamaño: nunca más ancha que su archivo (1159 px)
+  facade: "(min-width: 1288px) 1159px, 90vw",
+  wide: "(min-width: 1024px) min(872px, 60vw), 90vw",
+  half: "(min-width: 1024px) min(424px, 30vw), (min-width: 640px) calc(45vw - 12px), 90vw",
+  // Obra: vertical y horizontal a la misma altura (columnas 4fr / 9fr desde sm)
+  tall: "(min-width: 1024px) min(261px, 18.5vw), (min-width: 640px) calc(27.7vw - 7px), 90vw",
+  beside: "(min-width: 1024px) min(587px, 41.5vw), (min-width: 640px) calc(62.3vw - 17px), 90vw",
+} as const;
+
+interface OfficesContent {
+  /** Introducción: una sola frase, sin cifras ni adjetivos */
+  intro: string;
+  reception: string;
+  meetingRooms: string;
+  workAreas: string;
+  art: string;
+  /** h2 del bloque de la dirección (el mismo término que /contact usa en su lista) */
+  address: string;
+  phone: string;
+  email: string;
+  hours: string;
+  hoursDetails: string;
+  getDirections: string;
+  newTab: string;
+  alt: Record<PhotoKey, string>;
+}
+
+// Textos de la dirección (teléfono, correo, horario, "Cómo llegar", aviso de pestaña nueva):
+// los mismos de /contact en cada idioma.
+const content: Record<LanguageCode, OfficesContent> = {
+  es: {
+    intro:
+      "La oficina de Santos & Saucedo está en la colonia Del Valle, en San Pedro Garza García, Nuevo León, frente al Cerro de la Silla.",
+    reception: "Recepción",
+    meetingRooms: "Salas de juntas",
+    workAreas: "Áreas de trabajo",
+    art: "Obra",
+    address: "Dirección",
+    phone: "Teléfono",
+    email: "Correo electrónico",
+    hours: "Horario de oficina",
+    hoursDetails: "Lunes a viernes, 9:00–19:00 h",
+    getDirections: "Cómo llegar",
+    newTab: "(se abre en otra pestaña)",
+    alt: {
+      fachada: "Fachada de cristal de la oficina de Santos & Saucedo, con el Cerro de la Silla reflejado",
+      recepcion: "Recepción de la oficina de Santos & Saucedo",
+      vestibulo: "Vestíbulo de la oficina de Santos & Saucedo, visto desde arriba",
+      vestibulo2: "Sala de espera en el vestíbulo de la oficina de Santos & Saucedo",
+      salaJuntas: "Sala de juntas de la oficina de Santos & Saucedo",
+      salaJuntas2: "Sala de juntas con estantería, en la oficina de Santos & Saucedo",
+      areaTrabajo: "Área de trabajo abierta de la oficina de Santos & Saucedo",
+      areaTrabajo2: "Escritorios en un área de trabajo de la oficina de Santos & Saucedo",
+      privado: "Privado en la oficina de Santos & Saucedo",
+      escultura: "Escultura azul ante un muro verde, en la oficina de Santos & Saucedo",
+      obraMazo: "Pintura de un mazo de juez en la oficina de Santos & Saucedo",
+    },
+  },
+  en: {
+    intro:
+      "Santos & Saucedo’s office is in Colonia Del Valle, San Pedro Garza García, Nuevo León, facing Cerro de la Silla.",
+    reception: "Reception",
+    meetingRooms: "Meeting rooms",
+    workAreas: "Work areas",
+    art: "Art",
+    address: "Address",
+    phone: "Telephone",
+    email: "Email",
+    hours: "Office hours",
+    hoursDetails: "Monday to Friday, 9:00–19:00",
+    getDirections: "Get directions",
+    newTab: "(opens in a new tab)",
+    alt: {
+      fachada: "Glass facade of the Santos & Saucedo office, with Cerro de la Silla reflected",
+      recepcion: "Reception at the Santos & Saucedo office",
+      vestibulo: "Lobby of the Santos & Saucedo office, seen from above",
+      vestibulo2: "Waiting area in the lobby of the Santos & Saucedo office",
+      salaJuntas: "Meeting room at the Santos & Saucedo office",
+      salaJuntas2: "Meeting room with shelving at the Santos & Saucedo office",
+      areaTrabajo: "Open work area at the Santos & Saucedo office",
+      areaTrabajo2: "Desks in a work area of the Santos & Saucedo office",
+      privado: "Private office at Santos & Saucedo",
+      escultura: "Blue sculpture against a green wall at the Santos & Saucedo office",
+      obraMazo: "Painting of a gavel at the Santos & Saucedo office",
+    },
+  },
+  de: {
+    intro:
+      "Die Kanzleiräume von Santos & Saucedo liegen in der Colonia Del Valle in San Pedro Garza García, Nuevo León, gegenüber dem Cerro de la Silla.",
+    reception: "Empfang",
+    meetingRooms: "Besprechungsräume",
+    workAreas: "Arbeitsbereiche",
+    art: "Kunst",
+    address: "Adresse",
+    phone: "Telefon",
+    email: "E-Mail",
+    hours: "Öffnungszeiten",
+    hoursDetails: "Montag bis Freitag, 9:00–19:00 Uhr",
+    getDirections: "Anfahrt",
+    newTab: "(öffnet in einem neuen Tab)",
+    alt: {
+      fachada: "Glasfassade der Kanzlei Santos & Saucedo, in der sich der Cerro de la Silla spiegelt",
+      recepcion: "Empfang der Kanzlei Santos & Saucedo",
+      vestibulo: "Eingangshalle der Kanzlei Santos & Saucedo, von oben gesehen",
+      vestibulo2: "Wartebereich in der Eingangshalle der Kanzlei Santos & Saucedo",
+      salaJuntas: "Besprechungsraum der Kanzlei Santos & Saucedo",
+      salaJuntas2: "Besprechungsraum mit Regal in der Kanzlei Santos & Saucedo",
+      areaTrabajo: "Offener Arbeitsbereich der Kanzlei Santos & Saucedo",
+      areaTrabajo2: "Schreibtische in einem Arbeitsbereich der Kanzlei Santos & Saucedo",
+      privado: "Einzelbüro in der Kanzlei Santos & Saucedo",
+      escultura: "Blaue Skulptur vor einer grünen Wand in der Kanzlei Santos & Saucedo",
+      obraMazo: "Gemälde eines Richterhammers in der Kanzlei Santos & Saucedo",
+    },
+  },
+  fr: {
+    intro:
+      "Le bureau de Santos & Saucedo se trouve dans la colonia Del Valle, à San Pedro Garza García, Nuevo León, face au Cerro de la Silla.",
+    reception: "Accueil",
+    meetingRooms: "Salles de réunion",
+    workAreas: "Espaces de travail",
+    art: "Œuvres",
+    address: "Adresse",
+    phone: "Téléphone",
+    email: "E-mail",
+    hours: "Heures d’ouverture",
+    hoursDetails: "Du lundi au vendredi, de 9 h à 19 h",
+    getDirections: "Itinéraire",
+    newTab: "(s’ouvre dans un nouvel onglet)",
+    alt: {
+      fachada: "Façade vitrée du bureau de Santos & Saucedo, où se reflète le Cerro de la Silla",
+      recepcion: "Accueil du bureau de Santos & Saucedo",
+      vestibulo: "Hall du bureau de Santos & Saucedo, vu d’en haut",
+      vestibulo2: "Espace d’attente dans le hall du bureau de Santos & Saucedo",
+      salaJuntas: "Salle de réunion du bureau de Santos & Saucedo",
+      salaJuntas2: "Salle de réunion avec étagères, au bureau de Santos & Saucedo",
+      areaTrabajo: "Espace de travail ouvert du bureau de Santos & Saucedo",
+      areaTrabajo2: "Postes de travail dans un espace du bureau de Santos & Saucedo",
+      privado: "Bureau individuel chez Santos & Saucedo",
+      escultura: "Sculpture bleue devant un mur végétal, au bureau de Santos & Saucedo",
+      obraMazo: "Tableau représentant un marteau de juge, au bureau de Santos & Saucedo",
+    },
+  },
+  it: {
+    intro:
+      "La sede di Santos & Saucedo si trova nella colonia Del Valle, a San Pedro Garza García, Nuevo León, di fronte al Cerro de la Silla.",
+    reception: "Accoglienza",
+    meetingRooms: "Sale riunioni",
+    workAreas: "Aree di lavoro",
+    art: "Opere",
+    address: "Indirizzo",
+    phone: "Telefono",
+    email: "E-mail",
+    hours: "Orari di apertura",
+    hoursDetails: "Dal lunedì al venerdì, 9:00–19:00",
+    getDirections: "Indicazioni stradali",
+    newTab: "(si apre in una nuova scheda)",
+    alt: {
+      fachada: "Facciata in vetro della sede di Santos & Saucedo, in cui si riflette il Cerro de la Silla",
+      recepcion: "Accoglienza della sede di Santos & Saucedo",
+      vestibulo: "Atrio della sede di Santos & Saucedo, visto dall’alto",
+      vestibulo2: "Area d’attesa nell’atrio della sede di Santos & Saucedo",
+      salaJuntas: "Sala riunioni della sede di Santos & Saucedo",
+      salaJuntas2: "Sala riunioni con scaffalature, nella sede di Santos & Saucedo",
+      areaTrabajo: "Area di lavoro aperta della sede di Santos & Saucedo",
+      areaTrabajo2: "Scrivanie in un’area di lavoro della sede di Santos & Saucedo",
+      privado: "Ufficio privato nella sede di Santos & Saucedo",
+      escultura: "Scultura blu davanti a una parete verde, nella sede di Santos & Saucedo",
+      obraMazo: "Dipinto di un martelletto da giudice nella sede di Santos & Saucedo",
+    },
+  },
+  ru: {
+    intro:
+      "Офис Santos & Saucedo находится в районе Дель-Валье в Сан-Педро-Гарса-Гарсия, штат Нуэво-Леон, напротив горы Серро-де-ла-Силья.",
+    reception: "Приёмная",
+    meetingRooms: "Переговорные",
+    workAreas: "Рабочие зоны",
+    art: "Искусство",
+    address: "Адрес",
+    phone: "Телефон",
+    email: "Эл. почта",
+    hours: "Часы работы",
+    hoursDetails: "Понедельник — пятница, 9:00–19:00",
+    getDirections: "Как добраться",
+    newTab: "(откроется в новой вкладке)",
+    alt: {
+      fachada: "Стеклянный фасад офиса Santos & Saucedo, в котором отражается гора Серро-де-ла-Силья",
+      recepcion: "Приёмная офиса Santos & Saucedo",
+      vestibulo: "Вестибюль офиса Santos & Saucedo, вид сверху",
+      vestibulo2: "Зона ожидания в вестибюле офиса Santos & Saucedo",
+      salaJuntas: "Переговорная комната офиса Santos & Saucedo",
+      salaJuntas2: "Переговорная комната со стеллажом в офисе Santos & Saucedo",
+      areaTrabajo: "Открытая рабочая зона офиса Santos & Saucedo",
+      areaTrabajo2: "Рабочие столы в одной из рабочих зон офиса Santos & Saucedo",
+      privado: "Отдельный кабинет в офисе Santos & Saucedo",
+      escultura: "Синяя скульптура на фоне зелёной стены в офисе Santos & Saucedo",
+      obraMazo: "Картина с судейским молотком в офисе Santos & Saucedo",
+    },
+  },
+  zh: {
+    intro: "Santos & Saucedo的办公室位于新莱昂州圣佩德罗加尔萨加西亚的Del Valle区，面朝马鞍山（Cerro de la Silla）。",
+    reception: "前台",
+    meetingRooms: "会议室",
+    workAreas: "办公区",
+    art: "艺术品",
+    address: "地址",
+    phone: "电话",
+    email: "电子邮件",
+    hours: "办公时间",
+    hoursDetails: "周一至周五 9:00–19:00",
+    getDirections: "获取路线",
+    newTab: "（在新标签页中打开）",
+    alt: {
+      fachada: "Santos & Saucedo办公室的玻璃外立面，映出马鞍山（Cerro de la Silla）",
+      recepcion: "Santos & Saucedo办公室的前台",
+      vestibulo: "俯瞰Santos & Saucedo办公室的大堂",
+      vestibulo2: "Santos & Saucedo办公室大堂的等候区",
+      salaJuntas: "Santos & Saucedo办公室的会议室",
+      salaJuntas2: "Santos & Saucedo办公室内设有书架的会议室",
+      areaTrabajo: "Santos & Saucedo办公室的开放式办公区",
+      areaTrabajo2: "Santos & Saucedo办公室办公区的办公桌",
+      privado: "Santos & Saucedo办公室的独立办公间",
+      escultura: "Santos & Saucedo办公室内绿墙前的蓝色雕塑",
+      obraMazo: "Santos & Saucedo办公室内一幅描绘法槌的画作",
+    },
+  },
+  ja: {
+    intro:
+      "Santos & Saucedoのオフィスは、ヌエボ・レオン州サン・ペドロ・ガルサ・ガルシアのコロニア・デル・バジェにあり、セロ・デ・ラ・シージャに面しています。",
+    reception: "受付",
+    meetingRooms: "会議室",
+    workAreas: "執務エリア",
+    art: "アート",
+    // H5: en japonés, 所在地 para la dirección, como el pie y /contact
+    address: "所在地",
+    phone: "電話",
+    email: "メールアドレス",
+    hours: "営業時間",
+    hoursDetails: "月曜日〜金曜日 9:00–19:00",
+    getDirections: "アクセス",
+    newTab: "（新しいタブで開きます）",
+    alt: {
+      fachada: "セロ・デ・ラ・シージャが映るSantos & Saucedoのオフィスのガラスのファサード",
+      recepcion: "Santos & Saucedoのオフィスの受付",
+      vestibulo: "上から見たSantos & Saucedoのオフィスのロビー",
+      vestibulo2: "Santos & Saucedoのオフィスのロビーにある待合スペース",
+      salaJuntas: "Santos & Saucedoのオフィスの会議室",
+      salaJuntas2: "書棚のあるSantos & Saucedoのオフィスの会議室",
+      areaTrabajo: "Santos & Saucedoのオフィスのオープンな執務エリア",
+      areaTrabajo2: "Santos & Saucedoのオフィスの執務エリアのデスク",
+      privado: "Santos & Saucedoのオフィスの個室",
+      escultura: "Santos & Saucedoのオフィスにある緑の壁の前の青い彫刻",
+      obraMazo: "Santos & Saucedoのオフィスにある裁判官の木槌を描いた絵画",
+    },
+  },
+  ko: {
+    intro:
+      "Santos & Saucedo의 사무실은 누에보레온주 산페드로가르사가르시아의 콜로니아 델바예에 있으며, 세로 데 라 시야를 마주하고 있습니다.",
+    reception: "리셉션",
+    meetingRooms: "회의실",
+    workAreas: "업무 공간",
+    art: "작품",
+    address: "주소",
+    phone: "전화",
+    email: "이메일",
+    hours: "업무 시간",
+    hoursDetails: "월요일–금요일 9:00–19:00",
+    getDirections: "길찾기",
+    newTab: "(새 탭에서 열림)",
+    alt: {
+      fachada: "세로 데 라 시야가 비치는 Santos & Saucedo 사무실의 유리 외관",
+      recepcion: "Santos & Saucedo 사무실의 리셉션",
+      vestibulo: "위에서 본 Santos & Saucedo 사무실의 로비",
+      vestibulo2: "Santos & Saucedo 사무실 로비의 대기 공간",
+      salaJuntas: "Santos & Saucedo 사무실의 회의실",
+      salaJuntas2: "선반이 있는 Santos & Saucedo 사무실의 회의실",
+      areaTrabajo: "Santos & Saucedo 사무실의 개방형 업무 공간",
+      areaTrabajo2: "Santos & Saucedo 사무실 업무 공간의 책상",
+      privado: "Santos & Saucedo 사무실의 개인 집무실",
+      escultura: "Santos & Saucedo 사무실의 녹색 벽 앞에 놓인 파란 조각",
+      obraMazo: "Santos & Saucedo 사무실에 걸린 판사봉 그림",
+    },
+  },
+  ar: {
+    intro:
+      "يقع مكتب Santos & Saucedo في حي ديل فالي في سان بيدرو غارثا غارسيا بولاية نويفو ليون، قبالة جبل سيرو دي لا سيا.",
+    reception: "الاستقبال",
+    meetingRooms: "قاعات الاجتماعات",
+    workAreas: "مساحات العمل",
+    art: "أعمال فنية",
+    address: "العنوان",
+    phone: "الهاتف",
+    email: "البريد الإلكتروني",
+    hours: "ساعات العمل",
+    hoursDetails: "من الاثنين إلى الجمعة، ⁦9:00–19:00⁩", // horario aislado (LRI…PDI), como en /contact
+    getDirections: "كيفية الوصول",
+    newTab: "(يُفتح في علامة تبويب جديدة)",
+    alt: {
+      fachada: "الواجهة الزجاجية لمكتب Santos & Saucedo، وينعكس عليها جبل سيرو دي لا سيا",
+      recepcion: "الاستقبال في مكتب Santos & Saucedo",
+      vestibulo: "بهو مكتب Santos & Saucedo من الأعلى",
+      vestibulo2: "منطقة الانتظار في بهو مكتب Santos & Saucedo",
+      salaJuntas: "قاعة اجتماعات في مكتب Santos & Saucedo",
+      salaJuntas2: "قاعة اجتماعات ذات رفوف في مكتب Santos & Saucedo",
+      areaTrabajo: "مساحة عمل مفتوحة في مكتب Santos & Saucedo",
+      areaTrabajo2: "مكاتب في إحدى مساحات العمل بمكتب Santos & Saucedo",
+      privado: "غرفة مكتب خاصة في مكتب Santos & Saucedo",
+      escultura: "منحوتة زرقاء أمام جدار أخضر في مكتب Santos & Saucedo",
+      obraMazo: "لوحة لمطرقة قاضٍ في مكتب Santos & Saucedo",
+    },
+  },
+};
+
+// "Cómo llegar": las indicaciones de Google Maps en otra pestaña, con "Col. del Valle" (E15),
+// la misma consulta que /contact. Sin mapa incrustado: el sitio público no carga terceros.
+const DIRECTIONS_URL =
+  "https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Col.+del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220";
+
+// Lista de datos: filas con filete superior, como /contact; etiqueta (dt) en versalitas sans,
+// dato (dd) en la sans de 17 px
 const rowClass = "grid grid-cols-1 gap-y-1 border-t border-ss-rule py-4 sm:grid-cols-[11rem,1fr] sm:gap-x-6";
 const dtClass = "ss-label text-ss-medio sm:pt-1";
 const ddClass = "text-[17px] leading-[1.55] text-ss-tinta";
 const ddLinkClass = "hover:text-ss-marino hover:underline underline-offset-4 transition-colors";
-// La página solo da los datos que la firma publica (dirección, teléfono, correo, horario y mapa).
-// Sin amenidades, salas, estacionamiento, transporte ni "puntos de referencia": nadie los
-// confirmó y venían de la plantilla anterior.
 
-interface OfficeContent {
-  heroTitle: string;
-  heroSubtitle: string;
-  mainOfficeTitle: string;
-  buildingName: string;
-  floor: string;
-  address: string;
-  colony: string;
-  postalCode: string;
-  city: string;
-  phone: string;
-  email: string;
-  addressLabel: string;
-  phoneLabel: string;
-  emailLabel: string;
-  mapTitle: string;
-  officeHoursTitle: string;
-  officeHours: string;
-  saturdayHours: string;
-  getDirections: string;
-  galleryTitle: string;
-  contactCtaSubtitle: string;
-  contactButton: string;
-  teamLink: string;
-  headquarters: string;
-  viewOnMap: string;
+/** Una foto: srcset de dos tamaños, sizes del hueco, medidas para reservar el sitio, gris
+    (.ss-photo) y diferida salvo la primera (la fachada, que se ve al abrir la página). */
+function OfficePhoto({
+  photo,
+  alt,
+  sizes,
+  eager = false,
+  className = "",
+  testId,
+}: {
+  photo: PhotoKey;
+  alt: string;
+  sizes: string;
+  eager?: boolean;
+  className?: string;
+  testId?: string;
+}) {
+  const f = PHOTOS[photo];
+  return (
+    <img
+      src={f.l}
+      srcSet={`${f.s} ${f.sw}w, ${f.l} ${f.lw}w`}
+      sizes={sizes}
+      width={f.lw}
+      height={f.lh}
+      alt={keepFirmName(alt)}
+      loading={eager ? "eager" : "lazy"}
+      decoding="async"
+      {...(eager ? highFetchPriority : {})}
+      className={`ss-photo block h-auto w-full ${className}`}
+      data-testid={testId}
+    />
+  );
+}
+
+/** Bloque de fotos: el nombre (h2.ss-h2-sm) en el aside y las fotos en el cuerpo */
+function PhotoBlock({
+  id,
+  title,
+  testId,
+  children,
+}: {
+  id: string;
+  title: string;
+  testId: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="mb-20 lg:mb-24" aria-labelledby={id} data-testid={testId}>
+      <SplitSection
+        aside={
+          <h2 id={id} className="ss-h2-sm">
+            {title}
+          </h2>
+        }
+      >
+        {children}
+      </SplitSection>
+    </section>
+  );
 }
 
 export default function Offices() {
   const { language } = useLanguage();
-  const [selectedImage, setSelectedImage] = useState<OfficeImage | null>(null);
-
-  const { data: officeImages, isLoading: imagesLoading } = useQuery<OfficeImage[]>({
-    queryKey: ["/api/office-images"],
-  });
-
-  const content: Record<string, OfficeContent> = {
-    en: {
-      heroTitle: "Our Offices",
-      heroSubtitle: "Our office is in San Pedro Garza García, Nuevo León.",
-      mainOfficeTitle: "Main Office in San Pedro Garza García",
-      buildingName: "Río Tamazunchale 205 Norte",
-      floor: "",
-      address: "San Pedro Garza García, N.L.",
-      colony: "Nuevo León",
-      postalCode: "San Pedro Garza García, Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, C.P. 66220, México",
-      phone: "+52 81 8335 2086",
-      email: "info@santossaucedo.com",
-      mapTitle: "Map of the Santos & Saucedo office in San Pedro Garza García",
-      emailLabel: "Email",
-      phoneLabel: "Telephone",
-      addressLabel: "Address",
-      officeHoursTitle: "Office Hours",
-      officeHours: "Monday to Friday, 9:00–19:00",
-      saturdayHours: "Saturday and Sunday: closed",
-      getDirections: "Get Directions",
-      galleryTitle: "Office Gallery",
-      contactCtaSubtitle: "Each partner's contact details appear on their profile.",
-      contactButton: "Contact",
-      teamLink: "Partners",
-      headquarters: "Headquarters",
-      viewOnMap: "View on Map",
-    },
-    es: {
-      heroTitle: "Nuestras oficinas",
-      heroSubtitle: "Nuestra oficina está en San Pedro Garza García, Nuevo León.",
-      mainOfficeTitle: "Oficina principal en San Pedro Garza García",
-      buildingName: "Río Tamazunchale 205 Norte",
-      floor: "",
-      address: "San Pedro Garza García, N.L.",
-      colony: "Nuevo León",
-      postalCode: "San Pedro Garza García, Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, C.P. 66220, México",
-      phone: "+52 81 8335 2086",
-      email: "info@santossaucedo.com",
-      mapTitle: "Mapa de la oficina de Santos & Saucedo en San Pedro Garza García",
-      emailLabel: "Correo electrónico",
-      phoneLabel: "Teléfono",
-      addressLabel: "Dirección",
-      officeHoursTitle: "Horario de oficina",
-      officeHours: "Lunes a viernes, 9:00–19:00 h",
-      saturdayHours: "Sábado y domingo: cerrado",
-      getDirections: "Cómo llegar",
-      galleryTitle: "Galería de oficinas",
-      contactCtaSubtitle: "Los datos de contacto de cada socio aparecen en su ficha.",
-      contactButton: "Contacto",
-      teamLink: "Socios",
-      headquarters: "Sede central",
-      viewOnMap: "Ver en el mapa",
-    },
-    de: {
-      heroTitle: "Unsere Büros",
-      heroSubtitle: "Unser Büro befindet sich in San Pedro Garza García, Nuevo León.",
-      mainOfficeTitle: "Hauptsitz in San Pedro Garza García",
-      buildingName: "Río Tamazunchale 205 Norte",
-      floor: "",
-      address: "San Pedro Garza García, N.L.",
-      colony: "Nuevo León",
-      postalCode: "San Pedro Garza García, Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, Mexiko",
-      phone: "+52 81 8335 2086",
-      email: "info@santossaucedo.com",
-      mapTitle: "Karte des Büros von Santos & Saucedo in San Pedro Garza García",
-      emailLabel: "E-Mail",
-      phoneLabel: "Telefon",
-      addressLabel: "Adresse",
-      officeHoursTitle: "Öffnungszeiten",
-      officeHours: "Montag bis Freitag, 9:00–19:00 Uhr",
-      saturdayHours: "Samstag und Sonntag: geschlossen",
-      getDirections: "Anfahrt",
-      galleryTitle: "Bürogalerie",
-      contactCtaSubtitle: "Die Kontaktdaten der einzelnen Partner stehen in ihrem jeweiligen Profil.",
-      contactButton: "Kontakt",
-      teamLink: "Unser Team",
-      headquarters: "Hauptsitz",
-      viewOnMap: "Auf Karte anzeigen",
-    },
-    zh: {
-      heroTitle: "我们的办公室",
-      heroSubtitle: "我们的办公室位于新莱昂州圣佩德罗加尔萨加西亚（San Pedro Garza García）。",
-      mainOfficeTitle: "圣佩德罗加尔萨加西亚总部",
-      buildingName: "Río Tamazunchale 205 Norte",
-      floor: "18层",
-      address: "San Pedro Garza García, N.L.",
-      colony: "Nuevo León",
-      postalCode: "San Pedro Garza García, Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, México",
-      phone: "+52 81 8335 2086",
-      email: "info@santossaucedo.com",
-      mapTitle: "Santos & Saucedo San Pedro Garza García 办公室地图",
-      emailLabel: "电子邮件",
-      phoneLabel: "电话",
-      addressLabel: "地址",
-      officeHoursTitle: "办公时间",
-      officeHours: "周一至周五 9:00–19:00",
-      saturdayHours: "周六、周日休息",
-      getDirections: "获取路线",
-      galleryTitle: "办公室图库",
-      contactCtaSubtitle: "各合伙人的联系方式见其个人页面。",
-      contactButton: "联系我们",
-      teamLink: "我们的团队",
-      headquarters: "总部",
-      viewOnMap: "在地图上查看",
-    },
-    ko: {
-      heroTitle: "사무실",
-      heroSubtitle: "사무소는 누에보레온주 산페드로 가르사 가르시아(San Pedro Garza García)에 있습니다.",
-      mainOfficeTitle: "산페드로 가르사 가르시아 본사",
-      buildingName: "Río Tamazunchale 205 Norte",
-      floor: "18층",
-      address: "San Pedro Garza García, N.L.",
-      colony: "Nuevo León",
-      postalCode: "San Pedro Garza García, Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, México",
-      phone: "+52 81 8335 2086",
-      email: "info@santossaucedo.com",
-      mapTitle: "San Pedro Garza García에 있는 Santos & Saucedo 사무소 지도",
-      emailLabel: "이메일",
-      phoneLabel: "전화",
-      addressLabel: "주소",
-      officeHoursTitle: "영업 시간",
-      officeHours: "월요일–금요일 9:00–19:00",
-      saturdayHours: "토요일·일요일 휴무",
-      getDirections: "길 찾기",
-      galleryTitle: "사무실 갤러리",
-      contactCtaSubtitle: "각 파트너의 연락처는 해당 프로필에 있습니다.",
-      contactButton: "문의하기",
-      teamLink: "우리 팀",
-      headquarters: "본사",
-      viewOnMap: "지도에서 보기",
-    },
-    ja: {
-      heroTitle: "オフィス",
-      heroSubtitle: "事務所はヌエボ・レオン州サン・ペドロ・ガルサ・ガルシア（San Pedro Garza García）にあります。",
-      mainOfficeTitle: "サン・ペドロ・ガルサ・ガルシア本社",
-      buildingName: "Río Tamazunchale 205 Norte",
-      floor: "18階",
-      address: "San Pedro Garza García, N.L.",
-      colony: "Nuevo León",
-      postalCode: "San Pedro Garza García, Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, México",
-      phone: "+52 81 8335 2086",
-      email: "info@santossaucedo.com",
-      mapTitle: "San Pedro Garza García の Santos & Saucedo 事務所の地図",
-      emailLabel: "メール",
-      phoneLabel: "電話",
-      addressLabel: "所在地",
-      officeHoursTitle: "営業時間",
-      officeHours: "月曜日〜金曜日 9:00–19:00",
-      saturdayHours: "土曜日・日曜日休業",
-      getDirections: "道順を見る",
-      galleryTitle: "オフィスギャラリー",
-      contactCtaSubtitle: "各パートナーの連絡先は、それぞれのプロフィールに掲載しています。",
-      contactButton: "お問い合わせ",
-      teamLink: "私たちのチーム",
-      headquarters: "本社",
-      viewOnMap: "地図で見る",
-    },
-    ar: {
-      heroTitle: "مكاتبنا",
-      heroSubtitle: "يقع مكتبنا في San Pedro Garza García بولاية نويفو ليون.",
-      mainOfficeTitle: "المقر الرئيسي في San Pedro Garza García",
-      buildingName: "Río Tamazunchale 205 Norte",
-      floor: "الطابق 18",
-      address: "San Pedro Garza García, N.L.",
-      colony: "Nuevo León",
-      postalCode: "San Pedro Garza García, Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, México",
-      phone: "+52 81 8335 2086",
-      email: "info@santossaucedo.com",
-      mapTitle: "خريطة مكتب Santos & Saucedo في San Pedro Garza García",
-      emailLabel: "البريد الإلكتروني",
-      phoneLabel: "الهاتف",
-      addressLabel: "العنوان",
-      officeHoursTitle: "ساعات العمل",
-      officeHours: "من الاثنين إلى الجمعة، 9:00–19:00",
-      saturdayHours: "السبت والأحد: مغلق",
-      getDirections: "احصل على الاتجاهات",
-      galleryTitle: "معرض المكتب",
-      contactCtaSubtitle: "تظهر بيانات الاتصال بكل شريك في صفحته الشخصية.",
-      contactButton: "اتصل بنا",
-      teamLink: "فريقنا",
-      headquarters: "المقر الرئيسي",
-      viewOnMap: "عرض على الخريطة",
-    },
-    ru: {
-      heroTitle: "Наши офисы",
-      heroSubtitle: "Наш офис находится в Сан-Педро-Гарса-Гарсия (штат Нуэво-Леон).",
-      mainOfficeTitle: "Главный офис в Сан-Педро-Гарса-Гарсия",
-      buildingName: "Río Tamazunchale 205 Norte",
-      floor: "Этаж 18",
-      address: "San Pedro Garza García, N.L.",
-      colony: "Nuevo León",
-      postalCode: "San Pedro Garza García, Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, México",
-      phone: "+52 81 8335 2086",
-      email: "info@santossaucedo.com",
-      mapTitle: "Карта офиса Santos & Saucedo в Сан-Педро-Гарса-Гарсия",
-      emailLabel: "Эл. почта",
-      phoneLabel: "Телефон",
-      addressLabel: "Адрес",
-      officeHoursTitle: "Часы работы",
-      officeHours: "Понедельник — пятница, 9:00–19:00",
-      saturdayHours: "Суббота и воскресенье: выходной",
-      getDirections: "Как добраться",
-      galleryTitle: "Галерея офиса",
-      contactCtaSubtitle: "Контактные данные каждого партнёра указаны в его профиле.",
-      contactButton: "Контакты",
-      teamLink: "Наша команда",
-      headquarters: "Штаб-квартира",
-      viewOnMap: "На карте",
-    },
-    fr: {
-      heroTitle: "Nos bureaux",
-      heroSubtitle: "Notre bureau se trouve à San Pedro Garza García, dans l’État de Nuevo León.",
-      mainOfficeTitle: "Siège à San Pedro Garza García",
-      buildingName: "Río Tamazunchale 205 Norte",
-      floor: "Étage 18",
-      address: "San Pedro Garza García, N.L.",
-      colony: "Nuevo León",
-      postalCode: "San Pedro Garza García, Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, Mexique",
-      phone: "+52 81 8335 2086",
-      email: "info@santossaucedo.com",
-      mapTitle: "Plan d’accès au bureau de Santos & Saucedo à San Pedro Garza García",
-      emailLabel: "E-mail",
-      phoneLabel: "Téléphone",
-      addressLabel: "Adresse",
-      officeHoursTitle: "Heures d’ouverture",
-      officeHours: "Du lundi au vendredi, de 9 h à 19 h",
-      saturdayHours: "Samedi et dimanche : fermé",
-      getDirections: "Obtenir l’itinéraire",
-      galleryTitle: "Galerie du bureau",
-      contactCtaSubtitle: "Les coordonnées de chaque associé figurent sur sa fiche.",
-      contactButton: "Contact",
-      teamLink: "Notre équipe",
-      headquarters: "Siège social",
-      viewOnMap: "Voir sur la carte",
-    },
-    it: {
-      heroTitle: "I nostri uffici",
-      heroSubtitle: "Il nostro ufficio si trova a San Pedro Garza García, nello stato di Nuevo León.",
-      mainOfficeTitle: "Sede principale a San Pedro Garza García",
-      buildingName: "Río Tamazunchale 205 Norte",
-      floor: "Piano 18",
-      address: "San Pedro Garza García, N.L.",
-      colony: "Nuevo León",
-      postalCode: "San Pedro Garza García, Nuevo León",
-      city: "San Pedro Garza García, Nuevo León, Messico",
-      phone: "+52 81 8335 2086",
-      email: "info@santossaucedo.com",
-      mapTitle: "Mappa dell'ufficio di Santos & Saucedo a San Pedro Garza García",
-      emailLabel: "E-mail",
-      phoneLabel: "Telefono",
-      addressLabel: "Indirizzo",
-      officeHoursTitle: "Orari di ufficio",
-      officeHours: "Dal lunedì al venerdì, 9:00–19:00",
-      saturdayHours: "Sabato e domenica: chiuso",
-      getDirections: "Ottieni indicazioni",
-      galleryTitle: "Galleria dell'ufficio",
-      contactCtaSubtitle: "I recapiti di ciascun socio sono indicati nella sua scheda.",
-      contactButton: "Contatti",
-      teamLink: "Il nostro team",
-      headquarters: "Sede centrale",
-      viewOnMap: "Vedi sulla mappa",
-    },
-  };
-
-  const baseT = content[language] || content.en;
-  const t = {
-    ...baseT,
-    buildingName: "Río Tamazunchale 205 Norte",
-    floor: "",
-    address: "Río Tamazunchale 205 Norte",
-    colony: "Col. del Valle",
-    postalCode: "San Pedro Garza García, N.L.",
-    city: "C.P. 66220, México",
-  };
-
-  const googleMapsEmbedUrl = "https://www.google.com/maps?q=R%C3%ADo+Tamazunchale+205+Norte,+Col.+del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220&output=embed";
-  const googleMapsDirectionsUrl = "https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Col.+del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220";
+  const t = content[language] ?? content.en;
+  const title = officeLabel(language);
+  // Contacto: la etiqueta del menú (nav[5]) en cada idioma
+  const nav = (chrome26[language] ?? chrome26.en).nav;
+  // Dirección, teléfono y correo de /api/site-content (los mismos del pie)
+  const firm = useSiteContact(language === "en" ? "en" : "es");
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-offices">
@@ -351,245 +485,167 @@ export default function Offices() {
       <Header />
 
       {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo
-          salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
-          siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
+          salta. ss-container: mismo borde izquierdo que logotipo y pie. */}
       <main id="main-content">
-      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-offices-hero">
-        <div className="ss-container">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="max-w-3xl"
-          >
-            <Eyebrow num="06" tone="navy" className="mb-6" />
-            <h1 
-              className="mb-5"
-              data-testid="text-offices-title"
-            >
-              {t.heroTitle}
-            </h1>
-            <p data-testid="text-offices-subtitle">
-              {t.heroSubtitle}
-            </p>
-          </motion.div>
-        </div>
-      </section>
+        {/* § 01: la oficina pertenece a Nuestra firma en el menú. Sin subtítulo. */}
+        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-offices-hero">
+          <div className="ss-container">
+            <div className="max-w-3xl">
+              <Eyebrow num="01" tone="navy" className="mb-6" />
+              <h1 data-testid="text-offices-title">{title}</h1>
+            </div>
+          </div>
+        </section>
 
-      <div className="py-16 lg:py-20">
-        <div className="ss-container">
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-20"
-            data-testid="section-main-office"
-          >
-            <h2 className={`${h2Class} mb-8`}>
-              {t.mainOfficeTitle}
-            </h2>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
-              {/* Datos de la oficina: lista con filetes, sin tarjeta ni iconos. Sin el fax
-                  (repetía el teléfono) ni el nombre de la calle repetido como título. Las líneas
-                  van en <div> y el teléfono hereda el tamaño del dd: la regla móvil de index.css
-                  lleva los <span> a 16 px y la lista quedaba con dos tamaños. */}
-              <div className="order-2 lg:order-1" data-testid="card-office-info">
-                <dl className="border-b border-ss-rule">
-                  <div className={rowClass}>
-                    <dt className={dtClass}>{t.addressLabel}</dt>
-                    <dd className={ddClass} data-testid="text-full-address">
-                      <div data-testid="text-building-name">{t.address}</div>
-                      <div>{t.colony}</div>
-                      <div>{t.postalCode}</div>
-                      <div>{t.city}</div>
-                    </dd>
-                  </div>
-                  <div className={rowClass}>
-                    <dt className={dtClass}>{t.phoneLabel}</dt>
-                    <dd className={ddClass}>
-                      <a 
-                        href={`tel:${t.phone.replace(/\s/g, "")}`} 
-                        className={ddLinkClass}
-                        data-testid="link-phone"
-                      >
-                        <span dir="ltr" className="[font-size:inherit]">{t.phone}</span>
-                      </a>
-                    </dd>
-                  </div>
-                  <div className={rowClass}>
-                    <dt className={dtClass}>{t.emailLabel}</dt>
-                    <dd className={ddClass}>
-                      <a 
-                        href={`mailto:${t.email}`}
-                        className={ddLinkClass}
-                        data-testid="link-email"
-                      >
-                        {t.email}
-                      </a>
-                    </dd>
-                  </div>
-                  <div className={rowClass}>
-                    <dt className={dtClass}>{t.officeHoursTitle}</dt>
-                    <dd className={ddClass}>
-                      <div data-testid="text-office-hours">{t.officeHours}</div>
-                      <div className="text-ss-medio">{t.saturdayHours}</div>
-                    </dd>
-                  </div>
-                </dl>
-
-                {/* Enlace de texto de la marca (etiqueta, subrayado al pasar, flecha), sin botón con caja */}
-                <a 
-                  href={googleMapsDirectionsUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="ss-label group mt-8 inline-flex min-h-[44px] items-center gap-3 text-ss-marino"
-                  data-testid="button-directions"
+        <div className="py-16 lg:py-24">
+          <div className="ss-container">
+            {/* Introducción: una sola frase, en el cuerpo de la rejilla editorial. En coreano,
+                keep-all: a 320 px partía "누에보레온주" y "있으며" dentro de la palabra (D18). */}
+            <section className="mb-12 lg:mb-16" data-testid="section-offices-intro">
+              <SplitSection>
+                <p
+                  className={`ss-lead max-w-[44rem] ${language === "ko" ? "[word-break:keep-all]" : ""}`}
+                  data-testid="text-offices-intro"
                 >
-                  <span className="ss-link">{t.getDirections}</span>
-                  <span aria-hidden="true" className="ss-arrow">
-                    →
-                  </span>
-                </a>
-              </div>
+                  {keepFirmName(t.intro)}
+                </p>
+              </SplitSection>
+            </section>
 
-              {/* Mapa en gris, sin marco ni esquinas; Hueso de fondo mientras carga */}
-              <div className="order-1 lg:order-2">
-                <div 
-                  className="w-full h-[360px] lg:h-full min-h-[360px] lg:min-h-[480px] bg-ss-paper"
-                  data-testid="container-map"
-                >
-                  <iframe
-                    src={googleMapsEmbedUrl}
-                    width="100%"
-                    height="100%"
-                    className="block h-full w-full"
-                    style={{ border: 0, filter: "grayscale(1) contrast(.95)" }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title={t.mapTitle}
-                    data-testid="iframe-google-maps"
-                  />
+            {/* La fachada grande, dentro del contenedor (no a sangre) y a su tamaño: nunca más
+                ancha que su archivo. Desde lg, alineada al final del contenedor (ms-auto, también
+                en árabe), en el mismo borde que las fotos de abajo, como la de La firma en la
+                portada (E19). La única foto que no se difiere. */}
+            <div className="mb-20 max-w-[1159px] lg:mb-24 lg:ms-auto">
+              <OfficePhoto
+                photo="fachada"
+                alt={t.alt.fachada}
+                sizes={SIZES.facade}
+                eager
+                testId="img-offices-facade"
+              />
+            </div>
+
+            {/* Fotos por tema. Composición editorial: una ancha y dos a media columna, o una
+                vertical junto a una horizontal; huecos de 24 px (gap-6), sin bordes ni sombras.
+                En teléfono, una debajo de otra. Sin pie de foto: el nombre del bloque basta. */}
+            <div data-testid="section-gallery">
+              <PhotoBlock id="offices-reception" title={t.reception} testId="section-offices-reception">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <OfficePhoto photo="recepcion" alt={t.alt.recepcion} sizes={SIZES.wide} className="sm:col-span-2" />
+                  <OfficePhoto photo="vestibulo" alt={t.alt.vestibulo} sizes={SIZES.half} />
+                  <OfficePhoto photo="vestibulo2" alt={t.alt.vestibulo2} sizes={SIZES.half} />
                 </div>
-              </div>
+              </PhotoBlock>
+
+              <PhotoBlock id="offices-meeting-rooms" title={t.meetingRooms} testId="section-offices-meeting-rooms">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <OfficePhoto photo="salaJuntas" alt={t.alt.salaJuntas} sizes={SIZES.half} />
+                  <OfficePhoto photo="salaJuntas2" alt={t.alt.salaJuntas2} sizes={SIZES.half} />
+                </div>
+              </PhotoBlock>
+
+              <PhotoBlock id="offices-work-areas" title={t.workAreas} testId="section-offices-work-areas">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <OfficePhoto photo="areaTrabajo" alt={t.alt.areaTrabajo} sizes={SIZES.wide} className="sm:col-span-2" />
+                  <OfficePhoto photo="areaTrabajo2" alt={t.alt.areaTrabajo2} sizes={SIZES.half} />
+                  <OfficePhoto photo="privado" alt={t.alt.privado} sizes={SIZES.half} />
+                </div>
+              </PhotoBlock>
+
+              {/* Vertical junto a horizontal: columnas 4fr / 9fr para que las dos tengan la misma
+                  altura (2:3 y 3:2) */}
+              <PhotoBlock id="offices-art" title={t.art} testId="section-offices-art">
+                <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-[4fr_9fr]">
+                  <OfficePhoto photo="escultura" alt={t.alt.escultura} sizes={SIZES.tall} />
+                  <OfficePhoto photo="obraMazo" alt={t.alt.obraMazo} sizes={SIZES.beside} />
+                </div>
+              </PhotoBlock>
             </div>
-          </motion.section>
 
-          {/* Galería: solo mientras carga o si hay imágenes (/api/office-images devuelve [] hoy);
-              sin ellas el titular invitaba a explorar una banda vacía */}
-          {(imagesLoading || (officeImages?.length ?? 0) > 0) && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mb-20"
-            data-testid="section-gallery"
-          >
-            <div className="mb-10">
-              <h2 className={h2Class}>
-                {t.galleryTitle}
-              </h2>
-            </div>
-
-            {imagesLoading ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" data-testid="skeleton-gallery">
-                {Array.from({ length: 8 }).map((_, index) => (
-                  <Skeleton key={index} className="aspect-[4/3]" />
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" data-testid="grid-gallery">
-                {officeImages?.map((image, index) => (
-                  <motion.div
-                    key={image.id}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: index * 0.05 }}
-                    className="aspect-[4/3] overflow-hidden cursor-pointer group"
-                    onClick={() => setSelectedImage(image)}
-                    data-testid={`gallery-image-${image.id}`}
-                  >
-                    <img
-                      src={image.imageUrl}
-                      alt={language === "es" ? image.altEs : image.alt}
-                      className="ss-photo w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </motion.section>
-          )}
-
-          {/* Cierre: el dato (las fichas de los socios) y dos enlaces de texto, uno por acción.
-              Sin "¿Listo para visitarnos?" ni botones dentro de enlaces. */}
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="border-t border-ss-rule pt-8"
-            data-testid="section-contact-cta"
-          >
-            <p className="text-base text-ss-tinta leading-[1.55] max-w-2xl mb-6">
-              {t.contactCtaSubtitle}
-            </p>
-            <div className="flex flex-wrap items-center gap-x-10 gap-y-4">
-              <Link
-                href="/contact"
-                className="ss-label group relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3"
-                data-testid="button-contact"
+            {/* Dirección: el h2 en el aside y en el cuerpo la lista de datos (los del pie) con
+                "Cómo llegar" y "Contacto" */}
+            <section aria-labelledby="offices-address" data-testid="section-main-office">
+              <SplitSection
+                aside={
+                  <h2 id="offices-address" className="ss-h2-sm">
+                    {t.address}
+                  </h2>
+                }
               >
-                <span className="ss-link">{t.contactButton}</span>
-                <span aria-hidden="true" className="ss-arrow">
-                  →
-                </span>
-              </Link>
-              <Link
-                href="/team"
-                className="ss-label group relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3"
-                data-testid="button-schedule"
-              >
-                <span className="ss-link">{t.teamLink}</span>
-                <span aria-hidden="true" className="ss-arrow">
-                  →
-                </span>
-              </Link>
-            </div>
-          </motion.section>
-        </div>
-      </div>
-      </main>
+                <div className="max-w-[44rem]" data-testid="card-office-info">
+                  <dl className="border-b border-ss-rule">
+                    {/* La dirección ya la nombra el h2: su etiqueta solo para lectores de pantalla,
+                        y la celda conserva la columna para que los datos queden alineados */}
+                    <div className={rowClass}>
+                      <dt className={dtClass}>
+                        <span className="sr-only">{t.address}</span>
+                      </dt>
+                      {/* bdi: en árabe (RTL) el punto final de "N.L." no salta al principio de la línea */}
+                      <dd className={ddClass} data-testid="text-full-address">
+                        {firm.address.map((line, i) => (
+                          <div key={i}>
+                            <bdi>{line}</bdi>
+                          </div>
+                        ))}
+                      </dd>
+                    </div>
+                    <div className={rowClass}>
+                      <dt className={dtClass}>{t.phone}</dt>
+                      <dd className={ddClass}>
+                        <a href={firm.phoneHref} className={ddLinkClass} data-testid="link-phone">
+                          <span dir="ltr" className="[font-size:inherit]">
+                            {firm.phone}
+                          </span>
+                        </a>
+                      </dd>
+                    </div>
+                    <div className={rowClass}>
+                      <dt className={dtClass}>{t.email}</dt>
+                      <dd className={ddClass}>
+                        <a
+                          href={`mailto:${firm.email}`}
+                          dir="ltr"
+                          className={`${ddLinkClass} [overflow-wrap:anywhere]`}
+                          data-testid="link-email"
+                        >
+                          {firm.email}
+                        </a>
+                      </dd>
+                    </div>
+                    <div className={rowClass}>
+                      <dt className={dtClass}>{t.hours}</dt>
+                      <dd className={ddClass} data-testid="text-office-hours">
+                        {t.hoursDetails}
+                      </dd>
+                    </div>
+                  </dl>
 
-      {selectedImage && (
-        <div
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
-          data-testid="modal-image-lightbox"
-        >
-          <div className="relative max-w-5xl w-full">
-            <img
-              src={selectedImage.imageUrl}
-              alt={language === "es" ? selectedImage.altEs : selectedImage.alt}
-              className="w-full h-auto max-h-[80vh] object-contain"
-            />
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute top-4 right-4 w-11 h-11 bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-colors"
-              aria-label={language === "es" ? "Cerrar" : "Close"}
-              data-testid="button-close-lightbox"
-            >
-              ×
-            </button>
+                  <div className="mt-8 flex flex-wrap gap-x-10 gap-y-6">
+                    {/* Mismo aspecto que TextLink; <a> propio porque el destino es externo */}
+                    <a
+                      href={DIRECTIONS_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ss-label group relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3"
+                      data-testid="button-directions"
+                    >
+                      <span className="ss-link">{t.getDirections}</span>
+                      <span className="sr-only">{` ${t.newTab}`}</span>
+                      <span aria-hidden="true" className="ss-arrow">
+                        →
+                      </span>
+                    </a>
+                    <TextLink href="/contact" data-testid="button-contact">
+                      {nav[5].label}
+                    </TextLink>
+                  </div>
+                </div>
+              </SplitSection>
+            </section>
           </div>
         </div>
-      )}
+      </main>
 
       <Footer />
     </div>

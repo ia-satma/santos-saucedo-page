@@ -195,13 +195,12 @@ export async function registerRoutes(
     app.use("/api/health-check", disabledAgentService);
   }
 
-  // Rutas retiradas (D4, D5, E4): redirección permanente que conserva la consulta. /experience
-  // listaba asuntos sin confirmar; /offices repetía /contact; /articles repetía la lista de
-  // /news y /events era una página sin eventos. Las páginas siguen en el código sin ruta, y el
-  // cliente (App.tsx) redirige igual en GitHub Pages, donde no hay servidor.
+  // Rutas retiradas (D4, E4): redirección permanente que conserva la consulta. /experience
+  // listaba asuntos sin confirmar; /articles repetía la lista de /news y /events era una página
+  // sin eventos. Las páginas siguen en el código sin ruta, y el cliente (App.tsx) redirige igual
+  // en GitHub Pages, donde no hay servidor. /offices ya no se retira: es "La oficina" (H1).
   const RETIRED_ROUTES: Record<string, string> = {
     "/experience": "/practice-groups",
-    "/offices": "/contact",
     "/articles": "/news",
     "/events": "/news",
   };
@@ -803,6 +802,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         { loc: '/practice-groups', changefreq: 'monthly', priority: '0.8' },
         { loc: '/news', changefreq: 'daily', priority: '0.9' },
         { loc: '/contact', changefreq: 'monthly', priority: '0.7' },
+        { loc: '/offices', changefreq: 'monthly', priority: '0.6' },
         { loc: '/careers', changefreq: 'weekly', priority: '0.7' },
         { loc: '/careers/interns', changefreq: 'monthly', priority: '0.5' },
         { loc: '/privacy-policy', changefreq: 'yearly', priority: '0.3' },

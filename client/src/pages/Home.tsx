@@ -61,7 +61,8 @@ export default function Home() {
       <SEOHead page="home" language={lang} />
       <JsonLdSchema language={lang} />
 
-      <Header26 />
+      {/* Transparente sobre el video del héroe hasta que se hace scroll */}
+      <Header26 overlay />
 
       <main id="main-content">
         {/* Expediente §: cada sección es un § numerado */}
