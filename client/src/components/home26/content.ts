@@ -24,12 +24,13 @@ export const home26 = {
     // y año. Las dos partes del lugar se unen con " · " (en teléfono, una debajo de la otra).
     hero: {
       tagline: "Derecho laboral para empresas",
-      place: ["San Pedro Garza García", "Desde 2010"],
+      place: ["San Pedro Garza García", "Desde 2009"],
     },
     firma: {
-      title: "Una práctica dedicada a\u00a0las empresas",
+      // h2 de § 01 (documento de redacción): el nombre de la sección, como Socios y Monitor Laboral
+      title: "La firma",
       body: [
-        "Santos & Saucedo nació en San Pedro Garza García en 2010 con una práctica dedicada a las empresas. Desde entonces asesora a grupos industriales mexicanos, a multinacionales y a empresas de capital asiático en las decisiones que involucran a su personal: la contratación, la organización del trabajo, la relación con el sindicato, la terminación de una relación laboral y la defensa ante las autoridades y los tribunales.",
+        "Santos & Saucedo nació en San Pedro Garza García en 2009 con una práctica dedicada a las empresas. Desde entonces asesora a grupos industriales mexicanos, a multinacionales y a empresas de capital asiático en las decisiones que involucran a su personal: la contratación, la organización del trabajo, la relación con el sindicato, la terminación de una relación laboral y la defensa ante las autoridades y los tribunales.",
         "El trabajo de la firma se apoya en una alianza de despachos especializados que le da presencia en más de 72 ciudades. Un cliente con plantas o sucursales en varios estados recibe el mismo criterio en todas ellas.",
       ],
       caption: "Río Tamazunchale 205 Norte, San Pedro Garza García. En el cristal, el Cerro de la Silla.",
@@ -45,8 +46,8 @@ export const home26 = {
       ],
     },
     practicas: {
-      // Dos líneas fijas, como el titular de portada
-      title: ["Cuatro prácticas,", "un mismo criterio"],
+      // h2 de § 02: el nombre de la sección (documento de redacción)
+      title: "Prácticas",
       // slug: el de la base; la fila enlaza a /practice-groups/<slug>
       items: [
         {
@@ -75,7 +76,6 @@ export const home26 = {
       title: "Empresas extranjeras en México",
       body:
         "Nuevo León recibe cada año nuevas plantas de capital asiático, estadounidense y europeo. Para estas empresas, las prácticas corporativa, migratoria y laboral de la firma trabajan en conjunto, desde la constitución de la sociedad hasta la contratación del primer turno.",
-      steps: ["Constitución de la sociedad", "Permisos migratorios", "Contratación del primer turno"],
       alt: "Sala de juntas de Santos & Saucedo con el tríptico abstracto de la firma",
     },
     // Las filas son las notas publicadas en /api/news (Sections26, MonitorList)
@@ -108,12 +108,12 @@ export const home26 = {
     close: "Close",
     hero: {
       tagline: "Labor law for companies",
-      place: ["San Pedro Garza García", "Since 2010"],
+      place: ["San Pedro Garza García", "Since 2009"],
     },
     firma: {
-      title: "A practice devoted to\u00a0employers",
+      title: "The firm",
       body: [
-        "Santos & Saucedo was founded in San Pedro Garza García in 2010 with a practice devoted to employers. Since then it has advised Mexican industrial groups, multinationals and Asian-owned companies on the decisions that involve their people: hiring, the organization of work, union relations, terminations and the defense before authorities and courts.",
+        "Santos & Saucedo was founded in San Pedro Garza García in 2009 with a practice devoted to employers. Since then it has advised Mexican industrial groups, multinationals and Asian-owned companies on the decisions that involve their people: hiring, the organization of work, union relations, terminations and the defense before authorities and courts.",
         "The firm works with an alliance of specialized law firms that gives it presence in more than 72 cities. A client with plants or branches in several states receives the same judgment in all of them.",
       ],
       caption: "Río Tamazunchale 205 Norte, San Pedro Garza García. In the glass, the Cerro de la Silla.",
@@ -124,16 +124,16 @@ export const home26 = {
       quote: "Prevention is the first defense.",
       body: [
         "We are convinced that most labor disputes are resolved before they reach a court: in a well-drafted contract, in a file kept in order, in a negotiation prepared in advance.",
-        "That is why most of our work is preventive. When litigation is unavoidable, it is handled by the same team that knows the client's operation.",
+        "That is why most of our work is preventive. When litigation is unavoidable, it is handled by the same team that knows the client’s operation.",
       ],
     },
     practicas: {
-      title: ["Four practices,", "one standard"],
+      title: "Practices",
       items: [
         {
           slug: "laboral-seguridad-social",
           title: "Labor and\u00a0social security",
-          body: "Audits, inspections, employment documentation, collective relations and litigation before the Conciliation Centers and Labor Courts. It is the firm's core practice and gives meaning to the others.",
+          body: "Audits, inspections, employment documentation, collective relations and litigation before the Conciliation Centers and Labor Courts. It is the firm’s core practice and gives meaning to the others.",
         },
         {
           slug: "corporativo-contractual",
@@ -143,7 +143,7 @@ export const home26 = {
         {
           slug: "migratorio",
           title: "Immigration",
-          body: "Visas, residence and work permits for foreign executives, technicians and specialists, coordinated with our clients' human resources departments.",
+          body: "Visas, residence and work permits for foreign executives, technicians and specialists, coordinated with our clients’ human resources departments.",
         },
         {
           slug: "litigio-contencioso",
@@ -155,13 +155,12 @@ export const home26 = {
     extranjeras: {
       title: "Foreign companies in Mexico",
       body:
-        "Every year Nuevo León receives new plants backed by Asian, American and European capital. For these companies, the firm's corporate, immigration and labor practices work together, from incorporation to hiring the first shift.",
-      steps: ["Incorporation", "Immigration permits", "Hiring the first shift"],
-      alt: "Santos & Saucedo boardroom with the firm's abstract triptych",
+        "Every year Nuevo León receives new plants backed by Asian, American and European capital. For these companies, the firm’s corporate, immigration and labor practices work together, from incorporation to hiring the first shift.",
+      alt: "Santos & Saucedo boardroom with the firm’s abstract triptych",
     },
     monitor: {
       title: "Labor Monitor",
-      intro: "The firm's analysis of the changes that affect employers.",
+      intro: "The firm’s analysis of the changes that affect employers.",
     },
     socios: {
       title: "Partners",

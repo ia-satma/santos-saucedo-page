@@ -105,6 +105,7 @@ export default {
           paper: "#F3F1EA", // Hueso
           rule: "#E1E0D7", // Línea
           input: "#C9C8BD",
+          field: "#8A897E", // Borde de campo de formulario: 3,5:1 sobre blanco (WCAG 1.4.11)
           lime: "#B2EB3E", // solo sobre Azul Profundo (ver ss26.css)
         },
         status: {

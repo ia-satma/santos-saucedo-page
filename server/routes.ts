@@ -57,8 +57,11 @@ import {
   insertSpecializedDeskSchema,
   insertOfficeImageSchema,
   newsletterSubscribers,
+  events as eventsTable,
 } from "@shared/schema";
-import { isNamedOnTeamPage } from "@shared/teamVisibility";
+import { isNamedOnTeamPage, toPublicTeamMember, toPublicTeamProfile } from "@shared/teamVisibility";
+import { isPublicNews, toPublicNews } from "@shared/publicNews";
+import { desc, eq } from "drizzle-orm";
 import { z, ZodError } from "zod";
 import {
   SUPPORTED_LANGUAGES,
@@ -270,14 +273,33 @@ export async function registerRoutes(
     immutable: true,
   }));
 
-  // Retratos de los socios sin confirmar (E11): no se sirven, igual que en el build estático
-  // (script/generate-static-api.ts no los copia). Archivos "<slug>.jpg" y "<slug>-128.webp".
-  const hiddenPhotoSlugs = new Set(
-    teamMembersData.filter((m) => m.isPartner && !isNamedOnTeamPage(m)).map((m) => m.slug),
-  );
-  app.use('/team_photos', (req, res, next) => {
-    const slug = path.basename(req.path).replace(/(-\d+)?\.[a-z0-9]+$/i, "");
-    if (hiddenPhotoSlugs.has(slug)) return res.status(404).end();
+  // /team_photos (J1): solo los retratos de quien el sitio nombra (isNamedOnTeamPage: socios
+  // confirmados y Of Counsel); los de asociados, staff y socios sin confirmar dan 404, igual que
+  // en el build estático (script/generate-static-api.ts no los copia). La lista sale de la base
+  // (caché de 60 s); si la base falla, del seed. Archivos: "<slug>.<png|jpg|jpeg>" y sus tamaños
+  // "<slug>-128.webp", "<slug>-360.webp", "<slug>-652.webp"; cualquier otro nombre, 404.
+  const TEAM_PHOTO_FILE = /^\/([a-z0-9-]+?)(?:\.(?:png|jpe?g)|-(?:128|360|652)\.webp)$/i;
+  const NAMED_PHOTO_TTL_MS = 60_000;
+  let namedPhotoSlugs: { slugs: Set<string>; loadedAt: number } | null = null;
+  const getNamedPhotoSlugs = async (): Promise<Set<string>> => {
+    if (namedPhotoSlugs && Date.now() - namedPhotoSlugs.loadedAt < NAMED_PHOTO_TTL_MS) {
+      return namedPhotoSlugs.slugs;
+    }
+    try {
+      const members = await storage.getTeamMembers();
+      const slugs = new Set(members.filter((m) => isNamedOnTeamPage(m)).map((m) => m.slug));
+      namedPhotoSlugs = { slugs, loadedAt: Date.now() };
+      return slugs;
+    } catch (error) {
+      console.error("[team_photos] No se pudo leer el equipo; se usa el seed:", error);
+      return new Set(teamMembersData.filter((m) => isNamedOnTeamPage(m)).map((m) => m.slug));
+    }
+  };
+  app.use('/team_photos', async (req, res, next) => {
+    const match = TEAM_PHOTO_FILE.exec(req.path);
+    if (!match) return res.status(404).end();
+    const slugs = await getNamedPhotoSlugs();
+    if (!slugs.has(match[1].toLowerCase())) return res.status(404).end();
     next();
   });
 
@@ -345,12 +367,14 @@ export async function registerRoutes(
     res.json({ language: fromHeader ?? "es", source: fromHeader ? "accept-language" : "default" });
   });
 
+  // Monitor Laboral (J2): las rutas públicas dan solo notas publicadas y ya en fecha
+  // (isPublicNews) y solo los campos que pintan las páginas (toPublicNews, sin los del proceso
+  // interno del CMS). Borradores y programadas, con todos sus campos, solo en /api/admin/news…
   app.get("/api/news", async (_req, res) => {
     try {
       const allNews = await storage.getNews();
       const now = new Date();
-      const news = allNews.filter(n => !n.publishAt || new Date(n.publishAt) <= now);
-      res.json(news);
+      res.json(allNews.filter((n) => isPublicNews(n, now)).map(toPublicNews));
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch news" });
     }
@@ -360,40 +384,40 @@ export async function registerRoutes(
     try {
       const allNews = await storage.getNews();
       const now = new Date();
-      const news = allNews.filter(n => n.published && (!n.publishAt || new Date(n.publishAt) <= now));
       res.set("Cache-Control", "public, max-age=60");
-      res.json(news);
+      res.json(allNews.filter((n) => isPublicNews(n, now)).map(toPublicNews));
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch published news" });
     }
   });
 
+  // Nota pública por slug o id; borrador, programada o inexistente: 404 (sin distinguirlas)
+  async function findPublicNews(idOrSlug: string) {
+    const item = (await storage.getNewsBySlug(idOrSlug)) ?? (await storage.getNewsById(idOrSlug));
+    return item && isPublicNews(item) ? item : undefined;
+  }
+
   app.get("/api/news/:idOrSlug", async (req, res) => {
     try {
-      const param = req.params.idOrSlug;
-      let news = await storage.getNewsBySlug(param);
-      if (!news) {
-        news = await storage.getNewsById(param);
-      }
+      const news = await findPublicNews(req.params.idOrSlug);
       if (!news) {
         return res.status(404).json({ error: "News not found" });
       }
-      res.json(news);
+      res.json(toPublicNews(news));
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch news" });
     }
   });
 
-  // Get all team members (authors) related to a news article by slug
+  // Autores de una nota pública: solo quien el sitio nombra (J1), con los campos de la ficha
   app.get("/api/news/:slug/authors", async (req, res) => {
     try {
-      const slug = req.params.slug;
-      const newsItem = await storage.getNewsBySlug(slug);
-      if (!newsItem) {
+      const newsItem = await storage.getNewsBySlug(req.params.slug);
+      if (!newsItem || !isPublicNews(newsItem)) {
         return res.status(404).json({ error: "News not found" });
       }
       const teamMembersList = await storage.getTeamMembersByNewsId(newsItem.id);
-      res.json(teamMembersList);
+      res.json(teamMembersList.filter((m) => isNamedOnTeamPage(m)).map(toPublicTeamProfile));
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch authors for news" });
     }
@@ -512,14 +536,15 @@ export async function registerRoutes(
     }
   });
 
-  // E11: el API público solo da lo que el sitio muestra. /api/team deja fuera a los socios
-  // sin confirmar (los asociados siguen: el mosaico de /team usa sus fotos, sin nombres);
-  // ficha, vCard y notas de una persona, solo de quien /team nombra (isNamedOnTeamPage).
+  // E11, J1: el API público solo da lo que el sitio muestra. Listas, ficha, vCard y notas de
+  // una persona, solo de quien /team nombra (isNamedOnTeamPage: socios confirmados y Of
+  // Counsel). Asociados y staff no salen en ningún JSON público: el mosaico de /team usa fotos
+  // estáticas, sin nombres. Listas con el DTO de tarjeta; la ficha, con el de ficha.
   app.get("/api/team", async (_req, res) => {
     try {
       const members = await storage.getTeamMembers();
       res.set("Cache-Control", "public, max-age=60");
-      res.json(members.filter((m) => !m.isPartner || isNamedOnTeamPage(m)));
+      res.json(members.filter((m) => isNamedOnTeamPage(m)).map(toPublicTeamMember));
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch team members" });
     }
@@ -529,7 +554,7 @@ export async function registerRoutes(
     try {
       const partners = await storage.getPartners();
       res.set("Cache-Control", "public, max-age=60");
-      res.json(partners.filter((m) => isNamedOnTeamPage(m)));
+      res.json(partners.filter((m) => isNamedOnTeamPage(m)).map(toPublicTeamMember));
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch partners" });
     }
@@ -545,7 +570,7 @@ export async function registerRoutes(
       if (!member || !isNamedOnTeamPage(member)) {
         return res.status(404).json({ error: "Team member not found" });
       }
-      res.json(member);
+      res.json(toPublicTeamProfile(member));
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch team member" });
     }
@@ -576,7 +601,7 @@ export async function registerRoutes(
     }
   });
 
-  // Get all news articles related to a team member by slug
+  // Notas de una persona nombrada: solo las públicas, con el DTO público (J2)
   app.get("/api/team/:slug/news", async (req, res) => {
     try {
       const slug = req.params.slug;
@@ -585,15 +610,96 @@ export async function registerRoutes(
         return res.status(404).json({ error: "Team member not found" });
       }
       const newsList = await storage.getNewsByTeamMemberId(member.id);
-      res.json(newsList);
+      const now = new Date();
+      res.json(newsList.filter((n) => isPublicNews(n, now)).map(toPublicNews));
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch news for team member" });
     }
   });
 
-  app.post("/api/contact", async (req, res) => {
+  // Formularios públicos (J4): /api/contact y /api/newsletter.
+  // IP del visitante: la primera de X-Forwarded-For (la que guarda el contacto) o la del socket.
+  const clientIp = (req: Request): string => {
+    const fwd = req.headers["x-forwarded-for"];
+    const raw = Array.isArray(fwd) ? fwd[0] : fwd;
+    return raw?.split(",")[0]?.trim() || req.ip || req.socket.remoteAddress || "unknown";
+  };
+
+  // Origen: si el navegador manda Origin, debe ser el propio sitio (mismo host) o uno de la
+  // lista de CORS (CORS_ORIGIN, la misma que server/index.ts); si no, 403. Sin Origin (curl,
+  // formularios antiguos) se deja pasar: lo frenan el límite y la trampa.
+  const formOrigins = (process.env.CORS_ORIGIN || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+  const isAllowedFormOrigin = (req: Request): boolean => {
+    const origin = req.headers.origin;
+    if (!origin) return true;
+    if (formOrigins.includes(origin)) return true;
     try {
-      const validationResult = contactFormSchema.safeParse(req.body);
+      const { host } = new URL(origin);
+      const forwardedHost = String(req.headers["x-forwarded-host"] ?? "").split(",")[0].trim();
+      return host === req.headers.host || (!!forwardedHost && host === forwardedHost);
+    } catch {
+      return false;
+    }
+  };
+
+  // Límite en memoria: 5 envíos por IP cada 10 minutos en cada formulario, y un tope global de
+  // 50 por formulario en esa ventana (X-Forwarded-For lo escribe el cliente: el tope acota a
+  // quien cambie de IP declarada). Respuesta 429 con mensaje genérico.
+  const FORM_WINDOW_MS = 10 * 60 * 1000;
+  const FORM_MAX_PER_IP = 5;
+  const FORM_MAX_GLOBAL = 50;
+  const createFormLimiter = () => {
+    const perIp = new Map<string, { count: number; resetAt: number }>();
+    let global = { count: 0, resetAt: 0 };
+    return (ip: string): boolean => {
+      const now = Date.now();
+      if (perIp.size > 5000) {
+        perIp.forEach((entry, key) => {
+          if (entry.resetAt <= now) perIp.delete(key);
+        });
+      }
+      if (global.resetAt <= now) global = { count: 0, resetAt: now + FORM_WINDOW_MS };
+      let entry = perIp.get(ip);
+      if (!entry || entry.resetAt <= now) {
+        entry = { count: 0, resetAt: now + FORM_WINDOW_MS };
+        perIp.set(ip, entry);
+      }
+      if (entry.count >= FORM_MAX_PER_IP || global.count >= FORM_MAX_GLOBAL) return false;
+      entry.count += 1;
+      global.count += 1;
+      return true;
+    };
+  };
+
+  // Origen, límite y campo trampa ("website", oculto en el formulario): una persona no lo ve ni
+  // lo alcanza; si llega lleno, se responde como un envío correcto sin guardar nada.
+  const publicFormGuard = (successBody: Record<string, unknown>) => {
+    const allow = createFormLimiter();
+    return (req: Request, res: Response, next: () => void) => {
+      if (!isAllowedFormOrigin(req)) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
+      if (!allow(clientIp(req))) {
+        return res.status(429).json({ error: "Too many requests. Please try again later." });
+      }
+      const trap = req.body?.website;
+      if (typeof trap === "string" ? trap.trim() !== "" : trap != null) {
+        return res.json(successBody);
+      }
+      next();
+    };
+  };
+
+  const contactSuccess = { success: true, message: "Contact form submitted successfully" };
+  // La casilla del aviso de privacidad también se exige aquí, no solo en el formulario
+  const contactRequestSchema = contactFormSchema.extend({ consent: z.literal(true) });
+
+  app.post("/api/contact", publicFormGuard(contactSuccess), async (req, res) => {
+    try {
+      const validationResult = contactRequestSchema.safeParse(req.body);
 
       if (!validationResult.success) {
         return res.status(400).json({
@@ -613,105 +719,97 @@ export async function registerRoutes(
         company: contactData.company ? sanitize(contactData.company) : undefined,
         practiceArea: contactData.practiceArea ? sanitize(contactData.practiceArea) : undefined,
         message: sanitize(contactData.message),
-        ipAddress: (() => {
-          const fwd = req.headers["x-forwarded-for"];
-          const raw = Array.isArray(fwd) ? fwd[0] : fwd;
-          return raw?.split(",")[0]?.trim() || req.ip || null;
-        })(),
+        ipAddress: clientIp(req),
       };
 
       const submission = await storage.createContactSubmission(sanitizedData);
 
       console.log(`[Contact] New submission from ${sanitizedData.fullName} <${sanitizedData.email}> saved with id ${submission.id}`);
 
-      res.json({ success: true, message: "Contact form submitted successfully" });
+      res.json(contactSuccess);
     } catch (error) {
       console.error("Contact form error:", error);
       res.status(500).json({ error: "Failed to process contact form" });
     }
   });
 
-  // Suscripción al Monitor Laboral (E20): guarda el correo en newsletter_subscribers; no envía
-  // correos. Un correo ya suscrito recibe la misma respuesta que un alta nueva (no revela
-  // quién está suscrito) y su registro no cambia. Sin límite de peticiones, como /api/contact.
+  // Suscripción al Monitor Laboral (E20, J4): guarda el correo en newsletter_subscribers; no
+  // envía correos. Exige la casilla del aviso de privacidad (consent: true). Nombre y apellido,
+  // si llegan, se guardan juntos en name (el formulario actual, D13, solo pide el correo). Un
+  // correo ya suscrito recibe la misma respuesta que un alta nueva (no revela quién está
+  // suscrito) y su registro no cambia; uno dado de baja se reactiva, con la misma respuesta.
   const newsletterSchema = z.object({
     email: z.string().trim().toLowerCase().min(1).max(254).email(),
+    firstName: z.string().trim().max(100).optional().catch(undefined),
+    lastName: z.string().trim().max(100).optional().catch(undefined),
     // Idioma de la página, si viene; uno desconocido se ignora (queda el de la tabla, "es")
     preferredLanguage: z
       .string()
       .refine((code) => SUPPORTED_LANGUAGES.some((l) => l.code === code))
       .optional()
       .catch(undefined),
+    consent: z.literal(true),
   });
+  const newsletterSuccess = { success: true };
 
-  app.post("/api/newsletter", async (req, res) => {
+  app.post("/api/newsletter", publicFormGuard(newsletterSuccess), async (req, res) => {
     const parsed = newsletterSchema.safeParse(req.body ?? {});
     if (!parsed.success) {
       return res.status(400).json({ error: "Validation failed" });
     }
     try {
-      const { email, preferredLanguage } = parsed.data;
+      const { email, firstName, lastName, preferredLanguage } = parsed.data;
+      const name = [firstName, lastName]
+        .map((part) => part?.replace(/<[^>]*>/g, "").trim())
+        .filter(Boolean)
+        .join(" ");
       await db
         .insert(newsletterSubscribers)
-        .values(preferredLanguage ? { email, preferredLanguage } : { email })
-        .onConflictDoNothing({ target: newsletterSubscribers.email });
-      res.json({ success: true });
+        .values({
+          email,
+          ...(name ? { name } : {}),
+          ...(preferredLanguage ? { preferredLanguage } : {}),
+        })
+        .onConflictDoUpdate({
+          target: newsletterSubscribers.email,
+          set: {
+            isActive: true,
+            unsubscribedAt: null,
+            ...(name ? { name } : {}),
+            ...(preferredLanguage ? { preferredLanguage } : {}),
+          },
+          // Solo las bajas: un suscriptor activo queda como estaba
+          setWhere: eq(newsletterSubscribers.isActive, false),
+        });
+      res.json(newsletterSuccess);
     } catch (error) {
       console.error("Newsletter subscription error:", error);
       res.status(500).json({ error: "Failed to process subscription" });
     }
   });
 
-  app.get("/api/representative-matters", async (_req, res) => {
-    try {
-      const matters = await storage.getRepresentativeMatters();
-      res.json(matters);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch representative matters" });
-    }
+  // Rutas retiradas (J3). Asuntos representativos: no hay asuntos confirmados (los 18 del seed
+  // son de plantilla), así que las dos rutas devuelven una lista vacía. Eventos: /events
+  // redirige a /news y ninguna página pública los lee: lista vacía y 404. El panel lee los
+  // eventos (también los no publicados) en /api/admin/events, con sesión.
+  app.get("/api/representative-matters", (_req, res) => {
+    res.json([]);
   });
 
-  app.get("/api/practice-groups/:slug/representative-matters", async (req, res) => {
-    try {
-      const { slug } = req.params;
-      const allMatters = await storage.getRepresentativeMatters();
-      const filtered = allMatters.filter(m => m.practiceAreaSlug === slug);
-      res.json(filtered);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch representative matters" });
-    }
+  app.get("/api/practice-groups/:slug/representative-matters", (_req, res) => {
+    res.json([]);
   });
 
-  // Events API routes
-  app.get("/api/events", async (_req, res) => {
-    try {
-      const eventsList = await storage.getEvents();
-      res.json(eventsList);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch events" });
-    }
+  app.get("/api/events", (_req, res) => {
+    res.json([]);
   });
 
-  app.get("/api/events/upcoming", async (req, res) => {
-    try {
-      const limit = parseInt(req.query.limit as string) || 4;
-      const eventsList = await storage.getUpcomingEvents(limit);
-      res.json(eventsList);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch upcoming events" });
-    }
+  app.get("/api/events/upcoming", (_req, res) => {
+    res.json([]);
   });
 
-  app.get("/api/events/:id", async (req, res) => {
-    try {
-      const event = await storage.getEventById(req.params.id);
-      if (!event) {
-        return res.status(404).json({ error: "Event not found" });
-      }
-      res.json(event);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch event" });
-    }
+  app.get("/api/events/:id", (_req, res) => {
+    res.status(404).json({ error: "Event not found" });
   });
 
   app.get("/api/search", async (req, res) => {
@@ -729,7 +827,7 @@ export async function registerRoutes(
       ]);
       
       // Solo quien aparece con nombre en /team (socios confirmados y Of Counsel) y solo notas
-      // publicadas, como /api/news/published
+      // públicas (isPublicNews), como /api/news; resultados con los DTO públicos (J1, J2)
       const now = new Date();
       const filteredTeam = team.filter(m => isNamedOnTeamPage(m)).filter(m => 
         m.name.toLowerCase().includes(query) ||
@@ -755,7 +853,7 @@ export async function registerRoutes(
         g.descriptionEs.toLowerCase().includes(query)
       ).slice(0, 5);
       
-      const filteredNews = news.filter(n => n.published && (!n.publishAt || new Date(n.publishAt) <= now)).filter(n =>
+      const filteredNews = news.filter(n => isPublicNews(n, now)).filter(n =>
         n.title.toLowerCase().includes(query) ||
         n.titleEs.toLowerCase().includes(query) ||
         n.excerpt.toLowerCase().includes(query) ||
@@ -765,10 +863,10 @@ export async function registerRoutes(
       ).slice(0, 5);
       
       res.json({
-        team: filteredTeam,
+        team: filteredTeam.map(toPublicTeamMember),
         practiceGroups: filteredPractice,
         industryGroups: filteredIndustry,
-        news: filteredNews,
+        news: filteredNews.map(toPublicNews),
       });
     } catch (error) {
       res.status(500).json({ error: "Search failed" });
@@ -848,9 +946,9 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   </url>`;
       }
 
-      // Solo notas publicadas (mismo criterio que /api/news/published)
+      // Solo notas públicas (isPublicNews, el criterio de /api/news)
       const now = new Date();
-      const publishedNews = newsItems.filter(n => n.published && (!n.publishAt || new Date(n.publishAt) <= now));
+      const publishedNews = newsItems.filter(n => isPublicNews(n, now));
       for (const newsItem of publishedNews) {
         const lastmod = newsItem.date ? new Date(newsItem.date).toISOString().split('T')[0] : today;
         urlEntries += `
@@ -1390,6 +1488,18 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
     }
   });
 
+  // Todas las notas, con borradores, programadas y los campos del proceso (J2): lo que antes
+  // daba /api/news, que ahora solo entrega las públicas. La lee el panel (procesamiento de
+  // artículos). Antes de /api/admin/news/:id, que si no tomaría "all" como id.
+  app.get("/api/admin/news/all", authMiddleware, async (_req: Request, res: Response) => {
+    try {
+      res.json(await storage.getNews());
+    } catch (error) {
+      console.error("Get all admin news error:", error);
+      res.status(500).json({ error: "Failed to fetch news" });
+    }
+  });
+
   // Get comprehensive CMS stats for admin dashboard
   app.get("/api/admin/cms-stats", authMiddleware, async (_req: Request, res: Response) => {
     try {
@@ -1782,9 +1892,11 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // ADMIN EVENTS CRUD
   // =============================================
   
+  // Todos los eventos, también los no publicados (storage.getEvents solo da los publicados y
+  // el panel no veía sus borradores); J3
   app.get("/api/admin/events", authMiddleware, async (_req: Request, res: Response) => {
     try {
-      const eventsList = await storage.getEvents();
+      const eventsList = await db.select().from(eventsTable).orderBy(desc(eventsTable.date));
       res.json(eventsList);
     } catch (error) {
       console.error("Get events error:", error);
@@ -2752,6 +2864,11 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         return res.status(400).json({ error: "Invalid target language code" });
       }
 
+      // Solo de contenido público (getEntity): nada de notas no públicas ni personas sin ficha
+      if (!(await getEntity(contentType, entityId))) {
+        return res.json({ translations: {}, contentType, entityId, targetLanguage });
+      }
+
       // For news content, first check the newsTranslations table
       if (contentType === 'news') {
         const newsTranslation = await storage.getNewsTranslation(entityId, targetLanguage);
@@ -2793,17 +2910,23 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
   // Public translation endpoints only translate text that already exists in the CMS,
   // so anonymous visitors cannot spend the AI budget on arbitrary text.
+  // Solo contenido público (J1–J3): una persona que el sitio no nombra, una nota no pública y
+  // los eventos y asuntos retirados no se traducen ni devuelven traducciones guardadas.
   async function getEntity(contentType: string, entityId: string): Promise<Record<string, unknown> | undefined> {
     let entity: Record<string, unknown> | undefined;
     switch (contentType) {
-      case "team_member": entity = await storage.getTeamMemberById(entityId); break;
+      case "team_member": {
+        const member = await storage.getTeamMemberById(entityId);
+        entity = member && isNamedOnTeamPage(member) ? member : undefined;
+        break;
+      }
       case "practice_group": entity = await storage.getPracticeGroupById(entityId); break;
       case "industry_group": entity = await storage.getIndustryGroupById(entityId); break;
-      case "news": entity = await storage.getNewsById(entityId); break;
-      case "event": entity = await storage.getEventById(entityId); break;
-      case "representative_matter":
-        entity = (await storage.getRepresentativeMatters()).find((m) => m.id === entityId);
+      case "news": {
+        const item = await storage.getNewsById(entityId);
+        entity = item && isPublicNews(item) ? item : undefined;
         break;
+      }
     }
     return entity;
   }

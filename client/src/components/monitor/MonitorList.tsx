@@ -280,9 +280,11 @@ function MonitorRow({
             {titleIsSource ? <bdi lang="en" dir="ltr">{title}</bdi> : title}
           </Link>
         </Heading>
+        {/* Índice: bajo lg la fila ocupa todo el contenedor; la entradilla con medida máxima de
+            40rem para no pasar de lo legible. Desde lg la acota su columna */}
         {excerpt && (
           <p
-            className="mt-3 text-[16px] leading-[1.55] text-ss-tinta [text-wrap:pretty]"
+            className={`mt-3 text-[16px] leading-[1.55] text-ss-tinta [text-wrap:pretty] ${index ? "max-w-[40rem] lg:max-w-none" : ""}`}
             data-testid={testIds.excerpt?.(item)}
             lang={excerptIsSource ? "en" : undefined}
           >
@@ -383,8 +385,9 @@ export function MonitorList({
                   type="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  // 44 px fijos: h-11 depende de rem y baja a 38,5 px bajo 360 px (html a 14 px)
-                  className="h-[44px] ps-9 bg-white border-ss-input text-ss-tinta focus-visible:ring-ss-marino focus-visible:border-ss-marino"
+                  // 44 px fijos: h-11 depende de rem y baja a 38,5 px bajo 360 px (html a 14 px).
+                  // Borde de campo (--ss-field, 3,5:1 sobre blanco; WCAG 1.4.11)
+                  className="h-[44px] ps-9 bg-white border-ss-field text-ss-tinta focus-visible:ring-ss-marino focus-visible:border-ss-marino"
                   data-testid={testIds.search}
                 />
               </div>

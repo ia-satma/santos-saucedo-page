@@ -1817,16 +1817,16 @@ Hors jours fériés fédéraux mexicains`
           id: "acceptance",
           icon: FileText,
           title: "1. Accettazione dei termini",
-          content: `Accedendo e utilizzando il sito web di Santos & Saucedo Abogados (di seguito «S&S», «lo Studio», «noi», «ci» o «nostro»), situato su www.santossaucedo.com (di seguito «il Sito Web»), riconosci di aver letto, compreso e di accettare di essere vincolato da questi Termini e Condizioni d'uso (di seguito «Termini»).
+          content: `Accedendo e utilizzando il sito web di Santos & Saucedo Abogados (di seguito «S&S», «lo Studio», «noi», «ci» o «nostro»), situato su www.santossaucedo.com (di seguito «il Sito Web»), riconosci di aver letto, compreso e di accettare di essere vincolato da questi Termini e Condizioni d’uso (di seguito «Termini»).
 
-Se non sei d'accordo con qualsiasi parte di questi Termini, devi interrompere immediatamente l'uso del Sito Web. L'uso continuato del Sito Web costituisce la tua accettazione di questi Termini e di eventuali modifiche.
+Se non sei d’accordo con qualsiasi parte di questi Termini, devi interrompere immediatamente l’uso del Sito Web. L’uso continuato del Sito Web costituisce la tua accettazione di questi Termini e di eventuali modifiche.
 
 Questi Termini costituiscono un accordo legalmente vincolante tra te (di seguito «Utente», «tu» o «tuo») e S&S. Ci riserviamo il diritto di modificare, aggiornare o cambiare questi Termini in qualsiasi momento senza preavviso.
 
 Utilizzando questo Sito Web, dichiari e garantisci che:
-• Hai almeno 18 anni o l'età legale della maggiore età nella tua giurisdizione
+• Hai almeno 18 anni o l’età legale della maggiore età nella tua giurisdizione
 • Hai la capacità giuridica di stipulare accordi vincolanti
-• Rispetterai tutte le leggi e i regolamenti applicabili durante l'utilizzo di questo Sito Web
+• Rispetterai tutte le leggi e i regolamenti applicabili durante l’utilizzo di questo Sito Web
 • Tutte le informazioni che fornisci sono accurate, attuali e complete`
         },
         {
@@ -1855,7 +1855,7 @@ S&S si riserva il diritto di terminare o limitare il tuo accesso al Sito Web per
           id: "intellectual-property",
           icon: BookOpen,
           title: "3. Proprietà intellettuale",
-          content: `Tutti i contenuti di questo Sito Web, inclusi ma non limitati a testi, grafica, loghi, immagini, fotografie, video, clip audio, compilazioni di dati, software, icone e la loro selezione e disposizione (collettivamente, «Contenuto»), sono proprietà esclusiva di Santos & Saucedo Abogados o dei suoi fornitori di contenuti e sono protetti dalle leggi messicane e internazionali sul diritto d'autore, marchi, brevetti, segreti commerciali e altre leggi sulla proprietà intellettuale.
+          content: `Tutti i contenuti di questo Sito Web, inclusi ma non limitati a testi, grafica, loghi, immagini, fotografie, video, clip audio, compilazioni di dati, software, icone e la loro selezione e disposizione (collettivamente, «Contenuto»), sono proprietà esclusiva di Santos & Saucedo Abogados o dei suoi fornitori di contenuti e sono protetti dalle leggi messicane e internazionali sul diritto d’autore, marchi, brevetti, segreti commerciali e altre leggi sulla proprietà intellettuale.
 
 Marchi:
 Il nome S&S, il logo e tutti i nomi, loghi, nomi di prodotti e servizi, design e slogan correlati sono marchi di Santos & Saucedo Abogados o delle sue affiliate. Non puoi utilizzare tali marchi senza il previo consenso scritto di S&S.
@@ -1871,7 +1871,7 @@ Fatti salvi questi Termini, S&S ti concede una licenza limitata, non esclusiva, 
 
 Nulla in questo Sito Web deve essere interpretato come:
 • Consulenza legale o parere legale su fatti o circostanze specifiche
-• Un'offerta o un invito a fornire servizi legali
+• Un’offerta o un invito a fornire servizi legali
 • Una sollecitazione per la rappresentanza legale
 • Una garanzia o previsione di un particolare risultato legale
 
@@ -1887,7 +1887,7 @@ IMPORTANTE: Non inviare informazioni riservate o sensibili a S&S tramite questo 
           id: "no-attorney-client",
           icon: Users,
           title: "5. Assenza di rapporto avvocato-cliente",
-          content: `Il tuo utilizzo di questo Sito Web, inclusa la navigazione dei Contenuti, l'invio di moduli di contatto, l'invio di e-mail o il download di materiali, NON crea un rapporto avvocato-cliente tra te e Santos & Saucedo Abogados o alcuno dei suoi avvocati.
+          content: `Il tuo utilizzo di questo Sito Web, inclusa la navigazione dei Contenuti, l’invio di moduli di contatto, l’invio di e-mail o il download di materiali, NON crea un rapporto avvocato-cliente tra te e Santos & Saucedo Abogados o alcuno dei suoi avvocati.
 
 Un rapporto avvocato-cliente con S&S viene stabilito solo quando:
 • S&S ha formalmente accettato per iscritto di rappresentarti
@@ -1914,7 +1914,7 @@ IL SITO WEB E TUTTI I CONTENUTI SONO FORNITI «COSÌ COME SONO» E «COME DISPON
 
 S&S non garantisce che:
 • Il Sito Web sarà disponibile, ininterrotto, tempestivo, sicuro o privo di errori
-• I risultati che possono essere ottenuti dall'uso del Sito Web saranno accurati o affidabili
+• I risultati che possono essere ottenuti dall’uso del Sito Web saranno accurati o affidabili
 • La qualità di qualsiasi informazione o Contenuto ottenuto tramite il Sito Web soddisferà le tue aspettative
 
 Limitazione di responsabilità:
@@ -1930,14 +1930,14 @@ NELLA MISURA MASSIMA CONSENTITA DALLA LEGGE, LA RESPONSABILITÀ AGGREGATA DI S&S
           content: `Questi Termini e Condizioni e qualsiasi controversia o reclamo derivante da essi o ad essi correlato, il loro oggetto o la loro formazione (incluse controversie o reclami non contrattuali), saranno regolati e interpretati in conformità con le leggi degli Stati Uniti Messicani (Messico), senza riguardo alle sue disposizioni sui conflitti di leggi.
 
 Legge applicabile:
-Le seguenti leggi e regolamenti messicani si applicano a questi Termini e all'uso del Sito Web:
+Le seguenti leggi e regolamenti messicani si applicano a questi Termini e all’uso del Sito Web:
 • Codice Civile Federale
 • Codice di Commercio Federale
 • Legge Federale sulla Protezione dei Consumatori
 • Legge Federale sulla Protezione dei Dati Personali (LFPDPPP)
 
 Utenti internazionali:
-Se accedi al Sito Web dall'esterno del Messico, lo fai a tuo rischio e sei responsabile del rispetto delle leggi locali.`
+Se accedi al Sito Web dall’esterno del Messico, lo fai a tuo rischio e sei responsabile del rispetto delle leggi locali.`
         },
         {
           id: "dispute-resolution",
@@ -1954,7 +1954,7 @@ Se le negoziazioni non riescono a risolvere la controversia entro trenta (30) gi
 Giurisdizione e foro:
 Qualsiasi azione legale o procedimento sarà avviato esclusivamente presso i tribunali federali o locali competenti situati a Città del Messico (Ciudad de México), Messico.
 
-Rinuncia all'azione collettiva:
+Rinuncia all’azione collettiva:
 Accetti che qualsiasi reclamo sarà presentato nella tua capacità individuale e non come querelante o membro di qualsiasi presunta azione collettiva o rappresentativa.`
         },
         {
@@ -1970,7 +1970,7 @@ Come vengono comunicati i cambiamenti:
 Le tue responsabilità:
 È tua responsabilità rivedere periodicamente questi Termini per rimanere informato sugli aggiornamenti.
 
-Effetto dell'uso continuato:
+Effetto dell’uso continuato:
 Il tuo uso continuato del Sito Web dopo la pubblicazione dei Termini rivisti significa che accetti e concordi con le modifiche. Se non accetti i nuovi Termini, devi smettere di utilizzare il Sito Web.`
         },
         {

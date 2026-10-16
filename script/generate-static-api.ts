@@ -9,7 +9,8 @@ import {
   statsData,
   teamMembersData,
 } from "../server/seed";
-import { isNamedOnTeamPage } from "../shared/teamVisibility";
+import { isNamedOnTeamPage, toPublicTeamMember, toPublicTeamProfile } from "../shared/teamVisibility";
+import { isPublicNews, toPublicNews } from "../shared/publicNews";
 
 const outDir = path.resolve("dist/public");
 const apiDir = path.join(outDir, "static-api");
@@ -31,10 +32,11 @@ function withDefaults<T extends Record<string, any>>(prefix: string, item: T) {
 
 const practiceGroups = practiceGroupsData.map((raw) => withDefaults("practice", raw as any));
 const industryGroups = industryGroupsData.map((raw) => withDefaults("industry", raw as any));
-// Socios sin confirmar (D17, E11): fuera del API estático, del índice de búsqueda y del mapa
-// del sitio, y sin sus retratos. Asociados y staff siguen en team.json (el mosaico de /team
-// usa sus fotos sin nombrarlos) pero sin JSON propio, buscador ni mapa: ficha solo para quien
-// /team nombra (isNamedOnTeamPage); para los demás, /team/<slug> da la vista 404.
+// Personas (D17, E11, J1): solo quien /team nombra (isNamedOnTeamPage: socios confirmados y Of
+// Counsel) sale en el API estático, el índice de búsqueda, el mapa del sitio y team_photos.
+// Asociados, staff y socios sin confirmar no salen en ningún JSON (el mosaico de /team usa
+// fotos estáticas, sin nombres) y /team/<slug> les da la vista 404. Listas con el DTO de
+// tarjeta (toPublicTeamMember); ficha e índice de búsqueda con el de ficha (toPublicTeamProfile).
 const allTeamMembers = teamMembersData.map((raw) => {
   const item = raw as any;
   return {
@@ -52,8 +54,7 @@ const allTeamMembers = teamMembersData.map((raw) => {
   ...item,
   };
 });
-const teamMembers = allTeamMembers.filter((m) => !m.isPartner || isNamedOnTeamPage(m));
-const namedTeamMembers = teamMembers.filter((m) => isNamedOnTeamPage(m));
+const namedTeamMembers = allTeamMembers.filter((m) => isNamedOnTeamPage(m));
 const news = newsData.map((raw) => {
   const item = raw as any;
   return {
@@ -74,13 +75,20 @@ const news = newsData.map((raw) => {
   };
 });
 const officeImages = officeImagesData.map((raw) => withDefaults("office-image", raw as any));
-// Retratos que no se copian: "<slug>.<ext>" y sus tamaños "<slug>-128.webp", "<slug>-360.webp"
-const hiddenPhotoSlugs = new Set(
-  allTeamMembers.filter((m) => m.isPartner && !isNamedOnTeamPage(m)).map((m) => String(m.slug)),
-);
-const isHiddenPhoto = (fileName: string) => hiddenPhotoSlugs.has(fileName.replace(/(-\d+)?\.[a-z0-9]+$/i, ""));
+// Retratos que se copian: solo los de quien se nombra, "<slug>.<png|jpg|jpeg>" y sus tamaños
+// "<slug>-128.webp", "<slug>-360.webp", "<slug>-652.webp" (el mismo filtro que /team_photos
+// en server/routes.ts)
+const namedPhotoSlugs = new Set(namedTeamMembers.map((m) => String(m.slug)));
+const TEAM_PHOTO_FILE = /^([a-z0-9-]+?)(?:\.(?:png|jpe?g)|-(?:128|360|652)\.webp)$/i;
+const isNamedPhoto = (fileName: string) => {
+  const match = TEAM_PHOTO_FILE.exec(fileName);
+  return !!match && namedPhotoSlugs.has(match[1].toLowerCase());
+};
 
-const publishedNews = news.filter((item) => item.published);
+// Notas (J2): solo las publicadas y ya en fecha al compilar (isPublicNews, el criterio del
+// servidor) y solo con los campos públicos (toPublicNews, sin los del proceso interno del CMS)
+const buildTime = new Date();
+const publishedNews = news.filter((item) => isPublicNews(item, buildTime)).map(toPublicNews);
 
 async function writeJson(relativePath: string, value: JsonValue) {
   const target = path.join(apiDir, relativePath);
@@ -96,6 +104,7 @@ function search(query: string) {
 
   return {
     team: namedTeamMembers
+      .map(toPublicTeamProfile)
       .filter((m) =>
         [
           m.name,
@@ -187,18 +196,24 @@ async function generate() {
   await writeJson("detect-language.json", { language: "es", source: "default" });
   await writeJson("site-content.json", siteContentData);
   await writeJson("stats.json", statsData);
-  await writeJson("news.json", news);
+  await writeJson("news.json", publishedNews);
   await writeJson("news/published.json", publishedNews);
   await writeJson("office-images.json", officeImages);
   await writeJson("practice-groups.json", practiceGroups);
   await writeJson("industry-groups.json", industryGroups);
-  await writeJson("team.json", teamMembers);
-  await writeJson("team/partners.json", teamMembers.filter((item) => item.isPartner));
+  await writeJson("team.json", namedTeamMembers.map(toPublicTeamMember));
+  await writeJson("team/partners.json", namedTeamMembers.filter((item) => item.isPartner).map(toPublicTeamMember));
   // /experience redirige a /practice-groups (D4): sus asuntos (sin confirmar) no se publican.
   // /events redirige a /news (E4): sin events.json. Los datos siguen en server/seed.ts.
-  await writeJson("search-index.json", { team: namedTeamMembers, practiceGroups, industryGroups, news: publishedNews });
+  await writeJson("search-index.json", {
+    team: namedTeamMembers.map(toPublicTeamProfile),
+    practiceGroups,
+    industryGroups,
+    news: publishedNews,
+  });
 
-  for (const item of news) {
+  // JSON por nota solo de las públicas: un borrador o una nota programada no tiene archivo
+  for (const item of publishedNews) {
     await writeJson(`news/${item.slug}.json`, item);
     await writeJson(`news/${item.id}.json`, item);
     await writeJson(`news/${item.slug}/authors.json`, []);
@@ -217,8 +232,8 @@ async function generate() {
   }
 
   for (const item of namedTeamMembers) {
-    await writeJson(`team/${item.slug}.json`, item);
-    await writeJson(`team/${item.id}.json`, item);
+    await writeJson(`team/${item.slug}.json`, toPublicTeamProfile(item));
+    await writeJson(`team/${item.id}.json`, toPublicTeamProfile(item));
     await writeJson(`team/${item.slug}/news.json`, []);
   }
 
@@ -227,7 +242,7 @@ async function generate() {
   await rm(teamPhotosOutDir, { recursive: true, force: true });
   await mkdir(teamPhotosOutDir, { recursive: true });
   for (const fileName of await readdir(teamPhotosSourceDir)) {
-    if (fileName.startsWith("._") || isHiddenPhoto(fileName)) continue;
+    if (fileName.startsWith("._") || !isNamedPhoto(fileName)) continue;
     await copyFile(path.join(teamPhotosSourceDir, fileName), path.join(teamPhotosOutDir, fileName));
   }
   for (const fileName of await readdir(teamPhotosOutDir)) {

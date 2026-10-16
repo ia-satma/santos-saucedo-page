@@ -710,8 +710,15 @@ export default function AdminEvents() {
     },
   });
 
+  // Con el token del panel (J3): todos los eventos, también los no publicados. Sin queryFn la
+  // petición salía sin Authorization y la ruta respondía 401
   const { data: events, isLoading: eventsLoading } = useQuery<Event[]>({
     queryKey: ["/api/admin/events"],
+    queryFn: async () => {
+      const res = await adminApiRequest("GET", "/api/admin/events");
+      if (!res.ok) throw new Error("Failed to fetch events");
+      return res.json();
+    },
   });
 
   const saveMutation = useMutation({

@@ -282,8 +282,15 @@ export default function AdminArticleDetail() {
   const { isAuthenticated } = useAdminAuth();
   const t = translations[language as keyof typeof translations] || translations.en;
 
+  // La nota completa (borrador o programada incluidas, con el veredicto y el estado del
+  // proceso) por la ruta autenticada del panel (J2): /api/news/:id solo da notas públicas
   const { data: article, isLoading, error, refetch } = useQuery<ArticleWithVerdict>({
-    queryKey: ['/api/news', id],
+    queryKey: ['/api/admin/news', id],
+    queryFn: async () => {
+      const res = await adminApiRequest('GET', `/api/admin/news/${id}`);
+      if (!res.ok) throw new Error(`${res.status}: Failed to fetch article`);
+      return res.json();
+    },
     enabled: !!id && isAuthenticated,
   });
 
@@ -294,8 +301,8 @@ export default function AdminArticleDetail() {
     },
     onSuccess: () => {
       toast({ title: t.validateSuccess });
-      queryClient.invalidateQueries({ queryKey: ['/api/news', id] });
-      queryClient.invalidateQueries({ queryKey: ['/api/news'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/news', id] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/news/all'] });
     },
     onError: () => {
       toast({ title: t.validateError, variant: 'destructive' });

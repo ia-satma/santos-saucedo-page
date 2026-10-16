@@ -33,6 +33,8 @@ import type { LanguageCode } from "@shared/schema";
 interface NewsletterFormData {
   email: string;
   consent: boolean;
+  /** Campo trampa (J4): oculto; una persona lo deja vacío */
+  website?: string;
 }
 
 interface NewsletterStrings {
@@ -54,6 +56,8 @@ interface NewsletterStrings {
   successTitle: string;
   errorTitle: string;
   errorDescription: string;
+  /** Respuesta 429 del servidor (J4): demasiados envíos desde la misma conexión */
+  rateLimitedDescription: string;
   /** Build estático (sin servidor): se abre el programa de correo del visitante con la
       solicitud, como en Contacto; aviso neutro, no de error */
   staticTitle: string;
@@ -76,6 +80,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "Suscripción registrada",
     errorTitle: "Error",
     errorDescription: "No fue posible completar la suscripción. Intente de nuevo más tarde.",
+    rateLimitedDescription: "Demasiados envíos. Inténtelo más tarde.",
     staticTitle: "Enviar por correo",
     staticDescription: "Se abrió su programa de correo para enviar la solicitud de suscripción.",
   },
@@ -94,6 +99,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "Subscription registered",
     errorTitle: "Error",
     errorDescription: "The subscription could not be completed. Please try again later.",
+    rateLimitedDescription: "Too many submissions. Please try again later.",
     staticTitle: "Send by email",
     staticDescription: "Your email program was opened to send the subscription request.",
   },
@@ -112,6 +118,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "Anmeldung gespeichert",
     errorTitle: "Fehler",
     errorDescription: "Die Anmeldung konnte nicht abgeschlossen werden. Bitte versuchen Sie es später erneut.",
+    rateLimitedDescription: "Zu viele Anfragen. Bitte versuchen Sie es später erneut.",
     staticTitle: "Per E-Mail senden",
     staticDescription: "Ihr E-Mail-Programm wurde geöffnet, um die Anmeldung zu senden.",
   },
@@ -130,6 +137,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "订阅已登记",
     errorTitle: "错误",
     errorDescription: "无法完成订阅。请稍后再试。",
+    rateLimitedDescription: "提交次数过多。请稍后再试。",
     staticTitle: "通过电子邮件发送",
     staticDescription: "已打开您的电子邮件程序以发送订阅申请。",
   },
@@ -148,6 +156,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "구독이 등록되었습니다",
     errorTitle: "오류",
     errorDescription: "구독을 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+    rateLimitedDescription: "전송 횟수가 너무 많습니다. 잠시 후 다시 시도해 주세요.",
     staticTitle: "이메일로 보내기",
     staticDescription: "구독 신청을 보낼 수 있도록 이메일 프로그램을 열었습니다.",
   },
@@ -166,6 +175,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "購読を登録しました",
     errorTitle: "エラー",
     errorDescription: "購読を完了できませんでした。しばらくしてからもう一度お試しください。",
+    rateLimitedDescription: "送信回数が多すぎます。しばらくしてからもう一度お試しください。",
     staticTitle: "メールで送信",
     staticDescription: "購読の申し込みを送信するため、メールソフトを開きました。",
   },
@@ -184,6 +194,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "تم تسجيل الاشتراك",
     errorTitle: "خطأ",
     errorDescription: "تعذّر إتمام الاشتراك. يرجى المحاولة مرة أخرى لاحقًا.",
+    rateLimitedDescription: "عدد مرات الإرسال كبير جدًا. يرجى المحاولة مرة أخرى لاحقًا.",
     staticTitle: "الإرسال بالبريد الإلكتروني",
     staticDescription: "فُتح برنامج البريد الإلكتروني لديك لإرسال طلب الاشتراك.",
   },
@@ -202,6 +213,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "Подписка оформлена",
     errorTitle: "Ошибка",
     errorDescription: "Не удалось оформить подписку. Попробуйте позже.",
+    rateLimitedDescription: "Слишком много отправок. Попробуйте позже.",
     staticTitle: "Отправка по эл. почте",
     staticDescription: "Открылась ваша почтовая программа для отправки заявки на подписку.",
   },
@@ -220,6 +232,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "Abonnement enregistré",
     errorTitle: "Erreur",
     errorDescription: "L’abonnement n’a pas pu être enregistré. Veuillez réessayer plus tard.",
+    rateLimitedDescription: "Trop d’envois. Veuillez réessayer plus tard.",
     staticTitle: "Envoyer par e-mail",
     staticDescription: "Votre messagerie s’est ouverte pour envoyer la demande d’abonnement.",
   },
@@ -238,6 +251,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     successTitle: "Iscrizione registrata",
     errorTitle: "Errore",
     errorDescription: "Non è stato possibile completare l’iscrizione. Riprovi più tardi.",
+    rateLimitedDescription: "Troppi invii. Riprovi più tardi.",
     staticTitle: "Invio per e-mail",
     staticDescription: "Si è aperto il suo programma di posta per inviare la richiesta di iscrizione.",
   },
@@ -247,6 +261,7 @@ const getNewsletterFormSchema = (t: NewsletterStrings) =>
   z.object({
     email: z.string().min(1, t.emailRequired).email(t.emailInvalid),
     consent: z.boolean().refine((value) => value, { message: t.consentRequired }),
+    website: z.string().optional(),
   });
 
 export default function Newsletter() {
@@ -264,16 +279,20 @@ export default function Newsletter() {
     defaultValues: {
       email: "",
       consent: false,
+      website: "",
     },
   });
 
   const newsletterMutation = useMutation({
     // El correo y el idioma de la interfaz (preferredLanguage: el servidor guarda solo los
-    // códigos admitidos). La aceptación del aviso es requisito del formulario, no un dato que se guarde
+    // códigos admitidos), la aceptación del aviso (el servidor exige consent: true; no se
+    // guarda) y el campo trampa (J4). Sin nombre ni apellido: el formulario solo pide el correo (D13)
     mutationFn: async (data: NewsletterFormData) => {
       const response = await apiRequest("POST", "/api/newsletter", {
         email: data.email,
         preferredLanguage: language,
+        consent: data.consent,
+        website: data.website ?? "",
       });
       return response.json();
     },
@@ -281,10 +300,12 @@ export default function Newsletter() {
       toast({ title: t.successTitle });
       form.reset();
     },
-    onError: () => {
+    onError: (error: Error) => {
+      // apiRequest lanza "429: …" cuando el servidor limita los envíos (J4)
+      const rateLimited = error.message.startsWith("429");
       toast({
         title: t.errorTitle,
-        description: t.errorDescription,
+        description: rateLimited ? t.rateLimitedDescription : t.errorDescription,
         variant: "destructive",
       });
     },
@@ -385,7 +406,7 @@ export default function Newsletter() {
                                 onBlur={field.onBlur}
                                 name={field.name}
                                 ref={field.ref}
-                                className="relative mt-[3px] h-5 min-h-0 w-5 border-ss-input data-[state=checked]:border-primary before:absolute before:-inset-3"
+                                className="relative mt-[3px] h-5 min-h-0 w-5 border-ss-medio data-[state=checked]:border-primary before:absolute before:-inset-3"
                                 data-testid="checkbox-consent"
                               />
                             </FormControl>
@@ -408,6 +429,19 @@ export default function Newsletter() {
                         </FormItem>
                       )}
                     />
+
+                    {/* Campo trampa (J4): fuera de la vista (sr-only, sin desbordar en árabe) y de
+                        los lectores de pantalla (aria-hidden), fuera del orden del teclado y sin
+                        autocompletar. Solo un programa lo rellena. */}
+                    <div className="sr-only" aria-hidden="true">
+                      <input
+                        type="text"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        {...form.register("website")}
+                        data-testid="input-website"
+                      />
+                    </div>
 
                     {/* Enviar: el único botón Azul Marino lleno, 44 px de alto */}
                     <Button

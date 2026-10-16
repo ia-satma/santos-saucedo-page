@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import fachada768 from "@assets/ss26/oficina/fachada-768.webp";
@@ -92,7 +91,9 @@ export function Firma26({ lang }: { lang: Lang26 }) {
             </h2>
           </Reveal>
           <Reveal delay={0.12}>
-            <div className="ss-prose mt-10 space-y-6 text-ss-tinta">
+            {/* Bajo lg, la columna ocupa todo el contenedor: medida máxima de 40rem (unos 70
+                caracteres) para que las líneas no pasen de lo legible; desde lg manda la columna */}
+            <div className="ss-prose mt-10 max-w-[40rem] space-y-6 text-ss-tinta lg:max-w-none">
               {/* "Santos & Saucedo" sin partirse entre líneas */}
               {t.body.map((p) => (
                 <p key={p.slice(0, 24)}>{keepFirmName(p)}</p>
@@ -112,7 +113,7 @@ export function Firma26({ lang }: { lang: Lang26 }) {
             texto y la foto. Siempre contra el borde derecho del contenedor, donde acaban las
             filas de Prácticas, las columnas del manifiesto y el Monitor. Arriba, a la altura de
             la cejilla, sin estirarse ni fijarse al hacer scroll: a 1024 el texto sigue unos
-            250 px bajo el pie de foto; a 1440 terminan a la par. */}
+            220 px bajo el pie de foto; a 1440 terminan a la par. */}
         <figure className="w-full max-w-[708px] lg:col-span-6 lg:col-start-7 lg:self-start lg:justify-self-end xl:col-span-7 xl:col-start-6 xl:max-w-none">
           {/* Fondo Línea mientras carga */}
           <div className="overflow-hidden bg-ss-rule">
@@ -125,8 +126,9 @@ export function Firma26({ lang }: { lang: Lang26 }) {
               decoding="async"
               width={1159}
               height={900}
-              // En grises, como la sala de juntas y los retratos. Sin entrada al aparecer (G3)
-              className="ss-photo ss-photo--mono block h-auto w-full"
+              // Lugar: color suave (K1), con el cielo de la fachada algo más apagado; los retratos
+              // siguen en gris. Sin entrada al aparecer (G3)
+              className="ss-photo--soft ss-photo--sky block h-auto w-full"
             />
           </div>
           {/* Junto al pie, el enlace a la página de la oficina (su nombre en officeLabel) */}
@@ -192,12 +194,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
             </Reveal>
             <Reveal delay={0.06}>
               <h2 id="ss26-practicas" className={H2}>
-                {t.title.map((line, i) => (
-                  <Fragment key={line}>
-                    {i > 0 && " "}
-                    <span className="block">{line}</span>
-                  </Fragment>
-                ))}
+                {t.title}
               </h2>
             </Reveal>
             <Reveal delay={0.12}>
@@ -260,12 +257,12 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
     >
       {/* Foto / texto 7fr / 5fr desde 1280; antes, apilados. La sala (oficina/sala-juntas,
           1536 × 1024) nunca se dibuja más grande que su tamaño nativo: apilada, el hueco mide
-          como mucho 1279 × 420; desde 1280, el panel (py-20) deja la fila en ~690–700 px y el
-          hueco de la foto no pasa de 1536 de ancho (en pantallas mayores, Azul Profundo a la
-          izquierda). */}
+          como mucho 1279 × 420; desde 1280, sin la lista de pasos, el texto (~320 px) queda
+          centrado en la fila de 600 px (min-h) y el hueco de la foto no pasa de 1536 de ancho
+          (en pantallas mayores, Azul Profundo a la izquierda). */}
       <div className={`grid grid-cols-1 xl:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] ${GAP_X}`}>
         <div className="relative min-h-[300px] overflow-hidden sm:min-h-[420px] xl:min-h-[600px]">
-          {/* El mismo gris que el edificio de La firma y los retratos (.ss-photo--mono), sin velo */}
+          {/* Lugar: el mismo color suave que la fachada de La firma (.ss-photo--soft), sin velo */}
           <img
             src={salaJuntas768}
             srcSet={`${salaJuntas768} 768w, ${salaJuntas1536} 1536w`}
@@ -275,7 +272,7 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
             decoding="async"
             width={1536}
             height={1024}
-            className="ss-photo ss-photo--mono absolute inset-y-0 right-0 h-full w-full max-w-[1536px] object-cover object-[50%_42%]"
+            className="ss-photo--soft absolute inset-y-0 right-0 h-full w-full max-w-[1536px] object-cover object-[50%_42%]"
           />
         </div>
         <div className="flex items-center px-[var(--ss-pad)] py-20 xl:pl-0 xl:pr-[clamp(48px,6vw,104px)]">
@@ -288,18 +285,8 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
             <Reveal delay={0.12}>
               <p className="ss-prose mt-8 text-white/80">{t.body}</p>
             </Reveal>
-            <ol className="mt-10 space-y-4">
-              {t.steps.map((step, i) => (
-                <Reveal as="li" key={step} delay={0.16 + i * 0.06} className="flex items-baseline gap-5">
-                  {/* La lista ya numera; el número visible es solo gráfico (blanco tenue, no lima) */}
-                  <span aria-hidden="true" className="ss-label ss-num w-6 text-white/[.66]">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span className="text-[17px] text-white/90">{step}</span>
-                </Reveal>
-              ))}
-            </ol>
-            <Reveal delay={0.3}>
+            {/* Sin lista de pasos (K3): repetía el párrafo. Queda el enlace a Prácticas */}
+            <Reveal delay={0.18}>
               <TextLink href="/practice-groups" tone="dark" className="mt-10">
                 {navLabel(lang, "practicas")}
               </TextLink>

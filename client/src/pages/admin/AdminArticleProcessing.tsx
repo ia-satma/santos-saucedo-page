@@ -34,6 +34,9 @@ import type { News, NewsTranslation } from "@shared/schema";
 // Concurrency limit for batch processing (max 3 parallel requests)
 const BATCH_CONCURRENCY_LIMIT = 3;
 
+// Lista completa de notas del panel (ruta autenticada; también es la clave de la caché)
+const ADMIN_NEWS_ALL_KEY = "/api/admin/news/all";
+
 const translations = {
   en: {
     title: "Article Processing",
@@ -450,8 +453,15 @@ export default function AdminArticleProcessing() {
     enabled: isAuthenticated,
   });
 
+  // Todas las notas, con borradores y programadas (J2): /api/news ya solo da las públicas y sin
+  // los campos del proceso; el panel las lee por la ruta autenticada
   const newsQuery = useQuery<News[]>({
-    queryKey: ["/api/news"],
+    queryKey: [ADMIN_NEWS_ALL_KEY],
+    queryFn: async () => {
+      const res = await adminApiRequest("GET", ADMIN_NEWS_ALL_KEY);
+      if (!res.ok) throw new Error("Failed to fetch news");
+      return res.json();
+    },
     enabled: isAuthenticated,
   });
 
@@ -518,7 +528,7 @@ export default function AdminArticleProcessing() {
         title: t.repairSuccess,
         description: `${data.recovered} articles recovered`,
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/news"] });
+      queryClient.invalidateQueries({ queryKey: [ADMIN_NEWS_ALL_KEY] });
     },
     onError: (error: any) => {
       setIsRecovering(false);
@@ -645,7 +655,7 @@ export default function AdminArticleProcessing() {
 
     // Invalidate queries to refresh the data
     queryClient.invalidateQueries({ queryKey: ["/api/admin/news/translation-counts"] });
-    queryClient.invalidateQueries({ queryKey: ["/api/news"] });
+    queryClient.invalidateQueries({ queryKey: [ADMIN_NEWS_ALL_KEY] });
   }, [processSingleArticle, t, toast]);
 
   // Stop batch processing
@@ -681,7 +691,7 @@ export default function AdminArticleProcessing() {
     onSuccess: () => {
       toast({ title: t.processSuccess });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/news/translation-counts"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/news"] });
+      queryClient.invalidateQueries({ queryKey: [ADMIN_NEWS_ALL_KEY] });
       setProcessingArticleId(null);
     },
     onError: (error: any) => {
@@ -699,7 +709,7 @@ export default function AdminArticleProcessing() {
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ["/api/admin/news/stats"] });
     queryClient.invalidateQueries({ queryKey: ["/api/admin/news/translation-counts"] });
-    queryClient.invalidateQueries({ queryKey: ["/api/news"] });
+    queryClient.invalidateQueries({ queryKey: [ADMIN_NEWS_ALL_KEY] });
   };
 
   const formatDate = (date: string | Date | null | undefined) => {

@@ -1,3 +1,5 @@
+import type { TeamMember } from "./schema";
+
 // Quién aparece con nombre en el sitio público (/team, "Equipo relacionado", buscador,
 // mapa del sitio, JSON-LD). Compartido entre cliente y servidor.
 
@@ -23,4 +25,60 @@ export function isOfCounselMember(member: Pick<VisibilityFields, "title">): bool
 export function isNamedOnTeamPage(member: VisibilityFields): boolean {
   if (member.isPartner) return CONFIRMED_PARTNER_SLUGS.has(member.slug);
   return isOfCounselMember(member);
+}
+
+// DTO públicos de una persona (J1). Listas de campos permitidos: lo que leen las páginas, no
+// el registro entero; un campo nuevo del CMS no sale hasta añadirlo aquí. Solo para quien
+// isNamedOnTeamPage acepta: asociados y staff no salen en ningún JSON público (el mosaico de
+// /team usa fotos estáticas, sin nombres).
+
+// Listas (/api/team, /api/team/partners, buscador): tarjeta de /team, "Equipo relacionado",
+// socios de cada práctica y la frase de /contact (correo y teléfono, lib/partnerContact).
+const PUBLIC_MEMBER_FIELDS = [
+  "id",
+  "slug",
+  "name",
+  "title",
+  "titleEs",
+  "role",
+  "roleEs",
+  "isPartner",
+  "order",
+  "imageUrl",
+  "email",
+  "phone",
+] as const satisfies readonly (keyof TeamMember)[];
+
+// Ficha (/api/team/:slug) y autores de una nota: además, biografía, LinkedIn y las secciones
+// de la ficha que se pintan si el registro las trae.
+const PUBLIC_PROFILE_FIELDS = [
+  ...PUBLIC_MEMBER_FIELDS,
+  "bio",
+  "bioEs",
+  "linkedinUrl",
+  "education",
+  "barAdmissions",
+  "languages",
+  "affiliations",
+  "rankings",
+  "publications",
+  "representativeMatters",
+  "experience",
+] as const satisfies readonly (keyof TeamMember)[];
+
+export type PublicTeamMember = Pick<TeamMember, (typeof PUBLIC_MEMBER_FIELDS)[number]>;
+export type PublicTeamProfile = Pick<TeamMember, (typeof PUBLIC_PROFILE_FIELDS)[number]>;
+
+function pickFields<K extends keyof TeamMember>(member: Partial<TeamMember>, fields: readonly K[]) {
+  const out: Record<string, unknown> = {};
+  for (const key of fields) out[key] = member[key] ?? null;
+  return out as Pick<TeamMember, K>;
+}
+
+export function toPublicTeamMember(member: Partial<TeamMember>): PublicTeamMember {
+  return pickFields(member, PUBLIC_MEMBER_FIELDS);
+}
+
+export function toPublicTeamProfile(member: Partial<TeamMember>): PublicTeamProfile {
+  return pickFields(member, PUBLIC_PROFILE_FIELDS);
 }

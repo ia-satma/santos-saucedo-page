@@ -37,8 +37,8 @@ import obraMazoL from "@assets/ss26/oficina/obra-mazo-1536.webp";
 // "La oficina" (H1, ronda 6), como la página de oficinas de Von Wobeser: h1, una frase de
 // introducción, la fachada y las fotos por tema, y la dirección con "Cómo llegar". Sin metros,
 // pisos, arquitecto ni adjetivos: la firma no los ha confirmado. Sin carrusel, sin visor y sin
-// animación; las fotos en gris (.ss-photo) como el resto del sitio. data-testid="page-offices"
-// en la raíz permite a un juicio comparar gris contra color solo en esta página.
+// animación. Las fotos en color suave (.ss-photo--soft, K1: ganó 5 a 0 al gris en el juicio a
+// ciegas de la ronda 7): personas en gris, lugares en color suave.
 
 type PhotoKey =
   | "fachada"
@@ -395,8 +395,9 @@ const dtClass = "ss-label text-ss-medio sm:pt-1";
 const ddClass = "text-[17px] leading-[1.55] text-ss-tinta";
 const ddLinkClass = "hover:text-ss-marino hover:underline underline-offset-4 transition-colors";
 
-/** Una foto: srcset de dos tamaños, sizes del hueco, medidas para reservar el sitio, gris
-    (.ss-photo) y diferida salvo la primera (la fachada, que se ve al abrir la página). */
+/** Una foto: srcset de dos tamaños, sizes del hueco, medidas para reservar el sitio, color
+    suave (.ss-photo--soft; la fachada, con cielo, además .ss-photo--sky) y diferida salvo la
+    primera (la fachada, que se ve al abrir la página). */
 function OfficePhoto({
   photo,
   alt,
@@ -424,7 +425,7 @@ function OfficePhoto({
       loading={eager ? "eager" : "lazy"}
       decoding="async"
       {...(eager ? highFetchPriority : {})}
-      className={`ss-photo block h-auto w-full ${className}`}
+      className={`${photo === "fachada" ? "ss-photo--soft ss-photo--sky" : "ss-photo--soft"} block h-auto w-full ${className}`}
       data-testid={testId}
     />
   );
@@ -567,14 +568,13 @@ export default function Offices() {
               >
                 <div data-testid="card-office-info">
                   <dl className="border-b border-ss-rule">
-                    {/* La dirección ya la nombra el h2: su etiqueta solo para lectores de pantalla,
-                        y la celda conserva la columna para que los datos queden alineados */}
+                    {/* La dirección ya la nombra el h2: su etiqueta solo para lectores de pantalla
+                        (sr-only la saca de la rejilla) y el dato ocupa las dos columnas desde sm,
+                        desde el borde de la columna, sin celda vacía delante (K5) */}
                     <div className={rowClass}>
-                      <dt className={dtClass}>
-                        <span className="sr-only">{t.address}</span>
-                      </dt>
+                      <dt className="sr-only">{t.address}</dt>
                       {/* bdi: en árabe (RTL) el punto final de "N.L." no salta al principio de la línea */}
-                      <dd className={ddClass} data-testid="text-full-address">
+                      <dd className={`${ddClass} sm:col-span-2`} data-testid="text-full-address">
                         {firm.address.map((line, i) => (
                           <div key={i}>
                             <bdi>{line}</bdi>

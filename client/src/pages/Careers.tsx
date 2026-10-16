@@ -59,7 +59,7 @@ export default function Careers() {
       environmentTitle: "The firm",
       environmentText: "With more than 35 years of experience, Santos & Saucedo advises companies on employment matters from San Pedro Garza García.",
       internshipTitle: "Semillero S&S",
-      internshipSubtitle: "Semillero S&S is the firm's internship program.",
+      internshipSubtitle: "Semillero S&S is the firm’s internship program.",
       positionsTitle: "Openings",
       positionsEmpty: "There are no openings at the moment. You can leave your details with the Semillero S&S.",
       positions: [] as Position[],
@@ -318,7 +318,8 @@ export default function Careers() {
                       decoding="async"
                       width={1536}
                       height={1024}
-                      className="ss-photo block h-auto w-full"
+                      // Lugar: color suave, como todas las fotos de la oficina (K1)
+                      className="ss-photo--soft block h-auto w-full"
                       data-testid="img-careers-workspace"
                     />
                   </div>

@@ -119,7 +119,10 @@ html:has(header.ss26) {
   --ss-claro: #8a8a94;
   --ss-paper: #f3f1ea;
   --ss-rule: #e1e0d7;
+  /* Entrada: solo usos decorativos (filetes cortos sobre Hueso, subrayados) */
   --ss-input: #c9c8bd;
+  /* Borde de campo de formulario (WCAG 1.4.11): 3,5:1 sobre blanco y 3,1:1 sobre Hueso */
+  --ss-field: #8a897e;
   --ss-lime: #b2eb3e;
   /* Error de formulario: rojo sobrio, solo en el mensaje (8.1:1 sobre blanco, 7.2:1 sobre Hueso) */
   --ss-error: #9b1c1c;
@@ -415,11 +418,22 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   box-shadow: none;
 }
 
-/* Fotografía: todo retrato en escala de grises (.ss-photo o, explícito, .ss-photo--mono);
-   .ss-photo--colour solo para el edificio (Fig. 1 de la portada) */
+/* Fotografía: personas en gris, lugares en color suave.
+   Retratos en escala de grises (.ss-photo o, explícito, .ss-photo--mono). Las fotos de la
+   oficina (ss26/oficina: /offices, portada, /about, /contact, /careers) en color suave
+   (.ss-photo--soft, K1): el gris aplanaba la madera, el latón, la piel y la obra. La fachada,
+   con el cielo, un poco más apagada (.ss-photo--sky). Con o sin .ss-photo al lado, --soft
+   manda (0,2,0 gana a .ss-photo--mono). .ss-photo--colour: la imagen de cabecera de la nota. */
 .ss-photo,
 .ss-photo--mono {
   filter: grayscale(1) contrast(1.04);
+}
+.ss-photo--soft,
+.ss-photo.ss-photo--soft {
+  filter: saturate(0.55) contrast(1.02);
+}
+.ss-photo--soft.ss-photo--sky {
+  filter: saturate(0.45) contrast(1.02);
 }
 .ss-photo--colour {
   filter: saturate(0.85) contrast(1.02);

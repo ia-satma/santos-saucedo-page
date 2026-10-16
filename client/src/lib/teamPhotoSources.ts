@@ -1,12 +1,14 @@
 import type { SyntheticEvent } from "react";
 import type { TeamMember } from "@shared/schema";
+import { CONFIRMED_PARTNER_SLUGS } from "@shared/teamVisibility";
 
 // La regla de quién aparece con nombre vive en shared/teamVisibility.ts (también la usa el servidor).
 export { CONFIRMED_PARTNER_SLUGS, isOfCounselMember, isNamedOnTeamPage } from "@shared/teamVisibility";
 
 // Variantes WebP de los retratos (q80, sin metadatos), generadas junto a los originales de
 // attached_assets/team_photos. server/routes.ts sirve esa carpeta en /team_photos y el build
-// estático la copia entera, así que cada variante vive al lado de su original. Los originales
+// estático la copia (en los dos casos, solo los retratos de quien el sitio nombra), así que cada
+// variante vive al lado de su original. Los originales
 // se conservan: son el src de respaldo si una variante no existe donde se sirven las fotos.
 
 // Socios con <slug>-652.webp y <slug>-360.webp (los PNG de 652 px pesan 0,5–1 MB)
@@ -17,34 +19,11 @@ const PORTRAIT_SLUGS = new Set([
   "mario-saucedo-rodriguez",
 ]);
 
-// Retratos con miniatura <slug>-128.webp (miniaturas cuadradas de 56 px de "Equipo relacionado").
-// Sin los socios que el sitio no nombra (shared/teamVisibility): nunca se muestran y sus slugs
-// quedaban en el bundle como texto. Si se confirman, vuelven aquí (los archivos siguen en su sitio).
-const THUMB_SLUGS = new Set([
-  "ancella-reynoso-pamanes",
-  "carlos-a-cerda-ramos",
-  "carlos-f-rodriguez-mirelles",
-  "diana-g-lopez-rodriguez",
-  "eduardo-castillo-cervantes",
-  "enrique-santos-arce",
-  "enrique-santos-guzman",
-  "erick-estrada-marquez",
-  "gabriela-l-garcia-vasquez",
-  "huan-jose-trevino-cavazos",
-  "jorge-a-garza-martinez",
-  "jorge-a-melchor-ortiz",
-  "jose-maria-urena-flores",
-  "lillia-cardoza-diaz-de-leon",
-  "luis-a-saucedo-rodriguez",
-  "maria-elena-mata-martinez",
-  "mario-saucedo-montemayor",
-  "mario-saucedo-rodriguez",
-  "misden-castillo-chavez",
-  "orlando-cantu-garza",
-  "pedro-a-sanvicente-romero",
-  "ruben-a-frias-garcia",
-  "rubi-quintanilla-martinez",
-]);
+// Retratos con miniatura <slug>-128.webp (miniaturas cuadradas de 56 px de "Equipo relacionado"):
+// solo quien el sitio nombra (J1). Los asociados no se nombran en ningún sitio público y sus
+// slugs ya no viajan en el bundle; /team_photos tampoco sirve sus retratos. Un Of Counsel que se
+// añada sin estar aquí usa su retrato original (getTeamPhotoThumb).
+const THUMB_SLUGS: ReadonlySet<string> = CONFIRMED_PARTNER_SLUGS;
 
 // Solo URLs ".../team_photos/<slug>.<png|jpg>" (con o sin base del sitio estático); cualquier
 // otra ruta se usa tal cual.

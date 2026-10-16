@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import { SectionMark } from "./primitives";
 import { home26, langAttrs, type Lang26 } from "./content";
@@ -38,6 +38,15 @@ function savesData() {
   return !!c && (c.saveData === true || c.effectiveType === "slow-2g" || c.effectiveType === "2g");
 }
 
+/** play() con aviso si el navegador la rechaza (reproducción automática bloqueada, ahorro de
+    energía en iOS, fuente que no carga): `onRejected` pasa el botón a "Reproducir". AbortError no
+    es un rechazo: la interrumpió una pausa (fuera de la vista, botón) o el video se desmontó. */
+function playOrReport(video: HTMLVideoElement, onRejected: () => void) {
+  video.play().catch((err: unknown) => {
+    if ((err as { name?: string } | null)?.name !== "AbortError") onRejected();
+  });
+}
+
 /** Consulta de medios leída al montar (la portada solo se pinta en el navegador) y seguida después. */
 function useMedia(query: string) {
   const [matches, setMatches] = useState(() => typeof window !== "undefined" && window.matchMedia(query).matches);
@@ -53,10 +62,24 @@ function useMedia(query: string) {
 
 /** Video de fondo: mudo, en bucle, sin controles nativos ni audio, y en pausa mientras el héroe
     no se ve (no gasta batería ni CPU al leer el resto de la página). `paused`: lo pausó el
-    visitante con el botón; entonces queda en su cuadro y el observador no lo reanuda. */
-function HeroVideo({ paused }: { paused: boolean }) {
-  const ref = useRef<HTMLVideoElement>(null);
+    visitante con el botón (o el navegador rechazó reproducirlo); entonces queda en su cuadro y el
+    observador no lo reanuda. `onBlocked`: el navegador rechazó play(). */
+function HeroVideo({
+  paused,
+  videoRef: ref,
+  onBlocked,
+}: {
+  paused: boolean;
+  videoRef: RefObject<HTMLVideoElement>;
+  onBlocked: () => void;
+}) {
   const pausedRef = useRef(paused);
+  // Siempre el último aviso, sin volver a crear el observador
+  const onBlockedRef = useRef(onBlocked);
+  onBlockedRef.current = onBlocked;
+  const reportBlocked = () => {
+    if (!pausedRef.current) onBlockedRef.current();
+  };
   const [src] = useState(() => `${VIDEO_DIR}portada-azul-${window.matchMedia(SMALL_SCREEN).matches ? 1280 : 1920}.mp4`);
 
   useEffect(() => {
@@ -70,7 +93,7 @@ function HeroVideo({ paused }: { paused: boolean }) {
     // Fuera de la vista se detiene; al volver se reanuda solo si el visitante no lo pausó
     const io = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) video.pause();
-      else if (!pausedRef.current) video.play().catch(() => undefined);
+      else if (!pausedRef.current) playOrReport(video, reportBlocked);
     });
     io.observe(video);
     return () => io.disconnect();
@@ -82,7 +105,7 @@ function HeroVideo({ paused }: { paused: boolean }) {
     const video = ref.current;
     if (!video) return;
     if (paused) video.pause();
-    else video.play().catch(() => undefined);
+    else playOrReport(video, reportBlocked);
   }, [paused]);
 
   return (
@@ -121,10 +144,20 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
   const [paused, setPaused] = useState(startPaused);
   const [mounted, setMounted] = useState(!startPaused);
   const still = reduced || !mounted;
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // El navegador rechazó la reproducción (K6): el botón pasa a "Reproducir" sin guardar
+  // preferencia (no la eligió el visitante). Una pulsación lo inicia.
+  const onBlocked = useCallback(() => setPaused(true), []);
 
   const toggle = () => {
     const next = !paused;
-    if (!next) setMounted(true);
+    if (!next) {
+      setMounted(true);
+      // play() dentro del gesto: el navegador que rechazó la reproducción automática la acepta
+      // ahora. Si el video aún no está montado, lo monta este clic y lo reproduce su efecto.
+      if (videoRef.current) playOrReport(videoRef.current, onBlocked);
+    }
     setPaused(next);
     writePausedPref(next);
   };
@@ -136,7 +169,7 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
         {still ? (
           <img src={POSTER} alt="" width={1920} height={872} decoding="async" className="absolute inset-0 h-full w-full object-cover" />
         ) : (
-          <HeroVideo paused={paused} />
+          <HeroVideo paused={paused} videoRef={videoRef} onBlocked={onBlocked} />
         )}
         <div className="ss-hero-veil absolute inset-0" />
       </div>

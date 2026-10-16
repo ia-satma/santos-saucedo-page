@@ -2128,7 +2128,7 @@ Per richieste relative alla privacy:
 E-mail: privacidad@santossaucedo.com
 Telefono: +52 81 8335 2086
 
-Il nostro Responsabile della protezione dei dati può essere contattato all'indirizzo sopra indicato per qualsiasi domanda riguardante questa Informativa sulla privacy o l'esercizio dei tuoi diritti in materia di protezione dei dati.`
+Il nostro Responsabile della protezione dei dati può essere contattato all’indirizzo sopra indicato per qualsiasi domanda riguardante questa Informativa sulla privacy o l’esercizio dei tuoi diritti in materia di protezione dei dati.`
         },
         {
           id: "data-collected",
@@ -2139,7 +2139,7 @@ Il nostro Responsabile della protezione dei dati può essere contattato all'indi
 Dati identificativi:
 • Nome completo, titolo e posizione professionale
 • Informazioni di contatto (indirizzo e-mail, numero di telefono, indirizzo postale)
-• Nome dell'azienda o dell'organizzazione
+• Nome dell’azienda o dell’organizzazione
 • Qualifiche e affiliazioni professionali
 
 Dati di comunicazione:
@@ -2184,7 +2184,7 @@ Puoi rinunciare alle finalità secondarie in qualsiasi momento contattandoci a p
 
 Periodi di conservazione:
 • Fascicoli clienti e questioni legali: 10 anni dopo la chiusura del caso
-• Richieste generali e comunicazioni: 3 anni dall'ultimo contatto
+• Richieste generali e comunicazioni: 3 anni dall’ultimo contatto
 • Iscrizioni alle newsletter: Fino alla cancellazione
 • Dati analitici del sito web: 2 anni
 • Documenti contabili e di fatturazione: Come richiesto dalle normative fiscali
@@ -2197,7 +2197,7 @@ Dopo la scadenza del periodo di conservazione applicabile, elimineremo o anonimi
           title: "6. Condivisione dei dati",
           content: `Possiamo condividere i tuoi dati personali con le seguenti categorie di destinatari:
 
-All'interno di S&S:
+All’interno di S&S:
 • Partner, avvocati e personale professionale coinvolti nella tua pratica
 • Personale amministrativo e di supporto secondo necessità
 • Altri uffici di S&S per il coordinamento dei servizi
@@ -2235,7 +2235,7 @@ Invia una richiesta scritta a:
 E-mail: privacidad@santossaucedo.com
 Indirizzo: Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220
 
-Se non sei soddisfatto della nostra risposta, puoi presentare un reclamo all'Istituto nazionale per la trasparenza, l'accesso alle informazioni e la protezione dei dati personali (INAI): www.inai.org.mx`
+Se non sei soddisfatto della nostra risposta, puoi presentare un reclamo all’Istituto nazionale per la trasparenza, l’accesso alle informazioni e la protezione dei dati personali (INAI): www.inai.org.mx`
         },
         {
           id: "transfers",
@@ -2248,13 +2248,13 @@ Trasferimenti che richiedono consenso:
 • A fornitori di servizi di marketing e comunicazione per attività promozionali
 • Agli organizzatori di eventi quando ti registri per eventi sponsorizzati da S&S
 
-Trasferimenti che non richiedono consenso (come consentito dall'articolo 37 della LFPDPPP):
+Trasferimenti che non richiedono consenso (come consentito dall’articolo 37 della LFPDPPP):
 • A tribunali e autorità governative quando richiesto dalla legge o da procedimenti legali
-• A organismi di regolamentazione e associazioni professionali nell'ambito dei nostri obblighi di conformità
+• A organismi di regolamentazione e associazioni professionali nell’ambito dei nostri obblighi di conformità
 • A società madri, controllate o affiliate sotto controllo comune
 
 Trasferimenti internazionali:
-Quando i tuoi dati vengono trasferiti in paesi al di fuori del Messico, ci assicuriamo che siano in atto garanzie adeguate, incluse clausole contrattuali e l'impegno del destinatario ai principi di privacy equivalenti alla legge messicana.`
+Quando i tuoi dati vengono trasferiti in paesi al di fuori del Messico, ci assicuriamo che siano in atto garanzie adeguate, incluse clausole contrattuali e l’impegno del destinatario ai principi di privacy equivalenti alla legge messicana.`
         },
         {
           id: "cookies",
@@ -2290,7 +2290,7 @@ Nonostante i nostri migliori sforzi, nessun metodo di trasmissione su Internet o
         {
           id: "changes",
           icon: AlertCircle,
-          title: "11. Modifiche all'informativa",
+          title: "11. Modifiche all’informativa",
           content: `S&S si riserva il diritto di modificare questa Informativa sulla privacy in qualsiasi momento per riflettere i cambiamenti nelle nostre pratiche di trattamento dei dati, nei requisiti legali o per altri motivi operativi o legali.
 
 Come ti informiamo delle modifiche:
@@ -2300,7 +2300,7 @@ Come ti informiamo delle modifiche:
 
 Ti incoraggiamo a rivedere periodicamente questa Informativa sulla privacy per rimanere informato su come proteggiamo i tuoi dati personali.
 
-Questa Informativa sulla privacy è stata aggiornata l'ultima volta a dicembre 2024 e sostituisce tutte le versioni precedenti.`
+Questa Informativa sulla privacy è stata aggiornata l’ultima volta a dicembre 2024 e sostituisce tutte le versioni precedenti.`
         },
         {
           id: "contact",

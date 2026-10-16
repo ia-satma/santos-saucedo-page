@@ -161,14 +161,17 @@ const getContactFormSchema = (language: LanguageCode) => {
     company: z.string().optional(),
     practiceArea: z.string().optional(),
     message: z.string().min(1, t.messageRequired),
-    // Casilla del aviso de privacidad, obligatoria como en el boletín
+    // Casilla del aviso de privacidad, obligatoria como en el boletín (el servidor también la exige)
     consent: z.boolean().refine((value) => value, { message: t.consentRequired }),
+    // Campo trampa (J4): oculto; una persona lo deja vacío
+    website: z.string().optional(),
   });
 };
 
 // Valores del formulario: los datos que recibe /api/contact (sin teléfono: el documento de
-// redacción no lo pide) y la aceptación del aviso, que es requisito y no se envía.
-type ContactFormValues = Omit<ContactFormData, "phone"> & { consent: boolean };
+// redacción no lo pide), la aceptación del aviso (el servidor exige consent: true) y el campo
+// trampa "website" (J4: si llega lleno, el servidor responde como si guardara y no guarda).
+type ContactFormValues = Omit<ContactFormData, "phone"> & { consent: boolean; website?: string };
 
 // Casilla del aviso de privacidad: los mismos textos que el boletín (Newsletter.tsx); el
 // enlace lleva el nombre del aviso en el pie de cada idioma.
@@ -192,6 +195,8 @@ const toastMessages: Record<LanguageCode, {
   successDescription: string;
   errorTitle: string;
   errorDescription: string;
+  /** Respuesta 429 del servidor (J4): demasiados envíos desde la misma conexión */
+  rateLimitedDescription: string;
   staticTitle: string;
   staticDescription: string;
 }> = {
@@ -200,6 +205,7 @@ const toastMessages: Record<LanguageCode, {
     successDescription: "We have received your message.",
     errorTitle: "Error",
     errorDescription: "The message could not be sent. Please try again later.",
+    rateLimitedDescription: "Too many submissions. Please try again later.",
     staticTitle: "Send by email",
     staticDescription: "Your email program was opened to send the message.",
   },
@@ -208,6 +214,7 @@ const toastMessages: Record<LanguageCode, {
     successDescription: "Recibimos su mensaje.",
     errorTitle: "Error",
     errorDescription: "No fue posible enviar el mensaje. Intente de nuevo más tarde.",
+    rateLimitedDescription: "Demasiados envíos. Inténtelo más tarde.",
     staticTitle: "Enviar por correo",
     staticDescription: "Se abrió su programa de correo para enviar el mensaje.",
   },
@@ -216,6 +223,7 @@ const toastMessages: Record<LanguageCode, {
     successDescription: "Wir haben Ihre Nachricht erhalten.",
     errorTitle: "Fehler",
     errorDescription: "Die Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.",
+    rateLimitedDescription: "Zu viele Anfragen. Bitte versuchen Sie es später erneut.",
     staticTitle: "Per E-Mail senden",
     staticDescription: "Ihr E-Mail-Programm wurde geöffnet, um die Nachricht zu senden.",
   },
@@ -224,6 +232,7 @@ const toastMessages: Record<LanguageCode, {
     successDescription: "我们已收到您的消息。",
     errorTitle: "错误",
     errorDescription: "无法发送消息。请稍后再试。",
+    rateLimitedDescription: "提交次数过多。请稍后再试。",
     staticTitle: "通过电子邮件发送",
     staticDescription: "已打开您的电子邮件程序以发送消息。",
   },
@@ -232,6 +241,7 @@ const toastMessages: Record<LanguageCode, {
     successDescription: "메시지를 받았습니다.",
     errorTitle: "오류",
     errorDescription: "메시지를 보내지 못했습니다. 잠시 후 다시 시도해 주세요.",
+    rateLimitedDescription: "전송 횟수가 너무 많습니다. 잠시 후 다시 시도해 주세요.",
     staticTitle: "이메일로 보내기",
     staticDescription: "메시지를 보낼 수 있도록 이메일 프로그램을 열었습니다.",
   },
@@ -240,6 +250,7 @@ const toastMessages: Record<LanguageCode, {
     successDescription: "メッセージを受け付けました。",
     errorTitle: "エラー",
     errorDescription: "メッセージを送信できませんでした。しばらくしてからもう一度お試しください。",
+    rateLimitedDescription: "送信回数が多すぎます。しばらくしてからもう一度お試しください。",
     staticTitle: "メールで送信",
     staticDescription: "メッセージを送信するため、メールソフトを開きました。",
   },
@@ -248,6 +259,7 @@ const toastMessages: Record<LanguageCode, {
     successDescription: "تلقّينا رسالتك.",
     errorTitle: "خطأ",
     errorDescription: "تعذّر إرسال الرسالة. يرجى المحاولة مرة أخرى لاحقًا.",
+    rateLimitedDescription: "عدد مرات الإرسال كبير جدًا. يرجى المحاولة مرة أخرى لاحقًا.",
     staticTitle: "الإرسال بالبريد الإلكتروني",
     staticDescription: "فُتح برنامج البريد الإلكتروني لديك لإرسال الرسالة.",
   },
@@ -256,6 +268,7 @@ const toastMessages: Record<LanguageCode, {
     successDescription: "Мы получили ваше сообщение.",
     errorTitle: "Ошибка",
     errorDescription: "Не удалось отправить сообщение. Попробуйте позже.",
+    rateLimitedDescription: "Слишком много отправок. Попробуйте позже.",
     staticTitle: "Отправка по эл. почте",
     staticDescription: "Открылась ваша почтовая программа для отправки сообщения.",
   },
@@ -264,6 +277,7 @@ const toastMessages: Record<LanguageCode, {
     successDescription: "Nous avons bien reçu votre message.",
     errorTitle: "Erreur",
     errorDescription: "Le message n’a pas pu être envoyé. Veuillez réessayer plus tard.",
+    rateLimitedDescription: "Trop d’envois. Veuillez réessayer plus tard.",
     staticTitle: "Envoyer par e-mail",
     staticDescription: "Votre messagerie s’est ouverte pour envoyer le message.",
   },
@@ -272,6 +286,7 @@ const toastMessages: Record<LanguageCode, {
     successDescription: "Abbiamo ricevuto il suo messaggio.",
     errorTitle: "Errore",
     errorDescription: "Non è stato possibile inviare il messaggio. Riprovi più tardi.",
+    rateLimitedDescription: "Troppi invii. Riprovi più tardi.",
     staticTitle: "Invio per e-mail",
     staticDescription: "Si è aperto il suo programma di posta per inviare il messaggio.",
   },
@@ -305,6 +320,7 @@ export default function Contact() {
       practiceArea: "",
       message: "",
       consent: false,
+      website: "",
     },
   });
 
@@ -312,7 +328,8 @@ export default function Contact() {
   const consentT = consentText[language] || consentText.en;
 
   const contactMutation = useMutation({
-    mutationFn: async (data: ContactFormData) => {
+    // Con consent (el servidor exige true) y el campo trampa
+    mutationFn: async (data: ContactFormValues) => {
       const response = await apiRequest("POST", "/api/contact", data);
       return response.json();
     },
@@ -324,15 +341,17 @@ export default function Contact() {
       form.reset();
     },
     onError: (error: Error) => {
+      // apiRequest lanza "429: …" cuando el servidor limita los envíos (J4)
+      const rateLimited = error.message.startsWith("429");
       toast({
         title: toastT.errorTitle,
-        description: toastT.errorDescription,
+        description: rateLimited ? toastT.rateLimitedDescription : toastT.errorDescription,
         variant: "destructive",
       });
     },
   });
 
-  const onSubmit = ({ consent: _consent, ...data }: ContactFormValues) => {
+  const onSubmit = (data: ContactFormValues) => {
     if (isStaticSite) {
       const subject = encodeURIComponent(`Contacto web - ${data.fullName}`);
       const body = encodeURIComponent(
@@ -975,7 +994,7 @@ export default function Contact() {
                               onBlur={field.onBlur}
                               name={field.name}
                               ref={field.ref}
-                              className="relative mt-[3px] h-5 min-h-0 w-5 border-ss-input data-[state=checked]:border-primary before:absolute before:-inset-3"
+                              className="relative mt-[3px] h-5 min-h-0 w-5 border-ss-medio data-[state=checked]:border-primary before:absolute before:-inset-3"
                               data-testid="checkbox-consent"
                             />
                           </FormControl>
@@ -999,6 +1018,19 @@ export default function Contact() {
                     )}
                   />
 
+                  {/* Campo trampa (J4): fuera de la vista (sr-only, sin desbordar en árabe) y de los
+                      lectores de pantalla (aria-hidden), fuera del orden del teclado y sin
+                      autocompletar. Solo un programa lo rellena. */}
+                  <div className="sr-only" aria-hidden="true">
+                    <input
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      {...form.register("website")}
+                      data-testid="input-website"
+                    />
+                  </div>
+
                   {/* Enviar: el único botón Azul Marino lleno, 44 px de alto */}
                   <Button
                     type="submit"
@@ -1021,19 +1053,23 @@ export default function Contact() {
             </section>
 
             {/* La fachada (oficina/fachada, 1159 × 900, sin el estacionamiento): la misma de la
-                portada, en gris y a su proporción propia, sin reencuadre. Hasta 26rem de ancho */}
-            <figure className="sm:max-w-[26rem] lg:col-span-5 lg:row-start-2 lg:self-start" data-testid="figure-contact-building">
+                portada, a su proporción propia, sin reencuadre. Color suave de los lugares, con el
+                cielo más apagado (K1: .ss-photo--soft.ss-photo--sky). Hasta 26rem de ancho en
+                tableta; desde lg, el ancho de su columna (5/12), como la lista de datos de arriba
+                (K5): 356 px a 1024, 512 a 1440, 522 desde 1464 (37,5vw − 28px con el margen de
+                5vw del contenedor). */}
+            <figure className="sm:max-w-[26rem] lg:col-span-5 lg:row-start-2 lg:max-w-none lg:self-start" data-testid="figure-contact-building">
               <div className="overflow-hidden bg-ss-rule">
                 <img
                   src={fachada768}
                   srcSet={`${fachada768} 768w, ${fachada1536} 1159w`}
-                  sizes="(min-width: 640px) 416px, calc(100vw - 40px)"
+                  sizes="(min-width: 1024px) min(522px, calc(37.5vw - 28px)), (min-width: 640px) 416px, calc(100vw - 40px)"
                   alt={t.photoAlt}
                   loading="lazy"
                   decoding="async"
                   width={1159}
                   height={900}
-                  className="ss-photo block h-auto w-full"
+                  className="ss-photo--soft ss-photo--sky block h-auto w-full"
                   data-testid="img-contact-building"
                 />
               </div>
