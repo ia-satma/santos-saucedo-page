@@ -1,9 +1,10 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TextLink } from "@/components/home26/primitives";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { formatNewsDate } from "@/lib/newsDate";
@@ -13,13 +14,15 @@ import { newsCategories, type LanguageCode, type News } from "@shared/schema";
 // si se quiere, la portada). Filas de filete: categoría · fecha en etiqueta, titular en la
 // romana que es el enlace y entradilla. Sin foto ni loseta Hueso con §, sin "Leer más".
 // Lee solo lo publicado en /api/news, del más reciente al más antiguo, con estados de
-// carga, vacío y error.
+// carga, vacío y error (anunciados en un contenedor role="status").
 
 interface MonitorStrings {
   all: string;
   /** Nombre accesible del grupo de filtros */
   filters: string;
   search: string;
+  /** Estado de carga: texto oculto del contenedor de estado y nombre de la lista ocupada */
+  loading: string;
   empty: string;
   noResults: string;
   error: string;
@@ -31,6 +34,7 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     all: "Todas",
     filters: "Filtrar por categoría",
     search: "Buscar en el Monitor Laboral",
+    loading: "Cargando publicaciones…",
     empty: "Aún no hay publicaciones.",
     noResults: "Ninguna publicación coincide con la búsqueda.",
     error: "No fue posible cargar las publicaciones.",
@@ -40,6 +44,7 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     all: "All",
     filters: "Filter by category",
     search: "Search the Labor Monitor",
+    loading: "Loading publications…",
     empty: "There are no publications yet.",
     noResults: "No publications match the search.",
     error: "The publications could not be loaded.",
@@ -49,6 +54,7 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     all: "Alle",
     filters: "Nach Kategorie filtern",
     search: "Suchen",
+    loading: "Veröffentlichungen werden geladen…",
     empty: "Es gibt noch keine Veröffentlichungen.",
     noResults: "Keine Veröffentlichung entspricht der Suche.",
     error: "Die Veröffentlichungen konnten nicht geladen werden.",
@@ -58,6 +64,7 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     all: "全部",
     filters: "按类别筛选",
     search: "搜索",
+    loading: "正在加载文章…",
     empty: "暂无文章。",
     noResults: "没有符合搜索条件的文章。",
     error: "无法加载文章。",
@@ -67,6 +74,7 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     all: "전체",
     filters: "카테고리별 필터",
     search: "검색",
+    loading: "게시물을 불러오는 중…",
     empty: "아직 게시물이 없습니다.",
     noResults: "검색 결과가 없습니다.",
     error: "게시물을 불러오지 못했습니다.",
@@ -76,6 +84,7 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     all: "すべて",
     filters: "カテゴリーで絞り込む",
     search: "検索",
+    loading: "記事を読み込んでいます…",
     empty: "まだ記事はありません。",
     noResults: "検索に一致する記事はありません。",
     error: "記事を読み込めませんでした。",
@@ -85,6 +94,7 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     all: "الكل",
     filters: "تصفية حسب الفئة",
     search: "بحث",
+    loading: "جارٍ تحميل المنشورات…",
     empty: "لا توجد منشورات بعد.",
     noResults: "لا توجد منشورات تطابق البحث.",
     error: "تعذّر تحميل المنشورات.",
@@ -94,6 +104,7 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     all: "Все",
     filters: "Фильтр по категории",
     search: "Поиск",
+    loading: "Загрузка публикаций…",
     empty: "Публикаций пока нет.",
     noResults: "По запросу ничего не найдено.",
     error: "Не удалось загрузить публикации.",
@@ -103,6 +114,7 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     all: "Tout",
     filters: "Filtrer par catégorie",
     search: "Rechercher",
+    loading: "Chargement des publications…",
     empty: "Aucune publication pour le moment.",
     noResults: "Aucune publication ne correspond à la recherche.",
     error: "Impossible de charger les publications.",
@@ -112,6 +124,7 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     all: "Tutte",
     filters: "Filtra per categoria",
     search: "Cerca",
+    loading: "Caricamento delle pubblicazioni…",
     empty: "Non ci sono ancora pubblicazioni.",
     noResults: "Nessuna pubblicazione corrisponde alla ricerca.",
     error: "Impossibile caricare le pubblicazioni.",
@@ -143,7 +156,7 @@ interface MonitorListProps {
   excludeId?: string;
   /** Filtros de categoría: solo aparecen si al menos dos categorías tienen notas */
   filters?: boolean;
-  /** Campo de búsqueda sobre titular y entradilla (español e inglés) */
+  /** Campo de búsqueda sobre titular y entradilla (español e inglés); solo con 12 notas o más */
   search?: boolean;
   /** Nivel del titular de cada fila: h2 bajo el h1 de la página, h3 bajo un h2 de sección */
   headingLevel?: "h2" | "h3";
@@ -153,12 +166,20 @@ interface MonitorListProps {
   tone?: "light" | "paper";
   /** Estado vacío propio (p. ej. /articles conserva su bloque y sus testids) */
   empty?: ReactNode;
+  /** Idioma mostrado si no es el de la interfaz (la portada pasa es/en): etiquetas, fechas y
+   *  traducción; en español e inglés no se traduce nada automáticamente */
+  language?: LanguageCode;
+  /** Avisa cuando llega de verdad la traducción automática de alguna fila */
+  onTranslated?: () => void;
   testIds?: MonitorListTestIds;
   className?: string;
 }
 
 const TITLE_CLASS =
-  "ss-display text-[clamp(22px,1.7vw,25px)] font-[450] leading-[1.25] tracking-[-0.01em] text-ss-marino";
+  "ss-display text-[clamp(22px,1.7vw,25px)] font-normal leading-[1.25] tracking-[-0.01em] text-ss-marino";
+
+// Con 12 notas o más tiene sentido buscar; por debajo, la lista se lee de un vistazo
+const SEARCH_MIN_ITEMS = 12;
 
 function categoryLabel(item: News, language: LanguageCode, s: MonitorStrings): string | null {
   if (!item.category) return null;
@@ -169,25 +190,32 @@ function categoryLabel(item: News, language: LanguageCode, s: MonitorStrings): s
 
 function MonitorRow({
   item,
+  language,
+  showCategory,
   headingLevel,
   layout,
   rule,
   testIds,
+  onTranslated,
 }: {
   item: News;
+  language: LanguageCode;
+  /** La categoría solo informa si hay al menos dos con notas; si no, la fila lleva solo la fecha */
+  showCategory: boolean;
   headingLevel: "h2" | "h3";
   layout: "index" | "stacked";
   rule: string;
   testIds: MonitorListTestIds;
+  onTranslated?: () => void;
 }) {
-  const { language } = useLanguage();
   const s = STRINGS[language] || STRINGS.en;
   const isSpanish = language === "es";
 
   // Sin traducción se muestra el inglés de origen. Fuera de ES/EN va marcado: lang="en" en el
   // bloque (la romana, no la sans de CJK) y el texto en <bdi lang="en" dir="ltr"> (en árabe el
   // bloque sigue alineado a la derecha y el punto final no salta al principio).
-  const { translatedFields } = useTranslatedContent({
+  // En inglés y en español no se pide traducción (el hook ya lo descarta por idioma)
+  const { translatedFields, hasTranslation } = useTranslatedContent({
     contentType: "news",
     entityId: String(item.id),
     fields: {
@@ -196,15 +224,20 @@ function MonitorRow({
       excerpt: item.excerpt,
       excerptEs: item.excerptEs,
     },
-    enabled: !isSpanish,
+    enabled: !isSpanish && language !== "en",
+    language,
   });
+
+  useEffect(() => {
+    if (hasTranslation) onTranslated?.();
+  }, [hasTranslation, onTranslated]);
 
   const title = isSpanish ? item.titleEs || item.title : translatedFields.title || item.title;
   const excerpt = isSpanish ? item.excerptEs || item.excerpt : translatedFields.excerpt || item.excerpt;
   const isOtherLanguage = !isSpanish && language !== "en";
   const titleIsSource = isOtherLanguage && !!title && title === item.title;
   const excerptIsSource = isOtherLanguage && !!excerpt && excerpt === item.excerpt;
-  const category = categoryLabel(item, language, s);
+  const category = showCategory ? categoryLabel(item, language, s) : null;
   const date = formatNewsDate(item.date, language);
   const Heading = headingLevel;
   const index = layout === "index";
@@ -269,10 +302,13 @@ export function MonitorList({
   layout = "index",
   tone = "light",
   empty,
+  language: languageProp,
+  onTranslated,
   testIds = {},
   className = "",
 }: MonitorListProps) {
-  const { language } = useLanguage();
+  const { language: interfaceLanguage } = useLanguage();
+  const language = languageProp ?? interfaceLanguage;
   const s = STRINGS[language] || STRINGS.en;
   const [category, setCategory] = useState("all");
   const [query, setQuery] = useState("");
@@ -292,10 +328,12 @@ export function MonitorList({
     () => newsCategories.map((c) => c.value as string).filter((value) => items.some((item) => item.category === value)),
     [items],
   );
-  const showFilters = filters && presentCategories.length >= 2;
+  const showCategory = presentCategories.length >= 2;
+  const showFilters = filters && showCategory;
+  const showSearch = search && items.length >= SEARCH_MIN_ITEMS;
   const activeCategory = showFilters && presentCategories.includes(category) ? category : "all";
 
-  const q = query.trim().toLowerCase();
+  const q = showSearch ? query.trim().toLowerCase() : "";
   const visible = items
     .filter((item) => activeCategory === "all" || item.category === activeCategory)
     .filter((item) =>
@@ -308,7 +346,7 @@ export function MonitorList({
 
   return (
     <div className={className}>
-      {(showFilters || search) && !error && items.length > 0 && (
+      {(showFilters || showSearch) && !error && items.length > 0 && (
         <div className="mb-10 space-y-6">
           {showFilters && (
             <div role="group" aria-label={s.filters} className="flex flex-wrap gap-x-6" data-testid={testIds.filters}>
@@ -331,7 +369,7 @@ export function MonitorList({
               })}
             </div>
           )}
-          {search && (
+          {showSearch && (
             // Etiqueta visible y sin marcador que la repita
             <div className="max-w-md">
               <label htmlFor="monitor-search" className="ss-label block mb-2 text-ss-medio">
@@ -344,7 +382,7 @@ export function MonitorList({
                   type="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  className="ps-9 bg-white border-ss-input text-ss-tinta focus-visible:ring-ss-marino focus-visible:border-ss-marino"
+                  className="h-11 ps-9 bg-white border-ss-input text-ss-tinta focus-visible:ring-ss-marino focus-visible:border-ss-marino"
                   data-testid={testIds.search}
                 />
               </div>
@@ -353,14 +391,33 @@ export function MonitorList({
         </div>
       )}
 
-      {error ? (
-        <div className={`border-t ${rule} py-12`} data-testid={testIds.error}>
-          <p className="text-base text-ss-medio" data-testid={testIds.errorText}>
-            {s.error}
-          </p>
-        </div>
-      ) : isLoading ? (
-        <ul className={`border-t ${rule}`} aria-busy="true">
+      {/* Estados de carga, vacío y error en una región viva: se anuncian sin mover el foco */}
+      <div role="status" aria-live="polite">
+        {error ? (
+          <div className={`border-t ${rule} py-12`} data-testid={testIds.error}>
+            <p className="text-base text-ss-medio" data-testid={testIds.errorText}>
+              {s.error}
+            </p>
+          </div>
+        ) : isLoading ? (
+          <span className="sr-only">{s.loading}</span>
+        ) : visible.length === 0 ? (
+          narrowed ? (
+            <div className={`border-t ${rule} py-12`} data-testid={testIds.noResults}>
+              <p className="text-base text-ss-medio">{s.noResults}</p>
+            </div>
+          ) : (
+            empty ?? (
+              <div className={`border-t ${rule} py-12`} data-testid={testIds.empty}>
+                <p className="text-base text-ss-medio">{s.empty}</p>
+              </div>
+            )
+          )
+        ) : null}
+      </div>
+
+      {!error && isLoading && (
+        <ul className={`border-t ${rule}`} aria-busy="true" aria-label={s.loading}>
           {Array.from({ length: Math.min(limit ?? 3, 3) }).map((_, i) => (
             <li key={i} className={`border-b ${rule} py-8`} data-testid={testIds.skeleton?.(i)}>
               <Skeleton className="h-3 w-40 mb-4 bg-ss-rule" />
@@ -369,32 +426,66 @@ export function MonitorList({
             </li>
           ))}
         </ul>
-      ) : visible.length === 0 ? (
-        narrowed ? (
-          <div className={`border-t ${rule} py-12`} data-testid={testIds.noResults}>
-            <p className="text-base text-ss-medio">{s.noResults}</p>
-          </div>
-        ) : (
-          empty ?? (
-            <div className={`border-t ${rule} py-12`} data-testid={testIds.empty}>
-              <p className="text-base text-ss-medio">{s.empty}</p>
-            </div>
-          )
-        )
-      ) : (
+      )}
+
+      {!error && !isLoading && visible.length > 0 && (
         <ul className={`border-t ${rule}`}>
           {visible.map((item) => (
             <MonitorRow
               key={item.id}
               item={item}
+              language={language}
+              showCategory={showCategory}
               headingLevel={headingLevel}
               layout={layout}
               rule={rule}
               testIds={testIds}
+              onTranslated={onTranslated}
             />
           ))}
         </ul>
       )}
+    </div>
+  );
+}
+
+// Suscripción al pie del Monitor (/news y al final de cada nota): la frase y el botón de
+// /newsletter, con las mismas cadenas que esa página en cada idioma. Filete superior, sin caja.
+const SUBSCRIBE: Record<LanguageCode, { line: string; cta: string }> = {
+  es: { line: "Recibir el Monitor Laboral por correo.", cta: "Suscribirme" },
+  en: { line: "Receive the Labor Monitor by email.", cta: "Subscribe" },
+  de: { line: "Die Nachrichten der Kanzlei per E-Mail erhalten.", cta: "Abonnieren" },
+  zh: { line: "通过电子邮件接收本所新闻。", cta: "订阅" },
+  ko: { line: "법인의 뉴스를 이메일로 받아 보실 수 있습니다.", cta: "구독" },
+  ja: { line: "事務所のニュースをメールでお受け取りいただけます。", cta: "購読" },
+  ar: { line: "تلقّي أخبار المكتب عبر البريد الإلكتروني.", cta: "اشترك" },
+  ru: { line: "Получать новости фирмы по электронной почте.", cta: "Подписаться" },
+  fr: { line: "Recevoir les actualités du cabinet par e-mail.", cta: "S’abonner" },
+  it: { line: "Ricevere le notizie dello studio via e-mail.", cta: "Iscriviti" },
+};
+
+export function MonitorSubscribe({
+  language: languageProp,
+  className = "",
+  testId,
+  linkTestId,
+}: {
+  language?: LanguageCode;
+  className?: string;
+  testId?: string;
+  linkTestId?: string;
+}) {
+  const { language: interfaceLanguage } = useLanguage();
+  const t = SUBSCRIBE[languageProp ?? interfaceLanguage] || SUBSCRIBE.en;
+  return (
+    <div
+      className={`flex flex-wrap items-baseline gap-x-8 gap-y-4 border-t border-ss-rule pt-8 ${className}`}
+      data-testid={testId}
+    >
+      <p className="text-[16px] leading-[1.55] text-ss-tinta">{t.line}</p>
+      <TextLink href="/newsletter" data-testid={linkTestId}>
+        {t.cta}
+      </TextLink>
     </div>
   );
 }

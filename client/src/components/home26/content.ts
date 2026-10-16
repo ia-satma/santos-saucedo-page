@@ -11,25 +11,9 @@ export const langAttrs = {
 } as const;
 
 // En los titulares, "\u00a0" (espacio duro) evita que una palabra corta quede al final de línea.
-
-export const nav26 = {
-  es: [
-    { label: "Nuestra firma", href: "/about" },
-    { label: "Prácticas", href: "/practice-groups" },
-    { label: "Socios", href: "/team" },
-    { label: "Monitor Laboral", href: "/news" },
-    { label: "Carreras", href: "/careers" },
-    { label: "Contacto", href: "/contact" },
-  ],
-  en: [
-    { label: "The firm", href: "/about" },
-    { label: "Practices", href: "/practice-groups" },
-    { label: "Partners", href: "/team" },
-    { label: "Labor Monitor", href: "/news" },
-    { label: "Careers", href: "/careers" },
-    { label: "Contact", href: "/contact" },
-  ],
-} as const;
+// Los TextLink de cada sección no tienen texto propio: llevan la etiqueta del menú de su destino
+// (chrome26[lang].nav, fuente única de los nombres de sección), un solo texto por destino.
+// Los nombres de las prácticas son los de la base (practice_groups.name_es / name).
 
 export const home26 = {
   es: {
@@ -54,11 +38,12 @@ export const home26 = {
         "Santos & Saucedo nació en San Pedro Garza García en 2010 con una práctica dedicada a las empresas. Desde entonces asesora a grupos industriales mexicanos, a multinacionales y a empresas de capital asiático en las decisiones que involucran a su personal: la contratación, la organización del trabajo, la relación con el sindicato, la terminación de una relación laboral y la defensa ante las autoridades y los tribunales.",
         "El trabajo de la firma se apoya en una alianza de despachos especializados que le da presencia en más de 72 ciudades. Un cliente con plantas o sucursales en varios estados recibe el mismo criterio en todas ellas.",
       ],
-      link: "Nuestra firma",
       caption: "Río Tamazunchale 205 Norte, San Pedro Garza García. En el cristal, el Cerro de la Silla.",
       alt: "Fachada de cristal de las oficinas de Santos & Saucedo con el Cerro de la Silla reflejado",
     },
     creemos: {
+      // Etiqueta de la banda (redacción: "Lo que creemos"), tras "§ ——"
+      label: "Lo que creemos",
       quote: "La prevención es la primera defensa.",
       body: [
         "Estamos convencidos de que la mayoría de los conflictos laborales se resuelven antes de llegar a un tribunal: en un contrato bien redactado, en un expediente en orden, en una negociación preparada con tiempo.",
@@ -91,22 +76,18 @@ export const home26 = {
           body: "Juicios civiles y mercantiles, y asuntos penales en los que la empresa es la parte afectada por robo, fraude o abuso de confianza.",
         },
       ],
-      link: "Todas las prácticas",
     },
     extranjeras: {
       title: "Empresas extranjeras en México",
       body:
         "Nuevo León recibe cada año nuevas plantas de capital asiático, estadounidense y europeo. Para estas empresas, las prácticas corporativa, migratoria y laboral de la firma trabajan en conjunto, desde la constitución de la sociedad hasta la contratación del primer turno.",
       steps: ["Constitución de la sociedad", "Permisos migratorios", "Contratación del primer turno"],
-      // Lleva a /practice-groups: las tres prácticas que nombra el texto
-      link: "Ver las prácticas",
       alt: "Sala de juntas de Santos & Saucedo con el tríptico abstracto de la firma",
     },
     // Las filas son las notas publicadas en /api/news (Sections26, MonitorList)
     monitor: {
       title: "Monitor Laboral",
       intro: "Análisis de la firma sobre los cambios que afectan a las empresas.",
-      link: "Ver todo el Monitor Laboral",
     },
     socios: {
       title: "Socios",
@@ -117,7 +98,6 @@ export const home26 = {
         { name: "Enrique Santos Guzmán", photo: "enrique-santos-guzman", role: "Socio director" },
         { name: "Enrique Santos Arce", photo: "enrique-santos-arce", role: "Socio fundador" },
       ],
-      link: "Ver el equipo",
     },
     footer: {
       address: ["Río Tamazunchale 205 Norte", "Col. del Valle", "San Pedro Garza García, N.L.", "C.P. 66220, México"],
@@ -148,11 +128,11 @@ export const home26 = {
         "Santos & Saucedo was founded in San Pedro Garza García in 2010 with a practice devoted to employers. Since then it has advised Mexican industrial groups, multinationals and Asian-owned companies on the decisions that involve their people: hiring, the organization of work, union relations, terminations and the defense before authorities and courts.",
         "The firm works with an alliance of specialized law firms that gives it presence in more than 72 cities. A client with plants or branches in several states receives the same judgment in all of them.",
       ],
-      link: "The firm",
       caption: "Río Tamazunchale 205 Norte, San Pedro Garza García. In the glass, the Cerro de la Silla.",
       alt: "Glass facade of the Santos & Saucedo offices reflecting the Cerro de la Silla",
     },
     creemos: {
+      label: "What we believe",
       quote: "Prevention is the first defense.",
       body: [
         "We are convinced that most labor disputes are resolved before they reach a court: in a well-drafted contract, in a file kept in order, in a negotiation prepared in advance.",
@@ -169,7 +149,7 @@ export const home26 = {
         },
         {
           slug: "corporativo-contractual",
-          title: "Corporate and\u00a0contracts",
+          title: "Corporate and\u00a0contractual",
           body: "Incorporation and corporate life of companies, trusts and commercial contracts, with labor review built into every transaction.",
         },
         {
@@ -183,20 +163,17 @@ export const home26 = {
           body: "Civil and commercial proceedings, and criminal matters in which the company is the injured party in theft, fraud or breach of trust.",
         },
       ],
-      link: "All practices",
     },
     extranjeras: {
       title: "Foreign companies in Mexico",
       body:
         "Every year Nuevo León receives new plants backed by Asian, American and European capital. For these companies, the firm's corporate, immigration and labor practices work together, from incorporation to hiring the first shift.",
       steps: ["Incorporation", "Immigration permits", "Hiring the first shift"],
-      link: "See the practices",
       alt: "Santos & Saucedo boardroom with the firm's abstract triptych",
     },
     monitor: {
       title: "Labor Monitor",
       intro: "The firm's analysis of the changes that affect employers.",
-      link: "View the full Labor Monitor",
     },
     socios: {
       title: "Partners",
@@ -205,7 +182,6 @@ export const home26 = {
         { name: "Enrique Santos Guzmán", photo: "enrique-santos-guzman", role: "Managing partner" },
         { name: "Enrique Santos Arce", photo: "enrique-santos-arce", role: "Founding partner" },
       ],
-      link: "View the team",
     },
     footer: {
       address: ["Río Tamazunchale 205 Norte", "Col. del Valle", "San Pedro Garza García, N.L.", "C.P. 66220, México"],

@@ -216,7 +216,7 @@ export default function Experience() {
     },
     fr: {
       title: "Expérience",
-      subtitle: "Une sélection d'affaires dans lesquelles le cabinet est intervenu",
+      subtitle: "Une sélection d’affaires dans lesquelles le cabinet est intervenu",
       heroDescription: "Depuis plus de trois décennies, Santos & Saucedo représente des entreprises nationales et multinationales de premier plan dans leurs affaires juridiques les plus complexes et les plus importantes. Notre expérience couvre des transactions historiques, des litiges novateurs et des mandats de conseil stratégique.",
       featuredTitle: "Affaires en vedette",
       featuredSubtitle: "Des affaires de haut niveau qui démontrent notre expertise",

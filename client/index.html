@@ -20,14 +20,14 @@
     <meta property="og:description" content="Firma especializada en derecho laboral en San Pedro Garza García, N.L." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.santossaucedo.com" />
-    <meta property="og:image" content="https://santossaucedo.com/images/santossaucedo_2025.png" />
-    <meta property="og:site_name" content="Santos & Saucedo Abogados" />
+    <meta property="og:image" content="https://www.santossaucedo.com/logo-color.png" />
+    <meta property="og:site_name" content="Santos & Saucedo" />
     <meta property="og:locale" content="es_MX" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Santos & Saucedo Abogados - Derecho laboral" />
     <meta name="twitter:description" content="Firma especializada en derecho laboral en San Pedro Garza García, N.L." />
-    <meta name="twitter:image" content="https://santossaucedo.com/images/santossaucedo_2025.png" />
+    <meta name="twitter:image" content="https://www.santossaucedo.com/logo-color.png" />
 
     <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
     <link rel="icon" type="image/png" href="%BASE_URL%favicon.png" />
@@ -58,6 +58,9 @@
         background: #ffffff;
       }
     </style>
+    <!-- Datos estructurados de la firma, definidos solo aquí (E18): una entidad LegalService
+         (#organization) y un WebSite (#website). Person.worksFor/memberOf y Article.publisher
+         apuntan a #organization (JsonLdSchema.tsx). Las migas de pan van en cada página. -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -66,24 +69,27 @@
           "@type": "LegalService",
           "@id": "https://www.santossaucedo.com/#organization",
           "name": "Santos & Saucedo Abogados",
-          "alternateName": "S&S",
+          "alternateName": "Santos & Saucedo",
           "url": "https://www.santossaucedo.com",
           "logo": {
             "@type": "ImageObject",
-            "url": "https://www.santossaucedo.com/images/santossaucedo_2025.png"
+            "url": "https://www.santossaucedo.com/logo-color.png",
+            "width": 1530,
+            "height": 600
           },
-          "image": "https://www.santossaucedo.com/images/santossaucedo_2025.png",
-          "description": "Firma especializada en derecho laboral en San Pedro Garza García, N.L., con más de 35 años de experiencia asesorando empresas en conflictos laborales, administración laboral y cumplimiento normativo.",
+          "image": "https://www.santossaucedo.com/logo-color.png",
+          "description": "Santos & Saucedo es una firma legal para empresas —laboral, corporativo, migratorio y litigio— con raíz en el derecho laboral y más de 35 años de experiencia asesorando empresas nacionales y multinacionales.",
           "address": {
             "@type": "PostalAddress",
-            "streetAddress": "Río Tamazunchale 205 Norte",
+            "streetAddress": "Río Tamazunchale 205 Norte, Col. del Valle",
             "addressLocality": "San Pedro Garza García",
             "addressRegion": "Nuevo León",
+            "postalCode": "66220",
             "addressCountry": "MX"
           },
-          "telephone": "+52-81-8335-2086",
+          "hasMap": "https://www.google.com/maps/search/?api=1&query=R%C3%ADo+Tamazunchale+205+Norte%2C+Col.+del+Valle%2C+San+Pedro+Garza+Garc%C3%ADa%2C+N.L.%2C+C.P.+66220",
+          "telephone": "+52 81 8335 2086",
           "email": "info@santossaucedo.com",
-          "knowsLanguage": ["es"],
           "areaServed": {
             "@type": "Country",
             "name": "Mexico"
@@ -92,10 +98,10 @@
             "@type": "OfferCatalog",
             "name": "Prácticas",
             "itemListElement": [
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Laboral y seguridad social" } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Corporativo y contractual" } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Migratorio" } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Litigio" } }
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Laboral y seguridad social", "alternateName": "Labor and social security" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Corporativo y contractual", "alternateName": "Corporate and contractual" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Migratorio", "alternateName": "Immigration" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Litigio", "alternateName": "Litigation" } }
             ]
           }
         },
@@ -103,41 +109,11 @@
           "@type": "WebSite",
           "@id": "https://www.santossaucedo.com/#website",
           "url": "https://www.santossaucedo.com",
-          "name": "Santos & Saucedo Abogados",
+          "name": "Santos & Saucedo",
+          "inLanguage": "es-MX",
           "publisher": {
             "@id": "https://www.santossaucedo.com/#organization"
-          },
-          "inLanguage": ["es"]
-        },
-        {
-          "@type": "BreadcrumbList",
-          "@id": "https://www.santossaucedo.com/#breadcrumbs",
-          "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "Inicio",
-              "item": "https://www.santossaucedo.com/"
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "Prácticas",
-              "item": "https://www.santossaucedo.com/practice-groups"
-            },
-            {
-              "@type": "ListItem",
-              "position": 3,
-              "name": "Socios",
-              "item": "https://www.santossaucedo.com/team"
-            },
-            {
-              "@type": "ListItem",
-              "position": 4,
-              "name": "Monitor Laboral",
-              "item": "https://www.santossaucedo.com/news"
-            }
-          ]
+          }
         }
       ]
     }

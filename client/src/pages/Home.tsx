@@ -17,9 +17,13 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export default function Home() {
   const { language, displayLanguage } = useLanguage();
   const lang = displayLanguage === "es" ? "es" : "en";
+  // La portada en inglés para quien eligió otro idioma (ar, ja, de…): <html> lleva su idioma
+  // (y rtl en árabe), así que la página declara el que de verdad muestra (WCAG 3.1.1).
+  // El aviso de cookies, en el idioma del visitante, declara el suyo (CookieBanner).
+  const shownAttrs = lang === "en" && language !== "en" ? ({ lang: "en", dir: "ltr" } as const) : {};
 
   return (
-    <div className="ss26 min-h-screen" data-testid="page-home">
+    <div className="ss26 min-h-screen" data-testid="page-home" {...shownAttrs}>
       {/* Título, descripción y datos estructurados en el idioma que la portada muestra (ES/EN) */}
       <SEOHead page="home" language={lang} />
       <JsonLdSchema language={lang} />

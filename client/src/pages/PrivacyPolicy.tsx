@@ -7,11 +7,14 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContact } from "@/components/home26/useSiteContact";
+import { chrome26 } from "@/components/home26/chrome26";
+import { keepFirmName } from "@/lib/firmName";
 
 // Teléfonos aislados de izquierda a derecha (<bdi dir="ltr">): en árabe, dentro del texto
-// corrido, los grupos de cifras salían invertidos ("2086 8335 81 52+").
+// corrido, los grupos de cifras salían invertidos ("2086 8335 81 52+"). "Santos & Saucedo"
+// con espacios duros: el nombre no se parte entre líneas.
 function isolatePhones(text: string): ReactNode[] {
-  return text
+  return keepFirmName(text)
     .split(/(\+\d[\d ]{6,}\d)/)
     .map((part, i) => (i % 2 === 1 ? <bdi key={i} dir="ltr">{part}</bdi> : part));
 }
@@ -63,7 +66,6 @@ export default function PrivacyPolicy() {
   const { phone, phoneHref } = useSiteContact(displayLanguage);
 
   const content: Record<SupportedLanguage, {
-    title: string;
     subtitle: string;
     lastUpdated: string;
     sections: Array<{
@@ -74,7 +76,6 @@ export default function PrivacyPolicy() {
     }>;
   }> = {
     en: {
-      title: "Privacy policy",
       subtitle: "How we collect, use, and protect your personal data",
       lastUpdated: "Last updated: December 2024",
       sections: [
@@ -209,7 +210,7 @@ We never sell your personal data to third parties for marketing purposes.`
         {
           id: "arco-rights",
           icon: Shield,
-          title: "7. Your ARCO Rights",
+          title: "7. Your ARCO rights",
           content: `Under Mexican law, you have the following rights regarding your personal data (known as ARCO rights):
 
 Access (Acceso):
@@ -332,7 +333,6 @@ Website: www.santossaucedo.com`
       ]
     },
     es: {
-      title: "Aviso de privacidad",
       subtitle: "Cómo recopilamos, utilizamos y protegemos sus datos personales",
       lastUpdated: "Última actualización: diciembre de 2024",
       sections: [
@@ -529,7 +529,6 @@ Horario de atención: Lunes a viernes, 9:00 AM a 6:00 PM (hora de la Ciudad de M
       ]
     },
     de: {
-      title: "Datenschutzrichtlinie",
       subtitle: "Wie wir Ihre personenbezogenen Daten erfassen, verwenden und schützen",
       lastUpdated: "Zuletzt aktualisiert: Dezember 2024",
       sections: [
@@ -744,7 +743,6 @@ Website: www.santossaucedo.com`
       ]
     },
     zh: {
-      title: "隐私政策",
       subtitle: "我们如何收集、使用和保护您的个人数据",
       lastUpdated: "最后更新：2024年12月",
       sections: [
@@ -971,7 +969,6 @@ San Pedro Garza García, Nuevo León, México
       ]
     },
     ko: {
-      title: "개인정보 처리방침",
       subtitle: "개인 데이터를 수집, 사용 및 보호하는 방법",
       lastUpdated: "최종 업데이트: 2024년 12월",
       sections: [
@@ -1200,7 +1197,6 @@ San Pedro Garza García, Nuevo León, México
     ja: {
       // Punto de corte (espacio de ancho cero) entre las dos palabras: con auto-phrase el
       // titular no tenía dónde partirse y a 320 px quedaba "プライバシーポリ|シー".
-      title: "プライバシー\u200Bポリシー",
       subtitle: "お客様の個人データの収集、使用、保護方法について",
       lastUpdated: "最終更新：2024年12月",
       sections: [
@@ -1427,7 +1423,6 @@ San Pedro Garza García, Nuevo León, México
       ]
     },
     ar: {
-      title: "سياسة الخصوصية",
       subtitle: "كيف نجمع ونستخدم ونحمي بياناتك الشخصية",
       lastUpdated: "آخر تحديث: ديسمبر 2024",
       sections: [
@@ -1654,9 +1649,8 @@ San Pedro Garza García, Nuevo León، المكسيك
       ]
     },
     ru: {
-      title: "Политика конфиденциальности",
       subtitle: "Как мы собираем, используем и защищаем ваши персональные данные",
-      lastUpdated: "Последнее обновление: Декабрь 2024",
+      lastUpdated: "Последнее обновление: декабрь 2024",
       sections: [
         {
           id: "introduction",
@@ -1881,19 +1875,18 @@ San Pedro Garza García, Nuevo León, México
       ]
     },
     fr: {
-      title: "Politique de confidentialité",
       subtitle: "Comment nous collectons, utilisons et protégeons vos données personnelles",
-      lastUpdated: "Dernière mise à jour\u202f: Décembre 2024",
+      lastUpdated: "Dernière mise à jour\u202f: décembre 2024",
       sections: [
         {
           id: "introduction",
           icon: Shield,
           title: "1. Introduction",
-          content: `Santos & Saucedo Abogados («\u202fS&S\u202f», «\u202fnous\u202f», «\u202fnotre\u202f» ou «\u202fnos\u202f») s'engage à protéger votre vie privée et à assurer la sécurité de vos données personnelles. Cette Politique de confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous visitez notre site web www.santossaucedo.com (le «\u202fSite Web\u202f») ou interagissez avec nos services.
+          content: `Santos & Saucedo Abogados («\u202fS&S\u202f», «\u202fnous\u202f», «\u202fnotre\u202f» ou «\u202fnos\u202f») s’engage à protéger votre vie privée et à assurer la sécurité de vos données personnelles. Cette Politique de confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous visitez notre site web www.santossaucedo.com (le «\u202fSite Web\u202f») ou interagissez avec nos services.
 
-Cette Politique de confidentialité est conforme à la Loi fédérale sur la protection des données personnelles (LFPDPPP) et à ses règlements, ainsi qu'aux autres lois mexicaines applicables en matière de protection des données et aux meilleures pratiques internationales.
+Cette Politique de confidentialité est conforme à la Loi fédérale sur la protection des données personnelles (LFPDPPP) et à ses règlements, ainsi qu’aux autres lois mexicaines applicables en matière de protection des données et aux meilleures pratiques internationales.
 
-En accédant à notre Site Web ou en l'utilisant, vous reconnaissez avoir lu, compris et accepté d'être lié par cette Politique de confidentialité.`
+En accédant à notre Site Web ou en l’utilisant, vous reconnaissez avoir lu, compris et accepté d’être lié par cette Politique de confidentialité.`
         },
         {
           id: "data-controller",
@@ -1909,7 +1902,7 @@ Pour les demandes liées à la confidentialité\u202f:
 E-mail\u202f: privacidad@santossaucedo.com
 Téléphone\u202f: +52 81 8335 2086
 
-Notre Délégué à la protection des données peut être contacté à l'adresse ci-dessus pour toute question concernant cette Politique de confidentialité ou l'exercice de vos droits en matière de protection des données.`
+Notre Délégué à la protection des données peut être contacté à l’adresse ci-dessus pour toute question concernant cette Politique de confidentialité ou l’exercice de vos droits en matière de protection des données.`
         },
         {
           id: "data-collected",
@@ -1917,21 +1910,21 @@ Notre Délégué à la protection des données peut être contacté à l'adresse
           title: "3. Données collectées",
           content: `Nous pouvons collecter et traiter les catégories suivantes de données personnelles\u202f:
 
-Données d'identification\u202f:
+Données d’identification\u202f:
 • Nom complet, titre et poste professionnel
 • Coordonnées (adresse e-mail, numéro de téléphone, adresse postale)
-• Nom de l'entreprise ou de l'organisation
+• Nom de l’entreprise ou de l’organisation
 • Qualifications et affiliations professionnelles
 
 Données de communication\u202f:
 • Correspondance et communications avec S&S
 • Demandes soumises via nos formulaires de contact
-• Préférences d'abonnement aux newsletters et publications
+• Préférences d’abonnement aux newsletters et publications
 
 Données techniques\u202f:
-• Adresse IP et informations sur l'appareil
+• Adresse IP et informations sur l’appareil
 • Type et version du navigateur
-• Système d'exploitation
+• Système d’exploitation
 • Pages visitées et temps passé sur notre Site Web
 
 Nous ne collectons pas intentionnellement de données personnelles sensibles sauf si cela est strictement nécessaire pour la représentation juridique et avec votre consentement explicite.`
@@ -1966,11 +1959,11 @@ Vous pouvez vous désinscrire des finalités secondaires à tout moment en nous 
 Périodes de conservation\u202f:
 • Dossiers clients et affaires juridiques\u202f: 10 ans après la clôture du dossier
 • Demandes générales et communications\u202f: 3 ans à compter du dernier contact
-• Abonnements aux newsletters\u202f: Jusqu'à votre désabonnement
-• Données d'analyse du site web\u202f: 2 ans
+• Abonnements aux newsletters\u202f: Jusqu’à votre désabonnement
+• Données d’analyse du site web\u202f: 2 ans
 • Documents comptables et de facturation\u202f: Selon les exigences fiscales
 
-Après l'expiration de la période de conservation applicable, nous supprimerons ou anonymiserons vos données personnelles de manière sécurisée.`
+Après l’expiration de la période de conservation applicable, nous supprimerons ou anonymiserons vos données personnelles de manière sécurisée.`
         },
         {
           id: "data-sharing",
@@ -1985,7 +1978,7 @@ Au sein de S&S\u202f:
 
 Tiers\u202f:
 • Tribunaux et autorités réglementaires (selon les exigences des procédures judiciaires)
-• Autres cabinets d'avocats ou professionnels collaborant sur votre affaire (avec votre consentement)
+• Autres cabinets d’avocats ou professionnels collaborant sur votre affaire (avec votre consentement)
 • Prestataires de services sous accords de confidentialité stricts
 
 Transferts internationaux\u202f:
@@ -2006,7 +1999,7 @@ Rectification (Rectificación)\u202f:
 Vous pouvez demander la correction de données personnelles inexactes ou incomplètes.
 
 Suppression (Cancelación)\u202f:
-Vous pouvez demander la suppression de vos données personnelles lorsqu'elles ne sont plus nécessaires aux fins pour lesquelles elles ont été collectées.
+Vous pouvez demander la suppression de vos données personnelles lorsqu’elles ne sont plus nécessaires aux fins pour lesquelles elles ont été collectées.
 
 Opposition (Oposición)\u202f:
 Vous pouvez vous opposer au traitement de vos données personnelles pour des finalités spécifiques, notamment le marketing.
@@ -2016,7 +2009,7 @@ Soumettez une demande écrite à\u202f:
 E-mail\u202f: privacidad@santossaucedo.com
 Adresse\u202f: Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220
 
-Si vous n'êtes pas satisfait de notre réponse, vous pouvez déposer une plainte auprès de l'Institut national de transparence, d'accès à l'information et de protection des données personnelles (INAI)\u202f: www.inai.org.mx`
+Si vous n’êtes pas satisfait de notre réponse, vous pouvez déposer une plainte auprès de l’Institut national de transparence, d’accès à l’information et de protection des données personnelles (INAI)\u202f: www.inai.org.mx`
         },
         {
           id: "transfers",
@@ -2025,17 +2018,17 @@ Si vous n'êtes pas satisfait de notre réponse, vous pouvez déposer une plaint
           content: `S&S peut transférer vos données personnelles à des tiers dans les circonstances suivantes\u202f:
 
 Transferts nécessitant un consentement\u202f:
-• Aux cabinets d'avocats affiliés ou correspondants dans d'autres juridictions pour la fourniture de services juridiques
+• Aux cabinets d’avocats affiliés ou correspondants dans d’autres juridictions pour la fourniture de services juridiques
 • Aux prestataires de services marketing et communication pour des activités promotionnelles
-• Aux organisateurs d'événements lors de votre inscription à des événements parrainés par S&S
+• Aux organisateurs d’événements lors de votre inscription à des événements parrainés par S&S
 
-Transferts ne nécessitant pas de consentement (conformément à l'article 37 de la LFPDPPP)\u202f:
-• Aux tribunaux et autorités gouvernementales lorsque la loi l'exige
+Transferts ne nécessitant pas de consentement (conformément à l’article 37 de la LFPDPPP)\u202f:
+• Aux tribunaux et autorités gouvernementales lorsque la loi l’exige
 • Aux organismes de réglementation et associations professionnelles dans le cadre de nos obligations de conformité
 • Aux sociétés mères, filiales ou affiliées sous contrôle commun
 
 Transferts internationaux\u202f:
-Lorsque vos données sont transférées vers des pays en dehors du Mexique, nous nous assurons que des garanties appropriées sont en place, y compris des clauses contractuelles et l'engagement du destinataire à respecter des principes de confidentialité équivalents à la loi mexicaine.`
+Lorsque vos données sont transférées vers des pays en dehors du Mexique, nous nous assurons que des garanties appropriées sont en place, y compris des clauses contractuelles et l’engagement du destinataire à respecter des principes de confidentialité équivalents à la loi mexicaine.`
         },
         {
           id: "cookies",
@@ -2047,10 +2040,10 @@ Lorsque vos données sont transférées vers des pays en dehors du Mexique, nous
           id: "security",
           icon: Lock,
           title: "10. Mesures de sécurité",
-          content: `S&S met en œuvre des mesures de sécurité administratives, techniques et physiques complètes pour protéger vos données personnelles contre la perte, l'accès non autorisé, les dommages, l'altération ou la divulgation.
+          content: `S&S met en œuvre des mesures de sécurité administratives, techniques et physiques complètes pour protéger vos données personnelles contre la perte, l’accès non autorisé, les dommages, l’altération ou la divulgation.
 
 Mesures administratives\u202f:
-• Désignation d'un Délégué à la protection des données
+• Désignation d’un Délégué à la protection des données
 • Politiques et procédures internes pour le traitement des données
 • Formation du personnel sur la protection des données et la confidentialité
 • Audits réguliers et examens de conformité
@@ -2058,25 +2051,25 @@ Mesures administratives\u202f:
 
 Mesures techniques\u202f:
 • Chiffrement des données sensibles en transit et au repos
-• Contrôles d'accès sécurisés et mécanismes d'authentification
-• Pare-feu et systèmes de détection d'intrusion
+• Contrôles d’accès sécurisés et mécanismes d’authentification
+• Pare-feu et systèmes de détection d’intrusion
 • Mises à jour de sécurité régulières et évaluations des vulnérabilités
 
 Mesures physiques\u202f:
 • Accès restreint aux installations hébergeant des données personnelles
-• Systèmes de sécurité incluant la surveillance et les journaux d'accès
+• Systèmes de sécurité incluant la surveillance et les journaux d’accès
 
-Malgré nos meilleurs efforts, aucune méthode de transmission sur Internet ou de stockage électronique n'est sécurisée à 100 %. Si vous avez des raisons de croire que vos données personnelles ont été compromises, veuillez nous contacter immédiatement.`
+Malgré nos meilleurs efforts, aucune méthode de transmission sur Internet ou de stockage électronique n’est sécurisée à 100 %. Si vous avez des raisons de croire que vos données personnelles ont été compromises, veuillez nous contacter immédiatement.`
         },
         {
           id: "changes",
           icon: AlertCircle,
           title: "11. Modifications de la politique",
-          content: `S&S se réserve le droit de modifier cette Politique de confidentialité à tout moment pour refléter les changements dans nos pratiques de traitement des données, les exigences légales ou d'autres raisons opérationnelles ou juridiques.
+          content: `S&S se réserve le droit de modifier cette Politique de confidentialité à tout moment pour refléter les changements dans nos pratiques de traitement des données, les exigences légales ou d’autres raisons opérationnelles ou juridiques.
 
 Comment nous vous informons des changements\u202f:
 • Les changements significatifs seront communiqués par e-mail à nos clients et contacts
-• Les mises à jour seront publiées sur notre Site Web avec la nouvelle date d'entrée en vigueur
+• Les mises à jour seront publiées sur notre Site Web avec la nouvelle date d’entrée en vigueur
 • Pour les changements matériels affectant vos droits, nous pouvons demander un consentement renouvelé
 
 Nous vous encourageons à consulter périodiquement cette Politique de confidentialité pour rester informé de la manière dont nous protégeons vos données personnelles.
@@ -2099,7 +2092,7 @@ San Pedro Garza García, Nuevo León, Mexique
 E-mail\u202f: privacidad@santossaucedo.com
 Téléphone\u202f: +52 81 8335 2086
 
-Heures d'ouverture\u202f: Lundi au vendredi, 9h00 à 18h00 (heure de Mexico)
+Heures d’ouverture\u202f: Lundi au vendredi, 9h00 à 18h00 (heure de Mexico)
 
 Pour les demandes générales concernant nos services juridiques\u202f:
 E-mail\u202f: info@santossaucedo.com
@@ -2108,9 +2101,8 @@ Site web\u202f: www.santossaucedo.com`
       ]
     },
     it: {
-      title: "Informativa sulla privacy",
       subtitle: "Come raccogliamo, utilizziamo e proteggiamo i tuoi dati personali",
-      lastUpdated: "Ultimo aggiornamento: Dicembre 2024",
+      lastUpdated: "Ultimo aggiornamento: dicembre 2024",
       sections: [
         {
           id: "introduction",
@@ -2337,6 +2329,8 @@ Sito web: www.santossaucedo.com`
   };
 
   const t = content[language as SupportedLanguage] || content.en;
+  // h1 = el nombre del enlace del pie en cada idioma (E5), el mismo que el título de la pestaña
+  const title = (chrome26[language] ?? chrome26.en).footer.privacy;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -2394,7 +2388,7 @@ Sito web: www.santossaucedo.com`
                 className="mb-5"
                 data-testid="text-privacy-title"
               >
-                {t.title}
+                {title}
               </h1>
               <p
                 className="mb-4"

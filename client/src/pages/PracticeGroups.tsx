@@ -11,6 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { Eyebrow } from "@/components/editorial";
+import { chrome26 } from "@/components/home26/chrome26";
 import type { PracticeGroup } from "@shared/schema";
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
@@ -82,10 +83,10 @@ function PracticeGroupRow({ group, index }: PracticeGroupRowProps) {
         <span aria-hidden="true" className="ss-row-num ss-label ss-num sm:col-start-1 sm:row-start-1">
           {String(index + 1).padStart(2, "0")}
         </span>
-        {/* h2 bajo el h1 de la página; aspecto de fila de prácticas de la portada */}
+        {/* h2 bajo el h1 de la página: escala de sub-bloque (.ss-h2-sm, romana 400) */}
         <h2
           id={nameId}
-          className="ss-display text-[clamp(26px,2.3vw,34px)] font-[420] leading-[1.15] tracking-[-0.012em] text-ss-marino sm:col-start-2 sm:row-start-1"
+          className="ss-h2-sm sm:col-start-2 sm:row-start-1"
           data-testid={`text-practice-group-name-${group.slug}`}
           lang={nameIsSource ? "en" : undefined}
         >
@@ -120,61 +121,52 @@ export default function PracticeGroups() {
 
   // Subtítulo: de la redacción aprobada (Nuestra firma): una práctica laboral central y
   // tres complementarias. Sustituye a "cubre todas las principales áreas legales".
-  const content: Record<string, { title: string; subtitle: string; errorMessage: string }> = {
+  // h1: la etiqueta del menú en cada idioma (chrome26 nav[1]), la misma de la pestaña
+  const content: Record<string, { subtitle: string; errorMessage: string }> = {
     en: {
-      // Un solo nombre para /practice-groups en inglés, en minúscula inicial: "Practice areas"
-      title: "Practice areas",
       subtitle: "Around its labor practice, the firm has developed three complementary practices: corporate and contractual, immigration, and litigation.",
       errorMessage: "Failed to load practice areas",
     },
     es: {
-      title: "Áreas de práctica",
       subtitle: "Alrededor de su práctica laboral, la firma desarrolló tres prácticas complementarias: corporativa y contractual, migratoria y contenciosa.",
       errorMessage: "Error al cargar las áreas de práctica",
     },
     de: {
-      title: "Praxisbereiche",
       subtitle: "Rund um ihre arbeitsrechtliche Praxis hat die Kanzlei drei ergänzende Praxisbereiche aufgebaut: Gesellschafts- und Vertragsrecht, Migrationsrecht und Prozessführung.",
       errorMessage: "Fehler beim Laden der Praxisbereiche",
     },
     zh: {
-      title: "业务领域",
       subtitle: "围绕劳动法这一核心业务，本所发展了三个互补的业务领域：公司与合同、移民以及诉讼。",
       errorMessage: "加载业务领域失败",
     },
     ko: {
-      title: "업무 분야",
       subtitle: "법인은 노동법 업무를 중심으로 회사·계약, 이민, 소송의 세 가지 보완 업무 분야를 갖추고 있습니다.",
       errorMessage: "업무 분야 로드 실패",
     },
     ja: {
-      title: "取扱分野",
       subtitle: "当事務所は労働法を中核に、会社法・契約、移民、訴訟の三つの補完的な分野を展開しています。",
       errorMessage: "取扱分野の読み込みに失敗しました",
     },
     ar: {
-      title: "مجالات الممارسة",
       subtitle: "حول ممارسته في قانون العمل، طوّر المكتب ثلاث ممارسات مكمّلة: الشركات والعقود، والهجرة، والتقاضي.",
       errorMessage: "فشل تحميل مجالات الممارسة",
     },
     ru: {
-      title: "Практики",
       subtitle: "Вокруг практики трудового права фирма развила три дополняющие её практики: корпоративную и договорную, миграционную и судебную.",
       errorMessage: "Не удалось загрузить практики",
     },
     fr: {
-      title: "Domaines de pratique",
       subtitle: "Autour de sa pratique en droit du travail, le cabinet a développé trois pratiques complémentaires\u202f: droit des sociétés et des contrats, immigration et contentieux.",
       errorMessage: "Échec du chargement des domaines de pratique",
     },
     it: {
-      title: "Aree di pratica",
       subtitle: "Attorno alla sua pratica giuslavoristica, lo studio ha sviluppato tre aree complementari: societario e contrattuale, immigrazione e contenzioso.",
       errorMessage: "Impossibile caricare le aree di pratica",
     },
   };
 
   const t = content[language] || content.en;
+  const title = (chrome26[language as keyof typeof chrome26] ?? chrome26.en).nav[1].label;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -208,7 +200,7 @@ export default function PracticeGroups() {
                 className="mb-5"
                 data-testid="text-practice-groups-title"
               >
-                {t.title}
+                {title}
               </h1>
               <p
                 data-testid="text-practice-groups-subtitle"

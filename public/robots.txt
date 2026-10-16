@@ -12,7 +12,6 @@ Disallow: /api/admin/
 Allow: /practice-groups/
 Allow: /team/
 Allow: /news/
-Allow: /articles/
 Allow: /contact/
 
 # Sitemap location

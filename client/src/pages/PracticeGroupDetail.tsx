@@ -12,6 +12,7 @@ import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { getTeamPhotoThumb } from "@/lib/teamPhotoSources";
 import { Eyebrow, LeadParagraph, RankingsList, type RankingItem } from "@/components/editorial";
+import { chrome26 } from "@/components/home26/chrome26";
 import { isNamedOnTeamPage } from "@shared/teamVisibility";
 import type { PracticeGroup, TeamMember, RepresentativeMatterDb } from "@shared/schema";
 
@@ -41,10 +42,11 @@ interface PracticeRanking {
 }
 
 // Quién figura en cada práctica: solo lo que dice el registro de cada persona (campo role).
-// Hoy todos los registros dicen "Labor Law"; ninguno vincula a una persona con las prácticas
-// corporativa, migratoria o contenciosa, así que esas páginas no muestran nombres.
+// Hoy todos los registros dicen "Labor law" (la comparación no distingue mayúsculas); ninguno
+// vincula a una persona con las prácticas corporativa, migratoria o de litigio, así que esas
+// páginas no muestran nombres.
 const practiceAreaRoleMapping: Record<string, string[]> = {
-  "laboral-seguridad-social": ["Labor Law"],
+  "laboral-seguridad-social": ["Labor law"],
   "corporativo-contractual": [],
   "migratorio": [],
   "litigio-contencioso": [],
@@ -221,7 +223,6 @@ export default function PracticeGroupDetail() {
   });
 
   const translations: Record<string, {
-    backToAll: string;
     ourTeam: string;
     partners: string;
     rankingsTitle: string;
@@ -233,7 +234,6 @@ export default function PracticeGroupDetail() {
     client: string;
   }> = {
     en: {
-      backToAll: "All practice areas",
       ourTeam: "Our team",
       partners: "Partners",
       rankingsTitle: "Rankings and recognition",
@@ -245,7 +245,6 @@ export default function PracticeGroupDetail() {
       client: "Client:",
     },
     es: {
-      backToAll: "Todas las áreas de práctica",
       ourTeam: "Nuestro equipo",
       partners: "Socios",
       rankingsTitle: "Rankings y reconocimientos",
@@ -257,7 +256,6 @@ export default function PracticeGroupDetail() {
       client: "Cliente:",
     },
     de: {
-      backToAll: "Zurück zu Praxisbereichen",
       ourTeam: "Unser Team",
       partners: "Partner",
       rankingsTitle: "Rankings & Anerkennung",
@@ -269,7 +267,6 @@ export default function PracticeGroupDetail() {
       client: "Mandant:",
     },
     zh: {
-      backToAll: "返回业务领域",
       ourTeam: "我们的团队",
       partners: "合伙人",
       rankingsTitle: "排名与认可",
@@ -281,7 +278,6 @@ export default function PracticeGroupDetail() {
       client: "客户：",
     },
     ko: {
-      backToAll: "업무 분야로 돌아가기",
       ourTeam: "우리 팀",
       partners: "파트너",
       rankingsTitle: "순위 및 인정",
@@ -293,7 +289,6 @@ export default function PracticeGroupDetail() {
       client: "의뢰인:",
     },
     ja: {
-      backToAll: "取扱分野に戻る",
       ourTeam: "私たちのチーム",
       partners: "パートナー",
       rankingsTitle: "ランキングと評価",
@@ -305,7 +300,6 @@ export default function PracticeGroupDetail() {
       client: "クライアント：",
     },
     ar: {
-      backToAll: "العودة إلى مجالات الممارسة",
       ourTeam: "فريقنا",
       partners: "الشركاء",
       rankingsTitle: "التصنيفات والاعتراف",
@@ -317,7 +311,6 @@ export default function PracticeGroupDetail() {
       client: "العميل:",
     },
     ru: {
-      backToAll: "Назад к практикам",
       ourTeam: "Наша команда",
       partners: "Партнёры",
       rankingsTitle: "Рейтинги и признание",
@@ -329,7 +322,6 @@ export default function PracticeGroupDetail() {
       client: "Клиент:",
     },
     fr: {
-      backToAll: "Retour aux domaines de pratique",
       ourTeam: "Notre équipe",
       partners: "Associés",
       rankingsTitle: "Classements et reconnaissance",
@@ -341,7 +333,6 @@ export default function PracticeGroupDetail() {
       client: "Client\u202f:",
     },
     it: {
-      backToAll: "Torna alle aree di pratica",
       ourTeam: "Il nostro team",
       partners: "Soci",
       rankingsTitle: "Classifiche e riconoscimenti",
@@ -355,6 +346,8 @@ export default function PracticeGroupDetail() {
   };
 
   const t = translations[language] || translations.en;
+  // Vuelta a la sección con la etiqueta del menú en cada idioma (chrome26 nav[1]: "Prácticas")
+  const backToAll = (chrome26[language as keyof typeof chrome26] ?? chrome26.en).nav[1].label;
 
   // Personas de la práctica: su registro la menciona (role) y la regla de quién aparece con
   // nombre en el sitio (isNamedOnTeamPage: socios confirmados y Of Counsel). El fundador in
@@ -396,7 +389,7 @@ export default function PracticeGroupDetail() {
               data-testid="button-back-to-practice-groups"
             >
               <ArrowLeft className="w-4 h-4 rtl:-scale-x-100" aria-hidden="true" />
-              {t.backToAll}
+              {backToAll}
             </Link>
           </Column>
         </main>
@@ -430,8 +423,8 @@ export default function PracticeGroupDetail() {
     );
   }
 
-  // Otros idiomas: la traducción automática. Si no llega (o en el sitio estático), el inglés de
-  // origen, marcado como inglés (EN_SOURCE); mientras se traduce, el aviso de carga.
+  // Otros idiomas: el inglés de origen de inmediato, marcado como inglés (EN_SOURCE), y la
+  // traducción automática solo si llega (sin h1 vacío ni indicador mientras se espera).
   const isOtherLanguage = language !== 'es' && language !== 'en';
   const translationPending = isTranslating || isTranslationLoading;
   const sourceDescription = practiceGroup?.fullDescription || practiceGroup?.description;
@@ -439,13 +432,13 @@ export default function PracticeGroupDetail() {
     ? (practiceGroup?.nameEs || practiceGroup?.name)
     : language === 'en'
       ? practiceGroup?.name
-      : (translatedFields.name || null);
+      : (translatedFields.name || practiceGroup?.name);
   const displayDescription = language === 'es'
     ? (practiceGroup?.fullDescriptionEs || practiceGroup?.descriptionEs || practiceGroup?.fullDescription || practiceGroup?.description)
     : language === 'en'
       ? sourceDescription
-      : (translatedFields.fullDescription || translatedFields.description || (translationPending ? null : sourceDescription));
-  const shownName = displayName || (translationPending ? null : practiceGroup?.name);
+      : (translatedFields.fullDescription || translatedFields.description || sourceDescription);
+  const shownName = displayName;
   const nameIsSource = isOtherLanguage && !!shownName && shownName === practiceGroup?.name;
   const descriptionSource = isOtherLanguage && !!displayDescription &&
     (displayDescription === practiceGroup?.fullDescription || displayDescription === practiceGroup?.description);
@@ -497,7 +490,7 @@ export default function PracticeGroupDetail() {
                   data-testid="link-back-to-practice-groups"
                 >
                   <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-                  {t.backToAll}
+                  {backToAll}
                 </span>
               </Link>
               <Eyebrow num="02" tone="navy" className="mb-4" />
@@ -507,14 +500,7 @@ export default function PracticeGroupDetail() {
                   data-testid="text-practice-group-title"
                   lang={nameIsSource ? "en" : undefined}
                 >
-                  {nameIsSource ? <bdi lang="en" dir="ltr">{shownName}</bdi> : shownName || (translationPending && (
-                    <span className="flex items-center gap-2">
-                      <Loader2 className="w-5 h-5 animate-spin text-white/60" aria-hidden="true" />
-                    </span>
-                  ))}
-                  {displayName && isTranslating && (
-                    <Loader2 className="inline-block w-5 h-5 ml-3 animate-spin text-white/60" aria-hidden="true" />
-                  )}
+                  {nameIsSource ? <bdi lang="en" dir="ltr">{shownName}</bdi> : shownName}
                 </h1>
                 {practiceText?.tagline && (
                   <p data-testid="text-practice-group-tagline" lang={descriptionSource ? "en" : undefined}>

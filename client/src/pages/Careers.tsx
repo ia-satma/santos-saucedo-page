@@ -5,6 +5,9 @@ import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
 import { TextLink } from "@/components/home26/primitives";
+// "Santos & Saucedo" con espacios duros al pintarlo: el nombre no se parte al final de línea.
+// Para la frase de los 35 años, que no se edita en el texto (pendiente con el cliente).
+import { keepFirmName } from "@/lib/firmName";
 
 // "Clásica": titulares con la escala única de index.css (.ss-h2 para las secciones, .ss-h2-sm
 // para los sub-bloques, .ss-h3 para filas); entrada en romana 400 Gris Tinta (solo el primer
@@ -15,9 +18,6 @@ const leadClass = "font-serif font-normal text-ss-tinta text-[clamp(19px,0.6vw_+
 // cada idioma y la página muestra esa frase. Para publicar una, añadir su ficha aquí.
 type Position = { title: string; department: string; location: string; type: string; description: string };
 
-// "Santos & Saucedo" con espacios duros al pintarlo: el nombre no se parte al final de línea.
-// Para la frase de los 35 años, que no se edita en el texto (pendiente con el cliente).
-const keepFirmName = (text: string) => text.replace(/Santos & Saucedo/g, "Santos\u00a0&\u00a0Saucedo");
 
 export default function Careers() {
   const { language } = useLanguage();
@@ -39,7 +39,6 @@ export default function Careers() {
       environmentText: "With more than 35 years of experience, Santos & Saucedo advises companies on employment matters from San Pedro Garza García.",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "Semillero S&S is the firm's internship program.",
-      internshipOverviewText: "If there is no vacancy for your profile today, you can leave your details with the Semillero. We review the profiles every time a position opens.",
       positionsTitle: "Openings",
       positionsEmpty: "There are no openings at the moment. You can leave your details with the Semillero S&S.",
       positions: [] as Position[],
@@ -47,7 +46,6 @@ export default function Careers() {
       applyInstructions: "Send your CV as a PDF to:",
       applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "In the e-mail, include your name, your phone number with area code, your level (student, intern, lawyer or administrative staff) and the practice you are interested in: labor, corporate, immigration or litigation.",
-      contactCardTitle: "Careers contact",
       sendApplication: "Send application",
     },
     es: {
@@ -61,7 +59,6 @@ export default function Careers() {
       environmentText: "Con más de 35 años de experiencia, Santos & Saucedo asesora a empresas en materia laboral desde San Pedro Garza García.",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "El Semillero S&S es el programa de pasantes de la firma.",
-      internshipOverviewText: "Si hoy no hay una vacante para tu perfil, puedes dejar tus datos en el Semillero. Revisamos los perfiles cada vez que se abre una posición.",
       positionsTitle: "Vacantes",
       positionsEmpty: "Por ahora no hay vacantes abiertas. Puedes dejar tus datos en el Semillero S&S.",
       positions: [] as Position[],
@@ -69,7 +66,6 @@ export default function Careers() {
       applyInstructions: "Envía tu CV en PDF a:",
       applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "En el correo, indica tu nombre, tu teléfono con lada, tu nivel (estudiante, pasante, abogado o administrativo) y la práctica de interés: laboral, corporativo, migratorio o litigio.",
-      contactCardTitle: "Contacto de carreras",
       sendApplication: "Enviar solicitud",
     },
     de: {
@@ -83,7 +79,6 @@ export default function Careers() {
       environmentText: "Mit mehr als 35 Jahren Erfahrung berät Santos & Saucedo Unternehmen von San Pedro Garza García aus in arbeitsrechtlichen Fragen.",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "Das Semillero S&S ist das Praktikantenprogramm der Kanzlei.",
-      internshipOverviewText: "Wenn es heute keine passende Stelle für Ihr Profil gibt, können Sie Ihre Daten im Semillero hinterlegen. Wir sehen die Profile jedes Mal durch, wenn eine Stelle frei wird.",
       positionsTitle: "Offene Stellen",
       positionsEmpty: "Derzeit gibt es keine offenen Stellen. Sie können Ihre Daten im Semillero S&S hinterlegen.",
       positions: [] as Position[],
@@ -91,7 +86,6 @@ export default function Careers() {
       applyInstructions: "Senden Sie Ihren Lebenslauf als PDF an:",
       applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "Nennen Sie in der E-Mail Ihren Namen, Ihre Telefonnummer mit Vorwahl, Ihre Stufe (Studium, Praktikum, Jurist/in oder Verwaltung) und den gewünschten Bereich: Arbeitsrecht, Gesellschaftsrecht, Migrationsrecht oder Prozessführung.",
-      contactCardTitle: "Karriere-Kontakt",
       sendApplication: "Bewerbung senden",
     },
     zh: {
@@ -105,7 +99,6 @@ export default function Careers() {
       environmentText: "凭借超过35年的专业经验，Santos & Saucedo 在圣佩德罗-加尔萨-加西亚为企业提供劳动法律咨询。",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "Semillero S&S 是本所的实习生项目。",
-      internshipOverviewText: "如果目前没有适合您的职位，您可以将资料留在 Semillero。每当有职位空缺时，我们都会审阅这些资料。",
       positionsTitle: "职位空缺",
       positionsEmpty: "目前没有空缺职位。您可以将资料留在 Semillero S&S。",
       positions: [] as Position[],
@@ -113,7 +106,6 @@ export default function Careers() {
       applyInstructions: "请将 PDF 格式的简历发送至：",
       applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "请在邮件中注明您的姓名、带区号的电话、您的身份（学生、实习生、律师或行政人员）以及感兴趣的业务领域：劳动、公司、移民或诉讼。",
-      contactCardTitle: "招聘联系人",
       sendApplication: "发送申请",
     },
     ko: {
@@ -127,7 +119,6 @@ export default function Careers() {
       environmentText: "35년 이상의 전문 경험을 바탕으로, Santos & Saucedo는 산페드로 가르사 가르시아에서 기업에 노동 문제를 자문합니다.",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "Semillero S&S는 법인의 인턴십 프로그램입니다.",
-      internshipOverviewText: "지금 여러분의 프로필에 맞는 자리가 없다면 Semillero에 정보를 남길 수 있습니다. 자리가 날 때마다 프로필을 검토합니다.",
       positionsTitle: "채용 공고",
       positionsEmpty: "현재 채용 중인 자리가 없습니다. Semillero S&S에 정보를 남길 수 있습니다.",
       positions: [] as Position[],
@@ -135,7 +126,6 @@ export default function Careers() {
       applyInstructions: "PDF 형식의 이력서를 다음 주소로 보내 주세요:",
       applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "이메일에 이름, 지역번호를 포함한 전화번호, 구분(학생, 인턴, 변호사 또는 행정직)과 관심 업무 분야(노동, 기업, 출입국 또는 소송)를 적어 주세요.",
-      contactCardTitle: "채용 문의",
       sendApplication: "지원서 보내기",
     },
     ja: {
@@ -149,7 +139,6 @@ export default function Careers() {
       environmentText: "35年以上の専門的な実績を持ち、Santos & Saucedo はサン・ペドロ・ガルサ・ガルシアを拠点に企業の労働問題について助言しています。",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "Semillero S&S は当事務所のインターンシップ・プログラムです。",
-      internshipOverviewText: "現在、あなたのプロフィールに合う募集がない場合は、Semillero に情報を登録できます。募集が出るたびに登録されたプロフィールを確認します。",
       positionsTitle: "募集職種",
       positionsEmpty: "現在、募集中の職種はありません。Semillero S&S に情報を登録できます。",
       positions: [] as Position[],
@@ -157,7 +146,6 @@ export default function Careers() {
       applyInstructions: "PDF形式の履歴書を次のアドレスにお送りください：",
       applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "メールには、氏名、市外局番付きの電話番号、区分（学生、インターン、弁護士、事務職）、希望する業務分野（労働、企業法務、出入国管理、訴訟）をご記入ください。",
-      contactCardTitle: "採用担当連絡先",
       sendApplication: "応募書類を送信",
     },
     ar: {
@@ -171,7 +159,6 @@ export default function Careers() {
       environmentText: "مع أكثر من 35 عامًا من الخبرة، يقدّم Santos & Saucedo المشورة للشركات في مسائل العمل من San Pedro Garza García.",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "يُعدّ Semillero S&S برنامج المتدربين في المكتب.",
-      internshipOverviewText: "إذا لم تكن هناك اليوم وظيفة شاغرة تناسب ملفك، يمكنك ترك بياناتك في Semillero. نراجع الملفات كلما أُتيحت وظيفة.",
       positionsTitle: "الوظائف الشاغرة",
       positionsEmpty: "لا توجد حاليًا وظائف شاغرة. يمكنك ترك بياناتك في Semillero S&S.",
       positions: [] as Position[],
@@ -179,7 +166,6 @@ export default function Careers() {
       applyInstructions: "أرسل سيرتك الذاتية بصيغة PDF إلى:",
       applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "اذكر في رسالتك اسمك ورقم هاتفك مع رمز المنطقة ومستواك (طالب أو متدرب أو محامٍ أو موظف إداري) ومجال الممارسة الذي يهمك: العمل أو الشركات أو الهجرة أو التقاضي.",
-      contactCardTitle: "جهة اتصال التوظيف",
       sendApplication: "إرسال الطلب",
     },
     ru: {
@@ -193,7 +179,6 @@ export default function Careers() {
       environmentText: "С более чем 35-летним опытом Santos & Saucedo консультирует компании по вопросам трудового права из своего офиса в Сан-Педро-Гарса-Гарсия.",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "Semillero S&S — программа стажировки фирмы.",
-      internshipOverviewText: "Если сейчас нет вакансии для вашего профиля, вы можете оставить свои данные в Semillero. Мы просматриваем профили каждый раз, когда открывается позиция.",
       positionsTitle: "Вакансии",
       positionsEmpty: "Сейчас открытых вакансий нет. Вы можете оставить свои данные в Semillero S&S.",
       positions: [] as Position[],
@@ -201,29 +186,26 @@ export default function Careers() {
       applyInstructions: "Отправьте резюме в формате PDF на адрес:",
       applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "В письме укажите имя, телефон с кодом города, ваш уровень (студент, стажёр, юрист или административный сотрудник) и интересующую практику: трудовое право, корпоративное право, миграционное право или судебные споры.",
-      contactCardTitle: "Контакт отдела кадров",
       sendApplication: "Отправить заявку",
     },
     fr: {
       heroTitle: "Carrières",
       heroSubtitle: "Votre carrière chez Santos\u00a0&\u00a0Saucedo.",
       introText: "Chez Santos\u00a0&\u00a0Saucedo, les stagiaires et les collaborateurs travaillent dès le départ sur de vrais dossiers, aux côtés des associés : audits sur site, révision de conventions collectives, audiences de conciliation et procès.",
-      whyJoinSubtitle: "Nous recherchons des étudiants et des juristes intéressés par le droit du travail côté employeur, ainsi que du personnel administratif souhaitant évoluer dans un cabinet d'associés. Nous apprécions la rigueur, la discrétion et l'envie de comprendre le fonctionnement d'une entreprise de l'intérieur.",
+      whyJoinSubtitle: "Nous recherchons des étudiants et des juristes intéressés par le droit du travail côté employeur, ainsi que du personnel administratif souhaitant évoluer dans un cabinet d’associés. Nous apprécions la rigueur, la discrétion et l’envie de comprendre le fonctionnement d’une entreprise de l’intérieur.",
       cultureTitle: "Ce que vous apprendrez",
-      cultureText: "Dans un cabinet de notre taille, votre travail est relu directement par un associé. Vous apprendrez à préparer un dossier, à négocier et à défendre une position face à l'administration, et vous découvrirez de près le fonctionnement d'entreprises de nombreux secteurs.",
+      cultureText: "Dans un cabinet de notre taille, votre travail est relu directement par un associé. Vous apprendrez à préparer un dossier, à négocier et à défendre une position face à l’administration, et vous découvrirez de près le fonctionnement d’entreprises de nombreux secteurs.",
       environmentTitle: "Le cabinet",
       environmentText: "Avec plus de 35 ans d'expérience, Santos & Saucedo conseille les entreprises en droit du travail depuis San Pedro Garza García.",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "Le Semillero S&S est le programme de stage du cabinet.",
-      internshipOverviewText: "S'il n'y a pas aujourd'hui de poste pour votre profil, vous pouvez laisser vos coordonnées au Semillero. Nous examinons les profils chaque fois qu'un poste s'ouvre.",
       positionsTitle: "Postes à pourvoir",
-      positionsEmpty: "Il n'y a pas de poste à pourvoir pour le moment. Vous pouvez laisser vos coordonnées au Semillero S&S.",
+      positionsEmpty: "Il n’y a pas de poste à pourvoir pour le moment. Vous pouvez laisser vos coordonnées au Semillero S&S.",
       positions: [] as Position[],
       applyTitle: "Comment postuler",
       applyInstructions: "Envoyez votre CV au format PDF à :",
       applyEmail: "reclutamiento@santossaucedo.com",
-      applyNote: "Dans l'e-mail, indiquez votre nom, votre téléphone avec l'indicatif, votre niveau (étudiant, stagiaire, avocat ou personnel administratif) et le domaine qui vous intéresse : travail, sociétés, immigration ou contentieux.",
-      contactCardTitle: "Contact carrières",
+      applyNote: "Dans l’e-mail, indiquez votre nom, votre téléphone avec l’indicatif, votre niveau (étudiant, stagiaire, avocat ou personnel administratif) et le domaine qui vous intéresse : travail, sociétés, immigration ou contentieux.",
       sendApplication: "Envoyer la candidature",
     },
     it: {
@@ -237,7 +219,6 @@ export default function Careers() {
       environmentText: "Con oltre 35 anni di esperienza, Santos & Saucedo assiste le imprese in materia di lavoro da San Pedro Garza García.",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "Il Semillero S&S è il programma di tirocinio dello studio.",
-      internshipOverviewText: "Se oggi non c'è una posizione per il tuo profilo, puoi lasciare i tuoi dati nel Semillero. Esaminiamo i profili ogni volta che si apre una posizione.",
       positionsTitle: "Posizioni aperte",
       positionsEmpty: "Al momento non ci sono posizioni aperte. Puoi lasciare i tuoi dati nel Semillero S&S.",
       positions: [] as Position[],
@@ -245,7 +226,6 @@ export default function Careers() {
       applyInstructions: "Invia il tuo CV in PDF a:",
       applyEmail: "reclutamiento@santossaucedo.com",
       applyNote: "Nell'e-mail indica il tuo nome, il telefono con prefisso, il tuo livello (studente, tirocinante, avvocato o personale amministrativo) e l'area di interesse: lavoro, societario, immigrazione o contenzioso.",
-      contactCardTitle: "Contatto carriere",
       sendApplication: "Invia candidatura",
     },
   };
@@ -357,8 +337,9 @@ export default function Careers() {
           </motion.section>
 
           {/* Semillero S&S (el programa de pasantes), antes que las vacantes como en la
-              redacción: la frase de las vacantes remite a él. Enlaza a su página
-              (/careers/interns); sin duración, requisitos ni temario sin confirmar. */}
+              redacción: la frase de las vacantes remite a él. Solo su frase y el enlace a su
+              página (/careers/interns), que trae lo demás; sin "Si hoy no hay una vacante…",
+              que ya dice Vacantes. Sin duración, requisitos ni temario sin confirmar. */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -367,26 +348,17 @@ export default function Careers() {
             className="mb-20 lg:mb-24"
             data-testid="section-internship"
           >
-            <div className="max-w-3xl mb-12">
+            <div className="max-w-3xl">
               <h2 
                 className="ss-h2 mb-4"
                 data-testid="text-internship-title"
               >
                 {t.internshipTitle}
               </h2>
-              <p className={leadClass}>
+              <p className={leadClass} data-testid="card-internship-overview">
                 {t.internshipSubtitle}
               </p>
-            </div>
-
-            <div 
-              className={`${rowClass} max-w-3xl`}
-              data-testid="card-internship-overview"
-            >
-              <p className="text-base text-ss-tinta leading-[1.55]">
-                {t.internshipOverviewText}
-              </p>
-              <div className="mt-6" data-testid="card-internship-cta">
+              <div className="mt-8" data-testid="card-internship-cta">
                 <TextLink href="/careers/interns">{t.internshipTitle}</TextLink>
               </div>
             </div>
@@ -454,58 +426,40 @@ export default function Careers() {
             transition={{ duration: 0.6 }}
             data-testid="section-apply"
           >
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-12 gap-y-10">
-              <div className="lg:col-span-2" data-testid="card-apply-instructions">
-                <h2 
-                  className="ss-h2 mb-5"
-                  data-testid="text-apply-title"
-                >
-                  {t.applyTitle}
-                </h2>
-                <p className="text-base text-ss-tinta leading-[1.55] max-w-2xl mb-3">
-                  {t.applyInstructions}
-                </p>
-                {/* El correo como enlace de texto, no dentro de un botón. A 320 px no cabía en la
-                    columna: corte tras la arroba (<wbr>) y, por si acaso, overflow-wrap:anywhere */}
-                <a 
-                  href={`mailto:${t.applyEmail}`}
-                  className="inline-block max-w-full text-[19px] text-ss-marino underline decoration-ss-input underline-offset-4 [overflow-wrap:anywhere] hover:decoration-ss-marino mb-4"
-                  data-testid="link-apply-email"
-                >
-                  {emailUser}@<wbr />{emailDomain}
-                </a>
-                <p className="text-base text-ss-medio leading-[1.55] max-w-2xl">
-                  {t.applyNote}
-                </p>
-              </div>
-
-              <div className={rowClass} data-testid="card-careers-contact">
-                <h3 className="ss-h3 mb-4">
-                  {t.contactCardTitle}
-                </h3>
-                <p className="text-base text-ss-tinta leading-[1.55]">
-                  <a 
-                    href={`mailto:${t.applyEmail}`}
-                    className="[overflow-wrap:anywhere] hover:text-ss-marino hover:underline underline-offset-4 transition-colors"
-                    data-testid="link-contact-email"
-                  >
-                    {emailUser}@<wbr />{emailDomain}
-                  </a>
-                </p>
-                <p className="text-base text-ss-tinta leading-[1.55]">
-                  San Pedro Garza García
-                </p>
-                <a
-                  href={`mailto:${t.applyEmail}`}
-                  className={`${textLinkClass} mt-4`}
-                  data-testid="button-send-application"
-                >
-                  <span className="ss-link">{t.sendApplication}</span>
-                  <span aria-hidden="true" className="ss-arrow">
-                    →
-                  </span>
-                </a>
-              </div>
+            {/* El correo de reclutamiento una sola vez, en el cuerpo, y el único "Enviar
+                solicitud" debajo; sin el lateral "Contacto de carreras", que lo repetía */}
+            <div className="max-w-3xl" data-testid="card-apply-instructions">
+              <h2 
+                className="ss-h2 mb-5"
+                data-testid="text-apply-title"
+              >
+                {t.applyTitle}
+              </h2>
+              <p className="text-base text-ss-tinta leading-[1.55] max-w-2xl mb-3">
+                {t.applyInstructions}
+              </p>
+              {/* El correo como enlace de texto, no dentro de un botón. A 320 px no cabía en la
+                  columna: corte tras la arroba (<wbr>) y, por si acaso, overflow-wrap:anywhere */}
+              <a 
+                href={`mailto:${t.applyEmail}`}
+                className="inline-block max-w-full text-[19px] text-ss-marino underline decoration-ss-input underline-offset-4 [overflow-wrap:anywhere] hover:decoration-ss-marino mb-4"
+                data-testid="link-apply-email"
+              >
+                {emailUser}@<wbr />{emailDomain}
+              </a>
+              <p className="text-base text-ss-medio leading-[1.55] max-w-2xl">
+                {t.applyNote}
+              </p>
+              <a
+                href={`mailto:${t.applyEmail}`}
+                className={`${textLinkClass} mt-8`}
+                data-testid="button-send-application"
+              >
+                <span className="ss-link">{t.sendApplication}</span>
+                <span aria-hidden="true" className="ss-arrow">
+                  →
+                </span>
+              </a>
             </div>
           </motion.section>
 

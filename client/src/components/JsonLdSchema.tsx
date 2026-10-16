@@ -3,10 +3,23 @@ import { CONFIRMED_PARTNER_SLUGS } from "@shared/teamVisibility";
 
 // Datos estructurados sin datos no confirmados: fuera rango de precios, monedas y medios de
 // pago, coordenadas, horario, "Latin America", la foto de oficina sin archivo y la búsqueda
-// (/search no existe). La descripción con los 35 años se conserva tal cual.
+// (/search no existe).
+//
+// La firma (LegalService, @id #organization) y el sitio (WebSite, @id #website) se definen
+// una sola vez, en client/index.html (E18): así están en todas las páginas, también sin
+// JavaScript, y no hay dos versiones con valores distintos. Aquí solo se enlazan por @id.
 
-interface JsonLdSchemaProps {
-  language: LanguageCode;
+const SITE_URL = "https://www.santossaucedo.com";
+const ORGANIZATION = { "@id": `${SITE_URL}/#organization` };
+// Logotipo de client/public, que el build copia a la raíz del sitio
+const DEFAULT_IMAGE = `${SITE_URL}/logo-color.png`;
+
+/** URL absoluta en el dominio del sitio; quita la base de GitHub Pages (/santos-saucedo-page/) */
+function absoluteUrl(url: string): string {
+  if (/^https?:\/\//i.test(url)) return url;
+  const base = import.meta.env.BASE_URL || "/";
+  const path = base !== "/" && url.startsWith(base) ? url.slice(base.length - 1) : url;
+  return `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
 }
 
 const LANGUAGE_CODES: Record<LanguageCode, string> = {
@@ -22,219 +35,23 @@ const LANGUAGE_CODES: Record<LanguageCode, string> = {
   it: "it",
 };
 
-const descriptions = {
-  slogan: {
-    en: "Human-capital administration and legal defense for companies",
-    es: "Administración del capital humano y defensa legal para empresas",
-    de: "Human-capital administration and legal defense for companies",
-    zh: "Human-capital administration and legal defense for companies",
-    ko: "Human-capital administration and legal defense for companies",
-    ja: "Human-capital administration and legal defense for companies",
-    ar: "Human-capital administration and legal defense for companies",
-    ru: "Human-capital administration and legal defense for companies",
-    fr: "Human-capital administration and legal defense for companies",
-    it: "Human-capital administration and legal defense for companies",
-  },
-  homeBreadcrumb: {
-    en: "Home",
-    es: "Inicio",
-    de: "Home",
-    zh: "Home",
-    ko: "Home",
-    ja: "Home",
-    ar: "Home",
-    ru: "Home",
-    fr: "Home",
-    it: "Home",
-  },
-};
-
-export default function JsonLdSchema({ language }: JsonLdSchemaProps) {
-  const isSpanish = language === "es";
-  const safeDescription = isSpanish
-    ? "Santos & Saucedo Abogados es una firma legal para empresas -laboral, corporativo, migratorio y litigio-, con raíz en el derecho laboral y más de 35 años de experiencia asesorando empresas nacionales y multinacionales. Parte de una alianza con presencia en más de 72 ciudades de México."
-    : "Santos & Saucedo Abogados is a law firm for companies -labor, corporate, immigration and litigation-, rooted in labor law with more than 35 years of experience advising national and multinational companies. Part of an alliance with presence in more than 72 cities across Mexico.";
-  // Las cuatro prácticas, con el nombre del documento de redacción
-  const laborServices = isSpanish
-    ? [
-        "Laboral y seguridad social",
-        "Corporativo y contractual",
-        "Migratorio",
-        "Litigio",
-      ]
-    : [
-        "Labor and social security",
-        "Corporate and contractual",
-        "Immigration",
-        "Litigation",
-      ];
-  const langDescriptions = {
-    legalService: safeDescription,
-    organization: safeDescription,
-  };
-
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "@id": "https://www.santossaucedo.com/#organization",
-    "name": "Santos & Saucedo Abogados",
-    "alternateName": "S&S",
-    "legalName": "Santos & Saucedo Abogados",
-    "url": "https://www.santossaucedo.com",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://santossaucedo.com/images/santossaucedo_2025.png",
-      "width": "300",
-      "height": "60"
-    },
-    "image": "https://santossaucedo.com/images/santossaucedo_2025.png",
-    "description": langDescriptions.organization,
-    "slogan": descriptions.slogan[language],
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Río Tamazunchale 205 Norte",
-      "addressLocality": "San Pedro Garza García",
-      "addressRegion": "Nuevo León",
-      "addressCountry": "MX"
-    },
-    "contactPoint": [
-      {
-        "@type": "ContactPoint",
-        "telephone": "+52 81 8335 2086",
-        "contactType": "customer service",
-        "email": "info@santossaucedo.com",
-        "availableLanguage": ["Spanish"]
-      }
-    ],
-    "areaServed": {
-      "@type": "Country",
-      "name": "Mexico"
-    },
-    "knowsAbout": [
-      "Derecho laboral",
-      "Seguridad social",
-      "Derecho corporativo y contractual",
-      "Derecho migratorio",
-      "Litigio contencioso",
-      "Administración del capital humano"
-    ]
-  };
-
-  const legalServiceSchema = {
-    "@context": "https://schema.org",
-    "@type": "LegalService",
-    "@id": "https://www.santossaucedo.com/#legalservice",
-    "name": "Santos & Saucedo Abogados",
-    "url": "https://www.santossaucedo.com",
-    "logo": "https://santossaucedo.com/images/santossaucedo_2025.png",
-    "image": "https://santossaucedo.com/images/santossaucedo_2025.png",
-    "description": langDescriptions.legalService,
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Río Tamazunchale 205 Norte",
-      "addressLocality": "San Pedro Garza García",
-      "addressRegion": "Nuevo León",
-      "addressCountry": "MX"
-    },
-    "telephone": "+52 81 8335 2086",
-    "email": "info@santossaucedo.com",
-    "areaServed": {
-      "@type": "Country",
-      "name": "Mexico"
-    },
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": isSpanish ? "Prácticas" : "Practices",
-      "itemListElement": laborServices.map((name) => ({
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Service",
-          "name": name
-        }
-      }))
-    },
-    "knowsAbout": [
-      "Derecho laboral",
-      "Seguridad social",
-      "Derecho corporativo y contractual",
-      "Derecho migratorio",
-      "Litigio contencioso",
-      "Administración del capital humano"
-    ]
-  };
-
-  const localBusinessSchema = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "@id": "https://www.santossaucedo.com/#localbusiness",
-    "name": "Santos & Saucedo Abogados",
-    "description": safeDescription,
-    "image": "https://santossaucedo.com/images/santossaucedo_2025.png",
-    "url": "https://www.santossaucedo.com",
-    "telephone": "+52 81 8335 2086",
-    "email": "info@santossaucedo.com",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Río Tamazunchale 205 Norte",
-      "addressLocality": "San Pedro Garza García",
-      "addressRegion": "Nuevo León",
-      "addressCountry": "MX"
-    },
-    "hasMap": "https://www.google.com/maps/search/?api=1&query=R%C3%ADo+Tamazunchale+205+Norte%2C+San+Pedro+Garza+Garc%C3%ADa%2C+N.L."
-  };
-
-  const websiteSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "@id": "https://www.santossaucedo.com/#website",
-    "name": "Santos & Saucedo",
-    "url": "https://www.santossaucedo.com",
-    "inLanguage": LANGUAGE_CODES[language],
-    "description": safeDescription,
-    "publisher": {
-      "@id": "https://www.santossaucedo.com/#organization"
-    }
-  };
-
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": descriptions.homeBreadcrumb[language],
-        "item": "https://www.santossaucedo.com"
-      }
-    ]
-  };
-
-  const schemas = [
-    organizationSchema,
-    legalServiceSchema,
-    localBusinessSchema,
-    websiteSchema,
-    breadcrumbSchema
-  ];
-
-  return (
-    <>
-      {schemas.map((schema, index) => (
-        <script
-          key={index}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-        />
-      ))}
-    </>
-  );
+interface JsonLdSchemaProps {
+  language: LanguageCode;
 }
 
+/**
+ * Portada: la firma y el sitio ya están en index.html (E18) y la miga de pan de un solo
+ * nivel ("Inicio") no aporta nada; el componente se conserva para no tocar Home.tsx.
+ */
+export default function JsonLdSchema(_props: JsonLdSchemaProps) {
+  return null;
+}
+
+// Las fechas de las notas son las de la carga inicial, no las de publicación: datePublished y
+// dateModified se aceptan pero no se declaran hasta que la firma las confirme (E9)
 export function ArticleJsonLd({
   headline,
   description,
-  datePublished,
-  dateModified,
   authorName,
   authorUrl,
   imageUrl,
@@ -243,7 +60,7 @@ export function ArticleJsonLd({
 }: {
   headline: string;
   description: string;
-  datePublished: string | Date | null;
+  datePublished?: string | Date | null;
   dateModified?: string | Date | null;
   authorName?: string;
   authorUrl?: string;
@@ -251,47 +68,25 @@ export function ArticleJsonLd({
   url: string;
   language?: LanguageCode;
 }) {
-  const formatDate = (date: string | Date | null) => {
-    if (!date) return new Date().toISOString();
-    const d = typeof date === "string" ? new Date(date) : date;
-    return d.toISOString();
-  };
-
   const schema = {
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": headline,
     "description": description,
-    "image": imageUrl || "https://santossaucedo.com/images/santossaucedo_2025.png",
-    "datePublished": formatDate(datePublished),
-    "dateModified": formatDate(dateModified || datePublished),
+    "image": imageUrl ? absoluteUrl(imageUrl) : DEFAULT_IMAGE,
     "author": authorName ? {
       "@type": "Person",
       "name": authorName,
       "url": authorUrl
-    } : {
-      "@type": "Organization",
-      "name": "Santos & Saucedo Abogados",
-      "url": "https://www.santossaucedo.com"
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "Santos & Saucedo Abogados",
-      "url": "https://www.santossaucedo.com",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://santossaucedo.com/images/santossaucedo_2025.png",
-        "width": "300",
-        "height": "60"
-      }
-    },
+    } : ORGANIZATION,
+    "publisher": ORGANIZATION,
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": url
     },
     "inLanguage": LANGUAGE_CODES[language],
     "isPartOf": {
-      "@id": "https://www.santossaucedo.com/#website"
+      "@id": `${SITE_URL}/#website`
     }
   };
 
@@ -354,31 +149,24 @@ export function PersonJsonLd({
     "name": name,
     "jobTitle": jobTitle,
     "url": url,
-    "image": imageUrl || undefined,
+    "image": imageUrl ? absoluteUrl(imageUrl) : undefined,
     "email": email || undefined,
     "telephone": telephone || undefined,
-    "worksFor": {
-      "@type": "LegalService",
-      "@id": "https://www.santossaucedo.com/#legalservice",
-      "name": "Santos & Saucedo Abogados",
-      "url": "https://www.santossaucedo.com"
-    },
+    "worksFor": ORGANIZATION,
     "alumniOf": alumniOf.length > 0 ? alumniOf : undefined,
     "knowsLanguage": languages || undefined,
     "knowsAbout": knowsAbout || undefined,
     "sameAs": sameAs.length > 0 ? sameAs : undefined,
+    // La de la oficina, igual que la de #organization en index.html
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Río Tamazunchale 205 Norte",
+      "streetAddress": "Río Tamazunchale 205 Norte, Col. del Valle",
       "addressLocality": "San Pedro Garza García",
       "addressRegion": "Nuevo León",
+      "postalCode": "66220",
       "addressCountry": "MX"
     },
-    "memberOf": {
-      "@type": "Organization",
-      "@id": "https://www.santossaucedo.com/#organization",
-      "name": "Santos & Saucedo Abogados"
-    }
+    "memberOf": ORGANIZATION
   };
 
   const cleanSchema = JSON.parse(JSON.stringify(schema, (key, value) => 

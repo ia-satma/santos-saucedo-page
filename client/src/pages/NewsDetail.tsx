@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Link, useParams } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowLeft, Linkedin, Mail, LinkIcon, MessageCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
@@ -16,7 +15,7 @@ import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { Eyebrow, LeadParagraph } from "@/components/editorial";
 import { formatNewsDate } from "@/lib/newsDate";
-import { MonitorList } from "@/components/monitor/MonitorList";
+import { MonitorList, MonitorSubscribe } from "@/components/monitor/MonitorList";
 import { chrome26 } from "@/components/home26/chrome26";
 import type { News, TeamMember } from "@shared/schema";
 
@@ -27,15 +26,6 @@ import type { News, TeamMember } from "@shared/schema";
 // conserva la dirección de la página (en árabe, alineado a la derecha con el eyebrow y la
 // vuelta); el texto va aislado en <bdi lang="en" dir="ltr">, como en Team.tsx.
 const EN_SOURCE = { lang: "en", dir: "ltr" } as const;
-
-// Marca de X (antes Twitter), en el color del texto: la lucide "Twitter" es el pájaro retirado
-function XMark({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
-      <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
-    </svg>
-  );
-}
 
 // Imagen del artículo: figura al inicio del cuerpo, bajo el encabezado de papel, sin velo.
 // Sin imagen, o si no carga, no se pinta nada (sin foto genérica de reemplazo).
@@ -178,6 +168,8 @@ export default function NewsDetail() {
     home: string;
     backToNews: string;
     share: string;
+    /** Compartir por correo (mailto) */
+    shareEmail: string;
     relatedNews: string;
     errorMessage: string;
     copyLink: string;
@@ -188,7 +180,8 @@ export default function NewsDetail() {
     en: {
       home: "Home",
       backToNews: "Back to the Labor Monitor",
-      share: "Share this article",
+      share: "Share",
+      shareEmail: "Email",
       relatedNews: "More from the Labor Monitor",
       errorMessage: "Article not found",
       copyLink: "Copy link",
@@ -199,7 +192,8 @@ export default function NewsDetail() {
     es: {
       home: "Inicio",
       backToNews: "Volver al Monitor Laboral",
-      share: "Compartir este artículo",
+      share: "Compartir",
+      shareEmail: "Correo",
       relatedNews: "Más del Monitor Laboral",
       errorMessage: "Artículo no encontrado",
       copyLink: "Copiar enlace",
@@ -210,7 +204,8 @@ export default function NewsDetail() {
     de: {
       home: "Startseite",
       backToNews: "Zurück zu den Nachrichten",
-      share: "Artikel teilen",
+      share: "Teilen",
+      shareEmail: "E-Mail",
       relatedNews: "Weitere Nachrichten",
       errorMessage: "Nachricht nicht gefunden",
       copyLink: "Link kopieren",
@@ -221,7 +216,8 @@ export default function NewsDetail() {
     zh: {
       home: "首页",
       backToNews: "返回新闻",
-      share: "分享文章",
+      share: "分享",
+      shareEmail: "邮件",
       relatedNews: "更多新闻",
       errorMessage: "未找到新闻",
       copyLink: "复制链接",
@@ -232,7 +228,8 @@ export default function NewsDetail() {
     ko: {
       home: "홈",
       backToNews: "뉴스로 돌아가기",
-      share: "기사 공유",
+      share: "공유",
+      shareEmail: "이메일",
       relatedNews: "뉴스 더 보기",
       errorMessage: "뉴스를 찾을 수 없습니다",
       copyLink: "링크 복사",
@@ -243,7 +240,8 @@ export default function NewsDetail() {
     ja: {
       home: "ホーム",
       backToNews: "ニュースに戻る",
-      share: "記事を共有",
+      share: "共有",
+      shareEmail: "メール",
       relatedNews: "その他のニュース",
       errorMessage: "ニュースが見つかりません",
       copyLink: "リンクをコピー",
@@ -254,7 +252,8 @@ export default function NewsDetail() {
     ar: {
       home: "الرئيسية",
       backToNews: "العودة إلى الأخبار",
-      share: "مشاركة المقال",
+      share: "مشاركة",
+      shareEmail: "البريد الإلكتروني",
       relatedNews: "المزيد من الأخبار",
       errorMessage: "الخبر غير موجود",
       copyLink: "نسخ الرابط",
@@ -265,7 +264,8 @@ export default function NewsDetail() {
     ru: {
       home: "Главная",
       backToNews: "Назад к новостям",
-      share: "Поделиться статьёй",
+      share: "Поделиться",
+      shareEmail: "Эл. почта",
       relatedNews: "Другие новости",
       errorMessage: "Новость не найдена",
       copyLink: "Скопировать ссылку",
@@ -276,18 +276,20 @@ export default function NewsDetail() {
     fr: {
       home: "Accueil",
       backToNews: "Retour aux actualités",
-      share: "Partager l'article",
+      share: "Partager",
+      shareEmail: "E-mail",
       relatedNews: "Autres actualités",
       errorMessage: "Actualité non trouvée",
       copyLink: "Copier le lien",
       linkCopied: "Lien copié.",
-      aboutTheAuthor: "À propos de l'auteur",
+      aboutTheAuthor: "À propos de l’auteur",
       aboutTheAuthors: "À propos des auteurs",
     },
     it: {
       home: "Home",
       backToNews: "Torna alle notizie",
-      share: "Condividi articolo",
+      share: "Condividi",
+      shareEmail: "E-mail",
       relatedNews: "Altre notizie",
       errorMessage: "Notizia non trovata",
       copyLink: "Copia link",
@@ -304,15 +306,13 @@ export default function NewsDetail() {
   // Formato único de fecha del Monitor (lib/newsDate): el mismo que el listado de /news
   const formatDate = (date: Date | string | null) => formatNewsDate(date, language);
 
-  const handleShare = (platform: "linkedin" | "twitter" | "whatsapp" | "email") => {
+  const handleShare = (platform: "linkedin" | "email") => {
     const url = window.location.href;
     const shareTitle = translatedFields.title || newsArticle?.title;
     const shareExcerpt = translatedFields.excerpt || newsArticle?.excerpt;
     
     const shareUrls = {
       linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-      twitter: `https://x.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareTitle || "")}`,
-      whatsapp: `https://wa.me/?text=${encodeURIComponent(`${shareTitle} - ${url}`)}`,
       email: `mailto:?subject=${encodeURIComponent(shareTitle || "")}&body=${encodeURIComponent(`${shareExcerpt || ""}\n\n${url}`)}`,
     };
     
@@ -442,8 +442,7 @@ export default function NewsDetail() {
           <ArticleJsonLd
             headline={language === "es" ? newsArticle.titleEs : newsArticle.title}
             description={language === "es" ? newsArticle.excerptEs : newsArticle.excerpt}
-            datePublished={newsArticle.date}
-            dateModified={newsArticle.date}
+            // Sin datePublished: las fechas de las notas son las de la carga inicial (E9)
             authorName={primaryAuthor?.name}
             authorUrl={primaryAuthor ? `https://www.santossaucedo.com/team/${primaryAuthor.slug}` : undefined}
             imageUrl={newsArticle.imageUrl}
@@ -502,17 +501,15 @@ export default function NewsDetail() {
                 data-testid="text-news-title"
                 lang={titleIsSource ? "en" : undefined}
               >
+                {/* Titular de origen de inmediato; la traducción lo sustituye solo si llega */}
                 {titleIsSource ? <bdi lang="en" dir="ltr">{displayTitle}</bdi> : displayTitle}
-                {isTranslating && (
-                  <Loader2 className="inline-block w-5 h-5 ml-3 animate-spin text-ss-medio" aria-hidden="true" />
-                )}
               </h1>
 
               {/* Fecha bajo el titular, como en prensa */}
               {newsArticle?.date && (
                 <p className="ss-label ss-num mt-6 text-ss-medio">
                   <time
-                    // Instante completo, como datePublished del JSON-LD: no cambia con la zona del visitante
+                    // Instante completo: no cambia con la zona del visitante
                     dateTime={new Date(newsArticle.date).toISOString()}
                     data-testid="text-news-date"
                   >
@@ -569,72 +566,49 @@ export default function NewsDetail() {
                 )}
               </div>
 
-              {/* Compartir: botones de solo icono, funcionales, con nombre accesible */}
+              {/* Compartir: una fila de etiqueta con botones de texto (LinkedIn · Correo · Copiar
+                  enlace), sin bordes ni iconos; 44 px de alto útil por el relleno */}
               <div
                 className="pt-8 mb-16 border-t border-ss-rule"
                 data-testid="section-share"
               >
-                <div className="flex flex-wrap items-center gap-4">
-                  <span className="ss-label text-ss-medio">{t.share}</span>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="text-ss-marino"
-                      onClick={() => handleShare("linkedin")}
-                      data-testid="button-share-linkedin"
-                      title="LinkedIn"
-                      aria-label="LinkedIn"
-                    >
-                      <Linkedin className="w-4 h-4" aria-hidden="true" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="text-ss-marino"
-                      onClick={() => handleShare("twitter")}
-                      data-testid="button-share-twitter"
-                      title="X"
-                      aria-label="X"
-                    >
-                      <XMark className="w-3.5 h-3.5" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="text-ss-marino"
-                      onClick={() => handleShare("whatsapp")}
-                      data-testid="button-share-whatsapp"
-                      title="WhatsApp"
-                      aria-label="WhatsApp"
-                    >
-                      <MessageCircle className="w-4 h-4" aria-hidden="true" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="text-ss-marino"
-                      onClick={() => handleShare("email")}
-                      data-testid="button-share-email"
-                      title="Email"
-                      aria-label="Email"
-                    >
-                      <Mail className="w-4 h-4" aria-hidden="true" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="text-ss-marino"
-                      onClick={handleCopyLink}
-                      data-testid="button-share-copy-link"
-                      title={t.copyLink}
-                      aria-label={t.copyLink}
-                    >
-                      <LinkIcon className="w-4 h-4" aria-hidden="true" />
-                    </Button>
-                  </div>
+                <div
+                  role="group"
+                  aria-labelledby="news-share-label"
+                  className="ss-label flex flex-wrap items-center gap-x-2"
+                >
+                  <span id="news-share-label" className="text-ss-medio me-2">{t.share}</span>
+                  <button
+                    type="button"
+                    className="ss-label inline-flex min-h-[44px] items-center text-ss-marino underline-offset-[6px] decoration-1 hover:underline"
+                    onClick={() => handleShare("linkedin")}
+                    data-testid="button-share-linkedin"
+                  >
+                    LinkedIn
+                  </button>
+                  <span aria-hidden="true" className="text-ss-medio">·</span>
+                  <button
+                    type="button"
+                    className="ss-label inline-flex min-h-[44px] items-center text-ss-marino underline-offset-[6px] decoration-1 hover:underline"
+                    onClick={() => handleShare("email")}
+                    data-testid="button-share-email"
+                  >
+                    {t.shareEmail}
+                  </button>
+                  <span aria-hidden="true" className="text-ss-medio">·</span>
+                  <button
+                    type="button"
+                    className="ss-label inline-flex min-h-[44px] items-center text-ss-marino underline-offset-[6px] decoration-1 hover:underline"
+                    onClick={handleCopyLink}
+                    data-testid="button-share-copy-link"
+                  >
+                    {t.copyLink}
+                  </button>
                 </div>
               </div>
+
+              {/* Al pie de cada nota: la suscripción al Monitor (/newsletter) */}
+              <MonitorSubscribe className="mb-16" testId="section-article-subscribe" linkTestId="link-article-subscribe" />
             </motion.div>
 
             {relatedAuthors && relatedAuthors.length > 0 && (

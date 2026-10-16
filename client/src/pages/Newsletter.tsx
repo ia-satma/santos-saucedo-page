@@ -19,7 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, isStaticSite } from "@/lib/queryClient";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import SEOHead from "@/components/SEOHead";
+import SEOHead, { detailTitle } from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
 import type { LanguageCode } from "@shared/schema";
@@ -35,6 +35,8 @@ interface NewsletterFormData {
 }
 
 interface NewsletterStrings {
+  /** h1 y título de la pestaña (la misma cadena): la suscripción, con el nombre de la
+      publicación del menú de cada idioma (nav[3]: Monitor Laboral, Labor Monitor, Nachrichten…) */
   title: string;
   /** Frase única del encabezado (con su punto; "。" en chino y japonés) */
   subtitle: string;
@@ -57,7 +59,7 @@ interface NewsletterStrings {
 
 const content: Record<LanguageCode, NewsletterStrings> = {
   es: {
-    title: "Boletines",
+    title: "Suscripción al Monitor Laboral",
     subtitle: "Recibir el Monitor Laboral por correo.",
     emailLabel: "Correo electrónico",
     consentBefore: "He leído y acepto el ",
@@ -75,7 +77,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     unavailableDescription: "Por ahora no es posible suscribirse desde este sitio.",
   },
   en: {
-    title: "Newsletter",
+    title: "Labor Monitor subscription",
     subtitle: "Receive the Labor Monitor by email.",
     emailLabel: "Email address",
     consentBefore: "I have read and accept the ",
@@ -93,7 +95,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     unavailableDescription: "Subscribing from this site is not available for now.",
   },
   de: {
-    title: "Newsletter",
+    title: "Nachrichten abonnieren",
     subtitle: "Die Nachrichten der Kanzlei per E-Mail erhalten.",
     emailLabel: "E-Mail-Adresse",
     consentBefore: "Ich habe den ",
@@ -111,7 +113,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     unavailableDescription: "Eine Anmeldung über diese Website ist derzeit nicht möglich.",
   },
   zh: {
-    title: "电子通讯",
+    title: "订阅新闻",
     subtitle: "通过电子邮件接收本所新闻。",
     emailLabel: "电子邮件地址",
     consentBefore: "我已阅读并接受",
@@ -129,7 +131,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     unavailableDescription: "目前无法通过本网站订阅。",
   },
   ko: {
-    title: "뉴스레터",
+    title: "뉴스 구독",
     subtitle: "법인의 뉴스를 이메일로 받아 보실 수 있습니다.",
     emailLabel: "이메일 주소",
     consentBefore: "",
@@ -147,7 +149,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     unavailableDescription: "현재 이 사이트에서는 구독할 수 없습니다.",
   },
   ja: {
-    title: "ニュースレター",
+    title: "ニュースの購読",
     subtitle: "事務所のニュースをメールでお受け取りいただけます。",
     emailLabel: "メールアドレス",
     consentBefore: "",
@@ -165,7 +167,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     unavailableDescription: "現在、このサイトから購読することはできません。",
   },
   ar: {
-    title: "النشرة الإخبارية",
+    title: "الاشتراك في الأخبار",
     subtitle: "تلقّي أخبار المكتب عبر البريد الإلكتروني.",
     emailLabel: "عنوان البريد الإلكتروني",
     consentBefore: "قرأتُ ",
@@ -183,7 +185,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     unavailableDescription: "لا يمكن الاشتراك من هذا الموقع حاليًا.",
   },
   ru: {
-    title: "Рассылка",
+    title: "Подписка на новости",
     subtitle: "Получать новости фирмы по электронной почте.",
     emailLabel: "Адрес электронной почты",
     consentBefore: "Я прочитал(а) ",
@@ -201,7 +203,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     unavailableDescription: "Сейчас оформить подписку на этом сайте нельзя.",
   },
   fr: {
-    title: "Newsletter",
+    title: "Abonnement aux actualités",
     subtitle: "Recevoir les actualités du cabinet par e-mail.",
     emailLabel: "Adresse e-mail",
     consentBefore: "J’ai lu et j’accepte la ",
@@ -219,7 +221,7 @@ const content: Record<LanguageCode, NewsletterStrings> = {
     unavailableDescription: "Il n’est pas possible de s’abonner depuis ce site pour le moment.",
   },
   it: {
-    title: "Newsletter",
+    title: "Iscrizione alle notizie",
     subtitle: "Ricevere le notizie dello studio via e-mail.",
     emailLabel: "Indirizzo e-mail",
     consentBefore: "Ho letto e accetto l’",
@@ -293,7 +295,8 @@ export default function Newsletter() {
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-newsletter">
-      <SEOHead page="newsletter" language={language} />
+      {/* Título de la pestaña = h1 (E5) */}
+      <SEOHead page="newsletter" language={language} customTitle={detailTitle(t.title)} />
       <Header />
 
       {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo
@@ -344,7 +347,9 @@ export default function Newsletter() {
                     <FormItem>
                       <FormLabel data-testid="label-email">{t.emailLabel}</FormLabel>
                       <FormControl>
+                        {/* 44 px (h-11): el objetivo táctil del sitio */}
                         <Input
+                          className="h-11"
                           type="email"
                           autoComplete="email"
                           {...field}

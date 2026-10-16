@@ -6,9 +6,14 @@ import { home26, type Lang26 } from "./content";
 const FALLBACK_EMAIL = "info@santossaucedo.com";
 
 // La API da la dirección en una línea. Se compone como membrete en cuatro líneas:
-// calle / colonia / ciudad y estado / código postal y país.
+// calle / colonia / ciudad y estado / código postal y país. La colonia se escribe como en
+// /contact, las descripciones y el documento de redacción: "Col. del Valle" (la base dice
+// "Colonia Del Valle").
 function splitAddress(address: string): string[] {
-  const p = address.split(/,\s*/).filter(Boolean);
+  const p = address
+    .replace(/\bColonia\s+del\s+Valle\b/i, "Col. del Valle")
+    .split(/,\s*/)
+    .filter(Boolean);
   return p.length >= 4 ? [p[0], p[1], p.slice(2, -2).join(", "), p.slice(-2).join(", ")] : p;
 }
 

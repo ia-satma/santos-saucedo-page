@@ -4,10 +4,11 @@ import type { Lang26 } from "./content";
 
 // Texto de interfaz de cabecera, menú móvil, buscador, selector de idiomas y pie.
 // ES y EN son los textos aprobados de la portada (no cambian). Los otros 8 reutilizan
-// i18n.ts y CookieBanner cuando hay equivalente; cada enlace del menú lleva el título
-// (h1) que muestra su página, salvo Carreras (el h1 es una frase: se usa el nombre
-// corto), los títulos franceses que no caben en la cabecera y la publicación en coreano,
-// japonés y árabe: "Noticias" a secas, como en chino y ruso, sin "insights".
+// i18n.ts y CookieBanner cuando hay equivalente. La etiqueta del menú es el nombre único
+// de cada sección (E5): el h1 de su página, el título de pestaña (SEOHead), los enlaces de
+// vuelta y la miga de pan la toman de aquí. § 03 es "Socios" en todos los idiomas (Partner,
+// Associés, Soci…), no "nuestro equipo"; la publicación en coreano, japonés y árabe es
+// "Noticias" a secas, como en chino y ruso, sin "insights".
 
 export interface NavItem26 {
   label: string;
@@ -148,7 +149,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
   de: {
     attrs: { lang: "de", dir: "ltr" },
     locale: "de-DE",
-    nav: nav("Über die Kanzlei", "Praxisbereiche", "Unser Team", "Nachrichten", "Karriere", "Kontakt"),
+    nav: nav("Über die Kanzlei", "Praxisbereiche", "Partner", "Nachrichten", "Karriere", "Kontakt"),
     header: { nav: "Hauptmenü", menu: "Menü", close: "Schließen" },
     search: {
       open: "Suchen",
@@ -179,7 +180,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
   zh: {
     attrs: { lang: "zh-CN", dir: "ltr" },
     locale: "zh-CN",
-    nav: nav("关于律所", "业务领域", "我们的团队", "新闻", "职业发展", "联系我们"),
+    nav: nav("关于律所", "业务领域", "合伙人", "新闻", "职业发展", "联系我们"),
     header: { nav: "主菜单", menu: "菜单", close: "关闭" },
     search: {
       open: "搜索",
@@ -209,7 +210,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
   ko: {
     attrs: { lang: "ko", dir: "ltr" },
     locale: "ko-KR",
-    nav: nav("회사 소개", "업무 분야", "우리 팀", "뉴스", "채용", "문의하기"),
+    nav: nav("회사 소개", "업무 분야", "파트너", "뉴스", "채용", "문의하기"),
     header: { nav: "주 메뉴", menu: "메뉴", close: "닫기" },
     search: {
       open: "검색",
@@ -239,7 +240,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
   ja: {
     attrs: { lang: "ja", dir: "ltr" },
     locale: "ja-JP",
-    nav: nav("事務所について", "取扱分野", "私たちのチーム", "ニュース", "採用情報", "お問い合わせ"),
+    nav: nav("事務所について", "取扱分野", "パートナー", "ニュース", "採用情報", "お問い合わせ"),
     header: { nav: "メインメニュー", menu: "メニュー", close: "閉じる" },
     search: {
       open: "検索",
@@ -271,7 +272,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
     attrs: { lang: "ar", dir: "rtl" },
     // "ar" sin región: calendario gregoriano (ar-SA usaría el hégira)
     locale: "ar",
-    nav: nav("عن الشركة", "مجالات الممارسة", "فريقنا", "الأخبار", "الوظائف", "اتصل بنا"),
+    nav: nav("عن الشركة", "مجالات الممارسة", "الشركاء", "الأخبار", "الوظائف", "اتصل بنا"),
     header: { nav: "القائمة الرئيسية", menu: "القائمة", close: "إغلاق" },
     search: {
       open: "بحث",
@@ -301,7 +302,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
   ru: {
     attrs: { lang: "ru", dir: "ltr" },
     locale: "ru-RU",
-    nav: nav("О фирме", "Практики", "Наша команда", "Новости", "Карьера", "Контакты"),
+    nav: nav("О фирме", "Практики", "Партнёры", "Новости", "Карьера", "Контакты"),
     header: { nav: "Основное меню", menu: "Меню", close: "Закрыть" },
     search: {
       open: "Поиск",
@@ -331,9 +332,8 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
   fr: {
     attrs: { lang: "fr", dir: "ltr" },
     locale: "fr-FR",
-    // Los h1 completos ("À propos du cabinet", "Actualités et perspectives", "Contactez-nous")
-    // no caben en la cabecera ni a 1440 px: se usa su sustantivo, como el EN "The firm"
-    nav: nav("Le cabinet", "Domaines de pratique", "Notre équipe", "Actualités", "Carrières", "Contact"),
+    // Sustantivos cortos, como el EN "The firm": los h1 de las páginas los toman de aquí (E5)
+    nav: nav("Le cabinet", "Domaines de pratique", "Associés", "Actualités", "Carrières", "Contact"),
     header: { nav: "Principale", menu: "Menu", close: "Fermer" },
     search: {
       open: "Rechercher",
@@ -364,7 +364,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
   it: {
     attrs: { lang: "it", dir: "ltr" },
     locale: "it-IT",
-    nav: nav("Chi siamo", "Aree di pratica", "Il nostro team", "Notizie", "Carriere", "Contatti"),
+    nav: nav("Chi siamo", "Aree di pratica", "Soci", "Notizie", "Carriere", "Contatti"),
     header: { nav: "Principale", menu: "Menu", close: "Chiudi" },
     search: {
       open: "Cerca",

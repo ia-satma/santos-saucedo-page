@@ -59,8 +59,8 @@ export default function NotFound() {
     },
     fr: {
       title: "Page non trouvée",
-      subtitle: "La page que vous recherchez n'existe pas ou a été déplacée.",
-      goHome: "Aller à l'accueil",
+      subtitle: "La page que vous recherchez n’existe pas ou a été déplacée.",
+      goHome: "Aller à l’accueil",
       goBack: "Retour"
     },
     it: {

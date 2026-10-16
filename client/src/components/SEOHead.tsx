@@ -4,7 +4,8 @@ import type { LanguageCode } from "@shared/schema";
 import { chrome26 } from "@/components/home26/chrome26";
 
 const BASE_URL = "https://www.santossaucedo.com";
-const DEFAULT_IMAGE = "https://santossaucedo.com/images/santossaucedo_2025.png";
+// Logotipo de client/public (el build lo copia a la raíz del sitio); el de /images no existe
+const DEFAULT_IMAGE = "https://www.santossaucedo.com/logo-color.png";
 const SITE_NAME = "Santos & Saucedo";
 
 const OG_LOCALE_CODES: Record<LanguageCode, string> = {
@@ -57,11 +58,25 @@ export function articleTitle(headline: string, language: LanguageCode): string {
   return `${headline} | ${publicationName(language)}`;
 }
 
-/** Descripción a partir de un texto largo (biografía, resumen, entradilla): la primera oración, hasta ~160 caracteres */
-export function metaDescription(text: string | null | undefined, max = 160): string {
+// Fin de oración: . ! ? tras una minúscula, una cifra o un cierre (paréntesis, comillas), o
+// los signos de cierre del chino y el japonés. Una inicial ("Jorge A. Garza") no cierra la
+// oración, y tampoco un punto antes de 40 caracteres (abreviaturas como "Lic.").
+// (RegExp con "u" para \p{Ll}, minúscula de cualquier alfabeto: á, ñ, é…)
+const SENTENCE_END = new RegExp('[\\p{Ll}\\p{N})"»”’][.!?](?=\\s|$)|[。！？]', "gu");
+const MIN_SENTENCE = 40;
+
+/** Descripción a partir de un texto largo (biografía, resumen, entradilla): la primera oración, hasta ~155 caracteres en límite de palabra */
+export function metaDescription(text: string | null | undefined, max = 155): string {
   const clean = (text ?? "").replace(/\s+/g, " ").trim();
   if (!clean) return "";
-  const sentence = clean.match(/^.+?[.!?。！？](?=\s|$)/)?.[0] ?? clean;
+  let sentence = clean;
+  for (const m of Array.from(clean.matchAll(SENTENCE_END))) {
+    const end = (m.index ?? 0) + m[0].length;
+    if (end >= MIN_SENTENCE) {
+      sentence = clean.slice(0, end);
+      break;
+    }
+  }
   if (sentence.length <= max) return sentence;
   const cut = sentence.slice(0, max - 1);
   const space = cut.lastIndexOf(" ");
@@ -113,6 +128,23 @@ const contactConfig: SEOConfig = {
     it: "Sede di Santos & Saucedo: Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L.",
   },
   path: "/contact",
+};
+
+const newsConfig: SEOConfig = {
+  title: navTitle(3),
+  description: {
+    en: "Analysis and publications from the Santos & Saucedo Labor Monitor on the labor and social security changes that affect employers.",
+    es: "Análisis y publicaciones del Monitor Laboral de Santos & Saucedo sobre los cambios laborales y de seguridad social que afectan a las empresas.",
+    de: "Nachrichten und Analysen von Santos & Saucedo zu den Änderungen im Arbeits- und Sozialversicherungsrecht, die Unternehmen betreffen.",
+    zh: "Santos & Saucedo关于影响企业的劳动法和社会保障法变化的新闻与分析。",
+    ko: "기업에 영향을 미치는 노동법 및 사회보장법의 변화에 관한 Santos & Saucedo의 뉴스와 분석.",
+    ja: "企業に影響する労働法・社会保障法の改正に関するSantos & Saucedoのニュースと分析。",
+    ar: "أخبار وتحليلات Santos & Saucedo حول التغييرات في قانون العمل والضمان الاجتماعي التي تؤثر على الشركات.",
+    ru: "Новости и аналитика Santos & Saucedo об изменениях трудового права и социального обеспечения, которые касаются компаний.",
+    fr: "Actualités et analyses de Santos & Saucedo sur les évolutions du droit du travail et de la sécurité sociale qui concernent les entreprises.",
+    it: "Notizie e analisi di Santos & Saucedo sulle novità del diritto del lavoro e della previdenza sociale che riguardano le imprese.",
+  },
+  path: "/news",
 };
 
 const seoConfig: Record<string, SEOConfig> = {
@@ -176,22 +208,7 @@ const seoConfig: Record<string, SEOConfig> = {
     path: "/team",
   },
   practiceGroups: practiceGroupsConfig,
-  news: {
-    title: navTitle(3),
-    description: {
-      en: "Analysis and publications from the Santos & Saucedo Labor Monitor on the labor and social security changes that affect employers.",
-      es: "Análisis y publicaciones del Monitor Laboral de Santos & Saucedo sobre los cambios laborales y de seguridad social que afectan a las empresas.",
-      de: "Nachrichten und Analysen von Santos & Saucedo zu den Änderungen im Arbeits- und Sozialversicherungsrecht, die Unternehmen betreffen.",
-      zh: "Santos & Saucedo关于影响企业的劳动法和社会保障法变化的新闻与分析。",
-      ko: "기업에 영향을 미치는 노동법 및 사회보장법의 변화에 관한 Santos & Saucedo의 뉴스와 분석.",
-      ja: "企業に影響する労働法・社会保障法の改正に関するSantos & Saucedoのニュースと分析。",
-      ar: "أخبار وتحليلات Santos & Saucedo حول التغييرات في قانون العمل والضمان الاجتماعي التي تؤثر على الشركات.",
-      ru: "Новости и аналитика Santos & Saucedo об изменениях трудового права и социального обеспечения, которые касаются компаний.",
-      fr: "Actualités et analyses de Santos & Saucedo sur les évolutions du droit du travail et de la sécurité sociale qui concernent les entreprises.",
-      it: "Notizie e analisi di Santos & Saucedo sulle novità del diritto del lavoro e della previdenza sociale che riguardano le imprese.",
-    },
-    path: "/news",
-  },
+  news: newsConfig,
   contact: contactConfig,
   careers: {
     title: navTitle(4),
@@ -353,45 +370,24 @@ const seoConfig: Record<string, SEOConfig> = {
     },
     path: "/pro-bono",
   },
-  articles: {
-    title: {
-      en: "Articles | Santos & Saucedo",
-      es: "Artículos | Santos & Saucedo",
-      de: "Artikel | Santos & Saucedo",
-      zh: "文章 | Santos & Saucedo",
-      ko: "아티클 | Santos & Saucedo",
-      ja: "記事 | Santos & Saucedo",
-      ar: "المقالات | Santos & Saucedo",
-      ru: "Статьи | Santos & Saucedo",
-      fr: "Articles | Santos & Saucedo",
-      it: "Articoli | Santos & Saucedo",
-    },
-    description: {
-      en: "Articles from the Santos & Saucedo Labor Monitor on labor law, social security and the regulatory changes that affect employers.",
-      es: "Artículos del Monitor Laboral de Santos & Saucedo sobre derecho laboral, seguridad social y los cambios normativos que afectan a las empresas.",
-      de: "Artikel von Santos & Saucedo zu Arbeitsrecht, Sozialversicherung und den regulatorischen Änderungen, die Unternehmen betreffen.",
-      zh: "Santos & Saucedo的文章，涵盖劳动法、社会保障以及影响企业的法规变化。",
-      ko: "노동법과 사회보장, 기업에 영향을 미치는 규제 변화를 다루는 Santos & Saucedo의 기사.",
-      ja: "労働法、社会保障、企業に影響する規制の変更を取り上げるSantos & Saucedoの記事。",
-      ar: "مقالات Santos & Saucedo حول قانون العمل والضمان الاجتماعي والتغييرات التنظيمية التي تؤثر على الشركات.",
-      ru: "Статьи Santos & Saucedo о трудовом праве, социальном обеспечении и изменениях регулирования, которые касаются компаний.",
-      fr: "Articles de Santos & Saucedo sur le droit du travail, la sécurité sociale et les évolutions réglementaires qui concernent les entreprises.",
-      it: "Articoli di Santos & Saucedo sul diritto del lavoro, la previdenza sociale e le novità normative che riguardano le imprese.",
-    },
-    path: "/articles",
-  },
+  // /articles (repetía /news) y /events (sin eventos) redirigen a /news (E4): si algo los
+  // montara, título, descripción y canonical de /news
+  articles: newsConfig,
+  events: newsConfig,
+  // La página pasa su h1 como customTitle (E5); esto es el respaldo, con el mismo nombre de la
+  // publicación que el menú (nav[3]) en cada idioma
   newsletter: {
     title: {
-      en: "Newsletter | Santos & Saucedo",
-      es: "Boletín informativo | Santos & Saucedo",
-      de: "Newsletter | Santos & Saucedo",
-      zh: "通讯 | Santos & Saucedo",
-      ko: "뉴스레터 | Santos & Saucedo",
-      ja: "ニュースレター | Santos & Saucedo",
-      ar: "النشرة الإخبارية | Santos & Saucedo",
-      ru: "Рассылка | Santos & Saucedo",
-      fr: "Newsletter | Santos & Saucedo",
-      it: "Newsletter | Santos & Saucedo",
+      en: "Labor Monitor subscription | Santos & Saucedo",
+      es: "Suscripción al Monitor Laboral | Santos & Saucedo",
+      de: "Nachrichten abonnieren | Santos & Saucedo",
+      zh: "订阅新闻 | Santos & Saucedo",
+      ko: "뉴스 구독 | Santos & Saucedo",
+      ja: "ニュースの購読 | Santos & Saucedo",
+      ar: "الاشتراك في الأخبار | Santos & Saucedo",
+      ru: "Подписка на новости | Santos & Saucedo",
+      fr: "Abonnement aux actualités | Santos & Saucedo",
+      it: "Iscrizione alle notizie | Santos & Saucedo",
     },
     description: {
       en: "The Santos & Saucedo Labor Monitor's analysis of labor and social security law, by email.",
@@ -406,33 +402,6 @@ const seoConfig: Record<string, SEOConfig> = {
       it: "Le analisi di Santos & Saucedo sul diritto del lavoro e della previdenza sociale, via e-mail.",
     },
     path: "/newsletter",
-  },
-  events: {
-    title: {
-      en: "Events | Santos & Saucedo",
-      es: "Eventos | Santos & Saucedo",
-      de: "Veranstaltungen | Santos & Saucedo",
-      zh: "活动 | Santos & Saucedo",
-      ko: "이벤트 | Santos & Saucedo",
-      ja: "イベント | Santos & Saucedo",
-      ar: "الفعاليات | Santos & Saucedo",
-      ru: "Мероприятия | Santos & Saucedo",
-      fr: "Événements | Santos & Saucedo",
-      it: "Eventi | Santos & Saucedo",
-    },
-    description: {
-      en: "Santos & Saucedo events.",
-      es: "Eventos de Santos & Saucedo.",
-      de: "Veranstaltungen von Santos & Saucedo.",
-      zh: "Santos & Saucedo的活动。",
-      ko: "Santos & Saucedo의 이벤트.",
-      ja: "Santos & Saucedoのイベント。",
-      ar: "فعاليات Santos & Saucedo.",
-      ru: "Мероприятия Santos & Saucedo.",
-      fr: "Événements de Santos & Saucedo.",
-      it: "Eventi di Santos & Saucedo.",
-    },
-    path: "/events",
   },
   interns: {
     title: {

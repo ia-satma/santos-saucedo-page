@@ -1,7 +1,7 @@
 import { useState, useEffect, useId, useRef, type KeyboardEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'wouter';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { FOCUSABLE, useDialog26 } from '@/components/home26/useDialog26';
 
@@ -147,6 +147,11 @@ export default function CookieBanner({ language }: CookieBannerProps) {
   const t = content[language] || content.en;
   // Tras 。 (chino, japonés) no va espacio antes del enlace
   const sep = language === 'zh' || language === 'ja' ? '' : ' ';
+  // "Reducir movimiento" del sistema: el aviso y el diálogo aparecen y se van en su sitio,
+  // sin desplazarse ni fundirse
+  const reduceMotion = useReducedMotion();
+  const still = { opacity: 1, y: 0 };
+  const instant = { duration: 0 };
 
   // Primera visita (nada guardado): el aviso aparece abajo a los 2 s
   useEffect(() => {
@@ -263,10 +268,10 @@ export default function CookieBanner({ language }: CookieBannerProps) {
           <motion.div
             key="banner"
             ref={bannerRef}
-            initial={{ y: 100, opacity: 0 }}
+            initial={reduceMotion ? false : { y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
+            exit={reduceMotion ? still : { y: 100, opacity: 0 }}
+            transition={reduceMotion ? instant : { duration: 0.4, ease: "easeOut" }}
             className="ss26 fixed bottom-0 left-0 w-full bg-ss-navy text-white py-5 z-[60] border-t border-white/15"
             role="region"
             aria-label={t.title}
@@ -299,10 +304,10 @@ export default function CookieBanner({ language }: CookieBannerProps) {
           {dialogOpen && (
             <motion.div
               key="dialog"
-              initial={{ opacity: 0 }}
+              initial={reduceMotion ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              exit={reduceMotion ? { opacity: 1 } : { opacity: 0 }}
+              transition={reduceMotion ? instant : { duration: 0.3 }}
               className="ss26 fixed inset-0 z-[70] flex items-center justify-center bg-black/60 p-4"
               data-testid="modal-cookie-preferences-overlay"
               onClick={closeDialog}
@@ -315,10 +320,10 @@ export default function CookieBanner({ language }: CookieBannerProps) {
                 aria-describedby={descriptionId}
                 lang={language}
                 dir={dir}
-                initial={{ opacity: 0, y: 12 }}
+                initial={reduceMotion ? false : { opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 12 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
+                exit={reduceMotion ? still : { opacity: 0, y: 12 }}
+                transition={reduceMotion ? instant : { duration: 0.3, ease: "easeOut" }}
                 className="bg-ss-navy text-white w-full max-w-xl max-h-[90vh] overflow-y-auto border border-white/15"
                 data-testid="modal-cookie-preferences"
                 onClick={(e) => e.stopPropagation()}

@@ -1,7 +1,6 @@
 import { copyFile, mkdir, readdir, rm, writeFile } from "fs/promises";
 import path from "path";
 import {
-  eventsData,
   industryGroupsData,
   newsData,
   officeImagesData,
@@ -32,9 +31,10 @@ function withDefaults<T extends Record<string, any>>(prefix: string, item: T) {
 
 const practiceGroups = practiceGroupsData.map((raw) => withDefaults("practice", raw as any));
 const industryGroups = industryGroupsData.map((raw) => withDefaults("industry", raw as any));
-// Socios sin confirmar (D17): fuera del API estático, del índice de búsqueda y del mapa del
-// sitio; sus fichas no se generan. Asociados y staff siguen en team.json (el mosaico de /team
-// no los nombra) pero no en el buscador ni en el mapa: ahí solo va quien /team nombra.
+// Socios sin confirmar (D17, E11): fuera del API estático, del índice de búsqueda y del mapa
+// del sitio, y sin sus retratos. Asociados y staff siguen en team.json (el mosaico de /team
+// usa sus fotos sin nombrarlos) pero sin JSON propio, buscador ni mapa: ficha solo para quien
+// /team nombra (isNamedOnTeamPage); para los demás, /team/<slug> da la vista 404.
 const allTeamMembers = teamMembersData.map((raw) => {
   const item = raw as any;
   return {
@@ -74,10 +74,11 @@ const news = newsData.map((raw) => {
   };
 });
 const officeImages = officeImagesData.map((raw) => withDefaults("office-image", raw as any));
-const events = eventsData.map((item: any, index: number) => ({
-  id: item.id ?? stableId("event", item.slug ?? item.order ?? index + 1),
-  ...item,
-}));
+// Retratos que no se copian: "<slug>.<ext>" y sus tamaños "<slug>-128.webp", "<slug>-360.webp"
+const hiddenPhotoSlugs = new Set(
+  allTeamMembers.filter((m) => m.isPartner && !isNamedOnTeamPage(m)).map((m) => String(m.slug)),
+);
+const isHiddenPhoto = (fileName: string) => hiddenPhotoSlugs.has(fileName.replace(/(-\d+)?\.[a-z0-9]+$/i, ""));
 
 const publishedNews = news.filter((item) => item.published);
 
@@ -132,7 +133,8 @@ function search(query: string) {
 }
 
 // Mapa del sitio del build estático: las mismas URL que /sitemap.xml del servidor (sin
-// /experience ni /offices, que redirigen; fichas solo de quien /team nombra; notas publicadas).
+// /experience, /offices, /articles ni /events, que redirigen; fichas solo de quien /team
+// nombra; notas publicadas).
 // Sustituye a la copia de public/sitemap.xml que deja Vite en dist/public.
 const SITE_URL = "https://www.santossaucedo.com";
 const SITEMAP_PAGES = [
@@ -192,9 +194,7 @@ async function generate() {
   await writeJson("team.json", teamMembers);
   await writeJson("team/partners.json", teamMembers.filter((item) => item.isPartner));
   // /experience redirige a /practice-groups (D4): sus asuntos (sin confirmar) no se publican.
-  // Los datos siguen en server/seed.ts.
-  await writeJson("events.json", events);
-  await writeJson("events/upcoming.json", events.slice(0, 4));
+  // /events redirige a /news (E4): sin events.json. Los datos siguen en server/seed.ts.
   await writeJson("search-index.json", { team: namedTeamMembers, practiceGroups, industryGroups, news: publishedNews });
 
   for (const item of news) {
@@ -215,14 +215,10 @@ async function generate() {
     await writeJson(`industry-groups/${item.id}.json`, item);
   }
 
-  for (const item of teamMembers) {
+  for (const item of namedTeamMembers) {
     await writeJson(`team/${item.slug}.json`, item);
     await writeJson(`team/${item.id}.json`, item);
     await writeJson(`team/${item.slug}/news.json`, []);
-  }
-
-  for (const item of events) {
-    await writeJson(`events/${item.id}.json`, item);
   }
 
   const teamPhotosOutDir = path.join(outDir, "team_photos");
@@ -230,7 +226,7 @@ async function generate() {
   await rm(teamPhotosOutDir, { recursive: true, force: true });
   await mkdir(teamPhotosOutDir, { recursive: true });
   for (const fileName of await readdir(teamPhotosSourceDir)) {
-    if (fileName.startsWith("._")) continue;
+    if (fileName.startsWith("._") || isHiddenPhoto(fileName)) continue;
     await copyFile(path.join(teamPhotosSourceDir, fileName), path.join(teamPhotosOutDir, fileName));
   }
   for (const fileName of await readdir(teamPhotosOutDir)) {
@@ -242,8 +238,8 @@ async function generate() {
   await writeSitemap();
 
   // Respaldo de GitHub Pages para rutas del SPA: se sirve con estado 404, así que ninguna
-  // ruta sin archivo propio (tampoco /experience ni /offices, que el cliente redirige) queda
-  // como página indexable.
+  // ruta sin archivo propio (tampoco /experience, /offices, /articles ni /events, que el
+  // cliente redirige) queda como página indexable.
   await copyFile(path.join(outDir, "index.html"), path.join(outDir, "404.html"));
 }
 

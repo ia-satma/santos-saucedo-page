@@ -3,6 +3,7 @@ import { useEffect, useRef, useMemo } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { apiRequest, isStaticSite, queryClient } from "@/lib/queryClient";
 import { isNativeLanguage, type ContentType, type TranslatedFieldsMap } from "@/lib/translationUtils";
+import type { LanguageCode } from "@shared/schema";
 
 interface TranslationResponse {
   translations: Record<string, string>;
@@ -25,6 +26,8 @@ interface UseTranslatedContentOptions {
   entityId: string;
   fields: TranslatedFieldsMap;
   enabled?: boolean;
+  /** Idioma en que se muestra el bloque cuando no es el de la interfaz (la portada muestra es/en) */
+  language?: LanguageCode;
 }
 
 interface UseTranslatedContentReturn {
@@ -32,7 +35,14 @@ interface UseTranslatedContentReturn {
   isLoading: boolean;
   isTranslating: boolean;
   isTranslationPending: boolean;
+  /** true solo si llegó de verdad una traducción (algún campo distinto del texto de origen) */
+  hasTranslation: boolean;
   error: Error | null;
+}
+
+// Español e inglés son los idiomas de origen de los datos: nunca se traducen automáticamente.
+function isSourceLanguage(lang: string): boolean {
+  return isNativeLanguage(lang) || lang === 'en';
 }
 
 export function useTranslatedContent({
@@ -40,14 +50,17 @@ export function useTranslatedContent({
   entityId,
   fields,
   enabled = true,
+  language: languageOverride,
 }: UseTranslatedContentOptions): UseTranslatedContentReturn {
-  const { language } = useLanguage();
+  const { language: interfaceLanguage } = useLanguage();
+  const language = languageOverride ?? interfaceLanguage;
 
-  const isNative = isNativeLanguage(language);
+  const isSource = isSourceLanguage(language);
+  const canTranslate = enabled && !isStaticSite && !isSource && !!entityId;
 
   const { data: cachedTranslations, isLoading } = useQuery<TranslationResponse>({
     queryKey: ['/api/translations', contentType, entityId, language],
-    enabled: enabled && !isStaticSite && !isNative && !!entityId,
+    enabled: canTranslate,
   });
 
   const translateMutation = useMutation({
@@ -59,9 +72,12 @@ export function useTranslatedContent({
       targetLanguage: string;
     }) => {
       const response = await apiRequest('POST', '/api/translate-entity', data);
+      // Sin servicio de traducción el servidor puede responder sin cuerpo: se queda el origen
+      if (response.status === 204) return null;
       return response.json() as Promise<TranslateEntityResponse>;
     },
     onSuccess: (data) => {
+      if (!data?.translations) return;
       queryClient.setQueryData(
         ['/api/translations', contentType, entityId, language],
         { 
@@ -94,10 +110,10 @@ export function useTranslatedContent({
     return result;
   }, [fields]);
 
-  const hasCachedTranslations = cachedTranslations?.translations && 
+  const hasCachedTranslations = !!cachedTranslations?.translations && 
     Object.keys(cachedTranslations.translations).length > 0;
   
-  const needsTranslation = !isStaticSite && !isNative && enabled && !!entityId && !isLoading &&
+  const needsTranslation = canTranslate && !isLoading &&
     !hasCachedTranslations && Object.keys(fieldsToTranslate).length > 0;
 
   const translationKey = `${contentType}-${entityId}-${language}`;
@@ -115,8 +131,18 @@ export function useTranslatedContent({
     }
   }, [needsTranslation, translateMutation.isPending, contentType, entityId, fieldsToTranslate, language, translationKey]);
 
+  // Traducciones solo para idiomas que no son de origen
+  const translations = canTranslate
+    ? cachedTranslations?.translations || translateMutation.data?.translations
+    : undefined;
+
+  // Hubo traducción si algún campo llegó con texto propio distinto del de origen
+  const hasTranslation = !!translations && Object.entries(fieldsToTranslate).some(
+    ([key, value]) => typeof translations[key] === 'string' && translations[key].trim() !== '' && translations[key] !== value,
+  );
+
   const getTranslatedFields = (): TranslatedFieldsMap => {
-    if (language === 'es') {
+    if (isNativeLanguage(language)) {
       const esFields: TranslatedFieldsMap = {};
       for (const [key, value] of Object.entries(fields)) {
         if (key.endsWith('Es')) {
@@ -129,66 +155,26 @@ export function useTranslatedContent({
       return esFields;
     }
 
-    if (language === 'en') {
-      const translations = cachedTranslations?.translations || translateMutation.data?.translations;
-      
-      if (translations && Object.keys(translations).length > 0) {
-        const translatedFields: TranslatedFieldsMap = {};
-        for (const [key, value] of Object.entries(fields)) {
-          if (!key.endsWith('Es')) {
-            translatedFields[key] = translations[key] ?? value;
-          }
-        }
-        return translatedFields;
-      }
-      
-      const enFields: TranslatedFieldsMap = {};
-      for (const [key, value] of Object.entries(fields)) {
-        if (!key.endsWith('Es')) {
-          enFields[key] = value;
-        }
-      }
-      return enFields;
-    }
-
-    if (isStaticSite) {
-      const fallbackFields: TranslatedFieldsMap = {};
-      for (const [key, value] of Object.entries(fields)) {
-        if (!key.endsWith('Es')) {
-          fallbackFields[key] = value;
-        }
-      }
-      return fallbackFields;
-    }
-
-    const translations = cachedTranslations?.translations || translateMutation.data?.translations;
-    
-    if (translations && Object.keys(translations).length > 0) {
-      const translatedFields: TranslatedFieldsMap = {};
-      for (const [key, value] of Object.entries(fields)) {
-        if (!key.endsWith('Es')) {
-          translatedFields[key] = translations[key] || null;
-        }
-      }
-      return translatedFields;
-    }
-
-    const pendingFields: TranslatedFieldsMap = {};
-    for (const [key] of Object.entries(fields)) {
+    // Inglés y demás idiomas: el texto de origen (inglés) de inmediato, sin campos vacíos
+    // mientras se espera; la traducción lo sustituye solo si llega.
+    const result: TranslatedFieldsMap = {};
+    for (const [key, value] of Object.entries(fields)) {
       if (!key.endsWith('Es')) {
-        pendingFields[key] = null;
+        const translated = hasTranslation ? translations?.[key] : undefined;
+        result[key] = translated && translated.trim() ? translated : value;
       }
     }
-    return pendingFields;
+    return result;
   };
 
-  const isTranslationPending = !isStaticSite && !isNative && (isLoading || translateMutation.isPending || needsTranslation);
+  const isTranslationPending = canTranslate && (isLoading || translateMutation.isPending || needsTranslation);
 
   return {
     translatedFields: getTranslatedFields(),
-    isLoading,
-    isTranslating: translateMutation.isPending,
+    isLoading: canTranslate && isLoading,
+    isTranslating: canTranslate && translateMutation.isPending,
     isTranslationPending,
+    hasTranslation,
     error: translateMutation.error as Error | null,
   };
 }

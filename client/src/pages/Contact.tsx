@@ -6,6 +6,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -21,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, isStaticSite } from "@/lib/queryClient";
 import Header from "@/components/Header";
@@ -28,7 +30,8 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
-import edificioCerro from "@assets/ss26/edificio-cerro.webp";
+// El recorte de la portada (sin el letrero ni el estacionamiento), no el original
+import edificioCerro from "@assets/ss26/edificio-cerro-recorte.webp";
 import type { SiteContent, ContactFormData, LanguageCode } from "@shared/schema";
 
 // Perfil de LinkedIn del despacho. Sin URL confirmada el botón "Síguenos en LinkedIn"
@@ -36,17 +39,19 @@ import type { SiteContent, ContactFormData, LanguageCode } from "@shared/schema"
 // la URL externa (https://www.linkedin.com/company/…).
 const FIRM_LINKEDIN_URL: string | null = null;
 
-// Prácticas de la firma (las cuatro de /practice-groups, con sus nombres) y "Otro". Antes el
-// formulario usaba la lista heredada de @shared/schema (fusiones, competencia, energía…), que
-// no son prácticas de Santos & Saucedo.
+// Prácticas de la firma y "Otro", con las etiquetas cortas del documento de redacción
+// (Laboral · Corporativo · Migratorio · Litigio · Otro), las mismas que en Carreras. Los
+// valores no cambian: son los que guarda /api/contact. Antes el formulario usaba la lista
+// heredada de @shared/schema (fusiones, competencia, energía…), que no son prácticas de
+// Santos & Saucedo.
 const PRACTICE_OPTIONS: { value: string; label: Record<LanguageCode, string> }[] = [
   {
     value: "laboral-seguridad-social",
-    label: { es: "Laboral y seguridad social", en: "Labor and social security", de: "Arbeitsrecht und soziale Sicherheit", zh: "劳动与社会保障", ko: "노동 및 사회보장", ja: "労働・社会保障", ar: "العمل والضمان الاجتماعي", ru: "Трудовое право и социальное обеспечение", fr: "Droit du travail et sécurité sociale", it: "Diritto del lavoro e previdenza sociale" },
+    label: { es: "Laboral", en: "Labor", de: "Arbeitsrecht", zh: "劳动", ko: "노동", ja: "労働", ar: "العمل", ru: "Трудовое право", fr: "Travail", it: "Lavoro" },
   },
   {
     value: "corporativo-contractual",
-    label: { es: "Corporativo y contractual", en: "Corporate and contracts", de: "Gesellschafts- und Vertragsrecht", zh: "公司与合同", ko: "기업 및 계약", ja: "企業法務・契約", ar: "الشركات والعقود", ru: "Корпоративное и договорное право", fr: "Droit des sociétés et des contrats", it: "Diritto societario e contrattuale" },
+    label: { es: "Corporativo", en: "Corporate", de: "Gesellschaftsrecht", zh: "公司", ko: "기업", ja: "企業法務", ar: "الشركات", ru: "Корпоративное право", fr: "Sociétés", it: "Societario" },
   },
   {
     value: "migratorio",
@@ -54,7 +59,7 @@ const PRACTICE_OPTIONS: { value: string; label: Record<LanguageCode, string> }[]
   },
   {
     value: "litigio-contencioso",
-    label: { es: "Litigio contencioso", en: "Litigation", de: "Prozessführung", zh: "诉讼", ko: "소송", ja: "訴訟", ar: "التقاضي", ru: "Судебные споры", fr: "Contentieux", it: "Contenzioso" },
+    label: { es: "Litigio", en: "Litigation", de: "Prozessführung", zh: "诉讼", ko: "소송", ja: "訴訟", ar: "التقاضي", ru: "Судебные споры", fr: "Contentieux", it: "Contenzioso" },
   },
   {
     value: "otro",
@@ -78,66 +83,77 @@ const validationMessages: Record<LanguageCode, {
   emailRequired: string;
   emailInvalid: string;
   messageRequired: string;
+  consentRequired: string;
 }> = {
   en: {
     fullNameRequired: "Full name is required",
     emailRequired: "Email is required",
     emailInvalid: "Please enter a valid email address",
     messageRequired: "Message is required",
+    consentRequired: "You must accept the privacy notice.",
   },
   es: {
     fullNameRequired: "El nombre completo es requerido",
     emailRequired: "El correo electrónico es requerido",
     emailInvalid: "Por favor ingrese una dirección de correo válida",
     messageRequired: "El mensaje es requerido",
+    consentRequired: "Es necesario aceptar el aviso de privacidad.",
   },
   de: {
     fullNameRequired: "Name ist erforderlich",
     emailRequired: "E-Mail ist erforderlich",
     emailInvalid: "Ungültige E-Mail-Adresse",
     messageRequired: "Nachricht ist erforderlich",
+    consentRequired: "Bitte akzeptieren Sie den Datenschutzhinweis.",
   },
   zh: {
     fullNameRequired: "姓名是必填项",
     emailRequired: "电子邮件是必填项",
     emailInvalid: "请输入有效的电子邮件地址",
     messageRequired: "留言是必填项",
+    consentRequired: "请接受隐私声明。",
   },
   ko: {
     fullNameRequired: "이름은 필수입니다",
     emailRequired: "이메일은 필수입니다",
     emailInvalid: "유효한 이메일 주소를 입력하세요",
     messageRequired: "메시지는 필수입니다",
+    consentRequired: "개인정보 처리방침에 동의해야 합니다.",
   },
   ja: {
     fullNameRequired: "氏名は必須です",
     emailRequired: "メールアドレスは必須です",
     emailInvalid: "有効なメールアドレスを入力してください",
     messageRequired: "メッセージは必須です",
+    consentRequired: "プライバシーポリシーへの同意が必要です。",
   },
   ar: {
     fullNameRequired: "الاسم الكامل مطلوب",
     emailRequired: "البريد الإلكتروني مطلوب",
     emailInvalid: "يرجى إدخال عنوان بريد إلكتروني صالح",
     messageRequired: "الرسالة مطلوبة",
+    consentRequired: "يجب الموافقة على إشعار الخصوصية.",
   },
   ru: {
     fullNameRequired: "Имя обязательно для заполнения",
     emailRequired: "Электронная почта обязательна",
     emailInvalid: "Пожалуйста, введите действительный адрес электронной почты",
     messageRequired: "Сообщение обязательно для заполнения",
+    consentRequired: "Необходимо принять политику конфиденциальности.",
   },
   fr: {
     fullNameRequired: "Le nom complet est requis",
-    emailRequired: "L'e-mail est requis",
+    emailRequired: "L’e-mail est requis",
     emailInvalid: "Veuillez entrer une adresse e-mail valide",
     messageRequired: "Le message est requis",
+    consentRequired: "Vous devez accepter la politique de confidentialité.",
   },
   it: {
     fullNameRequired: "Il nome completo è obbligatorio",
     emailRequired: "L'e-mail è obbligatoria",
     emailInvalid: "Inserisci un indirizzo e-mail valido",
     messageRequired: "Il messaggio è obbligatorio",
+    consentRequired: "È necessario accettare l’informativa sulla privacy.",
   },
 };
 
@@ -147,11 +163,31 @@ const getContactFormSchema = (language: LanguageCode) => {
   return z.object({
     fullName: z.string().min(1, t.fullNameRequired),
     email: z.string().min(1, t.emailRequired).email(t.emailInvalid),
-    phone: z.string().optional(),
     company: z.string().optional(),
     practiceArea: z.string().optional(),
     message: z.string().min(1, t.messageRequired),
+    // Casilla del aviso de privacidad, obligatoria como en el boletín
+    consent: z.boolean().refine((value) => value, { message: t.consentRequired }),
   });
+};
+
+// Valores del formulario: los datos que recibe /api/contact (sin teléfono: el documento de
+// redacción no lo pide) y la aceptación del aviso, que es requisito y no se envía.
+type ContactFormValues = Omit<ContactFormData, "phone"> & { consent: boolean };
+
+// Casilla del aviso de privacidad: los mismos textos que el boletín (Newsletter.tsx); el
+// enlace lleva el nombre del aviso en el pie de cada idioma.
+const consentText: Record<LanguageCode, { before: string; link: string; after: string }> = {
+  es: { before: "He leído y acepto el ", link: "aviso de privacidad", after: "." },
+  en: { before: "I have read and accept the ", link: "privacy notice", after: "." },
+  de: { before: "Ich habe den ", link: "Datenschutzhinweis", after: " gelesen und akzeptiere ihn." },
+  zh: { before: "我已阅读并接受", link: "隐私声明", after: "。" },
+  ko: { before: "", link: "개인정보 처리방침", after: "을 읽었으며 이에 동의합니다." },
+  ja: { before: "", link: "プライバシーポリシー", after: "を読み、同意します。" },
+  ar: { before: "قرأتُ ", link: "إشعار الخصوصية", after: " وأوافق عليه." },
+  ru: { before: "Я прочитал(а) ", link: "политику конфиденциальности", after: " и принимаю её." },
+  fr: { before: "J’ai lu et j’accepte la ", link: "politique de confidentialité", after: "." },
+  it: { before: "Ho letto e accetto l’", link: "informativa sulla privacy", after: "." },
 };
 
 const toastMessages: Record<LanguageCode, {
@@ -212,7 +248,7 @@ const toastMessages: Record<LanguageCode, {
     successTitle: "Message envoyé",
     successDescription: "Nous avons bien reçu votre message.",
     errorTitle: "Erreur",
-    errorDescription: "Échec de l'envoi du message. Veuillez réessayer.",
+    errorDescription: "Échec de l’envoi du message. Veuillez réessayer.",
   },
   it: {
     successTitle: "Messaggio inviato",
@@ -232,19 +268,20 @@ export default function Contact() {
 
   const formSchema = getContactFormSchema(language);
 
-  const form = useForm<ContactFormData>({
+  const form = useForm<ContactFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       fullName: "",
       email: "",
-      phone: "",
       company: "",
       practiceArea: "",
       message: "",
+      consent: false,
     },
   });
 
   const toastT = toastMessages[language] || toastMessages.en;
+  const consentT = consentText[language] || consentText.en;
 
   const contactMutation = useMutation({
     mutationFn: async (data: ContactFormData) => {
@@ -267,14 +304,13 @@ export default function Contact() {
     },
   });
 
-  const onSubmit = (data: ContactFormData) => {
+  const onSubmit = ({ consent: _consent, ...data }: ContactFormValues) => {
     if (isStaticSite) {
       const subject = encodeURIComponent(`Contacto web - ${data.fullName}`);
       const body = encodeURIComponent(
         [
           `Nombre: ${data.fullName}`,
           `Email: ${data.email}`,
-          data.phone ? `Teléfono: ${data.phone}` : "",
           data.company ? `Empresa: ${data.company}` : "",
           data.practiceArea
             ? `Área: ${PRACTICE_OPTIONS.find((o) => o.value === data.practiceArea)?.label.es ?? data.practiceArea}`
@@ -300,7 +336,8 @@ export default function Contact() {
 
   const content: Record<LanguageCode, {
     title: string;
-    subtitle: string;
+    /** Bajo los datos de la oficina, antes de "Cómo llegar" (como en el documento de redacción) */
+    partnersNote: string;
     officesTitle: string;
     building: string;
     floor: string;
@@ -321,7 +358,6 @@ export default function Contact() {
     formSubtitle: string;
     fullName: string;
     emailLabel: string;
-    phoneLabel: string;
     companyLabel: string;
     practiceAreaLabel: string;
     messageLabel: string;
@@ -330,7 +366,7 @@ export default function Contact() {
   }> = {
     en: {
       title: "Contact",
-      subtitle: "Each partner's contact details appear on their profile.",
+      partnersNote: "Each partner's contact details appear on their profile.",
       officesTitle: "Office",
       building: "Río Tamazunchale 205 Norte",
       floor: "",
@@ -351,16 +387,15 @@ export default function Contact() {
       formSubtitle: "Submitting this form does not create an attorney-client relationship.",
       fullName: "Full name",
       emailLabel: "Email",
-      phoneLabel: "Phone (optional)",
       companyLabel: "Company (optional)",
-      practiceAreaLabel: "Practice area of interest (optional)",
+      practiceAreaLabel: "Practice (optional)",
       messageLabel: "Message",
       submit: "Send message",
       submitting: "Sending...",
     },
     es: {
       title: "Contacto",
-      subtitle: "Los datos de contacto de cada socio aparecen en su ficha.",
+      partnersNote: "Los datos de contacto de cada socio aparecen en su ficha.",
       officesTitle: "Oficina",
       building: "Río Tamazunchale 205 Norte",
       floor: "",
@@ -381,16 +416,15 @@ export default function Contact() {
       formSubtitle: "El envío de este formulario no crea una relación abogado-cliente.",
       fullName: "Nombre completo",
       emailLabel: "Correo electrónico",
-      phoneLabel: "Teléfono (opcional)",
       companyLabel: "Empresa (opcional)",
-      practiceAreaLabel: "Área de práctica de interés (opcional)",
+      practiceAreaLabel: "Práctica (opcional)",
       messageLabel: "Mensaje",
       submit: "Enviar mensaje",
       submitting: "Enviando...",
     },
     de: {
       title: "Kontakt",
-      subtitle: "Die Kontaktdaten der einzelnen Partner stehen in ihrem jeweiligen Profil.",
+      partnersNote: "Die Kontaktdaten der einzelnen Partner stehen in ihrem jeweiligen Profil.",
       officesTitle: "Büro",
       building: "Río Tamazunchale 205 Norte",
       floor: "18. Stock",
@@ -411,7 +445,6 @@ export default function Contact() {
       formSubtitle: "Die Übermittlung dieses Formulars begründet kein Mandatsverhältnis.",
       fullName: "Name",
       emailLabel: "E-Mail",
-      phoneLabel: "Telefon (optional)",
       companyLabel: "Unternehmen (optional)",
       practiceAreaLabel: "Praxisbereich (optional)",
       messageLabel: "Nachricht",
@@ -420,7 +453,7 @@ export default function Contact() {
     },
     zh: {
       title: "联系我们",
-      subtitle: "各合伙人的联系方式见其个人页面。",
+      partnersNote: "各合伙人的联系方式见其个人页面。",
       officesTitle: "办公地址",
       building: "Río Tamazunchale 205 Norte",
       floor: "18层",
@@ -441,7 +474,6 @@ export default function Contact() {
       formSubtitle: "提交本表格并不构成律师与客户之间的委托关系。",
       fullName: "姓名",
       emailLabel: "电子邮件",
-      phoneLabel: "电话 (可选)",
       companyLabel: "公司 (可选)",
       practiceAreaLabel: "业务领域 (可选)",
       messageLabel: "留言",
@@ -450,7 +482,7 @@ export default function Contact() {
     },
     ko: {
       title: "문의하기",
-      subtitle: "각 파트너의 연락처는 해당 프로필에 있습니다.",
+      partnersNote: "각 파트너의 연락처는 해당 프로필에 있습니다.",
       officesTitle: "사무소",
       building: "Río Tamazunchale 205 Norte",
       floor: "18층",
@@ -471,16 +503,15 @@ export default function Contact() {
       formSubtitle: "이 양식을 제출하는 것만으로 변호사와 의뢰인 관계가 성립하지는 않습니다.",
       fullName: "이름",
       emailLabel: "이메일",
-      phoneLabel: "전화번호 (선택사항)",
       companyLabel: "회사명 (선택사항)",
-      practiceAreaLabel: "관심 업무 분야 (선택사항)",
+      practiceAreaLabel: "업무 분야 (선택사항)",
       messageLabel: "메시지",
       submit: "메시지 전송",
       submitting: "전송 중...",
     },
     ja: {
       title: "お問い合わせ",
-      subtitle: "各パートナーの連絡先は、それぞれのプロフィールに掲載しています。",
+      partnersNote: "各パートナーの連絡先は、それぞれのプロフィールに掲載しています。",
       officesTitle: "所在地",
       building: "Río Tamazunchale 205 Norte",
       floor: "18階",
@@ -501,16 +532,15 @@ export default function Contact() {
       formSubtitle: "本フォームの送信によって、弁護士と依頼者の関係が成立するものではありません。",
       fullName: "氏名",
       emailLabel: "メールアドレス",
-      phoneLabel: "電話番号 (任意)",
       companyLabel: "会社名 (任意)",
-      practiceAreaLabel: "ご関心のある業務分野 (任意)",
+      practiceAreaLabel: "業務分野 (任意)",
       messageLabel: "メッセージ",
       submit: "メッセージを送信",
       submitting: "送信中...",
     },
     ar: {
       title: "اتصل بنا",
-      subtitle: "تظهر بيانات الاتصال بكل شريك في صفحته الشخصية.",
+      partnersNote: "تظهر بيانات الاتصال بكل شريك في صفحته الشخصية.",
       officesTitle: "المكتب",
       building: "Río Tamazunchale 205 Norte",
       floor: "الطابق 18",
@@ -531,7 +561,6 @@ export default function Contact() {
       formSubtitle: "إرسال هذا النموذج لا يُنشئ علاقة بين محامٍ وموكّل.",
       fullName: "الاسم الكامل",
       emailLabel: "البريد الإلكتروني",
-      phoneLabel: "الهاتف (اختياري)",
       companyLabel: "الشركة (اختياري)",
       practiceAreaLabel: "مجال الممارسة (اختياري)",
       messageLabel: "الرسالة",
@@ -540,7 +569,7 @@ export default function Contact() {
     },
     ru: {
       title: "Контакты",
-      subtitle: "Контактные данные каждого партнёра указаны в его профиле.",
+      partnersNote: "Контактные данные каждого партнёра указаны в его профиле.",
       officesTitle: "Офис",
       building: "Río Tamazunchale 205 Norte",
       floor: "18 этаж",
@@ -561,16 +590,15 @@ export default function Contact() {
       formSubtitle: "Отправка этой формы не устанавливает отношений адвоката и клиента.",
       fullName: "Имя",
       emailLabel: "Эл. почта",
-      phoneLabel: "Телефон (необязательно)",
       companyLabel: "Компания (необязательно)",
-      practiceAreaLabel: "Область практики (необязательно)",
+      practiceAreaLabel: "Практика (необязательно)",
       messageLabel: "Сообщение",
       submit: "Отправить сообщение",
       submitting: "Отправка...",
     },
     fr: {
       title: "Contact",
-      subtitle: "Les coordonnées de chaque associé figurent sur sa fiche.",
+      partnersNote: "Les coordonnées de chaque associé figurent sur sa fiche.",
       officesTitle: "Bureau",
       building: "Río Tamazunchale 205 Norte",
       floor: "18ème étage",
@@ -580,7 +608,7 @@ export default function Contact() {
       phone: "+52 81 8335 2086",
       fax: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
-      hours: "Heures d'ouverture",
+      hours: "Heures d’ouverture",
       hoursDetails: "Du lundi au vendredi, de 9 h à 19 h",
       getDirections: "Itinéraire",
       photoAlt: "Façade vitrée des bureaux de Santos & Saucedo, où se reflète le Cerro de la Silla",
@@ -588,10 +616,9 @@ export default function Contact() {
       telLabel: "Téléphone",
       addressLabel: "Adresse",
       formTitle: "Message",
-      formSubtitle: "L'envoi de ce formulaire ne crée pas de relation avocat-client.",
+      formSubtitle: "L’envoi de ce formulaire ne crée pas de relation avocat-client.",
       fullName: "Nom complet",
       emailLabel: "E-mail",
-      phoneLabel: "Téléphone (facultatif)",
       companyLabel: "Entreprise (facultatif)",
       practiceAreaLabel: "Domaine de pratique (facultatif)",
       messageLabel: "Message",
@@ -600,7 +627,7 @@ export default function Contact() {
     },
     it: {
       title: "Contatti",
-      subtitle: "I recapiti di ciascun socio sono indicati nella sua scheda.",
+      partnersNote: "I recapiti di ciascun socio sono indicati nella sua scheda.",
       officesTitle: "Sede",
       building: "Río Tamazunchale 205 Norte",
       floor: "18° piano",
@@ -621,7 +648,6 @@ export default function Contact() {
       formSubtitle: "L'invio di questo modulo non costituisce un rapporto avvocato-cliente.",
       fullName: "Nome",
       emailLabel: "E-mail",
-      phoneLabel: "Telefono (opzionale)",
       companyLabel: "Azienda (opzionale)",
       practiceAreaLabel: "Area di pratica (opzionale)",
       messageLabel: "Messaggio",
@@ -642,7 +668,8 @@ export default function Contact() {
   // "Cómo llegar": las indicaciones de Google Maps en otra pestaña. Sin mapa incrustado: al
   // cargarse, el iframe de Google podía fijar cookies y recibir la IP del visitante (el sitio
   // público ya no carga terceros).
-  const directionsUrl = "https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Colonia+Del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220";
+  // "Col. del Valle", como la ficha, el pie y el documento de redacción
+  const directionsUrl = "https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Col.+del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220";
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-contact">
@@ -663,12 +690,10 @@ export default function Contact() {
               className="max-w-3xl"
             >
               <Eyebrow num="06" tone="navy" className="mb-6" />
-              <h1 className="mb-5" data-testid="text-contact-title">
+              {/* Sin subtítulo: la frase de los socios va bajo los datos de la oficina */}
+              <h1 data-testid="text-contact-title">
                 {t.title}
               </h1>
-              <p data-testid="text-contact-subtitle">
-                {t.subtitle}
-              </p>
             </motion.div>
           </div>
         </section>
@@ -751,6 +776,15 @@ export default function Contact() {
                   )}
                 </dl>
 
+                {/* Como en el documento de redacción: bajo los datos de la oficina, en texto
+                    pequeño, antes de "Cómo llegar" (antes era el subtítulo del encabezado) */}
+                <p
+                  className="mt-6 max-w-md text-[15px] leading-[1.5] text-ss-medio"
+                  data-testid="text-contact-subtitle"
+                >
+                  {t.partnersNote}
+                </p>
+
                 {/* Mismo aspecto que TextLink (etiqueta, subrayado, flecha y área táctil ampliada);
                     <a> propio porque TextLink es un Link de wouter y este destino es externo */}
                 <a
@@ -784,8 +818,10 @@ export default function Contact() {
 
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-testid="form-contact">
-                  {/* Dos campos por fila solo en tableta (formulario a todo el ancho); en escritorio,
-                      columna de 6/12: un campo por fila */}
+                  {/* Dos campos por fila solo en tableta (formulario a todo el ancho): Nombre | Correo y
+                      Empresa | Práctica; en escritorio, columna de 6/12: un campo por fila. Campos y
+                      select de 44 px (h-11), el objetivo táctil del sitio. Sin Teléfono: el documento
+                      de redacción no lo pide. */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
                     <FormField
                       control={form.control}
@@ -795,6 +831,7 @@ export default function Contact() {
                           <FormLabel data-testid="label-fullname">{t.fullName}</FormLabel>
                           <FormControl>
                             <Input
+                              className="h-11"
                               autoComplete="name"
                               {...field}
                               data-testid="input-fullname"
@@ -813,6 +850,7 @@ export default function Contact() {
                           <FormLabel data-testid="label-email">{t.emailLabel}</FormLabel>
                           <FormControl>
                             <Input
+                              className="h-11"
                               type="email"
                               autoComplete="email"
                               {...field}
@@ -826,31 +864,13 @@ export default function Contact() {
 
                     <FormField
                       control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel data-testid="label-phone">{t.phoneLabel}</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="tel"
-                              autoComplete="tel"
-                              {...field}
-                              data-testid="input-phone"
-                            />
-                          </FormControl>
-                          <FormMessage data-testid="error-phone" />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
                       name="company"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel data-testid="label-company">{t.companyLabel}</FormLabel>
                           <FormControl>
                             <Input
+                              className="h-11"
                               autoComplete="organization"
                               {...field}
                               data-testid="input-company"
@@ -860,42 +880,42 @@ export default function Contact() {
                         </FormItem>
                       )}
                     />
-                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name="practiceArea"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel data-testid="label-practice-area">{t.practiceAreaLabel}</FormLabel>
-                        {/* Radix no hereda la dirección del documento: en árabe, valor a la
-                            derecha y flecha a la izquierda, como los campos de texto vecinos */}
-                        <Select
-                          dir={language === "ar" ? "rtl" : "ltr"}
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger data-testid="select-practice-area">
-                              <SelectValue />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent data-testid="select-practice-area-content">
-                            {PRACTICE_OPTIONS.map((area) => (
-                              <SelectItem
-                                key={area.value}
-                                value={area.value}
-                                data-testid={`option-practice-area-${area.value}`}
-                              >
-                                {area.label[language] ?? area.label.en}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage data-testid="error-practice-area" />
-                      </FormItem>
-                    )}
-                  />
+                    <FormField
+                      control={form.control}
+                      name="practiceArea"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel data-testid="label-practice-area">{t.practiceAreaLabel}</FormLabel>
+                          {/* Radix no hereda la dirección del documento: en árabe, valor a la
+                              derecha y flecha a la izquierda, como los campos de texto vecinos */}
+                          <Select
+                            dir={language === "ar" ? "rtl" : "ltr"}
+                            onValueChange={field.onChange}
+                            value={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="h-11" data-testid="select-practice-area">
+                                <SelectValue />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent data-testid="select-practice-area-content">
+                              {PRACTICE_OPTIONS.map((area) => (
+                                <SelectItem
+                                  key={area.value}
+                                  value={area.value}
+                                  data-testid={`option-practice-area-${area.value}`}
+                                >
+                                  {area.label[language] ?? area.label.en}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage data-testid="error-practice-area" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
                   <FormField
                     control={form.control}
@@ -911,6 +931,47 @@ export default function Contact() {
                           />
                         </FormControl>
                         <FormMessage data-testid="error-message" />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Casilla del aviso de privacidad, obligatoria: el mismo componente y los mismos
+                      textos que el boletín. El ::before amplía el área táctil a 44 px (min-h-0: en
+                      teléfono, index.css da 44 px de alto a todo botón y la casilla salía estirada);
+                      la etiqueta entera también la marca (el enlace no: navega). */}
+                  <FormField
+                    control={form.control}
+                    name="consent"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-start gap-3">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={(checked) => field.onChange(checked === true)}
+                              onBlur={field.onBlur}
+                              name={field.name}
+                              ref={field.ref}
+                              className="relative mt-[3px] h-5 min-h-0 w-5 border-ss-input data-[state=checked]:border-primary before:absolute before:-inset-3"
+                              data-testid="checkbox-consent"
+                            />
+                          </FormControl>
+                          <FormLabel
+                            className="text-[16px] font-normal leading-[1.5] text-ss-tinta"
+                            data-testid="label-consent"
+                          >
+                            {consentT.before}
+                            <Link
+                              href="/privacy-policy"
+                              className="inline-link text-ss-marino underline decoration-ss-input underline-offset-4 hover:decoration-ss-marino"
+                              data-testid="link-consent-privacy"
+                            >
+                              {consentT.link}
+                            </Link>
+                            {consentT.after}
+                          </FormLabel>
+                        </div>
+                        <FormMessage data-testid="error-consent" />
                       </FormItem>
                     )}
                   />
@@ -936,8 +997,8 @@ export default function Contact() {
               </Form>
             </motion.section>
 
-            {/* El edificio (la foto de la portada), en gris y en 3:4 desde el borde izquierdo:
-                el cuadro deja fuera el letrero del estacionamiento (x 712–918 de 952) */}
+            {/* El edificio: el mismo recorte de la portada (sin el letrero ni el estacionamiento
+                reflejado), en gris y a su proporción propia, sin reencuadre */}
             <figure className="sm:max-w-[26rem] lg:col-span-5 lg:row-start-2 lg:self-start" data-testid="figure-contact-building">
               <div className="overflow-hidden bg-ss-rule">
                 <img
@@ -945,9 +1006,9 @@ export default function Contact() {
                   alt={t.photoAlt}
                   loading="lazy"
                   decoding="async"
-                  width={952}
-                  height={937}
-                  className="ss-photo block aspect-[3/4] h-auto w-full object-cover object-[0%_50%]"
+                  width={708}
+                  height={684}
+                  className="ss-photo block h-auto w-full"
                   data-testid="img-contact-building"
                 />
               </div>

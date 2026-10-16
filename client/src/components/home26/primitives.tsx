@@ -130,29 +130,39 @@ export function SectionMark({ className = "", style }: { className?: string; sty
 
 /** Cabecera de sección del expediente: "§ 01 ——", como <Eyebrow> en las páginas internas.
     El número es la posición de la sección en el menú (01 Nuestra firma, 02 Prácticas,
-    03 Socios, 04 Monitor Laboral); las bandas que no están en el menú (el manifiesto y
-    Empresas extranjeras) llevan solo "§ ——". Sin etiqueta: el h2 ya nombra la sección.
-    § y cifras son gráficos (aria-hidden). Sobre Hueso, el filete toma Entrada (.ss-paper .ss-bar). */
+    03 Socios, 04 Monitor Laboral). Las secciones numeradas van sin etiqueta: el h2 ya las
+    nombra. El manifiesto, que no está en el menú, lleva "§ —— Lo que creemos" (label, la
+    etiqueta de la redacción): ningún § queda sin número ni nombre. § y cifras son gráficos
+    (aria-hidden); la etiqueta sí se lee, como en <Eyebrow>. Sobre Hueso, el filete toma
+    Entrada (.ss-paper .ss-bar). */
 export function SectionHead({
   num,
+  label,
   tone = "light",
   className = "",
 }: {
   num?: string;
+  /** Etiqueta tras el filete; solo en bandas sin número */
+  label?: string;
   tone?: "light" | "dark";
   className?: string;
 }) {
   const dark = tone === "dark";
   return (
-    <p aria-hidden="true" className={`ss-label flex items-center gap-4 ${dark ? "text-white/75" : "text-ss-medio"} ${className}`}>
+    <p
+      aria-hidden={label ? undefined : "true"}
+      className={`ss-label flex items-center gap-4 ${dark ? "text-white/75" : "text-ss-medio"} ${className}`}
+    >
       {/* Sobre Azul Profundo, solo el glifo § va en lima (eco del § del logotipo); las cifras,
           en blanco tenue. Sobre blanco y Hueso, § y cifras en Azul Marino (nunca lima).
           Es marcado y no ::first-letter: Chromium lo ignora en "§ 01". */}
-      <span className={`ss-num shrink-0 whitespace-nowrap ${dark ? "text-white/75" : "text-ss-marino"}`}>
+      <span aria-hidden="true" className={`ss-num shrink-0 whitespace-nowrap ${dark ? "text-white/75" : "text-ss-marino"}`}>
         <span className={dark ? "text-ss-lime" : ""}>§</span>
         {num ? ` ${num}` : ""}
       </span>
       <ShortRule />
+      {/* Etiqueta en Gris Medio (blanco tenue sobre Azul Profundo), como en <Eyebrow> */}
+      {label && <span>{label}</span>}
     </p>
   );
 }

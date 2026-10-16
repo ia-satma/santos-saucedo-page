@@ -21,6 +21,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow, NumberedCard } from "@/components/editorial";
 import { TextLink } from "@/components/home26/primitives";
 import { chrome26 } from "@/components/home26/chrome26";
+import { keepFirmName } from "@/lib/firmName";
 import type { LanguageCode } from "@shared/schema";
 
 // Cifras de /about: "35+" (sin tocar) y "72+" ciudades con presencia, la forma en cifras de
@@ -79,7 +80,7 @@ export default function About() {
       subtitle: "More than 35 years of experience in corporate labor law",
       historyTitle: "Our History",
       historyText1: "Santos & Saucedo is a boutique firm specialized in Labor Law, with more than 35 years advising national and international companies. From San Pedro Garza García, Nuevo León, we counsel our clients' management, human resources, and in-house legal teams.",
-      historyText2: "Our work combines prevention, consulting, audits, training, and defense in individual and collective labor conflicts. We help companies organize their labor administration, reduce risk, and make better decisions before, during, and after a conflict.",
+      historyText2: "A company’s decisions about its personnel are rarely only a labor matter: they affect the corporation, its contracts with third parties and, increasingly, people who come from other countries. Out of respect for the confidentiality of its clients’ matters, the firm does not publish their names.",
       valuesTitle: "How we work",
       values: [
         { title: "Prevention", text: "We review before the authorities do. A timely audit costs less than a lawsuit and often makes one unnecessary." },
@@ -181,7 +182,7 @@ export default function About() {
       subtitle: "Más de 35 años de experiencia en derecho laboral empresarial",
       historyTitle: "Nuestra historia",
       historyText1: "Santos & Saucedo es un despacho boutique especializado en derecho laboral, con más de 35 años acompañando a empresas nacionales e internacionales. Desde San Pedro Garza García, Nuevo León, asesoramos a la dirección, a recursos humanos y a los equipos legales internos de nuestros clientes.",
-      historyText2: "Nuestro trabajo combina prevención, consultoría, auditoría, capacitación y defensa en conflictos laborales individuales y colectivos. Ayudamos a las empresas a ordenar su administración laboral, reducir riesgos y tomar mejores decisiones antes, durante y después de un conflicto.",
+      historyText2: "Las decisiones de una empresa sobre su personal rara vez son solo laborales: tocan a la sociedad, a los contratos con terceros y, cada vez más, a personas que llegan de otros países. Por respeto a la confidencialidad de sus asuntos, la firma no publica los nombres de sus clientes.",
       valuesTitle: "Cómo trabajamos",
       values: [
         { title: "Prevención", text: "Revisamos antes de que lo haga la autoridad. Una auditoría a tiempo cuesta menos que un juicio y con frecuencia lo hace innecesario." },
@@ -283,7 +284,7 @@ export default function About() {
       subtitle: "Mehr als 35 Jahre Erfahrung im Arbeitsrecht für Unternehmen",
       historyTitle: "Unsere Geschichte",
       historyText1: "Santos & Saucedo ist eine auf Arbeitsrecht spezialisierte Boutique-Kanzlei, die seit mehr als 35 Jahren nationale und internationale Unternehmen berät. Von San Pedro Garza García, Nuevo León aus beraten wir die Geschäftsführung, die Personalabteilung und die internen Rechtsteams unserer Mandanten.",
-      historyText2: "Unsere Arbeit verbindet Prävention, Beratung, Audits, Schulung und Verteidigung in individuellen und kollektiven Arbeitskonflikten. Wir helfen Unternehmen, ihre Arbeitsverwaltung zu ordnen, Risiken zu reduzieren und bessere Entscheidungen vor, während und nach einem Konflikt zu treffen.",
+      historyText2: "Die Entscheidungen eines Unternehmens über sein Personal sind selten rein arbeitsrechtlich: Sie berühren die Gesellschaft, die Verträge mit Dritten und zunehmend Menschen, die aus anderen Ländern kommen. Aus Rücksicht auf die Vertraulichkeit ihrer Angelegenheiten veröffentlicht die Kanzlei die Namen ihrer Mandanten nicht.",
       valuesTitle: "Wie wir arbeiten",
       values: [
         { title: "Prävention", text: "Wir prüfen, bevor es die Behörde tut. Ein rechtzeitiges Audit kostet weniger als ein Prozess und macht ihn oft überflüssig." },
@@ -385,7 +386,7 @@ export default function About() {
       subtitle: "在企业劳动法领域拥有超过35年的经验",
       historyTitle: "我们的历史",
       historyText1: "Santos & Saucedo 是一家专注于劳动法的精品律师事务所，拥有超过35年为国内外企业提供服务的经验。我们立足于新莱昂州圣佩德罗-加尔萨-加西亚，为客户的管理层、人力资源部门和内部法务团队提供咨询。",
-      historyText2: "我们的工作涵盖预防、咨询、审计、培训以及个人和集体劳动纠纷中的辩护。我们帮助企业理顺劳动管理、降低风险，并在纠纷发生前、发生中和发生后做出更好的决策。",
+      historyText2: "企业关于员工的决定很少只是劳动问题：它们涉及公司本身、与第三方的合同，也越来越多地涉及来自其他国家的人员。出于对客户事务保密的尊重，本所不公开客户名称。",
       valuesTitle: "我们的工作方式",
       values: [
         { title: "预防", text: "我们赶在主管机关之前进行审查。及时的审计比诉讼成本更低，而且往往使诉讼不再必要。" },
@@ -487,7 +488,7 @@ export default function About() {
       subtitle: "기업 노동법 분야에서 35년 이상의 경험",
       historyTitle: "우리의 역사",
       historyText1: "Santos & Saucedo는 노동법을 전문으로 하는 부티크 로펌으로, 35년 이상 국내외 기업을 자문해 왔습니다. 누에보레온주 산페드로 가르사 가르시아에서 고객사의 경영진, 인사부서 및 사내 법무팀을 자문합니다.",
-      historyText2: "우리의 업무는 예방, 컨설팅, 감사, 교육 및 개별·집단 노동 분쟁에서의 방어를 결합합니다. 우리는 기업이 노무 관리를 정비하고 위험을 줄이며 분쟁 전, 중, 후에 더 나은 의사결정을 내리도록 돕습니다.",
+      historyText2: "인력에 관한 기업의 결정은 노동 문제에 그치는 경우가 드뭅니다. 회사 자체와 제3자와의 계약, 그리고 점점 더 다른 나라에서 오는 사람들과도 관련됩니다. 고객 사안의 기밀을 존중하여 법인은 고객의 이름을 공개하지 않습니다.",
       valuesTitle: "일하는 방식",
       values: [
         { title: "예방", text: "당국보다 먼저 검토합니다. 적시에 실시한 감사는 소송보다 비용이 적게 들고, 소송 자체를 불필요하게 만드는 경우가 많습니다." },
@@ -589,7 +590,7 @@ export default function About() {
       subtitle: "企業労働法における35年以上の経験",
       historyTitle: "私たちの歴史",
       historyText1: "Santos & Saucedoは労働法に特化したブティック法律事務所であり、35年以上にわたり国内外の企業を支援してきました。ヌエボ・レオン州サン・ペドロ・ガルサ・ガルシアを拠点に、クライアントの経営陣、人事部門、社内法務チームに助言を提供しています。",
-      historyText2: "私たちの業務は、予防、コンサルティング、監査、研修、そして個別および集団の労働紛争における防御を組み合わせています。企業が労務管理を整え、リスクを軽減し、紛争の前・最中・後においてより良い意思決定を行えるよう支援します。",
+      historyText2: "企業の人事に関する決定が労働の問題だけで終わることはまれです。会社そのもの、第三者との契約、そしてますます多くの場合、海外から来る人々にも関わります。クライアントの案件の秘密を尊重し、当事務所はクライアント名を公表していません。",
       valuesTitle: "私たちの仕事の進め方",
       values: [
         { title: "予防", text: "当局より先に確認します。適時の監査は訴訟よりも費用がかからず、多くの場合、訴訟そのものを不要にします。" },
@@ -691,7 +692,7 @@ export default function About() {
       subtitle: "أكثر من 35 عامًا من الخبرة في قانون العمل للشركات",
       historyTitle: "تاريخنا",
       historyText1: "Santos & Saucedo هي شركة محاماة متخصصة (بوتيك) في قانون العمل، بخبرة تزيد عن 35 عامًا في تقديم المشورة للشركات المحلية والدولية. من سان بيدرو غارزا غارسيا، نويفو ليون، نقدم المشورة لإدارة عملائنا وأقسام الموارد البشرية والفرق القانونية الداخلية.",
-      historyText2: "يجمع عملنا بين الوقاية والاستشارة والتدقيق والتدريب والدفاع في النزاعات العمالية الفردية والجماعية. نساعد الشركات على تنظيم إدارتها العمالية والحد من المخاطر واتخاذ قرارات أفضل قبل النزاع وأثناءه وبعده.",
+      historyText2: "نادرًا ما تكون قرارات الشركة بشأن موظفيها مسألة عمالية فحسب: فهي تمسّ الشركة ذاتها، والعقود مع الغير، وبشكل متزايد أشخاصًا قادمين من بلدان أخرى. واحترامًا لسرية شؤون عملائه، لا ينشر المكتب أسماءهم.",
       valuesTitle: "كيف نعمل",
       values: [
         { title: "الوقاية", text: "نراجع قبل أن تفعل السلطات ذلك. فالتدقيق في الوقت المناسب أقل كلفة من الدعوى القضائية، وكثيرًا ما يجعلها غير ضرورية." },
@@ -793,7 +794,7 @@ export default function About() {
       subtitle: "Более 35 лет опыта в корпоративном трудовом праве",
       historyTitle: "Наша история",
       historyText1: "Santos & Saucedo — это бутиковая фирма, специализирующаяся на трудовом праве, с более чем 35-летним опытом консультирования национальных и международных компаний. Из Сан-Педро-Гарса-Гарсия, Нуэво-Леон, мы консультируем руководство, кадровые службы и внутренние юридические команды наших клиентов.",
-      historyText2: "Наша работа сочетает профилактику, консультирование, аудит, обучение и защиту в индивидуальных и коллективных трудовых конфликтах. Мы помогаем компаниям упорядочить кадровое администрирование, снизить риски и принимать более взвешенные решения до, во время и после конфликта.",
+      historyText2: "Решения компании о персонале редко касаются только трудового права: они затрагивают корпоративные вопросы, договоры с третьими лицами и всё чаще — людей, приезжающих из других стран. Из уважения к конфиденциальности дел своих клиентов фирма не публикует их имена.",
       valuesTitle: "Как мы работаем",
       values: [
         { title: "Профилактика", text: "Мы проводим проверку раньше, чем это сделают органы власти. Своевременный аудит обходится дешевле судебного разбирательства и часто делает его ненужным." },
@@ -891,11 +892,11 @@ export default function About() {
       viewPractices: "Посмотреть практики",
     },
     fr: {
-      title: "À propos du cabinet",
+      title: "Le cabinet",
       subtitle: "Plus de 35 ans d'expérience en droit du travail des entreprises",
       historyTitle: "Notre histoire",
       historyText1: "Santos & Saucedo est un cabinet boutique spécialisé en droit du travail, fort de plus de 35 ans d'expérience au service d'entreprises nationales et internationales. Depuis San Pedro Garza García, Nuevo León, nous conseillons la direction, les ressources humaines et les équipes juridiques internes de nos clients.",
-      historyText2: "Notre travail combine prévention, conseil, audits, formation et défense dans les conflits du travail individuels et collectifs. Nous aidons les entreprises à organiser leur administration du travail, à réduire les risques et à prendre de meilleures décisions avant, pendant et après un conflit.",
+      historyText2: "Les décisions d’une entreprise concernant son personnel relèvent rarement du seul droit du travail : elles touchent la société, les contrats avec des tiers et, de plus en plus, des personnes venues d’autres pays. Par respect pour la confidentialité de leurs dossiers, le cabinet ne publie pas les noms de ses clients.",
       valuesTitle: "Notre façon de travailler",
       values: [
         { title: "Prévention", text: "Nous examinons avant que l'autorité ne le fasse. Un audit réalisé à temps coûte moins cher qu'un procès et le rend souvent inutile." },
@@ -997,7 +998,7 @@ export default function About() {
       subtitle: "Oltre 35 anni di esperienza nel diritto del lavoro aziendale",
       historyTitle: "La nostra storia",
       historyText1: "Santos & Saucedo è uno studio boutique specializzato in diritto del lavoro, con oltre 35 anni di esperienza nella consulenza a imprese nazionali e internazionali. Da San Pedro Garza García, Nuevo León, assistiamo la direzione, le risorse umane e i team legali interni dei nostri clienti.",
-      historyText2: "Il nostro lavoro combina prevenzione, consulenza, audit, formazione e difesa nei conflitti di lavoro individuali e collettivi. Aiutiamo le aziende a organizzare la propria amministrazione del lavoro, ridurre i rischi e prendere decisioni migliori prima, durante e dopo un conflitto.",
+      historyText2: "Le decisioni di un'impresa sul proprio personale raramente riguardano solo il diritto del lavoro: toccano la società, i contratti con terzi e, sempre più spesso, persone che arrivano da altri paesi. Per rispetto della riservatezza delle loro questioni, lo studio non pubblica i nomi dei propri clienti.",
       valuesTitle: "Come lavoriamo",
       values: [
         { title: "Prevenzione", text: "Verifichiamo prima che lo faccia l'autorità. Un audit tempestivo costa meno di una causa e spesso la rende superflua." },
@@ -1101,18 +1102,19 @@ export default function About() {
   // ES/EN: textos del reposicionamiento laboral
   const labor: typeof baseT = {
     ...baseT,
-    // h1 como el rótulo del menú (chrome26.ts)
+    // h1 como el rótulo del menú (chrome26.ts). Subtítulo: el h2 de la redacción aprobada
     title: isSpanish ? "Nuestra firma" : "The firm",
     subtitle: isSpanish
-      ? "Derecho laboral estratégico para empresas"
-      : "Strategic labor law for companies",
+      ? "Una firma de socios con alcance nacional."
+      : "A partner-led firm with national reach.",
     historyTitle: isSpanish ? "Santos & Saucedo Abogados" : "Santos & Saucedo Abogados",
     historyText1: isSpanish
       ? "Santos & Saucedo es una firma especializada en derecho laboral con más de 35 años de experiencia asesorando a empresas nacionales e internacionales."
       : "Santos & Saucedo is a labor-law boutique firm with more than 35 years of experience advising national and international companies.",
+    // Redacción aprobada (Nuestra firma, En breve) y la frase de Nuestros clientes
     historyText2: isSpanish
-      ? "Diagnosticamos, prevenimos, corregimos, capacitamos y defendemos la operación laboral de la empresa mediante asesoría preventiva, administración laboral, auditorías, capacitación y atención de conflictos individuales y colectivos."
-      : "We diagnose, prevent, correct, train, and defend companies' labor operations through preventive counsel, labor administration, audits, training, and individual and collective conflict resolution.",
+      ? "Las decisiones de una empresa sobre su personal rara vez son solo laborales: tocan a la sociedad, a los contratos con terceros y, cada vez más, a personas que llegan de otros países. Por respeto a la confidencialidad de sus asuntos, la firma no publica los nombres de sus clientes."
+      : "A company’s decisions about its personnel are rarely only a labor matter: they affect the corporation, its contracts with third parties and, increasingly, people who come from other countries. Out of respect for the confidentiality of its clients’ matters, the firm does not publish their names.",
     valuesTitle: isSpanish ? "Cómo trabajamos" : "How we work",
     cultureTitle: isSpanish ? "Metodología laboral" : "Labor Methodology",
     cultureSubtitle: isSpanish
@@ -1143,12 +1145,12 @@ export default function About() {
 
   // Los otros 8 idiomas: título, subtítulo, historia y valores de content[lang] (el h1
   // coincide con el menú y el pie, chrome26.ts); las cifras, las mismas de ES/EN.
+  // Enlaces finales (redacción aprobada: "Socios → Prácticas → Monitor Laboral →") y h1, con
+  // los rótulos del menú en cada idioma
+  const nav = (chrome26[language] ?? chrome26.en).nav;
   const t: typeof baseT = isSpanish || language === "en"
     ? labor
-    : { ...baseT, stats: [baseT.stats[0], { value: "72+", label: citiesLabel[language] }] };
-  // Enlaces finales (redacción aprobada: "Socios → Prácticas → Monitor Laboral →"), con los
-  // rótulos del menú en cada idioma
-  const nav = (chrome26[language] ?? chrome26.en).nav;
+    : { ...baseT, title: nav[0].label, stats: [baseT.stats[0], { value: "72+", label: citiesLabel[language] }] };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -1208,55 +1210,19 @@ export default function About() {
               className="mb-20 lg:mb-24"
               data-testid="section-history"
             >
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-5">
-                <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]">
-                  {t.historyText1}
+              {/* Una sola columna: el primer párrafo como entrada (.ss-lead) y el segundo en texto */}
+              <div className="max-w-[44rem] space-y-6">
+                <p className="ss-lead" data-testid="text-about-lead">
+                  {keepFirmName(t.historyText1)}
                 </p>
                 <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]">
                   {t.historyText2}
                 </p>
               </div>
-            </motion.section>
 
-            <motion.section
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="mb-20 lg:mb-24"
-              data-testid="section-values"
-            >
-              <h2 className="ss-h2 mb-8">
-                {t.valuesTitle}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
-                {t.values.map((value, index) => (
-                  <motion.div key={index} variants={itemVariants}>
-                    <NumberedCard
-                      index={index}
-                      title={value.title}
-                      body={value.text}
-                      dataTestid={`card-value-${index}`}
-                    />
-                  </motion.div>
-                ))}
-              </div>
-            </motion.section>
-
-            {/* Cifras con el estilo de cifra de la portada (romana 300, Azul Marino),
-                filetes de 1 px y sin panel */}
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="mb-20 lg:mb-24"
-              data-testid="section-stats"
-            >
-              <h2 className="ss-h2 mb-8">
-                {t.statsTitle}
-              </h2>
-              <dl className="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
+              {/* Cifras bajo la introducción, sin h2: estilo de cifra de la portada, filetes de
+                  1 px y sin panel */}
+              <dl className="mt-12 grid max-w-[36rem] grid-cols-2 gap-x-8 gap-y-10 lg:mt-16" data-testid="section-stats">
                 {t.stats.map((stat, index) => (
                   <div key={index} className="flex flex-col border-t border-ss-rule pt-6" data-testid={`stat-${index}`}>
                     {/* Etiquetas equilibradas (sin huérfanas en teléfono) y, como red, corte de
@@ -1270,6 +1236,33 @@ export default function About() {
                   </div>
                 ))}
               </dl>
+            </motion.section>
+
+            <motion.section
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="mb-20 lg:mb-24"
+              data-testid="section-values"
+            >
+              <h2 className="ss-h2 mb-8">
+                {t.valuesTitle}
+              </h2>
+              {/* Principios sin orden: sin numerales, en rejilla de 2 × 2 con filete superior */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                {t.values.map((value, index) => (
+                  <motion.div key={index} variants={itemVariants}>
+                    <NumberedCard
+                      index={index}
+                      showIndex={false}
+                      title={value.title}
+                      body={value.text}
+                      dataTestid={`card-value-${index}`}
+                    />
+                  </motion.div>
+                ))}
+              </div>
             </motion.section>
 
             {/* Navegación como enlaces de texto (sin botones): Socios, Prácticas y Monitor */}

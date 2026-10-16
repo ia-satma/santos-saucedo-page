@@ -1,4 +1,4 @@
-import { useState, useMemo, type ReactNode, type SyntheticEvent } from "react";
+import { useMemo, type ReactNode, type SyntheticEvent } from "react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -12,19 +12,18 @@ import { fallbackToOriginalSrc, getTeamPhotoSrcSet, isNamedOnTeamPage } from "@/
 import { Eyebrow } from "@/components/editorial";
 import { TextLink } from "@/components/home26/primitives";
 import { chrome26 } from "@/components/home26/chrome26";
+import { keepFirmName } from "@/lib/firmName";
 import type { TeamMember } from "@shared/schema";
 
-// Helper to split an array into chunks of a given size
-function chunkArray<T>(arr: T[], size: number): T[][] {
-  const chunks: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) {
-    chunks.push(arr.slice(i, i + size));
-  }
-  return chunks;
-}
-
 // Mosaico "Integrantes del equipo": columnas por tramo (teléfono, md, lg en adelante)
-const EQUIPO_COLUMNS = { phone: 5, md: 8, lg: 10 } as const;
+const EQUIPO_COLUMNS = { phone: 4, md: 6, lg: 8 } as const;
+
+// Clases completas de col-span por tramo (Tailwind solo genera las que aparecen escritas)
+const EQUIPO_SPAN_CLASSES = {
+  phone: ["col-span-1", "col-span-2", "col-span-3", "col-span-4"],
+  md: ["md:col-span-1", "md:col-span-2", "md:col-span-3", "md:col-span-4", "md:col-span-5", "md:col-span-6"],
+  lg: ["lg:col-span-1", "lg:col-span-2", "lg:col-span-3", "lg:col-span-4", "lg:col-span-5", "lg:col-span-6", "lg:col-span-7", "lg:col-span-8"],
+} as const;
 
 // Columnas que ocupa la celda Hueso de cierre: las que la última fila deja vacías; si la
 // cuenta cierra la fila, una fila entera (la celda lleva el enlace a Carreras y no se omite)
@@ -37,17 +36,16 @@ const CARD_PHOTO_SIZES = "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 112
 
 export default function Team() {
   const { language } = useLanguage();
-  const [assocPanels, setAssocPanels] = useState<Record<number, string | null>>({});
 
   const { data: allTeamMembers, isLoading: isLoadingAll, error: errorAll } = useQuery<TeamMember[]>({
     queryKey: ["/api/team"],
   });
 
+  // Sin título ni subtítulo propios: el h1 es la etiqueta del menú (chrome26, E5) y el
+  // encabezado no lleva subtítulo (E3); el párrafo solo se pinta si algún idioma lo trae.
   const content: Record<string, {
-    title: string;
-    subtitle: string;
+    subtitle?: string;
     errorMessage: string;
-    partnersOnly: string;
     ofCounsel: string;
     associatesTitle: string;
     mosaicNote: string;
@@ -60,10 +58,7 @@ export default function Team() {
     };
   }> = {
     en: {
-      title: "Our team",
-      subtitle: "Partners and team of Santos & Saucedo.",
       errorMessage: "Failed to load team members",
-      partnersOnly: "Partners",
       ofCounsel: "Of Counsel",
       associatesTitle: "Team members",
       mosaicNote: "Portraits of team members.",
@@ -76,10 +71,7 @@ export default function Team() {
       },
     },
     es: {
-      title: "Nuestro equipo",
-      subtitle: "Socios y equipo de Santos & Saucedo.",
       errorMessage: "Error al cargar los miembros del equipo",
-      partnersOnly: "Socios",
       ofCounsel: "Of Counsel",
       associatesTitle: "Integrantes del equipo",
       mosaicNote: "Retratos de integrantes del equipo.",
@@ -92,10 +84,7 @@ export default function Team() {
       },
     },
     de: {
-      title: "Unser Team",
-      subtitle: "Partner und Team von Santos & Saucedo.",
       errorMessage: "Teammitglieder konnten nicht geladen werden",
-      partnersOnly: "Partner",
       ofCounsel: "Of Counsel",
       associatesTitle: "Teammitglieder",
       mosaicNote: "Porträts von Teammitgliedern.",
@@ -108,10 +97,7 @@ export default function Team() {
       },
     },
     zh: {
-      title: "我们的团队",
-      subtitle: "Santos & Saucedo 的合伙人与团队。",
       errorMessage: "无法加载团队成员",
-      partnersOnly: "合伙人",
       ofCounsel: "法律顾问",
       associatesTitle: "团队成员",
       mosaicNote: "团队成员的肖像。",
@@ -124,10 +110,7 @@ export default function Team() {
       },
     },
     ko: {
-      title: "우리 팀",
-      subtitle: "Santos & Saucedo의 파트너와 팀.",
       errorMessage: "팀원을 불러올 수 없습니다",
-      partnersOnly: "파트너",
       ofCounsel: "고문",
       associatesTitle: "팀 구성원",
       mosaicNote: "팀 구성원의 사진.",
@@ -140,10 +123,7 @@ export default function Team() {
       },
     },
     ja: {
-      title: "私たちのチーム",
-      subtitle: "Santos & Saucedoのパートナーとチーム。",
       errorMessage: "チームメンバーを読み込めませんでした",
-      partnersOnly: "パートナー",
       ofCounsel: "オブ・カウンセル",
       associatesTitle: "チームメンバー",
       mosaicNote: "チームメンバーの写真。",
@@ -156,10 +136,7 @@ export default function Team() {
       },
     },
     ar: {
-      title: "فريقنا",
-      subtitle: "شركاء Santos & Saucedo وفريقها.",
       errorMessage: "فشل في تحميل أعضاء الفريق",
-      partnersOnly: "الشركاء",
       ofCounsel: "مستشار قانوني",
       associatesTitle: "أعضاء الفريق",
       mosaicNote: "صور أعضاء الفريق.",
@@ -172,10 +149,7 @@ export default function Team() {
       },
     },
     ru: {
-      title: "Наша команда",
-      subtitle: "Партнёры и команда Santos & Saucedo.",
       errorMessage: "Не удалось загрузить членов команды",
-      partnersOnly: "Партнёры",
       ofCounsel: "Советник",
       associatesTitle: "Сотрудники",
       mosaicNote: "Портреты сотрудников.",
@@ -188,10 +162,7 @@ export default function Team() {
       },
     },
     fr: {
-      title: "Notre équipe",
-      subtitle: "Associés et équipe de Santos & Saucedo.",
       errorMessage: "Échec du chargement des membres de l'équipe",
-      partnersOnly: "Associés",
       ofCounsel: "Of Counsel",
       associatesTitle: "Membres de l'équipe",
       mosaicNote: "Portraits de membres de l'équipe.",
@@ -204,10 +175,7 @@ export default function Team() {
       },
     },
     it: {
-      title: "Il nostro team",
-      subtitle: "Soci e team di Santos & Saucedo.",
       errorMessage: "Impossibile caricare i membri del team",
-      partnersOnly: "Partner",
       ofCounsel: "Of Counsel",
       associatesTitle: "Membri del team",
       mosaicNote: "Ritratti di membri del team.",
@@ -223,9 +191,12 @@ export default function Team() {
 
   const t = content[language] || content.en;
 
-  // Celda Hueso de cierre del mosaico: "Carreras" con el nombre del menú en cada idioma y el
-  // enlace al Semillero S&S (el nombre del programa no se traduce)
-  const careersLabel = (chrome26[language] ?? chrome26.es).nav[4].label;
+  // Nombres del menú en cada idioma (E5): el h1 es "Socios" (nav[2]) y la celda Hueso de
+  // cierre del mosaico lleva "Carreras" (nav[4]) con el enlace al Semillero S&S (el nombre del
+  // programa no se traduce)
+  const navLabels = (chrome26[language] ?? chrome26.es).nav;
+  const pageTitle = navLabels[2].label;
+  const careersLabel = navLabels[4].label;
 
   const groupedMembers = useMemo(() => {
     if (!allTeamMembers) return { partners: [], ofCounsel: [] };
@@ -246,13 +217,13 @@ export default function Team() {
     return { partners, ofCounsel };
   }, [allTeamMembers]);
 
-  const equipoClosingSpan = {
-    phone: closingColumns(equipoPhotos.length, EQUIPO_COLUMNS.phone),
-    md: closingColumns(equipoPhotos.length, EQUIPO_COLUMNS.md),
-    lg: closingColumns(equipoPhotos.length, EQUIPO_COLUMNS.lg),
-  };
-  // Desde lg la celda va dentro de la última fila; si esa fila está llena, en una franja propia
-  const equipoClosingOwnRow = equipoClosingSpan.lg === EQUIPO_COLUMNS.lg;
+  // Celda Hueso de cierre: un elemento más de la rejilla que ocupa las columnas que la última
+  // fila deja vacías en cada tramo (o una fila entera si la cuenta la cierra)
+  const equipoClosingSpanClass = [
+    EQUIPO_SPAN_CLASSES.phone[closingColumns(equipoPhotos.length, EQUIPO_COLUMNS.phone) - 1],
+    EQUIPO_SPAN_CLASSES.md[closingColumns(equipoPhotos.length, EQUIPO_COLUMNS.md) - 1],
+    EQUIPO_SPAN_CLASSES.lg[closingColumns(equipoPhotos.length, EQUIPO_COLUMNS.lg) - 1],
+  ].join(" ");
 
   const getInitials = (name: string) =>
     name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
@@ -311,7 +282,7 @@ export default function Team() {
             )}
           </span>
           <span className="block sm:mt-5">
-            <span className="ss-display block text-[clamp(24px,1.9vw,28px)] font-[420] leading-[1.15] tracking-[-0.01em] text-ss-marino decoration-1 underline-offset-4 group-hover:underline group-focus-visible:underline">
+            <span className="ss-display block text-[clamp(24px,1.9vw,28px)] font-normal leading-[1.15] tracking-[-0.01em] text-ss-marino decoration-1 underline-offset-4 group-hover:underline group-focus-visible:underline">
               {member.name}
             </span>
             {renderMemberRole(member, fallbackRole)}
@@ -321,10 +292,11 @@ export default function Team() {
     </li>
   );
 
-  // Sección con tarjetas, dentro del contenedor (el primer retrato arranca en el borde del logo)
-  const renderCardSection = (testId: string, title: string, children: ReactNode) => (
+  // Sección con tarjetas, dentro del contenedor (el primer retrato arranca en el borde del logo).
+  // Los socios van sin h2: el h1 de la página ya es "Socios" (E5).
+  const renderCardSection = (testId: string, title: string | null, children: ReactNode) => (
     <section className="ss-container pt-16 lg:pt-20" data-testid={testId}>
-      <h2 className="ss-h2 mb-10 lg:mb-12">{title}</h2>
+      {title && <h2 className="ss-h2 mb-10 lg:mb-12">{title}</h2>}
       <ul className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 sm:gap-y-12 lg:grid-cols-4">
         {children}
       </ul>
@@ -359,17 +331,16 @@ export default function Team() {
               transition={{ duration: 0.7 }}
             >
               <Eyebrow num="03" tone="navy" className="mb-6" />
+              {/* h1 = etiqueta del menú; mb-5 solo si sigue un subtítulo */}
               <h1
-                className="mb-5"
+                className={t.subtitle ? "mb-5" : undefined}
                 data-testid="text-team-title"
               >
-                {t.title}
+                {pageTitle}
               </h1>
-              <p
-                data-testid="text-team-subtitle"
-              >
-                {t.subtitle}
-              </p>
+              {t.subtitle && (
+                <p data-testid="text-team-subtitle">{keepFirmName(t.subtitle)}</p>
+              )}
             </motion.div>
           </div>
         </section>
@@ -383,7 +354,6 @@ export default function Team() {
         ) : isLoadingAll ? (
           // Carga con la misma retícula de tarjetas que la vista final
           <div className="ss-container pt-16 lg:pt-20" aria-busy="true">
-            <Skeleton className="h-9 w-40 mb-10 lg:mb-12 bg-ss-rule" />
             <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 sm:gap-y-12 lg:grid-cols-4">
               {Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="grid grid-cols-[112px_1fr] items-end gap-x-5 sm:block" data-testid={`skeleton-team-member-${i}`}>
@@ -402,7 +372,7 @@ export default function Team() {
             {groupedMembers.partners.length > 0 &&
               renderCardSection(
                 "section-partners",
-                t.partnersOnly,
+                null,
                 groupedMembers.partners.map((member, i) => renderPersonCard(member, t.positions.partner, i < 2)),
               )}
 
@@ -416,9 +386,9 @@ export default function Team() {
 
             {/* ─── INTEGRANTES DEL EQUIPO (mosaico anónimo: aún sin nombres) ─────── */}
             {equipoPhotos.length > 0 && (
-              <section className="pt-20 lg:pt-24" data-testid="section-associates">
-                <div className="ss-container pb-10 lg:pb-12">
-                  {/* No repite el h1 "Nuestro equipo": "Integrantes del equipo", como en la redacción */}
+              <section className="ss-container pt-20 pb-24 lg:pt-24 lg:pb-32" data-testid="section-associates">
+                <div className="pb-10 lg:pb-12">
+                  {/* No repite el h1 "Socios": "Integrantes del equipo", como en la redacción */}
                   <h2 className="ss-h2">
                     {t.associatesTitle}
                   </h2>
@@ -426,77 +396,32 @@ export default function Team() {
                       sin cifra: el número de integrantes no está confirmado */}
                   <p className="sr-only">{t.mosaicNote}</p>
                 </div>
-                {/* Desktop: diez columnas a todo lo ancho; filas que se expanden al pasar el cursor.
-                    Sin cursor de enlace: no llevan a ninguna parte. La última fila termina en una
-                    celda Hueso que ocupa las columnas vacías (cada retrato conserva su ancho). */}
-                <div className="hidden lg:block">
-                  {chunkArray(equipoPhotos, EQUIPO_COLUMNS.lg).map((row, rowIdx, rows) => (
-                    <div
-                      key={rowIdx}
-                      className="flex w-full h-[400px]"
-                      onMouseLeave={() => setAssocPanels(prev => ({ ...prev, [rowIdx]: null }))}
-                    >
-                      {row.map((photo, colIdx) => {
-                        const panelKey = `p-${rowIdx}-${colIdx}`;
-                        const isActive = assocPanels[rowIdx] === panelKey;
-                        return (
-                          <div
-                            key={panelKey}
-                            data-testid={`img-equipo-${rowIdx}-${colIdx}`}
-                            className="relative overflow-hidden block"
-                            style={{ flex: isActive ? 4 : 1, transition: "flex 0.45s cubic-bezier(0.22, 1, 0.36, 1)", minWidth: 0 }}
-                            onMouseEnter={() => setAssocPanels(prev => ({ ...prev, [rowIdx]: panelKey }))}
-                          >
-                            {/* Mosaico sin nombres: retrato en grises sin velo */}
-                            <img src={photo} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top" style={{ transform: isActive ? "scale(1.03)" : "scale(1)", transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)" }} />
-                            <div className="absolute top-0 right-0 w-px h-full bg-white/10" />
-                          </div>
-                        );
-                      })}
-                      {!equipoClosingOwnRow && rowIdx === rows.length - 1 && (
-                        // Sin relleno en la celda (el contenido va en absoluto): el relleno se sumaba
-                        // a su base flex y estrechaba los retratos de la última fila
-                        <div
-                          data-testid="cell-equipo-closing"
-                          className="relative bg-ss-paper"
-                          style={{ flex: equipoClosingSpan.lg, minWidth: 0 }}
-                        >
-                          <div className="absolute bottom-6 start-6 end-6 flex flex-col items-start">
-                            {closingContent}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                  {equipoClosingOwnRow && (
-                    <div data-testid="cell-equipo-closing" className="flex flex-col items-start bg-ss-paper px-6 py-8">
-                      {closingContent}
-                    </div>
-                  )}
-                </div>
-                {/* Teléfono y tableta: retícula compacta de columnas iguales (5 en el teléfono, 8 desde
-                    md), con la misma celda Hueso de cierre en la última fila */}
-                <div className="lg:hidden grid grid-cols-5 md:grid-cols-8 gap-px">
+                {/* Una sola rejilla contenida en todos los tramos (4, 6 y 8 columnas) de retratos
+                    4/5 en grises, con el encuadre de las tarjetas de socio; sin acordeón ni zoom al
+                    pasar el cursor: no llevan a ninguna parte. La celda Hueso de cierre es un
+                    elemento más que ocupa las columnas sobrantes de la última fila. */}
+                <ul className="grid grid-cols-4 gap-3 md:grid-cols-6 lg:grid-cols-8 lg:gap-6">
                   {equipoPhotos.map((photo, idx) => (
-                    <div key={idx} className="relative overflow-hidden block" style={{ aspectRatio: "3/4" }} data-testid={`img-equipo-mob-${idx}`}>
-                      <img src={photo} alt="" aria-hidden="true" loading="lazy" decoding="async" className="ss-photo absolute inset-0 w-full h-full object-cover object-top" />
-                    </div>
+                    // aria-hidden en el elemento: la lista no anuncia 37 elementos vacíos
+                    <li key={idx} aria-hidden="true" className="relative aspect-[4/5] overflow-hidden bg-ss-paper" data-testid={`img-equipo-${idx}`}>
+                      <img
+                        src={photo}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        width={295}
+                        height={295}
+                        className="ss-photo h-full w-full object-cover object-[50%_28%]"
+                      />
+                    </li>
                   ))}
-                  <div
-                    data-testid="cell-equipo-closing-mob"
-                    className="flex flex-col items-start justify-end bg-ss-paper p-3 md:hidden"
-                    style={{ gridColumn: `span ${equipoClosingSpan.phone} / span ${equipoClosingSpan.phone}` }}
+                  <li
+                    data-testid="cell-equipo-closing"
+                    className={`flex flex-col items-start justify-end bg-ss-paper p-3 md:p-4 lg:p-6 ${equipoClosingSpanClass}`}
                   >
                     {closingContent}
-                  </div>
-                  <div
-                    data-testid="cell-equipo-closing-md"
-                    className="hidden flex-col items-start justify-end bg-ss-paper p-4 md:flex"
-                    style={{ gridColumn: `span ${equipoClosingSpan.md} / span ${equipoClosingSpan.md}` }}
-                  >
-                    {closingContent}
-                  </div>
-                </div>
+                  </li>
+                </ul>
               </section>
             )}
           </>

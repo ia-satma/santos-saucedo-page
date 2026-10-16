@@ -1,5 +1,6 @@
 import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from "wouter";
 import { useEffect, lazy, Suspense } from "react";
+import { MotionConfig } from "framer-motion";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -34,9 +35,7 @@ const Careers = lazy(() => import("@/pages/Careers"));
 const Interns = lazy(() => import("@/pages/Interns"));
 const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
 const Terms = lazy(() => import("@/pages/Terms"));
-const Articles = lazy(() => import("@/pages/Articles"));
 const Newsletter = lazy(() => import("@/pages/Newsletter"));
-const Events = lazy(() => import("@/pages/Events"));
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
 const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
 const AdminPosts = lazy(() => import("@/pages/admin/AdminPosts"));
@@ -153,11 +152,11 @@ function StaticAdminUnavailable() {
   );
 }
 
-// Rutas retiradas (D4, D5): /experience pasa a /practice-groups y /offices a /contact.
-// El servidor responde 301 (server/routes.ts); en GitHub Pages no hay servidor y la
-// redirección es del cliente: Redirect antepone la base del router (/santos-saucedo-page)
-// y se conservan la consulta y el ancla. Las páginas Experience y Offices quedan en el
-// código, sin ruta.
+// Rutas retiradas (D4, D5, E4): /experience pasa a /practice-groups, /offices a /contact,
+// y /articles (repetía /news) y /events (sin eventos) a /news. El servidor responde 301
+// (server/routes.ts); en GitHub Pages no hay servidor y la redirección es del cliente:
+// Redirect antepone la base del router (/santos-saucedo-page) y se conservan la consulta y
+// el ancla. Las páginas Experience, Offices, Articles y Events quedan en el código, sin ruta.
 function RedirectKeepingQuery({ to }: { to: string }) {
   return <Redirect to={`${to}${window.location.search}${window.location.hash}`} replace />;
 }
@@ -191,9 +190,13 @@ function Router() {
         <Route path="/offices/*?">
           <RedirectKeepingQuery to="/contact" />
         </Route>
-        <Route path="/articles" component={Articles} />
+        <Route path="/articles/*?">
+          <RedirectKeepingQuery to="/news" />
+        </Route>
         <Route path="/newsletter" component={Newsletter} />
-        <Route path="/events" component={Events} />
+        <Route path="/events/*?">
+          <RedirectKeepingQuery to="/news" />
+        </Route>
         <Route path="/admin/login" component={AdminLogin} />
         <Route path="/admin/dashboard" component={AdminDashboard} />
         <Route path="/admin/posts" component={AdminPosts} />
@@ -224,20 +227,24 @@ function Router() {
   );
 }
 
+// reducedMotion="user": con "reducir movimiento" del sistema, framer-motion deja de mover
+// (translateY, escala) los héroes y secciones de las páginas internas; solo queda la opacidad.
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <LanguageProvider>
-          <WouterRouter base={routerBase}>
-            <ScrollToTop />
-            <SkipLinks />
-            <Toaster />
-            <Router />
-          </WouterRouter>
-        </LanguageProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <MotionConfig reducedMotion="user">
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <LanguageProvider>
+            <WouterRouter base={routerBase}>
+              <ScrollToTop />
+              <SkipLinks />
+              <Toaster />
+              <Router />
+            </WouterRouter>
+          </LanguageProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </MotionConfig>
   );
 }
 

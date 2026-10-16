@@ -277,7 +277,7 @@ export default function Offices() {
     },
     fr: {
       heroTitle: "Nos bureaux",
-      heroSubtitle: "Notre bureau se trouve à San Pedro Garza García, dans l'État de Nuevo León.",
+      heroSubtitle: "Notre bureau se trouve à San Pedro Garza García, dans l’État de Nuevo León.",
       mainOfficeTitle: "Siège à San Pedro Garza García",
       buildingName: "Río Tamazunchale 205 Norte",
       floor: "Étage 18",
@@ -287,14 +287,14 @@ export default function Offices() {
       city: "San Pedro Garza García, Nuevo León, Mexique",
       phone: "+52 81 8335 2086",
       email: "info@santossaucedo.com",
-      mapTitle: "Plan d'accès au bureau de Santos & Saucedo à San Pedro Garza García",
+      mapTitle: "Plan d’accès au bureau de Santos & Saucedo à San Pedro Garza García",
       emailLabel: "E-mail",
       phoneLabel: "Téléphone",
       addressLabel: "Adresse",
-      officeHoursTitle: "Heures d'ouverture",
+      officeHoursTitle: "Heures d’ouverture",
       officeHours: "Du lundi au vendredi, de 9 h à 19 h",
       saturdayHours: "Samedi et dimanche : fermé",
-      getDirections: "Obtenir l'itinéraire",
+      getDirections: "Obtenir l’itinéraire",
       galleryTitle: "Galerie du bureau",
       contactCtaSubtitle: "Les coordonnées de chaque associé figurent sur sa fiche.",
       contactButton: "Contact",
@@ -342,8 +342,8 @@ export default function Offices() {
     city: "C.P. 66220, México",
   };
 
-  const googleMapsEmbedUrl = "https://www.google.com/maps?q=R%C3%ADo+Tamazunchale+205+Norte,+Colonia+Del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220&output=embed";
-  const googleMapsDirectionsUrl = "https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Colonia+Del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220";
+  const googleMapsEmbedUrl = "https://www.google.com/maps?q=R%C3%ADo+Tamazunchale+205+Norte,+Col.+del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220&output=embed";
+  const googleMapsDirectionsUrl = "https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Col.+del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220";
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-offices">

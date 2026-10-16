@@ -11,6 +11,12 @@ import { MonitorList } from "@/components/monitor/MonitorList";
 import type { News } from "@shared/schema";
 import { Reveal, SectionHead, TextLink, useInView } from "./primitives";
 import { home26, langAttrs, type Lang26 } from "./content";
+import { chrome26 } from "./chrome26";
+
+/* Texto de los TextLink: la etiqueta del menú de su destino (chrome26, fuente única de los
+   nombres de sección), un solo texto por destino, como en /about. */
+const NAV = { firma: 0, practicas: 1, socios: 2, monitor: 3 } as const;
+const navLabel = (lang: Lang26, key: keyof typeof NAV) => chrome26[lang].nav[NAV[key]].label;
 
 /* Ritmo vertical propio de cada sección. Los pares de Codex §5.2 (móvil/escritorio)
    van en md/lg; en teléfono un paso menos para no alargar la página. */
@@ -91,14 +97,15 @@ export function Firma26({ lang }: { lang: Lang26 }) {
           </Reveal>
           <Reveal delay={0.18}>
             <TextLink href="/about" className="mt-10">
-              {t.link}
+              {navLabel(lang, "firma")}
             </TextLink>
           </Reveal>
         </div>
 
         {/* A su tamaño nativo (708 × 684), nunca más grande: la figura no pasa de 708 px y
-            arranca en la columna 5 (el borde de Prácticas, Socios y el pie). */}
-        <figure className="w-full max-w-[708px] lg:col-span-6 lg:col-start-7 xl:col-span-8 xl:col-start-5">
+            termina en el borde derecho del contenedor (justify-self-end), donde acaban las filas
+            de Prácticas, las columnas del manifiesto y el Monitor. */}
+        <figure className="w-full max-w-[708px] lg:col-span-6 lg:col-start-7 lg:justify-self-end xl:col-span-8 xl:col-start-5">
           {/* Fondo Línea mientras carga */}
           <div ref={photoRef} className="overflow-hidden bg-ss-rule">
             <img
@@ -124,7 +131,7 @@ export function Firma26({ lang }: { lang: Lang26 }) {
   );
 }
 
-/* Manifiesto — Lo que creemos (sin numeral: no es una sección del menú) */
+/* Manifiesto — Lo que creemos (sin numeral: no es una sección del menú; lleva su etiqueta) */
 export function Creemos26({ lang }: { lang: Lang26 }) {
   const t = home26[lang].creemos;
   return (
@@ -132,7 +139,7 @@ export function Creemos26({ lang }: { lang: Lang26 }) {
     <section {...langAttrs[lang]} className={`ss-paper ${Y.creemos}`} aria-labelledby="ss26-creemos">
       <div className="ss-container grid grid-cols-1 gap-x-6 lg:grid-cols-12">
         <Reveal className="lg:col-span-12">
-          <SectionHead />
+          <SectionHead label={t.label} />
         </Reveal>
         <Reveal delay={0.08} className="mt-12 lg:col-span-11 lg:mt-16">
           {/* La única itálica del sitio (romana 300 estática); en una línea a 1440 px */}
@@ -183,7 +190,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
             </Reveal>
             <Reveal delay={0.12}>
               <TextLink href="/practice-groups" className="mt-10">
-                {t.link}
+                {navLabel(lang, "practicas")}
               </TextLink>
             </Reveal>
           </div>
@@ -230,7 +237,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
   );
 }
 
-/* Empresas extranjeras en México (sin numeral: no es una sección del menú) */
+/* Empresas extranjeras en México (sin cabecera §: no es una sección del menú y el h2 la nombra) */
 export function Extranjeras26({ lang }: { lang: Lang26 }) {
   const t = home26[lang].extranjeras;
   return (
@@ -259,10 +266,7 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
         <div className="flex items-center px-[var(--ss-pad)] py-20 xl:pl-0 xl:pr-[clamp(48px,6vw,104px)]">
           <div className="max-w-[560px]">
             <Reveal>
-              <SectionHead tone="dark" />
-            </Reveal>
-            <Reveal delay={0.06}>
-              <h2 id="ss26-extranjeras" className={`${H2} text-white`}>
+              <h2 id="ss26-extranjeras" className="ss-h2 text-white">
                 {t.title}
               </h2>
             </Reveal>
@@ -282,7 +286,7 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
             </ol>
             <Reveal delay={0.3}>
               <TextLink href="/practice-groups" tone="dark" className="mt-10">
-                {t.link}
+                {navLabel(lang, "practicas")}
               </TextLink>
             </Reveal>
           </div>
@@ -327,7 +331,7 @@ export function Monitor26({ lang }: { lang: Lang26 }) {
             )}
           </div>
           <Reveal delay={0.1}>
-            <TextLink href="/news">{t.link}</TextLink>
+            <TextLink href="/news">{navLabel(lang, "monitor")}</TextLink>
           </Reveal>
         </div>
 
@@ -338,7 +342,8 @@ export function Monitor26({ lang }: { lang: Lang26 }) {
             unión (JoinRule) ya separa y no quedan dos filetes seguidos. */}
         {hasItems && (
           <Reveal delay={0.12} className="mt-14 lg:mt-16 [section:has(+[data-surface=light])_&_li:last-child]:border-b-0">
-            <MonitorList limit={3} headingLevel="h3" layout="index" tone="light" />
+            {/* En el idioma que muestra la portada (es/en): sin traducción automática */}
+            <MonitorList limit={3} headingLevel="h3" layout="index" tone="light" language={lang} />
           </Reveal>
         )}
       </div>
@@ -371,18 +376,22 @@ export function Socios26({ lang }: { lang: Lang26 }) {
             </Reveal>
           </div>
           <Reveal delay={0.1}>
-            <TextLink href="/team">{t.link}</TextLink>
+            <TextLink href="/team">{navLabel(lang, "socios")}</TextLink>
           </Reveal>
         </div>
 
-        {/* Teléfono: lista con retrato pequeño al lado del nombre; desde sm, tres columnas */}
+        {/* Teléfono: lista con retrato pequeño al lado del nombre; desde sm, tres columnas.
+            La tarjeta es la de /team (Team.tsx renderPersonCard): enlace a la ficha del socio,
+            el retrato se acerca al 1 % y el nombre se subraya al pasar el ratón o con el foco.
+            inline-link: fuera de la regla móvil de index.css que vuelve inline-flex todo <a>. */}
         <ul className="mt-14 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-3 sm:gap-y-12 lg:mt-16">
           {t.people.map((person, i) => (
             <Reveal as="li" key={person.name} delay={i * 0.08}>
-                <figure className="group grid grid-cols-[112px_1fr] items-end gap-x-5 sm:block">
-                  <div className="overflow-hidden bg-ss-paper">
+              <Link href={`/team/${person.photo}`} className="inline-link group block">
+                <span className="grid grid-cols-[112px_1fr] items-end gap-x-5 sm:block">
+                  <span className="block overflow-hidden bg-ss-paper">
                     {/* Fuente 652×652 (360 en teléfono) recortada a 4:5, en grises como todo
-                        retrato; alt vacío: el pie ya da el nombre */}
+                        retrato; alt vacío: el nombre ya es el texto del enlace */}
                     <img
                       src={socioPhotos[person.photo]}
                       {...socioSrcSetProps(person.photo)}
@@ -394,14 +403,15 @@ export function Socios26({ lang }: { lang: Lang26 }) {
                       height={652}
                       className="ss-photo ss-photo--mono aspect-[4/5] h-auto w-full object-cover object-[50%_28%] transition-transform duration-700 [transition-timing-function:var(--ss-ease)] motion-safe:group-hover:scale-[1.01] motion-reduce:transform-none motion-reduce:transition-none"
                     />
-                  </div>
-                  <figcaption className="sm:mt-5">
-                    <span className="ss-display block text-[clamp(24px,1.9vw,28px)] font-normal leading-[1.15] tracking-[-0.01em] text-ss-marino">
+                  </span>
+                  <span className="block sm:mt-5">
+                    <span className="ss-display block text-[clamp(24px,1.9vw,28px)] font-normal leading-[1.15] tracking-[-0.01em] text-ss-marino decoration-1 underline-offset-4 group-hover:underline group-focus-visible:underline">
                       {person.name}
                     </span>
                     <span className="ss-label mt-3 block text-ss-medio">{person.role}</span>
-                  </figcaption>
-                </figure>
+                  </span>
+                </span>
+              </Link>
             </Reveal>
           ))}
         </ul>

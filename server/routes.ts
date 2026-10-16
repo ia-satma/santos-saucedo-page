@@ -2,7 +2,8 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
-import { seed } from "./seed";
+import { seed, teamMembersData } from "./seed";
+import { db } from "./db";
 import express from "express";
 import path from "path";
 import fs from "fs";
@@ -55,9 +56,10 @@ import {
   insertAllianceSchema,
   insertSpecializedDeskSchema,
   insertOfficeImageSchema,
+  newsletterSubscribers,
 } from "@shared/schema";
 import { isNamedOnTeamPage } from "@shared/teamVisibility";
-import { ZodError } from "zod";
+import { z, ZodError } from "zod";
 import {
   SUPPORTED_LANGUAGES,
   translateLegalText,
@@ -154,7 +156,7 @@ function generateVCard(member: any, language: "es" | "en" = "es"): string {
     lines.push(`TEL;TYPE=WORK,VOICE:${member.phone}`);
   }
   
-  lines.push(`ADR;TYPE=WORK:;;Río Tamazunchale 205 Norte, Colonia Del Valle;San Pedro Garza García;N.L.;66220;México`);
+  lines.push(`ADR;TYPE=WORK:;;Río Tamazunchale 205 Norte, Col. del Valle;San Pedro Garza García;N.L.;66220;México`);
   lines.push(`URL:https://www.santossaucedo.com`);
   
   if (member.linkedinUrl) {
@@ -193,12 +195,15 @@ export async function registerRoutes(
     app.use("/api/health-check", disabledAgentService);
   }
 
-  // Rutas retiradas (D4, D5): redirección permanente que conserva la consulta. /experience
-  // listaba asuntos sin confirmar; /offices repetía /contact. Las páginas siguen en el código
-  // sin ruta, y el cliente (App.tsx) redirige igual en GitHub Pages, donde no hay servidor.
+  // Rutas retiradas (D4, D5, E4): redirección permanente que conserva la consulta. /experience
+  // listaba asuntos sin confirmar; /offices repetía /contact; /articles repetía la lista de
+  // /news y /events era una página sin eventos. Las páginas siguen en el código sin ruta, y el
+  // cliente (App.tsx) redirige igual en GitHub Pages, donde no hay servidor.
   const RETIRED_ROUTES: Record<string, string> = {
     "/experience": "/practice-groups",
     "/offices": "/contact",
+    "/articles": "/news",
+    "/events": "/news",
   };
   for (const [from, to] of Object.entries(RETIRED_ROUTES)) {
     app.get([from, `${from}/*`], (req, res) => {
@@ -265,6 +270,17 @@ export async function registerRoutes(
     maxAge: '7d',
     immutable: true,
   }));
+
+  // Retratos de los socios sin confirmar (E11): no se sirven, igual que en el build estático
+  // (script/generate-static-api.ts no los copia). Archivos "<slug>.jpg" y "<slug>-128.webp".
+  const hiddenPhotoSlugs = new Set(
+    teamMembersData.filter((m) => m.isPartner && !isNamedOnTeamPage(m)).map((m) => m.slug),
+  );
+  app.use('/team_photos', (req, res, next) => {
+    const slug = path.basename(req.path).replace(/(-\d+)?\.[a-z0-9]+$/i, "");
+    if (hiddenPhotoSlugs.has(slug)) return res.status(404).end();
+    next();
+  });
 
   // Serve Santos & Saucedo team photos from attached_assets/team_photos
   app.use('/team_photos', express.static(path.join(process.cwd(), 'attached_assets', 'team_photos'), {
@@ -497,11 +513,14 @@ export async function registerRoutes(
     }
   });
 
+  // E11: el API público solo da lo que el sitio muestra. /api/team deja fuera a los socios
+  // sin confirmar (los asociados siguen: el mosaico de /team usa sus fotos, sin nombres);
+  // ficha, vCard y notas de una persona, solo de quien /team nombra (isNamedOnTeamPage).
   app.get("/api/team", async (_req, res) => {
     try {
       const members = await storage.getTeamMembers();
       res.set("Cache-Control", "public, max-age=60");
-      res.json(members);
+      res.json(members.filter((m) => !m.isPartner || isNamedOnTeamPage(m)));
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch team members" });
     }
@@ -511,7 +530,7 @@ export async function registerRoutes(
     try {
       const partners = await storage.getPartners();
       res.set("Cache-Control", "public, max-age=60");
-      res.json(partners);
+      res.json(partners.filter((m) => isNamedOnTeamPage(m)));
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch partners" });
     }
@@ -524,7 +543,7 @@ export async function registerRoutes(
       if (!member) {
         member = await storage.getTeamMemberById(param);
       }
-      if (!member) {
+      if (!member || !isNamedOnTeamPage(member)) {
         return res.status(404).json({ error: "Team member not found" });
       }
       res.json(member);
@@ -543,7 +562,7 @@ export async function registerRoutes(
       if (!member) {
         member = await storage.getTeamMemberById(param);
       }
-      if (!member) {
+      if (!member || !isNamedOnTeamPage(member)) {
         return res.status(404).json({ error: "Team member not found" });
       }
       
@@ -563,7 +582,7 @@ export async function registerRoutes(
     try {
       const slug = req.params.slug;
       const member = await storage.getTeamMemberBySlug(slug);
-      if (!member) {
+      if (!member || !isNamedOnTeamPage(member)) {
         return res.status(404).json({ error: "Team member not found" });
       }
       const newsList = await storage.getNewsByTeamMemberId(member.id);
@@ -610,6 +629,37 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Contact form error:", error);
       res.status(500).json({ error: "Failed to process contact form" });
+    }
+  });
+
+  // Suscripción al Monitor Laboral (E20): guarda el correo en newsletter_subscribers; no envía
+  // correos. Un correo ya suscrito recibe la misma respuesta que un alta nueva (no revela
+  // quién está suscrito) y su registro no cambia. Sin límite de peticiones, como /api/contact.
+  const newsletterSchema = z.object({
+    email: z.string().trim().toLowerCase().min(1).max(254).email(),
+    // Idioma de la página, si viene; uno desconocido se ignora (queda el de la tabla, "es")
+    preferredLanguage: z
+      .string()
+      .refine((code) => SUPPORTED_LANGUAGES.some((l) => l.code === code))
+      .optional()
+      .catch(undefined),
+  });
+
+  app.post("/api/newsletter", async (req, res) => {
+    const parsed = newsletterSchema.safeParse(req.body ?? {});
+    if (!parsed.success) {
+      return res.status(400).json({ error: "Validation failed" });
+    }
+    try {
+      const { email, preferredLanguage } = parsed.data;
+      await db
+        .insert(newsletterSubscribers)
+        .values(preferredLanguage ? { email, preferredLanguage } : { email })
+        .onConflictDoNothing({ target: newsletterSubscribers.email });
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Newsletter subscription error:", error);
+      res.status(500).json({ error: "Failed to process subscription" });
     }
   });
 

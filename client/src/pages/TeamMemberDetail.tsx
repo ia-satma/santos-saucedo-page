@@ -1,4 +1,4 @@
-import { useState, useMemo, type ReactNode, type SyntheticEvent } from "react";
+import { lazy, Suspense, useState, useMemo, type ReactNode, type SyntheticEvent } from "react";
 import { Link, useParams } from "wouter";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
@@ -17,21 +17,34 @@ import { formatNewsDate } from "@/lib/newsDate";
 import { getTeamPhotoObjectPosition } from "@/lib/teamPhotoPosition";
 import { fallbackToOriginalSrc, getTeamPhotoSrcSet, getTeamPhotoThumb, highFetchPriority, isNamedOnTeamPage } from "@/lib/teamPhotoSources";
 import { Eyebrow, LeadParagraph } from "@/components/editorial";
+import { chrome26 } from "@/components/home26/chrome26";
+import { useSiteContact } from "@/components/home26/useSiteContact";
+import { keepFirmName } from "@/lib/firmName";
 import type { TeamMember, PracticeGroup, IndustryGroup, Education, Affiliation, Ranking, Publication, RepresentativeMatter, BarAdmission, News, LanguageCode } from "@shared/schema";
 
+// Vista 404 del sitio (la misma carga diferida que usa App): fichas que no existen y personas
+// que el sitio no nombra (E11)
+const NotFound = lazy(() => import("@/pages/not-found"));
+
 // Retícula del encabezado del perfil, compartida por la vista y su carga para que no se
-// desalineen (el orden del DOM es el del teléfono; desde md cada bloque va a su celda).
-// Teléfono: nombre, botones y foto: los tres botones quedan en el primer pantallazo, antes
-// que el retrato cuadrado. md: foto en la columna 1 (dos filas, al menos cuadrada), filete
-// de 1 px y el texto en la 3 alineado con la foto; los botones debajo, en una fila de tres a
-// todo lo ancho (junto al retrato quedaban dos y uno). lg: los botones vuelven a la columna
-// del texto, al pie, alineados con el borde inferior del retrato (240 px en md, 260 en lg).
-const PROFILE_GRID = "grid grid-cols-1 md:grid-cols-[240px_1px_minmax(0,1fr)] md:grid-rows-[auto_1fr] lg:grid-cols-[260px_1px_minmax(0,1fr)]";
-const PROFILE_PHOTO_CELL = "aspect-square w-full md:col-start-1 md:row-span-2 md:row-start-1 md:aspect-auto md:min-h-[240px] lg:min-h-[260px]";
+// desalineen (cada bloque se coloca en su celda; el DOM sigue nombre, botones, foto).
+// Teléfono: retrato 4/5 de 112 px al lado del nombre y el cargo, como la tarjeta de /team
+// (grid-cols-[112px_1fr], al pie de la fila), y los botones debajo de ese bloque, a todo lo
+// ancho. md: foto en la columna 1 (dos filas, al menos cuadrada), filete de 1 px y el texto en
+// la 3 alineado con la foto; los botones debajo, en una fila a todo lo ancho. lg: los botones
+// vuelven a la columna del texto, al pie, alineados con el borde inferior del retrato (240 px
+// en md, 260 en lg).
+const PROFILE_GRID = "grid grid-cols-[112px_minmax(0,1fr)] items-end gap-x-5 md:grid-cols-[240px_1px_minmax(0,1fr)] md:grid-rows-[auto_1fr] md:items-stretch md:gap-x-0 lg:grid-cols-[260px_1px_minmax(0,1fr)]";
+const PROFILE_PHOTO_CELL = "col-start-1 row-start-1 aspect-[4/5] w-full md:row-span-2 md:aspect-auto md:min-h-[240px] lg:min-h-[260px]";
 // Ancho del retrato en cada tramo, para que srcset elija la variante WebP adecuada
-const PROFILE_PHOTO_SIZES = "(min-width: 1024px) 260px, (min-width: 768px) 240px, 100vw";
-const PROFILE_IDENTITY_CELL = "pb-6 md:col-start-3 md:row-start-1 md:px-10";
-const PROFILE_ACTIONS_CELL = "pb-8 md:col-span-3 md:col-start-1 md:row-start-3 md:pb-0 md:pt-8 lg:col-span-1 lg:col-start-3 lg:row-start-2 lg:self-end lg:px-10 lg:pt-0";
+const PROFILE_PHOTO_SIZES = "(min-width: 1024px) 260px, (min-width: 768px) 240px, 112px";
+const PROFILE_IDENTITY_CELL = "col-start-2 row-start-1 md:col-start-3 md:px-10 md:pb-6";
+const PROFILE_ACTIONS_CELL = "col-span-2 col-start-1 row-start-2 pt-6 md:col-span-3 md:row-start-3 md:pt-8 lg:col-span-1 lg:col-start-3 lg:row-start-2 lg:self-end lg:px-10 lg:pt-0";
+// Columnas de la fila de botones (dos sin vCard en el build estático; uno si solo hay correo)
+const ACTIONS_COLUMNS = ["", "sm:grid-cols-2 lg:max-w-[32rem]", "sm:grid-cols-3 lg:max-w-[48rem]"] as const;
+
+// Teléfonos comparados solo por sus cifras (sin espacios ni guiones)
+const digitsOf = (value: string) => value.replace(/[^\d+]/g, "");
 
 // Relleno del encabezado: el mismo de los demás encabezados internos, escrito aquí y sin las
 // clases pt-36/pb-20 (la regla propia de la ficha en index.css dejaba 86/64 px a 1440).
@@ -41,7 +54,9 @@ const PROFILE_HERO = "pt-[clamp(56px,4vw,72px)] pb-[clamp(40px,3.6vw,56px)]";
 const PROFILE_BUTTON = "min-h-11 w-full whitespace-normal text-center leading-[1.2] border-ss-marino text-ss-marino transition-colors duration-200 hover:bg-ss-marino hover:text-white";
 
 // Texto sin traducción (la traducción automática falló o no llegó): se muestra el original
-// en inglés, marcado lang="en"; si tampoco hay inglés, el español (lang="es").
+// en inglés, marcado lang="en"; si tampoco hay inglés, el español (lang="es"). `translated`
+// solo cuando el hook dice que llegó una traducción (hasTranslation): mientras tanto devuelve
+// el texto de origen, que aquí es el español.
 type LocalizedText = { text: string | null | undefined; lang?: "en" | "es" };
 function pickLocalized(
   language: LanguageCode,
@@ -88,7 +103,7 @@ function RelatedTeamMemberCard({
   language: LanguageCode;
   getInitials: (name: string) => string;
 }) {
-  const { translatedFields } = useTranslatedContent({
+  const { translatedFields, hasTranslation } = useTranslatedContent({
     contentType: 'team_member',
     entityId: relatedMember.id.toString(),
     fields: { title: relatedMember.titleEs || relatedMember.title, titleEs: relatedMember.titleEs },
@@ -97,7 +112,7 @@ function RelatedTeamMemberCard({
   });
 
   // Inglés: title tal cual. Otros idiomas: traducción, o el inglés antes que el español
-  const displayTitle = pickLocalized(language, translatedFields.title, relatedMember.title, relatedMember.titleEs);
+  const displayTitle = pickLocalized(language, hasTranslation ? translatedFields.title : null, relatedMember.title, relatedMember.titleEs);
 
   // Miniatura WebP de 128 px; si no existe donde se sirven las fotos, el original; si tampoco,
   // quedan las iniciales sobre Hueso
@@ -109,7 +124,7 @@ function RelatedTeamMemberCard({
       {/* Fila con filete superior a todo lo ancho; retrato cuadrado de 56 px (sin círculo), en
           grises como todos los retratos */}
       <div
-        className="group flex w-full items-center gap-4 py-4 border-t border-ss-rule cursor-pointer"
+        className="group flex w-full items-start gap-4 py-4 border-t border-ss-rule cursor-pointer"
         data-testid={`card-related-member-${relatedMember.slug}`}
       >
         <span className="relative block h-14 w-14 shrink-0 overflow-hidden bg-ss-paper">
@@ -198,7 +213,7 @@ function PracticeGroupBadge({
   group: PracticeGroup;
   language: LanguageCode;
 }) {
-  const { translatedFields } = useTranslatedContent({
+  const { translatedFields, hasTranslation } = useTranslatedContent({
     contentType: 'practice_group',
     entityId: group.id.toString(),
     fields: { name: group.nameEs || group.name, nameEs: group.nameEs },
@@ -206,7 +221,7 @@ function PracticeGroupBadge({
   });
 
   // Inglés: name tal cual. Otros idiomas: traducción, o el inglés antes que el español
-  const displayName = pickLocalized(language, translatedFields.name, group.name, group.nameEs);
+  const displayName = pickLocalized(language, hasTranslation ? translatedFields.name : null, group.name, group.nameEs);
 
   return (
     <Link href={`/practice-groups/${group.slug}`}>
@@ -229,14 +244,14 @@ function IndustryGroupBadge({
   group: IndustryGroup;
   language: LanguageCode;
 }) {
-  const { translatedFields } = useTranslatedContent({
+  const { translatedFields, hasTranslation } = useTranslatedContent({
     contentType: 'industry_group',
     entityId: group.id.toString(),
     fields: { name: group.nameEs || group.name, nameEs: group.nameEs },
     enabled: language !== 'es' && !(language === 'en' && group.name),
   });
 
-  const displayName = pickLocalized(language, translatedFields.name, group.name, group.nameEs);
+  const displayName = pickLocalized(language, hasTranslation ? translatedFields.name : null, group.name, group.nameEs);
 
   // Sin enlace: el sitio no tiene páginas públicas de industrias (rutas retiradas en 4f995a6)
   return (
@@ -592,7 +607,10 @@ export default function TeamMemberDetail() {
     enabled: !!slug,
   });
 
-  const { translatedFields, isTranslating } = useTranslatedContent({
+  // Quien el sitio no nombra (E11) recibe la 404: no se pide traducción de su ficha
+  const isNamed = !!member && isNamedOnTeamPage(member);
+
+  const { translatedFields, isTranslating, hasTranslation } = useTranslatedContent({
     contentType: 'team_member',
     entityId: member?.id?.toString() || '',
     fields: { 
@@ -603,11 +621,14 @@ export default function TeamMemberDetail() {
       bio: member?.bioEs || member?.bio,
       bioEs: member?.bioEs,
     },
-    enabled: !!member && !!member.bio && language !== 'es',
+    enabled: isNamed && !!member?.bio && language !== 'es',
   });
 
+  // Teléfono y correo generales de la firma (pie y /contact): si la ficha solo repite esos
+  // datos, no lleva bloque de contacto propio (E7)
+  const firmContact = useSiteContact(language === "en" ? "en" : "es");
+
   const content: Record<string, {
-    backToAll: string;
     partner: string;
     ofCounsel: string;
     associate: string;
@@ -651,7 +672,6 @@ export default function TeamMemberDetail() {
     };
   }> = {
     en: {
-      backToAll: "All team members",
       partner: "Partner",
       ofCounsel: "Of Counsel",
       associate: "Associate",
@@ -695,7 +715,6 @@ export default function TeamMemberDetail() {
       },
     },
     es: {
-      backToAll: "Todos los miembros",
       partner: "Socio",
       ofCounsel: "Of Counsel",
       associate: "Asociado",
@@ -739,7 +758,6 @@ export default function TeamMemberDetail() {
       },
     },
     de: {
-      backToAll: "Zurück zum Team",
       partner: "Partner",
       ofCounsel: "Of Counsel",
       associate: "Associate",
@@ -783,7 +801,6 @@ export default function TeamMemberDetail() {
       },
     },
     zh: {
-      backToAll: "返回团队",
       partner: "合伙人",
       ofCounsel: "法律顾问",
       associate: "律师",
@@ -827,7 +844,6 @@ export default function TeamMemberDetail() {
       },
     },
     ko: {
-      backToAll: "팀으로 돌아가기",
       partner: "파트너",
       ofCounsel: "고문",
       associate: "어소시에이트",
@@ -871,7 +887,6 @@ export default function TeamMemberDetail() {
       },
     },
     ja: {
-      backToAll: "チームに戻る",
       partner: "パートナー",
       ofCounsel: "オブ・カウンセル",
       associate: "アソシエイト",
@@ -896,7 +911,8 @@ export default function TeamMemberDetail() {
       downloadVCard: "名刺をダウンロード",
       errorMessage: "チームメンバーが見つかりません",
       loading: "読み込み中...",
-      relatedTeam: "関連チームメンバー",
+      // U+200B tras 関連: el corte cae ahí y no antes de la ー final (関連チームメンバ|ー a 320 px)
+      relatedTeam: "関連\u200Bチームメンバー",
       viewProfile: "プロフィールを見る",
       relatedNews: "最新ニュース・記事",
       featuredRecognition: "注目の評価",
@@ -915,7 +931,6 @@ export default function TeamMemberDetail() {
       },
     },
     ar: {
-      backToAll: "العودة للفريق",
       partner: "شريك",
       ofCounsel: "مستشار قانوني",
       associate: "محامي",
@@ -959,7 +974,6 @@ export default function TeamMemberDetail() {
       },
     },
     ru: {
-      backToAll: "Назад к команде",
       partner: "Партнёр",
       ofCounsel: "Советник",
       associate: "Юрист",
@@ -1003,7 +1017,6 @@ export default function TeamMemberDetail() {
       },
     },
     fr: {
-      backToAll: "Retour à l'équipe",
       partner: "Associé",
       ofCounsel: "Of Counsel",
       associate: "Collaborateur",
@@ -1047,7 +1060,6 @@ export default function TeamMemberDetail() {
       },
     },
     it: {
-      backToAll: "Torna al team",
       partner: "Partner",
       ofCounsel: "Of Counsel",
       associate: "Associato",
@@ -1093,6 +1105,9 @@ export default function TeamMemberDetail() {
   };
 
   const t = content[language] || content.en;
+
+  // "Socios" con el nombre del menú en cada idioma (E5): enlace de vuelta y miga de pan
+  const partnersLabel = (chrome26[language] ?? chrome26.es).nav[2].label;
 
   // Fecha de las notas: el formateador compartido del Monitor Laboral (lib/newsDate)
   const formatDate = (date: string | Date | null) => formatNewsDate(date, language);
@@ -1197,26 +1212,14 @@ export default function TeamMemberDetail() {
     return areas.length > 0 ? areas.slice(0, 10) : undefined;
   };
 
-  if (error) {
+  // Ficha inexistente o de alguien que el sitio no nombra (socios sin confirmar, asociados):
+  // la vista 404 del sitio, con su SEOHead page="notFound" (noindex), igual en el servidor y
+  // en el build estático (E11)
+  if (error || (member && !isNamed)) {
     return (
-      <div className="min-h-screen bg-background" data-testid="page-team-member-error">
-        {/* Ficha inexistente: título y descripción de la 404 (noindex) */}
-        <SEOHead page="notFound" language={language} />
-        <Header />
-        {/* Cabecera sticky en flujo: ya no hace falta compensar el header fijo */}
-        <main id="main-content" className="pt-16 pb-20 lg:pt-20">
-          <div className="ss-container">
-            <h2 className="ss-h2 mb-6" data-testid="text-error-title">
-              {t.errorMessage}
-            </h2>
-            {/* Navegación: enlace de texto, no botón (antes un botón dentro del enlace) */}
-            <BackTextLink href="/team" testId="button-back-to-team">
-              {t.backToAll}
-            </BackTextLink>
-          </div>
-        </main>
-        <Footer />
-      </div>
+      <Suspense fallback={null}>
+        <NotFound />
+      </Suspense>
     );
   }
 
@@ -1261,15 +1264,26 @@ export default function TeamMemberDetail() {
 
   // Sin traducción (falló o no llegó), el original en inglés marcado lang="en" dir="ltr";
   // antes quedaba null y desaparecían el cargo, la práctica y la biografía.
-  const localizedTitle = pickLocalized(language, translatedFields.title, member?.title, member?.titleEs);
-  const localizedRole = pickLocalized(language, translatedFields.role, member?.role, member?.roleEs);
-  const localizedBio = pickLocalized(language, translatedFields.bio, member?.bio, member?.bioEs);
+  const translated: Partial<typeof translatedFields> = hasTranslation ? translatedFields : {};
+  const localizedTitle = pickLocalized(language, translated.title, member?.title, member?.titleEs);
+  const localizedRole = pickLocalized(language, translated.role, member?.role, member?.roleEs);
+  const localizedBio = pickLocalized(language, translated.bio, member?.bio, member?.bioEs);
   const displayTitle = localizedTitle.text;
   const displayBio = localizedBio.text;
   const profilePhotoSrcSet = getTeamPhotoSrcSet(member?.imageUrl);
   // Descripción: la primera oración de la biografía en el idioma de la página; si solo hay el
   // texto de respaldo en otro idioma, la descripción general del equipo en este idioma
   const seoDescription = !localizedBio.lang ? metaDescription(displayBio) || undefined : undefined;
+
+  // Bloque de contacto del lateral solo si la ficha trae un teléfono o un correo propios; si
+  // repite los generales de la firma (hoy, todas), ya están en los botones y en el pie (E7)
+  const hasOwnPhone = !!member?.phone && digitsOf(member.phone) !== digitsOf(firmContact.phone);
+  const hasOwnEmail = !!member?.email && member.email.trim().toLowerCase() !== firmContact.email.toLowerCase();
+  const showContactList = !isInMemoriam && (hasOwnPhone || hasOwnEmail);
+
+  // Botones del encabezado: "Descargar vCard" no va en el build estático, donde no hace nada
+  const showVCard = !isStaticSite;
+  const actionCount = (member?.email ? 1 : 0) + (member?.phone ? 1 : 0) + (showVCard ? 1 : 0);
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-team-member-detail">
@@ -1285,8 +1299,10 @@ export default function TeamMemberDetail() {
       <Header />
       
       {/* JSON-LD solo de quien el sitio nombra (isNamedOnTeamPage): ni socios sin confirmar ni
-          asociados */}
-      {member && isNamedOnTeamPage(member) && (
+          asociados (los demás reciben la 404). Person enlaza con la firma por @id (#organization)
+          y su imagen va con URL absoluta (PersonJsonLd, E18); la miga de pan nombra la sección
+          como el menú. */}
+      {member && isNamed && (
         <>
           <PersonJsonLd
             name={member.name}
@@ -1299,12 +1315,13 @@ export default function TeamMemberDetail() {
             education={getMemberEducation()}
             languages={member.languages as string[] | undefined}
             knowsAbout={getMemberKnowsAbout()}
+            named
             language={language}
           />
           <BreadcrumbJsonLd
             items={[
               { name: language === "es" ? "Inicio" : "Home", url: "https://www.santossaucedo.com" },
-              { name: language === "es" ? "Equipo" : "Team", url: "https://www.santossaucedo.com/team" },
+              { name: partnersLabel, url: "https://www.santossaucedo.com/team" },
               { name: member.name, url: `https://www.santossaucedo.com/team/${member.slug}` }
             ]}
             language={language}
@@ -1330,16 +1347,16 @@ export default function TeamMemberDetail() {
               {/* Vuelta a /team: enlace de texto (etiqueta con flecha), como toda navegación */}
               <div className="mb-6">
                 <BackTextLink href="/team" testId="link-back-to-team">
-                  {t.backToAll}
+                  {partnersLabel}
                 </BackTextLink>
               </div>
-              {/* Móvil (y lectores de pantalla): nombre, foto y contacto, en ese orden; antes la
-                  foto a todo lo ancho empujaba el nombre bajo el primer pantallazo. Desde md cada
-                  bloque va a su celda: foto a la izquierda en las dos filas y el texto alineado
-                  con su borde superior. */}
+              {/* Lectores de pantalla: nombre, botones y foto, en ese orden. Teléfono: retrato de
+                  112 px al lado del nombre y el cargo, y los botones debajo. Desde md cada bloque
+                  va a su celda: foto a la izquierda en las dos filas y el texto alineado con su
+                  borde superior. */}
               <div className={PROFILE_GRID}>
-                {/* Sin padding lateral en móvil: el texto arranca en el borde de la foto y de la vuelta */}
-                <div className={`min-w-0 text-center md:text-left ${PROFILE_IDENTITY_CELL}`}>
+                {/* Texto al inicio de la línea (a la derecha en árabe, junto al retrato) */}
+                <div className={`min-w-0 text-start ${PROFILE_IDENTITY_CELL}`}>
                   {/* Eyebrow del expediente: "§ 03 —— Socio" (sobre Hueso, § y cifras en Azul Marino;
                       la lima solo va sobre Azul Profundo). La categoría va aquí y no en una píldora. */}
                   <Eyebrow
@@ -1389,14 +1406,14 @@ export default function TeamMemberDetail() {
                   </p>
                 </div>
 
-                {/* Tres botones iguales de contorno Azul Marino de 1 px, texto Azul Marino y, al pasar
-                    el cursor, relleno Azul Marino con texto blanco; sin iconos: ninguno pesa más que el
-                    nombre. Teléfono: uno debajo de otro, antes del retrato. Desde sm, una fila de tres
-                    columnas iguales (en md, a todo lo ancho bajo el retrato y el nombre; desde lg, al
-                    pie de la columna del texto). El número de teléfono (dir="ltr") está en el bloque
-                    de contacto. Sin correo ni teléfono (in memoriam), ni botones ni vCard. */}
+                {/* Botones iguales de contorno Azul Marino de 1 px, texto Azul Marino y, al pasar el
+                    cursor, relleno Azul Marino con texto blanco; sin iconos: ninguno pesa más que el
+                    nombre. Teléfono: uno debajo de otro, bajo el retrato y el nombre. Desde sm, una
+                    fila de columnas iguales (en md, a todo lo ancho bajo el retrato y el nombre;
+                    desde lg, al pie de la columna del texto). Sin correo ni teléfono (in memoriam),
+                    ni botones ni vCard; en el build estático, sin vCard. */}
                 {showActions && (
-                  <div className={`grid grid-cols-1 sm:grid-cols-3 lg:max-w-[48rem] content-start gap-3 ${PROFILE_ACTIONS_CELL}`}>
+                  <div className={`grid grid-cols-1 ${ACTIONS_COLUMNS[actionCount - 1] ?? ""} content-start gap-3 ${PROFILE_ACTIONS_CELL}`}>
                     {member?.email && (
                       <Button
                         variant="outline"
@@ -1422,14 +1439,16 @@ export default function TeamMemberDetail() {
                         </a>
                       </Button>
                     )}
-                    <Button
-                      variant="outline"
-                      className={PROFILE_BUTTON}
-                      onClick={handleDownloadVCard}
-                      data-testid="button-download-vcard"
-                    >
-                      {t.downloadVCard}
-                    </Button>
+                    {showVCard && (
+                      <Button
+                        variant="outline"
+                        className={PROFILE_BUTTON}
+                        onClick={handleDownloadVCard}
+                        data-testid="button-download-vcard"
+                      >
+                        {t.downloadVCard}
+                      </Button>
+                    )}
                   </div>
                 )}
                 <div
@@ -1509,8 +1528,10 @@ export default function TeamMemberDetail() {
                       dir={localizedBio.lang ? "ltr" : undefined}
                     >
                       {displayBio ? (() => {
-                        const paragraphs = displayBio.split(/\n\s*\n/).map((p: string) => p.trim()).filter(Boolean);
-                        const [first, ...rest] = paragraphs.length ? paragraphs : [displayBio];
+                        // "Santos & Saucedo" sin partirse entre líneas (espacios duros, E16)
+                        const bioText = keepFirmName(displayBio);
+                        const paragraphs = bioText.split(/\n\s*\n/).map((p: string) => p.trim()).filter(Boolean);
+                        const [first, ...rest] = paragraphs.length ? paragraphs : [bioText];
                         return (
                           <LeadParagraph
                             firstParagraph={first}
@@ -1870,16 +1891,17 @@ export default function TeamMemberDetail() {
               </div>
 
               <div className="lg:col-span-4 space-y-10">
-                {/* Contacto: lista de datos sobre Hueso (oficina, teléfono, correo), sin botones ni
-                    frase de venta; las acciones ya están en el encabezado. Sin correo ni teléfono
-                    (socio in memoriam) no hay bloque. */}
-                {(member?.email || member?.phone) && (
+                {/* Contacto: lista de datos con filete superior, sin fondo (oficina, teléfono, correo),
+                    sin botones ni frase de venta; las acciones ya están en el encabezado. Solo si
+                    la ficha trae un teléfono o un correo propios: los generales de la firma ya
+                    están en los botones y en el pie. Sin correo ni teléfono (in memoriam), nada. */}
+                {showContactList && (
                   <motion.section
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: 0.3 }}
-                    className="bg-ss-paper p-6 lg:p-8"
+                    className="border-t border-ss-rule pt-6"
                     data-testid="section-contact-cta"
                   >
                     <h2
@@ -1992,8 +2014,9 @@ export default function TeamMemberDetail() {
                 className="mt-16"
                 data-testid="section-related-team"
               >
+                {/* Mismo nivel que "Biografía" y "Más del Monitor Laboral" (.ss-h2-sm, E7) */}
                 <h2
-                  className="ss-h2 mb-6"
+                  className="ss-h2-sm mb-6"
                   data-testid="text-related-team-title"
                 >
                   {t.relatedTeam}
@@ -2023,7 +2046,7 @@ export default function TeamMemberDetail() {
             >
               <div className="ss-container">
                 <h2 
-                  className="ss-h2 mb-8"
+                  className="ss-h2-sm mb-8"
                   data-testid="text-related-news-title"
                 >
                   {t.relatedNews}
@@ -2056,7 +2079,7 @@ export default function TeamMemberDetail() {
                         </p>
                         <div className="lg:col-span-7 lg:col-start-5 xl:col-span-6">
                           <h3
-                            className="ss-display text-[clamp(22px,1.7vw,25px)] font-[450] leading-[1.25] tracking-[-0.01em] text-ss-marino"
+                            className="ss-display text-[clamp(22px,1.7vw,25px)] font-normal leading-[1.25] tracking-[-0.01em] text-ss-marino"
                             data-testid={`text-news-title-${article.slug}`}
                           >
                             <Link

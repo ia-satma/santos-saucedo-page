@@ -8,12 +8,11 @@ import { useDialog26 } from "./useDialog26";
 import Search26 from "./Search26";
 import { LangList26, LangSwitch26 } from "./LangMenu26";
 
-// Rutas que también marcan una sección del menú, además de sus propias subrutas
-// (/articles estaba bajo Publicaciones junto a /news en el Header anterior). Siguen el
-// número § de su sección en el menú: artículos, eventos y boletín, 04 Monitor Laboral.
-// /experience y /offices ya no se pintan: redirigen a /practice-groups y /contact (App.tsx).
+// Rutas que también marcan una sección del menú, además de sus propias subrutas. Siguen el
+// número § de su sección en el menú: el boletín, 04 Monitor Laboral. /experience, /offices,
+// /articles y /events ya no se pintan: redirigen a /practice-groups, /contact y /news (App.tsx).
 const alsoActive: Record<string, string[]> = {
-  "/news": ["/articles", "/events", "/newsletter"],
+  "/news": ["/newsletter"],
 };
 
 // Un solo panel abierto a la vez: menú móvil o buscador, nunca los dos

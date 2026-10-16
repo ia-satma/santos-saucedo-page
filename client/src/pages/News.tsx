@@ -1,29 +1,33 @@
+import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
-import { MonitorList } from "@/components/monitor/MonitorList";
+import { MonitorList, MonitorSubscribe } from "@/components/monitor/MonitorList";
 import { chrome26 } from "@/components/home26/chrome26";
+import { home26 } from "@/components/home26/content";
 
 export default function NewsPage() {
   const { language } = useLanguage();
   // h1: el rótulo del menú en cada idioma (chrome26.ts), el mismo de la pestaña y del artículo
-  // ("Monitor Laboral" en español, "Labor Monitor" en inglés). El subtítulo es una etiqueta: sin punto.
+  // ("Monitor Laboral" en español, "Labor Monitor" en inglés). Subtítulo: la misma frase con que
+  // la portada presenta el Monitor (home26.monitor.intro); en los demás idiomas, su traducción.
   const subtitles: Record<string, string> = {
-    en: "News and analysis",
-    es: "Noticias y análisis",
-    de: "Neuigkeiten und Analysen",
-    zh: "新闻与分析",
-    ko: "뉴스와 분석",
-    ja: "ニュースと分析",
-    ar: "الأخبار والتحليلات",
-    ru: "Новости и аналитика",
-    fr: "Actualités et analyses",
-    it: "Notizie e analisi",
+    es: home26.es.monitor.intro,
+    en: home26.en.monitor.intro,
+    de: "Analysen der Kanzlei zu den Änderungen, die Unternehmen betreffen.",
+    zh: "本所对影响企业的各项变化的分析。",
+    ko: "기업에 영향을 미치는 변화에 관한 법인의 분석.",
+    ja: "企業に影響する変化についての事務所の分析。",
+    ar: "تحليلات المكتب للتغييرات التي تمسّ الشركات.",
+    ru: "Аналитика фирмы об изменениях, которые касаются компаний.",
+    fr: "Les analyses du cabinet sur les évolutions qui concernent les entreprises.",
+    it: "Le analisi dello studio sui cambiamenti che riguardano le imprese.",
   };
 
+  // Aviso solo si de verdad llegó una traducción automática (nunca en español ni en inglés)
   const translationBannerMessages: Record<string, string> = {
     de: "Inhalte werden automatisch übersetzt.",
     zh: "内容正在自动翻译中。",
@@ -34,11 +38,13 @@ export default function NewsPage() {
     fr: "Le contenu est traduit automatiquement.",
     it: "Il contenuto viene tradotto automaticamente.",
   };
+  // Idioma en que llegó la traducción: al cambiar de idioma el aviso no se arrastra
+  const [translatedFor, setTranslatedFor] = useState<string | null>(null);
+  const handleTranslated = useCallback(() => setTranslatedFor(language), [language]);
 
   const title = (chrome26[language as keyof typeof chrome26] ?? chrome26.en).nav[3].label;
   const subtitle = subtitles[language] || subtitles.en;
-  const isNonNativeLanguage = language !== 'es';
-  const translationBanner = isNonNativeLanguage ? (translationBannerMessages[language] || (language === 'en' ? "Content is automatically translated from Spanish." : null)) : null;
+  const translationBanner = translatedFor === language ? translationBannerMessages[language] ?? null : null;
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-news">
@@ -64,11 +70,11 @@ export default function NewsPage() {
               >
                 {title}
               </h1>
-              <p
-                data-testid="text-news-subtitle"
-              >
-                {subtitle}
-              </p>
+              {subtitle && (
+                <p data-testid="text-news-subtitle">
+                  {subtitle}
+                </p>
+              )}
               {translationBanner && (
                 <p
                   className="mt-4 text-sm"
@@ -88,6 +94,7 @@ export default function NewsPage() {
             <MonitorList
               filters
               search
+              onTranslated={handleTranslated}
               testIds={{
                 row: (item) => `card-news-${item.slug}`,
                 category: (item) => `badge-category-${item.slug}`,
@@ -104,6 +111,9 @@ export default function NewsPage() {
                 skeleton: (i) => `skeleton-news-${i}`,
               }}
             />
+
+            {/* Al pie del Monitor: la suscripción por correo (/newsletter) */}
+            <MonitorSubscribe className="mt-16 lg:mt-20" testId="section-news-subscribe" linkTestId="link-news-subscribe" />
           </div>
         </div>
       </main>

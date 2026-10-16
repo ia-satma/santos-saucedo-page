@@ -1,3 +1,4 @@
+import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -5,6 +6,7 @@ import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
 import { MonitorList } from "@/components/monitor/MonitorList";
+import { keepFirmName } from "@/lib/firmName";
 
 export default function ArticlesPage() {
   const { language } = useLanguage();
@@ -75,8 +77,10 @@ export default function ArticlesPage() {
   };
 
   const t = content[language] || content.en;
-  const isNonNativeLanguage = language !== 'es';
-  const translationBanner = isNonNativeLanguage ? (translationBannerMessages[language] || (language === 'en' ? "Content is automatically translated from Spanish." : null)) : null;
+  // Aviso solo si de verdad llegó una traducción automática (nunca en español ni en inglés)
+  const [translatedFor, setTranslatedFor] = useState<string | null>(null);
+  const handleTranslated = useCallback(() => setTranslatedFor(language), [language]);
+  const translationBanner = translatedFor === language ? translationBannerMessages[language] ?? null : null;
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-articles">
@@ -102,10 +106,11 @@ export default function ArticlesPage() {
               >
                 {t.title}
               </h1>
+              {/* "Santos & Saucedo" sin partirse entre líneas */}
               <p
                 data-testid="text-articles-subtitle"
               >
-                {t.subtitle}
+                {keepFirmName(t.subtitle)}
               </p>
               {translationBanner && (
                 <p
@@ -123,6 +128,7 @@ export default function ArticlesPage() {
           <div className="ss-container">
             <MonitorList
               search
+              onTranslated={handleTranslated}
               testIds={{
                 row: (item) => `card-article-${item.slug}`,
                 date: (item) => `text-article-date-${item.slug}`,
