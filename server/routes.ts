@@ -251,7 +251,7 @@ export async function registerRoutes(
   };
 
   // WebSocket del proceso de notas (L7): manda pasos, estados y errores de cada nota, también de
-  // los borradores, así que solo acepta una sesión válida del panel (?token=, validado como en
+  // los borradores, así que solo acepta una sesión válida del panel (subprotocolo, validado como en
   // authMiddleware) desde un origen admitido. Sin token, con otro Origin o sin Origin: 401/403
   // antes de abrir la conexión.
   const PIPELINE_WS_PROTOCOL = 'ss-pipeline';
