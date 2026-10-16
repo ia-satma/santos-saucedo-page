@@ -3057,7 +3057,10 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         const member = await storage.getTeamMemberById(entityId);
         return member && isNamedOnTeamPage(member) ? toPublicTeamProfile(member) : undefined;
       }
-      case "practice_group": return await storage.getPracticeGroupById(entityId);
+      case "practice_group": {
+        const group = await storage.getPracticeGroupById(entityId);
+        return group && group.published !== false ? group : undefined;
+      }
       case "industry_group": return await storage.getIndustryGroupById(entityId);
       case "news": {
         const item = await storage.getNewsById(entityId);
