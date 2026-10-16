@@ -22,8 +22,10 @@ const ToastViewport = React.forwardRef<
 ))
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
 
+// gap-4, pe-8 y end-2 (cerrar), no space-x-4, pr-8 y right-2: en árabe el aviso se refleja y
+// el botón de cerrar y su anillo dejan de tapar el comienzo del título (RTL)
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-none border p-6 pr-8 transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
+  "group pointer-events-auto relative flex w-full items-center justify-between gap-4 overflow-hidden rounded-none border p-6 pe-8 transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
   {
     variants: {
       variant: {
@@ -74,10 +76,12 @@ const ToastClose = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Close>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Close>
 >(({ className, ...props }, ref) => (
+  // Aviso blanco: icono en Marino pleno y anillo de foco Marino de 2 px (N12), no el azul por
+  // defecto de Tailwind (1,85:1 sobre blanco). El aviso rojo conserva su anillo blanco
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
-      "absolute right-2 top-2 rounded-none p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-white/75 group-[.destructive]:hover:text-white group-[.destructive]:focus:ring-white group-[.destructive]:focus:ring-offset-[color:var(--ss-error)]",
+      "absolute end-2 top-2 rounded-none p-1 text-[color:var(--ss-marino)] opacity-0 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-[color:var(--ss-marino)] group-hover:opacity-100 group-[.destructive]:text-white/75 group-[.destructive]:hover:text-white group-[.destructive]:focus:ring-white group-[.destructive]:focus:ring-offset-[color:var(--ss-error)]",
       className
     )}
     toast-close=""

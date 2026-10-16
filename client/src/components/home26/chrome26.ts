@@ -45,6 +45,9 @@ export interface Chrome26Strings {
   };
   /** aria-label del botón del video de la portada (Hero26), según su estado */
   heroVideo: { pause: string; play: string };
+  /** Avisos (Toaster): `item` precede al texto de cada aviso en la región viva; `region` nombra
+      la región de avisos y Radix cambia {hotkey} por la tecla que la enfoca (F8) */
+  toast: { item: string; region: string };
   langs: {
     /** aria-label del selector de la cabecera: bilingüe, para quien no lee el idioma activo */
     group: string;
@@ -109,6 +112,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       groups: { industryGroups: "Industrias" },
     },
     heroVideo: { pause: "Pausar el video de fondo", play: "Reproducir el video de fondo" },
+    toast: { item: "Aviso", region: "Avisos ({hotkey})" },
     langs: { group: "Idioma / Language", others: "Otros idiomas", label: "Idioma" },
     footer: {
       office: "Oficina",
@@ -140,6 +144,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       groups: { industryGroups: "Industries" },
     },
     heroVideo: { pause: "Pause background video", play: "Play background video" },
+    toast: { item: "Notification", region: "Notifications ({hotkey})" },
     langs: { group: "Idioma / Language", others: "Other languages", label: "Language" },
     footer: {
       office: "Office",
@@ -171,6 +176,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       groups: { industryGroups: "Branchen" },
     },
     heroVideo: { pause: "Hintergrundvideo anhalten", play: "Hintergrundvideo abspielen" },
+    toast: { item: "Hinweis", region: "Hinweise ({hotkey})" },
     langs: { group: "Sprache / Language", others: "Weitere Sprachen", label: "Sprache" },
     footer: {
       office: "Büro",
@@ -203,6 +209,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       groups: { industryGroups: "行业" },
     },
     heroVideo: { pause: "暂停背景视频", play: "播放背景视频" },
+    toast: { item: "通知", region: "通知 ({hotkey})" },
     langs: { group: "语言 / Language", others: "其他语言", label: "语言" },
     footer: {
       office: "办公地址",
@@ -234,6 +241,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       groups: { industryGroups: "산업" },
     },
     heroVideo: { pause: "배경 동영상 일시 정지", play: "배경 동영상 재생" },
+    toast: { item: "알림", region: "알림 ({hotkey})" },
     langs: { group: "언어 / Language", others: "다른 언어", label: "언어" },
     footer: {
       office: "사무소",
@@ -265,6 +273,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       groups: { industryGroups: "業種" },
     },
     heroVideo: { pause: "背景動画を一時停止", play: "背景動画を再生" },
+    toast: { item: "お知らせ", region: "お知らせ ({hotkey})" },
     langs: { group: "言語 / Language", others: "その他の言語", label: "言語" },
     footer: {
       // 所在地 (dirección) y, para la columna de enlaces, メニュー: 事務所 es "Oficina" en /contact
@@ -299,6 +308,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       groups: { industryGroups: "القطاعات" },
     },
     heroVideo: { pause: "إيقاف فيديو الخلفية مؤقتًا", play: "تشغيل فيديو الخلفية" },
+    toast: { item: "إشعار", region: "الإشعارات ({hotkey})" },
     langs: { group: "اللغة / Language", others: "لغات أخرى", label: "اللغة" },
     footer: {
       office: "المكتب",
@@ -330,6 +340,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       groups: { industryGroups: "Отрасли" },
     },
     heroVideo: { pause: "Приостановить фоновое видео", play: "Воспроизвести фоновое видео" },
+    toast: { item: "Уведомление", region: "Уведомления ({hotkey})" },
     langs: { group: "Язык / Language", others: "Другие языки", label: "Язык" },
     footer: {
       office: "Офис",
@@ -363,6 +374,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       groups: { industryGroups: "Secteurs" },
     },
     heroVideo: { pause: "Mettre en pause la vidéo d’arrière-plan", play: "Lire la vidéo d’arrière-plan" },
+    toast: { item: "Notification", region: "Notifications ({hotkey})" },
     langs: { group: "Langue / Language", others: "Autres langues", label: "Langue" },
     footer: {
       office: "Bureau",
@@ -394,6 +406,7 @@ export const chrome26: Record<LanguageCode, Chrome26Strings> = {
       groups: { industryGroups: "Settori" },
     },
     heroVideo: { pause: "Mettere in pausa il video di sfondo", play: "Riprodurre il video di sfondo" },
+    toast: { item: "Avviso", region: "Avvisi ({hotkey})" },
     langs: { group: "Lingua / Language", others: "Altre lingue", label: "Lingua" },
     footer: {
       office: "Sede",

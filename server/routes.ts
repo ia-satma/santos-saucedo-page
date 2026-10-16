@@ -3,6 +3,7 @@ import { createServer, type IncomingMessage, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { seed, teamMembersData } from "./seed";
+import { syncSeedContent } from "./contentSync";
 import { db } from "./db";
 import express from "express";
 import path from "path";
@@ -106,6 +107,14 @@ function auditLog(
   console.log("[AUDIT]", JSON.stringify(entry));
 }
 
+// Error de los formularios públicos para el registro (N4): nombre, código y mensaje, sin el
+// objeto entero (el error de Postgres trae en "detail" los valores, p. ej. el correo).
+function describeErrorForLog(error: unknown): string {
+  if (!(error instanceof Error)) return String(typeof error);
+  const code = (error as { code?: unknown }).code;
+  return `${error.name}${typeof code === "string" ? ` ${code}` : ""}: ${error.message}`;
+}
+
 const uploadsDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
@@ -184,6 +193,12 @@ export async function registerRoutes(
     await seed();
   } catch (err) {
     console.error("[seed] Seeding failed, continuing without seed data:", err);
+  }
+  // En una base ya poblada, pone al día los textos de la semilla que nadie editó (prácticas y equipo)
+  try {
+    await syncSeedContent();
+  } catch (err) {
+    console.error("[seed] No se pudieron actualizar los textos de la semilla:", err);
   }
 
   const agentsEnabled = process.env.ENABLE_APP_AGENTS === "true";
@@ -692,7 +707,8 @@ export async function registerRoutes(
   // todos los visitantes compartirían la misma clave (el proxy) y se bloquearían entre sí.
   const FORM_WINDOW_MS = 10 * 60 * 1000;
   const FORM_MAX_PER_IP = 5;
-  const createFormLimiter = () => {
+  // maxPerIp: 5 en los formularios; la traducción pública usa la misma clave con 30 (N1)
+  const createFormLimiter = (maxPerIp = FORM_MAX_PER_IP) => {
     const perIp = new Map<string, { count: number; resetAt: number }>();
     return (ip: string): boolean => {
       const now = Date.now();
@@ -709,7 +725,7 @@ export async function registerRoutes(
         entry = { count: 0, resetAt: now + FORM_WINDOW_MS };
         perIp.set(ip, entry);
       }
-      if (entry.count >= FORM_MAX_PER_IP) return false;
+      if (entry.count >= maxPerIp) return false;
       entry.count += 1;
       return true;
     };
@@ -765,11 +781,12 @@ export async function registerRoutes(
 
       const submission = await storage.createContactSubmission(sanitizedData);
 
-      console.log(`[Contact] New submission from ${sanitizedData.fullName} <${sanitizedData.email}> saved with id ${submission.id}`);
+      // Solo el id del envío (N4): nombre, correo y mensaje no van al registro
+      console.log(`[Contact] New submission saved with id ${submission.id}`);
 
       res.json(contactSuccess);
     } catch (error) {
-      console.error("Contact form error:", error);
+      console.error("Contact form error:", describeErrorForLog(error));
       res.status(500).json({ error: "Failed to process contact form" });
     }
   });
@@ -824,7 +841,7 @@ export async function registerRoutes(
         });
       res.json(newsletterSuccess);
     } catch (error) {
-      console.error("Newsletter subscription error:", error);
+      console.error("Newsletter subscription error:", describeErrorForLog(error));
       res.status(500).json({ error: "Failed to process subscription" });
     }
   });
@@ -1104,10 +1121,15 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // Admin Login
   app.post("/api/admin/login", async (req: Request, res: Response) => {
     try {
-      const ip = req.ip || req.socket.remoteAddress || "unknown";
-      
+      const ip = clientIp(req);
+      // Límite por dirección y usuario (N3), con la misma dirección de mejor esfuerzo que los
+      // formularios. Con req.ip solo, detrás del proxy todos compartían una clave y cinco
+      // intentos de un extraño bloqueaban 30 minutos al editor real desde cualquier dirección.
+      const attemptedUser = typeof req.body?.username === "string" ? req.body.username.trim().toLowerCase() : "";
+      const rateKey = `${ip}|${attemptedUser}`;
+
       // Check rate limit
-      const rateCheck = checkRateLimit(ip);
+      const rateCheck = checkRateLimit(rateKey);
       if (!rateCheck.allowed) {
         return res.status(429).json({ 
           error: "Too many login attempts", 
@@ -1118,7 +1140,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       // Validate input
       const validation = adminLoginSchema.safeParse(req.body);
       if (!validation.success) {
-        recordLoginAttempt(ip, false);
+        recordLoginAttempt(rateKey, false);
         return res.status(400).json({ 
           error: "Invalid input", 
           details: validation.error.errors 
@@ -1134,25 +1156,25 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       }
       if (!user) {
         await comparePassword(password, "$2b$12$InvalidHashToPreventTimingAttackXXXXXXXXXXXX");
-        recordLoginAttempt(ip, false);
+        recordLoginAttempt(rateKey, false);
         return res.status(401).json({ error: "Invalid credentials" });
       }
 
       // Check if user is active
       if (!user.isActive) {
-        recordLoginAttempt(ip, false);
+        recordLoginAttempt(rateKey, false);
         return res.status(401).json({ error: "Account is disabled" });
       }
 
       // Verify password
       const validPassword = await comparePassword(password, user.passwordHash);
       if (!validPassword) {
-        recordLoginAttempt(ip, false);
+        recordLoginAttempt(rateKey, false);
         return res.status(401).json({ error: "Invalid credentials" });
       }
 
       // Record successful attempt
-      recordLoginAttempt(ip, true);
+      recordLoginAttempt(rateKey, true);
 
       // Create session
       const token = generateToken();
@@ -2982,18 +3004,49 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
     representative_matter: ['title', 'description', 'client'],
   };
 
-  // Textos de origen admitidos para un campo (L6): su valor público y el de su gemelo en
-  // español ("title" y "titleEs"), tal como los publica el sitio. Ni otros campos ni valores
-  // internos: nadie puede probar si un texto cualquiera está en el registro, ni guardar la
-  // traducción de un campo bajo el nombre de otro.
-  function allowedSourceTexts(entity: Record<string, unknown>, field: string): Set<string> {
-    const values = new Set<string>();
-    for (const key of [field, `${field}Es`]) {
-      const value = entity[key];
-      if (typeof value === "string" && value.trim()) values.add(value);
-    }
-    return values;
+  // Texto de origen admitido para un campo (L6, N1): solo su valor público, entity[field], el
+  // que manda el cliente (useTranslatedContent quita los *Es). Ya no el gemelo en español: la
+  // caché compara el texto de origen y cada guardado lo sustituye, así que alternar "title" y
+  // "titleEs" fallaba la caché en cada petición y cada una pagaba una llamada a la IA.
+  function publicSourceText(entity: Record<string, unknown>, field: string): string | undefined {
+    const value = entity[field];
+    return typeof value === "string" && value.trim() ? value : undefined;
   }
+
+  // Gasto de IA de las rutas públicas de traducción (N1).
+  // - Una sola llamada por clave en curso: las peticiones simultáneas de la misma traducción
+  //   (tipo|id|campo|idioma, con el mismo texto de origen) esperan la misma promesa, que
+  //   traduce y guarda. Al terminar bien, la entrada se queda unos segundos para que una
+  //   petición que leyó la caché justo antes del guardado no repita la llamada.
+  // - Límite por dirección (la clave de mejor esfuerzo de los formularios): 30 llamadas reales
+  //   cada 10 minutos, 429 al pasarse. Solo cuentan los fallos de caché que llaman a la IA; las
+  //   respuestas desde la caché o desde una llamada ya en curso no cuentan.
+  const TRANSLATE_MAX_AI_CALLS_PER_IP = 30;
+  const allowTranslationCall = createFormLimiter(TRANSLATE_MAX_AI_CALLS_PER_IP);
+  const TRANSLATION_LINGER_MS = 30 * 1000;
+  type SharedTranslation = { sourceText: string; promise: Promise<string | undefined> };
+  const translationsInFlight = new Map<string, SharedTranslation>();
+  const translationKey = (contentType: string, entityId: string, field: string, targetLanguage: string) =>
+    `${contentType}|${entityId}|${field}|${targetLanguage}`;
+  const translationInFlight = (key: string, sourceText: string) => {
+    const shared = translationsInFlight.get(key);
+    return shared && shared.sourceText === sourceText ? shared.promise : undefined;
+  };
+  // run() traduce y guarda; devuelve undefined si la IA no trajo texto para ese campo
+  function shareTranslation(key: string, sourceText: string, run: () => Promise<string | undefined>) {
+    const shared: SharedTranslation = { sourceText, promise: run() };
+    translationsInFlight.set(key, shared);
+    const forget = () => {
+      if (translationsInFlight.get(key) === shared) translationsInFlight.delete(key);
+    };
+    shared.promise.then(
+      (text) => (text === undefined ? forget() : setTimeout(forget, TRANSLATION_LINGER_MS).unref()),
+      forget,
+    );
+    return shared.promise;
+  }
+  const tooManyTranslations = (res: Response) =>
+    res.status(429).json({ error: "Too many requests. Please try again later." });
 
   // POST /api/translate-content - Translate single content and cache it
   app.post("/api/translate-content", async (req: Request, res: Response) => {
@@ -3019,7 +3072,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       }
 
       const entity = await getEntity(contentType, entityId);
-      if (!entity || typeof sourceText !== "string" || !allowedSourceTexts(entity, field).has(sourceText)) {
+      if (!entity || typeof sourceText !== "string" || publicSourceText(entity, field) !== sourceText) {
         return res.status(400).json({ error: "Source text does not match published content" });
       }
       const existingTranslation = await storage.getTranslation(contentType, entityId, field, targetLanguage);
@@ -3034,24 +3087,33 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         });
       }
 
-      const translatedText = await translateLegalText(
-        sourceText,
-        sourceLanguage as LanguageCode,
-        targetLanguage as LanguageCode
-      );
-
-      const saved = await storage.saveTranslation({
-        contentType,
-        entityId,
-        field,
-        sourceLanguage,
-        targetLanguage,
-        sourceText,
-        translatedText,
-      });
+      // Fallo de caché: se une a la llamada en curso o, si no hay, gasta una del límite (N1)
+      const key = translationKey(contentType, entityId, field, targetLanguage);
+      let pending = translationInFlight(key, sourceText);
+      if (!pending) {
+        if (!allowTranslationCall(clientIp(req))) return tooManyTranslations(res);
+        pending = shareTranslation(key, sourceText, async () => {
+          const translatedText = await translateLegalText(
+            sourceText,
+            sourceLanguage as LanguageCode,
+            targetLanguage as LanguageCode
+          );
+          const saved = await storage.saveTranslation({
+            contentType,
+            entityId,
+            field,
+            sourceLanguage,
+            targetLanguage,
+            sourceText,
+            translatedText,
+          });
+          return saved.translatedText ?? translatedText;
+        });
+      }
+      const translatedText = await pending;
 
       res.json({ 
-        translation: saved.translatedText, 
+        translation: translatedText ?? sourceText, 
         cached: false,
         contentType, 
         entityId, 
@@ -3103,10 +3165,12 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       }
       const fieldsToTranslate: { key: string; text: string }[] = [];
       const cachedTranslations: Record<string, string> = {};
+      // Campos que ya traduce otra petición en este momento (N1): se espera su resultado
+      const sharedFields: { key: string; promise: Promise<string | undefined> }[] = [];
 
       for (const [fieldName, text] of Object.entries(fields as Record<string, string>)) {
         if (!text || typeof text !== 'string' || !text.trim()) continue;
-        if (!allowedSourceTexts(entity, fieldName).has(text)) continue;
+        if (publicSourceText(entity, fieldName) !== text) continue;
 
         // The CMS already stores English in the base field next to its *Es twin; serve it without calling the AI.
         const englishText = entity[fieldName];
@@ -3119,33 +3183,53 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         if (existingTranslation && existingTranslation.sourceText === text && existingTranslation.translatedText) {
           cachedTranslations[fieldName] = existingTranslation.translatedText;
         } else {
-          fieldsToTranslate.push({ key: fieldName, text });
+          const inFlight = translationInFlight(translationKey(contentType, entityId, fieldName, targetLanguage), text);
+          if (inFlight) sharedFields.push({ key: fieldName, promise: inFlight });
+          else fieldsToTranslate.push({ key: fieldName, text });
         }
       }
 
-      let newTranslations: Record<string, string> = {};
+      // Los campos sin caché ni llamada en curso van en una sola llamada a la IA, que cuenta
+      // una vez en el límite de la dirección; cada campo queda compartido mientras dura
       if (fieldsToTranslate.length > 0) {
-        newTranslations = await translateMultipleTexts(
-          fieldsToTranslate,
-          sourceLanguage as LanguageCode,
-          targetLanguage as LanguageCode
-        );
-
-        for (const [fieldName, translatedText] of Object.entries(newTranslations)) {
-          const originalField = fieldsToTranslate.find(f => f.key === fieldName);
-          if (originalField) {
+        if (!allowTranslationCall(clientIp(req))) return tooManyTranslations(res);
+        const batch = (async () => {
+          const result = await translateMultipleTexts(
+            fieldsToTranslate,
+            sourceLanguage as LanguageCode,
+            targetLanguage as LanguageCode
+          );
+          const saved: Record<string, string> = {};
+          for (const { key, text } of fieldsToTranslate) {
+            const translatedText = result?.[key];
+            if (typeof translatedText !== 'string' || !translatedText.trim()) continue;
             await storage.saveTranslation({
               contentType,
               entityId,
-              field: fieldName,
+              field: key,
               sourceLanguage,
               targetLanguage,
-              sourceText: originalField.text,
+              sourceText: text,
               translatedText,
             });
+            saved[key] = translatedText;
           }
+          return saved;
+        })();
+        for (const { key, text } of fieldsToTranslate) {
+          sharedFields.push({
+            key,
+            promise: shareTranslation(translationKey(contentType, entityId, key, targetLanguage), text, async () => (await batch)[key]),
+          });
         }
       }
+
+      const newTranslations: Record<string, string> = {};
+      const sharedResults = await Promise.all(sharedFields.map((shared) => shared.promise));
+      sharedFields.forEach(({ key }, index) => {
+        const translatedText = sharedResults[index];
+        if (translatedText !== undefined) newTranslations[key] = translatedText;
+      });
 
       const allTranslations = { ...cachedTranslations, ...newTranslations };
 

@@ -159,8 +159,9 @@ function StaticAdminUnavailable() {
 // Rutas retiradas (D4, E4): /experience pasa a /practice-groups, y /articles (repetía /news)
 // y /events (sin eventos) a /news. El servidor responde 301 (server/routes.ts); en GitHub
 // Pages no hay servidor y la redirección es del cliente: Redirect antepone la base del router
-// (/santos-saucedo-page) y se conservan la consulta y el ancla. Las páginas Experience,
-// Articles y Events quedan en el código, sin ruta. /offices vuelve como "La oficina" (H1).
+// (/santos-saucedo-page) y se conservan la consulta y el ancla. Las páginas Articles y
+// Events quedan en el código, sin ruta; Experience se borró (N8). /offices vuelve como
+// "La oficina" (H1).
 function RedirectKeepingQuery({ to }: { to: string }) {
   return <Redirect to={`${to}${window.location.search}${window.location.hash}`} replace />;
 }

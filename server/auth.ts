@@ -27,6 +27,8 @@ export function getSessionExpiry(): Date {
 }
 
 // Rate limiting for login attempts
+// La clave (identifier) es "dirección|usuario en minúsculas" (N3, server/routes.ts): cinco
+// intentos fallidos bloquean esa pareja, no a todos los que entran por el mismo proxy.
 interface RateLimitEntry {
   attempts: number;
   lastAttempt: number;
@@ -81,8 +83,16 @@ export function recordLoginAttempt(identifier: string, success: boolean): void {
   }
 
   const entry = loginAttempts.get(identifier);
-  
+
   if (!entry) {
+    // Claves inventadas en masa (otra dirección o usuario en cada intento): se quitan las
+    // vencidas y, si aún sobran, se vacía el mapa antes que dejarlo crecer sin límite
+    if (loginAttempts.size > 20000) {
+      loginAttempts.forEach((old, key) => {
+        if (now - old.lastAttempt > WINDOW_MS && old.blockedUntil < now) loginAttempts.delete(key);
+      });
+      if (loginAttempts.size > 20000) loginAttempts.clear();
+    }
     loginAttempts.set(identifier, {
       attempts: 1,
       lastAttempt: now,

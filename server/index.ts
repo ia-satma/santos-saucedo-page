@@ -68,10 +68,13 @@ export function log(message: string, source = "express") {
 
 // Registro de peticiones /api (L12). En producción solo método, ruta, estado y duración: el
 // cuerpo de la respuesta puede llevar datos del CMS, de contactos o de la sesión. En desarrollo
-// se añade el cuerpo recortado a 200 caracteres, con tokens y contraseñas tapados.
+// se añade el cuerpo recortado a 200 caracteres, con tokens, contraseñas y datos personales tapados.
 const LOG_RESPONSE_BODY = process.env.NODE_ENV !== "production";
 const LOG_BODY_MAX_CHARS = 200;
 const SECRET_LOG_KEY = /token|password|secret|hash/i;
+// Datos personales de visitantes (N4): en desarrollo tampoco van al registro, p. ej. los
+// envíos de contacto o los suscriptores que lista el panel
+const PERSONAL_LOG_KEY = /^(email|fullName|firstName|lastName|name|phone|company|message|ipAddress|userAgent)$/;
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -92,7 +95,7 @@ app.use((req, res, next) => {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
       if (LOG_RESPONSE_BODY && capturedJsonResponse !== undefined) {
         let body = JSON.stringify(capturedJsonResponse, (key, value) =>
-          key && SECRET_LOG_KEY.test(key) ? "[oculto]" : value,
+          key && (SECRET_LOG_KEY.test(key) || PERSONAL_LOG_KEY.test(key)) ? "[oculto]" : value,
         );
         if (body && body.length > LOG_BODY_MAX_CHARS) {
           body = `${body.slice(0, LOG_BODY_MAX_CHARS - 1)}…`;

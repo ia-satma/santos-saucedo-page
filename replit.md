@@ -165,4 +165,4 @@ The backend has been transformed from a static brochure into a self-evolving sys
 - **Branding & Content:** Configuration and markdown stored in `attached_assets`.
 - **Favicon:** `/favicon.png`.
 - **Fonts:** Google Fonts CDN (Cormorant Garamond, Inter).
-- **Images:** Partner photos are served locally from `/partner_photos/` (21 photos), with an avatar component providing initials fallback for missing images. Office imagery uses Santos & Saucedo branding images.
+- **Images:** Portraits are served locally from `/team_photos/` (source: `attached_assets/team_photos`), only for the people the site names (confirmed partners and Of Counsel); any other file there returns 404. An avatar component provides an initials fallback for missing images. Office imagery uses Santos & Saucedo branding images.

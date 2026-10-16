@@ -452,6 +452,15 @@ export function CouncilSafetyCard({ verdict, onValidate, isValidating, isAdmin }
   const overallStatus = typeof verdict.overallStatus === 'string' ? verdict.overallStatus : '';
   const riskFlag = typeof verdict.riskFlag === 'string' ? verdict.riskFlag : '';
   const checksPassed = overallStatus === 'approved' || overallStatus === 'pending_revision';
+  // Marca (N5): "—" sin estado; aprobado solo con approved o pending_revision; rechazado,
+  // fallido; cualquier otro estado (escalated, deadlocked…), a revisar
+  const brandCheck = !overallStatus
+    ? { label: '—', className: 'border-muted-foreground/40 text-muted-foreground' }
+    : checksPassed
+      ? { label: t.passed, className: 'border-green-500 text-green-600' }
+      : overallStatus === 'rejected'
+        ? { label: t.failed, className: 'border-red-500 text-red-600' }
+        : { label: t.review, className: 'border-yellow-500 text-yellow-600' };
   const asText = (value: unknown): string => (typeof value === 'string' ? value : '');
 
   return (
@@ -536,11 +545,11 @@ export function CouncilSafetyCard({ verdict, onValidate, isValidating, isAdmin }
           </Badge>
           <Badge 
             variant="outline" 
-            className={overallStatus !== 'rejected' ? 'border-green-500 text-green-600' : 'border-red-500 text-red-600'}
+            className={brandCheck.className}
             data-testid="badge-brand-check"
           >
             <Eye className="w-3 h-3 mr-1" />
-            {t.brandCheck}: {overallStatus !== 'rejected' ? t.passed : t.failed}
+            {t.brandCheck}: {brandCheck.label}
           </Badge>
         </div>
 

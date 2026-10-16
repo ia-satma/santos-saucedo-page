@@ -19,7 +19,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { apiRequest, queryClient } from '@/lib/queryClient';
+import { adminApiRequest } from '@/lib/adminAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getImpactLabel } from '@/lib/adminTranslations';
 
@@ -452,21 +452,35 @@ function getSeverityLabel(severity: string, lang: string): string {
   return severityMap[severity] || severity;
 }
 
+// Mensaje del servidor ({ error }) o, si no lo hay, el estado HTTP
+async function errorMessage(res: Response): Promise<string> {
+  const body = await res.json().catch(() => null);
+  return typeof body?.error === 'string' ? `${res.status}: ${body.error}` : `${res.status}: ${res.statusText}`;
+}
+
 export default function AdminHealthCheck() {
   const { toast } = useToast();
   const { language } = useLanguage();
   const t = translations[language] || translations.en;
   const [selectedType, setSelectedType] = useState<string | null>(null);
 
-  const { data: healthData, isLoading, refetch, isFetching } = useQuery<HealthCheckResponse>({
+  // Con el token del panel, como AdminGuide (N2): la ruta responde 401 sin sesión y
+  // adminApiRequest lleva entonces a /admin/login
+  const { data: healthData, isLoading, refetch, isFetching, error: auditError } = useQuery<HealthCheckResponse>({
     queryKey: ['/api/health-check/run'],
+    queryFn: async () => {
+      const res = await adminApiRequest('GET', '/api/health-check/run');
+      if (!res.ok) throw new Error(await errorMessage(res));
+      return res.json();
+    },
     staleTime: 0,
     refetchOnWindowFocus: false,
   });
 
   const resetZombiesMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest('POST', '/api/health-check/reset-zombies');
+      const response = await adminApiRequest('POST', '/api/health-check/reset-zombies');
+      if (!response.ok) throw new Error(await errorMessage(response));
       return response.json();
     },
     onSuccess: (data) => {
@@ -543,6 +557,17 @@ export default function AdminHealthCheck() {
           <CardContent className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             <span className="ml-3 text-muted-foreground">{t.runningInitialCheck}</span>
+          </CardContent>
+        </Card>
+      )}
+
+      {auditError && !report && !isFetching && (
+        <Card data-testid="card-audit-error">
+          <CardContent className="flex items-center gap-3 py-6">
+            <AlertTriangle className="h-5 w-5 text-red-500" />
+            <span className="text-sm text-muted-foreground">
+              {t.error}: {auditError.message}
+            </span>
           </CardContent>
         </Card>
       )}

@@ -411,7 +411,7 @@ export default function Contact() {
   }> = {
     en: {
       title: "Contact",
-      partnersNote: "Each partner's contact details appear on their profile.",
+      partnersNote: "Each partner’s contact details appear on their profile.",
       officesTitle: "Office",
       building: "Río Tamazunchale 205 Norte",
       floor: "",

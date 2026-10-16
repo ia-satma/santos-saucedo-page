@@ -232,6 +232,8 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                     >
                       {item.title}
                     </span>
+                    {/* 60ch a 17 px (507 px): la misma medida de las entradillas del Monitor
+                        (MonitorList, N9); si cambia aquí, cambia allí */}
                     <span id={`ss26-prd-${item.slug}`} className="ss-prose mt-4 block max-w-[60ch] text-[17px] text-ss-tinta">
                       {item.body}
                     </span>

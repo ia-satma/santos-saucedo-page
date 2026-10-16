@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { adminApiRequest } from "@/lib/adminAuth";
 import { 
   Activity, 
   Cpu, 
@@ -371,20 +372,30 @@ interface AgentStatus {
   successRate: number;
 }
 
+// Consultas del panel con el token, como AdminGuide (N2): sin sesión, 401 y a /admin/login
+const adminQueryFn = async ({ queryKey }: { queryKey: readonly unknown[] }) => {
+  const res = await adminApiRequest("GET", String(queryKey[0]));
+  if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+  return res.json();
+};
+
 export default function AdminPerformance() {
   const { language } = useLanguage();
   const t = translations[language as keyof typeof translations] || translations.en;
   
   const { data: agentStatus, isLoading, refetch, isRefetching } = useQuery<AgentStatus>({
     queryKey: ['/api/agents/status'],
+    queryFn: adminQueryFn,
   });
 
   const { data: translationStats } = useQuery<{ totalCached: number }>({
     queryKey: ['/api/translations/stats'],
+    queryFn: adminQueryFn,
   });
 
   const { data: contentStats } = useQuery<{ totalAnalyzed: number; avgScore: number }>({
     queryKey: ['/api/content-analysis/stats'],
+    queryFn: adminQueryFn,
   });
 
   const mockMetrics = {

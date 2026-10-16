@@ -280,11 +280,12 @@ function MonitorRow({
             {titleIsSource ? <bdi lang="en" dir="ltr">{title}</bdi> : title}
           </Link>
         </Heading>
-        {/* Índice: bajo lg la fila ocupa todo el contenedor; la entradilla con medida máxima de
-            30rem (entre 60 y 75 caracteres por línea a 16 px). Desde lg la acota su columna */}
+        {/* Índice: la entradilla con la medida de los cuerpos de las prácticas de la portada en
+            todos los anchos (N9): 60ch a 17 px allí son 63,75ch a 16 px aquí, unos 507 px, el
+            mismo borde derecho (entre 60 y 75 caracteres por línea). En el móvil, el contenedor */}
         {excerpt && (
           <p
-            className={`mt-3 text-[16px] leading-[1.55] text-ss-tinta [text-wrap:pretty] ${index ? "max-w-[30rem] lg:max-w-none" : ""}`}
+            className={`mt-3 text-[16px] leading-[1.55] text-ss-tinta [text-wrap:pretty] ${index ? "max-w-[63.75ch]" : ""}`}
             data-testid={testIds.excerpt?.(item)}
             lang={excerptIsSource ? "en" : undefined}
           >
