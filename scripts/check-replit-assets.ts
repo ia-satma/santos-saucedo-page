@@ -54,7 +54,6 @@ try {
     const expected = [pdfBytes, png, pptx][index];
     assert((await readStream(await openPrivatePresentationStream(entries[index].storagePath))).equals(expected));
   }
-  console.log("REPLIT ASSETS PASSED: real scanner, public PNG round trip, private CV PDF, private PPTX/PDF/PNG read from App Storage after local deletion. No database or AI call.");
 } finally {
   await deleteAppStorageObject(publicKey);
   await deletePersistentPrivateCv(cvRef);
@@ -62,3 +61,6 @@ try {
   await fs.unlink(cvFile).catch(() => {});
   await fs.rm(root, { recursive: true, force: true });
 }
+console.log("REPLIT ASSETS PASSED: real scanner, public PNG round trip, private CV PDF, private PPTX/PDF/PNG read from App Storage after local deletion. Test objects removed. No database or AI call.");
+// The storage SDK may retain its HTTP connection pool after the check.
+process.exit(0);
