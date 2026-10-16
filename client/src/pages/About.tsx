@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { 
   Building2, 
   Sparkles,
@@ -19,7 +18,7 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow, NumberedCard } from "@/components/editorial";
-import { TextLink } from "@/components/home26/primitives";
+import { SplitSection, TextLink } from "@/components/home26/primitives";
 import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
 import type { LanguageCode } from "@shared/schema";
@@ -899,19 +898,19 @@ export default function About() {
       historyText2: "Les décisions d’une entreprise concernant son personnel relèvent rarement du seul droit du travail : elles touchent la société, les contrats avec des tiers et, de plus en plus, des personnes venues d’autres pays. Par respect pour la confidentialité de leurs dossiers, le cabinet ne publie pas les noms de ses clients.",
       valuesTitle: "Notre façon de travailler",
       values: [
-        { title: "Prévention", text: "Nous examinons avant que l'autorité ne le fasse. Un audit réalisé à temps coûte moins cher qu'un procès et le rend souvent inutile." },
+        { title: "Prévention", text: "Nous examinons avant que l’autorité ne le fasse. Un audit réalisé à temps coûte moins cher qu’un procès et le rend souvent inutile." },
         { title: "Responsabilité", text: "Chaque dossier est suivi par un associé qui connaît le client et répond du travail du début à la fin." },
-        { title: "Franchise", text: "Nous disons ce que nous voyons, même si ce n'est pas ce que l'on attend. Parfois, le meilleur conseil est de ne pas aller en justice." },
-        { title: "Cohérence", text: "Le même critère dans tous les établissements d'un client, dans toutes les villes du pays." },
+        { title: "Franchise", text: "Nous disons ce que nous voyons, même si ce n’est pas ce que l’on attend. Parfois, le meilleur conseil est de ne pas aller en justice." },
+        { title: "Cohérence", text: "Le même critère dans tous les établissements d’un client, dans toutes les villes du pays." },
       ],
       cultureTitle: "Notre culture",
-      cultureSubtitle: "Un lieu de travail où les talents s'épanouissent et l'excellence est la norme",
-      cultureIntro: "Chez Santos & Saucedo, nous avons cultivé une culture unique qui allie rigueur professionnelle et environnement de soutien et de collaboration. Nos avocats travaillent aux côtés de certains des professionnels juridiques les plus talentueux du Mexique, favorisant une atmosphère d'apprentissage continu et de respect mutuel.",
+      cultureSubtitle: "Un lieu de travail où les talents s’épanouissent et l’excellence est la norme",
+      cultureIntro: "Chez Santos & Saucedo, nous avons cultivé une culture unique qui allie rigueur professionnelle et environnement de soutien et de collaboration. Nos avocats travaillent aux côtés de certains des professionnels juridiques les plus talentueux du Mexique, favorisant une atmosphère d’apprentissage continu et de respect mutuel.",
       cultureAspects: [
         { 
           icon: Building2, 
           title: "Environnement de travail moderne", 
-          text: "Des installations à la pointe de la technologie conçues pour promouvoir la collaboration, la créativité et le bien-être. Nos bureaux disposent d'espaces ouverts, de salles de réunion équipées de technologies de pointe et d'espaces de détente et de rassemblements informels."
+          text: "Des installations à la pointe de la technologie conçues pour promouvoir la collaboration, la créativité et le bien-être. Nos bureaux disposent d’espaces ouverts, de salles de réunion équipées de technologies de pointe et d’espaces de détente et de rassemblements informels."
         },
         { 
           icon: Handshake, 
@@ -921,62 +920,62 @@ export default function About() {
         { 
           icon: GraduationCap, 
           title: "Développement professionnel", 
-          text: "La formation continue est fondamentale pour notre cabinet. Nous investissons dans des programmes de formation, des opportunités de mentorat et le soutien pour les diplômes avancés et les certifications afin d'aider nos avocats à atteindre leur plein potentiel."
+          text: "La formation continue est fondamentale pour notre cabinet. Nous investissons dans des programmes de formation, des opportunités de mentorat et le soutien pour les diplômes avancés et les certifications afin d’aider nos avocats à atteindre leur plein potentiel."
         },
         { 
           icon: HeartHandshake, 
           title: "Engagement communautaire", 
-          text: "Nous nous engageons à redonner à la communauté. Par le travail pro bono, les partenariats avec des ONG et le soutien aux initiatives d'éducation juridique, nous nous efforçons d'avoir un impact positif au-delà de notre pratique."
+          text: "Nous nous engageons à redonner à la communauté. Par le travail pro bono, les partenariats avec des ONG et le soutien aux initiatives d’éducation juridique, nous nous efforçons d’avoir un impact positif au-delà de notre pratique."
         },
         { 
           icon: Coffee, 
           title: "Équilibre vie professionnelle-vie privée", 
-          text: "Nous reconnaissons qu'un succès durable nécessite un équilibre. Notre cabinet promeut des arrangements flexibles et des initiatives de bien-être pour soutenir les membres de notre équipe tant sur le plan professionnel que personnel."
+          text: "Nous reconnaissons qu’un succès durable nécessite un équilibre. Notre cabinet promeut des arrangements flexibles et des initiatives de bien-être pour soutenir les membres de notre équipe tant sur le plan professionnel que personnel."
         },
         { 
           icon: Lightbulb, 
-          title: "Esprit d'innovation", 
-          text: "Nous encourageons la pensée créative et adoptons la technologie pour fournir des services juridiques plus efficaces. Notre culture récompense l'initiative et valorise les nouvelles idées à tous les niveaux de l'organisation."
+          title: "Esprit d’innovation", 
+          text: "Nous encourageons la pensée créative et adoptons la technologie pour fournir des services juridiques plus efficaces. Notre culture récompense l’initiative et valorise les nouvelles idées à tous les niveaux de l’organisation."
         },
       ],
       diversityTitle: "Diversité et inclusion",
       diversitySubtitle: "Construire une profession juridique plus inclusive",
-      diversityIntro: "Santos & Saucedo s'engage à favoriser un lieu de travail diversifié et inclusif où chaque individu est valorisé, respecté et habilité à réussir. Nous croyons que la diversité de pensée, d'origine et d'expérience renforce notre cabinet et améliore la qualité du service que nous fournissons à nos clients.",
+      diversityIntro: "Santos & Saucedo s’engage à favoriser un lieu de travail diversifié et inclusif où chaque individu est valorisé, respecté et habilité à réussir. Nous croyons que la diversité de pensée, d’origine et d’expérience renforce notre cabinet et améliore la qualité du service que nous fournissons à nos clients.",
       diversityStats: [
         { value: "45%", label: "Femmes dans le cabinet", icon: UsersRound },
         { value: "35%", label: "Femmes associées", icon: TrendingUp },
         { value: "50%", label: "Femmes aux postes de direction", icon: Target },
-        { value: "100%", label: "Engagement pour l'égalité des chances", icon: Shield },
+        { value: "100%", label: "Engagement pour l’égalité des chances", icon: Shield },
       ],
       diversityInitiatives: [
         { 
           icon: UserCheck, 
           title: "Recrutement inclusif", 
-          text: "Nos pratiques de recrutement sont conçues pour attirer et évaluer les candidats uniquement sur la base de leurs compétences, de leur expérience et de leur potentiel, garantissant l'égalité des chances pour tous, indépendamment du genre, de l'origine ou des circonstances personnelles."
+          text: "Nos pratiques de recrutement sont conçues pour attirer et évaluer les candidats uniquement sur la base de leurs compétences, de leur expérience et de leur potentiel, garantissant l’égalité des chances pour tous, indépendamment du genre, de l’origine ou des circonstances personnelles."
         },
         { 
           icon: BarChart3, 
           title: "Égalité des genres", 
-          text: "Nous promouvons activement l'égalité des genres à tous les niveaux de l'organisation. Nos programmes soutiennent l'avancement des femmes aux postes de direction et assurent une rémunération équitable et des opportunités de croissance."
+          text: "Nous promouvons activement l’égalité des genres à tous les niveaux de l’organisation. Nos programmes soutiennent l’avancement des femmes aux postes de direction et assurent une rémunération équitable et des opportunités de croissance."
         },
         { 
           icon: Sparkles, 
           title: "Égalité des chances", 
-          text: "Chaque membre de l'équipe a accès aux mêmes ressources de développement, aux missions stimulantes et aux parcours d'avancement de carrière. Nous nous engageons à éliminer les obstacles et à créer des voies vers le succès pour tous."
+          text: "Chaque membre de l’équipe a accès aux mêmes ressources de développement, aux missions stimulantes et aux parcours d’avancement de carrière. Nous nous engageons à éliminer les obstacles et à créer des voies vers le succès pour tous."
         },
         { 
           icon: Shield, 
           title: "Lieu de travail inclusif", 
-          text: "Nous favorisons un environnement où les différences sont célébrées et toutes les voix sont entendues. Nos politiques et pratiques garantissent que chaque individu se sent en sécurité, respecté et capable d'être authentique au travail."
+          text: "Nous favorisons un environnement où les différences sont célébrées et toutes les voix sont entendues. Nos politiques et pratiques garantissent que chaque individu se sent en sécurité, respecté et capable d’être authentique au travail."
         },
       ],
-      diversityCommitment: "Notre engagement envers la diversité et l'inclusion n'est pas seulement une politique — c'est une valeur fondamentale qui façonne notre façon de travailler, de grandir et de servir nos clients. Nous évaluons et améliorons continuellement nos pratiques pour rester à l'avant-garde de la création d'une profession juridique plus équitable.",
+      diversityCommitment: "Notre engagement envers la diversité et l’inclusion n’est pas seulement une politique — c’est une valeur fondamentale qui façonne notre façon de travailler, de grandir et de servir nos clients. Nous évaluons et améliorons continuellement nos pratiques pour rester à l’avant-garde de la création d’une profession juridique plus équitable.",
       statsTitle: "Notre cabinet en chiffres",
       stats: [
         { value: "35+", label: "Années d'expérience" },
       ],
       rankingsTitle: "Classements et reconnaissance",
-      rankingsText: "Santos & Saucedo est constamment reconnu comme l'un des principaux cabinets d'avocats au Mexique par les annuaires juridiques les plus prestigieux du monde.",
+      rankingsText: "Santos & Saucedo est constamment reconnu comme l’un des principaux cabinets d’avocats au Mexique par les annuaires juridiques les plus prestigieux du monde.",
       rankings: [
         "Chambers and Partners Global - Band 1",
         "Chambers and Partners Latin America - Band 1",
@@ -986,9 +985,9 @@ export default function About() {
         "Global Investigations Review 100",
       ],
       proBonoTitle: "Pro Bono",
-      proBonoText: "Nous sommes profondément engagés à fournir des services juridiques pro bono à ceux qui en ont besoin. Nos avocats consacrent un temps considérable au soutien d'organisations caritatives, de causes de droits de l'homme et d'initiatives d'accès à la justice.",
+      proBonoText: "Nous sommes profondément engagés à fournir des services juridiques pro bono à ceux qui en ont besoin. Nos avocats consacrent un temps considérable au soutien d’organisations caritatives, de causes de droits de l’homme et d’initiatives d’accès à la justice.",
       careersTitle: "Carrières",
-      careersText: "Rejoignez l'un des principaux cabinets d'avocats du Mexique et construisez votre carrière avec les meilleurs. Nous offrons des opportunités exceptionnelles de croissance et de développement.",
+      careersText: "Rejoignez l’un des principaux cabinets d’avocats du Mexique et construisez votre carrière avec les meilleurs. Nous offrons des opportunités exceptionnelles de croissance et de développement.",
       learnMore: "En savoir plus",
       viewTeam: "Voir notre équipe",
       viewPractices: "Voir les domaines de pratique",
@@ -1152,25 +1151,6 @@ export default function About() {
     ? labor
     : { ...baseT, title: nav[0].label, stats: [baseT.stats[0], { value: "72+", label: citiesLabel[language] }] };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.4 },
-    },
-  };
-
   return (
     <div className="min-h-screen bg-background" data-testid="page-about">
       <SEOHead page="about" language={language} />
@@ -1182,13 +1162,7 @@ export default function About() {
       <main id="main-content">
         <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-about-hero">
           <div className="ss-container">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="max-w-3xl"
-            >
+            <div className="max-w-3xl">
               <Eyebrow num="01" tone="navy" className="mb-6" />
               <h1 className="mb-5" data-testid="text-about-title">
                 {t.title}
@@ -1196,93 +1170,89 @@ export default function About() {
               <p data-testid="text-about-subtitle">
                 {t.subtitle}
               </p>
-            </motion.div>
+            </div>
           </div>
         </section>
 
         <div className="py-16 lg:py-24">
           <div className="ss-container">
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="mb-20 lg:mb-24"
-              data-testid="section-history"
-            >
-              {/* Una sola columna: el primer párrafo como entrada (.ss-lead) y el segundo en texto */}
-              <div className="max-w-[44rem] space-y-6">
-                <p className="ss-lead" data-testid="text-about-lead">
-                  {keepFirmName(t.historyText1)}
-                </p>
-                <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]">
-                  {t.historyText2}
-                </p>
-              </div>
+            {/* Rejilla editorial de la portada (SplitSection): desde lg, las cifras en el aside
+                (columnas 1–4, en vertical y alineadas arriba con la entrada) y la introducción en
+                el cuerpo (desde la 5). En teléfono y tableta, como antes: introducción y debajo
+                las dos cifras en dos columnas (order-last solo bajo lg). */}
+            <section className="mb-20 lg:mb-24" data-testid="section-history">
+              <SplitSection
+                asideClassName="order-last mt-4 lg:order-none lg:mt-0"
+                aside={
+                  /* Cifras sin h2: estilo de cifra de la portada, filetes de 1 px y sin panel */
+                  <dl className="grid max-w-[36rem] grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-1" data-testid="section-stats">
+                    {t.stats.map((stat, index) => (
+                      <div key={index} className="flex flex-col border-t border-ss-rule pt-6" data-testid={`stat-${index}`}>
+                        {/* Etiquetas equilibradas (sin huérfanas en teléfono) y, como red, corte de
+                            compuestos largos (alemán) dentro de su media columna */}
+                        <dt className="ss-label text-ss-medio order-2 mt-3 text-balance hyphens-auto [overflow-wrap:anywhere]">
+                          {stat.label}
+                        </dt>
+                        <dd className="ss-figure order-1">
+                          {stat.value}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                }
+              >
+                {/* El primer párrafo como entrada (.ss-lead) y el segundo en texto */}
+                <div className="max-w-[44rem] space-y-6">
+                  <p className="ss-lead" data-testid="text-about-lead">
+                    {keepFirmName(t.historyText1)}
+                  </p>
+                  <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]">
+                    {t.historyText2}
+                  </p>
+                </div>
+              </SplitSection>
+            </section>
 
-              {/* Cifras bajo la introducción, sin h2: estilo de cifra de la portada, filetes de
-                  1 px y sin panel */}
-              <dl className="mt-12 grid max-w-[36rem] grid-cols-2 gap-x-8 gap-y-10 lg:mt-16" data-testid="section-stats">
-                {t.stats.map((stat, index) => (
-                  <div key={index} className="flex flex-col border-t border-ss-rule pt-6" data-testid={`stat-${index}`}>
-                    {/* Etiquetas equilibradas (sin huérfanas en teléfono) y, como red, corte de
-                        compuestos largos (alemán) dentro de su media columna */}
-                    <dt className="ss-label text-ss-medio order-2 mt-3 text-balance hyphens-auto [overflow-wrap:anywhere]">
-                      {stat.label}
-                    </dt>
-                    <dd className="ss-figure order-1">
-                      {stat.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </motion.section>
-
-            <motion.section
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="mb-20 lg:mb-24"
-              data-testid="section-values"
-            >
-              <h2 className="ss-h2 mb-8">
-                {t.valuesTitle}
-              </h2>
-              {/* Principios sin orden: sin numerales, en rejilla de 2 × 2 con filete superior */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-                {t.values.map((value, index) => (
-                  <motion.div key={index} variants={itemVariants}>
+            {/* "Cómo trabajamos": el h2 en el aside y los cuatro principios en el cuerpo */}
+            <section className="mb-20 lg:mb-24" aria-labelledby="about-values-title" data-testid="section-values">
+              <SplitSection
+                aside={
+                  <h2 id="about-values-title" className="ss-h2">
+                    {t.valuesTitle}
+                  </h2>
+                }
+              >
+                {/* Principios sin orden: sin numerales, en rejilla de 2 × 2 con filete superior */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                  {t.values.map((value, index) => (
                     <NumberedCard
+                      key={index}
                       index={index}
                       showIndex={false}
                       title={value.title}
                       body={value.text}
                       dataTestid={`card-value-${index}`}
                     />
-                  </motion.div>
-                ))}
-              </div>
-            </motion.section>
+                  ))}
+                </div>
+              </SplitSection>
+            </section>
 
-            {/* Navegación como enlaces de texto (sin botones): Socios, Prácticas y Monitor */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex flex-wrap gap-x-10 gap-y-6"
-            >
-              <span data-testid="button-view-team">
-                <TextLink href="/team">{nav[2].label}</TextLink>
-              </span>
-              <span data-testid="button-view-practices">
-                <TextLink href="/practice-groups">{nav[1].label}</TextLink>
-              </span>
-              <span data-testid="link-view-news">
-                <TextLink href="/news">{nav[3].label}</TextLink>
-              </span>
-            </motion.div>
+            {/* Navegación como enlaces de texto (sin botones): Socios, Prácticas y Monitor, en la
+                columna del cuerpo desde lg (el aside vacío no ocupa sitio bajo lg) */}
+            <SplitSection asideClassName="hidden lg:block">
+              <div className="flex flex-wrap gap-x-10 gap-y-6">
+                <span data-testid="button-view-team">
+                  <TextLink href="/team">{nav[2].label}</TextLink>
+                </span>
+                <span data-testid="button-view-practices">
+                  <TextLink href="/practice-groups">{nav[1].label}</TextLink>
+                </span>
+                <span data-testid="link-view-news">
+                  <TextLink href="/news">{nav[3].label}</TextLink>
+                </span>
+              </div>
+            </SplitSection>
           </div>
         </div>
       </main>

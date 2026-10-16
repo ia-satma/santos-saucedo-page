@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, useParams } from "wouter";
-import { motion } from "framer-motion";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -160,13 +159,12 @@ export default function NewsDetail() {
     enabled: !!newsArticle,
   });
 
-  // Vuelta y relacionados con el nombre de la publicación, como el eyebrow y el menú:
-  // "Monitor Laboral" en español, "Labor Monitor" en inglés; en los demás idiomas, el rótulo
-  // del menú (chrome26.ts). Inglés en minúscula inicial, como el español.
+  // Relacionados con el nombre de la publicación: "Monitor Laboral" en español, "Labor Monitor"
+  // en inglés. La vuelta es el rótulo del menú (chrome26 nav[3]), como "← Socios" y
+  // "← Prácticas". Inglés en minúscula inicial, como el español.
   const content: Record<string, {
     /** Primer paso de las migas (JSON-LD) */
     home: string;
-    backToNews: string;
     share: string;
     /** Compartir por correo (mailto) */
     shareEmail: string;
@@ -179,7 +177,6 @@ export default function NewsDetail() {
   }> = {
     en: {
       home: "Home",
-      backToNews: "Back to the Labor Monitor",
       share: "Share",
       shareEmail: "Email",
       relatedNews: "More from the Labor Monitor",
@@ -191,7 +188,6 @@ export default function NewsDetail() {
     },
     es: {
       home: "Inicio",
-      backToNews: "Volver al Monitor Laboral",
       share: "Compartir",
       shareEmail: "Correo",
       relatedNews: "Más del Monitor Laboral",
@@ -203,7 +199,6 @@ export default function NewsDetail() {
     },
     de: {
       home: "Startseite",
-      backToNews: "Zurück zu den Nachrichten",
       share: "Teilen",
       shareEmail: "E-Mail",
       relatedNews: "Weitere Nachrichten",
@@ -215,7 +210,6 @@ export default function NewsDetail() {
     },
     zh: {
       home: "首页",
-      backToNews: "返回新闻",
       share: "分享",
       shareEmail: "邮件",
       relatedNews: "更多新闻",
@@ -227,7 +221,6 @@ export default function NewsDetail() {
     },
     ko: {
       home: "홈",
-      backToNews: "뉴스로 돌아가기",
       share: "공유",
       shareEmail: "이메일",
       relatedNews: "뉴스 더 보기",
@@ -239,7 +232,6 @@ export default function NewsDetail() {
     },
     ja: {
       home: "ホーム",
-      backToNews: "ニュースに戻る",
       share: "共有",
       shareEmail: "メール",
       relatedNews: "その他のニュース",
@@ -251,7 +243,6 @@ export default function NewsDetail() {
     },
     ar: {
       home: "الرئيسية",
-      backToNews: "العودة إلى الأخبار",
       share: "مشاركة",
       shareEmail: "البريد الإلكتروني",
       relatedNews: "المزيد من الأخبار",
@@ -263,7 +254,6 @@ export default function NewsDetail() {
     },
     ru: {
       home: "Главная",
-      backToNews: "Назад к новостям",
       share: "Поделиться",
       shareEmail: "Эл. почта",
       relatedNews: "Другие новости",
@@ -275,7 +265,6 @@ export default function NewsDetail() {
     },
     fr: {
       home: "Accueil",
-      backToNews: "Retour aux actualités",
       share: "Partager",
       shareEmail: "E-mail",
       relatedNews: "Autres actualités",
@@ -287,7 +276,6 @@ export default function NewsDetail() {
     },
     it: {
       home: "Home",
-      backToNews: "Torna alle notizie",
       share: "Condividi",
       shareEmail: "E-mail",
       relatedNews: "Altre notizie",
@@ -300,7 +288,7 @@ export default function NewsDetail() {
   };
 
   const t = content[language] || content.en;
-  // Nombre de la publicación: el rótulo del menú en cada idioma (h1 de /news, pestaña, eyebrow)
+  // Nombre de la publicación: el rótulo del menú en cada idioma (h1 de /news, pestaña, vuelta)
   const newsLabel = (chrome26[language as keyof typeof chrome26] ?? chrome26.en).nav[3].label;
 
   // Formato único de fecha del Monitor (lib/newsDate): el mismo que el listado de /news
@@ -362,7 +350,7 @@ export default function NewsDetail() {
               data-testid="button-back-to-news"
             >
               <ArrowLeft className="w-4 h-4 rtl:-scale-x-100" aria-hidden="true" />
-              {t.backToNews}
+              {newsLabel}
             </Link>
           </div>
         </main>
@@ -471,27 +459,23 @@ export default function NewsDetail() {
               Hasta lg, el margen lateral es el de ss-container (--ss-pad): en teléfono el texto
               empieza bajo el logotipo (x = 20 a 390 px); desde lg la columna va centrada. */}
           <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12 w-full">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              {/* Al listado del Monitor (/news) con el router: respeta la base de GitHub Pages */}
+            <div>
+              {/* Al listado del Monitor (/news) con el router: respeta la base de GitHub Pages.
+                  Texto: el rótulo del menú, como la vuelta de socios y prácticas */}
               <Link
                 href="/news"
                 className="inline-flex items-center gap-2 mb-6"
                 data-testid="link-back-to-news"
               >
                 <ArrowLeft className="w-4 h-4 rtl:-scale-x-100" aria-hidden="true" />
-                {t.backToNews}
+                {newsLabel}
               </Link>
 
-              {/* Eyebrow del expediente, como los encabezados internos: "§ 04 —— Monitor Laboral"
-                  (rótulo de la tabla de textos, en los 10 idiomas) */}
+              {/* Eyebrow del expediente solo con el número, como en la ficha de práctica: la
+                  vuelta ya nombra la publicación */}
               <Eyebrow
                 num="04"
                 tone="paper"
-                label={newsLabel}
                 className="mb-4"
                 testId="eyebrow-news"
               />
@@ -517,17 +501,13 @@ export default function NewsDetail() {
                   </time>
                 </p>
               )}
-            </motion.div>
+            </div>
           </div>
         </section>
 
         <div className="py-16 lg:py-20">
           <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
+            <div>
               <NewsHeroImage key={heroImage} src={heroImage} />
 
               <div
@@ -566,56 +546,66 @@ export default function NewsDetail() {
                 )}
               </div>
 
-              {/* Compartir: una fila de etiqueta con botones de texto (LinkedIn · Correo · Copiar
-                  enlace), sin bordes ni iconos; 44 px de alto útil por el relleno */}
-              <div
-                className="pt-8 mb-16 border-t border-ss-rule"
-                data-testid="section-share"
-              >
-                <div
-                  role="group"
-                  aria-labelledby="news-share-label"
-                  className="ss-label flex flex-wrap items-center gap-x-2"
-                >
-                  <span id="news-share-label" className="text-ss-medio me-2">{t.share}</span>
-                  <button
-                    type="button"
-                    className="ss-label inline-flex min-h-[44px] items-center text-ss-marino underline-offset-[6px] decoration-1 hover:underline"
-                    onClick={() => handleShare("linkedin")}
-                    data-testid="button-share-linkedin"
+              {/* Compartir y suscribirse en una sola fila bajo un solo filete. Desde md, compartir a
+                  un lado y la suscripción al otro; en teléfono, apilados sin otro filete. En el
+                  sitio estático MonitorSubscribe no se pinta y queda solo compartir. */}
+              <div className="mb-16 border-t border-ss-rule pt-8 md:flex md:flex-wrap md:items-center md:justify-between md:gap-x-10 md:gap-y-2">
+                {/* Compartir: fila de etiqueta con botones de texto (LinkedIn · Correo · Copiar
+                    enlace), sin bordes ni iconos; 44 px de alto útil por el relleno. Cada "·" va
+                    unido al botón que sigue (whitespace-nowrap): ninguno queda al final de una
+                    línea. Bajo sm, "Compartir" en su propia línea. */}
+                <div data-testid="section-share">
+                  <div
+                    role="group"
+                    aria-labelledby="news-share-label"
+                    className="ss-label flex flex-wrap items-center gap-x-2"
                   >
-                    LinkedIn
-                  </button>
-                  <span aria-hidden="true" className="text-ss-medio">·</span>
-                  <button
-                    type="button"
-                    className="ss-label inline-flex min-h-[44px] items-center text-ss-marino underline-offset-[6px] decoration-1 hover:underline"
-                    onClick={() => handleShare("email")}
-                    data-testid="button-share-email"
-                  >
-                    {t.shareEmail}
-                  </button>
-                  <span aria-hidden="true" className="text-ss-medio">·</span>
-                  <button
-                    type="button"
-                    className="ss-label inline-flex min-h-[44px] items-center text-ss-marino underline-offset-[6px] decoration-1 hover:underline"
-                    onClick={handleCopyLink}
-                    data-testid="button-share-copy-link"
-                  >
-                    {t.copyLink}
-                  </button>
+                    <span id="news-share-label" className="basis-full text-ss-medio sm:basis-auto sm:me-2">{t.share}</span>
+                    <button
+                      type="button"
+                      className="ss-label inline-flex min-h-[44px] items-center text-ss-marino underline-offset-[6px] decoration-1 hover:underline"
+                      onClick={() => handleShare("linkedin")}
+                      data-testid="button-share-linkedin"
+                    >
+                      LinkedIn
+                    </button>
+                    <span className="inline-flex items-center gap-x-2 whitespace-nowrap">
+                      <span aria-hidden="true" className="text-ss-medio">·</span>
+                      <button
+                        type="button"
+                        className="ss-label inline-flex min-h-[44px] items-center text-ss-marino underline-offset-[6px] decoration-1 hover:underline"
+                        onClick={() => handleShare("email")}
+                        data-testid="button-share-email"
+                      >
+                        {t.shareEmail}
+                      </button>
+                    </span>
+                    <span className="inline-flex items-center gap-x-2 whitespace-nowrap">
+                      <span aria-hidden="true" className="text-ss-medio">·</span>
+                      <button
+                        type="button"
+                        className="ss-label inline-flex min-h-[44px] items-center text-ss-marino underline-offset-[6px] decoration-1 hover:underline"
+                        onClick={handleCopyLink}
+                        data-testid="button-share-copy-link"
+                      >
+                        {t.copyLink}
+                      </button>
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              {/* Al pie de cada nota: la suscripción al Monitor (/newsletter) */}
-              <MonitorSubscribe className="mb-16" testId="section-article-subscribe" linkTestId="link-article-subscribe" />
-            </motion.div>
+                {/* La suscripción al Monitor (/newsletter), sin filete propio */}
+                <MonitorSubscribe
+                  rule={false}
+                  className="mt-4 md:mt-0"
+                  testId="section-article-subscribe"
+                  linkTestId="link-article-subscribe"
+                />
+              </div>
+            </div>
 
             {relatedAuthors && relatedAuthors.length > 0 && (
-              <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.25 }}
+              <section
                 className="mb-16"
                 data-testid="section-related-authors"
               >
@@ -635,14 +625,11 @@ export default function NewsDetail() {
                     />
                   ))}
                 </div>
-              </motion.section>
+              </section>
             )}
 
             {hasRelatedNews && (
-              <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
+              <section
                 data-testid="section-related-news"
               >
                 <h2 
@@ -662,7 +649,7 @@ export default function NewsDetail() {
                     title: (item) => `text-related-news-title-${item.id}`,
                   }}
                 />
-              </motion.section>
+              </section>
             )}
           </div>
         </div>

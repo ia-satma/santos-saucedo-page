@@ -7,9 +7,10 @@ import socioSantosArce from "@assets/ss26/socio-enrique-hernan-santos-arce.webp"
 import socioSantosGuzman from "@assets/ss26/socio-enrique-hernan-santos-guzman.webp";
 import socioSaucedoMontemayor from "@assets/ss26/socio-mario-saucedo-montemayor.webp";
 import { fallbackToOriginalSrc, getTeamPhotoSrcSet } from "@/lib/teamPhotoSources";
+import { keepFirmName } from "@/lib/firmName";
 import { MonitorList } from "@/components/monitor/MonitorList";
 import type { News } from "@shared/schema";
-import { Reveal, SectionHead, TextLink, useInView } from "./primitives";
+import { Reveal, SectionHead, TextLink } from "./primitives";
 import { home26, langAttrs, type Lang26 } from "./content";
 import { chrome26 } from "./chrome26";
 
@@ -72,7 +73,6 @@ const socioSrcSetProps = (slug: string) => {
 /* § 01 — La firma */
 export function Firma26({ lang }: { lang: Lang26 }) {
   const t = home26[lang].firma;
-  const [photoRef, photoIn] = useInView<HTMLDivElement>();
   return (
     <section id="firma" {...langAttrs[lang]} data-surface="light" className={`bg-white ${Y.firma}`} aria-labelledby="ss26-firma">
       {/* Retícula de 12. Desde 1280: texto en 4 columnas y foto desde la 5 (el borde de la
@@ -90,8 +90,9 @@ export function Firma26({ lang }: { lang: Lang26 }) {
           </Reveal>
           <Reveal delay={0.12}>
             <div className="ss-prose mt-10 space-y-6 text-ss-tinta">
+              {/* "Santos & Saucedo" sin partirse entre líneas */}
               {t.body.map((p) => (
-                <p key={p.slice(0, 24)}>{p}</p>
+                <p key={p.slice(0, 24)}>{keepFirmName(p)}</p>
               ))}
             </div>
           </Reveal>
@@ -107,7 +108,7 @@ export function Firma26({ lang }: { lang: Lang26 }) {
             de Prácticas, las columnas del manifiesto y el Monitor. */}
         <figure className="w-full max-w-[708px] lg:col-span-6 lg:col-start-7 lg:justify-self-end xl:col-span-8 xl:col-start-5">
           {/* Fondo Línea mientras carga */}
-          <div ref={photoRef} className="overflow-hidden bg-ss-rule">
+          <div className="overflow-hidden bg-ss-rule">
             <img
               src={edificioCerro}
               alt={t.alt}
@@ -118,7 +119,8 @@ export function Firma26({ lang }: { lang: Lang26 }) {
               // edificio-cerro-recorte.webp: x 0–708, y 0–684 del original (952 × 937), sin el
               // letrero del estacionamiento (desde x 711) ni el estacionamiento reflejado bajo
               // el cerro (desde y 688). En grises, como la sala de juntas y los retratos.
-              className={`ss-photo ss-photo--mono ss-settle block h-auto w-full ${photoIn ? "is-in" : ""}`}
+              // Sin entrada al aparecer (G3): la foto está quieta desde el inicio
+              className="ss-photo ss-photo--mono block h-auto w-full"
             />
           </div>
           <figcaption className="mt-4 flex gap-4 text-[14px] leading-snug text-ss-medio">

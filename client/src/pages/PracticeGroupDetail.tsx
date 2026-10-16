@@ -1,6 +1,5 @@
 import { Link, useParams } from "wouter";
 import { useMemo, useState, type ReactNode } from "react";
-import { motion } from "framer-motion";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,6 +13,8 @@ import { getTeamPhotoThumb } from "@/lib/teamPhotoSources";
 import { Eyebrow, LeadParagraph, RankingsList, type RankingItem } from "@/components/editorial";
 import { chrome26 } from "@/components/home26/chrome26";
 import { isNamedOnTeamPage } from "@shared/teamVisibility";
+import { keepFirmName } from "@/lib/firmName";
+import { practiceName } from "@/lib/practiceNames";
 import type { PracticeGroup, TeamMember, RepresentativeMatterDb } from "@shared/schema";
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
@@ -428,18 +429,22 @@ export default function PracticeGroupDetail() {
   const isOtherLanguage = language !== 'es' && language !== 'en';
   const translationPending = isTranslating || isTranslationLoading;
   const sourceDescription = practiceGroup?.fullDescription || practiceGroup?.description;
+  // Fuera de ES/EN, el nombre de la práctica en el idioma de la página (practiceNames.ts): el
+  // mismo término de la lista, la descripción SEO y el select de Contacto
+  const localName = isOtherLanguage && slug ? practiceName(slug, language) : undefined;
   const displayName = language === 'es' 
     ? (practiceGroup?.nameEs || practiceGroup?.name)
     : language === 'en'
       ? practiceGroup?.name
-      : (translatedFields.name || practiceGroup?.name);
+      : (localName || translatedFields.name || practiceGroup?.name);
   const displayDescription = language === 'es'
     ? (practiceGroup?.fullDescriptionEs || practiceGroup?.descriptionEs || practiceGroup?.fullDescription || practiceGroup?.description)
     : language === 'en'
       ? sourceDescription
       : (translatedFields.fullDescription || translatedFields.description || sourceDescription);
   const shownName = displayName;
-  const nameIsSource = isOtherLanguage && !!shownName && shownName === practiceGroup?.name;
+  // Con nombre propio del idioma no es texto de origen (fr "Immigration" coincide con el inglés)
+  const nameIsSource = isOtherLanguage && !localName && !!shownName && shownName === practiceGroup?.name;
   const descriptionSource = isOtherLanguage && !!displayDescription &&
     (displayDescription === practiceGroup?.fullDescription || displayDescription === practiceGroup?.description);
 
@@ -478,12 +483,7 @@ export default function PracticeGroupDetail() {
       <main id="main-content">
         <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-practice-group-hero">
           <Column>
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
+            <div>
               <Link href="/practice-groups">
                 <span
                   className="inline-flex items-center gap-2 mb-6 cursor-pointer"
@@ -504,11 +504,11 @@ export default function PracticeGroupDetail() {
                 </h1>
                 {practiceText?.tagline && (
                   <p data-testid="text-practice-group-tagline" lang={descriptionSource ? "en" : undefined}>
-                    {descriptionSource ? <bdi lang="en" dir="ltr">{practiceText.tagline}</bdi> : practiceText.tagline}
+                    {descriptionSource ? <bdi lang="en" dir="ltr">{keepFirmName(practiceText.tagline)}</bdi> : keepFirmName(practiceText.tagline)}
                   </p>
                 )}
               </div>
-            </motion.div>
+            </div>
           </Column>
         </section>
 
@@ -517,19 +517,14 @@ export default function PracticeGroupDetail() {
             dos columnas a todo el ancho del contenedor. */}
         <section className="bg-background py-16 lg:py-20">
           <div className="ss-container">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="grid grid-cols-1 gap-y-12 lg:grid-cols-12 lg:gap-x-12"
-            >
+            <div className="grid grid-cols-1 gap-y-12 lg:grid-cols-12 lg:gap-x-12">
               <div className="lg:col-span-8 xl:col-span-7" data-testid="container-practice-group-description">
                 {practiceText && practiceText.intro.length > 0 ? (
                   <div {...sourceAttrs}>
+                    {/* "Santos & Saucedo" sin partirse entre líneas (espacios duros) */}
                     <LeadParagraph
-                      firstParagraph={practiceText.intro[0]}
-                      restParagraphs={practiceText.intro.slice(1)}
+                      firstParagraph={keepFirmName(practiceText.intro[0])}
+                      restParagraphs={practiceText.intro.slice(1).map(keepFirmName)}
                       testId="lead-practice-group"
                     />
                   </div>
@@ -567,7 +562,13 @@ export default function PracticeGroupDetail() {
                   >
                     {allPartners ? t.partners : t.ourTeam}
                   </h2>
-                  <ul className="border-b border-ss-rule" data-testid="section-partners">
+                  {/* Filete de cierre solo desde lg: debajo, el primer servicio (border-t) ya cierra
+                      la lista y dos filetes paralelos sin nada entre ellos sobran. Sin servicios,
+                      la lista conserva su cierre. */}
+                  <ul
+                    className={practiceText && practiceText.services.length > 0 ? "lg:border-b lg:border-ss-rule" : "border-b border-ss-rule"}
+                    data-testid="section-partners"
+                  >
                     {practiceMembers.map((member) => {
                       const role = memberTitle(member, language);
                       return (
@@ -600,7 +601,7 @@ export default function PracticeGroupDetail() {
                   </ul>
                 </aside>
               )}
-            </motion.div>
+            </div>
 
             {practiceText && practiceText.services.length > 0 && (
               <ul
@@ -615,10 +616,10 @@ export default function PracticeGroupDetail() {
                     data-testid={`item-practice-service-${index}`}
                   >
                     {/* h2 con el aspecto de h3: cada servicio es una sección de la práctica */}
-                    <h2 className="ss-h3 mb-3">{service.title}</h2>
+                    <h2 className="ss-h3 mb-3">{keepFirmName(service.title)}</h2>
                     {service.paragraphs.map((paragraph, i) => (
                       <p key={i} className={`ss-prose text-[16px] leading-[1.6] text-ss-tinta ${i > 0 ? "mt-4" : ""}`}>
-                        {paragraph}
+                        {keepFirmName(paragraph)}
                       </p>
                     ))}
                   </li>
@@ -632,12 +633,7 @@ export default function PracticeGroupDetail() {
         {representativeMatters && representativeMatters.length > 0 && (
           <section className="bg-background border-t border-ss-rule py-16 lg:py-20" data-testid="section-representative-matters">
             <Column>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.22 }}
-              >
+              <div>
                 <h2
                   className="ss-h2 mb-3"
                   data-testid="text-success-cases-title"
@@ -666,7 +662,7 @@ export default function PracticeGroupDetail() {
                       />
                     ))}
                 </div>
-              </motion.div>
+              </div>
             </Column>
           </section>
         )}
@@ -675,12 +671,7 @@ export default function PracticeGroupDetail() {
         {practiceRankings.length > 0 && (
           <section className="bg-background border-t border-ss-rule py-16 lg:py-20" data-testid="section-rankings">
             <Column>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.25 }}
-              >
+              <div>
                 <Eyebrow label={t.rankingsTitle} className="mb-4" testId="eyebrow-rankings" />
                 <h2
                   className="ss-h2 mb-3"
@@ -701,7 +692,7 @@ export default function PracticeGroupDetail() {
                   getBadgeIcon={getBadgeIcon}
                   testIdPrefix="ranking"
                 />
-              </motion.div>
+              </div>
             </Column>
           </section>
         )}

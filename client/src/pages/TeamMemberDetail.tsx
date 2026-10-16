@@ -1,6 +1,5 @@
 import { lazy, Suspense, useState, useMemo, type ReactNode, type SyntheticEvent } from "react";
 import { Link, useParams } from "wouter";
-import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -19,6 +18,8 @@ import { fallbackToOriginalSrc, getTeamPhotoSrcSet, getTeamPhotoThumb, highFetch
 import { Eyebrow, LeadParagraph } from "@/components/editorial";
 import { chrome26 } from "@/components/home26/chrome26";
 import { useSiteContact } from "@/components/home26/useSiteContact";
+import { SplitSection } from "@/components/home26/primitives";
+import { directContact, isInMemoriamMember } from "@/lib/partnerContact";
 import { keepFirmName } from "@/lib/firmName";
 import type { TeamMember, PracticeGroup, IndustryGroup, Education, Affiliation, Ranking, Publication, RepresentativeMatter, BarAdmission, News, LanguageCode } from "@shared/schema";
 
@@ -30,28 +31,28 @@ const NotFound = lazy(() => import("@/pages/not-found"));
 // desalineen (cada bloque se coloca en su celda; el DOM sigue nombre, botones, foto).
 // Teléfono: retrato 4/5 de 112 px al lado del nombre y el cargo, como la tarjeta de /team
 // (grid-cols-[112px_1fr], al pie de la fila), y los botones debajo de ese bloque, a todo lo
-// ancho. md: foto en la columna 1 (dos filas, al menos cuadrada), filete de 1 px y el texto en
+// ancho. Bajo 360 px el retrato baja a 88 px: a 320 la columna del nombre no llegaba a la
+// palabra más larga ("Montemayor") y el h1 la partía por dentro. md: foto en la columna 1 (dos
+// filas, al menos cuadrada), filete de 1 px y el texto en
 // la 3 alineado con la foto; los botones debajo, en una fila a todo lo ancho. lg: los botones
 // vuelven a la columna del texto, al pie, alineados con el borde inferior del retrato (240 px
 // en md, 260 en lg).
-const PROFILE_GRID = "grid grid-cols-[112px_minmax(0,1fr)] items-end gap-x-5 md:grid-cols-[240px_1px_minmax(0,1fr)] md:grid-rows-[auto_1fr] md:items-stretch md:gap-x-0 lg:grid-cols-[260px_1px_minmax(0,1fr)]";
+const PROFILE_GRID = "grid grid-cols-[112px_minmax(0,1fr)] items-end gap-x-5 max-[359px]:grid-cols-[88px_minmax(0,1fr)] max-[359px]:gap-x-4 md:grid-cols-[240px_1px_minmax(0,1fr)] md:grid-rows-[auto_1fr] md:items-stretch md:gap-x-0 lg:grid-cols-[260px_1px_minmax(0,1fr)]";
 const PROFILE_PHOTO_CELL = "col-start-1 row-start-1 aspect-[4/5] w-full md:row-span-2 md:aspect-auto md:min-h-[240px] lg:min-h-[260px]";
 // Ancho del retrato en cada tramo, para que srcset elija la variante WebP adecuada
 const PROFILE_PHOTO_SIZES = "(min-width: 1024px) 260px, (min-width: 768px) 240px, 112px";
 const PROFILE_IDENTITY_CELL = "col-start-2 row-start-1 md:col-start-3 md:px-10 md:pb-6";
 const PROFILE_ACTIONS_CELL = "col-span-2 col-start-1 row-start-2 pt-6 md:col-span-3 md:row-start-3 md:pt-8 lg:col-span-1 lg:col-start-3 lg:row-start-2 lg:self-end lg:px-10 lg:pt-0";
-// Columnas de la fila de botones (dos sin vCard en el build estático; uno si solo hay correo)
-const ACTIONS_COLUMNS = ["", "sm:grid-cols-2 lg:max-w-[32rem]", "sm:grid-cols-3 lg:max-w-[48rem]"] as const;
-
-// Teléfonos comparados solo por sus cifras (sin espacios ni guiones)
-const digitsOf = (value: string) => value.replace(/[^\d+]/g, "");
+// Columnas de la fila de botones: hoy solo "Descargar vCard" (G6), de 240 px (en lg la celda
+// suma 80 px de relleno lateral)
+const ACTIONS_COLUMNS = ["sm:max-w-[15rem] lg:max-w-[20rem]", "sm:grid-cols-2 lg:max-w-[32rem]", "sm:grid-cols-3 lg:max-w-[48rem]"] as const;
 
 // Relleno del encabezado: el mismo de los demás encabezados internos, escrito aquí y sin las
 // clases pt-36/pb-20 (la regla propia de la ficha en index.css dejaba 86/64 px a 1440).
 const PROFILE_HERO = "pt-[clamp(56px,4vw,72px)] pb-[clamp(40px,3.6vw,56px)]";
 // Botones sobre Hueso: contorno y texto Azul Marino; relleno Azul Marino al pasar el cursor
 // (twMerge sustituye el border-primary/text-primary de la variante outline)
-const PROFILE_BUTTON = "min-h-11 w-full whitespace-normal text-center leading-[1.2] border-ss-marino text-ss-marino transition-colors duration-200 hover:bg-ss-marino hover:text-white";
+const PROFILE_BUTTON = "min-h-[44px] w-full whitespace-normal text-center leading-[1.2] border-ss-marino text-ss-marino transition-colors duration-200 hover:bg-ss-marino hover:text-white";
 
 // Texto sin traducción (la traducción automática falló o no llegó): se muestra el original
 // en inglés, marcado lang="en"; si tampoco hay inglés, el español (lang="es"). `translated`
@@ -91,6 +92,32 @@ function BackTextLink({ href, children, testId }: { href: string; children: Reac
       <span aria-hidden="true" className="inline-block rtl:-scale-x-100">←</span>
       <span className="ss-link">{children}</span>
     </Link>
+  );
+}
+
+// Retícula de "Equipo relacionado" (vista, carga y espera de /api/team): una columna con filete
+// final en el teléfono; tres iguales en tableta; desde lg, en las ocho columnas del cuerpo, otra
+// vez una lista de filas con filete final, como las prácticas de la portada (en tres columnas los
+// nombres y cargos se partían en dos y tres líneas)
+const RELATED_GRID = "grid grid-cols-1 md:grid-cols-3 gap-x-8 lg:grid-cols-1 border-b border-ss-rule md:border-b-0 lg:border-b";
+
+// "Equipo relacionado" mientras carga: tres filas del mismo alto (filete, retrato de 56 px y dos
+// líneas), para que el pie no salte cuando llegan la ficha o la lista del equipo
+function RelatedTeamSkeleton() {
+  return (
+    <SplitSection aside={<Skeleton className="h-7 w-48 bg-ss-rule" />}>
+      <div className={RELATED_GRID} aria-busy="true">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="flex items-start gap-4 py-4 border-t border-ss-rule">
+            <Skeleton className="h-14 w-14 shrink-0 rounded-none bg-ss-rule" />
+            <div className="flex-1 min-w-0">
+              <Skeleton className="h-5 w-1/2 mb-2 bg-ss-rule" />
+              <Skeleton className="h-3 w-1/3 bg-ss-rule" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </SplitSection>
   );
 }
 
@@ -598,7 +625,7 @@ export default function TeamMemberDetail() {
     queryKey: ["/api/industry-groups"],
   });
 
-  const { data: allTeamMembers } = useQuery<TeamMember[]>({
+  const { data: allTeamMembers, isLoading: isLoadingTeam } = useQuery<TeamMember[]>({
     queryKey: ["/api/team"],
   });
 
@@ -625,7 +652,7 @@ export default function TeamMemberDetail() {
   });
 
   // Teléfono y correo generales de la firma (pie y /contact): si la ficha solo repite esos
-  // datos, no lleva bloque de contacto propio (E7)
+  // datos, no lleva bloque de contacto ni botones "Enviar correo"/"Llamar" (E7, G6)
   const firmContact = useSiteContact(language === "en" ? "en" : "es");
 
   const content: Record<string, {
@@ -663,6 +690,8 @@ export default function TeamMemberDetail() {
     otherRecognitions: string;
     band: string;
     viewPublication: string;
+    // Primer nivel de la miga de pan (JSON-LD), como en las notas del Monitor
+    home: string;
     positions: {
       foundingPartner: string;
       partner: string;
@@ -706,6 +735,7 @@ export default function TeamMemberDetail() {
       otherRecognitions: "Other recognitions",
       band: "Band",
       viewPublication: "View publication",
+      home: "Home",
       positions: {
         foundingPartner: "Founding partner",
         partner: "Partner",
@@ -749,6 +779,7 @@ export default function TeamMemberDetail() {
       otherRecognitions: "Otros reconocimientos",
       band: "Banda",
       viewPublication: "Ver publicación",
+      home: "Inicio",
       positions: {
         foundingPartner: "Socio fundador",
         partner: "Socio",
@@ -792,6 +823,7 @@ export default function TeamMemberDetail() {
       otherRecognitions: "Weitere Auszeichnungen",
       band: "Band",
       viewPublication: "Publikation ansehen",
+      home: "Startseite",
       positions: {
         foundingPartner: "Gründungspartner",
         partner: "Partner",
@@ -835,6 +867,7 @@ export default function TeamMemberDetail() {
       otherRecognitions: "其他认可",
       band: "等级",
       viewPublication: "查看出版物",
+      home: "首页",
       positions: {
         foundingPartner: "创始合伙人",
         partner: "合伙人",
@@ -878,6 +911,7 @@ export default function TeamMemberDetail() {
       otherRecognitions: "기타 인정",
       band: "등급",
       viewPublication: "출판물 보기",
+      home: "홈",
       positions: {
         foundingPartner: "창립 파트너",
         partner: "파트너",
@@ -922,6 +956,7 @@ export default function TeamMemberDetail() {
       otherRecognitions: "その他の評価",
       band: "バンド",
       viewPublication: "出版物を見る",
+      home: "ホーム",
       positions: {
         foundingPartner: "創立パートナー",
         partner: "パートナー",
@@ -965,6 +1000,7 @@ export default function TeamMemberDetail() {
       otherRecognitions: "تقديرات أخرى",
       band: "الفئة",
       viewPublication: "عرض المنشور",
+      home: "الرئيسية",
       positions: {
         foundingPartner: "شريك مؤسس",
         partner: "شريك",
@@ -993,7 +1029,7 @@ export default function TeamMemberDetail() {
       officeLabel: "Офис",
       phoneLabel: "Телефон",
       emailLabel: "Эл. почта",
-      emailUs: "Отправить email",
+      emailUs: "Написать на эл. почту",
       callUs: "Позвонить",
       downloadVCard: "Скачать визитку",
       errorMessage: "Член команды не найден",
@@ -1008,6 +1044,7 @@ export default function TeamMemberDetail() {
       otherRecognitions: "Другие признания",
       band: "Уровень",
       viewPublication: "Смотреть публикацию",
+      home: "Главная",
       positions: {
         foundingPartner: "Учредитель",
         partner: "Партнёр",
@@ -1036,12 +1073,12 @@ export default function TeamMemberDetail() {
       officeLabel: "Bureau",
       phoneLabel: "Téléphone",
       emailLabel: "E-mail",
-      emailUs: "Envoyer un email",
+      emailUs: "Envoyer un e-mail",
       callUs: "Appeler",
       downloadVCard: "Télécharger vCard",
-      errorMessage: "Membre de l'équipe introuvable",
+      errorMessage: "Membre de l’équipe introuvable",
       loading: "Chargement...",
-      relatedTeam: "Membres de l'équipe associés",
+      relatedTeam: "Autres membres de l’équipe",
       viewProfile: "Voir le profil",
       relatedNews: "Dernières actualités et articles",
       featuredRecognition: "Reconnaissance mise en avant",
@@ -1051,6 +1088,7 @@ export default function TeamMemberDetail() {
       otherRecognitions: "Autres distinctions",
       band: "Bande",
       viewPublication: "Voir la publication",
+      home: "Accueil",
       positions: {
         foundingPartner: "Associé fondateur",
         partner: "Associé",
@@ -1079,7 +1117,7 @@ export default function TeamMemberDetail() {
       officeLabel: "Ufficio",
       phoneLabel: "Telefono",
       emailLabel: "E-mail",
-      emailUs: "Invia email",
+      emailUs: "Invia e-mail",
       callUs: "Chiama",
       downloadVCard: "Scarica vCard",
       errorMessage: "Membro del team non trovato",
@@ -1094,6 +1132,7 @@ export default function TeamMemberDetail() {
       otherRecognitions: "Altri riconoscimenti",
       band: "Fascia",
       viewPublication: "Vedi pubblicazione",
+      home: "Home",
       positions: {
         foundingPartner: "Partner fondatore",
         partner: "Partner",
@@ -1150,8 +1189,7 @@ export default function TeamMemberDetail() {
 
   // Sin correo ni teléfono (el socio fundador in memoriam) no hay botones ni vCard, como no hay
   // bloque de contacto
-  const isInMemoriam = /in memoriam/i.test(member?.title ?? "");
-  const showActions = !!(member?.email || member?.phone) && !isInMemoriam;
+  const isInMemoriam = isInMemoriamMember({ title: member?.title });
 
   // Sin viñeta: la jerarquía la dan la letra y los filetes
   const getPublicationIcon = (_publication: string): JSX.Element | null => null;
@@ -1231,7 +1269,10 @@ export default function TeamMemberDetail() {
           {/* Carga con el mismo encabezado Hueso y el mismo orden que la vista final */}
           <section className={`${PROFILE_HERO} editorial-page-hero editorial-page-hero--paper`} aria-busy="true">
             <div className="ss-container">
-              <Skeleton className="h-4 w-44 bg-ss-rule mb-6" />
+              {/* Enlace de vuelta: barra en línea dentro del mismo bloque mb-6, con su alto de línea */}
+              <div className="mb-6">
+                <Skeleton className="inline-block h-4 w-24 bg-ss-rule align-middle" />
+              </div>
               <div className={PROFILE_GRID}>
                 <div className={PROFILE_IDENTITY_CELL}>
                   <Skeleton className="h-3 w-28 bg-ss-rule mb-4" />
@@ -1240,20 +1281,24 @@ export default function TeamMemberDetail() {
                   <Skeleton className="h-5 w-40 bg-ss-rule" />
                 </div>
                 <div className={PROFILE_ACTIONS_CELL}>
-                  <Skeleton className="h-11 w-56 bg-ss-rule" />
+                  <Skeleton className="h-[44px] w-full bg-ss-rule sm:max-w-[15rem]" />
                 </div>
                 <Skeleton className={`${PROFILE_PHOTO_CELL} rounded-none bg-ss-rule`} />
               </div>
             </div>
           </section>
+          {/* Cuerpo en la rejilla de la vista final (SplitSection): título a la izquierda desde lg;
+              biografía y las tres filas de "Equipo relacionado", para que el pie no salte */}
           <div className="py-16 lg:py-20">
-            <div className="ss-container">
-              <div className="max-w-[44rem]">
-                <Skeleton className="h-6 w-full mb-4" />
-                <Skeleton className="h-6 w-full mb-4" />
-                <Skeleton className="h-6 w-3/4 mb-4" />
-                <Skeleton className="h-6 w-5/6 mb-4" />
-              </div>
+            <div className="ss-container space-y-12 lg:space-y-16">
+              <SplitSection prose aside={<Skeleton className="h-7 w-40 bg-ss-rule" />}>
+                <div className="max-w-[44rem] lg:max-w-none space-y-4">
+                  <Skeleton className="h-6 w-full" />
+                  <Skeleton className="h-6 w-full" />
+                  <Skeleton className="h-6 w-3/4" />
+                </div>
+              </SplitSection>
+              <RelatedTeamSkeleton />
             </div>
           </div>
         </main>
@@ -1275,15 +1320,17 @@ export default function TeamMemberDetail() {
   // texto de respaldo en otro idioma, la descripción general del equipo en este idioma
   const seoDescription = !localizedBio.lang ? metaDescription(displayBio) || undefined : undefined;
 
-  // Bloque de contacto del lateral solo si la ficha trae un teléfono o un correo propios; si
-  // repite los generales de la firma (hoy, todas), ya están en los botones y en el pie (E7)
-  const hasOwnPhone = !!member?.phone && digitsOf(member.phone) !== digitsOf(firmContact.phone);
-  const hasOwnEmail = !!member?.email && member.email.trim().toLowerCase() !== firmContact.email.toLowerCase();
-  const showContactList = !isInMemoriam && (hasOwnPhone || hasOwnEmail);
+  // Correo y teléfono propios (lib/partnerContact, la misma regla que la frase de /contact):
+  // si la ficha repite los generales de la firma (hoy, todas), ni "Enviar correo" ni "Llamar"
+  // ni bloque de contacto: no son líneas directas y ya están en el pie (E7; G6 cambia D8)
+  const ownContact = directContact(member, firmContact);
+  const showContactList = !!(ownContact.email || ownContact.phone);
 
-  // Botones del encabezado: "Descargar vCard" no va en el build estático, donde no hace nada
-  const showVCard = !isStaticSite;
-  const actionCount = (member?.email ? 1 : 0) + (member?.phone ? 1 : 0) + (showVCard ? 1 : 0);
+  // Botones del encabezado: correo y teléfono solo si son directos; "Descargar vCard" se queda
+  // (salvo in memoriam y en el build estático, donde no hace nada)
+  const showVCard = !isStaticSite && !isInMemoriam && !!(member?.email || member?.phone);
+  const actionCount = (ownContact.email ? 1 : 0) + (ownContact.phone ? 1 : 0) + (showVCard ? 1 : 0);
+  const showActions = actionCount > 0;
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-team-member-detail">
@@ -1307,8 +1354,8 @@ export default function TeamMemberDetail() {
           <PersonJsonLd
             name={member.name}
             jobTitle={displayTitle || member.title}
-            email={member.email}
-            telephone={member.phone}
+            email={ownContact.email}
+            telephone={ownContact.phone}
             imageUrl={member.imageUrl}
             url={`https://www.santossaucedo.com/team/${member.slug}`}
             linkedinUrl={member.linkedinUrl}
@@ -1320,7 +1367,7 @@ export default function TeamMemberDetail() {
           />
           <BreadcrumbJsonLd
             items={[
-              { name: language === "es" ? "Inicio" : "Home", url: "https://www.santossaucedo.com" },
+              { name: t.home, url: "https://www.santossaucedo.com" },
               { name: partnersLabel, url: "https://www.santossaucedo.com/team" },
               { name: member.name, url: `https://www.santossaucedo.com/team/${member.slug}` }
             ]}
@@ -1338,12 +1385,7 @@ export default function TeamMemberDetail() {
         <section className={`${PROFILE_HERO} editorial-page-hero editorial-page-hero--paper`} data-testid="section-team-member-hero">
           {/* Mismo contenedor que la cabecera y el cuerpo: la foto arranca en el borde del logo */}
           <div className="ss-container">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
+            <div>
               {/* Vuelta a /team: enlace de texto (etiqueta con flecha), como toda navegación */}
               <div className="mb-6">
                 <BackTextLink href="/team" testId="link-back-to-team">
@@ -1410,23 +1452,24 @@ export default function TeamMemberDetail() {
                     cursor, relleno Azul Marino con texto blanco; sin iconos: ninguno pesa más que el
                     nombre. Teléfono: uno debajo de otro, bajo el retrato y el nombre. Desde sm, una
                     fila de columnas iguales (en md, a todo lo ancho bajo el retrato y el nombre;
-                    desde lg, al pie de la columna del texto). Sin correo ni teléfono (in memoriam),
-                    ni botones ni vCard; en el build estático, sin vCard. */}
+                    desde lg, al pie de la columna del texto). "Enviar correo" y "Llamar" solo con
+                    datos directos (G6); in memoriam, ni botones ni vCard; en el build estático,
+                    sin vCard. */}
                 {showActions && (
                   <div className={`grid grid-cols-1 ${ACTIONS_COLUMNS[actionCount - 1] ?? ""} content-start gap-3 ${PROFILE_ACTIONS_CELL}`}>
-                    {member?.email && (
+                    {ownContact.email && (
                       <Button
                         variant="outline"
                         className={PROFILE_BUTTON}
                         asChild
                         data-testid="button-email"
                       >
-                        <a href={`mailto:${member.email}`}>
+                        <a href={`mailto:${ownContact.email}`}>
                           {t.emailUs}
                         </a>
                       </Button>
                     )}
-                    {member?.phone && (
+                    {ownContact.phone && (
                       <Button
                         variant="outline"
                         className={PROFILE_BUTTON}
@@ -1434,7 +1477,7 @@ export default function TeamMemberDetail() {
                         data-testid="button-phone"
                       >
                         {/* Sin espacios (RFC 3966): el mismo href que el del bloque de contacto */}
-                        <a href={`tel:${member.phone.replace(/\s+/g, "")}`}>
+                        <a href={`tel:${ownContact.phone.replace(/\s+/g, "")}`}>
                           {t.callUs}
                         </a>
                       </Button>
@@ -1490,28 +1533,24 @@ export default function TeamMemberDetail() {
                   className="hidden md:col-start-2 md:row-span-2 md:row-start-1 md:block bg-ss-rule"
                 />
               </div>
-            </motion.div>
+            </div>
           </div>
         </section>
 
         {/* Relleno vertical del cuerpo (antes en main, que ahora también contiene el encabezado) */}
         <div className="py-16 lg:py-20">
-          <div className="ss-container">
-            {/* Biografía en 8 columnas, con medida de lectura de 44rem, y "Áreas de práctica"
-                debajo; contacto en 4. "Equipo relacionado" va debajo de las dos columnas, a todo lo
-                ancho: en la barra lateral la alargaba unos 450 px por debajo de la biografía. */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-              <div className="lg:col-span-8 space-y-12 max-w-[44rem]">
-                {(displayBio || ((member?.bio || member?.bioEs) && isTranslating)) && (
-                  <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    data-testid="section-biography"
-                  >
-                    <h2 
-                      className="ss-h2-sm mb-6 flex items-center gap-3"
+          {/* Rejilla editorial de la portada (SplitSection, G1): desde lg, cada h2 en las columnas
+              1–4 y su contenido desde la 5 (la biografía, en prosa, de la 6 a la 12); en teléfono
+              y tableta, apilado. Las secciones del antiguo lateral (contacto, reconocimiento
+              destacado) son filas más. Sin aparición al hacer scroll (G3). */}
+          <div className="ss-container space-y-12 lg:space-y-16">
+            {(displayBio || ((member?.bio || member?.bioEs) && isTranslating)) && (
+              <section data-testid="section-biography">
+                <SplitSection
+                  prose
+                  aside={
+                    <h2
+                      className="ss-h2-sm flex items-center gap-3"
                       data-testid="text-biography-title"
                     >
                       {t.biography}
@@ -1519,528 +1558,505 @@ export default function TeamMemberDetail() {
                         <Loader2 className="w-4 h-4 animate-spin text-ss-medio" aria-hidden="true" />
                       )}
                     </h2>
-                    {/* Biografía sin traducción: bloque largo en el idioma de origen, marcado lang y
-                        dir="ltr" (en árabe, alineado a la izquierda, como el resumen de las prácticas
-                        y el cuerpo de las notas); los textos cortos de respaldo van en <bdi>. */}
-                    <div
-                      data-testid="container-biography"
-                      lang={localizedBio.lang}
-                      dir={localizedBio.lang ? "ltr" : undefined}
-                    >
-                      {displayBio ? (() => {
-                        // "Santos & Saucedo" sin partirse entre líneas (espacios duros, E16)
-                        const bioText = keepFirmName(displayBio);
-                        const paragraphs = bioText.split(/\n\s*\n/).map((p: string) => p.trim()).filter(Boolean);
-                        const [first, ...rest] = paragraphs.length ? paragraphs : [bioText];
-                        return (
-                          <LeadParagraph
-                            firstParagraph={first}
-                            restParagraphs={rest}
-                            testId="lead-biography"
-                          />
-                        );
-                      })() : (
-                        <div className="flex items-center gap-2 text-ss-medio">
-                          <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                          <span data-testid="text-translation-pending">
-                            {language === 'de' ? 'Übersetzung lädt...' :
-                             language === 'zh' ? '翻译加载中...' :
-                             language === 'ko' ? '번역 로딩 중...' :
-                             language === 'ja' ? '翻訳を読み込み中...' :
-                             language === 'ar' ? 'جاري تحميل الترجمة...' :
-                             language === 'ru' ? 'Загрузка перевода...' :
-                             language === 'fr' ? 'Traduction en cours...' :
-                             language === 'it' ? 'Caricamento traduzione...' :
-                             'Loading translation...'}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </motion.section>
-                )}
-
-                {processedRankings && (
-                  <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.25 }}
-                    data-testid="section-rankings"
+                  }
+                >
+                  {/* Biografía sin traducción: bloque largo en el idioma de origen, marcado lang y
+                      dir="ltr" (en árabe, alineado a la izquierda, como el resumen de las prácticas
+                      y el cuerpo de las notas); los textos cortos de respaldo van en <bdi>. Medida
+                      de lectura de 44rem en tableta, donde ocupa todo el ancho; desde lg la da la
+                      columna de prosa (así el bloque en inglés no queda corrido en árabe). */}
+                  <div
+                    className="max-w-[44rem] lg:max-w-none"
+                    data-testid="container-biography"
+                    lang={localizedBio.lang}
+                    dir={localizedBio.lang ? "ltr" : undefined}
                   >
-                    <div>
-                      <div className="mb-6">
-                        <h2
-                          className="ss-h2-sm flex items-baseline gap-3"
-                          data-testid="text-rankings-title"
-                        >
-                          <span>{t.rankings}</span>
-                          <span
-                            className="ms-auto ss-label ss-num text-ss-medio"
-                            data-testid="badge-rankings-count"
-                          >
-                            {processedRankings.totalCount}
-                          </span>
-                        </h2>
+                    {displayBio ? (() => {
+                      // "Santos & Saucedo" sin partirse entre líneas (espacios duros, E16)
+                      const bioText = keepFirmName(displayBio);
+                      const paragraphs = bioText.split(/\n\s*\n/).map((p: string) => p.trim()).filter(Boolean);
+                      const [first, ...rest] = paragraphs.length ? paragraphs : [bioText];
+                      return (
+                        <LeadParagraph
+                          firstParagraph={first}
+                          restParagraphs={rest}
+                          testId="lead-biography"
+                        />
+                      );
+                    })() : (
+                      <div className="flex items-center gap-2 text-ss-medio">
+                        <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                        <span data-testid="text-translation-pending">
+                          {language === 'de' ? 'Übersetzung lädt...' :
+                           language === 'zh' ? '翻译加载中...' :
+                           language === 'ko' ? '번역 로딩 중...' :
+                           language === 'ja' ? '翻訳を読み込み中...' :
+                           language === 'ar' ? 'جاري تحميل الترجمة...' :
+                           language === 'ru' ? 'Загрузка перевода...' :
+                           language === 'fr' ? 'Traduction en cours...' :
+                           language === 'it' ? 'Caricamento traduzione...' :
+                           'Loading translation...'}
+                        </span>
                       </div>
+                    )}
+                  </div>
+                </SplitSection>
+              </section>
+            )}
 
-                      {processedRankings.tieredRankings.length > 0 && (
-                        <div className="mb-6" data-testid="container-tiered-rankings">
-                          <h3 className="ss-label text-ss-medio mb-2">
-                            {t.tieredRankings}
-                          </h3>
-                          <div>
-                            {processedRankings.tieredRankings.map((ranking, index) => (
-                              <RankingItemTranslated
-                                key={index}
-                                ranking={ranking}
-                                index={index}
-                                language={language}
-                                memberId={member?.id?.toString() || ''}
-                                isTiered={true}
-                                getPublicationIcon={getPublicationIcon}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {processedRankings.simpleRankings.length > 0 && (
-                        <div data-testid="container-simple-rankings">
-                          {processedRankings.tieredRankings.length > 0 && (
-                            <h3 className="ss-label text-ss-medio mb-2">
-                              {t.otherRecognitions}
-                            </h3>
-                          )}
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-                            {processedRankings.simpleRankings.map((ranking, index) => (
-                              <RankingItemTranslated
-                                key={index}
-                                ranking={ranking}
-                                index={processedRankings.tieredRankings.length + index}
-                                language={language}
-                                memberId={member?.id?.toString() || ''}
-                                isTiered={false}
-                                getPublicationIcon={getPublicationIcon}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </motion.section>
-                )}
-
-                {memberPracticeGroups.length > 0 && (
-                  <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
-                    data-testid="section-practice-areas"
-                  >
-                    <h2 
-                      className="ss-h2-sm mb-5"
-                      data-testid="text-practice-areas-title"
-                    >
-                      {t.practiceAreas}
-                    </h2>
-                    <div className="flex flex-wrap gap-2">
-                      {memberPracticeGroups.map((group) => (
-                        <PracticeGroupBadge
-                          key={group.id}
-                          group={group}
-                          language={language}
-                        />
-                      ))}
-                    </div>
-                  </motion.section>
-                )}
-
-                {memberIndustryGroups.length > 0 && (
-                  <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.35 }}
-                    data-testid="section-industry-groups"
-                  >
-                    <h2 
-                      className="ss-h2-sm mb-5"
-                      data-testid="text-industry-groups-title"
-                    >
-                      {t.industryGroups}
-                    </h2>
-                    <div className="flex flex-wrap gap-2">
-                      {memberIndustryGroups.map((group) => (
-                        <IndustryGroupBadge
-                          key={group.id}
-                          group={group}
-                          language={language}
-                        />
-                      ))}
-                    </div>
-                  </motion.section>
-                )}
-
-                {member?.education && member.education.length > 0 && (
-                  <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                    data-testid="section-education"
-                  >
-                    <h2 
-                      className="ss-h2-sm mb-5"
-                      data-testid="text-education-title"
-                    >
-                      {t.education}
-                    </h2>
-                    <div className="space-y-4">
-                      {(member.education as Education[]).map((edu, index) => (
-                        <EducationItemTranslated
-                          key={index}
-                          edu={edu}
-                          index={index}
-                          language={language}
-                          memberId={member.id.toString()}
-                        />
-                      ))}
-                    </div>
-                  </motion.section>
-                )}
-
-                {member?.barAdmissions && member.barAdmissions.length > 0 && (
-                  <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.45 }}
-                    data-testid="section-bar-admissions"
-                  >
-                    <h2 
-                      className="ss-h2-sm mb-5"
-                      data-testid="text-bar-admissions-title"
-                    >
-                      {t.barAdmissions}
-                    </h2>
-                    <div className="flex flex-wrap gap-3">
-                      {(member.barAdmissions as BarAdmission[]).map((admission, index) => (
-                        <BarAdmissionItemTranslated
-                          key={index}
-                          admission={admission}
-                          index={index}
-                          language={language}
-                          memberId={member.id.toString()}
-                        />
-                      ))}
-                    </div>
-                  </motion.section>
-                )}
-
-                {member?.languages && member.languages.length > 0 && (
-                  <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.5 }}
-                    data-testid="section-languages"
-                  >
-                    <h2 
-                      className="ss-h2-sm mb-5"
-                      data-testid="text-languages-title"
-                    >
-                      {t.languages}
-                    </h2>
-                    <div className="flex flex-wrap gap-3">
-                      {(member.languages as string[]).map((lang, index) => (
-                        <LanguageItemTranslated
-                          key={index}
-                          lang={lang}
-                          index={index}
-                          language={language}
-                          memberId={member.id.toString()}
-                        />
-                      ))}
-                    </div>
-                  </motion.section>
-                )}
-
-                {member?.affiliations && member.affiliations.length > 0 && (
-                  <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.55 }}
-                    data-testid="section-affiliations"
-                  >
-                    <h2 
-                      className="ss-h2-sm mb-5"
-                      data-testid="text-affiliations-title"
-                    >
-                      {t.affiliations}
-                    </h2>
-                    <div className="space-y-3">
-                      {(member.affiliations as Affiliation[]).map((affiliation, index) => (
-                        <AffiliationItemTranslated
-                          key={index}
-                          affiliation={affiliation}
-                          index={index}
-                          language={language}
-                          memberId={member.id.toString()}
-                        />
-                      ))}
-                    </div>
-                  </motion.section>
-                )}
-
-                {member?.publications && member.publications.length > 0 && (
-                  <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.65 }}
-                    data-testid="section-publications"
-                  >
-                    <h2 
-                      className="ss-h2-sm mb-5"
-                      data-testid="text-publications-title"
-                    >
-                      {t.publications}
-                    </h2>
-                    <div className="space-y-4">
-                      {(member.publications as Publication[]).map((pub, index) => (
-                        <PublicationItemTranslated
-                          key={index}
-                          pub={pub}
-                          index={index}
-                          language={language}
-                          memberId={member.id.toString()}
-                          viewPublicationText={t.viewPublication}
-                        />
-                      ))}
-                    </div>
-                  </motion.section>
-                )}
-
-                {member?.representativeMatters && member.representativeMatters.length > 0 && (
-                  <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.7 }}
-                    data-testid="section-representative-matters"
-                  >
-                    <h2 
-                      className="ss-h2-sm mb-5"
-                      data-testid="text-representative-matters-title"
-                    >
-                      {t.representativeMatters}
-                    </h2>
-                    <div className="space-y-3">
-                      {(member.representativeMatters as RepresentativeMatter[]).map((matter, index) => (
-                        <RepresentativeMatterTranslated
-                          key={index}
-                          matter={matter}
-                          index={index}
-                          language={language}
-                          memberId={member.id.toString()}
-                        />
-                      ))}
-                    </div>
-                  </motion.section>
-                )}
-
-                {member?.experience && member.experience.length > 0 && (
-                  <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.75 }}
-                    data-testid="section-experience"
-                  >
-                    <h2 
-                      className="ss-h2-sm mb-5"
-                      data-testid="text-experience-title"
-                    >
-                      {t.experience}
-                    </h2>
-                    <div className="space-y-4">
-                      {(member.experience as any[]).map((exp, index) => (
-                        <div 
-                          key={index}
-                          className="border-s border-ss-rule ps-4 py-1"
-                          data-testid={`item-experience-${index}`}
-                        >
-                          <p className="font-semibold text-ss-tinta">
-                            {language === "es" && exp.positionEs ? exp.positionEs : exp.position}
-                          </p>
-                          <p className="text-ss-medio">
-                            {exp.company}
-                            {(exp.startYear || exp.endYear) && (
-                              <span className="ml-2 text-sm">
-                                ({exp.startYear}{exp.endYear ? ` - ${exp.endYear}` : ' - Present'})
-                              </span>
-                            )}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </motion.section>
-                )}
-              </div>
-
-              <div className="lg:col-span-4 space-y-10">
-                {/* Contacto: lista de datos con filete superior, sin fondo (oficina, teléfono, correo),
-                    sin botones ni frase de venta; las acciones ya están en el encabezado. Solo si
-                    la ficha trae un teléfono o un correo propios: los generales de la firma ya
-                    están en los botones y en el pie. Sin correo ni teléfono (in memoriam), nada. */}
-                {showContactList && (
-                  <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
-                    className="border-t border-ss-rule pt-6"
-                    data-testid="section-contact-cta"
-                  >
+            {/* Contacto: lista de datos con filete superior, sin fondo (oficina, teléfono, correo),
+                sin botones ni frase de venta. Solo con un teléfono o un correo propios, y solo esos:
+                los generales de la firma ya están en el pie (E7, G6). In memoriam, nada. */}
+            {showContactList && (
+              <section data-testid="section-contact-cta">
+                <SplitSection
+                  aside={
                     <h2
-                      className="ss-label text-ss-marino mb-5"
+                      className="ss-h2-sm"
                       data-testid="text-contact-cta-title"
                     >
                       {t.contactCta}
                     </h2>
-                    <dl className="space-y-4 text-base leading-[1.5] text-ss-tinta" data-testid="text-contact-cta-subtitle">
+                  }
+                >
+                  <dl className="grid gap-4 border-t border-ss-rule pt-6 text-base leading-[1.5] text-ss-tinta sm:grid-cols-3 sm:gap-x-6" data-testid="text-contact-cta-subtitle">
+                    <div>
+                      <dt className="ss-label text-ss-medio">{t.officeLabel}</dt>
+                      {/* <bdi>: en árabe el punto de "N.L." saltaba al principio de la línea */}
+                      <dd className="mt-1"><bdi>San Pedro Garza García, N.L.</bdi></dd>
+                    </div>
+                    {ownContact.phone && (
                       <div>
-                        <dt className="ss-label text-ss-medio">{t.officeLabel}</dt>
-                        {/* <bdi>: en árabe el punto de "N.L." saltaba al principio de la línea */}
-                        <dd className="mt-1"><bdi>San Pedro Garza García, N.L.</bdi></dd>
+                        <dt className="ss-label text-ss-medio">{t.phoneLabel}</dt>
+                        <dd className="mt-1">
+                          {/* dir="ltr": en árabe el número se leía "2086 8335 81 52+" */}
+                          <a
+                            href={`tel:${ownContact.phone.replace(/\s+/g, "")}`}
+                            dir="ltr"
+                            className="text-ss-marino underline-offset-4 hover:underline"
+                            data-testid="button-call-contact"
+                          >
+                            {ownContact.phone}
+                          </a>
+                        </dd>
                       </div>
-                      {member?.phone && (
-                        <div>
-                          <dt className="ss-label text-ss-medio">{t.phoneLabel}</dt>
-                          <dd className="mt-1">
-                            {/* dir="ltr": en árabe el número se leía "2086 8335 81 52+" */}
-                            <a
-                              href={`tel:${member.phone.replace(/\s+/g, "")}`}
-                              dir="ltr"
-                              className="text-ss-marino underline-offset-4 hover:underline"
-                              data-testid="button-call-contact"
-                            >
-                              {member.phone}
-                            </a>
-                          </dd>
-                        </div>
-                      )}
-                      {member?.email && (
-                        <div>
-                          <dt className="ss-label text-ss-medio">{t.emailLabel}</dt>
-                          <dd className="mt-1 [overflow-wrap:anywhere]">
-                            <a
-                              href={`mailto:${member.email}`}
-                              dir="ltr"
-                              className="text-ss-marino underline-offset-4 hover:underline"
-                              data-testid="button-email-contact"
-                            >
-                              {member.email}
-                            </a>
-                          </dd>
-                        </div>
-                      )}
-                    </dl>
-                  </motion.section>
-                )}
+                    )}
+                    {ownContact.email && (
+                      <div>
+                        <dt className="ss-label text-ss-medio">{t.emailLabel}</dt>
+                        <dd className="mt-1 [overflow-wrap:anywhere]">
+                          <a
+                            href={`mailto:${ownContact.email}`}
+                            dir="ltr"
+                            className="text-ss-marino underline-offset-4 hover:underline"
+                            data-testid="button-email-contact"
+                          >
+                            {ownContact.email}
+                          </a>
+                        </dd>
+                      </div>
+                    )}
+                  </dl>
+                </SplitSection>
+              </section>
+            )}
 
-                {processedRankings && (
-                  <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.35 }}
-                    className="border-t border-ss-rule pt-6"
-                    data-testid="section-featured-recognition"
-                  >
-                    <h2 
-                      className="ss-h3 text-[20px] mb-4"
+            {processedRankings && (
+              <section data-testid="section-rankings">
+                <SplitSection
+                  aside={
+                    <h2
+                      className="ss-h2-sm flex items-baseline gap-3"
+                      data-testid="text-rankings-title"
+                    >
+                      <span>{t.rankings}</span>
+                      <span
+                        className="ms-auto ss-label ss-num text-ss-medio"
+                        data-testid="badge-rankings-count"
+                      >
+                        {processedRankings.totalCount}
+                      </span>
+                    </h2>
+                  }
+                >
+                  {processedRankings.tieredRankings.length > 0 && (
+                    <div className="mb-6" data-testid="container-tiered-rankings">
+                      <h3 className="ss-label text-ss-medio mb-2">
+                        {t.tieredRankings}
+                      </h3>
+                      <div>
+                        {processedRankings.tieredRankings.map((ranking, index) => (
+                          <RankingItemTranslated
+                            key={index}
+                            ranking={ranking}
+                            index={index}
+                            language={language}
+                            memberId={member?.id?.toString() || ''}
+                            isTiered={true}
+                            getPublicationIcon={getPublicationIcon}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {processedRankings.simpleRankings.length > 0 && (
+                    <div data-testid="container-simple-rankings">
+                      {processedRankings.tieredRankings.length > 0 && (
+                        <h3 className="ss-label text-ss-medio mb-2">
+                          {t.otherRecognitions}
+                        </h3>
+                      )}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                        {processedRankings.simpleRankings.map((ranking, index) => (
+                          <RankingItemTranslated
+                            key={index}
+                            ranking={ranking}
+                            index={processedRankings.tieredRankings.length + index}
+                            language={language}
+                            memberId={member?.id?.toString() || ''}
+                            isTiered={false}
+                            getPublicationIcon={getPublicationIcon}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </SplitSection>
+              </section>
+            )}
+
+            {/* Reconocimiento destacado (antes en el lateral): cifra y publicaciones principales */}
+            {processedRankings && (
+              <section data-testid="section-featured-recognition">
+                <SplitSection
+                  aside={
+                    <h2
+                      className="ss-h2-sm"
                       data-testid="text-featured-recognition-title"
                     >
                       {t.featuredRecognition}
                     </h2>
-                  
-                    <div className="flex items-baseline gap-3 mb-5">
-                      <span 
-                        className="ss-figure text-[44px]"
-                        data-testid="text-total-recognitions-count"
-                      >
-                        {processedRankings.totalCount}
-                      </span>
-                      <span className="ss-label text-ss-medio">
-                        {t.totalRecognitions}
-                      </span>
-                    </div>
-                  
-                    {processedRankings.topPublications.length > 0 && (
-                      <div data-testid="container-top-publications">
-                        <p className="ss-label text-ss-medio mb-2">
-                          {t.topPublications}
-                        </p>
-                        <div className="space-y-2">
-                          {processedRankings.topPublications.map((pub, index) => (
-                            <div 
-                              key={index}
-                              className="text-base text-ss-tinta"
-                              data-testid={`item-top-publication-${index}`}
-                            >
-                              <span className="block truncate">{pub}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </motion.section>
-                )}
-              </div>
-            </div>
-
-            {/* Equipo relacionado: filete superior en cada persona, debajo de las dos columnas; una
-                columna con filete final en el teléfono y tres iguales desde md (como mucho tres
-                personas: la fila se llena; nombres y cargos pasan a otra línea si no caben) */}
-            {relatedMembers && relatedMembers.length > 0 && (
-              <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="mt-16"
-                data-testid="section-related-team"
-              >
-                {/* Mismo nivel que "Biografía" y "Más del Monitor Laboral" (.ss-h2-sm, E7) */}
-                <h2
-                  className="ss-h2-sm mb-6"
-                  data-testid="text-related-team-title"
+                  }
                 >
-                  {t.relatedTeam}
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 border-b border-ss-rule md:border-b-0">
-                  {relatedMembers.map((relatedMember) => (
-                    <RelatedTeamMemberCard
-                      key={relatedMember.id}
-                      relatedMember={relatedMember}
-                      language={language}
-                      getInitials={getInitials}
-                    />
-                  ))}
-                </div>
-              </motion.section>
+                  <div className="flex items-baseline gap-3 mb-5">
+                    <span
+                      className="ss-figure text-[44px]"
+                      data-testid="text-total-recognitions-count"
+                    >
+                      {processedRankings.totalCount}
+                    </span>
+                    <span className="ss-label text-ss-medio">
+                      {t.totalRecognitions}
+                    </span>
+                  </div>
+
+                  {processedRankings.topPublications.length > 0 && (
+                    <div data-testid="container-top-publications">
+                      <p className="ss-label text-ss-medio mb-2">
+                        {t.topPublications}
+                      </p>
+                      <div className="space-y-2">
+                        {processedRankings.topPublications.map((pub, index) => (
+                          <div
+                            key={index}
+                            className="text-base text-ss-tinta"
+                            data-testid={`item-top-publication-${index}`}
+                          >
+                            <span className="block truncate">{pub}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </SplitSection>
+              </section>
+            )}
+
+            {memberPracticeGroups.length > 0 && (
+              <section data-testid="section-practice-areas">
+                <SplitSection
+                  aside={
+                    <h2
+                      className="ss-h2-sm"
+                      data-testid="text-practice-areas-title"
+                    >
+                      {t.practiceAreas}
+                    </h2>
+                  }
+                >
+                  <div className="flex flex-wrap gap-2">
+                    {memberPracticeGroups.map((group) => (
+                      <PracticeGroupBadge
+                        key={group.id}
+                        group={group}
+                        language={language}
+                      />
+                    ))}
+                  </div>
+                </SplitSection>
+              </section>
+            )}
+
+            {memberIndustryGroups.length > 0 && (
+              <section data-testid="section-industry-groups">
+                <SplitSection
+                  aside={
+                    <h2
+                      className="ss-h2-sm"
+                      data-testid="text-industry-groups-title"
+                    >
+                      {t.industryGroups}
+                    </h2>
+                  }
+                >
+                  <div className="flex flex-wrap gap-2">
+                    {memberIndustryGroups.map((group) => (
+                      <IndustryGroupBadge
+                        key={group.id}
+                        group={group}
+                        language={language}
+                      />
+                    ))}
+                  </div>
+                </SplitSection>
+              </section>
+            )}
+
+            {member?.education && member.education.length > 0 && (
+              <section data-testid="section-education">
+                <SplitSection
+                  aside={
+                    <h2
+                      className="ss-h2-sm"
+                      data-testid="text-education-title"
+                    >
+                      {t.education}
+                    </h2>
+                  }
+                >
+                  <div className="space-y-4">
+                    {(member.education as Education[]).map((edu, index) => (
+                      <EducationItemTranslated
+                        key={index}
+                        edu={edu}
+                        index={index}
+                        language={language}
+                        memberId={member.id.toString()}
+                      />
+                    ))}
+                  </div>
+                </SplitSection>
+              </section>
+            )}
+
+            {member?.barAdmissions && member.barAdmissions.length > 0 && (
+              <section data-testid="section-bar-admissions">
+                <SplitSection
+                  aside={
+                    <h2
+                      className="ss-h2-sm"
+                      data-testid="text-bar-admissions-title"
+                    >
+                      {t.barAdmissions}
+                    </h2>
+                  }
+                >
+                  <div className="flex flex-wrap gap-3">
+                    {(member.barAdmissions as BarAdmission[]).map((admission, index) => (
+                      <BarAdmissionItemTranslated
+                        key={index}
+                        admission={admission}
+                        index={index}
+                        language={language}
+                        memberId={member.id.toString()}
+                      />
+                    ))}
+                  </div>
+                </SplitSection>
+              </section>
+            )}
+
+            {member?.languages && member.languages.length > 0 && (
+              <section data-testid="section-languages">
+                <SplitSection
+                  aside={
+                    <h2
+                      className="ss-h2-sm"
+                      data-testid="text-languages-title"
+                    >
+                      {t.languages}
+                    </h2>
+                  }
+                >
+                  <div className="flex flex-wrap gap-3">
+                    {(member.languages as string[]).map((lang, index) => (
+                      <LanguageItemTranslated
+                        key={index}
+                        lang={lang}
+                        index={index}
+                        language={language}
+                        memberId={member.id.toString()}
+                      />
+                    ))}
+                  </div>
+                </SplitSection>
+              </section>
+            )}
+
+            {member?.affiliations && member.affiliations.length > 0 && (
+              <section data-testid="section-affiliations">
+                <SplitSection
+                  aside={
+                    <h2
+                      className="ss-h2-sm"
+                      data-testid="text-affiliations-title"
+                    >
+                      {t.affiliations}
+                    </h2>
+                  }
+                >
+                  <div className="space-y-3">
+                    {(member.affiliations as Affiliation[]).map((affiliation, index) => (
+                      <AffiliationItemTranslated
+                        key={index}
+                        affiliation={affiliation}
+                        index={index}
+                        language={language}
+                        memberId={member.id.toString()}
+                      />
+                    ))}
+                  </div>
+                </SplitSection>
+              </section>
+            )}
+
+            {member?.publications && member.publications.length > 0 && (
+              <section data-testid="section-publications">
+                <SplitSection
+                  aside={
+                    <h2
+                      className="ss-h2-sm"
+                      data-testid="text-publications-title"
+                    >
+                      {t.publications}
+                    </h2>
+                  }
+                >
+                  <div className="space-y-4">
+                    {(member.publications as Publication[]).map((pub, index) => (
+                      <PublicationItemTranslated
+                        key={index}
+                        pub={pub}
+                        index={index}
+                        language={language}
+                        memberId={member.id.toString()}
+                        viewPublicationText={t.viewPublication}
+                      />
+                    ))}
+                  </div>
+                </SplitSection>
+              </section>
+            )}
+
+            {member?.representativeMatters && member.representativeMatters.length > 0 && (
+              <section data-testid="section-representative-matters">
+                <SplitSection
+                  aside={
+                    <h2
+                      className="ss-h2-sm"
+                      data-testid="text-representative-matters-title"
+                    >
+                      {t.representativeMatters}
+                    </h2>
+                  }
+                >
+                  <div className="space-y-3">
+                    {(member.representativeMatters as RepresentativeMatter[]).map((matter, index) => (
+                      <RepresentativeMatterTranslated
+                        key={index}
+                        matter={matter}
+                        index={index}
+                        language={language}
+                        memberId={member.id.toString()}
+                      />
+                    ))}
+                  </div>
+                </SplitSection>
+              </section>
+            )}
+
+            {member?.experience && member.experience.length > 0 && (
+              <section data-testid="section-experience">
+                <SplitSection
+                  aside={
+                    <h2
+                      className="ss-h2-sm"
+                      data-testid="text-experience-title"
+                    >
+                      {t.experience}
+                    </h2>
+                  }
+                >
+                  <div className="space-y-4">
+                    {(member.experience as any[]).map((exp, index) => (
+                      <div
+                        key={index}
+                        className="border-s border-ss-rule ps-4 py-1"
+                        data-testid={`item-experience-${index}`}
+                      >
+                        <p className="font-semibold text-ss-tinta">
+                          {language === "es" && exp.positionEs ? exp.positionEs : exp.position}
+                        </p>
+                        <p className="text-ss-medio">
+                          {exp.company}
+                          {(exp.startYear || exp.endYear) && (
+                            <span className="ml-2 text-sm">
+                              ({exp.startYear}{exp.endYear ? ` - ${exp.endYear}` : ' - Present'})
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </SplitSection>
+              </section>
+            )}
+
+            {/* Equipo relacionado: el h2 en el aside y las personas en el cuerpo, con filete
+                superior en cada una (como mucho tres: la fila de tableta se llena). Mientras llega
+                /api/team, su esqueleto ocupa el sitio. */}
+            {isLoadingTeam && <RelatedTeamSkeleton />}
+            {relatedMembers && relatedMembers.length > 0 && (
+              <section data-testid="section-related-team">
+                <SplitSection
+                  aside={
+                    // Mismo nivel que "Biografía" y "Más del Monitor Laboral" (.ss-h2-sm, E7)
+                    <h2
+                      className="ss-h2-sm"
+                      data-testid="text-related-team-title"
+                    >
+                      {t.relatedTeam}
+                    </h2>
+                  }
+                >
+                  <div className={RELATED_GRID}>
+                    {relatedMembers.map((relatedMember) => (
+                      <RelatedTeamMemberCard
+                        key={relatedMember.id}
+                        relatedMember={relatedMember}
+                        language={language}
+                        getInitials={getInitials}
+                      />
+                    ))}
+                  </div>
+                </SplitSection>
+              </section>
             )}
           </div>
 
           {relatedNews && relatedNews.length > 0 && (
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.8 }}
+            <section
               className="mt-16 pt-12"
               data-testid="section-related-news"
             >
@@ -2103,7 +2119,7 @@ export default function TeamMemberDetail() {
                   })}
                 </ul>
               </div>
-            </motion.section>
+            </section>
           )}
         </div>
       </main>

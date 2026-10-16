@@ -1,82 +1,13 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { Link } from "wouter";
 import seccionUrl from "@assets/ss26/seccion.svg";
 
-/* Revelado por posición, no por IntersectionObserver: si el hilo principal va lento
-   y la página se desplaza rápido, un elemento puede cruzar la pantalla sin que el
-   observador lo registre. Aquí basta con que su borde superior haya pasado el 92%
-   de la altura de la ventana, aunque ya esté por encima. */
-const pending = new Map<Element, () => void>();
-let attached = false;
-let frame = 0;
-let timer = 0;
-
-function checkPending() {
-  frame = 0;
-  const limit = window.innerHeight * 0.92;
-  pending.forEach((reveal, el) => {
-    if (el.getBoundingClientRect().top < limit) {
-      pending.delete(el);
-      reveal();
-    }
-  });
-  if (pending.size === 0) detach();
-}
-
-function schedule() {
-  if (frame || pending.size === 0) return;
-  frame = requestAnimationFrame(checkPending);
-}
-
-/* Escuchas activas solo mientras queda algo por revelar. */
-function attach() {
-  if (attached) return;
-  attached = true;
-  window.addEventListener("scroll", schedule, { passive: true });
-  window.addEventListener("resize", schedule);
-  // La altura cambia al cargar fuentes e imágenes: volver a medir entonces.
-  if (document.readyState !== "complete") window.addEventListener("load", schedule, { once: true });
-  document.fonts?.ready.then(schedule);
-  timer = window.setTimeout(schedule, 800);
-}
-
-/* Mapa vacío: fuera escuchas, temporizador y cuadro pendiente. */
-function detach() {
-  if (!attached) return;
-  attached = false;
-  window.removeEventListener("scroll", schedule);
-  window.removeEventListener("resize", schedule);
-  window.removeEventListener("load", schedule);
-  window.clearTimeout(timer);
-  timer = 0;
-  if (frame) cancelAnimationFrame(frame);
-  frame = 0;
-}
-
-/** Marca `is-in` la primera vez que el elemento entra en pantalla. */
-export function useInView<T extends HTMLElement>() {
-  const ref = useRef<T>(null);
-  const [inView, setInView] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    pending.set(el, () => setInView(true));
-    attach();
-    schedule();
-    return () => {
-      pending.delete(el);
-      if (pending.size === 0) detach();
-    };
-  }, []);
-  return [ref, inView] as const;
-}
-
-/** Entrada única al aparecer; con movimiento reducido el CSS la deja estática. */
+/** Envoltorio simple, sin entrada al aparecer (G3): el contenido se ve completo desde el
+    inicio. Conserva la API anterior (delay, y, duration) para no tocar a quien lo usa; esas
+    props ya no hacen nada. La única animación de entrada del sitio es la máscara del título
+    del héroe de portada (Hero26). */
 export function Reveal({
   children,
-  delay = 0,
-  y = 20,
-  duration = 560,
   as = "div",
   className = "",
 }: {
@@ -87,21 +18,40 @@ export function Reveal({
   as?: "div" | "li";
   className?: string;
 }) {
-  const [ref, inView] = useInView<HTMLElement>();
   const Tag = as as "div";
+  return <Tag className={className || undefined}>{children}</Tag>;
+}
+
+/** Rejilla editorial de las páginas internas, la misma de la portada: el título (o una nota breve)
+    en las columnas 1–4 y el cuerpo desde la 5 (en prosa larga, de la 6 a la 12). En teléfono, apilado.
+    No incluye .ss-container: va dentro del contenedor de cada sección. */
+export function SplitSection({
+  aside,
+  children,
+  prose = false,
+  className = "",
+  asideClassName = "",
+  bodyClassName = "",
+}: {
+  aside?: ReactNode;
+  children: ReactNode;
+  prose?: boolean;
+  className?: string;
+  asideClassName?: string;
+  bodyClassName?: string;
+}) {
   return (
-    <Tag
-      ref={ref as React.Ref<HTMLDivElement>}
-      className={`ss-reveal ${inView ? "is-in" : ""} ${className}`}
-      style={{ "--ss-delay": `${Math.min(delay, 0.32)}s`, "--ss-y": `${y}px`, "--ss-dur": `${duration}ms` } as CSSProperties}
-    >
-      {children}
-    </Tag>
+    <div className={`grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-6 ${className}`}>
+      <div className={`lg:col-span-4 ${asideClassName}`}>{aside}</div>
+      <div className={`${prose ? "lg:col-span-7 lg:col-start-6" : "lg:col-span-8 lg:col-start-5"} ${bodyClassName}`}>
+        {children}
+      </div>
+    </div>
   );
 }
 
-/** Filete corto de 24 × 1 px (ss26.css: blanco tenue sobre Azul Profundo, Línea sobre claro);
-    se dibuja cuando su bloque entra (clase is-in del Reveal padre). */
+/** Filete corto de 24 × 1 px (ss26.css: blanco tenue sobre Azul Profundo, Línea sobre claro),
+    completo desde el inicio: no se dibuja al aparecer. */
 export function ShortRule({ className = "" }: { className?: string }) {
   return <span aria-hidden className={`ss-bar shrink-0 ${className}`} />;
 }

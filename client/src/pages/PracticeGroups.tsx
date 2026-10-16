@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { Link } from "wouter";
-import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,6 +11,7 @@ import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { Eyebrow } from "@/components/editorial";
 import { chrome26 } from "@/components/home26/chrome26";
+import { practiceName } from "@/lib/practiceNames";
 import type { PracticeGroup } from "@shared/schema";
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
@@ -21,15 +21,6 @@ import type { PracticeGroup } from "@shared/schema";
 function EnglishSource({ children }: { children: ReactNode }) {
   return <bdi lang="en" dir="ltr">{children}</bdi>;
 }
-
-const rowVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4 },
-  },
-};
 
 interface PracticeGroupRowProps {
   group: PracticeGroup;
@@ -54,20 +45,23 @@ function PracticeGroupRow({ group, index }: PracticeGroupRowProps) {
     enabled: !isNativeLanguage(language),
   });
 
-  const displayName = translatedFields.name || group.name;
+  const isOtherLanguage = language !== "es" && language !== "en";
+  // Fuera de ES/EN, el nombre de la práctica en el idioma de la página (practiceNames.ts, el
+  // mismo término de la descripción SEO y del select de Contacto), no el inglés de la base
+  const localName = isOtherLanguage ? practiceName(group.slug, language) : undefined;
+  const displayName = localName ?? (translatedFields.name || group.name);
   const displayDescription = translatedFields.description || group.description;
   const showTranslatingIndicator = isLoading || isTranslating;
 
-  const isOtherLanguage = language !== "es" && language !== "en";
-  const nameIsSource = isOtherLanguage && displayName === group.name;
+  // Con nombre propio del idioma no es texto de origen (fr "Immigration" coincide con el inglés)
+  const nameIsSource = isOtherLanguage && !localName && displayName === group.name;
   const descriptionIsSource = isOtherLanguage && displayDescription === group.description;
 
   const nameId = `practice-name-${group.slug}`;
   const descriptionId = `practice-desc-${group.slug}`;
 
   return (
-    <motion.li
-      variants={rowVariants}
+    <li
       className="ss-row relative border-b border-ss-rule"
       data-testid={`card-practice-group-${group.slug}`}
     >
@@ -108,7 +102,7 @@ function PracticeGroupRow({ group, index }: PracticeGroupRowProps) {
         </span>
       </Link>
       <span aria-hidden="true" className="ss-row-rule absolute -bottom-px left-0 h-[2px] w-full bg-ss-marino" />
-    </motion.li>
+    </li>
   );
 }
 
@@ -140,11 +134,11 @@ export default function PracticeGroups() {
       errorMessage: "加载业务领域失败",
     },
     ko: {
-      subtitle: "법인은 노동법 업무를 중심으로 회사·계약, 이민, 소송의 세 가지 보완 업무 분야를 갖추고 있습니다.",
+      subtitle: "법인은 노동법 업무를 중심으로 기업·계약, 이민, 소송의 세 가지 보완 업무 분야를 갖추고 있습니다.",
       errorMessage: "업무 분야 로드 실패",
     },
     ja: {
-      subtitle: "当事務所は労働法を中核に、会社法・契約、移民、訴訟の三つの補完的な分野を展開しています。",
+      subtitle: "当事務所は労働法を中核に、企業法務・契約、移民、訴訟の三つの補完的な分野を展開しています。",
       errorMessage: "取扱分野の読み込みに失敗しました",
     },
     ar: {
@@ -168,16 +162,6 @@ export default function PracticeGroups() {
   const t = content[language] || content.en;
   const title = (chrome26[language as keyof typeof chrome26] ?? chrome26.en).nav[1].label;
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-      },
-    },
-  };
-
   return (
     <div className="min-h-screen bg-background" data-testid="page-practice-groups">
       <SEOHead page="practiceGroups" language={language} />
@@ -188,13 +172,7 @@ export default function PracticeGroups() {
       <main id="main-content">
         <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-practice-groups-hero">
           <div className="ss-container">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="max-w-3xl"
-            >
+            <div className="max-w-3xl">
               <Eyebrow num="02" tone="navy" className="mb-6" />
               <h1
                 className="mb-5"
@@ -207,7 +185,7 @@ export default function PracticeGroups() {
               >
                 {t.subtitle}
               </p>
-            </motion.div>
+            </div>
           </div>
         </section>
 
@@ -239,17 +217,11 @@ export default function PracticeGroups() {
                 ))}
               </div>
             ) : (
-              <motion.ol
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                className="border-t border-ss-rule"
-              >
+              <ol className="border-t border-ss-rule">
                 {practiceGroups?.map((group, idx) => (
                   <PracticeGroupRow key={group.id} group={group} index={idx} />
                 ))}
-              </motion.ol>
+              </ol>
             )}
           </div>
         </div>

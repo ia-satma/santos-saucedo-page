@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -56,13 +55,7 @@ export default function NewsPage() {
       <main id="main-content">
         <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-news-hero">
           <div className="ss-container">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="max-w-3xl"
-            >
+            <div className="max-w-3xl">
               <Eyebrow num="04" tone="navy" className="mb-6" />
               <h1
                 className="mb-5"
@@ -83,7 +76,7 @@ export default function NewsPage() {
                   {translationBanner}
                 </p>
               )}
-            </motion.div>
+            </div>
           </div>
         </section>
 
@@ -112,8 +105,9 @@ export default function NewsPage() {
               }}
             />
 
-            {/* Al pie del Monitor: la suscripción por correo (/newsletter) */}
-            <MonitorSubscribe className="mt-16 lg:mt-20" testId="section-news-subscribe" linkTestId="link-news-subscribe" />
+            {/* Al pie del Monitor: la suscripción por correo (/newsletter), sin filete propio: el
+                último filete de la lista es el único cierre */}
+            <MonitorSubscribe rule={false} className="mt-8 lg:mt-10" testId="section-news-subscribe" linkTestId="link-news-subscribe" />
           </div>
         </div>
       </main>

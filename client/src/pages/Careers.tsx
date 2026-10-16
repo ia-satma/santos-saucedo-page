@@ -1,10 +1,9 @@
-import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
-import { TextLink } from "@/components/home26/primitives";
+import { SplitSection, TextLink } from "@/components/home26/primitives";
 // "Santos & Saucedo" con espacios duros al pintarlo: el nombre no se parte al final de línea.
 // Para la frase de los 35 años, que no se edita en el texto (pendiente con el cliente).
 import { keepFirmName } from "@/lib/firmName";
@@ -17,6 +16,10 @@ const leadClass = "font-serif font-normal text-ss-tinta text-[clamp(19px,0.6vw_+
 // Vacantes abiertas. La redacción aprobada dice que hoy no hay ninguna: la lista va vacía en
 // cada idioma y la página muestra esa frase. Para publicar una, añadir su ficha aquí.
 type Position = { title: string; department: string; location: string; type: string; description: string };
+
+// "Semillero S&S" con espacio duro al pintarlo: el nombre del programa no se parte entre líneas
+// (en alemán quedaba "Semillero" al final de una línea y "S&S" al principio de la siguiente)
+const keepProgramName = (text: string) => text.replace(/Semillero S&S/g, "Semillero\u00a0S&S");
 
 
 export default function Careers() {
@@ -45,7 +48,7 @@ export default function Careers() {
       applyTitle: "How to apply",
       applyInstructions: "Send your CV as a PDF to:",
       applyEmail: "reclutamiento@santossaucedo.com",
-      applyNote: "In the e-mail, include your name, your phone number with area code, your level (student, intern, lawyer or administrative staff) and the practice you are interested in: labor, corporate, immigration or litigation.",
+      applyNote: "In the email, include your name, your phone number with area code, your level (student, intern, lawyer or administrative staff) and the practice you are interested in: labor, corporate, immigration or litigation.",
       sendApplication: "Send application",
     },
     es: {
@@ -125,7 +128,7 @@ export default function Careers() {
       applyTitle: "지원 방법",
       applyInstructions: "PDF 형식의 이력서를 다음 주소로 보내 주세요:",
       applyEmail: "reclutamiento@santossaucedo.com",
-      applyNote: "이메일에 이름, 지역번호를 포함한 전화번호, 구분(학생, 인턴, 변호사 또는 행정직)과 관심 업무 분야(노동, 기업, 출입국 또는 소송)를 적어 주세요.",
+      applyNote: "이메일에 이름, 지역번호를 포함한 전화번호, 구분(학생, 인턴, 변호사 또는 행정직)과 관심 업무 분야(노동, 기업, 이민 또는 소송)를 적어 주세요.",
       sendApplication: "지원서 보내기",
     },
     ja: {
@@ -145,7 +148,7 @@ export default function Careers() {
       applyTitle: "応募方法",
       applyInstructions: "PDF形式の履歴書を次のアドレスにお送りください：",
       applyEmail: "reclutamiento@santossaucedo.com",
-      applyNote: "メールには、氏名、市外局番付きの電話番号、区分（学生、インターン、弁護士、事務職）、希望する業務分野（労働、企業法務、出入国管理、訴訟）をご記入ください。",
+      applyNote: "メールには、氏名、市外局番付きの電話番号、区分（学生、インターン、弁護士、事務職）、希望する業務分野（労働、企業法務、移民、訴訟）をご記入ください。",
       sendApplication: "応募書類を送信",
     },
     ar: {
@@ -232,33 +235,16 @@ export default function Careers() {
 
   const t = content[language as keyof typeof content] || content.en;
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.4 },
-    },
-  };
-
   // Enlace de texto con el aspecto de TextLink (etiqueta, subrayado, flecha y área táctil
   // ampliada); propio porque es mailto y conserva su data-testid
   const textLinkClass = "ss-label group relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3";
   // Correo de reclutamiento en dos piezas: se parte tras la arroba si la columna es estrecha
   const [emailUser, emailDomain] = t.applyEmail.split("@");
-  // Filas abiertas, como "Nuestro enfoque" en /about: filete superior, titular en romana,
+  // Filas abiertas, como "Cómo trabajamos" en /about: filete superior, titular en romana,
   // texto en la sans. Sin tarjeta, píldora, icono ni sombra.
   const rowClass = "border-t border-ss-rule pt-6";
+  // Texto de las cuatro filas (el mismo cuerpo en las cuatro: solo la entrada va en romana)
+  const rowTextClass = "text-base text-ss-tinta leading-[1.55]";
 
   return (
     <div className="min-h-screen bg-background" data-testid="page-careers">
@@ -267,17 +253,12 @@ export default function Careers() {
 
       {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo
           salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
-          siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
+          siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie.
+          Sin entrada al aparecer (G3): todo se ve completo desde el inicio. */}
       <main id="main-content">
       <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-careers-hero">
         <div className="ss-container">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="max-w-3xl"
-          >
+          <div className="max-w-3xl">
             <Eyebrow num="05" tone="navy" className="mb-6" />
             <h1 
               className="mb-5"
@@ -288,180 +269,151 @@ export default function Careers() {
             <p data-testid="text-careers-subtitle">
               {t.heroSubtitle}
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       <div className="py-16 lg:py-20">
         <div className="ss-container">
           
-          {/* Tu carrera en Santos & Saucedo (la entrada del encabezado): los párrafos de la
-              redacción, el primero en romana, y dos sub-bloques abiertos (lo que se aprende y la
-              firma). Sin valores genéricos ni prestaciones sin confirmar. */}
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-20 lg:mb-24"
-            data-testid="section-why-join"
-          >
-            <div className="max-w-3xl mb-12">
-              <p className={leadClass} data-testid="text-careers-intro">
-                {t.introText}
-              </p>
-              <p className="mt-6 text-[17px] md:text-[18px] text-ss-tinta leading-[1.65] [text-wrap:pretty]">
-                {t.whyJoinSubtitle}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
-              <div className={rowClass} data-testid="card-culture">
-                <h2 className="ss-h2-sm mb-3">
-                  {t.cultureTitle}
-                </h2>
-                <p className="text-base text-ss-tinta leading-[1.55]">
-                  {t.cultureText}
+          {/* Rejilla editorial de la portada (SplitSection, G1): desde lg, el cuerpo desde la
+              columna 5; aquí el aside queda vacío (y no ocupa sitio bajo lg). La entrada (la única
+              en romana), el segundo párrafo y una rejilla de 2 × 2 con filetes y h2.ss-h2-sm: lo
+              que se aprende, la firma, el Semillero S&S (su frase y el enlace a su página) y las
+              vacantes (su frase). Sin valores genéricos ni prestaciones sin confirmar. */}
+          <section className="mb-20 lg:mb-24" data-testid="section-why-join">
+            <SplitSection asideClassName="hidden lg:block">
+              <div className="max-w-[44rem] mb-12">
+                <p className={leadClass} data-testid="text-careers-intro">
+                  {t.introText}
+                </p>
+                <p className="mt-6 text-[17px] md:text-[18px] text-ss-tinta leading-[1.65] [text-wrap:pretty]">
+                  {t.whyJoinSubtitle}
                 </p>
               </div>
 
-              <div className={rowClass} data-testid="card-environment">
-                <h2 className="ss-h2-sm mb-3">
-                  {t.environmentTitle}
-                </h2>
-                <p className="text-base text-ss-tinta leading-[1.55]">
-                  {keepFirmName(t.environmentText)}
-                </p>
-              </div>
-            </div>
-          </motion.section>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                <div className={rowClass} data-testid="card-culture">
+                  <h2 className="ss-h2-sm mb-3">
+                    {t.cultureTitle}
+                  </h2>
+                  <p className={rowTextClass}>
+                    {t.cultureText}
+                  </p>
+                </div>
 
-          {/* Semillero S&S (el programa de pasantes), antes que las vacantes como en la
-              redacción: la frase de las vacantes remite a él. Solo su frase y el enlace a su
-              página (/careers/interns), que trae lo demás; sin "Si hoy no hay una vacante…",
-              que ya dice Vacantes. Sin duración, requisitos ni temario sin confirmar. */}
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mb-20 lg:mb-24"
-            data-testid="section-internship"
-          >
-            <div className="max-w-3xl">
-              <h2 
-                className="ss-h2 mb-4"
-                data-testid="text-internship-title"
-              >
-                {t.internshipTitle}
-              </h2>
-              <p className={leadClass} data-testid="card-internship-overview">
-                {t.internshipSubtitle}
-              </p>
-              <div className="mt-8" data-testid="card-internship-cta">
-                <TextLink href="/careers/interns">{t.internshipTitle}</TextLink>
-              </div>
-            </div>
-          </motion.section>
+                <div className={rowClass} data-testid="card-environment">
+                  <h2 className="ss-h2-sm mb-3">
+                    {t.environmentTitle}
+                  </h2>
+                  <p className={rowTextClass}>
+                    {keepFirmName(t.environmentText)}
+                  </p>
+                </div>
 
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mb-20 lg:mb-24"
-            data-testid="section-positions"
-          >
-            <div className="max-w-3xl">
-              <h2 
-                className="ss-h2 mb-4"
-                data-testid="text-positions-title"
-              >
-                {t.positionsTitle}
-              </h2>
-              {t.positions.length === 0 && (
-                <p className={leadClass} data-testid="text-positions-empty">
-                  {t.positionsEmpty}
-                </p>
-              )}
-            </div>
-
-            {/* Vacantes en filas abiertas: tipo, área y ciudad en etiqueta (sin píldora ni iconos)
-                y titular en romana. Solo si hay alguna; la solicitud se envía desde "Cómo
-                postularse" (un solo "Enviar solicitud" en la página). */}
-            {t.positions.length > 0 && (
-            <motion.div 
-              className="mt-12 border-b border-ss-rule"
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              {t.positions.map((position, index) => (
-                <motion.div key={index} variants={itemVariants}>
-                  <article
-                    className="border-t border-ss-rule py-8"
-                    data-testid={`card-position-${index}`}
+                {/* Semillero S&S (el programa de pasantes), antes que las vacantes como en la
+                    redacción: la frase de las vacantes remite a él. Su frase y el enlace a su
+                    página (/careers/interns), que trae lo demás. */}
+                <div className={rowClass} data-testid="section-internship">
+                  <h2 
+                    className="ss-h2-sm mb-3"
+                    data-testid="text-internship-title"
                   >
-                    <p className="ss-label text-ss-medio mb-3">
-                      {position.type} · {position.department} · {position.location}
-                    </p>
-                    <h3 className="ss-h3 mb-3">
-                      {position.title}
-                    </h3>
-                    <p className="text-base text-ss-tinta leading-[1.55] max-w-[48rem]">
-                      {position.description}
-                    </p>
-                  </article>
-                </motion.div>
-              ))}
-            </motion.div>
-            )}
-          </motion.section>
+                    {t.internshipTitle}
+                  </h2>
+                  <p className={rowTextClass} data-testid="card-internship-overview">
+                    {keepProgramName(t.internshipSubtitle)}
+                  </p>
+                  <div className="mt-6" data-testid="card-internship-cta">
+                    <TextLink href="/careers/interns">{t.internshipTitle}</TextLink>
+                  </div>
+                </div>
 
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            data-testid="section-apply"
-          >
-            {/* El correo de reclutamiento una sola vez, en el cuerpo, y el único "Enviar
-                solicitud" debajo; sin el lateral "Contacto de carreras", que lo repetía */}
-            <div className="max-w-3xl" data-testid="card-apply-instructions">
-              <h2 
-                className="ss-h2 mb-5"
-                data-testid="text-apply-title"
-              >
-                {t.applyTitle}
-              </h2>
-              <p className="text-base text-ss-tinta leading-[1.55] max-w-2xl mb-3">
-                {t.applyInstructions}
-              </p>
-              {/* El correo como enlace de texto, no dentro de un botón. A 320 px no cabía en la
-                  columna: corte tras la arroba (<wbr>) y, por si acaso, overflow-wrap:anywhere */}
-              <a 
-                href={`mailto:${t.applyEmail}`}
-                className="inline-block max-w-full text-[19px] text-ss-marino underline decoration-ss-input underline-offset-4 [overflow-wrap:anywhere] hover:decoration-ss-marino mb-4"
-                data-testid="link-apply-email"
-              >
-                {emailUser}@<wbr />{emailDomain}
-              </a>
-              <p className="text-base text-ss-medio leading-[1.55] max-w-2xl">
-                {t.applyNote}
-              </p>
-              <a
-                href={`mailto:${t.applyEmail}`}
-                className={`${textLinkClass} mt-8`}
-                data-testid="button-send-application"
-              >
-                <span className="ss-link">{t.sendApplication}</span>
-                <span aria-hidden="true" className="ss-arrow">
-                  →
-                </span>
-              </a>
-            </div>
-          </motion.section>
+                <div className={rowClass} data-testid="section-positions">
+                  <h2 
+                    className="ss-h2-sm mb-3"
+                    data-testid="text-positions-title"
+                  >
+                    {t.positionsTitle}
+                  </h2>
+                  {t.positions.length === 0 && (
+                    <p className={rowTextClass} data-testid="text-positions-empty">
+                      {keepProgramName(t.positionsEmpty)}
+                    </p>
+                  )}
+
+                  {/* Vacantes en filas abiertas: tipo, área y ciudad en etiqueta (sin píldora ni
+                      iconos) y titular en romana. Solo si hay alguna; la solicitud se envía desde
+                      "Cómo postularse" (un solo "Enviar solicitud" en la página). */}
+                  {t.positions.length > 0 && (
+                    <div className="mt-6 border-b border-ss-rule">
+                      {t.positions.map((position, index) => (
+                        <article
+                          key={index}
+                          className="border-t border-ss-rule py-6"
+                          data-testid={`card-position-${index}`}
+                        >
+                          <p className="ss-label text-ss-medio mb-3">
+                            {position.type} · {position.department} · {position.location}
+                          </p>
+                          <h3 className="ss-h3 mb-3">
+                            {position.title}
+                          </h3>
+                          <p className={rowTextClass}>
+                            {position.description}
+                          </p>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </SplitSection>
+          </section>
+
+          {/* Cómo postularse: la única sección .ss-h2, con el h2 en el aside. El correo de
+              reclutamiento una sola vez, en el cuerpo, y el único "Enviar solicitud" debajo; sin
+              el lateral "Contacto de carreras", que lo repetía */}
+          <section data-testid="section-apply">
+            <SplitSection
+              aside={
+                <h2 
+                  className="ss-h2"
+                  data-testid="text-apply-title"
+                >
+                  {t.applyTitle}
+                </h2>
+              }
+            >
+              <div className="max-w-[44rem]" data-testid="card-apply-instructions">
+                <p className="text-base text-ss-tinta leading-[1.55] max-w-2xl mb-3">
+                  {t.applyInstructions}
+                </p>
+                {/* El correo como enlace de texto, no dentro de un botón. A 320 px no cabía en la
+                    columna: corte tras la arroba (<wbr>) y, por si acaso, overflow-wrap:anywhere */}
+                <a 
+                  href={`mailto:${t.applyEmail}`}
+                  className="inline-block max-w-full text-[19px] text-ss-marino underline decoration-ss-input underline-offset-4 [overflow-wrap:anywhere] hover:decoration-ss-marino mb-4"
+                  data-testid="link-apply-email"
+                >
+                  {emailUser}@<wbr />{emailDomain}
+                </a>
+                <p className="text-base text-ss-medio leading-[1.55] max-w-2xl">
+                  {t.applyNote}
+                </p>
+                <a
+                  href={`mailto:${t.applyEmail}`}
+                  className={`${textLinkClass} mt-8`}
+                  data-testid="button-send-application"
+                >
+                  <span className="ss-link">{t.sendApplication}</span>
+                  <span aria-hidden="true" className="ss-arrow">
+                    →
+                  </span>
+                </a>
+              </div>
+            </SplitSection>
+          </section>
 
         </div>
       </div>

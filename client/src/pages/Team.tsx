@@ -1,5 +1,4 @@
 import { useMemo, type ReactNode, type SyntheticEvent } from "react";
-import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -33,6 +32,12 @@ function closingColumns(total: number, columns: number): number {
 
 // Retrato de la tarjeta: 112 px en teléfono, media columna desde sm y un cuarto desde lg
 const CARD_PHOTO_SIZES = "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 112px";
+
+// Rejilla de tarjetas y letra del nombre, compartidas por la vista y su carga (misma altura).
+// Desde sm el nombre reserva dos líneas (interlineado 1.15 × 2): "Mario Saucedo Montemayor" pasa
+// a dos a 1024–1440 y su cargo quedaba más abajo que los de al lado.
+const CARD_GRID = "grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 sm:gap-y-12 lg:grid-cols-4";
+const CARD_NAME = "ss-display block text-[clamp(24px,1.9vw,28px)] font-normal leading-[1.15] tracking-[-0.01em] sm:min-h-[2.3em]";
 
 export default function Team() {
   const { language } = useLanguage();
@@ -162,10 +167,10 @@ export default function Team() {
       },
     },
     fr: {
-      errorMessage: "Échec du chargement des membres de l'équipe",
+      errorMessage: "Échec du chargement des membres de l’équipe",
       ofCounsel: "Of Counsel",
-      associatesTitle: "Membres de l'équipe",
-      mosaicNote: "Portraits de membres de l'équipe.",
+      associatesTitle: "Membres de l’équipe",
+      mosaicNote: "Portraits de membres de l’équipe.",
       positions: {
         foundingPartner: "Associé fondateur",
         partner: "Associé",
@@ -282,7 +287,7 @@ export default function Team() {
             )}
           </span>
           <span className="block sm:mt-5">
-            <span className="ss-display block text-[clamp(24px,1.9vw,28px)] font-normal leading-[1.15] tracking-[-0.01em] text-ss-marino decoration-1 underline-offset-4 group-hover:underline group-focus-visible:underline">
+            <span className={`${CARD_NAME} text-ss-marino decoration-1 underline-offset-4 group-hover:underline group-focus-visible:underline`}>
               {member.name}
             </span>
             {renderMemberRole(member, fallbackRole)}
@@ -297,7 +302,7 @@ export default function Team() {
   const renderCardSection = (testId: string, title: string | null, children: ReactNode) => (
     <section className="ss-container pt-16 lg:pt-20" data-testid={testId}>
       {title && <h2 className="ss-h2 mb-10 lg:mb-12">{title}</h2>}
-      <ul className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 sm:gap-y-12 lg:grid-cols-4">
+      <ul className={CARD_GRID}>
         {children}
       </ul>
     </section>
@@ -324,12 +329,7 @@ export default function Team() {
       <main id="main-content" data-testid="section-team-main">
         <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-team-hero">
           <div className="ss-container">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
+            <div>
               <Eyebrow num="03" tone="navy" className="mb-6" />
               {/* h1 = etiqueta del menú; mb-5 solo si sigue un subtítulo */}
               <h1
@@ -341,7 +341,7 @@ export default function Team() {
               {t.subtitle && (
                 <p data-testid="text-team-subtitle">{keepFirmName(t.subtitle)}</p>
               )}
-            </motion.div>
+            </div>
           </div>
         </section>
 
@@ -352,15 +352,20 @@ export default function Team() {
             <p className="text-ss-tinta" data-testid="text-team-error">{t.errorMessage}</p>
           </div>
         ) : isLoadingAll ? (
-          // Carga con la misma retícula de tarjetas que la vista final
+          // Carga con la misma retícula, el mismo relleno y la misma letra que las tarjetas finales
+          // (nombre de dos líneas desde sm, cargo en etiqueta): la altura no cambia al llegar los datos
           <div className="ss-container pt-16 lg:pt-20" aria-busy="true">
-            <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 sm:gap-y-12 lg:grid-cols-4">
+            <div className={CARD_GRID}>
               {Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="grid grid-cols-[112px_1fr] items-end gap-x-5 sm:block" data-testid={`skeleton-team-member-${i}`}>
                   <Skeleton className="aspect-[4/5] w-full rounded-none bg-ss-rule" />
                   <div className="sm:mt-5">
-                    <Skeleton className="h-7 w-4/5 mb-3 bg-ss-rule" />
-                    <Skeleton className="h-3 w-1/2 bg-ss-rule" />
+                    <div className={CARD_NAME}>
+                      <Skeleton className="inline-block h-[0.8em] w-4/5 bg-ss-rule align-middle" />
+                    </div>
+                    <div className="ss-label mt-3">
+                      <Skeleton className="inline-block h-[0.8em] w-1/2 bg-ss-rule align-middle" />
+                    </div>
                   </div>
                 </div>
               ))}
@@ -383,48 +388,51 @@ export default function Team() {
                 t.ofCounsel,
                 groupedMembers.ofCounsel.map((member) => renderPersonCard(member, t.ofCounsel, false)),
               )}
-
-            {/* ─── INTEGRANTES DEL EQUIPO (mosaico anónimo: aún sin nombres) ─────── */}
-            {equipoPhotos.length > 0 && (
-              <section className="ss-container pt-20 pb-24 lg:pt-24 lg:pb-32" data-testid="section-associates">
-                <div className="pb-10 lg:pb-12">
-                  {/* No repite el h1 "Socios": "Integrantes del equipo", como en la redacción */}
-                  <h2 className="ss-h2">
-                    {t.associatesTitle}
-                  </h2>
-                  {/* Los retratos son decorativos (alt vacío) hasta que exista la relación de nombres;
-                      sin cifra: el número de integrantes no está confirmado */}
-                  <p className="sr-only">{t.mosaicNote}</p>
-                </div>
-                {/* Una sola rejilla contenida en todos los tramos (4, 6 y 8 columnas) de retratos
-                    4/5 en grises, con el encuadre de las tarjetas de socio; sin acordeón ni zoom al
-                    pasar el cursor: no llevan a ninguna parte. La celda Hueso de cierre es un
-                    elemento más que ocupa las columnas sobrantes de la última fila. */}
-                <ul className="grid grid-cols-4 gap-3 md:grid-cols-6 lg:grid-cols-8 lg:gap-6">
-                  {equipoPhotos.map((photo, idx) => (
-                    // aria-hidden en el elemento: la lista no anuncia 37 elementos vacíos
-                    <li key={idx} aria-hidden="true" className="relative aspect-[4/5] overflow-hidden bg-ss-paper" data-testid={`img-equipo-${idx}`}>
-                      <img
-                        src={photo}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                        width={295}
-                        height={295}
-                        className="ss-photo h-full w-full object-cover object-[50%_28%]"
-                      />
-                    </li>
-                  ))}
-                  <li
-                    data-testid="cell-equipo-closing"
-                    className={`flex flex-col items-start justify-end bg-ss-paper p-3 md:p-4 lg:p-6 ${equipoClosingSpanClass}`}
-                  >
-                    {closingContent}
-                  </li>
-                </ul>
-              </section>
-            )}
           </>
+        )}
+
+        {/* ─── INTEGRANTES DEL EQUIPO (mosaico anónimo: aún sin nombres) ─────── */}
+        {/* Fuera de la carga: las fotos son estáticas (equipoMosaicPhotos), así que el bloque y su
+            rejilla ocupan su sitio desde el principio y el pie no salta cuando llega /api/team
+            (CLS de 0.14–0.28 en pantallas altas en la ronda 4) */}
+        {equipoPhotos.length > 0 && (
+          <section className="ss-container pt-20 pb-24 lg:pt-24 lg:pb-32" data-testid="section-associates">
+            <div className="pb-10 lg:pb-12">
+              {/* No repite el h1 "Socios": "Integrantes del equipo", como en la redacción */}
+              <h2 className="ss-h2">
+                {t.associatesTitle}
+              </h2>
+              {/* Los retratos son decorativos (alt vacío) hasta que exista la relación de nombres;
+                  sin cifra: el número de integrantes no está confirmado */}
+              <p className="sr-only">{t.mosaicNote}</p>
+            </div>
+            {/* Una sola rejilla contenida en todos los tramos (4, 6 y 8 columnas) de retratos
+                4/5 en grises, con el encuadre de las tarjetas de socio; sin acordeón ni zoom al
+                pasar el cursor: no llevan a ninguna parte. La celda Hueso de cierre es un
+                elemento más que ocupa las columnas sobrantes de la última fila. */}
+            <ul className="grid grid-cols-4 gap-3 md:grid-cols-6 lg:grid-cols-8 lg:gap-6">
+              {equipoPhotos.map((photo, idx) => (
+                // aria-hidden en el elemento: la lista no anuncia 37 elementos vacíos
+                <li key={idx} aria-hidden="true" className="relative aspect-[4/5] overflow-hidden bg-ss-paper" data-testid={`img-equipo-${idx}`}>
+                  <img
+                    src={photo}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    width={295}
+                    height={295}
+                    className="ss-photo h-full w-full object-cover object-[50%_28%]"
+                  />
+                </li>
+              ))}
+              <li
+                data-testid="cell-equipo-closing"
+                className={`flex flex-col items-start justify-end bg-ss-paper p-3 md:p-4 lg:p-6 ${equipoClosingSpanClass}`}
+              >
+                {closingContent}
+              </li>
+            </ul>
+          </section>
         )}
       </main>
 

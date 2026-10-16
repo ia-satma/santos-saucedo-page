@@ -8,6 +8,7 @@ import { TextLink } from "@/components/home26/primitives";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { formatNewsDate } from "@/lib/newsDate";
+import { isStaticSite } from "@/lib/queryClient";
 import { newsCategories, type LanguageCode, type News } from "@shared/schema";
 
 // Lista única del Monitor Laboral (/news, /articles, "Más del Monitor Laboral" del artículo y,
@@ -382,7 +383,8 @@ export function MonitorList({
                   type="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  className="h-11 ps-9 bg-white border-ss-input text-ss-tinta focus-visible:ring-ss-marino focus-visible:border-ss-marino"
+                  // 44 px fijos: h-11 depende de rem y baja a 38,5 px bajo 360 px (html a 14 px)
+                  className="h-[44px] ps-9 bg-white border-ss-input text-ss-tinta focus-visible:ring-ss-marino focus-visible:border-ss-marino"
                   data-testid={testIds.search}
                 />
               </div>
@@ -450,7 +452,9 @@ export function MonitorList({
 }
 
 // Suscripción al pie del Monitor (/news y al final de cada nota): la frase y el botón de
-// /newsletter, con las mismas cadenas que esa página en cada idioma. Filete superior, sin caja.
+// /newsletter, con las mismas cadenas que esa página en cada idioma. Sin caja; filete superior
+// solo si se pide (rule): en /news cierra la lista su último filete y en la nota va en la fila de
+// compartir. En el sitio estático no se pinta: allí /newsletter no puede dar de alta a nadie.
 const SUBSCRIBE: Record<LanguageCode, { line: string; cta: string }> = {
   es: { line: "Recibir el Monitor Laboral por correo.", cta: "Suscribirme" },
   en: { line: "Receive the Labor Monitor by email.", cta: "Subscribe" },
@@ -466,20 +470,24 @@ const SUBSCRIBE: Record<LanguageCode, { line: string; cta: string }> = {
 
 export function MonitorSubscribe({
   language: languageProp,
+  rule = true,
   className = "",
   testId,
   linkTestId,
 }: {
   language?: LanguageCode;
+  /** Filete superior propio (por defecto sí) */
+  rule?: boolean;
   className?: string;
   testId?: string;
   linkTestId?: string;
 }) {
   const { language: interfaceLanguage } = useLanguage();
   const t = SUBSCRIBE[languageProp ?? interfaceLanguage] || SUBSCRIBE.en;
+  if (isStaticSite) return null;
   return (
     <div
-      className={`flex flex-wrap items-baseline gap-x-8 gap-y-4 border-t border-ss-rule pt-8 ${className}`}
+      className={`flex flex-wrap items-baseline gap-x-6 gap-y-4 ${rule ? "border-t border-ss-rule pt-8" : ""} ${className}`}
       data-testid={testId}
     >
       <p className="text-[16px] leading-[1.55] text-ss-tinta">{t.line}</p>

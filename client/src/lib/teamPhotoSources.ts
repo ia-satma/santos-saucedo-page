@@ -17,12 +17,13 @@ const PORTRAIT_SLUGS = new Set([
   "mario-saucedo-rodriguez",
 ]);
 
-// Retratos con miniatura <slug>-128.webp (miniaturas cuadradas de 56 px de "Equipo relacionado")
+// Retratos con miniatura <slug>-128.webp (miniaturas cuadradas de 56 px de "Equipo relacionado").
+// Sin los socios que el sitio no nombra (shared/teamVisibility): nunca se muestran y sus slugs
+// quedaban en el bundle como texto. Si se confirman, vuelven aquí (los archivos siguen en su sitio).
 const THUMB_SLUGS = new Set([
   "ancella-reynoso-pamanes",
   "carlos-a-cerda-ramos",
   "carlos-f-rodriguez-mirelles",
-  "david-martinez-saucedo",
   "diana-g-lopez-rodriguez",
   "eduardo-castillo-cervantes",
   "enrique-santos-arce",
@@ -30,7 +31,6 @@ const THUMB_SLUGS = new Set([
   "erick-estrada-marquez",
   "gabriela-l-garcia-vasquez",
   "huan-jose-trevino-cavazos",
-  "jaime-herrera-de-herrera",
   "jorge-a-garza-martinez",
   "jorge-a-melchor-ortiz",
   "jose-maria-urena-flores",

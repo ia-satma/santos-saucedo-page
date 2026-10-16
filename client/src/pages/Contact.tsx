@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,42 +29,32 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
+import { useSiteContact } from "@/components/home26/useSiteContact";
+import { anyPartnerHasDirectContact } from "@/lib/partnerContact";
+import { PRACTICE_SLUGS, practiceShortName } from "@/lib/practiceNames";
 // El recorte de la portada (sin el letrero ni el estacionamiento), no el original
 import edificioCerro from "@assets/ss26/edificio-cerro-recorte.webp";
-import type { SiteContent, ContactFormData, LanguageCode } from "@shared/schema";
+import type { SiteContent, ContactFormData, LanguageCode, TeamMember } from "@shared/schema";
 
 // Perfil de LinkedIn del despacho. Sin URL confirmada el botón "Síguenos en LinkedIn"
 // no se muestra (antes enlazaba a /contact en otra pestaña). Para activarlo, poner aquí
 // la URL externa (https://www.linkedin.com/company/…).
 const FIRM_LINKEDIN_URL: string | null = null;
 
-// Prácticas de la firma y "Otro", con las etiquetas cortas del documento de redacción
-// (Laboral · Corporativo · Migratorio · Litigio · Otro), las mismas que en Carreras. Los
-// valores no cambian: son los que guarda /api/contact. Antes el formulario usaba la lista
-// heredada de @shared/schema (fusiones, competencia, energía…), que no son prácticas de
-// Santos & Saucedo.
-const PRACTICE_OPTIONS: { value: string; label: Record<LanguageCode, string> }[] = [
-  {
-    value: "laboral-seguridad-social",
-    label: { es: "Laboral", en: "Labor", de: "Arbeitsrecht", zh: "劳动", ko: "노동", ja: "労働", ar: "العمل", ru: "Трудовое право", fr: "Travail", it: "Lavoro" },
-  },
-  {
-    value: "corporativo-contractual",
-    label: { es: "Corporativo", en: "Corporate", de: "Gesellschaftsrecht", zh: "公司", ko: "기업", ja: "企業法務", ar: "الشركات", ru: "Корпоративное право", fr: "Sociétés", it: "Societario" },
-  },
-  {
-    value: "migratorio",
-    label: { es: "Migratorio", en: "Immigration", de: "Migrationsrecht", zh: "移民", ko: "출입국", ja: "出入国管理", ar: "الهجرة", ru: "Миграционное право", fr: "Immigration", it: "Immigrazione" },
-  },
-  {
-    value: "litigio-contencioso",
-    label: { es: "Litigio", en: "Litigation", de: "Prozessführung", zh: "诉讼", ko: "소송", ja: "訴訟", ar: "التقاضي", ru: "Судебные споры", fr: "Contentieux", it: "Contenzioso" },
-  },
-  {
-    value: "otro",
-    label: { es: "Otro", en: "Other", de: "Sonstiges", zh: "其他", ko: "기타", ja: "その他", ar: "أخرى", ru: "Другое", fr: "Autre", it: "Altro" },
-  },
-];
+// Prácticas de la firma y "Otro". Los valores no cambian: son los slugs que guarda /api/contact.
+// Etiquetas: las cortas de lib/practiceNames (en español, las del documento de redacción:
+// Laboral · Corporativo · Migratorio · Litigio; en cada idioma, el mismo término que usa el
+// resto del sitio para esa práctica). Antes el formulario usaba la lista heredada de
+// @shared/schema (fusiones, competencia, energía…), que no son prácticas de Santos & Saucedo.
+const OTHER_VALUE = "otro";
+const OTHER_LABEL: Record<LanguageCode, string> = {
+  es: "Otro", en: "Other", de: "Sonstiges", zh: "其他", ko: "기타", ja: "その他", ar: "أخرى", ru: "Другое", fr: "Autre", it: "Altro",
+};
+const PRACTICE_OPTIONS: string[] = [...PRACTICE_SLUGS, OTHER_VALUE];
+
+function practiceOptionLabel(value: string, language: LanguageCode): string {
+  return practiceShortName(value, language) ?? OTHER_LABEL[language] ?? OTHER_LABEL.en;
+}
 
 // Lista de datos de la oficina: filas con filete superior; etiqueta (dt) en la sans
 // versal espaciada, Gris Medio; dato (dd) en la sans de 17 px, Gris Tinta. Etiqueta al lado
@@ -78,6 +67,8 @@ const ddLinkClass = "hover:text-ss-marino hover:underline underline-offset-4 tra
 
 // Titulares: .ss-h2 (index.css), la escala única de las secciones de página.
 
+// Mensajes de validación en registro sobrio (G9): qué escribir, sin "es requerido" ni "Por
+// favor"; el formato del correo y el campo vacío dicen lo mismo
 const validationMessages: Record<LanguageCode, {
   fullNameRequired: string;
   emailRequired: string;
@@ -86,74 +77,74 @@ const validationMessages: Record<LanguageCode, {
   consentRequired: string;
 }> = {
   en: {
-    fullNameRequired: "Full name is required",
-    emailRequired: "Email is required",
-    emailInvalid: "Please enter a valid email address",
-    messageRequired: "Message is required",
-    consentRequired: "You must accept the privacy notice.",
+    fullNameRequired: "Enter your name.",
+    emailRequired: "Enter a valid email address.",
+    emailInvalid: "Enter a valid email address.",
+    messageRequired: "Enter your message.",
+    consentRequired: "Accept the privacy notice to submit.",
   },
   es: {
-    fullNameRequired: "El nombre completo es requerido",
-    emailRequired: "El correo electrónico es requerido",
-    emailInvalid: "Por favor ingrese una dirección de correo válida",
-    messageRequired: "El mensaje es requerido",
-    consentRequired: "Es necesario aceptar el aviso de privacidad.",
+    fullNameRequired: "Escriba su nombre.",
+    emailRequired: "Escriba un correo válido.",
+    emailInvalid: "Escriba un correo válido.",
+    messageRequired: "Escriba su mensaje.",
+    consentRequired: "Acepte el aviso de privacidad para enviar.",
   },
   de: {
-    fullNameRequired: "Name ist erforderlich",
-    emailRequired: "E-Mail ist erforderlich",
-    emailInvalid: "Ungültige E-Mail-Adresse",
-    messageRequired: "Nachricht ist erforderlich",
-    consentRequired: "Bitte akzeptieren Sie den Datenschutzhinweis.",
+    fullNameRequired: "Geben Sie Ihren Namen ein.",
+    emailRequired: "Geben Sie eine gültige E-Mail-Adresse ein.",
+    emailInvalid: "Geben Sie eine gültige E-Mail-Adresse ein.",
+    messageRequired: "Geben Sie Ihre Nachricht ein.",
+    consentRequired: "Akzeptieren Sie den Datenschutzhinweis, um das Formular zu senden.",
   },
   zh: {
-    fullNameRequired: "姓名是必填项",
-    emailRequired: "电子邮件是必填项",
-    emailInvalid: "请输入有效的电子邮件地址",
-    messageRequired: "留言是必填项",
-    consentRequired: "请接受隐私声明。",
+    fullNameRequired: "请填写姓名。",
+    emailRequired: "请填写有效的电子邮件地址。",
+    emailInvalid: "请填写有效的电子邮件地址。",
+    messageRequired: "请填写留言。",
+    consentRequired: "请接受隐私声明后再发送。",
   },
   ko: {
-    fullNameRequired: "이름은 필수입니다",
-    emailRequired: "이메일은 필수입니다",
-    emailInvalid: "유효한 이메일 주소를 입력하세요",
-    messageRequired: "메시지는 필수입니다",
-    consentRequired: "개인정보 처리방침에 동의해야 합니다.",
+    fullNameRequired: "이름을 입력해 주세요.",
+    emailRequired: "올바른 이메일 주소를 입력해 주세요.",
+    emailInvalid: "올바른 이메일 주소를 입력해 주세요.",
+    messageRequired: "메시지를 입력해 주세요.",
+    consentRequired: "보내려면 개인정보 처리방침에 동의해 주세요.",
   },
   ja: {
-    fullNameRequired: "氏名は必須です",
-    emailRequired: "メールアドレスは必須です",
-    emailInvalid: "有効なメールアドレスを入力してください",
-    messageRequired: "メッセージは必須です",
-    consentRequired: "プライバシーポリシーへの同意が必要です。",
+    fullNameRequired: "氏名を入力してください。",
+    emailRequired: "有効なメールアドレスを入力してください。",
+    emailInvalid: "有効なメールアドレスを入力してください。",
+    messageRequired: "メッセージを入力してください。",
+    consentRequired: "送信するには、プライバシーポリシーに同意してください。",
   },
   ar: {
-    fullNameRequired: "الاسم الكامل مطلوب",
-    emailRequired: "البريد الإلكتروني مطلوب",
-    emailInvalid: "يرجى إدخال عنوان بريد إلكتروني صالح",
-    messageRequired: "الرسالة مطلوبة",
-    consentRequired: "يجب الموافقة على إشعار الخصوصية.",
+    fullNameRequired: "اكتب اسمك.",
+    emailRequired: "اكتب عنوان بريد إلكتروني صالحًا.",
+    emailInvalid: "اكتب عنوان بريد إلكتروني صالحًا.",
+    messageRequired: "اكتب رسالتك.",
+    consentRequired: "وافق على إشعار الخصوصية لإرسال النموذج.",
   },
   ru: {
-    fullNameRequired: "Имя обязательно для заполнения",
-    emailRequired: "Электронная почта обязательна",
-    emailInvalid: "Пожалуйста, введите действительный адрес электронной почты",
-    messageRequired: "Сообщение обязательно для заполнения",
-    consentRequired: "Необходимо принять политику конфиденциальности.",
+    fullNameRequired: "Укажите имя.",
+    emailRequired: "Укажите действительный адрес эл. почты.",
+    emailInvalid: "Укажите действительный адрес эл. почты.",
+    messageRequired: "Напишите сообщение.",
+    consentRequired: "Примите политику конфиденциальности, чтобы отправить форму.",
   },
   fr: {
-    fullNameRequired: "Le nom complet est requis",
-    emailRequired: "L’e-mail est requis",
-    emailInvalid: "Veuillez entrer une adresse e-mail valide",
-    messageRequired: "Le message est requis",
-    consentRequired: "Vous devez accepter la politique de confidentialité.",
+    fullNameRequired: "Saisissez votre nom.",
+    emailRequired: "Saisissez une adresse e-mail valide.",
+    emailInvalid: "Saisissez une adresse e-mail valide.",
+    messageRequired: "Saisissez votre message.",
+    consentRequired: "Acceptez la politique de confidentialité pour envoyer le formulaire.",
   },
   it: {
-    fullNameRequired: "Il nome completo è obbligatorio",
-    emailRequired: "L'e-mail è obbligatoria",
-    emailInvalid: "Inserisci un indirizzo e-mail valido",
-    messageRequired: "Il messaggio è obbligatorio",
-    consentRequired: "È necessario accettare l’informativa sulla privacy.",
+    fullNameRequired: "Inserisca il suo nome.",
+    emailRequired: "Inserisca un indirizzo e-mail valido.",
+    emailInvalid: "Inserisca un indirizzo e-mail valido.",
+    messageRequired: "Inserisca il suo messaggio.",
+    consentRequired: "Accetti l’informativa sulla privacy per inviare il modulo.",
   },
 };
 
@@ -190,71 +181,95 @@ const consentText: Record<LanguageCode, { before: string; link: string; after: s
   it: { before: "Ho letto e accetto l’", link: "informativa sulla privacy", after: "." },
 };
 
+// Avisos tras enviar. staticTitle/staticDescription: el build estático (sin servidor) abre el
+// programa de correo del visitante con el mensaje; el aviso va en el idioma de la página.
 const toastMessages: Record<LanguageCode, {
   successTitle: string;
   successDescription: string;
   errorTitle: string;
   errorDescription: string;
+  staticTitle: string;
+  staticDescription: string;
 }> = {
   en: {
     successTitle: "Message sent",
     successDescription: "We have received your message.",
     errorTitle: "Error",
     errorDescription: "The message could not be sent. Please try again later.",
+    staticTitle: "Send by email",
+    staticDescription: "Your email program was opened to send the message.",
   },
   es: {
     successTitle: "Mensaje enviado",
     successDescription: "Recibimos su mensaje.",
     errorTitle: "Error",
     errorDescription: "No fue posible enviar el mensaje. Intente de nuevo más tarde.",
+    staticTitle: "Enviar por correo",
+    staticDescription: "Se abrió su programa de correo para enviar el mensaje.",
   },
   de: {
     successTitle: "Nachricht gesendet",
     successDescription: "Wir haben Ihre Nachricht erhalten.",
     errorTitle: "Fehler",
-    errorDescription: "Fehler beim Senden der Nachricht. Bitte versuchen Sie es erneut.",
+    errorDescription: "Die Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.",
+    staticTitle: "Per E-Mail senden",
+    staticDescription: "Ihr E-Mail-Programm wurde geöffnet, um die Nachricht zu senden.",
   },
   zh: {
     successTitle: "消息已发送",
     successDescription: "我们已收到您的消息。",
     errorTitle: "错误",
-    errorDescription: "发送消息时出错。请重试。",
+    errorDescription: "无法发送消息。请稍后再试。",
+    staticTitle: "通过电子邮件发送",
+    staticDescription: "已打开您的电子邮件程序以发送消息。",
   },
   ko: {
     successTitle: "메시지 전송 완료",
     successDescription: "메시지를 받았습니다.",
     errorTitle: "오류",
-    errorDescription: "메시지 전송에 실패했습니다. 다시 시도해 주세요.",
+    errorDescription: "메시지를 보내지 못했습니다. 잠시 후 다시 시도해 주세요.",
+    staticTitle: "이메일로 보내기",
+    staticDescription: "메시지를 보낼 수 있도록 이메일 프로그램을 열었습니다.",
   },
   ja: {
     successTitle: "メッセージを送信しました",
     successDescription: "メッセージを受け付けました。",
     errorTitle: "エラー",
-    errorDescription: "メッセージの送信に失敗しました。もう一度お試しください。",
+    errorDescription: "メッセージを送信できませんでした。しばらくしてからもう一度お試しください。",
+    staticTitle: "メールで送信",
+    staticDescription: "メッセージを送信するため、メールソフトを開きました。",
   },
   ar: {
     successTitle: "تم إرسال الرسالة",
     successDescription: "تلقّينا رسالتك.",
     errorTitle: "خطأ",
-    errorDescription: "فشل في إرسال الرسالة. يرجى المحاولة مرة أخرى.",
+    errorDescription: "تعذّر إرسال الرسالة. يرجى المحاولة مرة أخرى لاحقًا.",
+    staticTitle: "الإرسال بالبريد الإلكتروني",
+    staticDescription: "فُتح برنامج البريد الإلكتروني لديك لإرسال الرسالة.",
   },
   ru: {
     successTitle: "Сообщение отправлено",
     successDescription: "Мы получили ваше сообщение.",
     errorTitle: "Ошибка",
-    errorDescription: "Ошибка при отправке сообщения. Пожалуйста, попробуйте снова.",
+    errorDescription: "Не удалось отправить сообщение. Попробуйте позже.",
+    staticTitle: "Отправка по эл. почте",
+    staticDescription: "Открылась ваша почтовая программа для отправки сообщения.",
   },
   fr: {
     successTitle: "Message envoyé",
     successDescription: "Nous avons bien reçu votre message.",
     errorTitle: "Erreur",
-    errorDescription: "Échec de l’envoi du message. Veuillez réessayer.",
+    errorDescription: "Le message n’a pas pu être envoyé. Veuillez réessayer plus tard.",
+    staticTitle: "Envoyer par e-mail",
+    staticDescription: "Votre messagerie s’est ouverte pour envoyer le message.",
   },
   it: {
     successTitle: "Messaggio inviato",
-    successDescription: "Abbiamo ricevuto il tuo messaggio.",
+    successDescription: "Abbiamo ricevuto il suo messaggio.",
     errorTitle: "Errore",
-    errorDescription: "Errore nell'invio del messaggio. Riprova.",
+    errorDescription: "Non è stato possibile inviare il messaggio. Riprovi più tardi.",
+    staticTitle: "Invio per e-mail",
+    staticDescription: "Si è aperto il suo programma di posta per inviare il messaggio.",
   },
 };
 
@@ -265,6 +280,15 @@ export default function Contact() {
   const { data: siteContent, isLoading } = useQuery<SiteContent>({
     queryKey: ["/api/site-content"],
   });
+
+  // La frase "Los datos de contacto de cada socio aparecen en su ficha." solo es verdad si algún
+  // socio nombrado tiene correo o teléfono propios (distintos de los generales de la firma, la
+  // misma regla que la ficha: lib/partnerContact). Hoy ninguno los tiene y la frase no sale (G6).
+  const firmContact = useSiteContact(language === "en" ? "en" : "es");
+  const { data: teamMembers } = useQuery<TeamMember[]>({
+    queryKey: ["/api/team"],
+  });
+  const showPartnersNote = anyPartnerHasDirectContact(teamMembers, firmContact);
 
   const formSchema = getContactFormSchema(language);
 
@@ -313,7 +337,7 @@ export default function Contact() {
           `Email: ${data.email}`,
           data.company ? `Empresa: ${data.company}` : "",
           data.practiceArea
-            ? `Área: ${PRACTICE_OPTIONS.find((o) => o.value === data.practiceArea)?.label.es ?? data.practiceArea}`
+            ? `Área: ${practiceOptionLabel(data.practiceArea, "es")}`
             : "",
           "",
           data.message,
@@ -323,10 +347,8 @@ export default function Contact() {
       window.location.href = `mailto:${siteContent?.email || "info@santossaucedo.com"}?subject=${subject}&body=${body}`;
       // Sitio estático (sin servidor): el mensaje sale por el programa de correo del visitante
       toast({
-        title: language === "es" ? "Enviar por correo" : "Send by email",
-        description: language === "es"
-          ? "Se abrió su programa de correo para enviar el mensaje."
-          : "Your email program was opened to send the message.",
+        title: toastT.staticTitle,
+        description: toastT.staticDescription,
       });
       return;
     }
@@ -512,7 +534,7 @@ export default function Contact() {
     ja: {
       title: "お問い合わせ",
       partnersNote: "各パートナーの連絡先は、それぞれのプロフィールに掲載しています。",
-      officesTitle: "所在地",
+      officesTitle: "事務所",
       building: "Río Tamazunchale 205 Norte",
       floor: "18階",
       street: "San Pedro Garza García, N.L.",
@@ -682,19 +704,13 @@ export default function Contact() {
       <main id="main-content">
         <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-contact-hero">
           <div className="ss-container">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="max-w-3xl"
-            >
+            <div className="max-w-3xl">
               <Eyebrow num="06" tone="navy" className="mb-6" />
               {/* Sin subtítulo: la frase de los socios va bajo los datos de la oficina */}
               <h1 data-testid="text-contact-title">
                 {t.title}
               </h1>
-            </motion.div>
+            </div>
           </div>
         </section>
 
@@ -704,11 +720,7 @@ export default function Contact() {
               escritorio la foto va bajo la ficha (fila 2) y el formulario ocupa las dos filas. */}
           <div className="ss-container grid grid-cols-1 gap-y-16 lg:grid-cols-12 lg:grid-rows-[auto_1fr] lg:gap-x-12 lg:gap-y-12">
             {/* Oficina: lista de datos con filetes (sin tarjeta ni iconos) y el enlace "Cómo llegar" */}
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
+            <section
               className="lg:col-span-5"
               data-testid="section-contact-office"
             >
@@ -777,13 +789,16 @@ export default function Contact() {
                 </dl>
 
                 {/* Como en el documento de redacción: bajo los datos de la oficina, en texto
-                    pequeño, antes de "Cómo llegar" (antes era el subtítulo del encabezado) */}
-                <p
-                  className="mt-6 max-w-md text-[15px] leading-[1.5] text-ss-medio"
-                  data-testid="text-contact-subtitle"
-                >
-                  {t.partnersNote}
-                </p>
+                    pequeño, antes de "Cómo llegar" (antes era el subtítulo del encabezado). Solo
+                    si algún socio tiene datos directos en su ficha (G6) */}
+                {showPartnersNote && (
+                  <p
+                    className="mt-6 max-w-md text-[15px] leading-[1.5] text-ss-medio"
+                    data-testid="text-contact-subtitle"
+                  >
+                    {t.partnersNote}
+                  </p>
+                )}
 
                 {/* Mismo aspecto que TextLink (etiqueta, subrayado, flecha y área táctil ampliada);
                     <a> propio porque TextLink es un Link de wouter y este destino es externo */}
@@ -801,14 +816,10 @@ export default function Contact() {
                   </span>
                 </a>
               </div>
-            </motion.section>
+            </section>
 
             {/* Formulario: sin llamada en el título ni marcadores que repitan la etiqueta */}
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+            <section
               className="lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1"
               data-testid="section-contact-form"
             >
@@ -820,8 +831,9 @@ export default function Contact() {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-testid="form-contact">
                   {/* Dos campos por fila solo en tableta (formulario a todo el ancho): Nombre | Correo y
                       Empresa | Práctica; en escritorio, columna de 6/12: un campo por fila. Campos y
-                      select de 44 px (h-11), el objetivo táctil del sitio. Sin Teléfono: el documento
-                      de redacción no lo pide. */}
+                      select de 44 px, el objetivo táctil del sitio: en px y no h-11 (rem), que bajo
+                      360 px (html a 14 px) quedaba en 38,5 px. Sin Teléfono: el documento de
+                      redacción no lo pide. */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
                     <FormField
                       control={form.control}
@@ -831,7 +843,7 @@ export default function Contact() {
                           <FormLabel data-testid="label-fullname">{t.fullName}</FormLabel>
                           <FormControl>
                             <Input
-                              className="h-11"
+                              className="h-[44px]"
                               autoComplete="name"
                               {...field}
                               data-testid="input-fullname"
@@ -850,7 +862,7 @@ export default function Contact() {
                           <FormLabel data-testid="label-email">{t.emailLabel}</FormLabel>
                           <FormControl>
                             <Input
-                              className="h-11"
+                              className="h-[44px]"
                               type="email"
                               autoComplete="email"
                               {...field}
@@ -870,7 +882,7 @@ export default function Contact() {
                           <FormLabel data-testid="label-company">{t.companyLabel}</FormLabel>
                           <FormControl>
                             <Input
-                              className="h-11"
+                              className="h-[44px]"
                               autoComplete="organization"
                               {...field}
                               data-testid="input-company"
@@ -895,18 +907,18 @@ export default function Contact() {
                             value={field.value}
                           >
                             <FormControl>
-                              <SelectTrigger className="h-11" data-testid="select-practice-area">
+                              <SelectTrigger className="h-[44px]" data-testid="select-practice-area">
                                 <SelectValue />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent data-testid="select-practice-area-content">
-                              {PRACTICE_OPTIONS.map((area) => (
+                              {PRACTICE_OPTIONS.map((value) => (
                                 <SelectItem
-                                  key={area.value}
-                                  value={area.value}
-                                  data-testid={`option-practice-area-${area.value}`}
+                                  key={value}
+                                  value={value}
+                                  data-testid={`option-practice-area-${value}`}
                                 >
-                                  {area.label[language] ?? area.label.en}
+                                  {practiceOptionLabel(value, language)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -995,7 +1007,7 @@ export default function Contact() {
                   </p>
                 </form>
               </Form>
-            </motion.section>
+            </section>
 
             {/* El edificio: el mismo recorte de la portada (sin el letrero ni el estacionamiento
                 reflejado), en gris y a su proporción propia, sin reencuadre */}

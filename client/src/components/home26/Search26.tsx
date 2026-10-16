@@ -123,7 +123,14 @@ interface Search26Props {
 
 /** Buscador a pantalla completa. Se monta al abrir: cada apertura empieza vacía. */
 export default function Search26({ lang, onClose, onClosed }: Search26Props) {
-  const { attrs, search: t } = chrome26[lang];
+  const { attrs, search: t, nav } = chrome26[lang];
+  // Un nombre por cosa (E5): cada grupo lleva la etiqueta del menú de su sección
+  const groupLabel: Record<GroupId, string> = {
+    team: nav[2].label,
+    practiceGroups: nav[1].label,
+    industryGroups: t.groups.industryGroups,
+    news: nav[3].label,
+  };
   const dialogRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   // Enter mientras llegan resultados nuevos: ir al primero cuando lleguen
@@ -272,8 +279,9 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
           enterKeyHint="search"
           aria-describedby="ss26-search-hint"
           data-testid="input-global-search"
-          // Sin radio, filete blanco al 30 %; el foco de teclado sobre Azul Profundo es lima
-          className="mt-4 w-full appearance-none rounded-none border-0 border-b border-white/30 bg-transparent pb-3 text-[clamp(28px,2.4vw+16px,40px)] font-normal leading-tight text-white caret-white placeholder:text-white/50 focus:border-transparent focus-visible:!shadow-[inset_0_-2px_0_0_var(--ss-lime)] focus-visible:!outline-none"
+          // Sin radio, filete blanco al 30 %; el foco de teclado sobre Azul Profundo es lima.
+          // La romana display 350, como los titulares (en CJK y árabe, la sans: ss26.css)
+          className="ss-display mt-4 w-full appearance-none rounded-none border-0 border-b border-white/30 bg-transparent pb-3 text-[clamp(28px,2.4vw+16px,40px)] leading-tight text-white caret-white placeholder:text-white/50 focus:border-transparent focus-visible:!shadow-[inset_0_-2px_0_0_var(--ss-lime)] focus-visible:!outline-none"
         />
         {/* Con la consulta ya escrita la pista sobra a la vista; sigue para aria-describedby */}
         <p
@@ -296,7 +304,7 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
                 className="grid gap-4 lg:grid-cols-[minmax(160px,3fr)_9fr] lg:gap-10"
               >
                 <h2 id={`ss26-search-${g.id}`} className="ss-label pt-1 text-white/[.66] lg:pt-5">
-                  {t.groups[g.id]}
+                  {groupLabel[g.id]}
                 </h2>
                 <ul className="border-t border-white/15">
                   {g.rows.map((row) => (
@@ -309,7 +317,8 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
                         // Foco: el contorno lima de 3px de .ss26 (ss26.css), más tinte y el subrayado del título
                         className="-ms-4 flex flex-col gap-1 py-4 ps-4 transition-colors focus-visible:bg-white/5"
                       >
-                        <span className="text-[19px] leading-snug text-white lg:text-[21px]">
+                        {/* Nombres y titulares en la romana 400, como las tarjetas y las filas del Monitor */}
+                        <span className="ss-display block text-[20px] font-normal leading-snug tracking-[-0.01em] text-white lg:text-[22px]">
                           <span className="ss-link" lang={row.titleLang}>
                             {row.title}
                           </span>

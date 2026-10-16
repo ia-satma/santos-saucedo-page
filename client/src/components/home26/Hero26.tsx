@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
+import { keepFirmName } from "@/lib/firmName";
 import { Reveal, SectionMark } from "./primitives";
 import { home26, langAttrs, type Lang26 } from "./content";
 
@@ -45,7 +46,7 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
 
           <Reveal delay={0.35}>
             {/* Sobre Azul Profundo, .ss-lead pasa a la sans 400 al 84 % (ss26.css) */}
-            <p className="ss-lead mt-8 max-w-[36em] lg:mt-10">{t.hero.lead}</p>
+            <p className="ss-lead mt-8 max-w-[36em] lg:mt-10">{keepFirmName(t.hero.lead)}</p>
           </Reveal>
         </div>
 

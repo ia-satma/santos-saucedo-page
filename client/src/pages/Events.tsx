@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { MapPin, Calendar } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -262,7 +261,7 @@ export default function EventsPage() {
       all: "Tous",
       upcoming: "À venir",
       past: "Passés",
-      register: "S'inscrire",
+      register: "S’inscrire",
       noEvents: "Aucun événement prévu.",
       monitorLink: "Actualités",
     },
@@ -322,25 +321,6 @@ export default function EventsPage() {
     return new Date(date) > new Date();
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.4 },
-    },
-  };
-
   return (
     <div className="min-h-screen bg-background" data-testid="page-events">
       <SEOHead page="events" language={language} />
@@ -352,13 +332,7 @@ export default function EventsPage() {
       <main id="main-content">
       <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-events-hero">
         <div className="ss-container">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="max-w-3xl"
-          >
+          <div className="max-w-3xl">
             <Eyebrow num="04" tone="navy" className="mb-6" />
             <h1 
               className="mb-5"
@@ -369,7 +343,7 @@ export default function EventsPage() {
             <p data-testid="text-events-subtitle">
               {t.subtitle}
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -377,13 +351,7 @@ export default function EventsPage() {
         <div className="ss-container">
           {/* Filtros solo si hay eventos: seis botones sobre una lista vacía parecen una plantilla sin llenar */}
           {events && events.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-            className="mb-10"
-          >
+          <div className="mb-10">
             {/* Filtros: botones de contorno de 44 px (el Azul Marino lleno queda para enviar
                 formularios); el activo, con filete Azul Marino y aria-pressed. Etiquetas en el
                 idioma de la página. */}
@@ -405,7 +373,7 @@ export default function EventsPage() {
                 </Button>
               ))}
             </div>
-          </motion.div>
+          </div>
           )}
 
           {error ? (
@@ -445,15 +413,9 @@ export default function EventsPage() {
               )}
             </div>
           ) : (
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-            viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredEvents?.map((event) => (
-                <motion.div key={event.id} variants={itemVariants}>
+                <div key={event.id}>
                   <EventCard
                     event={event}
                     language={language}
@@ -461,9 +423,9 @@ export default function EventsPage() {
                     formatDate={formatDate}
                     t={{ past: t.past, learnMore: t.learnMore }}
                   />
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           )}
         </div>
       </div>

@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
 import { isStaticSite } from "@/lib/queryClient";
+import { chrome26 } from "@/components/home26/chrome26";
 
 const routerBase = isStaticSite ? "/santos-saucedo-page" : "";
 
@@ -107,8 +108,10 @@ function SkipLinks() {
   
   const t = labels[language as keyof typeof labels] || labels.en;
   
+  // Los enlaces van en el idioma del visitante y lo declaran: en la portada en inglés,
+  // <html> lleva lang="en" (Home.tsx) aunque el visitante haya elegido otro
   return (
-    <div className="skip-links">
+    <div className="skip-links" {...chrome26[language].attrs}>
       <a
         href="#main-content"
         className="skip-link"
@@ -228,7 +231,8 @@ function Router() {
 }
 
 // reducedMotion="user": con "reducir movimiento" del sistema, framer-motion deja de mover
-// (translateY, escala) los héroes y secciones de las páginas internas; solo queda la opacidad.
+// (translateY, escala) lo poco que aún anima (diálogos); solo queda la opacidad. El sitio no
+// tiene entradas al aparecer: solo la máscara del título del héroe de portada (Hero26).
 function App() {
   return (
     <MotionConfig reducedMotion="user">

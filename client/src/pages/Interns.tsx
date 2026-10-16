@@ -1,10 +1,10 @@
-import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "wouter";
 import { Eyebrow } from "@/components/editorial";
+import { SplitSection } from "@/components/home26/primitives";
 
 // "Clásica": titular de sección .ss-h2 (escala única de index.css); texto en sans 400 Gris Tinta.
 
@@ -31,7 +31,7 @@ export default function Interns() {
       heroTitle: "Semillero S&S",
       heroSubtitle: "El Semillero S&S es el programa de pasantes de la firma.",
       applyEmail: "reclutamiento@santossaucedo.com",
-      ctaTitle: "Cómo enviar tu solicitud",
+      ctaTitle: "Cómo postularse",
       ctaIntro: "Si hoy no hay una vacante para tu perfil, puedes dejar tus datos en el Semillero. Revisamos los perfiles cada vez que se abre una posición.",
       ctaInstructions: "Envía tu CV en PDF a:",
       viewCareers: "Carreras",
@@ -130,13 +130,7 @@ export default function Interns() {
       <main id="main-content">
       <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-interns-hero">
         <div className="ss-container">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="max-w-3xl"
-          >
+          <div className="max-w-3xl">
             <Eyebrow num="05" tone="navy" className="mb-6" />
             <h1 
               className="mb-5"
@@ -147,58 +141,58 @@ export default function Interns() {
             <p data-testid="text-interns-subtitle">
               {t.heroSubtitle}
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       <div className="py-16 lg:py-20">
         <div className="ss-container">
           
-          {/* Solicitud: la frase del Semillero, el correo como enlace de texto (el único
-              mailto) y el enlace a Carreras. Sin tarjeta, sin un segundo "Enviar solicitud"
-              ni la llamada "¿Listo para iniciar tu carrera legal?" */}
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            data-testid="section-cta"
-          >
-            <div className="max-w-3xl">
-              <h2 
-                className="ss-h2 mb-5"
-                data-testid="text-cta-title"
-              >
-                {t.ctaTitle}
-              </h2>
-              <p className="text-[17px] md:text-[18px] text-ss-tinta leading-[1.65] max-w-2xl mb-6 [text-wrap:pretty]">
-                {t.ctaIntro}
-              </p>
-              <p className="text-base text-ss-tinta leading-[1.55] mb-2">
-                {t.ctaInstructions}
-              </p>
-              {/* A 320 px el correo no cabía: corte tras la arroba y overflow-wrap:anywhere */}
-              <a
-                href={applyHref}
-                className="inline-block max-w-full text-[19px] text-ss-marino underline decoration-ss-input underline-offset-4 [overflow-wrap:anywhere] hover:decoration-ss-marino"
-                data-testid="link-cta-email"
-              >
-                {emailUser}@<wbr />{emailDomain}
-              </a>
-              <div className="mt-10">
-                <Link
-                  href="/careers"
-                  className={textLinkClass}
-                  data-testid="button-view-careers"
+          {/* Solicitud, en la rejilla editorial de la portada (SplitSection, G1): el h2 en el
+              aside y, en el cuerpo, la frase del Semillero, el correo como enlace de texto (el
+              único mailto) y el enlace a Carreras. Sin tarjeta, sin un segundo "Enviar solicitud"
+              ni la llamada "¿Listo para iniciar tu carrera legal?". Sin entrada al aparecer (G3). */}
+          <section data-testid="section-cta">
+            <SplitSection
+              aside={
+                <h2 
+                  className="ss-h2"
+                  data-testid="text-cta-title"
                 >
-                  <span className="ss-link">{t.viewCareers}</span>
-                  <span aria-hidden="true" className="ss-arrow">
-                    →
-                  </span>
-                </Link>
+                  {t.ctaTitle}
+                </h2>
+              }
+            >
+              <div className="max-w-[44rem]">
+                <p className="text-[17px] md:text-[18px] text-ss-tinta leading-[1.65] max-w-2xl mb-6 [text-wrap:pretty]">
+                  {t.ctaIntro}
+                </p>
+                <p className="text-base text-ss-tinta leading-[1.55] mb-2">
+                  {t.ctaInstructions}
+                </p>
+                {/* A 320 px el correo no cabía: corte tras la arroba y overflow-wrap:anywhere */}
+                <a
+                  href={applyHref}
+                  className="inline-block max-w-full text-[19px] text-ss-marino underline decoration-ss-input underline-offset-4 [overflow-wrap:anywhere] hover:decoration-ss-marino"
+                  data-testid="link-cta-email"
+                >
+                  {emailUser}@<wbr />{emailDomain}
+                </a>
+                <div className="mt-10">
+                  <Link
+                    href="/careers"
+                    className={textLinkClass}
+                    data-testid="button-view-careers"
+                  >
+                    <span className="ss-link">{t.viewCareers}</span>
+                    <span aria-hidden="true" className="ss-arrow">
+                      →
+                    </span>
+                  </Link>
+                </div>
               </div>
-            </div>
-          </motion.section>
+            </SplitSection>
+          </section>
 
         </div>
       </div>

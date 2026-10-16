@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { motion } from "framer-motion";
 // Los iconos solo quedan en los datos de cada sección; la página ya no los dibuja.
 import { FileText, Scale, Globe, AlertTriangle, Users, Shield, Gavel, BookOpen, Bell, Phone } from "lucide-react";
 import Header from "@/components/Header";
@@ -9,6 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContact } from "@/components/home26/useSiteContact";
 import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
+import { SplitSection } from "@/components/home26/primitives";
 
 // Teléfonos aislados de izquierda a derecha (<bdi dir="ltr">): en árabe, dentro del texto
 // corrido, los grupos de cifras salían invertidos ("2086 8335 81 52+"). "Santos & Saucedo"
@@ -101,13 +101,13 @@ By using this Website, you represent and warrant that:
           title: "2. Use of website",
           content: `The Website is provided for informational purposes only. The content on this Website is intended to provide general information about S&S, its legal services, practice areas, and professional team.
 
-Permitted Uses:
+Permitted uses:
 • Browsing and viewing content for personal, non-commercial informational purposes
 • Contacting S&S through provided contact forms and information
 • Downloading publicly available materials for personal reference
 • Sharing links to Website content through legitimate means
 
-Prohibited Uses:
+Prohibited uses:
 You agree NOT to use the Website to:
 • Violate any applicable local, state, national, or international law or regulation
 • Transmit any material that is defamatory, offensive, or otherwise objectionable
@@ -130,14 +130,14 @@ S&S reserves the right to terminate or restrict your access to the Website for a
 Trademarks:
 The S&S name, logo, and all related names, logos, product and service names, designs, and slogans are trademarks of Santos & Saucedo Abogados or its affiliates. You may not use such marks without the prior written permission of S&S. All other names, logos, product and service names, designs, and slogans on this Website are the trademarks of their respective owners.
 
-Limited License:
+Limited license:
 Subject to these Terms, S&S grants you a limited, non-exclusive, non-transferable, revocable license to access and use the Website and its Content for your personal, non-commercial use only. This license does not include:
 • Any resale or commercial use of the Website or its Content
 • Any derivative use of the Website or its Content
 • Any downloading or copying of account information for the benefit of another
 • Any use of data mining, robots, or similar data gathering and extraction tools
 
-Copyright Infringement:
+Copyright infringement:
 If you believe that any Content on the Website infringes your copyright, please contact us at info@santossaucedo.com with:
 • A description of the copyrighted work you claim has been infringed
 • A description of where the material is located on the Website
@@ -197,7 +197,7 @@ Any communication sent to S&S through this Website, email, or other means before
 • Does not prevent S&S from representing other parties with adverse interests
 • Does not create any duties or obligations on the part of S&S
 
-Potential Clients:
+Potential clients:
 If you are considering engaging S&S for legal representation, please contact us directly by telephone at +52 81 8335 2086 to discuss your matter and the process for formally establishing an attorney-client relationship.`
         },
         {
@@ -206,7 +206,7 @@ If you are considering engaging S&S for legal representation, please contact us 
           title: "6. Limitation of liability",
           content: `TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW:
 
-Disclaimer of Warranties:
+Disclaimer of warranties:
 THE WEBSITE AND ALL CONTENT ARE PROVIDED “AS IS” AND “AS AVAILABLE” WITHOUT WARRANTY OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE. S&S SPECIFICALLY DISCLAIMS ALL IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
 
 S&S does not warrant that:
@@ -215,7 +215,7 @@ S&S does not warrant that:
 • The quality of any information or Content obtained through the Website will meet your expectations
 • Any errors on the Website will be corrected
 
-Limitation of Liability:
+Limitation of liability:
 IN NO EVENT SHALL SANTOS & SAUCEDO ABOGADOS, ITS PARTNERS, ATTORNEYS, EMPLOYEES, AFFILIATES, AGENTS, OR LICENSORS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, PUNITIVE, OR EXEMPLARY DAMAGES ARISING OUT OF OR RELATING TO:
 • Your access to or use of, or inability to access or use, the Website
 • Any conduct or Content of any third party on the Website
@@ -226,7 +226,7 @@ IN NO EVENT SHALL SANTOS & SAUCEDO ABOGADOS, ITS PARTNERS, ATTORNEYS, EMPLOYEES,
 
 This limitation applies regardless of the legal theory upon which the claim is based, whether S&S has been advised of the possibility of such damages, and even if a remedy set forth herein is found to have failed its essential purpose.
 
-Maximum Liability:
+Maximum liability:
 TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE AGGREGATE LIABILITY OF S&S ARISING OUT OF OR RELATED TO THESE TERMS OR THE WEBSITE SHALL NOT EXCEED ONE HUNDRED MEXICAN PESOS (MXN $100.00).`
         },
         {
@@ -235,7 +235,7 @@ TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE AGGREGATE LIABILITY OF S&S ARISING O
           title: "7. Governing law",
           content: `These Terms and Conditions, and any dispute or claim arising out of or in connection with them or their subject matter or formation (including non-contractual disputes or claims), shall be governed by and construed in accordance with the laws of the United Mexican States (Mexico), without regard to its conflict of law provisions.
 
-Applicable Law:
+Applicable law:
 The following Mexican laws and regulations apply to these Terms and the use of the Website:
 • Federal Civil Code (Código Civil Federal)
 • Federal Commerce Code (Código de Comercio)
@@ -244,7 +244,7 @@ The following Mexican laws and regulations apply to these Terms and the use of t
 • General Law of Electronic Signatures (Ley de Firma Electrónica Avanzada)
 • Applicable regulations and official Mexican standards (NOMs)
 
-International Users:
+International users:
 If you access the Website from outside Mexico, you do so at your own risk and are responsible for compliance with local laws. The Website is operated from Mexico, and S&S makes no representations that the Content is appropriate or available for use in other locations.
 
 Nothing in these Terms shall be construed to:
@@ -267,7 +267,7 @@ Before initiating any formal dispute resolution procedure, the parties agree to 
 Mediation:
 If negotiations fail to resolve the dispute within thirty (30) calendar days, either party may request mediation before a mediator certified by the Mexico City Mediation and Conciliation Center (Centro de Justicia Alternativa del Poder Judicial de la Ciudad de México).
 
-Jurisdiction and Venue:
+Jurisdiction and venue:
 Any legal action or proceeding arising out of or relating to these Terms or the Website shall be brought exclusively in the competent federal or local courts located in Mexico City (Ciudad de México), Mexico.
 
 By using the Website, you irrevocably and unconditionally:
@@ -276,10 +276,10 @@ By using the Website, you irrevocably and unconditionally:
 • Waive any claim that such forum is inconvenient
 • Agree not to commence any action or proceeding in any other jurisdiction
 
-Waiver of Jury Trial:
+Waiver of jury trial:
 TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, EACH PARTY WAIVES ANY RIGHT TO A JURY TRIAL IN ANY LEGAL PROCEEDING ARISING OUT OF OR RELATING TO THESE TERMS.
 
-Class Action Waiver:
+Class action waiver:
 You agree that any claims shall be brought in your individual capacity and not as a plaintiff or class member in any purported class or representative proceeding.`
         },
         {
@@ -288,24 +288,24 @@ You agree that any claims shall be brought in your individual capacity and not a
           title: "9. Modifications to terms",
           content: `Santos & Saucedo Abogados reserves the right, at its sole discretion, to modify, amend, or update these Terms and Conditions at any time without prior notice.
 
-How Changes Are Communicated:
+How changes are communicated:
 • Material changes will be indicated by updating the “Last updated” date at the top of this page
 • Significant modifications may be announced through a notice on the Website's homepage
 • For registered users or subscribers, we may send email notifications of important changes
 
-Your Responsibilities:
+Your responsibilities:
 It is your responsibility to review these Terms periodically to stay informed of updates. You should check this page regularly to ensure you are aware of any changes.
 
-Effect of Continued Use:
+Effect of continued use:
 Your continued use of the Website following the posting of revised Terms means that you accept and agree to the changes. If you do not agree to the new Terms, you must stop using the Website.
 
-Version History:
+Version history:
 We maintain previous versions of these Terms for reference purposes. You may request access to prior versions by contacting us at info@santossaucedo.com.
 
 Severability:
 If any provision of these Terms is held by a court or other tribunal of competent jurisdiction to be invalid, illegal, or unenforceable for any reason, such provision shall be eliminated or limited to the minimum extent necessary, and the remaining provisions of these Terms will continue in full force and effect.
 
-Entire Agreement:
+Entire agreement:
 These Terms, together with the Privacy Policy and any other legal notices published by S&S on the Website, constitute the entire agreement between you and S&S concerning the use of the Website and supersede all prior or contemporaneous communications, whether electronic, oral, or written.`
         },
         {
@@ -318,7 +318,7 @@ These Terms, together with the Privacy Policy and any other legal notices publis
 
 Santos & Saucedo Abogados
 
-Mailing Address:
+Mailing address:
 Río Tamazunchale 205 Norte
 San Pedro Garza García, Nuevo León, México
 
@@ -326,7 +326,7 @@ Telephone: +52 81 8335 2086
 Email: info@santossaucedo.com
 Website: www.santossaucedo.com
 
-Office Hours:
+Office hours:
 Monday to Friday: 9:00 AM to 6:00 PM (Mexico City time)`
         }
       ]
@@ -2001,25 +2001,6 @@ Escluse le festività federali messicane`
   // h1 = el nombre del enlace del pie en cada idioma (E5), el mismo que el título de la pestaña
   const title = (chrome26[language] ?? chrome26.en).footer.terms;
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.4 },
-    },
-  };
-
   const contactText: Record<SupportedLanguage, string> = {
     en: "For inquiries about these terms and conditions:",
     es: "Para consultas sobre estos términos y condiciones:",
@@ -2043,15 +2024,10 @@ Escluse le festività federali messicane`
       <main id="main-content">
         {/* Encabezado de papel ("memorándum impreso"), como los artículos: Hueso, h1 Azul Marino */}
         <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" data-testid="section-terms-hero">
-          {/* Columna del documento (max-w-4xl): titular, subtítulo y fecha sobre su borde. En el
-              teléfono arranca en el margen del logotipo (--ss-pad); en escritorio va centrada. */}
-          <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
+          {/* Mismo contenedor que el cuerpo (ss-container): titular, subtítulo y fecha en el
+              borde izquierdo de la rejilla, sobre los títulos de sección del aside (G1) */}
+          <div className="ss-container">
+            <div className="max-w-3xl">
               {/* Sin cejilla: las páginas legales no están en el menú y no llevan "§" */}
               <h1
                 className="mb-5"
@@ -2071,71 +2047,72 @@ Escluse le festività federali messicane`
               >
                 {t.lastUpdated}
               </p>
-            </motion.div>
+            </div>
           </div>
         </section>
 
         <div className="py-16 lg:py-20">
-        <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12">
-          {/* Secciones abiertas: filete superior, h2 en romana y texto corrido. Sin cajas ni iconos. */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="space-y-12"
-          >
+        <div className="ss-container">
+          {/* Secciones abiertas en la rejilla editorial de la portada (SplitSection, G1): desde lg,
+              el número y el título de cada sección en el aside (columnas 1–4) y el texto en prosa
+              en el cuerpo (6–12); en teléfono y tableta, apilados. Filete superior entre secciones,
+              no en la primera: el encabezado de papel ya la cierra con el suyo (G10). Sin cajas,
+              iconos ni entrada al aparecer (G3). Solo maquetación: el texto legal no cambia. */}
+          <div className="space-y-12">
             {t.sections.map((section) => (
-              <motion.div
+              <section
                 key={section.id}
-                variants={itemVariants}
-                className="border-t border-ss-rule pt-8"
+                className="border-t border-ss-rule pt-8 first:border-t-0 first:pt-0"
                 data-testid={`section-terms-${section.id}`}
               >
-                <h2
-                  className="ss-h2-sm mb-4"
-                  data-testid={`text-section-title-${section.id}`}
+                <SplitSection
+                  prose
+                  className="max-lg:gap-y-4"
+                  aside={
+                    <h2
+                      className="ss-h2-sm"
+                      data-testid={`text-section-title-${section.id}`}
+                    >
+                      {section.title}
+                    </h2>
+                  }
                 >
-                  {section.title}
-                </h2>
-                <div
-                  className="ss-prose text-ss-tinta text-[17px] md:text-[18px] space-y-5"
-                  data-testid={`text-section-content-${section.id}`}
-                >
-                  {renderLegalText(section.content)}
-                </div>
-              </motion.div>
+                  <div
+                    className="ss-prose max-w-[42rem] text-ss-tinta text-[17px] md:text-[18px] space-y-5"
+                    data-testid={`text-section-content-${section.id}`}
+                  >
+                    {renderLegalText(section.content)}
+                  </div>
+                </SplitSection>
+              </section>
             ))}
-          </motion.div>
+          </div>
 
-          {/* Contacto: bloque Hueso con dos enlaces de texto */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="mt-16 bg-ss-paper p-8 lg:p-10"
-          >
-            <p className="text-base text-ss-tinta mb-4">
-              {contactText[language as keyof typeof contactText] || contactText.en}
-            </p>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-x-8 gap-y-2">
-              <a
-                href="mailto:info@santossaucedo.com"
-                className="font-semibold text-ss-marino underline decoration-1 underline-offset-4 hover:decoration-2"
-                data-testid="link-terms-email"
-              >
-                info@santossaucedo.com
-              </a>
-              <a
-                href={phoneHref}
-                className="font-semibold text-ss-marino underline decoration-1 underline-offset-4 hover:decoration-2"
-                data-testid="link-terms-phone"
-              >
-                <span dir="ltr">{phone}</span>
-              </a>
+          {/* Contacto: bloque Hueso con dos enlaces de texto, en la columna del texto y con su
+              medida (42rem, ~80 caracteres por línea, como la prosa de las secciones) */}
+          <SplitSection prose className="mt-16" asideClassName="hidden lg:block">
+            <div className="max-w-[42rem] bg-ss-paper p-8 lg:p-10">
+              <p className="text-base text-ss-tinta mb-4">
+                {contactText[language as keyof typeof contactText] || contactText.en}
+              </p>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-x-8 gap-y-2">
+                <a
+                  href="mailto:info@santossaucedo.com"
+                  className="font-semibold text-ss-marino underline decoration-1 underline-offset-4 hover:decoration-2"
+                  data-testid="link-terms-email"
+                >
+                  info@santossaucedo.com
+                </a>
+                <a
+                  href={phoneHref}
+                  className="font-semibold text-ss-marino underline decoration-1 underline-offset-4 hover:decoration-2"
+                  data-testid="link-terms-phone"
+                >
+                  <span dir="ltr">{phone}</span>
+                </a>
+              </div>
             </div>
-          </motion.div>
+          </SplitSection>
         </div>
         </div>
       </main>

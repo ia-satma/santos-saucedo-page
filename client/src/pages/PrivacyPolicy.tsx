@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { motion } from "framer-motion";
 // Los iconos solo quedan en los datos de cada sección; la página ya no los dibuja.
 import { Shield, FileText, Database, Eye, Lock, Cookie, AlertCircle, Phone, Globe, Users, Building2 } from "lucide-react";
 import Header from "@/components/Header";
@@ -9,6 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContact } from "@/components/home26/useSiteContact";
 import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
+import { SplitSection } from "@/components/home26/primitives";
 
 // Teléfonos aislados de izquierda a derecha (<bdi dir="ltr">): en árabe, dentro del texto
 // corrido, los grupos de cifras salían invertidos ("2086 8335 81 52+"). "Santos & Saucedo"
@@ -111,25 +111,25 @@ Our Data Protection Officer can be contacted at the above address for any questi
           title: "3. Personal data we collect",
           content: `We may collect and process the following categories of personal data:
 
-Identification Data:
+Identification data:
 • Full name, title, and professional position
 • Contact information (email address, phone number, mailing address)
 • Company or organization name
 • Professional credentials and affiliations
 
-Communication Data:
+Communication data:
 • Correspondence and communications with S&S
 • Inquiries submitted through our contact forms
 • Subscription preferences for newsletters and publications
 
-Technical Data:
+Technical data:
 • IP address and device information
 • Browser type and version
 • Operating system
 • Pages visited and time spent on our Website
 • Referral source and navigation patterns
 
-Professional Data:
+Professional data:
 • Legal matters and case-related information (for clients)
 • Professional background and expertise areas
 • Business relationships and referrals
@@ -142,21 +142,21 @@ We do not intentionally collect sensitive personal data (such as racial or ethni
           title: "4. How we use your data",
           content: `We use your personal data for the following purposes:
 
-Primary Purposes (require no additional consent):
+Primary purposes (require no additional consent):
 • To provide legal services and professional advice
 • To respond to your inquiries and communications
 • To manage our attorney-client relationships
 • To comply with legal and regulatory obligations
 • To administer and protect our Website and systems
 
-Secondary Purposes (may require consent):
+Secondary purposes (may require consent):
 • To send newsletters, publications, and legal updates
 • To invite you to events, seminars, and conferences
 • To conduct surveys and gather feedback on our services
 • To send marketing communications about our practice areas
 • To analyze Website usage and improve user experience
 
-Legal Bases for Processing:
+Legal bases for processing:
 Under applicable law, we process your data based on:
 • Performance of a contract or pre-contractual measures
 • Compliance with legal obligations
@@ -171,7 +171,7 @@ You may opt out of secondary purposes at any time by contacting us at privacidad
           title: "5. Data retention",
           content: `We retain your personal data only for as long as necessary to fulfill the purposes for which it was collected, unless a longer retention period is required or permitted by law.
 
-Retention Periods:
+Retention periods:
 • Client files and legal matters: 10 years after case closure (as required by professional regulations)
 • General inquiries and communications: 3 years from last contact
 • Newsletter subscriptions: Until you unsubscribe
@@ -193,13 +193,13 @@ Within S&S:
 • Administrative and support personnel as necessary
 • Other offices of S&S for coordination of services
 
-Third Parties:
+Third parties:
 • Courts, tribunals, and regulatory authorities (as required by legal proceedings)
 • Other law firms or professionals collaborating on your matter (with your consent)
 • Service providers (IT, hosting, communication platforms) under strict confidentiality agreements
 • Professional auditors and insurers as required
 
-International Transfers:
+International transfers:
 When we transfer your data outside Mexico, we ensure appropriate safeguards are in place, including:
 • Contractual clauses ensuring equivalent protection
 • Transfers to countries with adequate data protection laws
@@ -225,13 +225,13 @@ You may request deletion of your personal data when it is no longer necessary fo
 Opposition (Oposición):
 You may object to the processing of your personal data for specific purposes, particularly for marketing and secondary purposes.
 
-To Exercise Your Rights:
+To exercise your rights:
 Submit a written request to:
 Email: privacidad@santossaucedo.com
 Address: Río Tamazunchale 205 Norte
 San Pedro Garza García, Nuevo León, México
 
-Response Times:
+Response times:
 • We will acknowledge your request within 5 business days
 • We will respond to your request within 20 business days from receipt
 • If your request is approved, changes will be implemented within 15 business days
@@ -244,19 +244,19 @@ If you are not satisfied with our response, you may file a complaint with the Na
           title: "8. Third-party transfers",
           content: `S&S may transfer your personal data to third parties in the following circumstances:
 
-Transfers Requiring Consent:
+Transfers requiring consent:
 • To affiliated law firms or correspondents in other jurisdictions for legal service delivery
 • To marketing and communications service providers for promotional activities
 • To event organizers when you register for S&S-sponsored events
 
-Transfers Not Requiring Consent (as permitted by Article 37 of LFPDPPP):
+Transfers not requiring consent (as permitted by Article 37 of LFPDPPP):
 • To courts and government authorities when required by law or legal proceedings
 • To regulatory bodies and professional associations as part of our compliance obligations
 • To parent companies, subsidiaries, or affiliates under common control, sharing the same privacy policies
 • When necessary to fulfill a contract in your interest
 • In emergency cases where your vital interests are at stake
 
-International Transfers:
+International transfers:
 When your data is transferred to countries outside Mexico, we ensure appropriate safeguards are in place, including contractual clauses and the recipient's commitment to privacy principles equivalent to Mexican law.`
         },
         {
@@ -271,21 +271,21 @@ When your data is transferred to countries outside Mexico, we ensure appropriate
           title: "10. Security measures",
           content: `S&S implements comprehensive administrative, technical, and physical security measures to protect your personal data against loss, unauthorized access, damage, alteration, or disclosure.
 
-Administrative Measures:
+Administrative measures:
 • Designation of a Data Protection Officer
 • Internal policies and procedures for data handling
 • Personnel training on data protection and confidentiality
 • Regular audits and compliance reviews
 • Incident response procedures
 
-Technical Measures:
+Technical measures:
 • Encryption of sensitive data in transit and at rest
 • Secure access controls and authentication mechanisms
 • Firewalls and intrusion detection systems
 • Regular security updates and vulnerability assessments
 • Secure backup and recovery procedures
 
-Physical Measures:
+Physical measures:
 • Restricted access to facilities housing personal data
 • Security systems including surveillance and access logs
 • Secure document storage and destruction
@@ -299,7 +299,7 @@ Despite our best efforts, no method of transmission over the Internet or electro
           title: "11. Changes to this privacy policy",
           content: `S&S reserves the right to modify this Privacy Policy at any time to reflect changes in our data processing practices, legal requirements, or other operational or legal reasons.
 
-How We Notify You of Changes:
+How we notify you of changes:
 • Significant changes will be communicated by email to our clients and contacts
 • Updates will be posted on our Website with the new effective date
 • For material changes affecting your rights, we may request renewed consent
@@ -324,7 +324,7 @@ San Pedro Garza García, Nuevo León, México
 Email: privacidad@santossaucedo.com
 Phone: +52 81 8335 2086
 
-Office Hours: Monday to Friday, 9:00 AM to 6:00 PM (Mexico City time)
+Office hours: Monday to Friday, 9:00 AM to 6:00 PM (Mexico City time)
 
 For general inquiries about our legal services:
 Email: info@santossaucedo.com
@@ -2332,25 +2332,6 @@ Sito web: www.santossaucedo.com`
   // h1 = el nombre del enlace del pie en cada idioma (E5), el mismo que el título de la pestaña
   const title = (chrome26[language] ?? chrome26.en).footer.privacy;
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.4 },
-    },
-  };
-
   const contactText: Record<SupportedLanguage, string> = {
     en: "To exercise your ARCO rights or make privacy inquiries:",
     es: "Para ejercer sus derechos ARCO o hacer consultas sobre privacidad:",
@@ -2374,15 +2355,10 @@ Sito web: www.santossaucedo.com`
       <main id="main-content">
         {/* Encabezado de papel ("memorándum impreso"), como los artículos: Hueso, h1 Azul Marino */}
         <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" data-testid="section-privacy-hero">
-          {/* Columna del documento (max-w-4xl): titular, subtítulo y fecha sobre su borde. En el
-              teléfono arranca en el margen del logotipo (--ss-pad); en escritorio va centrada. */}
-          <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
+          {/* Mismo contenedor que el cuerpo (ss-container): titular, subtítulo y fecha en el
+              borde izquierdo de la rejilla, sobre los títulos de sección del aside (G1) */}
+          <div className="ss-container">
+            <div className="max-w-3xl">
               {/* Sin cejilla: las páginas legales no están en el menú y no llevan "§" */}
               <h1
                 className="mb-5"
@@ -2402,71 +2378,72 @@ Sito web: www.santossaucedo.com`
               >
                 {t.lastUpdated}
               </p>
-            </motion.div>
+            </div>
           </div>
         </section>
 
         <div className="py-16 lg:py-20">
-        <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12">
-          {/* Secciones abiertas: filete superior, h2 en romana y texto corrido. Sin cajas ni iconos. */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="space-y-12"
-          >
+        <div className="ss-container">
+          {/* Secciones abiertas en la rejilla editorial de la portada (SplitSection, G1): desde lg,
+              el número y el título de cada sección en el aside (columnas 1–4) y el texto en prosa
+              en el cuerpo (6–12); en teléfono y tableta, apilados. Filete superior entre secciones,
+              no en la primera: el encabezado de papel ya la cierra con el suyo (G10). Sin cajas,
+              iconos ni entrada al aparecer (G3). Solo maquetación: el texto legal no cambia. */}
+          <div className="space-y-12">
             {t.sections.map((section) => (
-              <motion.div
+              <section
                 key={section.id}
-                variants={itemVariants}
-                className="border-t border-ss-rule pt-8"
+                className="border-t border-ss-rule pt-8 first:border-t-0 first:pt-0"
                 data-testid={`section-privacy-${section.id}`}
               >
-                <h2
-                  className="ss-h2-sm mb-4"
-                  data-testid={`text-section-title-${section.id}`}
+                <SplitSection
+                  prose
+                  className="max-lg:gap-y-4"
+                  aside={
+                    <h2
+                      className="ss-h2-sm"
+                      data-testid={`text-section-title-${section.id}`}
+                    >
+                      {section.title}
+                    </h2>
+                  }
                 >
-                  {section.title}
-                </h2>
-                <div
-                  className="ss-prose text-ss-tinta text-[17px] md:text-[18px] space-y-5"
-                  data-testid={`text-section-content-${section.id}`}
-                >
-                  {renderLegalText(section.content)}
-                </div>
-              </motion.div>
+                  <div
+                    className="ss-prose max-w-[42rem] text-ss-tinta text-[17px] md:text-[18px] space-y-5"
+                    data-testid={`text-section-content-${section.id}`}
+                  >
+                    {renderLegalText(section.content)}
+                  </div>
+                </SplitSection>
+              </section>
             ))}
-          </motion.div>
+          </div>
 
-          {/* Contacto: bloque Hueso con dos enlaces de texto */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="mt-16 bg-ss-paper p-8 lg:p-10"
-          >
-            <p className="text-base text-ss-tinta mb-4">
-              {contactText[language as keyof typeof contactText] || contactText.en}
-            </p>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-x-8 gap-y-2">
-              <a
-                href="mailto:privacidad@santossaucedo.com"
-                className="font-semibold text-ss-marino underline decoration-1 underline-offset-4 hover:decoration-2"
-                data-testid="link-privacy-email"
-              >
-                privacidad@santossaucedo.com
-              </a>
-              <a
-                href={phoneHref}
-                className="font-semibold text-ss-marino underline decoration-1 underline-offset-4 hover:decoration-2"
-                data-testid="link-privacy-phone"
-              >
-                <span dir="ltr">{phone}</span>
-              </a>
+          {/* Contacto: bloque Hueso con dos enlaces de texto, en la columna del texto y con su
+              medida (42rem, ~80 caracteres por línea, como la prosa de las secciones) */}
+          <SplitSection prose className="mt-16" asideClassName="hidden lg:block">
+            <div className="max-w-[42rem] bg-ss-paper p-8 lg:p-10">
+              <p className="text-base text-ss-tinta mb-4">
+                {contactText[language as keyof typeof contactText] || contactText.en}
+              </p>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-x-8 gap-y-2">
+                <a
+                  href="mailto:privacidad@santossaucedo.com"
+                  className="font-semibold text-ss-marino underline decoration-1 underline-offset-4 hover:decoration-2"
+                  data-testid="link-privacy-email"
+                >
+                  privacidad@santossaucedo.com
+                </a>
+                <a
+                  href={phoneHref}
+                  className="font-semibold text-ss-marino underline decoration-1 underline-offset-4 hover:decoration-2"
+                  data-testid="link-privacy-phone"
+                >
+                  <span dir="ltr">{phone}</span>
+                </a>
+              </div>
             </div>
-          </motion.div>
+          </SplitSection>
         </div>
         </div>
       </main>

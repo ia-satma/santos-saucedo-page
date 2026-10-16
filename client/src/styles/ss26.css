@@ -121,6 +121,8 @@ html:has(header.ss26) {
   --ss-rule: #e1e0d7;
   --ss-input: #c9c8bd;
   --ss-lime: #b2eb3e;
+  /* Error de formulario: rojo sobrio, solo en el mensaje (8.1:1 sobre blanco, 7.2:1 sobre Hueso) */
+  --ss-error: #9b1c1c;
   --ss-on-navy: rgb(255 255 255 / 0.84);
   --ss-on-navy-2: rgb(255 255 255 / 0.74);
   --ss-on-navy-rule: rgb(255 255 255 / 0.14);
@@ -220,6 +222,13 @@ html:has(.ss26) body {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-variant-numeric: tabular-nums lining-nums;
+}
+/* index.css (max-width 639px) fuerza 16 px en p, span, li, label… fuera de .ss26: dentro de
+   una etiqueta (texto y flecha de los TextLink, "·" de la fila de compartir) todo hereda sus
+   12 px, en las páginas internas igual que en la portada. 0,1,0 gana al 0,0,1 de aquella regla;
+   un tamaño explícito (utilidad text-[…]) sigue mandando. */
+.ss-label :where(p, span, li, label) {
+  font-size: inherit;
 }
 
 /* Itálica verdadera, la única del sitio: la frase de "Lo que creemos" */
@@ -406,21 +415,6 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   box-shadow: none;
 }
 
-/* Entrada única al aparecer (Reveal). Solo se oculta con JS activo
-   (html.ss-js, ver main.tsx): sin JS el contenido queda visible. */
-.ss-reveal {
-  transition: opacity var(--ss-dur, 560ms) var(--ss-ease), transform var(--ss-dur, 560ms) var(--ss-ease);
-  transition-delay: var(--ss-delay, 0s);
-}
-.ss-js .ss-reveal {
-  opacity: 0;
-  transform: translate3d(0, var(--ss-y, 24px), 0);
-}
-.ss-js .ss-reveal.is-in {
-  opacity: 1;
-  transform: none;
-}
-
 /* Fotografía: todo retrato en escala de grises (.ss-photo o, explícito, .ss-photo--mono);
    .ss-photo--colour solo para el edificio (Fig. 1 de la portada) */
 .ss-photo,
@@ -431,43 +425,22 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   filter: saturate(0.85) contrast(1.02);
 }
 
-/* Foto que se asienta: escala 1.06 → 1 una vez (estado inicial solo con JS) */
-.ss-settle {
-  transition: transform 1400ms var(--ss-ease), opacity 620ms var(--ss-ease);
-}
-.ss-js .ss-settle {
-  transform: scale(1.06);
-  opacity: 0.6;
-}
-.ss-js .ss-settle.is-in {
-  transform: none;
-  opacity: 1;
-}
-
-/* Filete corto (24 × 1 px) que se dibuja una vez (sin JS queda dibujado).
-   Sobre Azul Profundo, blanco al 35 % (el mismo del § de los encabezados internos; al 14 %,
-   el de los filetes largos, un trazo tan corto no se ve); sobre blanco, Línea; sobre Hueso,
-   Entrada (Línea apenas se ve en el papel), como el eyebrow papel de las páginas internas. */
+/* Filete corto (24 × 1 px), completo desde el inicio: el sitio no tiene entradas al aparecer
+   (solo la máscara del título del héroe de portada). Sobre Azul Profundo, blanco al 35 % (el
+   mismo del § de los encabezados internos; al 14 %, el de los filetes largos, un trazo tan
+   corto no se ve); sobre blanco, Línea; sobre Hueso, Entrada (Línea apenas se ve en el papel),
+   como el eyebrow papel de las páginas internas. */
 .ss-bar {
   display: inline-block;
   width: 24px;
   height: 1px;
   background: var(--ss-rule);
-  transform-origin: left center;
-  transition: transform 400ms var(--ss-ease) calc(var(--ss-delay, 0s) + 150ms);
 }
 .ss-paper .ss-bar {
   background: var(--ss-input);
 }
 :is(.ss-navy, .editorial-page-hero) .ss-bar {
   background: rgb(255 255 255 / 0.35);
-}
-.ss-js .ss-bar {
-  transform: scaleX(0);
-}
-.ss-js .is-in .ss-bar,
-.ss-js .ss-bar.is-in {
-  transform: scaleX(1);
 }
 
 /* Fila de prácticas: el número (01–04) pasa de tenue a pleno */
@@ -490,16 +463,6 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* Misma especificidad que los estados .ss-js de arriba: gana por orden */
-  .ss-js .ss-reveal,
-  .ss-js .ss-settle,
-  .ss-js .ss-bar {
-    opacity: 1;
-    transform: none;
-  }
-  .ss-reveal,
-  .ss-settle,
-  .ss-bar,
   .ss-link,
   .ss-arrow,
   .ss-row .ss-row-num,
@@ -514,17 +477,5 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   a:hover > .ss-arrow:dir(rtl),
   a:focus-visible > .ss-arrow:dir(rtl) {
     transform: scaleX(-1);
-  }
-}
-
-/* Impresión: todo visible aunque no se haya desplazado (misma especificidad
-   que los estados ocultos de arriba; gana por orden) */
-@media print {
-  .ss-js .ss-reveal,
-  .ss-js .ss-settle,
-  .ss-js .ss-bar {
-    opacity: 1;
-    transform: none;
-    transition: none;
   }
 }

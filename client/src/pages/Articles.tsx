@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -92,13 +91,7 @@ export default function ArticlesPage() {
       <main id="main-content">
         <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-articles-hero">
           <div className="ss-container">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="max-w-3xl"
-            >
+            <div className="max-w-3xl">
               <Eyebrow num="04" tone="navy" className="mb-6" />
               <h1
                 className="mb-5"
@@ -120,7 +113,7 @@ export default function ArticlesPage() {
                   {translationBanner}
                 </p>
               )}
-            </motion.div>
+            </div>
           </div>
         </section>
 

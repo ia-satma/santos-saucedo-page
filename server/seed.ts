@@ -6,12 +6,13 @@ export const siteContentData: SiteContent = {
   visionTitle: "Human-capital administration and legal defense for companies",
   visionText: "Santos & Saucedo Abogados provides legal counsel and services for the implementation and development of strategies in human-capital administration and legal defense for national and multinational companies — anchored in labor law and backed by more than 35 years of experience.",
   locationTitle: "Office address",
-  locationText: "Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220",
+  // "Col. del Valle", como el pie, la ficha de Contacto y la consulta de Google Maps (G11)
+  locationText: "Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220",
   statsTitle: "Santos & Saucedo Abogados",
   quoteText: "",
   quoteAuthor: "",
   quoteRole: "",
-  address: "Río Tamazunchale 205 Norte, Colonia Del Valle, San Pedro Garza García, N.L., C.P. 66220, México",
+  address: "Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220, México",
   phone: "+52 81 8335 2086",
   email: "info@santossaucedo.com",
 };

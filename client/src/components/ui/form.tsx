@@ -90,12 +90,13 @@ const FormLabel = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
 >(({ className, ...props }, ref) => {
-  const { error, formItemId } = useFormField()
+  const { formItemId } = useFormField()
 
+  // La etiqueta no cambia de color con el error: solo el mensaje (FormMessage) lo señala
   return (
     <Label
       ref={ref}
-      className={cn(error && "text-destructive", className)}
+      className={className}
       htmlFor={formItemId}
       {...props}
     />
@@ -157,7 +158,9 @@ const FormMessage = React.forwardRef<
     <p
       ref={ref}
       id={formMessageId}
-      className={cn("text-sm font-medium text-destructive", className)}
+      // Rojo sobrio (--ss-error, ss26.css: 8.1:1 sobre blanco), no el rojo saturado de --destructive,
+      // que siguen usando los botones y avisos del panel
+      className={cn("text-sm font-normal text-[color:var(--ss-error)]", className)}
       {...props}
     >
       {body}
