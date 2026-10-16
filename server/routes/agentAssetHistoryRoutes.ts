@@ -3,6 +3,7 @@ import type { Express, Request, Response } from "express";
 import fs from "node:fs";
 import path from "node:path";
 import { z } from "zod";
+import JSZip from "jszip";
 import type { ExecutionContext } from "../agents/core/types";
 import { AiGovernanceBlockedError, inspectAiData } from "../ai/dataGovernance";
 import {
@@ -150,6 +151,24 @@ export function registerAgentAssetHistoryRoutes(app: Express): void {
       console.error("Copy history detail error:", error);
       res.status(500).json({ error: "Failed to load copy history record" });
     }
+  });
+
+  app.get("/api/admin/copies-ai/:id/export/:format", authMiddleware, requirePermission("agents"), async (req: Request, res: Response) => {
+    if (!z.string().uuid().safeParse(req.params.id).success) return res.status(404).end();
+    const format = z.enum(["txt", "html", "json"]).safeParse(req.params.format);
+    if (!format.success) return res.status(404).end();
+    try {
+      const copy = await getAgentCopy(req.params.id);
+      if (!copy) return res.status(404).end();
+      const plainText = copyPlainText(copy.content);
+      res.set({ "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff", "Content-Security-Policy": "sandbox" });
+      res.attachment(`copy-${copy.id}.${format.data}`);
+      if (format.data === "json") return res.type("application/json").send(JSON.stringify({ title: copy.title, language: copy.language, agent: copy.agentType, content: copy.content, plainText }, null, 2));
+      if (format.data === "txt") return res.type("text/plain; charset=utf-8").send(`${copy.title}\n\n${plainText}\n`);
+      // A portable reading document, never executable model HTML.
+      const escape = (value: string) => value.replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]!);
+      return res.type("text/html; charset=utf-8").send(`<!doctype html><html lang="${copy.language === "en" ? "en" : "es"}"><meta charset="utf-8"><title>${escape(copy.title)}</title><body><h1>${escape(copy.title)}</h1><pre style="white-space:pre-wrap;font:16px/1.6 sans-serif">${escape(plainText)}</pre></body></html>`);
+    } catch { res.status(500).json({ error: "No se pudo exportar el copy." }); }
   });
 
   app.post("/api/admin/copies-ai/:id/archive", authMiddleware, requirePermission("agents"), async (req: Request, res: Response) => {
@@ -384,10 +403,37 @@ export function registerAgentAssetHistoryRoutes(app: Express): void {
       if (!privatePresentationPathBelongsTo(storagePath, presentation.id)) return res.status(404).end();
       const stream = await openPrivatePresentationStream(storagePath!);
       if (!stream) return res.status(404).end();
-      streamPrivatePresentation(res, storagePath!, stream, `presentacion-${presentation.id}-diapositiva-${index.data + 1}.png`, "inline");
+      streamPrivatePresentation(res, storagePath!, stream, `presentacion-${presentation.id}-diapositiva-${index.data + 1}.png`, req.query.download !== undefined ? "attachment" : "inline");
     } catch {
       res.status(404).end();
     }
+  });
+
+  app.get("/api/admin/generated-presentations/:id/slides.zip", authMiddleware, requirePermission("agents"), async (req: Request, res: Response) => {
+    if (!z.string().uuid().safeParse(req.params.id).success) return res.status(404).end();
+    try {
+      const presentation = await storage.getGeneratedPresentationById(req.params.id);
+      if (!presentation || presentation.status !== "active") return res.status(404).end();
+      const refs = Array.isArray(presentation.pngUrls) ? presentation.pngUrls : [];
+      const zip = new JSZip();
+      let totalBytes = 0, files = 0;
+      for (let index = 0; index < refs.length; index++) {
+        if (!privatePresentationPathBelongsTo(refs[index], presentation.id)) continue;
+        const stream = await openPrivatePresentationStream(refs[index]);
+        if (!stream) continue;
+        const chunks: Buffer[] = [];
+        for await (const chunk of stream) {
+          const bytes = Buffer.from(chunk); totalBytes += bytes.length;
+          if (totalBytes > 128 * 1024 * 1024) { stream.destroy(); return res.status(413).json({ error: "Descargue las diapositivas individualmente: el conjunto supera 128 MB." }); }
+          chunks.push(bytes);
+        }
+        zip.file(`diapositiva-${String(index + 1).padStart(2, "0")}.png`, Buffer.concat(chunks)); files++;
+      }
+      if (!files) return res.status(404).end();
+      const bytes = await zip.generateAsync({ type: "nodebuffer", compression: "STORE" });
+      res.set({ "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" });
+      res.attachment(`diapositivas-${presentation.id}.zip`).type("application/zip").send(bytes);
+    } catch { if (!res.headersSent) res.status(500).json({ error: "No se pudo preparar la descarga de diapositivas." }); }
   });
 
   app.delete("/api/admin/generated-presentations/:id", authMiddleware, requirePermission("agents"), (_req: Request, res: Response) => {

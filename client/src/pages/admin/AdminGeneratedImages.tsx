@@ -1,5 +1,7 @@
 import { AgentCreator } from "@/components/admin/AgentCreator";
-import { useEffect } from "react";
+import { AssetDownloadButton } from "@/components/admin/AssetFiles";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useEffect, useState } from "react";
 import { AdminPageHelp } from "@/components/admin/AdminPageHelp";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { useQuery } from "@tanstack/react-query";
@@ -9,9 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { Sparkles, Copy, ExternalLink, ImageOff, Download } from "lucide-react";
+import { Sparkles, Copy, ExternalLink, ImageOff, Download, Eye } from "lucide-react";
 import { Link } from "wouter";
-import { downloadHref } from "@/components/admin/ImageUpload";
+
 
 interface GeneratedImageRow {
   id: string;
@@ -39,6 +41,7 @@ export default function AdminGeneratedImages() {
     requireAuth();
   }, [requireAuth]);
   const { toast } = useToast();
+  const [preview, setPreview] = useState<GeneratedImageRow | null>(null);
 
   const { data: images = [], isLoading, isError, error, refetch } = useQuery<GeneratedImageRow[]>({
     queryKey: ["/api/admin/generated-images"],
@@ -164,7 +167,7 @@ export default function AdminGeneratedImages() {
                         <p className="text-xs text-muted-foreground italic">Noticia original eliminada</p>
                       )}
 
-                      <div className="flex items-center gap-1 pt-1">
+                      <div className="flex flex-wrap items-center gap-2 pt-1">
                         <Button
                           size="sm"
                           variant="outline"
@@ -175,23 +178,11 @@ export default function AdminGeneratedImages() {
                           <Copy className="w-3 h-3 mr-1" />
                           Copiar URL
                         </Button>
-                        {img.available ? (
-                          <Button asChild size="sm" variant="outline" data-testid={`button-download-${img.id}`}>
-                            <a
-                              href={downloadHref(img.imageUrl)}
-                              download={img.imageUrl.split("?")[0].split("/").pop() || "imagen.png"}
-                              rel="noopener noreferrer"
-                            >
-                              <Download className="w-3 h-3 mr-1" />
-                              Descargar
-                            </a>
-                          </Button>
-                        ) : (
-                          <Button size="sm" variant="outline" disabled data-testid={`button-download-${img.id}`}>
-                            <Download className="w-3 h-3 mr-1" />
-                            Descargar
-                          </Button>
-                        )}
+                        {img.available && <>
+                          <Button size="sm" variant="outline" onClick={() => setPreview(img)} data-testid={`button-preview-${img.id}`}><Eye className="w-4 h-4" />Ver imagen</Button>
+                          <AssetDownloadButton url={img.imageUrl} filename={img.imageUrl.split("?")[0].split("/").pop() || "imagen.png"} testId={`button-download-${img.id}`}>Descargar</AssetDownloadButton>
+                        </>}
+
                       </div>
                     </div>
                   </CardContent>
@@ -202,6 +193,12 @@ export default function AdminGeneratedImages() {
         </div>
       </main>
 
+      <Dialog open={!!preview} onOpenChange={open => !open && setPreview(null)}>
+        <DialogContent className="admin-asset-dialog max-w-5xl max-h-[90dvh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Imagen generada por IA</DialogTitle><DialogDescription>{preview?.prompt || "Vista completa del archivo guardado."}</DialogDescription></DialogHeader>
+          {preview && <><img src={preview.imageUrl} alt={preview.prompt || "Imagen generada por IA"} className="max-h-[65dvh] w-full object-contain" /><AssetDownloadButton url={preview.imageUrl} filename={preview.imageUrl.split("/").pop() || "imagen.png"}>Descargar imagen</AssetDownloadButton></>}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

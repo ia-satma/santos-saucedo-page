@@ -1,6 +1,8 @@
+import { AssetDownloadButton } from "@/components/admin/AssetFiles";
+import { agentTone } from "@/features/admin/appearance";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useSearch } from "wouter";
 import { Archive, ArchiveRestore, Check, ClipboardCopy, FileText, Filter, History, Search, X } from "lucide-react";
 import { AGENT_DEFINITIONS } from "@shared/agentConstants";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -76,6 +78,7 @@ export default function AdminCopyHistory() {
   const { isAuthenticated, isLoading: authLoading, requireAuth } = useAdminAuth();
   const { toast } = useToast();
   const [location, setLocation] = useLocation();
+  const searchParams = useSearch();
   const [search, setSearch] = useState("");
   const [agentType, setAgentType] = useState("all");
   const [status, setStatus] = useState<"all" | CopyStatus>("all");
@@ -90,7 +93,7 @@ export default function AdminCopyHistory() {
     requireAuth();
   }, [requireAuth]);
 
-  const selectedId = useMemo(() => new URLSearchParams(location.split("?")[1] || "").get("copy"), [location]);
+  const selectedId = useMemo(() => new URLSearchParams(searchParams).get("copy"), [searchParams]);
   const queryString = useMemo(() => {
     const params = new URLSearchParams({ page: String(page), pageSize: "25", archived: String(showArchived) });
     if (search.trim()) params.set("search", search.trim());
@@ -235,7 +238,7 @@ export default function AdminCopyHistory() {
             {!copiesQuery.isLoading && !copiesQuery.isError && copies.length === 0 && <Card><CardContent className="flex flex-col items-center gap-3 py-16 text-center text-muted-foreground"><FileText className="h-9 w-9 opacity-35" /><p className="text-sm">No hay copys que coincidan con estos filtros.</p><p className="max-w-md text-xs">Los siguientes resultados completos de los agentes de texto aparecerán aquí automáticamente.</p></CardContent></Card>}
             <div className="space-y-3">
               {copies.map((copy) => (
-                <Card key={copy.id} className={`transition-colors ${selectedId === copy.id ? "border-primary" : "hover:border-primary/40"}`}>
+                <Card key={copy.id} data-tone={agentTone(copy.agentType)} className={`admin-copy-card transition-colors ${selectedId === copy.id ? "border-primary" : "hover:border-primary/40"}`}>
                   <CardContent className="p-4">
                     <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
                       <button type="button" className="min-w-0 text-left" onClick={() => setLocation(`/admin/copies-ai?copy=${copy.id}`)} data-testid={`button-open-copy-${copy.id}`}>
@@ -266,7 +269,7 @@ export default function AdminCopyHistory() {
                 <div className="mt-4 flex flex-wrap gap-2"><Badge variant="secondary">{STATUS_LABEL[selected.status]}</Badge><Badge variant="outline">{selected.language}</Badge><Badge variant="outline">{formatDate(selected.createdAt)}</Badge></div>
                 {selected.articleId && <Link href={`/admin/news/${selected.articleId}/edit`} className="mt-4 block text-sm font-medium text-primary hover:underline">Abrir publicación relacionada</Link>}
                 <pre className="mt-5 max-h-[50vh] overflow-auto whitespace-pre-wrap break-words rounded-md border bg-muted/25 p-4 font-sans text-sm leading-relaxed text-foreground">{selected.plainText}</pre>
-                <div className="mt-5 flex flex-wrap gap-2"><Button size="sm" onClick={() => void copyToClipboard()}><ClipboardCopy className="mr-2 h-4 w-4" />Copiar texto</Button><Button size="sm" variant="outline" disabled={archiveMutation.isPending} onClick={() => archiveMutation.mutate({ id: selected.id, archived: !selected.archived })}>{selected.archived ? <ArchiveRestore className="mr-2 h-4 w-4" /> : <Archive className="mr-2 h-4 w-4" />}{selected.archived ? "Restaurar vista" : "Archivar"}</Button></div>
+                <div className="mt-5 flex flex-wrap gap-2"><Button size="sm" onClick={() => void copyToClipboard()}><ClipboardCopy className="mr-2 h-4 w-4" />Copiar texto</Button><AssetDownloadButton url={`/api/admin/copies-ai/${selected.id}/export/txt`} filename={`copy-${selected.id}.txt`} testId="download-copy-txt">Descargar TXT</AssetDownloadButton><AssetDownloadButton url={`/api/admin/copies-ai/${selected.id}/export/html`} filename={`copy-${selected.id}.html`} testId="download-copy-html">Descargar HTML</AssetDownloadButton><Button size="sm" variant="outline" disabled={archiveMutation.isPending} onClick={() => archiveMutation.mutate({ id: selected.id, archived: !selected.archived })}>{selected.archived ? <ArchiveRestore className="mr-2 h-4 w-4" /> : <Archive className="mr-2 h-4 w-4" />}{selected.archived ? "Restaurar vista" : "Archivar"}</Button></div>
                 <p className="mt-4 flex items-start gap-2 text-xs leading-relaxed text-muted-foreground"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-green-600" />La instantánea no puede editarse ni eliminarse. Archivar solo la oculta de la vista principal.</p>
               </CardContent>
             </Card>}

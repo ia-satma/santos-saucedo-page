@@ -1,3 +1,4 @@
+import { AssetDownloadButton, PrivateAssetPreview } from "@/components/admin/AssetFiles";
 import { useEffect, useState } from "react";
 import { AdminPageHelp } from "@/components/admin/AdminPageHelp";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -18,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Presentation, Loader2, FileDown, FileText, Image as ImageIcon, Wand2, Eye } from "lucide-react";
@@ -340,10 +341,10 @@ export default function AdminPresentations() {
                   {([
                     ["pptx", "PowerPoint (.pptx) — editable"],
                     ["pdf", "PDF"],
-                    ["png", "Imágenes (.png por diapositiva)"],
+                    ["png", "PNG por diapositiva y vista previa (siempre incluidas)"],
                   ] as [Format, string][]).map(([f, label]) => (
                     <label key={f} className="flex items-center gap-2 text-sm cursor-pointer">
-                      <Checkbox checked={formats[f]} onCheckedChange={() => toggleFormat(f)} data-testid={`checkbox-format-${f}`} />
+                      <Checkbox checked={f === "png" || formats[f]} disabled={f === "png"} onCheckedChange={() => toggleFormat(f)} data-testid={`checkbox-format-${f}`} />
                       {label}
                     </label>
                   ))}
@@ -490,7 +491,7 @@ export default function AdminPresentations() {
             {presentations.map((p) => {
               const pngUrls = Array.isArray(p.pngUrls) ? p.pngUrls : [];
               const pngAvailable = pngUrls.map((_, index) => p.availability?.png[index] ?? true);
-              const hasPreview = pngAvailable.some(Boolean);
+              const hasPreview = pngAvailable.some(Boolean) || Boolean(p.pdfUrl);
               const hasPptx = Boolean(p.pptxUrl && (p.availability?.pptx ?? true));
               const hasPdf = Boolean(p.pdfUrl && (p.availability?.pdf ?? true));
               const hasStoredPaths = Boolean(p.pptxUrl || p.pdfUrl || pngUrls.length);
@@ -520,21 +521,10 @@ export default function AdminPresentations() {
                         <Eye className="w-3 h-3 mr-1" />Previsualizar
                       </Button>
                     )}
-                    {hasPptx && p.pptxUrl && (
-                      <a href={`${p.pptxUrl}?download=1`} className="inline-flex" data-testid={`download-pptx-${p.id}`}>
-                        <Button size="sm" variant="outline"><FileDown className="w-3 h-3 mr-1" />PPTX</Button>
-                      </a>
-                    )}
-                    {hasPdf && p.pdfUrl && (
-                      <a href={`${p.pdfUrl}?download=1`} className="inline-flex" data-testid={`download-pdf-${p.id}`}>
-                        <Button size="sm" variant="outline"><FileText className="w-3 h-3 mr-1" />PDF</Button>
-                      </a>
-                    )}
-                    {hasPreview && pngUrls[0] && pngAvailable[0] && (
-                      <a href={`${pngUrls[0]}?download=1`} className="inline-flex" data-testid={`download-png-${p.id}`}>
-                        <Button size="sm" variant="outline"><ImageIcon className="w-3 h-3 mr-1" />PNG portada</Button>
-                      </a>
-                    )}
+                    {hasPptx && p.pptxUrl && <AssetDownloadButton url={p.pptxUrl} filename={`presentacion-${p.id}.pptx`} testId={`download-pptx-${p.id}`}>PPTX</AssetDownloadButton>}
+                    {hasPdf && p.pdfUrl && <AssetDownloadButton url={p.pdfUrl} filename={`presentacion-${p.id}.pdf`} testId={`download-pdf-${p.id}`}>PDF</AssetDownloadButton>}
+                    {pngAvailable.some(Boolean) && <AssetDownloadButton url={`/api/admin/generated-presentations/${p.id}/slides.zip`} filename={`diapositivas-${p.id}.zip`} testId={`download-png-${p.id}`}>Todas las PNG (ZIP)</AssetDownloadButton>}
+
                   </div>
 
                   {p.availability && hasStoredPaths && hasMissingFile && (
@@ -555,9 +545,10 @@ export default function AdminPresentations() {
 
       {/* Vista previa in-panel: muestra las PNG por diapositiva (índice 0 = portada). */}
       <Dialog open={!!previewId} onOpenChange={(open) => !open && setPreviewId(null)}>
-        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className="admin-asset-dialog max-w-5xl max-h-[90dvh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Vista previa de la presentación</DialogTitle>
+            <DialogDescription>Revise y descargue las diapositivas conservadas en el historial privado.</DialogDescription>
           </DialogHeader>
           {(() => {
             const pre = presentations.find((p) => p.id === previewId);
@@ -569,6 +560,7 @@ export default function AdminPresentations() {
                 available: pre?.availability?.png[index] ?? true,
               }))
               .filter((entry) => entry.available);
+            if (!availablePngs.length && pre?.pdfUrl) return <PrivateAssetPreview url={pre.pdfUrl} label={pre.title} pdf />;
             if (!availablePngs.length) {
               return (
                 <p className="text-sm text-muted-foreground py-2">
@@ -583,7 +575,8 @@ export default function AdminPresentations() {
                     <p className="text-xs uppercase tracking-wide text-muted-foreground">
                       {index === 0 ? "Portada" : `Diapositiva ${index}`}
                     </p>
-                    <img src={url} alt={index === 0 ? "Portada" : `Diapositiva ${index}`} className="w-full rounded-md border" loading="lazy" />
+                    <PrivateAssetPreview url={url} label={index === 0 ? "Portada" : `Diapositiva ${index}`} />
+                    <AssetDownloadButton url={`${url}?download=1`} filename={`presentacion-${pre!.id}-diapositiva-${index + 1}.png`} testId={`download-slide-${index}`}>Descargar {index === 0 ? "portada" : `diapositiva ${index}`}</AssetDownloadButton>
                   </div>
                 ))}
               </div>

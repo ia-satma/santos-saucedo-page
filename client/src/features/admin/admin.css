@@ -1352,3 +1352,8 @@
 @media (forced-colors: active) {
   .admin-nav-link.is-active, .admin-agent-choice.is-selected { border-left-color: Highlight; outline: 1px solid Highlight; }
 }
+.admin-copy-card { border-left: 4px solid var(--tone); }
+.admin-copy-card .text-primary { color: var(--tone); }
+.admin-asset-dialog { font-family: var(--font-sans); font-size: 16px; line-height: 1.6; }
+.admin-asset-dialog h2 { font-family: var(--font-sans); }
+.admin-asset-dialog button { min-height: 40px; font-size: 15px; }
