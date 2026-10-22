@@ -314,7 +314,9 @@ export class DatabaseStorage extends GeneratedAssetsRepository implements IStora
   }
 
   async createNews(insertNews: InsertNews): Promise<News> {
-    const [item] = await db.insert(news).values(insertNews).returning();
+    // Cierre por defecto: si quien crea la nota (agente, importación o panel) no pide
+    // publicarla de forma explícita, nace como borrador y espera revisión humana.
+    const [item] = await db.insert(news).values({ ...insertNews, published: insertNews.published === true }).returning();
     return item;
   }
 

@@ -19,6 +19,7 @@ import { formatNewsDate } from "@/lib/newsDate";
 import { MonitorList, MonitorSubscribe } from "@/components/monitor/MonitorList";
 import { chrome26 } from "@/components/home26/chrome26";
 import { TextLink } from "@/components/home26/primitives";
+import { copyToClipboard, emailShareHref, newsShareUrl, sourceLabel, whatsappShareHref } from "@/lib/shareNews";
 import type { News, TeamMember } from "@shared/schema";
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
@@ -169,6 +170,8 @@ export default function NewsDetail() {
     share: string;
     /** Compartir por correo (mailto) */
     shareEmail: string;
+    /** Pie de una nota breve que comenta una noticia externa: "Fuente: El Economista" */
+    source: string;
     relatedNews: string;
     errorMessage: string;
     copyLink: string;
@@ -180,6 +183,7 @@ export default function NewsDetail() {
       home: "Home",
       share: "Share",
       shareEmail: "Email",
+      source: "Source",
       relatedNews: "More from the Labor Monitor",
       errorMessage: "Article not found",
       copyLink: "Copy link",
@@ -191,6 +195,7 @@ export default function NewsDetail() {
       home: "Inicio",
       share: "Compartir",
       shareEmail: "Correo",
+      source: "Fuente",
       relatedNews: "Más del Monitor Laboral",
       errorMessage: "Artículo no encontrado",
       copyLink: "Copiar enlace",
@@ -202,6 +207,7 @@ export default function NewsDetail() {
       home: "Startseite",
       share: "Teilen",
       shareEmail: "E-Mail",
+      source: "Quelle",
       relatedNews: "Weitere Nachrichten",
       errorMessage: "Nachricht nicht gefunden",
       copyLink: "Link kopieren",
@@ -213,6 +219,7 @@ export default function NewsDetail() {
       home: "首页",
       share: "分享",
       shareEmail: "邮件",
+      source: "来源",
       relatedNews: "更多新闻",
       errorMessage: "未找到新闻",
       copyLink: "复制链接",
@@ -224,6 +231,7 @@ export default function NewsDetail() {
       home: "홈",
       share: "공유",
       shareEmail: "이메일",
+      source: "출처",
       relatedNews: "뉴스 더 보기",
       errorMessage: "뉴스를 찾을 수 없습니다",
       copyLink: "링크 복사",
@@ -235,6 +243,7 @@ export default function NewsDetail() {
       home: "ホーム",
       share: "共有",
       shareEmail: "メール",
+      source: "出典",
       relatedNews: "その他のニュース",
       errorMessage: "ニュースが見つかりません",
       copyLink: "リンクをコピー",
@@ -246,6 +255,7 @@ export default function NewsDetail() {
       home: "الرئيسية",
       share: "مشاركة",
       shareEmail: "البريد الإلكتروني",
+      source: "المصدر",
       relatedNews: "المزيد من الأخبار",
       errorMessage: "الخبر غير موجود",
       copyLink: "نسخ الرابط",
@@ -257,6 +267,7 @@ export default function NewsDetail() {
       home: "Главная",
       share: "Поделиться",
       shareEmail: "Эл. почта",
+      source: "Источник",
       relatedNews: "Другие новости",
       errorMessage: "Новость не найдена",
       copyLink: "Скопировать ссылку",
@@ -268,6 +279,7 @@ export default function NewsDetail() {
       home: "Accueil",
       share: "Partager",
       shareEmail: "E-mail",
+      source: "Source",
       relatedNews: "Autres actualités",
       errorMessage: "Actualité non trouvée",
       copyLink: "Copier le lien",
@@ -279,6 +291,7 @@ export default function NewsDetail() {
       home: "Home",
       share: "Condividi",
       shareEmail: "E-mail",
+      source: "Fonte",
       relatedNews: "Altre notizie",
       errorMessage: "Notizia non trovata",
       copyLink: "Copia link",
@@ -296,32 +309,26 @@ export default function NewsDetail() {
   // Formato único de fecha del Monitor (lib/newsDate): el mismo que el listado de /news
   const formatDate = (date: Date | string | null) => formatNewsDate(date, language);
 
-  const handleShare = (platform: "linkedin" | "email") => {
-    const url = window.location.href;
-    const shareTitle = translatedFields.title || newsArticle?.title;
-    const shareExcerpt = translatedFields.excerpt || newsArticle?.excerpt;
-    
-    const shareUrls = {
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-      email: `mailto:?subject=${encodeURIComponent(shareTitle || "")}&body=${encodeURIComponent(`${shareExcerpt || ""}\n\n${url}`)}`,
-    };
-    
-    if (platform === "email") {
-      window.location.href = shareUrls[platform];
+  // Se comparte siempre el enlace público de la nota en el sitio de la firma (no el del medio
+  // citado ni el de la vista previa); la tarjeta de WhatsApp sale de las etiquetas del servidor.
+  const shareUrl = () => (newsArticle ? newsShareUrl(newsArticle.slug) : window.location.href);
+  const shareTitle = () => translatedFields.title || newsArticle?.title || "";
+
+  const handleShare = (platform: "whatsapp" | "email") => {
+    const url = shareUrl();
+    if (platform === "whatsapp") {
+      window.open(whatsappShareHref(shareTitle(), url), "_blank", "noopener,noreferrer");
     } else {
-      window.open(shareUrls[platform], "_blank", "width=600,height=400");
+      window.location.href = emailShareHref(shareTitle(), url, translatedFields.excerpt || newsArticle?.excerpt);
     }
   };
 
   const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
+    if (await copyToClipboard(shareUrl())) {
       toast({
         title: t.linkCopied,
         duration: 3000,
       });
-    } catch (err) {
-      console.error("Failed to copy link:", err);
     }
   };
 
@@ -512,7 +519,6 @@ export default function NewsDetail() {
               <NewsHeroImage key={heroImage} src={heroImage} />
 
               {(newsArticle?.documentUrl || newsArticle?.documentUrlEs) && <div className="mb-10 border-y border-ss-rule py-5"><a href={(language==='es'?newsArticle?.documentUrlEs||newsArticle?.documentUrl:newsArticle?.documentUrl||newsArticle?.documentUrlEs)!} target="_blank" rel="noopener noreferrer" className="text-sm underline underline-offset-4">{language==='es'?'Consultar documento PDF':'Read PDF document'}</a></div>}
-              {newsArticle?.sourceUrl && <p className="text-xs text-ss-medio mb-8"><a href={newsArticle?.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline">{language==='es'?'Fuente original':'Original source'}</a></p>}
               <div
                 className="mb-12 relative"
                 data-testid="container-news-content"
@@ -549,14 +555,31 @@ export default function NewsDetail() {
                 )}
               </div>
 
+              {/* Nota breve con fuente: el análisis es de la firma y la noticia comentada se cita
+                  al pie ("Fuente: El Economista"), con enlace al medio en otra pestaña. */}
+              {newsArticle?.sourceUrl && (
+                <p className="mb-12 text-base text-ss-medio" data-testid="text-news-source">
+                  {t.source}:{" "}
+                  <a
+                    href={newsArticle.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-ss-marino underline underline-offset-4 decoration-1"
+                    data-testid="link-news-source"
+                  >
+                    {sourceLabel(newsArticle.sourceName, newsArticle.sourceUrl)}
+                  </a>
+                </p>
+              )}
+
               {/* Compartir y suscribirse bajo un solo filete. Apilados hasta lg (a propósito: a 768
                   no caben en una fila en es, fr, de, ru ni ja); desde lg, compartir a un lado y la
                   suscripción al otro, y si no caben (ruso) la suscripción baja a su propia línea,
                   sin otro filete. En el sitio estático MonitorSubscribe no se pinta y queda solo
                   compartir. */}
               <div className="mb-16 border-t border-ss-rule pt-8 lg:flex lg:flex-wrap lg:items-center lg:justify-between lg:gap-x-10 lg:gap-y-4">
-                {/* Compartir: fila de etiqueta con botones de texto (LinkedIn · Correo · Copiar
-                    enlace), sin bordes ni iconos; 44 px de alto útil por el relleno. Cada "·" va
+                {/* Compartir: fila de etiqueta con botones de texto (Copiar enlace · WhatsApp ·
+                    Correo), sin bordes, iconos ni contadores; 44 px de alto útil por el relleno. Cada "·" va
                     unido al botón que sigue (whitespace-nowrap): ninguno queda al final de una
                     línea. Bajo sm, "Compartir" en su propia línea. */}
                 <div data-testid="section-share">
@@ -569,11 +592,22 @@ export default function NewsDetail() {
                     <button
                       type="button"
                       className="ss-label inline-flex min-h-[44px] items-center text-ss-marino underline-offset-[6px] decoration-1 hover:underline"
-                      onClick={() => handleShare("linkedin")}
-                      data-testid="button-share-linkedin"
+                      onClick={handleCopyLink}
+                      data-testid="button-share-copy-link"
                     >
-                      LinkedIn
+                      {t.copyLink}
                     </button>
+                    <span className="inline-flex items-center gap-x-2 whitespace-nowrap">
+                      <span aria-hidden="true" className="text-ss-medio">·</span>
+                      <button
+                        type="button"
+                        className="ss-label inline-flex min-h-[44px] items-center text-ss-marino underline-offset-[6px] decoration-1 hover:underline"
+                        onClick={() => handleShare("whatsapp")}
+                        data-testid="button-share-whatsapp"
+                      >
+                        WhatsApp
+                      </button>
+                    </span>
                     <span className="inline-flex items-center gap-x-2 whitespace-nowrap">
                       <span aria-hidden="true" className="text-ss-medio">·</span>
                       <button
@@ -583,17 +617,6 @@ export default function NewsDetail() {
                         data-testid="button-share-email"
                       >
                         {t.shareEmail}
-                      </button>
-                    </span>
-                    <span className="inline-flex items-center gap-x-2 whitespace-nowrap">
-                      <span aria-hidden="true" className="text-ss-medio">·</span>
-                      <button
-                        type="button"
-                        className="ss-label inline-flex min-h-[44px] items-center text-ss-marino underline-offset-[6px] decoration-1 hover:underline"
-                        onClick={handleCopyLink}
-                        data-testid="button-share-copy-link"
-                      >
-                        {t.copyLink}
                       </button>
                     </span>
                   </div>

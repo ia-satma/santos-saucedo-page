@@ -31,6 +31,8 @@ export const newsEditorSchema = z
       .or(z.literal(""))
       .nullable()
       .optional(),
+    // Medio de la noticia comentada (p. ej. "El Economista"); se muestra al pie como "Fuente: …"
+    sourceName: z.string().trim().max(120).nullable().optional(),
     category: z.enum(["press", "insights", "rankings", "events", "alerts"]),
     categoryEs: z.string().max(100),
     published: z.boolean(),
@@ -48,6 +50,12 @@ export const newsEditorSchema = z
         code: "custom",
         path: ["excerpt"],
         message: "Complete el extracto en español e inglés antes de publicar.",
+      });
+    if (value.sourceName?.trim() && !value.sourceUrl?.trim())
+      ctx.addIssue({
+        code: "custom",
+        path: ["sourceUrl"],
+        message: "Agregue el enlace de la fuente citada.",
       });
     if (
       value.memberIds &&

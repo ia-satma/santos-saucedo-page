@@ -95,9 +95,12 @@ export const news = pgTable("news", {
   documentUrl: text("document_url"),
   documentUrlEs: text("document_url_es"),
   sourceUrl: text("source_url"),
+  // Medio citado en una nota breve con fuente ("El Economista"); se muestra al pie como "Fuente: …"
+  sourceName: text("source_name"),
   tags: jsonb("tags").$type<string[]>(),
   featuredHome: boolean("featured_home").default(false),
-  published: boolean("published").default(true),
+  // Nada se publica solo: una nota nueva nace en borrador salvo que una persona la publique
+  published: boolean("published").default(false),
   category: text("category").default("press"),
   categoryEs: text("category_es").default("Prensa"),
   authorId: varchar("author_id"),

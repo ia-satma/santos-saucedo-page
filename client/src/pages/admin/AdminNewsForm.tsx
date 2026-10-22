@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { newsCategories } from "@shared/schema";
+import { sourceLabel } from "@/lib/shareNews";
 const today = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -27,6 +28,7 @@ const initial = {
   documentUrl: "",
   documentUrlEs: "",
   sourceUrl: "",
+  sourceName: "",
   category: "insights",
   categoryEs: "Insights",
   published: false,
@@ -37,6 +39,22 @@ const initial = {
   memberIds: [] as string[],
 };
 type Draft = typeof initial;
+// Estructura de la nota breve con fuente: análisis propio de la firma sobre una noticia
+// externa. No se copia el texto del medio; se cita al pie con "Fuente".
+const BRIEF_TEMPLATE_ES = `Contexto en una o dos frases, con palabras de la firma: qué se publicó, quién lo emitió y desde cuándo aplica.
+
+## Qué significa para las empresas
+
+Análisis de la firma: a quién aplica, qué cambia en la operación y qué riesgos o plazos conviene vigilar.
+
+Recomendación práctica: qué revisar, documentar o ajustar.`;
+const BRIEF_TEMPLATE_EN = `Context in one or two sentences, in the firm's own words: what was published, who issued it and when it applies.
+
+## What it means for employers
+
+The firm's analysis: who it applies to, what changes in day-to-day operations and which risks or deadlines to watch.
+
+Practical recommendation: what to review, document or adjust.`;
 function localInput(value: string) {
   const d = new Date(value);
   return new Date(d.getTime() - d.getTimezoneOffset() * 60000)
@@ -275,9 +293,23 @@ export default function AdminNewsForm() {
             </p>
           </div>
           <div>
-            <label htmlFor="news-body" className="block text-sm mb-2">
-              Cuerpo de la publicación
-            </label>
+            <div className="flex flex-wrap items-baseline justify-between gap-3 mb-2">
+              <label htmlFor="news-body" className="block text-sm">
+                Cuerpo de la publicación
+              </label>
+              {!draft[contentKey].trim() && (
+                <button
+                  type="button"
+                  className="text-xs underline"
+                  data-testid="button-brief-template"
+                  onClick={() =>
+                    field(contentKey, lang === "es" ? BRIEF_TEMPLATE_ES : BRIEF_TEMPLATE_EN)
+                  }
+                >
+                  Usar formato de nota breve con fuente
+                </button>
+              )}
+            </div>
             <TextEditor
               id="news-body"
               value={draft[contentKey]}
@@ -310,20 +342,46 @@ export default function AdminNewsForm() {
                   onChange={(v) => field("documentUrl", v)}
                 />
               </div>
-              <div>
-                <label className="block text-sm mb-2" htmlFor="news-source">
-                  Fuente original (opcional)
-                </label>
-                <Input
-                  id="news-source"
-                  type="url"
-                  placeholder="https://"
-                  value={draft.sourceUrl}
-                  onChange={(e) => field("sourceUrl", e.target.value)}
-                />
-                <p className="text-xs text-muted-foreground mt-2">
-                  La fuente y el documento descargable son referencias
-                  independientes.
+              <div className="border bg-white p-5 rounded-md space-y-4" data-testid="section-news-source">
+                <div>
+                  <h3 className="text-sm font-medium">Fuente citada (nota breve)</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Para comentar una noticia de otro medio: título propio, de dos a
+                    cuatro párrafos de análisis de la firma (“Qué significa para las
+                    empresas”) y la fuente al pie. No copie la nota del medio; cite su
+                    enlace.
+                  </p>
+                </div>
+                <div className="grid sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-4">
+                  <div>
+                    <label className="block text-sm mb-2" htmlFor="news-source-name">
+                      Medio
+                    </label>
+                    <Input
+                      id="news-source-name"
+                      maxLength={120}
+                      placeholder="El Economista"
+                      value={draft.sourceName}
+                      onChange={(e) => field("sourceName", e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm mb-2" htmlFor="news-source">
+                      Enlace a la noticia
+                    </label>
+                    <Input
+                      id="news-source"
+                      type="url"
+                      placeholder="https://"
+                      value={draft.sourceUrl}
+                      onChange={(e) => field("sourceUrl", e.target.value)}
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground" data-testid="text-source-preview">
+                  {draft.sourceUrl.trim()
+                    ? <>Al pie de la nota se verá: <strong>Fuente: {sourceLabel(draft.sourceName, draft.sourceUrl) || "…"}</strong>, con enlace al medio.</>
+                    : "Sin enlace no se muestra fuente. El documento PDF y la fuente son referencias independientes."}
                 </p>
               </div>
             </div>
@@ -344,8 +402,9 @@ export default function AdminNewsForm() {
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              Un borrador puede revisarse en privado. Una fecha futura mantiene
-              la nota fuera del sitio hasta ese momento.
+              Un borrador puede revisarse en privado. Nada se publica solo:
+              la nota aparece en el sitio únicamente cuando una persona activa
+              “Publicada”. Una fecha futura la mantiene fuera hasta ese momento.
             </p>
             <div>
               <label htmlFor="news-date" className="block text-xs mb-2">
