@@ -7,9 +7,9 @@ export const mediaDefaults = {
     "name": "Santos & Saucedo"
   },
   "hero": {
-    "videoDesktop": "/video/portada-azul-1920.mp4",
-    "videoMobile": "/video/portada-azul-1280.mp4",
-    "poster": "/video/portada-azul-poster.jpg",
+    "videoDesktop": "/video/portada-color-1920.mp4",
+    "videoMobile": "/video/portada-color-1280.mp4",
+    "poster": "/video/portada-color-poster.jpg",
     "videoEnabled": true
   },
   "photos": {

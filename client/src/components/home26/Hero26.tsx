@@ -6,10 +6,10 @@ import { SectionMark } from "./primitives";
 import { home26, langAttrs, type Lang26 } from "./content";
 import { chrome26 } from "./chrome26";
 
-// Video de la portada (client/public/video): tomas de dron de Monterrey con el tratamiento azul
-// ya aplicado. Ruta con la base de Pages (/santos-saucedo-page/ en el build estático).
+// Video de la portada (client/public/video): tomas de dron de Monterrey a color natural,
+// sin tinte. Ruta con la base de Pages (/santos-saucedo-page/ en el build estático).
 const VIDEO_DIR = `${import.meta.env.BASE_URL}video/`;
-const POSTER = `${VIDEO_DIR}portada-azul-poster.jpg`;
+const POSTER = `${VIDEO_DIR}portada-color-poster.jpg`;
 // 1280 hasta 1024 px de ancho (teléfono y tableta); 1920 en el resto. Se elige al montar.
 const SMALL_SCREEN = "(max-width: 1024px)";
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";

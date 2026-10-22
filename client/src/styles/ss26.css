@@ -418,18 +418,19 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   box-shadow: none;
 }
 
-/* Fotografía: personas en gris; lugares en color suave, salvo en la portada, donde todo va
-   en gris.
-   Retratos en escala de grises (.ss-photo o, explícito, .ss-photo--mono). En la portada, la
-   fachada de La firma y la sala de Empresas extranjeras llevan el mismo gris (M1, prueba a
-   ciegas 3 a 0: una sola voz fotográfica; el color de la sala chocaba con el Azul Profundo).
-   Las fotos de la oficina en /offices, /about, /contact y /careers van en color suave
-   (.ss-photo--soft, K1; en /offices ganó 5 a 0): el gris aplanaba la madera, el latón, la piel
-   y la obra. La fachada, con el cielo, un poco más apagada (.ss-photo--sky). Con o sin
-   .ss-photo al lado, --soft manda (0,2,0 gana a .ss-photo--mono). .ss-photo--colour: la
-   imagen de cabecera de la nota. */
-.ss-photo,
-.ss-photo--mono {
+/* Fotografía (petición del cliente, 2026-10-22): las personas van a color natural; los lugares
+   en color suave, salvo en la portada, donde la fachada de La firma y la sala de Empresas
+   extranjeras siguen en gris (.ss-photo--mono, M1: el color de la sala chocaba con el Azul
+   Profundo).
+   .ss-photo: retratos, sin filtro. Las fotos de la oficina en /offices, /about, /contact y
+   /careers van en color suave (.ss-photo--soft, K1; en /offices ganó 5 a 0); la fachada, con el
+   cielo, un poco más apagada (.ss-photo--sky). --soft manda sobre --mono (0,2,0).
+   .ss-photo--colour: la imagen de cabecera de la nota. */
+.ss-photo {
+  filter: none;
+}
+.ss-photo--mono,
+.ss-photo.ss-photo--mono {
   filter: grayscale(1) contrast(1.04);
 }
 .ss-photo--soft,
@@ -480,23 +481,24 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   background-color: var(--ss-navy);
   color: #fff;
 }
-/* Capas de lectura (LEEME): velo Azul Profundo al 66 %, elipse central más oscura (1600 × 760
-   en el lienzo, con la caída medida en la muestra aprobada: más densa en el centro y casi nula
-   al borde), degradado arriba para el menú y abajo hacia la sección siguiente */
+/* Capas de lectura: el video va a color natural (cliente, 2026-10-22), sin velo azul. Solo un
+   oscurecido neutro (negro, sin tinte): leve en toda la imagen, más denso en la elipse central
+   detrás del logotipo y la frase, y degradados arriba para el menú y abajo hacia la sección
+   siguiente. */
 .ss-hero-veil {
-  background-color: rgb(20 21 62 / 0.66);
+  background-color: rgb(0 0 0 / 0.26);
   background-image:
-    linear-gradient(to bottom, rgb(14 15 40 / 0.7), rgb(14 15 40 / 0) 16%),
-    linear-gradient(to top, rgb(14 15 40 / 0.66), rgb(14 15 40 / 0) 25%),
+    linear-gradient(to bottom, rgb(0 0 0 / 0.55), rgb(0 0 0 / 0) 18%),
+    linear-gradient(to top, rgb(0 0 0 / 0.5), rgb(0 0 0 / 0) 28%),
     radial-gradient(
       41.67% 35.19% at 50% 50%,
-      rgb(18 19 48 / 0.45) 0%,
-      rgb(18 19 48 / 0.42) 30%,
-      rgb(18 19 48 / 0.35) 50%,
-      rgb(18 19 48 / 0.25) 70%,
-      rgb(18 19 48 / 0.12) 90%,
-      rgb(18 19 48 / 0.03) 110%,
-      rgb(18 19 48 / 0) 125%
+      rgb(0 0 0 / 0.56) 0%,
+      rgb(0 0 0 / 0.52) 30%,
+      rgb(0 0 0 / 0.42) 50%,
+      rgb(0 0 0 / 0.28) 70%,
+      rgb(0 0 0 / 0.12) 90%,
+      rgb(0 0 0 / 0.03) 110%,
+      rgb(0 0 0 / 0) 125%
     );
 }
 /* La § de marca de agua: 820 de alto, a 40 del borde derecho y centrada 20 por debajo del

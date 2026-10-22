@@ -432,7 +432,7 @@ export function Socios26({ lang }: { lang: Lang26 }) {
                       decoding="async"
                       width={652}
                       height={652}
-                      className="ss-photo ss-photo--mono aspect-[4/5] h-auto w-full object-cover object-[50%_28%] transition-transform duration-700 [transition-timing-function:var(--ss-ease)] motion-safe:group-hover:scale-[1.01] motion-reduce:transform-none motion-reduce:transition-none"
+                      className="ss-photo aspect-[4/5] h-auto w-full object-cover object-[50%_28%] transition-transform duration-700 [transition-timing-function:var(--ss-ease)] motion-safe:group-hover:scale-[1.01] motion-reduce:transform-none motion-reduce:transition-none"
                     />
                   </span>
                   <span className="block sm:mt-5">

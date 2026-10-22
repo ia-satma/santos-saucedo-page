@@ -288,7 +288,7 @@ export default function Team() {
                 decoding="async"
                 width={652}
                 height={652}
-                className="ss-photo ss-photo--mono absolute inset-0 h-full w-full object-cover object-[50%_28%] transition-transform duration-700 [transition-timing-function:var(--ss-ease)] motion-safe:group-hover:scale-[1.01] motion-reduce:transform-none motion-reduce:transition-none"
+                className="ss-photo absolute inset-0 h-full w-full object-cover object-[50%_28%] transition-transform duration-700 [transition-timing-function:var(--ss-ease)] motion-safe:group-hover:scale-[1.01] motion-reduce:transform-none motion-reduce:transition-none"
                 onError={handlePhotoError}
               />
             )}
@@ -414,7 +414,7 @@ export default function Team() {
               <p className="sr-only">{t.mosaicNote}</p>
             </div>
             {/* Una sola rejilla contenida en todos los tramos (4, 6 y 8 columnas) de retratos
-                4/5 en grises, con el encuadre de las tarjetas de socio; sin acordeón ni zoom al
+                4/5 a color, con el encuadre de las tarjetas de socio; sin acordeón ni zoom al
                 pasar el cursor: no llevan a ninguna parte. La celda Hueso de cierre es un
                 elemento más que ocupa las columnas sobrantes de la última fila. */}
             <ul className="grid grid-cols-4 gap-3 md:grid-cols-6 lg:grid-cols-8 lg:gap-6">
