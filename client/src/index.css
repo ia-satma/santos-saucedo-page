@@ -11,48 +11,48 @@
   --button-outline: #c9c8bd;
   --badge-outline: #e1e0d7;
   --opaque-button-border-intensity: -8;
-  --elevate-1: rgba(36, 37, 92, .03);
-  --elevate-2: rgba(36, 37, 92, .06);
+  --elevate-1: rgba(29, 28, 104, .03);
+  --elevate-2: rgba(29, 28, 104, .06);
   /* Los tokens --ss-* ("Clásica") viven en styles/ss26.css, también en :root. */
 
   /* ── PALETA LIGHT ("Clásica", manual 2025) ────────────────
      Blanco para cuerpos de página, Hueso #F3F1EA como único papel,
-     Azul Marino #24255C como tinta de titulares y acción,
+     Azul Marino #1D1C68 como tinta de titulares y acción,
      Gris Tinta #33333B para el texto. La lima no es acento de interfaz.
   ─────────────────────────────────────────────────────────── */
   --background: 0 0% 100%;         /* #FFFFFF — blanco puro           */
-  --foreground: 239 44% 25%;       /* #24255C — Azul Marino            */
+  --foreground: 240.79 57.58% 25.88%;       /* #1D1C68 — Azul Marino            */
   --card: 0 0% 100%;               /* #FFFFFF — blanco puro           */
-  --card-foreground: 239 44% 25%;
+  --card-foreground: 240.79 57.58% 25.88%;
   --card-border: 54 14% 86%;       /* #E1E0D7 — Línea                 */
   --border: 54 14% 86%;
   --sidebar: 240 5% 98%;
   --sidebar-foreground: 240 7% 22%;
   --sidebar-border: 54 14% 86%;
-  --sidebar-primary: 239 44% 25%;
+  --sidebar-primary: 240.79 57.58% 25.88%;
   --sidebar-primary-foreground: 0 0% 98%;
   --sidebar-accent: 240 5% 96%;
-  --sidebar-accent-foreground: 239 44% 25%;
-  --sidebar-ring: 239 44% 25%;
+  --sidebar-accent-foreground: 240.79 57.58% 25.88%;
+  --sidebar-ring: 240.79 57.58% 25.88%;
   --popover: 0 0% 100%;
   --popover-foreground: 240 7% 22%;
   --popover-border: 54 14% 86%;
-  --primary: 239 44% 25%;          /* #24255C — Azul Marino           */
+  --primary: 240.79 57.58% 25.88%;          /* #1D1C68 — Azul Marino           */
   --primary-foreground: 0 0% 100%;
   --secondary: 47 27% 94%;         /* #F3F1EA — Hueso                 */
-  --secondary-foreground: 239 44% 25%;
+  --secondary-foreground: 240.79 57.58% 25.88%;
   --muted: 47 27% 94%;
   --muted-foreground: 240 6% 40%;  /* #5F5F6B — Gris Medio            */
   --body: 240 7% 22%;              /* #33333B — Gris Tinta            */
   --accent: 47 27% 94%;
-  --accent-foreground: 239 44% 25%;
-  --brand: 239 44% 25%;            /* Azul Marino: la lima deja bg-brand/text-brand */
+  --accent-foreground: 240.79 57.58% 25.88%;
+  --brand: 240.79 57.58% 25.88%;            /* Azul Marino: la lima deja bg-brand/text-brand */
   --brand-foreground: 0 0% 100%;
   --destructive: 0 72% 45%;
   --destructive-foreground: 0 0% 98%;
   --input: 54 10% 76%;             /* #C9C8BD                         */
-  --ring: 239 44% 25%;
-  --chart-1: 239 44% 25%;
+  --ring: 240.79 57.58% 25.88%;
+  --chart-1: 240.79 57.58% 25.88%;
   --chart-2: 240 38% 38%;
   --chart-3: 240 4% 32%;
   --chart-4: 240 4% 52%;
@@ -303,9 +303,9 @@
     margin: 0;
     font-family: var(--font-sans);
     font-weight: 600;
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.4;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.09em;
     text-transform: uppercase;
     text-align: start;
     font-variant-numeric: tabular-nums lining-nums;
@@ -1124,13 +1124,13 @@ html, body {
    ====================================================== */
 .editorial-page-hero {
   /* Tokens que usan ss-link, ss-arrow y el eyebrow */
-  --ss-navy: #1a1b42;
+  --ss-navy: #18175b;
   --ss-lime: #b2eb3e;
   position: relative;
   overflow: hidden;
   isolation: isolate;
   color: #fff;
-  background-color: #1a1b42;
+  background-color: #18175b;
   background-image: none;
   /* Anillos ring-ring y contorno de foco sobre Azul Profundo: lima */
   --ring: 80 81% 58%;
@@ -1375,7 +1375,7 @@ footer.ss26:lang(ja) :is(a, button) {
    Hueso, h1 Azul Marino (350, como el oscuro), etiquetas en Gris Medio, § en Azul Marino, filete inferior
    en Línea y foco Azul Marino. Va después de las reglas oscuras: les gana a igual especificidad. */
 .editorial-page-hero--paper {
-  --ring: 239 44% 25%;
+  --ring: 240.79 57.58% 25.88%;
   color: var(--ss-marino);
   background-color: var(--ss-paper);
   border-bottom: 1px solid var(--ss-rule);

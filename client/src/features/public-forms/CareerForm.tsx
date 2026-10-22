@@ -6,7 +6,7 @@ import defaults from "@shared/cms-defaults.json";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-export function CareerForm({ source = "careers" }: { source?: string }) {
+export function CareerForm({ source = "careers", className = "mt-10" }: { source?: string; className?: string }) {
   const { language } = useLanguage();
   const settings = useCmsContent("forms", defaults.forms).careers;
   const t = settings.labels[language as "es" | "en"] || settings.labels.en;
@@ -49,23 +49,24 @@ export function CareerForm({ source = "careers" }: { source?: string }) {
     );
   return (
     <section
-      className="mt-12 border-t border-ss-rule pt-10"
+      className={`ss-contact-card ss-career-card ${className}`}
       data-testid="career-application-form"
     >
-      <h3 className="ss-h3 mb-6">{t.title}</h3>
+      <h3 className="ss-h2-sm mb-6">{t.title}</h3>
       {success ? (
         <p role="status" className="py-5">
           {t.success}
         </p>
       ) : (
-        <form onSubmit={send} className="space-y-6 max-w-2xl">
+        <form onSubmit={send} className="space-y-5">
           <div className="grid gap-5 sm:grid-cols-2">
             {(["fullName", "email", "phone", "interest"] as const).map(
               (key) => (
-                <label key={key} className="space-y-2">
+                <label key={key} className="block space-y-2">
                   <span>{key === "fullName" ? t.name : t[key]}</span>
                   <Input
                     name={key}
+                    className="h-[44px]"
                     type={
                       key === "email"
                         ? "email"
@@ -100,12 +101,13 @@ export function CareerForm({ source = "careers" }: { source?: string }) {
           </div>
           <label className="block space-y-2">
             <span>{t.message}</span>
-            <Textarea name="message" maxLength={12000} />
+            <Textarea name="message" className="min-h-[112px] resize-y" maxLength={12000} />
           </label>
           <label className="block space-y-2">
             <span>{t.cv}</span>
             <Input
               name="cv"
+              className="ss-career-file"
               type="file"
               accept="application/pdf,.pdf"
               required
@@ -137,6 +139,7 @@ export function CareerForm({ source = "careers" }: { source?: string }) {
           <Button
             type="submit"
             disabled={busy}
+            className="min-h-[48px] w-full rounded-lg px-6 text-[17px] font-semibold"
             data-testid={`submit-application-${source}`}
           >
             {busy ? t.sending : t.submit}

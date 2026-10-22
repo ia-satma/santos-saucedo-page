@@ -1,9 +1,13 @@
+import { Fragment, useState } from "react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { ZoomIn, ChevronLeft, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import type { OfficeImage } from "@shared/schema";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
 import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
-import type { ReactNode } from "react";
+import { OfficePhotography } from "@/components/editorial/OfficePhotography";
+import { mediaDefaults } from "@/lib/cmsMedia";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -14,89 +18,13 @@ import { chrome26 } from "@/components/home26/chrome26";
 import { useSiteContact } from "@/components/home26/useSiteContact";
 import { keepFirmName } from "@/lib/firmName";
 import { useOfficeLabel } from "@/lib/officeLabel";
-import { highFetchPriority } from "@/lib/teamPhotoSources";
 import type { LanguageCode } from "@shared/schema";
-// Fotos de la oficina (ronda 6): dos tamaños por foto. Solo estas; el resto del folder de la
-// firma no se usa (varias tienen huellas de retoque).
-import fachadaS from "@assets/ss26/oficina/fachada-768.webp";
-import fachadaL from "@assets/ss26/oficina/fachada-1536.webp";
-import recepcionS from "@assets/ss26/oficina/recepcion-768.webp";
-import recepcionL from "@assets/ss26/oficina/recepcion-1536.webp";
-import vestibuloS from "@assets/ss26/oficina/vestibulo-768.webp";
-import vestibuloL from "@assets/ss26/oficina/vestibulo-1536.webp";
-import vestibulo2S from "@assets/ss26/oficina/vestibulo-2-768.webp";
-import vestibulo2L from "@assets/ss26/oficina/vestibulo-2-1536.webp";
-import salaJuntas2S from "@assets/ss26/oficina/sala-juntas-2-768.webp";
-import salaJuntas2L from "@assets/ss26/oficina/sala-juntas-2-1536.webp";
-import areaTrabajoS from "@assets/ss26/oficina/area-trabajo-768.webp";
-import areaTrabajoL from "@assets/ss26/oficina/area-trabajo-1536.webp";
-import areaTrabajo2S from "@assets/ss26/oficina/area-trabajo-2-768.webp";
-import areaTrabajo2L from "@assets/ss26/oficina/area-trabajo-2-1536.webp";
-import privadoS from "@assets/ss26/oficina/privado-768.webp";
-import privadoL from "@assets/ss26/oficina/privado-1536.webp";
-import esculturaS from "@assets/ss26/oficina/escultura-768.webp";
-import esculturaL from "@assets/ss26/oficina/escultura-1536.webp";
-import obraMazoS from "@assets/ss26/oficina/obra-mazo-768.webp";
-import obraMazoL from "@assets/ss26/oficina/obra-mazo-1536.webp";
-
-// "La oficina" (H1, ronda 6), como la página de oficinas de Von Wobeser: h1, una frase de
-// introducción, la fachada y las fotos por tema, y la dirección con "Cómo llegar". Sin metros,
-// pisos, arquitecto ni adjetivos: la firma no los ha confirmado. Sin carrusel, sin visor y sin
-// animación. Las fotos se muestran con sus colores originales.
-
-type PhotoKey =
-  | "fachada"
-  | "recepcion"
-  | "vestibulo"
-  | "vestibulo2"
-  | "salaJuntas2"
-  | "areaTrabajo"
-  | "areaTrabajo2"
-  | "privado"
-  | "escultura"
-  | "obraMazo";
-
-// Medidas reales de cada archivo (srcset con su ancho verdadero; width/height del grande
-// reservan el hueco y la página no se mueve al cargar). La fachada, la recepción y la escultura
-// no llegan a 1536: sus archivos "-1536" miden 1159, 1522 y 1024 de ancho. La obra del mazo,
-// recortada (I4), mide 1536 × 940.
-interface PhotoFile {
-  s: string;
-  sw: number;
-  l: string;
-  lw: number;
-  lh: number;
-}
-
-const PHOTOS: Record<PhotoKey, PhotoFile> = {
-  fachada: { s: fachadaS, sw: 768, l: fachadaL, lw: 1159, lh: 900 },
-  recepcion: { s: recepcionS, sw: 761, l: recepcionL, lw: 1522, lh: 1024 },
-  vestibulo: { s: vestibuloS, sw: 768, l: vestibuloL, lw: 1536, lh: 1024 },
-  vestibulo2: { s: vestibulo2S, sw: 768, l: vestibulo2L, lw: 1536, lh: 1024 },
-  salaJuntas2: { s: salaJuntas2S, sw: 768, l: salaJuntas2L, lw: 1536, lh: 1024 },
-  areaTrabajo: { s: areaTrabajoS, sw: 768, l: areaTrabajoL, lw: 1536, lh: 1024 },
-  areaTrabajo2: { s: areaTrabajo2S, sw: 768, l: areaTrabajo2L, lw: 1536, lh: 1024 },
-  privado: { s: privadoS, sw: 768, l: privadoL, lw: 1536, lh: 1024 },
-  escultura: { s: esculturaS, sw: 640, l: esculturaL, lw: 1024, lh: 1536 },
-  obraMazo: { s: obraMazoS, sw: 768, l: obraMazoL, lw: 1536, lh: 940 },
-};
-
-// sizes según el hueco de cada foto. .ss-container: 1320 px de contenido y 5vw de margen
-// (20 px bajo 400). Desde lg el cuerpo de SplitSection (columnas 5–12) mide hasta 872 px
-// (≈ 60vw); antes, todo el contenedor (≈ 90vw). Media columna: la mitad menos el hueco de 24 px.
-// La fachada va en el mismo cuerpo (I3): mismo sizes que las anchas.
-const SIZES = {
-  wide: "(min-width: 1024px) min(872px, 60vw), 90vw",
-  half: "(min-width: 1024px) min(424px, 30vw), (min-width: 640px) calc(45vw - 12px), 90vw",
-  // Obra: vertical y horizontal a la misma altura (columnas 235fr / 576fr desde sm: 29 % y 71 %
-  // de lo que queda tras el hueco)
-  tall: "(min-width: 1024px) min(246px, 17.4vw), (min-width: 640px) calc(26.1vw - 7px), 90vw",
-  beside: "(min-width: 1024px) min(603px, 42.6vw), (min-width: 640px) calc(63.9vw - 17px), 90vw",
-} as const;
+type PhotoKey = "fachada" | "recepcion" | "vestibulo" | "vestibulo2" | "salaJuntas2" | "areaTrabajo" | "areaTrabajo2" | "privado" | "escultura" | "obraMazo";
 
 interface OfficesContent {
-  /** Introducción: una sola frase, sin cifras ni adjetivos */
+  /** Introducción editorial, editable por idioma. */
   intro: string;
+  story?: { workTitle: string; workText: string; cultureTitle: string; cultureText: string };
   reception: string;
   meetingRooms: string;
   workAreas: string;
@@ -117,7 +45,8 @@ interface OfficesContent {
 const content: Record<LanguageCode, OfficesContent> = {
   es: {
     intro:
-      "La oficina de Santos & Saucedo está en la colonia Del Valle, en San Pedro Garza García, Nuevo León, frente al Cerro de la Silla.",
+      "Nuestras oficinas se encuentran en la colonia Del Valle, en San Pedro Garza García, Nuevo León. Aquí recibimos a nuestros clientes y desarrollamos el trabajo cotidiano de la firma.",
+    story: {"workTitle": "El trabajo diario", "workText": "Las áreas de trabajo y las salas de reunión permiten alternar el trabajo individual con la colaboración del equipo. Son espacios para revisar documentación, preparar asuntos y conversar con nuestros clientes.", "cultureTitle": "Biblioteca y arte", "cultureText": "La biblioteca jurídica y el arte contemporáneo conviven en distintos espacios de la oficina. Libros, pinturas y esculturas aportan un carácter propio al entorno de trabajo de Santos & Saucedo."},
     reception: "Recepción",
     meetingRooms: "Salas de juntas",
     workAreas: "Áreas de trabajo",
@@ -144,7 +73,8 @@ const content: Record<LanguageCode, OfficesContent> = {
   },
   en: {
     intro:
-      "Santos & Saucedo’s office is in Colonia Del Valle, San Pedro Garza García, Nuevo León, facing Cerro de la Silla.",
+      "Our offices are located in Colonia Del Valle, San Pedro Garza García, Nuevo León. This is where we meet with clients and carry out the firm’s daily work.",
+    story: {"workTitle": "Everyday work", "workText": "Workspaces and meeting rooms accommodate both individual work and team collaboration. These are places to review documents, prepare matters and meet with our clients.", "cultureTitle": "Library and art", "cultureText": "The legal library and contemporary art share spaces throughout the office. Books, paintings and sculptures give the working environment at Santos & Saucedo its own character."},
     reception: "Reception",
     meetingRooms: "Meeting rooms",
     workAreas: "Work areas",
@@ -399,79 +329,31 @@ const dtClass = "ss-label text-ss-medio sm:pt-1";
 const ddClass = "text-[17px] leading-[1.55] text-ss-tinta";
 const ddLinkClass = "hover:text-ss-marino hover:underline underline-offset-4 transition-colors";
 
-/** Una foto: srcset de dos tamaños, medidas para reservar el sitio y carga diferida salvo la
-    primera (la fachada, que se ve al abrir la página). */
-function OfficePhoto({
-  photo,
-  alt,
-  sizes,
-  eager = false,
-  className = "",
-  testId,
-}: {
-  photo: PhotoKey;
-  alt: string;
-  sizes: string;
-  eager?: boolean;
-  className?: string;
-  testId?: string;
-}) {
-  const { photos } = useCmsMedia();
-  const f = PHOTOS[photo];
-  const configured = photos[photo];
-  return (
-    <img
-      src={configured.url}
-      srcSet={configured.smallUrl && configured.smallUrl !== configured.url ? `${configured.smallUrl} ${f.sw}w, ${configured.url} ${f.lw}w` : undefined}
-      sizes={sizes}
-      width={f.lw}
-      height={f.lh}
-      alt={keepFirmName(alt)}
-      loading={eager ? "eager" : "lazy"}
-      decoding="async"
-      {...(eager ? highFetchPriority : {})}
-      className={`block h-auto w-full ${className}`}
-      data-testid={testId}
-    />
-  );
-}
-
-/** Bloque de fotos: el nombre (h2.ss-h2-sm) en el aside y las fotos en el cuerpo */
-function PhotoBlock({
-  id,
-  title,
-  testId,
-  children,
-}: {
-  id: string;
-  title: string;
-  testId: string;
-  children: ReactNode;
-}) {
-  return (
-    <section className="mb-20 lg:mb-24" aria-labelledby={id} data-testid={testId}>
-      <SplitSection
-        aside={
-          <h2 id={id} className="ss-h2-sm">
-            {title}
-          </h2>
-        }
-      >
-        {children}
-      </SplitSection>
-    </section>
-  );
-}
-
 export default function Offices() {
   const siteDetails = useSiteDetails();
+  const media = useCmsMedia();
+  const officePhotos = media.officeGallery.filter(photo => photo.enabled && photo.photo in media.photos);
+  const [selectedPhoto, setSelectedPhoto] = useState<number | null>(null);
   const officeNameFor = useOfficeLabel();
   const cmsChrome = useCmsContent("chrome", chrome26);
   const { language } = useLanguage();
   const editableContent = useCmsContent("offices", content);
   const t = editableContent[language] ?? editableContent.en;
   const title = officeNameFor(language);
+  const story = t.story ?? editableContent.en.story;
   const { data: gallery = [] } = useQuery<OfficeImage[]>({ queryKey: ["/api/office-images"] });
+  const photographicTour = [
+    ...officePhotos.slice(1).map(item => ({
+      featured: item.featured,
+      src: media.photos[item.photo as keyof typeof mediaDefaults.photos].url,
+      small: media.photos[item.photo as keyof typeof mediaDefaults.photos].smallUrl,
+      alt: language === "es" ? item.altEs : item.alt,
+    })),
+    ...(officePhotos.length ? [{featured:true, src: media.photos.fachada.url, small: media.photos.fachada.smallUrl, alt: t.alt.fachada}] : []),
+    ...gallery.map(item => ({featured:false, src:item.imageUrl, small:item.imageUrl, alt:(language === "es" ? item.altEs : item.alt) || title})),
+  ];
+  const activePhoto = selectedPhoto === null ? undefined : photographicTour[selectedPhoto];
+  const nextPhoto = (step: number) => setSelectedPhoto(index => index === null ? null : (index + step + photographicTour.length) % photographicTour.length);
   // Contacto: la etiqueta del menú (nav[5]) en cada idioma
   const nav = (cmsChrome[language] ?? cmsChrome.en).nav;
   // Dirección, teléfono y correo de /api/site-content (los mismos del pie)
@@ -486,18 +368,18 @@ export default function Offices() {
           salta. ss-container: mismo borde izquierdo que logotipo y pie. */}
       <main id="main-content">
         {/* § 01: la oficina pertenece a Nuestra firma en el menú. Sin subtítulo. */}
-        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-offices-hero">
-          <div className="ss-container">
-            <div className="max-w-3xl">
-              <Eyebrow num="01" tone="navy" className="mb-6" />
-              <h1 data-testid="text-offices-title">{title}</h1>
-            </div>
+        <section className={`ss-office-cover ${officePhotos.length ? "ss-office-cover-photo" : ""}`} data-surface="dark" data-testid="section-offices-hero">
+          {officePhotos[0] && <OfficePhotography photo={officePhotos[0].photo as keyof typeof mediaDefaults.photos} eager sizes="100vw" />}
+          <div className="ss-office-cover-shade" aria-hidden="true" />
+          <div className="ss-container relative z-10 pb-12 lg:pb-20">
+            <Eyebrow num="01" tone="light" className="mb-6" />
+            <h1 className="!text-white" data-testid="text-offices-title">{title}</h1>
           </div>
         </section>
 
         <div className="py-16 lg:py-24">
           <div className="ss-container">
-            {/* Introducción: una sola frase, en el cuerpo de la rejilla editorial. En coreano,
+            {/* Introducción en el cuerpo de la rejilla editorial. En coreano,
                 keep-all: a 320 px partía "누에보레온주" y "있으며" dentro de la palabra (D18). */}
             <section className="mb-12 lg:mb-16" data-testid="section-offices-intro">
               <SplitSection>
@@ -510,62 +392,26 @@ export default function Offices() {
               </SplitSection>
             </section>
 
-            {/* La fachada, dentro del contenedor (no a sangre): desde lg en la columna del cuerpo
-                (5–12), con el mismo borde inicial que la introducción y las fotos de abajo (I3);
-                bajo lg, a todo el ancho del contenedor. Nunca más ancha que su archivo (1159 px;
-                el cuerpo mide hasta 872). La única foto que no se difiere. */}
-            <div className="mb-20 lg:mb-24">
-              <SplitSection>
-                <OfficePhoto
-                  photo="fachada"
-                  alt={t.alt.fachada}
-                  sizes={SIZES.wide}
-                  eager
-                  testId="img-offices-facade"
-                />
-              </SplitSection>
-            </div>
-
-            {/* Fotos por tema. Composición editorial: una ancha y dos a media columna, una sola
-                ancha, o una vertical junto a una horizontal; huecos de 24 px (gap-6), sin bordes
-                ni sombras. En teléfono, una debajo de otra. Sin pie de foto: el nombre del bloque
-                basta. */}
-            <div data-testid="section-gallery">
-              <PhotoBlock id="offices-reception" title={t.reception} testId="section-offices-reception">
-                {/* La sala de espera ancha; debajo, recepción (1522 × 1024) y vestíbulo (1536 × 1024)
-                    en columnas 1522fr / 1536fr para que las dos tengan la misma altura */}
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-[1522fr_1536fr]">
-                  <OfficePhoto photo="vestibulo2" alt={t.alt.vestibulo2} sizes={SIZES.wide} className="sm:col-span-2" />
-                  <OfficePhoto photo="recepcion" alt={t.alt.recepcion} sizes={SIZES.half} />
-                  <OfficePhoto photo="vestibulo" alt={t.alt.vestibulo} sizes={SIZES.half} />
-                </div>
-              </PhotoBlock>
-
-              {/* Una sola foto ancha: sala-juntas y sala-juntas-2 son casi la misma toma, y la
-                  primera ya está en la portada (Empresas extranjeras) */}
-              <PhotoBlock id="offices-meeting-rooms" title={t.meetingRooms} testId="section-offices-meeting-rooms">
-                <OfficePhoto photo="salaJuntas2" alt={t.alt.salaJuntas2} sizes={SIZES.wide} />
-              </PhotoBlock>
-
-              <PhotoBlock id="offices-work-areas" title={t.workAreas} testId="section-offices-work-areas">
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <OfficePhoto photo="areaTrabajo" alt={t.alt.areaTrabajo} sizes={SIZES.wide} className="sm:col-span-2" />
-                  <OfficePhoto photo="areaTrabajo2" alt={t.alt.areaTrabajo2} sizes={SIZES.half} />
-                  <OfficePhoto photo="privado" alt={t.alt.privado} sizes={SIZES.half} />
-                </div>
-              </PhotoBlock>
-
-              {/* Vertical junto a horizontal: a la misma altura, el ancho de cada una es su
-                  proporción (1024/1536 y 1536/940), es decir 235fr / 576fr */}
-              <PhotoBlock id="offices-art" title={t.art} testId="section-offices-art">
-                <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-[235fr_576fr]">
-                  <OfficePhoto photo="escultura" alt={t.alt.escultura} sizes={SIZES.tall} />
-                  <OfficePhoto photo="obraMazo" alt={t.alt.obraMazo} sizes={SIZES.beside} />
-                </div>
-              </PhotoBlock>
-            </div>
-
-            {gallery.length > 0 && <PhotoBlock id="offices-gallery" title={title} testId="section-office-gallery"><div className="grid gap-6 sm:grid-cols-2">{gallery.map(photo=><img key={photo.id} src={photo.imageUrl} alt={language==='es'?photo.altEs:photo.alt} className="block h-auto w-full" loading="lazy" />)}</div></PhotoBlock>}
+            <section className="mb-20 lg:mb-24" aria-label={title} data-testid="section-gallery">
+              <div className="ss-office-gallery">
+                {photographicTour.map((photo, index) => (
+                  <Fragment key={`${photo.src}-${index}`}>
+                  <figure className={photo.featured ? "ss-office-photo-featured" : "ss-office-photo-support"}>
+                    <button type="button" className="ss-office-photo-button" onClick={()=>setSelectedPhoto(index)} aria-label={`${language === "es" ? "Ampliar fotografía" : "Enlarge photograph"}: ${photo.alt}`}>
+                      <img src={photo.src} srcSet={photo.small !== photo.src ? `${photo.small} 768w, ${photo.src} 1536w` : undefined}
+                        sizes="(min-width: 1024px) 60vw, 90vw" alt={photo.alt} loading="lazy" decoding="async" />
+                      <span className="ss-office-photo-expand" aria-hidden="true"><ZoomIn size={13} strokeWidth={1.5} /></span>
+                    </button>
+                  </figure>
+                  {story && (index === 5 || index === 11) && <section className="ss-office-story" aria-labelledby={`office-story-${index}`} data-testid={`office-story-${index}`}>
+                    <SplitSection aside={<h2 id={`office-story-${index}`} className="ss-h2-sm">{index === 5 ? story.workTitle : story.cultureTitle}</h2>}>
+                      <p className="ss-prose max-w-[44rem]">{keepFirmName(index === 5 ? story.workText : story.cultureText)}</p>
+                    </SplitSection>
+                  </section>}
+                  </Fragment>
+                ))}
+              </div>
+            </section>
 
             {/* Dirección: el h2 en el aside y en el cuerpo la lista de datos (los del pie) con
                 "Cómo llegar" y "Contacto". Sin límite de medida (I3): los filetes terminan en el
@@ -651,6 +497,19 @@ export default function Offices() {
         </div>
       </main>
 
+      <Dialog open={activePhoto !== undefined} onOpenChange={open=>{if(!open)setSelectedPhoto(null);}}>
+        <DialogContent className="max-w-6xl border-none bg-[#15152a] p-5 text-white sm:p-8" onKeyDown={event=>{if(event.key==='ArrowLeft'){event.preventDefault();nextPhoto(-1);}if(event.key==='ArrowRight'){event.preventDefault();nextPhoto(1);}}}>
+          <DialogTitle className="sr-only">{title}</DialogTitle>
+          {activePhoto && <>
+            <img src={activePhoto.src} alt={activePhoto.alt} className="mx-auto max-h-[72vh] max-w-full rounded-lg object-contain" />
+            <div className="flex items-center justify-between gap-4 pt-3">
+              <button type="button" className="grid size-11 place-items-center rounded-full border border-white/30 hover:bg-white/10" aria-label={language==='es'?'Fotografía anterior':'Previous photograph'} onClick={()=>nextPhoto(-1)}><ChevronLeft /></button>
+              <p aria-live="polite" className="text-sm">{(selectedPhoto ?? 0)+1} / {photographicTour.length}</p>
+              <button type="button" className="grid size-11 place-items-center rounded-full border border-white/30 hover:bg-white/10" aria-label={language==='es'?'Siguiente fotografía':'Next photograph'} onClick={()=>nextPhoto(1)}><ChevronRight /></button>
+            </div>
+          </>}
+        </DialogContent>
+      </Dialog>
       <Footer />
     </div>
   );

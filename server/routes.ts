@@ -292,7 +292,7 @@ export async function registerRoutes(
   // antes de abrir la conexión.
   const PIPELINE_WS_PROTOCOL = 'ss-pipeline';
   const wss = new WebSocketServer({
-    server: httpServer,
+    noServer: true,
     path: '/ws/pipeline',
     handleProtocols: (protocols) => (protocols.has(PIPELINE_WS_PROTOCOL) ? PIPELINE_WS_PROTOCOL : false),
     verifyClient: (info, done) => {
@@ -316,6 +316,19 @@ export async function registerRoutes(
         });
     },
   });
+
+  // El servidor HTTP también recibe el WebSocket de Vite en desarrollo. Un WSS
+  // ligado directamente al servidor rechaza esas conexiones por su otra ruta,
+  // y el cliente de Vite entra en un ciclo de reconexión y recarga de la página.
+  // Solo reclamamos nuestra ruta; Vite gestiona las actualizaciones del frontend.
+  httpServer.on('upgrade', (req, socket, head) => {
+    const pathname = new URL(req.url || '/', 'http://localhost').pathname;
+    if (pathname !== '/ws/pipeline') return;
+    wss.handleUpgrade(req, socket, head, (ws) => {
+      wss.emit('connection', ws, req);
+    });
+  });
+  httpServer.once('close', () => wss.close());
   
   // Heartbeat to detect stale connections
   const heartbeatInterval = setInterval(() => {

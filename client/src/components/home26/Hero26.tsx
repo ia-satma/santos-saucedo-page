@@ -138,7 +138,7 @@ function HeroVideo({
    video-portada/muestras/portada-completa.jpg, lienzo 1920 × 1080): video a toda la primera
    pantalla bajo el encabezado transparente; al centro, el logotipo blanco con § lima, la raya
    lima, la frase y la línea de lugar y año; a la derecha, la § del logotipo como marca de agua
-   blanca al 12 %, completa. Medidas en ss26.css (.ss-hero…), en la unidad --u (1 px a 1920 × 1080). */
+   blanca al 20 %, completa. Medidas en ss26.css (.ss-hero…), en la unidad --u (1 px a 1920 × 1080). */
 export default function Hero26({ lang }: { lang: Lang26 }) {
   const media = useCmsMedia();
   const liveHome = useCmsContent("home", home26);
@@ -186,7 +186,7 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
         <div className="ss-hero-veil absolute inset-0" />
       </div>
 
-      {/* La § oficial del logotipo (seccion.svg), blanca al 12 %: completa dentro del héroe, sin
+      {/* La § oficial del logotipo (seccion.svg), blanca al 20 %: completa dentro del héroe, sin
           recortar ni deformar (aspecto fijo del trazo). Solo desde lg; debajo taparía el logotipo. */}
       <div aria-hidden="true" className="ss-hero-mark-box">
         <SectionMark className="ss-hero-mark" />

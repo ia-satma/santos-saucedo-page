@@ -1,4 +1,5 @@
 import { useCmsMedia } from "@/lib/cmsMedia";
+import { teamPortraitFraming } from "@/lib/teamPortraitFraming";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useMemo, type ReactNode, type SyntheticEvent } from "react";
 import { Link } from "wouter";
@@ -17,7 +18,7 @@ import { keepFirmName } from "@/lib/firmName";
 import type { TeamMember } from "@shared/schema";
 
 // Mosaico "Integrantes del equipo": columnas por tramo (teléfono, md, lg en adelante)
-const EQUIPO_COLUMNS = { phone: 4, md: 6, lg: 8 } as const;
+const EQUIPO_COLUMNS = { phone: 2, md: 4, lg: 6 } as const;
 
 // Clases completas de col-span por tramo (Tailwind solo genera las que aparecen escritas)
 const EQUIPO_SPAN_CLASSES = {
@@ -274,7 +275,7 @@ export default function Team() {
         data-testid={`card-team-member-${member.slug}`}
       >
         <span className="grid grid-cols-[112px_1fr] items-end gap-x-5 sm:block">
-          <span className="relative block overflow-hidden bg-ss-paper aspect-[4/5]">
+          <span className="ss-portrait-frame relative block overflow-hidden bg-ss-paper aspect-[4/5]">
             <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center font-heading text-2xl text-ss-marino/50 select-none">
               {getInitials(member.name)}
             </span>
@@ -282,6 +283,7 @@ export default function Team() {
               // alt vacío: el nombre ya es el texto del enlace
               <img
                 src={member.imageUrl}
+                data-portrait-slug={member.slug}
                 {...photoSrcSetProps(member)}
                 alt=""
                 loading={eager ? "eager" : "lazy"}
@@ -403,7 +405,7 @@ export default function Team() {
             rejilla ocupan su sitio desde el principio y el pie no salta cuando llega /api/team
             (CLS de 0.14–0.28 en pantallas altas en la ronda 4) */}
         {equipoPhotos.length > 0 && (
-          <section className="ss-container pt-20 pb-24 lg:pt-24 lg:pb-32" data-testid="section-associates">
+          <section id="equipo" className="ss-container pt-20 pb-24 lg:pt-24 lg:pb-32" data-testid="section-associates">
             <div className="pb-10 lg:pb-12">
               {/* No repite el h1 "Socios": "Integrantes del equipo", como en la redacción */}
               <h2 className="ss-h2">
@@ -413,14 +415,14 @@ export default function Team() {
                   sin cifra: el número de integrantes no está confirmado */}
               <p className="sr-only">{t.mosaicNote}</p>
             </div>
-            {/* Una sola rejilla contenida en todos los tramos (4, 6 y 8 columnas) de retratos
-                4/5 en color, con el encuadre de las tarjetas de socio; sin acordeón ni zoom al
-                pasar el cursor: no llevan a ninguna parte. La celda Hueso de cierre es un
+            {/* Rejilla de 2, 4 y 6 columnas con encuadres ópticos individuales.
+                La elevación al pasar el cursor es decorativa: los retratos no son enlaces.
+                La celda Hueso de cierre es un
                 elemento más que ocupa las columnas sobrantes de la última fila. */}
-            <ul className="grid grid-cols-4 gap-3 md:grid-cols-6 lg:grid-cols-8 lg:gap-6">
+            <ul className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6 lg:gap-6">
               {equipoPhotos.map((photo, idx) => (
                 // aria-hidden en el elemento: la lista no anuncia 37 elementos vacíos
-                <li key={idx} aria-hidden="true" className="relative aspect-[4/5] overflow-hidden bg-ss-paper" data-testid={`img-equipo-${idx}`}>
+                <li key={`${photo}-${idx}`} aria-hidden="true" className="ss-team-portrait ss-portrait-frame relative aspect-[4/5] overflow-hidden bg-ss-paper" data-testid={`img-equipo-${idx}`}>
                   <img
                     src={photo}
                     alt=""
@@ -428,7 +430,8 @@ export default function Team() {
                     decoding="async"
                     width={295}
                     height={295}
-                    className="ss-photo h-full w-full object-cover object-[50%_28%]"
+                    className="ss-photo absolute h-auto max-w-none"
+                    style={teamPortraitFraming(photo)}
                   />
                 </li>
               ))}

@@ -98,7 +98,7 @@ interface SEOConfig {
 
 // Cada idioma usa su propio texto (antes una anulación en inglés pisaba a los otros ocho).
 // Descripciones neutras, en tercera persona, sin elogios, llamadas ni datos sin confirmar;
-// la frase de los 35 años se conserva tal cual. Títulos en minúscula inicial (también en
+// la experiencia del equipo se comunica como más de 40 años. Títulos en minúscula inicial (también en
 // ruso e inglés).
 const practiceGroupsConfig: SEOConfig = {
   title: navTitle(1),
@@ -166,32 +166,32 @@ const seoConfig: Record<string, SEOConfig> = {
       it: "Santos & Saucedo | Studio legale per le imprese a San Pedro Garza García",
     },
     description: {
-      en: "Human-capital administration and legal defense for companies, rooted in labor law. More than 35 years of experience and a national alliance across more than 72 Mexican cities.",
-      es: "Administración del capital humano y defensa legal para empresas, con raíz en el derecho laboral. Más de 35 años de experiencia y alianza nacional en más de 72 ciudades de México.",
+      en: "Human-capital administration and legal defense for companies, rooted in labor law. More than 40 years of experience and a national alliance across more than 72 Mexican cities.",
+      es: "Administración del capital humano y defensa legal para empresas, con raíz en el derecho laboral. Más de 40 años de experiencia y alianza nacional en más de 72 ciudades de México.",
       de: "Verwaltung des Humankapitals und Rechtsverteidigung für Unternehmen, mit Wurzeln im Arbeitsrecht. Mehr als 35 Jahre Erfahrung und eine nationale Allianz in mehr als 72 Städten Mexikos.",
-      zh: "为企业提供人力资本管理与法律辩护，以劳动法为根基。超过35年的经验，并通过全国联盟覆盖墨西哥72个以上城市。",
-      ko: "노동법에 뿌리를 둔 기업의 인적 자본 관리와 법률 방어. 35년 이상의 경험과 멕시코 72개 이상 도시에 걸친 전국 제휴.",
-      ja: "労働法を基盤とする、企業のための人的資本管理と法的防御。35年以上の経験と、メキシコ72以上の都市にわたる全国的な提携。",
-      ar: "إدارة رأس المال البشري والدفاع القانوني للشركات، بجذور في قانون العمل. أكثر من 35 عامًا من الخبرة وتحالف وطني في أكثر من 72 مدينة في المكسيك.",
-      ru: "Управление человеческим капиталом и правовая защита компаний с опорой на трудовое право. Более 35 лет опыта и национальный альянс в более чем 72 городах Мексики.",
-      fr: "Administration du capital humain et défense juridique des entreprises, ancrées dans le droit du travail. Plus de 35 ans d’expérience et une alliance nationale dans plus de 72 villes du Mexique.",
-      it: "Amministrazione del capitale umano e difesa legale per le imprese, con radici nel diritto del lavoro. Oltre 35 anni di esperienza e un’alleanza nazionale in più di 72 città del Messico.",
+      zh: "为企业提供人力资本管理与法律辩护，以劳动法为根基。超过40年的经验，并通过全国联盟覆盖墨西哥72个以上城市。",
+      ko: "노동법에 뿌리를 둔 기업의 인적 자본 관리와 법률 방어. 40년 이상의 경험과 멕시코 72개 이상 도시에 걸친 전국 제휴.",
+      ja: "労働法を基盤とする、企業のための人的資本管理と法的防御。40年以上の経験と、メキシコ72以上の都市にわたる全国的な提携。",
+      ar: "إدارة رأس المال البشري والدفاع القانوني للشركات، بجذور في قانون العمل. أكثر من 40 عامًا من الخبرة وتحالف وطني في أكثر من 72 مدينة في المكسيك.",
+      ru: "Управление человеческим капиталом и правовая защита компаний с опорой на трудовое право. Более 40 лет опыта и национальный альянс в более чем 72 городах Мексики.",
+      fr: "Administration du capital humain et défense juridique des entreprises, ancrées dans le droit du travail. Plus de 40 ans d’expérience et une alliance nationale dans plus de 72 villes du Mexique.",
+      it: "Amministrazione del capitale umano e difesa legale per le imprese, con radici nel diritto del lavoro. Oltre 40 anni di esperienza e un’alleanza nazionale in più di 72 città del Messico.",
     },
     path: "/",
   },
   about: {
     title: navTitle(0),
     description: {
-      en: "Santos & Saucedo is a law firm for companies —labor, corporate, immigration and litigation— rooted in labor law, with more than 35 years of experience advising national and multinational companies.",
-      es: "Santos & Saucedo es una firma legal para empresas —laboral, corporativo, migratorio y litigio— con raíz en el derecho laboral y más de 35 años de experiencia asesorando empresas nacionales y multinacionales.",
-      de: "Santos & Saucedo ist eine Kanzlei für Unternehmen – Arbeitsrecht, Gesellschafts- und Vertragsrecht, Migrationsrecht und Prozessführung – mit Wurzeln im Arbeitsrecht und mehr als 35 Jahren Erfahrung in der Beratung nationaler und multinationaler Unternehmen.",
-      zh: "Santos & Saucedo是一家服务企业的律师事务所，业务涵盖劳动、公司、移民和诉讼，以劳动法为根基，拥有超过35年为国内企业和跨国企业提供咨询的经验。",
-      ko: "Santos & Saucedo는 노동, 기업, 이민, 소송 분야에서 기업을 자문하는 법률사무소로, 노동법에 뿌리를 두고 35년 이상 국내 기업과 다국적 기업에 자문해 왔습니다.",
-      ja: "Santos & Saucedoは、労働、企業法務、移民、訴訟の分野で企業を支援する法律事務所です。労働法を基盤とし、35年以上にわたり国内企業と多国籍企業に助言してきました。",
-      ar: "Santos & Saucedo مكتب محاماة للشركات في مجالات العمل والشركات والهجرة والتقاضي، بجذور في قانون العمل وخبرة تزيد على 35 عامًا في تقديم المشورة للشركات الوطنية والمتعددة الجنسيات.",
-      ru: "Santos & Saucedo — юридическая фирма для компаний (трудовое, корпоративное и миграционное право, судебные споры) с опорой на трудовое право и более чем 35-летним опытом консультирования национальных и многонациональных компаний.",
-      fr: "Santos & Saucedo est un cabinet d’avocats pour les entreprises — droit du travail, droit des sociétés, immigration et contentieux — ancré dans le droit du travail, avec plus de 35 ans d’expérience auprès d’entreprises nationales et multinationales.",
-      it: "Santos & Saucedo è uno studio legale per le imprese — lavoro, societario, immigrazione e contenzioso — con radici nel diritto del lavoro e oltre 35 anni di esperienza nella consulenza ad aziende nazionali e multinazionali.",
+      en: "Santos & Saucedo is a law firm for companies —labor, corporate, immigration and litigation— rooted in labor law, with more than 40 years of experience advising national and multinational companies.",
+      es: "Santos & Saucedo es una firma legal para empresas —laboral, corporativo, migratorio y litigio— con raíz en el derecho laboral y más de 40 años de experiencia asesorando empresas nacionales y multinacionales.",
+      de: "Santos & Saucedo ist eine Kanzlei für Unternehmen – Arbeitsrecht, Gesellschafts- und Vertragsrecht, Migrationsrecht und Prozessführung – mit Wurzeln im Arbeitsrecht und mehr als 40 Jahren Erfahrung in der Beratung nationaler und multinationaler Unternehmen.",
+      zh: "Santos & Saucedo是一家服务企业的律师事务所，业务涵盖劳动、公司、移民和诉讼，以劳动法为根基，拥有超过40年为国内企业和跨国企业提供咨询的经验。",
+      ko: "Santos & Saucedo는 노동, 기업, 이민, 소송 분야에서 기업을 자문하는 법률사무소로, 노동법에 뿌리를 두고 40년 이상 국내 기업과 다국적 기업에 자문해 왔습니다.",
+      ja: "Santos & Saucedoは、労働、企業法務、移民、訴訟の分野で企業を支援する法律事務所です。労働法を基盤とし、40年以上にわたり国内企業と多国籍企業に助言してきました。",
+      ar: "Santos & Saucedo مكتب محاماة للشركات في مجالات العمل والشركات والهجرة والتقاضي، بجذور في قانون العمل وخبرة تزيد على 40 عامًا في تقديم المشورة للشركات الوطنية والمتعددة الجنسيات.",
+      ru: "Santos & Saucedo — юридическая фирма для компаний (трудовое, корпоративное и миграционное право, судебные споры) с опорой на трудовое право и более чем 40-летним опытом консультирования национальных и многонациональных компаний.",
+      fr: "Santos & Saucedo est un cabinet d’avocats pour les entreprises — droit du travail, droit des sociétés, immigration et contentieux — ancré dans le droit du travail, avec plus de 40 ans d’expérience auprès d’entreprises nationales et multinationales.",
+      it: "Santos & Saucedo è uno studio legale per le imprese — lavoro, societario, immigrazione e contenzioso — con radici nel diritto del lavoro e oltre 40 anni di esperienza nella consulenza ad aziende nazionali e multinazionali.",
     },
     path: "/about",
   },

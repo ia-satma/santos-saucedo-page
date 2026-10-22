@@ -9,14 +9,14 @@ import { useOfficeLabel } from "@/lib/officeLabel";
 import { useChrome26 } from "./chrome26";
 import { useSiteContact } from "./useSiteContact";
 
-// Área de clic de 32px (WCAG 2.5.8 pide 24px); el subrayado va en el texto, no en la caja.
-const linkCls = "inline-flex min-h-8 items-center text-start text-[16px] transition-colors";
+// Filas compactas en escritorio; se conserva un área táctil amplia en móvil.
+const linkCls = "inline-flex min-h-11 items-center md:min-h-7 text-start text-[17px] transition-colors";
 // Encabezados de columna: etiqueta en blanco tenue sobre Azul Profundo (la lima no va en texto)
 const headCls = "ss-label text-white/75";
 // Listas de enlaces: a 320 px cada columna mide ~128 px y una sola palabra larga
 // (Nutzungsbedingungen, конфиденциальности) se salía; primero el guion del idioma, y si no
 // hay, el corte donde haga falta.
-const listCls = "mt-4 hyphens-auto [overflow-wrap:anywhere]";
+const listCls = "mt-3 hyphens-auto [overflow-wrap:anywhere]";
 
 // Vuelve a abrir el aviso de cookies como diálogo modal (CookieBanner escucha este evento).
 function openCookiePreferences() {
@@ -56,14 +56,14 @@ export default function Footer26({ localized = false }: Footer26Props) {
       {/* Filete superior de 1 px (blanco al 14 %, border-t): separa el pie de un bloque Azul
           Profundo que lo preceda, como el 404; junto a un cuerpo blanco apenas se nota.
           Sin marca de agua: el § grande decorativo aparece una sola vez, en el héroe de la portada. */}
-      <div className="ss-container grid grid-cols-2 gap-x-6 gap-y-14 pb-10 pt-14 md:grid-cols-3 lg:grid-cols-12 lg:pb-12 lg:pt-20">
+      <div className="ss-container grid grid-cols-2 gap-x-6 gap-y-7 py-8 md:grid-cols-3 lg:grid-cols-12 lg:pb-7 lg:pt-10">
         <div className="col-span-2 md:col-span-3 lg:col-span-4">
-          <img src={media.brand.logoLight} alt={media.brand.name} className="h-[34px] w-auto lg:h-[40px]" width={244} height={40} />
+          <img src={media.brand.logoLight} alt={media.brand.name} className="h-[30px] w-auto lg:h-[32px]" width={244} height={40} />
         </div>
 
         {navigation.footer.officeEnabled&&<address className="col-span-2 not-italic md:col-span-1 lg:col-span-3" data-testid="text-footer-address">
           <p className={headCls}>{t.office}</p>
-          <p className="mt-5 text-[16px] leading-[1.6] text-white/80">
+          <p className="mt-3 text-[17px] leading-[1.45] text-white/80">
             {/* bdi: en árabe (RTL) el punto final de "N.L." no salta al principio de la línea */}
             {address.map((line, i) => (
               <span key={i} className="block">
@@ -72,7 +72,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
             ))}
           </p>
           {/* Teléfono y correo siempre de izquierda a derecha: en árabe los grupos de cifras se invertían */}
-          <div className="mt-3 flex flex-col items-start">
+          <div className="mt-2 flex flex-col items-start">
             <a href={phoneHref} dir="ltr" className={`${linkCls} ss-num text-white`} data-testid="link-footer-phone">
               <span className="ss-link">{phone}</span>
             </a>
@@ -97,7 +97,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
           </ul>
         </nav>}
 
-        <div className="flex flex-col gap-12 lg:col-span-3">
+        <div className="flex flex-col gap-5 lg:col-span-3">
           {navigation.footer.legalEnabled&&<nav aria-labelledby="ss26-footer-legal">
             <p id="ss26-footer-legal" className={headCls}>
               {t.legal}
@@ -121,7 +121,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
             <p id="ss26-footer-lang" className={headCls}>
               {chrome.langs.label}
             </p>
-            <div className="mt-4 flex flex-wrap gap-x-5">
+            <div className="mt-2 flex flex-wrap gap-x-5">
               {(["es", "en"] as const).map((code) => (
                 <button
                   key={code}
@@ -150,7 +150,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
       </div>
 
       <div className="ss-container">
-        <div className="flex flex-col gap-4 border-t border-white/15 py-8 text-[13px] leading-relaxed text-white/65 md:flex-row md:items-center md:justify-between md:gap-10">
+        <div className="flex flex-col gap-3 border-t border-white/15 py-5 text-[15px] leading-relaxed text-white/75 md:flex-row md:items-center md:justify-between md:gap-10">
           <p>{t.disclaimer}</p>
           <div className="flex shrink-0 items-center gap-3">
             <p className="ss-num" data-testid="text-copyright">

@@ -902,8 +902,8 @@
     }
   },
   "officeLabels": {
-    "es": "La oficina",
-    "en": "The office",
+    "es": "Nuestras Oficinas",
+    "en": "Our Offices",
     "de": "Das Büro",
     "fr": "Le bureau",
     "it": "La sede",
@@ -928,16 +928,16 @@
         "it": "Santos & Saucedo | Studio legale per le imprese a San Pedro Garza García"
       },
       "description": {
-        "en": "Human-capital administration and legal defense for companies, rooted in labor law. More than 35 years of experience and a national alliance across more than 72 Mexican cities.",
-        "es": "Administración del capital humano y defensa legal para empresas, con raíz en el derecho laboral. Más de 35 años de experiencia y alianza nacional en más de 72 ciudades de México.",
+        "en": "Human-capital administration and legal defense for companies, rooted in labor law. More than 40 years of experience and a national alliance across more than 72 Mexican cities.",
+        "es": "Administración del capital humano y defensa legal para empresas, con raíz en el derecho laboral. Más de 40 años de experiencia y alianza nacional en más de 72 ciudades de México.",
         "de": "Verwaltung des Humankapitals und Rechtsverteidigung für Unternehmen, mit Wurzeln im Arbeitsrecht. Mehr als 35 Jahre Erfahrung und eine nationale Allianz in mehr als 72 Städten Mexikos.",
-        "zh": "为企业提供人力资本管理与法律辩护，以劳动法为根基。超过35年的经验，并通过全国联盟覆盖墨西哥72个以上城市。",
-        "ko": "노동법에 뿌리를 둔 기업의 인적 자본 관리와 법률 방어. 35년 이상의 경험과 멕시코 72개 이상 도시에 걸친 전국 제휴.",
-        "ja": "労働法を基盤とする、企業のための人的資本管理と法的防御。35年以上の経験と、メキシコ72以上の都市にわたる全国的な提携。",
-        "ar": "إدارة رأس المال البشري والدفاع القانوني للشركات، بجذور في قانون العمل. أكثر من 35 عامًا من الخبرة وتحالف وطني في أكثر من 72 مدينة في المكسيك.",
-        "ru": "Управление человеческим капиталом и правовая защита компаний с опорой на трудовое право. Более 35 лет опыта и национальный альянс в более чем 72 городах Мексики.",
-        "fr": "Administration du capital humain et défense juridique des entreprises, ancrées dans le droit du travail. Plus de 35 ans d’expérience et une alliance nationale dans plus de 72 villes du Mexique.",
-        "it": "Amministrazione del capitale umano e difesa legale per le imprese, con radici nel diritto del lavoro. Oltre 35 anni di esperienza e un’alleanza nazionale in più di 72 città del Messico."
+        "zh": "为企业提供人力资本管理与法律辩护，以劳动法为根基。超过40年的经验，并通过全国联盟覆盖墨西哥72个以上城市。",
+        "ko": "노동법에 뿌리를 둔 기업의 인적 자본 관리와 법률 방어. 40년 이상의 경험과 멕시코 72개 이상 도시에 걸친 전국 제휴.",
+        "ja": "労働法を基盤とする、企業のための人的資本管理と法的防御。40年以上の経験と、メキシコ72以上の都市にわたる全国的な提携。",
+        "ar": "إدارة رأس المال البشري والدفاع القانوني للشركات، بجذور في قانون العمل. أكثر من 40 عامًا من الخبرة وتحالف وطني في أكثر من 72 مدينة في المكسيك.",
+        "ru": "Управление человеческим капиталом и правовая защита компаний с опорой на трудовое право. Более 40 лет опыта и национальный альянс в более чем 72 городах Мексики.",
+        "fr": "Administration du capital humain et défense juridique des entreprises, ancrées dans le droit du travail. Plus de 40 ans d’expérience et une alliance nationale dans plus de 72 villes du Mexique.",
+        "it": "Amministrazione del capitale umano e difesa legale per le imprese, con radici nel diritto del lavoro. Oltre 40 anni di esperienza e un’alleanza nazionale in più di 72 città del Messico."
       },
       "path": "/"
     },
@@ -955,16 +955,16 @@
         "it": "Chi siamo | Santos & Saucedo"
       },
       "description": {
-        "en": "Santos & Saucedo is a law firm for companies —labor, corporate, immigration and litigation— rooted in labor law, with more than 35 years of experience advising national and multinational companies.",
-        "es": "Santos & Saucedo es una firma legal para empresas —laboral, corporativo, migratorio y litigio— con raíz en el derecho laboral y más de 35 años de experiencia asesorando empresas nacionales y multinacionales.",
-        "de": "Santos & Saucedo ist eine Kanzlei für Unternehmen – Arbeitsrecht, Gesellschafts- und Vertragsrecht, Migrationsrecht und Prozessführung – mit Wurzeln im Arbeitsrecht und mehr als 35 Jahren Erfahrung in der Beratung nationaler und multinationaler Unternehmen.",
-        "zh": "Santos & Saucedo是一家服务企业的律师事务所，业务涵盖劳动、公司、移民和诉讼，以劳动法为根基，拥有超过35年为国内企业和跨国企业提供咨询的经验。",
-        "ko": "Santos & Saucedo는 노동, 기업, 이민, 소송 분야에서 기업을 자문하는 법률사무소로, 노동법에 뿌리를 두고 35년 이상 국내 기업과 다국적 기업에 자문해 왔습니다.",
-        "ja": "Santos & Saucedoは、労働、企業法務、移民、訴訟の分野で企業を支援する法律事務所です。労働法を基盤とし、35年以上にわたり国内企業と多国籍企業に助言してきました。",
-        "ar": "Santos & Saucedo مكتب محاماة للشركات في مجالات العمل والشركات والهجرة والتقاضي، بجذور في قانون العمل وخبرة تزيد على 35 عامًا في تقديم المشورة للشركات الوطنية والمتعددة الجنسيات.",
-        "ru": "Santos & Saucedo — юридическая фирма для компаний (трудовое, корпоративное и миграционное право, судебные споры) с опорой на трудовое право и более чем 35-летним опытом консультирования национальных и многонациональных компаний.",
-        "fr": "Santos & Saucedo est un cabinet d’avocats pour les entreprises — droit du travail, droit des sociétés, immigration et contentieux — ancré dans le droit du travail, avec plus de 35 ans d’expérience auprès d’entreprises nationales et multinationales.",
-        "it": "Santos & Saucedo è uno studio legale per le imprese — lavoro, societario, immigrazione e contenzioso — con radici nel diritto del lavoro e oltre 35 anni di esperienza nella consulenza ad aziende nazionali e multinazionali."
+        "en": "Santos & Saucedo is a law firm for companies —labor, corporate, immigration and litigation— rooted in labor law, with more than 40 years of experience advising national and multinational companies.",
+        "es": "Santos & Saucedo es una firma legal para empresas —laboral, corporativo, migratorio y litigio— con raíz en el derecho laboral y más de 40 años de experiencia asesorando empresas nacionales y multinacionales.",
+        "de": "Santos & Saucedo ist eine Kanzlei für Unternehmen – Arbeitsrecht, Gesellschafts- und Vertragsrecht, Migrationsrecht und Prozessführung – mit Wurzeln im Arbeitsrecht und mehr als 40 Jahren Erfahrung in der Beratung nationaler und multinationaler Unternehmen.",
+        "zh": "Santos & Saucedo是一家服务企业的律师事务所，业务涵盖劳动、公司、移民和诉讼，以劳动法为根基，拥有超过40年为国内企业和跨国企业提供咨询的经验。",
+        "ko": "Santos & Saucedo는 노동, 기업, 이민, 소송 분야에서 기업을 자문하는 법률사무소로, 노동법에 뿌리를 두고 40년 이상 국내 기업과 다국적 기업에 자문해 왔습니다.",
+        "ja": "Santos & Saucedoは、労働、企業法務、移民、訴訟の分野で企業を支援する法律事務所です。労働法を基盤とし、40年以上にわたり国内企業と多国籍企業に助言してきました。",
+        "ar": "Santos & Saucedo مكتب محاماة للشركات في مجالات العمل والشركات والهجرة والتقاضي، بجذور في قانون العمل وخبرة تزيد على 40 عامًا في تقديم المشورة للشركات الوطنية والمتعددة الجنسيات.",
+        "ru": "Santos & Saucedo — юридическая фирма для компаний (трудовое, корпоративное и миграционное право, судебные споры) с опорой на трудовое право и более чем 40-летним опытом консультирования национальных и многонациональных компаний.",
+        "fr": "Santos & Saucedo est un cabinet d’avocats pour les entreprises — droit du travail, droit des sociétés, immigration et contentieux — ancré dans le droit du travail, avec plus de 40 ans d’expérience auprès d’entreprises nationales et multinationales.",
+        "it": "Santos & Saucedo è uno studio legale per le imprese — lavoro, societario, immigrazione e contenzioso — con radici nel diritto del lavoro e oltre 40 anni di esperienza nella consulenza ad aziende nazionali e multinazionali."
       },
       "path": "/about"
     },
@@ -1105,8 +1105,8 @@
     },
     "offices": {
       "title": {
-        "en": "The office | Santos & Saucedo",
-        "es": "La oficina | Santos & Saucedo",
+        "en": "Our Offices | Santos & Saucedo",
+        "es": "Nuestras Oficinas | Santos & Saucedo",
         "de": "Das Büro | Santos & Saucedo",
         "zh": "办公室 | Santos & Saucedo",
         "ko": "사무실 | Santos & Saucedo",
@@ -1271,8 +1271,8 @@
     "en": {
       "title": "The firm",
       "subtitle": "A partner-led firm with national reach.",
-      "historyText1": "Santos & Saucedo is a labor-law boutique firm with more than 35 years of experience advising national and international companies.",
-      "historyText2": "A company’s decisions about its personnel are rarely only a labor matter: they affect the corporation, its contracts with third parties and, increasingly, people who come from other countries. Out of respect for the confidentiality of its clients’ matters, the firm does not publish their names.",
+      "historyText1": "Santos & Saucedo is a law firm specializing in employment law for businesses. Its team brings more than 40 years of experience advising national and international companies.",
+      "historyText2": "The firm advises on risk prevention, employment relations and dispute resolution. Its practice also integrates the corporate and immigration aspects of its clients’ operations.",
       "valuesTitle": "How we work",
       "values": [
         {
@@ -1294,20 +1294,20 @@
       ],
       "stats": [
         {
-          "value": "35+",
+          "value": "40+",
           "label": "Years of Experience"
         },
         {
           "value": "72+",
-          "label": "Cities with presence"
+          "label": "Cities in our alliance network"
         }
       ]
     },
     "es": {
       "title": "Nuestra firma",
       "subtitle": "Una firma de socios con alcance nacional.",
-      "historyText1": "Santos & Saucedo es una firma especializada en derecho laboral con más de 35 años de experiencia asesorando a empresas nacionales e internacionales.",
-      "historyText2": "Las decisiones de una empresa sobre su personal rara vez son solo laborales: tocan a la sociedad, a los contratos con terceros y, cada vez más, a personas que llegan de otros países. Por respeto a la confidencialidad de sus asuntos, la firma no publica los nombres de sus clientes.",
+      "historyText1": "Santos & Saucedo es una firma especializada en derecho laboral para empresas. Su equipo reúne más de 40 años de experiencia en la asesoría a compañías nacionales e internacionales.",
+      "historyText2": "La firma asesora en prevención de riesgos, relaciones de trabajo y solución de controversias. Su práctica también integra los aspectos corporativos y migratorios que intervienen en la operación de sus clientes.",
       "valuesTitle": "Cómo trabajamos",
       "values": [
         {
@@ -1329,19 +1329,19 @@
       ],
       "stats": [
         {
-          "value": "35+",
+          "value": "40+",
           "label": "Años de experiencia"
         },
         {
           "value": "72+",
-          "label": "Ciudades con presencia"
+          "label": "Ciudades en nuestra red de alianzas"
         }
       ]
     },
     "de": {
       "title": "Über die Kanzlei",
-      "subtitle": "Mehr als 35 Jahre Erfahrung im Arbeitsrecht für Unternehmen",
-      "historyText1": "Santos & Saucedo ist eine auf Arbeitsrecht spezialisierte Boutique-Kanzlei, die seit mehr als 35 Jahren nationale und internationale Unternehmen berät. Von San Pedro Garza García, Nuevo León aus beraten wir die Geschäftsführung, die Personalabteilung und die internen Rechtsteams unserer Mandanten.",
+      "subtitle": "Mehr als 40 Jahre Erfahrung im Arbeitsrecht für Unternehmen",
+      "historyText1": "Santos & Saucedo ist eine auf Arbeitsrecht spezialisierte Boutique-Kanzlei, die seit mehr als 40 Jahren nationale und internationale Unternehmen berät. Von San Pedro Garza García, Nuevo León aus beraten wir die Geschäftsführung, die Personalabteilung und die internen Rechtsteams unserer Mandanten.",
       "historyText2": "Die Entscheidungen eines Unternehmens über sein Personal sind selten rein arbeitsrechtlich: Sie berühren die Gesellschaft, die Verträge mit Dritten und zunehmend Menschen, die aus anderen Ländern kommen. Aus Rücksicht auf die Vertraulichkeit ihrer Angelegenheiten veröffentlicht die Kanzlei die Namen ihrer Mandanten nicht.",
       "valuesTitle": "Wie wir arbeiten",
       "values": [
@@ -1364,7 +1364,7 @@
       ],
       "stats": [
         {
-          "value": "35+",
+          "value": "40+",
           "label": "Jahre Erfahrung"
         },
         {
@@ -1375,8 +1375,8 @@
     },
     "zh": {
       "title": "关于律所",
-      "subtitle": "在企业劳动法领域拥有超过35年的经验",
-      "historyText1": "Santos & Saucedo 是一家专注于劳动法的精品律师事务所，拥有超过35年为国内外企业提供服务的经验。我们立足于新莱昂州圣佩德罗-加尔萨-加西亚，为客户的管理层、人力资源部门和内部法务团队提供咨询。",
+      "subtitle": "在企业劳动法领域拥有超过40年的经验",
+      "historyText1": "Santos & Saucedo 是一家专注于劳动法的精品律师事务所，拥有超过40年为国内外企业提供服务的经验。我们立足于新莱昂州圣佩德罗-加尔萨-加西亚，为客户的管理层、人力资源部门和内部法务团队提供咨询。",
       "historyText2": "企业关于员工的决定很少只是劳动问题：它们涉及公司本身、与第三方的合同，也越来越多地涉及来自其他国家的人员。出于对客户事务保密的尊重，本所不公开客户名称。",
       "valuesTitle": "我们的工作方式",
       "values": [
@@ -1399,7 +1399,7 @@
       ],
       "stats": [
         {
-          "value": "35+",
+          "value": "40+",
           "label": "年经验"
         },
         {
@@ -1410,8 +1410,8 @@
     },
     "ko": {
       "title": "회사 소개",
-      "subtitle": "기업 노동법 분야에서 35년 이상의 경험",
-      "historyText1": "Santos & Saucedo는 노동법을 전문으로 하는 부티크 로펌으로, 35년 이상 국내외 기업을 자문해 왔습니다. 누에보레온주 산페드로 가르사 가르시아에서 고객사의 경영진, 인사부서 및 사내 법무팀을 자문합니다.",
+      "subtitle": "기업 노동법 분야에서 40년 이상의 경험",
+      "historyText1": "Santos & Saucedo는 노동법을 전문으로 하는 부티크 로펌으로, 40년 이상 국내외 기업을 자문해 왔습니다. 누에보레온주 산페드로 가르사 가르시아에서 고객사의 경영진, 인사부서 및 사내 법무팀을 자문합니다.",
       "historyText2": "인력에 관한 기업의 결정은 노동 문제에 그치는 경우가 드뭅니다. 회사 자체와 제3자와의 계약, 그리고 점점 더 다른 나라에서 오는 사람들과도 관련됩니다. 고객 사안의 기밀을 존중하여 법인은 고객의 이름을 공개하지 않습니다.",
       "valuesTitle": "일하는 방식",
       "values": [
@@ -1434,7 +1434,7 @@
       ],
       "stats": [
         {
-          "value": "35+",
+          "value": "40+",
           "label": "년의 경험"
         },
         {
@@ -1445,8 +1445,8 @@
     },
     "ja": {
       "title": "事務所について",
-      "subtitle": "企業労働法における35年以上の経験",
-      "historyText1": "Santos & Saucedoは労働法に特化したブティック法律事務所であり、35年以上にわたり国内外の企業を支援してきました。ヌエボ・レオン州サン・ペドロ・ガルサ・ガルシアを拠点に、クライアントの経営陣、人事部門、社内法務チームに助言を提供しています。",
+      "subtitle": "企業労働法における40年以上の経験",
+      "historyText1": "Santos & Saucedoは労働法に特化したブティック法律事務所であり、40年以上にわたり国内外の企業を支援してきました。ヌエボ・レオン州サン・ペドロ・ガルサ・ガルシアを拠点に、クライアントの経営陣、人事部門、社内法務チームに助言を提供しています。",
       "historyText2": "企業の人事に関する決定が労働の問題だけで終わることはまれです。会社そのもの、第三者との契約、そしてますます多くの場合、海外から来る人々にも関わります。クライアントの案件の秘密を尊重し、当事務所はクライアント名を公表していません。",
       "valuesTitle": "私たちの仕事の進め方",
       "values": [
@@ -1469,7 +1469,7 @@
       ],
       "stats": [
         {
-          "value": "35+",
+          "value": "40+",
           "label": "年の経験"
         },
         {
@@ -1480,8 +1480,8 @@
     },
     "ar": {
       "title": "عن الشركة",
-      "subtitle": "أكثر من 35 عامًا من الخبرة في قانون العمل للشركات",
-      "historyText1": "Santos & Saucedo هي شركة محاماة متخصصة (بوتيك) في قانون العمل، بخبرة تزيد عن 35 عامًا في تقديم المشورة للشركات المحلية والدولية. من سان بيدرو غارزا غارسيا، نويفو ليون، نقدم المشورة لإدارة عملائنا وأقسام الموارد البشرية والفرق القانونية الداخلية.",
+      "subtitle": "أكثر من 40 عامًا من الخبرة في قانون العمل للشركات",
+      "historyText1": "Santos & Saucedo هي شركة محاماة متخصصة (بوتيك) في قانون العمل، بخبرة تزيد عن 40 عامًا في تقديم المشورة للشركات المحلية والدولية. من سان بيدرو غارزا غارسيا، نويفو ليون، نقدم المشورة لإدارة عملائنا وأقسام الموارد البشرية والفرق القانونية الداخلية.",
       "historyText2": "نادرًا ما تكون قرارات الشركة بشأن موظفيها مسألة عمالية فحسب: فهي تمسّ الشركة ذاتها، والعقود مع الغير، وبشكل متزايد أشخاصًا قادمين من بلدان أخرى. واحترامًا لسرية شؤون عملائه، لا ينشر المكتب أسماءهم.",
       "valuesTitle": "كيف نعمل",
       "values": [
@@ -1504,7 +1504,7 @@
       ],
       "stats": [
         {
-          "value": "35+",
+          "value": "40+",
           "label": "سنوات من الخبرة"
         },
         {
@@ -1515,8 +1515,8 @@
     },
     "ru": {
       "title": "О фирме",
-      "subtitle": "Более 35 лет опыта в корпоративном трудовом праве",
-      "historyText1": "Santos & Saucedo — это бутиковая фирма, специализирующаяся на трудовом праве, с более чем 35-летним опытом консультирования национальных и международных компаний. Из Сан-Педро-Гарса-Гарсия, Нуэво-Леон, мы консультируем руководство, кадровые службы и внутренние юридические команды наших клиентов.",
+      "subtitle": "Более 40 лет опыта в корпоративном трудовом праве",
+      "historyText1": "Santos & Saucedo — это бутиковая фирма, специализирующаяся на трудовом праве, с более чем 40-летним опытом консультирования национальных и международных компаний. Из Сан-Педро-Гарса-Гарсия, Нуэво-Леон, мы консультируем руководство, кадровые службы и внутренние юридические команды наших клиентов.",
       "historyText2": "Решения компании о персонале редко касаются только трудового права: они затрагивают корпоративные вопросы, договоры с третьими лицами и всё чаще — людей, приезжающих из других стран. Из уважения к конфиденциальности дел своих клиентов фирма не публикует их имена.",
       "valuesTitle": "Как мы работаем",
       "values": [
@@ -1539,7 +1539,7 @@
       ],
       "stats": [
         {
-          "value": "35+",
+          "value": "40+",
           "label": "Лет опыта"
         },
         {
@@ -1550,8 +1550,8 @@
     },
     "fr": {
       "title": "Le cabinet",
-      "subtitle": "Plus de 35 ans d'expérience en droit du travail des entreprises",
-      "historyText1": "Santos & Saucedo est un cabinet boutique spécialisé en droit du travail, fort de plus de 35 ans d'expérience au service d'entreprises nationales et internationales. Depuis San Pedro Garza García, Nuevo León, nous conseillons la direction, les ressources humaines et les équipes juridiques internes de nos clients.",
+      "subtitle": "Plus de 40 ans d'expérience en droit du travail des entreprises",
+      "historyText1": "Santos & Saucedo est un cabinet boutique spécialisé en droit du travail, fort de plus de 40 ans d'expérience au service d'entreprises nationales et internationales. Depuis San Pedro Garza García, Nuevo León, nous conseillons la direction, les ressources humaines et les équipes juridiques internes de nos clients.",
       "historyText2": "Les décisions d’une entreprise concernant son personnel relèvent rarement du seul droit du travail : elles touchent la société, les contrats avec des tiers et, de plus en plus, des personnes venues d’autres pays. Par respect pour la confidentialité de leurs dossiers, le cabinet ne publie pas les noms de ses clients.",
       "valuesTitle": "Notre façon de travailler",
       "values": [
@@ -1574,7 +1574,7 @@
       ],
       "stats": [
         {
-          "value": "35+",
+          "value": "40+",
           "label": "Années d'expérience"
         },
         {
@@ -1585,8 +1585,8 @@
     },
     "it": {
       "title": "Chi siamo",
-      "subtitle": "Oltre 35 anni di esperienza nel diritto del lavoro aziendale",
-      "historyText1": "Santos & Saucedo è uno studio boutique specializzato in diritto del lavoro, con oltre 35 anni di esperienza nella consulenza a imprese nazionali e internazionali. Da San Pedro Garza García, Nuevo León, assistiamo la direzione, le risorse umane e i team legali interni dei nostri clienti.",
+      "subtitle": "Oltre 40 anni di esperienza nel diritto del lavoro aziendale",
+      "historyText1": "Santos & Saucedo è uno studio boutique specializzato in diritto del lavoro, con oltre 40 anni di esperienza nella consulenza a imprese nazionali e internazionali. Da San Pedro Garza García, Nuevo León, assistiamo la direzione, le risorse umane e i team legali interni dei nostri clienti.",
       "historyText2": "Le decisioni di un’impresa sul proprio personale raramente riguardano solo il diritto del lavoro: toccano la società, i contratti con terzi e, sempre più spesso, persone che arrivano da altri paesi. Per rispetto della riservatezza delle loro questioni, lo studio non pubblica i nomi dei propri clienti.",
       "valuesTitle": "Come lavoriamo",
       "values": [
@@ -1609,7 +1609,7 @@
       ],
       "stats": [
         {
-          "value": "35+",
+          "value": "40+",
           "label": "Anni di esperienza"
         },
         {
@@ -1628,7 +1628,7 @@
       "cultureTitle": "What you will learn",
       "cultureText": "In a firm of our size, your work is reviewed directly by a partner. You will learn to prepare a case file, to negotiate and to hold a position before the authorities, and you will see at close range how companies in many sectors operate.",
       "environmentTitle": "The firm",
-      "environmentText": "With more than 35 years of experience, Santos & Saucedo advises companies on employment matters from San Pedro Garza García.",
+      "environmentText": "With more than 40 years of experience, Santos & Saucedo advises companies on employment matters from San Pedro Garza García.",
       "internshipTitle": "Semillero S&S",
       "internshipSubtitle": "Semillero S&S is the firm’s internship program.",
       "positionsTitle": "Openings",
@@ -1647,7 +1647,7 @@
       "cultureTitle": "Lo que aprenderás",
       "cultureText": "En una firma de nuestro tamaño, tu trabajo lo revisa directamente un socio. Aprenderás a preparar un expediente, a negociar y a sostener una postura frente a la autoridad, y conocerás de cerca la operación de empresas de muchos sectores.",
       "environmentTitle": "La firma",
-      "environmentText": "Con más de 35 años de experiencia, Santos & Saucedo asesora a empresas en materia laboral desde San Pedro Garza García.",
+      "environmentText": "Con más de 40 años de experiencia, Santos & Saucedo asesora a empresas en materia laboral desde San Pedro Garza García.",
       "internshipTitle": "Semillero S&S",
       "internshipSubtitle": "El Semillero S&S es el programa de pasantes de la firma.",
       "positionsTitle": "Vacantes",
@@ -1666,7 +1666,7 @@
       "cultureTitle": "Was Sie lernen",
       "cultureText": "In einer Kanzlei unserer Größe prüft ein Partner Ihre Arbeit direkt. Sie lernen, eine Akte vorzubereiten, zu verhandeln und eine Position gegenüber den Behörden zu vertreten, und Sie lernen den Betrieb von Unternehmen aus vielen Branchen aus der Nähe kennen.",
       "environmentTitle": "Die Kanzlei",
-      "environmentText": "Mit mehr als 35 Jahren Erfahrung berät Santos & Saucedo Unternehmen von San Pedro Garza García aus in arbeitsrechtlichen Fragen.",
+      "environmentText": "Mit mehr als 40 Jahren Erfahrung berät Santos & Saucedo Unternehmen von San Pedro Garza García aus in arbeitsrechtlichen Fragen.",
       "internshipTitle": "Semillero S&S",
       "internshipSubtitle": "Das Semillero S&S ist das Praktikantenprogramm der Kanzlei.",
       "positionsTitle": "Offene Stellen",
@@ -1685,7 +1685,7 @@
       "cultureTitle": "您将学到什么",
       "cultureText": "在我们这样规模的律所，您的工作由合伙人直接审阅。您将学习如何准备案卷、进行谈判、在主管机关面前坚持立场，并近距离了解众多行业企业的运营。",
       "environmentTitle": "关于律所",
-      "environmentText": "凭借超过35年的专业经验，Santos & Saucedo 在圣佩德罗-加尔萨-加西亚为企业提供劳动法律咨询。",
+      "environmentText": "凭借超过40年的专业经验，Santos & Saucedo 在圣佩德罗-加尔萨-加西亚为企业提供劳动法律咨询。",
       "internshipTitle": "Semillero S&S",
       "internshipSubtitle": "Semillero S&S 是本所的实习生项目。",
       "positionsTitle": "职位空缺",
@@ -1704,7 +1704,7 @@
       "cultureTitle": "배우게 될 것",
       "cultureText": "우리 규모의 법인에서는 파트너가 여러분의 업무를 직접 검토합니다. 사건 기록을 준비하고, 협상하고, 당국 앞에서 입장을 지키는 법을 배우며, 여러 업종 기업의 운영을 가까이에서 알게 됩니다.",
       "environmentTitle": "법인 소개",
-      "environmentText": "35년 이상의 전문 경험을 바탕으로, Santos & Saucedo는 산페드로 가르사 가르시아에서 기업에 노동 문제를 자문합니다.",
+      "environmentText": "40년 이상의 전문 경험을 바탕으로, Santos & Saucedo는 산페드로 가르사 가르시아에서 기업에 노동 문제를 자문합니다.",
       "internshipTitle": "Semillero S&S",
       "internshipSubtitle": "Semillero S&S는 법인의 인턴십 프로그램입니다.",
       "positionsTitle": "채용 공고",
@@ -1723,7 +1723,7 @@
       "cultureTitle": "学べること",
       "cultureText": "当事務所の規模では、あなたの仕事はパートナーが直接確認します。記録の準備、交渉、当局に対して立場を貫くことを学び、さまざまな業種の企業の業務を間近で知ることができます。",
       "environmentTitle": "事務所について",
-      "environmentText": "35年以上の専門的な実績を持ち、Santos & Saucedo はサン・ペドロ・ガルサ・ガルシアを拠点に企業の労働問題について助言しています。",
+      "environmentText": "40年以上の専門的な実績を持ち、Santos & Saucedo はサン・ペドロ・ガルサ・ガルシアを拠点に企業の労働問題について助言しています。",
       "internshipTitle": "Semillero S&S",
       "internshipSubtitle": "Semillero S&S は当事務所のインターンシップ・プログラムです。",
       "positionsTitle": "募集職種",
@@ -1742,7 +1742,7 @@
       "cultureTitle": "ما ستتعلمه",
       "cultureText": "في مكتب بحجمنا، يراجع أحد الشركاء عملك مباشرة. ستتعلم إعداد الملف والتفاوض والدفاع عن موقف أمام السلطات، وستتعرف عن قرب على طريقة عمل شركات من قطاعات كثيرة.",
       "environmentTitle": "المكتب",
-      "environmentText": "مع أكثر من 35 عامًا من الخبرة، يقدّم Santos & Saucedo المشورة للشركات في مسائل العمل من San Pedro Garza García.",
+      "environmentText": "مع أكثر من 40 عامًا من الخبرة، يقدّم Santos & Saucedo المشورة للشركات في مسائل العمل من San Pedro Garza García.",
       "internshipTitle": "Semillero S&S",
       "internshipSubtitle": "يُعدّ Semillero S&S برنامج المتدربين في المكتب.",
       "positionsTitle": "الوظائف الشاغرة",
@@ -1761,7 +1761,7 @@
       "cultureTitle": "Чему вы научитесь",
       "cultureText": "В фирме нашего размера вашу работу напрямую проверяет партнёр. Вы научитесь готовить дело, вести переговоры и отстаивать позицию перед органами власти, а также близко познакомитесь с работой компаний из многих отраслей.",
       "environmentTitle": "О фирме",
-      "environmentText": "С более чем 35-летним опытом Santos & Saucedo консультирует компании по вопросам трудового права из своего офиса в Сан-Педро-Гарса-Гарсия.",
+      "environmentText": "С более чем 40-летним опытом Santos & Saucedo консультирует компании по вопросам трудового права из своего офиса в Сан-Педро-Гарса-Гарсия.",
       "internshipTitle": "Semillero S&S",
       "internshipSubtitle": "Semillero S&S — программа стажировки фирмы.",
       "positionsTitle": "Вакансии",
@@ -1780,7 +1780,7 @@
       "cultureTitle": "Ce que vous apprendrez",
       "cultureText": "Dans un cabinet de notre taille, votre travail est relu directement par un associé. Vous apprendrez à préparer un dossier, à négocier et à défendre une position face à l’administration, et vous découvrirez de près le fonctionnement d’entreprises de nombreux secteurs.",
       "environmentTitle": "Le cabinet",
-      "environmentText": "Avec plus de 35 ans d'expérience, Santos & Saucedo conseille les entreprises en droit du travail depuis San Pedro Garza García.",
+      "environmentText": "Avec plus de 40 ans d'expérience, Santos & Saucedo conseille les entreprises en droit du travail depuis San Pedro Garza García.",
       "internshipTitle": "Semillero S&S",
       "internshipSubtitle": "Le Semillero S&S est le programme de stage du cabinet.",
       "positionsTitle": "Postes à pourvoir",
@@ -1799,7 +1799,7 @@
       "cultureTitle": "Cosa imparerai",
       "cultureText": "In uno studio delle nostre dimensioni, il tuo lavoro viene rivisto direttamente da un socio. Imparerai a preparare un fascicolo, a negoziare e a sostenere una posizione davanti all’autorità, e conoscerai da vicino l’attività di imprese di molti settori.",
       "environmentTitle": "Lo studio",
-      "environmentText": "Con oltre 35 anni di esperienza, Santos & Saucedo assiste le imprese in materia di lavoro da San Pedro Garza García.",
+      "environmentText": "Con oltre 40 anni di esperienza, Santos & Saucedo assiste le imprese in materia di lavoro da San Pedro Garza García.",
       "internshipTitle": "Semillero S&S",
       "internshipSubtitle": "Il Semillero S&S è il programma di tirocinio dello studio.",
       "positionsTitle": "Posizioni aperte",
@@ -2197,7 +2197,7 @@
   },
   "offices": {
     "es": {
-      "intro": "La oficina de Santos & Saucedo está en la colonia Del Valle, en San Pedro Garza García, Nuevo León, frente al Cerro de la Silla.",
+      "intro": "Nuestras oficinas se encuentran en la colonia Del Valle, en San Pedro Garza García, Nuevo León. Aquí recibimos a nuestros clientes y desarrollamos el trabajo cotidiano de la firma.",
       "reception": "Recepción",
       "meetingRooms": "Salas de juntas",
       "workAreas": "Áreas de trabajo",
@@ -2220,10 +2220,16 @@
         "privado": "Privado en la oficina de Santos & Saucedo",
         "escultura": "Escultura azul ante un muro verde, en la oficina de Santos & Saucedo",
         "obraMazo": "Pintura de un mazo de juez en la oficina de Santos & Saucedo"
+      },
+      "story": {
+        "workTitle": "El trabajo diario",
+        "workText": "Las áreas de trabajo y las salas de reunión permiten alternar el trabajo individual con la colaboración del equipo. Son espacios para revisar documentación, preparar asuntos y conversar con nuestros clientes.",
+        "cultureTitle": "Biblioteca y arte",
+        "cultureText": "La biblioteca jurídica y el arte contemporáneo conviven en distintos espacios de la oficina. Libros, pinturas y esculturas aportan un carácter propio al entorno de trabajo de Santos & Saucedo."
       }
     },
     "en": {
-      "intro": "Santos & Saucedo’s office is in Colonia Del Valle, San Pedro Garza García, Nuevo León, facing Cerro de la Silla.",
+      "intro": "Our offices are located in Colonia Del Valle, San Pedro Garza García, Nuevo León. This is where we meet with clients and carry out the firm’s daily work.",
       "reception": "Reception",
       "meetingRooms": "Meeting rooms",
       "workAreas": "Work areas",
@@ -2246,6 +2252,12 @@
         "privado": "Private office at Santos & Saucedo",
         "escultura": "Blue sculpture against a green wall at the Santos & Saucedo office",
         "obraMazo": "Painting of a gavel at the Santos & Saucedo office"
+      },
+      "story": {
+        "workTitle": "Everyday work",
+        "workText": "Workspaces and meeting rooms accommodate both individual work and team collaboration. These are places to review documents, prepare matters and meet with our clients.",
+        "cultureTitle": "Library and art",
+        "cultureText": "The legal library and contemporary art share spaces throughout the office. Books, paintings and sculptures give the working environment at Santos & Saucedo its own character."
       }
     },
     "de": {
@@ -5336,6 +5348,46 @@
       "recepcionBanda": {
         "url": "/editorial/recepcion-banda-1536.webp",
         "smallUrl": "/editorial/recepcion-banda-768.webp"
+      },
+      "biblioteca": {
+        "url": "/editorial/oficina-biblioteca-1536.webp",
+        "smallUrl": "/editorial/oficina-biblioteca-768.webp"
+      },
+      "escalera": {
+        "url": "/editorial/oficina-escalera-1536.webp",
+        "smallUrl": "/editorial/oficina-escalera-768.webp"
+      },
+      "detalle": {
+        "url": "/editorial/oficina-arte-detalle-1536.webp",
+        "smallUrl": "/editorial/oficina-arte-detalle-768.webp"
+      },
+      "arteMapa": {
+        "url": "/editorial/oficina-arte-mapa-1536.webp",
+        "smallUrl": "/editorial/oficina-arte-mapa-768.webp"
+      },
+      "oficinaPrivada": {
+        "url": "/editorial/oficina-oficina-privada-1536.webp",
+        "smallUrl": "/editorial/oficina-oficina-privada-768.webp"
+      },
+      "salaPanoramica": {
+        "url": "/editorial/oficina-sala-panoramica-1536.webp",
+        "smallUrl": "/editorial/oficina-sala-panoramica-768.webp"
+      },
+      "espaciosAbiertos": {
+        "url": "/editorial/oficina-espacios-abiertos-1536.webp",
+        "smallUrl": "/editorial/oficina-espacios-abiertos-768.webp"
+      },
+      "recepcionGeneral": {
+        "url": "/editorial/oficina-recepcion-general-1536.webp",
+        "smallUrl": "/editorial/oficina-recepcion-general-768.webp"
+      },
+      "arteColor": {
+        "url": "/editorial/oficina-arte-color-1536.webp",
+        "smallUrl": "/editorial/oficina-arte-color-768.webp"
+      },
+      "mesaTrabajo": {
+        "url": "/editorial/oficina-mesa-trabajo-1536.webp",
+        "smallUrl": "/editorial/oficina-mesa-trabajo-768.webp"
       }
     },
     "teamMosaic": [
@@ -5376,6 +5428,134 @@
       "/editorial/team-35.webp",
       "/editorial/team-36.webp",
       "/editorial/team-37.webp"
+    ],
+    "officeGallery": [
+      {
+        "photo": "recepcionGeneral",
+        "altEs": "Vista general del interior de la firma",
+        "alt": "Overview of the firm’s interior",
+        "enabled": true,
+        "featured": false
+      },
+      {
+        "photo": "salaPanoramica",
+        "altEs": "Vista de la mesa de reuniones y el jardín",
+        "alt": "View of the meeting table and garden",
+        "enabled": true,
+        "featured": true
+      },
+      {
+        "photo": "escultura",
+        "altEs": "Escultura en el jardín de la oficina",
+        "alt": "Sculpture in the office garden",
+        "enabled": true,
+        "featured": false
+      },
+      {
+        "photo": "biblioteca",
+        "altEs": "Biblioteca jurídica de la firma",
+        "alt": "The firm’s legal library",
+        "enabled": true,
+        "featured": false
+      },
+      {
+        "photo": "vestibulo",
+        "altEs": "Interior de las oficinas de Santos & Saucedo",
+        "alt": "Inside the Santos & Saucedo offices",
+        "enabled": true,
+        "featured": true
+      },
+      {
+        "photo": "espaciosAbiertos",
+        "altEs": "Vista general de los espacios de trabajo",
+        "alt": "Overview of the workspaces",
+        "enabled": true,
+        "featured": true
+      },
+      {
+        "photo": "detalle",
+        "altEs": "Obra de arte contemporáneo en la firma",
+        "alt": "Contemporary artwork at the firm",
+        "enabled": true,
+        "featured": false
+      },
+      {
+        "photo": "arteColor",
+        "altEs": "Arte contemporáneo en las oficinas",
+        "alt": "Contemporary art in the offices",
+        "enabled": true,
+        "featured": false
+      },
+      {
+        "photo": "vestibulo2",
+        "altEs": "Vista de los interiores de la firma",
+        "alt": "View of the firm’s interiors",
+        "enabled": true,
+        "featured": true
+      },
+      {
+        "photo": "areaTrabajo2",
+        "altEs": "Otra perspectiva de los espacios de trabajo",
+        "alt": "Another view of the workspaces",
+        "enabled": true,
+        "featured": true
+      },
+      {
+        "photo": "oficinaPrivada",
+        "altEs": "Interior de una oficina de Santos & Saucedo",
+        "alt": "Interior of a Santos & Saucedo office",
+        "enabled": true,
+        "featured": false
+      },
+      {
+        "photo": "arteMapa",
+        "altEs": "Obra de arte en las oficinas de la firma",
+        "alt": "Artwork at the firm’s offices",
+        "enabled": true,
+        "featured": false
+      },
+      {
+        "photo": "mesaTrabajo",
+        "altEs": "Espacio compartido de trabajo en la firma",
+        "alt": "Shared workspace at the firm",
+        "enabled": true,
+        "featured": true
+      },
+      {
+        "photo": "recepcion",
+        "altEs": "Vista interior de la oficina",
+        "alt": "View inside the office",
+        "enabled": true,
+        "featured": true
+      },
+      {
+        "photo": "escalera",
+        "altEs": "Biblioteca y escalera de la oficina",
+        "alt": "Office library and staircase",
+        "enabled": true,
+        "featured": false
+      },
+      {
+        "photo": "obraMazo",
+        "altEs": "Obra de arte de temática jurídica",
+        "alt": "Legal-themed artwork",
+        "enabled": true,
+        "featured": false
+      },
+      {
+        "photo": "areaTrabajo",
+        "altEs": "Espacios de trabajo de la firma",
+        "alt": "The firm’s workspaces",
+        "enabled": true,
+        "featured": true
+      },
+      {
+        "photo": "privado",
+        "altEs": "Oficina de la firma",
+        "alt": "Office at the firm",
+        "enabled": true,
+        "featured": false
+      }
     ]
   },
   "contactData": {
@@ -5911,8 +6091,8 @@
         "id": "offices",
         "href": "/offices",
         "labels": {
-          "es": "La oficina",
-          "en": "The office",
+          "es": "Nuestras Oficinas",
+          "en": "Our Offices",
           "de": "Das Büro",
           "fr": "Le bureau",
           "it": "La sede",

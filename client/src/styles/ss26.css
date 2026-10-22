@@ -112,8 +112,8 @@ html:has(header.ss26) {
 .ss26,
 .editorial-page-hero,
 [data-testid="section-news-hero"] {
-  --ss-navy: #1a1b42;
-  --ss-marino: #24255c;
+  --ss-navy: #18175b;
+  --ss-marino: #1d1c68;
   --ss-tinta: #33333b;
   --ss-medio: #5f5f6b;
   --ss-claro: #8a8a94;
@@ -173,7 +173,7 @@ html:has(.ss26) body {
 /* Selección: gris azulado, nunca lima */
 ::selection {
   background: #d9d8e6;
-  color: #1a1b42;
+  color: #18175b;
 }
 
 /* Contenedor: 1320px de contenido + márgenes laterales fluidos */
@@ -220,9 +220,9 @@ html:has(.ss26) body {
 .ss-label {
   font-family: var(--ss-font-sans);
   font-weight: 600;
-  font-size: 12px;
-  line-height: 1.4;
-  letter-spacing: 0.12em;
+  font-size: 14px;
+  line-height: 1.45;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   font-variant-numeric: tabular-nums lining-nums;
 }
@@ -245,7 +245,7 @@ html:has(.ss26) body {
 }
 
 .ss-prose {
-  font-size: 18px;
+  font-size: 19px;
   line-height: 1.65;
   text-wrap: pretty;
   hanging-punctuation: first;
@@ -290,7 +290,7 @@ html:has(.ss26) body {
 .ss-lead {
   font-family: var(--ss-font-serif);
   font-optical-sizing: auto;
-  font-size: clamp(19px, 0.6vw + 14px, 22px);
+  font-size: clamp(21px, 0.6vw + 15px, 23px);
   line-height: 1.55;
   font-weight: 400;
   letter-spacing: -0.003em;
@@ -303,7 +303,7 @@ html:has(.ss26) body {
 /* Entrada sobre Azul Profundo: sans 400 al 84 % (la romana fina se lee débil en teléfono) */
 :is(.ss-navy, .editorial-page-hero) .ss-lead {
   font-family: var(--ss-font-sans);
-  font-size: clamp(18px, 0.5vw + 14px, 21px);
+  font-size: clamp(20px, 0.5vw + 15px, 22px);
   letter-spacing: 0;
   color: var(--ss-on-navy);
 }
@@ -450,7 +450,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 /* Fondo claro (secciones blancas con data-surface="light" y papel .ss-paper):
    contorno Azul Marino, sin lima (lima sobre claro ≈ 1.3:1). */
 :is(.ss-paper, [data-surface="light"]) :is(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
-  outline: 3px solid var(--ss-marino, #24255c);
+  outline: 3px solid var(--ss-marino, #1d1c68);
   outline-offset: 2px;
   box-shadow: none;
 }
@@ -478,6 +478,28 @@ a:focus-visible > .ss-arrow:dir(rtl) {
    dos ejes, para que logotipo, textos y § guarden la proporción en cualquier pantalla de
    escritorio. Ocupa la primera pantalla y sube bajo el encabezado (transparente en la
    portada, Header26 overlay). Mientras carga el video, Azul Profundo. */
+.ss-photo { border-radius: 10px; }
+.ss-portrait-frame { border-radius: 12px; isolation: isolate; }
+.ss-portrait-frame .ss-photo { border-radius: 0; }
+.ss-team-portrait {
+  transition: transform 240ms ease, box-shadow 240ms ease;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .ss-team-portrait:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgb(25 31 58 / 0.12);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ss-team-portrait { transition: none; }
+}
+
+/* Retrato conmemorativo: blanco y negro de contraste suave, sin modificar el original.
+   Se identifica por persona para conservar el tratamiento aunque se cambie la foto en el CMS. */
+.ss-photo[data-portrait-slug="mario-saucedo-rodriguez"] {
+  filter: grayscale(1) contrast(0.94) brightness(1.04);
+}
+
 .ss-hero {
   --u: min(0.05208vw, 0.09259vh);
   --u: min(0.05208vw, 0.09259svh);
@@ -492,23 +514,19 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   background-color: var(--ss-navy);
   color: #fff;
 }
-/* Capas de lectura: oscurecimiento neutro para conservar contraste sin teñir el video ni el
-   póster. El velo central es más denso y cae casi a cero en los bordes; los degradados superior
-   e inferior mantienen legibles el menú y la transición a la sección siguiente. */
+/* Viñeta neutra: conserva el color y el detalle en el centro del video y oscurece
+   los bordes para separar la marca de agua. El velo central sostiene la lectura del logo. */
 .ss-hero-veil {
-  background-color: rgb(0 0 0 / 0.34);
+  background-color: rgb(0 0 0 / 0.32);
   background-image:
-    linear-gradient(to bottom, rgb(0 0 0 / 0.42), rgb(0 0 0 / 0) 16%),
+    radial-gradient(ellipse at 50% 47%, transparent 30%, rgb(0 0 0 / 0.12) 63%, rgb(0 0 0 / 0.52) 100%),
+    linear-gradient(to bottom, rgb(0 0 0 / 0.38), rgb(0 0 0 / 0) 18%),
     linear-gradient(to top, rgb(0 0 0 / 0.42), rgb(0 0 0 / 0) 25%),
     radial-gradient(
       41.67% 35.19% at 50% 50%,
-      rgb(0 0 0 / 0.24) 0%,
-      rgb(0 0 0 / 0.2) 30%,
-      rgb(0 0 0 / 0.16) 50%,
-      rgb(0 0 0 / 0.11) 70%,
-      rgb(0 0 0 / 0.05) 90%,
-      rgb(0 0 0 / 0.01) 110%,
-      rgb(0 0 0 / 0) 125%
+      rgb(0 0 0 / 0.18),
+      rgb(0 0 0 / 0.1) 55%,
+      transparent 100%
     );
 }
 /* La § de marca de agua: 820 de alto, a 40 del borde derecho y centrada 20 por debajo del
@@ -527,7 +545,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   right: calc(40 * var(--u));
   top: calc(50% - 390 * var(--u));
   height: calc(820 * var(--u));
-  background-color: rgb(255 255 255 / 0.12);
+  background-color: rgb(255 255 255 / 0.2);
 }
 .ss-hero-body {
   position: relative;
@@ -559,7 +577,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   margin-top: 24px;
   font-family: var(--ss-font-sans);
   font-weight: 400;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.35;
   letter-spacing: 0.24em;
   /* El espaciado queda también tras la última letra: el mismo al principio centra el texto */
@@ -572,12 +590,12 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   margin-top: 14px;
   font-family: var(--ss-font-sans);
   font-weight: 400;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.5;
   letter-spacing: 0.24em;
   padding-inline-start: 0.24em;
   text-transform: uppercase;
-  color: rgb(255 255 255 / 0.62);
+  color: rgb(255 255 255 / 0.78);
 }
 .ss-hero-dot {
   display: none;
@@ -652,7 +670,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   }
   .ss-hero-place {
     margin-top: calc(23 * var(--u));
-    font-size: max(12px, 15 * var(--u));
+    font-size: max(14px, 16 * var(--u));
     line-height: 1;
     letter-spacing: 0.36em;
     padding-inline-start: 0.36em;
@@ -662,7 +680,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 
 /* Fila de prácticas: el número (01–04) pasa de tenue a pleno */
 .ss-row .ss-row-num {
-  color: rgb(36 37 92 / 0.65);
+  color: rgb(29 28 104 / 0.65);
   transition: color 320ms var(--ss-ease);
 }
 .ss-row:hover .ss-row-num,
@@ -696,3 +714,69 @@ a:focus-visible > .ss-arrow:dir(rtl) {
     transform: scaleX(-1);
   }
 }
+
+/* Office tour: a photographic cover and an alternating editorial mosaic. */
+.ss-office-gallery figure { margin: 0; overflow: hidden; border-radius: 12px; }
+.ss-office-cover { position: relative; display: flex; align-items: flex-end; min-height: 76svh; padding-top: 120px; overflow: hidden; background: var(--ss-marino, #1b1b3b); }
+.ss-office-cover > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 48%; border-radius: 0; }
+.ss-office-cover-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgb(16 19 39 / .73), transparent 70%); }
+.ss-office-cover .ss-eyebrow { color: white; }
+.ss-office-gallery { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-rows: clamp(210px, 26vw, 360px); gap: clamp(16px, 1.8vw, 26px); }
+.ss-office-gallery .ss-office-photo-featured { grid-column: span 4; }
+.ss-office-gallery .ss-office-photo-support { grid-column: span 2; }
+.ss-office-gallery img { display: block; width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto; }
+.ss-office-photo-button { position: relative; display: block; width: 100%; height: 100%; overflow: hidden; text-align: left; }
+.ss-office-photo-button:focus-visible { outline: 3px solid #b8ec39; outline-offset: -4px; }
+.ss-office-photo-expand { position: absolute; right: 12px; bottom: 12px; display: grid; place-items: center; width: 25px; height: 25px; border-radius: 50%; color: rgb(255 255 255 / .92); background: rgb(18 23 43 / .28); opacity: .65; transition: opacity 180ms ease, background 180ms ease; pointer-events: none; }
+.ss-office-photo-expand svg { width: 13px; height: 13px; }
+.ss-office-photo-button:hover .ss-office-photo-expand, .ss-office-photo-button:focus-visible .ss-office-photo-expand { opacity: 1; background: rgb(18 23 43 / .46); }
+@media (hover: hover) { .ss-office-photo-expand { opacity: 0; } }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .ss-office-photo-button img { transition: transform 350ms ease; }
+  .ss-office-photo-button:hover img { transform: scale(1.025); }
+}
+@media (max-width: 639px) {
+  .ss-office-cover { min-height: 62svh; }
+  .ss-office-gallery { grid-template-columns: minmax(0, 1fr); grid-auto-rows: auto; gap: 16px; }
+  .ss-office-gallery .ss-office-photo-featured, .ss-office-gallery .ss-office-photo-support { grid-column: 1; }
+  .ss-office-gallery .ss-office-photo-featured { height: auto; aspect-ratio: 3 / 2; }
+  .ss-office-gallery .ss-office-photo-support { height: 220px; }
+
+}
+.ss-office-cover h1 { font-size: clamp(3.5rem, 7vw, 7.5rem); line-height: 1.05; letter-spacing: -.035em; max-width: 18ch; text-wrap: balance; }
+.ss-office-cover .ss-eyebrow span { color: white; }
+
+.ss-office-story { grid-column: 1 / -1; display: flex; align-items: center; padding: clamp(28px, 5vw, 64px) 0; }
+.ss-office-story > div { width: 100%; }
+@media (max-width: 639px) { .ss-office-story { padding: 28px 0; } }
+
+@media (max-width: 639px) { .ss-prose { font-size: 18px; } }
+
+/* Contact form: a compact surface with a clear field hierarchy. */
+.ss-contact-card {
+  padding: clamp(22px, 3vw, 36px);
+  border: 1px solid rgb(29 28 104 / .13);
+  border-radius: 20px;
+  background: #f8f8fb;
+  box-shadow: 0 12px 36px rgb(24 23 91 / .045);
+}
+.ss-contact-card :is(input:not([type="checkbox"]), textarea, [role="combobox"]) {
+  border-radius: 8px;
+  background: #fff;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.ss-contact-card label { font-size: 16px; line-height: 1.4; }
+.ss-contact-card [data-testid="text-form-subtitle"] { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgb(29 28 104 / .1); }
+@media (max-width: 639px) { .ss-contact-card { border-radius: 16px; } }
+.ss-contact-card [data-testid="button-submit-contact"] { border-radius: 8px; }
+
+/* Firm principles share the full editorial width, with readable body text. */
+.ss-about-principle { border-color: rgb(29 28 104 / .18); padding-top: 24px; }
+.ss-about-principle .ss-h3 { font-size: clamp(25px, 2vw, 29px); line-height: 1.2; }
+.ss-about-principle p { max-width: 52ch; margin-top: 14px; font-size: 19px; line-height: 1.7; text-wrap: pretty; }
+@media (max-width: 639px) { .ss-about-principle p { font-size: 18px; } }
+
+.ss-career-card button[type="submit"] { border-radius: 8px; }
+.ss-career-card .ss-career-file { height: auto; min-height: 64px; padding: 14px; border-style: dashed; line-height: 1.5; }
+.ss-career-file::file-selector-button { margin-inline-end: 12px; padding: 6px 10px; border: 0; border-radius: 6px; color: var(--ss-marino); background: #eeedf6; font: inherit; font-weight: 600; cursor: pointer; }

@@ -289,7 +289,7 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
         {/* Con la consulta ya escrita la pista sobra a la vista; sigue para aria-describedby */}
         <p
           id="ss26-search-hint"
-          className={`mt-3 max-w-[60ch] text-[15px] leading-relaxed text-white/75 ${query.trim().length >= MIN_CHARS ? "sr-only" : ""}`}
+          className={`mt-3 max-w-[60ch] text-[16px] leading-relaxed text-white/75 ${query.trim().length >= MIN_CHARS ? "sr-only" : ""}`}
         >
           {t.hint}
         </p>

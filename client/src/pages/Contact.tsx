@@ -1,3 +1,4 @@
+import { OfficePhotography } from "@/components/editorial/OfficePhotography";
 import cmsDefaults from "@shared/cms-defaults.json";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
 import { useCmsMedia } from "@/lib/cmsMedia";
@@ -826,7 +827,7 @@ export default function Contact() {
                     si algún socio tiene datos directos en su ficha (G6) */}
                 {showPartnersNote && (
                   <p
-                    className="mt-6 max-w-md text-[15px] leading-[1.5] text-ss-medio"
+                    className="mt-6 max-w-md text-[16px] leading-[1.5] text-ss-medio"
                     data-testid="text-contact-subtitle"
                   >
                     {t.partnersNote}
@@ -858,23 +859,19 @@ export default function Contact() {
               </div>
             </section>
 
-            {/* Formulario: sin llamada en el título ni marcadores que repitan la etiqueta */}
+            {/* Tarjeta compacta: conserva campos, validación y envío del formulario. */}
             <section
-              className="lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1"
+              className="ss-contact-card lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 lg:self-start"
               data-testid="section-contact-form"
             >
-              <h2 className="ss-h2 mb-8" data-testid="text-form-title">
+              <h2 className="ss-h2-sm mb-6" data-testid="text-form-title">
                 {t.formTitle}
               </h2>
 
               {!formSettings.enabled?<p role="status" className="border-t border-ss-rule py-6">{formSettings.disabledMessage[language as "es"|"en"]||formSettings.disabledMessage.en}</p>:<Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-testid="form-contact">
-                  {/* Dos campos por fila solo en tableta (formulario a todo el ancho): Nombre | Correo y
-                      Empresa | Práctica; en escritorio, columna de 6/12: un campo por fila. Campos y
-                      select de 44 px, el objetivo táctil del sitio: en px y no h-11 (rem), que bajo
-                      360 px (html a 14 px) quedaba en 38,5 px. Sin Teléfono: el documento de
-                      redacción no lo pide. */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5" data-testid="form-contact">
+                  {/* Dos columnas desde tableta; una columna en pantallas pequeñas. */}
+                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <FormField
                       control={form.control}
                       name="fullName"
@@ -977,7 +974,7 @@ export default function Contact() {
                         <FormLabel data-testid="label-message">{t.messageLabel}</FormLabel>
                         <FormControl>
                           <Textarea
-                            className="min-h-[160px]"
+                            className="min-h-[112px] resize-y"
                             {...field}
                             data-testid="textarea-message"
                           />
@@ -1044,7 +1041,7 @@ export default function Contact() {
                   {/* Enviar: el único botón Azul Marino lleno, 44 px de alto */}
                   <Button
                     type="submit"
-                    className="min-h-[44px] w-full px-6 sm:w-auto"
+                    className="min-h-[48px] w-full rounded-lg px-6 text-[17px] font-semibold"
                     disabled={contactMutation.isPending}
                     data-testid="button-submit-contact"
                   >
@@ -1053,7 +1050,7 @@ export default function Contact() {
 
                   {/* Aviso tras el botón, como en la redacción */}
                   <p
-                    className="max-w-xl text-[15px] leading-[1.5] text-ss-medio"
+                    className="max-w-xl text-[16px] leading-[1.5] text-ss-medio"
                     data-testid="text-form-subtitle"
                   >
                     {t.formSubtitle}
@@ -1078,10 +1075,11 @@ export default function Contact() {
                   decoding="async"
                   width={1159}
                   height={900}
-                  className="block h-auto w-full"
+                  className="ss-photo block h-auto w-full"
                   data-testid="img-contact-building"
                 />
               </div>
+              <OfficePhotography photo="recepcionGeneral" className="mt-5" />
             </figure>
           </div>
         </div>

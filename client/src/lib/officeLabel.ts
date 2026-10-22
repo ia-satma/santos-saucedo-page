@@ -3,8 +3,8 @@ import type { LanguageCode } from "@shared/schema";
 
 // Nombre de la página de la oficina (/offices), el mismo en h1, pestaña, pie y enlaces de cada idioma.
 export const OFFICE_LABEL: Record<LanguageCode, string> = {
-  es: "La oficina",
-  en: "The office",
+  es: "Nuestras Oficinas",
+  en: "Our Offices",
   // I6: "Das Büro" y no "Die Kanzlei", que junto a "Über die Kanzlei" se lee como la firma
   de: "Das Büro",
   fr: "Le bureau",

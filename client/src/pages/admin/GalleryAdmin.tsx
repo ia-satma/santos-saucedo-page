@@ -150,10 +150,10 @@ export default function GalleryAdmin() {
           </Link>
           <div className="w-12 h-px bg-ss-marino mb-3" />
           <h1 className="font-heading text-foreground text-3xl">
-            Galería de La oficina
+            Galería de Nuestras Oficinas
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Añada fotografías a La oficina, edite sus descripciones y organice la galería.
+            Añada fotografías a Nuestras Oficinas, edite sus descripciones y organice la galería.
           </p>
         </div>
 

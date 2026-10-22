@@ -23,7 +23,7 @@ const alsoActive: Record<string, string[]> = {
 // Un solo panel abierto a la vez: menú móvil o buscador, nunca los dos
 type Panel = "menu" | "search" | null;
 // A dónde vuelve el foco al cerrar: al botón que abrió el panel, o a la navegación
-// de escritorio si el menú se cerró por pasar a ≥1024px (el botón Menú ya no se ve).
+// de escritorio si el menú se cerró por pasar a ≥1280px (el botón Menú ya no se ve).
 type FocusTarget = "menu" | "search" | "nav" | null;
 
 // Lupa en blanco: la lima queda en el logotipo, el § de las secciones y el menú actual
@@ -85,8 +85,8 @@ export default function Header26({ localized = false, overlay = false }: Header2
     initialFocus: () => firstLinkRef.current,
     onEscape: () => closePanel("menu"),
     onClosed: restoreFocus,
-    // Al pasar a escritorio el diálogo se oculta (lg:hidden): se cierra para no dejar la página inerte
-    closeWhen: { query: "(min-width: 1024px)", onMatch: () => closePanel("nav") },
+    // Al pasar a escritorio el diálogo se oculta (xl:hidden): se cierra para no dejar la página inerte
+    closeWhen: { query: "(min-width: 1280px)", onMatch: () => closePanel("nav") },
   });
 
   // Cambio de ruta: cierra el panel y devuelve el foco solo si estaba abierto
@@ -115,10 +115,9 @@ export default function Header26({ localized = false, overlay = false }: Header2
         } ${scrolled ? "shadow-[0_1px_0_rgba(255,255,255,0.08)]" : ""}`}
         data-testid="header"
       >
-        {/* Entre 1024 y 1279px se aprietan logo, huecos y espaciado del menú para que quepan
-            navegación, buscador e idiomas; desde 1280px vuelve la medida de la portada.
-            En alemán, francés y ruso el menú se aprieta algo más (ss26.css) */}
-        <div className="ss-container flex h-[68px] items-center justify-between gap-4 lg:h-20 lg:gap-6 xl:gap-8">
+        {/* La navegación completa aparece desde 1280px para mantener etiquetas legibles.
+            En pantallas menores se conserva el menú desplegable. */}
+        <div className="ss-container flex h-[68px] items-center justify-between gap-4 lg:h-20 lg:gap-6 xl:gap-5">
           <Link href="/" aria-label="Santos & Saucedo" className="shrink-0" data-testid="link-logo">
             <img
               src={media.brand.logoLight}
@@ -134,9 +133,9 @@ export default function Header26({ localized = false, overlay = false }: Header2
             id="main-navigation"
             tabIndex={-1}
             aria-label={t.header.nav}
-            className="flex items-center gap-5 lg:ms-auto xl:gap-8"
+            className="flex items-center gap-5 lg:ms-auto xl:gap-5"
           >
-            <ul className="hidden items-center gap-4 lg:flex xl:gap-[clamp(20px,2.2vw,36px)]">
+            <ul className="hidden items-center gap-4 xl:flex xl:gap-[clamp(16px,1.5vw,28px)]">
               {items.map((item) => (
                 // flex + pt-[2px] (compensa el padding-bottom de .ss-link): mismo centro que Buscar y ES/EN.
                 // Elemento actual (página o subruta): blanco y filete lima de 2 px (.ss-link--lime);
@@ -173,7 +172,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
             <button
               ref={menuButtonRef}
               type="button"
-              className="ss-label flex min-h-[44px] items-center gap-3 tracking-[0.10em] text-white lg:hidden"
+              className="ss-label flex min-h-[44px] items-center gap-3 tracking-[0.10em] text-white xl:hidden"
               aria-expanded={panel === "menu"}
               aria-controls="mobile-menu"
               aria-haspopup="dialog"
@@ -188,7 +187,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
             </button>
           </nav>
 
-          {navigation.header.languageEnabled&&<LangSwitch26 lang={code} className="hidden lg:flex" />}
+          {navigation.header.languageEnabled&&<LangSwitch26 lang={code} className="hidden xl:flex" />}
         </div>
       </header>
 
@@ -204,7 +203,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
             aria-label={t.header.menu}
             {...t.attrs}
             data-testid="modal-mobile-menu"
-            className="ss26 fixed inset-0 z-[70] flex flex-col overflow-y-auto overscroll-contain bg-ss-navy text-white lg:hidden"
+            className="ss26 fixed inset-0 z-[70] flex flex-col overflow-y-auto overscroll-contain bg-ss-navy text-white xl:hidden"
           >
             <div className="ss-container relative flex h-[68px] shrink-0 items-center justify-between">
               <img src={media.brand.logoLight} alt={media.brand.name} className="h-[26px] w-auto" width={159} height={26} />

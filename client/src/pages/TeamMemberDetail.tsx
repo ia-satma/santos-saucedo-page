@@ -168,6 +168,7 @@ function RelatedTeamMemberCard({
           {avatarSrc && (
             <img
               src={avatarSrc}
+              data-portrait-slug={relatedMember.slug}
               // alt vacío: el nombre ya es el texto del enlace (antes se leía dos veces)
               alt=""
               width={56}
@@ -234,7 +235,7 @@ function EducationItemTranslated({
       </p>
       <p className="text-ss-medio">
         {displaySchool}
-        {edu.year && <span className="ml-2 text-sm">({edu.year})</span>}
+        {edu.year && <span className="ml-2 text-base">({edu.year})</span>}
       </p>
     </div>
   );
@@ -1510,12 +1511,13 @@ export default function TeamMemberDetail() {
                     <>
                       <img
                         src={member.imageUrl}
+                        data-portrait-slug={member.slug}
                         // WebP de 360/652 px en vez del PNG de 0,5–1 MB; si la variante no
                         // existe donde se sirven las fotos, onError vuelve al original (src)
                         {...(profilePhotoSrcSet ? { srcSet: profilePhotoSrcSet, sizes: PROFILE_PHOTO_SIZES } : {})}
                         // alt vacío: el nombre ya está en el h1 de al lado (antes se leía dos veces)
                         alt=""
-                        // En color, sin velo marino encima
+                        // El tratamiento conmemorativo de Mario se aplica desde ss26.css.
                         className="ss-photo absolute inset-0 h-full w-full object-cover object-top"
                         style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }}
                         loading="eager"
@@ -2018,7 +2020,7 @@ export default function TeamMemberDetail() {
                         <p className="text-ss-medio">
                           {exp.company}
                           {(exp.startYear || exp.endYear) && (
-                            <span className="ml-2 text-sm">
+                            <span className="ml-2 text-base">
                               ({exp.startYear}{exp.endYear ? ` - ${exp.endYear}` : ' - Present'})
                             </span>
                           )}

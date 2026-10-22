@@ -69,7 +69,7 @@ export const cmsSections: {
     key: "media",
     label: "Identidad, fotos y video",
     path: "/",
-    help: "Logotipos, portada, fotografías de la oficina y mosaico anónimo. Elija un archivo de Galería o suba uno nuevo.",
+    help: "Logotipos, portada, fotografías y mosaico del equipo. En Galería general de la oficina puede elegir, ordenar y activar fotografías. Sustituya los archivos en Fotografías.",
   },
   {
     key: "chrome",
@@ -91,13 +91,13 @@ export const cmsSections: {
   },
   {
     key: "officeLabels",
-    label: "Nombre de La oficina",
+    label: "Nombre de Nuestras Oficinas",
     path: "/offices",
     help: "Un nombre por idioma para la página, el menú, el SEO y los enlaces a la oficina.",
   },
   {
     key: "offices",
-    label: "La oficina",
+    label: "Nuestras Oficinas",
     path: "/offices",
     help: "Introducción, grupos de fotografías, textos alternativos y horario. Las imágenes se cambian en Identidad, fotos y video.",
   },

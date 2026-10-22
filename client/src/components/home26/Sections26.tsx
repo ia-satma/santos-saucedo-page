@@ -1,3 +1,4 @@
+import { OfficePhotoPair } from "@/components/editorial/OfficePhotography";
 import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { Link } from "wouter";
@@ -126,8 +127,9 @@ export function Firma26({ lang }: { lang: Lang26 }) {
               className="ss-photo block h-auto w-full"
             />
           </div>
+          <OfficePhotoPair photos={["biblioteca", "detalle"]} className="mt-4 md:mt-6" />
           {/* Junto al pie, el enlace a la página de la oficina (su nombre en officeLabel) */}
-          <figcaption className="mt-4 flex flex-wrap items-baseline gap-x-4 gap-y-4 text-[14px] leading-snug text-ss-medio">
+          <figcaption className="mt-4 flex flex-wrap items-baseline gap-x-4 gap-y-4 text-[16px] leading-relaxed text-ss-medio">
             <span className="ss-label shrink-0 text-ss-marino">Fig. 1</span>
             <span className="min-w-0 flex-1 basis-[16rem]">{t.caption}</span>
             <TextLink href="/offices" className="shrink-0" data-testid="link-home-offices">
@@ -162,7 +164,7 @@ export function Creemos26({ lang }: { lang: Lang26 }) {
         <div className="ss-creemos-body text-ss-tinta">
           {t.body.map((p, i) => (
             <Reveal key={p.slice(0, 24)} delay={0.14 + i * 0.06}>
-              <p className="ss-prose text-[17px]">{p}</p>
+              <p className="ss-prose text-[18px]">{p}</p>
             </Reveal>
           ))}
         </div>
@@ -246,7 +248,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                       </span>
                       {/* 60ch a 17 px (507 px): la misma medida de las entradillas del Monitor
                           (MonitorList, N9); si cambia aquí, cambia allí */}
-                      <span id={`ss26-prd-${item.slug}`} className="ss-prose mt-4 block max-w-[60ch] text-[17px] text-ss-tinta">
+                      <span id={`ss26-prd-${item.slug}`} className="ss-prose mt-4 block max-w-[60ch] text-[18px] text-ss-tinta">
                         {item.body}
                       </span>
                     </span>
@@ -430,11 +432,12 @@ export function Socios26({ lang }: { lang: Lang26 }) {
             <Reveal as="li" key={person.name} delay={i * 0.08}>
               <Link href={`/team/${person.photo}`} className="inline-link group block">
                 <span className="grid grid-cols-[112px_1fr] items-end gap-x-5 sm:block">
-                  <span className="relative block aspect-[4/5] overflow-hidden bg-ss-paper">
+                  <span className="ss-portrait-frame relative block aspect-[4/5] overflow-hidden bg-ss-paper">
                     {/* Fuente 652×652 (360 en teléfono) recortada a 4:5, en color como todo
                         retrato; alt vacío: el nombre ya es el texto del enlace */}
                     <img
                       src={person.image}
+                      data-portrait-slug={person.photo}
                       {...(getTeamPhotoSrcSet(person.image) ? { srcSet: getTeamPhotoSrcSet(person.image), sizes: "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 112px" } : {})}
                       onError={fallbackToOriginalSrc}
                       alt=""

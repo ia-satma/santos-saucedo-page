@@ -628,5 +628,159 @@
     "key": "public/media/a4c1164e93a30d817f438734-mario-saucedo-rodriguez-color.png",
     "sha256": "a4c1164e93a30d817f438734104258ba44b06c87bd2a04c89eb06cbf0d1cb748",
     "bytes": 1080886
+  },
+  {
+    "url": "/editorial/oficina-biblioteca-768.webp",
+    "source": "client/public/editorial/oficina-biblioteca-768.webp",
+    "key": "public/media/16163a95118411a46da8ab84-oficina-biblioteca-768.webp",
+    "sha256": "16163a95118411a46da8ab84eaea8765d96a0e6151295021d0e8638470493c26",
+    "bytes": 76082
+  },
+  {
+    "url": "/editorial/oficina-biblioteca-1536.webp",
+    "source": "client/public/editorial/oficina-biblioteca-1536.webp",
+    "key": "public/media/0b276fb4acb7907423335677-oficina-biblioteca-1536.webp",
+    "sha256": "0b276fb4acb79074233356772b9527b67b1fe03231fa7e925755ad961545a7b7",
+    "bytes": 233714
+  },
+  {
+    "url": "/editorial/oficina-escalera-768.webp",
+    "source": "client/public/editorial/oficina-escalera-768.webp",
+    "key": "public/media/2a0c669de92f65ad16c53962-oficina-escalera-768.webp",
+    "sha256": "2a0c669de92f65ad16c53962b65b5458b6b150bd589f2b9db302d87f4fe55402",
+    "bytes": 41558
+  },
+  {
+    "url": "/editorial/oficina-escalera-1536.webp",
+    "source": "client/public/editorial/oficina-escalera-1536.webp",
+    "key": "public/media/1ca6c7dedb3201c35d7ae51f-oficina-escalera-1536.webp",
+    "sha256": "1ca6c7dedb3201c35d7ae51f272299faa80b29a73b8948e61ae2cb982be15485",
+    "bytes": 117494
+  },
+  {
+    "url": "/editorial/oficina-detalle-768.webp",
+    "source": "client/public/editorial/oficina-detalle-768.webp",
+    "key": "public/media/5c408c3a79de2de2c805f072-oficina-detalle-768.webp",
+    "sha256": "5c408c3a79de2de2c805f072ca3e7ec7dab70589b74e7202dd737460753ff443",
+    "bytes": 57730
+  },
+  {
+    "url": "/editorial/oficina-detalle-1536.webp",
+    "source": "client/public/editorial/oficina-detalle-1536.webp",
+    "key": "public/media/78856beac8381df1c3dd78f6-oficina-detalle-1536.webp",
+    "sha256": "78856beac8381df1c3dd78f6900a4fb98b3a81d53296e8e4de8403a397491acc",
+    "bytes": 154818
+  },
+  {
+    "url": "/editorial/oficina-arte-mapa-768.webp",
+    "source": "client/public/editorial/oficina-arte-mapa-768.webp",
+    "key": "public/media/6a0f0b46b08a13ba0de0e1ad-oficina-arte-mapa-768.webp",
+    "sha256": "6a0f0b46b08a13ba0de0e1ad38b4c813a717f1b202b392fa8fd0f8610039c622",
+    "bytes": 110226
+  },
+  {
+    "url": "/editorial/oficina-arte-mapa-1536.webp",
+    "source": "client/public/editorial/oficina-arte-mapa-1536.webp",
+    "key": "public/media/3b3428f5401c0e40ba95158f-oficina-arte-mapa-1536.webp",
+    "sha256": "3b3428f5401c0e40ba95158fc2f02b4333c6f32e8ee728b59635fb4d9d8f9b3f",
+    "bytes": 435822
+  },
+  {
+    "url": "/editorial/oficina-oficina-privada-768.webp",
+    "source": "client/public/editorial/oficina-oficina-privada-768.webp",
+    "key": "public/media/81d9fe6ca2f958bee174b107-oficina-oficina-privada-768.webp",
+    "sha256": "81d9fe6ca2f958bee174b107cfa7b308db50482abf1344b09ff1240681177350",
+    "bytes": 55142
+  },
+  {
+    "url": "/editorial/oficina-oficina-privada-1536.webp",
+    "source": "client/public/editorial/oficina-oficina-privada-1536.webp",
+    "key": "public/media/38a38a48c7a7d5965e6fc239-oficina-oficina-privada-1536.webp",
+    "sha256": "38a38a48c7a7d5965e6fc2399b8f379ce12b217f44d298e57f1d2dff7e4ae1f1",
+    "bytes": 167922
+  },
+  {
+    "url": "/editorial/oficina-sala-panoramica-768.webp",
+    "source": "client/public/editorial/oficina-sala-panoramica-768.webp",
+    "key": "public/media/8a40864b960b844dbbfe06bc-oficina-sala-panoramica-768.webp",
+    "sha256": "8a40864b960b844dbbfe06bc2c71f4d32ad02f3af52e3ece85544e59ae276319",
+    "bytes": 61762
+  },
+  {
+    "url": "/editorial/oficina-sala-panoramica-1536.webp",
+    "source": "client/public/editorial/oficina-sala-panoramica-1536.webp",
+    "key": "public/media/ee9cf85052a0bbc366a8c289-oficina-sala-panoramica-1536.webp",
+    "sha256": "ee9cf85052a0bbc366a8c2898a43502f1d548a3eed7c45fa275d8e63c672ab14",
+    "bytes": 203464
+  },
+  {
+    "url": "/editorial/oficina-espacios-abiertos-768.webp",
+    "source": "client/public/editorial/oficina-espacios-abiertos-768.webp",
+    "key": "public/media/d9d563eea274b81b267e3b3b-oficina-espacios-abiertos-768.webp",
+    "sha256": "d9d563eea274b81b267e3b3b80548c051570181636b8f6bebbf85b8f2eea883a",
+    "bytes": 47788
+  },
+  {
+    "url": "/editorial/oficina-espacios-abiertos-1536.webp",
+    "source": "client/public/editorial/oficina-espacios-abiertos-1536.webp",
+    "key": "public/media/9109d8708143cadc7ba3ff69-oficina-espacios-abiertos-1536.webp",
+    "sha256": "9109d8708143cadc7ba3ff69a5ecd51088d5065e7d119393a350be824764acea",
+    "bytes": 141442
+  },
+  {
+    "url": "/editorial/oficina-recepcion-general-768.webp",
+    "source": "client/public/editorial/oficina-recepcion-general-768.webp",
+    "key": "public/media/90b4e773f0eb8dcac849eba1-oficina-recepcion-general-768.webp",
+    "sha256": "90b4e773f0eb8dcac849eba111c3120f43da4602d760c9f3ee66e501a2c3d01a",
+    "bytes": 80520
+  },
+  {
+    "url": "/editorial/oficina-recepcion-general-1536.webp",
+    "source": "client/public/editorial/oficina-recepcion-general-1536.webp",
+    "key": "public/media/def6509ca9bf60232ca00b9b-oficina-recepcion-general-1536.webp",
+    "sha256": "def6509ca9bf60232ca00b9bf8f67811bd56d13c1e95e9d789d8e7f65a5a7f01",
+    "bytes": 242164
+  },
+  {
+    "url": "/editorial/oficina-arte-color-768.webp",
+    "source": "client/public/editorial/oficina-arte-color-768.webp",
+    "key": "public/media/07ccdac11f53ed82ed01ee38-oficina-arte-color-768.webp",
+    "sha256": "07ccdac11f53ed82ed01ee38b5dfada2363d01a05a545f170b334f18be456458",
+    "bytes": 118888
+  },
+  {
+    "url": "/editorial/oficina-arte-color-1536.webp",
+    "source": "client/public/editorial/oficina-arte-color-1536.webp",
+    "key": "public/media/54e835e4397f1c75993d42c2-oficina-arte-color-1536.webp",
+    "sha256": "54e835e4397f1c75993d42c2be9f46d7010330fe4d6edd7e285e706ee19d11d0",
+    "bytes": 388744
+  },
+  {
+    "url": "/editorial/oficina-mesa-trabajo-768.webp",
+    "source": "client/public/editorial/oficina-mesa-trabajo-768.webp",
+    "key": "public/media/4e1dc73adeb2bf965261a8a4-oficina-mesa-trabajo-768.webp",
+    "sha256": "4e1dc73adeb2bf965261a8a406e4757648eba0a155045721ae45165366154937",
+    "bytes": 37906
+  },
+  {
+    "url": "/editorial/oficina-mesa-trabajo-1536.webp",
+    "source": "client/public/editorial/oficina-mesa-trabajo-1536.webp",
+    "key": "public/media/297601eb09cd32bf57155584-oficina-mesa-trabajo-1536.webp",
+    "sha256": "297601eb09cd32bf57155584e5fb6b30fcc1442bafa8c3569657722444f52e7c",
+    "bytes": 110128
+  },
+  {
+    "url": "/editorial/oficina-arte-detalle-768.webp",
+    "source": "client/public/editorial/oficina-arte-detalle-768.webp",
+    "key": "public/media/3292cb4d38c4e743bbe4e013-oficina-arte-detalle-768.webp",
+    "sha256": "3292cb4d38c4e743bbe4e0133aa3f7a44383490704e53086aa8c00cc2bfe5e92",
+    "bytes": 82844
+  },
+  {
+    "url": "/editorial/oficina-arte-detalle-1536.webp",
+    "source": "client/public/editorial/oficina-arte-detalle-1536.webp",
+    "key": "public/media/1f691de76376834c1a0f5788-oficina-arte-detalle-1536.webp",
+    "sha256": "1f691de76376834c1a0f5788c73e22c4a55dc20d9c0207a9ed345715eea46604",
+    "bytes": 269300
   }
 ]
