@@ -1,4 +1,5 @@
 import { cmsDefaults } from "../shared/cms";
+import { teamPhotoOwner } from "../shared/marioPortrait";
 import { copyFile, mkdir, readdir, rm, writeFile } from "fs/promises";
 import path from "path";
 import {
@@ -83,7 +84,7 @@ const namedPhotoSlugs = new Set(namedTeamMembers.map((m) => String(m.slug)));
 const TEAM_PHOTO_FILE = /^([a-z0-9-]+?)(?:\.(?:png|jpe?g)|-(?:128|360|652)\.webp)$/i;
 const isNamedPhoto = (fileName: string) => {
   const match = TEAM_PHOTO_FILE.exec(fileName);
-  return !!match && namedPhotoSlugs.has(match[1].toLowerCase());
+  return !!match && namedPhotoSlugs.has(teamPhotoOwner(match[1].toLowerCase()));
 };
 
 // Notas (J2): solo las publicadas y ya en fecha al compilar (isPublicNews, el criterio del

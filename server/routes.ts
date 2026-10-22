@@ -15,6 +15,7 @@ import { registerCatalogOrder } from "./cms/catalogOrder";
 import { mediaInventory, persistentMediaItem, registerMediaLibrary } from "./cms/mediaLibrary";
 import { registerNewsEditor } from "./cms/newsEditor";
 import { getBundledMediaMap } from "./cms/bundledMediaMap";
+import { teamPhotoOwner } from "@shared/marioPortrait";
 import { ensureCmsSchema, registerCmsRoutes, getCmsContact, getCmsFormControls } from "./cms/siteConfig";
 import { registerAdminUsers } from "./cms/adminUsers";
 import { recordAccessEvent } from "./cms/accessAudit";
@@ -394,7 +395,7 @@ export async function registerRoutes(
     const match = TEAM_PHOTO_FILE.exec(req.path);
     if (!match) return res.status(404).end();
     const slugs = await getNamedPhotoSlugs();
-    if (!slugs.has(match[1].toLowerCase())) return res.status(404).end();
+    if (!slugs.has(teamPhotoOwner(match[1].toLowerCase()))) return res.status(404).end();
     try { const target=(await getBundledMediaMap())[req.originalUrl.split('?')[0]];if(target)return res.redirect(302,target); }catch{}
     next();
   });

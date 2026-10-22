@@ -1,4 +1,5 @@
 import type { SiteContent, Stat } from "@shared/schema";
+import { MARIO_PORTRAIT_URL } from "@shared/marioPortrait";
 
 export const siteContentData: SiteContent = {
   heroTitle: "WE GO WHERE CLIENTS NEED US",
@@ -125,7 +126,8 @@ export const teamMembersData = [
   {
     name: "Mario Saucedo Rodríguez",
     slug: "mario-saucedo-rodriguez",
-    imageUrl: "/team_photos/mario-saucedo-rodriguez.png",
+    imageUrl: MARIO_PORTRAIT_URL,
+    showOnHome: true,
     title: "Founding partner (in memoriam)",
     titleEs: "Socio fundador (in memoriam)",
     role: "Labor law",

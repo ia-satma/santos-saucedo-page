@@ -6,9 +6,6 @@ import fachada768 from "@assets/ss26/oficina/fachada-768.webp";
 import fachada1536 from "@assets/ss26/oficina/fachada-1536.webp";
 import salaJuntas768 from "@assets/ss26/oficina/sala-juntas-768.webp";
 import salaJuntas1536 from "@assets/ss26/oficina/sala-juntas-1536.webp";
-import socioSantosArce from "@assets/ss26/socio-enrique-hernan-santos-arce.webp";
-import socioSantosGuzman from "@assets/ss26/socio-enrique-hernan-santos-guzman.webp";
-import socioSaucedoMontemayor from "@assets/ss26/socio-mario-saucedo-montemayor.webp";
 import { isNamedOnTeamPage, fallbackToOriginalSrc, getTeamPhotoSrcSet } from "@/lib/teamPhotoSources";
 import { keepFirmName } from "@/lib/firmName";
 import { useOfficeLabel } from "@/lib/officeLabel";
@@ -64,19 +61,6 @@ const GAP_X = "xl:gap-x-[clamp(32px,6vw,96px)]";
    index.css). Sobre Azul Profundo se añade text-white. El manifiesto es la excepción: la
    única itálica del sitio. */
 const H2 = "ss-h2 mt-8";
-
-/* Retratos de socios, por slug de /team. El WebP de la portada (652 px) queda como src de
-   respaldo; el navegador elige del srcset de team_photos (360w y 652w, el de /team) según
-   el hueco: 112 px en teléfono, un tercio del contenedor desde sm (416 px a 1440, 424 máx.). */
-const socioPhotos: Record<string, string> = {
-  "enrique-santos-arce": socioSantosArce,
-  "enrique-santos-guzman": socioSantosGuzman,
-  "mario-saucedo-montemayor": socioSaucedoMontemayor,
-};
-const socioSrcSetProps = (slug: string) => {
-  const srcSet = getTeamPhotoSrcSet(`${import.meta.env.BASE_URL}team_photos/${slug}.png`);
-  return srcSet ? { srcSet, sizes: "(min-width: 1464px) 424px, (min-width: 640px) calc(30vw - 16px), 112px" } : {};
-};
 
 /* § 01 — La firma */
 export function Firma26({ lang }: { lang: Lang26 }) {
@@ -436,35 +420,36 @@ export function Socios26({ lang }: { lang: Lang26 }) {
           </Reveal>
         </div>
 
-        {/* Teléfono: lista con retrato pequeño al lado del nombre; desde sm, tres columnas.
+        {/* Teléfono: lista con retrato pequeño al lado del nombre; desde sm, dos columnas y
+            desde lg, cuatro, como las tarjetas de /team.
             La tarjeta es la de /team (Team.tsx renderPersonCard): enlace a la ficha del socio,
             el retrato se acerca al 1 % y el nombre se subraya al pasar el ratón o con el foco.
             inline-link: fuera de la regla móvil de index.css que vuelve inline-flex todo <a>. */}
-        <ul className="mt-14 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-3 sm:gap-y-12 lg:mt-16">
+        <ul className="mt-14 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 sm:gap-y-12 lg:mt-16 lg:grid-cols-4">
           {people.map((person, i) => (
             <Reveal as="li" key={person.name} delay={i * 0.08}>
               <Link href={`/team/${person.photo}`} className="inline-link group block">
                 <span className="grid grid-cols-[112px_1fr] items-end gap-x-5 sm:block">
-                  <span className="block overflow-hidden bg-ss-paper">
+                  <span className="relative block aspect-[4/5] overflow-hidden bg-ss-paper">
                     {/* Fuente 652×652 (360 en teléfono) recortada a 4:5, en color como todo
                         retrato; alt vacío: el nombre ya es el texto del enlace */}
                     <img
                       src={person.image}
-                      {...(getTeamPhotoSrcSet(person.image) ? { srcSet: getTeamPhotoSrcSet(person.image), sizes: "(min-width: 640px) 30vw, 112px" } : {})}
+                      {...(getTeamPhotoSrcSet(person.image) ? { srcSet: getTeamPhotoSrcSet(person.image), sizes: "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 112px" } : {})}
                       onError={fallbackToOriginalSrc}
                       alt=""
                       loading="lazy"
                       decoding="async"
                       width={652}
                       height={652}
-                      className="ss-photo aspect-[4/5] h-auto w-full object-cover object-[50%_28%] transition-transform duration-700 [transition-timing-function:var(--ss-ease)] motion-safe:group-hover:scale-[1.01] motion-reduce:transform-none motion-reduce:transition-none"
+                      className="ss-photo absolute inset-0 h-full w-full object-cover object-[50%_28%] transition-transform duration-700 [transition-timing-function:var(--ss-ease)] motion-safe:group-hover:scale-[1.01] motion-reduce:transform-none motion-reduce:transition-none"
                     />
                   </span>
                   <span className="block sm:mt-5">
-                    <span className="ss-display block text-[clamp(24px,1.9vw,28px)] font-normal leading-[1.15] tracking-[-0.01em] text-ss-marino decoration-1 underline-offset-4 group-hover:underline group-focus-visible:underline">
+                    <span className="ss-display block text-[clamp(24px,1.9vw,28px)] font-normal leading-[1.15] tracking-[-0.01em] text-ss-marino decoration-1 underline-offset-4 sm:min-h-[2.3em] group-hover:underline group-focus-visible:underline">
                       {person.name}
                     </span>
-                    <span className="ss-label mt-3 block text-ss-medio">{person.role}</span>
+                    <span className="ss-label mt-3 block text-ss-medio">{person.role.replace(/\((in)\s+(memoriam)\)/gi, "($1\u00a0$2)")}</span>
                   </span>
                 </span>
               </Link>

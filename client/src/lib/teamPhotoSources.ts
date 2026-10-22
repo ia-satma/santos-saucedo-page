@@ -1,6 +1,13 @@
 import type { SyntheticEvent } from "react";
 import type { TeamMember } from "@shared/schema";
 import { CONFIRMED_PARTNER_SLUGS } from "@shared/teamVisibility";
+import { MARIO_PORTRAIT_FILE, teamPhotoOwner } from "@shared/marioPortrait";
+import bundled from "@shared/cms-media-manifest.json";
+
+const colorAssets = bundled.filter(asset => asset.url.includes(`/${MARIO_PORTRAIT_FILE}`));
+const persistentColorOriginal = colorAssets.find(asset => asset.url.endsWith(".png"));
+const persistentColorVariant = (size: number) =>
+  `/media/${colorAssets.find(asset => asset.url.endsWith(`-${size}.webp`))!.key}`;
 
 // La regla de quién aparece con nombre vive en shared/teamVisibility.ts (también la usa el servidor).
 export { CONFIRMED_PARTNER_SLUGS, isOfCounselMember, isNamedOnTeamPage } from "@shared/teamVisibility";
@@ -17,6 +24,7 @@ const PORTRAIT_SLUGS = new Set([
   "enrique-santos-guzman",
   "enrique-santos-arce",
   "mario-saucedo-rodriguez",
+  MARIO_PORTRAIT_FILE,
 ]);
 
 // Retratos con miniatura <slug>-128.webp (miniaturas cuadradas de 56 px de "Equipo relacionado"):
@@ -36,6 +44,9 @@ function parseTeamPhotoUrl(url?: string | null) {
 
 /** srcset WebP (360w y 652w) de un retrato de socio, o undefined si no hay variantes. */
 export function getTeamPhotoSrcSet(url?: string | null): string | undefined {
+  if (url === `/media/${persistentColorOriginal?.key}`) {
+    return `${persistentColorVariant(360)} 360w, ${persistentColorVariant(652)} 652w`;
+  }
   const parsed = parseTeamPhotoUrl(url);
   if (!parsed || !PORTRAIT_SLUGS.has(parsed.slug)) return undefined;
   return `${parsed.dir}${parsed.slug}-360.webp 360w, ${parsed.dir}${parsed.slug}-652.webp 652w`;
@@ -43,8 +54,9 @@ export function getTeamPhotoSrcSet(url?: string | null): string | undefined {
 
 /** Miniatura WebP de 128 px para avatares; si no hay, la URL original. */
 export function getTeamPhotoThumb(url?: string | null): string | undefined {
+  if (url === `/media/${persistentColorOriginal?.key}`) return persistentColorVariant(128);
   const parsed = parseTeamPhotoUrl(url);
-  if (!parsed || !THUMB_SLUGS.has(parsed.slug)) return url || undefined;
+   if (!parsed || !THUMB_SLUGS.has(teamPhotoOwner(parsed.slug))) return url || undefined;
   return `${parsed.dir}${parsed.slug}-128.webp`;
 }
 

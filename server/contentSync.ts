@@ -79,6 +79,8 @@ function staleFields(
 }
 
 export async function syncSeedContent() {
+  const { syncMarioPortrait } = await import("./cms/marioPortrait");
+  await syncMarioPortrait();
   const { db } = await import("./db");
   const { and, eq, isNull } = await import("drizzle-orm");
   const { practiceGroups, teamMembers } = await import("@shared/schema");

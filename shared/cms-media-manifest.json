@@ -600,5 +600,33 @@
     "key": "public/media/b6ef23de02e363423dcee118-mario-saucedo-rodriguez.png",
     "sha256": "b6ef23de02e363423dcee1187bfe4358bb3e3c82247ce141db2edb8a950281f8",
     "bytes": 564233
+  },
+  {
+    "url": "/team_photos/mario-saucedo-rodriguez-color-128.webp",
+    "source": "attached_assets/team_photos/mario-saucedo-rodriguez-color-128.webp",
+    "key": "public/media/5ad72e9ccf7eef34471d9f50-mario-saucedo-rodriguez-color-128.webp",
+    "sha256": "5ad72e9ccf7eef34471d9f50797fa2fa7e718624bbb446cb5968c8b699de1011",
+    "bytes": 5580
+  },
+  {
+    "url": "/team_photos/mario-saucedo-rodriguez-color-360.webp",
+    "source": "attached_assets/team_photos/mario-saucedo-rodriguez-color-360.webp",
+    "key": "public/media/cb4b0edcdc98f6e34eb24460-mario-saucedo-rodriguez-color-360.webp",
+    "sha256": "cb4b0edcdc98f6e34eb244604a9e4f4a8b21f5a376c7c8235dccca7ae70ff696",
+    "bytes": 33864
+  },
+  {
+    "url": "/team_photos/mario-saucedo-rodriguez-color-652.webp",
+    "source": "attached_assets/team_photos/mario-saucedo-rodriguez-color-652.webp",
+    "key": "public/media/df8e0987f70d5d51b051388c-mario-saucedo-rodriguez-color-652.webp",
+    "sha256": "df8e0987f70d5d51b051388ccca4341e7f5d44c2a2dee82f35df8ba70df70629",
+    "bytes": 83374
+  },
+  {
+    "url": "/team_photos/mario-saucedo-rodriguez-color.png",
+    "source": "attached_assets/team_photos/mario-saucedo-rodriguez-color.png",
+    "key": "public/media/a4c1164e93a30d817f438734-mario-saucedo-rodriguez-color.png",
+    "sha256": "a4c1164e93a30d817f438734104258ba44b06c87bd2a04c89eb06cbf0d1cb748",
+    "bytes": 1080886
   }
 ]
