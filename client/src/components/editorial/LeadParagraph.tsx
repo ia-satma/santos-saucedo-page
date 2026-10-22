@@ -89,7 +89,7 @@ export function LeadParagraph({
       {body.map((p, i) => (
         <p
           key={i}
-          className={`ss-prose text-ss-tinta text[19px] md:text[20px] ${lead || i > 0 ? "mt-5" : ""}`}
+          className={`ss-prose text-ss-tinta text-[19px] md:text-[20px] ${lead || i > 0 ? "mt-5" : ""}`}
         >
           {inlineText(p)}
         </p>

@@ -142,7 +142,7 @@ export function Firma26({ lang }: { lang: Lang26 }) {
             />
           </div>
           {/* Junto al pie, el enlace a la página de la oficina (su nombre en officeLabel) */}
-          <figcaption className="mt-4 flex flex-wrap items-baseline gap-x-4 gap-y-4 text[15px] leading-snug text-ss-medio">
+          <figcaption className="mt-4 flex flex-wrap items-baseline gap-x-4 gap-y-4 text-[15px] leading-snug text-ss-medio">
             <span className="ss-label shrink-0 text-ss-marino">Fig. 1</span>
             <span className="min-w-0 flex-1 basis-[16rem]">{t.caption}</span>
             <TextLink href="/offices" className="shrink-0" data-testid="link-home-offices">
@@ -177,7 +177,7 @@ export function Creemos26({ lang }: { lang: Lang26 }) {
         <div className="mt-14 grid gap-8 text-ss-tinta md:grid-cols-2 lg:col-span-8 lg:col-start-5 lg:mt-20 lg:grid-cols-1 lg:gap-10 xl:grid-cols-2">
           {t.body.map((p, i) => (
             <Reveal key={p.slice(0, 24)} delay={0.14 + i * 0.06}>
-              <p className="ss-prose text[19px]">{p}</p>
+              <p className="ss-prose text-[19px]">{p}</p>
             </Reveal>
           ))}
         </div>
@@ -249,11 +249,11 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                     </span>
                     {/* 60ch a 17 px (507 px): la misma medida de las entradillas del Monitor
                         (MonitorList, N9); si cambia aquí, cambia allí */}
-                    <span id={`ss26-prd-${item.slug}`} className="ss-prose mt-4 block max-w-[60ch] text[19px] text-ss-tinta">
+                    <span id={`ss26-prd-${item.slug}`} className="ss-prose mt-4 block max-w-[60ch] text-[19px] text-ss-tinta">
                       {item.body}
                     </span>
                   </span>
-                  <span aria-hidden className="ss-arrow hidden pt-1 text[25px] text-ss-marino sm:block lg:col-start-12 lg:justify-self-end">
+                  <span aria-hidden className="ss-arrow hidden pt-1 text-[25px] text-ss-marino sm:block lg:col-start-12 lg:justify-self-end">
                     →
                   </span>
                 </Link>

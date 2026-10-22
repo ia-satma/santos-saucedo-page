@@ -184,7 +184,7 @@ function RelatedTeamMemberCard({
         </span>
         <div className="flex-1 min-w-0">
           {/* Nombre y cargo completos: si no caben, pasan a una segunda línea (antes "Mario Saucedo M…") */}
-          <p className="font-heading text[19px] leading-[1.2] tracking-[-0.01em] text-ss-marino group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1">
+          <p className="font-heading text-[19px] leading-[1.2] tracking-[-0.01em] text-ss-marino group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1">
             {relatedMember.name}
           </p>
           {/* Sin traducción, el cargo en inglés va en <bdi>: aislado del árabe sin cambiar la alineación */}
@@ -2114,7 +2114,7 @@ export default function TeamMemberDetail() {
                           </h3>
                           {(language === "es" ? article.excerptEs : article.excerpt) && (
                             <p
-                              className="mt-3 text[18px] leading-[1.55] text-ss-tinta [text-wrap:pretty]"
+                              className="mt-3 text-[18px] leading-[1.55] text-ss-tinta [text-wrap:pretty]"
                               data-testid={`text-news-excerpt-${article.slug}`}
                             >
                               {language === "es" ? article.excerptEs : article.excerpt}

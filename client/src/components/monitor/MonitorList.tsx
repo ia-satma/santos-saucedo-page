@@ -287,7 +287,7 @@ function MonitorRow({
             mismo borde derecho (entre 60 y 75 caracteres por línea). En el móvil, el contenedor */}
         {excerpt && (
           <p
-            className={`mt-3 text[18px] leading-[1.55] text-ss-tinta [text-wrap:pretty] ${index ? "max-w-[63.75ch]" : ""}`}
+            className={`mt-3 text-[18px] leading-[1.55] text-ss-tinta [text-wrap:pretty] ${index ? "max-w-[63.75ch]" : ""}`}
             data-testid={testIds.excerpt?.(item)}
             lang={excerptIsSource ? "en" : undefined}
           >
@@ -498,7 +498,7 @@ export function MonitorSubscribe({
       className={`flex flex-wrap items-baseline gap-x-6 gap-y-4 ${rule ? "border-t border-ss-rule pt-8" : ""} ${className}`}
       data-testid={testId}
     >
-      <p className="text[18px] leading-[1.55] text-ss-tinta">{t.line}</p>
+      <p className="text-[18px] leading-[1.55] text-ss-tinta">{t.line}</p>
       <TextLink href="/newsletter" data-testid={linkTestId}>
         {t.cta}
       </TextLink>

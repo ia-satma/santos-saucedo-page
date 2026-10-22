@@ -93,13 +93,13 @@ function PracticeGroupRow({ group, index }: PracticeGroupRowProps) {
         </h2>
         <p
           id={descriptionId}
-          className="ss-prose max-w-[60ch] text[19px] text-ss-tinta sm:col-start-2 sm:row-start-2 lg:col-start-3 lg:row-start-1"
+          className="ss-prose max-w-[60ch] text-[19px] text-ss-tinta sm:col-start-2 sm:row-start-2 lg:col-start-3 lg:row-start-1"
           data-testid={`text-practice-group-desc-${group.slug}`}
           lang={descriptionIsSource ? "en" : undefined}
         >
           {descriptionIsSource ? <EnglishSource>{displayDescription}</EnglishSource> : displayDescription}
         </p>
-        <span aria-hidden="true" className="ss-arrow hidden text[25px] text-ss-marino sm:block sm:col-start-3 sm:row-start-1 lg:col-start-4">
+        <span aria-hidden="true" className="ss-arrow hidden text-[25px] text-ss-marino sm:block sm:col-start-3 sm:row-start-1 lg:col-start-4">
           →
         </span>
       </Link>

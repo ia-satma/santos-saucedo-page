@@ -68,7 +68,7 @@ const PRACTICE_OPTIONS: string[] = [...PRACTICE_SLUGS, OTHER_VALUE];
 // encima (a 1024 px la dirección se partía en seis líneas y el correo salía del filete).
 const rowClass = "grid grid-cols-1 gap-y-1 border-t border-ss-rule py-4 sm:grid-cols-[11rem,1fr] sm:gap-x-6 lg:grid-cols-1";
 const dtClass = "ss-label text-ss-medio sm:pt-1 lg:pt-0";
-const ddClass = "text[19px] leading-[1.55] text-ss-tinta";
+const ddClass = "text-[19px] leading-[1.55] text-ss-tinta";
 const ddLinkClass = "hover:text-ss-marino hover:underline underline-offset-4 transition-colors";
 
 // Titulares: .ss-h2 (index.css), la escala única de las secciones de página.
@@ -826,7 +826,7 @@ export default function Contact() {
                     si algún socio tiene datos directos en su ficha (G6) */}
                 {showPartnersNote && (
                   <p
-                    className="mt-6 max-w-md text[17px] leading-[1.5] text-ss-medio"
+                    className="mt-6 max-w-md text-[17px] leading-[1.5] text-ss-medio"
                     data-testid="text-contact-subtitle"
                   >
                     {t.partnersNote}
@@ -1009,7 +1009,7 @@ export default function Contact() {
                             />
                           </FormControl>
                           <FormLabel
-                            className="text[18px] font-normal leading-[1.5] text-ss-tinta"
+                            className="text-[18px] font-normal leading-[1.5] text-ss-tinta"
                             data-testid="label-consent"
                           >
                             {consentT.before}
@@ -1053,7 +1053,7 @@ export default function Contact() {
 
                   {/* Aviso tras el botón, como en la redacción */}
                   <p
-                    className="max-w-xl text[17px] leading-[1.5] text-ss-medio"
+                    className="max-w-xl text-[17px] leading-[1.5] text-ss-medio"
                     data-testid="text-form-subtitle"
                   >
                     {t.formSubtitle}

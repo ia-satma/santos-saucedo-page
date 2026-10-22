@@ -10,7 +10,7 @@ import { useChrome26 } from "./chrome26";
 import { useSiteContact } from "./useSiteContact";
 
 // Área de clic de 32px (WCAG 2.5.8 pide 24px); el subrayado va en el texto, no en la caja.
-const linkCls = "inline-flex min-h-8 items-center text-start text[18px] transition-colors";
+const linkCls = "inline-flex min-h-8 items-center text-start text-[18px] transition-colors";
 // Encabezados de columna: etiqueta en blanco tenue sobre Azul Profundo (la lima no va en texto)
 const headCls = "ss-label text-white/75";
 // Listas de enlaces: a 320 px cada columna mide ~128 px y una sola palabra larga
@@ -63,7 +63,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
 
         {navigation.footer.officeEnabled&&<address className="col-span-2 not-italic md:col-span-1 lg:col-span-3" data-testid="text-footer-address">
           <p className={headCls}>{t.office}</p>
-          <p className="mt-5 text[18px] leading-[1.6] text-white/80">
+          <p className="mt-5 text-[18px] leading-[1.6] text-white/80">
             {/* bdi: en árabe (RTL) el punto final de "N.L." no salta al principio de la línea */}
             {address.map((line, i) => (
               <span key={i} className="block">
@@ -150,7 +150,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
       </div>
 
       <div className="ss-container">
-        <div className="flex flex-col gap-4 border-t border-white/15 py-8 text[14px] leading-relaxed text-white/65 md:flex-row md:items-center md:justify-between md:gap-10">
+        <div className="flex flex-col gap-4 border-t border-white/15 py-8 text-[14px] leading-relaxed text-white/65 md:flex-row md:items-center md:justify-between md:gap-10">
           <p>{t.disclaimer}</p>
           <div className="flex shrink-0 items-center gap-3">
             <p className="ss-num" data-testid="text-copyright">

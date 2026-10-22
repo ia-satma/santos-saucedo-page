@@ -100,7 +100,7 @@ function AuthorCard({
           </Avatar>
           <div className="flex-1 min-w-0">
             <h3 
-              className="ss-h3 text[22px] transition-colors group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1"
+              className="ss-h3 text-[22px] transition-colors group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1"
               data-testid={`text-author-name-${author.slug}`}
             >
               {author.name}

@@ -120,7 +120,7 @@ export function LangSwitch26({ lang, className = "" }: { lang: LanguageCode; cla
                     lang={l.code}
                     aria-pressed={language === l.code}
                     onClick={() => choose(l.code)}
-                    className="flex min-h-[44px] w-full items-center justify-between gap-6 border-s-2 border-transparent pe-5 ps-[18px] text-start text[17px] text-white/80 transition-colors hover:bg-white/5 hover:text-white aria-pressed:border-white/85 aria-pressed:text-white"
+                    className="flex min-h-[44px] w-full items-center justify-between gap-6 border-s-2 border-transparent pe-5 ps-[18px] text-start text-[17px] text-white/80 transition-colors hover:bg-white/5 hover:text-white aria-pressed:border-white/85 aria-pressed:text-white"
                   >
                     <span {...nameProps(l.code)}>{l.nameNative}</span>
                     <span aria-hidden="true" className="ss-label text-white/50">
@@ -178,7 +178,7 @@ export function LangList26({ lang }: { lang: LanguageCode }) {
               lang={l.code}
               aria-pressed={language === l.code}
               onClick={() => setLanguage(l.code)}
-              className="flex min-h-[44px] w-full items-center text-start text[17px] normal-case tracking-normal text-white/60 transition-colors hover:text-white aria-pressed:text-white aria-pressed:underline aria-pressed:decoration-white/85 aria-pressed:decoration-1 aria-pressed:underline-offset-[6px]"
+              className="flex min-h-[44px] w-full items-center text-start text-[17px] normal-case tracking-normal text-white/60 transition-colors hover:text-white aria-pressed:text-white aria-pressed:underline aria-pressed:decoration-white/85 aria-pressed:decoration-1 aria-pressed:underline-offset-[6px]"
             >
               <span {...nameProps(l.code)}>{l.nameNative}</span>
             </button>

@@ -415,7 +415,7 @@ export default function Newsletter() {
                               />
                             </FormControl>
                             <FormLabel
-                              className="text[18px] font-normal leading-[1.5] text-ss-tinta"
+                              className="text-[18px] font-normal leading-[1.5] text-ss-tinta"
                               data-testid="label-consent"
                             >
                               {t.consentBefore}

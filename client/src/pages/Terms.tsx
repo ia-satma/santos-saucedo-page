@@ -2082,7 +2082,7 @@ Escluse le festività federali messicane`
                   }
                 >
                   <div
-                    className="ss-prose max-w-[42rem] text-ss-tinta text[19px] md:text[20px] space-y-5"
+                    className="ss-prose max-w-[42rem] text-ss-tinta text-[19px] md:text-[20px] space-y-5"
                     data-testid={`text-section-content-${section.id}`}
                   >
                     {renderLegalText(section.content)}
