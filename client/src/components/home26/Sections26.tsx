@@ -12,6 +12,7 @@ import socioSaucedoMontemayor from "@assets/ss26/socio-mario-saucedo-montemayor.
 import { isNamedOnTeamPage, fallbackToOriginalSrc, getTeamPhotoSrcSet } from "@/lib/teamPhotoSources";
 import { keepFirmName } from "@/lib/firmName";
 import { useOfficeLabel } from "@/lib/officeLabel";
+import { getPracticeImage } from "@/lib/practiceIndustryImages";
 import { MonitorList } from "@/components/monitor/MonitorList";
 import type { News, PracticeGroup, TeamMember } from "@shared/schema";
 import { Reveal, SectionHead, TextLink } from "./primitives";
@@ -192,7 +193,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
   const liveHome = useCmsContent("home", home26);
   const t = liveHome[lang].practicas;
   const { data: groups = [], isError: practicesError } = useQuery<PracticeGroup[]>({ queryKey: ["/api/practice-groups"] });
-  const items = practicesError ? [] : groups.map(group => ({ slug: group.slug, title: lang === "es" ? group.nameEs : group.name, body: lang === "es" ? group.descriptionEs : group.description, imageUrl: group.imageUrl }));
+  const items = practicesError ? [] : groups.map(group => ({ slug: group.slug, title: lang === "es" ? group.nameEs : group.name, body: lang === "es" ? group.descriptionEs : group.description, imageUrl: group.imageUrl || getPracticeImage(group.slug) }));
   return (
     <section
       id="practices"

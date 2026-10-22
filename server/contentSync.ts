@@ -1,8 +1,8 @@
 import { createHash } from "crypto";
 import { practiceGroupsData, teamMembersData } from "./seed";
 
-/* Pone al día, en una base ya poblada, los textos que vienen de la semilla (prácticas y
-   equipo). seed() solo inserta en tablas vacías: sin esto, el sitio publicado seguiría con los
+/* Pone al día, en una base ya poblada, los textos de prácticas/equipo y las imágenes de
+   prácticas que vienen de la semilla. seed() solo inserta en tablas vacías: sin esto, el sitio publicado seguiría con los
    textos anteriores (por ejemplo, la práctica laboral con "más de 35 años").
    Un campo solo se cambia si su valor actual es exactamente uno de los que escribió una versión
    anterior de server/seed.ts; lo que alguien editó desde el panel se respeta. Las huellas
@@ -10,7 +10,7 @@ import { practiceGroupsData, teamMembersData } from "./seed";
    repositorio. Es idempotente: lo ya actualizado no vuelve a cambiar.
    Autorizado por el dueño del proyecto el 2026-10-16 ("actualiza textos"). */
 
-const PRACTICE_FIELDS = ["name", "nameEs", "description", "descriptionEs", "fullDescription", "fullDescriptionEs"] as const;
+const PRACTICE_FIELDS = ["name", "nameEs", "description", "descriptionEs", "fullDescription", "fullDescriptionEs", "imageUrl"] as const;
 const TEAM_FIELDS = ["name", "title", "titleEs", "role", "roleEs", "bio", "bioEs"] as const;
 
 type Previous = Record<string, Record<string, string[]>>;
@@ -65,7 +65,14 @@ function staleFields(
   for (const field of fields) {
     const now = row[field];
     const next = current[field];
-    if (typeof now !== "string" || typeof next !== "string" || now === next) continue;
+    if (typeof next !== "string" || now === next) continue;
+    // Fill missing practice images and replace the old generic service-area photos,
+    // but preserve any image explicitly selected in the CMS.
+    if (field === "imageUrl" && (now == null || (typeof now === "string" && /area-[1-6]-/i.test(now)))) {
+      changes[field] = next;
+      continue;
+    }
+    if (typeof now !== "string") continue;
     if (previous[field]?.includes(fingerprint(now))) changes[field] = next;
   }
   return changes;
@@ -73,12 +80,14 @@ function staleFields(
 
 export async function syncSeedContent() {
   const { db } = await import("./db");
-  const { and, eq } = await import("drizzle-orm");
+  const { and, eq, isNull } = await import("drizzle-orm");
   const { practiceGroups, teamMembers } = await import("@shared/schema");
 
   // Condición "el campo aún tiene el valor que se leyó", por cada campo que se cambia
   const unchanged = (table: object, row: Record<string, unknown>, changes: Record<string, string>) =>
-    Object.keys(changes).map((field) => eq((table as Record<string, any>)[field], row[field] as string));
+    Object.keys(changes).map((field) => row[field] == null
+      ? isNull((table as Record<string, any>)[field])
+      : eq((table as Record<string, any>)[field], row[field] as string));
 
   let updated = 0;
 

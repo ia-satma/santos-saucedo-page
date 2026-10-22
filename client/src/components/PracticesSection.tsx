@@ -2,11 +2,12 @@ import { motion } from "framer-motion";
 import { ArrowRight, Phone } from "lucide-react";
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { getIcon } from "@/lib/icons";
 import { getPracticeImage } from "@/lib/practiceIndustryImages";
 import bgWaves from "@assets/pdf2026/bg-waves-gray.webp";
-import type { LanguageCode } from "@shared/schema";
+import type { LanguageCode, PracticeGroup } from "@shared/schema";
 
 interface PracticeArea {
   id: number;
@@ -149,6 +150,8 @@ const itemVariants = {
 
 export default function PracticesSection() {
   const { language } = useLanguage();
+  const { data: practiceGroups = [] } = useQuery<PracticeGroup[]>({ queryKey: ["/api/practice-groups"] });
+  const practiceImages = new Map(practiceGroups.map((group) => [group.slug, group.imageUrl]));
   const baseT = content[language] || content.en;
   const t = {
     ...baseT,
@@ -252,14 +255,13 @@ export default function PracticesSection() {
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-105">
                         <img
-                          src={getPracticeImage(area.slug)}
+                          src={getPracticeImage(area.slug, practiceImages.get(area.slug))}
                           alt=""
                           aria-hidden="true"
                           loading="lazy"
                           decoding="async"
                           className="absolute inset-0 w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,17,110,0.15)_0%,rgba(18,17,110,0.55)_100%)]" aria-hidden="true" />
                       </div>
                       <div className="absolute top-3 left-3 w-9 h-9 rounded-full bg-primary/40 flex items-center justify-center ring-1 ring-white/25">
                         <Icon className="w-4 h-4 text-white" strokeWidth={1.75} aria-hidden="true" />
