@@ -64,7 +64,7 @@ function IndustryGroupCard({ group, index, learnMoreText }: IndustryGroupCardPro
             alt=""
             loading="lazy"
             aria-hidden="true"
-            className="ss-photo absolute inset-0 w-full h-full object-cover pointer-events-none transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+            className="ss-photo ss-photo--mono absolute inset-0 w-full h-full object-cover pointer-events-none transition-transform duration-700 ease-out group-hover:scale-[1.03]"
             onError={(e) => {
               (e.currentTarget as HTMLImageElement).style.display = "none";
             }}

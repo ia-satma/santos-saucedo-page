@@ -184,7 +184,7 @@ try {
   const library = await call("GET", "/api/admin/media");
   assert(
     library.body.some(
-      (item: any) => item.originalName === "portada-azul-1920.mp4",
+      (item: any) => item.originalName === "portada-color-1920.mp4",
     ),
   );
   assert.equal(

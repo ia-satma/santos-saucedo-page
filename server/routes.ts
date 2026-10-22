@@ -28,6 +28,7 @@ import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { seed, teamMembersData } from "./seed";
 import { syncSeedContent } from "./contentSync";
+import { switchHeroToColourVideo } from "./cms/heroColorVideo";
 import { db } from "./db";
 import express from "express";
 import path from "path";
@@ -235,6 +236,11 @@ export async function registerRoutes(
     await syncSeedContent();
   } catch (err) {
     console.error("[seed] No se pudieron actualizar los textos de la semilla:", err);
+  }
+  try {
+    await switchHeroToColourVideo();
+  } catch (err) {
+    console.error("[CMS] No se pudo cambiar el video de portada a color:", err);
   }
 
   const agentsEnabled = process.env.ENABLE_APP_AGENTS === "true";
