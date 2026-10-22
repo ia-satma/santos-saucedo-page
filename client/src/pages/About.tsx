@@ -458,7 +458,6 @@ export default function About() {
             toma completa, que recorta mejor en vertical. Sin marco ni pie. */}
         <PhotoBand
           photo="recepcion"
-          widePhoto="recepcionBanda"
           position="object-[50%_60%]"
           testId="figure-about-reception"
         />
