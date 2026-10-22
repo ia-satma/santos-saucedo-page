@@ -1,6 +1,5 @@
 import cmsDefaults from "@shared/cms-defaults.json";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
-import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -39,9 +38,8 @@ import { PRACTICE_SLUGS, practiceShortName, usePracticeNames } from "@/lib/pract
 // El recorte de la portada (sin el letrero ni el estacionamiento), no el original
 import { TextLink } from "@/components/home26/primitives";
 import { useOfficeLabel } from "@/lib/officeLabel";
-// La fachada de la oficina (oficina/fachada, sin el estacionamiento): la misma de la portada y de /offices
-import fachada768 from "@assets/ss26/oficina/fachada-768.webp";
-import fachada1536 from "@assets/ss26/oficina/fachada-1536.webp";
+// La fachada de la oficina a todo lo ancho, al final de la página
+import { PhotoBand } from "@/components/home26/PhotoBand";
 import type { SiteContent, ContactFormData, LanguageCode, TeamMember } from "@shared/schema";
 
 // Perfil de LinkedIn del despacho. Sin URL confirmada el botón "Síguenos en LinkedIn"
@@ -303,7 +301,6 @@ export default function Contact() {
   function practiceOptionLabel(value: string, language: LanguageCode): string {
   return (language === "es" ? contactPractices.find(p=>p.slug===value)?.nameEs : language === "en" ? contactPractices.find(p=>p.slug===value)?.name : practiceShortName(value, language)) ?? OTHER_LABEL[language] ?? OTHER_LABEL.en;
 }
-  const { photos } = useCmsMedia();
   const officeNameFor = useOfficeLabel();
   const { language } = useLanguage();
   const { toast } = useToast();
@@ -1062,30 +1059,19 @@ export default function Contact() {
               </Form>}
             </section>
 
-            {/* La fachada (oficina/fachada, 1159 × 900, sin el estacionamiento): la misma de la
-                portada, a su proporción propia, sin reencuadre. Color suave de los lugares, con el
-                cielo más apagado (K1: .ss-photo--soft.ss-photo--sky). Hasta 26rem de ancho en
-                tableta; desde lg, el ancho de su columna (5/12), como la lista de datos de arriba
-                (K5): 356 px a 1024, 512 a 1440, 522 desde 1464 (37,5vw − 28px con el margen de
-                5vw del contenedor). */}
-            <figure className="sm:max-w-[26rem] lg:col-span-5 lg:row-start-2 lg:max-w-none lg:self-start" data-testid="figure-contact-building">
-              <div className="overflow-hidden bg-ss-rule">
-                <img
-                  src={photos.fachada.url}
-                  srcSet={photos.fachada.smallUrl && photos.fachada.smallUrl !== photos.fachada.url ? `${photos.fachada.smallUrl} 768w, ${photos.fachada.url} 1159w` : undefined}
-                  sizes="(min-width: 1024px) min(522px, calc(37.5vw - 28px)), (min-width: 640px) 416px, calc(100vw - 40px)"
-                  alt={t.photoAlt}
-                  loading="lazy"
-                  decoding="async"
-                  width={1159}
-                  height={900}
-                  className="ss-photo--soft ss-photo--sky block h-auto w-full"
-                  data-testid="img-contact-building"
-                />
-              </div>
-            </figure>
           </div>
         </div>
+
+        {/* La fachada de borde a borde de la ventana, contra el pie (antes un recuadro bajo los
+            datos): "para que sepan dónde estamos". Sin marco ni pie; color natural suave, el
+            cielo un poco más contenido (.ss-photo--sky). */}
+        <PhotoBand
+          photo="fachada"
+          alt={t.photoAlt}
+          height="medium"
+          position="object-[50%_58%]"
+          testId="figure-contact-building"
+        />
       </main>
 
       <Footer />

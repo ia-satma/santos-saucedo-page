@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { PhotoBand } from "@/components/home26/PhotoBand";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
@@ -229,6 +230,10 @@ export default function PracticeGroups() {
             )}
           </div>
         </div>
+
+        {/* Al final, contra el pie: el librero de la escalera de la oficina, de borde a borde de
+            la ventana (PhotoBand), sin marco ni pie */}
+        <PhotoBand photo="biblioteca" height="medium" position="object-[50%_45%]" testId="band-practices-office" />
       </main>
 
       <Footer />

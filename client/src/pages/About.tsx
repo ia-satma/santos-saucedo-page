@@ -1,4 +1,3 @@
-import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -10,31 +9,15 @@ import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
 import { useOfficeLabel } from "@/lib/officeLabel";
 import type { LanguageCode } from "@shared/schema";
-// La recepción de la oficina, después de la introducción: la franja del mostrador
-// (oficina/recepcion-banda, 1522 × 694 y 761 × 347), a todo el ancho del contenedor (I5)
-import recepcionBanda768 from "@assets/ss26/oficina/recepcion-banda-768.webp";
-import recepcionBanda1536 from "@assets/ss26/oficina/recepcion-banda-1536.webp";
+// Fotos de la oficina a todo el ancho de la ventana (PhotoBand): la recepción después de la
+// introducción y la sala de espera ante la sala de juntas al final, antes del pie
+import { PhotoBand } from "@/components/home26/PhotoBand";
 
 // Cifras de /about (junta del 16-10-2026): "+40" años de experiencia acumulada de los socios
 // (la firma es de 2009) y "+72" ciudades, de "presencia en más de 72 ciudades". Fuera el conteo
 // de integrantes, el número de prácticas y "1 oficina".
 
-// Texto alternativo de la foto de la recepción: el mismo de /offices en cada idioma
-const receptionAlt: Record<LanguageCode, string> = {
-  es: "Recepción de la oficina de Santos & Saucedo",
-  en: "Reception at the Santos & Saucedo office",
-  de: "Empfang der Kanzlei Santos & Saucedo",
-  zh: "Santos & Saucedo办公室的前台",
-  ko: "Santos & Saucedo 사무실의 리셉션",
-  ja: "Santos & Saucedoのオフィスの受付",
-  ar: "الاستقبال في مكتب Santos & Saucedo",
-  ru: "Приёмная офиса Santos & Saucedo",
-  fr: "Accueil du bureau de Santos & Saucedo",
-  it: "Accoglienza della sede di Santos & Saucedo",
-};
-
 export default function About() {
-  const { photos } = useCmsMedia();
   const officeNameFor = useOfficeLabel();
   const { language } = useLanguage();
 
@@ -435,7 +418,7 @@ export default function About() {
                 (columnas 1–4, en vertical y alineadas arriba con la entrada) y la introducción en
                 el cuerpo (desde la 5). En teléfono y tableta, como antes: introducción y debajo
                 las dos cifras en dos columnas (order-last solo bajo lg). */}
-            <section className="mb-20 lg:mb-24" data-testid="section-history">
+            <section data-testid="section-history">
               <SplitSection
                 asideClassName="order-last mt-4 lg:order-none lg:mt-0"
                 aside={
@@ -467,28 +450,21 @@ export default function About() {
                 </div>
               </SplitSection>
             </section>
+          </div>
+        </div>
 
-            {/* La recepción de la oficina a todo el ancho del contenedor, a la proporción de su
-                archivo (1522 × 694; sin object-fit ni recorte por CSS), en color suave como todas
-                las fotos de la oficina (K1) y sin pie: la página de la oficina la enlaza al final.
-                El contenedor mide hasta 1320 px: nunca más ancha que su archivo. */}
-            <figure className="mb-20 lg:mb-24" data-testid="figure-about-reception">
-              <div className="bg-ss-rule">
-                <img
-                  src={photos.recepcionBanda.url}
-                  srcSet={photos.recepcionBanda.smallUrl && photos.recepcionBanda.smallUrl !== photos.recepcionBanda.url ? `${photos.recepcionBanda.smallUrl} 761w, ${photos.recepcionBanda.url} 1522w` : undefined}
-                  sizes="(min-width: 1464px) 1320px, 90vw"
-                  alt={keepFirmName(receptionAlt[language] ?? receptionAlt.en)}
-                  loading="lazy"
-                  decoding="async"
-                  width={1522}
-                  height={694}
-                  className="ss-photo--soft block h-auto w-full"
-                  data-testid="img-about-reception"
-                />
-              </div>
-            </figure>
+        {/* La recepción de borde a borde de la ventana (no "como un cuadro", petición del
+            cliente): en escritorio la franja del mostrador (recepcion-banda), en teléfono la
+            toma completa, que recorta mejor en vertical. Sin marco ni pie. */}
+        <PhotoBand
+          photo="recepcion"
+          widePhoto="recepcionBanda"
+          position="object-[50%_60%]"
+          testId="figure-about-reception"
+        />
 
+        <div className="py-16 lg:py-24">
+          <div className="ss-container">
             {/* "Cómo trabajamos": el h2 en el aside y los cuatro principios en el cuerpo */}
             <section className="mb-20 lg:mb-24" aria-labelledby="about-values-title" data-testid="section-values">
               <SplitSection
@@ -535,6 +511,9 @@ export default function About() {
             </SplitSection>
           </div>
         </div>
+
+        {/* Al final, contra el pie: la sala de espera frente a la sala de juntas */}
+        <PhotoBand photo="vestibulo3" height="medium" position="object-[50%_48%]" testId="band-about-lobby" />
       </main>
 
       <Footer />

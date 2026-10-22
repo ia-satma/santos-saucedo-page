@@ -2198,10 +2198,6 @@
   "offices": {
     "es": {
       "intro": "La oficina de Santos & Saucedo está en la colonia Del Valle, en San Pedro Garza García, Nuevo León, frente al Cerro de la Silla.",
-      "reception": "Recepción",
-      "meetingRooms": "Salas de juntas",
-      "workAreas": "Áreas de trabajo",
-      "art": "Obra",
       "address": "Dirección",
       "phone": "Teléfono",
       "email": "Correo electrónico",
@@ -2224,10 +2220,6 @@
     },
     "en": {
       "intro": "Santos & Saucedo’s office is in Colonia Del Valle, San Pedro Garza García, Nuevo León, facing Cerro de la Silla.",
-      "reception": "Reception",
-      "meetingRooms": "Meeting rooms",
-      "workAreas": "Work areas",
-      "art": "Art",
       "address": "Address",
       "phone": "Telephone",
       "email": "Email",
@@ -2250,10 +2242,6 @@
     },
     "de": {
       "intro": "Die Kanzleiräume von Santos & Saucedo liegen in der Colonia Del Valle in San Pedro Garza García, Nuevo León, gegenüber dem Cerro de la Silla.",
-      "reception": "Empfang",
-      "meetingRooms": "Besprechungsräume",
-      "workAreas": "Arbeitsbereiche",
-      "art": "Kunst",
       "address": "Adresse",
       "phone": "Telefon",
       "email": "E-Mail",
@@ -2276,10 +2264,6 @@
     },
     "fr": {
       "intro": "Le bureau de Santos & Saucedo se trouve dans la colonia Del Valle, à San Pedro Garza García, Nuevo León, face au Cerro de la Silla.",
-      "reception": "Accueil",
-      "meetingRooms": "Salles de réunion",
-      "workAreas": "Espaces de travail",
-      "art": "Œuvres",
       "address": "Adresse",
       "phone": "Téléphone",
       "email": "E-mail",
@@ -2302,10 +2286,6 @@
     },
     "it": {
       "intro": "La sede di Santos & Saucedo si trova nella colonia Del Valle, a San Pedro Garza García, Nuevo León, di fronte al Cerro de la Silla.",
-      "reception": "Accoglienza",
-      "meetingRooms": "Sale riunioni",
-      "workAreas": "Aree di lavoro",
-      "art": "Opere",
       "address": "Indirizzo",
       "phone": "Telefono",
       "email": "E-mail",
@@ -2328,10 +2308,6 @@
     },
     "ru": {
       "intro": "Офис Santos & Saucedo находится в районе Дель-Валье в Сан-Педро-Гарса-Гарсия, штат Нуэво-Леон, напротив горы Серро-де-ла-Силья.",
-      "reception": "Приёмная",
-      "meetingRooms": "Переговорные",
-      "workAreas": "Рабочие зоны",
-      "art": "Искусство",
       "address": "Адрес",
       "phone": "Телефон",
       "email": "Эл. почта",
@@ -2354,10 +2330,6 @@
     },
     "zh": {
       "intro": "Santos & Saucedo的办公室位于新莱昂州圣佩德罗加尔萨加西亚的Del Valle区，面朝马鞍山（Cerro de la Silla）。",
-      "reception": "前台",
-      "meetingRooms": "会议室",
-      "workAreas": "办公区",
-      "art": "艺术品",
       "address": "地址",
       "phone": "电话",
       "email": "电子邮件",
@@ -2380,10 +2352,6 @@
     },
     "ja": {
       "intro": "Santos & Saucedoのオフィスは、ヌエボ・レオン州サン・ペドロ・ガルサ・ガルシアのコロニア・デル・バジェにあり、セロ・デ・ラ・シージャに面しています。",
-      "reception": "受付",
-      "meetingRooms": "会議室",
-      "workAreas": "執務エリア",
-      "art": "アート",
       "address": "所在地",
       "phone": "電話",
       "email": "メールアドレス",
@@ -2406,10 +2374,6 @@
     },
     "ko": {
       "intro": "Santos & Saucedo의 사무실은 누에보레온주 산페드로가르사가르시아의 콜로니아 델바예에 있으며, 세로 데 라 시야를 마주하고 있습니다.",
-      "reception": "리셉션",
-      "meetingRooms": "회의실",
-      "workAreas": "업무 공간",
-      "art": "작품",
       "address": "주소",
       "phone": "전화",
       "email": "이메일",
@@ -2432,10 +2396,6 @@
     },
     "ar": {
       "intro": "يقع مكتب Santos & Saucedo في حي ديل فالي في سان بيدرو غارثا غارسيا بولاية نويفو ليون، قبالة جبل سيرو دي لا سيا.",
-      "reception": "الاستقبال",
-      "meetingRooms": "قاعات الاجتماعات",
-      "workAreas": "مساحات العمل",
-      "art": "أعمال فنية",
       "address": "العنوان",
       "phone": "الهاتف",
       "email": "البريد الإلكتروني",
@@ -5336,6 +5296,22 @@
       "recepcionBanda": {
         "url": "/editorial/recepcion-banda-1536.webp",
         "smallUrl": "/editorial/recepcion-banda-768.webp"
+      },
+      "vestibulo3": {
+        "url": "/editorial/vestibulo-3-1536.webp",
+        "smallUrl": "/editorial/vestibulo-3-768.webp"
+      },
+      "estancia": {
+        "url": "/editorial/estancia-1536.webp",
+        "smallUrl": "/editorial/estancia-768.webp"
+      },
+      "mezanine": {
+        "url": "/editorial/mezanine-1536.webp",
+        "smallUrl": "/editorial/mezanine-768.webp"
+      },
+      "biblioteca": {
+        "url": "/editorial/biblioteca-1536.webp",
+        "smallUrl": "/editorial/biblioteca-768.webp"
       }
     },
     "teamMosaic": [

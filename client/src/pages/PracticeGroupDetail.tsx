@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { PhotoBand } from "@/components/home26/PhotoBand";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
@@ -699,6 +700,10 @@ export default function PracticeGroupDetail() {
             </Column>
           </section>
         )}
+
+        {/* Al final, contra el pie: una sala de juntas de la oficina, de borde a borde de la
+            ventana (PhotoBand), sin marco ni pie */}
+        <PhotoBand photo="salaJuntas2" height="medium" position="object-[50%_55%]" testId="band-practice-office" />
       </main>
 
       <Footer />

@@ -135,10 +135,9 @@ export function Firma26({ lang }: { lang: Lang26 }) {
               decoding="async"
               width={1159}
               height={900}
-              // En la portada todo va en gris (M1): el mismo tratamiento que los retratos de
-              // Socios; /offices, /about, /careers y /contact siguen en color suave. Sin entrada al
-              // aparecer (G3)
-              className="ss-photo ss-photo--mono block h-auto w-full"
+              // Color natural suave como el resto de las fotos de la oficina (el cliente pidió
+              // más color, 16-10-2026; antes en gris, M1). Sin entrada al aparecer (G3)
+              className="ss-photo ss-photo--soft ss-photo--sky block h-auto w-full"
             />
           </div>
           {/* Junto al pie, el enlace a la página de la oficina (su nombre en officeLabel) */}
@@ -285,7 +284,7 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
           (en pantallas mayores, Azul Profundo a la izquierda). */}
       <div className={`grid grid-cols-1 xl:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] ${GAP_X}`}>
         <div className="relative min-h-[300px] overflow-hidden sm:min-h-[420px] xl:min-h-[600px]">
-          {/* Lugar en la portada: el gris de los retratos y de la fachada de La firma (M1), sin velo */}
+          {/* Lugar en la portada: color natural suave como toda la oficina (antes en gris, M1), sin velo */}
           <img
             src={photos.salaJuntas.url}
             srcSet={photos.salaJuntas.smallUrl && photos.salaJuntas.smallUrl !== photos.salaJuntas.url ? `${photos.salaJuntas.smallUrl} 768w, ${photos.salaJuntas.url} 1536w` : undefined}
@@ -295,7 +294,7 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
             decoding="async"
             width={1536}
             height={1024}
-            className="ss-photo ss-photo--mono absolute inset-y-0 right-0 h-full w-full max-w-[1536px] object-cover object-[50%_42%]"
+            className="ss-photo ss-photo--soft absolute inset-y-0 right-0 h-full w-full max-w-[1536px] object-cover object-[50%_42%]"
           />
         </div>
         <div className="flex items-center px-[var(--ss-pad)] py-20 xl:pl-0 xl:pr-[clamp(48px,6vw,104px)]">

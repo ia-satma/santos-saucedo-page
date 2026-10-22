@@ -210,6 +210,62 @@
     "bytes": 21346
   },
   {
+    "url": "/editorial/vestibulo-3-1536.webp",
+    "source": "client/public/editorial/vestibulo-3-1536.webp",
+    "key": "public/media/8766a7e7819ef4bd8cb3a546-vestibulo-3-1536.webp",
+    "sha256": "8766a7e7819ef4bd8cb3a5467e4a920280c300680d514ca2c352b1c353a88128",
+    "bytes": 182364
+  },
+  {
+    "url": "/editorial/vestibulo-3-768.webp",
+    "source": "client/public/editorial/vestibulo-3-768.webp",
+    "key": "public/media/825851375e43f50c66a41315-vestibulo-3-768.webp",
+    "sha256": "825851375e43f50c66a41315ae47ed78c634638d5e3bf0e138f45b6b775832f1",
+    "bytes": 61184
+  },
+  {
+    "url": "/editorial/estancia-1536.webp",
+    "source": "client/public/editorial/estancia-1536.webp",
+    "key": "public/media/c26eb30e6d19fca562e4342b-estancia-1536.webp",
+    "sha256": "c26eb30e6d19fca562e4342b49b293395ee728d7a57961df7822867798fdc191",
+    "bytes": 113464
+  },
+  {
+    "url": "/editorial/estancia-768.webp",
+    "source": "client/public/editorial/estancia-768.webp",
+    "key": "public/media/d300cd4f92ea026c10ffac9f-estancia-768.webp",
+    "sha256": "d300cd4f92ea026c10ffac9f8eb7b19813bba1d0611e8b11485033a71bbba769",
+    "bytes": 39230
+  },
+  {
+    "url": "/editorial/mezanine-1536.webp",
+    "source": "client/public/editorial/mezanine-1536.webp",
+    "key": "public/media/f7cec02d2dd369146f4cccf5-mezanine-1536.webp",
+    "sha256": "f7cec02d2dd369146f4cccf59340a0c963c6eafbac570ba68934ec20abd1448d",
+    "bytes": 113368
+  },
+  {
+    "url": "/editorial/mezanine-768.webp",
+    "source": "client/public/editorial/mezanine-768.webp",
+    "key": "public/media/3f9be2014718e707b2f29510-mezanine-768.webp",
+    "sha256": "3f9be2014718e707b2f2951020aa6518220445fbad55f2b001f33d6128be793d",
+    "bytes": 38372
+  },
+  {
+    "url": "/editorial/biblioteca-1536.webp",
+    "source": "client/public/editorial/biblioteca-1536.webp",
+    "key": "public/media/404ce90e1663cdf5e2a8252c-biblioteca-1536.webp",
+    "sha256": "404ce90e1663cdf5e2a8252c711b860b5a11040b8d70dfd6dc2d58ed660dc247",
+    "bytes": 92642
+  },
+  {
+    "url": "/editorial/biblioteca-768.webp",
+    "source": "client/public/editorial/biblioteca-768.webp",
+    "key": "public/media/170f612ba4371098271dee19-biblioteca-768.webp",
+    "sha256": "170f612ba4371098271dee19a60d3ba9e5c30c69df3c198d894e998d528d50f3",
+    "bytes": 32726
+  },
+  {
     "url": "/editorial/team-01.webp",
     "source": "client/public/editorial/team-01.webp",
     "key": "public/media/b7e132a92b491e22898e1d9e-team-01.webp",

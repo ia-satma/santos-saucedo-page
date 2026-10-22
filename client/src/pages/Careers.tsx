@@ -2,7 +2,6 @@ import { CareerForm } from "@/features/public-forms/CareerForm";
 import { useQuery } from "@tanstack/react-query";
 import { jobTypes, type JobOpening } from "@shared/schema";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
-import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -13,10 +12,8 @@ import { SplitSection, TextLink } from "@/components/home26/primitives";
 // "Santos & Saucedo" con espacios duros al pintarlo: el nombre no se parte al final de línea.
 // Para la frase de la experiencia de los socios, que no se edita en el texto.
 import { keepFirmName } from "@/lib/firmName";
-import type { LanguageCode } from "@shared/schema";
-// El área de trabajo de la oficina (oficina/area-trabajo, 1536 × 1024), junto a la entrada
-import areaTrabajo768 from "@assets/ss26/oficina/area-trabajo-768.webp";
-import areaTrabajo1536 from "@assets/ss26/oficina/area-trabajo-1536.webp";
+// El área de trabajo de la oficina a todo lo ancho, después de la entrada
+import { PhotoBand } from "@/components/home26/PhotoBand";
 
 // "Clásica": titulares con la escala única de index.css (.ss-h2 para las secciones, .ss-h2-sm
 // para los sub-bloques, .ss-h3 para filas); entrada en romana 400 Gris Tinta (solo el primer
@@ -31,24 +28,8 @@ type Position = { title: string; department: string; location: string; type: str
 // (en alemán quedaba "Semillero" al final de una línea y "S&S" al principio de la siguiente)
 const keepProgramName = (text: string) => text.replace(/Semillero S&S/g, "Semillero\u00a0S&S");
 
-// Texto alternativo de la foto del área de trabajo: el mismo de /offices en cada idioma
-const workAreaAlt: Record<LanguageCode, string> = {
-  es: "Área de trabajo abierta de la oficina de Santos & Saucedo",
-  en: "Open work area at the Santos & Saucedo office",
-  de: "Offener Arbeitsbereich der Kanzlei Santos & Saucedo",
-  zh: "Santos & Saucedo办公室的开放式办公区",
-  ko: "Santos & Saucedo 사무실의 개방형 업무 공간",
-  ja: "Santos & Saucedoのオフィスのオープンな執務エリア",
-  ar: "مساحة عمل مفتوحة في مكتب Santos & Saucedo",
-  ru: "Открытая рабочая зона офиса Santos & Saucedo",
-  fr: "Espace de travail ouvert du bureau de Santos & Saucedo",
-  it: "Area di lavoro aperta della sede di Santos & Saucedo",
-};
-
-
 export default function Careers() {
   const siteDetails = useSiteDetails();
-  const { photos } = useCmsMedia();
   const { language } = useLanguage();
 
   // Textos de la redacción aprobada (sección "Carreras"; la única página en tú). Sin valores
@@ -307,37 +288,14 @@ export default function Careers() {
         <div className="ss-container">
           
           {/* Rejilla editorial de la portada (SplitSection, G1): desde lg, el cuerpo desde la
-              columna 5. Primera fila: la foto del área de trabajo en el aside (columnas 1–4,
-              alineada arriba con la entrada; antes ese tercio de la primera pantalla quedaba
-              vacío) y la entrada (la única en romana) con el segundo párrafo en el cuerpo. En
-              teléfono y tableta, la foto va después de la entrada (order-last). Segunda fila, con
-              el aside vacío (no ocupa sitio bajo lg): la rejilla de 2 × 2 con filetes y
-              h2.ss-h2-sm: lo que se aprende, la firma, el Semillero S&S (su frase y el enlace a su
-              página) y las vacantes (su frase). Sin valores genéricos ni prestaciones sin
+              columna 5. Primero la entrada; luego el área de trabajo a todo lo ancho; después,
+              con el aside vacío (no ocupa sitio bajo lg), la rejilla de 2 × 2 con filetes y
+              h2.ss-h2-sm: lo que se aprende, la firma, el Semillero S&S (su frase y el enlace a
+              su página) y las vacantes (su frase). Sin valores genéricos ni prestaciones sin
               confirmar, y sin texto nuevo junto a la foto. */}
-          <section className="mb-20 lg:mb-24" data-testid="section-why-join">
-            <SplitSection
-              asideClassName="order-last lg:order-none"
-              aside={
-                <figure className="max-w-[44rem] lg:max-w-none" data-testid="figure-careers-workspace">
-                  <div className="overflow-hidden bg-ss-rule">
-                    <img
-                      src={photos.areaTrabajo.url}
-                      srcSet={photos.areaTrabajo.smallUrl && photos.areaTrabajo.smallUrl !== photos.areaTrabajo.url ? `${photos.areaTrabajo.smallUrl} 768w, ${photos.areaTrabajo.url} 1536w` : undefined}
-                      sizes="(min-width: 1024px) min(424px, 28vw), 90vw"
-                      alt={keepFirmName(workAreaAlt[language as LanguageCode] ?? workAreaAlt.en)}
-                      loading="lazy"
-                      decoding="async"
-                      width={1536}
-                      height={1024}
-                      // Lugar: color suave, como todas las fotos de la oficina (K1)
-                      className="ss-photo--soft block h-auto w-full"
-                      data-testid="img-careers-workspace"
-                    />
-                  </div>
-                </figure>
-              }
-            >
+          <section data-testid="section-why-join">
+            {/* La entrada (la única en romana) y el segundo párrafo, en el cuerpo de la rejilla */}
+            <SplitSection>
               <div className="max-w-[44rem]">
                 <p className={leadClass} data-testid="text-careers-intro">
                   {t.introText}
@@ -347,8 +305,18 @@ export default function Careers() {
                 </p>
               </div>
             </SplitSection>
+          </section>
+        </div>
+      </div>
 
-            <SplitSection className="mt-12" asideClassName="hidden lg:block">
+      {/* El área de trabajo de la oficina de borde a borde de la ventana (antes una foto en el
+          aside, "como un cuadro"): sin marco ni pie, color natural suave */}
+      <PhotoBand photo="areaTrabajo" position="object-[50%_60%]" testId="figure-careers-workspace" />
+
+      <div className="py-16 lg:py-20">
+        <div className="ss-container">
+          <section className="mb-20 lg:mb-24" data-testid="section-why-join-details">
+            <SplitSection asideClassName="hidden lg:block">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
                 <div className={rowClass} data-testid="card-culture">
                   <h2 className="ss-h2-sm mb-3">

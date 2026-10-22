@@ -1,4 +1,5 @@
 import { useCmsMedia } from "@/lib/cmsMedia";
+import { PhotoBand } from "@/components/home26/PhotoBand";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useMemo, type ReactNode, type SyntheticEvent } from "react";
 import { Link } from "wouter";
@@ -397,6 +398,10 @@ export default function Team() {
               )}
           </>
         )}
+
+        {/* La oficina entre los socios y el equipo: la sala de espera del vestíbulo de borde a
+            borde de la ventana, sin marco ni pie (PhotoBand) */}
+        <PhotoBand photo="vestibulo2" height="medium" position="object-[50%_62%]" className="mt-20 lg:mt-24" testId="band-team-office" />
 
         {/* ─── INTEGRANTES DEL EQUIPO (mosaico anónimo: aún sin nombres) ─────── */}
         {/* Fuera de la carga: las fotos son estáticas (equipoMosaicPhotos), así que el bloque y su
