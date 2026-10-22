@@ -192,7 +192,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
   const liveHome = useCmsContent("home", home26);
   const t = liveHome[lang].practicas;
   const { data: groups = [], isError: practicesError } = useQuery<PracticeGroup[]>({ queryKey: ["/api/practice-groups"] });
-  const items = practicesError ? [] : groups.map(group => ({ slug: group.slug, title: lang === "es" ? group.nameEs : group.name, body: lang === "es" ? group.descriptionEs : group.description }));
+  const items = practicesError ? [] : groups.map(group => ({ slug: group.slug, title: lang === "es" ? group.nameEs : group.name, body: lang === "es" ? group.descriptionEs : group.description, imageUrl: group.imageUrl }));
   return (
     <section
       id="practices"
@@ -232,7 +232,11 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                   href={`/practice-groups/${item.slug}`}
                   aria-labelledby={`ss26-pr-${item.slug}`}
                   aria-describedby={`ss26-prd-${item.slug}`}
-                  className="inline-link grid grid-cols-1 gap-y-3 py-8 sm:grid-cols-[88px_1fr_auto] sm:gap-x-8 lg:grid-cols-12 lg:items-baseline lg:gap-x-6 lg:py-10"
+                  className={`inline-link grid grid-cols-1 gap-y-3 py-8 sm:gap-x-5 lg:grid-cols-12 lg:items-baseline lg:gap-x-6 lg:py-10 ${
+                    item.imageUrl
+                      ? "sm:grid-cols-[88px_minmax(0,1fr)_minmax(112px,22%)_24px]"
+                      : "sm:grid-cols-[88px_1fr_auto]"
+                  }`}
                 >
                   {/* 01–04 simples, como las filas de /practice-groups; la lista ya numera para
                       lectores de pantalla. Desde lg, número, titular y flecha sobre la misma línea
@@ -240,20 +244,33 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                   <span aria-hidden className="ss-row-num ss-label ss-num lg:col-span-4">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span className="lg:col-span-7 lg:col-start-5">
-                    <span
-                      id={`ss26-pr-${item.slug}`}
-                      className="ss-display block text-[clamp(26px,2.3vw,34px)] font-normal leading-[1.15] tracking-[-0.012em] text-ss-marino"
-                    >
-                      {item.title}
+                  <div className={item.imageUrl ? "grid grid-cols-[minmax(0,1fr)_112px] items-center gap-4 sm:contents" : "sm:contents"}>
+                    <span className={`${item.imageUrl ? "sm:col-start-2" : ""} sm:row-start-1 ${item.imageUrl ? "lg:col-span-5" : "lg:col-span-7"} lg:col-start-5`}>
+                      <span
+                        id={`ss26-pr-${item.slug}`}
+                        className="ss-display block text-[clamp(26px,2.3vw,34px)] font-normal leading-[1.15] tracking-[-0.012em] text-ss-marino"
+                      >
+                        {item.title}
+                      </span>
+                      {/* 60ch a 17 px (507 px): la misma medida de las entradillas del Monitor
+                          (MonitorList, N9); si cambia aquí, cambia allí */}
+                      <span id={`ss26-prd-${item.slug}`} className="ss-prose mt-4 block max-w-[60ch] text-[17px] text-ss-tinta">
+                        {item.body}
+                      </span>
                     </span>
-                    {/* 60ch a 17 px (507 px): la misma medida de las entradillas del Monitor
-                        (MonitorList, N9); si cambia aquí, cambia allí */}
-                    <span id={`ss26-prd-${item.slug}`} className="ss-prose mt-4 block max-w-[60ch] text-[17px] text-ss-tinta">
-                      {item.body}
-                    </span>
-                  </span>
-                  <span aria-hidden className="ss-arrow hidden pt-1 text-[22px] text-ss-marino sm:block lg:col-start-12 lg:justify-self-end">
+                    {item.imageUrl && (
+                      <span aria-hidden="true" className="block overflow-hidden bg-ss-paper sm:col-start-3 sm:row-start-1 lg:col-span-2 lg:col-start-10 lg:self-center">
+                        <img
+                          src={item.imageUrl}
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                          className="ss-photo block aspect-[3/2] h-auto w-full object-cover"
+                        />
+                      </span>
+                    )}
+                  </div>
+                  <span aria-hidden className={`ss-arrow hidden pt-1 text-[22px] text-ss-marino ${item.imageUrl ? "sm:col-start-4" : "sm:col-start-3"} sm:row-start-1 sm:block lg:col-start-12 lg:justify-self-end`}>
                     →
                   </span>
                 </Link>
