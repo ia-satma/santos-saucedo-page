@@ -30,7 +30,7 @@ function useNavLabel() {
    van en md/lg; en teléfono un paso menos para no alargar la página. */
 const Y = {
   firma: "py-[88px] md:py-[112px] lg:py-[144px]",
-  creemos: "py-[96px] md:py-[128px] lg:py-[176px]",
+  creemos: "py-[76px] md:py-[92px] lg:py-[120px]",
   practicas: "py-[80px] md:py-[104px] lg:py-[136px]",
   monitor: "py-[72px] md:py-[96px] lg:py-[128px]",
   socios: "py-[72px] md:py-[96px] lg:py-[128px]",
@@ -157,24 +157,24 @@ export function Firma26({ lang }: { lang: Lang26 }) {
 
 /* Manifiesto — Lo que creemos (sin numeral: no es una sección del menú; lleva su etiqueta) */
 export function Creemos26({ lang }: { lang: Lang26 }) {
-  const navLabel = useNavLabel();
   const liveHome = useCmsContent("home", home26);
   const t = liveHome[lang].creemos;
   return (
     // Banda Hueso: titular Azul Marino, texto Gris Tinta, § Azul Marino (sin lima sobre claro)
     <section {...langAttrs[lang]} className={`ss-paper ${Y.creemos}`} aria-labelledby="ss26-creemos">
-      <div className="ss-container grid grid-cols-1 gap-x-6 lg:grid-cols-12">
-        <Reveal className="lg:col-span-12">
+      <div className="ss-container">
+        <Reveal>
           <SectionHead label={t.label} />
         </Reveal>
-        <Reveal delay={0.08} className="mt-12 lg:col-span-11 lg:mt-16">
-          {/* La única itálica del sitio (romana 300 estática); en una línea a 1440 px */}
-          <h2 id="ss26-creemos" className="ss-serif text-[clamp(42px,5.6vw,88px)] text-ss-marino [text-wrap:balance]">
+        <Reveal delay={0.08} className="mt-[clamp(34px,5vw,60px)]">
+          <h2
+            id="ss26-creemos"
+            className="ss-serif max-w-[15ch] text-[clamp(46px,6.3vw,92px)] leading-[1.02] text-ss-marino [text-wrap:balance]"
+          >
             {t.quote}
           </h2>
         </Reveal>
-        {/* 1024–1279: una sola columna (dos de ~290px quedaban apretadas) */}
-        <div className="mt-14 grid gap-8 text-ss-tinta md:grid-cols-2 lg:col-span-8 lg:col-start-5 lg:mt-20 lg:grid-cols-1 lg:gap-10 xl:grid-cols-2">
+        <div className="ss-creemos-body text-ss-tinta">
           {t.body.map((p, i) => (
             <Reveal key={p.slice(0, 24)} delay={0.14 + i * 0.06}>
               <p className="ss-prose text-[17px]">{p}</p>
