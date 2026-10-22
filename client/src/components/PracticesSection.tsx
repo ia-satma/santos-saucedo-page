@@ -255,7 +255,7 @@ export default function PracticesSection() {
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-105">
                         <img
-                          src={getPracticeImage(area.slug, practiceImages.get(area.slug))}
+                          src={getPracticeImage(area.slug)}
                           alt=""
                           aria-hidden="true"
                           loading="lazy"

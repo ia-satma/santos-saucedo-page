@@ -495,7 +495,7 @@ export default function About() {
                   decoding="async"
                   width={1522}
                   height={694}
-                  className="ss-photo--soft block h-auto w-full"
+                  className="block h-auto w-full"
                   data-testid="img-about-reception"
                 />
               </div>

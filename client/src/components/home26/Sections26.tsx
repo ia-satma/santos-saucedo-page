@@ -193,7 +193,14 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
   const liveHome = useCmsContent("home", home26);
   const t = liveHome[lang].practicas;
   const { data: groups = [], isError: practicesError } = useQuery<PracticeGroup[]>({ queryKey: ["/api/practice-groups"] });
-  const items = practicesError ? [] : groups.map(group => ({ slug: group.slug, title: lang === "es" ? group.nameEs : group.name, body: lang === "es" ? group.descriptionEs : group.description, imageUrl: group.imageUrl || getPracticeImage(group.slug) }));
+  const items = practicesError ? [] : groups.map(group => ({
+    slug: group.slug,
+    title: lang === "es" ? group.nameEs : group.name,
+    body: lang === "es" ? group.descriptionEs : group.description,
+    // La portada conserva la serie aprobada para cada práctica, aunque el CMS tenga
+    // una ruta anterior. Las fotos personalizadas siguen disponibles en el CMS.
+    imageUrl: getPracticeImage(group.slug),
+  }));
   return (
     <section
       id="practices"
@@ -264,7 +271,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                         <img
                           src={item.imageUrl}
                           alt=""
-                          loading="lazy"
+                          loading="eager"
                           decoding="async"
                           className="ss-photo block aspect-[3/2] h-auto w-full object-cover"
                         />

@@ -40,7 +40,7 @@ function NewsHeroImage({ src }: { src: string }) {
       <img
         src={src}
         alt=""
-        className="ss-photo--colour block w-full aspect-[16/9] object-cover"
+        className="block w-full aspect-[16/9] object-cover"
         loading="eager"
         decoding="async"
         onError={() => setHasError(true)}

@@ -330,8 +330,7 @@ export default function Careers() {
                       decoding="async"
                       width={1536}
                       height={1024}
-                      // Lugar: color suave, como todas las fotos de la oficina (K1)
-                      className="ss-photo--soft block h-auto w-full"
+                      className="block h-auto w-full"
                       data-testid="img-careers-workspace"
                     />
                   </div>

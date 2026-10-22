@@ -21,25 +21,25 @@
     "bytes": 187467
   },
   {
-    "url": "/video/portada-azul-1920.mp4",
-    "source": "client/public/video/portada-azul-1920.mp4",
-    "key": "public/media/62b62c9c4203f8240550284d-portada-azul-1920.mp4",
-    "sha256": "62b62c9c4203f8240550284d88b66902fe475d0d6331dc912ac9a7217cce38da",
-    "bytes": 8691240
+    "url": "/video/portada-color-1920.mp4",
+    "source": "client/public/video/portada-color-1920.mp4",
+    "key": "public/media/b35ad21d5f090f6dc7a645a8-portada-color-1920.mp4",
+    "sha256": "b35ad21d5f090f6dc7a645a8c0886c177c40872c52d7326c8f3aaa72884bdc0c",
+    "bytes": 24403488
   },
   {
-    "url": "/video/portada-azul-1280.mp4",
-    "source": "client/public/video/portada-azul-1280.mp4",
-    "key": "public/media/5d80e88886b4da5364ecd6fe-portada-azul-1280.mp4",
-    "sha256": "5d80e88886b4da5364ecd6fe9c0066bc861e1208cd84ed8a05eff858e8fe0651",
-    "bytes": 4361212
+    "url": "/video/portada-color-1280.mp4",
+    "source": "client/public/video/portada-color-1280.mp4",
+    "key": "public/media/661e96ab8e7cd79deba32537-portada-color-1280.mp4",
+    "sha256": "661e96ab8e7cd79deba32537ce8b3ae6d8a9e0f72610c1ee38126fe489d2d709",
+    "bytes": 11708761
   },
   {
-    "url": "/video/portada-azul-poster.jpg",
-    "source": "client/public/video/portada-azul-poster.jpg",
-    "key": "public/media/9a3a5f1508a511d40537f7d1-portada-azul-poster.jpg",
-    "sha256": "9a3a5f1508a511d40537f7d1df5751f160cd5dbb94cec3464a446f14c4080ffc",
-    "bytes": 184033
+    "url": "/video/portada-color-poster.jpg",
+    "source": "client/public/video/portada-color-poster.jpg",
+    "key": "public/media/55605915011825d639e3e4b9-portada-color-poster.jpg",
+    "sha256": "55605915011825d639e3e4b9ed498908c4b0d95d63f3ceaea77143e1391c8a6c",
+    "bytes": 257411
   },
   {
     "url": "/editorial/fachada-1536.webp",

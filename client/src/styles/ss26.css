@@ -249,7 +249,10 @@ html:has(.ss26) body {
   line-height: 1.65;
   text-wrap: pretty;
   hanging-punctuation: first;
-  hyphens: manual;
+  hyphens: auto;
+  text-align: justify;
+  text-align-last: start;
+  text-justify: inter-word;
 }
 
 /* Manifiesto: el cuerpo comparte eje con la declaración y se divide con un filete editorial. */
@@ -293,6 +296,9 @@ html:has(.ss26) body {
   letter-spacing: -0.003em;
   color: var(--ss-tinta);
   text-wrap: pretty;
+  text-align: justify;
+  text-align-last: start;
+  text-justify: inter-word;
 }
 /* Entrada sobre Azul Profundo: sans 400 al 84 % (la romana fina se lee débil en teléfono) */
 :is(.ss-navy, .editorial-page-hero) .ss-lead {
@@ -447,19 +453,6 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   outline: 3px solid var(--ss-marino, #24255c);
   outline-offset: 2px;
   box-shadow: none;
-}
-
-/* Las fotografías se muestran en color. Se conserva el tratamiento suave opcional
-   de las imágenes de oficina y cabeceras. */
-.ss-photo--soft,
-.ss-photo.ss-photo--soft {
-  filter: saturate(0.55) contrast(1.02);
-}
-.ss-photo--soft.ss-photo--sky {
-  filter: saturate(0.45) contrast(1.02);
-}
-.ss-photo--colour {
-  filter: saturate(0.85) contrast(1.02);
 }
 
 /* Filete corto (24 × 1 px), completo desde el inicio: el sitio no tiene entradas al aparecer.

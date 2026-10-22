@@ -287,7 +287,7 @@ function MonitorRow({
             mismo borde derecho (entre 60 y 75 caracteres por línea). En el móvil, el contenedor */}
         {excerpt && (
           <p
-            className={`mt-3 text-[16px] leading-[1.55] text-ss-tinta [text-wrap:pretty] ${index ? "max-w-[63.75ch]" : ""}`}
+            className={`ss-prose mt-3 text-[16px] leading-[1.55] text-ss-tinta ${index ? "max-w-[63.75ch]" : ""}`}
             data-testid={testIds.excerpt?.(item)}
             lang={excerptIsSource ? "en" : undefined}
           >

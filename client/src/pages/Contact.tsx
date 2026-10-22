@@ -1063,8 +1063,7 @@ export default function Contact() {
             </section>
 
             {/* La fachada (oficina/fachada, 1159 × 900, sin el estacionamiento): la misma de la
-                portada, a su proporción propia, sin reencuadre. Color suave de los lugares, con el
-                cielo más apagado (K1: .ss-photo--soft.ss-photo--sky). Hasta 26rem de ancho en
+                portada, a su proporción propia, sin reencuadre ni filtro. Hasta 26rem de ancho en
                 tableta; desde lg, el ancho de su columna (5/12), como la lista de datos de arriba
                 (K5): 356 px a 1024, 512 a 1440, 522 desde 1464 (37,5vw − 28px con el margen de
                 5vw del contenedor). */}
@@ -1079,7 +1078,7 @@ export default function Contact() {
                   decoding="async"
                   width={1159}
                   height={900}
-                  className="ss-photo--soft ss-photo--sky block h-auto w-full"
+                  className="block h-auto w-full"
                   data-testid="img-contact-building"
                 />
               </div>

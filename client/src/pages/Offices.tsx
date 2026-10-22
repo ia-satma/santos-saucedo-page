@@ -42,8 +42,7 @@ import obraMazoL from "@assets/ss26/oficina/obra-mazo-1536.webp";
 // "La oficina" (H1, ronda 6), como la página de oficinas de Von Wobeser: h1, una frase de
 // introducción, la fachada y las fotos por tema, y la dirección con "Cómo llegar". Sin metros,
 // pisos, arquitecto ni adjetivos: la firma no los ha confirmado. Sin carrusel, sin visor y sin
-// animación. Las fotos conservan un tratamiento de color suave (.ss-photo--soft, K1: ganó 5 a 0
-// al gris en el juicio a ciegas de la ronda 7).
+// animación. Las fotos se muestran con sus colores originales.
 
 type PhotoKey =
   | "fachada"
@@ -400,8 +399,7 @@ const dtClass = "ss-label text-ss-medio sm:pt-1";
 const ddClass = "text-[17px] leading-[1.55] text-ss-tinta";
 const ddLinkClass = "hover:text-ss-marino hover:underline underline-offset-4 transition-colors";
 
-/** Una foto: srcset de dos tamaños, sizes del hueco, medidas para reservar el sitio, color
-    suave (.ss-photo--soft; la fachada, con cielo, además .ss-photo--sky) y diferida salvo la
+/** Una foto: srcset de dos tamaños, medidas para reservar el sitio y carga diferida salvo la
     primera (la fachada, que se ve al abrir la página). */
 function OfficePhoto({
   photo,
@@ -432,7 +430,7 @@ function OfficePhoto({
       loading={eager ? "eager" : "lazy"}
       decoding="async"
       {...(eager ? highFetchPriority : {})}
-      className={`${photo === "fachada" ? "ss-photo--soft ss-photo--sky" : "ss-photo--soft"} block h-auto w-full ${className}`}
+      className={`block h-auto w-full ${className}`}
       data-testid={testId}
     />
   );
@@ -567,7 +565,7 @@ export default function Offices() {
               </PhotoBlock>
             </div>
 
-            {gallery.length > 0 && <PhotoBlock id="offices-gallery" title={title} testId="section-office-gallery"><div className="grid gap-6 sm:grid-cols-2">{gallery.map(photo=><img key={photo.id} src={photo.imageUrl} alt={language==='es'?photo.altEs:photo.alt} className="ss-photo--soft block h-auto w-full" loading="lazy" />)}</div></PhotoBlock>}
+            {gallery.length > 0 && <PhotoBlock id="offices-gallery" title={title} testId="section-office-gallery"><div className="grid gap-6 sm:grid-cols-2">{gallery.map(photo=><img key={photo.id} src={photo.imageUrl} alt={language==='es'?photo.altEs:photo.alt} className="block h-auto w-full" loading="lazy" />)}</div></PhotoBlock>}
 
             {/* Dirección: el h2 en el aside y en el cuerpo la lista de datos (los del pie) con
                 "Cómo llegar" y "Contacto". Sin límite de medida (I3): los filetes terminan en el
