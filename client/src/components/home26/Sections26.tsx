@@ -234,18 +234,18 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                   aria-describedby={`ss26-prd-${item.slug}`}
                   className={`inline-link grid grid-cols-1 gap-y-3 py-8 sm:gap-x-5 lg:grid-cols-12 lg:items-baseline lg:gap-x-6 lg:py-10 ${
                     item.imageUrl
-                      ? "sm:grid-cols-[88px_minmax(0,1fr)_minmax(112px,22%)_24px]"
-                      : "sm:grid-cols-[88px_1fr_auto]"
+                      ? "sm:grid-cols-[56px_minmax(0,1fr)_minmax(112px,22%)_24px]"
+                      : "sm:grid-cols-[56px_minmax(0,1fr)_24px]"
                   }`}
                 >
                   {/* 01–04 simples, como las filas de /practice-groups; la lista ya numera para
                       lectores de pantalla. Desde lg, número, titular y flecha sobre la misma línea
                       base (la primera del titular), a cualquier tamaño del titular */}
-                  <span aria-hidden className="ss-row-num ss-label ss-num lg:col-span-4">
+                  <span aria-hidden className="ss-row-num ss-label ss-num lg:col-span-1">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div className={item.imageUrl ? "grid grid-cols-[minmax(0,1fr)_112px] items-center gap-4 sm:contents" : "sm:contents"}>
-                    <span className={`${item.imageUrl ? "sm:col-start-2" : ""} sm:row-start-1 ${item.imageUrl ? "lg:col-span-5" : "lg:col-span-7"} lg:col-start-5`}>
+                    <span className={`${item.imageUrl ? "sm:col-start-2" : ""} sm:row-start-1 ${item.imageUrl ? "lg:col-span-7" : "lg:col-span-10"} lg:col-start-2`}>
                       <span
                         id={`ss26-pr-${item.slug}`}
                         className="ss-display block text-[clamp(26px,2.3vw,34px)] font-normal leading-[1.15] tracking-[-0.012em] text-ss-marino"
@@ -259,7 +259,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                       </span>
                     </span>
                     {item.imageUrl && (
-                      <span aria-hidden="true" className="block overflow-hidden bg-ss-paper sm:col-start-3 sm:row-start-1 lg:col-span-2 lg:col-start-10 lg:self-center">
+                      <span aria-hidden="true" className="block overflow-hidden bg-ss-paper sm:col-start-3 sm:row-start-1 lg:col-span-3 lg:col-start-9 lg:self-center">
                         <img
                           src={item.imageUrl}
                           alt=""
