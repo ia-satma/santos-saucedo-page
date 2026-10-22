@@ -15,6 +15,12 @@ vite.config.ts.*
 /public/generated-images/
 /public/generated-audio/
 /attached_assets/generated_images/
+!attached_assets/team_photos/
+attached_assets/team_photos/*
+!attached_assets/team_photos/mario-saucedo-rodriguez-color.png
+!attached_assets/team_photos/mario-saucedo-rodriguez-color-128.webp
+!attached_assets/team_photos/mario-saucedo-rodriguez-color-360.webp
+!attached_assets/team_photos/mario-saucedo-rodriguez-color-652.webp
 
 # Official antivirus definitions are prepared in the deployment build artifact.
 /dist/clamav/
