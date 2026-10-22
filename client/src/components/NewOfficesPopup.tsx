@@ -326,7 +326,7 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
     ...baseT,
     heroTitle: language === "es" ? "SANTOS & SAUCEDO" : "SANTOS & SAUCEDO",
     heroSubtitle: language === "es" ? "Especialistas en derecho laboral" : "Labor Law Specialists",
-    visionTitle: language === "es" ? "Más de 35 años de experiencia" : "More than 35 years of experience",
+    visionTitle: language === "es" ? "Más de 40 años de experiencia acumulada" : "More than 40 years of combined experience",
     visionText: language === "es"
       ? "Somos un despacho jurídico especializado en derecho laboral, enfocado en acompañar a empresas nacionales e internacionales con asesoría preventiva, consultoría legal y representación en asuntos individuales y colectivos."
       : "We are a legal firm specialized in labor law, focused on advising national and international companies through preventive counsel, legal consulting, and representation in individual and collective matters.",
@@ -341,8 +341,8 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
     collabText2: language === "es"
       ? "La prioridad es anticipar riesgos, ordenar relaciones laborales y sostener decisiones empresariales con criterio jurídico sólido."
       : "The priority is to anticipate risks, organize workplace relations, and support business decisions with sound legal judgment.",
-    workplacesNum: "35+",
-    workplacesLabel: language === "es" ? "años de experiencia" : "years of experience",
+    workplacesNum: "+40",
+    workplacesLabel: language === "es" ? "años de experiencia acumulada" : "years of combined experience",
     capacityText: language === "es"
       ? "La atención pública de la firma se concentra en su oficina de San Pedro Garza García y en el correo info@santossaucedo.com."
       : "Public inquiries are handled through the San Pedro Garza García office and info@santossaucedo.com.",

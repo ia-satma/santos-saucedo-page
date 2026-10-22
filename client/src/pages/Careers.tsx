@@ -11,7 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
 import { SplitSection, TextLink } from "@/components/home26/primitives";
 // "Santos & Saucedo" con espacios duros al pintarlo: el nombre no se parte al final de línea.
-// Para la frase de los 35 años, que no se edita en el texto (pendiente con el cliente).
+// Para la frase de la experiencia de los socios, que no se edita en el texto.
 import { keepFirmName } from "@/lib/firmName";
 import type { LanguageCode } from "@shared/schema";
 // El área de trabajo de la oficina (oficina/area-trabajo, 1536 × 1024), junto a la entrada
@@ -53,7 +53,7 @@ export default function Careers() {
 
   // Textos de la redacción aprobada (sección "Carreras"; la única página en tú). Sin valores
   // genéricos, prestaciones, salarios ni requisitos que la firma no haya confirmado. La frase
-  // de los 35 años se conserva tal cual (pendiente de confirmar con el cliente).
+  // de la experiencia: "más de 40 años" son los acumulados por los socios (junta del 16-10-2026).
   // h1 = la etiqueta del menú en cada idioma; "Tu carrera en Santos & Saucedo." es la entrada.
   // "Santos & Saucedo" con espacios duros: no se parte al final de línea (coreano, árabe).
   const content = {
@@ -65,7 +65,7 @@ export default function Careers() {
       cultureTitle: "What you will learn",
       cultureText: "In a firm of our size, your work is reviewed directly by a partner. You will learn to prepare a case file, to negotiate and to hold a position before the authorities, and you will see at close range how companies in many sectors operate.",
       environmentTitle: "The firm",
-      environmentText: "With more than 35 years of experience, Santos & Saucedo advises companies on employment matters from San Pedro Garza García.",
+      environmentText: "With partners who have more than 40 years of combined experience, Santos & Saucedo advises companies on employment matters from San Pedro Garza García.",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "Semillero S&S is the firm’s internship program.",
       positionsTitle: "Openings",
@@ -85,7 +85,7 @@ export default function Careers() {
       cultureTitle: "Lo que aprenderás",
       cultureText: "En una firma de nuestro tamaño, tu trabajo lo revisa directamente un socio. Aprenderás a preparar un expediente, a negociar y a sostener una postura frente a la autoridad, y conocerás de cerca la operación de empresas de muchos sectores.",
       environmentTitle: "La firma",
-      environmentText: "Con más de 35 años de experiencia, Santos & Saucedo asesora a empresas en materia laboral desde San Pedro Garza García.",
+      environmentText: "Con socios que suman más de 40 años de experiencia, Santos & Saucedo asesora a empresas en materia laboral desde San Pedro Garza García.",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "El Semillero S&S es el programa de pasantes de la firma.",
       positionsTitle: "Vacantes",
@@ -105,7 +105,7 @@ export default function Careers() {
       cultureTitle: "Was Sie lernen",
       cultureText: "In einer Kanzlei unserer Größe prüft ein Partner Ihre Arbeit direkt. Sie lernen, eine Akte vorzubereiten, zu verhandeln und eine Position gegenüber den Behörden zu vertreten, und Sie lernen den Betrieb von Unternehmen aus vielen Branchen aus der Nähe kennen.",
       environmentTitle: "Die Kanzlei",
-      environmentText: "Mit mehr als 35 Jahren Erfahrung berät Santos & Saucedo Unternehmen von San Pedro Garza García aus in arbeitsrechtlichen Fragen.",
+      environmentText: "Mit Partnern, die zusammen mehr als 40 Jahre Erfahrung haben, berät Santos & Saucedo Unternehmen von San Pedro Garza García aus in arbeitsrechtlichen Fragen.",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "Das Semillero S&S ist das Praktikantenprogramm der Kanzlei.",
       positionsTitle: "Offene Stellen",
@@ -125,7 +125,7 @@ export default function Careers() {
       cultureTitle: "您将学到什么",
       cultureText: "在我们这样规模的律所，您的工作由合伙人直接审阅。您将学习如何准备案卷、进行谈判、在主管机关面前坚持立场，并近距离了解众多行业企业的运营。",
       environmentTitle: "关于律所",
-      environmentText: "凭借超过35年的专业经验，Santos & Saucedo 在圣佩德罗-加尔萨-加西亚为企业提供劳动法律咨询。",
+      environmentText: "凭借合伙人累计超过40年的专业经验，Santos & Saucedo 在圣佩德罗-加尔萨-加西亚为企业提供劳动法律咨询。",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "Semillero S&S 是本所的实习生项目。",
       positionsTitle: "职位空缺",
@@ -145,7 +145,7 @@ export default function Careers() {
       cultureTitle: "배우게 될 것",
       cultureText: "우리 규모의 법인에서는 파트너가 여러분의 업무를 직접 검토합니다. 사건 기록을 준비하고, 협상하고, 당국 앞에서 입장을 지키는 법을 배우며, 여러 업종 기업의 운영을 가까이에서 알게 됩니다.",
       environmentTitle: "법인 소개",
-      environmentText: "35년 이상의 전문 경험을 바탕으로, Santos & Saucedo는 산페드로 가르사 가르시아에서 기업에 노동 문제를 자문합니다.",
+      environmentText: "파트너들의 합산 40년 이상의 전문 경험을 바탕으로, Santos & Saucedo는 산페드로 가르사 가르시아에서 기업에 노동 문제를 자문합니다.",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "Semillero S&S는 법인의 인턴십 프로그램입니다.",
       positionsTitle: "채용 공고",
@@ -165,7 +165,7 @@ export default function Careers() {
       cultureTitle: "学べること",
       cultureText: "当事務所の規模では、あなたの仕事はパートナーが直接確認します。記録の準備、交渉、当局に対して立場を貫くことを学び、さまざまな業種の企業の業務を間近で知ることができます。",
       environmentTitle: "事務所について",
-      environmentText: "35年以上の専門的な実績を持ち、Santos & Saucedo はサン・ペドロ・ガルサ・ガルシアを拠点に企業の労働問題について助言しています。",
+      environmentText: "パートナーの通算40年以上の実績を持ち、Santos & Saucedo はサン・ペドロ・ガルサ・ガルシアを拠点に企業の労働問題について助言しています。",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "Semillero S&S は当事務所のインターンシップ・プログラムです。",
       positionsTitle: "募集職種",
@@ -185,7 +185,7 @@ export default function Careers() {
       cultureTitle: "ما ستتعلمه",
       cultureText: "في مكتب بحجمنا، يراجع أحد الشركاء عملك مباشرة. ستتعلم إعداد الملف والتفاوض والدفاع عن موقف أمام السلطات، وستتعرف عن قرب على طريقة عمل شركات من قطاعات كثيرة.",
       environmentTitle: "المكتب",
-      environmentText: "مع أكثر من 35 عامًا من الخبرة، يقدّم Santos & Saucedo المشورة للشركات في مسائل العمل من San Pedro Garza García.",
+      environmentText: "بخبرة متراكمة لشركائه تزيد على 40 عامًا، يقدّم Santos & Saucedo المشورة للشركات في مسائل العمل من San Pedro Garza García.",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "يُعدّ Semillero S&S برنامج المتدربين في المكتب.",
       positionsTitle: "الوظائف الشاغرة",
@@ -205,7 +205,7 @@ export default function Careers() {
       cultureTitle: "Чему вы научитесь",
       cultureText: "В фирме нашего размера вашу работу напрямую проверяет партнёр. Вы научитесь готовить дело, вести переговоры и отстаивать позицию перед органами власти, а также близко познакомитесь с работой компаний из многих отраслей.",
       environmentTitle: "О фирме",
-      environmentText: "С более чем 35-летним опытом Santos & Saucedo консультирует компании по вопросам трудового права из своего офиса в Сан-Педро-Гарса-Гарсия.",
+      environmentText: "Партнёры Santos & Saucedo, чей совокупный опыт превышает 40 лет, консультируют компании по вопросам трудового права из офиса в Сан-Педро-Гарса-Гарсия.",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "Semillero S&S — программа стажировки фирмы.",
       positionsTitle: "Вакансии",
@@ -225,7 +225,7 @@ export default function Careers() {
       cultureTitle: "Ce que vous apprendrez",
       cultureText: "Dans un cabinet de notre taille, votre travail est relu directement par un associé. Vous apprendrez à préparer un dossier, à négocier et à défendre une position face à l’administration, et vous découvrirez de près le fonctionnement d’entreprises de nombreux secteurs.",
       environmentTitle: "Le cabinet",
-      environmentText: "Avec plus de 35 ans d'expérience, Santos & Saucedo conseille les entreprises en droit du travail depuis San Pedro Garza García.",
+      environmentText: "Avec des associés qui cumulent plus de 40 ans d'expérience, Santos & Saucedo conseille les entreprises en droit du travail depuis San Pedro Garza García.",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "Le Semillero S&S est le programme de stage du cabinet.",
       positionsTitle: "Postes à pourvoir",
@@ -245,7 +245,7 @@ export default function Careers() {
       cultureTitle: "Cosa imparerai",
       cultureText: "In uno studio delle nostre dimensioni, il tuo lavoro viene rivisto direttamente da un socio. Imparerai a preparare un fascicolo, a negoziare e a sostenere una posizione davanti all’autorità, e conoscerai da vicino l’attività di imprese di molti settori.",
       environmentTitle: "Lo studio",
-      environmentText: "Con oltre 35 anni di esperienza, Santos & Saucedo assiste le imprese in materia di lavoro da San Pedro Garza García.",
+      environmentText: "Con soci che riuniscono oltre 40 anni di esperienza, Santos & Saucedo assiste le imprese in materia di lavoro da San Pedro Garza García.",
       internshipTitle: "Semillero S&S",
       internshipSubtitle: "Il Semillero S&S è il programma di tirocinio dello studio.",
       positionsTitle: "Posizioni aperte",

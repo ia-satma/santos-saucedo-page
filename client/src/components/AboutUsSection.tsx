@@ -226,8 +226,8 @@ export default function AboutUsSection() {
     sectionTitle: isSpanish ? "CAPITAL HUMANO Y DEFENSA LEGAL" : "HUMAN CAPITAL & LEGAL DEFENSE",
     visionTitle: isSpanish ? "Enfoque" : "Focus",
     visionText: isSpanish
-      ? "Somos una firma de abogados que brinda asesoría y servicios legales para la administración del capital humano y la defensa legal de empresas nacionales y multinacionales. Con raíz en el derecho laboral y más de 35 años de experiencia."
-      : "We are a law firm providing legal counsel and services for human-capital administration and the legal defense of national and multinational companies. Rooted in labor law, with more than 35 years of experience.",
+      ? "Somos una firma de abogados que brinda asesoría y servicios legales para la administración del capital humano y la defensa legal de empresas nacionales y multinacionales. Con raíz en el derecho laboral; sus socios suman más de 40 años de experiencia."
+      : "We are a law firm providing legal counsel and services for human-capital administration and the legal defense of national and multinational companies. Rooted in labor law; its partners have more than 40 years of combined experience.",
     missionTitle: isSpanish ? "Método" : "Method",
     missionText: isSpanish
       ? "Diagnosticamos, prevenimos, corregimos, capacitamos y defendemos la operación de la empresa en materia laboral, corporativa, migratoria y contenciosa."

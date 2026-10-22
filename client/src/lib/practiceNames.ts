@@ -52,17 +52,18 @@ const NAMES: Record<PracticeSlug, Record<LanguageCode, string>> = {
     fr: "Immigration",
     it: "Immigrazione",
   },
+  // "Litigio y penal laboral", como lo nombra la firma (junta del 16-10-2026); el slug no cambia
   "litigio-contencioso": {
-    es: "Litigio",
-    en: "Litigation",
-    de: "Prozessführung",
-    zh: "诉讼",
-    ko: "소송",
-    ja: "訴訟",
-    ar: "التقاضي",
-    ru: "Судебные споры",
-    fr: "Contentieux",
-    it: "Contenzioso",
+    es: "Litigio y penal laboral",
+    en: "Litigation and workplace criminal matters",
+    de: "Prozessführung und Arbeitsstrafrecht",
+    zh: "诉讼与劳动刑事",
+    ko: "소송 및 노동 형사",
+    ja: "訴訟・労働刑事",
+    ar: "التقاضي والقضايا الجنائية العمالية",
+    ru: "Судебные споры и уголовные дела в сфере труда",
+    fr: "Contentieux et pénal du travail",
+    it: "Contenzioso e penale del lavoro",
   },
 };
 
