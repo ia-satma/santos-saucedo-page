@@ -17,8 +17,8 @@
 
   /* ── PALETA LIGHT ("Clásica", manual 2025) ────────────────
      Blanco para cuerpos de página, Hueso #F3F1EA como único papel,
-     Azul Marino #24255C como tinta de titulares y acción,
-     Gris Tinta #33333B para el texto. La lima no es acento de interfaz.
+     Azul Marino #1a3f70 como tinta de titulares y acción,
+     Gris Tinta #2f343c para el texto. La lima no es acento de interfaz.
   ─────────────────────────────────────────────────────────── */
   --background: 0 0% 100%;         /* #FFFFFF — blanco puro           */
   --foreground: 214 62% 27%;       /* #1A3F70 — Azul Marino (azul del logo oficial)            */
@@ -42,8 +42,8 @@
   --secondary: 47 27% 94%;         /* #F3F1EA — Hueso                 */
   --secondary-foreground: 214 62% 27%;
   --muted: 47 27% 94%;
-  --muted-foreground: 216 9% 39%;  /* #5F5F6B — Gris Medio            */
-  --body: 216 12% 21%;              /* #33333B — Gris Tinta            */
+  --muted-foreground: 216 9% 39%;  /* #5b6270 — Gris Medio            */
+  --body: 216 12% 21%;              /* #2f343c — Gris Tinta            */
   --accent: 47 27% 94%;
   --accent-foreground: 214 62% 27%;
   --brand: 214 62% 27%;            /* Azul Marino: la lima deja bg-brand/text-brand */
@@ -1124,13 +1124,13 @@ html, body {
    ====================================================== */
 .editorial-page-hero {
   /* Tokens que usan ss-link, ss-arrow y el eyebrow */
-  --ss-navy: #1a1b42;
+  --ss-navy: #0b2850;
   --ss-lime: #b2eb3e;
   position: relative;
   overflow: hidden;
   isolation: isolate;
   color: #fff;
-  background-color: #1a1b42;
+  background-color: #0b2850;
   background-image: none;
   /* Anillos ring-ring y contorno de foco sobre Azul Profundo: lima */
   --ring: 80 81% 58%;
