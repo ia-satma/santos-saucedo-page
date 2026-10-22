@@ -184,11 +184,12 @@ function RelatedTeamMemberCard({
         </span>
         <div className="flex-1 min-w-0">
           {/* Nombre y cargo completos: si no caben, pasan a una segunda línea (antes "Mario Saucedo M…") */}
-          <p className="font-heading text-[19px] leading-[1.2] tracking-[-0.01em] text-ss-marino group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1">
+          {/* 22 px (antes la clase "text[19px]" sin guion no aplicaba y quedaba en 16–18 px) */}
+          <p className="font-heading text-[22px] leading-[1.2] tracking-[-0.01em] text-ss-marino group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1">
             {relatedMember.name}
           </p>
           {/* Sin traducción, el cargo en inglés va en <bdi>: aislado del árabe sin cambiar la alineación */}
-          <p className="ss-label text-ss-medio mt-1">
+          <p className="ss-label mt-1.5 text-[14px] text-ss-medio">
             <LocalizedRun value={displayTitle} />
           </p>
         </div>
@@ -1510,7 +1511,7 @@ export default function TeamMemberDetail() {
                     <>
                       <img
                         src={member.imageUrl}
-                        // WebP de 360/652 px en vez del PNG de 0,5–1 MB; si la variante no
+                        // WebP de 360/541 px en vez del PNG de 0,4–0,6 MB; si la variante no
                         // existe donde se sirven las fotos, onError vuelve al original (src)
                         {...(profilePhotoSrcSet ? { srcSet: profilePhotoSrcSet, sizes: PROFILE_PHOTO_SIZES } : {})}
                         // alt vacío: el nombre ya está en el h1 de al lado (antes se leía dos veces)

@@ -584,13 +584,13 @@ export default function PracticeGroupDetail() {
                             <MemberThumb member={member} />
                             <span className="min-w-0">
                               <span
-                                className="block font-heading text-[20px] leading-[1.25] text-ss-marino group-hover:underline decoration-1 underline-offset-4"
+                                className="block font-heading text-[22px] leading-[1.25] text-ss-marino group-hover:underline decoration-1 underline-offset-4"
                                 data-testid={`text-team-member-name-${member.slug}`}
                               >
                                 {member.name}
                               </span>
                               <span
-                                className="ss-label block mt-1 text-ss-medio"
+                                className="ss-label block mt-1 text-[14px] text-ss-medio"
                                 data-testid={`text-team-member-role-${member.slug}`}
                                 lang={role.source ? "en" : undefined}
                               >

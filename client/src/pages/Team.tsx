@@ -38,9 +38,11 @@ const CARD_PHOTO_SIZES = "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 112
 
 // Rejilla de tarjetas y letra del nombre, compartidas por la vista y su carga (misma altura).
 // Desde sm el nombre reserva dos líneas (interlineado 1.15 × 2): "Mario Saucedo Montemayor" pasa
-// a dos a 1024–1440 y su cargo quedaba más abajo que los de al lado.
+// a dos a 1024–1440 y su cargo quedaba más abajo que los de al lado. Nombre de 26–32 px y cargo de
+// 14–15 px: en la junta del 16-10-2026 el cliente vio chica la letra de Socios.
 const CARD_GRID = "grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 sm:gap-y-12 lg:grid-cols-4";
-const CARD_NAME = "ss-display block text-[clamp(24px,1.9vw,28px)] font-normal leading-[1.15] tracking-[-0.01em] sm:min-h-[2.3em]";
+const CARD_ROLE = "ss-label mt-3 block text-[14px] text-ss-medio sm:text-[15px]";
+const CARD_NAME = "ss-display block text-[clamp(26px,2.2vw,32px)] font-normal leading-[1.15] tracking-[-0.01em] sm:min-h-[2.3em]";
 
 export default function Team() {
   const { teamMosaic: equipoPhotos } = useCmsMedia();
@@ -239,7 +241,7 @@ export default function Team() {
   const getInitials = (name: string) =>
     name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
-  // Retratos: WebP con srcset (360w y 652w); si la variante falla, vuelve al original
+  // Retratos: WebP con srcset (360w y 541w); si la variante falla, vuelve al original
   const photoSrcSetProps = (member: TeamMember) => {
     const srcSet = getTeamPhotoSrcSet(member.imageUrl);
     return srcSet ? { srcSet, sizes: CARD_PHOTO_SIZES } : {};
@@ -257,7 +259,7 @@ export default function Team() {
     const role = language === "es" ? (member.titleEs || member.title || fallback) : (member.title || fallback);
     const text = role.replace(/\((in)\s+(memoriam)\)/gi, "($1\u00a0$2)");
     return (
-      <span className="ss-label mt-3 block text-ss-medio">
+      <span className={CARD_ROLE}>
         {englishFallback ? <bdi lang="en" dir="ltr">{text}</bdi> : text}
       </span>
     );
@@ -287,9 +289,9 @@ export default function Team() {
                 alt=""
                 loading={eager ? "eager" : "lazy"}
                 decoding="async"
-                width={652}
-                height={652}
-                className="ss-photo absolute inset-0 h-full w-full object-cover object-[50%_28%] transition-transform duration-700 [transition-timing-function:var(--ss-ease)] motion-safe:group-hover:scale-[1.01] motion-reduce:transform-none motion-reduce:transition-none"
+                width={541}
+                height={541}
+                className="ss-photo absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 [transition-timing-function:var(--ss-ease)] motion-safe:group-hover:scale-[1.01] motion-reduce:transform-none motion-reduce:transition-none"
                 onError={handlePhotoError}
               />
             )}
@@ -371,7 +373,7 @@ export default function Team() {
                     <div className={CARD_NAME}>
                       <Skeleton className="inline-block h-[0.8em] w-4/5 bg-ss-rule align-middle" />
                     </div>
-                    <div className="ss-label mt-3">
+                    <div className={CARD_ROLE}>
                       <Skeleton className="inline-block h-[0.8em] w-1/2 bg-ss-rule align-middle" />
                     </div>
                   </div>

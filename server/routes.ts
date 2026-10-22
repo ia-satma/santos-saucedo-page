@@ -167,9 +167,10 @@ function generateVCard(member: any, language: "es" | "en" = "es"): string {
     `FN:${safeName}`,
     `N:${lastName};${firstName};;;`,
     `ORG:Santos & Saucedo, S.C.`,
-    `TITLE:${title}`,
-    `ROLE:${role}`,
   ];
+  // Sin "null" en la tarjeta cuando falta el cargo o el rol
+  if (title) lines.push(`TITLE:${title}`);
+  if (role) lines.push(`ROLE:${role}`);
   
   if (member.email) {
     lines.push(`EMAIL;TYPE=WORK:${member.email}`);
@@ -691,7 +692,9 @@ export async function registerRoutes(
         return res.status(404).json({ error: "Team member not found" });
       }
       
-      const vcard = generateVCard(member, language);
+      // Con el DTO público: correo y teléfono generales de la firma, sin LinkedIn ni datos
+      // personales que el registro pudiera traer (shared/teamVisibility)
+      const vcard = generateVCard(toPublicTeamProfile(member), language);
       const filename = member.slug.replace(/[^a-z0-9-]/g, '') + '.vcf';
       
       res.setHeader('Content-Type', 'text/vcard; charset=utf-8');
