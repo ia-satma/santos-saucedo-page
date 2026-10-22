@@ -12,7 +12,6 @@ const VIDEO_DIR = `${import.meta.env.BASE_URL}video/`;
 const POSTER = `${VIDEO_DIR}portada-color-poster.jpg`;
 // 1280 hasta 1024 px de ancho (teléfono y tableta); 1920 en el resto. Se elige al montar.
 const SMALL_SCREEN = "(max-width: 1024px)";
-const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 // Preferencia del visitante (I1): "paused" si pausó el video. Lectura y escritura con try/catch:
 // en modo privado o con el almacenamiento bloqueado la elección vale solo para esta visita.
 const PREF_KEY = "ss-hero-video";
@@ -47,19 +46,6 @@ function playOrReport(video: HTMLVideoElement, onRejected: () => void) {
   video.play().catch((err: unknown) => {
     if ((err as { name?: string } | null)?.name !== "AbortError") onRejected();
   });
-}
-
-/** Consulta de medios leída al montar (la portada solo se pinta en el navegador) y seguida después. */
-function useMedia(query: string) {
-  const [matches, setMatches] = useState(() => typeof window !== "undefined" && window.matchMedia(query).matches);
-  useEffect(() => {
-    const mq = window.matchMedia(query);
-    const onChange = () => setMatches(mq.matches);
-    onChange();
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, [query]);
-  return matches;
 }
 
 /** Video de fondo: mudo, en bucle, sin controles nativos ni audio, y en pausa mientras el héroe
@@ -145,8 +131,9 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
   const liveChrome = useCmsContent("chrome", chrome26);
   const t = liveHome[lang].hero;
   const labels = liveChrome[lang].heroVideo;
-  // Con movimiento reducido no se monta el video ni hay botón: el póster como imagen fija, mismo encuadre
-  const reduced = useMedia(REDUCED_MOTION);
+  // Movimiento reducido (macOS/iOS "Reducir movimiento"): el cliente pidió que el video se vea en
+  // todos los equipos (junta del 16-10-2026). Es una toma aérea lenta, sin destellos, y el botón de
+  // pausa queda siempre visible (WCAG 2.2.2), así que ya no se sustituye por el póster.
   // Si el visitante lo pausó en otra visita o ahorra datos, el video no se monta (ni se descarga):
   // póster fijo y el botón ofrece reproducir. Al pulsarlo se monta y se reproduce; al pausarlo
   // después queda montado en su cuadro.
@@ -155,7 +142,7 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
   const [mounted, setMounted] = useState(!startPaused);
   const [videoFailed,setVideoFailed]=useState(false);
   useEffect(()=>setVideoFailed(false),[media.hero.videoDesktop,media.hero.videoMobile]);
-  const still = videoFailed || reduced || !mounted || !media.hero.videoEnabled;
+  const still = videoFailed || !mounted || !media.hero.videoEnabled;
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // El navegador rechazó la reproducción (K6): el botón pasa a "Reproducir" sin guardar
@@ -210,8 +197,8 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
       </div>
 
       {/* Pausa del video (WCAG 2.2.2): un solo botón, solo icono, en la esquina inferior del lado
-          final; la etiqueta cambia con el estado (sin aria-pressed). Fuera con movimiento reducido. */}
-      {!reduced && media.hero.videoEnabled && (
+          final; la etiqueta cambia con el estado (sin aria-pressed). */}
+      {media.hero.videoEnabled && (
         <button
           type="button"
           className="ss-hero-toggle"

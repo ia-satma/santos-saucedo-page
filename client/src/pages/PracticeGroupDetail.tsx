@@ -112,7 +112,7 @@ function MemberThumb({ member }: { member: TeamMember }) {
           onError={() => setSrc(src !== member.imageUrl ? member.imageUrl || undefined : undefined)}
         />
       ) : (
-        <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center font-heading text-[18px] text-ss-marino">
+        <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center font-heading text[20px] text-ss-marino">
           {initials}
         </span>
       )}
@@ -560,7 +560,7 @@ export default function PracticeGroupDetail() {
                   {/* Encabezado de columna lateral: romana de 20 px, no etiqueta */}
                   <h2
                     id="practice-people-title"
-                    className="ss-h3 text-[20px] mb-4"
+                    className="ss-h3 text[22px] mb-4"
                     data-testid="text-our-team-title"
                   >
                     {allPartners ? t.partners : t.ourTeam}
@@ -583,7 +583,7 @@ export default function PracticeGroupDetail() {
                             <MemberThumb member={member} />
                             <span className="min-w-0">
                               <span
-                                className="block font-heading text-[18px] leading-[1.25] text-ss-marino group-hover:underline decoration-1 underline-offset-4"
+                                className="block font-heading text[20px] leading-[1.25] text-ss-marino group-hover:underline decoration-1 underline-offset-4"
                                 data-testid={`text-team-member-name-${member.slug}`}
                               >
                                 {member.name}
@@ -621,7 +621,7 @@ export default function PracticeGroupDetail() {
                     {/* h2 con el aspecto de h3: cada servicio es una sección de la práctica */}
                     <h2 className="ss-h3 mb-3">{keepFirmName(service.title)}</h2>
                     {service.paragraphs.map((paragraph, i) => (
-                      <p key={i} className={`ss-prose text-[16px] leading-[1.6] text-ss-tinta ${i > 0 ? "mt-4" : ""}`}>
+                      <p key={i} className={`ss-prose text[18px] leading-[1.6] text-ss-tinta ${i > 0 ? "mt-4" : ""}`}>
                         {keepFirmName(paragraph)}
                       </p>
                     ))}

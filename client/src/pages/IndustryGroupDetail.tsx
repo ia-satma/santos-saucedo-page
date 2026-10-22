@@ -38,7 +38,7 @@ function TranslatedPracticeGroupBadge({ practiceGroup, language }: TranslatedPra
         href={`/practice-groups/${practiceGroup.slug}`}
         className="group flex w-full items-center justify-between gap-4 py-4 cursor-pointer"
       >
-        <span className="font-heading text-[19px] leading-[1.3] text-ss-marino min-w-0 group-hover:underline decoration-1 underline-offset-4">
+        <span className="font-heading text[21px] leading-[1.3] text-ss-marino min-w-0 group-hover:underline decoration-1 underline-offset-4">
           {displayName}
         </span>
         <span className="ss-label text-ss-medio shrink-0">

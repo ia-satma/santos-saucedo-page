@@ -112,11 +112,11 @@ html:has(header.ss26) {
 .ss26,
 .editorial-page-hero,
 [data-testid="section-news-hero"] {
-  --ss-navy: #1a1b42;
-  --ss-marino: #24255c;
-  --ss-tinta: #33333b;
-  --ss-medio: #5f5f6b;
-  --ss-claro: #8a8a94;
+  --ss-navy: #0b2850;
+  --ss-marino: #1a3f70;
+  --ss-tinta: #2f343c;
+  --ss-medio: #5b6270;
+  --ss-claro: #8a909a;
   --ss-paper: #f3f1ea;
   --ss-rule: #e1e0d7;
   /* Entrada: solo usos decorativos (filetes cortos sobre Hueso, subrayados) */
@@ -153,6 +153,11 @@ html:has(.ss26),
 html:has(.ss26) body {
   overflow-x: clip;
 }
+/* Letra más grande en todo el sitio público (junta 16-10-2026: "veo muy chiquita la letra").
+   Las utilidades en rem (text-sm, text-base…) suben un 6 %; las de px se subieron en cada página. */
+html:has(.ss26) {
+  font-size: 106.25%;
+}
 
 /* index.css fija familia y color en encabezados, párrafos y botones;
    dentro de .ss26 heredan del sistema 2026 (especificidad baja con :where). */
@@ -172,8 +177,8 @@ html:has(.ss26) body {
 
 /* Selección: gris azulado, nunca lima */
 ::selection {
-  background: #d9d8e6;
-  color: #1a1b42;
+  background: #d6dfeb;
+  color: #0b2850;
 }
 
 /* Contenedor: 1320px de contenido + márgenes laterales fluidos */
@@ -220,7 +225,7 @@ html:has(.ss26) body {
 .ss-label {
   font-family: var(--ss-font-sans);
   font-weight: 600;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.4;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -245,7 +250,7 @@ html:has(.ss26) body {
 }
 
 .ss-prose {
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.65;
   text-wrap: pretty;
   hanging-punctuation: first;
@@ -256,7 +261,7 @@ html:has(.ss26) body {
 .ss-lead {
   font-family: var(--ss-font-serif);
   font-optical-sizing: auto;
-  font-size: clamp(19px, 0.6vw + 14px, 22px);
+  font-size: clamp(20px, 0.6vw + 15px, 24px);
   line-height: 1.55;
   font-weight: 400;
   letter-spacing: -0.003em;
@@ -266,7 +271,7 @@ html:has(.ss26) body {
 /* Entrada sobre Azul Profundo: sans 400 al 84 % (la romana fina se lee débil en teléfono) */
 :is(.ss-navy, .editorial-page-hero) .ss-lead {
   font-family: var(--ss-font-sans);
-  font-size: clamp(18px, 0.5vw + 14px, 21px);
+  font-size: clamp(19px, 0.5vw + 15px, 22px);
   letter-spacing: 0;
   color: var(--ss-on-navy);
 }
@@ -413,7 +418,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 /* Fondo claro (secciones blancas con data-surface="light" y papel .ss-paper):
    contorno Azul Marino, sin lima (lima sobre claro ≈ 1.3:1). */
 :is(.ss-paper, [data-surface="light"]) :is(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
-  outline: 3px solid var(--ss-marino, #24255c);
+  outline: 3px solid var(--ss-marino, #1a3f70);
   outline-offset: 2px;
   box-shadow: none;
 }
@@ -594,9 +599,11 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   padding: 0;
   border: 0;
   border-radius: 0;
-  background: transparent;
-  color: rgb(255 255 255 / 0.62);
-  transition: color 200ms var(--ss-ease);
+  /* Visible a primera vista (junta 16-10: no se encontraba): filete blanco y glifo casi pleno */
+  border: 1px solid rgb(255 255 255 / 0.5);
+  background: rgb(11 40 80 / 0.35);
+  color: rgb(255 255 255 / 0.9);
+  transition: color 200ms var(--ss-ease), background-color 200ms var(--ss-ease);
 }
 .ss-hero-toggle:hover,
 .ss-hero-toggle:focus-visible {
@@ -652,7 +659,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 
 /* Fila de prácticas: el número (01–04) pasa de tenue a pleno */
 .ss-row .ss-row-num {
-  color: rgb(36 37 92 / 0.65);
+  color: rgb(26 63 112 / 0.65);
   transition: color 320ms var(--ss-ease);
 }
 .ss-row:hover .ss-row-num,

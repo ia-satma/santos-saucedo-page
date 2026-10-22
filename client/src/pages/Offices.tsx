@@ -397,7 +397,7 @@ const DIRECTIONS_URL =
 // dato (dd) en la sans de 17 px
 const rowClass = "grid grid-cols-1 gap-y-1 border-t border-ss-rule py-4 sm:grid-cols-[11rem,1fr] sm:gap-x-6";
 const dtClass = "ss-label text-ss-medio sm:pt-1";
-const ddClass = "text-[17px] leading-[1.55] text-ss-tinta";
+const ddClass = "text[19px] leading-[1.55] text-ss-tinta";
 const ddLinkClass = "hover:text-ss-marino hover:underline underline-offset-4 transition-colors";
 
 /** Una foto: srcset de dos tamaños, sizes del hueco, medidas para reservar el sitio, color

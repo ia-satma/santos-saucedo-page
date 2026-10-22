@@ -88,11 +88,11 @@ function IndustryGroupCard({ group, index, learnMoreText }: IndustryGroupCardPro
           {displayDescription}
         </p>
         <span
-          className="inline-flex items-center gap-2 text-[15px] font-semibold text-ss-marino"
+          className="inline-flex items-center gap-2 text[17px] font-semibold text-ss-marino"
           data-testid={`link-industry-group-${group.slug}`}
         >
-          <span className="text-[15px] group-hover:underline decoration-1 underline-offset-4">{learnMoreText}</span>
-          <span aria-hidden="true" className="text-[15px] inline-block transition-transform duration-300 group-hover:translate-x-1 rtl:-scale-x-100 rtl:group-hover:-translate-x-1">→</span>
+          <span className="text[17px] group-hover:underline decoration-1 underline-offset-4">{learnMoreText}</span>
+          <span aria-hidden="true" className="text[17px] inline-block transition-transform duration-300 group-hover:translate-x-1 rtl:-scale-x-100 rtl:group-hover:-translate-x-1">→</span>
         </span>
       </article>
     </Link>

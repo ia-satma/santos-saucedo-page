@@ -473,7 +473,7 @@ export default function About() {
                   <p className="ss-lead" data-testid="text-about-lead">
                     {keepFirmName(t.historyText1)}
                   </p>
-                  <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]">
+                  <p className="ss-prose text-ss-tinta text[19px] md:text[20px]">
                     {t.historyText2}
                   </p>
                 </div>

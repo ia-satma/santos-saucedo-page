@@ -342,7 +342,7 @@ export default function Careers() {
                 <p className={leadClass} data-testid="text-careers-intro">
                   {t.introText}
                 </p>
-                <p className="mt-6 text-[17px] md:text-[18px] text-ss-tinta leading-[1.65] [text-wrap:pretty]">
+                <p className="mt-6 text[19px] md:text[20px] text-ss-tinta leading-[1.65] [text-wrap:pretty]">
                   {t.whyJoinSubtitle}
                 </p>
               </div>
@@ -452,7 +452,7 @@ export default function Careers() {
                     columna: corte tras la arroba (<wbr>) y, por si acaso, overflow-wrap:anywhere */}
                 <a 
                   href={`mailto:${t.applyEmail}`}
-                  className="inline-block max-w-full text-[19px] text-ss-marino underline decoration-ss-input underline-offset-4 [overflow-wrap:anywhere] hover:decoration-ss-marino mb-4"
+                  className="inline-block max-w-full text[21px] text-ss-marino underline decoration-ss-input underline-offset-4 [overflow-wrap:anywhere] hover:decoration-ss-marino mb-4"
                   data-testid="link-apply-email"
                 >
                   {emailUser}@<wbr />{emailDomain}

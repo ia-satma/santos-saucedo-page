@@ -170,7 +170,7 @@ export default function Interns() {
               }
             >
               <div className="max-w-[44rem]">
-                <p className="text-[17px] md:text-[18px] text-ss-tinta leading-[1.65] max-w-2xl mb-6 [text-wrap:pretty]">
+                <p className="text[19px] md:text[20px] text-ss-tinta leading-[1.65] max-w-2xl mb-6 [text-wrap:pretty]">
                   {t.ctaIntro}
                 </p>
                 <p className="text-base text-ss-tinta leading-[1.55] mb-2">
@@ -179,7 +179,7 @@ export default function Interns() {
                 {/* A 320 px el correo no cabía: corte tras la arroba y overflow-wrap:anywhere */}
                 <a
                   href={applyHref}
-                  className="inline-block max-w-full text-[19px] text-ss-marino underline decoration-ss-input underline-offset-4 [overflow-wrap:anywhere] hover:decoration-ss-marino"
+                  className="inline-block max-w-full text[21px] text-ss-marino underline decoration-ss-input underline-offset-4 [overflow-wrap:anywhere] hover:decoration-ss-marino"
                   data-testid="link-cta-email"
                 >
                   {emailUser}@<wbr />{emailDomain}
