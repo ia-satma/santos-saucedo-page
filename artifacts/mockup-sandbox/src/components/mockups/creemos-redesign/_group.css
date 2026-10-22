@@ -1,0 +1,232 @@
+@font-face {
+  font-family: "SS Serif";
+  src: url("/__mockup/fonts/creemos/Newsreader-Roman-latin.woff2") format("woff2");
+  font-weight: 300 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SS Serif";
+  src: url("/__mockup/fonts/creemos/Newsreader-Italic300-latin.woff2") format("woff2");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SS Sans";
+  src: url("/__mockup/fonts/creemos/SourceSans3-r-latin.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --ss-marino: #24255c;
+  --ss-tinta: #33333b;
+  --ss-medio: #5f5f6b;
+  --ss-paper: #f3f1ea;
+  --ss-rule: #e1e0d7;
+  --ss-input: #c9c8bd;
+  --ss-font-serif: "SS Serif", Georgia, "Times New Roman", serif;
+  --ss-font-sans: "SS Sans", Arial, Helvetica, sans-serif;
+  --ss-pad: clamp(20px, 5vw, 72px);
+}
+
+.creemos-frame,
+.creemos-frame * {
+  box-sizing: border-box;
+}
+
+.creemos-frame {
+  min-height: 100%;
+  width: 100%;
+  background: var(--ss-paper);
+  color: var(--ss-tinta);
+  font-family: var(--ss-font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.creemos-section {
+  padding-block: 96px;
+}
+
+.creemos-container {
+  width: 100%;
+  max-width: calc(1320px + 2 * var(--ss-pad));
+  margin-inline: auto;
+  padding-inline: var(--ss-pad);
+}
+
+.creemos-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0;
+  color: var(--ss-medio);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.creemos-eyebrow__mark {
+  flex: 0 0 auto;
+  color: var(--ss-marino);
+  white-space: nowrap;
+}
+
+.creemos-eyebrow__rule {
+  width: 24px;
+  height: 1px;
+  flex: 0 0 auto;
+  background: var(--ss-rule);
+}
+
+.creemos-title {
+  margin: 0;
+  color: var(--ss-marino);
+  font-family: var(--ss-font-serif);
+  font-size: clamp(42px, 5.6vw, 88px);
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+  font-feature-settings: "kern", "liga", "lnum";
+  text-wrap: balance;
+}
+
+.creemos-copy {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.65;
+  text-wrap: pretty;
+  hanging-punctuation: first;
+  hyphens: manual;
+}
+
+/* Extracted baseline: preserves the section's current 12-column placement. */
+.creemos-current {
+  padding-block: 96px;
+}
+
+.creemos-current .creemos-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 24px;
+}
+
+.creemos-current .creemos-eyebrow {
+  grid-column: 1 / -1;
+}
+
+.creemos-current__title-wrap {
+  margin-top: 48px;
+}
+
+.creemos-current__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+  margin-top: 56px;
+}
+
+/* Proposed layout: one shared left edge and a deliberate divider between the two ideas. */
+.creemos-proposed {
+  padding-block: 76px;
+}
+
+.creemos-proposed__title-wrap {
+  margin-top: clamp(34px, 5vw, 60px);
+}
+
+.creemos-proposed__title {
+  max-width: 15ch;
+  font-size: clamp(46px, 6.3vw, 92px);
+  line-height: 1.02;
+}
+
+.creemos-proposed__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: clamp(38px, 5vw, 58px);
+  border-top: 1px solid var(--ss-input);
+}
+
+.creemos-proposed__copy {
+  padding-block: 24px;
+}
+
+@media (min-width: 768px) {
+  .creemos-section {
+    padding-block: 128px;
+  }
+
+  .creemos-current__title-wrap {
+    margin-top: 64px;
+  }
+
+  .creemos-current__body {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
+    margin-top: 64px;
+  }
+
+  .creemos-proposed {
+    padding-block: 92px;
+  }
+
+  .creemos-proposed__body {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .creemos-proposed__copy {
+    padding-block: 28px 0;
+  }
+
+  .creemos-proposed__copy + .creemos-proposed__copy {
+    border-left: 1px solid var(--ss-rule);
+    padding-left: clamp(28px, 4vw, 56px);
+  }
+
+  .creemos-proposed__copy:first-child {
+    padding-right: clamp(28px, 4vw, 56px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .creemos-current {
+    padding-block: 176px;
+  }
+
+  .creemos-current .creemos-container {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .creemos-current__title-wrap {
+    grid-column: span 11;
+  }
+
+  .creemos-current__body {
+    grid-column: 5 / span 8;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+    margin-top: 80px;
+  }
+
+  .creemos-proposed {
+    padding-block: 120px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .creemos-current__body {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
