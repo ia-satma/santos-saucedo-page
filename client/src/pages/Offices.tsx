@@ -42,8 +42,8 @@ import obraMazoL from "@assets/ss26/oficina/obra-mazo-1536.webp";
 // "La oficina" (H1, ronda 6), como la página de oficinas de Von Wobeser: h1, una frase de
 // introducción, la fachada y las fotos por tema, y la dirección con "Cómo llegar". Sin metros,
 // pisos, arquitecto ni adjetivos: la firma no los ha confirmado. Sin carrusel, sin visor y sin
-// animación. Las fotos en color suave (.ss-photo--soft, K1: ganó 5 a 0 al gris en el juicio a
-// ciegas de la ronda 7): personas en gris, lugares en color suave.
+// animación. Las fotos conservan un tratamiento de color suave (.ss-photo--soft, K1: ganó 5 a 0
+// al gris en el juicio a ciegas de la ronda 7).
 
 type PhotoKey =
   | "fachada"

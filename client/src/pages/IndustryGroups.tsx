@@ -43,7 +43,7 @@ function IndustryGroupCard({ group, index, learnMoreText }: IndustryGroupCardPro
   const imageUrl = getIndustryImage(group.slug, group.imageUrl);
 
   // Fila abierta "Clásica": filete superior, numeral en romana 300 Gris Claro, foto en
-  // escala de grises (sin color al pasar el cursor ni velo marino), titular en romana
+  // color, titular en romana
   // Azul Marino, texto de 16 px y enlace de texto. Sin borde lateral ni sombra.
   return (
     <Link href={`/industry-groups/${group.slug}`}>

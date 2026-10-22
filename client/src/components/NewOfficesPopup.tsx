@@ -495,7 +495,7 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
                     <img
                       src={img}
                       alt={`${t.officeInterior} ${index + 1}`}
-                      className="w-full h-full object-cover transition-all duration-500 grayscale brightness-90 group-hover:grayscale-0 group-hover:brightness-100 group-hover:scale-105"
+                      className="w-full h-full object-cover transition-all duration-500 brightness-90 group-hover:brightness-100 group-hover:scale-105"
                       loading="lazy"
                     />
                   </div>
@@ -508,7 +508,7 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
                 <img
                   src={heroOffice}
                   alt={`${t.officeInterior} ${collageImages.length + 1}`}
-                  className="w-full h-full object-cover transition-all duration-500 grayscale brightness-90 group-hover:grayscale-0 group-hover:brightness-100 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-all duration-500 brightness-90 group-hover:brightness-100 group-hover:scale-105"
                   loading="lazy"
                 />
               </div>

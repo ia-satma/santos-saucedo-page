@@ -255,7 +255,7 @@ export default function IndustryGroupsSection() {
               }}
               onMouseEnter={() => setActivePanel(group.id)}
             >
-              {/* Background image — grayscale at rest, color on hover */}
+              {/* Background image */}
               <img
                 src={group.image}
                 alt=""
@@ -263,9 +263,8 @@ export default function IndustryGroupsSection() {
                 className="absolute inset-0 w-full h-full object-cover"
                 style={{
                   transform: isActive ? "scale(1.04)" : "scale(1)",
-                  filter: isActive ? "grayscale(0%)" : "grayscale(100%)",
                   transition:
-                    "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease",
+                    "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)",
                 }}
               />
 
@@ -345,7 +344,7 @@ export default function IndustryGroupsSection() {
                 src={group.image}
                 alt=""
                 aria-hidden="true"
-                className="absolute inset-0 w-full h-full object-cover transition-[transform,filter] duration-500 grayscale group-hover:grayscale-0 group-hover:scale-105"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-ss-navy/60 group-hover:bg-ss-navy/44 transition-colors duration-300" />
               <span className="absolute top-3 left-3 text-primary text-xs font-medium tabular-nums">

@@ -1515,7 +1515,7 @@ export default function TeamMemberDetail() {
                         {...(profilePhotoSrcSet ? { srcSet: profilePhotoSrcSet, sizes: PROFILE_PHOTO_SIZES } : {})}
                         // alt vacío: el nombre ya está en el h1 de al lado (antes se leía dos veces)
                         alt=""
-                        // En grises, como todos los retratos del sitio; sin velo marino encima
+                        // En color, sin velo marino encima
                         className="ss-photo absolute inset-0 h-full w-full object-cover object-top"
                         style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }}
                         loading="eager"

@@ -135,10 +135,10 @@ export function Firma26({ lang }: { lang: Lang26 }) {
               decoding="async"
               width={1159}
               height={900}
-              // En la portada todo va en gris (M1): el mismo tratamiento que los retratos de
-              // Socios; /offices, /about, /careers y /contact siguen en color suave. Sin entrada al
+              // En la portada se muestra en color, igual que los retratos de Socios; /offices,
+              // /about, /careers y /contact conservan su color suave. Sin entrada al
               // aparecer (G3)
-              className="ss-photo ss-photo--mono block h-auto w-full"
+              className="ss-photo block h-auto w-full"
             />
           </div>
           {/* Junto al pie, el enlace a la página de la oficina (su nombre en officeLabel) */}
@@ -285,7 +285,7 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
           (en pantallas mayores, Azul Profundo a la izquierda). */}
       <div className={`grid grid-cols-1 xl:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] ${GAP_X}`}>
         <div className="relative min-h-[300px] overflow-hidden sm:min-h-[420px] xl:min-h-[600px]">
-          {/* Lugar en la portada: el gris de los retratos y de la fachada de La firma (M1), sin velo */}
+          {/* Lugar en la portada, sin velo */}
           <img
             src={photos.salaJuntas.url}
             srcSet={photos.salaJuntas.smallUrl && photos.salaJuntas.smallUrl !== photos.salaJuntas.url ? `${photos.salaJuntas.smallUrl} 768w, ${photos.salaJuntas.url} 1536w` : undefined}
@@ -295,7 +295,7 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
             decoding="async"
             width={1536}
             height={1024}
-            className="ss-photo ss-photo--mono absolute inset-y-0 right-0 h-full w-full max-w-[1536px] object-cover object-[50%_42%]"
+            className="ss-photo absolute inset-y-0 right-0 h-full w-full max-w-[1536px] object-cover object-[50%_42%]"
           />
         </div>
         <div className="flex items-center px-[var(--ss-pad)] py-20 xl:pl-0 xl:pr-[clamp(48px,6vw,104px)]">
@@ -421,7 +421,7 @@ export function Socios26({ lang }: { lang: Lang26 }) {
               <Link href={`/team/${person.photo}`} className="inline-link group block">
                 <span className="grid grid-cols-[112px_1fr] items-end gap-x-5 sm:block">
                   <span className="block overflow-hidden bg-ss-paper">
-                    {/* Fuente 652×652 (360 en teléfono) recortada a 4:5, en grises como todo
+                    {/* Fuente 652×652 (360 en teléfono) recortada a 4:5, en color como todo
                         retrato; alt vacío: el nombre ya es el texto del enlace */}
                     <img
                       src={person.image}
@@ -432,7 +432,7 @@ export function Socios26({ lang }: { lang: Lang26 }) {
                       decoding="async"
                       width={652}
                       height={652}
-                      className="ss-photo ss-photo--mono aspect-[4/5] h-auto w-full object-cover object-[50%_28%] transition-transform duration-700 [transition-timing-function:var(--ss-ease)] motion-safe:group-hover:scale-[1.01] motion-reduce:transform-none motion-reduce:transition-none"
+                      className="ss-photo aspect-[4/5] h-auto w-full object-cover object-[50%_28%] transition-transform duration-700 [transition-timing-function:var(--ss-ease)] motion-safe:group-hover:scale-[1.01] motion-reduce:transform-none motion-reduce:transition-none"
                     />
                   </span>
                   <span className="block sm:mt-5">

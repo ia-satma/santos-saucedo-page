@@ -81,7 +81,7 @@ function AuthorCard({
       href={`/team/${author.slug}`}
       className="group block"
     >
-      {/* Fila con filete superior, sin caja; retrato en grises como todos los retratos */}
+      {/* Fila con filete superior, sin caja; retrato en color */}
       <div
         className="border-t border-ss-rule pt-6 pb-2"
         data-testid={`card-author-${author.slug}`}

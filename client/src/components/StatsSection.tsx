@@ -514,7 +514,7 @@ export default function StatsSection({ language }: StatsSectionProps) {
                 <img
                   src={img.src}
                   alt={altText}
-                  className="absolute inset-0 w-full h-full object-cover transition-all duration-500 grayscale brightness-50 group-hover:grayscale-0 group-hover:brightness-100 group-hover:scale-105"
+                  className="absolute inset-0 w-full h-full object-cover transition-all duration-500 brightness-50 group-hover:brightness-100 group-hover:scale-105"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-black/30 group-hover:bg-black/0 transition-colors duration-300 flex items-center justify-center">
