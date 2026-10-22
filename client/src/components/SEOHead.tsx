@@ -339,6 +339,9 @@ const seoConfig: Record<string, SEOConfig> = {
     },
     path: "/careers/interns",
   },
+  // Testimonios: el listado se indexa; el formulario del enlace de invitación, no
+  testimonials: defaults.seo.testimonials,
+  testimonialWrite: defaults.seo.testimonialWrite,
   // 404: título y descripción propios en el idioma de la página; no se indexa
   notFound: {
     title: {

@@ -84,6 +84,14 @@ Revisa el destino antes de ejecutar el comando. Las ampliaciones actuales del CM
 en `ensureCmsSchema` y `server/cms/agentSchema.ts`; no constituyen un ledger general de migraciones
 para cualquier modificación futura del esquema.
 
+Testimonios (oct. 2026): `ensureTestimonialSchema` (`server/cms/testimonialSchema.ts`, llamada desde
+`ensureCmsSchema`) agrega al arrancar las columnas nuevas de `testimonials` y crea
+`testimonial_invites`, con el mismo DDL que `shared/schema.ts` (un `db:push` posterior no ve
+diferencias). Una fila heredada de `testimonials` queda como `pending` y no sale en el sitio. Si la
+navegación ya se guardó desde el panel, `addTestimonialsToNavigation` agrega una sola vez
+"Testimonios" tras "Socios" en el menú y el pie (marca `migration.navigation-testimonials` en
+`site_config`); si alguien la quita después, no se vuelve a agregar.
+
 App Storage de Santos ya fue conectado en el corte anterior. El nuevo código separa objetos
 públicos (`santos-saucedo/public/`) y documentos/presentaciones privados
 (`santos-saucedo/private/`), exige persistir antes de confirmar y protege las descargas privadas.

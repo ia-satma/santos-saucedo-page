@@ -18,6 +18,7 @@ import {
   SpeakerLoudIcon,
   VideoIcon,
   CookieIcon,
+  ChatBubbleIcon,
 } from "@radix-ui/react-icons";
 export const adminNavigation = [
   {
@@ -177,6 +178,12 @@ export const adminNavigation = [
         label: "Contacto y suscripciones",
         hint: "Mensajes y suscriptores del Monitor Laboral",
         icon: EnvelopeClosedIcon,
+      },
+      {
+        href: "/admin/testimonials",
+        label: "Testimonios",
+        hint: "Invitaciones de un solo uso y aprobación",
+        icon: ChatBubbleIcon,
       },
       {
         href: "/admin/applications",

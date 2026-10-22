@@ -382,11 +382,12 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   line-height: 1.8;
 }
 
-/* Menú de escritorio en alemán y francés: etiquetas más largas que en ES/EN. Medido con el
-   espaciado de 0.10em: sin ajuste desbordan hasta ~1060 px (de 18 px, fr 27 px a 1024); el
-   ruso ya cabe. Entre 1024 y 1151 px se cierran espaciado y huecos solo en esos dos idiomas,
-   con margen para otras letras del sistema, sin recortar texto. */
-@media (min-width: 1024px) and (max-width: 1151.98px) {
+/* Menú de escritorio en alemán y francés: etiquetas más largas que en ES/EN. Con siete
+   secciones (Testimonios) el menú en línea empieza en 1280 px; medido con 0.10em, sin ajuste
+   desbordan en todo ancho (de 82 px y fr 33 px a 1280; 19 y 4 px a 1440, con "Buscar"
+   visible; el contenedor no pasa de 1320 px). Desde 1280 px se cierran espaciado y huecos solo en esos dos idiomas, con
+   margen para otras letras del sistema, sin recortar texto. */
+@media (min-width: 1280px) {
   #main-navigation > ul:is(:lang(de), :lang(fr)) {
     gap: 12px;
   }

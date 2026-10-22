@@ -1,5 +1,7 @@
 import { siteLink } from "@shared/siteControls";
 import { registerCareerApplications } from "./routes/careerApplications";
+import { registerTestimonials } from "./routes/testimonials";
+import { addTestimonialsToNavigation } from "./cms/testimonialSchema";
 import { registerMediaUploads } from "./routes/mediaUploads";
 import { registerSubmissionManagement } from "./routes/submissionManagement";
 import { registerAgentReportRoutes } from "./routes/agentReportRoutes";
@@ -75,7 +77,6 @@ import {
   insertRankingSchema,
   insertAwardSchema,
   insertRepresentativeClientSchema,
-  insertTestimonialSchema,
   insertJobOpeningSchema,
   insertOfficeSchema,
   insertAllianceSchema,
@@ -241,6 +242,11 @@ export async function registerRoutes(
     await switchHeroToColourVideo();
   } catch (err) {
     console.error("[CMS] No se pudo cambiar el video de portada a color:", err);
+  }
+  try {
+    await addTestimonialsToNavigation();
+  } catch (err) {
+    console.error("[CMS] No se pudo agregar Testimonios al menú guardado:", err);
   }
 
   const agentsEnabled = process.env.ENABLE_APP_AGENTS === "true";
@@ -790,6 +796,10 @@ export async function registerRoutes(
   };
 
   registerCareerApplications(app,publicFormGuard({success:true}));
+  // Testimonios: envío con el límite y la trampa de los formularios; la consulta del enlace,
+  // con un límite más holgado (30 por IP cada 10 minutos)
+  const allowInviteCheck = createFormLimiter(30);
+  registerTestimonials(app, publicFormGuard({ success: true }), (req) => allowInviteCheck(clientIp(req)));
 
   const contactSuccess = { success: true, message: "Contact form submitted successfully" };
   // La casilla del aviso de privacidad también se exige aquí, no solo en el formulario
@@ -1002,6 +1012,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         { loc: '/news', changefreq: 'daily', priority: '0.9' },
         { loc: '/contact', changefreq: 'monthly', priority: '0.7' },
         { loc: '/offices', changefreq: 'monthly', priority: '0.6' },
+        { loc: '/testimonios', changefreq: 'monthly', priority: '0.6' },
         { loc: '/careers', changefreq: 'weekly', priority: '0.7' },
         { loc: '/careers/interns', changefreq: 'monthly', priority: '0.5' },
         { loc: '/privacy-policy', changefreq: 'yearly', priority: '0.3' },
@@ -2255,63 +2266,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
     }
   });
 
-  // =============================================
-  // ADMIN TESTIMONIALS CRUD
-  // =============================================
-  
-  app.get("/api/admin/testimonials", authMiddleware, async (_req: Request, res: Response) => {
-    try {
-      const testimonialsList = await storage.getTestimonials();
-      res.json(testimonialsList);
-    } catch (error) {
-      console.error("Get testimonials error:", error);
-      res.status(500).json({ error: "Failed to fetch testimonials" });
-    }
-  });
-
-  app.post("/api/admin/testimonials", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
-    try {
-      const validatedData = insertTestimonialSchema.parse(req.body);
-      const testimonial = await storage.createTestimonial(validatedData);
-      res.json(testimonial);
-    } catch (error) {
-      if (error instanceof ZodError) {
-        return res.status(400).json({ error: "Validation failed", details: error.errors });
-      }
-      console.error("Create testimonial error:", error);
-      res.status(500).json({ error: "Failed to create testimonial" });
-    }
-  });
-
-  app.put("/api/admin/testimonials/:id", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
-    try {
-      const validatedData = insertTestimonialSchema.partial().parse(req.body);
-      const updated = await storage.updateTestimonial(req.params.id, validatedData);
-      if (!updated) {
-        return res.status(404).json({ error: "Testimonial not found" });
-      }
-      res.json(updated);
-    } catch (error) {
-      if (error instanceof ZodError) {
-        return res.status(400).json({ error: "Validation failed", details: error.errors });
-      }
-      console.error("Update testimonial error:", error);
-      res.status(500).json({ error: "Failed to update testimonial" });
-    }
-  });
-
-  app.delete("/api/admin/testimonials/:id", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
-    try {
-      const deleted = await storage.deleteTestimonial(req.params.id);
-      if (!deleted) {
-        return res.status(404).json({ error: "Testimonial not found" });
-      }
-      res.json({ success: true });
-    } catch (error) {
-      console.error("Delete testimonial error:", error);
-      res.status(500).json({ error: "Failed to delete testimonial" });
-    }
-  });
+  // Testimonios: server/routes/testimonials.ts (registerTestimonials, más arriba)
 
   app.get("/api/jobs", async (_req, res) => {
     try {

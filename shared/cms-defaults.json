@@ -1265,6 +1265,61 @@
       },
       "path": "",
       "noindex": true
+    },
+    "testimonials": {
+      "title": {
+        "es": "Testimonios | Santos & Saucedo",
+        "en": "Testimonials | Santos & Saucedo",
+        "de": "Mandantenstimmen | Santos & Saucedo",
+        "zh": "客户评价 | Santos & Saucedo",
+        "ko": "고객 추천사 | Santos & Saucedo",
+        "ja": "お客様の声 | Santos & Saucedo",
+        "ar": "آراء العملاء | Santos & Saucedo",
+        "ru": "Отзывы клиентов | Santos & Saucedo",
+        "fr": "Témoignages | Santos & Saucedo",
+        "it": "Testimonianze | Santos & Saucedo"
+      },
+      "description": {
+        "es": "Comentarios de clientes de Santos & Saucedo, firma de derecho laboral para empresas en San Pedro Garza García, publicados con su autorización.",
+        "en": "Comments from clients of Santos & Saucedo, a labor law firm for companies in San Pedro Garza García, published with their permission.",
+        "de": "Kommentare von Mandanten von Santos & Saucedo, mit ihrer Genehmigung veröffentlicht.",
+        "zh": "Santos & Saucedo客户的评价，经其授权发布。",
+        "ko": "Santos & Saucedo 고객의 의견으로, 고객의 허락을 받아 게재합니다.",
+        "ja": "Santos & Saucedoのクライアントからのコメントです。ご本人の許可を得て掲載しています。",
+        "ar": "تعليقات عملاء Santos & Saucedo، منشورة بإذنهم.",
+        "ru": "Отзывы клиентов Santos & Saucedo, опубликованные с их согласия.",
+        "fr": "Commentaires de clients de Santos & Saucedo, publiés avec leur autorisation.",
+        "it": "Commenti dei clienti di Santos & Saucedo, pubblicati con il loro consenso."
+      },
+      "path": "/testimonios"
+    },
+    "testimonialWrite": {
+      "title": {
+        "es": "Testimonios | Santos & Saucedo",
+        "en": "Testimonials | Santos & Saucedo",
+        "de": "Mandantenstimmen | Santos & Saucedo",
+        "zh": "客户评价 | Santos & Saucedo",
+        "ko": "고객 추천사 | Santos & Saucedo",
+        "ja": "お客様の声 | Santos & Saucedo",
+        "ar": "آراء العملاء | Santos & Saucedo",
+        "ru": "Отзывы клиентов | Santos & Saucedo",
+        "fr": "Témoignages | Santos & Saucedo",
+        "it": "Testimonianze | Santos & Saucedo"
+      },
+      "description": {
+        "es": "Comentarios de clientes de Santos & Saucedo, publicados con su autorización.",
+        "en": "Comments from Santos & Saucedo clients, published with their permission.",
+        "de": "Kommentare von Mandanten von Santos & Saucedo, mit ihrer Genehmigung veröffentlicht.",
+        "zh": "Santos & Saucedo客户的评价，经其授权发布。",
+        "ko": "Santos & Saucedo 고객의 의견으로, 고객의 허락을 받아 게재합니다.",
+        "ja": "Santos & Saucedoのクライアントからのコメントです。ご本人の許可を得て掲載しています。",
+        "ar": "تعليقات عملاء Santos & Saucedo، منشورة بإذنهم.",
+        "ru": "Отзывы клиентов Santos & Saucedo, опубликованные с их согласия.",
+        "fr": "Commentaires de clients de Santos & Saucedo, publiés avec leur autorisation.",
+        "it": "Commenti dei clienti di Santos & Saucedo, pubblicati con il loro consenso."
+      },
+      "path": "/testimonios/escribir",
+      "noindex": true
     }
   },
   "about": {
@@ -5361,7 +5416,8 @@
     "recruitmentEmail": "reclutamiento@santossaucedo.com",
     "linkedinUrl": "",
     "directionsUrl": "https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Col.+del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220",
-    "privacyEmail": "privacidad@santossaucedo.com"
+    "privacyEmail": "privacidad@santossaucedo.com",
+    "googleReviewsUrl": ""
   },
   "layout": {
     "home": {
@@ -5862,6 +5918,25 @@
         "visible": true,
         "order": 5,
         "children": []
+      },
+      {
+        "id": "testimonials",
+        "href": "/testimonios",
+        "labels": {
+          "es": "Testimonios",
+          "en": "Testimonials",
+          "de": "Mandantenstimmen",
+          "zh": "客户评价",
+          "ko": "고객 추천사",
+          "ja": "お客様の声",
+          "ar": "آراء العملاء",
+          "ru": "Отзывы клиентов",
+          "fr": "Témoignages",
+          "it": "Testimonianze"
+        },
+        "visible": true,
+        "order": 2,
+        "children": []
       }
     ],
     "footerItems": [
@@ -5990,6 +6065,24 @@
         },
         "visible": true,
         "order": 6
+      },
+      {
+        "id": "testimonials",
+        "href": "/testimonios",
+        "labels": {
+          "es": "Testimonios",
+          "en": "Testimonials",
+          "de": "Mandantenstimmen",
+          "zh": "客户评价",
+          "ko": "고객 추천사",
+          "ja": "お客様の声",
+          "ar": "آراء العملاء",
+          "ru": "Отзывы клиентов",
+          "fr": "Témoignages",
+          "it": "Testimonianze"
+        },
+        "visible": true,
+        "order": 3
       }
     ],
     "legalItems": [
@@ -6174,6 +6267,148 @@
     "guidance": {
       "es": "Lenguaje claro, preciso y profesional. No inventar datos ni conclusiones. Conservar los términos jurídicos y nombres del despacho.",
       "en": "Use clear, precise and professional language. Do not invent facts or conclusions. Preserve legal terminology and the firm name."
+    }
+  },
+  "testimonials": {
+    "es": {
+      "title": "Testimonios",
+      "intro": "Comentarios de clientes de Santos & Saucedo, publicados con su autorización.",
+      "empty": "Aún no hay testimonios publicados.",
+      "error": "Los testimonios no están disponibles en este momento.",
+      "googleLink": "Ver reseñas en Google",
+      "newTab": "(se abre en otra pestaña)"
+    },
+    "en": {
+      "title": "Testimonials",
+      "intro": "Comments from Santos & Saucedo clients, published with their permission.",
+      "empty": "No testimonials have been published yet.",
+      "error": "Testimonials are not available at the moment.",
+      "googleLink": "See reviews on Google",
+      "newTab": "(opens in a new tab)"
+    },
+    "de": {
+      "title": "Mandantenstimmen",
+      "intro": "Kommentare von Mandanten von Santos & Saucedo, mit ihrer Genehmigung veröffentlicht.",
+      "empty": "Es wurden noch keine Mandantenstimmen veröffentlicht.",
+      "error": "Die Mandantenstimmen sind derzeit nicht verfügbar.",
+      "googleLink": "Bewertungen auf Google ansehen",
+      "newTab": "(öffnet in einem neuen Tab)"
+    },
+    "zh": {
+      "title": "客户评价",
+      "intro": "Santos & Saucedo客户的评价，经其授权发布。",
+      "empty": "暂无已发布的客户评价。",
+      "error": "客户评价暂时无法显示。",
+      "googleLink": "查看Google评价",
+      "newTab": "（在新标签页中打开）"
+    },
+    "ko": {
+      "title": "고객 추천사",
+      "intro": "Santos & Saucedo 고객의 의견으로, 고객의 허락을 받아 게재합니다.",
+      "empty": "아직 게재된 추천사가 없습니다.",
+      "error": "현재 추천사를 표시할 수 없습니다.",
+      "googleLink": "Google 리뷰 보기",
+      "newTab": "(새 탭에서 열림)"
+    },
+    "ja": {
+      "title": "お客様の声",
+      "intro": "Santos & Saucedoのクライアントからのコメントです。ご本人の許可を得て掲載しています。",
+      "empty": "まだ掲載されているコメントはありません。",
+      "error": "現在、コメントを表示できません。",
+      "googleLink": "Googleのレビューを見る",
+      "newTab": "（新しいタブで開きます）"
+    },
+    "ar": {
+      "title": "آراء العملاء",
+      "intro": "تعليقات عملاء Santos & Saucedo، منشورة بإذنهم.",
+      "empty": "لا توجد آراء منشورة بعد.",
+      "error": "الآراء غير متاحة في الوقت الحالي.",
+      "googleLink": "عرض المراجعات على Google",
+      "newTab": "(يُفتح في علامة تبويب جديدة)"
+    },
+    "ru": {
+      "title": "Отзывы клиентов",
+      "intro": "Отзывы клиентов Santos & Saucedo, опубликованные с их согласия.",
+      "empty": "Пока нет опубликованных отзывов.",
+      "error": "Отзывы сейчас недоступны.",
+      "googleLink": "Отзывы в Google",
+      "newTab": "(откроется в новой вкладке)"
+    },
+    "fr": {
+      "title": "Témoignages",
+      "intro": "Commentaires de clients de Santos & Saucedo, publiés avec leur autorisation.",
+      "empty": "Aucun témoignage n’a encore été publié.",
+      "error": "Les témoignages ne sont pas disponibles pour le moment.",
+      "googleLink": "Voir les avis sur Google",
+      "newTab": "(s’ouvre dans un nouvel onglet)"
+    },
+    "it": {
+      "title": "Testimonianze",
+      "intro": "Commenti dei clienti di Santos & Saucedo, pubblicati con il loro consenso.",
+      "empty": "Non sono ancora state pubblicate testimonianze.",
+      "error": "Le testimonianze non sono disponibili al momento.",
+      "googleLink": "Vedi le recensioni su Google",
+      "newTab": "(si apre in una nuova scheda)"
+    },
+    "form": {
+      "es": {
+        "title": "Su comentario",
+        "intro": "Gracias por compartir su experiencia con Santos & Saucedo. El despacho revisa cada comentario antes de publicarlo.",
+        "fullName": "Nombre completo",
+        "jobTitle": "Puesto",
+        "company": "Empresa",
+        "quote": "Comentario",
+        "count": "{n} de {max} caracteres",
+        "consent": "Autorizo que Santos & Saucedo publique este comentario en su sitio con mi nombre y puesto y, si lo indico abajo, con mi empresa.",
+        "showCompany": "Mostrar el nombre de mi empresa junto al comentario.",
+        "privacyBefore": "Sus datos se tratan conforme al ",
+        "privacyLink": "aviso de privacidad",
+        "privacyAfter": ".",
+        "submit": "Enviar comentario",
+        "sending": "Enviando…",
+        "success": "Gracias. Recibimos su comentario; el despacho lo revisará antes de publicarlo.",
+        "googleBefore": "Si lo desea, también puede ",
+        "googleLink": "dejar su reseña en Google",
+        "googleAfter": ".",
+        "checking": "Verificando el enlace…",
+        "invalidTitle": "Este enlace no es válido o ya se usó",
+        "invalidBody": "Cada enlace sirve para un solo comentario y vence a los 30 días. Si desea dejar su comentario, pida un enlace nuevo a su contacto en Santos & Saucedo.",
+        "required": "Escriba al menos {min} caracteres.",
+        "quoteLength": "Escriba entre 20 y {max} caracteres.",
+        "consentRequired": "Para enviar, marque la autorización.",
+        "review": "Revise los campos marcados.",
+        "tooMany": "Demasiados intentos. Intente de nuevo en unos minutos.",
+        "failed": "No se pudo enviar el comentario. Intente de nuevo más tarde."
+      },
+      "en": {
+        "title": "Your comment",
+        "intro": "Thank you for sharing your experience with Santos & Saucedo. The firm reviews every comment before publishing it.",
+        "fullName": "Full name",
+        "jobTitle": "Position",
+        "company": "Company",
+        "quote": "Comment",
+        "count": "{n} of {max} characters",
+        "consent": "I authorize Santos & Saucedo to publish this comment on its website with my name and position and, if I indicate so below, my company.",
+        "showCompany": "Show my company name with the comment.",
+        "privacyBefore": "Your data is processed in accordance with the ",
+        "privacyLink": "privacy notice",
+        "privacyAfter": ".",
+        "submit": "Send comment",
+        "sending": "Sending…",
+        "success": "Thank you. We have received your comment; the firm will review it before publishing it.",
+        "googleBefore": "If you wish, you can also ",
+        "googleLink": "leave a review on Google",
+        "googleAfter": ".",
+        "checking": "Checking the link…",
+        "invalidTitle": "This link is not valid or has already been used",
+        "invalidBody": "Each link can be used for one comment and expires after 30 days. If you would like to leave a comment, please ask your contact at Santos & Saucedo for a new link.",
+        "required": "Enter at least {min} characters.",
+        "quoteLength": "Enter between 20 and {max} characters.",
+        "consentRequired": "To send, please check the authorization.",
+        "review": "Please review the highlighted fields.",
+        "tooMany": "Too many attempts. Please try again in a few minutes.",
+        "failed": "The comment could not be sent. Please try again later."
+      }
     }
   }
 }

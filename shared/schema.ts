@@ -1016,10 +1016,20 @@ export const clientPracticeGroups = pgTable("client_practice_groups", {
 // TESTIMONIALS MODULE
 // ============================================
 
+// Testimonios de clientes con aprobación humana (junta 16-10-2026). Llegan por un enlace de
+// invitación de un solo uso o los captura el despacho en el panel; todos entran "pending".
+// En /testimonios solo sale status = "approved" y published = true (ocultar = published false).
+// quote es el comentario tal como lo escribió el cliente; quote_es y los campos *_es, source,
+// year, foto y práctica son de la plantilla anterior y no se usan.
+// Las columnas nuevas también las crea ensureTestimonialSchema al arrancar (producción).
+export const TESTIMONIAL_STATUSES = ["pending", "approved", "rejected"] as const;
+export type TestimonialStatus = (typeof TESTIMONIAL_STATUSES)[number];
+export const TESTIMONIAL_QUOTE_MAX = 1200;
+
 export const testimonials = pgTable("testimonials", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   quote: text("quote").notNull(),
-  quoteEs: text("quote_es").notNull(),
+  quoteEs: text("quote_es"),
   authorName: text("author_name").notNull(),
   authorTitle: text("author_title"),
   authorTitleEs: text("author_title_es"),
@@ -1030,14 +1040,45 @@ export const testimonials = pgTable("testimonials", {
   year: integer("year"),
   practiceGroupId: varchar("practice_group_id"),
   isFeatured: boolean("is_featured").default(false),
-  published: boolean("published").default(true),
+  published: boolean("published").default(false),
   order: integer("order").default(0),
   createdAt: timestamp("created_at").defaultNow(),
+  status: text("status").notNull().default("pending"),
+  // El cliente decide si su empresa se muestra junto a su nombre y puesto
+  showCompany: boolean("show_company").notNull().default(false),
+  language: text("language"),
+  // "invite" (enlace de un solo uso) o "panel" (capturado por el despacho)
+  origin: text("origin").notNull().default("panel"),
+  inviteId: varchar("invite_id"),
+  consentAt: timestamp("consent_at"),
+  approvedBy: varchar("approved_by"),
+  approvedByName: text("approved_by_name"),
+  approvedAt: timestamp("approved_at"),
+  reviewedByName: text("reviewed_by_name"),
+  reviewedAt: timestamp("reviewed_at"),
+  updatedAt: timestamp("updated_at"),
 });
 
-export const insertTestimonialSchema = createInsertSchema(testimonials).omit({ id: true, createdAt: true });
-export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
 export type Testimonial = typeof testimonials.$inferSelect;
+
+// Invitaciones de un solo uso: solo se guarda el hash SHA-256 del token; el enlace se muestra
+// una vez al crearlo. Caduca a los 30 días y se consume al enviar el formulario.
+export const testimonialInvites = pgTable("testimonial_invites", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  tokenHash: text("token_hash").notNull().unique(),
+  // Nota interna para reconocer a quién se envió (no se publica)
+  clientName: text("client_name"),
+  clientEmail: text("client_email"),
+  createdBy: varchar("created_by"),
+  createdByName: text("created_by_name"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  expiresAt: timestamp("expires_at").notNull(),
+  usedAt: timestamp("used_at"),
+  revokedAt: timestamp("revoked_at"),
+  testimonialId: varchar("testimonial_id"),
+});
+
+export type TestimonialInvite = typeof testimonialInvites.$inferSelect;
 
 // ============================================
 // JOB OPENINGS & INTERNSHIPS MODULE

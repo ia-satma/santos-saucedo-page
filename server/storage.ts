@@ -47,8 +47,6 @@ import {
   type InsertAward,
   type RepresentativeClient,
   type InsertRepresentativeClient,
-  type Testimonial,
-  type InsertTestimonial,
   type JobOpening,
   type InsertJobOpening,
   type Office,
@@ -83,7 +81,6 @@ import {
   rankings,
   awards,
   representativeClients,
-  testimonials,
   jobOpenings,
   offices,
   alliances,
@@ -202,13 +199,6 @@ export interface IStorage {
   createRepresentativeClient(client: InsertRepresentativeClient): Promise<RepresentativeClient>;
   updateRepresentativeClient(id: string, client: Partial<InsertRepresentativeClient>): Promise<RepresentativeClient | undefined>;
   deleteRepresentativeClient(id: string): Promise<boolean>;
-  
-  // Testimonials CRUD
-  getTestimonials(): Promise<Testimonial[]>;
-  getTestimonialById(id: string): Promise<Testimonial | undefined>;
-  createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial>;
-  updateTestimonial(id: string, testimonial: Partial<InsertTestimonial>): Promise<Testimonial | undefined>;
-  deleteTestimonial(id: string): Promise<boolean>;
   
   // Job Openings CRUD
   getJobOpenings(): Promise<JobOpening[]>;
@@ -824,31 +814,6 @@ export class DatabaseStorage extends GeneratedAssetsRepository implements IStora
 
   async deleteRepresentativeClient(id: string): Promise<boolean> {
     const result = await db.delete(representativeClients).where(eq(representativeClients.id, id));
-    return (result.rowCount ?? 0) > 0;
-  }
-
-  // Testimonials CRUD
-  async getTestimonials(): Promise<Testimonial[]> {
-    return db.select().from(testimonials).orderBy(asc(testimonials.order));
-  }
-
-  async getTestimonialById(id: string): Promise<Testimonial | undefined> {
-    const [testimonial] = await db.select().from(testimonials).where(eq(testimonials.id, id));
-    return testimonial;
-  }
-
-  async createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial> {
-    const [item] = await db.insert(testimonials).values(testimonial).returning();
-    return item;
-  }
-
-  async updateTestimonial(id: string, testimonialData: Partial<InsertTestimonial>): Promise<Testimonial | undefined> {
-    const [updated] = await db.update(testimonials).set(testimonialData).where(eq(testimonials.id, id)).returning();
-    return updated;
-  }
-
-  async deleteTestimonial(id: string): Promise<boolean> {
-    const result = await db.delete(testimonials).where(eq(testimonials.id, id));
     return (result.rowCount ?? 0) > 0;
   }
 
