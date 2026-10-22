@@ -262,6 +262,11 @@ html:has(.ss26) body {
 .ss-creemos-body > * {
   padding-block: 24px;
 }
+.ss-creemos-body > * > p {
+  text-align: justify;
+  text-align-last: start;
+  text-justify: inter-word;
+}
 @media (min-width: 768px) {
   .ss-creemos-body {
     grid-template-columns: repeat(2, minmax(0, 1fr));
