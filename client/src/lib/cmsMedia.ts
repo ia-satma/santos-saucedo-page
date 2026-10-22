@@ -100,6 +100,18 @@ export const mediaDefaults = {
     "mesaTrabajo": {
       "url": "/editorial/oficina-mesa-trabajo-1536.webp",
       "smallUrl": "/editorial/oficina-mesa-trabajo-768.webp"
+    },
+    "vestibulo3": {
+      "url": "/editorial/vestibulo-3-1536.webp",
+      "smallUrl": "/editorial/vestibulo-3-768.webp"
+    },
+    "estancia": {
+      "url": "/editorial/estancia-1536.webp",
+      "smallUrl": "/editorial/estancia-768.webp"
+    },
+    "mezanine": {
+      "url": "/editorial/mezanine-1536.webp",
+      "smallUrl": "/editorial/mezanine-768.webp"
     }
   },
   "teamMosaic": [

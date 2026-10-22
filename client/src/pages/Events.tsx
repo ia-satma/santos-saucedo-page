@@ -87,7 +87,7 @@ function EventCard({ event, language, isUpcoming, formatDate, t }: EventCardProp
         </div>
         
         <h3 
-          className={`font-heading font-normal text-[22px] leading-[1.25] tracking-[-0.01em] text-ss-marino mb-3 group-hover:underline decoration-1 underline-offset-4 line-clamp-2 ${isTranslating ? 'opacity-70' : ''}`}
+          className={`font-heading font-normal text-[25px] leading-[1.25] tracking-[-0.01em] text-ss-marino mb-3 group-hover:underline decoration-1 underline-offset-4 line-clamp-2 ${isTranslating ? 'opacity-70' : ''}`}
           data-testid={`text-event-title-${event.id}`}
         >
           {displayTitle}
@@ -114,7 +114,7 @@ function EventCard({ event, language, isUpcoming, formatDate, t }: EventCardProp
             href={event.externalUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center text-ss-marino font-semibold text-[15px] underline decoration-ss-rule underline-offset-4 hover:decoration-ss-marino"
+            className="inline-flex items-center text-ss-marino font-semibold text-[17px] underline decoration-ss-rule underline-offset-4 hover:decoration-ss-marino"
             data-testid={`link-event-learn-more-${event.id}`}
           >
             {t.learnMore}

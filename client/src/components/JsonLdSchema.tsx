@@ -161,14 +161,19 @@ export function PersonJsonLd({
     "knowsLanguage": languages || undefined,
     "knowsAbout": knowsAbout || undefined,
     "sameAs": sameAs.length > 0 ? sameAs : undefined,
-    // La de la oficina, igual que la de #organization en index.html
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Río Tamazunchale 205 Norte, Col. del Valle",
-      "addressLocality": "San Pedro Garza García",
-      "addressRegion": "Nuevo León",
-      "postalCode": "66220",
-      "addressCountry": "MX"
+    // La oficina, igual que #organization en index.html, como lugar de trabajo: "address" de
+    // una Person se lee como domicilio particular, y ese dato no se publica
+    "workLocation": {
+      "@type": "Place",
+      "name": "Santos & Saucedo",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Río Tamazunchale 205 Norte, Col. del Valle",
+        "addressLocality": "San Pedro Garza García",
+        "addressRegion": "Nuevo León",
+        "postalCode": "66220",
+        "addressCountry": "MX"
+      }
     },
     "memberOf": ORGANIZATION
   };

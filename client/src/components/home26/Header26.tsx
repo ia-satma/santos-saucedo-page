@@ -163,10 +163,10 @@ export default function Header26({ localized = false, overlay = false }: Header2
               aria-controls="search-dialog"
               data-testid="button-search"
               onClick={() => setPanel("search")}
-              className="ss-label -mx-3 flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 tracking-[0.10em] text-white/80 transition-colors hover:text-white xl:mx-0 xl:min-w-0"
+              className="ss-label -mx-3 flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 tracking-[0.10em] text-white/80 transition-colors hover:text-white min-[1440px]:mx-0 min-[1440px]:min-w-0"
             >
               <SearchIcon />
-              <span className="sr-only xl:not-sr-only">{t.search.open}</span>
+              <span className="sr-only min-[1440px]:not-sr-only">{t.search.open}</span>
             </button>}
 
             <button

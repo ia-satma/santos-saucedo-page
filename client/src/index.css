@@ -27,7 +27,7 @@
   --card-border: 54 14% 86%;       /* #E1E0D7 — Línea                 */
   --border: 54 14% 86%;
   --sidebar: 240 5% 98%;
-  --sidebar-foreground: 240 7% 22%;
+  --sidebar-foreground: 216 12% 21%;
   --sidebar-border: 54 14% 86%;
   --sidebar-primary: 240.79 57.58% 25.88%;
   --sidebar-primary-foreground: 0 0% 98%;
@@ -35,15 +35,15 @@
   --sidebar-accent-foreground: 240.79 57.58% 25.88%;
   --sidebar-ring: 240.79 57.58% 25.88%;
   --popover: 0 0% 100%;
-  --popover-foreground: 240 7% 22%;
+  --popover-foreground: 216 12% 21%;
   --popover-border: 54 14% 86%;
   --primary: 240.79 57.58% 25.88%;          /* #1D1C68 — Azul Marino           */
   --primary-foreground: 0 0% 100%;
   --secondary: 47 27% 94%;         /* #F3F1EA — Hueso                 */
   --secondary-foreground: 240.79 57.58% 25.88%;
   --muted: 47 27% 94%;
-  --muted-foreground: 240 6% 40%;  /* #5F5F6B — Gris Medio            */
-  --body: 240 7% 22%;              /* #33333B — Gris Tinta            */
+  --muted-foreground: 216 9% 39%;  /* #5b6270 — Gris Medio            */
+  --body: 216 12% 21%;              /* #2f343c — Gris Tinta            */
   --accent: 47 27% 94%;
   --accent-foreground: 240.79 57.58% 25.88%;
   --brand: 240.79 57.58% 25.88%;            /* Azul Marino: la lima deja bg-brand/text-brand */
@@ -114,43 +114,43 @@
   /* ── PALETA DARK ──────────────────────────────────────────
      Carbón/navy profundo, evitando negro puro.
   ─────────────────────────────────────────────────────────── */
-  --background: 243 52% 11%;        /* Azul Noche muy profundo (contraste) */
+  --background: 215 52% 11%;        /* Azul Noche muy profundo (contraste) */
   --foreground: 0 0% 98%;
-  --card: 243 42% 16%;
+  --card: 215 42% 16%;
   --card-foreground: 0 0% 93%;
-  --card-border: 243 28% 26%;
-  --border: 243 28% 26%;
-  --sidebar: 243 50% 9%;
+  --card-border: 215 28% 26%;
+  --border: 215 28% 26%;
+  --sidebar: 215 50% 9%;
   --sidebar-foreground: 0 0% 92%;
-  --sidebar-border: 243 28% 24%;
-  --sidebar-primary: 240 50% 58%;
+  --sidebar-border: 215 28% 24%;
+  --sidebar-primary: 214 55% 58%;
   --sidebar-primary-foreground: 0 0% 98%;
   --sidebar-accent: 0 0% 18%;
   --sidebar-accent-foreground: 0 0% 90%;
-  --sidebar-ring: 240 50% 58%;
-  --popover: 243 42% 16%;
+  --sidebar-ring: 214 55% 58%;
+  --popover: 215 42% 16%;
   --popover-foreground: 0 0% 98%;
-  --popover-border: 243 28% 26%;
+  --popover-border: 215 28% 26%;
   --primary: 79 74% 55%;           /* acento VERDE en oscuro (navy se pierde) */
-  --primary-foreground: 243 59% 12%;
-  --secondary: 243 30% 22%;
+  --primary-foreground: 215 59% 12%;
+  --secondary: 215 30% 22%;
   --secondary-foreground: 0 0% 90%;
-  --muted: 243 28% 19%;
+  --muted: 215 28% 19%;
   --muted-foreground: 0 0% 68%;
   --body: 0 0% 84%;
-  --accent: 243 30% 22%;
+  --accent: 215 30% 22%;
   --accent-foreground: 0 0% 92%;
   --brand: 79 74% 55%;             /* Verde Lima — modo oscuro        */
-  --brand-foreground: 243 59% 12%;
+  --brand-foreground: 215 59% 12%;
   --destructive: 0 70% 45%;
   --destructive-foreground: 0 0% 98%;
-  --input: 243 24% 24%;
+  --input: 215 24% 24%;
   --ring: 79 74% 55%;
-  --chart-1: 240 50% 64%;
-  --chart-2: 240 42% 70%;
+  --chart-1: 214 55% 64%;
+  --chart-2: 214 45% 70%;
   --chart-3: 0 0% 65%;
   --chart-4: 0 0% 48%;
-  --chart-5: 240 30% 60%;
+  --chart-5: 214 30% 60%;
   --shadow-2xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.00);
   --shadow-xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.00);
   --shadow-sm: 0px 2px 0px 0px hsl(0 0% 0% / 0.00), 0px 1px 2px -1px hsl(0 0% 0% / 0.00);

@@ -103,16 +103,16 @@ interface SEOConfig {
 const practiceGroupsConfig: SEOConfig = {
   title: navTitle(1),
   description: {
-    en: "Santos & Saucedo practices for companies: labor and social security, corporate and contractual, immigration, and litigation.",
-    es: "Prácticas de Santos & Saucedo para empresas: laboral y seguridad social, corporativo y contractual, migratorio y litigio.",
-    de: "Praxisbereiche von Santos & Saucedo für Unternehmen: Arbeits- und Sozialversicherungsrecht, Gesellschafts- und Vertragsrecht, Migrationsrecht sowie Prozessführung.",
-    zh: "Santos & Saucedo为企业提供的业务领域：劳动与社会保障、公司与合同、移民以及诉讼。",
-    ko: "Santos & Saucedo의 기업 대상 업무 분야: 노동 및 사회보장, 기업 및 계약, 이민, 소송.",
-    ja: "Santos & Saucedoの企業向け取扱分野：労働・社会保障、企業法務・契約、移民、訴訟。",
-    ar: "مجالات ممارسة Santos & Saucedo للشركات: العمل والضمان الاجتماعي، والشركات والعقود، والهجرة، والتقاضي.",
-    ru: "Практики Santos & Saucedo для компаний: трудовое право и социальное обеспечение, корпоративное и договорное право, миграционное право и судебные споры.",
-    fr: "Domaines de pratique de Santos & Saucedo pour les entreprises : droit du travail et sécurité sociale, droit des sociétés et des contrats, immigration et contentieux.",
-    it: "Aree di pratica di Santos & Saucedo per le imprese: lavoro e previdenza sociale, societario e contrattuale, immigrazione e contenzioso.",
+    en: "Santos & Saucedo practices for companies: labor and social security, corporate and contractual, immigration, and litigation and workplace criminal matters.",
+    es: "Prácticas de Santos & Saucedo para empresas: laboral y seguridad social, corporativo y contractual, migratorio, y litigio y penal laboral.",
+    de: "Praxisbereiche von Santos & Saucedo für Unternehmen: Arbeits- und Sozialversicherungsrecht, Gesellschafts- und Vertragsrecht, Migrationsrecht sowie Prozessführung und Arbeitsstrafrecht.",
+    zh: "Santos & Saucedo为企业提供的业务领域：劳动与社会保障、公司与合同、移民以及诉讼与劳动刑事。",
+    ko: "Santos & Saucedo의 기업 대상 업무 분야: 노동 및 사회보장, 기업 및 계약, 이민, 소송 및 노동 형사.",
+    ja: "Santos & Saucedoの企業向け取扱分野：労働・社会保障、企業法務・契約、移民、訴訟・労働刑事。",
+    ar: "مجالات ممارسة Santos & Saucedo للشركات: العمل والضمان الاجتماعي، والشركات والعقود، والهجرة، والتقاضي والقضايا الجنائية العمالية.",
+    ru: "Практики Santos & Saucedo для компаний: трудовое право и социальное обеспечение, корпоративное и договорное право, миграционное право, судебные споры и уголовные дела в сфере труда.",
+    fr: "Domaines de pratique de Santos & Saucedo pour les entreprises : droit du travail et sécurité sociale, droit des sociétés et des contrats, immigration, contentieux et pénal du travail.",
+    it: "Aree di pratica di Santos & Saucedo per le imprese: lavoro e previdenza sociale, societario e contrattuale, immigrazione, contenzioso e penale del lavoro.",
   },
   path: "/practice-groups",
 };
@@ -339,6 +339,9 @@ const seoConfig: Record<string, SEOConfig> = {
     },
     path: "/careers/interns",
   },
+  // Testimonios: el listado se indexa; el formulario del enlace de invitación, no
+  testimonials: defaults.seo.testimonials,
+  testimonialWrite: defaults.seo.testimonialWrite,
   // 404: título y descripción propios en el idioma de la página; no se indexa
   notFound: {
     title: {

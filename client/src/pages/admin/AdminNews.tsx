@@ -23,6 +23,49 @@ import {
   Newspaper
 } from "lucide-react";
 import type { News } from "@shared/schema";
+import { isPublicNews } from "@shared/publicNews";
+import { copyToClipboard, emailShareHref, newsShareUrl, whatsappShareHref } from "@/lib/shareNews";
+
+// Estado editorial visible en la lista. Nada se publica solo: "Pendiente de revisión" es lo que
+// dejan los agentes (borrador con processingStatus ready_for_approval) hasta que una persona publica.
+const statusText = {
+  es: { draft: "Borrador", review: "Pendiente de revisión", scheduled: "Programada", share: "Compartir", copy: "Copiar enlace", copied: "Enlace copiado.", copyError: "No se pudo copiar el enlace.", email: "Correo", heading: "Monitor Laboral" },
+  en: { draft: "Draft", review: "Pending review", scheduled: "Scheduled", share: "Share", copy: "Copy link", copied: "Link copied.", copyError: "The link could not be copied.", email: "Email", heading: "Labor Monitor" },
+};
+
+/** Compartir una nota publicada con el enlace de la página de la firma (no el del medio citado). */
+function NewsShareActions({ item, lang }: { item: News; lang: "es" | "en" }) {
+  const { toast } = useToast();
+  const s = statusText[lang];
+  const url = newsShareUrl(item.slug);
+  const title = (lang === "es" ? item.titleEs || item.title : item.title || item.titleEs) ?? "";
+  const excerpt = lang === "es" ? item.excerptEs || item.excerpt : item.excerpt || item.excerptEs;
+  const linkClass = "underline underline-offset-4 hover:text-foreground";
+  return (
+    <div className="mt-1 flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground" data-testid={`share-news-${item.id}`}>
+      <span>{s.share}:</span>
+      <button
+        type="button"
+        className={linkClass}
+        data-testid={`button-copy-link-${item.id}`}
+        onClick={async () => {
+          const ok = await copyToClipboard(url);
+          toast({ title: ok ? s.copied : s.copyError, variant: ok ? "default" : "destructive" });
+        }}
+      >
+        {s.copy}
+      </button>
+      <span aria-hidden="true">·</span>
+      <a className={linkClass} href={whatsappShareHref(title, url)} target="_blank" rel="noopener noreferrer" data-testid={`link-whatsapp-${item.id}`}>
+        WhatsApp
+      </a>
+      <span aria-hidden="true">·</span>
+      <a className={linkClass} href={emailShareHref(title, url, excerpt)} data-testid={`link-email-${item.id}`}>
+        {s.email}
+      </a>
+    </div>
+  );
+}
 
 const translations = {
   en: {
@@ -358,11 +401,17 @@ export default function AdminNews() {
     });
   };
 
-  const getStatusBadge = (published: boolean | null) => {
-    if (published) {
-      return <Badge variant="default">{t.published}</Badge>;
+  const st = statusText[language === "es" ? "es" : "en"];
+  const getStatusBadge = (item: News) => {
+    if (item.published) {
+      return isPublicNews(item)
+        ? <Badge variant="default">{t.published}</Badge>
+        : <Badge variant="outline">{st.scheduled}</Badge>;
     }
-    return <Badge variant="secondary">{t.unpublished}</Badge>;
+    if (item.processingStatus === "ready_for_approval") {
+      return <Badge variant="outline">{st.review}</Badge>;
+    }
+    return <Badge variant="secondary">{st.draft}</Badge>;
   };
 
   const getCategoryLabel = (category: string | null) => {
@@ -402,7 +451,7 @@ export default function AdminNews() {
               <div className="flex items-center gap-2">
                 <Newspaper className="h-5 w-5 text-primary" />
                 <Link href="/admin/news/new" className="underline text-sm mr-4">Nueva publicación</Link><h1 className="text-xl font-semibold" data-testid="text-page-title">
-                  {t.title}
+                  {language === "es" || language === "en" ? st.heading : t.title}
                 </h1>
               </div>
             </div>
@@ -474,8 +523,11 @@ export default function AdminNews() {
                   <TableBody>
                     {data.news.map((newsItem) => (
                       <TableRow key={newsItem.id} data-testid={`row-news-${newsItem.id}`}>
-                        <TableCell className="font-medium max-w-xs truncate" data-testid={`text-title-${newsItem.id}`}>
-                          {language === "es" ? newsItem.titleEs : newsItem.title}
+                        <TableCell className="max-w-md" data-testid={`text-title-${newsItem.id}`}>
+                          <div className="font-medium truncate">{language === "es" ? newsItem.titleEs : newsItem.title}</div>
+                          {isPublicNews(newsItem) && (
+                            <NewsShareActions item={newsItem} lang={language === "es" ? "es" : "en"} />
+                          )}
                         </TableCell>
                         <TableCell data-testid={`text-category-${newsItem.id}`}>
                           {getCategoryLabel(newsItem.category)}
@@ -484,7 +536,7 @@ export default function AdminNews() {
                           {formatDate(newsItem.date)}
                         </TableCell>
                         <TableCell data-testid={`badge-status-${newsItem.id}`}>
-                          {getStatusBadge(newsItem.published)}
+                          {getStatusBadge(newsItem)}
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">

@@ -18,7 +18,11 @@ export { CONFIRMED_PARTNER_SLUGS, isOfCounselMember, isNamedOnTeamPage } from "@
 // variante vive al lado de su original. Los originales
 // se conservan: son el src de respaldo si una variante no existe donde se sirven las fotos.
 
-// Socios con <slug>-652.webp y <slug>-360.webp (los PNG de 652 px pesan 0,5–1 MB)
+// Socios con <slug>-652.webp y <slug>-360.webp (el PNG pesa 0,4–0,6 MB). Los cuatro retratos se
+// recortaron de nuevo (22-10-2026) con la misma escala de cabeza y los ojos a la misma altura: el
+// cuadro mide 541 px (no se amplía más allá del original); el nombre "-652" se conserva porque lo
+// esperan /team_photos (server/routes.ts) y el manifiesto de medios.
+const PORTRAIT_WIDTH = 541;
 const PORTRAIT_SLUGS = new Set([
   "mario-saucedo-montemayor",
   "enrique-santos-guzman",
@@ -42,14 +46,14 @@ function parseTeamPhotoUrl(url?: string | null) {
   return match ? { dir: match[1], slug: match[2].toLowerCase() } : null;
 }
 
-/** srcset WebP (360w y 652w) de un retrato de socio, o undefined si no hay variantes. */
+/** srcset WebP (360w y 541w) de un retrato de socio, o undefined si no hay variantes. */
 export function getTeamPhotoSrcSet(url?: string | null): string | undefined {
   if (url === `/media/${persistentColorOriginal?.key}`) {
     return `${persistentColorVariant(360)} 360w, ${persistentColorVariant(652)} 652w`;
   }
   const parsed = parseTeamPhotoUrl(url);
   if (!parsed || !PORTRAIT_SLUGS.has(parsed.slug)) return undefined;
-  return `${parsed.dir}${parsed.slug}-360.webp 360w, ${parsed.dir}${parsed.slug}-652.webp 652w`;
+  return `${parsed.dir}${parsed.slug}-360.webp 360w, ${parsed.dir}${parsed.slug}-652.webp ${PORTRAIT_WIDTH}w`;
 }
 
 /** Miniatura WebP de 128 px para avatares; si no hay, la URL original. */

@@ -32,6 +32,7 @@ const PUBLIC_NEWS_FIELDS = [
   "documentUrl",
   "documentUrlEs",
   "sourceUrl",
+  "sourceName",
   "tags",
   "featuredHome",
   "date",

@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { PhotoBand } from "@/components/home26/PhotoBand";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
@@ -112,7 +113,7 @@ function MemberThumb({ member }: { member: TeamMember }) {
           onError={() => setSrc(src !== member.imageUrl ? member.imageUrl || undefined : undefined)}
         />
       ) : (
-        <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center font-heading text-[18px] text-ss-marino">
+        <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center font-heading text-[20px] text-ss-marino">
           {initials}
         </span>
       )}
@@ -560,7 +561,7 @@ export default function PracticeGroupDetail() {
                   {/* Encabezado de columna lateral: romana de 20 px, no etiqueta */}
                   <h2
                     id="practice-people-title"
-                    className="ss-h3 text-[20px] mb-4"
+                    className="ss-h3 text-[22px] mb-4"
                     data-testid="text-our-team-title"
                   >
                     {allPartners ? t.partners : t.ourTeam}
@@ -583,13 +584,13 @@ export default function PracticeGroupDetail() {
                             <MemberThumb member={member} />
                             <span className="min-w-0">
                               <span
-                                className="block font-heading text-[18px] leading-[1.25] text-ss-marino group-hover:underline decoration-1 underline-offset-4"
+                                className="block font-heading text-[22px] leading-[1.25] text-ss-marino group-hover:underline decoration-1 underline-offset-4"
                                 data-testid={`text-team-member-name-${member.slug}`}
                               >
                                 {member.name}
                               </span>
                               <span
-                                className="ss-label block mt-1 text-ss-medio"
+                                className="ss-label block mt-1 text-[14px] text-ss-medio"
                                 data-testid={`text-team-member-role-${member.slug}`}
                                 lang={role.source ? "en" : undefined}
                               >
@@ -621,7 +622,7 @@ export default function PracticeGroupDetail() {
                     {/* h2 con el aspecto de h3: cada servicio es una sección de la práctica */}
                     <h2 className="ss-h3 mb-3">{keepFirmName(service.title)}</h2>
                     {service.paragraphs.map((paragraph, i) => (
-                      <p key={i} className={`ss-prose text-[16px] leading-[1.6] text-ss-tinta ${i > 0 ? "mt-4" : ""}`}>
+                      <p key={i} className={`ss-prose text-[18px] leading-[1.6] text-ss-tinta ${i > 0 ? "mt-4" : ""}`}>
                         {keepFirmName(paragraph)}
                       </p>
                     ))}
@@ -699,6 +700,10 @@ export default function PracticeGroupDetail() {
             </Column>
           </section>
         )}
+
+        {/* Al final, contra el pie: una sala de juntas de la oficina, de borde a borde de la
+            ventana (PhotoBand), sin marco ni pie */}
+        <PhotoBand photo="salaJuntas2" height="medium" position="object-[50%_55%]" testId="band-practice-office" />
       </main>
 
       <Footer />

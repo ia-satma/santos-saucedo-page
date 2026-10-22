@@ -41,6 +41,9 @@ const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
 const Terms = lazy(() => import("@/pages/Terms"));
 const NewsletterUnsubscribe = lazy(() => import("@/pages/NewsletterUnsubscribe"));
 const Newsletter = lazy(() => import("@/pages/Newsletter"));
+const Testimonials = lazy(() => import("@/pages/Testimonials"));
+const TestimonialWrite = lazy(() => import("@/pages/TestimonialWrite"));
+const AdminTestimonials = lazy(() => import("@/pages/admin/AdminTestimonials"));
 const AdminOverview = lazy(() => import("@/pages/admin/AdminOverview"));
 const AdminContentHub = lazy(() => import("@/pages/admin/AdminContentHub"));
 const AdminMedia = lazy(() => import("@/pages/admin/AdminMedia"));
@@ -218,6 +221,13 @@ function Router() {
         <Route path="/privacy-policy" component={PrivacyPolicy} />
         <Route path="/terms" component={Terms} />
         <Route path="/offices" component={Offices} />
+        {/* Testimonios: una sola ruta para todos los idiomas, como las demás páginas;
+            /testimonials (inglés) lleva a la misma */}
+        <Route path="/testimonios" component={Testimonials} />
+        <Route path="/testimonios/escribir" component={TestimonialWrite} />
+        <Route path="/testimonials">
+          <RedirectKeepingQuery to="/testimonios" />
+        </Route>
         <Route path="/articles/*?">
           <RedirectKeepingQuery to="/news" />
         </Route>
@@ -233,6 +243,7 @@ function Router() {
         <Route path="/admin/site-config"><AdminSiteConfig/></Route>
         <Route path="/admin/jobs" component={AdminJobs} />
         <Route path="/admin/inbox" component={AdminInbox} />
+        <Route path="/admin/testimonials" component={AdminTestimonials} />
         <Route path="/admin/applications" component={AdminApplications} />
         <Route path="/admin/login" component={AdminLogin} />
         <Route path="/admin/setup" component={AdminSetup} />

@@ -97,8 +97,8 @@ export default function VisionSection() {
   const t = {
     ...baseT,
     text: language === "es"
-      ? "Santos & Saucedo Abogados es un despacho jurídico especializado en derecho laboral, con más de 35 años de experiencia brindando asesoría preventiva y consultoría legal a empresas nacionales e internacionales."
-      : "Santos & Saucedo Abogados is a labor-law firm with more than 35 years of experience providing preventive counsel and legal consulting to national and international companies.",
+      ? "Santos & Saucedo Abogados es un firma especializada en derecho laboral para empresas, cuyos socios suman más de 40 años de experiencia brindando asesoría preventiva y consultoría legal a empresas nacionales e internacionales."
+      : "Santos & Saucedo Abogados is a firm specialized in labor law for companies whose partners have more than 40 years of combined experience providing preventive counsel and legal consulting to national and international companies.",
     subtitle: language === "es" ? "Asesoría preventiva y consultoría laboral" : "Preventive counsel and labor consulting",
     subtext: language === "es"
       ? "Nuestro trabajo se enfoca en conflictos laborales individuales y colectivos, revisión de administración laboral, diagnóstico de relaciones laborales, planes de mejora, auditoría jurídico laboral y planeación laboral estratégica."

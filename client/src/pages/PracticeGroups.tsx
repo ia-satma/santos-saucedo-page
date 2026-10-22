@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { PhotoBand } from "@/components/home26/PhotoBand";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
@@ -93,13 +94,13 @@ function PracticeGroupRow({ group, index }: PracticeGroupRowProps) {
         </h2>
         <p
           id={descriptionId}
-          className="ss-prose max-w-[60ch] text-[17px] text-ss-tinta sm:col-start-2 sm:row-start-2 lg:col-start-3 lg:row-start-1"
+          className="ss-prose max-w-[60ch] text-[19px] text-ss-tinta sm:col-start-2 sm:row-start-2 lg:col-start-3 lg:row-start-1"
           data-testid={`text-practice-group-desc-${group.slug}`}
           lang={descriptionIsSource ? "en" : undefined}
         >
           {descriptionIsSource ? <EnglishSource>{displayDescription}</EnglishSource> : displayDescription}
         </p>
-        <span aria-hidden="true" className="ss-arrow hidden text-[22px] text-ss-marino sm:block sm:col-start-3 sm:row-start-1 lg:col-start-4">
+        <span aria-hidden="true" className="ss-arrow hidden text-[25px] text-ss-marino sm:block sm:col-start-3 sm:row-start-1 lg:col-start-4">
           →
         </span>
       </Link>
@@ -121,43 +122,43 @@ export default function PracticeGroups() {
   // h1: la etiqueta del menú en cada idioma (chrome26 nav[1]), la misma de la pestaña
   const content: Record<string, { subtitle: string; errorMessage: string }> = {
     en: {
-      subtitle: "Around its labor practice, the firm has developed three complementary practices: corporate and contractual, immigration, and litigation.",
+      subtitle: "Around its labor practice, the firm has developed three complementary practices: corporate and contractual, immigration, and litigation and workplace criminal matters.",
       errorMessage: "Failed to load practice areas",
     },
     es: {
-      subtitle: "Alrededor de su práctica laboral, la firma desarrolló tres prácticas complementarias: corporativa y contractual, migratoria y contenciosa.",
+      subtitle: "Alrededor de su práctica laboral, la firma desarrolló tres prácticas complementarias: corporativa y contractual, migratoria, y de litigio y penal laboral.",
       errorMessage: "Error al cargar las áreas de práctica",
     },
     de: {
-      subtitle: "Rund um ihre arbeitsrechtliche Praxis hat die Kanzlei drei ergänzende Praxisbereiche aufgebaut: Gesellschafts- und Vertragsrecht, Migrationsrecht und Prozessführung.",
+      subtitle: "Rund um ihre arbeitsrechtliche Praxis hat die Kanzlei drei ergänzende Praxisbereiche aufgebaut: Gesellschafts- und Vertragsrecht, Migrationsrecht sowie Prozessführung und Arbeitsstrafrecht.",
       errorMessage: "Fehler beim Laden der Praxisbereiche",
     },
     zh: {
-      subtitle: "围绕劳动法这一核心业务，本所发展了三个互补的业务领域：公司与合同、移民以及诉讼。",
+      subtitle: "围绕劳动法这一核心业务，本所发展了三个互补的业务领域：公司与合同、移民以及诉讼与劳动刑事。",
       errorMessage: "加载业务领域失败",
     },
     ko: {
-      subtitle: "법인은 노동법 업무를 중심으로 기업·계약, 이민, 소송의 세 가지 보완 업무 분야를 갖추고 있습니다.",
+      subtitle: "법인은 노동법 업무를 중심으로 기업·계약, 이민, 소송 및 노동 형사의 세 가지 보완 업무 분야를 갖추고 있습니다.",
       errorMessage: "업무 분야 로드 실패",
     },
     ja: {
-      subtitle: "当事務所は労働法を中核に、企業法務・契約、移民、訴訟の三つの補完的な分野を展開しています。",
+      subtitle: "当事務所は労働法を中核に、企業法務・契約、移民、訴訟・労働刑事の三つの補完的な分野を展開しています。",
       errorMessage: "取扱分野の読み込みに失敗しました",
     },
     ar: {
-      subtitle: "حول ممارسته في قانون العمل، طوّر المكتب ثلاث ممارسات مكمّلة: الشركات والعقود، والهجرة، والتقاضي.",
+      subtitle: "حول ممارسته في قانون العمل، طوّر المكتب ثلاث ممارسات مكمّلة: الشركات والعقود، والهجرة، والتقاضي والقضايا الجنائية العمالية.",
       errorMessage: "فشل تحميل مجالات الممارسة",
     },
     ru: {
-      subtitle: "Вокруг практики трудового права фирма развила три дополняющие её практики: корпоративную и договорную, миграционную и судебную.",
+      subtitle: "Вокруг практики трудового права фирма развила три дополняющие её практики: корпоративную и договорную, миграционную и судебную, включая уголовные дела в сфере труда.",
       errorMessage: "Не удалось загрузить практики",
     },
     fr: {
-      subtitle: "Autour de sa pratique en droit du travail, le cabinet a développé trois pratiques complémentaires\u202f: droit des sociétés et des contrats, immigration et contentieux.",
+      subtitle: "Autour de sa pratique en droit du travail, le cabinet a développé trois pratiques complémentaires\u202f: droit des sociétés et des contrats, immigration, contentieux et pénal du travail.",
       errorMessage: "Échec du chargement des domaines de pratique",
     },
     it: {
-      subtitle: "Attorno alla sua pratica giuslavoristica, lo studio ha sviluppato tre aree complementari: societario e contrattuale, immigrazione e contenzioso.",
+      subtitle: "Attorno alla sua pratica giuslavoristica, lo studio ha sviluppato tre aree complementari: societario e contrattuale, immigrazione, contenzioso e penale del lavoro.",
       errorMessage: "Impossibile caricare le aree di pratica",
     },
   };
@@ -229,6 +230,10 @@ export default function PracticeGroups() {
             )}
           </div>
         </div>
+
+        {/* Al final, contra el pie: el librero de la escalera de la oficina, de borde a borde de
+            la ventana (PhotoBand), sin marco ni pie */}
+        <PhotoBand photo="biblioteca" height="medium" position="object-[50%_45%]" testId="band-practices-office" />
       </main>
 
       <Footer />

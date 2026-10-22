@@ -930,7 +930,7 @@
       "description": {
         "en": "Human-capital administration and legal defense for companies, rooted in labor law. More than 40 years of experience and a national alliance across more than 72 Mexican cities.",
         "es": "Administración del capital humano y defensa legal para empresas, con raíz en el derecho laboral. Más de 40 años de experiencia y alianza nacional en más de 72 ciudades de México.",
-        "de": "Verwaltung des Humankapitals und Rechtsverteidigung für Unternehmen, mit Wurzeln im Arbeitsrecht. Mehr als 35 Jahre Erfahrung und eine nationale Allianz in mehr als 72 Städten Mexikos.",
+        "de": "Verwaltung des Humankapitals und Rechtsverteidigung für Unternehmen, mit Wurzeln im Arbeitsrecht. Partner mit mehr als 40 Jahren gemeinsamer Erfahrung und Präsenz in mehr als 72 Städten Mexikos.",
         "zh": "为企业提供人力资本管理与法律辩护，以劳动法为根基。超过40年的经验，并通过全国联盟覆盖墨西哥72个以上城市。",
         "ko": "노동법에 뿌리를 둔 기업의 인적 자본 관리와 법률 방어. 40년 이상의 경험과 멕시코 72개 이상 도시에 걸친 전국 제휴.",
         "ja": "労働法を基盤とする、企業のための人的資本管理と法的防御。40年以上の経験と、メキシコ72以上の都市にわたる全国的な提携。",
@@ -1009,16 +1009,16 @@
         "it": "Aree di pratica | Santos & Saucedo"
       },
       "description": {
-        "en": "Santos & Saucedo practices for companies: labor and social security, corporate and contractual, immigration, and litigation.",
-        "es": "Prácticas de Santos & Saucedo para empresas: laboral y seguridad social, corporativo y contractual, migratorio y litigio.",
-        "de": "Praxisbereiche von Santos & Saucedo für Unternehmen: Arbeits- und Sozialversicherungsrecht, Gesellschafts- und Vertragsrecht, Migrationsrecht sowie Prozessführung.",
-        "zh": "Santos & Saucedo为企业提供的业务领域：劳动与社会保障、公司与合同、移民以及诉讼。",
-        "ko": "Santos & Saucedo의 기업 대상 업무 분야: 노동 및 사회보장, 기업 및 계약, 이민, 소송.",
-        "ja": "Santos & Saucedoの企業向け取扱分野：労働・社会保障、企業法務・契約、移民、訴訟。",
-        "ar": "مجالات ممارسة Santos & Saucedo للشركات: العمل والضمان الاجتماعي، والشركات والعقود، والهجرة، والتقاضي.",
-        "ru": "Практики Santos & Saucedo для компаний: трудовое право и социальное обеспечение, корпоративное и договорное право, миграционное право и судебные споры.",
-        "fr": "Domaines de pratique de Santos & Saucedo pour les entreprises : droit du travail et sécurité sociale, droit des sociétés et des contrats, immigration et contentieux.",
-        "it": "Aree di pratica di Santos & Saucedo per le imprese: lavoro e previdenza sociale, societario e contrattuale, immigrazione e contenzioso."
+        "en": "Santos & Saucedo practices for companies: labor and social security, corporate and contractual, immigration, and litigation and workplace criminal matters.",
+        "es": "Prácticas de Santos & Saucedo para empresas: laboral y seguridad social, corporativo y contractual, migratorio, y litigio y penal laboral.",
+        "de": "Praxisbereiche von Santos & Saucedo für Unternehmen: Arbeits- und Sozialversicherungsrecht, Gesellschafts- und Vertragsrecht, Migrationsrecht sowie Prozessführung und Arbeitsstrafrecht.",
+        "zh": "Santos & Saucedo为企业提供的业务领域：劳动与社会保障、公司与合同、移民以及诉讼与劳动刑事。",
+        "ko": "Santos & Saucedo의 기업 대상 업무 분야: 노동 및 사회보장, 기업 및 계약, 이민, 소송 및 노동 형사.",
+        "ja": "Santos & Saucedoの企業向け取扱分野：労働・社会保障、企業法務・契約、移民、訴訟・労働刑事。",
+        "ar": "مجالات ممارسة Santos & Saucedo للشركات: العمل والضمان الاجتماعي، والشركات والعقود، والهجرة، والتقاضي والقضايا الجنائية العمالية.",
+        "ru": "Практики Santos & Saucedo для компаний: трудовое право и социальное обеспечение, корпоративное и договорное право, миграционное право, судебные споры и уголовные дела в сфере труда.",
+        "fr": "Domaines de pratique de Santos & Saucedo pour les entreprises : droit du travail et sécurité sociale, droit des sociétés et des contrats, immigration, contentieux et pénal du travail.",
+        "it": "Aree di pratica di Santos & Saucedo per le imprese: lavoro e previdenza sociale, societario e contrattuale, immigrazione, contenzioso e penale del lavoro."
       },
       "path": "/practice-groups"
     },
@@ -1264,6 +1264,61 @@
         "it": "La pagina richiesta non esiste sul sito di Santos & Saucedo."
       },
       "path": "",
+      "noindex": true
+    },
+    "testimonials": {
+      "title": {
+        "es": "Testimonios | Santos & Saucedo",
+        "en": "Testimonials | Santos & Saucedo",
+        "de": "Mandantenstimmen | Santos & Saucedo",
+        "zh": "客户评价 | Santos & Saucedo",
+        "ko": "고객 추천사 | Santos & Saucedo",
+        "ja": "お客様の声 | Santos & Saucedo",
+        "ar": "آراء العملاء | Santos & Saucedo",
+        "ru": "Отзывы клиентов | Santos & Saucedo",
+        "fr": "Témoignages | Santos & Saucedo",
+        "it": "Testimonianze | Santos & Saucedo"
+      },
+      "description": {
+        "es": "Comentarios de clientes de Santos & Saucedo, firma de derecho laboral para empresas en San Pedro Garza García, publicados con su autorización.",
+        "en": "Comments from clients of Santos & Saucedo, a labor law firm for companies in San Pedro Garza García, published with their permission.",
+        "de": "Kommentare von Mandanten von Santos & Saucedo, mit ihrer Genehmigung veröffentlicht.",
+        "zh": "Santos & Saucedo客户的评价，经其授权发布。",
+        "ko": "Santos & Saucedo 고객의 의견으로, 고객의 허락을 받아 게재합니다.",
+        "ja": "Santos & Saucedoのクライアントからのコメントです。ご本人の許可を得て掲載しています。",
+        "ar": "تعليقات عملاء Santos & Saucedo، منشورة بإذنهم.",
+        "ru": "Отзывы клиентов Santos & Saucedo, опубликованные с их согласия.",
+        "fr": "Commentaires de clients de Santos & Saucedo, publiés avec leur autorisation.",
+        "it": "Commenti dei clienti di Santos & Saucedo, pubblicati con il loro consenso."
+      },
+      "path": "/testimonios"
+    },
+    "testimonialWrite": {
+      "title": {
+        "es": "Testimonios | Santos & Saucedo",
+        "en": "Testimonials | Santos & Saucedo",
+        "de": "Mandantenstimmen | Santos & Saucedo",
+        "zh": "客户评价 | Santos & Saucedo",
+        "ko": "고객 추천사 | Santos & Saucedo",
+        "ja": "お客様の声 | Santos & Saucedo",
+        "ar": "آراء العملاء | Santos & Saucedo",
+        "ru": "Отзывы клиентов | Santos & Saucedo",
+        "fr": "Témoignages | Santos & Saucedo",
+        "it": "Testimonianze | Santos & Saucedo"
+      },
+      "description": {
+        "es": "Comentarios de clientes de Santos & Saucedo, publicados con su autorización.",
+        "en": "Comments from Santos & Saucedo clients, published with their permission.",
+        "de": "Kommentare von Mandanten von Santos & Saucedo, mit ihrer Genehmigung veröffentlicht.",
+        "zh": "Santos & Saucedo客户的评价，经其授权发布。",
+        "ko": "Santos & Saucedo 고객의 의견으로, 고객의 허락을 받아 게재합니다.",
+        "ja": "Santos & Saucedoのクライアントからのコメントです。ご本人の許可を得て掲載しています。",
+        "ar": "تعليقات عملاء Santos & Saucedo، منشورة بإذنهم.",
+        "ru": "Отзывы клиентов Santos & Saucedo, опубликованные с их согласия.",
+        "fr": "Commentaires de clients de Santos & Saucedo, publiés avec leur autorisation.",
+        "it": "Commenti dei clienti di Santos & Saucedo, pubblicati con il loro consenso."
+      },
+      "path": "/testimonios/escribir",
       "noindex": true
     }
   },
@@ -2198,10 +2253,6 @@
   "offices": {
     "es": {
       "intro": "Nuestras oficinas se encuentran en la colonia Del Valle, en San Pedro Garza García, Nuevo León. Aquí recibimos a nuestros clientes y desarrollamos el trabajo cotidiano de la firma.",
-      "reception": "Recepción",
-      "meetingRooms": "Salas de juntas",
-      "workAreas": "Áreas de trabajo",
-      "art": "Obra",
       "address": "Dirección",
       "phone": "Teléfono",
       "email": "Correo electrónico",
@@ -2230,10 +2281,6 @@
     },
     "en": {
       "intro": "Our offices are located in Colonia Del Valle, San Pedro Garza García, Nuevo León. This is where we meet with clients and carry out the firm’s daily work.",
-      "reception": "Reception",
-      "meetingRooms": "Meeting rooms",
-      "workAreas": "Work areas",
-      "art": "Art",
       "address": "Address",
       "phone": "Telephone",
       "email": "Email",
@@ -2262,10 +2309,6 @@
     },
     "de": {
       "intro": "Die Kanzleiräume von Santos & Saucedo liegen in der Colonia Del Valle in San Pedro Garza García, Nuevo León, gegenüber dem Cerro de la Silla.",
-      "reception": "Empfang",
-      "meetingRooms": "Besprechungsräume",
-      "workAreas": "Arbeitsbereiche",
-      "art": "Kunst",
       "address": "Adresse",
       "phone": "Telefon",
       "email": "E-Mail",
@@ -2288,10 +2331,6 @@
     },
     "fr": {
       "intro": "Le bureau de Santos & Saucedo se trouve dans la colonia Del Valle, à San Pedro Garza García, Nuevo León, face au Cerro de la Silla.",
-      "reception": "Accueil",
-      "meetingRooms": "Salles de réunion",
-      "workAreas": "Espaces de travail",
-      "art": "Œuvres",
       "address": "Adresse",
       "phone": "Téléphone",
       "email": "E-mail",
@@ -2314,10 +2353,6 @@
     },
     "it": {
       "intro": "La sede di Santos & Saucedo si trova nella colonia Del Valle, a San Pedro Garza García, Nuevo León, di fronte al Cerro de la Silla.",
-      "reception": "Accoglienza",
-      "meetingRooms": "Sale riunioni",
-      "workAreas": "Aree di lavoro",
-      "art": "Opere",
       "address": "Indirizzo",
       "phone": "Telefono",
       "email": "E-mail",
@@ -2340,10 +2375,6 @@
     },
     "ru": {
       "intro": "Офис Santos & Saucedo находится в районе Дель-Валье в Сан-Педро-Гарса-Гарсия, штат Нуэво-Леон, напротив горы Серро-де-ла-Силья.",
-      "reception": "Приёмная",
-      "meetingRooms": "Переговорные",
-      "workAreas": "Рабочие зоны",
-      "art": "Искусство",
       "address": "Адрес",
       "phone": "Телефон",
       "email": "Эл. почта",
@@ -2366,10 +2397,6 @@
     },
     "zh": {
       "intro": "Santos & Saucedo的办公室位于新莱昂州圣佩德罗加尔萨加西亚的Del Valle区，面朝马鞍山（Cerro de la Silla）。",
-      "reception": "前台",
-      "meetingRooms": "会议室",
-      "workAreas": "办公区",
-      "art": "艺术品",
       "address": "地址",
       "phone": "电话",
       "email": "电子邮件",
@@ -2392,10 +2419,6 @@
     },
     "ja": {
       "intro": "Santos & Saucedoのオフィスは、ヌエボ・レオン州サン・ペドロ・ガルサ・ガルシアのコロニア・デル・バジェにあり、セロ・デ・ラ・シージャに面しています。",
-      "reception": "受付",
-      "meetingRooms": "会議室",
-      "workAreas": "執務エリア",
-      "art": "アート",
       "address": "所在地",
       "phone": "電話",
       "email": "メールアドレス",
@@ -2418,10 +2441,6 @@
     },
     "ko": {
       "intro": "Santos & Saucedo의 사무실은 누에보레온주 산페드로가르사가르시아의 콜로니아 델바예에 있으며, 세로 데 라 시야를 마주하고 있습니다.",
-      "reception": "리셉션",
-      "meetingRooms": "회의실",
-      "workAreas": "업무 공간",
-      "art": "작품",
       "address": "주소",
       "phone": "전화",
       "email": "이메일",
@@ -2444,10 +2463,6 @@
     },
     "ar": {
       "intro": "يقع مكتب Santos & Saucedo في حي ديل فالي في سان بيدرو غارثا غارسيا بولاية نويفو ليون، قبالة جبل سيرو دي لا سيا.",
-      "reception": "الاستقبال",
-      "meetingRooms": "قاعات الاجتماعات",
-      "workAreas": "مساحات العمل",
-      "art": "أعمال فنية",
       "address": "العنوان",
       "phone": "الهاتف",
       "email": "البريد الإلكتروني",
@@ -2471,43 +2486,43 @@
   },
   "practices": {
     "en": {
-      "subtitle": "Around its labor practice, the firm has developed three complementary practices: corporate and contractual, immigration, and litigation.",
+      "subtitle": "Around its labor practice, the firm has developed three complementary practices: corporate and contractual, immigration, and litigation and workplace criminal matters.",
       "errorMessage": "Failed to load practice areas"
     },
     "es": {
-      "subtitle": "Alrededor de su práctica laboral, la firma desarrolló tres prácticas complementarias: corporativa y contractual, migratoria y contenciosa.",
+      "subtitle": "Alrededor de su práctica laboral, la firma desarrolló tres prácticas complementarias: corporativa y contractual, migratoria, y de litigio y penal laboral.",
       "errorMessage": "Error al cargar las áreas de práctica"
     },
     "de": {
-      "subtitle": "Rund um ihre arbeitsrechtliche Praxis hat die Kanzlei drei ergänzende Praxisbereiche aufgebaut: Gesellschafts- und Vertragsrecht, Migrationsrecht und Prozessführung.",
+      "subtitle": "Rund um ihre arbeitsrechtliche Praxis hat die Kanzlei drei ergänzende Praxisbereiche aufgebaut: Gesellschafts- und Vertragsrecht, Migrationsrecht sowie Prozessführung und Arbeitsstrafrecht.",
       "errorMessage": "Fehler beim Laden der Praxisbereiche"
     },
     "zh": {
-      "subtitle": "围绕劳动法这一核心业务，本所发展了三个互补的业务领域：公司与合同、移民以及诉讼。",
+      "subtitle": "围绕劳动法这一核心业务，本所发展了三个互补的业务领域：公司与合同、移民以及诉讼与劳动刑事。",
       "errorMessage": "加载业务领域失败"
     },
     "ko": {
-      "subtitle": "법인은 노동법 업무를 중심으로 기업·계약, 이민, 소송의 세 가지 보완 업무 분야를 갖추고 있습니다.",
+      "subtitle": "법인은 노동법 업무를 중심으로 기업·계약, 이민, 소송 및 노동 형사의 세 가지 보완 업무 분야를 갖추고 있습니다.",
       "errorMessage": "업무 분야 로드 실패"
     },
     "ja": {
-      "subtitle": "当事務所は労働法を中核に、企業法務・契約、移民、訴訟の三つの補完的な分野を展開しています。",
+      "subtitle": "当事務所は労働法を中核に、企業法務・契約、移民、訴訟・労働刑事の三つの補完的な分野を展開しています。",
       "errorMessage": "取扱分野の読み込みに失敗しました"
     },
     "ar": {
-      "subtitle": "حول ممارسته في قانون العمل، طوّر المكتب ثلاث ممارسات مكمّلة: الشركات والعقود، والهجرة، والتقاضي.",
+      "subtitle": "حول ممارسته في قانون العمل، طوّر المكتب ثلاث ممارسات مكمّلة: الشركات والعقود، والهجرة، والتقاضي والقضايا الجنائية العمالية.",
       "errorMessage": "فشل تحميل مجالات الممارسة"
     },
     "ru": {
-      "subtitle": "Вокруг практики трудового права фирма развила три дополняющие её практики: корпоративную и договорную, миграционную и судебную.",
+      "subtitle": "Вокруг практики трудового права фирма развила три дополняющие её практики: корпоративную и договорную, миграционную и судебную, включая уголовные дела в сфере труда.",
       "errorMessage": "Не удалось загрузить практики"
     },
     "fr": {
-      "subtitle": "Autour de sa pratique en droit du travail, le cabinet a développé trois pratiques complémentaires : droit des sociétés et des contrats, immigration et contentieux.",
+      "subtitle": "Autour de sa pratique en droit du travail, le cabinet a développé trois pratiques complémentaires : droit des sociétés et des contrats, immigration, contentieux et pénal du travail.",
       "errorMessage": "Échec du chargement des domaines de pratique"
     },
     "it": {
-      "subtitle": "Attorno alla sua pratica giuslavoristica, lo studio ha sviluppato tre aree complementari: societario e contrattuale, immigrazione e contenzioso.",
+      "subtitle": "Attorno alla sua pratica giuslavoristica, lo studio ha sviluppato tre aree complementari: societario e contrattuale, immigrazione, contenzioso e penale del lavoro.",
       "errorMessage": "Impossibile caricare le aree di pratica"
     }
   },
@@ -5388,6 +5403,18 @@
       "mesaTrabajo": {
         "url": "/editorial/oficina-mesa-trabajo-1536.webp",
         "smallUrl": "/editorial/oficina-mesa-trabajo-768.webp"
+      },
+      "vestibulo3": {
+        "url": "/editorial/vestibulo-3-1536.webp",
+        "smallUrl": "/editorial/vestibulo-3-768.webp"
+      },
+      "estancia": {
+        "url": "/editorial/estancia-1536.webp",
+        "smallUrl": "/editorial/estancia-768.webp"
+      },
+      "mezanine": {
+        "url": "/editorial/mezanine-1536.webp",
+        "smallUrl": "/editorial/mezanine-768.webp"
       }
     },
     "teamMosaic": [
@@ -5565,7 +5592,8 @@
     "recruitmentEmail": "reclutamiento@santossaucedo.com",
     "linkedinUrl": "",
     "directionsUrl": "https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Col.+del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220",
-    "privacyEmail": "privacidad@santossaucedo.com"
+    "privacyEmail": "privacidad@santossaucedo.com",
+    "googleReviewsUrl": ""
   },
   "layout": {
     "home": {
@@ -5875,16 +5903,16 @@
       "it": "Immigrazione"
     },
     "litigio-contencioso": {
-      "es": "Litigio",
-      "en": "Litigation",
-      "de": "Prozessführung",
-      "zh": "诉讼",
-      "ko": "소송",
-      "ja": "訴訟",
-      "ar": "التقاضي",
-      "ru": "Судебные споры",
-      "fr": "Contentieux",
-      "it": "Contenzioso"
+      "es": "Litigio y penal laboral",
+      "en": "Litigation and workplace criminal matters",
+      "de": "Prozessführung und Arbeitsstrafrecht",
+      "zh": "诉讼与劳动刑事",
+      "ko": "소송 및 노동 형사",
+      "ja": "訴訟・労働刑事",
+      "ar": "التقاضي والقضايا الجنائية العمالية",
+      "ru": "Судебные споры и уголовные дела в сфере труда",
+      "fr": "Contentieux et pénal du travail",
+      "it": "Contenzioso e penale del lavoro"
     }
   },
   "practice-short-names": {
@@ -6066,6 +6094,25 @@
         "visible": true,
         "order": 5,
         "children": []
+      },
+      {
+        "id": "testimonials",
+        "href": "/testimonios",
+        "labels": {
+          "es": "Testimonios",
+          "en": "Testimonials",
+          "de": "Mandantenstimmen",
+          "zh": "客户评价",
+          "ko": "고객 추천사",
+          "ja": "お客様の声",
+          "ar": "آراء العملاء",
+          "ru": "Отзывы клиентов",
+          "fr": "Témoignages",
+          "it": "Testimonianze"
+        },
+        "visible": true,
+        "order": 2,
+        "children": []
       }
     ],
     "footerItems": [
@@ -6194,6 +6241,24 @@
         },
         "visible": true,
         "order": 6
+      },
+      {
+        "id": "testimonials",
+        "href": "/testimonios",
+        "labels": {
+          "es": "Testimonios",
+          "en": "Testimonials",
+          "de": "Mandantenstimmen",
+          "zh": "客户评价",
+          "ko": "고객 추천사",
+          "ja": "お客様の声",
+          "ar": "آراء العملاء",
+          "ru": "Отзывы клиентов",
+          "fr": "Témoignages",
+          "it": "Testimonianze"
+        },
+        "visible": true,
+        "order": 3
       }
     ],
     "legalItems": [
@@ -6378,6 +6443,148 @@
     "guidance": {
       "es": "Lenguaje claro, preciso y profesional. No inventar datos ni conclusiones. Conservar los términos jurídicos y nombres del despacho.",
       "en": "Use clear, precise and professional language. Do not invent facts or conclusions. Preserve legal terminology and the firm name."
+    }
+  },
+  "testimonials": {
+    "es": {
+      "title": "Testimonios",
+      "intro": "Comentarios de clientes de Santos & Saucedo, publicados con su autorización.",
+      "empty": "Aún no hay testimonios publicados.",
+      "error": "Los testimonios no están disponibles en este momento.",
+      "googleLink": "Ver reseñas en Google",
+      "newTab": "(se abre en otra pestaña)"
+    },
+    "en": {
+      "title": "Testimonials",
+      "intro": "Comments from Santos & Saucedo clients, published with their permission.",
+      "empty": "No testimonials have been published yet.",
+      "error": "Testimonials are not available at the moment.",
+      "googleLink": "See reviews on Google",
+      "newTab": "(opens in a new tab)"
+    },
+    "de": {
+      "title": "Mandantenstimmen",
+      "intro": "Kommentare von Mandanten von Santos & Saucedo, mit ihrer Genehmigung veröffentlicht.",
+      "empty": "Es wurden noch keine Mandantenstimmen veröffentlicht.",
+      "error": "Die Mandantenstimmen sind derzeit nicht verfügbar.",
+      "googleLink": "Bewertungen auf Google ansehen",
+      "newTab": "(öffnet in einem neuen Tab)"
+    },
+    "zh": {
+      "title": "客户评价",
+      "intro": "Santos & Saucedo客户的评价，经其授权发布。",
+      "empty": "暂无已发布的客户评价。",
+      "error": "客户评价暂时无法显示。",
+      "googleLink": "查看Google评价",
+      "newTab": "（在新标签页中打开）"
+    },
+    "ko": {
+      "title": "고객 추천사",
+      "intro": "Santos & Saucedo 고객의 의견으로, 고객의 허락을 받아 게재합니다.",
+      "empty": "아직 게재된 추천사가 없습니다.",
+      "error": "현재 추천사를 표시할 수 없습니다.",
+      "googleLink": "Google 리뷰 보기",
+      "newTab": "(새 탭에서 열림)"
+    },
+    "ja": {
+      "title": "お客様の声",
+      "intro": "Santos & Saucedoのクライアントからのコメントです。ご本人の許可を得て掲載しています。",
+      "empty": "まだ掲載されているコメントはありません。",
+      "error": "現在、コメントを表示できません。",
+      "googleLink": "Googleのレビューを見る",
+      "newTab": "（新しいタブで開きます）"
+    },
+    "ar": {
+      "title": "آراء العملاء",
+      "intro": "تعليقات عملاء Santos & Saucedo، منشورة بإذنهم.",
+      "empty": "لا توجد آراء منشورة بعد.",
+      "error": "الآراء غير متاحة في الوقت الحالي.",
+      "googleLink": "عرض المراجعات على Google",
+      "newTab": "(يُفتح في علامة تبويب جديدة)"
+    },
+    "ru": {
+      "title": "Отзывы клиентов",
+      "intro": "Отзывы клиентов Santos & Saucedo, опубликованные с их согласия.",
+      "empty": "Пока нет опубликованных отзывов.",
+      "error": "Отзывы сейчас недоступны.",
+      "googleLink": "Отзывы в Google",
+      "newTab": "(откроется в новой вкладке)"
+    },
+    "fr": {
+      "title": "Témoignages",
+      "intro": "Commentaires de clients de Santos & Saucedo, publiés avec leur autorisation.",
+      "empty": "Aucun témoignage n’a encore été publié.",
+      "error": "Les témoignages ne sont pas disponibles pour le moment.",
+      "googleLink": "Voir les avis sur Google",
+      "newTab": "(s’ouvre dans un nouvel onglet)"
+    },
+    "it": {
+      "title": "Testimonianze",
+      "intro": "Commenti dei clienti di Santos & Saucedo, pubblicati con il loro consenso.",
+      "empty": "Non sono ancora state pubblicate testimonianze.",
+      "error": "Le testimonianze non sono disponibili al momento.",
+      "googleLink": "Vedi le recensioni su Google",
+      "newTab": "(si apre in una nuova scheda)"
+    },
+    "form": {
+      "es": {
+        "title": "Su comentario",
+        "intro": "Gracias por compartir su experiencia con Santos & Saucedo. El despacho revisa cada comentario antes de publicarlo.",
+        "fullName": "Nombre completo",
+        "jobTitle": "Puesto",
+        "company": "Empresa",
+        "quote": "Comentario",
+        "count": "{n} de {max} caracteres",
+        "consent": "Autorizo que Santos & Saucedo publique este comentario en su sitio con mi nombre y puesto y, si lo indico abajo, con mi empresa.",
+        "showCompany": "Mostrar el nombre de mi empresa junto al comentario.",
+        "privacyBefore": "Sus datos se tratan conforme al ",
+        "privacyLink": "aviso de privacidad",
+        "privacyAfter": ".",
+        "submit": "Enviar comentario",
+        "sending": "Enviando…",
+        "success": "Gracias. Recibimos su comentario; el despacho lo revisará antes de publicarlo.",
+        "googleBefore": "Si lo desea, también puede ",
+        "googleLink": "dejar su reseña en Google",
+        "googleAfter": ".",
+        "checking": "Verificando el enlace…",
+        "invalidTitle": "Este enlace no es válido o ya se usó",
+        "invalidBody": "Cada enlace sirve para un solo comentario y vence a los 30 días. Si desea dejar su comentario, pida un enlace nuevo a su contacto en Santos & Saucedo.",
+        "required": "Escriba al menos {min} caracteres.",
+        "quoteLength": "Escriba entre 20 y {max} caracteres.",
+        "consentRequired": "Para enviar, marque la autorización.",
+        "review": "Revise los campos marcados.",
+        "tooMany": "Demasiados intentos. Intente de nuevo en unos minutos.",
+        "failed": "No se pudo enviar el comentario. Intente de nuevo más tarde."
+      },
+      "en": {
+        "title": "Your comment",
+        "intro": "Thank you for sharing your experience with Santos & Saucedo. The firm reviews every comment before publishing it.",
+        "fullName": "Full name",
+        "jobTitle": "Position",
+        "company": "Company",
+        "quote": "Comment",
+        "count": "{n} of {max} characters",
+        "consent": "I authorize Santos & Saucedo to publish this comment on its website with my name and position and, if I indicate so below, my company.",
+        "showCompany": "Show my company name with the comment.",
+        "privacyBefore": "Your data is processed in accordance with the ",
+        "privacyLink": "privacy notice",
+        "privacyAfter": ".",
+        "submit": "Send comment",
+        "sending": "Sending…",
+        "success": "Thank you. We have received your comment; the firm will review it before publishing it.",
+        "googleBefore": "If you wish, you can also ",
+        "googleLink": "leave a review on Google",
+        "googleAfter": ".",
+        "checking": "Checking the link…",
+        "invalidTitle": "This link is not valid or has already been used",
+        "invalidBody": "Each link can be used for one comment and expires after 30 days. If you would like to leave a comment, please ask your contact at Santos & Saucedo for a new link.",
+        "required": "Enter at least {min} characters.",
+        "quoteLength": "Enter between 20 and {max} characters.",
+        "consentRequired": "To send, please check the authorization.",
+        "review": "Please review the highlighted fields.",
+        "tooMany": "Too many attempts. Please try again in a few minutes.",
+        "failed": "The comment could not be sent. Please try again later."
+      }
     }
   }
 }

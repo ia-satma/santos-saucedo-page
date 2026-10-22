@@ -2,6 +2,7 @@ import { useCmsContent } from "@/hooks/useCmsContent";
 import { useCallback, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { PhotoBand } from "@/components/home26/PhotoBand";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
@@ -114,6 +115,10 @@ export default function NewsPage() {
             <MonitorSubscribe rule={false} className="mt-8 lg:mt-10" testId="section-news-subscribe" linkTestId="link-news-subscribe" />
           </div>
         </div>
+
+        {/* Después de la lista y la suscripción, contra el pie (no interrumpe la lectura): la
+            estancia del mapamundi, de borde a borde de la ventana (PhotoBand), sin marco ni pie */}
+        <PhotoBand photo="estancia" height="medium" position="object-[50%_40%]" testId="band-news-office" />
       </main>
 
       <Footer />

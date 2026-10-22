@@ -9,15 +9,15 @@
   {
     "url": "/editorial/logo-marino.svg",
     "source": "client/public/editorial/logo-marino.svg",
-    "key": "public/media/bf9808aedbe7308ddbaf7e74-logo-marino.svg",
-    "sha256": "bf9808aedbe7308ddbaf7e741769346f40aa6bc7749890d1e1244b6f12f32956",
+    "key": "public/media/cf7fe82e4f9e7fb543248f64-logo-marino.svg",
+    "sha256": "cf7fe82e4f9e7fb543248f6457e4964ef44c9ee78da54122a18e2562482db8f2",
     "bytes": 10905
   },
   {
     "url": "/favicon.svg",
     "source": "client/public/favicon.svg",
-    "key": "public/media/f9e074cddfc5bc88d323d629-favicon.svg",
-    "sha256": "f9e074cddfc5bc88d323d629a975a5f7604df14e0515ae09356918141041a6c3",
+    "key": "public/media/d67eb4ff581323d3c60403d1-favicon.svg",
+    "sha256": "d67eb4ff581323d3c60403d1e6e7dcb62d565fc47c84f9f6115da91526307647",
     "bytes": 187467
   },
   {
@@ -471,9 +471,9 @@
   {
     "url": "/logo-color.png",
     "source": "client/public/logo-color.png",
-    "key": "public/media/124d96c7f8343611e3028d7f-logo-color.png",
-    "sha256": "124d96c7f8343611e3028d7ffd0bd58f5a2424920f2df58e6d78d6dfd40d764c",
-    "bytes": 142900
+    "key": "public/media/5f90e06247e3b7e84f6de9dc-logo-color.png",
+    "sha256": "5f90e06247e3b7e84f6de9dcd81a20457a1424e4e47ca909c71b8893382f152a",
+    "bytes": 105662
   },
   {
     "url": "/logo-white.png",
@@ -485,121 +485,121 @@
   {
     "url": "/favicon.png",
     "source": "client/public/favicon.png",
-    "key": "public/media/fddc76b7ba957a0c32ae56f5-favicon.png",
-    "sha256": "fddc76b7ba957a0c32ae56f5af8e719ab96c48906b3e733b75b96652048b9d0d",
-    "bytes": 22359
+    "key": "public/media/db4011a62c150b87b675d964-favicon.png",
+    "sha256": "db4011a62c150b87b675d9647002057e7e3e9f5d01a0df0edd8d425c81a36d02",
+    "bytes": 16805
   },
   {
     "url": "/team_photos/enrique-santos-arce-128.webp",
     "source": "attached_assets/team_photos/enrique-santos-arce-128.webp",
-    "key": "public/media/2df1b69b60d8095eb8d23070-enrique-santos-arce-128.webp",
-    "sha256": "2df1b69b60d8095eb8d23070534145659bd5547ca93f6bb1bbaddcfa6a350932",
-    "bytes": 6746
+    "key": "public/media/77145adfdec2a78f14546582-enrique-santos-arce-128.webp",
+    "sha256": "77145adfdec2a78f14546582bf9c68d53496f3c2f6f6c7fc970eac56ee185e83",
+    "bytes": 6130
   },
   {
     "url": "/team_photos/enrique-santos-arce-360.webp",
     "source": "attached_assets/team_photos/enrique-santos-arce-360.webp",
-    "key": "public/media/576eaed4d65f89a5ae296819-enrique-santos-arce-360.webp",
-    "sha256": "576eaed4d65f89a5ae29681937c860c26d6a2bf644a375b711d2cf725d135aed",
-    "bytes": 39238
+    "key": "public/media/c6b5b77facd78399c43f0048-enrique-santos-arce-360.webp",
+    "sha256": "c6b5b77facd78399c43f00482b6806f5264954b4c5aaf0be64684031b5812cf7",
+    "bytes": 36654
   },
   {
     "url": "/team_photos/enrique-santos-arce-652.webp",
     "source": "attached_assets/team_photos/enrique-santos-arce-652.webp",
-    "key": "public/media/b14647e5ea74dad6b6c67889-enrique-santos-arce-652.webp",
-    "sha256": "b14647e5ea74dad6b6c6788961f8e2f4d99bf925ffbaf201ee7a2a264aff9381",
-    "bytes": 98058
+    "key": "public/media/9f58f7e9cfd3ca1d4a48f53f-enrique-santos-arce-652.webp",
+    "sha256": "9f58f7e9cfd3ca1d4a48f53f974aeb90ae075d10cc8c4bdbae064221e0f5e31c",
+    "bytes": 68132
   },
   {
     "url": "/team_photos/enrique-santos-arce.png",
     "source": "attached_assets/team_photos/enrique-santos-arce.png",
-    "key": "public/media/2ee749ada9c5426d588c04be-enrique-santos-arce.png",
-    "sha256": "2ee749ada9c5426d588c04be397efe650686b91db8bce4cc4f88567680c36440",
-    "bytes": 975156
+    "key": "public/media/abcbaec7f6c628b7d5114620-enrique-santos-arce.png",
+    "sha256": "abcbaec7f6c628b7d51146205213b6f9377e32d05e28dac2cdb6ab1dd7cfacc9",
+    "bytes": 577369
   },
   {
     "url": "/team_photos/enrique-santos-guzman-128.webp",
     "source": "attached_assets/team_photos/enrique-santos-guzman-128.webp",
-    "key": "public/media/c0a420906a2b5ff2a64b04d0-enrique-santos-guzman-128.webp",
-    "sha256": "c0a420906a2b5ff2a64b04d054d2188ca2bd2d8119a43d4a32c7c266764dc3fd",
-    "bytes": 6120
+    "key": "public/media/45d57a4f02804db1b7c4e1b4-enrique-santos-guzman-128.webp",
+    "sha256": "45d57a4f02804db1b7c4e1b4356d0aca9aeb6025a05da46982f1fbd9ae5628a6",
+    "bytes": 5468
   },
   {
     "url": "/team_photos/enrique-santos-guzman-360.webp",
     "source": "attached_assets/team_photos/enrique-santos-guzman-360.webp",
-    "key": "public/media/61d42d2a158c1a57adaf6d18-enrique-santos-guzman-360.webp",
-    "sha256": "61d42d2a158c1a57adaf6d1879c46c397326720cd3c6989b3dae6a0228526575",
-    "bytes": 37574
+    "key": "public/media/a49d9b7794ef10b03f9f2c09-enrique-santos-guzman-360.webp",
+    "sha256": "a49d9b7794ef10b03f9f2c09dee6b344ce96f4604f4ef6d8d55f7cb698f77017",
+    "bytes": 35098
   },
   {
     "url": "/team_photos/enrique-santos-guzman-652.webp",
     "source": "attached_assets/team_photos/enrique-santos-guzman-652.webp",
-    "key": "public/media/02ebfb8073a430ec3efab059-enrique-santos-guzman-652.webp",
-    "sha256": "02ebfb8073a430ec3efab05915aaed098240dda1e2300c3fcb236b23384679d0",
-    "bytes": 100548
+    "key": "public/media/aa49d45f0ad30239ab91f670-enrique-santos-guzman-652.webp",
+    "sha256": "aa49d45f0ad30239ab91f670c174c5cd4808846999e02d0fbcdb67c4a88a1a9c",
+    "bytes": 65936
   },
   {
     "url": "/team_photos/enrique-santos-guzman.png",
     "source": "attached_assets/team_photos/enrique-santos-guzman.png",
-    "key": "public/media/4e6fe2d357ffaaa5b5a2d18f-enrique-santos-guzman.png",
-    "sha256": "4e6fe2d357ffaaa5b5a2d18fc5df5a2cfe33362ed8319b9acb0f10573ab7614a",
-    "bytes": 864670
+    "key": "public/media/a550bd6c82995c5c7a152cd8-enrique-santos-guzman.png",
+    "sha256": "a550bd6c82995c5c7a152cd8bc4d0f7c4e1b4a1ec863e5bc99bbf41d552dcbba",
+    "bytes": 576526
   },
   {
     "url": "/team_photos/mario-saucedo-montemayor-128.webp",
     "source": "attached_assets/team_photos/mario-saucedo-montemayor-128.webp",
-    "key": "public/media/9316263315c3cdd3e22fc41e-mario-saucedo-montemayor-128.webp",
-    "sha256": "9316263315c3cdd3e22fc41e0d820dcfe16bd7aac973accb1bfe80d5d04d174c",
-    "bytes": 5300
+    "key": "public/media/25fb0454f0c9fbeb7eb99410-mario-saucedo-montemayor-128.webp",
+    "sha256": "25fb0454f0c9fbeb7eb99410e2c5ef2b4b7903e8a279b7330352b22df4ce8327",
+    "bytes": 4944
   },
   {
     "url": "/team_photos/mario-saucedo-montemayor-360.webp",
     "source": "attached_assets/team_photos/mario-saucedo-montemayor-360.webp",
-    "key": "public/media/8f8111ca4501d5380c9e9b8c-mario-saucedo-montemayor-360.webp",
-    "sha256": "8f8111ca4501d5380c9e9b8c8e44420132f94581567fbd7f1f9e06397872f1cc",
-    "bytes": 32416
+    "key": "public/media/125ec7808bc8425328eed0da-mario-saucedo-montemayor-360.webp",
+    "sha256": "125ec7808bc8425328eed0daf255b021b5b8ce647160d83afd479ec8972b3f1f",
+    "bytes": 32810
   },
   {
     "url": "/team_photos/mario-saucedo-montemayor-652.webp",
     "source": "attached_assets/team_photos/mario-saucedo-montemayor-652.webp",
-    "key": "public/media/d5bd94856338b4f14145eefa-mario-saucedo-montemayor-652.webp",
-    "sha256": "d5bd94856338b4f14145eefa28c711b3c556edeb4b6fa3933663bf7f380aa1a3",
-    "bytes": 87836
+    "key": "public/media/cd6ccd57eb4c461110fe908b-mario-saucedo-montemayor-652.webp",
+    "sha256": "cd6ccd57eb4c461110fe908b6f61a65011b99ba3feeee87d2c04d55aa75ff12f",
+    "bytes": 64532
   },
   {
     "url": "/team_photos/mario-saucedo-montemayor.png",
     "source": "attached_assets/team_photos/mario-saucedo-montemayor.png",
-    "key": "public/media/9c6cfb3f4e3403096ac6ac7a-mario-saucedo-montemayor.png",
-    "sha256": "9c6cfb3f4e3403096ac6ac7a474d7783d32f1e225b2c8a422c5b86bdd56f85fb",
-    "bytes": 910119
+    "key": "public/media/27bd4d5c1052b5534cb78575-mario-saucedo-montemayor.png",
+    "sha256": "27bd4d5c1052b5534cb78575a96016120a4ae5bbec033cfdd6a7f1ae56e4cb18",
+    "bytes": 578987
   },
   {
     "url": "/team_photos/mario-saucedo-rodriguez-128.webp",
     "source": "attached_assets/team_photos/mario-saucedo-rodriguez-128.webp",
-    "key": "public/media/aed30af934eea1a1c1064b7c-mario-saucedo-rodriguez-128.webp",
-    "sha256": "aed30af934eea1a1c1064b7c68e9d43b7062fa86bf0953d69a9a2683f2214ca2",
-    "bytes": 4974
+    "key": "public/media/dad70146abd503798a150932-mario-saucedo-rodriguez-128.webp",
+    "sha256": "dad70146abd503798a1509323151a8e14e7bd41e33f47af1f2c8c68a5868ef93",
+    "bytes": 4644
   },
   {
     "url": "/team_photos/mario-saucedo-rodriguez-360.webp",
     "source": "attached_assets/team_photos/mario-saucedo-rodriguez-360.webp",
-    "key": "public/media/2cd739859ebac887af089011-mario-saucedo-rodriguez-360.webp",
-    "sha256": "2cd739859ebac887af08901131affaa55412600ac80c3d1534ad064323a47d0a",
-    "bytes": 35360
+    "key": "public/media/3b175839ff4ff96f6b3fa1c4-mario-saucedo-rodriguez-360.webp",
+    "sha256": "3b175839ff4ff96f6b3fa1c49f7bc4d55900f61dc744d362abaad27044f90cb3",
+    "bytes": 34792
   },
   {
     "url": "/team_photos/mario-saucedo-rodriguez-652.webp",
     "source": "attached_assets/team_photos/mario-saucedo-rodriguez-652.webp",
-    "key": "public/media/391a8383402d8a9e651c9389-mario-saucedo-rodriguez-652.webp",
-    "sha256": "391a8383402d8a9e651c9389b82d3aac675afecbc2c1dee1495d77cbbba56f75",
-    "bytes": 90710
+    "key": "public/media/995e0fbee5dbe3b0a1f34379-mario-saucedo-rodriguez-652.webp",
+    "sha256": "995e0fbee5dbe3b0a1f343794f1444e739874edc391e909b657084c6d803075b",
+    "bytes": 65772
   },
   {
     "url": "/team_photos/mario-saucedo-rodriguez.png",
     "source": "attached_assets/team_photos/mario-saucedo-rodriguez.png",
-    "key": "public/media/b6ef23de02e363423dcee118-mario-saucedo-rodriguez.png",
-    "sha256": "b6ef23de02e363423dcee1187bfe4358bb3e3c82247ce141db2edb8a950281f8",
-    "bytes": 564233
+    "key": "public/media/261edd2708610448621607c3-mario-saucedo-rodriguez.png",
+    "sha256": "261edd2708610448621607c36f1162f14bb9f80ab0aa062bad40162fbf2653d5",
+    "bytes": 406206
   },
   {
     "url": "/team_photos/mario-saucedo-rodriguez-color-128.webp",
@@ -782,5 +782,61 @@
     "key": "public/media/1f691de76376834c1a0f5788-oficina-arte-detalle-1536.webp",
     "sha256": "1f691de76376834c1a0f5788c73e22c4a55dc20d9c0207a9ed345715eea46604",
     "bytes": 269300
+  },
+  {
+    "url": "/editorial/vestibulo-3-1536.webp",
+    "source": "client/public/editorial/vestibulo-3-1536.webp",
+    "key": "public/media/8766a7e7819ef4bd8cb3a546-vestibulo-3-1536.webp",
+    "sha256": "8766a7e7819ef4bd8cb3a5467e4a920280c300680d514ca2c352b1c353a88128",
+    "bytes": 182364
+  },
+  {
+    "url": "/editorial/vestibulo-3-768.webp",
+    "source": "client/public/editorial/vestibulo-3-768.webp",
+    "key": "public/media/825851375e43f50c66a41315-vestibulo-3-768.webp",
+    "sha256": "825851375e43f50c66a41315ae47ed78c634638d5e3bf0e138f45b6b775832f1",
+    "bytes": 61184
+  },
+  {
+    "url": "/editorial/estancia-1536.webp",
+    "source": "client/public/editorial/estancia-1536.webp",
+    "key": "public/media/c26eb30e6d19fca562e4342b-estancia-1536.webp",
+    "sha256": "c26eb30e6d19fca562e4342b49b293395ee728d7a57961df7822867798fdc191",
+    "bytes": 113464
+  },
+  {
+    "url": "/editorial/estancia-768.webp",
+    "source": "client/public/editorial/estancia-768.webp",
+    "key": "public/media/d300cd4f92ea026c10ffac9f-estancia-768.webp",
+    "sha256": "d300cd4f92ea026c10ffac9f8eb7b19813bba1d0611e8b11485033a71bbba769",
+    "bytes": 39230
+  },
+  {
+    "url": "/editorial/mezanine-1536.webp",
+    "source": "client/public/editorial/mezanine-1536.webp",
+    "key": "public/media/f7cec02d2dd369146f4cccf5-mezanine-1536.webp",
+    "sha256": "f7cec02d2dd369146f4cccf59340a0c963c6eafbac570ba68934ec20abd1448d",
+    "bytes": 113368
+  },
+  {
+    "url": "/editorial/mezanine-768.webp",
+    "source": "client/public/editorial/mezanine-768.webp",
+    "key": "public/media/3f9be2014718e707b2f29510-mezanine-768.webp",
+    "sha256": "3f9be2014718e707b2f2951020aa6518220445fbad55f2b001f33d6128be793d",
+    "bytes": 38372
+  },
+  {
+    "url": "/editorial/biblioteca-1536.webp",
+    "source": "client/public/editorial/biblioteca-1536.webp",
+    "key": "public/media/404ce90e1663cdf5e2a8252c-biblioteca-1536.webp",
+    "sha256": "404ce90e1663cdf5e2a8252c711b860b5a11040b8d70dfd6dc2d58ed660dc247",
+    "bytes": 92642
+  },
+  {
+    "url": "/editorial/biblioteca-768.webp",
+    "source": "client/public/editorial/biblioteca-768.webp",
+    "key": "public/media/170f612ba4371098271dee19-biblioteca-768.webp",
+    "sha256": "170f612ba4371098271dee19a60d3ba9e5c30c69df3c198d894e998d528d50f3",
+    "bytes": 32726
   }
 ]

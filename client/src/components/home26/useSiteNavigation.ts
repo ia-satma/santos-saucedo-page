@@ -24,7 +24,8 @@ export function useSiteNavigation(code: string, chrome: Chrome26Strings) {
         ...item,
         labels: { ...item.labels, [code]: chrome.nav[i]?.label || label(item) },
         visible: chrome.nav[i]?.visible !== false,
-        order: chrome.nav[i]?.order ?? i,
+        // Las entradas sin par en chrome26 (Testimonios) conservan su propio orden
+        order: chrome.nav[i]?.order ?? item.order,
       }));
   return {
     ...value,

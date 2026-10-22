@@ -24,6 +24,6 @@ export function serveStatic(app: Express) {
 
   // fall through to index.html if the file doesn't exist
   app.use("*", async (_req, res,next) => {
-    try { const html=await fs.promises.readFile(path.resolve(distPath,"index.html"),"utf8");res.set({"Content-Type":"text/html","Cache-Control":"no-store"}).send(await injectSiteMetadata(html)); } catch(error){next(error);}
+    try { const html=await fs.promises.readFile(path.resolve(distPath,"index.html"),"utf8");res.set({"Content-Type":"text/html","Cache-Control":"no-store"}).send(await injectSiteMetadata(html,_req.originalUrl)); } catch(error){next(error);}
   });
 }

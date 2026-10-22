@@ -321,7 +321,7 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
                         className="-ms-4 flex flex-col gap-1 py-4 ps-4 transition-colors focus-visible:bg-white/5"
                       >
                         {/* Nombres y titulares en la romana 400, como las tarjetas y las filas del Monitor */}
-                        <span className="ss-display block text-[20px] font-normal leading-snug tracking-[-0.01em] text-white lg:text-[22px]">
+                        <span className="ss-display block text-[22px] font-normal leading-snug tracking-[-0.01em] text-white lg:text-[25px]">
                           <span className="ss-link" lang={row.titleLang}>
                             {row.title}
                           </span>

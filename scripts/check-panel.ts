@@ -247,9 +247,13 @@ try {
     ],
     [
       "testimonials",
-      { quote: "QA quote", quoteEs: "Cita QA", authorName: "QA" },
-      "quoteEs",
-      "Cita actualizada",
+      {
+        quote: "Comentario de prueba del panel QA.",
+        authorName: "QA Cliente",
+        consentConfirmed: true,
+      },
+      "authorTitle",
+      "Puesto actualizado",
       schema.testimonials,
     ],
     [

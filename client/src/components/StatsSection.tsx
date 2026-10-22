@@ -145,8 +145,8 @@ export default function StatsSection({ language }: StatsSectionProps) {
     ...baseT,
     title: language === "es" ? "Especialistas en derecho laboral" : "Labor Law Specialists",
     subtitle: language === "es"
-      ? "Santos & Saucedo es un despacho jurídico con más de 35 años de experiencia, especializado en derecho laboral."
-      : "Santos & Saucedo is a legal firm with more than 35 years of experience, specialized in labor law.",
+      ? "Santos & Saucedo es una firma especializada en derecho laboral para empresas. Sus socios suman más de 40 años de experiencia asesorando a empresas nacionales e internacionales."
+      : "Santos & Saucedo is a firm specialized in labor law for companies. Its partners have more than 40 years of combined experience advising national and international companies.",
     description: language === "es"
       ? "La firma acompaña a empresas nacionales e internacionales con asesoría preventiva, consultoría laboral y representación en conflictos individuales y colectivos."
       : "The firm advises national and international companies through preventive counsel, labor consulting, and representation in individual and collective disputes.",

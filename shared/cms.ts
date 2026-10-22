@@ -162,6 +162,12 @@ export const cmsSections: {
     help: "Compartir, autoría y navegación de las publicaciones.",
   },
   {
+    key: "testimonials",
+    label: "Testimonios — textos",
+    path: "/testimonios",
+    help: "Título, introducción y textos del formulario de invitación. Los testimonios y las invitaciones se administran en Testimonios; el enlace de Google, en Datos del despacho.",
+  },
+  {
     key: "careers",
     label: "Carreras",
     path: "/careers",

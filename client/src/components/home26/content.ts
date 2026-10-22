@@ -67,8 +67,8 @@ export const home26 = {
         },
         {
           slug: "litigio-contencioso",
-          title: "Litigio",
-          body: "Juicios civiles y mercantiles, y asuntos penales en los que la empresa es la parte afectada por robo, fraude o abuso de confianza.",
+          title: "Litigio y\u00a0penal laboral",
+          body: "Juicios civiles y mercantiles, y asuntos penales en los que la empresa es la parte afectada por robo, fraude o abuso de confianza, incluidos los que involucran a su propio personal.",
         },
       ],
     },
@@ -147,8 +147,8 @@ export const home26 = {
         },
         {
           slug: "litigio-contencioso",
-          title: "Litigation",
-          body: "Civil and commercial proceedings, and criminal matters in which the company is the injured party in theft, fraud or breach of trust.",
+          title: "Litigation and workplace criminal matters",
+          body: "Civil and commercial proceedings, and criminal matters in which the company is the injured party in theft, fraud or breach of trust, including those involving its own personnel.",
         },
       ],
     },

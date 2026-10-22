@@ -1,4 +1,5 @@
 import { ensureAgentSchema } from "./agentSchema";
+import { ensureTestimonialSchema } from "./testimonialSchema";
 import type { Express } from 'express';
 import { getBundledMediaMap, mapBundledMedia } from './bundledMediaMap';
 import { createHash } from 'node:crypto';
@@ -41,6 +42,7 @@ export async function ensureCmsSchema() {
   await db.execute(sql`ALTER TABLE practice_groups ADD COLUMN IF NOT EXISTS published boolean DEFAULT true`);
   await db.execute(sql`ALTER TABLE media_items ADD COLUMN IF NOT EXISTS archived_at timestamp`);
   await db.execute(sql`ALTER TABLE news ADD COLUMN IF NOT EXISTS document_url text, ADD COLUMN IF NOT EXISTS document_url_es text, ADD COLUMN IF NOT EXISTS source_url text, ADD COLUMN IF NOT EXISTS tags jsonb, ADD COLUMN IF NOT EXISTS featured_home boolean DEFAULT false`);
+  await ensureTestimonialSchema();
 }
 
 export async function getCmsOverrides(): Promise<Record<string, CmsValue>> {
