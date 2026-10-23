@@ -120,6 +120,7 @@ export default function ArticlesPage() {
         <div className="py-16 lg:py-20">
           <div className="ss-container">
             <MonitorList
+              presentation="archive"
               search
               onTranslated={handleTranslated}
               testIds={{

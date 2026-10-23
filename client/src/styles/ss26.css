@@ -249,7 +249,7 @@ html:has(.ss26) body {
   line-height: 1.65;
   text-wrap: pretty;
   hanging-punctuation: first;
-  hyphens: auto;
+  hyphens: none;
   text-align: justify;
   text-align-last: start;
   text-justify: inter-word;

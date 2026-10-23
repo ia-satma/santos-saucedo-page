@@ -228,6 +228,8 @@
 
   p {
     text-wrap: pretty;
+    /* Los párrafos pasan palabras completas al siguiente renglón, sin guiones. */
+    hyphens: none;
   }
 }
 

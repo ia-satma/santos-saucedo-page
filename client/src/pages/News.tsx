@@ -90,6 +90,7 @@ export default function NewsPage() {
         <div className="py-16 lg:py-20">
           <div className="ss-container">
             <MonitorList
+              presentation="archive"
               filters
               search
               onTranslated={handleTranslated}
