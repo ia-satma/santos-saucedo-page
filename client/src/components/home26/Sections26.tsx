@@ -3,6 +3,7 @@ import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import fachada768 from "@assets/ss26/oficina/fachada-768.webp";
 import fachada1536 from "@assets/ss26/oficina/fachada-1536.webp";
 import salaJuntas768 from "@assets/ss26/oficina/sala-juntas-768.webp";
@@ -187,6 +188,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
     // una ruta anterior. Las fotos personalizadas siguen disponibles en el CMS.
     imageUrl: getPracticeImage(group.slug),
   }));
+  const [active, setActive] = useState(0);
   return (
     <section
       id="practices"
@@ -214,64 +216,96 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
           </Reveal>
         </div>
 
-        {/* Índice con filetes Línea al ancho del contenedor, como el del Monitor Laboral: desde lg,
-            el número en las columnas 1–4 y el texto desde la 5 (el borde de La firma, Socios y el
-            pie). Las reglas entre filas se quedan: llevan el trazo del hover */}
-        <ol className="mt-14 border-t border-ss-rule lg:mt-16">
-          {items.map((item, i) => (
-            <Reveal as="li" key={item.slug} delay={i * 0.06} className="ss-row relative border-b border-ss-rule">
-                {/* inline-link: fuera de la regla móvil de index.css que vuelve inline-flex todo <a>.
-                    Nombre del enlace = título; el texto va como descripción. */}
-                <Link
-                  href={`/practice-groups/${item.slug}`}
-                  aria-labelledby={`ss26-pr-${item.slug}`}
-                  aria-describedby={`ss26-prd-${item.slug}`}
-                  className={`inline-link grid grid-cols-1 gap-y-3 py-8 sm:gap-x-5 lg:grid-cols-12 lg:items-baseline lg:gap-x-6 lg:py-10 ${
-                    item.imageUrl
-                      ? "sm:grid-cols-[56px_minmax(0,1fr)_minmax(112px,22%)_24px]"
-                      : "sm:grid-cols-[56px_minmax(0,1fr)_24px]"
-                  }`}
-                >
-                  {/* 01–04 simples, como las filas de /practice-groups; la lista ya numera para
-                      lectores de pantalla. Desde lg, número, titular y flecha sobre la misma línea
-                      base (la primera del titular), a cualquier tamaño del titular */}
-                  <span aria-hidden className="ss-row-num ss-label ss-num lg:col-span-1">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <div className={item.imageUrl ? "grid grid-cols-[minmax(0,1fr)_112px] items-center gap-4 sm:contents" : "sm:contents"}>
-                    <span className={`${item.imageUrl ? "sm:col-start-2" : ""} sm:row-start-1 ${item.imageUrl ? "lg:col-span-7" : "lg:col-span-10"} lg:col-start-2`}>
+        {/* Índice de revista (idea 3, aprobada por el cliente el 23-10-2026): titulares grandes.
+            Desde lg, la práctica activa (cursor o foco) muestra su texto y su imagen-idea, fija a
+            la derecha, que cambia con calma; las demás quedan en Azul Marino tenue. En teléfono y
+            tableta, cada práctica lleva su imagen arriba del título y su texto siempre visible. */}
+        <div className="mt-14 lg:mt-16 lg:grid lg:grid-cols-12 lg:gap-x-6">
+          <ol className="border-t border-ss-marino lg:col-span-7">
+            {items.map((item, i) => {
+              const on = i === active;
+              return (
+                <Reveal as="li" key={item.slug} delay={i * 0.06} className="border-b border-ss-rule">
+                  {/* inline-link: fuera de la regla móvil de index.css que vuelve inline-flex todo <a>.
+                      Nombre del enlace = título; el texto va como descripción. */}
+                  <Link
+                    href={`/practice-groups/${item.slug}`}
+                    aria-labelledby={`ss26-pr-${item.slug}`}
+                    aria-describedby={`ss26-prd-${item.slug}`}
+                    onMouseEnter={() => setActive(i)}
+                    onFocus={() => setActive(i)}
+                    className="inline-link grid grid-cols-[40px_minmax(0,1fr)] gap-x-3 py-7 sm:grid-cols-[56px_minmax(0,1fr)] lg:py-8"
+                  >
+                    {item.imageUrl && (
+                      <span aria-hidden="true" data-curtain="" className="col-span-2 mb-6 block aspect-[16/10] overflow-hidden bg-ss-paper lg:hidden">
+                        <img src={item.imageUrl} alt="" loading="lazy" decoding="async" className="ss-photo block h-full w-full object-cover" />
+                      </span>
+                    )}
+                    {/* 01–04 simples, como las filas de /practice-groups; la lista ya numera */}
+                    <span aria-hidden className="ss-label ss-num pt-[0.7em] text-ss-medio">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span>
                       <span
                         id={`ss26-pr-${item.slug}`}
-                        className="ss-display block text-[clamp(26px,2.3vw,34px)] font-normal leading-[1.15] tracking-[-0.012em] text-ss-marino"
+                        className={`ss-display block text-[clamp(30px,4.2vw,56px)] font-normal leading-[1.05] tracking-[-0.015em] text-ss-marino transition-colors duration-700 motion-reduce:transition-none ${
+                          on ? "" : "lg:text-ss-marino/40"
+                        }`}
                       >
                         {item.title}
                       </span>
-                      {/* 60ch a 17 px (507 px): la misma medida de las entradillas del Monitor
-                          (MonitorList, N9); si cambia aquí, cambia allí */}
-                      <span id={`ss26-prd-${item.slug}`} className="ss-prose mt-4 block max-w-[60ch] text-[18px] text-ss-tinta">
-                        {item.body}
+                      <span
+                        className={`mt-4 grid grid-rows-[1fr] transition-[grid-template-rows,opacity,margin] duration-700 ease-[cubic-bezier(.77,0,.18,1)] motion-reduce:transition-none ${
+                          on ? "lg:mt-5 lg:grid-rows-[1fr] lg:opacity-100" : "lg:mt-0 lg:grid-rows-[0fr] lg:opacity-0"
+                        }`}
+                      >
+                        <span className="overflow-hidden">
+                          {/* 60ch a 17 px (507 px): la misma medida de las entradillas del Monitor */}
+                          <span id={`ss26-prd-${item.slug}`} className="ss-prose block max-w-[46ch] text-[18px] text-ss-tinta">
+                            {item.body}
+                          </span>
+                          <span aria-hidden className="ss-label mt-4 inline-block text-ss-marino">
+                            {lang === "es" ? "Ver la práctica" : "View the practice"} →
+                          </span>
+                        </span>
                       </span>
                     </span>
-                    {item.imageUrl && (
-                      <span aria-hidden="true" data-curtain="" className="block overflow-hidden bg-ss-paper sm:col-start-3 sm:row-start-1 lg:col-span-3 lg:col-start-9 lg:self-center">
-                        <img
-                          src={item.imageUrl}
-                          alt=""
-                          loading="eager"
-                          decoding="async"
-                          className="ss-photo block aspect-[3/2] h-auto w-full object-cover"
-                        />
-                      </span>
-                    )}
-                  </div>
-                  <span aria-hidden className={`ss-arrow hidden pt-1 text-[22px] text-ss-marino ${item.imageUrl ? "sm:col-start-4" : "sm:col-start-3"} sm:row-start-1 sm:block lg:col-start-12 lg:justify-self-end`}>
-                    →
+                  </Link>
+                </Reveal>
+              );
+            })}
+          </ol>
+
+          {/* La imagen-idea de la práctica activa: una sola, fija mientras se recorre la lista */}
+          {items.length > 0 && (
+            <figure aria-hidden="true" className="hidden lg:col-span-4 lg:col-start-9 lg:block">
+              <div className="sticky top-28">
+                <div data-curtain="" className="relative aspect-[4/5] overflow-hidden bg-ss-paper">
+                  {items.map((item, i) =>
+                    item.imageUrl ? (
+                      <img
+                        key={item.slug}
+                        src={item.imageUrl}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        className={`ss-photo absolute inset-0 h-full w-full object-cover [transition:opacity_1.1s_ease,transform_2.4s_ease] motion-reduce:transition-none ${
+                          i === active ? "scale-100 opacity-100" : "scale-[1.06] opacity-0"
+                        }`}
+                      />
+                    ) : null,
+                  )}
+                </div>
+                <figcaption className="ss-label mt-4 flex justify-between gap-4 text-ss-medio">
+                  <span className="text-ss-marino">{items[active]?.title}</span>
+                  <span className="ss-num">
+                    {String(active + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
                   </span>
-                </Link>
-                <span aria-hidden className="ss-row-rule absolute -bottom-px left-0 h-[2px] w-full bg-ss-marino" />
-            </Reveal>
-          ))}
-        </ol>
+                </figcaption>
+              </div>
+            </figure>
+          )}
+        </div>
       </div>
     </section>
   );
