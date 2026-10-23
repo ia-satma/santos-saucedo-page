@@ -267,9 +267,9 @@ export const mediaDefaults = {
       "featured": false
     },
     {
-      "photo": "areaTrabajo",
-      "altEs": "Espacios de trabajo de la firma",
-      "alt": "The firm’s workspaces",
+      "photo": "salaJuntas2",
+      "altEs": "Sala de juntas con estantería, en la oficina de Santos & Saucedo",
+      "alt": "Meeting room with shelving at the Santos & Saucedo office",
       "enabled": true,
       "featured": true
     },

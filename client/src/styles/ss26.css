@@ -751,6 +751,8 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 @media (max-width: 639px) { .ss-office-story { padding: 28px 0; } }
 
 @media (max-width: 639px) { .ss-prose { font-size: 18px; } }
+/* Teléfono: sin justificar (en columna angosta el justificado abre huecos grandes entre palabras) */
+@media (max-width: 639px) { .ss-prose, .ss-lead, .ss-creemos-body > * > p { text-align: start; } }
 
 /* Contact form: a compact surface with a clear field hierarchy. */
 .ss-contact-card {

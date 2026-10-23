@@ -133,9 +133,9 @@ export default function About() {
   },
   "de": {
     "title": "Über die Kanzlei",
-    "subtitle": "Mehr als 40 Jahre Erfahrung im Arbeitsrecht für Unternehmen",
-    "historyText1": "Santos & Saucedo ist eine auf Arbeitsrecht spezialisierte Boutique-Kanzlei, die seit mehr als 40 Jahren nationale und internationale Unternehmen berät. Von San Pedro Garza García, Nuevo León aus beraten wir die Geschäftsführung, die Personalabteilung und die internen Rechtsteams unserer Mandanten.",
-    "historyText2": "Die Entscheidungen eines Unternehmens über sein Personal sind selten rein arbeitsrechtlich: Sie berühren die Gesellschaft, die Verträge mit Dritten und zunehmend Menschen, die aus anderen Ländern kommen. Aus Rücksicht auf die Vertraulichkeit ihrer Angelegenheiten veröffentlicht die Kanzlei die Namen ihrer Mandanten nicht.",
+    "subtitle": "Eine partnergeführte Kanzlei mit landesweiter Reichweite.",
+    "historyText1": "Santos & Saucedo ist eine auf Arbeitsrecht für Unternehmen spezialisierte Kanzlei. Ihr Team vereint mehr als 40 Jahre Erfahrung in der Beratung nationaler und internationaler Unternehmen.",
+    "historyText2": "Die Kanzlei berät in den Bereichen Risikoprävention, Arbeitsbeziehungen und Streitbeilegung. Ihre Praxis umfasst zudem die gesellschafts- und migrationsrechtlichen Aspekte der Geschäftstätigkeit ihrer Mandanten.",
     "valuesTitle": "Wie wir arbeiten",
     "values": [
       {
@@ -162,15 +162,15 @@ export default function About() {
       },
       {
         "value": "72+",
-        "label": "Städte mit Präsenz"
+        "label": "Städte in unserem Allianznetzwerk"
       }
     ]
   },
   "zh": {
     "title": "关于律所",
-    "subtitle": "在企业劳动法领域拥有超过40年的经验",
-    "historyText1": "Santos & Saucedo 是一家专注于劳动法的精品律师事务所，拥有超过40年为国内外企业提供服务的经验。我们立足于新莱昂州圣佩德罗-加尔萨-加西亚，为客户的管理层、人力资源部门和内部法务团队提供咨询。",
-    "historyText2": "企业关于员工的决定很少只是劳动问题：它们涉及公司本身、与第三方的合同，也越来越多地涉及来自其他国家的人员。出于对客户事务保密的尊重，本所不公开客户名称。",
+    "subtitle": "一家由合伙人主导、业务覆盖全国的律所。",
+    "historyText1": "Santos & Saucedo 是一家专注于企业劳动法的律师事务所。其团队在为国内外企业提供咨询方面累计拥有超过40年的经验。",
+    "historyText2": "本所就风险预防、劳动关系和争议解决提供咨询，并将客户运营中涉及的公司法和移民事务纳入其业务之中。",
     "valuesTitle": "我们的工作方式",
     "values": [
       {
@@ -197,15 +197,15 @@ export default function About() {
       },
       {
         "value": "72+",
-        "label": "覆盖城市"
+        "label": "合作网络覆盖城市"
       }
     ]
   },
   "ko": {
     "title": "회사 소개",
-    "subtitle": "기업 노동법 분야에서 40년 이상의 경험",
-    "historyText1": "Santos & Saucedo는 노동법을 전문으로 하는 부티크 로펌으로, 40년 이상 국내외 기업을 자문해 왔습니다. 누에보레온주 산페드로 가르사 가르시아에서 고객사의 경영진, 인사부서 및 사내 법무팀을 자문합니다.",
-    "historyText2": "인력에 관한 기업의 결정은 노동 문제에 그치는 경우가 드뭅니다. 회사 자체와 제3자와의 계약, 그리고 점점 더 다른 나라에서 오는 사람들과도 관련됩니다. 고객 사안의 기밀을 존중하여 법인은 고객의 이름을 공개하지 않습니다.",
+    "subtitle": "파트너가 이끄는, 전국적 네트워크를 갖춘 로펌",
+    "historyText1": "Santos & Saucedo는 기업 노동법을 전문으로 하는 로펌입니다. 소속 팀은 국내외 기업 자문 분야에서 합산 40년 이상의 경험을 보유하고 있습니다.",
+    "historyText2": "법인은 위험 예방, 노사 관계 및 분쟁 해결에 관해 자문합니다. 또한 고객의 사업 운영에 관련된 회사법 및 이민 측면도 함께 다룹니다.",
     "valuesTitle": "일하는 방식",
     "values": [
       {
@@ -232,15 +232,15 @@ export default function About() {
       },
       {
         "value": "72+",
-        "label": "진출 도시"
+        "label": "제휴 네트워크 도시"
       }
     ]
   },
   "ja": {
     "title": "事務所について",
-    "subtitle": "企業労働法における40年以上の経験",
-    "historyText1": "Santos & Saucedoは労働法に特化したブティック法律事務所であり、40年以上にわたり国内外の企業を支援してきました。ヌエボ・レオン州サン・ペドロ・ガルサ・ガルシアを拠点に、クライアントの経営陣、人事部門、社内法務チームに助言を提供しています。",
-    "historyText2": "企業の人事に関する決定が労働の問題だけで終わることはまれです。会社そのもの、第三者との契約、そしてますます多くの場合、海外から来る人々にも関わります。クライアントの案件の秘密を尊重し、当事務所はクライアント名を公表していません。",
+    "subtitle": "パートナーが主導し、全国で業務を展開する法律事務所。",
+    "historyText1": "Santos & Saucedoは、企業向け労働法を専門とする法律事務所です。そのチームは、国内外の企業への助言において通算40年以上の経験を有しています。",
+    "historyText2": "当事務所は、リスク予防、労使関係、紛争解決について助言を行っています。また、クライアントの事業に関わる会社法および出入国関連の側面もあわせて取り扱っています。",
     "valuesTitle": "私たちの仕事の進め方",
     "values": [
       {
@@ -267,15 +267,15 @@ export default function About() {
       },
       {
         "value": "72+",
-        "label": "展開都市"
+        "label": "提携ネットワークの都市"
       }
     ]
   },
   "ar": {
     "title": "عن الشركة",
-    "subtitle": "أكثر من 40 عامًا من الخبرة في قانون العمل للشركات",
-    "historyText1": "Santos & Saucedo هي شركة محاماة متخصصة (بوتيك) في قانون العمل، بخبرة تزيد عن 40 عامًا في تقديم المشورة للشركات المحلية والدولية. من سان بيدرو غارزا غارسيا، نويفو ليون، نقدم المشورة لإدارة عملائنا وأقسام الموارد البشرية والفرق القانونية الداخلية.",
-    "historyText2": "نادرًا ما تكون قرارات الشركة بشأن موظفيها مسألة عمالية فحسب: فهي تمسّ الشركة ذاتها، والعقود مع الغير، وبشكل متزايد أشخاصًا قادمين من بلدان أخرى. واحترامًا لسرية شؤون عملائه، لا ينشر المكتب أسماءهم.",
+    "subtitle": "مكتب يقوده الشركاء ويمتد نشاطه على مستوى البلاد.",
+    "historyText1": "Santos & Saucedo مكتب محاماة متخصص في قانون العمل للشركات. ويجمع فريقه أكثر من 40 عامًا من الخبرة في تقديم المشورة للشركات المحلية والدولية.",
+    "historyText2": "يقدم المكتب المشورة في الوقاية من المخاطر وعلاقات العمل وتسوية النزاعات. كما تشمل ممارسته الجوانب المؤسسية والمتعلقة بالهجرة التي تتصل بعمليات عملائه.",
     "valuesTitle": "كيف نعمل",
     "values": [
       {
@@ -302,15 +302,15 @@ export default function About() {
       },
       {
         "value": "72+",
-        "label": "مدينة نتواجد فيها"
+        "label": "مدينة في شبكة تحالفاتنا"
       }
     ]
   },
   "ru": {
     "title": "О фирме",
-    "subtitle": "Более 40 лет опыта в корпоративном трудовом праве",
-    "historyText1": "Santos & Saucedo — это бутиковая фирма, специализирующаяся на трудовом праве, с более чем 40-летним опытом консультирования национальных и международных компаний. Из Сан-Педро-Гарса-Гарсия, Нуэво-Леон, мы консультируем руководство, кадровые службы и внутренние юридические команды наших клиентов.",
-    "historyText2": "Решения компании о персонале редко касаются только трудового права: они затрагивают корпоративные вопросы, договоры с третьими лицами и всё чаще — людей, приезжающих из других стран. Из уважения к конфиденциальности дел своих клиентов фирма не публикует их имена.",
+    "subtitle": "Партнёрская фирма с общенациональным охватом.",
+    "historyText1": "Santos & Saucedo — фирма, специализирующаяся на трудовом праве для бизнеса. Её команда объединяет более 40 лет опыта консультирования национальных и международных компаний.",
+    "historyText2": "Фирма консультирует по вопросам предотвращения рисков, трудовых отношений и разрешения споров. Её практика также охватывает корпоративные и миграционные аспекты деятельности клиентов.",
     "valuesTitle": "Как мы работаем",
     "values": [
       {
@@ -337,15 +337,15 @@ export default function About() {
       },
       {
         "value": "72+",
-        "label": "Городов присутствия"
+        "label": "Городов в нашей партнёрской сети"
       }
     ]
   },
   "fr": {
     "title": "Le cabinet",
-    "subtitle": "Plus de 40 ans d'expérience en droit du travail des entreprises",
-    "historyText1": "Santos & Saucedo est un cabinet boutique spécialisé en droit du travail, fort de plus de 40 ans d'expérience au service d'entreprises nationales et internationales. Depuis San Pedro Garza García, Nuevo León, nous conseillons la direction, les ressources humaines et les équipes juridiques internes de nos clients.",
-    "historyText2": "Les décisions d’une entreprise concernant son personnel relèvent rarement du seul droit du travail : elles touchent la société, les contrats avec des tiers et, de plus en plus, des personnes venues d’autres pays. Par respect pour la confidentialité de leurs dossiers, le cabinet ne publie pas les noms de ses clients.",
+    "subtitle": "Un cabinet dirigé par ses associés, à portée nationale.",
+    "historyText1": "Santos & Saucedo est un cabinet spécialisé en droit du travail pour les entreprises. Son équipe réunit plus de 40 ans d’expérience dans le conseil aux entreprises nationales et internationales.",
+    "historyText2": "Le cabinet intervient en prévention des risques, relations de travail et règlement des différends. Sa pratique intègre également les aspects sociétaires et migratoires liés à l’activité de ses clients.",
     "valuesTitle": "Notre façon de travailler",
     "values": [
       {
@@ -372,15 +372,15 @@ export default function About() {
       },
       {
         "value": "72+",
-        "label": "Villes de présence"
+        "label": "Villes de notre réseau d’alliances"
       }
     ]
   },
   "it": {
     "title": "Chi siamo",
-    "subtitle": "Oltre 40 anni di esperienza nel diritto del lavoro aziendale",
-    "historyText1": "Santos & Saucedo è uno studio boutique specializzato in diritto del lavoro, con oltre 40 anni di esperienza nella consulenza a imprese nazionali e internazionali. Da San Pedro Garza García, Nuevo León, assistiamo la direzione, le risorse umane e i team legali interni dei nostri clienti.",
-    "historyText2": "Le decisioni di un’impresa sul proprio personale raramente riguardano solo il diritto del lavoro: toccano la società, i contratti con terzi e, sempre più spesso, persone che arrivano da altri paesi. Per rispetto della riservatezza delle loro questioni, lo studio non pubblica i nomi dei propri clienti.",
+    "subtitle": "Uno studio guidato dai soci, con portata nazionale.",
+    "historyText1": "Santos & Saucedo è uno studio specializzato in diritto del lavoro per le imprese. Il suo team riunisce oltre 40 anni di esperienza nella consulenza a società nazionali e internazionali.",
+    "historyText2": "Lo studio assiste in materia di prevenzione dei rischi, rapporti di lavoro e risoluzione delle controversie. La sua attività integra inoltre gli aspetti societari e migratori che interessano l’operatività dei clienti.",
     "valuesTitle": "Come lavoriamo",
     "values": [
       {
@@ -407,7 +407,7 @@ export default function About() {
       },
       {
         "value": "72+",
-        "label": "Città con presenza"
+        "label": "Città della nostra rete di alleanze"
       }
     ]
   }
@@ -486,7 +486,7 @@ export default function About() {
                 las fotos de la oficina (K1) y sin pie: la página de la oficina la enlaza al final.
                 El contenedor mide hasta 1320 px: nunca más ancha que su archivo. */}
             <figure className="mb-20 lg:mb-24" data-testid="figure-about-reception">
-              <div className="bg-ss-rule">
+              <div className="overflow-hidden rounded-[10px] bg-ss-rule">
                 <img
                   src={photos.recepcionBanda.url}
                   srcSet={photos.recepcionBanda.smallUrl && photos.recepcionBanda.smallUrl !== photos.recepcionBanda.url ? `${photos.recepcionBanda.smallUrl} 761w, ${photos.recepcionBanda.url} 1522w` : undefined}

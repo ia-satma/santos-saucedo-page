@@ -102,6 +102,7 @@ const content: Record<LanguageCode, OfficesContent> = {
   de: {
     intro:
       "Die Kanzleiräume von Santos & Saucedo liegen in der Colonia Del Valle in San Pedro Garza García, Nuevo León, gegenüber dem Cerro de la Silla.",
+    story: {"workTitle": "Die tägliche Arbeit", "workText": "Arbeitsbereiche und Besprechungsräume erlauben den Wechsel zwischen Einzelarbeit und Zusammenarbeit im Team. Hier werden Unterlagen geprüft, Mandate vorbereitet und Gespräche mit unseren Mandanten geführt.", "cultureTitle": "Bibliothek und Kunst", "cultureText": "Die juristische Bibliothek und zeitgenössische Kunst teilen sich verschiedene Räume der Kanzlei. Bücher, Gemälde und Skulpturen verleihen dem Arbeitsumfeld von Santos & Saucedo einen eigenen Charakter."},
     reception: "Empfang",
     meetingRooms: "Besprechungsräume",
     workAreas: "Arbeitsbereiche",
@@ -129,6 +130,7 @@ const content: Record<LanguageCode, OfficesContent> = {
   fr: {
     intro:
       "Le bureau de Santos & Saucedo se trouve dans la colonia Del Valle, à San Pedro Garza García, Nuevo León, face au Cerro de la Silla.",
+    story: {"workTitle": "Le travail au quotidien", "workText": "Les espaces de travail et les salles de réunion permettent d’alterner travail individuel et collaboration en équipe. Ce sont des lieux pour examiner des documents, préparer les dossiers et échanger avec nos clients.", "cultureTitle": "Bibliothèque et art", "cultureText": "La bibliothèque juridique et l’art contemporain cohabitent dans différents espaces du bureau. Livres, tableaux et sculptures donnent un caractère propre à l’environnement de travail de Santos & Saucedo."},
     reception: "Accueil",
     meetingRooms: "Salles de réunion",
     workAreas: "Espaces de travail",
@@ -156,6 +158,7 @@ const content: Record<LanguageCode, OfficesContent> = {
   it: {
     intro:
       "La sede di Santos & Saucedo si trova nella colonia Del Valle, a San Pedro Garza García, Nuevo León, di fronte al Cerro de la Silla.",
+    story: {"workTitle": "Il lavoro quotidiano", "workText": "Le aree di lavoro e le sale riunioni permettono di alternare il lavoro individuale alla collaborazione di squadra. Sono spazi per esaminare documenti, preparare le pratiche e incontrare i nostri clienti.", "cultureTitle": "Biblioteca e arte", "cultureText": "La biblioteca giuridica e l’arte contemporanea convivono in diversi spazi della sede. Libri, dipinti e sculture conferiscono un carattere proprio all’ambiente di lavoro di Santos & Saucedo."},
     reception: "Accoglienza",
     meetingRooms: "Sale riunioni",
     workAreas: "Aree di lavoro",
@@ -183,6 +186,7 @@ const content: Record<LanguageCode, OfficesContent> = {
   ru: {
     intro:
       "Офис Santos & Saucedo находится в районе Дель-Валье в Сан-Педро-Гарса-Гарсия, штат Нуэво-Леон, напротив горы Серро-де-ла-Силья.",
+    story: {"workTitle": "Повседневная работа", "workText": "Рабочие зоны и переговорные позволяют сочетать индивидуальную работу и командное взаимодействие. Здесь изучают документы, готовят дела и встречаются с клиентами.", "cultureTitle": "Библиотека и искусство", "cultureText": "Юридическая библиотека и современное искусство соседствуют в разных пространствах офиса. Книги, картины и скульптуры придают рабочей среде Santos & Saucedo особый характер."},
     reception: "Приёмная",
     meetingRooms: "Переговорные",
     workAreas: "Рабочие зоны",
@@ -209,6 +213,7 @@ const content: Record<LanguageCode, OfficesContent> = {
   },
   zh: {
     intro: "Santos & Saucedo的办公室位于新莱昂州圣佩德罗加尔萨加西亚的Del Valle区，面朝马鞍山（Cerro de la Silla）。",
+    story: {"workTitle": "日常工作", "workText": "办公区和会议室兼顾个人工作与团队协作，是审阅文件、准备案件以及与客户会谈的场所。", "cultureTitle": "图书馆与艺术", "cultureText": "法律图书馆与当代艺术分布在办公室的各个空间。书籍、绘画和雕塑赋予 Santos & Saucedo 的工作环境独特的气质。"},
     reception: "前台",
     meetingRooms: "会议室",
     workAreas: "办公区",
@@ -236,6 +241,7 @@ const content: Record<LanguageCode, OfficesContent> = {
   ja: {
     intro:
       "Santos & Saucedoのオフィスは、ヌエボ・レオン州サン・ペドロ・ガルサ・ガルシアのコロニア・デル・バジェにあり、セロ・デ・ラ・シージャに面しています。",
+    story: {"workTitle": "日々の業務", "workText": "執務エリアと会議室は、個人作業とチームでの協働を切り替えられるよう設計されています。書類の確認や案件の準備、クライアントとの打ち合わせを行う場です。", "cultureTitle": "ライブラリーとアート", "cultureText": "法律書のライブラリーと現代アートが、オフィスのさまざまな空間に共存しています。書籍、絵画、彫刻が、Santos & Saucedoの職場に独自の個性を与えています。"},
     reception: "受付",
     meetingRooms: "会議室",
     workAreas: "執務エリア",
@@ -264,6 +270,7 @@ const content: Record<LanguageCode, OfficesContent> = {
   ko: {
     intro:
       "Santos & Saucedo의 사무실은 누에보레온주 산페드로가르사가르시아의 콜로니아 델바예에 있으며, 세로 데 라 시야를 마주하고 있습니다.",
+    story: {"workTitle": "일상 업무", "workText": "업무 공간과 회의실은 개인 업무와 팀 협업을 오갈 수 있도록 마련되어 있습니다. 문서를 검토하고 사안을 준비하며 고객과 상담하는 공간입니다.", "cultureTitle": "도서관과 예술", "cultureText": "법률 도서관과 현대 미술이 사무실 곳곳에 함께 자리하고 있습니다. 책과 회화, 조각이 Santos & Saucedo의 업무 환경에 고유한 개성을 더합니다."},
     reception: "리셉션",
     meetingRooms: "회의실",
     workAreas: "업무 공간",
@@ -291,6 +298,7 @@ const content: Record<LanguageCode, OfficesContent> = {
   ar: {
     intro:
       "يقع مكتب Santos & Saucedo في حي ديل فالي في سان بيدرو غارثا غارسيا بولاية نويفو ليون، قبالة جبل سيرو دي لا سيا.",
+    story: {"workTitle": "العمل اليومي", "workText": "تتيح مساحات العمل وقاعات الاجتماعات التنقل بين العمل الفردي والتعاون الجماعي. وهي أماكن لمراجعة الوثائق وإعداد القضايا والاجتماع بعملائنا.", "cultureTitle": "المكتبة والفن", "cultureText": "تتجاور المكتبة القانونية والفن المعاصر في مساحات مختلفة من المكتب. وتمنح الكتب واللوحات والمنحوتات بيئة العمل في Santos & Saucedo طابعها الخاص."},
     reception: "الاستقبال",
     meetingRooms: "قاعات الاجتماعات",
     workAreas: "مساحات العمل",
