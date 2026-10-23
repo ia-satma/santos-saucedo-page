@@ -6,6 +6,7 @@ import { PhotoBand } from "@/components/home26/PhotoBand";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
+import { PhotoPageHeader } from "@/components/editorial/PhotoPageHeader";
 import { MonitorList, MonitorSubscribe } from "@/components/monitor/MonitorList";
 import { chrome26 } from "@/components/home26/chrome26";
 import { home26 } from "@/components/home26/content";
@@ -58,7 +59,8 @@ export default function NewsPage() {
       {/* Encabezado dentro de <main> (el salto al contenido no se salta el h1); el relleno
           del cuerpo va en su propio envoltorio. ss-container: borde de logotipo y pie. */}
       <main id="main-content">
-        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-news-hero">
+        <section className="editorial-page-hero ss-photo-page-hero" data-testid="section-news-hero">
+          <PhotoPageHeader src="/editorial/monitor-prevencion.webp" position="50% 50%" />
           <div className="ss-container">
             <div className="max-w-3xl">
               <Eyebrow num="04" tone="navy" className="mb-6" />

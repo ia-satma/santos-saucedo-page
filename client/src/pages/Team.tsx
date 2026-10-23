@@ -12,6 +12,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { equipoMosaicPhotos as equipoPhotos } from "@/lib/equipoMosaicPhotos";
 import { fallbackToOriginalSrc, getTeamPhotoSrcSet, isNamedOnTeamPage } from "@/lib/teamPhotoSources";
 import { Eyebrow } from "@/components/editorial";
+import { PhotoPageHeader } from "@/components/editorial/PhotoPageHeader";
 import { TextLink } from "@/components/home26/primitives";
 import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
@@ -336,7 +337,8 @@ export default function Team() {
 
       {/* El encabezado va dentro de main: "Saltar al contenido" y el landmark incluyen el h1 */}
       <main id="main-content" data-testid="section-team-main">
-        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-team-hero">
+        <section className="editorial-page-hero ss-photo-page-hero" data-testid="section-team-hero">
+          <PhotoPageHeader photo="arteColor" position="55% 46%" />
           <div className="ss-container">
             <div>
               <Eyebrow num="03" tone="navy" className="mb-6" />

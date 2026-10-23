@@ -23,6 +23,7 @@ import Footer from "@/components/Footer";
 import SEOHead, { detailTitle } from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
+import { PhotoPageHeader } from "@/components/editorial/PhotoPageHeader";
 import { SplitSection } from "@/components/home26/primitives";
 import { useSiteContact } from "@/components/home26/useSiteContact";
 import type { LanguageCode } from "@shared/schema";
@@ -343,7 +344,8 @@ export default function Newsletter() {
           salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
           siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
       <main id="main-content">
-      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-newsletter-hero">
+      <section className="editorial-page-hero ss-photo-page-hero" data-testid="section-newsletter-hero">
+        <PhotoPageHeader src="/editorial/monitor-auditoria.webp" position="50% 50%" />
         <div className="ss-container">
           <div className="max-w-3xl">
             <Eyebrow num="04" tone="navy" className="mb-6" />

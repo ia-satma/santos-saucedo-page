@@ -6,6 +6,7 @@ import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { Eyebrow } from "@/components/editorial";
+import { PhotoPageHeader } from "@/components/editorial/PhotoPageHeader";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
 
 // Testimonios (junta 16-10-2026): muro sobrio de comentarios de clientes que el despacho
@@ -53,7 +54,8 @@ export default function Testimonials() {
       <SEOHead page="testimonials" language={language} />
       <Header />
       <main id="main-content">
-        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-testimonials-hero">
+        <section className="editorial-page-hero ss-photo-page-hero" data-testid="section-testimonials-hero">
+          <PhotoPageHeader photo="escultura" position="50% 46%" />
           <div className="ss-container">
             <div className="max-w-3xl">
               <Eyebrow num="" tone="navy" className="mb-6" />

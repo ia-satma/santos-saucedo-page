@@ -45,7 +45,8 @@ async function check(page, expected) {
   const main = page.locator("main");
   assert.equal(await main.locator("h1").count(), 1);
   assert.equal(await page.locator('[data-testid^="card-value-"]').count(), 4);
-  assert.equal(await main.locator("img").count(), 3);
+  assert.equal(await main.locator("img").count(), 4,
+    "The new decorative cover accompanies the three unchanged gallery photographs");
   assert.equal(await page.getByTestId("section-history").locator("img").count(), 0,
     "The reception no longer occupies the introductory text column");
   assert.equal(await page.getByTestId("gallery-about-office").locator("img").count(), 3,
@@ -75,6 +76,7 @@ async function check(page, expected) {
     images: [...el.querySelectorAll("img")].map(img => ({
       loaded: img.complete && img.naturalWidth > 0, alt: img.alt,
       filter: getComputedStyle(img).filter,
+      decorative: !!img.closest('[aria-hidden="true"]'),
     })),
     order: ["section-history", "section-values", "gallery-about-office", "nav-about-related"]
       .map(id => el.querySelector(`[data-testid="${id}"]`).getBoundingClientRect().top),
@@ -83,7 +85,8 @@ async function check(page, expected) {
   assert.ok(layout.paragraphs.every(p => p.align === "justify" && p.hyphens === "none" && p.wordBreak !== "break-all" && !p.clipped),
     `Justified paragraphs retain whole words: ${JSON.stringify(layout.paragraphs)}`);
   assert.ok(layout.headings.every(h => !h.clipped), "Titles are not clipped");
-  assert.ok(layout.images.every(img => img.loaded && img.alt && img.filter === "none"), "Color images load with alternative text");
+  assert.ok(layout.images.every(img => img.loaded && (img.decorative || img.alt) && img.filter === "none"),
+    "Color images load; informative images retain alternative text and decorative cover is hidden");
   assert.deepEqual([...layout.order].sort((a, b) => a - b), layout.order, "Principles precede the secondary photo gallery");
   const gallery = await page.getByTestId("gallery-about-office").evaluate(el => {
     const reception = el.querySelector('[data-testid="img-about-reception"]');

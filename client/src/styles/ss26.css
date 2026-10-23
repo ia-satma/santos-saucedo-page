@@ -748,6 +748,95 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 
 .ss-office-story { grid-column: 1 / -1; display: flex; align-items: center; padding: clamp(28px, 5vw, 64px) 0; }
 .ss-office-story > div { width: 100%; }
+
+/* Principal-page photo headers — deliberately scoped so detail, legal, editorial
+   article, home and the office reference retain their existing treatments. */
+.editorial-page-hero.ss-photo-page-hero {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: clamp(420px, 39vw, 610px);
+  padding-block: clamp(154px, 17vw, 224px) clamp(56px, 7vw, 92px);
+  color: #fff;
+  background: #18175b;
+}
+.editorial-page-hero.ss-photo-page-hero.practice-directory-hero {
+  padding-block: clamp(154px, 17vw, 224px) clamp(56px, 7vw, 92px);
+}
+.ss-photo-page-hero__media {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  background: #18175b;
+}
+.ss-photo-page-hero__image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  object-fit: cover;
+}
+.editorial-page-hero.ss-photo-page-hero::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(0deg, rgb(17 18 25 / 0.72) 0%, rgb(17 18 25 / 0.37) 34%, rgb(17 18 25 / 0.08) 78%),
+    linear-gradient(90deg, rgb(17 18 25 / 0.22), transparent 72%);
+}
+.editorial-page-hero.ss-photo-page-hero::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset-block: 0;
+  inset-inline-end: clamp(16px, 5vw, 72px);
+  width: clamp(128px, 28vw, 360px);
+  pointer-events: none;
+  background-color: rgb(255 255 255 / 0.055);
+  -webkit-mask: url("../../attached_assets/ss26/seccion.svg") center / contain no-repeat;
+  mask: url("../../attached_assets/ss26/seccion.svg") center / contain no-repeat;
+}
+.editorial-page-hero.ss-photo-page-hero > .ss-container {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+}
+.ss-photo-page-hero,
+.ss-photo-page-hero :where(p, li, address) {
+  color: #fff;
+}
+.ss-photo-page-hero h1,
+.ss-photo-page-hero .ss-lead,
+.ss-photo-page-hero .practice-directory-subtitle {
+  color: #fff;
+}
+.ss-photo-page-hero .ss-eyebrow,
+.ss-photo-page-hero .ss-eyebrow span {
+  color: rgb(255 255 255 / 0.88);
+}
+.ss-photo-page-hero .ss-eyebrow .ss-eyebrow-mark {
+  color: #b2eb3e;
+}
+.ss-photo-page-hero [data-testid^="link-back-to"] {
+  color: rgb(255 255 255 / 0.88);
+}
+@media (max-width: 639px) {
+  .editorial-page-hero.ss-photo-page-hero,
+  .editorial-page-hero.ss-photo-page-hero.practice-directory-hero {
+    min-height: clamp(420px, 72svh, 580px);
+    padding-block: 138px 52px;
+  }
+  .editorial-page-hero.ss-photo-page-hero::after {
+    background: linear-gradient(0deg, rgb(17 18 25 / 0.78), rgb(17 18 25 / 0.34) 62%, rgb(17 18 25 / 0.2));
+  }
+}
 @media (max-width: 639px) { .ss-office-story { padding: 28px 0; } }
 
 @media (max-width: 639px) { .ss-prose { font-size: 18px; } }

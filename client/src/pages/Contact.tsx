@@ -34,6 +34,7 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
+import { PhotoPageHeader } from "@/components/editorial/PhotoPageHeader";
 import { useSiteContact } from "@/components/home26/useSiteContact";
 import { anyPartnerHasDirectContact } from "@/lib/partnerContact";
 import { PRACTICE_SLUGS, practiceShortName, usePracticeNames } from "@/lib/practiceNames";
@@ -736,7 +737,8 @@ export default function Contact() {
           salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
           siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
       <main id="main-content">
-        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-contact-hero">
+        <section className="editorial-page-hero ss-photo-page-hero" data-testid="section-contact-hero">
+          <PhotoPageHeader photo="fachada" position="50% 44%" />
           <div className="ss-container">
             <div className="max-w-3xl">
               <Eyebrow num="06" tone="navy" className="mb-6" />

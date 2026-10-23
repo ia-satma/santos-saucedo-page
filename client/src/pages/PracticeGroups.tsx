@@ -12,6 +12,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { Eyebrow } from "@/components/editorial";
+import { PhotoPageHeader } from "@/components/editorial/PhotoPageHeader";
 import { chrome26 } from "@/components/home26/chrome26";
 import { usePracticeNames } from "@/lib/practiceNames";
 import { getPracticeImage } from "@/lib/practiceIndustryImages";
@@ -211,7 +212,8 @@ export default function PracticeGroups() {
       <Header />
 
       <main id="main-content">
-        <section className="practice-directory-hero editorial-page-hero" data-testid="section-practice-groups-hero">
+        <section className="practice-directory-hero editorial-page-hero ss-photo-page-hero" data-testid="section-practice-groups-hero">
+          <PhotoPageHeader src={getPracticeImage("laboral-seguridad-social")} position="50% 44%" />
           <div className="ss-container">
             <div className="practice-directory-intro">
               <Eyebrow num="02" tone="navy" className="mb-6" />

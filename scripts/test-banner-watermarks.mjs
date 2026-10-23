@@ -65,6 +65,7 @@ try {
           heroWidth: rect.width, heroHeight: rect.height,
           height: parseFloat(css.height), top: parseFloat(css.top),
           paper: el.classList.contains("editorial-page-hero--paper"),
+          photo: el.classList.contains("ss-photo-page-hero"),
           isolated: getComputedStyle(el).isolation,
         };
       });
@@ -72,7 +73,7 @@ try {
       assert.equal(mark.content, '""', `${label}: decorative empty content`);
       assert.match(mark.mask, /seccion.*\.svg/, `${label}: official symbol`);
       assets.add(mark.mask.match(/url\(["']?(.*?)["']?\)/)[1]);
-      assert.equal(mark.z, "-1", `${label}: behind content`);
+      assert.equal(mark.z, mark.photo ? "2" : "-1", `${label}: behind content, above photographic layers`);
       assert.equal(mark.events, "none", `${label}: no click interception`);
       assert.equal(mark.isolated, "isolate", `${label}: contained stacking`);
       const color = mark.opacity.match(/[\d.]+/g).map(Number);
