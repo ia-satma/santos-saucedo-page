@@ -147,6 +147,8 @@ export function PersonJsonLd({
   })) || [];
 
   const siteUrl=useCmsContent("integrations",defaults.integrations).siteUrl;
+  // In memoriam: sin "worksFor" ni lugar de trabajo en presente; solo la afiliación a la firma
+  const inMemoriam = /in memoriam/i.test(jobTitle);
   const schema = {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -156,14 +158,15 @@ export function PersonJsonLd({
     "image": imageUrl ? absoluteUrl(imageUrl) : undefined,
     "email": email || undefined,
     "telephone": telephone || undefined,
-    "worksFor": ORGANIZATION,
+    "worksFor": inMemoriam ? undefined : ORGANIZATION,
+    "affiliation": inMemoriam ? ORGANIZATION : undefined,
     "alumniOf": alumniOf.length > 0 ? alumniOf : undefined,
     "knowsLanguage": languages || undefined,
     "knowsAbout": knowsAbout || undefined,
     "sameAs": sameAs.length > 0 ? sameAs : undefined,
     // La oficina, igual que #organization en index.html, como lugar de trabajo: "address" de
     // una Person se lee como domicilio particular, y ese dato no se publica
-    "workLocation": {
+    "workLocation": inMemoriam ? undefined : {
       "@type": "Place",
       "name": "Santos & Saucedo",
       "address": {
@@ -175,7 +178,7 @@ export function PersonJsonLd({
         "addressCountry": "MX"
       }
     },
-    "memberOf": ORGANIZATION
+    "memberOf": inMemoriam ? undefined : ORGANIZATION
   };
 
   const cleanSchema = JSON.parse(JSON.stringify(schema, (key, value) => 

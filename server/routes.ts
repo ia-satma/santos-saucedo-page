@@ -168,7 +168,7 @@ function generateVCard(member: any, language: "es" | "en" = "es"): string {
     'VERSION:3.0',
     `FN:${safeName}`,
     `N:${lastName};${firstName};;;`,
-    `ORG:Santos & Saucedo, S.C.`,
+    `ORG:Santos & Saucedo\\, S.C.`,
   ];
   // Sin "null" en la tarjeta cuando falta el cargo o el rol
   if (title) lines.push(`TITLE:${title}`);
@@ -182,15 +182,22 @@ function generateVCard(member: any, language: "es" | "en" = "es"): string {
     lines.push(`TEL;TYPE=WORK,VOICE:${member.phone}`);
   }
   
-  lines.push(`ADR;TYPE=WORK:;;Río Tamazunchale 205 Norte, Col. del Valle;San Pedro Garza García;N.L.;66220;México`);
+  // vCard 3.0: la coma dentro de un componente va escapada (sin escape, "Col. del Valle" se lee
+  // como un segundo valor de la calle)
+  lines.push(`ADR;TYPE=WORK:;;Río Tamazunchale 205 Norte\\, Col. del Valle;San Pedro Garza García;N.L.;66220;México`);
   lines.push(`URL:https://www.santossaucedo.com`);
-  
+
   if (member.linkedinUrl) {
     lines.push(`X-SOCIALPROFILE;TYPE=linkedin:${member.linkedinUrl}`);
   }
-  
+
+  // La foto con URL absoluta: una ruta relativa ("/team_photos/…") no la resuelve ninguna
+  // libreta de contactos
   if (member.imageUrl) {
-    lines.push(`PHOTO;VALUE=URI:${member.imageUrl}`);
+    const photo = /^https?:\/\//i.test(member.imageUrl)
+      ? member.imageUrl
+      : `https://www.santossaucedo.com${member.imageUrl.startsWith('/') ? '' : '/'}${member.imageUrl}`;
+    lines.push(`PHOTO;VALUE=URI:${photo}`);
   }
   
   lines.push('END:VCARD');
@@ -711,7 +718,11 @@ export async function registerRoutes(
       if (!member || !isNamedOnTeamPage(member)) {
         return res.status(404).json({ error: "Team member not found" });
       }
-      
+      // Socio fundador in memoriam: la ficha no ofrece vCard (sin contacto); la ruta tampoco
+      if (/in memoriam/i.test(member.title ?? "")) {
+        return res.status(404).json({ error: "Team member not found" });
+      }
+
       // Con el DTO público: correo y teléfono generales de la firma, sin LinkedIn ni datos
       // personales que el registro pudiera traer (shared/teamVisibility)
       const vcard = generateVCard(toPublicTeamProfile(member), language);
