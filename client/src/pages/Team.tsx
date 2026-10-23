@@ -336,7 +336,7 @@ export default function Team() {
 
       {/* El encabezado va dentro de main: "Saltar al contenido" y el landmark incluyen el h1 */}
       <main id="main-content" data-testid="section-team-main">
-        <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-team-hero">
+        <section className="editorial-page-hero ss-principal-page-hero ss-team-page-hero" data-testid="section-team-hero">
           <div className="ss-container">
             <div>
               <Eyebrow num="03" tone="navy" className="mb-6" />

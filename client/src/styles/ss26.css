@@ -772,6 +772,27 @@ a:focus-visible > .ss-arrow:dir(rtl) {
     padding-block: 138px 52px;
   }
 }
+
+/* Socios: compacta solo su cabecera; conserva espacio para títulos CMS largos. */
+.editorial-page-hero.ss-principal-page-hero.ss-team-page-hero {
+  min-height: clamp(320px, 24vw, 350px);
+  padding-block: clamp(104px, 9vw, 132px) 44px;
+}
+@media (max-width: 639px) {
+  .editorial-page-hero.ss-principal-page-hero.ss-team-page-hero {
+    min-height: clamp(280px, 42svh, 320px);
+    padding-block: 100px 36px;
+  }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .ss-team-page-hero::before {
+    transition: transform 420ms var(--ss-ease);
+  }
+  .ss-team-page-hero:hover::before {
+    transform: translateX(-6px) scale(1.015);
+  }
+}
+
 @media (max-width: 639px) { .ss-office-story { padding: 28px 0; } }
 
 @media (max-width: 639px) { .ss-prose { font-size: 18px; } }
