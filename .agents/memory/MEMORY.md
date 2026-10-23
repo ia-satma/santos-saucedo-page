@@ -2,3 +2,4 @@
 - [Fotografía editorial](editorial-photography.md) — En las imágenes del Monitor Laboral, evitar rostros.
 - [Palabras completas](paragraph-wrapping.md) — No dividir palabras con guiones automáticos en los párrafos del sitio.
 - [Capturas del Monitor](monitor-visual-testing.md) — Excluir de la captura la cabecera sticky, no el contenido editorial, para evitar falsos positivos por scroll.
+- [Recepción en Nuestra firma](about-photography.md) — El usuario rechaza la recepción pequeña «tipo editorial» junto al texto; prefiere verla amplia con las otras fotos.

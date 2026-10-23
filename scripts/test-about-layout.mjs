@@ -46,6 +46,10 @@ async function check(page, expected) {
   assert.equal(await main.locator("h1").count(), 1);
   assert.equal(await page.locator('[data-testid^="card-value-"]').count(), 4);
   assert.equal(await main.locator("img").count(), 3);
+  assert.equal(await page.getByTestId("section-history").locator("img").count(), 0,
+    "The reception no longer occupies the introductory text column");
+  assert.equal(await page.getByTestId("gallery-about-office").locator("img").count(), 3,
+    "All three existing photographs belong to the lower gallery");
   if (expected) {
     const text = normalize(await main.innerText());
     for (const phrase of [expected.subtitle, expected.historyText1, expected.historyText2, expected.valuesTitle,
@@ -81,6 +85,32 @@ async function check(page, expected) {
   assert.ok(layout.headings.every(h => !h.clipped), "Titles are not clipped");
   assert.ok(layout.images.every(img => img.loaded && img.alt && img.filter === "none"), "Color images load with alternative text");
   assert.deepEqual([...layout.order].sort((a, b) => a - b), layout.order, "Principles precede the secondary photo gallery");
+  const gallery = await page.getByTestId("gallery-about-office").evaluate(el => {
+    const reception = el.querySelector('[data-testid="img-about-reception"]');
+    const otherImages = [...el.querySelectorAll("img")].filter(img => img !== reception);
+    return {
+      width: el.getBoundingClientRect().width,
+      reception: reception.getBoundingClientRect().toJSON(),
+      naturalRatio: reception.naturalWidth / reception.naturalHeight,
+      naturalWidth: reception.naturalWidth,
+      others: otherImages.map(img => img.getBoundingClientRect().toJSON()),
+      availableWidth: innerWidth,
+    };
+  });
+  assert.ok(Math.abs(gallery.reception.width - gallery.width) <= 1, "Reception uses the full gallery width");
+  // srcset density-corrected natural dimensions are integer-rounded by Chromium.
+  assert.ok(Math.abs(gallery.reception.height - gallery.reception.width / gallery.naturalRatio)
+    <= Math.max(1, gallery.reception.width / gallery.naturalWidth),
+    "Reception retains its natural panorama without cropping");
+  assert.ok(gallery.others.every(image => image.top >= gallery.reception.bottom),
+    "The other photographs appear below the reception");
+  assert.ok(Math.abs(gallery.others[0].width - gallery.others[1].width) <= 1
+    && Math.abs(gallery.others[0].height - gallery.others[1].height) <= 1,
+  "The two secondary photographs have equal dimensions");
+  if (gallery.availableWidth >= 768) {
+    assert.ok(Math.abs(gallery.others[0].top - gallery.others[1].top) <= 1,
+      "The desktop/tablet pair is horizontally aligned");
+  }
   const nav = page.getByTestId("nav-about-related");
   assert.deepEqual(await nav.locator("a").evaluateAll(links => links.map(link => new URL(link.href).pathname)),
     ["/team", "/practice-groups", "/news", "/offices"]);
@@ -92,7 +122,8 @@ async function check(page, expected) {
 
 try {
   const cases = [["es", 1440], ["es", 1024], ["es", 768], ["es", 375], ["es", 320],
-    ["en", 1440], ["en", 375], ["de", 320], ["de", 1024], ["ar", 375], ["ar", 1440], ["zh", 375]];
+    ["en", 1440], ["en", 375], ["de", 320], ["de", 1024], ["ar", 375], ["ar", 1440], ["zh", 375],
+    ["fr", 375], ["it", 375], ["ru", 375], ["ko", 375], ["ja", 375]];
   for (const [language, width] of cases) {
     const { page } = await open(language, width);
     await check(page, copy[language]);

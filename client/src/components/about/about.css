@@ -10,38 +10,32 @@
 }
 
 .ss-about-intro {
-  display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr);
-  align-items: start;
-  gap: clamp(32px, 5vw, 76px);
+  display: block;
 }
 
 .ss-about-copy {
-  max-width: 58rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px clamp(28px, 5vw, 76px);
+}
+
+.ss-about-copy > .ss-lead,
+.ss-about-copy > .ss-prose {
+  min-width: 0;
+  max-width: 68ch;
 }
 
 .ss-about-copy > .ss-prose {
-  margin-top: clamp(18px, 2vw, 26px);
+  margin-top: 0;
   font-size: clamp(17px, 1.25vw, 19px);
-}
-
-.ss-about-reception {
-  margin: 8px 0 0;
-  min-width: 0;
-}
-
-.ss-about-reception img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
 }
 
 .ss-about-stats {
   display: grid;
+  grid-column: 1 / -1;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(18px, 3vw, 44px);
-  margin-top: clamp(32px, 4vw, 54px);
-  max-width: 690px;
+  gap: clamp(28px, 5vw, 76px);
+  margin-top: clamp(8px, 1.5vw, 22px);
 }
 
 .ss-about-stat {
@@ -107,10 +101,14 @@
 
 .ss-about-gallery {
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: start;
   gap: clamp(14px, 2vw, 24px);
   margin-top: clamp(38px, 5vw, 64px);
+}
+
+.ss-about-gallery-reception {
+  grid-column: 1 / -1;
 }
 
 .ss-about-gallery figure {
@@ -118,7 +116,15 @@
   margin: 0;
 }
 
-.ss-about-gallery img {
+.ss-about-gallery-reception img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: none;
+}
+
+.ss-about-gallery > figure:not(.ss-about-gallery-reception) img {
   aspect-ratio: 16 / 10;
   object-fit: cover;
 }
@@ -133,18 +139,19 @@
 }
 
 @media (max-width: 767px) {
-  .ss-about-intro {
+  .ss-about-copy {
     grid-template-columns: minmax(0, 1fr);
-    gap: 28px;
+    gap: 22px;
   }
 
-  .ss-about-reception {
-    margin-top: 0;
+  .ss-about-copy > .ss-lead,
+  .ss-about-copy > .ss-prose {
+    max-width: 68ch;
   }
 
   .ss-about-stats {
     max-width: none;
-    margin-top: 30px;
+    margin-top: 8px;
     gap: 16px;
   }
 
@@ -167,7 +174,7 @@
     margin-top: 34px;
   }
 
-  .ss-about-gallery img {
+  .ss-about-gallery > figure:not(.ss-about-gallery-reception) img {
     aspect-ratio: 4 / 3;
   }
 }

@@ -458,20 +458,6 @@ export default function About() {
                   ))}
                 </dl>
               </div>
-              <figure className="ss-about-reception" data-testid="figure-about-reception">
-                <img
-                  src={photos.recepcionBanda.url}
-                  srcSet={photos.recepcionBanda.smallUrl && photos.recepcionBanda.smallUrl !== photos.recepcionBanda.url ? `${photos.recepcionBanda.smallUrl} 761w, ${photos.recepcionBanda.url} 1522w` : undefined}
-                  sizes="(min-width: 1024px) 42vw, 90vw"
-                  alt={keepFirmName(receptionAlt[language] ?? receptionAlt.en)}
-                  loading="lazy"
-                  decoding="async"
-                  width={1522}
-                  height={694}
-                  className="ss-photo block h-auto w-full"
-                  data-testid="img-about-reception"
-                />
-              </figure>
             </section>
 
             <section className="ss-about-values" aria-labelledby="about-values-title" data-testid="section-values">
@@ -489,11 +475,25 @@ export default function About() {
             </section>
 
             <div role="group" className="ss-about-gallery" aria-label={officeNameFor(language)} data-testid="gallery-about-office">
-              <figure>
-                <OfficePhotography photo="oficinaPrivada" sizes="(min-width: 768px) 44vw, 90vw" />
+              <figure className="ss-about-gallery-reception" data-testid="figure-about-reception">
+                <img
+                  src={photos.recepcionBanda.url}
+                  srcSet={photos.recepcionBanda.smallUrl && photos.recepcionBanda.smallUrl !== photos.recepcionBanda.url ? `${photos.recepcionBanda.smallUrl} 761w, ${photos.recepcionBanda.url} 1522w` : undefined}
+                  sizes="(min-width: 1024px) 100vw, 100vw"
+                  alt={keepFirmName(receptionAlt[language] ?? receptionAlt.en)}
+                  loading="lazy"
+                  decoding="async"
+                  width={1522}
+                  height={694}
+                  className="ss-photo block h-auto w-full"
+                  data-testid="img-about-reception"
+                />
               </figure>
               <figure>
-                <OfficePhotography photo="arteColor" sizes="(min-width: 768px) 34vw, 90vw" />
+                <OfficePhotography photo="oficinaPrivada" sizes="(min-width: 1464px) 648px, (min-width: 421px) 44vw, 90vw" />
+              </figure>
+              <figure>
+                <OfficePhotography photo="arteColor" sizes="(min-width: 1464px) 648px, (min-width: 421px) 44vw, 90vw" />
               </figure>
             </div>
 
