@@ -54,7 +54,8 @@ function PracticeGroupRow({ group, index }: PracticeGroupRowProps) {
 
   const nameId = `practice-name-${group.slug}`;
   const descriptionId = `practice-desc-${group.slug}`;
-  const imageUrl = getPracticeImage(group.slug, group.imageUrl);
+  // Misma serie aprobada que en el inicio; conservar las imágenes guardadas sin borrarlas.
+  const imageUrl = getPracticeImage(group.slug);
 
   return (
     <li

@@ -57,8 +57,7 @@ async function checkRows(page, language, items = groups) {
     await image.scrollIntoViewIfNeeded();
     await image.evaluate(img => img.decode());
     assert.equal(await image.getAttribute("alt"), "", "Image doesn't repeat accessible link name");
-    assert.equal(await image.getAttribute("src"), group.imageUrl?.trim()
-      ? group.imageUrl : `/editorial/practice-${({
+    assert.equal(await image.getAttribute("src"), `/editorial/practice-${({
         "laboral-seguridad-social": "laboral",
         "corporativo-contractual": "corporativo",
         migratorio: "migratorio",
@@ -93,7 +92,39 @@ async function checkRows(page, language, items = groups) {
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "No horizontal overflow");
 }
 
+async function checkPhotoParity(width, items = groups) {
+  const page = await pageFor("es", width);
+  await page.route("**/api/practice-groups", route => route.fulfill({ json: items }));
+  await page.goto(baseURL, { waitUntil: "domcontentloaded" });
+  const homePhotos = {};
+  for (const group of items) {
+    const image = page.locator(`#practices a[href="/practice-groups/${group.slug}"] img`);
+    await image.scrollIntoViewIfNeeded();
+    await image.evaluate(img => img.decode());
+    homePhotos[group.slug] = await image.getAttribute("src");
+  }
+  await open(page);
+  for (const group of items) {
+    const image = page.getByTestId(`link-practice-group-${group.slug}`).locator("img");
+    await image.scrollIntoViewIfNeeded();
+    await image.evaluate(img => img.decode());
+    assert.equal(await image.getAttribute("src"), homePhotos[group.slug], `Same photo on both pages: ${group.slug}`);
+    assert.ok(await image.evaluate(img => img.complete && img.naturalWidth > 0));
+  }
+  await page.close();
+  console.log(`PASS matching homepage/directory photographs: ${width}px`);
+}
+
 try {
+  // Record images may be empty, older office photographs or another area's photograph.
+  const oldImages = groups.map((group, index) => ({
+    ...group,
+    imageUrl: ["/editorial/oficina-biblioteca-1536.webp", "/editorial/practice-migratorio.webp", "", null][index],
+  }));
+  for (const width of [1440, 375]) {
+    await checkPhotoParity(width);
+    await checkPhotoParity(width, oldImages);
+  }
   for (const [language, width] of [
     ["es", 1440], ["es", 1024], ["es", 768], ["es", 375], ["es", 320],
     ["en", 1440], ["en", 375], ["de", 768], ["de", 320], ["ru", 375],
@@ -148,7 +179,7 @@ try {
     .filter({ hasText: "Beschreibung aus der gespeicherten Übersetzung." }).waitFor();
   assert.equal(await translated.getByTestId(`text-practice-group-desc-${groups[0].slug}`).getAttribute("lang"), null);
   await translated.close();
-  console.log("PASS edited CMS/catalog content, image override, per-area defaults and cached translation");
+  console.log("PASS edited CMS/catalog text, approved photos despite image overrides, and cached translation");
 
   for (const language of ["es", "en"]) {
     for (const state of ["empty", "error", "loading"]) {
