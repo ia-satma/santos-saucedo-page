@@ -294,8 +294,9 @@ export function PhotoBand({
     />
   );
   return (
-    // Fondo Línea mientras carga; overflow para que el recorte no desborde
-    <div className={`ss-photo-band relative w-full overflow-hidden bg-ss-rule ${HEIGHTS[height]} ${className}`} data-testid={testId}>
+    // Fondo Línea mientras carga; overflow para que el recorte no desborde. Fuera del primer
+    // pantallazo (eager), la banda se descubre de abajo hacia arriba al llegar (idea 5)
+    <div className={`ss-photo-band relative w-full overflow-hidden bg-ss-rule ${HEIGHTS[height]} ${className}`} data-testid={testId} data-curtain={eager ? undefined : ""}>
       {widePhoto ? (
         <picture>
           <source media="(min-width: 768px)" srcSet={wide.srcSet ?? wide.url} sizes={sizes} />

@@ -783,3 +783,16 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 .ss-career-card .ss-career-file { height: auto; min-height: 64px; padding: 14px; border-style: dashed; line-height: 1.5; }
 .ss-career-file::file-selector-button { margin-inline-end: 12px; padding: 6px 10px; border: 0; border-radius: 6px; color: var(--ss-marino); background: #eeedf6; font: inherit; font-weight: 600; cursor: pointer; }
 
+
+/* Movimiento fino (idea 5, lib/siteMotion.ts). Solo con .ss-motion, que no se pone con
+   "reducir movimiento": sin ella todo se ve completo desde el inicio. */
+.ss-motion [data-reveal] {
+  transition: opacity .9s cubic-bezier(.2, .7, .1, 1), transform .9s cubic-bezier(.2, .7, .1, 1);
+  transition-delay: var(--reveal-delay, 0s);
+}
+.ss-motion [data-reveal]:not(.is-in) { opacity: 0; transform: translateY(14px); }
+.ss-motion [data-curtain] { transition: clip-path 1.3s cubic-bezier(.77, 0, .18, 1); }
+.ss-motion [data-curtain]:not(.is-in) { clip-path: inset(100% 0 0 0); }
+/* Cambio de página: el contenido se funde en lugar de saltar (main se monta de nuevo en cada ruta) */
+.ss-motion main#main-content { animation: ss-page-in .5s ease-out both; }
+@keyframes ss-page-in { from { opacity: 0; } to { opacity: 1; } }

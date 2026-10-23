@@ -162,8 +162,10 @@ interface MonitorListProps {
   search?: boolean;
   /** Nivel del titular de cada fila: h2 bajo el h1 de la página, h3 bajo un h2 de sección */
   headingLevel?: "h2" | "h3";
-  /** index: etiqueta a la izquierda y texto a la derecha desde lg · stacked: todo apilado */
-  layout?: "index" | "stacked";
+  /** index: etiqueta a la izquierda y texto a la derecha desde lg · stacked: todo apilado ·
+   *  bulletin (portada, idea 4): la primera nota grande a la izquierda con § y las otras a la
+   *  derecha, como el boletín de un despacho */
+  layout?: "index" | "stacked" | "bulletin";
   /** Fondo: blanco (filete Línea) o Hueso (Azul Marino al 15 %, como la portada) */
   tone?: "light" | "paper";
   /** Estado vacío propio (p. ej. /articles conserva su bloque y sus testids) */
@@ -197,6 +199,7 @@ function MonitorRow({
   headingLevel,
   layout,
   rule,
+  lead = false,
   testIds,
   onTranslated,
 }: {
@@ -205,8 +208,10 @@ function MonitorRow({
   /** La categoría solo informa si hay al menos dos con notas; si no, la fila lleva solo la fecha */
   showCategory: boolean;
   headingLevel: "h2" | "h3";
-  layout: "index" | "stacked";
+  layout: "index" | "stacked" | "bulletin";
   rule: string;
+  /** Primera nota del boletín: titular grande, § y fuente al pie */
+  lead?: boolean;
   testIds: MonitorListTestIds;
   onTranslated?: () => void;
 }) {
@@ -244,6 +249,62 @@ function MonitorRow({
   const date = formatNewsDate(item.date, language);
   const Heading = headingLevel;
   const index = layout === "index";
+  const bulletin = layout === "bulletin";
+
+  if (bulletin) {
+    return (
+      <li
+        className={`flex flex-col gap-y-4 border-b ${rule} py-8 lg:py-10 ${
+          lead ? "lg:col-span-7 lg:row-span-2 lg:border-e lg:pe-12" : "lg:col-span-5 lg:ps-12"
+        }`}
+        data-testid={testIds.row?.(item)}
+      >
+        {lead && (
+          <span aria-hidden="true" className="ss-display block text-[88px] leading-[0.8] text-ss-marino opacity-[0.14]">
+            §
+          </span>
+        )}
+        <p className="ss-label ss-num">
+          {category && <span className="text-ss-marino">{category}</span>}
+          {category && date && <span aria-hidden="true" className="text-ss-medio"> · </span>}
+          {date && (
+            <time className="text-ss-medio" dateTime={item.date ? new Date(item.date).toISOString() : undefined}>
+              {date}
+            </time>
+          )}
+        </p>
+        <Heading
+          className={`ss-display font-normal tracking-[-0.01em] text-ss-marino ${
+            lead ? "text-[clamp(30px,3.2vw,40px)] leading-[1.15]" : "text-[clamp(22px,1.9vw,26px)] leading-[1.22]"
+          }`}
+          data-testid={testIds.title?.(item)}
+          lang={titleIsSource ? "en" : undefined}
+        >
+          {/* Subrayado que se dibuja de izquierda a derecha al pasar el cursor o con el foco */}
+          <Link
+            href={`/news/${item.slug}`}
+            className="inline-link bg-[linear-gradient(currentColor,currentColor)] bg-[length:0_1px] bg-[position:0_100%] bg-no-repeat pb-0.5 transition-[background-size] duration-700 ease-[cubic-bezier(.77,0,.18,1)] hover:bg-[length:100%_1px] focus-visible:bg-[length:100%_1px] motion-reduce:transition-none"
+          >
+            {titleIsSource ? <bdi lang="en" dir="ltr">{title}</bdi> : title}
+          </Link>
+        </Heading>
+        {excerpt && (
+          <p
+            className="max-w-[46ch] text-[17px] leading-[1.55] text-ss-tinta [text-wrap:pretty]"
+            lang={excerptIsSource ? "en" : undefined}
+          >
+            {excerptIsSource ? <bdi lang="en" dir="ltr">{excerpt}</bdi> : excerpt}
+          </p>
+        )}
+        {/* La fuente solo si la nota la tiene capturada en el panel; nunca una inventada */}
+        {lead && item.sourceName && (
+          <p className="mt-auto border-t border-ss-rule pt-4 text-[14px] text-ss-medio">
+            <span className="font-semibold text-ss-marino">{language === "es" ? "Fuente:" : "Source:"}</span> {item.sourceName}
+          </p>
+        )}
+      </li>
+    );
+  }
 
   return (
     <li
@@ -438,8 +499,8 @@ export function MonitorList({
       )}
 
       {!error && !isLoading && visible.length > 0 && (
-        <ul className={`border-t ${rule}`}>
-          {visible.map((item) => (
+        <ul className={`border-t ${layout === "bulletin" ? "border-ss-marino lg:grid lg:grid-cols-12" : rule}`}>
+          {visible.map((item, i) => (
             <MonitorRow
               key={item.id}
               item={item}
@@ -448,6 +509,7 @@ export function MonitorList({
               headingLevel={headingLevel}
               layout={layout}
               rule={rule}
+              lead={layout === "bulletin" && i === 0}
               testIds={testIds}
               onTranslated={onTranslated}
             />

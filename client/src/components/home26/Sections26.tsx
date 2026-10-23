@@ -253,7 +253,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                       </span>
                     </span>
                     {item.imageUrl && (
-                      <span aria-hidden="true" className="block overflow-hidden bg-ss-paper sm:col-start-3 sm:row-start-1 lg:col-span-3 lg:col-start-9 lg:self-center">
+                      <span aria-hidden="true" data-curtain="" className="block overflow-hidden bg-ss-paper sm:col-start-3 sm:row-start-1 lg:col-span-3 lg:col-start-9 lg:self-center">
                         <img
                           src={item.imageUrl}
                           alt=""
@@ -382,7 +382,7 @@ export function Monitor26({ lang, limit = 3 }: { lang: Lang26; limit?: number })
         {hasItems && (
           <Reveal delay={0.12} className="mt-14 lg:mt-16 [section:has(+[data-surface=light])_&_li:last-child]:border-b-0">
             {/* En el idioma que muestra la portada (es/en): sin traducción automática */}
-            <MonitorList limit={limit} headingLevel="h3" layout="index" tone="light" language={lang} />
+            <MonitorList limit={limit} headingLevel="h3" layout="bulletin" tone="light" language={lang} />
           </Reveal>
         )}
       </div>

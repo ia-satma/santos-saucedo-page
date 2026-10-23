@@ -4,13 +4,13 @@ import { useCmsContent } from "@/hooks/useCmsContent";
 import defaults from "@shared/cms-defaults.json";
 import seccionUrl from "@assets/ss26/seccion.svg";
 
-/** Envoltorio simple, sin entrada al aparecer (G3): el contenido se ve completo desde el
-    inicio. Conserva la API anterior (delay, y, duration) para no tocar a quien lo usa; esas
-    props ya no hacen nada. El sitio no tiene animaciones de entrada; lo único que se mueve
-    es el video del héroe de portada (Hero26), y no con movimiento reducido. */
+/** Entrada al aparecer, una sola vez: el bloque sube 14 px y aparece (idea 5 aprobada por el
+    cliente, 23-10-2026). La mueve lib/siteMotion; sin JavaScript o con movimiento reducido el
+    contenido se ve completo desde el inicio. delay en segundos; y y duration ya no hacen nada. */
 export function Reveal({
   children,
   as = "div",
+  delay = 0,
   className = "",
 }: {
   children: ReactNode;
@@ -21,7 +21,12 @@ export function Reveal({
   className?: string;
 }) {
   const Tag = as as "div";
-  return <Tag className={className || undefined}>{children}</Tag>;
+  const style = delay ? ({ "--reveal-delay": `${delay}s` } as CSSProperties) : undefined;
+  return (
+    <Tag data-reveal="" style={style} className={className || undefined}>
+      {children}
+    </Tag>
+  );
 }
 
 /** Rejilla editorial de las páginas internas, la misma de la portada: el título (o una nota breve)

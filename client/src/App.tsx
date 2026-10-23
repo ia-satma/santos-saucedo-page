@@ -294,8 +294,8 @@ function Router() {
 }
 
 // reducedMotion="user": con "reducir movimiento" del sistema, framer-motion deja de mover
-// (translateY, escala) lo poco que aún anima (diálogos); solo queda la opacidad. El sitio no
-// tiene entradas al aparecer: solo la máscara del título del héroe de portada (Hero26).
+// (translateY, escala) lo poco que aún anima (diálogos); solo queda la opacidad. Las entradas al
+// aparecer y el cambio de página los lleva lib/siteMotion, que tampoco se activa en ese caso.
 function App() {
   return (
     <MotionConfig reducedMotion="user">
