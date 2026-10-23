@@ -71,7 +71,14 @@ try {
           };
         });
         const { heroText, bodyText, bodyImages } = baseline[route];
-        assert.deepEqual(current, { heroText, bodyText, bodyImages }, `${label}: copy and body images unchanged`);
+        if (["/careers", "/contact"].includes(route)) {
+          // These bodies were deliberately reorganized. Their dedicated layout
+          // test compares individual paragraphs, headings, destinations and fields.
+          assert.equal(current.heroText, heroText, `${label}: original banner copy`);
+          assert.deepEqual([...current.bodyImages].sort(), [...bodyImages].sort(), `${label}: original body photos`);
+        } else {
+          assert.deepEqual(current, { heroText, bodyText, bodyImages }, `${label}: copy and body images unchanged`);
+        }
       }
       if (route === "/team") {
         assert.ok(await page.locator("main img").count() >= 4, "All four partner portraits remain");

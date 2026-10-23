@@ -7,3 +7,4 @@
 - [Marca de agua SS](banner-watermark.md) — El usuario quiere la marca oficial en los banners de las páginas, no limitada a la portada.
 - [Cabeceras principales](photo-banners.md) — La decisión vigente es quitar las imágenes de los banners; no generar sustitutas ni retirar fotos del contenido.
 - [Pruebas de hover](hover-verification.md) — Evaluar el efecto local sin atribuirle cambios ajenos del contenido que carga después.
+- [HTML de la vista previa](preview-dom.md) — La instrumentación del editor no forma parte del contenido que deben conservar las comparaciones de HTML.
