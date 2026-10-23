@@ -783,11 +783,3 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 .ss-career-card .ss-career-file { height: auto; min-height: 64px; padding: 14px; border-style: dashed; line-height: 1.5; }
 .ss-career-file::file-selector-button { margin-inline-end: 12px; padding: 6px 10px; border: 0; border-radius: 6px; color: var(--ss-marino); background: #eeedf6; font: inherit; font-weight: 600; cursor: pointer; }
 
-/* En teléfono, sin justificar: en columnas de 230-360 px el justificado abría huecos entre palabras */
-@media (max-width: 639px) {
-  .ss-prose,
-  .ss-lead,
-  .ss-creemos-body > * > p {
-    text-align: start;
-  }
-}
