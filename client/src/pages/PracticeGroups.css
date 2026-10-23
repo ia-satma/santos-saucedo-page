@@ -1,0 +1,204 @@
+.practice-directory-hero {
+  padding-block: clamp(132px, 17vh, 196px) clamp(62px, 9vw, 112px);
+}
+
+.practice-directory-intro {
+  max-width: 960px;
+}
+
+.practice-directory-intro h1 {
+  max-width: 14ch;
+  margin: 0;
+  font-family: var(--ss-font-serif);
+  font-size: clamp(48px, 7vw, 88px);
+  font-weight: 350;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+
+.practice-directory-subtitle {
+  max-width: 68ch;
+  margin-top: clamp(22px, 3vw, 34px);
+}
+
+.practice-directory-list {
+  padding-block: 0 clamp(80px, 11vw, 144px);
+}
+
+.practice-directory-entries {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.practice-entry {
+  position: relative;
+}
+
+.practice-entry-link {
+  display: grid;
+  grid-template-columns: minmax(0, 0.93fr) minmax(0, 1fr);
+  grid-template-areas: "photo copy";
+  align-items: center;
+  gap: clamp(28px, 6vw, 88px);
+  min-width: 0;
+  padding-block: clamp(32px, 5vw, 68px);
+  color: inherit;
+  text-decoration: none;
+}
+
+.practice-entry:nth-child(even) .practice-entry-link {
+  grid-template-areas: "copy photo";
+}
+
+.practice-entry-image {
+  grid-area: photo;
+  min-width: 0;
+  overflow: hidden;
+  aspect-ratio: 1.35 / 1;
+  background: var(--ss-paper);
+}
+
+.practice-entry-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 550ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.practice-entry-link:hover .practice-entry-photo,
+.practice-entry-link:focus-visible .practice-entry-photo {
+  transform: scale(1.025);
+}
+
+.practice-entry-copy {
+  grid-area: copy;
+  min-width: 0;
+  padding-block: 6px;
+}
+
+.practice-entry-number {
+  display: block;
+  margin-bottom: clamp(22px, 3vw, 38px);
+  color: var(--ss-medio);
+}
+
+.practice-entry-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
+}
+
+.practice-entry-title {
+  min-width: 0;
+  margin: 0;
+  font-size: clamp(27px, 2.8vw, 40px);
+  line-height: 1.13;
+  overflow-wrap: anywhere;
+  hyphens: none;
+}
+
+.practice-entry-arrow {
+  flex: 0 0 auto;
+  margin-top: 4px;
+  font-size: 25px;
+  color: var(--ss-marino);
+}
+
+.practice-entry-description {
+  max-width: 58ch;
+  margin: clamp(18px, 2.2vw, 28px) 0 0;
+  color: var(--ss-tinta);
+  text-align: justify;
+  text-align-last: start;
+  text-justify: inter-word;
+  hyphens: none;
+  overflow-wrap: normal;
+}
+
+.practice-entry-link:focus-visible {
+  outline: 3px solid var(--ss-marino);
+  outline-offset: 6px;
+}
+
+.practice-directory-empty {
+  border-top: 1px solid var(--ss-rule);
+  padding-block: clamp(40px, 6vw, 76px);
+}
+
+.practice-directory-empty p {
+  max-width: 58ch;
+  margin: 0;
+  font-family: var(--ss-font-serif);
+  font-size: clamp(22px, 2.3vw, 30px);
+  line-height: 1.45;
+  text-align: start;
+}
+
+.practice-skeleton-image {
+  grid-area: photo;
+  width: 100%;
+  aspect-ratio: 1.35 / 1;
+}
+
+@media (max-width: 767px) {
+  .practice-directory-hero {
+    padding-block: 118px 56px;
+  }
+
+  .practice-directory-intro h1 {
+    max-width: 100%;
+    font-size: clamp(42px, 12vw, 64px);
+    line-height: 1.08;
+  }
+
+  .practice-directory-subtitle {
+    margin-top: 22px;
+  }
+
+  .practice-entry-link,
+  .practice-entry:nth-child(even) .practice-entry-link {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "photo"
+      "copy";
+    gap: 22px;
+    padding-block: 24px 34px;
+  }
+
+  .practice-entry-image,
+  .practice-skeleton-image {
+    aspect-ratio: 1.55 / 1;
+  }
+
+  .practice-entry-copy {
+    padding-block: 0;
+  }
+
+  .practice-entry-number {
+    margin-bottom: 12px;
+  }
+
+  .practice-entry-title {
+    font-size: clamp(25px, 7vw, 34px);
+    line-height: 1.17;
+  }
+
+  .practice-entry-description {
+    max-width: none;
+    margin-top: 14px;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .practice-entry-photo {
+    transition: none;
+  }
+}
