@@ -6,3 +6,4 @@
 - [Fotos de Prácticas](practice-photography.md) — El directorio debe mostrar las mismas fotografías aprobadas que el inicio, no otra selección.
 - [Marca de agua SS](banner-watermark.md) — El usuario quiere la marca oficial en los banners de las páginas, no limitada a la portada.
 - [Cabeceras principales](photo-banners.md) — La decisión vigente es quitar las imágenes de los banners; no generar sustitutas ni retirar fotos del contenido.
+- [Pruebas de hover](hover-verification.md) — Evaluar el efecto local sin atribuirle cambios ajenos del contenido que carga después.

@@ -749,47 +749,76 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 .ss-office-story { grid-column: 1 / -1; display: flex; align-items: center; padding: clamp(28px, 5vw, 64px) 0; }
 .ss-office-story > div { width: 100%; }
 
-/* Principal headers retain their spacing and identity, without photographs.
-   Detail, legal, article, home and the office reference remain unchanged. */
+/* Shared compact treatment for the nine principal page headers. Detail, legal,
+   article, home and the office reference remain unchanged. The title rule owns
+   its own reserved block, so optional subtitles always begin below it. */
 .editorial-page-hero.ss-principal-page-hero {
   position: relative;
   display: flex;
   align-items: flex-end;
   isolation: isolate;
   overflow: hidden;
-  min-height: clamp(420px, 39vw, 610px);
-  padding-block: clamp(154px, 17vw, 224px) clamp(56px, 7vw, 92px);
+  min-height: clamp(300px, 24vw, 350px);
+  padding-block: clamp(96px, 8vw, 120px) clamp(40px, 4vw, 56px);
   color: #fff;
   background: #18175b;
 }
-.editorial-page-hero.ss-principal-page-hero.practice-directory-hero {
-  padding-block: clamp(154px, 17vw, 224px) clamp(56px, 7vw, 92px);
+.editorial-page-hero.ss-principal-page-hero h1 {
+  margin: 0;
 }
-@media (max-width: 639px) {
-  .editorial-page-hero.ss-principal-page-hero,
-  .editorial-page-hero.ss-principal-page-hero.practice-directory-hero {
-    min-height: clamp(420px, 72svh, 580px);
-    padding-block: 138px 52px;
-  }
+.editorial-page-hero.ss-principal-page-hero h1::after {
+  content: "";
+  display: block;
+  width: 132px;
+  height: 1px;
+  margin-top: clamp(18px, 2vw, 24px);
+  margin-bottom: clamp(16px, 1.8vw, 22px);
+  background: rgb(255 255 255 / 0.66);
+  pointer-events: none;
+  transform: scaleX(0.2);
+  transform-origin: left center;
 }
-
-/* Socios: compacta solo su cabecera; conserva espacio para títulos CMS largos. */
-.editorial-page-hero.ss-principal-page-hero.ss-team-page-hero {
-  min-height: clamp(320px, 24vw, 350px);
-  padding-block: clamp(104px, 9vw, 132px) 44px;
+.editorial-page-hero.ss-principal-page-hero h1:dir(rtl)::after {
+  transform-origin: right center;
 }
-@media (max-width: 639px) {
-  .editorial-page-hero.ss-principal-page-hero.ss-team-page-hero {
-    min-height: clamp(280px, 42svh, 320px);
-    padding-block: 100px 36px;
-  }
+.editorial-page-hero.ss-principal-page-hero:has(h1 + p:not(.ss-label)) {
+  min-height: clamp(350px, 28vw, 440px);
 }
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .ss-team-page-hero::before {
-    transition: transform 420ms var(--ss-ease);
+  .editorial-page-hero.ss-principal-page-hero::before,
+  .editorial-page-hero.ss-principal-page-hero h1::after {
+    transition: transform 460ms var(--ss-ease);
   }
-  .ss-team-page-hero:hover::before {
-    transform: translateX(-6px) scale(1.015);
+  .editorial-page-hero.ss-principal-page-hero:hover::before {
+    transform: translateX(-24px) scale(1.07);
+  }
+  .editorial-page-hero.ss-principal-page-hero:hover h1::after {
+    transform: scaleX(1);
+  }
+  .editorial-page-hero.ss-principal-page-hero:dir(rtl):hover::before {
+    transform: translateX(24px) scale(1.07);
+  }
+}
+@media (max-width: 767.98px) {
+  .editorial-page-hero.ss-principal-page-hero {
+    min-height: 0;
+    padding-block: clamp(108px, 28vw, 136px) 44px;
+  }
+  .editorial-page-hero.ss-principal-page-hero:has(h1 + p:not(.ss-label)) {
+    min-height: 0;
+  }
+}
+/* Touch has no hover affordance: show the complete refined line at rest. With
+   reduced motion, the desktop line is likewise finalized without transitions. */
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .editorial-page-hero.ss-principal-page-hero h1::after {
+    transform: scaleX(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .editorial-page-hero.ss-principal-page-hero::before,
+  .editorial-page-hero.ss-principal-page-hero h1::after {
+    transition: none;
   }
 }
 

@@ -109,8 +109,8 @@ try {
       const other = page.getByTestId("section-about-hero");
       await other.locator("h1").waitFor();
       await page.evaluate(() => document.fonts.ready);
-      assert.ok(Math.abs((await other.boundingBox()).height - baseline[`/about-${width}`].height) < 1,
-        "Shared header dimensions stay unchanged on other pages");
+      assert.ok((await other.boundingBox()).height < baseline[`/about-${width}`].height * 0.85,
+        "Other principal headers now intentionally share the compact treatment");
     }
     checks++;
     await page.close();

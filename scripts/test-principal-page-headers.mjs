@@ -13,7 +13,7 @@ const browser = await chromium.launch({
 });
 const errors = [];
 let baseline;
-try { baseline = JSON.parse(await readFile("/tmp/ss-photo-headers-before.json", "utf8")); }
+try { baseline = JSON.parse(await readFile("/tmp/ss-main-banners-before.json", "utf8")); }
 catch (error) { if (error.code !== "ENOENT") throw error; }
 let checks = 0;
 try {
@@ -70,7 +70,8 @@ try {
             bodyImages: [...copy.querySelectorAll("img")].map(img => img.getAttribute("src")),
           };
         });
-        assert.deepEqual(current, baseline[route], `${label}: copy and body images unchanged`);
+        const { heroText, bodyText, bodyImages } = baseline[route];
+        assert.deepEqual(current, { heroText, bodyText, bodyImages }, `${label}: copy and body images unchanged`);
       }
       if (route === "/team") {
         assert.ok(await page.locator("main img").count() >= 4, "All four partner portraits remain");
