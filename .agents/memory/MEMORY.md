@@ -4,3 +4,4 @@
 - [Capturas del Monitor](monitor-visual-testing.md) — Excluir de la captura la cabecera sticky, no el contenido editorial, para evitar falsos positivos por scroll.
 - [Recepción en Nuestra firma](about-photography.md) — El usuario rechaza la recepción pequeña «tipo editorial» junto al texto; prefiere verla amplia con las otras fotos.
 - [Fotos de Prácticas](practice-photography.md) — El directorio debe mostrar las mismas fotografías aprobadas que el inicio, no otra selección.
+- [Marca de agua SS](banner-watermark.md) — El usuario quiere la marca oficial en los banners de las páginas, no limitada a la portada.
