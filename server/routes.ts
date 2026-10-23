@@ -950,7 +950,9 @@ export async function registerRoutes(
 
   app.get("/api/search", async (req, res) => {
     try {
-      const query = (req.query.q as string || '').toLowerCase().trim();
+      // Sin acentos ni mayúsculas en ambos lados: "Rodriguez" encuentra "Rodríguez"
+      const fold = (text: string) => text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const query = fold(req.query.q as string || '').trim();
       if (!query || query.length < 2) {
         return res.json({ team: [], practiceGroups: [], industryGroups: [], news: [] });
       }
@@ -966,36 +968,36 @@ export async function registerRoutes(
       // públicas (isPublicNews), como /api/news; resultados con los DTO públicos (J1, J2)
       const now = new Date();
       const filteredTeam = team.filter(m => isNamedOnTeamPage(m)).filter(m => 
-        m.name.toLowerCase().includes(query) ||
-        m.title.toLowerCase().includes(query) ||
-        m.titleEs.toLowerCase().includes(query) ||
-        m.role.toLowerCase().includes(query) ||
-        m.roleEs.toLowerCase().includes(query) ||
-        (m.bio && m.bio.toLowerCase().includes(query)) ||
-        (m.bioEs && m.bioEs.toLowerCase().includes(query))
+        fold(m.name).includes(query) ||
+        fold(m.title).includes(query) ||
+        fold(m.titleEs).includes(query) ||
+        fold(m.role).includes(query) ||
+        fold(m.roleEs).includes(query) ||
+        (m.bio && fold(m.bio).includes(query)) ||
+        (m.bioEs && fold(m.bioEs).includes(query))
       ).slice(0, 10);
       
       const filteredPractice = practiceGroups.filter(g =>
-        g.name.toLowerCase().includes(query) ||
-        g.nameEs.toLowerCase().includes(query) ||
-        g.description.toLowerCase().includes(query) ||
-        g.descriptionEs.toLowerCase().includes(query)
+        fold(g.name).includes(query) ||
+        fold(g.nameEs).includes(query) ||
+        fold(g.description).includes(query) ||
+        fold(g.descriptionEs).includes(query)
       ).slice(0, 5);
       
       const filteredIndustry = industryGroups.filter(g =>
-        g.name.toLowerCase().includes(query) ||
-        g.nameEs.toLowerCase().includes(query) ||
-        g.description.toLowerCase().includes(query) ||
-        g.descriptionEs.toLowerCase().includes(query)
+        fold(g.name).includes(query) ||
+        fold(g.nameEs).includes(query) ||
+        fold(g.description).includes(query) ||
+        fold(g.descriptionEs).includes(query)
       ).slice(0, 5);
       
       const filteredNews = news.filter(n => isPublicNews(n, now)).filter(n =>
-        n.title.toLowerCase().includes(query) ||
-        n.titleEs.toLowerCase().includes(query) ||
-        n.excerpt.toLowerCase().includes(query) ||
-        n.excerptEs.toLowerCase().includes(query) ||
-        (n.content && n.content.toLowerCase().includes(query)) ||
-        (n.contentEs && n.contentEs.toLowerCase().includes(query))
+        fold(n.title).includes(query) ||
+        fold(n.titleEs).includes(query) ||
+        fold(n.excerpt).includes(query) ||
+        fold(n.excerptEs).includes(query) ||
+        (n.content && fold(n.content).includes(query)) ||
+        (n.contentEs && fold(n.contentEs).includes(query))
       ).slice(0, 5);
       
       res.json({

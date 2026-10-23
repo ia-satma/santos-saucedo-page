@@ -83,13 +83,15 @@ function normalizeStaticAssets(value: unknown): unknown {
 }
 
 function filterSearchResults(index: any, query: string) {
-  const normalized = query.toLowerCase().trim();
+  // Sin acentos ni mayúsculas en ambos lados, como /api/search
+  const fold = (text: string) => text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const normalized = fold(query).trim();
   if (normalized.length < 2) {
     return { team: [], practiceGroups: [], industryGroups: [], news: [] };
   }
 
   const includes = (value: unknown) =>
-    String(value ?? "").toLowerCase().includes(normalized);
+    fold(String(value ?? "")).includes(normalized);
 
   return {
     team: (index.team || [])

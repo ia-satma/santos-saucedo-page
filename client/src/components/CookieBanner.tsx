@@ -125,7 +125,7 @@ export default function CookieBanner({ language }: { language: LanguageCode }) {
           <DialogTitle>{t.title}</DialogTitle>
           <DialogDescription>{t.body}</DialogDescription>
           <div className="border-t py-4">
-            <h3 className="font-semibold">{t.essential}</h3>
+            <h3 className="font-sans text-base font-semibold">{t.essential}</h3>
             <p className="text-sm mt-2">{t.essentialDescription}</p>
           </div>
           {(["analytics", "external", "leadinfo"] as const)
