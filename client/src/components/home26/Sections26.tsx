@@ -128,14 +128,12 @@ export function Firma26({ lang }: { lang: Lang26 }) {
             />
           </div>
           <OfficePhotoPair photos={["biblioteca", "detalle"]} className="mt-4 md:mt-6" />
-          {/* Junto al pie, el enlace a la página de la oficina (su nombre en officeLabel) */}
-          <figcaption className="mt-4 flex flex-wrap items-baseline gap-x-4 gap-y-4 text-[16px] leading-relaxed text-ss-medio">
-            <span className="ss-label shrink-0 text-ss-marino">Fig. 1</span>
-            <span className="min-w-0 flex-1 basis-[16rem]">{t.caption}</span>
-            <TextLink href="/offices" className="shrink-0" data-testid="link-home-offices">
+          {/* Enlace a la oficina, sin pie descriptivo de la foto. */}
+          <div className="mt-4 flex justify-end">
+            <TextLink href="/offices" data-testid="link-home-offices">
               {officeNameFor(lang)}
             </TextLink>
-          </figcaption>
+          </div>
         </figure>
       </div>
     </section>
