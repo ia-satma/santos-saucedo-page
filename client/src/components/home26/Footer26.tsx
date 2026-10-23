@@ -55,7 +55,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
     >
       {/* Filete superior de 1 px (blanco al 14 %, border-t): separa el pie de un bloque Azul
           Profundo que lo preceda, como el 404; junto a un cuerpo blanco apenas se nota.
-          Sin marca de agua: el § grande decorativo aparece una sola vez, en el héroe de la portada. */}
+          El pie queda limpio: la marca decorativa se reserva a los encabezados editoriales. */}
       <div className="ss-container grid grid-cols-2 gap-x-6 gap-y-7 py-8 md:grid-cols-3 lg:grid-cols-12 lg:pb-7 lg:pt-10">
         <div className="col-span-2 md:col-span-3 lg:col-span-4">
           <img src={media.brand.logoLight} alt={media.brand.name} className="h-[30px] w-auto lg:h-[32px]" width={244} height={40} />

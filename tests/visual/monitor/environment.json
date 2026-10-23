@@ -1,0 +1,34 @@
+{
+  "browser": "152.0.7977.64",
+  "platform": "linux",
+  "cases": {
+    "es-desktop": [
+      {
+        "key": "es-desktop",
+        "width": 1440,
+        "height": 1264
+      }
+    ],
+    "es-mobile": [
+      {
+        "key": "es-mobile",
+        "width": 375,
+        "height": 1520
+      }
+    ],
+    "en-desktop": [
+      {
+        "key": "en-desktop",
+        "width": 1440,
+        "height": 1233
+      }
+    ],
+    "en-mobile": [
+      {
+        "key": "en-mobile",
+        "width": 375,
+        "height": 1488
+      }
+    ]
+  }
+}

@@ -134,7 +134,7 @@ export default function Interns() {
           salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
           siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
       <main id="main-content">
-      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-interns-hero">
+      <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-interns-hero">
         <div className="ss-container">
           <div className="max-w-3xl">
             <Eyebrow num="05" tone="navy" className="mb-6" />

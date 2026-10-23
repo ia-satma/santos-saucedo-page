@@ -1,0 +1,36 @@
+{
+  "es": {
+    "title": "Nuestra firma",
+    "subtitle": "Una firma de socios con alcance nacional.",
+    "historyText1": "Santos & Saucedo es una firma especializada en derecho laboral para empresas. Su equipo reúne más de 40 años de experiencia en la asesoría a compañías nacionales e internacionales.",
+    "historyText2": "La firma asesora en prevención de riesgos, relaciones de trabajo y solución de controversias. Su práctica también integra los aspectos corporativos y migratorios que intervienen en la operación de sus clientes.",
+    "valuesTitle": "Cómo trabajamos",
+    "values": [
+      { "title": "Prevención", "text": "Revisamos antes de que lo haga la autoridad. Una auditoría a tiempo cuesta menos que un juicio y con frecuencia lo hace innecesario." },
+      { "title": "Responsabilidad", "text": "Cada asunto lo atiende un socio que conoce al cliente y responde por el trabajo de principio a fin." },
+      { "title": "Franqueza", "text": "Decimos lo que vemos, aunque no sea lo que se espera. A veces el mejor consejo es no litigar." },
+      { "title": "Consistencia", "text": "El mismo criterio en todos los centros de trabajo de un cliente, en cualquier ciudad del país." }
+    ],
+    "stats": [
+      { "value": "40+", "label": "Años de experiencia" },
+      { "value": "72+", "label": "Ciudades en nuestra red de alianzas" }
+    ]
+  },
+  "en": {
+    "title": "The firm",
+    "subtitle": "A partner-led firm with national reach.",
+    "historyText1": "Santos & Saucedo is a law firm specializing in employment law for businesses. Its team brings more than 40 years of experience advising national and international companies.",
+    "historyText2": "The firm advises on risk prevention, employment relations and dispute resolution. Its practice also integrates the corporate and immigration aspects of its clients’ operations.",
+    "valuesTitle": "How we work",
+    "values": [
+      { "title": "Prevention", "text": "We review before the authorities do. A timely audit costs less than a lawsuit and often makes one unnecessary." },
+      { "title": "Accountability", "text": "Every matter is handled by a partner who knows the client and answers for the work from start to finish." },
+      { "title": "Candor", "text": "We say what we see, even when it is not what is expected. Sometimes the best advice is not to litigate." },
+      { "title": "Consistency", "text": "The same judgment across all of a client’s workplaces, in any city in the country." }
+    ],
+    "stats": [
+      { "value": "40+", "label": "Years of Experience" },
+      { "value": "72+", "label": "Cities in our alliance network" }
+    ]
+  }
+}

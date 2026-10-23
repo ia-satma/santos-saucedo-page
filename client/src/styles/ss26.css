@@ -249,7 +249,7 @@ html:has(.ss26) body {
   line-height: 1.65;
   text-wrap: pretty;
   hanging-punctuation: first;
-  hyphens: auto;
+  hyphens: none;
   text-align: justify;
   text-align-last: start;
   text-justify: inter-word;
@@ -748,6 +748,80 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 
 .ss-office-story { grid-column: 1 / -1; display: flex; align-items: center; padding: clamp(28px, 5vw, 64px) 0; }
 .ss-office-story > div { width: 100%; }
+
+/* Shared compact treatment for the nine principal page headers. Detail, legal,
+   article, home and the office reference remain unchanged. The title rule owns
+   its own reserved block, so optional subtitles always begin below it. */
+.editorial-page-hero.ss-principal-page-hero {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: clamp(300px, 24vw, 350px);
+  padding-block: clamp(96px, 8vw, 120px) clamp(40px, 4vw, 56px);
+  color: #fff;
+  background: #18175b;
+}
+.editorial-page-hero.ss-principal-page-hero h1 {
+  margin: 0;
+}
+.editorial-page-hero.ss-principal-page-hero h1::after {
+  content: "";
+  display: block;
+  width: 132px;
+  height: 1px;
+  margin-top: clamp(18px, 2vw, 24px);
+  margin-bottom: clamp(16px, 1.8vw, 22px);
+  background: rgb(255 255 255 / 0.66);
+  pointer-events: none;
+  transform: scaleX(0.2);
+  transform-origin: left center;
+}
+.editorial-page-hero.ss-principal-page-hero h1:dir(rtl)::after {
+  transform-origin: right center;
+}
+.editorial-page-hero.ss-principal-page-hero:has(h1 + p:not(.ss-label)) {
+  min-height: clamp(350px, 28vw, 440px);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .editorial-page-hero.ss-principal-page-hero::before,
+  .editorial-page-hero.ss-principal-page-hero h1::after {
+    transition: transform 460ms var(--ss-ease);
+  }
+  .editorial-page-hero.ss-principal-page-hero:hover::before {
+    transform: translateX(-24px) scale(1.07);
+  }
+  .editorial-page-hero.ss-principal-page-hero:hover h1::after {
+    transform: scaleX(1);
+  }
+  .editorial-page-hero.ss-principal-page-hero:dir(rtl):hover::before {
+    transform: translateX(24px) scale(1.07);
+  }
+}
+@media (max-width: 767.98px) {
+  .editorial-page-hero.ss-principal-page-hero {
+    min-height: 0;
+    padding-block: clamp(108px, 28vw, 136px) 44px;
+  }
+  .editorial-page-hero.ss-principal-page-hero:has(h1 + p:not(.ss-label)) {
+    min-height: 0;
+  }
+}
+/* Touch has no hover affordance: show the complete refined line at rest. With
+   reduced motion, the desktop line is likewise finalized without transitions. */
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .editorial-page-hero.ss-principal-page-hero h1::after {
+    transform: scaleX(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .editorial-page-hero.ss-principal-page-hero::before,
+  .editorial-page-hero.ss-principal-page-hero h1::after {
+    transition: none;
+  }
+}
+
 @media (max-width: 639px) { .ss-office-story { padding: 28px 0; } }
 
 @media (max-width: 639px) { .ss-prose { font-size: 18px; } }

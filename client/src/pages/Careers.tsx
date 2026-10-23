@@ -1,3 +1,4 @@
+import "@/styles/careers-contact.css";
 import { OfficePhotography } from "@/components/editorial/OfficePhotography";
 import { CareerForm } from "@/features/public-forms/CareerForm";
 import { useQuery } from "@tanstack/react-query";
@@ -10,7 +11,7 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
-import { SplitSection, TextLink } from "@/components/home26/primitives";
+import { TextLink } from "@/components/home26/primitives";
 // "Santos & Saucedo" con espacios duros al pintarlo: el nombre no se parte al final de línea.
 // Para la frase de los 40 años, actualizada por indicación del cliente.
 import { keepFirmName } from "@/lib/firmName";
@@ -271,10 +272,7 @@ export default function Careers() {
   const textLinkClass = "ss-label group relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3";
   // Correo de reclutamiento en dos piezas: se parte tras la arroba si la columna es estrecha
   const [emailUser, emailDomain] = t.applyEmail.split("@");
-  // Filas abiertas, como "Cómo trabajamos" en /about: filete superior, titular en romana,
-  // texto en la sans. Sin tarjeta, píldora, icono ni sombra.
-  const rowClass = "border-t border-ss-rule pt-6";
-  // Texto de las cuatro filas (el mismo cuerpo en las cuatro: solo la entrada va en romana)
+  // Texto de las secciones editoriales.
   const rowTextClass = "text-[18px] text-ss-tinta leading-[1.65]";
 
   return (
@@ -287,7 +285,7 @@ export default function Careers() {
           siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie.
           Sin entrada al aparecer (G3): todo se ve completo desde el inicio. */}
       <main id="main-content">
-      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-careers-hero">
+      <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-careers-hero">
         <div className="ss-container">
           <div className="max-w-3xl">
             <Eyebrow num="05" tone="navy" className="mb-6" />
@@ -304,126 +302,90 @@ export default function Careers() {
         </div>
       </section>
 
-      <div className="py-16 lg:py-20">
+      <div className="careers-body py-16 lg:py-20">
         <div className="ss-container">
           
-          {/* Fotografías y contenido comparten una sola composición, sin una fila vacía. */}
-          <section className="mb-20 lg:mb-24" data-testid="section-why-join">
-            <SplitSection
-              asideClassName="order-last lg:order-none"
-              aside={
-                <figure className="max-w-[44rem] lg:max-w-none" data-testid="figure-careers-workspace">
-                  <div className="overflow-hidden rounded-xl bg-ss-rule">
-                    <img
-                      src={photos.areaTrabajo.url}
-                      srcSet={photos.areaTrabajo.smallUrl && photos.areaTrabajo.smallUrl !== photos.areaTrabajo.url ? `${photos.areaTrabajo.smallUrl} 768w, ${photos.areaTrabajo.url} 1536w` : undefined}
-                      sizes="(min-width: 1024px) min(424px, 28vw), 90vw"
-                      alt={keepFirmName(workAreaAlt[language as LanguageCode] ?? workAreaAlt.en)}
-                      loading="lazy"
-                      decoding="async"
-                      width={1536}
-                      height={1024}
-                      className="ss-photo block h-auto w-full"
-                      data-testid="img-careers-workspace"
-                    />
-                  </div>
-                  <OfficePhotography photo="mesaTrabajo" className="mt-5" />
-                </figure>
-              }
-            >
-              <div className="max-w-[44rem]">
-                <p className={leadClass} data-testid="text-careers-intro">
-                  {t.introText}
-                </p>
-                <p className="mt-6 text-[17px] md:text-[18px] text-ss-tinta leading-[1.65] [text-wrap:pretty]">
-                  {t.whyJoinSubtitle}
-                </p>
+          <section className="careers-overview" data-testid="section-why-join">
+            <div className="careers-introduction">
+              <p className={leadClass} data-testid="text-careers-intro">{t.introText}</p>
+              <p className="careers-introduction-support text-[17px] md:text-[18px] text-ss-tinta leading-[1.65] [text-wrap:pretty]">
+                {t.whyJoinSubtitle}
+              </p>
+            </div>
+
+            <figure className="careers-photo-story" data-testid="figure-careers-workspace">
+              <div className="careers-photo-primary">
+                <img
+                  src={photos.areaTrabajo.url}
+                  srcSet={photos.areaTrabajo.smallUrl && photos.areaTrabajo.smallUrl !== photos.areaTrabajo.url ? `${photos.areaTrabajo.smallUrl} 768w, ${photos.areaTrabajo.url} 1536w` : undefined}
+                  sizes="(min-width: 1024px) min(780px, 60vw), (min-width: 768px) 54vw, 90vw"
+                  alt={keepFirmName(workAreaAlt[language as LanguageCode] ?? workAreaAlt.en)}
+                  loading="lazy"
+                  decoding="async"
+                  width={1536}
+                  height={1024}
+                  className="ss-photo block h-auto w-full"
+                  data-testid="img-careers-workspace"
+                />
               </div>
-              <div className="mt-9 grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-2">
-                <div className={rowClass} data-testid="card-culture">
-                  <h2 className="ss-h2-sm mb-3">
-                    {t.cultureTitle}
-                  </h2>
-                  <p className={rowTextClass}>
-                    {t.cultureText}
-                  </p>
-                </div>
+              <OfficePhotography photo="mesaTrabajo" className="careers-photo-secondary" sizes="(min-width: 1024px) min(520px, 40vw), (min-width: 768px) 36vw, 90vw" />
+            </figure>
 
-                <div className={rowClass} data-testid="card-environment">
-                  <h2 className="ss-h2-sm mb-3">
-                    {t.environmentTitle}
-                  </h2>
-                  <p className={rowTextClass}>
-                    {keepFirmName(t.environmentText)}
-                  </p>
-                </div>
-
-                {/* Semillero S&S (el programa de pasantes), antes que las vacantes como en la
-                    redacción: la frase de las vacantes remite a él. Su frase y el enlace a su
-                    página (/careers/interns), que trae lo demás. */}
-                <div className={rowClass} data-testid="section-internship">
-                  <h2 
-                    className="ss-h2-sm mb-3"
-                    data-testid="text-internship-title"
-                  >
-                    {t.internshipTitle}
-                  </h2>
-                  <p className={rowTextClass} data-testid="card-internship-overview">
-                    {keepProgramName(t.internshipSubtitle)}
-                  </p>
-                  <div className="mt-6" data-testid="card-internship-cta">
-                    <TextLink href="/careers/interns">{t.internshipTitle}</TextLink>
-                  </div>
-                </div>
-
-                <div className={rowClass} data-testid="section-positions">
-                  <h2 
-                    className="ss-h2-sm mb-3"
-                    data-testid="text-positions-title"
-                  >
-                    {t.positionsTitle}
-                  </h2>
-                  {!jobsError && t.positions.length === 0 && (
-                    <p className={rowTextClass} data-testid="text-positions-empty">
-                      {keepProgramName(t.positionsEmpty)}
-                    </p>
-                  )}
-
-                  {/* Vacantes en filas abiertas: tipo, área y ciudad en etiqueta (sin píldora ni
-                      iconos) y titular en romana. Solo si hay alguna; la solicitud se envía desde
-                      "Cómo postularse" (un solo "Enviar solicitud" en la página). */}
-                  {jobsError && <p role="status">{language === "es" ? "No se pudieron cargar las vacantes. Puede postularse por correo." : "Openings could not be loaded. You can apply by email."}</p>}
-                  {t.positions.length > 0 && (
-                    <div className="mt-6 border-b border-ss-rule">
-                      {t.positions.map((position, index) => (
-                        <article
-                          key={index}
-                          className="border-t border-ss-rule py-6"
-                          data-testid={`card-position-${index}`}
-                        >
-                          <p className="ss-label text-ss-medio mb-3">
-                            {position.type} · {position.department} · {position.location}
-                          </p>
-                          <h3 className="ss-h3 mb-3">
-                            {position.title}
-                          </h3>
-                          <p className={rowTextClass}>
-                            {position.description}
-                          </p>
-                          {(position.applicationEmail || position.applicationUrl) && <a className="underline text-ss-marino mt-4 inline-block" href={position.applicationUrl || `mailto:${position.applicationEmail}`}>{t.sendApplication}</a>}
-                        </article>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </SplitSection>
+            <div className="careers-culture-grid">
+              <article className="careers-culture-item" data-testid="card-culture">
+                <h2 className="ss-h2-sm mb-4">{t.cultureTitle}</h2>
+                <p className={rowTextClass}>{t.cultureText}</p>
+              </article>
+              <article className="careers-culture-item" data-testid="card-environment">
+                <h2 className="ss-h2-sm mb-4">{t.environmentTitle}</h2>
+                <p className={rowTextClass}>{keepFirmName(t.environmentText)}</p>
+              </article>
+            </div>
           </section>
 
-          <section className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-6" data-testid="section-apply">
-            <div className="lg:col-span-5">
-              <h2 className="ss-h2 mb-6" data-testid="text-apply-title">{t.applyTitle}</h2>
-              <div className="max-w-[44rem]" data-testid="card-apply-instructions">
+          <section className="careers-program" data-testid="section-internship">
+            <div className="careers-program-copy">
+              <h2 className="ss-h2" data-testid="text-internship-title">{t.internshipTitle}</h2>
+              <p className={rowTextClass} data-testid="card-internship-overview">
+                {keepProgramName(t.internshipSubtitle)}
+              </p>
+            </div>
+            <div className="careers-program-action" data-testid="card-internship-cta">
+              <TextLink href="/careers/interns">{t.internshipTitle}</TextLink>
+            </div>
+          </section>
+
+          <section className="careers-positions" data-testid="section-positions">
+            <h2 className="ss-h2" data-testid="text-positions-title">{t.positionsTitle}</h2>
+            {!jobsError && t.positions.length === 0 && (
+              <p className="careers-positions-empty" data-testid="text-positions-empty">
+                {keepProgramName(t.positionsEmpty)}
+              </p>
+            )}
+            {jobsError && <p role="status" className="careers-positions-error">{language === "es" ? "No se pudieron cargar las vacantes. Puede postularse por correo." : "Openings could not be loaded. You can apply by email."}</p>}
+            {t.positions.length > 0 && (
+              <div className="careers-position-list">
+                {t.positions.map((position, index) => (
+                  <article
+                    key={index}
+                    className="careers-position"
+                    data-testid={`card-position-${index}`}
+                  >
+                    <p className="ss-label text-ss-medio mb-3">
+                      {position.type} · {position.department} · {position.location}
+                    </p>
+                    <h3 className="ss-h3 mb-3">{position.title}</h3>
+                    <p className={rowTextClass}>{position.description}</p>
+                    {(position.applicationEmail || position.applicationUrl) && <a className="underline text-ss-marino mt-4 inline-block" href={position.applicationUrl || `mailto:${position.applicationEmail}`}>{t.sendApplication}</a>}
+                  </article>
+                ))}
+              </div>
+            )}
+          </section>
+
+          <section className="careers-apply" data-testid="section-apply">
+            <h2 className="ss-h2" data-testid="text-apply-title">{t.applyTitle}</h2>
+            <div className="careers-apply-intro" data-testid="card-apply-instructions">
                 <p className="text-base text-ss-tinta leading-[1.55] max-w-2xl mb-3">
                   {t.applyInstructions}
                 </p>
@@ -449,9 +411,8 @@ export default function Careers() {
                     →
                   </span>
                 </a>
-              </div>
             </div>
-            <CareerForm source="careers" className="lg:col-span-6 lg:col-start-7"/>
+            <CareerForm source="careers" className="careers-form"/>
           </section>
 
         </div>

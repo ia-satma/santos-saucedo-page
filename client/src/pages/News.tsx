@@ -58,7 +58,7 @@ export default function NewsPage() {
       {/* Encabezado dentro de <main> (el salto al contenido no se salta el h1); el relleno
           del cuerpo va en su propio envoltorio. ss-container: borde de logotipo y pie. */}
       <main id="main-content">
-        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-news-hero">
+        <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-news-hero">
           <div className="ss-container">
             <div className="max-w-3xl">
               <Eyebrow num="04" tone="navy" className="mb-6" />
@@ -90,6 +90,7 @@ export default function NewsPage() {
         <div className="py-16 lg:py-20">
           <div className="ss-container">
             <MonitorList
+              presentation="archive"
               filters
               search
               onTranslated={handleTranslated}

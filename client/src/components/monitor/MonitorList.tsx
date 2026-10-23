@@ -11,10 +11,10 @@ import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { formatNewsDate } from "@/lib/newsDate";
 import { isStaticSite } from "@/lib/queryClient";
 import { newsCategories, type LanguageCode, type News } from "@shared/schema";
+import { getHomeMonitorImage } from "@shared/monitorEditorial";
 
-// Lista única del Monitor Laboral (/news, /articles, "Más del Monitor Laboral" del artículo y,
-// si se quiere, la portada). Filas de filete: categoría · fecha en etiqueta, titular en la
-// romana que es el enlace y entradilla. Sin foto ni loseta Hueso con §, sin "Leer más".
+// Lista del Monitor Laboral: archivo editorial optativo en /news y /articles;
+// filas de texto por defecto en los relacionados, sin alterar la portada.
 // Lee solo lo publicado en /api/news, del más reciente al más antiguo, con estados de
 // carga, vacío y error (anunciados en un contenedor role="status").
 
@@ -28,6 +28,12 @@ interface MonitorStrings {
   empty: string;
   noResults: string;
   error: string;
+  imageUnavailable: string;
+  pagination: string;
+  previous: string;
+  next: string;
+  page: string;
+  pageOf: string;
   categories: Record<string, string>;
 }
 
@@ -40,6 +46,12 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     empty: "Aún no hay publicaciones.",
     noResults: "Ninguna publicación coincide con la búsqueda.",
     error: "No fue posible cargar las publicaciones.",
+    imageUnavailable: "Imagen no disponible",
+    pagination: "Paginación de publicaciones",
+    previous: "Anterior",
+    next: "Siguiente",
+    page: "Página",
+    pageOf: "Página {page} de {count}",
     categories: { press: "Prensa", insights: "Análisis", rankings: "Rankings", events: "Eventos", alerts: "Alertas" },
   },
   en: {
@@ -50,6 +62,12 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     empty: "There are no publications yet.",
     noResults: "No publications match the search.",
     error: "The publications could not be loaded.",
+    imageUnavailable: "Image unavailable",
+    pagination: "Publication pagination",
+    previous: "Previous",
+    next: "Next",
+    page: "Page",
+    pageOf: "Page {page} of {count}",
     categories: { press: "Press", insights: "Analysis", rankings: "Rankings", events: "Events", alerts: "Alerts" },
   },
   de: {
@@ -60,6 +78,12 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     empty: "Es gibt noch keine Veröffentlichungen.",
     noResults: "Keine Veröffentlichung entspricht der Suche.",
     error: "Die Veröffentlichungen konnten nicht geladen werden.",
+    imageUnavailable: "Bild nicht verfügbar",
+    pagination: "Seitennavigation für Veröffentlichungen",
+    previous: "Zurück",
+    next: "Weiter",
+    page: "Seite",
+    pageOf: "Seite {page} von {count}",
     categories: { press: "Presse", insights: "Analysen", rankings: "Rankings", events: "Veranstaltungen", alerts: "Mitteilungen" },
   },
   zh: {
@@ -70,6 +94,12 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     empty: "暂无文章。",
     noResults: "没有符合搜索条件的文章。",
     error: "无法加载文章。",
+    imageUnavailable: "图片不可用",
+    pagination: "文章分页",
+    previous: "上一页",
+    next: "下一页",
+    page: "页",
+    pageOf: "第 {page} 页，共 {count} 页",
     categories: { press: "新闻稿", insights: "分析", rankings: "排名", events: "活动", alerts: "公告" },
   },
   ko: {
@@ -80,6 +110,12 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     empty: "아직 게시물이 없습니다.",
     noResults: "검색 결과가 없습니다.",
     error: "게시물을 불러오지 못했습니다.",
+    imageUnavailable: "이미지를 사용할 수 없습니다",
+    pagination: "게시물 페이지 이동",
+    previous: "이전",
+    next: "다음",
+    page: "페이지",
+    pageOf: "{count}페이지 중 {page}페이지",
     categories: { press: "보도자료", insights: "분석", rankings: "순위", events: "이벤트", alerts: "공지" },
   },
   ja: {
@@ -90,6 +126,12 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     empty: "まだ記事はありません。",
     noResults: "検索に一致する記事はありません。",
     error: "記事を読み込めませんでした。",
+    imageUnavailable: "画像を表示できません",
+    pagination: "記事のページ移動",
+    previous: "前へ",
+    next: "次へ",
+    page: "ページ",
+    pageOf: "{count}ページ中{page}ページ",
     categories: { press: "プレス", insights: "分析", rankings: "ランキング", events: "イベント", alerts: "お知らせ" },
   },
   ar: {
@@ -100,6 +142,12 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     empty: "لا توجد منشورات بعد.",
     noResults: "لا توجد منشورات تطابق البحث.",
     error: "تعذّر تحميل المنشورات.",
+    imageUnavailable: "الصورة غير متاحة",
+    pagination: "التنقل بين صفحات المنشورات",
+    previous: "السابق",
+    next: "التالي",
+    page: "الصفحة",
+    pageOf: "الصفحة {page} من {count}",
     categories: { press: "صحافة", insights: "تحليلات", rankings: "تصنيفات", events: "فعاليات", alerts: "تنبيهات" },
   },
   ru: {
@@ -110,6 +158,12 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     empty: "Публикаций пока нет.",
     noResults: "По запросу ничего не найдено.",
     error: "Не удалось загрузить публикации.",
+    imageUnavailable: "Изображение недоступно",
+    pagination: "Пагинация публикаций",
+    previous: "Назад",
+    next: "Далее",
+    page: "Страница",
+    pageOf: "Страница {page} из {count}",
     categories: { press: "Пресса", insights: "Аналитика", rankings: "Рейтинги", events: "Мероприятия", alerts: "Уведомления" },
   },
   fr: {
@@ -120,6 +174,12 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     empty: "Aucune publication pour le moment.",
     noResults: "Aucune publication ne correspond à la recherche.",
     error: "Impossible de charger les publications.",
+    imageUnavailable: "Image indisponible",
+    pagination: "Pagination des publications",
+    previous: "Précédent",
+    next: "Suivant",
+    page: "Page",
+    pageOf: "Page {page} sur {count}",
     categories: { press: "Presse", insights: "Analyses", rankings: "Classements", events: "Événements", alerts: "Alertes" },
   },
   it: {
@@ -130,6 +190,12 @@ const STRINGS: Record<LanguageCode, MonitorStrings> = {
     empty: "Non ci sono ancora pubblicazioni.",
     noResults: "Nessuna pubblicazione corrisponde alla ricerca.",
     error: "Impossibile caricare le pubblicazioni.",
+    imageUnavailable: "Immagine non disponibile",
+    pagination: "Paginazione delle pubblicazioni",
+    previous: "Precedente",
+    next: "Successiva",
+    page: "Pagina",
+    pageOf: "Pagina {page} di {count}",
     categories: { press: "Stampa", insights: "Analisi", rankings: "Classifiche", events: "Eventi", alerts: "Avvisi" },
   },
 };
@@ -177,6 +243,8 @@ interface MonitorListProps {
   onTranslated?: () => void;
   testIds?: MonitorListTestIds;
   className?: string;
+  /** Editorial archive layout for /news and /articles only. */
+  presentation?: "default" | "archive";
 }
 
 const TITLE_CLASS =
@@ -202,6 +270,8 @@ function MonitorRow({
   lead = false,
   testIds,
   onTranslated,
+  editorial,
+  imageUnavailable,
 }: {
   item: News;
   language: LanguageCode;
@@ -214,6 +284,8 @@ function MonitorRow({
   lead?: boolean;
   testIds: MonitorListTestIds;
   onTranslated?: () => void;
+  editorial: boolean;
+  imageUnavailable: string;
 }) {
   const liveStrings = useCmsContent("monitor-ui", STRINGS);
   const s = liveStrings[language] || liveStrings.en;
@@ -308,10 +380,14 @@ function MonitorRow({
 
   return (
     <li
-      className={`grid grid-cols-1 gap-y-3 border-b ${rule} py-8 ${index ? "lg:grid-cols-12 lg:gap-x-6 lg:py-10" : ""}`}
+      className={editorial
+        ? `grid grid-cols-1 gap-5 border-b ${rule} py-8 md:grid-cols-[minmax(220px,0.78fr)_minmax(0,1fr)] md:gap-8 md:py-9 lg:gap-12`
+        : `grid grid-cols-1 gap-y-3 border-b ${rule} py-8 ${index ? "lg:grid-cols-12 lg:gap-x-6 lg:py-10" : ""}`}
       data-testid={testIds.row?.(item)}
     >
-      <p className={`ss-label ss-num ${index ? "lg:col-span-4 lg:pt-2" : ""}`}>
+      {editorial && <ArchiveImage key={getHomeMonitorImage(item)} item={item} label={imageUnavailable} />}
+      <div className={editorial ? "min-w-0 self-center" : "contents"}>
+      <p className={`ss-label ss-num ${index && !editorial ? "lg:col-span-4 lg:pt-2" : ""}`}>
         {category && (
           <span className="text-ss-marino" data-testid={testIds.category?.(item)}>
             {category}
@@ -329,9 +405,9 @@ function MonitorRow({
           </time>
         )}
       </p>
-      <div className={index ? "lg:col-span-7 lg:col-start-5 xl:col-span-6" : ""}>
+      <div className={index && !editorial ? "lg:col-span-7 lg:col-start-5 xl:col-span-6" : ""}>
         <Heading
-          className={TITLE_CLASS}
+            className={`${TITLE_CLASS} ${editorial ? "text-[clamp(25px,2.1vw,32px)] leading-[1.18] tracking-[-0.015em]" : ""}`}
           data-testid={testIds.title?.(item)}
           lang={titleIsSource ? "en" : undefined}
         >
@@ -348,7 +424,7 @@ function MonitorRow({
             mismo borde derecho (entre 60 y 75 caracteres por línea). En el móvil, el contenedor */}
         {excerpt && (
           <p
-            className={`mt-3 text-[18px] leading-[1.55] text-ss-tinta [text-wrap:pretty] ${index ? "max-w-[63.75ch]" : ""}`}
+            className={`mt-3 text-[18px] leading-[1.55] text-ss-tinta [text-wrap:pretty] ${index || editorial ? "max-w-[63.75ch]" : ""}`}
             data-testid={testIds.excerpt?.(item)}
             lang={excerptIsSource ? "en" : undefined}
           >
@@ -356,7 +432,34 @@ function MonitorRow({
           </p>
         )}
       </div>
+      </div>
     </li>
+  );
+}
+
+function ArchiveImage({ item, label }: { item: News; label: string }) {
+  const image = getHomeMonitorImage(item);
+  const [failed, setFailed] = useState(false);
+  if (!image || failed) {
+    return (
+      <div aria-hidden="true" className="flex aspect-[16/9] min-h-[150px] items-end border-l-2 border-ss-rule bg-ss-paper p-4 md:min-h-[180px]">
+        <span className="ss-label text-[10px] tracking-[0.12em] text-ss-medio">{label}</span>
+      </div>
+    );
+  }
+  return (
+    <div className="overflow-hidden rounded-[8px] bg-ss-paper">
+      <img
+        src={image}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        onError={() => setFailed(true)}
+        width={1024}
+        height={1024}
+        className="block aspect-[16/9] min-h-[150px] w-full object-cover object-[50%_40%] md:min-h-[180px]"
+      />
+    </div>
   );
 }
 
@@ -373,6 +476,7 @@ export function MonitorList({
   onTranslated,
   testIds = {},
   className = "",
+  presentation = "default",
 }: MonitorListProps) {
   const { language: interfaceLanguage } = useLanguage();
   const language = languageProp ?? interfaceLanguage;
@@ -380,6 +484,9 @@ export function MonitorList({
   const s = liveStrings[language] || liveStrings.en;
   const [category, setCategory] = useState("all");
   const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const editorial = presentation === "archive";
+  const pageSize = 12;
 
   const { data, isLoading, error } = useQuery<News[]>({
     queryKey: ["/api/news"],
@@ -402,15 +509,20 @@ export function MonitorList({
   const activeCategory = showFilters && presentCategories.includes(category) ? category : "all";
 
   const q = showSearch ? query.trim().toLowerCase() : "";
-  const visible = items
+  const filteredItems = items
     .filter((item) => activeCategory === "all" || item.category === activeCategory)
     .filter((item) =>
       !q || [item.titleEs, item.title, item.excerptEs, item.excerpt].some((text) => text?.toLowerCase().includes(q)),
-    )
-    .slice(0, limit);
+    );
+  const pageCount = editorial ? Math.max(1, Math.ceil(filteredItems.length / pageSize)) : 1;
+  const currentPage = Math.min(page, pageCount);
+  const visible = editorial
+    ? filteredItems.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+    : filteredItems.slice(0, limit);
 
   const rule = tone === "paper" ? "border-ss-marino/15" : "border-ss-rule";
   const narrowed = activeCategory !== "all" || q.length > 0;
+  const paginationText = s.pageOf.replace("{page}", String(currentPage)).replace("{count}", String(pageCount));
 
   return (
     <div className={className}>
@@ -424,7 +536,7 @@ export function MonitorList({
                   <button
                     key={value}
                     type="button"
-                    onClick={() => setCategory(value)}
+                    onClick={() => { setCategory(value); setPage(1); }}
                     aria-pressed={active}
                     // Control, no navegación: botón de texto con objetivo de 44 px; la activa en
                     // Azul Marino con subrayado (sin botón Marino lleno, reservado a enviar)
@@ -449,7 +561,7 @@ export function MonitorList({
                   id="monitor-search"
                   type="search"
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
+                  onChange={(e) => { setQuery(e.target.value); setPage(1); }}
                   // 44 px fijos: h-11 depende de rem y baja a 38,5 px bajo 360 px (html a 14 px).
                   // Borde de campo (--ss-field, 3,5:1 sobre blanco; WCAG 1.4.11)
                   className="h-[44px] ps-9 bg-white border-ss-field text-ss-tinta focus-visible:ring-ss-marino focus-visible:border-ss-marino"
@@ -488,7 +600,7 @@ export function MonitorList({
 
       {!error && isLoading && (
         <ul className={`border-t ${rule}`} aria-busy="true" aria-label={s.loading}>
-          {Array.from({ length: Math.min(limit ?? 3, 3) }).map((_, i) => (
+          {Array.from({ length: editorial ? 4 : Math.min(limit ?? 3, 3) }).map((_, i) => (
             <li key={i} className={`border-b ${rule} py-8`} data-testid={testIds.skeleton?.(i)}>
               <Skeleton className="h-3 w-40 mb-4 bg-ss-rule" />
               <Skeleton className="h-6 w-full max-w-xl mb-3 bg-ss-rule" />
@@ -512,9 +624,46 @@ export function MonitorList({
               lead={layout === "bulletin" && i === 0}
               testIds={testIds}
               onTranslated={onTranslated}
+              editorial={editorial}
+              imageUnavailable={s.imageUnavailable}
             />
           ))}
         </ul>
+      )}
+      {editorial && !error && !isLoading && filteredItems.length > pageSize && (
+        <nav aria-label={s.pagination} className="flex flex-wrap items-center justify-between gap-4 border-b border-ss-rule py-6">
+          <button
+            type="button"
+            onClick={() => setPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            className="ss-label min-h-[44px] px-2 text-ss-marino underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ss-marino disabled:cursor-not-allowed disabled:text-ss-medio disabled:no-underline"
+          >
+            {s.previous}
+          </button>
+          <div className="flex flex-wrap items-center justify-center gap-1" aria-label={paginationText}>
+            {Array.from({ length: pageCount }, (_, index) => index + 1).map((number) => (
+              <button
+                key={number}
+                type="button"
+                onClick={() => setPage(number)}
+                aria-label={`${s.page} ${number}`}
+                aria-current={currentPage === number ? "page" : undefined}
+                className={`ss-label min-h-[44px] min-w-[44px] px-3 underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ss-marino ${currentPage === number ? "text-ss-marino underline" : "text-ss-medio hover:text-ss-marino hover:underline"}`}
+              >
+                {number}
+              </button>
+            ))}
+          </div>
+          <span className="sr-only" aria-live="polite">{paginationText}</span>
+          <button
+            type="button"
+            onClick={() => setPage(Math.min(pageCount, currentPage + 1))}
+            disabled={currentPage === pageCount}
+            className="ss-label min-h-[44px] px-2 text-ss-marino underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ss-marino disabled:cursor-not-allowed disabled:text-ss-medio disabled:no-underline"
+          >
+            {s.next}
+          </button>
+        </nav>
       )}
     </div>
   );

@@ -1,3 +1,4 @@
+import "@/styles/careers-contact.css";
 import { OfficePhotography } from "@/components/editorial/OfficePhotography";
 import cmsDefaults from "@shared/cms-defaults.json";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
@@ -736,7 +737,7 @@ export default function Contact() {
           salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
           siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
       <main id="main-content">
-        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-contact-hero">
+        <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-contact-hero">
           <div className="ss-container">
             <div className="max-w-3xl">
               <Eyebrow num="06" tone="navy" className="mb-6" />
@@ -748,14 +749,13 @@ export default function Contact() {
           </div>
         </section>
 
-        <div className="py-16 lg:py-20">
-          {/* Ficha de la oficina a la izquierda y formulario a la derecha. En el teléfono, por
-              orden del documento: ficha, formulario y, al final, la foto del edificio. En
-              escritorio la foto va bajo la ficha (fila 2) y el formulario ocupa las dos filas. */}
-          <div className="ss-container grid grid-cols-1 gap-y-16 lg:grid-cols-12 lg:grid-rows-[auto_1fr] lg:gap-x-12 lg:gap-y-12">
+        <div>
+          {/* Datos y formulario comparten una fila; las fotografías ocupan el ancho
+              completo debajo. En móvil se conserva el mismo orden de lectura. */}
+          <div className="contact-body-grid ss-container grid grid-cols-1 gap-y-16 lg:grid-cols-12 lg:gap-x-12 lg:gap-y-12">
             {/* Oficina: lista de datos con filetes (sin tarjeta ni iconos) y el enlace "Cómo llegar" */}
             <section
-              className="lg:col-span-5"
+              className="contact-office lg:col-span-5"
               data-testid="section-contact-office"
             >
               <h2 className="ss-h2 mb-8" data-testid="text-offices-title">
@@ -861,7 +861,7 @@ export default function Contact() {
 
             {/* Tarjeta compacta: conserva campos, validación y envío del formulario. */}
             <section
-              className="ss-contact-card lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 lg:self-start"
+              className="ss-contact-card contact-form-panel lg:col-span-6 lg:col-start-7 lg:self-start"
               data-testid="section-contact-form"
             >
               <h2 className="ss-h2-sm mb-6" data-testid="text-form-title">
@@ -1059,17 +1059,12 @@ export default function Contact() {
               </Form>}
             </section>
 
-            {/* La fachada (oficina/fachada, 1159 × 900, sin el estacionamiento): la misma de la
-                portada, a su proporción propia, sin reencuadre ni filtro. Hasta 26rem de ancho en
-                tableta; desde lg, el ancho de su columna (5/12), como la lista de datos de arriba
-                (K5): 356 px a 1024, 512 a 1440, 522 desde 1464 (37,5vw − 28px con el margen de
-                5vw del contenedor). */}
-            <figure className="sm:max-w-[26rem] lg:col-span-5 lg:row-start-2 lg:max-w-none lg:self-start" data-testid="figure-contact-building">
+            <figure className="contact-building" data-testid="figure-contact-building">
               <div className="overflow-hidden bg-ss-rule">
                 <img
                   src={photos.fachada.url}
                   srcSet={photos.fachada.smallUrl && photos.fachada.smallUrl !== photos.fachada.url ? `${photos.fachada.smallUrl} 768w, ${photos.fachada.url} 1159w` : undefined}
-                  sizes="(min-width: 1024px) min(522px, calc(37.5vw - 28px)), (min-width: 640px) 416px, calc(100vw - 40px)"
+                  sizes="(min-width: 1464px) 648px, (min-width: 768px) 44vw, calc(100vw - 40px)"
                   alt={t.photoAlt}
                   loading="lazy"
                   decoding="async"
@@ -1079,7 +1074,7 @@ export default function Contact() {
                   data-testid="img-contact-building"
                 />
               </div>
-              <OfficePhotography photo="recepcionGeneral" className="mt-5" />
+              <OfficePhotography photo="recepcionGeneral" sizes="(min-width: 1464px) 648px, (min-width: 768px) 44vw, calc(100vw - 40px)" />
             </figure>
           </div>
         </div>

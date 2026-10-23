@@ -228,6 +228,8 @@
 
   p {
     text-wrap: pretty;
+    /* Los párrafos pasan palabras completas al siguiente renglón, sin guiones. */
+    hyphens: none;
   }
 }
 
@@ -1134,6 +1136,25 @@ html, body {
   background-image: none;
   /* Anillos ring-ring y contorno de foco sobre Azul Profundo: lima */
   --ring: 80 81% 58%;
+}
+
+/* Marca oficial SS/§: máscara del asset de identidad, no un glifo tipográfico.
+   La sección ya es un contexto aislado; el pseudo queda sobre el fondo y bajo el
+   contenido, sin participar en el flujo, el foco ni los eventos del puntero. */
+.editorial-page-hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset-block: 0;
+  inset-inline-end: clamp(16px, 5vw, 72px);
+  width: clamp(128px, 28vw, 360px);
+  pointer-events: none;
+  background-color: rgb(255 255 255 / 0.055);
+  -webkit-mask: url("../../attached_assets/ss26/seccion.svg") center / contain no-repeat;
+  mask: url("../../attached_assets/ss26/seccion.svg") center / contain no-repeat;
+}
+.editorial-page-hero--paper::before {
+  background-color: rgb(29 28 104 / 0.035);
 }
 
 .editorial-page-hero,

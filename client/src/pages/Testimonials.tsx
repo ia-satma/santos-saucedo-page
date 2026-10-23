@@ -53,7 +53,7 @@ export default function Testimonials() {
       <SEOHead page="testimonials" language={language} />
       <Header />
       <main id="main-content">
-        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-testimonials-hero">
+        <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-testimonials-hero">
           <div className="ss-container">
             <div className="max-w-3xl">
               <Eyebrow num="" tone="navy" className="mb-6" />

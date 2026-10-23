@@ -1,1 +1,10 @@
 - [Retratos de socios](portraits.md) — Mario usa el retrato aportado a color, con in memoriam y presencia equivalente en inicio; conservar el original monocromo.
+- [Fotografía editorial](editorial-photography.md) — En las imágenes del Monitor Laboral, evitar rostros.
+- [Palabras completas](paragraph-wrapping.md) — No dividir palabras con guiones automáticos en los párrafos del sitio.
+- [Capturas del Monitor](monitor-visual-testing.md) — Excluir de la captura la cabecera sticky, no el contenido editorial, para evitar falsos positivos por scroll.
+- [Recepción en Nuestra firma](about-photography.md) — El usuario rechaza la recepción pequeña «tipo editorial» junto al texto; prefiere verla amplia con las otras fotos.
+- [Fotos de Prácticas](practice-photography.md) — El directorio debe mostrar las mismas fotografías aprobadas que el inicio, no otra selección.
+- [Marca de agua SS](banner-watermark.md) — El usuario quiere la marca oficial en los banners de las páginas, no limitada a la portada.
+- [Cabeceras principales](photo-banners.md) — La decisión vigente es quitar las imágenes de los banners; no generar sustitutas ni retirar fotos del contenido.
+- [Pruebas de hover](hover-verification.md) — Evaluar el efecto local sin atribuirle cambios ajenos del contenido que carga después.
+- [HTML de la vista previa](preview-dom.md) — La instrumentación del editor no forma parte del contenido que deben conservar las comparaciones de HTML.
