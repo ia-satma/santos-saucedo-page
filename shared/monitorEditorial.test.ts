@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { existsSync } from "node:fs";
+import bundled from "./cms-media-manifest.json";
 import type { News } from "./schema";
-import { getHomeMonitorImage, HOME_MONITOR_IMAGES, selectHomeMonitorItems } from "./monitorEditorial";
+import { getHomeMonitorImage, HOME_MONITOR_IMAGES, SUPERSEDED_HOME_MONITOR_IMAGES, selectHomeMonitorItems } from "./monitorEditorial";
 
 const article = (id: string, fields: Partial<News> = {}) => ({
   id, slug: id, published: true, featuredHome: false,
@@ -35,4 +37,22 @@ test("editor images take priority and unknown articles explicitly have no image"
   assert.ok(getHomeMonitorImage({ slug, imageUrl: null })?.includes("monitor-conciliacion"));
   assert.equal(getHomeMonitorImage({ slug: "new-article", imageUrl: null }), null);
   assert.equal(getHomeMonitorImage({ slug: "new-article", imageUrl: " " }), null);
+});
+
+test("superseded face photographs resolve to the new editorial series without replacing custom choices", () => {
+  for (const [slug, oldImage] of Object.entries(SUPERSEDED_HOME_MONITOR_IMAGES)) {
+    const replacement = getHomeMonitorImage({ slug, imageUrl: oldImage });
+    assert.notEqual(replacement, oldImage);
+    assert.equal(replacement, getHomeMonitorImage({ slug, imageUrl: null }));
+    assert.equal(getHomeMonitorImage({ slug, imageUrl: "/media/custom-editor-image.webp" }), "/media/custom-editor-image.webp");
+  }
+});
+
+test("initial images ship as static assets and do not require a populated storage bucket", () => {
+  for (const [slug, source] of Object.entries(HOME_MONITOR_IMAGES)) {
+    const asset = bundled.find(entry => entry.url === source)!;
+    assert.ok(existsSync(asset.source), `Bundled source exists: ${source}`);
+    assert.equal(getHomeMonitorImage({ slug, imageUrl: null }), source);
+    assert.equal(getHomeMonitorImage({ slug, imageUrl: `/media/${asset.key}` }), source);
+  }
 });

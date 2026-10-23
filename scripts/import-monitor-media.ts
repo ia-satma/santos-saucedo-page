@@ -5,7 +5,7 @@ import { and, eq, isNull, or } from "drizzle-orm";
 import { db } from "../server/db";
 import { mediaItems, news } from "../shared/schema";
 import bundled from "../shared/cms-media-manifest.json";
-import { HOME_MONITOR_IMAGES } from "../shared/monitorEditorial";
+import { HOME_MONITOR_IMAGES, SUPERSEDED_HOME_MONITOR_IMAGES } from "../shared/monitorEditorial";
 import { uploadAppStorageObject, downloadAppStorageObject, verifyAppStorage } from "../server/replitStorage";
 
 // Explicit development content setup only, never run automatically at startup.
@@ -41,7 +41,11 @@ async function main() {
   }
   for (const item of prepared) {
     const changed = await db.update(news).set({ imageUrl: item.path }).where(
-      and(eq(news.slug, item.slug), or(isNull(news.imageUrl), eq(news.imageUrl, ""))),
+      and(eq(news.slug, item.slug), or(
+        isNull(news.imageUrl),
+        eq(news.imageUrl, ""),
+        eq(news.imageUrl, SUPERSEDED_HOME_MONITOR_IMAGES[item.slug]),
+      )),
     ).returning({ slug: news.slug });
     console.log(`${item.slug}: ${changed.length ? "imagen asociada" : "se conserva la selección existente"}`);
   }

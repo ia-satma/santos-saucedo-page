@@ -32,10 +32,15 @@ runButton = "Project"
 [[workflows.workflow]]
 name = "Project"
 mode = "parallel"
+author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
 args = "Start application"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "monitor-editorial"
 
 [[workflows.workflow]]
 name = "Start application"
@@ -44,6 +49,17 @@ name = "Start application"
 task = "shell.exec"
 args = "npm run start:workspace"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "monitor-editorial"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node --import tsx --test shared/monitorEditorial.test.ts"
+
+[workflows.workflow.metadata]
+isValidation = true
 
 [postMerge]
 path = "scripts/post-merge.sh"

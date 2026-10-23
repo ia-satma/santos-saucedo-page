@@ -70,7 +70,7 @@ try {
     const target = await first.getAttribute("href");
     await first.click();
     await page.waitForURL(`**${target}`);
-    assert.ok(await page.locator("h1").isVisible(), "Article detail opens");
+    await page.locator("h1").waitFor({ state: "visible" });
     await page.goto(`${baseURL}/news`, { waitUntil: "domcontentloaded" });
     await page.locator('main a[href^="/news/"]').first().waitFor();
     assert.equal(await page.getByTestId("home-monitor-stories").count(), 0, "Archive keeps its original presentation");
@@ -123,6 +123,24 @@ try {
     console.log(`PASS zero/one/two/three, missing image, failed image, drafts, error and loading: ${language}`);
     await page.close();
   }
+  // Simulate an empty bucket, including initial DB storage URLs and freshly seeded nulls.
+  const fresh = await pageFor("es", 1440);
+  let freshArticles = articles;
+  await fresh.route("**/media/**", route => route.fulfill({ status: 404, body: "Empty storage bucket" }));
+  await fresh.route("**/api/news", route => route.fulfill({ json: freshArticles }));
+  for (const seededWithImages of [true, false]) {
+    freshArticles = seededWithImages ? articles : articles.map(item => ({ ...item, imageUrl: null }));
+    await open(fresh);
+    await fresh.locator("#news article").first().waitFor();
+    await fresh.locator("#news").scrollIntoViewIfNeeded();
+    await fresh.locator("#news img").evaluateAll(images => Promise.all(images.map(image => image.decode())));
+    assert.equal(await fresh.locator("#news img").count(), 3);
+    assert.ok(await fresh.locator("#news img").evaluateAll(images => images.every(image =>
+      image.naturalWidth > 0 && new URL(image.src).pathname.startsWith("/editorial/"),
+    )), "Bundled images load with empty App Storage");
+  }
+  await fresh.close();
+  console.log("PASS fresh installation with empty App Storage, with and without initial image URLs");
   assert.deepEqual(errors, [], "No browser runtime errors");
   console.log(`All Monitor editorial checks passed. Screenshots: ${screenshots}`);
 } finally {
