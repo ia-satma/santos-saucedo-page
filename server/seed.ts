@@ -1,5 +1,6 @@
 import type { SiteContent, Stat } from "@shared/schema";
 import { MARIO_PORTRAIT_URL } from "@shared/marioPortrait";
+import { getHomeMonitorImage } from "@shared/monitorEditorial";
 
 export const siteContentData: SiteContent = {
   heroTitle: "WE GO WHERE CLIENTS NEED US",
@@ -444,6 +445,7 @@ export const newsData = [
     content: "Individual labor conflicts can escalate quickly once they reach a conciliation and arbitration board. Companies that document processes and act early in the conciliation stage are consistently better positioned than those that wait until litigation is underway. This overview covers the key stages employers should understand and where preventive legal counsel makes the most difference.",
     contentEs: "Los conflictos individuales de trabajo pueden escalar rápidamente una vez que llegan a una junta de conciliación y arbitraje. Las empresas que documentan sus procesos y actúan desde la etapa de conciliación están consistentemente mejor posicionadas que aquellas que esperan a que el litigio esté en curso. Este panorama cubre las etapas clave que los empleadores deben entender y en qué momentos la asesoría legal preventiva marca la mayor diferencia.",
     slug: "conflictos-individuales-juntas-conciliacion",
+    imageUrl: getHomeMonitorImage({ slug: "conflictos-individuales-juntas-conciliacion", imageUrl: null }),
     published: true,
     category: "alerts",
     categoryEs: "Alertas",
@@ -456,6 +458,7 @@ export const newsData = [
     content: "Many labor claims trace back to gaps in day-to-day administration: incomplete files, inconsistent policy application, or undocumented decisions. A structured labor administration review identifies these gaps while they are still inexpensive to fix, rather than after a claim has already been filed.",
     contentEs: "Muchas demandas laborales se originan en vacíos de la administración cotidiana: expedientes incompletos, aplicación inconsistente de políticas o decisiones no documentadas. Una revisión estructurada de la administración laboral identifica estos vacíos mientras todavía son económicos de corregir, en lugar de después de que ya se presentó una demanda.",
     slug: "revision-administracion-laboral-preventiva",
+    imageUrl: getHomeMonitorImage({ slug: "revision-administracion-laboral-preventiva", imageUrl: null }),
     published: true,
     category: "alerts",
     categoryEs: "Alertas",
@@ -468,6 +471,7 @@ export const newsData = [
     content: "Companies scaling quickly often outgrow their original labor documentation and policies without noticing. A legal-labor audit checklist — covering contracts, internal regulations, and statutory filings — gives growing companies a repeatable way to catch gaps before they compound.",
     contentEs: "Las empresas que crecen rápido con frecuencia superan su documentación y políticas laborales originales sin notarlo. Un checklist de auditoría jurídico-laboral —que cubra contratos, reglamentos internos y obligaciones legales— le da a las empresas en crecimiento una forma repetible de detectar vacíos antes de que se acumulen.",
     slug: "checklist-auditoria-juridico-laboral",
+    imageUrl: getHomeMonitorImage({ slug: "checklist-auditoria-juridico-laboral", imageUrl: null }),
     published: true,
     category: "alerts",
     categoryEs: "Alertas",

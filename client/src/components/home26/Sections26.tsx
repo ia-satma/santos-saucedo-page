@@ -11,7 +11,7 @@ import { isNamedOnTeamPage, fallbackToOriginalSrc, getTeamPhotoSrcSet } from "@/
 import { keepFirmName } from "@/lib/firmName";
 import { useOfficeLabel } from "@/lib/officeLabel";
 import { getPracticeImage } from "@/lib/practiceIndustryImages";
-import { MonitorList } from "@/components/monitor/MonitorList";
+import { MonitorEditorial } from "@/components/monitor/MonitorEditorial";
 import type { News, PracticeGroup, TeamMember } from "@shared/schema";
 import { Reveal, SectionHead, TextLink } from "./primitives";
 import { home26, langAttrs, type Lang26 } from "./content";
@@ -335,9 +335,8 @@ export function Monitor26({ lang, limit = 3 }: { lang: Lang26; limit?: number })
   const navLabel = useNavLabel();
   const liveHome = useCmsContent("home", home26);
   const t = liveHome[lang].monitor;
-  // La misma consulta (y caché) que MonitorList. Sin notas publicadas, o si /api/news
-  // falla, la sección queda en su título y el enlace al Monitor: sin filas ni avisos.
-  const { data, error } = useQuery<News[]>({ queryKey: ["/api/news"] });
+  // Comparte la caché con el archivo, con una presentación editorial propia del inicio.
+  const { data, error, isLoading } = useQuery<News[]>({ queryKey: ["/api/news"] });
   const hasItems = !error && !!data?.some((item) => item.published !== false);
   return (
     <section
@@ -371,17 +370,13 @@ export function Monitor26({ lang, limit = 3 }: { lang: Lang26; limit?: number })
           </Reveal>
         </div>
 
-        {/* Las tres notas publicadas más recientes, con la lista única del Monitor (la de
-            /news): categoría y fecha en etiqueta, titular que enlaza a /news/<slug>, entradilla.
-            Índice con filetes Línea al ancho del contenedor; texto desde la columna 5. Si una
-            sección blanca viniera después, el filete de cierre de la lista se omite: el de
-            unión (JoinRule) ya separa y no quedan dos filetes seguidos. */}
-        {hasItems && (
-          <Reveal delay={0.12} className="mt-14 lg:mt-16 [section:has(+[data-surface=light])_&_li:last-child]:border-b-0">
-            {/* En el idioma que muestra la portada (es/en): sin traducción automática */}
-            <MonitorList limit={limit} headingLevel="h3" layout="index" tone="light" language={lang} />
-          </Reveal>
-        )}
+        <MonitorEditorial
+          items={data ?? []}
+          language={lang}
+          limit={limit}
+          isLoading={isLoading}
+          isError={!!error}
+        />
       </div>
     </section>
   );

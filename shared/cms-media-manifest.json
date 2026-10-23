@@ -1,5 +1,26 @@
 [
   {
+    "url": "/editorial/monitor-conciliacion.webp",
+    "source": "client/public/editorial/monitor-conciliacion.webp",
+    "key": "public/media/7479b8e67581a61b69d0de23-monitor-conciliacion.webp",
+    "sha256": "7479b8e67581a61b69d0de235f47df3899793cbd254dfef1ba2c0375f458648c",
+    "bytes": 56544
+  },
+  {
+    "url": "/editorial/monitor-prevencion.webp",
+    "source": "client/public/editorial/monitor-prevencion.webp",
+    "key": "public/media/a9ab918e924e9ec44b595495-monitor-prevencion.webp",
+    "sha256": "a9ab918e924e9ec44b5954950b6952ee0368647fc156583d960200ffb006c7f9",
+    "bytes": 87554
+  },
+  {
+    "url": "/editorial/monitor-auditoria.webp",
+    "source": "client/public/editorial/monitor-auditoria.webp",
+    "key": "public/media/7452be85216837d058faefe7-monitor-auditoria.webp",
+    "sha256": "7452be85216837d058faefe78623fb295808221a833d1b0ce0f00445edb52ec4",
+    "bytes": 102332
+  },
+  {
     "url": "/editorial/logo-blanco-lima.svg",
     "source": "client/public/editorial/logo-blanco-lima.svg",
     "key": "public/media/f446b4901dd7719d3b4ceb1a-logo-blanco-lima.svg",
