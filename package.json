@@ -25,6 +25,10 @@
     "test:privacy": "node --import tsx --test server/security/siteConsent.test.ts",
     "test:visual:creemos": "node scripts/test-creemos-visual.mjs",
     "test:visual:creemos:update": "UPDATE_VISUAL_SNAPSHOTS=1 node scripts/test-creemos-visual.mjs",
+    "test:monitor:editorial": "node scripts/test-monitor-editorial.mjs",
+    "test:visual:monitor": "node scripts/test-monitor-editorial.mjs --visual-only",
+    "test:visual:monitor:update": "UPDATE_VISUAL_SNAPSHOTS=1 node scripts/test-monitor-editorial.mjs --visual-only",
+    "test:visual:monitor:verify-detector": "node scripts/test-monitor-editorial.mjs --visual-only --verify-detector",
     "replit:prepare-uploads": "node scripts/prepare-upload-runtime.mjs",
     "build:deploy": "npm run build && npm run replit:prepare-uploads"
   },

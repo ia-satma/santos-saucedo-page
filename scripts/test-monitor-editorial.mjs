@@ -1,17 +1,24 @@
 import assert from "node:assert/strict";
 import { mkdir } from "node:fs/promises";
 import { chromium } from "playwright";
+import { existsSync } from "node:fs";
+import { runMonitorVisualChecks } from "./visual/monitor.mjs";
 
 const baseURL = process.env.VISUAL_TEST_BASE_URL
   ?? (process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : "http://127.0.0.1:5000");
 const screenshots = process.env.MONITOR_SCREENSHOTS_DIR ?? "/tmp/ss-monitor-editorial";
 await mkdir(screenshots, { recursive: true });
-const response = await fetch(`${baseURL}/api/news`);
-assert.ok(response.ok, "Public news API is available");
-const articles = await response.json();
-assert.ok(articles.length >= 3, "Development fixture has three real publications");
+const visualOnly = process.argv.includes("--visual-only");
+let articles;
+if (!visualOnly) {
+  const response = await fetch(`${baseURL}/api/news`);
+  assert.ok(response.ok, "Public news API is available");
+  articles = await response.json();
+  assert.ok(articles.length >= 3, "Development fixture has three real publications");
+}
 const browser = await chromium.launch({
-  executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ?? "/repl/tools/bin/chromium",
+  executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+    ?? (existsSync("/repl/tools/bin/chromium") ? "/repl/tools/bin/chromium" : undefined),
   args: ["--no-sandbox"],
 });
 const errors = [];
@@ -56,6 +63,8 @@ async function assertLayout(page, count) {
 }
 
 try {
+  await runMonitorVisualChecks(browser, baseURL);
+  if (!visualOnly) {
   for (const [language, width] of [["es", 1440], ["es", 768], ["es", 375], ["es", 320], ["en", 1440], ["en", 375]]) {
     const page = await pageFor(language, width);
     await open(page);
@@ -141,6 +150,7 @@ try {
   }
   await fresh.close();
   console.log("PASS fresh installation with empty App Storage, with and without initial image URLs");
+  }
   assert.deepEqual(errors, [], "No browser runtime errors");
   console.log(`All Monitor editorial checks passed. Screenshots: ${screenshots}`);
 } finally {

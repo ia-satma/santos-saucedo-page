@@ -1,3 +1,4 @@
 - [Retratos de socios](portraits.md) — Mario usa el retrato aportado a color, con in memoriam y presencia equivalente en inicio; conservar el original monocromo.
 - [Fotografía editorial](editorial-photography.md) — En las imágenes del Monitor Laboral, evitar rostros.
 - [Palabras completas](paragraph-wrapping.md) — No dividir palabras con guiones automáticos en los párrafos del sitio.
+- [Capturas del Monitor](monitor-visual-testing.md) — Excluir de la captura la cabecera sticky, no el contenido editorial, para evitar falsos positivos por scroll.
