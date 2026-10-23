@@ -39,6 +39,16 @@ const initial = {
   memberIds: [] as string[],
 };
 type Draft = typeof initial;
+// Dirección de la nota a partir del título, sin acentos
+const slugFromTitle = (title: string) =>
+  title
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 100)
+    .replace(/-$/, "");
 // Estructura de la nota breve con fuente: análisis propio de la firma sobre una noticia
 // externa. No se copia el texto del medio; se cita al pie con "Fuente".
 const BRIEF_TEMPLATE_ES = `Contexto en una o dos frases, con palabras de la firma: qué se publicó, quién lo emitió y desde cuándo aplica.
@@ -130,8 +140,12 @@ export default function AdminNewsForm() {
     setError("");
     setNotice("");
     try {
+      // Nota nueva sin dirección: se genera del título, para no rechazar el guardado
+      const slug = draft.slug.trim() || (!id ? slugFromTitle(draft.titleEs || draft.title) : "");
+      if (slug !== draft.slug) setDraft((old) => ({ ...old, slug }));
       const payload = {
         ...draft,
+        slug,
         date: draft.date ? `${draft.date}T12:00:00.000Z` : null,
         publishAt: draft.publishAt
           ? new Date(draft.publishAt).toISOString()
@@ -481,17 +495,7 @@ export default function AdminNewsForm() {
               <button
                 className="text-xs underline mt-2"
                 type="button"
-                onClick={() =>
-                  field(
-                    "slug",
-                    (draft.titleEs || draft.title)
-                      .normalize("NFD")
-                      .replace(/[\u0300-\u036f]/g, "")
-                      .toLowerCase()
-                      .replace(/[^a-z0-9]+/g, "-")
-                      .replace(/^-|-$/g, ""),
-                  )
-                }
+                onClick={() => field("slug", slugFromTitle(draft.titleEs || draft.title))}
               >
                 Generar desde el título
               </button>

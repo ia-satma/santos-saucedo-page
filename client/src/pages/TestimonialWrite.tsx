@@ -136,7 +136,8 @@ export default function TestimonialWrite() {
               <h1 className="mb-5" data-testid="text-testimonial-write-title">
                 {state === "invalid" ? f.invalidTitle : f.title}
               </h1>
-              {state !== "invalid" && <p>{f.intro}</p>}
+              {/* Tras enviar, el agradecimiento va abajo; aquí no se repite */}
+              {(state === "valid" || state === "checking") && <p>{f.intro}</p>}
             </div>
           </div>
         </section>

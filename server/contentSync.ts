@@ -1,5 +1,5 @@
 import { createHash } from "crypto";
-import { practiceGroupsData, teamMembersData } from "./seed";
+import { newsData, practiceGroupsData, teamMembersData } from "./seed";
 import { cmsDefaults, isCmsSection } from "@shared/cms";
 
 /* Pone al día, en una base ya poblada, los textos de prácticas/equipo y las imágenes de
@@ -19,6 +19,7 @@ import { cmsDefaults, isCmsSection } from "@shared/cms";
 
 const PRACTICE_FIELDS = ["name", "nameEs", "description", "descriptionEs", "fullDescription", "fullDescriptionEs", "imageUrl"] as const;
 const TEAM_FIELDS = ["name", "title", "titleEs", "role", "roleEs", "bio", "bioEs"] as const;
+const NEWS_FIELDS = ["title", "titleEs", "excerpt", "excerptEs", "content", "contentEs"] as const;
 
 type Previous = Record<string, Record<string, string[]>>;
 
@@ -56,6 +57,12 @@ const PREVIOUS_TEAM: Previous = {
   "pedro-a-sanvicente-romero": { role: ["2fbb4996c114380d424830ee"], roleEs: ["98dd8db9d9326b81a100ee6e"] },
   "ruben-a-frias-garcia": { role: ["2fbb4996c114380d424830ee"], roleEs: ["98dd8db9d9326b81a100ee6e"] },
   "rubi-quintanilla-martinez": { role: ["2fbb4996c114380d424830ee"], roleEs: ["98dd8db9d9326b81a100ee6e"], title: ["9442be7da01286f53e968867"] },
+};
+
+// Notas de ejemplo del Monitor: la de conflictos individuales hablaba de "juntas de conciliación y
+// arbitraje" como vigentes (desaparecieron con la reforma de 2019)
+const PREVIOUS_NEWS: Previous = {
+  "conflictos-individuales-juntas-conciliacion": { title: ["dcf27dc107c24c3095fa72fa"], titleEs: ["6cfd55c22df716d0166496dd"], excerpt: ["a74f80b99e5fd26614216d87"], excerptEs: ["ff31009c6acae1c4f8189267"], content: ["7e757b6e40ccf04602429129"], contentEs: ["d4b1ae80584764ca3942dee2"] },
 };
 
 // Contenido editable (cms-defaults.json): huellas del texto predeterminado anterior, por sección
@@ -154,16 +161,16 @@ const PREVIOUS_CMS: Previous = {
     "it.stats.1.label": ["af3f36d12d6db75831e37527"],
   },
   "careers": {
-    "en.environmentText": ["391c265a45f6258c338edd32"],
-    "es.environmentText": ["d550f71753a37e1e28dd5d37"],
-    "de.environmentText": ["9bba7dea8a34f3e794255445"],
-    "zh.environmentText": ["ee64ec51d85c8e69586b8f49"],
-    "ko.environmentText": ["96b7a0e329f8d38132f229f0"],
-    "ja.environmentText": ["7360e521459bfaee77a39cc9"],
-    "ar.environmentText": ["d744bc18efbaadf8508069de"],
-    "ru.environmentText": ["dc6d250bbb48225abef46cfe"],
-    "fr.environmentText": ["3cf522653ed199748c76251e"],
-    "it.environmentText": ["8a720e0dc839ff9f0fd3c2a5"],
+    "en.environmentText": ["391c265a45f6258c338edd32", "14df5f826087fff2caed2921"],
+    "es.environmentText": ["d550f71753a37e1e28dd5d37", "c8beebed53ddfd8ad22db58f"],
+    "de.environmentText": ["9bba7dea8a34f3e794255445", "c5350f4577334be3cd989667"],
+    "zh.environmentText": ["ee64ec51d85c8e69586b8f49", "6d3e240f95dad56c5f92fe10"],
+    "ko.environmentText": ["96b7a0e329f8d38132f229f0", "ffc83b883c6a01db98efe35d"],
+    "ja.environmentText": ["7360e521459bfaee77a39cc9", "e902662cd88255010931526b"],
+    "ar.environmentText": ["d744bc18efbaadf8508069de", "77fa084d6ded7bb6aa6509ba"],
+    "ru.environmentText": ["dc6d250bbb48225abef46cfe", "6da624ae5d0378269009f317"],
+    "fr.environmentText": ["3cf522653ed199748c76251e", "4275feb58a74dc4898bef0bc"],
+    "it.environmentText": ["8a720e0dc839ff9f0fd3c2a5", "6e5e5ae7b32429971d997f5f"],
   },
   "practices": {
     "en.subtitle": ["873891a2d02a124ace82358d"],
@@ -223,7 +230,7 @@ export async function syncSeedContent() {
   await syncMarioPortrait();
   const { db } = await import("./db");
   const { and, eq, isNull } = await import("drizzle-orm");
-  const { practiceGroups, teamMembers } = await import("@shared/schema");
+  const { practiceGroups, teamMembers, news } = await import("@shared/schema");
 
   // Condición "el campo aún tiene el valor que se leyó", por cada campo que se cambia
   const unchanged = (table: object, row: Record<string, unknown>, changes: Record<string, string>) =>
@@ -255,7 +262,17 @@ export async function syncSeedContent() {
     updated++;
   }
 
-  if (updated > 0) console.log(`[seed] Textos de la semilla actualizados en ${updated} filas (prácticas y equipo)`);
+  const notes = await db.select().from(news);
+  for (const item of newsData) {
+    const row = notes.find((n: { slug: string }) => n.slug === item.slug);
+    if (!row) continue;
+    const changes = staleFields(row, item, PREVIOUS_NEWS[item.slug], NEWS_FIELDS);
+    if (Object.keys(changes).length === 0) continue;
+    await db.update(news).set(changes).where(and(eq(news.id, row.id), ...unchanged(news, row, changes)));
+    updated++;
+  }
+
+  if (updated > 0) console.log(`[seed] Textos de la semilla actualizados en ${updated} filas (prácticas, equipo y notas)`);
 
   const sections = await syncCmsDefaults(db);
   if (sections > 0) console.log(`[seed] Textos predeterminados actualizados en ${sections} secciones guardadas del contenido editable`);

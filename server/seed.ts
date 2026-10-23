@@ -437,12 +437,12 @@ export const teamMembersData = [
 
 export const newsData = [
   {
-    title: "What companies should know about individual labor conflicts before conciliation and arbitration boards",
-    titleEs: "Lo que las empresas deben saber sobre conflictos individuales de trabajo ante juntas de conciliación y arbitraje",
-    excerpt: "A practical overview of the process employers face when an individual labor dispute reaches a conciliation and arbitration board.",
-    excerptEs: "Un panorama práctico del proceso que enfrentan los empleadores cuando un conflicto individual de trabajo llega a una junta de conciliación y arbitraje.",
-    content: "Individual labor conflicts can escalate quickly once they reach a conciliation and arbitration board. Companies that document processes and act early in the conciliation stage are consistently better positioned than those that wait until litigation is underway. This overview covers the key stages employers should understand and where preventive legal counsel makes the most difference.",
-    contentEs: "Los conflictos individuales de trabajo pueden escalar rápidamente una vez que llegan a una junta de conciliación y arbitraje. Las empresas que documentan sus procesos y actúan desde la etapa de conciliación están consistentemente mejor posicionadas que aquellas que esperan a que el litigio esté en curso. Este panorama cubre las etapas clave que los empleadores deben entender y en qué momentos la asesoría legal preventiva marca la mayor diferencia.",
+    title: "What companies should know about individual labor conflicts before the Conciliation Centers and the Labor Courts",
+    titleEs: "Lo que las empresas deben saber sobre conflictos individuales de trabajo ante los Centros de Conciliación y los Tribunales Laborales",
+    excerpt: "A practical overview of the process employers face when an individual labor dispute reaches pre-judicial conciliation and, without an agreement, the Labor Courts.",
+    excerptEs: "Un panorama práctico del proceso que enfrentan los empleadores cuando un conflicto individual de trabajo llega a la conciliación prejudicial y, sin convenio, a los Tribunales Laborales.",
+    content: "Since the 2019 labor reform, an individual labor conflict begins with mandatory pre-judicial conciliation before a Conciliation Center and, if no agreement is reached, continues as a lawsuit before the Labor Courts. Companies that document processes and act early in the conciliation stage are consistently better positioned than those that wait until litigation is underway. This overview covers the key stages employers should understand and where preventive legal counsel makes the most difference.",
+    contentEs: "Desde la reforma laboral de 2019, un conflicto individual de trabajo empieza con la conciliación prejudicial obligatoria ante un Centro de Conciliación y, si no hay convenio, continúa como juicio ante los Tribunales Laborales. Las empresas que documentan sus procesos y actúan desde la etapa de conciliación están consistentemente mejor posicionadas que aquellas que esperan a que el litigio esté en curso. Este panorama cubre las etapas clave que los empleadores deben entender y en qué momentos la asesoría legal preventiva marca la mayor diferencia.",
     slug: "conflictos-individuales-juntas-conciliacion",
     published: true,
     category: "alerts",
