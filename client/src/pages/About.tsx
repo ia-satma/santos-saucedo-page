@@ -1,5 +1,4 @@
 import { OfficePhotography } from "@/components/editorial/OfficePhotography";
-import { PhotoPageHeader } from "@/components/editorial/PhotoPageHeader";
 import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import Header from "@/components/Header";
@@ -426,8 +425,7 @@ export default function About() {
           salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
           siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
       <main id="main-content">
-        <section className="editorial-page-hero ss-photo-page-hero" data-testid="section-about-hero">
-          <PhotoPageHeader photo="salaPanoramica" position="50% 48%" />
+        <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-about-hero">
           <div className="ss-container">
             <div className="max-w-3xl">
               <Eyebrow num="01" tone="navy" className="mb-6" />

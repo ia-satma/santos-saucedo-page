@@ -10,7 +10,6 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow } from "@/components/editorial";
-import { PhotoPageHeader } from "@/components/editorial/PhotoPageHeader";
 import { SplitSection, TextLink } from "@/components/home26/primitives";
 // "Santos & Saucedo" con espacios duros al pintarlo: el nombre no se parte al final de línea.
 // Para la frase de los 40 años, actualizada por indicación del cliente.
@@ -288,8 +287,7 @@ export default function Careers() {
           siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie.
           Sin entrada al aparecer (G3): todo se ve completo desde el inicio. */}
       <main id="main-content">
-      <section className="editorial-page-hero ss-photo-page-hero" data-testid="section-careers-hero">
-        <PhotoPageHeader photo="espaciosAbiertos" position="50% 46%" />
+      <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-careers-hero">
         <div className="ss-container">
           <div className="max-w-3xl">
             <Eyebrow num="05" tone="navy" className="mb-6" />

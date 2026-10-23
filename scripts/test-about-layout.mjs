@@ -45,8 +45,8 @@ async function check(page, expected) {
   const main = page.locator("main");
   assert.equal(await main.locator("h1").count(), 1);
   assert.equal(await page.locator('[data-testid^="card-value-"]').count(), 4);
-  assert.equal(await main.locator("img").count(), 4,
-    "The new decorative cover accompanies the three unchanged gallery photographs");
+  assert.equal(await main.locator("img").count(), 3,
+    "Only the three unchanged gallery photographs remain; the cover has no image");
   assert.equal(await page.getByTestId("section-history").locator("img").count(), 0,
     "The reception no longer occupies the introductory text column");
   assert.equal(await page.getByTestId("gallery-about-office").locator("img").count(), 3,

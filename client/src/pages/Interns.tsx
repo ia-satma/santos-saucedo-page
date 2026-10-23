@@ -7,7 +7,6 @@ import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "wouter";
 import { Eyebrow } from "@/components/editorial";
-import { PhotoPageHeader } from "@/components/editorial/PhotoPageHeader";
 import { SplitSection } from "@/components/home26/primitives";
 
 // "Clásica": titular de sección .ss-h2 (escala única de index.css); texto en sans 400 Gris Tinta.
@@ -135,8 +134,7 @@ export default function Interns() {
           salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
           siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
       <main id="main-content">
-      <section className="editorial-page-hero ss-photo-page-hero" data-testid="section-interns-hero">
-        <PhotoPageHeader photo="biblioteca" position="50% 48%" />
+      <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-interns-hero">
         <div className="ss-container">
           <div className="max-w-3xl">
             <Eyebrow num="05" tone="navy" className="mb-6" />
