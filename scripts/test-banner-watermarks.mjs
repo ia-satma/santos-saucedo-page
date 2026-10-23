@@ -44,6 +44,7 @@ try {
     await page.route("**/api/translations/**", route => route.fulfill({
       json: { translations: {} },
     }));
+    await page.route("**/api/translate-entity", route => route.fulfill({ status: 204 }));
     const selected = language === "es" ? routes : [
       "/practice-groups", "/about", "/privacy-policy", `/news/${news[0].slug}`,
     ];
@@ -77,7 +78,7 @@ try {
       const color = mark.opacity.match(/[\d.]+/g).map(Number);
       assert.deepEqual(color.slice(0, 3), mark.paper ? [29, 28, 104] : [255, 255, 255]);
       // Chromium serializes alpha through an 8-bit channel; allow its rounding.
-      assert.ok(Math.abs(color[3] - (mark.paper ? 0.075 : 0.105)) < 1 / 255);
+      assert.ok(Math.abs(color[3] - (mark.paper ? 0.035 : 0.055)) < 1 / 255);
       assert.ok(mark.left >= 0 && mark.right >= 0, `${label}: inside banner`);
       assert.equal(mark.top, 0);
       assert.ok(Math.abs(mark.height - mark.heroHeight) < 2);
