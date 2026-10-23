@@ -1,4 +1,4 @@
-import { OfficePhotoPair } from "@/components/editorial/OfficePhotography";
+import { OfficePhotography } from "@/components/editorial/OfficePhotography";
 import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import Header from "@/components/Header";
@@ -6,15 +6,12 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eyebrow, NumberedCard } from "@/components/editorial";
-import { SplitSection, TextLink } from "@/components/home26/primitives";
+import { TextLink } from "@/components/home26/primitives";
 import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
 import { useOfficeLabel } from "@/lib/officeLabel";
 import type { LanguageCode } from "@shared/schema";
-// La recepción de la oficina, después de la introducción: la franja del mostrador
-// (oficina/recepcion-banda, 1522 × 694 y 761 × 347), a todo el ancho del contenedor (I5)
-import recepcionBanda768 from "@assets/ss26/oficina/recepcion-banda-768.webp";
-import recepcionBanda1536 from "@assets/ss26/oficina/recepcion-banda-1536.webp";
+import "@/components/about/about.css";
 
 // Cifras de /about: "40+" (sin tocar) y "72+" ciudades con presencia, la forma en cifras de
 // "más de 72" (redacción aprobada de la portada: "Ciudades en nuestra red de alianzas"). Fuera el conteo de
@@ -420,7 +417,7 @@ export default function About() {
   const t = { ...baseT, title: nav[0].label };
 
   return (
-    <div className="min-h-screen bg-background" data-testid="page-about">
+    <div className="ss26 min-h-[100dvh] bg-background" data-testid="page-about">
       <SEOHead page="about" language={language} />
       <Header />
 
@@ -428,69 +425,44 @@ export default function About() {
           salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
           siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
       <main id="main-content">
-        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-about-hero">
+        <section className="pt-32 pb-12 md:pt-36 md:pb-16 editorial-page-hero" data-testid="section-about-hero">
           <div className="ss-container">
             <div className="max-w-3xl">
               <Eyebrow num="01" tone="navy" className="mb-6" />
-              <h1 className="mb-5" data-testid="text-about-title">
+              <h1 className="ss-display mb-5 text-[clamp(3rem,7vw,6rem)]" data-testid="text-about-title">
                 {t.title}
               </h1>
-              <p data-testid="text-about-subtitle">
+              <p className="ss-lead max-w-2xl" data-testid="text-about-subtitle">
                 {t.subtitle}
               </p>
             </div>
           </div>
         </section>
 
-        <div className="py-16 lg:py-24">
+        <div className="ss-about" data-surface="light">
           <div className="ss-container">
-            {/* Rejilla editorial de la portada (SplitSection): desde lg, las cifras en el aside
-                (columnas 1–4, en vertical y alineadas arriba con la entrada) y la introducción en
-                el cuerpo (desde la 5). En teléfono y tableta, como antes: introducción y debajo
-                las dos cifras en dos columnas (order-last solo bajo lg). */}
-            <section className="mb-20 lg:mb-24" data-testid="section-history">
-              <SplitSection
-                asideClassName="order-last mt-4 lg:order-none lg:mt-0"
-                aside={
-                  /* Cifras sin h2: estilo de cifra de la portada, filetes de 1 px y sin panel */
-                  <dl className="grid max-w-[36rem] grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-1" data-testid="section-stats">
-                    {t.stats.map((stat, index) => (
-                      <div key={index} className="flex flex-col border-t border-ss-rule pt-6" data-testid={`stat-${index}`}>
-                        {/* Etiquetas equilibradas (sin huérfanas en teléfono) y, como red, corte de
-                            compuestos largos (alemán) dentro de su media columna */}
-                        <dt className="ss-label text-ss-medio order-2 mt-3 text-balance hyphens-auto [overflow-wrap:anywhere]">
-                          {stat.label}
-                        </dt>
-                        <dd className="ss-figure order-1">
-                          {stat.value}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                }
-              >
-                {/* El primer párrafo como entrada (.ss-lead) y el segundo en texto */}
-                <div className="max-w-[44rem] space-y-6">
-                  <p className="ss-lead" data-testid="text-about-lead">
-                    {keepFirmName(t.historyText1)}
-                  </p>
-                  <p className="ss-prose text-ss-tinta text-[17px] md:text-[18px]">
-                    {t.historyText2}
-                  </p>
-                </div>
-              </SplitSection>
-            </section>
-
-            {/* La recepción de la oficina a todo el ancho del contenedor, a la proporción de su
-                archivo (1522 × 694; sin object-fit ni recorte por CSS), en color suave como todas
-                las fotos de la oficina (K1) y sin pie: la página de la oficina la enlaza al final.
-                El contenedor mide hasta 1320 px: nunca más ancha que su archivo. */}
-            <figure className="mb-20 lg:mb-24" data-testid="figure-about-reception">
-              <div className="bg-ss-rule">
+            <section className="ss-about-intro" data-testid="section-history">
+              <div className="ss-about-copy">
+                <p className="ss-lead" data-testid="text-about-lead">
+                  {keepFirmName(t.historyText1)}
+                </p>
+                <p className="ss-prose text-ss-tinta">
+                  {t.historyText2}
+                </p>
+                <dl className="ss-about-stats" data-testid="section-stats">
+                  {t.stats.map((stat, index) => (
+                    <div key={index} className="ss-about-stat" data-testid={`stat-${index}`}>
+                      <dt className="ss-label text-ss-medio">{stat.label}</dt>
+                      <dd className="ss-figure">{stat.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+              <figure className="ss-about-reception" data-testid="figure-about-reception">
                 <img
                   src={photos.recepcionBanda.url}
                   srcSet={photos.recepcionBanda.smallUrl && photos.recepcionBanda.smallUrl !== photos.recepcionBanda.url ? `${photos.recepcionBanda.smallUrl} 761w, ${photos.recepcionBanda.url} 1522w` : undefined}
-                  sizes="(min-width: 1464px) 1320px, 90vw"
+                  sizes="(min-width: 1024px) 42vw, 90vw"
                   alt={keepFirmName(receptionAlt[language] ?? receptionAlt.en)}
                   loading="lazy"
                   decoding="async"
@@ -499,25 +471,33 @@ export default function About() {
                   className="ss-photo block h-auto w-full"
                   data-testid="img-about-reception"
                 />
+              </figure>
+            </section>
+
+            <section className="ss-about-values" aria-labelledby="about-values-title" data-testid="section-values">
+              <div className="ss-about-values-heading">
+                <h2 id="about-values-title" className="ss-h2">{t.valuesTitle}</h2>
               </div>
-            </figure>
-
-            <OfficePhotoPair photos={["oficinaPrivada", "arteColor"]} className="mb-20 lg:mb-24" />
-
-            <section className="mb-12 lg:mb-16" aria-labelledby="about-values-title" data-testid="section-values">
-              <h2 id="about-values-title" className="ss-h2 mb-8 lg:mb-10">{t.valuesTitle}</h2>
-              <div className="grid grid-cols-1 gap-x-12 gap-y-8 md:grid-cols-2 lg:gap-x-16 lg:gap-y-10">
+              <div className="ss-about-values-grid">
                 {t.values.map((value, index) => (
                   <NumberedCard key={index} index={index} showIndex={false}
                     title={value.title} body={value.text}
-                    className="ss-about-principle"
+                    className="ss-about-principle ss-about-principle-card"
                     dataTestid={`card-value-${index}`} />
                 ))}
               </div>
             </section>
 
-            {/* Accesos relacionados, alineados con el bloque de principios. */}
-              <nav aria-label={t.valuesTitle} className="flex flex-wrap gap-x-10 gap-y-6 border-t border-ss-rule pt-7">
+            <div role="group" className="ss-about-gallery" aria-label={officeNameFor(language)} data-testid="gallery-about-office">
+              <figure>
+                <OfficePhotography photo="oficinaPrivada" sizes="(min-width: 768px) 44vw, 90vw" />
+              </figure>
+              <figure>
+                <OfficePhotography photo="arteColor" sizes="(min-width: 768px) 34vw, 90vw" />
+              </figure>
+            </div>
+
+            <nav aria-label={t.title} className="ss-about-related" data-testid="nav-about-related">
                 <span data-testid="button-view-team">
                   <TextLink href="/team">{nav[2].label}</TextLink>
                 </span>
