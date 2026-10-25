@@ -105,11 +105,13 @@ html:has(header.ss26) {
   scroll-padding-top: var(--ss-header-h);
 }
 
-/* Los dos azules en canales RGB, solo en :root: el panel puede cambiarlos (tema, lib/brandColors)
+/* Los colores de marca en canales RGB, solo en :root: el panel puede cambiarlos (tema, lib/brandColors)
    y todo lo demás los lee de aquí, también las utilidades de Tailwind con opacidad (/15, /70). */
 :root {
   --ss-navy-rgb: 24 23 91; /* #18175B, Azul Profundo */
   --ss-marino-rgb: 29 28 104; /* #1D1C68, Azul Marino */
+  --ss-lime-rgb: 178 235 62; /* #B2EB3E, Verde Lima: el acento */
+  --ss-paper-rgb: 243 241 234; /* #F3F1EA, Hueso */
 }
 
 /* Paleta (nombres del manual 2025). Azul Profundo es la única superficie oscura.
@@ -124,13 +126,13 @@ html:has(header.ss26) {
   --ss-tinta: #33333b;
   --ss-medio: #5f5f6b;
   --ss-claro: #8a8a94;
-  --ss-paper: #f3f1ea;
+  --ss-paper: rgb(var(--ss-paper-rgb));
   --ss-rule: #e1e0d7;
   /* Entrada: solo usos decorativos (filetes cortos sobre Hueso, subrayados) */
   --ss-input: #c9c8bd;
   /* Borde de campo de formulario (WCAG 1.4.11): 3,5:1 sobre blanco y 3,1:1 sobre Hueso */
   --ss-field: #8a897e;
-  --ss-lime: #b2eb3e;
+  --ss-lime: rgb(var(--ss-lime-rgb));
   /* Error de formulario: rojo sobrio, solo en el mensaje (8.1:1 sobre blanco, 7.2:1 sobre Hueso) */
   --ss-error: #9b1c1c;
   --ss-on-navy: rgb(255 255 255 / 0.84);

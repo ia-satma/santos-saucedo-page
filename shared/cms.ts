@@ -123,7 +123,7 @@ export const cmsSections: {
     key: "theme",
     label: "Colores de marca",
     path: "/",
-    help: "Los dos azules del sitio en formato #RRGGBB: navy es el Azul Profundo (franjas y pie) y marino el Azul Marino (titulares, botones y enlaces). Se aplican al guardar.",
+    help: "Colores del sitio en formato #RRGGBB: navy es el Azul Profundo (franjas y pie), marino el Azul Marino (titulares, botones y enlaces), lime el acento (la S del logo y detalles) y paper el Hueso (fondos claros). Se aplican al guardar.",
   },
   {
     key: "practice-services",

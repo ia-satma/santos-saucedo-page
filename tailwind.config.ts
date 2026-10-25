@@ -102,11 +102,11 @@ export default {
           tinta: "#33333B", // Gris Tinta: texto corrido
           medio: "#5F5F6B", // Gris Medio: texto secundario
           claro: "#8A8A94", // Gris Claro: solo numerales decorativos grandes sobre blanco
-          paper: "#F3F1EA", // Hueso
+          paper: "rgb(var(--ss-paper-rgb) / <alpha-value>)", // Hueso (#F3F1EA por omisión)
           rule: "#E1E0D7", // Línea
           input: "#C9C8BD",
           field: "#8A897E", // Borde de campo de formulario: 3,5:1 sobre blanco (WCAG 1.4.11)
-          lime: "#B2EB3E", // solo sobre Azul Profundo (ver ss26.css)
+          lime: "rgb(var(--ss-lime-rgb) / <alpha-value>)", // Verde Lima (#B2EB3E por omisión), solo sobre Azul Profundo
         },
         status: {
           online: "rgb(34 197 94)",

@@ -6675,6 +6675,8 @@
   },
   "theme": {
     "navy": "#18175B",
-    "marino": "#1D1C68"
+    "marino": "#1D1C68",
+    "lime": "#B2EB3E",
+    "paper": "#F3F1EA"
   }
 }

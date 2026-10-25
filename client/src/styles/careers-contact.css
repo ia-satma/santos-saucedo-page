@@ -46,7 +46,7 @@
 .careers-photo-secondary {
   min-width: 0;
   overflow: hidden;
-  background: var(--ss-paper, #f3f1ea);
+  background: var(--ss-paper);
 }
 
 .careers-photo-primary img,
@@ -105,7 +105,7 @@
   padding: clamp(30px, 5vw, 64px);
   color: #fff;
   background: var(--ss-navy);
-  border-inline-start: 5px solid var(--ss-lime, #b2eb3e);
+  border-inline-start: 5px solid var(--ss-lime);
 }
 
 .careers-program h2 {

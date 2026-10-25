@@ -1127,7 +1127,7 @@ html, body {
 .editorial-page-hero {
   /* Tokens que usan ss-link, ss-arrow y el eyebrow */
   --ss-navy: rgb(var(--ss-navy-rgb));
-  --ss-lime: #b2eb3e;
+  --ss-lime: rgb(var(--ss-lime-rgb));
   position: relative;
   overflow: hidden;
   isolation: isolate;
