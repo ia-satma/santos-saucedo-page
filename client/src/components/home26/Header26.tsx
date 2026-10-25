@@ -10,7 +10,6 @@ import { useSiteContact } from "./useSiteContact";
 import { useDialog26 } from "./useDialog26";
 import Search26 from "./Search26";
 import { LangList26, LangSwitch26 } from "./LangMenu26";
-import { PaletteSwitcher } from "./PaletteSwitcher";
 
 // Rutas que también marcan una sección del menú, además de sus propias subrutas. Siguen el
 // número § de su sección en el menú: la oficina, 01 Nuestra firma; el boletín, 04 Monitor
@@ -182,8 +181,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
               <span className="sr-only min-[1440px]:not-sr-only">{t.search.open}</span>
             </button>}
 
-            {/* Selector privado de paletas: solo con ?paletas=1 en ese navegador */}
-            <PaletteSwitcher />
+            {/* El selector de paletas vive en el pie (Footer26), visible para todos */}
 
             <button
               ref={menuButtonRef}

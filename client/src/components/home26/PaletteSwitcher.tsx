@@ -77,8 +77,12 @@ function enabledFromUrl(): boolean {
   return read(FLAG) === "1";
 }
 
-export function PaletteSwitcher() {
-  const [enabled] = useState(enabledFromUrl);
+/** placement "footer": botón visible para todos en el pie (petición del 25-10-2026, para que
+    varias personas comparen sin el enlace ?paletas=1); el del encabezado sigue con el enlace. */
+export function PaletteSwitcher({ placement = "header" }: { placement?: "header" | "footer" }) {
+  const footer = placement === "footer";
+  // En el pie, siempre visible; fuera del pie, solo con ?paletas=1 (?paletas=0 borra la elección)
+  const [enabled] = useState(() => enabledFromUrl() || footer);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(() => read(CHOICE) || "original");
   const box = useRef<HTMLDivElement>(null);
@@ -110,18 +114,26 @@ export function PaletteSwitcher() {
         aria-label="Paletas"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="ss-label flex min-h-[44px] items-center gap-2 tracking-[0.10em] text-white/80 transition-colors hover:text-white"
-        data-testid="button-palettes"
+        className={`ss-label flex min-h-[44px] items-center gap-2 tracking-[0.10em] text-white/80 transition-colors hover:text-white ${footer ? "md:min-h-7" : ""}`}
+        data-testid={footer ? "button-palettes-footer" : "button-palettes"}
       >
         <span aria-hidden="true" className="flex">
           <span className="h-3 w-3 rounded-full border border-white/40 bg-ss-navy" />
           <span className="-ms-1 h-3 w-3 rounded-full border border-white/40 bg-ss-lime" />
           <span className="-ms-1 h-3 w-3 rounded-full border border-white/40 bg-ss-paper" />
         </span>
-        <span className="hidden sm:inline">Paletas</span>
+        <span className={footer ? "" : "hidden sm:inline"}>{footer ? "Paletas de color" : "Paletas"}</span>
       </button>
       {open && (
-        <div className="fixed inset-x-4 top-[calc(var(--ss-header-h)+8px)] z-[70] max-h-[calc(100dvh-var(--ss-header-h)-24px)] overflow-y-auto border border-white/15 bg-ss-navy p-2 shadow-lg sm:absolute sm:inset-x-auto sm:end-0 sm:top-full sm:mt-2 sm:w-[420px]" role="menu" aria-label="Paletas de color">
+        <div
+          className={
+            footer
+              ? "fixed inset-x-4 bottom-4 z-[70] max-h-[calc(100dvh-32px)] overflow-y-auto border border-white/15 bg-ss-navy p-2 shadow-lg sm:absolute sm:inset-x-auto sm:bottom-full sm:end-0 sm:mb-2 sm:w-[420px] lg:end-auto lg:start-[-240px]"
+              : "fixed inset-x-4 top-[calc(var(--ss-header-h)+8px)] z-[70] max-h-[calc(100dvh-var(--ss-header-h)-24px)] overflow-y-auto border border-white/15 bg-ss-navy p-2 shadow-lg sm:absolute sm:inset-x-auto sm:end-0 sm:top-full sm:mt-2 sm:w-[420px]"
+          }
+          role="menu"
+          aria-label="Paletas de color"
+        >
           {PALETTES.map((p) => (
             <button
               key={p.id}

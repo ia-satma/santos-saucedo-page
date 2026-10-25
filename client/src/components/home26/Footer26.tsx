@@ -8,6 +8,7 @@ import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import { useOfficeLabel } from "@/lib/officeLabel";
 import { useChrome26 } from "./chrome26";
 import { useSiteContact } from "./useSiteContact";
+import { PaletteSwitcher } from "./PaletteSwitcher";
 
 // Filas compactas en escritorio; se conserva un área táctil amplia en móvil.
 const linkCls = "inline-flex min-h-11 items-center md:min-h-7 text-start text-[17px] transition-colors";
@@ -128,6 +129,14 @@ export default function Footer26({ localized = false }: Footer26Props) {
               </li>
             </ul>
           </nav>}
+
+          {/* Paletas de color para comparar (temporal, mientras la firma elige) */}
+          <div>
+            <p className={headCls}>Color</p>
+            <div className="mt-2">
+              <PaletteSwitcher placement="footer" />
+            </div>
+          </div>
 
           {navigation.footer.languagesEnabled&&<div role="group" aria-labelledby="ss26-footer-lang">
             <p id="ss26-footer-lang" className={headCls}>
