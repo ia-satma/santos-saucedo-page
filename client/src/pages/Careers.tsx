@@ -1,4 +1,5 @@
 import "@/styles/careers-contact.css";
+import type { CSSProperties } from "react";
 import { OfficePhotography } from "@/components/editorial/OfficePhotography";
 import { CareerForm } from "@/features/public-forms/CareerForm";
 import { useQuery } from "@tanstack/react-query";
@@ -314,7 +315,7 @@ export default function Careers() {
             </div>
 
             <figure className="careers-photo-story" data-testid="figure-careers-workspace">
-              <div className="careers-photo-primary">
+              <div className="careers-photo-primary" data-curtain="">
                 <img
                   src={photos.areaTrabajo.url}
                   srcSet={photos.areaTrabajo.smallUrl && photos.areaTrabajo.smallUrl !== photos.areaTrabajo.url ? `${photos.areaTrabajo.smallUrl} 768w, ${photos.areaTrabajo.url} 1536w` : undefined}
@@ -328,22 +329,24 @@ export default function Careers() {
                   data-testid="img-careers-workspace"
                 />
               </div>
-              <OfficePhotography photo="mesaTrabajo" className="careers-photo-secondary" sizes="(min-width: 1024px) min(520px, 40vw), (min-width: 768px) 36vw, 90vw" />
+              <div className="careers-photo-secondary-frame" data-curtain="" style={{ "--reveal-delay": "0.12s" } as CSSProperties}>
+                <OfficePhotography photo="mesaTrabajo" className="careers-photo-secondary" sizes="(min-width: 1024px) min(520px, 40vw), (min-width: 768px) 36vw, 90vw" />
+              </div>
             </figure>
 
             <div className="careers-culture-grid">
-              <article className="careers-culture-item" data-testid="card-culture">
+              <article className="careers-culture-item folio-split" data-testid="card-culture">
                 <h2 className="ss-h2-sm mb-4">{t.cultureTitle}</h2>
                 <p className={rowTextClass}>{t.cultureText}</p>
               </article>
-              <article className="careers-culture-item" data-testid="card-environment">
+              <article className="careers-culture-item folio-split" data-testid="card-environment">
                 <h2 className="ss-h2-sm mb-4">{t.environmentTitle}</h2>
                 <p className={rowTextClass}>{keepFirmName(t.environmentText)}</p>
               </article>
             </div>
           </section>
 
-          <section className="careers-program" data-testid="section-internship">
+          <section className="careers-program folio-split" data-testid="section-internship">
             <div className="careers-program-copy">
               <h2 className="ss-h2" data-testid="text-internship-title">{t.internshipTitle}</h2>
               <p className={rowTextClass} data-testid="card-internship-overview">
@@ -355,7 +358,7 @@ export default function Careers() {
             </div>
           </section>
 
-          <section className="careers-positions" data-testid="section-positions">
+          <section className="careers-positions folio-split" data-testid="section-positions">
             <h2 className="ss-h2" data-testid="text-positions-title">{t.positionsTitle}</h2>
             {!jobsError && t.positions.length === 0 && (
               <p className="careers-positions-empty" data-testid="text-positions-empty">
@@ -383,7 +386,7 @@ export default function Careers() {
             )}
           </section>
 
-          <section className="careers-apply" data-testid="section-apply">
+          <section className="careers-apply folio-split" data-testid="section-apply">
             <h2 className="ss-h2" data-testid="text-apply-title">{t.applyTitle}</h2>
             <div className="careers-apply-intro" data-testid="card-apply-instructions">
                 <p className="text-base text-ss-tinta leading-[1.55] max-w-2xl mb-3">

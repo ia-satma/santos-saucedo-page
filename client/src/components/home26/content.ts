@@ -77,6 +77,11 @@ export const home26 = {
       body:
         "Nuevo León recibe cada año nuevas plantas de capital asiático, estadounidense y europeo. Para estas empresas, las prácticas corporativa, migratoria y laboral de la firma trabajan en conjunto, desde la constitución de la sociedad hasta la contratación del primer turno.",
       alt: "Sala de juntas de Santos & Saucedo con el tríptico abstracto de la firma",
+      // Cifras que cuentan al entrar en pantalla (Sections26 · CountUp): valor, sufijo y etiqueta
+      figures: [
+        { value: "72", suffix: "+", label: "ciudades con despacho aliado" },
+        { value: "40", suffix: "+", label: "años de experiencia de los socios" },
+      ],
     },
     // Las filas son las notas publicadas en /api/news (Sections26, MonitorList)
     monitor: {
@@ -157,6 +162,10 @@ export const home26 = {
       body:
         "Every year Nuevo León receives new plants backed by Asian, American and European capital. For these companies, the firm’s corporate, immigration and labor practices work together, from incorporation to hiring the first shift.",
       alt: "Santos & Saucedo boardroom with the firm’s abstract triptych",
+      figures: [
+        { value: "72", suffix: "+", label: "cities with an allied firm" },
+        { value: "40", suffix: "+", label: "years of partner experience" },
+      ],
     },
     monitor: {
       title: "Labor Monitor",

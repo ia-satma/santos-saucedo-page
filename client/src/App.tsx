@@ -1,6 +1,7 @@
 import CookieBanner from "@/components/CookieBanner";
 import { AdminShell } from "@/features/admin/AdminShell";
 import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from "wouter";
+import { useViewTransitionLocation } from "@/lib/viewTransitionLocation";
 import { useEffect, lazy, Suspense } from "react";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { applyBrandColors } from "@/lib/brandColors";
@@ -312,7 +313,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <LanguageProvider>
-            <WouterRouter base={routerBase}>
+            <WouterRouter base={routerBase} hook={useViewTransitionLocation}>
               <BrandColors />
               <ScrollToTop />
               <SkipLinks />

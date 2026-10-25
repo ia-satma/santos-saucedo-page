@@ -1,8 +1,11 @@
-// Movimiento fino del sitio (idea 5): bloques que suben al aparecer ([data-reveal]) y fotos que se
-// descubren de abajo hacia arriba ([data-curtain]), una sola vez cada uno. Un solo observador para
+// Movimiento del sitio (sistema «Folio», ss26.css): bloques que suben al aparecer ([data-reveal]),
+// fotos que se abren de abajo hacia arriba ([data-curtain]), filetes que se dibujan ([data-trazo])
+// y titulares cuyas palabras suben desde una máscara ([data-lineas]), una sola vez cada uno.
+// Se marca con el atributo data-in (no con una clase): React reescribe className al cambiar de
+// estado y borraría la marca. Un solo observador para
 // todo el sitio; las páginas que llegan después (SPA) se recogen con un MutationObserver.
 // Con "reducir movimiento" o sin IntersectionObserver no se activa y todo se ve desde el inicio.
-const SELECTOR = "[data-reveal]:not(.is-in), [data-curtain]:not(.is-in)";
+const SELECTOR = ":is([data-reveal], [data-curtain], [data-trazo], [data-lineas]):not([data-in])";
 
 export function initSiteMotion() {
   if (typeof window === "undefined" || !("IntersectionObserver" in window)) return;
@@ -12,7 +15,7 @@ export function initSiteMotion() {
     (entries) => {
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
-        entry.target.classList.add("is-in");
+        entry.target.setAttribute("data-in", "");
         io.unobserve(entry.target);
       }
     },

@@ -82,7 +82,7 @@ async function check(page, expected) {
       .map(id => el.querySelector(`[data-testid="${id}"]`).getBoundingClientRect().top),
   }));
   assert.equal(layout.overflow, false, "No horizontal overflow");
-  assert.ok(layout.paragraphs.every(p => p.align === "justify" && p.hyphens === "none" && p.wordBreak !== "break-all" && !p.clipped),
+  assert.ok(layout.paragraphs.every(p => p.align === "start" && p.hyphens === "none" && p.wordBreak !== "break-all" && !p.clipped),
     `Justified paragraphs retain whole words: ${JSON.stringify(layout.paragraphs)}`);
   assert.ok(layout.headings.every(h => !h.clipped), "Titles are not clipped");
   assert.ok(layout.images.every(img => img.loaded && (img.decorative || img.alt) && img.filter === "none"),

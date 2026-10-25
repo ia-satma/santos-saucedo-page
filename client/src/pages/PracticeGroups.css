@@ -113,9 +113,7 @@
   max-width: 58ch;
   margin: clamp(18px, 2.2vw, 28px) 0 0;
   color: var(--ss-tinta);
-  text-align: justify;
-  text-align-last: start;
-  text-justify: inter-word;
+  text-align: start;
   hyphens: none;
   overflow-wrap: normal;
 }

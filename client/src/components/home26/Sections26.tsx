@@ -14,7 +14,9 @@ import { useOfficeLabel } from "@/lib/officeLabel";
 import { getPracticeImage } from "@/lib/practiceIndustryImages";
 import { MonitorList } from "@/components/monitor/MonitorList";
 import type { News, PracticeGroup, TeamMember } from "@shared/schema";
-import { Reveal, SectionHead, TextLink } from "./primitives";
+import { Lineas, Reveal, SectionHead, TextLink } from "./primitives";
+import { Lienzo } from "./Lienzo";
+import { CountUp, ReadingReveal, ScrollSettle } from "./motion26";
 import { home26, langAttrs, type Lang26 } from "./content";
 import { chrome26 } from "./chrome26";
 
@@ -81,11 +83,9 @@ export function Firma26({ lang }: { lang: Lang26 }) {
           <Reveal>
             <SectionHead num="01" />
           </Reveal>
-          <Reveal delay={0.06}>
-            <h2 id="ss26-firma" className={H2}>
-              {t.title}
+          <h2 id="ss26-firma" className={H2}>
+              <Lineas text={t.title} delay={0.06} />
             </h2>
-          </Reveal>
           <Reveal delay={0.12}>
             {/* Bajo lg, la columna ocupa todo el contenedor: medida máxima de 34rem (entre 60 y 75
                 caracteres por línea a 18 px, medido en es y en a 768 y 1023); desde lg manda la columna */}
@@ -153,12 +153,12 @@ export function Creemos26({ lang }: { lang: Lang26 }) {
           <SectionHead label={t.label} />
         </Reveal>
         <Reveal delay={0.08} className="mt-[clamp(34px,5vw,60px)]">
-          <h2
+          {/* Las palabras se encienden una a una al bajar (21st.dev «Reading Text Reveal») */}
+          <ReadingReveal
             id="ss26-creemos"
+            text={t.quote}
             className="ss-serif max-w-[15ch] text-[clamp(46px,6.3vw,92px)] leading-[1.02] text-ss-marino [text-wrap:balance]"
-          >
-            {t.quote}
-          </h2>
+          />
         </Reveal>
         <div className="ss-creemos-body text-ss-tinta">
           {t.body.map((p, i) => (
@@ -186,7 +186,17 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
     // una ruta anterior. Las fotos personalizadas siguen disponibles en el CMS.
     imageUrl: getPracticeImage(group.slug),
   }));
-  const [active, setActive] = useState(0);
+  const [active, setActiveRaw] = useState(0);
+  // Barrido direccional (equipo de motion): al bajar por la lista la imagen nueva se abre hacia
+  // arriba, al subir se abre hacia abajo; la anterior queda debajo y se acerca un poco
+  const [prev, setPrev] = useState(-1);
+  const [dir, setDir] = useState<"up" | "down">("up");
+  const setActive = (i: number) => {
+    if (i === active) return;
+    setPrev(active);
+    setDir(i > active ? "up" : "down");
+    setActiveRaw(i);
+  };
   return (
     <section
       id="practices"
@@ -203,11 +213,9 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
             <Reveal>
               <SectionHead num="02" />
             </Reveal>
-            <Reveal delay={0.06}>
-              <h2 id="ss26-practicas" className={H2}>
-                {t.title}
-              </h2>
-            </Reveal>
+            <h2 id="ss26-practicas" className={H2}>
+              <Lineas text={t.title} delay={0.06} />
+            </h2>
           </div>
           <Reveal delay={0.1}>
             <TextLink href="/practice-groups">{navLabel(lang, "practicas")}</TextLink>
@@ -247,7 +255,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                       <span
                         id={`ss26-pr-${item.slug}`}
                         className={`ss-display block text-[clamp(30px,4.2vw,56px)] font-normal leading-[1.05] tracking-[-0.015em] text-ss-marino transition-colors duration-700 motion-reduce:transition-none ${
-                          on ? "" : "lg:text-ss-marino/40"
+                          on ? "" : "lg:text-ss-marino/55"
                         }`}
                       >
                         {item.title}
@@ -287,8 +295,12 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                         alt=""
                         loading="lazy"
                         decoding="async"
-                        className={`ss-photo absolute inset-0 h-full w-full object-cover [transition:opacity_1.1s_ease,transform_2.4s_ease] motion-reduce:transition-none ${
-                          i === active ? "scale-100 opacity-100" : "scale-[1.06] opacity-0"
+                        className={`ss-photo absolute inset-0 h-full w-full object-cover [transition:transform_1.2s_var(--ss-ease-out)] motion-reduce:transition-none ${
+                          i === active
+                            ? `z-[2] scale-100 opacity-100 ${prev >= 0 ? (dir === "up" ? "ss-wipe-up" : "ss-wipe-down") : ""}`
+                            : i === prev
+                              ? "z-[1] scale-[1.05] opacity-100"
+                              : "opacity-0"
                         }`}
                       />
                     ) : null,
@@ -329,7 +341,7 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
       <div className={`grid grid-cols-1 xl:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] ${GAP_X}`}>
         <div className="relative min-h-[300px] overflow-hidden sm:min-h-[420px] xl:min-h-[600px]">
           {/* Lugar en la portada, sin velo */}
-          <img
+          <ScrollSettle
             src={photos.salaJuntas.url}
             srcSet={photos.salaJuntas.smallUrl && photos.salaJuntas.smallUrl !== photos.salaJuntas.url ? `${photos.salaJuntas.smallUrl} 768w, ${photos.salaJuntas.url} 1536w` : undefined}
             sizes="(min-width: 1280px) 58vw, 100vw"
@@ -344,14 +356,29 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
         </div>
         <div className="flex items-center px-[var(--ss-pad)] py-20 xl:pl-0 xl:pr-[clamp(48px,6vw,104px)]">
           <div className="max-w-[560px]">
-            <Reveal>
-              <h2 id="ss26-extranjeras" className="ss-h2 text-white">
-                {t.title}
-              </h2>
-            </Reveal>
+            <h2 id="ss26-extranjeras" className="ss-h2 text-white">
+              <Lineas text={t.title} />
+            </h2>
             <Reveal delay={0.12}>
               <p className="ss-prose mt-8 text-white/80">{t.body}</p>
             </Reveal>
+            {/* Cifras de la firma que cuentan al entrar (21st.dev «Count Up»); el sufijo «+»
+                va en el acento de la marca */}
+            {t.figures?.length ? (
+              <Reveal delay={0.16}>
+                <dl className="mt-12 grid grid-cols-1 gap-y-6 border-t border-white/15 pt-8 sm:grid-cols-2 sm:gap-x-10">
+                  {t.figures.map((f) => (
+                    <div key={f.label} className="flex flex-row-reverse items-center justify-end gap-5 sm:flex-col-reverse sm:items-start sm:justify-end sm:gap-3">
+                      <dt className="ss-label text-white/70">{f.label}</dt>
+                      <dd className="ss-figure min-w-[2.2em] text-[clamp(40px,3.6vw,56px)] leading-none sm:min-w-0">
+                        <CountUp to={parseInt(f.value, 10) || 0} />
+                        {f.suffix && <span className="text-ss-lime">{f.suffix}</span>}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </Reveal>
+            ) : null}
             {/* Sin lista de pasos (K3): repetía el párrafo. Queda el enlace a Prácticas */}
             <Reveal delay={0.18}>
               <TextLink href="/practice-groups" tone="dark" className="mt-10">
@@ -389,11 +416,9 @@ export function Monitor26({ lang, limit = 3 }: { lang: Lang26; limit?: number })
             <Reveal>
               <SectionHead num="04" />
             </Reveal>
-            <Reveal delay={0.06}>
-              <h2 id="ss26-monitor" className={H2}>
-                {t.title}
-              </h2>
-            </Reveal>
+            <h2 id="ss26-monitor" className={H2}>
+              <Lineas text={t.title} delay={0.06} />
+            </h2>
             {hasItems && (
               <Reveal delay={0.1}>
                 <p className="ss-lead mt-5 max-w-[38em]">{t.intro}</p>
@@ -427,7 +452,7 @@ export function Socios26({ lang }: { lang: Lang26 }) {
   const liveHome = useCmsContent("home", home26);
   const t = liveHome[lang].socios;
   const { data: members = [], isError: teamError } = useQuery<TeamMember[]>({ queryKey: ["/api/team"] });
-  const people = teamError ? [] : members.filter(m => isNamedOnTeamPage(m) && (m.showOnHome ?? (m.isPartner && !/in memoriam/i.test(m.title)))).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)).map(m => ({ name: m.name, photo: m.slug, image: m.imageUrl || "", role: lang === "es" ? m.titleEs : m.title }));
+  const people = teamError ? [] : members.filter(m => isNamedOnTeamPage(m) && (m.showOnHome ?? (m.isPartner && !/in memoriam/i.test(m.title)))).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)).map(m => ({ name: m.name, slug: m.slug, image: m.imageUrl || "", role: (lang === "es" ? m.titleEs : m.title) || "", practice: (lang === "es" ? m.roleEs : m.role) || "" }));
   return (
     <section
       id="socios"
@@ -443,54 +468,17 @@ export function Socios26({ lang }: { lang: Lang26 }) {
             <Reveal>
               <SectionHead num="03" />
             </Reveal>
-            <Reveal delay={0.06}>
-              <h2 id="ss26-socios" className={H2}>
-                {t.title}
-              </h2>
-            </Reveal>
+            <h2 id="ss26-socios" className={H2}>
+              <Lineas text={t.title} delay={0.06} />
+            </h2>
           </div>
           <Reveal delay={0.1}>
             <TextLink href="/team">{navLabel(lang, "socios")}</TextLink>
           </Reveal>
         </div>
 
-        {/* Teléfono: lista con retrato pequeño al lado del nombre; desde sm, dos columnas y
-            desde lg, cuatro, como las tarjetas de /team.
-            La tarjeta es la de /team (Team.tsx renderPersonCard): enlace a la ficha del socio,
-            el retrato se acerca al 1 % y el nombre se subraya al pasar el ratón o con el foco.
-            inline-link: fuera de la regla móvil de index.css que vuelve inline-flex todo <a>. */}
-        <ul className="mt-14 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 sm:gap-y-12 lg:mt-16 lg:grid-cols-4">
-          {people.map((person, i) => (
-            <Reveal as="li" key={person.name} delay={i * 0.08}>
-              <Link href={`/team/${person.photo}`} className="inline-link group block">
-                <span className="grid grid-cols-[112px_1fr] items-end gap-x-5 sm:block">
-                  <span className="ss-portrait-frame relative block aspect-[4/5] overflow-hidden bg-ss-paper">
-                    {/* Fuente 652×652 (360 en teléfono) recortada a 4:5, en color como todo
-                        retrato; alt vacío: el nombre ya es el texto del enlace */}
-                    <img
-                      src={person.image}
-                      data-portrait-slug={person.photo}
-                      {...(getTeamPhotoSrcSet(person.image) ? { srcSet: getTeamPhotoSrcSet(person.image), sizes: "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 112px" } : {})}
-                      onError={fallbackToOriginalSrc}
-                      alt=""
-                      loading="lazy"
-                      decoding="async"
-                      width={652}
-                      height={652}
-                      className="ss-photo absolute inset-0 h-full w-full object-cover object-[50%_28%] transition-transform duration-700 [transition-timing-function:var(--ss-ease)] motion-safe:group-hover:scale-[1.01] motion-reduce:transform-none motion-reduce:transition-none"
-                    />
-                  </span>
-                  <span className="block sm:mt-5">
-                    <span className="ss-display block text-[clamp(24px,1.9vw,28px)] font-normal leading-[1.15] tracking-[-0.01em] text-ss-marino decoration-1 underline-offset-4 sm:min-h-[2.3em] group-hover:underline group-focus-visible:underline">
-                      {person.name}
-                    </span>
-                    <span className="ss-label mt-3 block text-ss-medio">{person.role.replace(/\((in)\s+(memoriam)\)/gi, "($1\u00a0$2)")}</span>
-                  </span>
-                </span>
-              </Link>
-            </Reveal>
-          ))}
-        </ul>
+        {/* «Lienzo»: los socios como lienzos que se abren (Lienzo.tsx) */}
+        <Lienzo people={people} lang={lang} />
       </div>
     </section>
   );

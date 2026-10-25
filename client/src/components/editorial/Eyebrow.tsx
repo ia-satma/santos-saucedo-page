@@ -21,7 +21,9 @@ interface EyebrowProps {
 // blanco al 74 %. Sobre claro: § y cifras en Azul Marino, etiqueta en Gris Medio
 // (Azul Marino si no hay expediente: es una etiqueta clave, como "Resumen").
 const TONES: Record<EyebrowTone, { glyph: string; num: string; rule: string; label: string }> = {
-  navy: { glyph: "text-ss-lime", num: "text-white/75", rule: "bg-white/35", label: "text-white/75" },
+  // Los encabezados internos ya no son Azul Profundo (encabezado «Folio», en papel): el tono navy
+  // se pinta como papel, con el § en el color de las marcas de la paleta
+  navy: { glyph: "text-[color:var(--ss-mark)]", num: "text-ss-marino", rule: "bg-ss-input", label: "text-ss-medio" },
   paper: { glyph: "text-ss-marino", num: "text-ss-marino", rule: "bg-ss-input", label: "text-ss-medio" },
   light: { glyph: "text-ss-marino", num: "text-ss-marino", rule: "bg-ss-rule", label: "text-ss-medio" },
 };

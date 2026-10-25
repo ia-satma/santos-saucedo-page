@@ -56,9 +56,21 @@ export default function Footer26({ localized = false }: Footer26Props) {
       {/* Filete superior de 1 px (blanco al 14 %, border-t): separa el pie de un bloque Azul
           Profundo que lo preceda, como el 404; junto a un cuerpo blanco apenas se nota.
           El pie queda limpio: la marca decorativa se reserva a los encabezados editoriales. */}
-      <div className="ss-container grid grid-cols-2 gap-x-6 gap-y-7 py-8 md:grid-cols-3 lg:grid-cols-12 lg:pb-7 lg:pt-10">
-        <div className="col-span-2 md:col-span-3 lg:col-span-4">
-          <img src={media.brand.logoLight} alt={media.brand.name} className="h-[30px] w-auto lg:h-[32px]" width={244} height={40} />
+      {/* Cierre (equipo gráfico): el logotipo a todo lo ancho, como firma de la página; se abre de
+          abajo hacia arriba al llegar */}
+      <div className="ss-container pt-14 lg:pt-24">
+        <img
+          src={media.brand.logoLight}
+          alt={media.brand.name}
+          data-curtain=""
+          className="block h-auto w-full max-w-none"
+          width={2400}
+          height={393}
+        />
+      </div>
+      <div className="ss-container grid grid-cols-2 gap-x-6 gap-y-7 py-10 md:grid-cols-3 lg:grid-cols-12 lg:pb-8 lg:pt-16">
+        <div className="col-span-2 md:col-span-3 lg:col-span-4" aria-hidden="true">
+          <span data-trazo="" className="block h-px w-24 bg-white/40" />
         </div>
 
         {navigation.footer.officeEnabled&&<address className="col-span-2 not-italic md:col-span-1 lg:col-span-3" data-testid="text-footer-address">

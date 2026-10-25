@@ -1,6 +1,6 @@
 import { useSiteNavigation } from "./useSiteNavigation";
 import { useCmsMedia } from "@/lib/cmsMedia";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { useLocation } from "wouter";
 import { SiteLink as Link } from "./SiteLink";
@@ -53,6 +53,8 @@ export default function Header26({ localized = false, overlay = false }: Header2
   const [location] = useLocation();
   const [panel, setPanel] = useState<Panel>(null);
   const [scrolled, setScrolled] = useState(false);
+  // Al bajar después del primer pantallazo el encabezado se retira; al subir, vuelve
+  const [tucked, setTucked] = useState(false);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const searchButtonRef = useRef<HTMLButtonElement>(null);
@@ -76,7 +78,16 @@ export default function Header26({ localized = false, overlay = false }: Header2
   };
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 8);
+      if (Math.abs(y - lastY) < 6) return;
+      const header = document.querySelector<HTMLElement>('header[data-testid="header"]');
+      const focusInside = !!header && header.contains(document.activeElement);
+      setTucked(y > lastY && y > window.innerHeight * 0.6 && !panelRef.current && !focusInside);
+      lastY = y;
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -111,9 +122,10 @@ export default function Header26({ localized = false, overlay = false }: Header2
     <>
       <header
         {...t.attrs}
-        className={`ss26 sticky top-0 z-50 text-white transition-[background-color,box-shadow] duration-300 motion-reduce:transition-none ${
+        className={`ss26 ss-header sticky top-0 z-50 text-white ${
           solid ? "bg-ss-navy" : "bg-transparent"
-        } ${scrolled ? "shadow-[0_1px_0_rgba(255,255,255,0.08)]" : ""}`}
+        } ${scrolled ? "shadow-[0_1px_0_rgba(255,255,255,0.08)]" : ""} ${tucked && !panel ? "is-tucked" : ""}`}
+        onFocus={() => setTucked(false)}
         data-testid="header"
       >
         {/* La navegación completa aparece desde 1280px para mantener etiquetas legibles.
@@ -223,7 +235,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
             <nav className="ss-container relative mt-8 flex-1" aria-label={t.header.nav}>
               <ol className="border-t border-white/15">
                 {items.map((item, i) => (
-                  <li key={item.href} className="border-b border-white/15">
+                  <li key={item.href} className="border-b border-white/15" style={{ "--i": i } as CSSProperties}>
                     <Link
                       href={item.href}
                       ref={i === 0 ? firstLinkRef : undefined}

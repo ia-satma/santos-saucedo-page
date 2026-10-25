@@ -9,6 +9,12 @@
   word-break: normal;
 }
 
+/* Nunca justificado: ss-lead y ss-prose justifican por omisión (ss26.css) */
+[data-testid="page-about"] main :is(.ss-lead, .ss-prose) {
+  text-align: start;
+  text-align-last: auto;
+}
+
 .ss-about-intro {
   display: block;
 }
@@ -19,10 +25,14 @@
   gap: 24px clamp(28px, 5vw, 76px);
 }
 
+/* ~62 caracteres por línea (la romana de la entrada, medida en em: su ch es más ancho) */
 .ss-about-copy > .ss-lead,
 .ss-about-copy > .ss-prose {
   min-width: 0;
-  max-width: 68ch;
+  max-width: 60ch;
+}
+.ss-about-copy > .ss-lead {
+  max-width: 27em;
 }
 
 .ss-about-copy > .ss-prose {
@@ -71,8 +81,6 @@
   justify-content: space-between;
   gap: 24px;
   margin-bottom: clamp(28px, 4vw, 48px);
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--ss-rule);
 }
 
 .ss-about-values-heading h2 {
@@ -81,20 +89,64 @@
 }
 
 .ss-about-values-grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: clamp(28px, 5vw, 76px);
   row-gap: clamp(30px, 4vw, 50px);
 }
 
-.ss-about-principle {
+/* «Cómo trabajamos»: artículos numerados. Filete superior que se dibuja (data-trazo), numeral
+   grande en la romana colgado a la izquierda, titular y texto en bandera a su lado. */
+.ss-about-article {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: clamp(18px, 2vw, 28px);
+  align-content: start;
   min-width: 0;
+  padding-top: clamp(22px, 2.4vw, 30px);
 }
 
-.ss-about-principle-card p {
-  text-align: justify;
-  text-align-last: start;
-  text-justify: inter-word;
+.ss-about-article-rule {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: var(--ss-rule);
+}
+
+.ss-about-article-num {
+  grid-row: 1 / span 2;
+  min-width: 1.15em;
+  font-family: var(--ss-font-serif);
+  font-weight: 350;
+  font-optical-sizing: auto;
+  font-size: clamp(48px, 4.6vw, 72px);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--ss-marino);
+}
+
+.ss-about-article h3 {
+  grid-column: 2;
+  margin: 0;
+  font-size: clamp(25px, 2vw, 29px);
+  line-height: 1.2;
+}
+
+.ss-about-article p {
+  grid-column: 2;
+  max-width: 52ch;
+  margin-top: 12px;
+  font-size: 19px;
+  line-height: 1.65;
+  color: var(--ss-tinta);
+  text-align: start;
+  text-wrap: pretty;
   hyphens: none;
   overflow-wrap: normal;
 }
@@ -111,9 +163,12 @@
   grid-column: 1 / -1;
 }
 
+/* Apertura (data-curtain): el marco recorta la foto mientras se asienta; esquinas rectas */
 .ss-about-gallery figure {
   min-width: 0;
   margin: 0;
+  overflow: hidden;
+  border-radius: 0;
 }
 
 .ss-about-gallery-reception img {
@@ -154,7 +209,7 @@
 
   .ss-about-copy > .ss-lead,
   .ss-about-copy > .ss-prose {
-    max-width: 68ch;
+    max-width: 60ch;
   }
 
   .ss-about-stats {
@@ -174,6 +229,10 @@
   .ss-about-values-grid {
     grid-template-columns: minmax(0, 1fr);
     row-gap: 28px;
+  }
+
+  .ss-about-article p {
+    font-size: 18px;
   }
 
   .ss-about-gallery {

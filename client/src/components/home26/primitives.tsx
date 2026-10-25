@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import { Fragment, type CSSProperties, type ReactNode } from "react";
 import { SiteLink as Link } from "./SiteLink";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import defaults from "@shared/cms-defaults.json";
@@ -26,6 +26,25 @@ export function Reveal({
     <Tag data-reveal="" style={style} className={className || undefined}>
       {children}
     </Tag>
+  );
+}
+
+/** Asiento (sistema «Folio»): las palabras de un titular suben una tras otra desde su máscara
+    al aparecer, una sola vez. Va dentro del h1/h2, que conserva su id y sus clases. */
+export function Lineas({ text, delay = 0 }: { text: string; delay?: number }) {
+  const words = text.split(/\s+/).filter(Boolean);
+  const style = delay ? ({ "--reveal-delay": `${delay}s` } as CSSProperties) : undefined;
+  return (
+    <span data-lineas="" style={style}>
+      {words.map((w, i) => (
+        <Fragment key={i}>
+          <span className="ss-w">
+            <span style={{ "--i": i } as CSSProperties}>{w}</span>
+          </span>
+          {i < words.length - 1 ? " " : null}
+        </Fragment>
+      ))}
+    </span>
   );
 }
 
@@ -58,10 +77,10 @@ export function SplitSection({
   );
 }
 
-/** Filete corto de 24 × 1 px (ss26.css: blanco tenue sobre Azul Profundo, Línea sobre claro),
-    completo desde el inicio: no se dibuja al aparecer. */
+/** Filete corto de 24 × 1 px (ss26.css: blanco tenue sobre Azul Profundo, Línea sobre claro).
+    Se dibuja al aparecer (Trazo, sistema «Folio»). */
 export function ShortRule({ className = "" }: { className?: string }) {
-  return <span aria-hidden className={`ss-bar shrink-0 ${className}`} />;
+  return <span aria-hidden data-trazo="" className={`ss-bar shrink-0 ${className}`} />;
 }
 
 /** El § de la marca como forma de color libre (máscara sobre el trazo del isotipo). */
