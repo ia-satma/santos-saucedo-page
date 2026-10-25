@@ -104,7 +104,7 @@ export const adminNavigation = [
       },
       {
         href: "/admin/site-config/interns",
-        label: "Semillero S&S",
+        label: "Pasantías S&S",
         hint: "Programa de prácticas profesionales",
         icon: PersonIcon,
       },

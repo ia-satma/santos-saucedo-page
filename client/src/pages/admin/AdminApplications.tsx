@@ -76,7 +76,7 @@ export default function AdminApplications() {
       <header>
         <h1 className="text-3xl font-semibold">Candidaturas y CV</h1>
         <p className="mt-3 text-muted-foreground">
-          Solicitudes recibidas desde Carreras y Semillero. Los CV se descargan
+          Solicitudes recibidas desde Carreras y Pasantías S&S. Los CV se descargan
           con autorización; archivar conserva el expediente.
         </p>
       </header>

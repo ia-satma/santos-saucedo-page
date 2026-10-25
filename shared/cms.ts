@@ -120,6 +120,18 @@ export const cmsSections: {
     help: "Entradilla del listado. Cada nombre, descripción, servicio y orden se edita en el catálogo de prácticas.",
   },
   {
+    key: "theme",
+    label: "Colores de marca",
+    path: "/",
+    help: "Los dos azules del sitio en formato #RRGGBB: navy es el Azul Profundo (franjas y pie) y marino el Azul Marino (titulares, botones y enlaces). Se aplican al guardar.",
+  },
+  {
+    key: "practice-services",
+    label: "Prácticas — servicios",
+    path: "/practice-groups",
+    help: "La lista «Qué hacemos» al inicio de cada ficha de práctica, por idioma. Cada área la confirma.",
+  },
+  {
     key: "practice-detail",
     label: "Prácticas — etiquetas",
     path: "/practice-groups",
@@ -175,7 +187,7 @@ export const cmsSections: {
   },
   {
     key: "interns",
-    label: "Semillero S&S",
+    label: "Pasantías S&S",
     path: "/careers/interns",
     help: "Textos del programa de prácticas profesionales.",
   },
@@ -307,6 +319,11 @@ export function validateCmsValue(
       : result.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`);
   }
   const errors: string[] = [];
+  if (section === "theme" && value && typeof value === "object") {
+    for (const [key, color] of Object.entries(value as Record<string, unknown>))
+      if (typeof color !== "string" || !/^#[0-9a-fA-F]{6}$/.test(color))
+        errors.push(`${key}: debe ser un color #RRGGBB.`);
+  }
   function check(template: CmsValue, item: unknown, parts: string[]) {
     if (errors.length > 20) return;
     const label = parts.join(".");

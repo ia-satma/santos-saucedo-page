@@ -129,6 +129,14 @@
   object-fit: cover;
 }
 
+/* El tríptico ocupa el hueco ancho con la proporción que tenía la recepción (1522 × 694),
+   encuadrado en los tres cuadros */
+.ss-about-gallery-feature img {
+  aspect-ratio: 1522 / 694;
+  object-fit: cover;
+  object-position: 50% 30%;
+}
+
 .ss-about-related {
   display: flex;
   flex-wrap: wrap;

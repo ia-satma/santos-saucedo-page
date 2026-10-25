@@ -105,6 +105,13 @@ html:has(header.ss26) {
   scroll-padding-top: var(--ss-header-h);
 }
 
+/* Los dos azules en canales RGB, solo en :root: el panel puede cambiarlos (tema, lib/brandColors)
+   y todo lo demás los lee de aquí, también las utilidades de Tailwind con opacidad (/15, /70). */
+:root {
+  --ss-navy-rgb: 24 23 91; /* #18175B, Azul Profundo */
+  --ss-marino-rgb: 29 28 104; /* #1D1C68, Azul Marino */
+}
+
 /* Paleta (nombres del manual 2025). Azul Profundo es la única superficie oscura.
    En :root para que las páginas heredadas también las lean (las variables no chocan
    con los tokens de shadcn de index.css, que no llevan el prefijo --ss-). */
@@ -112,8 +119,8 @@ html:has(header.ss26) {
 .ss26,
 .editorial-page-hero,
 [data-testid="section-news-hero"] {
-  --ss-navy: #18175b;
-  --ss-marino: #1d1c68;
+  --ss-navy: rgb(var(--ss-navy-rgb));
+  --ss-marino: rgb(var(--ss-marino-rgb));
   --ss-tinta: #33333b;
   --ss-medio: #5f5f6b;
   --ss-claro: #8a8a94;
@@ -173,7 +180,7 @@ html:has(.ss26) body {
 /* Selección: gris azulado, nunca lima */
 ::selection {
   background: #d9d8e6;
-  color: #18175b;
+  color: var(--ss-navy);
 }
 
 /* Contenedor: 1320px de contenido + márgenes laterales fluidos */
@@ -450,7 +457,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 /* Fondo claro (secciones blancas con data-surface="light" y papel .ss-paper):
    contorno Azul Marino, sin lima (lima sobre claro ≈ 1.3:1). */
 :is(.ss-paper, [data-surface="light"]) :is(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
-  outline: 3px solid var(--ss-marino, #1d1c68);
+  outline: 3px solid var(--ss-marino);
   outline-offset: 2px;
   box-shadow: none;
 }
@@ -680,7 +687,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 
 /* Fila de prácticas: el número (01–04) pasa de tenue a pleno */
 .ss-row .ss-row-num {
-  color: rgb(29 28 104 / 0.65);
+  color: rgb(var(--ss-marino-rgb) / 0.65);
   transition: color 320ms var(--ss-ease);
 }
 .ss-row:hover .ss-row-num,
@@ -761,7 +768,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   min-height: clamp(300px, 24vw, 350px);
   padding-block: clamp(96px, 8vw, 120px) clamp(40px, 4vw, 56px);
   color: #fff;
-  background: #18175b;
+  background: var(--ss-navy);
 }
 .editorial-page-hero.ss-principal-page-hero h1 {
   margin: 0;
@@ -831,10 +838,10 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 /* Contact form: a compact surface with a clear field hierarchy. */
 .ss-contact-card {
   padding: clamp(22px, 3vw, 36px);
-  border: 1px solid rgb(29 28 104 / .13);
+  border: 1px solid rgb(var(--ss-marino-rgb) / .13);
   border-radius: 20px;
   background: #f8f8fb;
-  box-shadow: 0 12px 36px rgb(24 23 91 / .045);
+  box-shadow: 0 12px 36px rgb(var(--ss-navy-rgb) / .045);
 }
 .ss-contact-card :is(input:not([type="checkbox"]), textarea, [role="combobox"]) {
   border-radius: 8px;
@@ -843,12 +850,12 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   line-height: 1.5;
 }
 .ss-contact-card label { font-size: 16px; line-height: 1.4; }
-.ss-contact-card [data-testid="text-form-subtitle"] { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgb(29 28 104 / .1); }
+.ss-contact-card [data-testid="text-form-subtitle"] { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgb(var(--ss-marino-rgb) / .1); }
 @media (max-width: 639px) { .ss-contact-card { border-radius: 16px; } }
 .ss-contact-card [data-testid="button-submit-contact"] { border-radius: 8px; }
 
 /* Firm principles share the full editorial width, with readable body text. */
-.ss-about-principle { border-color: rgb(29 28 104 / .18); padding-top: 24px; }
+.ss-about-principle { border-color: rgb(var(--ss-marino-rgb) / .18); padding-top: 24px; }
 .ss-about-principle .ss-h3 { font-size: clamp(25px, 2vw, 29px); line-height: 1.2; }
 .ss-about-principle p { max-width: 52ch; margin-top: 14px; font-size: 19px; line-height: 1.7; text-wrap: pretty; }
 @media (max-width: 639px) { .ss-about-principle p { font-size: 18px; } }

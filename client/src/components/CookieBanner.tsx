@@ -67,11 +67,17 @@ export default function CookieBanner({ language }: { language: LanguageCode }) {
     );
   };
   if (path.startsWith("/admin")) return null;
+  // El aviso solo aparece si hay algo opcional que pedir: Google Analytics con su ID o Leadinfo
+  // con su sitio (petición del cliente, 24-10-2026). Sin medición activa el sitio solo usa
+  // almacenamiento necesario y no interrumpe a nadie; las preferencias siguen en el pie.
+  const optionalActive =
+    (integrations.ga4.enabled && /^G-[A-Z0-9]+$/.test(integrations.ga4.measurementId)) ||
+    (integrations.leadinfo.enabled && Boolean(integrations.leadinfo.siteId));
   const button =
     "min-h-11 border border-white/40 px-4 py-2 text-base hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2";
   return (
     <>
-      {settings.enabled && !hasChoice && !open && (
+      {settings.enabled && optionalActive && !hasChoice && !open && (
         <section
           className="ss26 fixed inset-x-0 bottom-0 z-[60] border-t border-white/20 bg-ss-navy text-white"
           aria-label={t.title}

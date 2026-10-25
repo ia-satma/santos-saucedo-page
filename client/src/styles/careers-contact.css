@@ -104,7 +104,7 @@
   margin-bottom: clamp(30px, 4vw, 52px);
   padding: clamp(30px, 5vw, 64px);
   color: #fff;
-  background: var(--ss-navy, #18175b);
+  background: var(--ss-navy);
   border-inline-start: 5px solid var(--ss-lime, #b2eb3e);
 }
 
@@ -292,7 +292,7 @@
   min-width: 0;
   padding: clamp(24px, 3.6vw, 48px);
   border: 1px solid var(--ss-rule, #e1e0d7);
-  border-top: 3px solid var(--ss-marino, #1d1c68);
+  border-top: 3px solid var(--ss-marino);
   background: #f7f6f1;
 }
 

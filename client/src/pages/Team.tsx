@@ -203,7 +203,7 @@ export default function Team() {
   const t = editableContent[language] || editableContent.en;
 
   // Nombres del menú en cada idioma (E5): el h1 es "Socios" (nav[2]) y la celda Hueso de
-  // cierre del mosaico lleva "Carreras" (nav[4]) con el enlace al Semillero S&S (el nombre del
+  // cierre del mosaico lleva "Carreras" (nav[4]) con el enlace al Pasantías S&S (el nombre del
   // programa no se traduce)
   const navLabels = (cmsChrome[language] ?? cmsChrome.es).nav;
   const pageTitle = navLabels[2].label;
@@ -317,14 +317,14 @@ export default function Team() {
     </section>
   );
 
-  // Contenido de la celda de cierre: etiqueta "Carreras" y enlace de texto al Semillero S&S.
+  // Contenido de la celda de cierre: etiqueta "Carreras" y enlace de texto al Pasantías S&S.
   // [&_span]: la regla móvil de index.css (span a 16 px) agrandaba el texto del enlace; aquí
   // hereda los 12 px de la etiqueta, como en la portada.
   const closingContent = (
     <>
       <p className="ss-label text-ss-medio">{careersLabel}</p>
       <div className="mt-2 [&_span]:[font-size:inherit]">
-        <TextLink href="/careers/interns">Semillero S&amp;S</TextLink>
+        <TextLink href="/careers/interns">Pasantías S&amp;S</TextLink>
       </div>
     </>
   );

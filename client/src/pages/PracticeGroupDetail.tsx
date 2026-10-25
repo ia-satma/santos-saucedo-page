@@ -1,5 +1,6 @@
 import { useContentEntity, useContentPreview } from "@/features/admin/ContentPreview";
 import { useCmsContent } from "@/hooks/useCmsContent";
+import cmsDefaults from "@shared/cms-defaults.json";
 import { Link, useParams } from "wouter";
 import { useMemo, useState, type ReactNode } from "react";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -351,6 +352,11 @@ export default function PracticeGroupDetail() {
 
   const editableContent = useCmsContent("practice-detail", translations);
   const t = editableContent[language] || editableContent.en;
+  // «Qué hacemos»: la lista de servicios de cada práctica, editable en el panel (petición del
+  // cliente, 24-10-2026). Fuera de ES/EN se muestra la lista en inglés, marcada como tal.
+  const serviceLists = useCmsContent("practice-services", cmsDefaults["practice-services"]);
+  const servicesCopy = language === "es" ? serviceLists.es : serviceLists.en;
+  const serviceItems: string[] = (slug && (servicesCopy.items as Record<string, string[]>)[slug]) || [];
   // Vuelta a la sección con la etiqueta del menú en cada idioma (chrome26 nav[1]: "Prácticas")
   const backToAll = (cmsChrome[language as keyof typeof chrome26] ?? cmsChrome.en).nav[1].label;
 
@@ -523,6 +529,23 @@ export default function PracticeGroupDetail() {
           <div className="ss-container">
             <div className="grid grid-cols-1 gap-y-12 lg:grid-cols-12 lg:gap-x-12">
               <div className="lg:col-span-8 xl:col-span-7" data-testid="container-practice-group-description">
+                {serviceItems.length > 0 && (
+                  <section
+                    aria-labelledby="practice-what-title"
+                    className="mb-12 lg:mb-14"
+                    data-testid="list-practice-what-we-do"
+                    {...(language !== "es" && language !== "en" ? EN_SOURCE : {})}
+                  >
+                    <h2 id="practice-what-title" className="ss-h3 mb-4">{servicesCopy.title}</h2>
+                    <ul className="border-b border-ss-rule">
+                      {serviceItems.map((item, i) => (
+                        <li key={i} className="border-t border-ss-rule py-3 text-[18px] leading-[1.5] text-ss-tinta">
+                          {keepFirmName(item)}
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
                 {practiceText && practiceText.intro.length > 0 ? (
                   <div {...sourceAttrs}>
                     {/* "Santos & Saucedo" sin partirse entre líneas (espacios duros) */}

@@ -15,100 +15,100 @@ export default function Interns() {
   const siteDetails = useSiteDetails();
   const { language } = useLanguage();
 
-  // Textos de la redacción aprobada (sección "Carreras", Semillero S&S; página en tú). Sin
+  // Textos de la redacción aprobada (sección "Carreras", Pasantías S&S; página en tú). Sin
   // modalidades, duraciones, requisitos, beca ni pasos de selección que la firma no haya
-  // confirmado; la frase [CONFIRMAR] del Semillero no se publica. Solo lo propio del
-  // Semillero: el programa, lo que se aprende, a quién se busca y qué indicar en el correo ya
-  // están en /careers, que enlaza aquí. Aquí: la frase del Semillero, un solo mailto (el
+  // confirmado; la frase [CONFIRMAR] del Pasantías S&S no se publica. Solo lo propio del
+  // Pasantías S&S: el programa, lo que se aprende, a quién se busca y qué indicar en el correo ya
+  // están en /careers, que enlaza aquí. Aquí: la frase del Pasantías S&S, un solo mailto (el
   // correo) y el enlace de vuelta a Carreras.
   const content = {
     en: {
-      heroTitle: "Semillero S&S",
-      heroSubtitle: "Semillero S&S is the firm’s internship program.",
+      heroTitle: "S&S Internships",
+      heroSubtitle: "S&S Internships is the firm’s internship program.",
       applyEmail: "reclutamiento@santossaucedo.com",
       ctaTitle: "How to apply",
-      ctaIntro: "If there is no vacancy for your profile today, you can leave your details with the Semillero. We review the profiles every time a position opens.",
+      ctaIntro: "If there is no vacancy for your profile today, you can leave your details with S&S Internships. We review the profiles every time a position opens.",
       ctaInstructions: "Send your CV as a PDF to:",
       viewCareers: "Careers",
     },
     es: {
-      heroTitle: "Semillero S&S",
-      heroSubtitle: "El Semillero S&S es el programa de pasantes de la firma.",
+      heroTitle: "Pasantías S&S",
+      heroSubtitle: "Pasantías S&S es el programa de pasantes de la firma.",
       applyEmail: "reclutamiento@santossaucedo.com",
       ctaTitle: "Cómo postularse",
-      ctaIntro: "Si hoy no hay una vacante para tu perfil, puedes dejar tus datos en el Semillero. Revisamos los perfiles cada vez que se abre una posición.",
+      ctaIntro: "Si hoy no hay una vacante para tu perfil, puedes dejar tus datos en Pasantías S&S. Revisamos los perfiles cada vez que se abre una posición.",
       ctaInstructions: "Envía tu CV en PDF a:",
       viewCareers: "Carreras",
     },
     de: {
-      heroTitle: "Semillero S&S",
-      heroSubtitle: "Das Semillero S&S ist das Praktikantenprogramm der Kanzlei.",
+      heroTitle: "Pasantías S&S",
+      heroSubtitle: "Pasantías S&S ist das Praktikantenprogramm der Kanzlei.",
       applyEmail: "reclutamiento@santossaucedo.com",
       ctaTitle: "So bewerben Sie sich",
-      ctaIntro: "Wenn es heute keine passende Stelle für Ihr Profil gibt, können Sie Ihre Daten im Semillero hinterlegen. Wir sehen die Profile jedes Mal durch, wenn eine Stelle frei wird.",
+      ctaIntro: "Wenn es heute keine passende Stelle für Ihr Profil gibt, können Sie Ihre Daten bei Pasantías S&S hinterlegen. Wir sehen die Profile jedes Mal durch, wenn eine Stelle frei wird.",
       ctaInstructions: "Senden Sie Ihren Lebenslauf als PDF an:",
       viewCareers: "Karriere",
     },
     zh: {
-      heroTitle: "Semillero S&S",
-      heroSubtitle: "Semillero S&S 是本所的实习生项目。",
+      heroTitle: "Pasantías S&S",
+      heroSubtitle: "Pasantías S&S 是本所的实习生项目。",
       applyEmail: "reclutamiento@santossaucedo.com",
       ctaTitle: "如何申请",
-      ctaIntro: "如果目前没有适合您的职位，您可以将资料留在 Semillero。每当有职位空缺时，我们都会审阅这些资料。",
+      ctaIntro: "如果目前没有适合您的职位，您可以将资料留在 Pasantías S&S。每当有职位空缺时，我们都会审阅这些资料。",
       ctaInstructions: "请将 PDF 格式的简历发送至：",
       viewCareers: "职业发展",
     },
     ko: {
-      heroTitle: "Semillero S&S",
-      heroSubtitle: "Semillero S&S는 법인의 인턴십 프로그램입니다.",
+      heroTitle: "Pasantías S&S",
+      heroSubtitle: "Pasantías S&S는 법인의 인턴십 프로그램입니다.",
       applyEmail: "reclutamiento@santossaucedo.com",
       ctaTitle: "지원 방법",
-      ctaIntro: "지금 여러분의 프로필에 맞는 자리가 없다면 Semillero에 정보를 남길 수 있습니다. 자리가 날 때마다 프로필을 검토합니다.",
+      ctaIntro: "지금 여러분의 프로필에 맞는 자리가 없다면 Pasantías S&S에 정보를 남길 수 있습니다. 자리가 날 때마다 프로필을 검토합니다.",
       ctaInstructions: "PDF 형식의 이력서를 다음 주소로 보내 주세요:",
       viewCareers: "채용",
     },
     ja: {
-      heroTitle: "Semillero S&S",
-      heroSubtitle: "Semillero S&S は当事務所のインターンシップ・プログラムです。",
+      heroTitle: "Pasantías S&S",
+      heroSubtitle: "Pasantías S&S は当事務所のインターンシップ・プログラムです。",
       applyEmail: "reclutamiento@santossaucedo.com",
       ctaTitle: "応募方法",
-      ctaIntro: "現在、あなたのプロフィールに合う募集がない場合は、Semillero に情報を登録できます。募集が出るたびに登録されたプロフィールを確認します。",
+      ctaIntro: "現在、あなたのプロフィールに合う募集がない場合は、Pasantías S&S に情報を登録できます。募集が出るたびに登録されたプロフィールを確認します。",
       ctaInstructions: "PDF形式の履歴書を次のアドレスにお送りください：",
       viewCareers: "採用情報",
     },
     ar: {
-      heroTitle: "Semillero S&S",
-      heroSubtitle: "يُعدّ Semillero S&S برنامج المتدربين في المكتب.",
+      heroTitle: "Pasantías S&S",
+      heroSubtitle: "يُعدّ Pasantías S&S برنامج المتدربين في المكتب.",
       applyEmail: "reclutamiento@santossaucedo.com",
       ctaTitle: "كيفية التقديم",
-      ctaIntro: "إذا لم تكن هناك اليوم وظيفة شاغرة تناسب ملفك، يمكنك ترك بياناتك في Semillero. نراجع الملفات كلما أُتيحت وظيفة.",
+      ctaIntro: "إذا لم تكن هناك اليوم وظيفة شاغرة تناسب ملفك، يمكنك ترك بياناتك في Pasantías S&S. نراجع الملفات كلما أُتيحت وظيفة.",
       ctaInstructions: "أرسل سيرتك الذاتية بصيغة PDF إلى:",
       viewCareers: "الوظائف",
     },
     ru: {
-      heroTitle: "Semillero S&S",
-      heroSubtitle: "Semillero S&S — программа стажировки фирмы.",
+      heroTitle: "Pasantías S&S",
+      heroSubtitle: "Pasantías S&S — программа стажировки фирмы.",
       applyEmail: "reclutamiento@santossaucedo.com",
       ctaTitle: "Как подать заявку",
-      ctaIntro: "Если сейчас нет вакансии для вашего профиля, вы можете оставить свои данные в Semillero. Мы просматриваем профили каждый раз, когда открывается позиция.",
+      ctaIntro: "Если сейчас нет вакансии для вашего профиля, вы можете оставить свои данные в Pasantías S&S. Мы просматриваем профили каждый раз, когда открывается позиция.",
       ctaInstructions: "Отправьте резюме в формате PDF на адрес:",
       viewCareers: "Карьера",
     },
     fr: {
-      heroTitle: "Semillero S&S",
-      heroSubtitle: "Le Semillero S&S est le programme de stage du cabinet.",
+      heroTitle: "Pasantías S&S",
+      heroSubtitle: "Pasantías S&S est le programme de stage du cabinet.",
       applyEmail: "reclutamiento@santossaucedo.com",
       ctaTitle: "Comment postuler",
-      ctaIntro: "S’il n’y a pas aujourd’hui de poste pour votre profil, vous pouvez laisser vos coordonnées au Semillero. Nous examinons les profils chaque fois qu’un poste s’ouvre.",
+      ctaIntro: "S’il n’y a pas aujourd’hui de poste pour votre profil, vous pouvez laisser vos coordonnées à Pasantías S&S. Nous examinons les profils chaque fois qu’un poste s’ouvre.",
       ctaInstructions: "Envoyez votre CV au format PDF à :",
       viewCareers: "Carrières",
     },
     it: {
-      heroTitle: "Semillero S&S",
-      heroSubtitle: "Il Semillero S&S è il programma di tirocinio dello studio.",
+      heroTitle: "Pasantías S&S",
+      heroSubtitle: "Pasantías S&S è il programma di tirocinio dello studio.",
       applyEmail: "reclutamiento@santossaucedo.com",
       ctaTitle: "Come candidarsi",
-      ctaIntro: "Se oggi non c’è una posizione per il tuo profilo, puoi lasciare i tuoi dati nel Semillero. Esaminiamo i profili ogni volta che si apre una posizione.",
+      ctaIntro: "Se oggi non c’è una posizione per il tuo profilo, puoi lasciare i tuoi dati in Pasantías S&S. Esaminiamo i profili ogni volta che si apre una posizione.",
       ctaInstructions: "Invia il tuo CV in PDF a:",
       viewCareers: "Carriere",
     },
@@ -155,7 +155,7 @@ export default function Interns() {
         <div className="ss-container">
           
           {/* Solicitud, en la rejilla editorial de la portada (SplitSection, G1): el h2 en el
-              aside y, en el cuerpo, la frase del Semillero, el correo como enlace de texto (el
+              aside y, en el cuerpo, la frase del Pasantías S&S, el correo como enlace de texto (el
               único mailto) y el enlace a Carreras. Sin tarjeta, sin un segundo "Enviar solicitud"
               ni la llamada "¿Listo para iniciar tu carrera legal?". Sin entrada al aparecer (G3). */}
           <section data-testid="section-cta">

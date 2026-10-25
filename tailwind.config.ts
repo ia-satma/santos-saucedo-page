@@ -97,8 +97,8 @@ export default {
         },
         // Paleta "Clásica" (nombres del manual 2025). Hex para que funcionen los modificadores /15, /70…
         ss: {
-          navy: "#18175B", // Azul Profundo: la única superficie oscura
-          marino: "#1D1C68", // Azul Marino: tinta de titulares, botones, enlaces
+          navy: "rgb(var(--ss-navy-rgb) / <alpha-value>)", // Azul Profundo (#18175B por omisión; ajustable en el panel)
+          marino: "rgb(var(--ss-marino-rgb) / <alpha-value>)", // Azul Marino (#1D1C68 por omisión): titulares, botones, enlaces
           tinta: "#33333B", // Gris Tinta: texto corrido
           medio: "#5F5F6B", // Gris Medio: texto secundario
           claro: "#8A8A94", // Gris Claro: solo numerales decorativos grandes sobre blanco

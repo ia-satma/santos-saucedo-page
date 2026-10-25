@@ -1126,13 +1126,13 @@ html, body {
    ====================================================== */
 .editorial-page-hero {
   /* Tokens que usan ss-link, ss-arrow y el eyebrow */
-  --ss-navy: #18175b;
+  --ss-navy: rgb(var(--ss-navy-rgb));
   --ss-lime: #b2eb3e;
   position: relative;
   overflow: hidden;
   isolation: isolate;
   color: #fff;
-  background-color: #18175b;
+  background-color: var(--ss-navy);
   background-image: none;
   /* Anillos ring-ring y contorno de foco sobre Azul Profundo: lima */
   --ring: 80 81% 58%;
@@ -1154,7 +1154,7 @@ html, body {
   mask: url("../../attached_assets/ss26/seccion.svg") center / contain no-repeat;
 }
 .editorial-page-hero--paper::before {
-  background-color: rgb(29 28 104 / 0.035);
+  background-color: rgb(var(--ss-marino-rgb) / 0.035);
 }
 
 .editorial-page-hero,
