@@ -8,13 +8,17 @@ import { setPreviewPalette, type BrandTheme } from "@/lib/brandColors";
 // ese navegador y no cambia lo guardado en el panel.
 type Palette = BrandTheme & { id: string; name: string };
 
+// Las paletas 3 a 6 llevan los códigos exactos de los videos de referencia que compartió el
+// cliente (azules: #1B1E4A, #0E1D61, #021861, #255DCE, #226192); la 2 es la propuesta del verde
+// sobrio y la 7 combina tinta con el verde sobrio.
 export const PALETTES: Palette[] = [
   { id: "original", name: "Original", navy: "#18175B", marino: "#1D1C68", lime: "#B2EB3E", paper: "#F3F1EA" },
   { id: "verde-sobrio", name: "Marino, marfil y verde sobrio", navy: "#18175B", marino: "#1D1C68", lime: "#A9C25D", paper: "#F4EFE4" },
-  { id: "oro", name: "Medianoche, marfil y oro", navy: "#0E1A33", marino: "#16264A", lime: "#B39260", paper: "#EFE9DC" },
-  { id: "tinta", name: "Tinta, marfil y verde", navy: "#12181C", marino: "#22303A", lime: "#A9C25D", paper: "#EDE6D6" },
-  { id: "editorial", name: "Azul editorial y coral", navy: "#1C3466", marino: "#22407A", lime: "#E2734E", paper: "#EAE6DD" },
-  { id: "carmesi", name: "Medianoche, piedra y carmesí", navy: "#0E1630", marino: "#1B2547", lime: "#B3263A", paper: "#E9E6E0" },
+  { id: "atlas", name: "Deep Atlas Navy, marfil y oro", navy: "#0E1D61", marino: "#0E1D61", lime: "#B89A5A", paper: "#E8E0D2" },
+  { id: "midnight", name: "Midnight Navy, piedra y carmesí", navy: "#1B1E4A", marino: "#1B1E4A", lime: "#D21319", paper: "#AFAEA2" },
+  { id: "cobalto", name: "Midnight Navy, cobalto y rojo", navy: "#021861", marino: "#255DCE", lime: "#DE1110", paper: "#F3F1EA" },
+  { id: "editorial", name: "Deep Editorial Blue, marfil y coral", navy: "#226192", marino: "#226192", lime: "#EF8557", paper: "#EAE6DE" },
+  { id: "tinta", name: "Tinta, marfil y verde sobrio", navy: "#12181C", marino: "#22303A", lime: "#A9C25D", paper: "#EDE6D6" },
 ];
 
 const FLAG = "ss-paletas";
