@@ -1,0 +1,33 @@
+/* Sistema «Folio» en las páginas internas (nota del Monitor, Nuestra firma). Los gestos y
+   tiempos son los de ss26.css; aquí solo lo propio de estas páginas. */
+
+/* Un titular del encabezado con <Lineas> ya sube palabra por palabra: sin la entrada del h1
+   completo (index.css), que se sumaría a la de las palabras. */
+.ss-motion .editorial-page-hero h1:has([data-lineas]) {
+  animation: none;
+}
+/* Fuera de .ss26, la regla móvil de index.css (`span { font-size: max(16px, 1rem) }`) dejaba
+   cada palabra de <Lineas> en 16 px: heredan el tamaño del titular */
+[data-lineas],
+[data-lineas] span {
+  font-size: inherit;
+}
+
+/* Nota del Monitor: cuerpo en bandera (nunca justificado), ~62 caracteres por línea
+   (60ch de la sans de 20 px ≈ 62 caracteres reales) */
+.folio-article :is(.ss-lead, .ss-prose, p) {
+  max-width: 60ch;
+  text-align: start;
+  text-align-last: auto;
+  hyphens: manual;
+}
+/* La romana de la entrada es más ancha por cifra que por letra: medida en em (≈62 caracteres) */
+.folio-article .ss-lead {
+  max-width: 27em;
+}
+
+/* Marca de fin: el § de la marca, pequeño, tras el último párrafo */
+.folio-endmark {
+  height: 30px;
+  margin-top: 36px;
+}

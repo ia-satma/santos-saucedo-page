@@ -34,7 +34,19 @@
       "extranjeras": {
         "title": "Empresas extranjeras en México",
         "body": "Nuevo León recibe cada año nuevas plantas de capital asiático, estadounidense y europeo. Para estas empresas, las prácticas corporativa, migratoria y laboral de la firma trabajan en conjunto, desde la constitución de la sociedad hasta la contratación del primer turno.",
-        "alt": "Sala de juntas de Santos & Saucedo con el tríptico abstracto de la firma"
+        "alt": "Sala de juntas de Santos & Saucedo con el tríptico abstracto de la firma",
+        "figures": [
+          {
+            "value": "72",
+            "suffix": "+",
+            "label": "ciudades con despacho aliado"
+          },
+          {
+            "value": "40",
+            "suffix": "+",
+            "label": "años de experiencia de los socios"
+          }
+        ]
       },
       "monitor": {
         "title": "Monitor Laboral",
@@ -78,7 +90,19 @@
       "extranjeras": {
         "title": "Foreign companies in Mexico",
         "body": "Every year Nuevo León receives new plants backed by Asian, American and European capital. For these companies, the firm’s corporate, immigration and labor practices work together, from incorporation to hiring the first shift.",
-        "alt": "Santos & Saucedo boardroom with the firm’s abstract triptych"
+        "alt": "Santos & Saucedo boardroom with the firm’s abstract triptych",
+        "figures": [
+          {
+            "value": "72",
+            "suffix": "+",
+            "label": "cities with an allied firm"
+          },
+          {
+            "value": "40",
+            "suffix": "+",
+            "label": "years of partner experience"
+          }
+        ]
       },
       "monitor": {
         "title": "Labor Monitor",
@@ -1213,28 +1237,28 @@
     },
     "interns": {
       "title": {
-        "en": "Semillero S&S | Santos & Saucedo",
-        "es": "Semillero S&S | Santos & Saucedo",
-        "de": "Semillero S&S | Santos & Saucedo",
-        "zh": "Semillero S&S | Santos & Saucedo",
-        "ko": "Semillero S&S | Santos & Saucedo",
-        "ja": "Semillero S&S | Santos & Saucedo",
-        "ar": "Semillero S&S | Santos & Saucedo",
-        "ru": "Semillero S&S | Santos & Saucedo",
-        "fr": "Semillero S&S | Santos & Saucedo",
-        "it": "Semillero S&S | Santos & Saucedo"
+        "en": "Pasantías S&S | Santos & Saucedo",
+        "es": "Pasantías S&S | Santos & Saucedo",
+        "de": "Pasantías S&S | Santos & Saucedo",
+        "zh": "Pasantías S&S | Santos & Saucedo",
+        "ko": "Pasantías S&S | Santos & Saucedo",
+        "ja": "Pasantías S&S | Santos & Saucedo",
+        "ar": "Pasantías S&S | Santos & Saucedo",
+        "ru": "Pasantías S&S | Santos & Saucedo",
+        "fr": "Pasantías S&S | Santos & Saucedo",
+        "it": "Pasantías S&S | Santos & Saucedo"
       },
       "description": {
-        "en": "Semillero S&S is the Santos & Saucedo internship program.",
-        "es": "El Semillero S&S es el programa de pasantes de Santos & Saucedo.",
-        "de": "Semillero S&S ist das Praktikantenprogramm von Santos & Saucedo.",
-        "zh": "Semillero S&S是Santos & Saucedo的实习生项目。",
-        "ko": "Semillero S&S는 Santos & Saucedo의 인턴 프로그램입니다.",
-        "ja": "Semillero S&Sは、Santos & Saucedoのインターン・プログラムです。",
-        "ar": "Semillero S&S هو برنامج المتدربين في Santos & Saucedo.",
-        "ru": "Semillero S&S — программа стажировок Santos & Saucedo.",
-        "fr": "Semillero S&S est le programme de stagiaires de Santos & Saucedo.",
-        "it": "Semillero S&S è il programma di tirocinio di Santos & Saucedo."
+        "en": "S&S Internships is the Santos & Saucedo internship program.",
+        "es": "Pasantías S&S es el programa de pasantes de Santos & Saucedo.",
+        "de": "Pasantías S&S ist das Praktikantenprogramm von Santos & Saucedo.",
+        "zh": "Pasantías S&S是Santos & Saucedo的实习生项目。",
+        "ko": "Pasantías S&S는 Santos & Saucedo의 인턴 프로그램입니다.",
+        "ja": "Pasantías S&Sは、Santos & Saucedoのインターン・プログラムです。",
+        "ar": "Pasantías S&S هو برنامج المتدربين في Santos & Saucedo.",
+        "ru": "Pasantías S&S — программа стажировок Santos & Saucedo.",
+        "fr": "Pasantías S&S est le programme de stagiaires de Santos & Saucedo.",
+        "it": "Pasantías S&S è il programma di tirocinio di Santos & Saucedo."
       },
       "path": "/careers/interns"
     },
@@ -1684,10 +1708,10 @@
       "cultureText": "In a firm of our size, your work is reviewed directly by a partner. You will learn to prepare a case file, to negotiate and to hold a position before the authorities, and you will see at close range how companies in many sectors operate.",
       "environmentTitle": "The firm",
       "environmentText": "Backed by its partners’ more than 40 years of combined experience, Santos & Saucedo advises companies on employment matters from San Pedro Garza García.",
-      "internshipTitle": "Semillero S&S",
-      "internshipSubtitle": "Semillero S&S is the firm’s internship program.",
+      "internshipTitle": "S&S Internships",
+      "internshipSubtitle": "S&S Internships is the firm’s internship program.",
       "positionsTitle": "Openings",
-      "positionsEmpty": "There are no openings at the moment. You can leave your details with the Semillero S&S.",
+      "positionsEmpty": "There are no openings at the moment. You can leave your details with S&S Internships.",
       "applyTitle": "How to apply",
       "applyInstructions": "Send your CV as a PDF to:",
       "applyEmail": "reclutamiento@santossaucedo.com",
@@ -1703,10 +1727,10 @@
       "cultureText": "En una firma de nuestro tamaño, tu trabajo lo revisa directamente un socio. Aprenderás a preparar un expediente, a negociar y a sostener una postura frente a la autoridad, y conocerás de cerca la operación de empresas de muchos sectores.",
       "environmentTitle": "La firma",
       "environmentText": "Con los más de 40 años de experiencia que suman sus socios, Santos & Saucedo asesora a empresas en materia laboral desde San Pedro Garza García.",
-      "internshipTitle": "Semillero S&S",
-      "internshipSubtitle": "El Semillero S&S es el programa de pasantes de la firma.",
+      "internshipTitle": "Pasantías S&S",
+      "internshipSubtitle": "Pasantías S&S es el programa de pasantes de la firma.",
       "positionsTitle": "Vacantes",
-      "positionsEmpty": "Por ahora no hay vacantes abiertas. Puedes dejar tus datos en el Semillero S&S.",
+      "positionsEmpty": "Por ahora no hay vacantes abiertas. Puedes dejar tus datos en Pasantías S&S.",
       "applyTitle": "Cómo postularse",
       "applyInstructions": "Envía tu CV en PDF a:",
       "applyEmail": "reclutamiento@santossaucedo.com",
@@ -1722,10 +1746,10 @@
       "cultureText": "In einer Kanzlei unserer Größe prüft ein Partner Ihre Arbeit direkt. Sie lernen, eine Akte vorzubereiten, zu verhandeln und eine Position gegenüber den Behörden zu vertreten, und Sie lernen den Betrieb von Unternehmen aus vielen Branchen aus der Nähe kennen.",
       "environmentTitle": "Die Kanzlei",
       "environmentText": "Gestützt auf die zusammen mehr als 40 Jahre Erfahrung ihrer Partner berät Santos & Saucedo Unternehmen von San Pedro Garza García aus in arbeitsrechtlichen Fragen.",
-      "internshipTitle": "Semillero S&S",
-      "internshipSubtitle": "Das Semillero S&S ist das Praktikantenprogramm der Kanzlei.",
+      "internshipTitle": "Pasantías S&S",
+      "internshipSubtitle": "Pasantías S&S ist das Praktikantenprogramm der Kanzlei.",
       "positionsTitle": "Offene Stellen",
-      "positionsEmpty": "Derzeit gibt es keine offenen Stellen. Sie können Ihre Daten im Semillero S&S hinterlegen.",
+      "positionsEmpty": "Derzeit gibt es keine offenen Stellen. Sie können Ihre Daten im Pasantías S&S hinterlegen.",
       "applyTitle": "So bewerben Sie sich",
       "applyInstructions": "Senden Sie Ihren Lebenslauf als PDF an:",
       "applyEmail": "reclutamiento@santossaucedo.com",
@@ -1741,10 +1765,10 @@
       "cultureText": "在我们这样规模的律所，您的工作由合伙人直接审阅。您将学习如何准备案卷、进行谈判、在主管机关面前坚持立场，并近距离了解众多行业企业的运营。",
       "environmentTitle": "关于律所",
       "environmentText": "凭借合伙人累计超过40年的专业经验，Santos & Saucedo 在圣佩德罗-加尔萨-加西亚为企业提供劳动法律咨询。",
-      "internshipTitle": "Semillero S&S",
-      "internshipSubtitle": "Semillero S&S 是本所的实习生项目。",
+      "internshipTitle": "Pasantías S&S",
+      "internshipSubtitle": "Pasantías S&S 是本所的实习生项目。",
       "positionsTitle": "职位空缺",
-      "positionsEmpty": "目前没有空缺职位。您可以将资料留在 Semillero S&S。",
+      "positionsEmpty": "目前没有空缺职位。您可以将资料留在 Pasantías S&S。",
       "applyTitle": "如何申请",
       "applyInstructions": "请将 PDF 格式的简历发送至：",
       "applyEmail": "reclutamiento@santossaucedo.com",
@@ -1760,10 +1784,10 @@
       "cultureText": "우리 규모의 법인에서는 파트너가 여러분의 업무를 직접 검토합니다. 사건 기록을 준비하고, 협상하고, 당국 앞에서 입장을 지키는 법을 배우며, 여러 업종 기업의 운영을 가까이에서 알게 됩니다.",
       "environmentTitle": "법인 소개",
       "environmentText": "파트너들의 누적 40년 이상의 경험을 바탕으로, Santos & Saucedo는 산페드로 가르사 가르시아에서 기업에 노동 문제를 자문합니다.",
-      "internshipTitle": "Semillero S&S",
-      "internshipSubtitle": "Semillero S&S는 법인의 인턴십 프로그램입니다.",
+      "internshipTitle": "Pasantías S&S",
+      "internshipSubtitle": "Pasantías S&S는 법인의 인턴십 프로그램입니다.",
       "positionsTitle": "채용 공고",
-      "positionsEmpty": "현재 채용 중인 자리가 없습니다. Semillero S&S에 정보를 남길 수 있습니다.",
+      "positionsEmpty": "현재 채용 중인 자리가 없습니다. Pasantías S&S에 정보를 남길 수 있습니다.",
       "applyTitle": "지원 방법",
       "applyInstructions": "PDF 형식의 이력서를 다음 주소로 보내 주세요:",
       "applyEmail": "reclutamiento@santossaucedo.com",
@@ -1779,10 +1803,10 @@
       "cultureText": "当事務所の規模では、あなたの仕事はパートナーが直接確認します。記録の準備、交渉、当局に対して立場を貫くことを学び、さまざまな業種の企業の業務を間近で知ることができます。",
       "environmentTitle": "事務所について",
       "environmentText": "パートナーの通算40年以上の経験を基に、Santos & Saucedo はサン・ペドロ・ガルサ・ガルシアを拠点に企業の労働問題について助言しています。",
-      "internshipTitle": "Semillero S&S",
-      "internshipSubtitle": "Semillero S&S は当事務所のインターンシップ・プログラムです。",
+      "internshipTitle": "Pasantías S&S",
+      "internshipSubtitle": "Pasantías S&S は当事務所のインターンシップ・プログラムです。",
       "positionsTitle": "募集職種",
-      "positionsEmpty": "現在、募集中の職種はありません。Semillero S&S に情報を登録できます。",
+      "positionsEmpty": "現在、募集中の職種はありません。Pasantías S&S に情報を登録できます。",
       "applyTitle": "応募方法",
       "applyInstructions": "PDF形式の履歴書を次のアドレスにお送りください：",
       "applyEmail": "reclutamiento@santossaucedo.com",
@@ -1798,10 +1822,10 @@
       "cultureText": "في مكتب بحجمنا، يراجع أحد الشركاء عملك مباشرة. ستتعلم إعداد الملف والتفاوض والدفاع عن موقف أمام السلطات، وستتعرف عن قرب على طريقة عمل شركات من قطاعات كثيرة.",
       "environmentTitle": "المكتب",
       "environmentText": "استنادًا إلى أكثر من 40 عامًا من الخبرة المتراكمة لشركائه، يقدّم Santos & Saucedo المشورة للشركات في مسائل العمل من San Pedro Garza García.",
-      "internshipTitle": "Semillero S&S",
-      "internshipSubtitle": "يُعدّ Semillero S&S برنامج المتدربين في المكتب.",
+      "internshipTitle": "Pasantías S&S",
+      "internshipSubtitle": "يُعدّ Pasantías S&S برنامج المتدربين في المكتب.",
       "positionsTitle": "الوظائف الشاغرة",
-      "positionsEmpty": "لا توجد حاليًا وظائف شاغرة. يمكنك ترك بياناتك في Semillero S&S.",
+      "positionsEmpty": "لا توجد حاليًا وظائف شاغرة. يمكنك ترك بياناتك في Pasantías S&S.",
       "applyTitle": "كيفية التقديم",
       "applyInstructions": "أرسل سيرتك الذاتية بصيغة PDF إلى:",
       "applyEmail": "reclutamiento@santossaucedo.com",
@@ -1817,10 +1841,10 @@
       "cultureText": "В фирме нашего размера вашу работу напрямую проверяет партнёр. Вы научитесь готовить дело, вести переговоры и отстаивать позицию перед органами власти, а также близко познакомитесь с работой компаний из многих отраслей.",
       "environmentTitle": "О фирме",
       "environmentText": "Опираясь на более чем 40-летний совокупный опыт своих партнёров, Santos & Saucedo консультирует компании по вопросам трудового права из своего офиса в Сан-Педро-Гарса-Гарсия.",
-      "internshipTitle": "Semillero S&S",
-      "internshipSubtitle": "Semillero S&S — программа стажировки фирмы.",
+      "internshipTitle": "Pasantías S&S",
+      "internshipSubtitle": "Pasantías S&S — программа стажировки фирмы.",
       "positionsTitle": "Вакансии",
-      "positionsEmpty": "Сейчас открытых вакансий нет. Вы можете оставить свои данные в Semillero S&S.",
+      "positionsEmpty": "Сейчас открытых вакансий нет. Вы можете оставить свои данные в Pasantías S&S.",
       "applyTitle": "Как подать заявку",
       "applyInstructions": "Отправьте резюме в формате PDF на адрес:",
       "applyEmail": "reclutamiento@santossaucedo.com",
@@ -1836,10 +1860,10 @@
       "cultureText": "Dans un cabinet de notre taille, votre travail est relu directement par un associé. Vous apprendrez à préparer un dossier, à négocier et à défendre une position face à l’administration, et vous découvrirez de près le fonctionnement d’entreprises de nombreux secteurs.",
       "environmentTitle": "Le cabinet",
       "environmentText": "Forte de plus de 40 ans d’expérience cumulée de ses associés, Santos & Saucedo conseille les entreprises en droit du travail depuis San Pedro Garza García.",
-      "internshipTitle": "Semillero S&S",
-      "internshipSubtitle": "Le Semillero S&S est le programme de stage du cabinet.",
+      "internshipTitle": "Pasantías S&S",
+      "internshipSubtitle": "Pasantías S&S est le programme de stage du cabinet.",
       "positionsTitle": "Postes à pourvoir",
-      "positionsEmpty": "Il n’y a pas de poste à pourvoir pour le moment. Vous pouvez laisser vos coordonnées au Semillero S&S.",
+      "positionsEmpty": "Il n’y a pas de poste à pourvoir pour le moment. Vous pouvez laisser vos coordonnées à Pasantías S&S.",
       "applyTitle": "Comment postuler",
       "applyInstructions": "Envoyez votre CV au format PDF à :",
       "applyEmail": "reclutamiento@santossaucedo.com",
@@ -1855,10 +1879,10 @@
       "cultureText": "In uno studio delle nostre dimensioni, il tuo lavoro viene rivisto direttamente da un socio. Imparerai a preparare un fascicolo, a negoziare e a sostenere una posizione davanti all’autorità, e conoscerai da vicino l’attività di imprese di molti settori.",
       "environmentTitle": "Lo studio",
       "environmentText": "Forte degli oltre 40 anni di esperienza complessiva dei suoi soci, Santos & Saucedo assiste le imprese in materia di lavoro da San Pedro Garza García.",
-      "internshipTitle": "Semillero S&S",
-      "internshipSubtitle": "Il Semillero S&S è il programma di tirocinio dello studio.",
+      "internshipTitle": "Pasantías S&S",
+      "internshipSubtitle": "Pasantías S&S è il programma di tirocinio dello studio.",
       "positionsTitle": "Posizioni aperte",
-      "positionsEmpty": "Al momento non ci sono posizioni aperte. Puoi lasciare i tuoi dati nel Semillero S&S.",
+      "positionsEmpty": "Al momento non ci sono posizioni aperte. Puoi lasciare i tuoi dati in Pasantías S&S.",
       "applyTitle": "Come candidarsi",
       "applyInstructions": "Invia il tuo CV in PDF a:",
       "applyEmail": "reclutamiento@santossaucedo.com",
@@ -2160,92 +2184,92 @@
   },
   "interns": {
     "en": {
-      "heroTitle": "Semillero S&S",
-      "heroSubtitle": "Semillero S&S is the firm’s internship program.",
+      "heroTitle": "S&S Internships",
+      "heroSubtitle": "S&S Internships is the firm’s internship program.",
       "applyEmail": "reclutamiento@santossaucedo.com",
       "ctaTitle": "How to apply",
-      "ctaIntro": "If there is no vacancy for your profile today, you can leave your details with the Semillero. We review the profiles every time a position opens.",
+      "ctaIntro": "If there is no vacancy for your profile today, you can leave your details with S&S Internships. We review the profiles every time a position opens.",
       "ctaInstructions": "Send your CV as a PDF to:",
       "viewCareers": "Careers"
     },
     "es": {
-      "heroTitle": "Semillero S&S",
-      "heroSubtitle": "El Semillero S&S es el programa de pasantes de la firma.",
+      "heroTitle": "Pasantías S&S",
+      "heroSubtitle": "Pasantías S&S es el programa de pasantes de la firma.",
       "applyEmail": "reclutamiento@santossaucedo.com",
       "ctaTitle": "Cómo postularse",
-      "ctaIntro": "Si hoy no hay una vacante para tu perfil, puedes dejar tus datos en el Semillero. Revisamos los perfiles cada vez que se abre una posición.",
+      "ctaIntro": "Si hoy no hay una vacante para tu perfil, puedes dejar tus datos en Pasantías S&S. Revisamos los perfiles cada vez que se abre una posición.",
       "ctaInstructions": "Envía tu CV en PDF a:",
       "viewCareers": "Carreras"
     },
     "de": {
-      "heroTitle": "Semillero S&S",
-      "heroSubtitle": "Das Semillero S&S ist das Praktikantenprogramm der Kanzlei.",
+      "heroTitle": "Pasantías S&S",
+      "heroSubtitle": "Pasantías S&S ist das Praktikantenprogramm der Kanzlei.",
       "applyEmail": "reclutamiento@santossaucedo.com",
       "ctaTitle": "So bewerben Sie sich",
-      "ctaIntro": "Wenn es heute keine passende Stelle für Ihr Profil gibt, können Sie Ihre Daten im Semillero hinterlegen. Wir sehen die Profile jedes Mal durch, wenn eine Stelle frei wird.",
+      "ctaIntro": "Wenn es heute keine passende Stelle für Ihr Profil gibt, können Sie Ihre Daten bei Pasantías S&S hinterlegen. Wir sehen die Profile jedes Mal durch, wenn eine Stelle frei wird.",
       "ctaInstructions": "Senden Sie Ihren Lebenslauf als PDF an:",
       "viewCareers": "Karriere"
     },
     "zh": {
-      "heroTitle": "Semillero S&S",
-      "heroSubtitle": "Semillero S&S 是本所的实习生项目。",
+      "heroTitle": "Pasantías S&S",
+      "heroSubtitle": "Pasantías S&S 是本所的实习生项目。",
       "applyEmail": "reclutamiento@santossaucedo.com",
       "ctaTitle": "如何申请",
-      "ctaIntro": "如果目前没有适合您的职位，您可以将资料留在 Semillero。每当有职位空缺时，我们都会审阅这些资料。",
+      "ctaIntro": "如果目前没有适合您的职位，您可以将资料留在 Pasantías S&S。每当有职位空缺时，我们都会审阅这些资料。",
       "ctaInstructions": "请将 PDF 格式的简历发送至：",
       "viewCareers": "职业发展"
     },
     "ko": {
-      "heroTitle": "Semillero S&S",
-      "heroSubtitle": "Semillero S&S는 법인의 인턴십 프로그램입니다.",
+      "heroTitle": "Pasantías S&S",
+      "heroSubtitle": "Pasantías S&S는 법인의 인턴십 프로그램입니다.",
       "applyEmail": "reclutamiento@santossaucedo.com",
       "ctaTitle": "지원 방법",
-      "ctaIntro": "지금 여러분의 프로필에 맞는 자리가 없다면 Semillero에 정보를 남길 수 있습니다. 자리가 날 때마다 프로필을 검토합니다.",
+      "ctaIntro": "지금 여러분의 프로필에 맞는 자리가 없다면 Pasantías S&S에 정보를 남길 수 있습니다. 자리가 날 때마다 프로필을 검토합니다.",
       "ctaInstructions": "PDF 형식의 이력서를 다음 주소로 보내 주세요:",
       "viewCareers": "채용"
     },
     "ja": {
-      "heroTitle": "Semillero S&S",
-      "heroSubtitle": "Semillero S&S は当事務所のインターンシップ・プログラムです。",
+      "heroTitle": "Pasantías S&S",
+      "heroSubtitle": "Pasantías S&S は当事務所のインターンシップ・プログラムです。",
       "applyEmail": "reclutamiento@santossaucedo.com",
       "ctaTitle": "応募方法",
-      "ctaIntro": "現在、あなたのプロフィールに合う募集がない場合は、Semillero に情報を登録できます。募集が出るたびに登録されたプロフィールを確認します。",
+      "ctaIntro": "現在、あなたのプロフィールに合う募集がない場合は、Pasantías S&S に情報を登録できます。募集が出るたびに登録されたプロフィールを確認します。",
       "ctaInstructions": "PDF形式の履歴書を次のアドレスにお送りください：",
       "viewCareers": "採用情報"
     },
     "ar": {
-      "heroTitle": "Semillero S&S",
-      "heroSubtitle": "يُعدّ Semillero S&S برنامج المتدربين في المكتب.",
+      "heroTitle": "Pasantías S&S",
+      "heroSubtitle": "يُعدّ Pasantías S&S برنامج المتدربين في المكتب.",
       "applyEmail": "reclutamiento@santossaucedo.com",
       "ctaTitle": "كيفية التقديم",
-      "ctaIntro": "إذا لم تكن هناك اليوم وظيفة شاغرة تناسب ملفك، يمكنك ترك بياناتك في Semillero. نراجع الملفات كلما أُتيحت وظيفة.",
+      "ctaIntro": "إذا لم تكن هناك اليوم وظيفة شاغرة تناسب ملفك، يمكنك ترك بياناتك في Pasantías S&S. نراجع الملفات كلما أُتيحت وظيفة.",
       "ctaInstructions": "أرسل سيرتك الذاتية بصيغة PDF إلى:",
       "viewCareers": "الوظائف"
     },
     "ru": {
-      "heroTitle": "Semillero S&S",
-      "heroSubtitle": "Semillero S&S — программа стажировки фирмы.",
+      "heroTitle": "Pasantías S&S",
+      "heroSubtitle": "Pasantías S&S — программа стажировки фирмы.",
       "applyEmail": "reclutamiento@santossaucedo.com",
       "ctaTitle": "Как подать заявку",
-      "ctaIntro": "Если сейчас нет вакансии для вашего профиля, вы можете оставить свои данные в Semillero. Мы просматриваем профили каждый раз, когда открывается позиция.",
+      "ctaIntro": "Если сейчас нет вакансии для вашего профиля, вы можете оставить свои данные в Pasantías S&S. Мы просматриваем профили каждый раз, когда открывается позиция.",
       "ctaInstructions": "Отправьте резюме в формате PDF на адрес:",
       "viewCareers": "Карьера"
     },
     "fr": {
-      "heroTitle": "Semillero S&S",
-      "heroSubtitle": "Le Semillero S&S est le programme de stage du cabinet.",
+      "heroTitle": "Pasantías S&S",
+      "heroSubtitle": "Pasantías S&S est le programme de stage du cabinet.",
       "applyEmail": "reclutamiento@santossaucedo.com",
       "ctaTitle": "Comment postuler",
-      "ctaIntro": "S’il n’y a pas aujourd’hui de poste pour votre profil, vous pouvez laisser vos coordonnées au Semillero. Nous examinons les profils chaque fois qu’un poste s’ouvre.",
+      "ctaIntro": "S’il n’y a pas aujourd’hui de poste pour votre profil, vous pouvez laisser vos coordonnées à Pasantías S&S. Nous examinons les profils chaque fois qu’un poste s’ouvre.",
       "ctaInstructions": "Envoyez votre CV au format PDF à :",
       "viewCareers": "Carrières"
     },
     "it": {
-      "heroTitle": "Semillero S&S",
-      "heroSubtitle": "Il Semillero S&S è il programma di tirocinio dello studio.",
+      "heroTitle": "Pasantías S&S",
+      "heroSubtitle": "Pasantías S&S è il programma di tirocinio dello studio.",
       "applyEmail": "reclutamiento@santossaucedo.com",
       "ctaTitle": "Come candidarsi",
-      "ctaIntro": "Se oggi non c’è una posizione per il tuo profilo, puoi lasciare i tuoi dati nel Semillero. Esaminiamo i profili ogni volta che si apre una posizione.",
+      "ctaIntro": "Se oggi non c’è una posizione per il tuo profilo, puoi lasciare i tuoi dati in Pasantías S&S. Esaminiamo i profili ogni volta che si apre una posizione.",
       "ctaInstructions": "Invia il tuo CV in PDF a:",
       "viewCareers": "Carriere"
     }
@@ -6586,5 +6610,97 @@
         "failed": "The comment could not be sent. Please try again later."
       }
     }
+  },
+  "practice-services": {
+    "es": {
+      "title": "Qué hacemos",
+      "items": {
+        "laboral-seguridad-social": [
+          "Auditorías laborales de contratos, expedientes, nómina y prestaciones",
+          "Contratos, reglamentos interiores, políticas y protocolos, incluidos los de la NOM-035",
+          "Preparación y acompañamiento en inspecciones de las autoridades del trabajo",
+          "Revisión de proveedores de servicios especializados ante el REPSE y el IMSS",
+          "Planeación laboral: plantillas, turnos, jornada de 40 horas, cajas y fondos de ahorro",
+          "Revisiones contractuales y salariales, y consultas para contratos colectivos",
+          "Aspectos laborales de adquisiciones, fusiones, escisiones y reestructuras",
+          "Terminaciones individuales y colectivas, y convenios ante la autoridad",
+          "Conciliación prejudicial y juicios ante los Tribunales Laborales",
+          "Investigaciones internas por acoso, hostigamiento o faltas graves",
+          "Cumplimiento ante el IMSS y el Infonavit"
+        ],
+        "corporativo-contractual": [
+          "Constitución de sociedades mercantiles y civiles",
+          "Vida corporativa: asambleas, actas, libros y poderes",
+          "Aumentos y disminuciones de capital, fusiones, escisiones, disoluciones y liquidaciones",
+          "Emisión, cancelación y compraventa de acciones y partes sociales",
+          "Estructuración y revisión de fideicomisos",
+          "Contratos de coinversión, suministro, servicios, comisión, compraventa, administración y franquicia",
+          "Licencias de uso y de derechos de propiedad industrial"
+        ],
+        "migratorio": [
+          "Visas y permisos de trabajo para directivos, técnicos y especialistas extranjeros",
+          "Residencias del personal extranjero y su mantenimiento en regla",
+          "Visas de inversión, negocios, estudios y prácticas profesionales",
+          "Avisos por cambio de estado civil, domicilio o actividades",
+          "Medios de defensa contra resoluciones de la autoridad migratoria",
+          "Apostilla, legalización y traducción de documentos extranjeros"
+        ],
+        "litigio-contencioso": [
+          "Juicios civiles y mercantiles",
+          "Denuncias por robo, fraude o abuso de confianza ante la Fiscalía General de Justicia de Nuevo León",
+          "Coadyuvancia con el Ministerio Público en la investigación y en el juicio oral",
+          "Reparación del daño",
+          "Coordinación con la práctica laboral cuando el responsable es un trabajador"
+        ]
+      }
+    },
+    "en": {
+      "title": "What we do",
+      "items": {
+        "laboral-seguridad-social": [
+          "Labor audits of contracts, personnel files, payroll and benefits",
+          "Contracts, internal work rules, policies and protocols, including NOM-035",
+          "Preparation for and support during labor authority inspections",
+          "Review of specialized service providers under REPSE and IMSS",
+          "Labor planning: headcount, shifts, the 40-hour week, savings funds",
+          "Collective bargaining reviews and worker consultations for collective agreements",
+          "Labor aspects of acquisitions, mergers, spin-offs and restructurings",
+          "Individual and collective terminations, and settlements before the authority",
+          "Pre-judicial conciliation and trials before the Labor Courts",
+          "Internal investigations of harassment or serious misconduct",
+          "Compliance with IMSS and Infonavit"
+        ],
+        "corporativo-contractual": [
+          "Incorporation of commercial and civil companies",
+          "Corporate housekeeping: shareholder meetings, minutes, books and powers of attorney",
+          "Capital increases and reductions, mergers, spin-offs, dissolutions and liquidations",
+          "Issuance, cancellation and sale of shares and equity interests",
+          "Structuring and review of trusts",
+          "Joint venture, supply, services, commission, sale, management and franchise agreements",
+          "Licenses of use and industrial property rights"
+        ],
+        "migratorio": [
+          "Visas and work permits for foreign executives, technicians and specialists",
+          "Residence status for foreign staff, kept in good standing",
+          "Investment, business, study and internship visas",
+          "Notices of changes in marital status, address or activities",
+          "Challenges to decisions of the immigration authority",
+          "Apostille, legalization and translation of foreign documents"
+        ],
+        "litigio-contencioso": [
+          "Civil and commercial litigation",
+          "Criminal complaints for theft, fraud or breach of trust before the Nuevo León State Prosecutor",
+          "Acting alongside the Public Prosecutor during investigation and oral trial",
+          "Recovery of damages",
+          "Coordination with the labor practice when the person responsible is an employee"
+        ]
+      }
+    }
+  },
+  "theme": {
+    "navy": "#18175B",
+    "marino": "#1D1C68",
+    "lime": "#B2EB3E",
+    "paper": "#F3F1EA"
   }
 }

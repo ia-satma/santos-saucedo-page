@@ -1,9 +1,11 @@
+import "@/styles/folio-pages.css";
 import { useContentEntity, useContentPreview } from "@/features/admin/ContentPreview";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useState } from "react";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { motion, useScroll } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
@@ -18,7 +20,7 @@ import { Eyebrow, LeadParagraph } from "@/components/editorial";
 import { formatNewsDate } from "@/lib/newsDate";
 import { MonitorList, MonitorSubscribe } from "@/components/monitor/MonitorList";
 import { chrome26 } from "@/components/home26/chrome26";
-import { TextLink } from "@/components/home26/primitives";
+import { Lineas, SectionMark, TextLink } from "@/components/home26/primitives";
 import { copyToClipboard, emailShareHref, newsShareUrl, sourceLabel, whatsappShareHref } from "@/lib/shareNews";
 import type { News, TeamMember } from "@shared/schema";
 
@@ -30,6 +32,20 @@ import type { News, TeamMember } from "@shared/schema";
 // vuelta); el texto va aislado en <bdi lang="en" dir="ltr">, como en Team.tsx.
 const EN_SOURCE = { lang: "en", dir: "ltr" } as const;
 
+// Barra de lectura: filete de acento de 2 px fijo arriba, que crece con el avance de la página
+// (scaleX). Sigue al desplazamiento del lector; no se mueve sola.
+function ReadingProgress() {
+  const { scrollYProgress } = useScroll();
+  return (
+    <motion.div
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-[2px] origin-left bg-ss-lime rtl:origin-right"
+      style={{ scaleX: scrollYProgress }}
+      data-testid="news-reading-progress"
+    />
+  );
+}
+
 // Imagen del artículo: figura al inicio del cuerpo, bajo el encabezado de papel, sin velo.
 // Sin imagen, o si no carga, no se pinta nada (sin foto genérica de reemplazo).
 // alt vacío: el h1 ya dice el título.
@@ -37,7 +53,7 @@ function NewsHeroImage({ src }: { src: string }) {
   const [hasError, setHasError] = useState(false);
   if (!src || hasError) return null;
   return (
-    <figure className="mb-12">
+    <figure className="mb-12 overflow-hidden" data-curtain="">
       <img
         src={src}
         alt=""
@@ -425,6 +441,7 @@ export default function NewsDetail() {
   return (
     <div className="min-h-screen bg-background" data-testid="page-news-detail">
       <Header />
+      {newsArticle && <ReadingProgress />}
       
       {newsArticle && (
         <>
@@ -494,19 +511,34 @@ export default function NewsDetail() {
                 lang={titleIsSource ? "en" : undefined}
               >
                 {/* Titular de origen de inmediato; la traducción lo sustituye solo si llega */}
-                {titleIsSource ? <bdi lang="en" dir="ltr">{displayTitle}</bdi> : displayTitle}
+                {titleIsSource ? (
+                  <bdi lang="en" dir="ltr"><Lineas text={displayTitle ?? ""} /></bdi>
+                ) : (
+                  <Lineas text={displayTitle ?? ""} />
+                )}
               </h1>
 
-              {/* Fecha bajo el titular, como en prensa */}
-              {newsArticle?.date && (
+              {/* Fecha bajo el titular, como en prensa; si la nota tiene autores capturados, sus
+                  nombres (con enlace a su ficha) en la misma línea. Sin autor, ningún nombre. */}
+              {(newsArticle?.date || primaryAuthor) && (
                 <p className="ss-label ss-num mt-6 text-ss-medio">
-                  <time
-                    // Instante completo: no cambia con la zona del visitante
-                    dateTime={new Date(newsArticle.date).toISOString()}
-                    data-testid="text-news-date"
-                  >
-                    {formatDate(newsArticle.date)}
-                  </time>
+                  {newsArticle?.date && (
+                    <time
+                      // Instante completo: no cambia con la zona del visitante
+                      dateTime={new Date(newsArticle.date).toISOString()}
+                      data-testid="text-news-date"
+                    >
+                      {formatDate(newsArticle.date)}
+                    </time>
+                  )}
+                  {relatedAuthors?.map((author, i) => (
+                    <span key={author.id} data-testid={`text-news-byline-${author.slug}`}>
+                      {(i > 0 || newsArticle?.date) && <span aria-hidden="true"> · </span>}
+                      <Link href={`/team/${author.slug}`} className="inline-link text-ss-marino hover:underline underline-offset-4 decoration-1">
+                        {author.name}
+                      </Link>
+                    </span>
+                  ))}
                 </p>
               )}
             </div>
@@ -515,7 +547,9 @@ export default function NewsDetail() {
 
         <div className="py-16 lg:py-20">
           <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12">
-            <div>
+            {/* Columna de lectura (~680 px) sobre el borde del titular, texto en bandera, sin entradas
+                al aparecer: el cuerpo se lee quieto */}
+            <div className="folio-article max-w-[680px]">
               <NewsHeroImage key={heroImage} src={heroImage} />
 
               {(newsArticle?.documentUrl || newsArticle?.documentUrlEs) && <div className="mb-10 border-y border-ss-rule py-5"><a href={(language==='es'?newsArticle?.documentUrlEs||newsArticle?.documentUrl:newsArticle?.documentUrl||newsArticle?.documentUrlEs)!} target="_blank" rel="noopener noreferrer" className="text-sm underline underline-offset-4">{language==='es'?'Consultar documento PDF':'Read PDF document'}</a></div>}
@@ -545,6 +579,8 @@ export default function NewsDetail() {
                         restParagraphs={rest}
                         testId="lead-news-content"
                       />
+                      {/* Marca de fin: el § de la marca cierra el texto */}
+                      <SectionMark className="folio-endmark" style={{ backgroundColor: "var(--ss-mark)" }} />
                     </div>
                   );
                 })()}

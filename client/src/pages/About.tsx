@@ -1,3 +1,5 @@
+import "@/styles/folio-pages.css";
+import type { CSSProperties } from "react";
 import { OfficePhotography } from "@/components/editorial/OfficePhotography";
 import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
@@ -5,8 +7,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Eyebrow, NumberedCard } from "@/components/editorial";
-import { TextLink } from "@/components/home26/primitives";
+import { Eyebrow } from "@/components/editorial";
+import { Lineas, TextLink } from "@/components/home26/primitives";
 import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
 import { useOfficeLabel } from "@/lib/officeLabel";
@@ -430,7 +432,7 @@ export default function About() {
             <div className="max-w-3xl">
               <Eyebrow num="01" tone="navy" className="mb-6" />
               <h1 className="ss-display mb-5 text-[clamp(3rem,7vw,6rem)]" data-testid="text-about-title">
-                {t.title}
+                <Lineas text={t.title} />
               </h1>
               <p className="ss-lead max-w-2xl" data-testid="text-about-subtitle">
                 {t.subtitle}
@@ -462,24 +464,45 @@ export default function About() {
 
             <section className="ss-about-values" aria-labelledby="about-values-title" data-testid="section-values">
               <div className="ss-about-values-heading">
-                <h2 id="about-values-title" className="ss-h2">{t.valuesTitle}</h2>
+                <h2 id="about-values-title" className="ss-h2"><Lineas text={t.valuesTitle} /></h2>
               </div>
-              <div className="ss-about-values-grid">
+              {/* Los cuatro principios como artículos numerados: numeral grande en la romana, filete
+                  que se dibuja y texto que sube, escalonados por columna */}
+              <ol className="ss-about-values-grid">
                 {t.values.map((value, index) => (
-                  <NumberedCard key={index} index={index} showIndex={false}
-                    title={value.title} body={value.text}
-                    className="ss-about-principle ss-about-principle-card"
-                    dataTestid={`card-value-${index}`} />
+                  <li
+                    key={index}
+                    className="ss-about-article"
+                    data-reveal=""
+                    style={index % 2 ? ({ "--reveal-delay": "0.12s" } as CSSProperties) : undefined}
+                    data-testid={`card-value-${index}`}
+                  >
+                    <span aria-hidden="true" data-trazo="" className="ss-about-article-rule" />
+                    <span aria-hidden="true" className="ss-about-article-num">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <h3 className="ss-h3">{value.title}</h3>
+                    <p>{value.text}</p>
+                  </li>
                 ))}
-              </div>
+              </ol>
             </section>
 
             <div role="group" className="ss-about-gallery" aria-label={officeNameFor(language)} data-testid="gallery-about-office">
-              <figure className="ss-about-gallery-reception" data-testid="figure-about-reception">
+              {/* La pieza grande es el tríptico de la sala de juntas, el cuadro emblemático de la
+                  firma (petición del cliente, 24-10-2026: la recepción no debe ser la protagonista).
+                  Mismo hueco y proporción que tenía la recepción; la recepción pasa a un hueco chico. */}
+              <figure className="ss-about-gallery-reception ss-about-gallery-feature" data-curtain="" data-testid="figure-about-reception">
+                <OfficePhotography photo="arteColor" sizes="(min-width: 1464px) 1320px, 100vw" />
+              </figure>
+              <figure data-curtain="">
+                <OfficePhotography photo="oficinaPrivada" sizes="(min-width: 1464px) 648px, (min-width: 421px) 44vw, 90vw" />
+              </figure>
+              <figure data-curtain="" style={{ "--reveal-delay": "0.12s" } as CSSProperties}>
                 <img
                   src={photos.recepcionBanda.url}
                   srcSet={photos.recepcionBanda.smallUrl && photos.recepcionBanda.smallUrl !== photos.recepcionBanda.url ? `${photos.recepcionBanda.smallUrl} 761w, ${photos.recepcionBanda.url} 1522w` : undefined}
-                  sizes="(min-width: 1024px) 100vw, 100vw"
+                  sizes="(min-width: 1464px) 648px, (min-width: 421px) 44vw, 90vw"
                   alt={keepFirmName(receptionAlt[language] ?? receptionAlt.en)}
                   loading="lazy"
                   decoding="async"
@@ -488,12 +511,6 @@ export default function About() {
                   className="ss-photo block h-auto w-full"
                   data-testid="img-about-reception"
                 />
-              </figure>
-              <figure>
-                <OfficePhotography photo="oficinaPrivada" sizes="(min-width: 1464px) 648px, (min-width: 421px) 44vw, 90vw" />
-              </figure>
-              <figure>
-                <OfficePhotography photo="arteColor" sizes="(min-width: 1464px) 648px, (min-width: 421px) 44vw, 90vw" />
               </figure>
             </div>
 

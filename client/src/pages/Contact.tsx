@@ -1,4 +1,5 @@
 import "@/styles/careers-contact.css";
+import type { CSSProperties } from "react";
 import { OfficePhotography } from "@/components/editorial/OfficePhotography";
 import cmsDefaults from "@shared/cms-defaults.json";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
@@ -65,11 +66,10 @@ const PRACTICE_OPTIONS: string[] = [...PRACTICE_SLUGS, OTHER_VALUE];
 
 
 // Lista de datos de la oficina: filas con filete superior; etiqueta (dt) en la sans
-// versal espaciada, Gris Medio; dato (dd) en la sans de 17 px, Gris Tinta. Etiqueta al lado
-// del dato solo con la ficha a todo el ancho (sm–md); en la columna de 5/12 del escritorio,
-// encima (a 1024 px la dirección se partía en seis líneas y el correo salía del filete).
-const rowClass = "grid grid-cols-1 gap-y-1 border-t border-ss-rule py-4 sm:grid-cols-[11rem,1fr] sm:gap-x-6 lg:grid-cols-1";
-const dtClass = "ss-label text-ss-medio sm:pt-1 lg:pt-0";
+// versal espaciada, Gris Medio; dato (dd) en la sans de 17 px, Gris Tinta. Desde sm, la
+// etiqueta al lado del dato (la columna de lectura mide 8/12 en escritorio).
+const rowClass = "grid grid-cols-1 gap-y-1 border-t border-ss-rule py-4 sm:grid-cols-[11rem,1fr] sm:gap-x-6";
+const dtClass = "ss-label text-ss-medio sm:pt-1";
 const ddClass = "text-[17px] leading-[1.55] text-ss-tinta";
 const ddLinkClass = "hover:text-ss-marino hover:underline underline-offset-4 transition-colors";
 
@@ -750,30 +750,29 @@ export default function Contact() {
         </section>
 
         <div>
-          {/* Datos y formulario comparten una fila; las fotografías ocupan el ancho
-              completo debajo. En móvil se conserva el mismo orden de lectura. */}
-          <div className="contact-body-grid ss-container grid grid-cols-1 gap-y-16 lg:grid-cols-12 lg:gap-x-12 lg:gap-y-12">
-            {/* Oficina: lista de datos con filetes (sin tarjeta ni iconos) y el enlace "Cómo llegar" */}
+          {/* Una sola columna de lectura sobre el fondo de la página, sin cajas: cada sección
+              abre con un filete y lleva su título al margen (columnas 1–4 en escritorio, encima en
+              teléfono). Las fotografías cierran la página a todo el ancho. */}
+          <div className="contact-body ss-container">
+            {/* Oficina: la dirección como pieza central en la romana; debajo, los datos con filetes
+                (sin tarjeta ni iconos) y el enlace "Cómo llegar" */}
             <section
-              className="contact-office lg:col-span-5"
+              className="contact-office folio-split"
               data-testid="section-contact-office"
             >
-              <h2 className="ss-h2 mb-8" data-testid="text-offices-title">
+              <h2 className="ss-h2" data-testid="text-offices-title">
                 {t.officesTitle}
               </h2>
 
               <div data-testid="card-main-office">
-                <dl className="border-b border-ss-rule">
-                  <div className={rowClass}>
-                    <dt className={dtClass}>{t.addressLabel}</dt>
-                    {/* Líneas en <div> y teléfono con el tamaño del dd: la regla móvil de
-                        index.css lleva los <span> a 16 px y la lista quedaba con dos tamaños */}
-                    <dd className={ddClass} data-testid="text-office-address">
-                      <div>{t.street}</div>
-                      <div>{t.colony}</div>
-                      <div>{t.city}</div>
-                    </dd>
-                  </div>
+                <p className="ss-label text-ss-medio">{t.addressLabel}</p>
+                {/* Líneas en <div>: la regla móvil de index.css lleva los <span> a 16 px */}
+                <address className="contact-address" data-testid="text-office-address">
+                  <div>{t.street}</div>
+                  <div>{t.colony}</div>
+                  <div>{t.city}</div>
+                </address>
+                <dl className="mt-10">
                   <div className={rowClass}>
                     <dt className={dtClass}>{t.telLabel}</dt>
                     <dd className={ddClass}>
@@ -859,16 +858,17 @@ export default function Contact() {
               </div>
             </section>
 
-            {/* Tarjeta compacta: conserva campos, validación y envío del formulario. */}
+            {/* Formulario sin caja: campos dibujados como una sola línea inferior (careers-contact.css).
+                Conserva campos, validación y envío. */}
             <section
-              className="ss-contact-card contact-form-panel lg:col-span-6 lg:col-start-7 lg:self-start"
+              className="contact-form-panel folio-split"
               data-testid="section-contact-form"
             >
-              <h2 className="ss-h2-sm mb-6" data-testid="text-form-title">
+              <h2 className="ss-h2" data-testid="text-form-title">
                 {t.formTitle}
               </h2>
 
-              {!formSettings.enabled?<p role="status" className="border-t border-ss-rule py-6">{formSettings.disabledMessage[language as "es"|"en"]||formSettings.disabledMessage.en}</p>:<Form {...form}>
+              {!formSettings.enabled?<p role="status">{formSettings.disabledMessage[language as "es"|"en"]||formSettings.disabledMessage.en}</p>:<Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5" data-testid="form-contact">
                   {/* Dos columnas desde tableta; una columna en pantallas pequeñas. */}
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -1001,7 +1001,7 @@ export default function Contact() {
                               onBlur={field.onBlur}
                               name={field.name}
                               ref={field.ref}
-                              className="relative mt-[3px] h-5 min-h-0 w-5 border-ss-medio data-[state=checked]:border-primary before:absolute before:-inset-3"
+                              className="relative mt-[3px] h-5 min-h-0 w-5 rounded-none border-ss-medio data-[state=checked]:border-primary before:absolute before:-inset-3"
                               data-testid="checkbox-consent"
                             />
                           </FormControl>
@@ -1041,7 +1041,7 @@ export default function Contact() {
                   {/* Enviar: el único botón Azul Marino lleno, 44 px de alto */}
                   <Button
                     type="submit"
-                    className="min-h-[48px] w-full rounded-lg px-6 text-[17px] font-semibold"
+                    className="min-h-[48px] w-full rounded-none px-6 text-[17px] font-semibold sm:w-auto sm:min-w-[260px]"
                     disabled={contactMutation.isPending}
                     data-testid="button-submit-contact"
                   >
@@ -1060,7 +1060,7 @@ export default function Contact() {
             </section>
 
             <figure className="contact-building" data-testid="figure-contact-building">
-              <div className="overflow-hidden bg-ss-rule">
+              <div className="overflow-hidden bg-ss-rule" data-curtain="">
                 <img
                   src={photos.fachada.url}
                   srcSet={photos.fachada.smallUrl && photos.fachada.smallUrl !== photos.fachada.url ? `${photos.fachada.smallUrl} 768w, ${photos.fachada.url} 1159w` : undefined}
@@ -1074,7 +1074,9 @@ export default function Contact() {
                   data-testid="img-contact-building"
                 />
               </div>
-              <OfficePhotography photo="recepcionGeneral" sizes="(min-width: 1464px) 648px, (min-width: 768px) 44vw, calc(100vw - 40px)" />
+              <div className="overflow-hidden bg-ss-rule" data-curtain="" style={{ "--reveal-delay": "0.12s" } as CSSProperties}>
+                <OfficePhotography photo="recepcionGeneral" sizes="(min-width: 1464px) 648px, (min-width: 768px) 44vw, calc(100vw - 40px)" />
+              </div>
             </figure>
           </div>
         </div>

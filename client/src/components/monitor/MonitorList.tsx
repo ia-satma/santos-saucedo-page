@@ -1,5 +1,5 @@
 import { useCmsContent } from "@/hooks/useCmsContent";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
@@ -11,7 +11,6 @@ import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { formatNewsDate } from "@/lib/newsDate";
 import { isStaticSite } from "@/lib/queryClient";
 import { newsCategories, type LanguageCode, type News } from "@shared/schema";
-import { getHomeMonitorImage } from "@shared/monitorEditorial";
 
 // Lista del Monitor Laboral: archivo editorial optativo en /news y /articles;
 // filas de texto por defecto en los relacionados, sin alterar la portada.
@@ -271,7 +270,8 @@ function MonitorRow({
   testIds,
   onTranslated,
   editorial,
-  imageUnavailable,
+  folio,
+  order = 0,
 }: {
   item: News;
   language: LanguageCode;
@@ -285,7 +285,10 @@ function MonitorRow({
   testIds: MonitorListTestIds;
   onTranslated?: () => void;
   editorial: boolean;
-  imageUnavailable: string;
+  /** Archivo: número de la nota en el Monitor (1 = la más antigua), para el § de la portadilla */
+  folio?: number;
+  /** Archivo: posición en la página, para escalonar la entrada de las primeras filas */
+  order?: number;
 }) {
   const liveStrings = useCmsContent("monitor-ui", STRINGS);
   const s = liveStrings[language] || liveStrings.en;
@@ -332,7 +335,7 @@ function MonitorRow({
         data-testid={testIds.row?.(item)}
       >
         {lead && (
-          <span aria-hidden="true" className="ss-display block text-[88px] leading-[0.8] text-ss-marino opacity-[0.14]">
+          <span aria-hidden="true" className="ss-display block text-[88px] leading-[0.8] text-[color:var(--ss-mark)] opacity-[var(--ss-mark-op)]">
             §
           </span>
         )}
@@ -378,16 +381,74 @@ function MonitorRow({
     );
   }
 
+  if (editorial) {
+    // Archivo (/news, /articles): portadilla tipográfica en Hueso, sin foto (categoría, § con el
+    // número de la nota y fecha, todo de los datos). La fila sube al aparecer y su filete superior
+    // se dibuja (sistema «Folio»); toda la fila lleva a la nota y el titular se subraya al pasar.
+    const archiveCategory = categoryLabel(item, language, s);
+    const delay = Math.min(order, 3) * 0.08;
+    return (
+      <li
+        data-reveal=""
+        style={delay ? ({ "--reveal-delay": `${delay}s` } as CSSProperties) : undefined}
+        className="group relative grid grid-cols-1 gap-5 py-8 md:grid-cols-[minmax(220px,0.78fr)_minmax(0,1fr)] md:gap-8 md:py-9 lg:gap-12"
+        data-testid={testIds.row?.(item)}
+      >
+        <span aria-hidden="true" data-trazo="" className="absolute inset-x-0 top-0 h-px bg-ss-rule" />
+        <div className="flex aspect-[16/9] min-h-[150px] flex-col justify-between gap-3 bg-ss-paper p-5 md:min-h-[180px] md:p-6">
+          <p className="ss-label text-ss-marino">
+            {archiveCategory && <span data-testid={testIds.category?.(item)}>{archiveCategory}</span>}
+          </p>
+          {folio !== undefined && (
+            <span aria-hidden="true" className="ss-display ss-num block text-[clamp(56px,7.5vw,120px)] leading-[0.85] text-ss-marino">
+              <span className="text-[color:var(--ss-mark)] [font-size:inherit]">§</span> {String(folio).padStart(2, "0")}
+            </span>
+          )}
+          {date && (
+            <p className="ss-label ss-num text-ss-medio">
+              <time
+                dateTime={item.date ? new Date(item.date).toISOString() : undefined}
+                data-testid={testIds.date?.(item)}
+              >
+                {date}
+              </time>
+            </p>
+          )}
+        </div>
+        <div className="min-w-0 self-center">
+          <Heading
+            className={`${TITLE_CLASS} text-[clamp(25px,2.1vw,32px)] leading-[1.18] tracking-[-0.015em]`}
+            data-testid={testIds.title?.(item)}
+            lang={titleIsSource ? "en" : undefined}
+          >
+            {/* after: la fila entera es el área del enlace. Subrayado de 1 px que se dibuja en 240 ms */}
+            <Link
+              href={`/news/${item.slug}`}
+              className="inline-link bg-[linear-gradient(currentColor,currentColor)] bg-[length:0_1px] bg-[position:0_100%] bg-no-repeat pb-0.5 transition-[background-size] [transition-duration:var(--ss-dur-quick)] [transition-timing-function:var(--ss-ease-ui)] after:absolute after:inset-0 after:content-[''] group-hover:bg-[length:100%_1px] focus-visible:bg-[length:100%_1px] motion-reduce:transition-none"
+            >
+              {titleIsSource ? <bdi lang="en" dir="ltr">{title}</bdi> : title}
+            </Link>
+          </Heading>
+          {excerpt && (
+            <p
+              className="mt-3 max-w-[60ch] text-[18px] leading-[1.55] text-ss-tinta [text-wrap:pretty]"
+              data-testid={testIds.excerpt?.(item)}
+              lang={excerptIsSource ? "en" : undefined}
+            >
+              {excerptIsSource ? <bdi lang="en" dir="ltr">{excerpt}</bdi> : excerpt}
+            </p>
+          )}
+        </div>
+      </li>
+    );
+  }
+
   return (
     <li
-      className={editorial
-        ? `grid grid-cols-1 gap-5 border-b ${rule} py-8 md:grid-cols-[minmax(220px,0.78fr)_minmax(0,1fr)] md:gap-8 md:py-9 lg:gap-12`
-        : `grid grid-cols-1 gap-y-3 border-b ${rule} py-8 ${index ? "lg:grid-cols-12 lg:gap-x-6 lg:py-10" : ""}`}
+      className={`grid grid-cols-1 gap-y-3 border-b ${rule} py-8 ${index ? "lg:grid-cols-12 lg:gap-x-6 lg:py-10" : ""}`}
       data-testid={testIds.row?.(item)}
     >
-      {editorial && <ArchiveImage key={getHomeMonitorImage(item)} item={item} label={imageUnavailable} />}
-      <div className={editorial ? "min-w-0 self-center" : "contents"}>
-      <p className={`ss-label ss-num ${index && !editorial ? "lg:col-span-4 lg:pt-2" : ""}`}>
+      <p className={`ss-label ss-num ${index ? "lg:col-span-4 lg:pt-2" : ""}`}>
         {category && (
           <span className="text-ss-marino" data-testid={testIds.category?.(item)}>
             {category}
@@ -405,9 +466,9 @@ function MonitorRow({
           </time>
         )}
       </p>
-      <div className={index && !editorial ? "lg:col-span-7 lg:col-start-5 xl:col-span-6" : ""}>
+      <div className={index ? "lg:col-span-7 lg:col-start-5 xl:col-span-6" : ""}>
         <Heading
-            className={`${TITLE_CLASS} ${editorial ? "text-[clamp(25px,2.1vw,32px)] leading-[1.18] tracking-[-0.015em]" : ""}`}
+          className={TITLE_CLASS}
           data-testid={testIds.title?.(item)}
           lang={titleIsSource ? "en" : undefined}
         >
@@ -424,7 +485,7 @@ function MonitorRow({
             mismo borde derecho (entre 60 y 75 caracteres por línea). En el móvil, el contenedor */}
         {excerpt && (
           <p
-            className={`mt-3 text-[18px] leading-[1.55] text-ss-tinta [text-wrap:pretty] ${index || editorial ? "max-w-[63.75ch]" : ""}`}
+            className={`mt-3 text-[18px] leading-[1.55] text-ss-tinta [text-wrap:pretty] ${index ? "max-w-[63.75ch]" : ""}`}
             data-testid={testIds.excerpt?.(item)}
             lang={excerptIsSource ? "en" : undefined}
           >
@@ -432,34 +493,7 @@ function MonitorRow({
           </p>
         )}
       </div>
-      </div>
     </li>
-  );
-}
-
-function ArchiveImage({ item, label }: { item: News; label: string }) {
-  const image = getHomeMonitorImage(item);
-  const [failed, setFailed] = useState(false);
-  if (!image || failed) {
-    return (
-      <div aria-hidden="true" className="flex aspect-[16/9] min-h-[150px] items-end border-l-2 border-ss-rule bg-ss-paper p-4 md:min-h-[180px]">
-        <span className="ss-label text-[10px] tracking-[0.12em] text-ss-medio">{label}</span>
-      </div>
-    );
-  }
-  return (
-    <div className="overflow-hidden rounded-[8px] bg-ss-paper">
-      <img
-        src={image}
-        alt=""
-        loading="lazy"
-        decoding="async"
-        onError={() => setFailed(true)}
-        width={1024}
-        height={1024}
-        className="block aspect-[16/9] min-h-[150px] w-full object-cover object-[50%_40%] md:min-h-[180px]"
-      />
-    </div>
   );
 }
 
@@ -521,6 +555,8 @@ export function MonitorList({
     : filteredItems.slice(0, limit);
 
   const rule = tone === "paper" ? "border-ss-marino/15" : "border-ss-rule";
+  // Archivo: cada nota conserva su número aunque se filtre o se pagine (la más antigua es la 1)
+  const folios = useMemo(() => new Map(items.map((item, i) => [item.id, items.length - i])), [items]);
   const narrowed = activeCategory !== "all" || q.length > 0;
   const paginationText = s.pageOf.replace("{page}", String(currentPage)).replace("{count}", String(pageCount));
 
@@ -611,7 +647,7 @@ export function MonitorList({
       )}
 
       {!error && !isLoading && visible.length > 0 && (
-        <ul className={`border-t ${layout === "bulletin" ? "border-ss-marino lg:grid lg:grid-cols-12" : rule}`}>
+        <ul className={editorial ? `border-b ${rule}` : `border-t ${layout === "bulletin" ? "border-ss-marino lg:grid lg:grid-cols-12" : rule}`}>
           {visible.map((item, i) => (
             <MonitorRow
               key={item.id}
@@ -625,7 +661,8 @@ export function MonitorList({
               testIds={testIds}
               onTranslated={onTranslated}
               editorial={editorial}
-              imageUnavailable={s.imageUnavailable}
+              folio={folios.get(item.id)}
+              order={i}
             />
           ))}
         </ul>

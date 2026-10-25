@@ -1,7 +1,7 @@
 import { useCmsMedia } from "@/lib/cmsMedia";
 import { teamPortraitFraming } from "@/lib/teamPortraitFraming";
 import { useCmsContent } from "@/hooks/useCmsContent";
-import { useMemo, type ReactNode, type SyntheticEvent } from "react";
+import { useMemo, type CSSProperties, type ReactNode, type SyntheticEvent } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -39,7 +39,7 @@ const CARD_PHOTO_SIZES = "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 112
 // Rejilla de tarjetas y letra del nombre, compartidas por la vista y su carga (misma altura).
 // Desde sm el nombre reserva dos líneas (interlineado 1.15 × 2): "Mario Saucedo Montemayor" pasa
 // a dos a 1024–1440 y su cargo quedaba más abajo que los de al lado.
-const CARD_GRID = "grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 sm:gap-y-12 lg:grid-cols-4";
+const CARD_GRID = "grid grid-cols-1 gap-x-[clamp(24px,3vw,48px)] gap-y-10 sm:grid-cols-2 sm:gap-y-14 lg:grid-cols-4";
 const CARD_NAME = "ss-display block text-[clamp(24px,1.9vw,28px)] font-normal leading-[1.15] tracking-[-0.01em] sm:min-h-[2.3em]";
 
 export default function Team() {
@@ -203,7 +203,7 @@ export default function Team() {
   const t = editableContent[language] || editableContent.en;
 
   // Nombres del menú en cada idioma (E5): el h1 es "Socios" (nav[2]) y la celda Hueso de
-  // cierre del mosaico lleva "Carreras" (nav[4]) con el enlace al Semillero S&S (el nombre del
+  // cierre del mosaico lleva "Carreras" (nav[4]) con el enlace al Pasantías S&S (el nombre del
   // programa no se traduce)
   const navLabels = (cmsChrome[language] ?? cmsChrome.es).nav;
   const pageTitle = navLabels[2].label;
@@ -267,7 +267,11 @@ export default function Team() {
   // color, nombre en la romana y cargo en etiqueta debajo; sin velo ni paneles que se
   // expanden. Teléfono: retrato de 112 px al lado del nombre; desde sm, apilado. El enlace
   // lleva inline-link: la regla móvil de index.css volvería inline-flex la tarjeta.
-  const renderPersonCard = (member: TeamMember, fallbackRole: string, eager: boolean) => (
+  // «Galería» (equipos de UX y gráfico, 25-10-2026): cada socio es una obra enmarcada, con
+  // paspartú blanco, filete de 1 px y cédula de museo debajo. Se cuelgan uno tras otro al
+  // aparecer; al pasar el cursor el marco se eleva y el retrato se acerca dentro de él, sin
+  // atenuar a los demás. El retrato lleva su nombre de transición para pasar a la ficha.
+  const renderPersonCard = (member: TeamMember, fallbackRole: string, eager: boolean, index = 0) => (
     <li key={member.id}>
       <Link
         href={`/team/${member.slug}`}
@@ -275,6 +279,11 @@ export default function Team() {
         data-testid={`card-team-member-${member.slug}`}
       >
         <span className="grid grid-cols-[112px_1fr] items-end gap-x-5 sm:block">
+          <span
+            data-curtain=""
+            className="ss-plate block"
+            style={{ "--reveal-delay": `${index * 0.12}s`, viewTransitionName: `retrato-${member.slug}` } as CSSProperties}
+          >
           <span className="ss-portrait-frame relative block overflow-hidden bg-ss-paper aspect-[4/5]">
             <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center font-heading text-2xl text-ss-marino/50 select-none">
               {getInitials(member.name)}
@@ -290,16 +299,20 @@ export default function Team() {
                 decoding="async"
                 width={652}
                 height={652}
-                className="ss-photo absolute inset-0 h-full w-full object-cover object-[50%_28%] transition-transform duration-700 [transition-timing-function:var(--ss-ease)] motion-safe:group-hover:scale-[1.01] motion-reduce:transform-none motion-reduce:transition-none"
+                className="ss-photo absolute inset-0 h-full w-full object-cover object-[50%_28%] transition-transform [transition-duration:var(--ss-dur-slow)] [transition-timing-function:var(--ss-ease-out)] motion-safe:group-hover:scale-[1.05] motion-reduce:transform-none motion-reduce:transition-none"
                 onError={handlePhotoError}
               />
             )}
           </span>
-          <span className="block sm:mt-5">
+          </span>
+          <span className="block sm:mt-6">
             <span className={`${CARD_NAME} text-ss-marino decoration-1 underline-offset-4 group-hover:underline group-focus-visible:underline`}>
               {member.name}
             </span>
             {renderMemberRole(member, fallbackRole)}
+            <span aria-hidden="true" className="ss-plate-more ss-label mt-4 hidden text-ss-marino sm:block">
+              {language === "es" ? "Ver perfil" : "View profile"} <span className="ss-arrow">→</span>
+            </span>
           </span>
         </span>
       </Link>
@@ -317,14 +330,14 @@ export default function Team() {
     </section>
   );
 
-  // Contenido de la celda de cierre: etiqueta "Carreras" y enlace de texto al Semillero S&S.
+  // Contenido de la celda de cierre: etiqueta "Carreras" y enlace de texto al Pasantías S&S.
   // [&_span]: la regla móvil de index.css (span a 16 px) agrandaba el texto del enlace; aquí
   // hereda los 12 px de la etiqueta, como en la portada.
   const closingContent = (
     <>
       <p className="ss-label text-ss-medio">{careersLabel}</p>
       <div className="mt-2 [&_span]:[font-size:inherit]">
-        <TextLink href="/careers/interns">Semillero S&amp;S</TextLink>
+        <TextLink href="/careers/interns">Pasantías S&amp;S</TextLink>
       </div>
     </>
   );
@@ -387,7 +400,7 @@ export default function Team() {
               renderCardSection(
                 "section-partners",
                 null,
-                groupedMembers.partners.map((member, i) => renderPersonCard(member, t.positions.partner, i < 2)),
+                groupedMembers.partners.map((member, i) => renderPersonCard(member, t.positions.partner, i < 2, i)),
               )}
 
             {/* ─── OF COUNSEL ──────────────────────────────────── */}
@@ -419,10 +432,18 @@ export default function Team() {
                 La elevación al pasar el cursor es decorativa: los retratos no son enlaces.
                 La celda Hueso de cierre es un
                 elemento más que ocupa las columnas sobrantes de la última fila. */}
-            <ul className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6 lg:gap-6">
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-6 md:grid-cols-4 md:gap-x-6 md:gap-y-8 lg:grid-cols-6 lg:gap-x-8 lg:gap-y-10">
               {equipoPhotos.map((photo, idx) => (
                 // aria-hidden en el elemento: la lista no anuncia 37 elementos vacíos
-                <li key={`${photo}-${idx}`} aria-hidden="true" className="ss-team-portrait ss-portrait-frame relative aspect-[4/5] overflow-hidden bg-ss-paper" data-testid={`img-equipo-${idx}`}>
+                <li
+                  key={`${photo}-${idx}`}
+                  aria-hidden="true"
+                  data-curtain=""
+                  // Muro de salón: cada fila se descubre de izquierda a derecha (50 ms entre retratos)
+                  style={{ "--reveal-delay": `${(idx % EQUIPO_COLUMNS.lg) * 0.05}s` } as CSSProperties}
+                  className="ss-team-portrait ss-salon ss-portrait-frame relative aspect-[4/5] overflow-hidden bg-ss-paper"
+                  data-testid={`img-equipo-${idx}`}
+                >
                   <img
                     src={photo}
                     alt=""
@@ -437,7 +458,7 @@ export default function Team() {
               ))}
               <li
                 data-testid="cell-equipo-closing"
-                className={`flex flex-col items-start justify-end bg-ss-paper p-3 md:p-4 lg:p-6 ${equipoClosingSpanClass}`}
+                className={`flex flex-col items-start justify-end border-t border-ss-marino/40 pt-4 ${equipoClosingSpanClass}`}
               >
                 {closingContent}
               </li>

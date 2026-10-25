@@ -1,7 +1,11 @@
 import CookieBanner from "@/components/CookieBanner";
 import { AdminShell } from "@/features/admin/AdminShell";
 import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from "wouter";
+import { useViewTransitionLocation } from "@/lib/viewTransitionLocation";
 import { useEffect, lazy, Suspense } from "react";
+import { useCmsContent } from "@/hooks/useCmsContent";
+import { applyBrandColors } from "@/lib/brandColors";
+import cmsDefaults from "@shared/cms-defaults.json";
 import { MotionConfig } from "framer-motion";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -296,13 +300,21 @@ function Router() {
 // reducedMotion="user": con "reducir movimiento" del sistema, framer-motion deja de mover
 // (translateY, escala) lo poco que aún anima (diálogos); solo queda la opacidad. Las entradas al
 // aparecer y el cambio de página los lleva lib/siteMotion, que tampoco se activa en ese caso.
+// Azules de marca del panel (sección "Colores de marca"), aplicados a todo el sitio
+function BrandColors() {
+  const theme = useCmsContent("theme", cmsDefaults.theme);
+  useEffect(() => applyBrandColors(theme), [theme]);
+  return null;
+}
+
 function App() {
   return (
     <MotionConfig reducedMotion="user">
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <LanguageProvider>
-            <WouterRouter base={routerBase}>
+            <WouterRouter base={routerBase} hook={useViewTransitionLocation}>
+              <BrandColors />
               <ScrollToTop />
               <SkipLinks />
               <Toaster />

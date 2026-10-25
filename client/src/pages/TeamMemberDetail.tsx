@@ -1,6 +1,6 @@
 import { useContentEntity, useContentPreview } from "@/features/admin/ContentPreview";
 import { useCmsContent } from "@/hooks/useCmsContent";
-import { lazy, Suspense, useState, useMemo, type ReactNode, type SyntheticEvent } from "react";
+import { lazy, Suspense, useState, useMemo, type CSSProperties, type ReactNode, type SyntheticEvent } from "react";
 import { Link, useParams } from "wouter";
 import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -39,10 +39,10 @@ const NotFound = lazy(() => import("@/pages/not-found"));
 // la 3 alineado con la foto; los botones debajo, en una fila a todo lo ancho. lg: los botones
 // vuelven a la columna del texto, al pie, alineados con el borde inferior del retrato (240 px
 // en md, 260 en lg).
-const PROFILE_GRID = "grid grid-cols-[112px_minmax(0,1fr)] items-end gap-x-5 max-[359px]:grid-cols-[88px_minmax(0,1fr)] max-[359px]:gap-x-4 md:grid-cols-[240px_1px_minmax(0,1fr)] md:grid-rows-[auto_1fr] md:items-stretch md:gap-x-0 lg:grid-cols-[260px_1px_minmax(0,1fr)]";
-const PROFILE_PHOTO_CELL = "col-start-1 row-start-1 aspect-[4/5] w-full md:row-span-2 md:aspect-auto md:min-h-[240px] lg:min-h-[260px]";
+const PROFILE_GRID = "grid grid-cols-[112px_minmax(0,1fr)] items-end gap-x-5 max-[359px]:grid-cols-[88px_minmax(0,1fr)] max-[359px]:gap-x-4 md:grid-cols-[240px_1px_minmax(0,1fr)] md:grid-rows-[auto_1fr] md:items-stretch md:gap-x-0 lg:grid-cols-[300px_1px_minmax(0,1fr)]";
+const PROFILE_PHOTO_CELL = "col-start-1 row-start-1 aspect-[4/5] w-full md:row-span-2 md:aspect-auto md:min-h-[300px] lg:min-h-[375px]";
 // Ancho del retrato en cada tramo, para que srcset elija la variante WebP adecuada
-const PROFILE_PHOTO_SIZES = "(min-width: 1024px) 260px, (min-width: 768px) 240px, 112px";
+const PROFILE_PHOTO_SIZES = "(min-width: 1024px) 300px, (min-width: 768px) 240px, 112px";
 const PROFILE_IDENTITY_CELL = "col-start-2 row-start-1 md:col-start-3 md:px-10 md:pb-6";
 const PROFILE_ACTIONS_CELL = "col-span-2 col-start-1 row-start-2 pt-6 md:col-span-3 md:row-start-3 md:pt-8 lg:col-span-1 lg:col-start-3 lg:row-start-2 lg:self-end lg:px-10 lg:pt-0";
 // Columnas de la fila de botones: hoy solo "Descargar vCard" (G6), de 240 px (en lg la celda
@@ -1503,8 +1503,11 @@ export default function TeamMemberDetail() {
                     )}
                   </div>
                 )}
+                {/* Retrato enmarcado («Galería»); llega desde la portada o /team con la transición
+                    del navegador (retrato-<slug>) */}
                 <div
-                  className={`group relative overflow-hidden ${PROFILE_PHOTO_CELL}`}
+                  className={`group relative overflow-hidden ss-plate-frame ${PROFILE_PHOTO_CELL}`}
+                  style={member?.slug ? ({ viewTransitionName: `retrato-${member.slug}` } as CSSProperties) : undefined}
                   data-testid="container-profile-photo"
                 >
                   {member?.imageUrl ? (

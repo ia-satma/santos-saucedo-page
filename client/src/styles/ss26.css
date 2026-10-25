@@ -105,6 +105,33 @@ html:has(header.ss26) {
   scroll-padding-top: var(--ss-header-h);
 }
 
+/* Los colores de marca en canales RGB, solo en :root: el panel puede cambiarlos (tema, lib/brandColors)
+   y todo lo demás los lee de aquí, también las utilidades de Tailwind con opacidad (/15, /70). */
+:root {
+  --ss-navy-rgb: 24 23 91; /* #18175B, Azul Profundo */
+  --ss-marino-rgb: 29 28 104; /* #1D1C68, Azul Marino */
+  --ss-lime-rgb: 178 235 62; /* #B2EB3E, Verde Lima: el acento */
+  --ss-paper-rgb: 243 241 234; /* #F3F1EA, Hueso */
+  /* Papeles que solo cambian las paletas completas del selector (lib/brandColors): fondo de
+     página y color de los § y filetes cortos */
+  --ss-fondo: #fff;
+  --ss-mark: var(--ss-marino);
+  --ss-mark-op: 0.14;
+  --ss-bar: var(--ss-rule);
+  /* Sistema de movimiento «Folio» (equipo de motion, 25-10-2026): tres gestos con el mismo
+     tiempo y la misma curva en todo el sitio. Trazo: un filete se dibuja. Apertura: el marco de
+     una foto se abre y la imagen se asienta de 1.08 a 1. Asiento: las palabras suben desde una
+     máscara. Nada rebota, nada se repite. */
+  --ss-dur-quick: 240ms;
+  --ss-dur-base: 480ms;
+  --ss-dur-slow: 800ms;
+  --ss-dur-lavish: 1200ms;
+  --ss-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ss-ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --ss-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ss-ease-ui: cubic-bezier(0.2, 0, 0, 1);
+}
+
 /* Paleta (nombres del manual 2025). Azul Profundo es la única superficie oscura.
    En :root para que las páginas heredadas también las lean (las variables no chocan
    con los tokens de shadcn de index.css, que no llevan el prefijo --ss-). */
@@ -112,18 +139,18 @@ html:has(header.ss26) {
 .ss26,
 .editorial-page-hero,
 [data-testid="section-news-hero"] {
-  --ss-navy: #18175b;
-  --ss-marino: #1d1c68;
-  --ss-tinta: #33333b;
-  --ss-medio: #5f5f6b;
-  --ss-claro: #8a8a94;
-  --ss-paper: #f3f1ea;
-  --ss-rule: #e1e0d7;
+  --ss-navy: rgb(var(--ss-navy-rgb));
+  --ss-marino: rgb(var(--ss-marino-rgb));
+  --ss-tinta: var(--ss-p-tinta, #33333b);
+  --ss-medio: var(--ss-p-medio, #5f5f6b);
+  --ss-claro: var(--ss-p-claro, #8a8a94);
+  --ss-paper: rgb(var(--ss-paper-rgb));
+  --ss-rule: var(--ss-p-rule, #e1e0d7);
   /* Entrada: solo usos decorativos (filetes cortos sobre Hueso, subrayados) */
-  --ss-input: #c9c8bd;
+  --ss-input: var(--ss-p-input, #c9c8bd);
   /* Borde de campo de formulario (WCAG 1.4.11): 3,5:1 sobre blanco y 3,1:1 sobre Hueso */
-  --ss-field: #8a897e;
-  --ss-lime: #b2eb3e;
+  --ss-field: var(--ss-p-field, #8a897e);
+  --ss-lime: rgb(var(--ss-lime-rgb));
   /* Error de formulario: rojo sobrio, solo en el mensaje (8.1:1 sobre blanco, 7.2:1 sobre Hueso) */
   --ss-error: #9b1c1c;
   --ss-on-navy: rgb(255 255 255 / 0.84);
@@ -138,7 +165,7 @@ html:has(header.ss26) {
 .ss26 {
   font-family: var(--ss-font-sans);
   color: var(--ss-tinta);
-  background: #fff;
+  background: var(--ss-fondo);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -173,7 +200,7 @@ html:has(.ss26) body {
 /* Selección: gris azulado, nunca lima */
 ::selection {
   background: #d9d8e6;
-  color: #18175b;
+  color: var(--ss-navy);
 }
 
 /* Contenedor: 1320px de contenido + márgenes laterales fluidos */
@@ -250,9 +277,7 @@ html:has(.ss26) body {
   text-wrap: pretty;
   hanging-punctuation: first;
   hyphens: none;
-  text-align: justify;
-  text-align-last: start;
-  text-justify: inter-word;
+  text-align: start;
 }
 
 /* Manifiesto: el cuerpo comparte eje con la declaración y se divide con un filete editorial. */
@@ -266,9 +291,7 @@ html:has(.ss26) body {
   padding-block: 24px;
 }
 .ss-creemos-body > * > p {
-  text-align: justify;
-  text-align-last: start;
-  text-justify: inter-word;
+  text-align: start;
 }
 @media (min-width: 768px) {
   .ss-creemos-body {
@@ -296,9 +319,7 @@ html:has(.ss26) body {
   letter-spacing: -0.003em;
   color: var(--ss-tinta);
   text-wrap: pretty;
-  text-align: justify;
-  text-align-last: start;
-  text-justify: inter-word;
+  text-align: start;
 }
 /* Entrada sobre Azul Profundo: sans 400 al 84 % (la romana fina se lee débil en teléfono) */
 :is(.ss-navy, .editorial-page-hero) .ss-lead {
@@ -450,7 +471,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 /* Fondo claro (secciones blancas con data-surface="light" y papel .ss-paper):
    contorno Azul Marino, sin lima (lima sobre claro ≈ 1.3:1). */
 :is(.ss-paper, [data-surface="light"]) :is(a, button, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
-  outline: 3px solid var(--ss-marino, #1d1c68);
+  outline: 3px solid var(--ss-marino);
   outline-offset: 2px;
   box-shadow: none;
 }
@@ -464,10 +485,10 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   display: inline-block;
   width: 24px;
   height: 1px;
-  background: var(--ss-rule);
+  background: var(--ss-bar);
 }
 .ss-paper .ss-bar {
-  background: var(--ss-input);
+  background: var(--ss-bar-paper, var(--ss-input));
 }
 :is(.ss-navy, .editorial-page-hero) .ss-bar {
   background: rgb(255 255 255 / 0.35);
@@ -478,8 +499,8 @@ a:focus-visible > .ss-arrow:dir(rtl) {
    dos ejes, para que logotipo, textos y § guarden la proporción en cualquier pantalla de
    escritorio. Ocupa la primera pantalla y sube bajo el encabezado (transparente en la
    portada, Header26 overlay). Mientras carga el video, Azul Profundo. */
-.ss-photo { border-radius: 10px; }
-.ss-portrait-frame { border-radius: 12px; isolation: isolate; }
+.ss-photo { border-radius: 0; }
+.ss-portrait-frame { border-radius: 0; isolation: isolate; }
 .ss-portrait-frame .ss-photo { border-radius: 0; }
 .ss-team-portrait {
   transition: transform 240ms ease, box-shadow 240ms ease;
@@ -680,7 +701,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 
 /* Fila de prácticas: el número (01–04) pasa de tenue a pleno */
 .ss-row .ss-row-num {
-  color: rgb(29 28 104 / 0.65);
+  color: rgb(var(--ss-marino-rgb) / 0.65);
   transition: color 320ms var(--ss-ease);
 }
 .ss-row:hover .ss-row-num,
@@ -716,7 +737,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 }
 
 /* Office tour: a photographic cover and an alternating editorial mosaic. */
-.ss-office-gallery figure { margin: 0; overflow: hidden; border-radius: 12px; }
+.ss-office-gallery figure { margin: 0; overflow: hidden; border-radius: 0; }
 .ss-office-cover { position: relative; display: flex; align-items: flex-end; min-height: 76svh; padding-top: 120px; overflow: hidden; background: var(--ss-marino, #1b1b3b); }
 .ss-office-cover > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 48%; border-radius: 0; }
 .ss-office-cover-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgb(16 19 39 / .73), transparent 70%); }
@@ -760,8 +781,9 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   overflow: hidden;
   min-height: clamp(300px, 24vw, 350px);
   padding-block: clamp(96px, 8vw, 120px) clamp(40px, 4vw, 56px);
-  color: #fff;
-  background: #18175b;
+  /* Encabezado «Folio»: papel y Azul Marino, como el resto de las páginas internas */
+  color: var(--ss-marino);
+  background: var(--ss-paper);
 }
 .editorial-page-hero.ss-principal-page-hero h1 {
   margin: 0;
@@ -773,7 +795,7 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   height: 1px;
   margin-top: clamp(18px, 2vw, 24px);
   margin-bottom: clamp(16px, 1.8vw, 22px);
-  background: rgb(255 255 255 / 0.66);
+  background: rgb(var(--ss-marino-rgb) / 0.5);
   pointer-events: none;
   transform: scaleX(0.2);
   transform-origin: left center;
@@ -831,42 +853,192 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 /* Contact form: a compact surface with a clear field hierarchy. */
 .ss-contact-card {
   padding: clamp(22px, 3vw, 36px);
-  border: 1px solid rgb(29 28 104 / .13);
-  border-radius: 20px;
+  border: 1px solid rgb(var(--ss-marino-rgb) / .13);
+  border-radius: 0;
   background: #f8f8fb;
-  box-shadow: 0 12px 36px rgb(24 23 91 / .045);
+  box-shadow: 0 12px 36px rgb(var(--ss-navy-rgb) / .045);
 }
 .ss-contact-card :is(input:not([type="checkbox"]), textarea, [role="combobox"]) {
-  border-radius: 8px;
+  border-radius: 0;
   background: #fff;
   font-size: 16px;
   line-height: 1.5;
 }
 .ss-contact-card label { font-size: 16px; line-height: 1.4; }
-.ss-contact-card [data-testid="text-form-subtitle"] { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgb(29 28 104 / .1); }
-@media (max-width: 639px) { .ss-contact-card { border-radius: 16px; } }
-.ss-contact-card [data-testid="button-submit-contact"] { border-radius: 8px; }
+.ss-contact-card [data-testid="text-form-subtitle"] { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgb(var(--ss-marino-rgb) / .1); }
+
+.ss-contact-card [data-testid="button-submit-contact"] { border-radius: 0; }
 
 /* Firm principles share the full editorial width, with readable body text. */
-.ss-about-principle { border-color: rgb(29 28 104 / .18); padding-top: 24px; }
+.ss-about-principle { border-color: rgb(var(--ss-marino-rgb) / .18); padding-top: 24px; }
 .ss-about-principle .ss-h3 { font-size: clamp(25px, 2vw, 29px); line-height: 1.2; }
 .ss-about-principle p { max-width: 52ch; margin-top: 14px; font-size: 19px; line-height: 1.7; text-wrap: pretty; }
 @media (max-width: 639px) { .ss-about-principle p { font-size: 18px; } }
 
-.ss-career-card button[type="submit"] { border-radius: 8px; }
+.ss-career-card button[type="submit"] { border-radius: 0; }
 .ss-career-card .ss-career-file { height: auto; min-height: 64px; padding: 14px; border-style: dashed; line-height: 1.5; }
-.ss-career-file::file-selector-button { margin-inline-end: 12px; padding: 6px 10px; border: 0; border-radius: 6px; color: var(--ss-marino); background: #eeedf6; font: inherit; font-weight: 600; cursor: pointer; }
+.ss-career-file::file-selector-button { margin-inline-end: 12px; padding: 6px 10px; border: 0; border-radius: 0; color: var(--ss-marino); background: #eeedf6; font: inherit; font-weight: 600; cursor: pointer; }
 
 
-/* Movimiento fino (idea 5, lib/siteMotion.ts). Solo con .ss-motion, que no se pone con
+/* Movimiento (sistema «Folio», lib/siteMotion.ts). Solo con .ss-motion, que no se pone con
    "reducir movimiento": sin ella todo se ve completo desde el inicio. */
+/* Bloques de texto: suben 24 px (16 en teléfono) y aparecen */
 .ss-motion [data-reveal] {
-  transition: opacity .9s cubic-bezier(.2, .7, .1, 1), transform .9s cubic-bezier(.2, .7, .1, 1);
+  transition: opacity var(--ss-dur-base) var(--ss-ease-out), transform var(--ss-dur-slow) var(--ss-ease-out);
   transition-delay: var(--reveal-delay, 0s);
 }
-.ss-motion [data-reveal]:not(.is-in) { opacity: 0; transform: translateY(14px); }
-.ss-motion [data-curtain] { transition: clip-path 1.3s cubic-bezier(.77, 0, .18, 1); }
-.ss-motion [data-curtain]:not(.is-in) { clip-path: inset(100% 0 0 0); }
+.ss-motion [data-reveal]:not([data-in]) { opacity: 0; transform: translateY(24px); }
+@media (max-width: 767px) { .ss-motion [data-reveal]:not([data-in]) { transform: translateY(16px); } }
+/* Apertura: el marco se abre de abajo hacia arriba y la foto (si es una sola) se asienta */
+.ss-motion [data-curtain] { transition: clip-path var(--ss-dur-slow) var(--ss-ease-out) var(--reveal-delay, 0s); }
+.ss-motion [data-curtain]:not([data-in]) { clip-path: inset(100% 0 0 0); }
+.ss-motion [data-curtain] img:only-of-type { transition: transform var(--ss-dur-lavish) var(--ss-ease-out) var(--reveal-delay, 0s); }
+.ss-motion [data-curtain]:not([data-in]) img:only-of-type { transform: scale(1.08); }
+/* Trazo: un filete se dibuja de izquierda a derecha */
+.ss-motion [data-trazo] { transform-origin: left center; transition: transform var(--ss-dur-slow) var(--ss-ease-out) var(--reveal-delay, 0s); }
+.ss-motion [data-trazo]:not([data-in]) { transform: scaleX(0); }
+/* Asiento: cada palabra sube desde su máscara, una tras otra (primitives <Lineas>) */
+[data-lineas] .ss-w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0.06em 0.08em 0.14em; margin: -0.06em -0.08em -0.14em; }
+[data-lineas] .ss-w > span { display: inline-block; }
+/* La regla móvil de index.css (span a 16 px) no debe encoger las palabras del titular */
+[data-lineas] span { font-size: inherit; }
+.ss-motion [data-lineas] .ss-w > span {
+  transition: transform var(--ss-dur-slow) var(--ss-ease-out);
+  transition-delay: calc(var(--reveal-delay, 0s) + var(--i, 0) * 45ms);
+}
+.ss-motion [data-lineas]:not([data-in]) .ss-w > span { transform: translateY(115%); }
 /* Cambio de página: el contenido se funde en lugar de saltar (main se monta de nuevo en cada ruta) */
 .ss-motion main#main-content { animation: ss-page-in .5s ease-out both; }
 @keyframes ss-page-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* Paletas completas del selector privado (lib/brandColors, PaletteSwitcher). Fotos y video no
+   cambian. data-ss-tema: los fondos blancos toman el fondo de la paleta. data-ss-banda: la banda
+   del manifiesto se vuelve campo de color, con sus propios título, texto y líneas. */
+html[data-ss-tema] .ss26 .bg-white,
+html[data-ss-tema] .section-ambient,
+html[data-ss-tema] .section-mist {
+  background-color: var(--ss-fondo);
+}
+html[data-ss-tema] .ss-arrow {
+  color: var(--ss-mark);
+}
+html[data-ss-banda] .ss-banda {
+  --ss-marino-rgb: var(--ss-banda-tinta-rgb);
+  --ss-marino: rgb(var(--ss-banda-tinta-rgb));
+  --ss-tinta: var(--ss-banda-texto);
+  --ss-medio: var(--ss-banda-texto2);
+  --ss-input: var(--ss-banda-linea);
+  --ss-rule: var(--ss-banda-linea);
+  background-color: var(--ss-banda);
+}
+
+/* «Lienzo»: socios de la portada (Lienzo.tsx). El lienzo abierto es cuadrado (el retrato), los
+   cerrados reparten el resto y muestran solo la franja izquierda del cuadro de fondo. Lo único que
+   se anima es el ancho del marco: 700 ms, curva de ida y vuelta. */
+.ss-lienzo-row {
+  --lienzo-open: min(62vw, 250px);
+  display: flex;
+  gap: 8px;
+  height: var(--lienzo-open);
+}
+@media (min-width: 1024px) {
+  .ss-lienzo-row { --lienzo-open: clamp(300px, 26vw, 380px); gap: 12px; }
+}
+.ss-lienzo-canvas {
+  position: relative;
+  display: block;
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--ss-paper);
+  box-shadow: inset 0 0 0 1px rgb(var(--ss-marino-rgb) / 0.12);
+  transition: flex-grow 700ms var(--ss-ease-inout), flex-basis 700ms var(--ss-ease-inout), clip-path var(--ss-dur-slow) var(--ss-ease-out) var(--reveal-delay, 0s);
+  cursor: pointer;
+}
+.ss-lienzo-canvas.is-open { flex: 0 0 var(--lienzo-open); cursor: pointer; }
+.ss-lienzo-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--lienzo-open);
+  max-width: none;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 26%;
+}
+.ss-lienzo-canvas:focus-visible { outline: 2px solid var(--ss-lime); outline-offset: 3px; }
+/* Marca del nombre activo: un trazo de acento que se dibuja */
+.ss-lienzo-mark { display: inline-block; width: 32px; height: 1px; background: var(--ss-rule); transform-origin: left center; transition: background-color var(--ss-dur-quick) var(--ss-ease-ui); }
+.ss-lienzo-mark.is-on { height: 2px; background: var(--ss-lime); animation: ss-trazo var(--ss-dur-quick) var(--ss-ease-ui) both; }
+@keyframes ss-trazo { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+/* Cédula: la del socio nuevo sube al cambiar */
+.ss-motion .ss-lienzo-caption { animation: ss-cedula var(--ss-dur-base) var(--ss-ease-out) 220ms both; }
+@keyframes ss-cedula { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .ss-lienzo-canvas { transition: none; }
+  .ss-lienzo-mark.is-on { animation: none; }
+}
+
+/* «Galería»: retrato enmarcado (paspartú blanco, filete de 1 px y sombra larga y suave). Al pasar
+   el cursor o enfocar, el marco se eleva 6 px y la sombra se hace más honda; nada se atenúa. */
+.ss-plate {
+  padding: clamp(8px, 1vw, 14px);
+  background: #fff;
+  box-shadow: 0 0 0 1px rgb(var(--ss-marino-rgb) / 0.14), 0 18px 36px -26px rgb(var(--ss-navy-rgb) / 0.45);
+  transition: transform var(--ss-dur-base) var(--ss-ease-ui), box-shadow var(--ss-dur-base) var(--ss-ease-ui), clip-path var(--ss-dur-slow) var(--ss-ease-out) var(--reveal-delay, 0s);
+}
+@media (hover: hover) {
+  a:hover > span > .ss-plate, a:focus-visible > span > .ss-plate {
+    transform: translateY(-6px);
+    box-shadow: 0 0 0 1px rgb(var(--ss-marino-rgb) / 0.2), 0 30px 50px -28px rgb(var(--ss-navy-rgb) / 0.55);
+  }
+  .ss-plate-more { opacity: 0; transform: translateX(-8px); transition: opacity var(--ss-dur-quick) var(--ss-ease-ui), transform var(--ss-dur-quick) var(--ss-ease-ui); }
+  a:hover .ss-plate-more, a:focus-visible .ss-plate-more { opacity: 1; transform: none; }
+}
+/* Muro de salón (integrantes): filete fino en vez de paspartú (son muchos) */
+.ss-salon { box-shadow: inset 0 0 0 1px rgb(var(--ss-marino-rgb) / 0.1); }
+@media (prefers-reduced-motion: reduce) {
+  .ss-plate, .ss-plate-more { transition: none; }
+  a:hover > span > .ss-plate, a:focus-visible > span > .ss-plate { transform: none; }
+}
+/* Retrato de la ficha del socio: el mismo marco de la Galería, dibujado por fuera de la celda */
+.ss-plate-frame {
+  box-shadow: 0 0 0 clamp(6px, 0.9vw, 12px) #fff, 0 0 0 calc(clamp(6px, 0.9vw, 12px) + 1px) rgb(var(--ss-marino-rgb) / 0.14), 0 26px 44px -24px rgb(var(--ss-navy-rgb) / 0.5);
+}
+
+/* Transición entre páginas (lib/viewTransitionLocation): la página vieja se va en 240 ms, la nueva
+   llega en 480 ms subiendo un poco; el encabezado no se mueve; el retrato de un socio viaja a su
+   ficha en 650 ms. Sin la API o con "reducir movimiento", nada de esto se ejecuta. */
+header.ss26 { view-transition-name: site-header; }
+::view-transition-old(root) { animation: ss-vt-out var(--ss-dur-quick) var(--ss-ease-in) both; }
+::view-transition-new(root) { animation: ss-vt-in var(--ss-dur-base) var(--ss-ease-out) 120ms both; }
+::view-transition-group(*) { animation-duration: 650ms; animation-timing-function: var(--ss-ease-inout); }
+::view-transition-group(root), ::view-transition-group(site-header) { animation-duration: var(--ss-dur-base); }
+@keyframes ss-vt-out { to { opacity: 0; } }
+@keyframes ss-vt-in { from { opacity: 0; transform: translateY(16px); } }
+@supports (view-transition-name: none) {
+  .ss-motion main#main-content { animation: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+
+/* Encabezado: se retira al bajar y vuelve al subir (400 ms, curva de ida y vuelta) */
+.ss-header { transition: background-color 300ms var(--ss-ease-ui), box-shadow 300ms var(--ss-ease-ui), transform 400ms var(--ss-ease-inout); }
+.ss-header.is-tucked { transform: translateY(-100%); }
+/* Menú de teléfono: el panel se abre como telón y los enlaces suben uno tras otro */
+.ss-motion #mobile-menu { animation: ss-telon 600ms var(--ss-ease-inout) both; }
+.ss-motion #mobile-menu nav > ol > li { animation: ss-sube var(--ss-dur-base) var(--ss-ease-out) both; animation-delay: calc(200ms + var(--i, 0) * 50ms); }
+@keyframes ss-telon { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+@keyframes ss-sube { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .ss-header { transition: none; }
+  .ss-header.is-tucked { transform: none; }
+}
+
+/* Prácticas: la imagen nueva se abre en la dirección del recorrido (700 ms, ida y vuelta) */
+.ss-wipe-up { animation: ss-wipe-up 700ms var(--ss-ease-inout) both; }
+.ss-wipe-down { animation: ss-wipe-down 700ms var(--ss-ease-inout) both; }
+@keyframes ss-wipe-up { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0); } }
+@keyframes ss-wipe-down { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+@media (prefers-reduced-motion: reduce) { .ss-wipe-up, .ss-wipe-down { animation: none; } }
