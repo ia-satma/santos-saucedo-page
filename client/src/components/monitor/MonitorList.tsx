@@ -332,7 +332,7 @@ function MonitorRow({
         data-testid={testIds.row?.(item)}
       >
         {lead && (
-          <span aria-hidden="true" className="ss-display block text-[88px] leading-[0.8] text-ss-marino opacity-[0.14]">
+          <span aria-hidden="true" className="ss-display block text-[88px] leading-[0.8] text-[color:var(--ss-mark)] opacity-[var(--ss-mark-op)]">
             §
           </span>
         )}

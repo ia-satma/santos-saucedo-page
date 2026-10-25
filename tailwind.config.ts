@@ -95,17 +95,17 @@ export default {
           foreground: "hsl(var(--sidebar-accent-foreground) / <alpha-value>)",
           border: "var(--sidebar-accent-border)"
         },
-        // Paleta "Clásica" (nombres del manual 2025). Hex para que funcionen los modificadores /15, /70…
+        // Paleta "Clásica" (nombres del manual 2025). Los colores de marca en canales RGB para los modificadores /15, /70…; los grises y líneas son variables (las paletas del selector los cambian) y no llevan modificador
         ss: {
           navy: "rgb(var(--ss-navy-rgb) / <alpha-value>)", // Azul Profundo (#18175B por omisión; ajustable en el panel)
           marino: "rgb(var(--ss-marino-rgb) / <alpha-value>)", // Azul Marino (#1D1C68 por omisión): titulares, botones, enlaces
-          tinta: "#33333B", // Gris Tinta: texto corrido
-          medio: "#5F5F6B", // Gris Medio: texto secundario
-          claro: "#8A8A94", // Gris Claro: solo numerales decorativos grandes sobre blanco
+          tinta: "var(--ss-tinta)", // Gris Tinta: texto corrido
+          medio: "var(--ss-medio)", // Gris Medio: texto secundario
+          claro: "var(--ss-claro)", // Gris Claro: solo numerales decorativos grandes sobre blanco
           paper: "rgb(var(--ss-paper-rgb) / <alpha-value>)", // Hueso (#F3F1EA por omisión)
-          rule: "#E1E0D7", // Línea
-          input: "#C9C8BD",
-          field: "#8A897E", // Borde de campo de formulario: 3,5:1 sobre blanco (WCAG 1.4.11)
+          rule: "var(--ss-rule)", // Línea
+          input: "var(--ss-input)",
+          field: "var(--ss-field)", // Borde de campo de formulario: 3,5:1 sobre blanco (WCAG 1.4.11)
           lime: "rgb(var(--ss-lime-rgb) / <alpha-value>)", // Verde Lima (#B2EB3E por omisión), solo sobre Azul Profundo
         },
         status: {

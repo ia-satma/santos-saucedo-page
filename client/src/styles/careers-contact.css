@@ -1,7 +1,7 @@
 /* Editorial body layouts for the two principal pages; banners remain shared and untouched. */
 .careers-body {
   padding-block: clamp(48px, 6vw, 82px) clamp(40px, 4vw, 56px);
-  background: #fff;
+  background: var(--ss-fondo, #fff);
 }
 
 .careers-body p:not(.ss-label),

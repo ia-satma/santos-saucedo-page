@@ -147,7 +147,7 @@ export function Creemos26({ lang }: { lang: Lang26 }) {
   const t = liveHome[lang].creemos;
   return (
     // Banda Hueso: titular Azul Marino, texto Gris Tinta, § Azul Marino (sin lima sobre claro)
-    <section {...langAttrs[lang]} className={`ss-paper ${Y.creemos}`} aria-labelledby="ss26-creemos">
+    <section {...langAttrs[lang]} className={`ss-paper ss-banda ${Y.creemos}`} aria-labelledby="ss26-creemos">
       <div className="ss-container">
         <Reveal>
           <SectionHead label={t.label} />

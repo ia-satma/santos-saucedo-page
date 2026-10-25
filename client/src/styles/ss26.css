@@ -112,6 +112,12 @@ html:has(header.ss26) {
   --ss-marino-rgb: 29 28 104; /* #1D1C68, Azul Marino */
   --ss-lime-rgb: 178 235 62; /* #B2EB3E, Verde Lima: el acento */
   --ss-paper-rgb: 243 241 234; /* #F3F1EA, Hueso */
+  /* Papeles que solo cambian las paletas completas del selector (lib/brandColors): fondo de
+     página y color de los § y filetes cortos */
+  --ss-fondo: #fff;
+  --ss-mark: var(--ss-marino);
+  --ss-mark-op: 0.14;
+  --ss-bar: var(--ss-rule);
 }
 
 /* Paleta (nombres del manual 2025). Azul Profundo es la única superficie oscura.
@@ -123,15 +129,15 @@ html:has(header.ss26) {
 [data-testid="section-news-hero"] {
   --ss-navy: rgb(var(--ss-navy-rgb));
   --ss-marino: rgb(var(--ss-marino-rgb));
-  --ss-tinta: #33333b;
-  --ss-medio: #5f5f6b;
-  --ss-claro: #8a8a94;
+  --ss-tinta: var(--ss-p-tinta, #33333b);
+  --ss-medio: var(--ss-p-medio, #5f5f6b);
+  --ss-claro: var(--ss-p-claro, #8a8a94);
   --ss-paper: rgb(var(--ss-paper-rgb));
-  --ss-rule: #e1e0d7;
+  --ss-rule: var(--ss-p-rule, #e1e0d7);
   /* Entrada: solo usos decorativos (filetes cortos sobre Hueso, subrayados) */
-  --ss-input: #c9c8bd;
+  --ss-input: var(--ss-p-input, #c9c8bd);
   /* Borde de campo de formulario (WCAG 1.4.11): 3,5:1 sobre blanco y 3,1:1 sobre Hueso */
-  --ss-field: #8a897e;
+  --ss-field: var(--ss-p-field, #8a897e);
   --ss-lime: rgb(var(--ss-lime-rgb));
   /* Error de formulario: rojo sobrio, solo en el mensaje (8.1:1 sobre blanco, 7.2:1 sobre Hueso) */
   --ss-error: #9b1c1c;
@@ -147,7 +153,7 @@ html:has(header.ss26) {
 .ss26 {
   font-family: var(--ss-font-sans);
   color: var(--ss-tinta);
-  background: #fff;
+  background: var(--ss-fondo);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -473,10 +479,10 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   display: inline-block;
   width: 24px;
   height: 1px;
-  background: var(--ss-rule);
+  background: var(--ss-bar);
 }
 .ss-paper .ss-bar {
-  background: var(--ss-input);
+  background: var(--ss-bar-paper, var(--ss-input));
 }
 :is(.ss-navy, .editorial-page-hero) .ss-bar {
   background: rgb(255 255 255 / 0.35);
@@ -879,3 +885,24 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 /* Cambio de página: el contenido se funde en lugar de saltar (main se monta de nuevo en cada ruta) */
 .ss-motion main#main-content { animation: ss-page-in .5s ease-out both; }
 @keyframes ss-page-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* Paletas completas del selector privado (lib/brandColors, PaletteSwitcher). Fotos y video no
+   cambian. data-ss-tema: los fondos blancos toman el fondo de la paleta. data-ss-banda: la banda
+   del manifiesto se vuelve campo de color, con sus propios título, texto y líneas. */
+html[data-ss-tema] .ss26 .bg-white,
+html[data-ss-tema] .section-ambient,
+html[data-ss-tema] .section-mist {
+  background-color: var(--ss-fondo);
+}
+html[data-ss-tema] .ss-arrow {
+  color: var(--ss-mark);
+}
+html[data-ss-banda] .ss-banda {
+  --ss-marino-rgb: var(--ss-banda-tinta-rgb);
+  --ss-marino: rgb(var(--ss-banda-tinta-rgb));
+  --ss-tinta: var(--ss-banda-texto);
+  --ss-medio: var(--ss-banda-texto2);
+  --ss-input: var(--ss-banda-linea);
+  --ss-rule: var(--ss-banda-linea);
+  background-color: var(--ss-banda);
+}

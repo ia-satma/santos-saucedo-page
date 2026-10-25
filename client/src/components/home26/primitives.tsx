@@ -115,7 +115,7 @@ export function SectionHead({
           en blanco tenue. Sobre blanco y Hueso, § y cifras en Azul Marino (nunca lima).
           Es marcado y no ::first-letter: Chromium lo ignora en "§ 01". */}
       <span aria-hidden="true" className={`ss-num shrink-0 whitespace-nowrap ${dark ? "text-white/75" : "text-ss-marino"}`}>
-        <span className={dark ? "text-ss-lime" : ""}>§</span>
+        <span className={dark ? "text-ss-lime" : "text-[color:var(--ss-mark)]"}>§</span>
         {num ? ` ${num}` : ""}
       </span>
       <ShortRule />
