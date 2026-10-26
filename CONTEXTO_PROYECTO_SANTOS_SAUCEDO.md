@@ -794,3 +794,16 @@ La regla más importante acordada con el usuario es:
 > GitHub Pages debe mostrar el frontend real del proyecto y actualizarse con el repositorio. No debe ser un prototipo separado.
 
 Todo cambio futuro debe respetar esa regla.
+
+## Regla obligatoria de conexión con el CMS
+
+Todo agente, IA o persona que modifique el proyecto debe verificar que cualquier cambio de contenido, diseño configurable, formulario, estado, texto, imagen, video, dato de contacto o ajuste visible quede conectado correctamente al CMS.
+
+Antes de terminar un cambio, se debe:
+
+1. Identificar la sección CMS y su fuente de verdad (`useCmsContent`, `useCmsMedia`, `forms`, `shared/cms-defaults.json` o la API correspondiente).
+2. Evitar valores visibles hardcodeados cuando deban poder editarse desde el CMS; si no existe el campo, añadir el fallback y la conexión necesaria.
+3. Confirmar que los valores guardados desde el admin llegan a la interfaz pública y que los formularios conservan su configuración, validación y estado habilitado/deshabilitado.
+4. Ejecutar `npm run check` y `npm run build`, y revisar en local la pantalla afectada con la configuración CMS aplicada.
+
+Un cambio visual no se considera terminado si solo funciona con datos fijos en el frontend o si rompe la edición, persistencia o lectura de datos desde el CMS.

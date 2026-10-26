@@ -1,13 +1,13 @@
 import "@/styles/folio-pages.css";
 import type { CSSProperties } from "react";
 import { OfficePhotography } from "@/components/editorial/OfficePhotography";
+import { HeroKicker } from "@/components/editorial/HeroKicker";
 import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Eyebrow } from "@/components/editorial";
 import { Lineas, TextLink } from "@/components/home26/primitives";
 import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
@@ -430,7 +430,7 @@ export default function About() {
         <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-about-hero">
           <div className="ss-container">
             <div className="max-w-3xl">
-              <Eyebrow num="01" tone="navy" className="mb-6" />
+              <HeroKicker page="about" testId="text-about-kicker" />
               <h1 className="ss-display mb-5 text-[clamp(3rem,7vw,6rem)]" data-testid="text-about-title">
                 <Lineas text={t.title} />
               </h1>

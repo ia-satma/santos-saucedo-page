@@ -3,6 +3,7 @@ export const mediaDefaults = {
   "brand": {
     "logoLight": "/editorial/logo-blanco-lima.svg",
     "logoDark": "/editorial/logo-marino.svg",
+    "socialImage": "/editorial/logo-marino-og.png",
     "favicon": "/favicon.svg",
     "name": "Santos & Saucedo"
   },

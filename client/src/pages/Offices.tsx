@@ -7,12 +7,12 @@ import { useSiteDetails } from "@/components/home26/useSiteContact";
 import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { OfficePhotography } from "@/components/editorial/OfficePhotography";
+import { HeroKicker } from "@/components/editorial/HeroKicker";
 import { mediaDefaults } from "@/lib/cmsMedia";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Eyebrow } from "@/components/editorial";
 import { SplitSection, TextLink } from "@/components/home26/primitives";
 import { chrome26 } from "@/components/home26/chrome26";
 import { useSiteContact } from "@/components/home26/useSiteContact";
@@ -380,7 +380,7 @@ export default function Offices() {
           {officePhotos[0] && <OfficePhotography photo={officePhotos[0].photo as keyof typeof mediaDefaults.photos} eager sizes="100vw" />}
           <div className="ss-office-cover-shade" aria-hidden="true" />
           <div className="ss-container relative z-10 pb-12 lg:pb-20">
-            <Eyebrow num="01" tone="light" className="mb-6" />
+            <HeroKicker page="offices" testId="text-offices-kicker" light />
             <h1 className="!text-white" data-testid="text-offices-title">{title}</h1>
           </div>
         </section>

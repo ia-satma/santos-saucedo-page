@@ -1,6 +1,7 @@
 import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
+import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import { SectionMark } from "./primitives";
 import { home26, langAttrs, type Lang26 } from "./content";
@@ -112,7 +113,7 @@ function HeroVideo({
       muted
       loop
       playsInline
-      preload="metadata"
+      preload="none"
       disablePictureInPicture
       aria-hidden="true"
       tabIndex={-1}
@@ -133,17 +134,61 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
   const labels = liveChrome[lang].heroVideo;
   // Movimiento reducido (macOS/iOS "Reducir movimiento"): el cliente pidió que el video se vea en
   // todos los equipos (junta del 16-10-2026). Es una toma aérea lenta, sin destellos, y el botón de
-  // pausa queda siempre visible (WCAG 2.2.2), así que ya no se sustituye por el póster.
-  // Si el visitante lo pausó en otra visita o ahorra datos, el video no se monta (ni se descarga):
-  // póster fijo y el botón ofrece reproducir. Al pulsarlo se monta y se reproduce; al pausarlo
-  // después queda montado en su cuadro.
+  // pausa queda siempre visible (WCAG 2.2.2). El póster ocupa el primer render para diferir la
+  // descarga y decodificación; si el visitante lo pausó o ahorra datos, queda como frame fijo.
   const [startPaused] = useState(() => typeof window !== "undefined" && (readPausedPref() || savesData()));
   const [paused, setPaused] = useState(startPaused);
-  const [mounted, setMounted] = useState(!startPaused);
+  // El póster ocupa el primer render; el video se crea cuando el navegador ya terminó la entrada.
+  const [mounted, setMounted] = useState(false);
   const [videoFailed,setVideoFailed]=useState(false);
   useEffect(()=>setVideoFailed(false),[media.hero.videoDesktop,media.hero.videoMobile]);
+  useEffect(() => {
+    if (startPaused || paused || !media.hero.videoEnabled || savesData()) return;
+
+    let cancelled = false;
+    let idleReady = false;
+    let delayReady = false;
+    const startVideo = () => {
+      if (!cancelled && idleReady && delayReady) setMounted(true);
+    };
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+
+    const delayId = window.setTimeout(() => {
+      delayReady = true;
+      startVideo();
+    }, 900);
+    const idleId = idleWindow.requestIdleCallback?.(() => {
+      idleReady = true;
+      startVideo();
+    }, { timeout: 1600 });
+    if (!idleWindow.requestIdleCallback) idleReady = true;
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(delayId);
+      if (idleId !== undefined) idleWindow.cancelIdleCallback?.(idleId);
+    };
+  }, [media.hero.videoEnabled, paused, startPaused]);
   const still = videoFailed || !mounted || !media.hero.videoEnabled;
   const videoRef = useRef<HTMLVideoElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  // El fondo se mueve más lento que la página. El margen extra evita huecos durante la
+  // transformación y el resorte elimina los pequeños saltos del scroll de trackpad.
+  const backgroundY = useSpring(useTransform(scrollYProgress, [0, 1], [0, 110]), {
+    stiffness: 80,
+    damping: 24,
+    mass: 0.7,
+  });
+  const backgroundScale = useSpring(useTransform(scrollYProgress, [0, 1], [1.06, 1.12]), {
+    stiffness: 80,
+    damping: 24,
+    mass: 0.7,
+  });
 
   // El navegador rechazó la reproducción (K6): el botón pasa a "Reproducir" sin guardar
   // preferencia (no la eligió el visitante). Una pulsación lo inicia.
@@ -162,16 +207,23 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
   };
 
   return (
-    <section id="hero" {...langAttrs[lang]} className="ss-hero" aria-labelledby="ss26-hero-title">
+    <section ref={heroRef} id="hero" {...langAttrs[lang]} className="ss-hero" aria-labelledby="ss26-hero-title">
       {/* Fondo: Azul Profundo mientras carga (.ss-hero), video o póster y las capas de lectura */}
-      <div aria-hidden="true" className="absolute inset-0 -z-10">
+      <motion.div
+        aria-hidden="true"
+        className="-inset-[8%] absolute -z-10 will-change-transform"
+        style={{
+          y: reduceMotion ? 0 : backgroundY,
+          scale: reduceMotion ? 1.06 : backgroundScale,
+        }}
+      >
         {still ? (
           <img src={media.hero.poster} alt="" width={1920} height={872} decoding="async" className="absolute inset-0 h-full w-full object-cover" />
         ) : (
           <HeroVideo media={media.hero} paused={paused} videoRef={videoRef} onBlocked={onBlocked} onFailed={()=>setVideoFailed(true)} />
         )}
         <div className="ss-hero-veil absolute inset-0" />
-      </div>
+      </motion.div>
 
       {/* La § oficial del logotipo (seccion.svg), blanca al 20 %: completa dentro del héroe, sin
           recortar ni deformar (aspecto fijo del trazo). Solo desde lg; debajo taparía el logotipo. */}

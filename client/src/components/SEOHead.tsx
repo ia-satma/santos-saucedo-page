@@ -8,8 +8,8 @@ import { chrome26 } from "@/components/home26/chrome26";
 import { OFFICE_LABEL, officeLabel } from "@/lib/officeLabel";
 
 const BASE_URL = "https://www.santossaucedo.com";
-// Logotipo de client/public (el build lo copia a la raíz del sitio); el de /images no existe
-const DEFAULT_IMAGE = "https://www.santossaucedo.com/logo-color.png";
+// Miniatura social controlada por CMS; el fallback usa la composición del logo actual.
+const DEFAULT_IMAGE = "/editorial/logo-marino-og.png";
 const SITE_NAME = "Santos & Saucedo";
 
 const OG_LOCALE_CODES: Record<LanguageCode, string> = {
@@ -416,8 +416,10 @@ export default function SEOHead({
     // Canonical por página: la ruta propia (las fichas /team/slug, /news/slug… incluidas)
     const rawPath = customPath || (location.startsWith("/") ? location : config.path) || "/";
     const path = rawPath.length > 1 ? rawPath.replace(/\/+$/, "") : rawPath;
-    const image = customImage || `${integrations.siteUrl.replace(/\/$/,'')}/logo-color.png`;
-    const url = `${integrations.siteUrl.replace(/\/$/,'')}${path}`;
+    const siteUrl = integrations.siteUrl.replace(/\/$/,'');
+    const imagePath = customImage || media.brand.socialImage || DEFAULT_IMAGE;
+    const image = imagePath.startsWith("http") ? imagePath : `${siteUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
+    const url = `${siteUrl}${path}`;
 
     document.title = title;
     let favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
@@ -446,6 +448,7 @@ export default function SEOHead({
     updateOrCreateMeta("og:description", description, true);
     updateOrCreateMeta("og:url", url, true);
     updateOrCreateMeta("og:image", image, true);
+    updateOrCreateMeta("og:image:alt", media.brand.name, true);
     updateOrCreateMeta("og:type", "website", true);
     updateOrCreateMeta("og:site_name", SITE_NAME, true);
     updateOrCreateMeta("og:locale", OG_LOCALE_CODES[language], true);
@@ -472,7 +475,7 @@ export default function SEOHead({
       }
       canonical.setAttribute("href", url);
     }
-  }, [page, language, customTitle, customDescription, customImage, customPath, location, integrations.siteUrl, liveSEO, liveChrome, officeName, media.brand.favicon]);
+  }, [page, language, customTitle, customDescription, customImage, customPath, location, integrations.siteUrl, liveSEO, liveChrome, officeName, media.brand.favicon, media.brand.name, media.brand.socialImage]);
 
   return null;
 }

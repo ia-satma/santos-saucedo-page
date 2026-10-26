@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import { PhotoBand } from "@/components/home26/PhotoBand";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Eyebrow } from "@/components/editorial";
+import { HeroKicker } from "@/components/editorial/HeroKicker";
 import { MonitorList, MonitorSubscribe } from "@/components/monitor/MonitorList";
 import { chrome26 } from "@/components/home26/chrome26";
 import { home26 } from "@/components/home26/content";
@@ -61,7 +61,7 @@ export default function NewsPage() {
         <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-news-hero">
           <div className="ss-container">
             <div className="max-w-3xl">
-              <Eyebrow num="04" tone="navy" className="mb-6" />
+              <HeroKicker page="news" testId="text-news-kicker" />
               <h1
                 className="mb-5"
                 data-testid="text-news-title"

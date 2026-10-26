@@ -4,8 +4,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { HeroKicker } from "@/components/editorial/HeroKicker";
 import { useCmsContent } from "@/hooks/useCmsContent";
-import { Eyebrow } from "@/components/editorial";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
 
 // Testimonios (junta 16-10-2026): muro sobrio de comentarios de clientes que el despacho
@@ -56,7 +56,7 @@ export default function Testimonials() {
         <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-testimonials-hero">
           <div className="ss-container">
             <div className="max-w-3xl">
-              <Eyebrow num="" tone="navy" className="mb-6" />
+              <HeroKicker page="testimonials" testId="text-testimonials-kicker" />
               <h1 className="mb-5" data-testid="text-testimonials-title">
                 {t.title}
               </h1>

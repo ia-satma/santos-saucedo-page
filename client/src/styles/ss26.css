@@ -130,6 +130,8 @@ html:has(header.ss26) {
   --ss-ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
   --ss-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
   --ss-ease-ui: cubic-bezier(0.2, 0, 0, 1);
+  /* Grano editorial estático: semilla fija, sin animación ni cambio de paleta. */
+  --ss-noise-image: url("/ss26-noise.png");
 }
 
 /* Paleta (nombres del manual 2025). Azul Profundo es la única superficie oscura.
@@ -160,6 +162,7 @@ html:has(header.ss26) {
   --ss-font-sans: "SS Sans", "SS Sans Fallback", system-ui, -apple-system, "Segoe UI", sans-serif;
   --ss-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --ss-pad: clamp(20px, 5vw, 72px);
+  --ss-image-radius: clamp(2px, 0.28vw, 4px);
 }
 
 .ss26 {
@@ -169,6 +172,43 @@ html:has(header.ss26) {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+.ss26 :where([data-surface="light"], .ss-paper) {
+  position: relative;
+  isolation: isolate;
+}
+
+/* El grano vive en el fondo de cada superficie clara, detrás de su contenido. Así no toca
+   retratos, video ni tipografía, y las superficies azules quedan limpias. */
+.ss26 :where([data-surface="light"], .ss-paper)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--ss-noise-image);
+  background-repeat: repeat;
+  background-size: 128px 128px;
+  opacity: 0.5;
+}
+
+/* En la banda azul se conserva apenas un rastro del grano, siempre detrás del contenido. */
+.ss26 main .ss-navy::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--ss-noise-image);
+  background-repeat: repeat;
+  background-size: 128px 128px;
+  opacity: 0.12;
+}
+
+@media print {
+  .ss26 :where([data-surface="light"], .ss-paper)::after { display: none; }
+  .ss26 main .ss-navy::after { display: none; }
 }
 
 /* index.css corta el desborde horizontal con `hidden`, que convierte a body en
@@ -499,9 +539,9 @@ a:focus-visible > .ss-arrow:dir(rtl) {
    dos ejes, para que logotipo, textos y § guarden la proporción en cualquier pantalla de
    escritorio. Ocupa la primera pantalla y sube bajo el encabezado (transparente en la
    portada, Header26 overlay). Mientras carga el video, Azul Profundo. */
-.ss-photo { border-radius: 0; }
-.ss-portrait-frame { border-radius: 0; isolation: isolate; }
-.ss-portrait-frame .ss-photo { border-radius: 0; }
+.ss-photo { border-radius: var(--ss-image-radius); }
+.ss-portrait-frame { border-radius: var(--ss-image-radius); isolation: isolate; }
+.ss-portrait-frame .ss-photo { border-radius: var(--ss-image-radius); }
 .ss-team-portrait {
   transition: transform 240ms ease, box-shadow 240ms ease;
 }
@@ -737,9 +777,9 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 }
 
 /* Office tour: a photographic cover and an alternating editorial mosaic. */
-.ss-office-gallery figure { margin: 0; overflow: hidden; border-radius: 0; }
+.ss-office-gallery figure { margin: 0; overflow: hidden; border-radius: var(--ss-image-radius); }
 .ss-office-cover { position: relative; display: flex; align-items: flex-end; min-height: 76svh; padding-top: 120px; overflow: hidden; background: var(--ss-marino, #1b1b3b); }
-.ss-office-cover > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 48%; border-radius: 0; }
+.ss-office-cover > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 48%; border-radius: var(--ss-image-radius); }
 .ss-office-cover-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgb(16 19 39 / .73), transparent 70%); }
 .ss-office-cover .ss-eyebrow { color: white; }
 .ss-office-gallery { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-rows: clamp(210px, 26vw, 360px); gap: clamp(16px, 1.8vw, 26px); }
@@ -787,6 +827,22 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 }
 .editorial-page-hero.ss-principal-page-hero h1 {
   margin: 0;
+}
+.editorial-page-hero.ss-principal-page-hero .contact-hero-kicker {
+  margin: 0 0 18px;
+  color: var(--ss-marino);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+.editorial-page-hero.ss-principal-page-hero .contact-hero-kicker--light {
+  color: #fff;
+}
+.editorial-page-hero.ss-principal-page-hero:has(.contact-hero-kicker) h1::after {
+  display: none;
 }
 .editorial-page-hero.ss-principal-page-hero h1::after {
   content: "";
@@ -934,7 +990,7 @@ html[data-ss-banda] .ss-banda {
 
 /* «Lienzo»: socios de la portada (Lienzo.tsx). El lienzo abierto es cuadrado (el retrato), los
    cerrados reparten el resto y muestran solo la franja izquierda del cuadro de fondo. Lo único que
-   se anima es el ancho del marco: 700 ms, curva de ida y vuelta. */
+   se anima es el ancho del marco: 500 ms, curva de ida y vuelta. */
 .ss-lienzo-row {
   --lienzo-open: min(62vw, 250px);
   display: flex;
@@ -950,22 +1006,29 @@ html[data-ss-banda] .ss-banda {
   flex: 1 1 0%;
   min-width: 0;
   overflow: hidden;
+  border-radius: var(--ss-image-radius);
   background: var(--ss-paper);
   box-shadow: inset 0 0 0 1px rgb(var(--ss-marino-rgb) / 0.12);
-  transition: flex-grow 700ms var(--ss-ease-inout), flex-basis 700ms var(--ss-ease-inout), clip-path var(--ss-dur-slow) var(--ss-ease-out) var(--reveal-delay, 0s);
   cursor: pointer;
 }
-.ss-lienzo-canvas.is-open { flex: 0 0 var(--lienzo-open); cursor: pointer; }
 .ss-lienzo-img {
   position: absolute;
   top: 0;
   left: 0;
-  width: var(--lienzo-open);
-  max-width: none;
+  width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: 50% 26%;
 }
+.ss-lienzo-dim {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0.3;
+  pointer-events: none;
+  transition: opacity 300ms var(--ss-ease-out);
+}
+.ss-lienzo-dim.is-active { opacity: 0; }
 .ss-lienzo-canvas:focus-visible { outline: 2px solid var(--ss-lime); outline-offset: 3px; }
 /* Marca del nombre activo: un trazo de acento que se dibuja */
 .ss-lienzo-mark { display: inline-block; width: 32px; height: 1px; background: var(--ss-rule); transform-origin: left center; transition: background-color var(--ss-dur-quick) var(--ss-ease-ui); }
@@ -975,7 +1038,7 @@ html[data-ss-banda] .ss-banda {
 .ss-motion .ss-lienzo-caption { animation: ss-cedula var(--ss-dur-base) var(--ss-ease-out) 220ms both; }
 @keyframes ss-cedula { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
-  .ss-lienzo-canvas { transition: none; }
+  .ss-lienzo-dim { transition: none; }
   .ss-lienzo-mark.is-on { animation: none; }
 }
 

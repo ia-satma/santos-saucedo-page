@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
+import "@/styles/careers-contact.css";
 import { Link } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -170,7 +171,7 @@ export default function TestimonialWrite() {
               )}
 
               {state === "valid" && (
-                <form onSubmit={send} noValidate className="space-y-6" data-testid="form-testimonial">
+                <form onSubmit={send} noValidate className="public-form-card public-form-card--testimonial space-y-6" data-testid="form-testimonial">
                   {field("fullName", f.fullName, "name")}
                   <div className="grid gap-6 sm:grid-cols-2">
                     {field("title", f.jobTitle, "organization-title")}

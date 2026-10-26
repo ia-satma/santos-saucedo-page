@@ -9,9 +9,9 @@ import Footer from "@/components/Footer";
 import { PhotoBand } from "@/components/home26/PhotoBand";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { HeroKicker } from "@/components/editorial/HeroKicker";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
-import { Eyebrow } from "@/components/editorial";
 import { chrome26 } from "@/components/home26/chrome26";
 import { usePracticeNames } from "@/lib/practiceNames";
 import { getPracticeImage } from "@/lib/practiceIndustryImages";
@@ -214,7 +214,7 @@ export default function PracticeGroups() {
         <section className="practice-directory-hero editorial-page-hero ss-principal-page-hero" data-testid="section-practice-groups-hero">
           <div className="ss-container">
             <div className="practice-directory-intro">
-              <Eyebrow num="02" tone="navy" className="mb-6" />
+              <HeroKicker page="practices" testId="text-practice-groups-kicker" />
               <h1 data-testid="text-practice-groups-title">{title}</h1>
               <p className="practice-directory-subtitle ss-lead" data-testid="text-practice-groups-subtitle">
                 {t.subtitle}

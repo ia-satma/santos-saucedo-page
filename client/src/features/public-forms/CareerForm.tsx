@@ -49,7 +49,7 @@ export function CareerForm({ source = "careers", className = "mt-10" }: { source
     );
   return (
     <section
-      className={`ss-contact-card ss-career-card ${className}`}
+      className={`ss-contact-card ss-career-card public-form-card ${className}`}
       data-testid="career-application-form"
     >
       <h3 className="ss-h2-sm mb-6">{t.title}</h3>

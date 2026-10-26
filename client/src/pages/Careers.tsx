@@ -1,6 +1,7 @@
 import "@/styles/careers-contact.css";
 import type { CSSProperties } from "react";
 import { OfficePhotography } from "@/components/editorial/OfficePhotography";
+import { HeroKicker } from "@/components/editorial/HeroKicker";
 import { CareerForm } from "@/features/public-forms/CareerForm";
 import { useQuery } from "@tanstack/react-query";
 import { jobTypes, type JobOpening } from "@shared/schema";
@@ -11,7 +12,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Eyebrow } from "@/components/editorial";
 import { TextLink } from "@/components/home26/primitives";
 // "Santos & Saucedo" con espacios duros al pintarlo: el nombre no se parte al final de línea.
 // Para la frase de los 40 años, actualizada por indicación del cliente.
@@ -289,9 +289,8 @@ export default function Careers() {
       <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-careers-hero">
         <div className="ss-container">
           <div className="max-w-3xl">
-            <Eyebrow num="05" tone="navy" className="mb-6" />
-            <h1 
-              className="mb-5"
+            <HeroKicker page="careers" testId="text-careers-kicker" />
+            <h1
               data-testid="text-careers-title"
             >
               {t.heroTitle}
