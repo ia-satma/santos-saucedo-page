@@ -9,8 +9,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { HeroKicker } from "@/components/editorial/HeroKicker";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
-import { Eyebrow } from "@/components/editorial";
 import { TextLink } from "@/components/home26/primitives";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import type { Event } from "@shared/schema";
@@ -333,7 +333,7 @@ export default function EventsPage() {
       <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-events-hero">
         <div className="ss-container">
           <div className="max-w-3xl">
-            <Eyebrow num="04" tone="navy" className="mb-6" />
+            <HeroKicker page="events" testId="text-events-kicker" />
             <h1 
               className="mb-5"
               data-testid="text-events-title"

@@ -1,6 +1,7 @@
 import "@/styles/careers-contact.css";
+import { useRef } from "react";
 import type { CSSProperties } from "react";
-import { OfficePhotography } from "@/components/editorial/OfficePhotography";
+import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import cmsDefaults from "@shared/cms-defaults.json";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
 import { useCmsMedia } from "@/lib/cmsMedia";
@@ -35,12 +36,12 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Eyebrow } from "@/components/editorial";
 import { useSiteContact } from "@/components/home26/useSiteContact";
 import { anyPartnerHasDirectContact } from "@/lib/partnerContact";
 import { PRACTICE_SLUGS, practiceShortName, usePracticeNames } from "@/lib/practiceNames";
 // El recorte de la portada (sin el letrero ni el estacionamiento), no el original
 import { TextLink } from "@/components/home26/primitives";
+import { HeroKicker } from "@/components/editorial/HeroKicker";
 import { useOfficeLabel } from "@/lib/officeLabel";
 // La fachada de la oficina (oficina/fachada, sin el estacionamiento): la misma de la portada y de /offices
 import fachada768 from "@assets/ss26/oficina/fachada-768.webp";
@@ -297,6 +298,16 @@ const toastMessages: Record<LanguageCode, {
 };
 
 export default function Contact() {
+  const contactShellRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress: contactScrollProgress } = useScroll({
+    target: contactShellRef,
+    offset: ["start end", "end start"],
+  });
+  const contactBackdropY = useSpring(
+    useTransform(contactScrollProgress, [0, 1], reduceMotion ? [0, 0] : [-14, 14]),
+    { stiffness: 90, damping: 26, mass: 0.7 },
+  );
   const siteDetails = useSiteDetails();
   const { shortName: practiceShortName } = usePracticeNames();
   const { data: contactPractices = [] } = useQuery<import("@shared/schema").PracticeGroup[]>({queryKey:["/api/practice-groups"]});
@@ -398,9 +409,12 @@ export default function Contact() {
 
   const content: Record<LanguageCode, {
     title: string;
+    heroTitle?: string;
+    heroSubtitle?: string;
     /** Bajo los datos de la oficina, antes de "Cómo llegar" (como en el documento de redacción) */
     partnersNote: string;
     officesTitle: string;
+    officeSectionTitle?: string;
     building: string;
     floor: string;
     street: string;
@@ -418,6 +432,8 @@ export default function Contact() {
     telLabel: string;
     formTitle: string;
     formSubtitle: string;
+    formSectionTitle?: string;
+    formSectionLead?: string;
     fullName: string;
     emailLabel: string;
     companyLabel: string;
@@ -428,8 +444,11 @@ export default function Contact() {
   }> = {
     en: {
       title: "Contact",
+      heroTitle: "We are here to help",
+      heroSubtitle: "Get in touch with us or visit our offices",
       partnersNote: "Each partner’s contact details appear on their profile.",
       officesTitle: "Office",
+      officeSectionTitle: "Our location",
       building: "Río Tamazunchale 205 Norte",
       floor: "",
       street: "San Pedro Garza García, N.L.",
@@ -447,6 +466,8 @@ export default function Contact() {
       addressLabel: "Address",
       formTitle: "Message",
       formSubtitle: "Submitting this form does not create an attorney-client relationship.",
+      formSectionTitle: "Send us a message",
+      formSectionLead: "Share your details and tell us how we can help. Our team will be in touch.",
       fullName: "Full name",
       emailLabel: "Email",
       companyLabel: "Company (optional)",
@@ -457,8 +478,11 @@ export default function Contact() {
     },
     es: {
       title: "Contacto",
+      heroTitle: "Estamos aquí para ayudarte",
+      heroSubtitle: "Ponte en contacto con nosotros o visita nuestras oficinas",
       partnersNote: "Los datos de contacto de cada socio aparecen en su ficha.",
       officesTitle: "Oficina",
+      officeSectionTitle: "Nuestra ubicación",
       building: "Río Tamazunchale 205 Norte",
       floor: "",
       street: "San Pedro Garza García, N.L.",
@@ -476,6 +500,8 @@ export default function Contact() {
       addressLabel: "Dirección",
       formTitle: "Mensaje",
       formSubtitle: "El envío de este formulario no crea una relación abogado-cliente.",
+      formSectionTitle: "Envíanos un mensaje",
+      formSectionLead: "Déjanos tus datos y cuéntanos cómo podemos ayudarte. Nuestro equipo se pondrá en contacto contigo.",
       fullName: "Nombre completo",
       emailLabel: "Correo electrónico",
       companyLabel: "Empresa (opcional)",
@@ -721,15 +747,20 @@ export default function Contact() {
   const editableContent = useCmsContent("contact", content);
   const baseT = editableContent[language] || editableContent.en;
   const t = { ...baseT, phone: firmContact.phone, email: firmContact.email, street: firmContact.address[0] || "", colony: firmContact.address[1] || "", city: firmContact.address.slice(2).join(", ") };
+  const contactHeroTitle = t.heroTitle || t.title;
+  const contactHeroLead = t.heroSubtitle || "";
+  const officeSectionTitle = t.officeSectionTitle || t.officesTitle;
+  const formSectionTitle = t.formSectionTitle || t.formTitle;
+  const formSectionLead = t.formSectionLead || t.formSubtitle;
 
-  // "Cómo llegar": las indicaciones de Google Maps en otra pestaña. Sin mapa incrustado: al
-  // cargarse, el iframe de Google podía fijar cookies y recibir la IP del visitante (el sitio
-  // público ya no carga terceros).
+  // "Cómo llegar": las indicaciones de Google Maps en otra pestaña. El mapa de referencia se
+  // carga de forma diferida para no bloquear la entrada a la página.
   // "Col. del Valle", como la ficha, el pie y el documento de redacción
   const directionsUrl = "https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Col.+del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220";
+  const mapEmbedUrl = "https://www.google.com/maps?q=R%C3%ADo+Tamazunchale+205+Norte,+Col.+del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+Nuevo+Le%C3%B3n,+C.P.+66220,+M%C3%A9xico&output=embed";
 
   return (
-    <div className="min-h-screen bg-background" data-testid="page-contact">
+    <div className="contact-page min-h-[100svh] bg-background" data-testid="page-contact">
       <SEOHead page="contact" language={language} />
       <Header />
 
@@ -739,17 +770,34 @@ export default function Contact() {
       <main id="main-content">
         <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-contact-hero">
           <div className="ss-container">
-            <div className="max-w-3xl">
-              <Eyebrow num="06" tone="navy" className="mb-6" />
-              {/* Sin subtítulo: la frase de los socios va bajo los datos de la oficina */}
+          <div className="max-w-4xl">
+              <HeroKicker page="contact" testId="text-contact-kicker" />
               <h1 data-testid="text-contact-title">
-                {t.title}
+                {contactHeroTitle}
               </h1>
+              {contactHeroLead && (
+                <p className="contact-hero-lead" data-testid="text-contact-hero-lead">
+                  {contactHeroLead}
+                </p>
+              )}
             </div>
           </div>
         </section>
 
-        <div>
+        <div
+          ref={contactShellRef}
+          className="contact-content-shell"
+          style={{ "--contact-backdrop": `url(${photos.fachada.url})` } as CSSProperties}
+        >
+          <motion.div
+            aria-hidden="true"
+            className="contact-content-backdrop"
+            style={{
+              y: contactBackdropY,
+              scale: reduceMotion ? 1 : 1.018,
+              backgroundImage: `url(${photos.fachada.url})`,
+            }}
+          />
           {/* Una sola columna de lectura sobre el fondo de la página, sin cajas: cada sección
               abre con un filete y lleva su título al margen (columnas 1–4 en escritorio, encima en
               teléfono). Las fotografías cierran la página a todo el ancho. */}
@@ -759,19 +807,39 @@ export default function Contact() {
             <section
               className="contact-office folio-split"
               data-testid="section-contact-office"
+              style={{ "--office-backdrop": `url(${photos.fachada.url})` } as CSSProperties}
             >
               <h2 className="ss-h2" data-testid="text-offices-title">
-                {t.officesTitle}
+                {officeSectionTitle}
               </h2>
 
+              <motion.div
+                className="contact-office-card"
+                initial={reduceMotion ? false : { opacity: 0, y: 22 }}
+                whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                whileHover={reduceMotion ? undefined : { y: -3 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] as const }}
+              >
+              <div className="contact-office-grid">
               <div data-testid="card-main-office">
-                <p className="ss-label text-ss-medio">{t.addressLabel}</p>
                 {/* Líneas en <div>: la regla móvil de index.css lleva los <span> a 16 px */}
                 <address className="contact-address" data-testid="text-office-address">
                   <div>{t.street}</div>
                   <div>{t.colony}</div>
                   <div>{t.city}</div>
                 </address>
+                <a
+                  href={siteDetails.directionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-map-action contact-office-action"
+                  data-testid="button-get-directions"
+                >
+                  <span>{t.getDirections}</span>
+                  <span aria-hidden="true">→</span>
+                  <span className="sr-only">{` ${t.newTab}`}</span>
+                </a>
                 <dl className="mt-10">
                   <div className={rowClass}>
                     <dt className={dtClass}>{t.telLabel}</dt>
@@ -833,29 +901,31 @@ export default function Contact() {
                   </p>
                 )}
 
-                {/* "Cómo llegar" y, junto a él, la página de la oficina (su nombre en officeLabel).
-                    Uno al lado del otro; si no caben, uno debajo del otro */}
                 <div className="mt-8 flex flex-wrap gap-x-10 gap-y-6">
-                  {/* Mismo aspecto que TextLink (etiqueta, subrayado, flecha y área táctil ampliada);
-                      <a> propio porque TextLink es un Link de wouter y este destino es externo */}
-                  <a
-                    href={siteDetails.directionsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ss-label group relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3"
-                    data-testid="button-get-directions"
-                  >
-                    <span className="ss-link">{t.getDirections}</span>
-                    <span className="sr-only">{` ${t.newTab}`}</span>
-                    <span aria-hidden="true" className="ss-arrow">
-                      →
-                    </span>
-                  </a>
                   <TextLink href="/offices" data-testid="link-contact-offices">
                     {officeNameFor(language)}
                   </TextLink>
                 </div>
               </div>
+              <div className="contact-map-panel" data-ui="map" data-testid="panel-contact-map">
+                <div className="contact-map-heading">
+                  <span className="contact-map-title">Google Maps</span>
+                  <span className="contact-map-pin" aria-hidden="true">⌖</span>
+                </div>
+                <div className="contact-map-frame">
+                  <iframe
+                    src={mapEmbedUrl}
+                    title={`${t.officesTitle} — ${t.addressLabel}`}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    allowFullScreen
+                    data-testid="iframe-contact-map"
+                  />
+                </div>
+                <p className="contact-map-caption">{t.city}</p>
+              </div>
+              </div>
+              </motion.div>
             </section>
 
             {/* Formulario sin caja: campos dibujados como una sola línea inferior (careers-contact.css).
@@ -865,10 +935,21 @@ export default function Contact() {
               data-testid="section-contact-form"
             >
               <h2 className="ss-h2" data-testid="text-form-title">
-                {t.formTitle}
+                {formSectionTitle}
               </h2>
+              <p className="contact-section-lead" data-testid="text-form-section-lead">
+                {formSectionLead}
+              </p>
 
-              {!formSettings.enabled?<p role="status">{formSettings.disabledMessage[language as "es"|"en"]||formSettings.disabledMessage.en}</p>:<Form {...form}>
+              {!formSettings.enabled?<p role="status">{formSettings.disabledMessage[language as "es"|"en"]||formSettings.disabledMessage.en}</p>:<motion.div
+                className="contact-form-card public-form-card"
+                initial={reduceMotion ? false : { opacity: 0, y: 22 }}
+                whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                whileHover={reduceMotion ? undefined : { y: -3 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.72, delay: 0.08, ease: [0.16, 1, 0.3, 1] as const }}
+              >
+                <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5" data-testid="form-contact">
                   {/* Dos columnas desde tableta; una columna en pantallas pequeñas. */}
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -1048,36 +1129,11 @@ export default function Contact() {
                     {contactMutation.isPending ? t.submitting : t.submit}
                   </Button>
 
-                  {/* Aviso tras el botón, como en la redacción */}
-                  <p
-                    className="max-w-xl text-[16px] leading-[1.5] text-ss-medio"
-                    data-testid="text-form-subtitle"
-                  >
-                    {t.formSubtitle}
-                  </p>
                 </form>
-              </Form>}
+                </Form>
+              </motion.div>}
             </section>
 
-            <figure className="contact-building" data-testid="figure-contact-building">
-              <div className="overflow-hidden bg-ss-rule" data-curtain="">
-                <img
-                  src={photos.fachada.url}
-                  srcSet={photos.fachada.smallUrl && photos.fachada.smallUrl !== photos.fachada.url ? `${photos.fachada.smallUrl} 768w, ${photos.fachada.url} 1159w` : undefined}
-                  sizes="(min-width: 1464px) 648px, (min-width: 768px) 44vw, calc(100vw - 40px)"
-                  alt={t.photoAlt}
-                  loading="lazy"
-                  decoding="async"
-                  width={1159}
-                  height={900}
-                  className="ss-photo block h-auto w-full"
-                  data-testid="img-contact-building"
-                />
-              </div>
-              <div className="overflow-hidden bg-ss-rule" data-curtain="" style={{ "--reveal-delay": "0.12s" } as CSSProperties}>
-                <OfficePhotography photo="recepcionGeneral" sizes="(min-width: 1464px) 648px, (min-width: 768px) 44vw, calc(100vw - 40px)" />
-              </div>
-            </figure>
           </div>
         </div>
       </main>

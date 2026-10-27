@@ -1,3 +1,7 @@
+> **Actualización vigente: 2026-10-23.** Consultar [Contexto actual](docs/CONTEXTO_ACTUAL_2026-10-23.md) antes de trabajar. Carpeta activa: `santos-saucedo-cms`; runtime dinámico en Replit. Local y remoto revisados en c45b0de el 27 de octubre. La sincronización de Replit queda pendiente de comprobación posterior al push. Lo que sigue es un documento histórico de julio, no el estado operativo actual.
+
+---
+
 # Contexto de trabajo - Santos & Saucedo
 
 Fecha de corte: 2026-07-09

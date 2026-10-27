@@ -1,4 +1,6 @@
 import cmsDefaults from "@shared/cms-defaults.json";
+import { HeroKicker } from "@/components/editorial/HeroKicker";
+import "@/styles/careers-contact.css";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -22,7 +24,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead, { detailTitle } from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Eyebrow } from "@/components/editorial";
 import { SplitSection } from "@/components/home26/primitives";
 import { useSiteContact } from "@/components/home26/useSiteContact";
 import type { LanguageCode } from "@shared/schema";
@@ -346,7 +347,7 @@ export default function Newsletter() {
       <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-newsletter-hero">
         <div className="ss-container">
           <div className="max-w-3xl">
-            <Eyebrow num="04" tone="navy" className="mb-6" />
+            <HeroKicker page="newsletter" testId="text-newsletter-kicker" />
             {/* Sin subtítulo en el héroe: la frase va en el cuerpo, sobre el formulario (G1) */}
             <h1
               id="newsletter-title"
@@ -370,7 +371,7 @@ export default function Newsletter() {
                   {t.subtitle}
                 </p>
                 {!formSettings.enabled?<p role="status" className="border-t border-ss-rule py-6">{formSettings.disabledMessage[language as "es"|"en"]||formSettings.disabledMessage.en}</p>:<Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-testid="form-newsletter">
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="public-form-card public-form-card--newsletter space-y-6" data-testid="form-newsletter">
                     <FormField
                       control={form.control}
                       name="email"

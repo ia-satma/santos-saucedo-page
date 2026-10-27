@@ -78,6 +78,12 @@ export const cmsSections: {
     help: "Nombres de sección, enlaces visibles, orden del menú y textos del pie en cada idioma. Los títulos de página usan el mismo nombre que el menú.",
   },
   {
+    key: "heroLabels",
+    label: "Etiquetas de encabezados",
+    path: "/",
+    help: "Contexto breve que aparece sobre los títulos principales. Se mantiene separado del título y del subtítulo para conservar la jerarquía editorial.",
+  },
+  {
     key: "contactData",
     label: "Datos del despacho",
     path: "/contact",

@@ -1893,8 +1893,11 @@
   "contact": {
     "en": {
       "title": "Contact",
+      "heroTitle": "We are here to help",
+      "heroSubtitle": "Get in touch with us or visit our offices",
       "partnersNote": "Each partner’s contact details appear on their profile.",
       "officesTitle": "Office",
+      "officeSectionTitle": "Our location",
       "building": "Río Tamazunchale 205 Norte",
       "floor": "",
       "street": "Río Tamazunchale 205 Norte",
@@ -1912,6 +1915,8 @@
       "addressLabel": "Address",
       "formTitle": "Message",
       "formSubtitle": "Submitting this form does not create an attorney-client relationship.",
+      "formSectionTitle": "Send us a message",
+      "formSectionLead": "Share your details and tell us how we can help. Our team will be in touch.",
       "fullName": "Full name",
       "emailLabel": "Email",
       "companyLabel": "Company (optional)",
@@ -1922,8 +1927,11 @@
     },
     "es": {
       "title": "Contacto",
+      "heroTitle": "Estamos aquí para ayudarte",
+      "heroSubtitle": "Ponte en contacto con nosotros o visita nuestras oficinas",
       "partnersNote": "Los datos de contacto de cada socio aparecen en su ficha.",
       "officesTitle": "Oficina",
+      "officeSectionTitle": "Nuestra ubicación",
       "building": "Río Tamazunchale 205 Norte",
       "floor": "",
       "street": "Río Tamazunchale 205 Norte",
@@ -1941,6 +1949,8 @@
       "addressLabel": "Dirección",
       "formTitle": "Mensaje",
       "formSubtitle": "El envío de este formulario no crea una relación abogado-cliente.",
+      "formSectionTitle": "Envíanos un mensaje",
+      "formSectionLead": "Déjanos tus datos y cuéntanos cómo podemos ayudarte. Nuestro equipo se pondrá en contacto contigo.",
       "fullName": "Nombre completo",
       "emailLabel": "Correo electrónico",
       "companyLabel": "Empresa (opcional)",
@@ -5330,6 +5340,7 @@
     "brand": {
       "logoLight": "/editorial/logo-blanco-lima.svg",
       "logoDark": "/editorial/logo-marino.svg",
+      "socialImage": "/editorial/logo-marino-og.png",
       "favicon": "/favicon.svg",
       "name": "Santos & Saucedo"
     },
@@ -6702,5 +6713,59 @@
     "marino": "#1D1C68",
     "lime": "#B2EB3E",
     "paper": "#F3F1EA"
+  },
+  "heroLabels": {
+    "es": {
+      "about": "La firma",
+      "practices": "Áreas de práctica",
+      "team": "Nuestro equipo",
+      "news": "Actualidad",
+      "careers": "Oportunidades",
+      "contact": "Contacto",
+      "events": "Agenda",
+      "articles": "Monitor laboral",
+      "newsletter": "Actualizaciones",
+      "offices": "Visítanos",
+      "interns": "Programa de pasantías",
+      "testimonials": "Experiencias de clientes"
+    },
+    "en": {
+      "about": "The firm",
+      "practices": "Practice areas",
+      "team": "Our team",
+      "news": "Insights",
+      "careers": "Opportunities",
+      "contact": "Contact",
+      "events": "Agenda",
+      "articles": "Labor monitor",
+      "newsletter": "Updates",
+      "offices": "Visit us",
+      "interns": "Internship program",
+      "testimonials": "Client experiences"
+    },
+    "de": {
+      "about": "Die Kanzlei", "practices": "Praxisbereiche", "team": "Unser Team", "news": "Aktuelles", "careers": "Karrierechancen", "contact": "Kontakt", "events": "Agenda", "articles": "Arbeitsmonitor", "newsletter": "Aktuelles", "offices": "Besuchen Sie uns", "interns": "Praktikumsprogramm", "testimonials": "Kundenstimmen"
+    },
+    "zh": {
+      "about": "本所", "practices": "业务领域", "team": "我们的团队", "news": "最新动态", "careers": "职业机会", "contact": "联系我们", "events": "活动", "articles": "劳动监测", "newsletter": "更新", "offices": "访问我们", "interns": "实习项目", "testimonials": "客户评价"
+    },
+    "ko": {
+      "about": "법인 소개", "practices": "업무 분야", "team": "우리 팀", "news": "소식", "careers": "채용 기회", "contact": "문의", "events": "일정", "articles": "노동 모니터", "newsletter": "업데이트", "offices": "방문 안내", "interns": "인턴십 프로그램", "testimonials": "고객 후기"
+    },
+    "ja": {
+      "about": "事務所について", "practices": "取扱分野", "team": "私たちのチーム", "news": "最新情報", "careers": "採用情報", "contact": "お問い合わせ", "events": "予定", "articles": "労働モニター", "newsletter": "更新情報", "offices": "ご来訪ください", "interns": "インターンシップ", "testimonials": "お客様の声"
+    },
+    "ar": {
+      "about": "عن المكتب", "practices": "مجالات الممارسة", "team": "فريقنا", "news": "المستجدات", "careers": "الفرص المهنية", "contact": "اتصل بنا", "events": "الأجندة", "articles": "مرصد العمل", "newsletter": "التحديثات", "offices": "زورونا", "interns": "برنامج التدريب", "testimonials": "تجارب العملاء"
+    },
+    "ru": {
+      "about": "О фирме", "practices": "Практики", "team": "Наша команда", "news": "Новости", "careers": "Возможности", "contact": "Контакты", "events": "Афиша", "articles": "Трудовой монитор", "newsletter": "Обновления", "offices": "Посетите нас", "interns": "Программа стажировки", "testimonials": "Отзывы клиентов"
+    },
+    "fr": {
+      "about": "Le cabinet", "practices": "Domaines de pratique", "team": "Notre équipe", "news": "Actualités", "careers": "Opportunités", "contact": "Contact", "events": "Agenda", "articles": "Veille sociale", "newsletter": "Actualités", "offices": "Nous rendre visite", "interns": "Programme de stage", "testimonials": "Témoignages clients"
+    },
+    "it": {
+      "about": "Lo studio", "practices": "Aree di pratica", "team": "Il nostro team", "news": "Attualità", "careers": "Opportunità", "contact": "Contatti", "events": "Agenda", "articles": "Monitor del lavoro", "newsletter": "Aggiornamenti", "offices": "Venite a trovarci", "interns": "Programma di tirocinio", "testimonials": "Esperienze dei clienti"
+    }
   }
 }

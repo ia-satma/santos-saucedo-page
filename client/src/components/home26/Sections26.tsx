@@ -350,8 +350,7 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
             decoding="async"
             width={1536}
             height={1024}
-            // Banda a todo lo ancho: sin el radio de .ss-photo (las esquinas dejaban ver el azul)
-            className="ss-photo absolute inset-y-0 right-0 h-full w-full max-w-[1536px] object-cover object-[50%_42%] !rounded-none"
+            className="ss-photo absolute inset-y-0 right-0 h-full w-full max-w-[1536px] object-cover object-[50%_42%]"
           />
         </div>
         <div className="flex items-center px-[var(--ss-pad)] py-20 xl:pl-0 xl:pr-[clamp(48px,6vw,104px)]">

@@ -1,23 +1,22 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { Link } from "wouter";
+import { motion, useReducedMotion } from "framer-motion";
 import { fallbackToOriginalSrc, getTeamPhotoSrcSet } from "@/lib/teamPhotoSources";
 import { Lineas } from "./primitives";
 
 export type Partner = { name: string; slug: string; image: string; role: string; practice: string };
 
-/* «Lienzo»: los socios de la portada (equipo de motion, 25-10-2026; base: 21st.dev «Hover Expand»).
-   Cada retrato es un lienzo en una fila. El abierto muestra al socio; los cerrados, solo una franja
-   del cuadro que hay detrás de cada retrato (la obra de la firma, nunca media cara): la imagen
-   queda anclada a la izquierda a su tamaño abierto y lo único que se mueve es el marco.
-   La lista de nombres manda sobre los lienzos: pasar por un nombre o un lienzo, o enfocarlo con el
-   teclado, abre ese socio; el último abierto se queda abierto. En pantallas táctiles, el primer
-   toque abre el lienzo y el segundo lleva a la ficha. Los retratos miden 541 px: el lienzo abierto
-   no pasa de 380 px para que se vean nítidos. */
+/* «Lienzo»: los socios de la portada (patrón Elastic Gallery / ExpandableGallery de 21st.dev).
+   Cada retrato es una tarjeta en una fila: la activa gana espacio y las demás se repliegan con un
+   velo oscuro. La lista de nombres manda sobre los lienzos: pasar por un nombre o un lienzo, o
+   enfocarlo con el teclado, abre ese socio; el último abierto se queda abierto. En pantallas
+   táctiles, el primer toque abre el lienzo y el segundo lleva a la ficha. */
 export function Lienzo({ people, lang }: { people: Partner[]; lang: "es" | "en" }) {
   const [active, setActive] = useState(0);
   const timer = useRef<number>();
-  // Intención: 90 ms sobre un lienzo o un nombre antes de abrirlo (no se abren al cruzar)
-  const choose = (i: number, delay = 90) => {
+  const reduceMotion = useReducedMotion();
+  // El cambio se agenda en el siguiente frame para que la animación de 500 ms siempre arranque limpia.
+  const choose = (i: number, delay = 0) => {
     window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => setActive(i), delay);
   };
@@ -70,36 +69,43 @@ export function Lienzo({ people, lang }: { people: Partner[]; lang: "es" | "en" 
       <div className="order-1 lg:order-2 lg:col-span-7">
         <div className="ss-lienzo-row" aria-hidden="true">
           {people.map((person, i) => (
-            <Link
+            <motion.div
               key={person.slug}
-              href={`/team/${person.slug}`}
-              tabIndex={-1}
-              data-curtain=""
-              style={{ "--reveal-delay": `${0.25 + i * 0.09}s`, viewTransitionName: `retrato-${person.slug}` } as CSSProperties}
-              className={`ss-lienzo-canvas ${i === active ? "is-open" : ""}`}
+              className="ss-lienzo-canvas ss-lienzo-accordion-card"
+              style={{ flex: 1 }}
+              animate={{ flex: reduceMotion ? 1 : i === active ? 2 : 0.5 }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
               onMouseEnter={() => choose(i)}
               onMouseLeave={cancel}
-              onClick={(e) => {
-                // Táctil: el primer toque abre el lienzo; el segundo, ya abierto, lleva a la ficha
-                if (i !== active && window.matchMedia("(hover: none)").matches) {
-                  e.preventDefault();
-                  setActive(i);
-                }
-              }}
             >
-              <img
-                src={person.image}
-                data-portrait-slug={person.slug}
-                {...(getTeamPhotoSrcSet(person.image) ? { srcSet: getTeamPhotoSrcSet(person.image), sizes: "380px" } : {})}
-                onError={fallbackToOriginalSrc}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                width={652}
-                height={652}
-                className="ss-photo ss-lienzo-img"
-              />
-            </Link>
+              <Link
+                href={`/team/${person.slug}`}
+                tabIndex={-1}
+                style={{ "--reveal-delay": `${0.25 + i * 0.09}s`, viewTransitionName: `retrato-${person.slug}` } as CSSProperties}
+                className="block h-full w-full"
+                onClick={(e) => {
+                  // Táctil: el primer toque abre el lienzo; el segundo, ya abierto, lleva a la ficha
+                  if (i !== active && window.matchMedia("(hover: none)").matches) {
+                    e.preventDefault();
+                    setActive(i);
+                  }
+                }}
+              >
+                <img
+                  src={person.image}
+                  data-portrait-slug={person.slug}
+                  {...(getTeamPhotoSrcSet(person.image) ? { srcSet: getTeamPhotoSrcSet(person.image), sizes: "380px" } : {})}
+                  onError={fallbackToOriginalSrc}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  width={652}
+                  height={652}
+                  className="ss-photo ss-lienzo-img"
+                />
+                <span aria-hidden="true" className={`ss-lienzo-dim ${i === active ? "is-active" : ""}`} />
+              </Link>
+            </motion.div>
           ))}
         </div>
         {/* Cédula del socio abierto, como la de una obra: cargo, práctica y enlace a su ficha */}

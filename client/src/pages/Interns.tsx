@@ -1,4 +1,5 @@
 import { CareerForm } from "@/features/public-forms/CareerForm";
+import { HeroKicker } from "@/components/editorial/HeroKicker";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import Header from "@/components/Header";
@@ -6,7 +7,6 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "wouter";
-import { Eyebrow } from "@/components/editorial";
 import { SplitSection } from "@/components/home26/primitives";
 
 // "Clásica": titular de sección .ss-h2 (escala única de index.css); texto en sans 400 Gris Tinta.
@@ -137,9 +137,8 @@ export default function Interns() {
       <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-interns-hero">
         <div className="ss-container">
           <div className="max-w-3xl">
-            <Eyebrow num="05" tone="navy" className="mb-6" />
-            <h1 
-              className="mb-5"
+            <HeroKicker page="interns" testId="text-interns-kicker" />
+            <h1
               data-testid="text-interns-title"
             >
               {t.heroTitle}

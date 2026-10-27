@@ -1,5 +1,9 @@
 # Sistema de Agentes AI - Documentación Técnica
 
+## Regla obligatoria para cualquier agente o IA
+
+Todo agente que cambie el sitio debe comprobar que el cambio quede conectado al CMS. Esto incluye contenido, textos de interfaz, formularios, estados habilitado/deshabilitado, imágenes, videos, datos de contacto y ajustes visuales editables. Antes de cerrar una tarea debe identificar la sección CMS o la API que gobierna el dato, conservar un fallback en `shared/cms-defaults.json` cuando corresponda, confirmar que el valor guardado llega a la interfaz pública y ejecutar `npm run check` y `npm run build`. Un cambio no está terminado si funciona únicamente con valores fijos en el frontend o si rompe la persistencia del admin.
+
 ## Índice
 1. [Arquitectura del Sistema](#arquitectura-del-sistema)
 2. [Agentes Especializados](#agentes-especializados)

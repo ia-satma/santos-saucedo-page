@@ -9,9 +9,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { HeroKicker } from "@/components/editorial/HeroKicker";
 import { equipoMosaicPhotos as equipoPhotos } from "@/lib/equipoMosaicPhotos";
 import { fallbackToOriginalSrc, getTeamPhotoSrcSet, isNamedOnTeamPage } from "@/lib/teamPhotoSources";
-import { Eyebrow } from "@/components/editorial";
 import { TextLink } from "@/components/home26/primitives";
 import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
@@ -352,7 +352,7 @@ export default function Team() {
         <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-team-hero">
           <div className="ss-container">
             <div>
-              <Eyebrow num="03" tone="navy" className="mb-6" />
+              <HeroKicker page="team" testId="text-team-kicker" />
               {/* h1 = etiqueta del menú; mb-5 solo si sigue un subtítulo */}
               <h1
                 className={t.subtitle ? "mb-5" : undefined}

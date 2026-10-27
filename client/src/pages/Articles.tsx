@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Eyebrow } from "@/components/editorial";
+import { HeroKicker } from "@/components/editorial/HeroKicker";
 import { MonitorList } from "@/components/monitor/MonitorList";
 import { keepFirmName } from "@/lib/firmName";
 
@@ -92,7 +92,7 @@ export default function ArticlesPage() {
         <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-articles-hero">
           <div className="ss-container">
             <div className="max-w-3xl">
-              <Eyebrow num="04" tone="navy" className="mb-6" />
+              <HeroKicker page="articles" testId="text-articles-kicker" />
               <h1
                 className="mb-5"
                 data-testid="text-articles-title"
