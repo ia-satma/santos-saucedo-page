@@ -404,7 +404,7 @@ export function Monitor26({ lang, limit = 3 }: { lang: Lang26; limit?: number })
       id="news"
       {...langAttrs[lang]}
       data-surface="light"
-      className={`bg-white ${Y.monitor} ${JOIN_AFTER} ${JOIN_BEFORE}`}
+      className={`ss-paper ${Y.monitor} ${JOIN_AFTER} ${JOIN_BEFORE}`}
       aria-labelledby="ss26-monitor"
     >
       <div className="ss-container">

@@ -945,11 +945,46 @@ a:focus-visible > .ss-arrow:dir(rtl) {
 }
 .ss-motion [data-reveal]:not([data-in]) { opacity: 0; transform: translateY(24px); }
 @media (max-width: 767px) { .ss-motion [data-reveal]:not([data-in]) { transform: translateY(16px); } }
-/* Apertura: el marco se abre de abajo hacia arriba y la foto (si es una sola) se asienta */
-.ss-motion [data-curtain] { transition: clip-path var(--ss-dur-slow) var(--ss-ease-out) var(--reveal-delay, 0s); }
-.ss-motion [data-curtain]:not([data-in]) { clip-path: inset(100% 0 0 0); }
+/* Entrada de secciones: cada panel sube con una demora corta según su posición. Esto cubre
+   también páginas que no usan el componente Reveal y mantiene el contenido navegable si JS no
+   está disponible. */
+.ss-motion [data-scroll-panel] {
+  transition:
+    opacity 720ms var(--ss-ease-out) calc(var(--scroll-index, 0) * 70ms),
+    transform 900ms var(--ss-ease-out) calc(var(--scroll-index, 0) * 70ms);
+  will-change: opacity, transform;
+}
+.ss-motion [data-scroll-panel]:not([data-scroll-in]) {
+  opacity: 0;
+  transform: translate3d(0, 52px, 0);
+}
+.ss-motion [data-scroll-panel][data-scroll-in] { opacity: 1; transform: none; }
+@media (max-width: 767px) {
+  .ss-motion [data-scroll-panel]:not([data-scroll-in]) { transform: translate3d(0, 30px, 0); }
+}
+/* Apertura: el marco se abre de abajo hacia arriba y la foto (si es una sola) se asienta. La
+   escala y la opacidad hacen visible el cambio incluso en fotografías con poco contraste. */
+.ss-motion [data-curtain] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    clip-path var(--ss-dur-slow) var(--ss-ease-out) var(--reveal-delay, 0s),
+    opacity var(--ss-dur-base) var(--ss-ease-out) var(--reveal-delay, 0s),
+    transform var(--ss-dur-lavish) var(--ss-ease-out) var(--reveal-delay, 0s);
+}
+.ss-motion [data-curtain]:not([data-in]) {
+  clip-path: inset(100% 0 0 0);
+  opacity: 0.18;
+  transform: translate3d(0, 30px, 0) scale(1.025);
+}
 .ss-motion [data-curtain] img:only-of-type { transition: transform var(--ss-dur-lavish) var(--ss-ease-out) var(--reveal-delay, 0s); }
 .ss-motion [data-curtain]:not([data-in]) img:only-of-type { transform: scale(1.08); }
+/* Parallax breve en fotos del contenido. Usa la propiedad translate para no pisar el transform
+   que ya usan las imágenes activas de Prácticas y del mosaico de Socios. */
+.ss-motion main img[data-scroll-parallax] {
+  translate: 0 var(--ss-parallax-y, 0px);
+  will-change: translate;
+}
 /* Trazo: un filete se dibuja de izquierda a derecha */
 .ss-motion [data-trazo] { transform-origin: left center; transition: transform var(--ss-dur-slow) var(--ss-ease-out) var(--reveal-delay, 0s); }
 .ss-motion [data-trazo]:not([data-in]) { transform: scaleX(0); }

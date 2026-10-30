@@ -15,7 +15,10 @@ import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
 import { isStaticSite } from "@/lib/queryClient";
 import { chrome26 } from "@/components/home26/chrome26";
 
-const routerBase = isStaticSite ? "/santos-saucedo-page" : "";
+// Usa la misma base que Vite: en local suele ser `/`, mientras que GitHub Pages
+// conserva `/santos-saucedo-page/`. Evita que el preview local quede en blanco
+// porque el router busque todas las rutas bajo el prefijo de Pages.
+const routerBase = isStaticSite ? import.meta.env.BASE_URL.replace(/\/$/, "") : "";
 
 function ScrollToTop() {
   const [location] = useLocation();
