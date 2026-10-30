@@ -2,6 +2,7 @@ import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
+import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import { SectionMark } from "./primitives";
 import { home26, langAttrs, type Lang26 } from "./content";
 import { chrome26 } from "./chrome26";
@@ -121,15 +122,13 @@ function HeroVideo({
   );
 }
 
-/* Portada editorial: wordmark HTML seleccionable y monograma oficial como marca de agua. */
+/* Portada editorial: logo oficial blanco/lima y monograma oficial como marca de agua. */
 export default function Hero26({ lang }: { lang: Lang26 }) {
   const media = useCmsMedia();
   const liveHome = useCmsContent("home", home26);
   const liveChrome = useCmsContent("chrome", chrome26);
   const links = useCmsContent("links", { about: "/about", contact: "/contact" });
   const t = liveHome[lang].hero;
-  const sharedName = t.titleFirst.trim().toLowerCase() === "santos"
-    && t.titleSecond.trim().toLowerCase() === "saucedo";
   const labels = liveChrome[lang].heroVideo;
   // Movimiento reducido (macOS/iOS "Reducir movimiento"): el cliente pidió que el video se vea en
   // todos los equipos (junta del 16-10-2026). Es una toma aérea lenta, sin destellos, y el botón de
@@ -230,26 +229,20 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
       </div>
 
       <div className="ss-hero-body">
-        {/* Nombre seleccionable en HTML; la S compartida conserva el nombre accesible completo. */}
+        {/* La marca usa siempre el logo oficial; el contenido editorial debajo sigue siendo editable desde CMS. */}
         <div className="ss-hero-copy">
           <p className="ss-hero-eyebrow">{t.eyebrow}</p>
-          <h1
-            id="ss26-hero-title"
-            className={`ss-hero-wordmark ${sharedName ? "ss-hero-wordmark--shared" : "ss-hero-wordmark--custom"}`}
-            aria-label={`${t.titleFirst} & ${t.titleSecond}`}
-          >
-            {sharedName ? (
-              <>
-                <span aria-hidden="true" className="ss-hero-canonical-first">{t.titleFirst.trim().slice(0, -1)}</span>
-                <span aria-hidden="true" className="ss-hero-canonical-shared">{t.titleFirst.trim().slice(-1)}</span>
-                <span aria-hidden="true" className="ss-hero-canonical-last">{t.titleSecond.trim().slice(1)}</span>
-              </>
-            ) : (
-              <span aria-hidden="true" className="ss-hero-custom-names">
-                <span>{t.titleFirst}</span>
-                <span>{t.titleSecond}</span>
-              </span>
-            )}
+          <h1 id="ss26-hero-title">
+            <img
+              src={media.brand.logoLight || logoBlancoLima}
+              alt={media.brand.name || "Santos & Saucedo"}
+              width={2400}
+              height={393}
+              className="ss-hero-logo"
+              onError={(event) => {
+                if (event.currentTarget.src !== logoBlancoLima) event.currentTarget.src = logoBlancoLima;
+              }}
+            />
           </h1>
           <span aria-hidden="true" className="ss-hero-rule" />
           <p className="ss-hero-tagline">{t.tagline}</p>
