@@ -5,10 +5,15 @@
       "menu": "Menú",
       "close": "Cerrar",
       "hero": {
+        "eyebrow": "Firma legal empresarial",
+        "titleFirst": "Santos",
+        "titleSecond": "Saucedo",
+        "primaryCta": "Conozca la firma",
+        "secondaryCta": "Hable con nosotros",
         "tagline": "Derecho laboral para empresas",
         "place": [
           "San Pedro Garza García",
-          "Desde 2009"
+          "Desde 2010"
         ]
       },
       "firma": {
@@ -61,10 +66,15 @@
       "menu": "Menu",
       "close": "Close",
       "hero": {
+        "eyebrow": "Business law firm",
+        "titleFirst": "Santos",
+        "titleSecond": "Saucedo",
+        "primaryCta": "Discover the firm",
+        "secondaryCta": "Talk to our team",
         "tagline": "Labor law for companies",
         "place": [
           "San Pedro Garza García",
-          "Since 2009"
+          "Since 2010"
         ]
       },
       "firma": {

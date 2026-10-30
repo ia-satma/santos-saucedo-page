@@ -20,11 +20,15 @@ export const home26 = {
     skip: "Ir al contenido",
     menu: "Menú",
     close: "Cerrar",
-    // Héroe (composición aprobada, H4): el logotipo es el h1 junto con la frase; debajo, lugar
-    // y año. Las dos partes del lugar se unen con " · " (en teléfono, una debajo de la otra).
+    // Héroe: textos del wordmark y llamadas a la acción, editables desde CMS.
     hero: {
+      eyebrow: "Firma legal empresarial",
+      titleFirst: "Santos",
+      titleSecond: "Saucedo",
       tagline: "Derecho laboral para empresas",
-      place: ["San Pedro Garza García", "Desde 2009"],
+      place: ["San Pedro Garza García", "Desde 2010"],
+      primaryCta: "Conozca la firma",
+      secondaryCta: "Hable con nosotros",
     },
     firma: {
       // h2 de § 01 (documento de redacción): el nombre de la sección, como Socios y Monitor Laboral
@@ -112,8 +116,13 @@ export const home26 = {
     menu: "Menu",
     close: "Close",
     hero: {
+      eyebrow: "Business law firm",
+      titleFirst: "Santos",
+      titleSecond: "Saucedo",
       tagline: "Labor law for companies",
-      place: ["San Pedro Garza García", "Since 2009"],
+      place: ["San Pedro Garza García", "Since 2010"],
+      primaryCta: "Discover the firm",
+      secondaryCta: "Talk to our team",
     },
     firma: {
       title: "The firm",

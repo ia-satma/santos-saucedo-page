@@ -2,10 +2,10 @@ import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
-import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import { SectionMark } from "./primitives";
 import { home26, langAttrs, type Lang26 } from "./content";
 import { chrome26 } from "./chrome26";
+import { SiteLink } from "./SiteLink";
 
 // Video de la portada en color natural. Ruta con la base de Pages
 // (/santos-saucedo-page/ en el build estático).
@@ -121,16 +121,15 @@ function HeroVideo({
   );
 }
 
-/* Héroe de la portada, composición aprobada por el cliente (H4, referencia
-   video-portada/muestras/portada-completa.jpg, lienzo 1920 × 1080): video a toda la primera
-   pantalla bajo el encabezado transparente; al centro, el logotipo blanco con § lima, la raya
-   lima, la frase y la línea de lugar y año; a la derecha, la § del logotipo como marca de agua
-   blanca al 20 %, completa. Medidas en ss26.css (.ss-hero…), en la unidad --u (1 px a 1920 × 1080). */
+/* Portada editorial: wordmark HTML seleccionable y monograma oficial como marca de agua. */
 export default function Hero26({ lang }: { lang: Lang26 }) {
   const media = useCmsMedia();
   const liveHome = useCmsContent("home", home26);
   const liveChrome = useCmsContent("chrome", chrome26);
+  const links = useCmsContent("links", { about: "/about", contact: "/contact" });
   const t = liveHome[lang].hero;
+  const sharedName = t.titleFirst.trim().toLowerCase() === "santos"
+    && t.titleSecond.trim().toLowerCase() === "saucedo";
   const labels = liveChrome[lang].heroVideo;
   // Movimiento reducido (macOS/iOS "Reducir movimiento"): el cliente pidió que el video se vea en
   // todos los equipos (junta del 16-10-2026). Es una toma aérea lenta, sin destellos, y el botón de
@@ -211,7 +210,7 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
       {/* Fondo: Azul Profundo mientras carga (.ss-hero), video o póster y las capas de lectura */}
       <motion.div
         aria-hidden="true"
-        className="-inset-[8%] absolute -z-10 will-change-transform"
+        className="ss-hero-media -inset-[8%] absolute -z-10 will-change-transform"
         style={{
           y: reduceMotion ? 0 : backgroundY,
           scale: reduceMotion ? 1.06 : backgroundScale,
@@ -225,27 +224,49 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
         <div className="ss-hero-veil absolute inset-0" />
       </motion.div>
 
-      {/* La § oficial del logotipo (seccion.svg), blanca al 20 %: completa dentro del héroe, sin
-          recortar ni deformar (aspecto fijo del trazo). Solo desde lg; debajo taparía el logotipo. */}
+      {/* Monograma oficial proporcional, recortado en el margen derecho como en la referencia. */}
       <div aria-hidden="true" className="ss-hero-mark-box">
         <SectionMark className="ss-hero-mark" />
       </div>
 
       <div className="ss-hero-body">
-        {/* Un solo h1: el logotipo (su alt es el nombre) y la frase. La raya es solo gráfica. */}
-        <h1 id="ss26-hero-title" className="flex flex-col items-center">
-          <img src={media.brand.logoLight} alt={media.brand.name} width={2400} height={393} className="ss-hero-logo" />
+        {/* Nombre seleccionable en HTML; la S compartida conserva el nombre accesible completo. */}
+        <div className="ss-hero-copy">
+          <p className="ss-hero-eyebrow">{t.eyebrow}</p>
+          <h1
+            id="ss26-hero-title"
+            className={`ss-hero-wordmark ${sharedName ? "ss-hero-wordmark--shared" : "ss-hero-wordmark--custom"}`}
+            aria-label={`${t.titleFirst} & ${t.titleSecond}`}
+          >
+            {sharedName ? (
+              <>
+                <span aria-hidden="true" className="ss-hero-canonical-first">{t.titleFirst.trim().slice(0, -1)}</span>
+                <span aria-hidden="true" className="ss-hero-canonical-shared">{t.titleFirst.trim().slice(-1)}</span>
+                <span aria-hidden="true" className="ss-hero-canonical-last">{t.titleSecond.trim().slice(1)}</span>
+              </>
+            ) : (
+              <span aria-hidden="true" className="ss-hero-custom-names">
+                <span>{t.titleFirst}</span>
+                <span>{t.titleSecond}</span>
+              </span>
+            )}
+          </h1>
           <span aria-hidden="true" className="ss-hero-rule" />
-          <span className="ss-hero-tagline">{t.tagline}</span>
-        </h1>
-        <p className="ss-hero-place">
-          <span>{t.place[0]}</span>
-          {/* En teléfono, lugar y año en dos líneas, sin el punto medio */}
-          <span aria-hidden="true" className="ss-hero-dot">
-            ·
-          </span>
-          <span className="ss-hero-year">{t.place[1]}</span>
-        </p>
+          <p className="ss-hero-tagline">{t.tagline}</p>
+          <p className="ss-hero-place">
+            <span>{t.place[0]}</span>
+            <span aria-hidden="true" className="ss-hero-dot">·</span>
+            <span className="ss-hero-year">{t.place[1]}</span>
+          </p>
+        </div>
+        <nav className="ss-hero-actions" aria-label={lang === "es" ? "Enlaces principales" : "Primary links"}>
+          <SiteLink href={links.about} data-testid="hero-cta-firm" className="ss-hero-cta ss-hero-cta--primary">
+            {t.primaryCta}<svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor"><path d="M3 8h10m-4-4 4 4-4 4" /></svg>
+          </SiteLink>
+          <SiteLink href={links.contact} data-testid="hero-cta-contact" className="ss-hero-cta ss-hero-cta--secondary">
+            {t.secondaryCta}<svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor"><path d="M3 8h10m-4-4 4 4-4 4" /></svg>
+          </SiteLink>
+        </nav>
       </div>
 
       {/* Pausa del video (WCAG 2.2.2): un solo botón, solo icono, en la esquina inferior del lado

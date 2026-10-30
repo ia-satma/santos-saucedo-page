@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { useLocation } from "wouter";
 import { SiteLink as Link } from "./SiteLink";
-import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import { useChrome26 } from "./chrome26";
 import { useSiteContact } from "./useSiteContact";
 import { useDialog26 } from "./useDialog26";
@@ -121,7 +120,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
     <>
       <header
         {...t.attrs}
-        className={`ss26 ss-header sticky top-0 z-50 text-white ${
+        className={`ss26 ss-header sticky top-0 z-50 text-white ${overlay ? "ss-header--home-hero" : ""} ${
           solid ? "bg-ss-navy" : "bg-transparent"
         } ${scrolled ? "shadow-[0_1px_0_rgba(255,255,255,0.08)]" : ""} ${tucked && !panel ? "is-tucked" : ""}`}
         onFocus={() => setTucked(false)}
