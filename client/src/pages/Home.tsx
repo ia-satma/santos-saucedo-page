@@ -2,7 +2,7 @@ import defaults from "@shared/cms-defaults.json";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useEffect } from "react";
 import Header26 from "@/components/home26/Header26";
-import Hero26 from "@/components/home26/Hero26";
+import Telon from "@/v3/marca/Telon";
 import {
   Firma26,
   Creemos26,
@@ -68,7 +68,7 @@ export default function Home() {
 
       <main id="main-content">
         {/* Expediente §: cada sección es un § numerado */}
-        {layout.home.hero&&<Hero26 lang={lang} />}
+        {layout.home.hero&&<Telon lang={lang} />}
         {layout.homeOrder.map(key=>{
           if(!layout.home[key as keyof typeof layout.home])return null;
           switch(key){
