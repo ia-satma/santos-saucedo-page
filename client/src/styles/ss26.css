@@ -37,13 +37,24 @@
   font-display: swap;
   unicode-range: U+0000-017F, U+2000-206F;
 }
+/* Texto: Hanken Grotesk (peso variable 100–900), más fina que Source Sans 3 (pedido del
+   5-11-2026 al ver la demo v3: «la letra de los textos no es fina»). El cirílico sigue con
+   Source Sans 3 dentro de la misma familia. */
 @font-face {
   font-family: "SS Sans";
-  src: url("./fonts/SourceSans3-r-latin.woff2") format("woff2");
-  font-weight: 400 700;
+  src: url("./fonts/HankenGrotesk-r-latin.woff2") format("woff2");
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
-  unicode-range: U+0000-017F, U+0131, U+0152-0153, U+02BB-02DC, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212, U+FEFF, U+FFFD;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "SS Sans";
+  src: url("./fonts/HankenGrotesk-r-latinext.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+2020, U+20A0-20AB, U+2113, U+A720-A7FF;
 }
 @font-face {
   font-family: "SS Sans";
@@ -55,8 +66,8 @@
 }
 @font-face {
   font-family: "SS Sans";
-  src: url("./fonts/SourceSans3-i-latin.woff2") format("woff2");
-  font-weight: 400 600;
+  src: url("./fonts/HankenGrotesk-i-latin.woff2") format("woff2");
+  font-weight: 100 900;
   font-style: italic;
   font-display: swap;
   unicode-range: U+0000-017F, U+0131, U+0152-0153, U+02BB-02DC, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212, U+FEFF, U+FFFD;
@@ -108,8 +119,8 @@ html:has(header.ss26) {
 /* Los colores de marca en canales RGB, solo en :root: el panel puede cambiarlos (tema, lib/brandColors)
    y todo lo demás los lee de aquí, también las utilidades de Tailwind con opacidad (/15, /70). */
 :root {
-  --ss-navy-rgb: 24 23 91; /* #18175B, Azul Profundo */
-  --ss-marino-rgb: 29 28 104; /* #1D1C68, Azul Marino */
+  --ss-navy-rgb: 12 35 64; /* #0C2340, azul noche (junta del 30-10 y demo v3) */
+  --ss-marino-rgb: 15 63 107; /* #0F3F6B, azul de la junta */
   --ss-lime-rgb: 178 235 62; /* #B2EB3E, Verde Lima: el acento */
   --ss-paper-rgb: 243 241 234; /* #F3F1EA, Hueso */
   /* Papeles que solo cambian las paletas completas del selector (lib/brandColors): fondo de

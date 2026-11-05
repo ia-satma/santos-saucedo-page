@@ -1,0 +1,48 @@
+Fotos provisionales para la demo de Santos & Saucedo. Todas de Unsplash, Licencia Unsplash (uso comercial libre, sin atribución obligatoria).
+
+laboral-1.jpg — Autor: Craftsman Concrete Floors (@craftsmanconcrete_official) — Sitio: Unsplash — https://unsplash.com/photos/los-trabajadores-inspeccionan-un-gran-almacen-industrial-vacio-68E-dFpOF0g
+laboral-2.jpg — Autor: Adrian Sulyok (@sulyok_imaging) — Sitio: Unsplash — https://unsplash.com/photos/trabajadores-caminando-por-el-pasillo-del-almacen-c_4eaGRDSVU
+laboral-3.jpg — Autor: Homa Appliances (@homaappliances) — Sitio: Unsplash — https://unsplash.com/photos/una-maquina-grande-en-una-fabrica-con-gente-trabajando-en-ella-0V9Ua2YsXfE
+migratorio-1.jpg — Autor: Zach Camp (@zachccamp) — Sitio: Unsplash — https://unsplash.com/photos/el-ala-de-un-avion-volando-sobre-una-cadena-montanosa-nw0kV5Vysdw
+migratorio-2.jpg — Autor: Matej Pribanic (@bukze) — Sitio: Unsplash — https://unsplash.com/photos/un-ala-de-avion-sobre-una-cadena-montanosa-HgOShPZGb8U
+migratorio-3.jpg — Autor: Natallia Strok (@natali1998) — Sitio: Unsplash — https://unsplash.com/photos/avion-comercial-aterrizando-con-montanas-nevadas-bajo-un-cielo-azul-2DvayIt3uLQ
+corporativo-1.jpg — Autor: Darya Min (@darmink) — Sitio: Unsplash — https://unsplash.com/photos/edificio-en-construccion-con-montanas-y-cielo-tormentoso-I3iA-9lwvA0
+corporativo-2.jpg — Autor: Stefano Bazzoli (@stefanobaz) — Sitio: Unsplash — https://unsplash.com/photos/escalera-de-metal-gris-cerca-de-la-casa-UYs_Ye-JZA0
+corporativo-3.jpg — Autor: david Griffiths (@itscakefortea) — Sitio: Unsplash — https://unsplash.com/photos/un-sitio-de-construccion-con-una-gran-cantidad-de-equipos-de-construccion-UtgKZUlRV78
+industrias-1.jpg — Autor: Lenny Kuhne (@lennykuhne) — Sitio: Unsplash — https://unsplash.com/photos/vehiculo-gris-que-se-arregla-dentro-de-la-fabrica-usando-maquinas-roboticas-jHZ70nRk7Ns
+industrias-2.jpg — Autor: Lilian Do Khac (@nailil) — Sitio: Unsplash — https://unsplash.com/photos/brazos-roboticos-ensamblando-un-chasis-de-coche-en-una-linea-de-fabrica-EyqUxJuOb1Q
+industrias-3.jpg — Autor: Lilian Do Khac (@nailil) — Sitio: Unsplash — https://unsplash.com/photos/linea-de-montaje-de-coches-con-brazos-roboticos-y-carroceria-RWwaf60fw0w
+Fotos provisionales por industria para la demo de Santos & Saucedo. Todas de Unsplash, Licencia Unsplash (uso comercial libre, sin atribución obligatoria).
+
+bebidas-1.jpg — Autor: Waldemar Brandt (@waldemarbrandt67w) — Unsplash — https://unsplash.com/photos/botellas-de-vidrio-en-la-parte-superior-de-la-maquina-gris-Xlc8HG_FB2k
+bebidas-2.jpg — Autor: KC Shum (@kcshum) — Unsplash — https://unsplash.com/photos/las-botellas-de-refresco-estan-alineadas-con-tapas-rojas-GLdFbjaOvq8
+acero-1.jpg — Autor: Morteza Mohammadi (@morophoto) — Unsplash — https://unsplash.com/photos/una-gran-pieza-de-metal-que-se-vierte-en-una-maquina-ZLzkwU49BdY
+acero-2.jpg — Autor: NIloy Tanvirul (@vitriolic) — Unsplash — https://unsplash.com/photos/el-metal-caliente-esta-en-proceso-de-fabricacion-ChV1dmCnzRc
+energia-1.jpg — Autor: Steve Marquez (@stmarq) — Unsplash — https://unsplash.com/photos/los-aerogeneradores-se-encuentran-en-un-paisaje-seco-con-montanas-O5YwVG4AXD8
+energia-2.jpg — Autor: Manny Becerra (@mannyb) — Unsplash — https://unsplash.com/photos/una-gran-variedad-de-paneles-solares-en-un-desierto-Ss73u_UKr3U
+exportacion-1.jpg — Autor: Homa Appliances (@homaappliances) — Unsplash — https://unsplash.com/photos/una-maquina-grande-en-un-edificio-grande-pWUyHVJgLhg
+exportacion-2.jpg — Autor: Hyundai Motor Group (@hyundaimotorgroup) — Unsplash — https://unsplash.com/photos/una-fabrica-llena-de-muchas-maquinas-y-cajas-h2rWePLKxvs
+seguridad-1.jpg — Autor: Vera Gorbunova (@veragorbunova) — Unsplash — https://unsplash.com/photos/mujer-con-casco-azul-fEwtJ62KXlE
+seguridad-2.jpg — Autor: Ali Mkumbwa (@mkumbwajr) — Unsplash — https://unsplash.com/photos/un-hombre-con-overol-sosteniendo-un-casco-WwMG7hiQgDE
+monterrey-1.jpg — Autor: Gabriel Tovar (@gabrielrana) — Unsplash — https://unsplash.com/photos/una-vista-de-una-ciudad-con-montanas-al-fondo-GsikuTlvUCU
+monterrey-2.jpg — Autor: Jorge Gardner (@gardnerjorge) — Unsplash — https://unsplash.com/photos/vista-aerea-de-los-edificios-durante-la-hora-dorada-6YkqE50Gin0
+
+Ronda 10 (5 nov 2026) · fotos conceptuales, todas de Unsplash (licencia gratuita, verificada en cada página; ninguna Unsplash+ ni hecha con IA).
+Tratamiento único para todo el sitio: color natural, contraste profundo, sombras con leve tinte marino y viñeta suave (tools/grade.py).
+c-laboral.webp — laboral-1.jpg de la tanda anterior (Craftsman Concrete Floors)
+c-acumulado.webp — Morteza Mohammadi — https://unsplash.com/photos/-kWkoUkFyp0
+c-corporativo.webp — Jorge Gardner — https://unsplash.com/photos/hKHDEw-GTpc
+c-migratorio.webp — Julian Hochgesang — https://unsplash.com/photos/s4i33r-KszI (retoque: se borró el logotipo de la aerolínea en la punta del ala)
+c-prevencion.webp — Taneli Lahtinen — https://unsplash.com/photos/CO21c8nFarY
+c-estructura.webp — Alain Pham — https://unsplash.com/photos/P_qvsF7Yodw
+c-altura.webp — Sies Kranen — https://unsplash.com/photos/S4nPKoV5dFw (retoque: se borró el texto impreso en la camisa)
+c-ind-bebidas.webp — Waldemar Brandt — https://unsplash.com/photos/Xlc8HG_FB2k
+c-ind-automotriz.webp — carlos aranda — https://unsplash.com/photos/Spq4fuFM4Kw
+c-ind-acero.webp — Morteza Mohammadi — https://unsplash.com/photos/ZLzkwU49BdY
+c-ind-energia.webp — Matthew Henry — https://unsplash.com/photos/yETqkLnhsUI
+c-reaccion.webp — Ansel Huang — https://unsplash.com/photos/Qqr8dwAjqzw
+c-carnero.webp — Pete Nuij — https://unsplash.com/photos/6Uh-fJizwlw
+c-noche.webp — Sealtiel Huerta — https://unsplash.com/photos/dS4c6AMLG34
+c-san-pedro.webp — dron propio (dron-san-pedro) con el mismo tratamiento
+c-cerro-luna.webp — Jorge Gardner — https://unsplash.com/photos/jY6PNtt4jRI
+c-atardecer.webp — Jorge Gardner — https://unsplash.com/photos/6YkqE50Gin0 (foto-monterrey-2 con el mismo tratamiento)

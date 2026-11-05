@@ -15,7 +15,7 @@ type Palette = BrandTheme & { id: string; name: string; roles: [string, string, 
 
 export const PALETTES: Palette[] = [
   {
-    id: "original", name: "Original", roles: ["#18175B", "#F3F1EA", "#B2EB3E"],
+    id: "original", name: "Original", roles: ["#0C2340", "#F3F1EA", "#B2EB3E"],
     note: "Como está hoy",
   },
   {

@@ -8,7 +8,7 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 // llevan hash, así que se buscan en el bundle. La itálica y los subconjuntos cirílicos se piden
 // solo cuando hacen falta (unicode-range). En desarrollo no hay bundle y no hace nada.
 function preloadFonts(): Plugin {
-  const fonts = [/(^|\/)Newsreader-Roman-latin-[\w-]+\.woff2$/, /(^|\/)SourceSans3-r-latin-[\w-]+\.woff2$/];
+  const fonts = [/(^|\/)Newsreader-Roman-latin-[\w-]+\.woff2$/, /(^|\/)HankenGrotesk-r-latin-[\w-]+\.woff2$/];
   let base = "/";
   return {
     name: "ss-preload-fonts",

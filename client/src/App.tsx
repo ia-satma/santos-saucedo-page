@@ -3,6 +3,7 @@ import { AdminShell } from "@/features/admin/AdminShell";
 import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from "wouter";
 import { useViewTransitionLocation } from "@/lib/viewTransitionLocation";
 import { useEffect, lazy, Suspense } from "react";
+import { RmSync } from "@/v3/rm";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { applyBrandColors } from "@/lib/brandColors";
 import cmsDefaults from "@shared/cms-defaults.json";
@@ -42,6 +43,7 @@ const News = lazy(() => import("@/pages/News"));
 const Contact = lazy(() => import("@/pages/Contact"));
 const Offices = lazy(() => import("@/pages/Offices"));
 const About = lazy(() => import("@/pages/About"));
+const Industries = lazy(() => import("@/pages/Industries"));
 const Careers = lazy(() => import("@/pages/Careers"));
 const Interns = lazy(() => import("@/pages/Interns"));
 const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
@@ -213,6 +215,7 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/about" component={About} />
+        <Route path="/industries" component={Industries} />
         <Route path="/practice-groups" component={PracticeGroups} />
         <Route path="/practice-groups/:slug" component={PracticeGroupDetail} />
         <Route path="/team" component={Team} />
@@ -318,6 +321,7 @@ function App() {
           <LanguageProvider>
             <WouterRouter base={routerBase} hook={useViewTransitionLocation}>
               <BrandColors />
+              <RmSync />
               <ScrollToTop />
               <SkipLinks />
               <Toaster />
