@@ -4,6 +4,9 @@ import { setPreviewPalette, type BrandTheme } from "@/lib/brandColors";
 // Selector privado para comparar paletas con el cliente (petición del 24-10-2026). Solo aparece en
 // el navegador que abrió el sitio con ?paletas=1 (?paletas=0 lo quita); el público nunca lo ve.
 // La elegida se recuerda en ese navegador y no cambia lo guardado en el panel.
+// Desde el 6-11-2026 ya no está a la vista de todos en el pie: la paleta de la demo v3 quedó aprobada
+// y quien había elegido una paleta con rojo seguía viendo el sitio en rojo. Las claves llevan «-v3»
+// y las de antes se borran, así que toda elección vieja se olvida.
 //
 // Método de los videos de referencia que compartió el cliente: dos colores que "se ven bien"
 // juntos (primario y secundario) y un tercero que le da carácter (terciario, el acento). Aquí cada
@@ -62,27 +65,28 @@ export const PALETTES: Palette[] = [
   },
 ];
 
-const FLAG = "ss-paletas";
-const CHOICE = "ss-paleta";
+const FLAG = "ss-paletas-v3";
+const CHOICE = "ss-paleta-v3";
+const OLD_KEYS = ["ss-paletas", "ss-paleta"];
 const read = (k: string) => { try { return localStorage.getItem(k); } catch { return null; } };
 const write = (k: string, v: string | null) => {
   try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch {}
 };
 
-function enabledFromUrl(): boolean {
+/** Si el selector privado está activo en este navegador (?paletas=1 lo activa, ?paletas=0 lo quita) */
+export function palettesEnabled(): boolean {
   if (typeof window === "undefined") return false;
+  for (const k of OLD_KEYS) write(k, null);
   const q = new URLSearchParams(window.location.search).get("paletas");
   if (q === "1") write(FLAG, "1");
   if (q === "0") { write(FLAG, null); write(CHOICE, null); }
   return read(FLAG) === "1";
 }
 
-/** placement "footer": botón visible para todos en el pie (petición del 25-10-2026, para que
-    varias personas comparen sin el enlace ?paletas=1); el del encabezado sigue con el enlace. */
+/** placement "footer": el botón en el pie, con el formato del pie; solo con ?paletas=1. */
 export function PaletteSwitcher({ placement = "header" }: { placement?: "header" | "footer" }) {
   const footer = placement === "footer";
-  // En el pie, siempre visible; fuera del pie, solo con ?paletas=1 (?paletas=0 borra la elección)
-  const [enabled] = useState(() => enabledFromUrl() || footer);
+  const [enabled] = useState(palettesEnabled);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(() => read(CHOICE) || "original");
   const box = useRef<HTMLDivElement>(null);

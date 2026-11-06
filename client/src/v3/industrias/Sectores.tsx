@@ -5,6 +5,7 @@
    Tableta, teléfono y Modo Mario: cada industria con su foto a sangre, su nombre sobre la foto y,
    debajo, la línea y la lista. Nada se mueve solo. Marcado y clases: modules/industrias/section.html. */
 import { useLayoutEffect, useRef } from "react";
+import { Link } from "wouter";
 import "./industrias.css";
 import { initIndustrias } from "./initIndustrias";
 import type { IndustriasTexts } from "./texts";
@@ -62,7 +63,7 @@ export function Sectores({ t, headingId }: { t: IndustriasTexts; headingId: stri
       </div>
 
       <div className="in-wrap in-cierre">
-        <p>{t.cierre.texto} <a href="#presencia">{t.cierre.enlace}</a></p>
+        <p>{t.cierre.texto} <Link href="/team#presencia">{t.cierre.enlace}</Link></p>
       </div>
     </section>
   );

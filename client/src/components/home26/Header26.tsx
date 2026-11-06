@@ -257,7 +257,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
               <span className="sr-only">{t.search.open}</span>
             </button>}
 
-            {/* El selector de paletas vive en el pie (Footer26), visible para todos */}
+            {/* El selector de paletas vive en el pie (Footer26), solo con ?paletas=1 */}
 
             <button
               ref={menuButtonRef}
