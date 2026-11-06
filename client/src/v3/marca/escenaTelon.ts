@@ -359,32 +359,42 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
      (la demo dejaba fijo el espaciado final de .3em, más ancho que el de la tipografía actual,
      .26em, y la palabra se salía de su hueco y tocaba la siguiente). */
   function retirar(...as: Animation[]) { as.forEach((a) => { a.cancel(); animaciones.delete(a); }); }
+  /* Cambio de palabra sin hueco: la palabra que sale y la que entra se cruzan (la nueva sube
+     mientras la anterior se va) y el ancho del espacio se ajusta al mismo tiempo. Antes la
+     palabra se apagaba, el espacio cambiaba de ancho vacío y luego aparecía la nueva:
+     medio segundo sin palabra en cada cambio. En modo Mario solo se funden, sin moverse. */
+  let entrante: HTMLElement | null = null;
+  function quitarEntrante() { if (entrante) { entrante.remove(); entrante = null; } if (slot) slot.style.clipPath = ""; }
   function swap(i: number): Promise<void> {
     const txt = words![i];
     if (!pal || !slot || !tag) return Promise.resolve();
     if (!pal.animate) { pal.textContent = txt; slot.style.width = W[i] + "px"; return Promise.resolve(); }
-    if (rm) {
-      const a1 = tag.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, easing: EASE.in, fill: "forwards" });
-      animaciones.add(a1);
-      return a1.finished.then(() => {
-        pal.textContent = txt; slot.style.width = W[i] + "px";
-        const a2 = tag.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 400, easing: EASE.out, fill: "forwards" });
-        animaciones.add(a2);
-        return a2.finished.then(() => retirar(a1, a2));
-      });
-    }
-    const a1 = pal.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 240, easing: EASE.in, fill: "forwards" });
-    animaciones.add(a1);
-    return a1.finished.then(() => {
-      pal.textContent = txt;
-      return anima(slot, [{ width: slot.style.width }, { width: W[i] + "px" }], { duration: 320, easing: EASE.inout });
-    }).then(() => {
+    quitarEntrante();
+    const nuevo = pal.cloneNode(false) as HTMLElement;
+    nuevo.textContent = txt;
+    nuevo.setAttribute("aria-hidden", "true");
+    slot.appendChild(nuevo);
+    entrante = nuevo;
+    /* Rodillo: la palabra que sale sube y la nueva entra desde abajo; el espacio recorta solo
+       arriba y abajo, así nunca se ven dos palabras encimadas. El ancho se adelanta cuando la
+       nueva es más larga y espera a que salga la anterior cuando es más corta, para que ninguna
+       toque «Derecho» ni «para empresas». */
+    const D = rm ? 560 : 760, dy = rm ? "0em" : "1em", crece = W[i] >= (parseFloat(slot.style.width) || 0);
+    if (!rm) slot.style.clipPath = "inset(0 -100vw 0 -100vw)";
+    const desde = slot.style.width;
+    slot.style.width = W[i] + "px"; // el ancho final queda puesto; la animación solo cubre el trayecto
+    const aw = slot.animate([{ width: desde }, { width: W[i] + "px" }],
+      { duration: D * 0.62, delay: crece ? D * 0.06 : D * 0.3, easing: EASE.inout, fill: "backwards" });
+    const aOut = pal.animate([{ opacity: 1, transform: "translateY(0)" }, { opacity: 0, transform: "translateY(-" + dy + ")" }],
+      { duration: D * 0.5, easing: EASE.in, fill: "forwards" });
+    const aIn = nuevo.animate([{ opacity: 0, transform: "translateY(" + dy + ")" }, { opacity: 1, transform: "translateY(0)" }],
+      { duration: D * 0.68, delay: D * 0.32, easing: EASE.out, fill: "both" });
+    [aw, aOut, aIn].forEach((a) => animaciones.add(a));
+    return Promise.all([aw.finished, aOut.finished, aIn.finished]).then(() => {
       slot.style.width = W[i] + "px";
-      // Entra con el espaciado abierto .08em y se cierra en el de la tipografía (como la demo: .38 → .3em)
-      const cs = w.getComputedStyle(pal), ls = parseFloat(cs.letterSpacing) || 0, fs = parseFloat(cs.fontSize) || 16;
-      const a3 = pal.animate([{ opacity: 0, letterSpacing: ls + 0.08 * fs + "px" }, { opacity: 1, letterSpacing: ls + "px" }], { duration: 560, easing: EASE.out, fill: "forwards" });
-      animaciones.add(a3);
-      return a3.finished.then(() => retirar(a1, a3));
+      pal.textContent = txt;
+      retirar(aw, aOut, aIn);
+      quitarEntrante();
     });
   }
   function paso() {
@@ -406,7 +416,7 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
   function detener() {
     w.clearTimeout(timer); corriendo = false;
     // Un cambio a medias se corta: la palabra vuelve entera a la primera
-    animaciones.forEach((a) => a.cancel()); animaciones.clear();
+    animaciones.forEach((a) => a.cancel()); animaciones.clear(); quitarEntrante();
     if (words && pal && slot && (idx !== 0 || pal.textContent !== words[0])) { idx = 0; pal.textContent = words[0]; slot.style.width = W[0] + "px"; }
   }
   function revisarVista() {
@@ -418,6 +428,7 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
     w.clearTimeout(timer);
     animaciones.forEach((a) => a.cancel());
     animaciones.clear();
+    quitarEntrante();
   });
   if (words && pal) {
     pal.textContent = words[0];
