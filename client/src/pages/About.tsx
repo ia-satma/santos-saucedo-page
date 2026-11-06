@@ -17,7 +17,7 @@ import { useOfficeLabel } from "@/lib/officeLabel";
 import { practiceName, usePracticeNames } from "@/lib/practiceNames";
 import type { LanguageCode, PracticeGroup } from "@shared/schema";
 import { V3Main, V3NextPage, V3PageHeader, useV3Lang } from "@/v3/shared";
-import { FirmaRaiz, FirmaTexto, Laminas, Oficina, Prioridad, Principios } from "@/v3/firma/Firma";
+import { FirmaRaiz, FirmaTexto, LaminaCarnero, Oficina, Prioridad, Principios } from "@/v3/firma/Firma";
 import { HOME_FIRMA, TEXTOS } from "@/v3/firma/textos";
 import { v3Asset } from "@/v3/asset";
 
@@ -484,7 +484,9 @@ export default function About() {
 
           <Prioridad t={T} attrs={attrs} />
 
-          <Laminas t={T} attrs={attrs} logo={media.brand.logoLight} />
+          {/* El carnero, la filosofía de la firma. El avión (lámina 2/7, la capacidad de reacción) va en
+              la página de Prácticas, que es la que sigue en el recorrido */}
+          <LaminaCarnero t={T} attrs={attrs} logo={media.brand.logoLight} />
 
           <Oficina
             titulo={officeNameFor(language)}
@@ -508,14 +510,15 @@ export default function About() {
 
           {/* El final de la demo (la siguiente parte de la historia) con los enlaces que la página ya tenía */}
           <div data-testid="nav-about-related">
+            {/* Sigue Prácticas, donde está la lámina 2/7 (el avión); la primera práctica, entre los enlaces */}
             <V3NextPage
-              href={`/practice-groups/${firstSlug}`}
-              title={firstName}
+              href="/practice-groups"
+              title={nav[1].label}
               label={nextLabel}
               ariaLabel={language === "es" || language === "en" ? T.siguienteLabel : nextLabel}
               practices={[
                 { href: "/team", label: nav[2].label },
-                { href: "/practice-groups", label: nav[1].label },
+                { href: `/practice-groups/${firstSlug}`, label: firstName },
                 { href: "/news", label: nav[3].label },
                 { href: "/offices", label: officeNameFor(language) },
               ]}

@@ -1,92 +1,67 @@
-/* Listado de prácticas (/practice-groups) con el diseño de la demo v3, como sus cuatro páginas.
-   Sobre el CSS de la demo (client/src/v3/demo.css, que no se toca). Prefijo pg-. Todo dentro de .v3. */
+/* Prácticas (/practice-groups): el bloque de prácticas del Inicio (efecto Baker, demo.css pr-bk-*) como
+   cabecera de la página, y la lámina 2/7 del avión debajo. Sobre el CSS de la demo (client/src/v3/demo.css,
+   que no se toca). Prefijo pg-. Todo dentro de .v3. */
 
 /* index.css (≤639 px) limita a 80 px todo <header> que no sea .ss26: la cabecera de la página quedaba cortada */
 .v3.pg header { max-height: none; }
 
-/* Cabecera sin foto: el título y la entrada, con aire bajo la barra del sitio */
+/* Sin prácticas que mostrar: la cabecera sola, con el aviso */
 .v3 .pg-cab .sh-pp__cuerpo { padding-top: clamp(56px, 8vw, 120px); }
 .v3 .pg-cab .sh-lead { max-width: 30em; }
+.v3 .pg-aviso { margin-top: clamp(32px, 4vw, 48px); padding-top: 24px; color: var(--gris); border-top: 1px solid var(--linea); }
 
-/* Las cuatro prácticas: foto 3:2, número, nombre y resumen. La primera del panel (Laboral, «la práctica
-   central de la firma y la que da sentido a las demás») encabeza la lista a lo ancho; las otras van debajo,
-   en tres columnas (≥1100 px), en filas foto | texto (700–1099 px) o apiladas (teléfono). */
-.v3 .pg-lista { background: var(--hueso); padding-bottom: var(--sec-y); }
-.v3 .pg-grid {
-  list-style: none; margin: 0; padding: clamp(40px, 5vw, 64px) 0 0;
-  border-top: 1px solid var(--linea);
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(56px, 6vw, 88px) clamp(28px, 4vw, 56px);
-}
-@media (max-width: 699.98px) { .v3 .pg-grid { grid-template-columns: minmax(0, 1fr); } }
-.v3 .pg-item { min-width: 0; }
-.v3 .pg-a { display: block; text-decoration: none; color: inherit; }
-.v3 .pg-a:focus-visible { outline: 2px solid var(--azul); outline-offset: 8px; }
-.v3 .pg-foto { display: block; aspect-ratio: 3 / 2; overflow: hidden; background: var(--azul-noche); }
-.v3 .pg-foto img { width: 100%; height: 100%; object-fit: cover; }
-html:not(.rm) .v3 .pg-foto img { transition: transform var(--dur-slow) var(--ease-out); }
-html:not(.rm) .v3 .pg-a:hover .pg-foto img { transform: scale(1.025); }
-.v3 .pg-n {
-  display: block; margin-top: 22px;
-  font-family: var(--sans); font-weight: 500; font-size: var(--t-label); letter-spacing: var(--tr-label);
-  line-height: 1.3; color: var(--gris);
-}
-.v3 .pg-t {
-  margin-top: 10px;
-  font-family: var(--serif); font-weight: 400; font-size: var(--t-h3); line-height: 1.15; letter-spacing: -.01em;
-  color: var(--azul); text-wrap: balance;
-}
-.v3 .pg-t-txt {
-  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em;
-  text-decoration-color: transparent; transition: text-decoration-color var(--dur-base) var(--ease-out);
-}
-.v3 .pg-a:hover .pg-t-txt, .v3 .pg-a:focus-visible .pg-t-txt { text-decoration-color: var(--azul); }
-.v3 .pg-d { margin-top: 12px; max-width: 29.3em; color: var(--gris); text-wrap: pretty; hyphens: none; }
+/* ---- El bloque de Baker como cabecera ----
+   El titular es el de la página (h1), a la medida de los títulos de página del sitio. */
+.v3 .pr-practicas.pg-bk .pr-titulo { font-size: var(--t-h1); line-height: 1; }
+.v3 .pr-practicas.pg-bk .pr-entrada { max-width: 30em; }
+.v3 .pr-practicas.pg-bk .pr-titulo:focus { outline: none; }
+/* Debajo viene la lámina 2/7, también azul: la línea de la retícula cierra el bloque */
+.v3 .pr-practicas.pg-bk { border-bottom: 1px solid var(--pr-bk-linea); }
 
-.v3 .pg-item--esqueleto .pg-foto { width: 100%; height: auto; }
-.v3 .pg-aviso { padding-block: clamp(40px, 5vw, 64px); color: var(--gris); border-top: 1px solid var(--linea); }
+/* La descripción a la vista solo donde no hay panel (teléfono y toque) */
+.v3 .pg-bk-resumen { display: none; }
 
-/* ---- La práctica central, a lo ancho: foto 16:10 a la izquierda, el texto al pie a la derecha ---- */
-.v3 .pg-item--lead { grid-column: 1 / -1; }
-@media (min-width: 700px) {
-  .v3 .pg-item--lead .pg-a {
-    display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-rows: 1fr auto auto auto;
-    column-gap: clamp(32px, 5vw, 80px);
+@media (max-width: 767.98px), (hover: none), (pointer: coarse) {
+  /* Cada cuadro: su foto bajo el velo, el nombre y debajo la descripción, alineados a la izquierda */
+  .v3 .pg-bk .pr-bk-cuadro {
+    flex-direction: column; align-items: stretch; justify-content: flex-end; gap: 12px;
+    min-height: clamp(280px, 52vw, 380px);
   }
-  .v3 .pg-item--lead .pg-foto { grid-column: 1; grid-row: 1 / -1; aspect-ratio: 16 / 10; }
-  .v3 .pg-item--lead .pg-a > :not(.pg-foto) { grid-column: 2; }
-  .v3 .pg-item--lead .pg-n { grid-row: 2; margin-top: 0; }
-  .v3 .pg-item--lead .pg-t { grid-row: 3; margin-top: 14px; font-size: var(--t-h2); line-height: 1.04; letter-spacing: -.018em; font-weight: 350; }
-  .v3 .pg-item--lead .pg-d {
-    grid-row: 4; margin-top: clamp(16px, 2vw, 24px); max-width: 24em;
-    font-family: var(--serif); font-weight: 350; font-size: clamp(1.12rem, 1rem + .45vw, 1.4rem); line-height: 1.4; color: var(--tinta);
+  .v3 .pg-bk .pr-bk-cuadro::before {
+    background: linear-gradient(180deg, rgba(6, 16, 30, .2) 0%, rgba(6, 16, 30, .56) 42%, rgba(6, 16, 30, .88) 100%);
+  }
+  .v3 .pg-bk .pr-bk-nombre {
+    position: relative; z-index: 1;
+    max-width: none; text-align: start;
+    font-size: clamp(1.45rem, 1.2rem + .9vw, 1.85rem);
+  }
+  .v3 .pg-bk-resumen {
+    display: block; position: relative; z-index: 1;
+    margin: 0; max-width: 34em;
+    color: var(--sobre-azul);
+    font-size: var(--t-small); line-height: 1.55;
+    text-wrap: pretty;
   }
 }
 
-/* ---- Las otras tres: columnas en escritorio ---- */
-@media (min-width: 1100px) {
-  .v3 .pg-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: clamp(28px, 3vw, 48px); }
+/* Dos columnas con toque: los nombres de una misma fila a la misma altura aunque una descripción
+   ocupe un renglón más (hasta cuatro renglones) */
+@media (min-width: 600px) and (hover: none), (min-width: 600px) and (pointer: coarse) {
+  .v3 .pg-bk-resumen { min-height: calc(4 * 1.55em); }
 }
 
-/* ---- Tableta: filas foto | texto, con un filete entre una y otra ---- */
-@media (min-width: 700px) and (max-width: 1099.98px) {
-  .v3 .pg-grid { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
-  .v3 .pg-item { padding-block: clamp(32px, 4vw, 44px); }
-  .v3 .pg-item + .pg-item { border-top: 1px solid var(--linea); }
-  .v3 .pg-item--lead { padding-top: 0; padding-bottom: clamp(48px, 6vw, 64px); }
-  .v3 .pg-item:not(.pg-item--lead) .pg-a {
-    display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: auto auto 1fr;
-    column-gap: clamp(24px, 4vw, 44px);
-  }
-  .v3 .pg-item:not(.pg-item--lead) .pg-foto { grid-column: 1; grid-row: 1 / -1; }
-  .v3 .pg-item:not(.pg-item--lead) .pg-a > :not(.pg-foto) { grid-column: 2; }
-  .v3 .pg-item:not(.pg-item--lead) .pg-n { margin-top: 2px; }
-  .v3 .pg-item--lead .pg-a { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .v3 .pg-item--lead .pg-foto { aspect-ratio: 4 / 3; }
+/* Teléfono: una práctica por renglón, a todo lo ancho, con la línea de la retícula entre ellas */
+@media (max-width: 599.98px) {
+  .v3 .pg-bk .pr-bk-cuadros { grid-template-columns: minmax(0, 1fr); }
+  .v3 .pg-bk .pr-bk-item,
+  .v3 .pg-bk .pr-bk-item:nth-child(odd),
+  .v3 .pg-bk .pr-bk-item:nth-child(even) { border-right: 0; --pr-bk-pi: var(--gutter); --pr-bk-pd: var(--gutter); }
+  .v3 .pg-bk .pr-bk-item:nth-child(-n+2) { border-bottom: 0; }
+  .v3 .pg-bk .pr-bk-item + .pr-bk-item { border-top: 1px solid var(--pr-bk-linea); }
+  .v3 .pg-bk .pr-bk-cuadro { min-height: 300px; }
 }
 
-
-/* ---- Teléfono: todas apiladas; la central conserva su título mayor ---- */
-@media (max-width: 699.98px) {
-  .v3 .pg-item--lead .pg-t { font-size: var(--t-h2); line-height: 1.06; font-weight: 350; }
+/* Con cursor fino: cuadros más altos que en el Inicio, porque aquí el bloque es la página */
+@media (hover: hover) and (pointer: fine) and (min-width: 768px) {
+  .v3 .pr-practicas.pg-bk { --pr-bk-min: clamp(290px, 27cqw, 400px); }
 }
