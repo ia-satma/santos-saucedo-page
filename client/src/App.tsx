@@ -26,6 +26,28 @@ function ScrollToTop() {
   
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
+    // Enlace a una sección de otra página (p. ej. /team#presencia desde Industrias): la página llega
+    // perezosa, así que se espera a que exista la sección y se baja a ella. Al bajar, el encabezado
+    // se recoge; si no, cubre solo el margen superior de la sección.
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (!id) return;
+    let timer = 0;
+    let tries = 0;
+    const bajar = (el: HTMLElement) => {
+      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY, behavior: 'instant' });
+    };
+    const buscar = () => {
+      const el = document.getElementById(id);
+      if (el) {
+        bajar(el);
+        // otra vez cuando terminan de acomodarse fotos y fuentes
+        timer = window.setTimeout(() => bajar(el), 500);
+      } else if (++tries < 50) {
+        timer = window.setTimeout(buscar, 100);
+      }
+    };
+    buscar();
+    return () => window.clearTimeout(timer);
   }, [location]);
   
   return null;

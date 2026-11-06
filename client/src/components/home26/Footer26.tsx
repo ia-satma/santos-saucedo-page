@@ -8,7 +8,8 @@ import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import { useOfficeLabel } from "@/lib/officeLabel";
 import { useChrome26 } from "./chrome26";
 import { useSiteContact } from "./useSiteContact";
-import { PaletteSwitcher } from "./PaletteSwitcher";
+import { PaletteSwitcher, palettesEnabled } from "./PaletteSwitcher";
+import { useState } from "react";
 import PieMarca from "@/v3/marca/PieMarca";
 
 // Filas compactas en escritorio; se conserva un área táctil amplia en móvil.
@@ -43,6 +44,8 @@ export default function Footer26({ localized = false }: Footer26Props) {
   const navigation = useSiteNavigation(code,chrome);
   const items = navigation.footerItems;
   const year = new Date().getFullYear();
+  // Selector de paletas: ya no a la vista de todos (la paleta v3 está aprobada); solo con ?paletas=1
+  const [paletas] = useState(palettesEnabled);
 
   // Misma consulta que el pie anterior; lo estático de content.ts (ES/EN) queda como respaldo.
   const { address, phone, phoneHref, email } = useSiteContact(base);
@@ -134,13 +137,13 @@ export default function Footer26({ localized = false }: Footer26Props) {
             </ul>
           </nav>}
 
-          {/* Paletas de color para comparar (temporal, mientras la firma elige) */}
-          <div>
+          {/* Paletas de color para comparar: solo en el navegador que abrió el sitio con ?paletas=1 */}
+          {paletas && <div>
             <p className={headCls}>Color</p>
             <div className="mt-2">
               <PaletteSwitcher placement="footer" />
             </div>
-          </div>
+          </div>}
 
           {navigation.footer.languagesEnabled&&<div role="group" aria-labelledby="ss26-footer-lang">
             <p id="ss26-footer-lang" className={headCls}>
