@@ -573,9 +573,9 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   .ss-team-portrait { transition: none; }
 }
 
-/* Retrato conmemorativo de Mario Saucedo Rodríguez: a color, como en la demo v3 aprobada el
-   5-11-2026 y como el resto de las fotos del sitio (pedido del cliente). El blanco y negro anterior
-   era este filtro: filter: grayscale(1) contrast(0.94) brightness(1.04). */
+/* Retrato conmemorativo de Mario Saucedo Rodríguez (in memoriam): en blanco y negro en todo el
+   sitio (pedido del usuario el 6-11-2026). Los demás retratos y fotos siguen a color. */
+img[data-portrait-slug="mario-saucedo-rodriguez"] { filter: grayscale(1) contrast(0.94) brightness(1.04); }
 
 .ss-hero {
   --u: min(0.05208vw, 0.09259vh);

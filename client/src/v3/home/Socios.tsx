@@ -50,6 +50,7 @@ export function SociosBand({ lang }: { lang: V3Lang }) {
                 <img
                   data-no-parallax=""
                   key={p.slug}
+                  data-portrait-slug={p.slug}
                   src={p.imageUrl}
                   {...(srcSet ? { srcSet, sizes: "(min-width: 1001px) 380px, (min-width: 601px) 40vw, 300px" } : {})}
                   alt=""
