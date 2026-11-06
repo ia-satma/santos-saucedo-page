@@ -1,7 +1,7 @@
 /* «Nuestra firma» (/about): lo propio de la página sobre el CSS de la demo (client/src/v3/demo.css, que no se toca).
    Prefijo nf-. Todo dentro de .v3. */
 
-/* ---------- Escenario fijo de la turbina (lámina 2/7) ----------
+/* ---------- Escenario fijo de la turbina (lámina 2/7, en la página de Prácticas) ----------
    La demo lo ponía bajo su barra de 60 px, que nunca se retira. La cabecera del sitio (Header26: 80 px aquí)
    se retira al bajar: con el escenario a top: 80 px quedaba arriba una franja vacía de 80 px durante todo el
    recorrido y el avión se veía hasta abajo. Ahora el escenario ocupa la pantalla entera (el marco llega a
@@ -9,7 +9,7 @@
    al retirarse, el texto y el dibujo suben media cabecera, con la misma curva y duración que ella, y quedan
    centrados en el marco completo. Solo se mueven (transform): nada cambia de tamaño ni se vuelve a medir. */
 @media (min-width: 1200px) and (min-height: 860px) {
-  html:not(.rm) .v3[data-vista="firma"]:not([data-vista="inicio"]) .nf .fi-reaccion .fi-escena {
+  html:not(.rm) .v3[data-vista]:not([data-vista="inicio"]) .fi-lamina.fi-reaccion .fi-escena {
     top: 0;
     height: 100vh;
     height: 100dvh;
@@ -17,17 +17,17 @@
   }
   /* .fi-lectura queda fuera: va en la esquina del marco y su caja de referencia es el escenario
      (un transform en .fi-texto la volvería relativa a la columna) */
-  html:not(.rm) .v3[data-vista="firma"] .nf .fi-reaccion :is(.fi-texto > :not(.fi-lectura), .fi-plano) {
+  html:not(.rm) .v3[data-vista]:not([data-vista="inicio"]) .fi-lamina.fi-reaccion :is(.fi-texto > :not(.fi-lectura), .fi-plano) {
     transition: transform 400ms var(--ss-ease-inout, cubic-bezier(.65, 0, .35, 1));
   }
-  html:not(.rm) .ss26:has(> .ss-header.is-tucked) .v3[data-vista="firma"] .nf .fi-reaccion :is(.fi-texto > :not(.fi-lectura), .fi-plano) {
+  html:not(.rm) .ss26:has(> .ss-header.is-tucked) .v3[data-vista]:not([data-vista="inicio"]) .fi-lamina.fi-reaccion :is(.fi-texto > :not(.fi-lectura), .fi-plano) {
     transform: translate3d(0, calc(var(--ss-header-h, 80px) / -2), 0);
   }
 }
 
 /* El dibujo de la turbina llega aparte (Firma.tsx): hasta que el módulo arranca (fi-js), los números de las
    piezas no tienen dónde ir y quedarían amontonados en la esquina del plano */
-.v3 .nf .fi-reaccion:not(.fi-js) .fi-tags { visibility: hidden; }
+.v3 .fi-reaccion:not(.fi-js) .fi-tags { visibility: hidden; }
 
 /* index.css limita todo <header> que no sea .ss26 a 80 px por debajo de 640 px: la cabecera de la página no lo es */
 .v3 .nf header { max-height: none; }

@@ -24,6 +24,22 @@ import { SociosLienzo, OfCounsel, type LienzoPartner } from "@/v3/socios/Lienzo"
 import { EquipoMuro } from "@/v3/socios/Equipo";
 import { SOCIOS_TEXTS } from "@/v3/socios/texts";
 import { firmPartners } from "@/v3/socios/partners";
+import { Mapa } from "@/v3/industrias/Mapa";
+import { INDUSTRIAS_TEXTS } from "@/v3/industrias/texts";
+import { useSiteContact } from "@/components/home26/useSiteContact";
+
+// El mapa de la red (el mismo de Industrias), aquí como presencia de la firma en el país: desde la sede,
+// los socios y el equipo llegan a las 32 entidades. En Industrias habla de las plantas de los clientes.
+const PRESENCIA = {
+  es: {
+    titulo: "Presencia en todo el país",
+    entrada: "Desde San Pedro Garza García, los socios y su equipo atienden a sus clientes en las 32 entidades federativas, con una alianza de despachos presente en más de 72 ciudades.",
+  },
+  en: {
+    titulo: "Presence across Mexico",
+    entrada: "From San Pedro Garza García, the partners and their team serve clients in all 32 federal entities, through an alliance of law firms present in more than 72 cities.",
+  },
+} as const;
 
 // Encabezado del panel: manda si el cliente lo cambió; si sigue con el texto predeterminado del
 // panel (que no es el de la demo), el de la demo aprobada
@@ -39,6 +55,9 @@ export default function Team() {
   const cmsLinks = useCmsContent("links", defaults.links);
   const { language } = useLanguage();
   const { lang, attrs } = useV3Lang();
+  // Dirección de la sede para el mapa (la misma del pie y de /contact)
+  const { address: sede } = useSiteContact(lang);
+  const mapaTextos = useMemo(() => ({ ...INDUSTRIAS_TEXTS[lang].mapa, ...PRESENCIA[lang] }), [lang]);
   const tv = SOCIOS_TEXTS[lang];
   // Español o inglés: los textos de la demo; los demás idiomas: lo que el sitio ya tiene traducido
   const ownLang = language === "es" || language === "en";
@@ -289,6 +308,11 @@ export default function Team() {
           // «Pasantías S&S» es el nombre del programa: no se traduce y fuera del español se marca lang="es"
           careersNameLang={language !== "es" ? "es" : undefined}
         />
+
+        {/* Presencia nacional: el mapa interactivo de la red, después del equipo */}
+        <div {...attrs}>
+          <Mapa t={mapaTextos} address={sede} />
+        </div>
 
         <div {...attrs}>
           <V3NextPage

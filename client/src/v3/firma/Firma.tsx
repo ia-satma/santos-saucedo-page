@@ -1,5 +1,6 @@
 /* Piezas de «Nuestra firma» (/about) con el diseño de la demo v3: el texto de la firma y el tríptico,
-   «Cómo trabajamos», el lema de la prioridad, las láminas 1/7 y 2/7 y las fotos de la oficina.
+   «Cómo trabajamos», el lema de la prioridad, la lámina 1/7 (el carnero) y las fotos de la oficina. La
+   lámina 2/7 (el avión) también vive aquí y la usa la página de Prácticas.
    Marcado y clases de la demo (demo.css); lo propio de la página va en ./firma.css con el prefijo nf-. */
 import "./firma.css";
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
@@ -142,7 +143,7 @@ export function Prioridad({ t, attrs }: { t: FirmaTextos; attrs: LangAttrs }) {
   );
 }
 
-/* ---------- Láminas 1/7 (carnero) y 2/7 (turbina → avión) ---------- */
+/* ---------- Láminas 1/7 (carnero, en «Nuestra firma») y 2/7 (turbina → avión, en Prácticas) ---------- */
 function Lista({ n, L }: { n: string; L: Lamina }) {
   return (
     <>
@@ -185,17 +186,53 @@ const TAGS_CARNERO: { x: string; y: string; izq?: boolean }[] = [
   { x: "13.32%", y: "63.03%", izq: true },
 ];
 
-export function Laminas({ t, attrs, logo }: { t: FirmaTextos; attrs: LangAttrs; logo: string }) {
-  const refC = useRef<HTMLElement>(null);
-  const refR = useRef<HTMLElement>(null);
+/** Lámina 1/7, el carnero: la filosofía de la firma (en «Nuestra firma»). */
+export function LaminaCarnero({ t, attrs, logo }: { t: FirmaTextos; attrs: LangAttrs; logo: string }) {
+  const ref = useRef<HTMLElement>(null);
+  useV3Module(ref, (el) => initFilosofia(el, reaccionDatos as ReaccionDatos));
+  const C = t.carnero;
+  return (
+    <section ref={ref} className="fi-lamina fi-carnero sobre-azul" id="carnero" data-fi-lamina="1/7" data-fi-lean="5" aria-labelledby="carnero-t" {...attrs}>
+      <div className="fi-escena">
+        <div className="fi-marco" aria-hidden="true" />
+        <div className="fi-texto">
+          <h2 className="fi-h" id="carnero-t">{C.h}</h2>
+          {C.p.map((p, i) => <p key={i} className="fi-p">{p}</p>)}
+          <Lista n="1" L={C} />
+        </div>
+        <div className="fi-plano">
+          <div className="fi-lienzo">
+            <svg className="fi-fig" viewBox="-160 -198 392 238" role="img" aria-label={C.svgLabel} focusable="false" dangerouslySetInnerHTML={CARNERO} />
+            <div className="fi-tags" aria-hidden="true">
+              {C.piezas.map((pz, i) => {
+                const g = TAGS_CARNERO[i];
+                return (
+                  <span key={i} className={`fi-tag${g.izq ? " fi-tag--izq" : ""}`} data-p={String(i + 1)} style={{ "--x": g.x, "--y": g.y } as CSSProperties}>
+                    <span className="fi-tag-n">{`1.${i + 1}`}</span><span className="fi-tag-t">{pz.tag}</span>
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+          {C.nota ? <p className="fi-nota">{C.nota}</p> : null}
+        </div>
+        <Cajetin lamina="1/7" titulo={C.cajetin} t={t} logo={logo} />
+      </div>
+    </section>
+  );
+}
+
+/** Lámina 2/7, la turbina que se vuelve avión: la capacidad de reacción, la ventaja de la firma.
+    Va en la página de Prácticas (antes, en «Nuestra firma» junto al carnero). */
+export function LaminaReaccion({ t, attrs, logo }: { t: FirmaTextos; attrs: LangAttrs; logo: string }) {
+  const ref = useRef<HTMLElement>(null);
   const [reaccion, setReaccion] = useState<Html | null>(reaccionGuardada);
-  // cada lámina arranca por su cuenta: la turbina, cuando su dibujo ya está en la página
-  useV3Module(refC, (el) => initFilosofia(el, reaccionDatos as ReaccionDatos));
-  useV3Module(refR, (el) => (reaccion ? initFilosofia(el, reaccionDatos as ReaccionDatos) : undefined), [reaccion]);
+  // arranca cuando su dibujo ya está en la página
+  useV3Module(ref, (el) => (reaccion ? initFilosofia(el, reaccionDatos as ReaccionDatos) : undefined), [reaccion]);
   // se pide cuando la lámina está a una pantalla (arriba o abajo); si falla la red, se vuelve a intentar
   // la próxima vez que se acerque
   useEffect(() => {
-    const el = refR.current;
+    const el = ref.current;
     if (reaccion || !el) return;
     let vivo = true;
     const pedir = () => { pedirReaccion().then((h) => { if (vivo) setReaccion(h); }).catch(() => { /* reintento al volver */ }); };
@@ -204,59 +241,29 @@ export function Laminas({ t, attrs, logo }: { t: FirmaTextos; attrs: LangAttrs; 
     io.observe(el);
     return () => { vivo = false; io.disconnect(); };
   }, [reaccion]);
-  const C = t.carnero, R = t.reaccion;
+  const R = t.reaccion;
   return (
-    <>
-      <section ref={refC} className="fi-lamina fi-carnero sobre-azul" id="carnero" data-fi-lamina="1/7" data-fi-lean="5" aria-labelledby="carnero-t" {...attrs}>
-        <div className="fi-escena">
-          <div className="fi-marco" aria-hidden="true" />
-          <div className="fi-texto">
-            <h2 className="fi-h" id="carnero-t">{C.h}</h2>
-            {C.p.map((p, i) => <p key={i} className="fi-p">{p}</p>)}
-            <Lista n="1" L={C} />
-          </div>
-          <div className="fi-plano">
-            <div className="fi-lienzo">
-              <svg className="fi-fig" viewBox="-160 -198 392 238" role="img" aria-label={C.svgLabel} focusable="false" dangerouslySetInnerHTML={CARNERO} />
-              <div className="fi-tags" aria-hidden="true">
-                {C.piezas.map((pz, i) => {
-                  const g = TAGS_CARNERO[i];
-                  return (
-                    <span key={i} className={`fi-tag${g.izq ? " fi-tag--izq" : ""}`} data-p={String(i + 1)} style={{ "--x": g.x, "--y": g.y } as CSSProperties}>
-                      <span className="fi-tag-n">{`1.${i + 1}`}</span><span className="fi-tag-t">{pz.tag}</span>
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-            {C.nota ? <p className="fi-nota">{C.nota}</p> : null}
-          </div>
-          <Cajetin lamina="1/7" titulo={C.cajetin} t={t} logo={logo} />
+    <section ref={ref} className="fi-lamina fi-reaccion sobre-azul" id="reaccion" data-fi-lamina="2/7" aria-labelledby="reaccion-t" {...attrs}>
+      <div className="fi-escena">
+        <div className="fi-marco" aria-hidden="true" />
+        <div className="fi-texto">
+          <h2 className="fi-h" id="reaccion-t">{R.h}</h2>
+          {R.p.map((p, i) => <p key={i} className="fi-p">{p}</p>)}
+          <Lista n="2" L={R} />
         </div>
-      </section>
-
-      <section ref={refR} className="fi-lamina fi-reaccion sobre-azul" id="reaccion" data-fi-lamina="2/7" aria-labelledby="reaccion-t" {...attrs}>
-        <div className="fi-escena">
-          <div className="fi-marco" aria-hidden="true" />
-          <div className="fi-texto">
-            <h2 className="fi-h" id="reaccion-t">{R.h}</h2>
-            {R.p.map((p, i) => <p key={i} className="fi-p">{p}</p>)}
-            <Lista n="2" L={R} />
+        <div className="fi-plano">
+          <svg className="fi-fig" viewBox="-240.4 -211.9 970.1 578.1" preserveAspectRatio="xMidYMid meet" role="img" aria-label={R.svgLabel} focusable="false" dangerouslySetInnerHTML={reaccion ?? undefined} />
+          <div className="fi-tags" aria-hidden="true">
+            {R.piezas.map((pz, i) => (
+              <span key={i} className="fi-tag" data-p={String(i + 1)}>
+                <span className="fi-tag-n">{`2.${i + 1}`}</span><span className="fi-tag-t">{pz.tag}</span>
+              </span>
+            ))}
           </div>
-          <div className="fi-plano">
-            <svg className="fi-fig" viewBox="-240.4 -211.9 970.1 578.1" preserveAspectRatio="xMidYMid meet" role="img" aria-label={R.svgLabel} focusable="false" dangerouslySetInnerHTML={reaccion ?? undefined} />
-            <div className="fi-tags" aria-hidden="true">
-              {R.piezas.map((pz, i) => (
-                <span key={i} className="fi-tag" data-p={String(i + 1)}>
-                  <span className="fi-tag-n">{`2.${i + 1}`}</span><span className="fi-tag-t">{pz.tag}</span>
-                </span>
-              ))}
-            </div>
-          </div>
-          <Cajetin lamina="2/7" titulo={R.cajetin} t={t} logo={logo} />
         </div>
-      </section>
-    </>
+        <Cajetin lamina="2/7" titulo={R.cajetin} t={t} logo={logo} />
+      </div>
+    </section>
   );
 }
 
