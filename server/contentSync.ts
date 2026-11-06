@@ -462,6 +462,8 @@ async function addIndustriesToNavigation(db: typeof import("./db").db) {
   const content = stored?.content;
   if (!row || !content || typeof content !== "object") { await mark(); return false; }
   const defaults = cmsDefaults.navigation as unknown as Record<string, Array<Record<string, unknown>>>;
+  // Errores que el menú guardado ya traía: no deben impedir que entre «Industrias»
+  const errorsBefore = validateCmsValue("navigation", mergeCms(cmsDefaults.navigation, content)).length;
   let changed = 0;
   for (const list of ["items", "footerItems"] as const) {
     const items = content[list];
@@ -482,14 +484,15 @@ async function addIndustriesToNavigation(db: typeof import("./db").db) {
     // Cada lista por separado: si una ya no admite otra entrada (máximo de elementos), esa se deja
     // como estaba y la otra sí recibe «Industrias»
     const errors = validateCmsValue("navigation", mergeCms(cmsDefaults.navigation, content));
-    if (errors.length) {
+    if (errors.length > errorsBefore) {
       items.splice(index, 1);
       console.warn(`[contentSync] «Industrias» no se añadió a navigation.${list}: ${errors.slice(0, 3).join("; ")}`);
       continue;
     }
     changed++;
   }
-  if (changed === 0) { await mark(); return false; }
+  // Con errores previos no se marca: se vuelve a intentar al arrancar, cuando el panel los corrija
+  if (changed === 0) { if (errorsBefore === 0) await mark(); return false; }
   // Solo si la sección sigue como se leyó: un guardado del panel entretanto no se pisa
   const result = await db.update(siteConfig).set({ value: JSON.stringify(stored), updatedAt: new Date() })
     .where(and(eq(siteConfig.key, row.key), eq(siteConfig.value, row.value!))).returning();

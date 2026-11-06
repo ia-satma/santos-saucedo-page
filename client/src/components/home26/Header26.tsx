@@ -134,6 +134,12 @@ export default function Header26({ localized = false, overlay = false }: Header2
         list.querySelectorAll("details[open]").forEach((d) => d.removeAttribute("open"));
         if (list.contains(document.activeElement)) menuButtonRef.current?.focus();
       }
+      // Lo mismo con el selector de idioma de la barra: al cambiar a una lengua más larga el menú se
+      // pliega, el selector se oculta y el foco del teclado se perdería
+      const active = document.activeElement;
+      if (active instanceof HTMLElement && row.contains(active) && active.getClientRects().length === 0) {
+        menuButtonRef.current?.focus();
+      }
       if (compactRef.current !== next) {
         compactRef.current = next;
         setCompact(next);

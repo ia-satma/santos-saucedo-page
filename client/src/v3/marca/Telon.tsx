@@ -3,7 +3,7 @@
    Abierta, la § queda como marca de agua al 12 % y llegan el logo, la frase que rota, «San Pedro
    Garza García · Desde…» y la firma abajo a la izquierda. Botón de pausa (video y frase).
    Textos y medios del panel donde el sitio ya los tenía: logo, video, póster, frase y lugar
-   (home.hero), etiquetas del botón (chrome.heroVideo). Comportamiento: ./telon.ts. */
+   (home.hero), etiquetas del botón (chrome.heroVideo). Comportamiento: ./escenaTelon.ts (sin el nombre telon.ts, que en la Mac choca con Telon.tsx). */
 import "@/v3/shared";
 import "./telon.css";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
@@ -13,7 +13,7 @@ import { useCmsContent } from "@/hooks/useCmsContent";
 import { home26 } from "@/components/home26/content";
 import { chrome26 } from "@/components/home26/chrome26";
 import { useV3Lang, type V3Lang } from "@/v3/shared";
-import { initTelon, type TelonApi } from "./telon";
+import { initTelon, type TelonApi } from "./escenaTelon";
 
 /* Textos nuevos de la demo (español literal de la demo; inglés en el mismo registro) */
 const TXT = {
