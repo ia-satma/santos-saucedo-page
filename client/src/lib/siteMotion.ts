@@ -69,7 +69,8 @@ export function initSiteMotion() {
     if (root instanceof Element && root.matches(PANEL_SELECTOR)) candidates.push(root);
     root.querySelectorAll(PANEL_SELECTOR).forEach((el) => candidates.push(el));
     for (const panel of candidates) {
-      if (panel.hasAttribute("data-scroll-panel")) continue;
+      // Las páginas con el diseño de la demo v3 (.v3) traen su propio movimiento
+      if (panel.hasAttribute("data-scroll-panel") || panel.closest(".v3")) continue;
       panel.setAttribute("data-scroll-panel", "");
       const siblings = panel.parentElement?.querySelectorAll(":scope > section, :scope > [data-testid^=\"section-\"]");
       const index = siblings ? Array.from(siblings).indexOf(panel) : 0;
@@ -83,7 +84,7 @@ export function initSiteMotion() {
     if (root instanceof Element && root.matches(IMAGE_SELECTOR)) candidates.push(root);
     root.querySelectorAll(IMAGE_SELECTOR).forEach((el) => candidates.push(el));
     for (const image of candidates) {
-      if (!(image instanceof HTMLElement)) continue;
+      if (!(image instanceof HTMLElement) || image.closest(".v3")) continue;
       image.setAttribute("data-scroll-parallax", "");
       parallaxElements.add(image);
     }

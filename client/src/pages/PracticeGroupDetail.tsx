@@ -1,51 +1,46 @@
-import { useContentEntity, useContentPreview } from "@/features/admin/ContentPreview";
+// Página de cada práctica con el diseño de la demo v3 (aprobada el 5-11-2026): foto horizontal a todo lo
+// ancho, el nombre y su resumen; el texto de la práctica con «Qué hacemos» y su equipo; sus láminas
+// isométricas; y al final las cuatro prácticas y la página siguiente.
+// Todo el texto de la práctica viene de la base y del panel, en los 10 idiomas, como antes: nombre,
+// resumen, texto largo (lema «# », entrada y servicios «## »), lista «Qué hacemos», equipo y casos.
+// Lo nuevo de la demo (láminas y rótulos) va en español o inglés: client/src/v3/practicas/.
+import { useContentEntity } from "@/features/admin/ContentPreview";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import cmsDefaults from "@shared/cms-defaults.json";
-import { Link, useParams } from "wouter";
+import { Link, Redirect, useParams } from "wouter";
 import { useMemo, useState, type ReactNode } from "react";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { PhotoBand } from "@/components/home26/PhotoBand";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { getTeamPhotoThumb } from "@/lib/teamPhotoSources";
-import { Eyebrow, LeadParagraph, RankingsList, type RankingItem } from "@/components/editorial";
+import { Eyebrow } from "@/components/editorial";
 import { chrome26 } from "@/components/home26/chrome26";
 import { TextLink } from "@/components/home26/primitives";
 import { isNamedOnTeamPage } from "@shared/teamVisibility";
 import { keepFirmName } from "@/lib/firmName";
 import { usePracticeNames } from "@/lib/practiceNames";
+import { V3Main, V3NextPage, V3PageHeader, useV3Lang } from "@/v3/shared";
+import { Anatomia } from "@/v3/practicas/Anatomia";
+import { Figura } from "@/v3/practicas/Figura";
+import { LEGACY_SLUGS, PRACTICE_V3, type PracticeV3 } from "@/v3/practicas/config";
+import { PAGINA, type SheetId } from "@/v3/practicas/textos";
+import "@/v3/practicas/practicas.css";
 import type { PracticeGroup, TeamMember, RepresentativeMatterDb } from "@shared/schema";
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
 // lleva su propio idioma y dirección, para que :lang() y el algoritmo bidi lo traten como inglés.
-// La descripción larga va entera en LTR (EN_SOURCE). El titular conserva la dirección de la
-// página (en árabe, alineado a la derecha con la vuelta y el eyebrow): el bloque solo lleva
-// lang="en" (la romana, no la sans de CJK y árabe) y el texto va en <bdi lang="en" dir="ltr">.
+// La descripción larga va entera en LTR (EN_SOURCE). El título conserva la dirección de la
+// página: solo lleva <bdi lang="en" dir="ltr">.
 const EN_SOURCE = { lang: "en", dir: "ltr" } as const;
 
-// Columna de lectura (≈800 px) al borde izquierdo del contenedor de cabecera y pie
-// (ss-container), no centrada: encabezado y cuerpo empiezan bajo el logotipo.
-function Column({ children }: { children: ReactNode }) {
-  return (
-    <div className="ss-container">
-      <div className="max-w-[50rem]">{children}</div>
-    </div>
-  );
-}
-
-interface PracticeRanking {
-  publication: string;
-  ranking: string;
-  rankingEs: string;
-  year: string;
-  badgeType: "band" | "tier" | "star" | "recommended";
-}
+const BASE = import.meta.env.BASE_URL;
+const H1 = "pp-practica-h";
 
 // Quién figura en cada práctica: solo lo que dice el registro de cada persona (campo role).
 // Hoy todos los registros dicen "Labor law" (la comparación no distingue mayúsculas); ninguno
@@ -58,10 +53,19 @@ const practiceAreaRoleMapping: Record<string, string[]> = {
   "litigio-contencioso": [],
 };
 
+// Sin práctica en la tabla de la demo (una práctica nueva del panel): foto neutra y sin láminas
+const FALLBACK_V3: PracticeV3 = {
+  vista: "practica",
+  photo: {
+    src: "v3/c-cerro-luna.webp", w: 2400, h: 1600, pos: "50% 62%",
+    alt: { es: "La luna llena sale entre dos crestas de la sierra, al anochecer", en: "The full moon rises between two ridges of the sierra at dusk" },
+  },
+  plates: [],
+};
+
 // Texto de una práctica (full_description): párrafos separados por una línea en blanco.
-// Un bloque que empieza con "# " es el lema (subtítulo del encabezado) y cada "## " abre un
-// servicio de la lista de dos columnas; lo que va antes del primer servicio es la entrada.
-// Sin marcas (p. ej. una traducción que las pierda), todo es entrada.
+// Un bloque que empieza con "# " es el lema y cada "## " abre un servicio; lo que va antes del
+// primer servicio es la entrada. Sin marcas (p. ej. una traducción que las pierda), todo es entrada.
 interface PracticeText {
   tagline: string | null;
   intro: string[];
@@ -100,40 +104,32 @@ function MemberThumb({ member }: { member: TeamMember }) {
   const [src, setSrc] = useState(() => getTeamPhotoThumb(member.imageUrl));
   const initials = member.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
   return (
-    <div
-      className="relative h-14 w-14 shrink-0 overflow-hidden bg-ss-paper"
-      data-testid={`img-team-member-${member.slug}`}
-    >
+    <span className="pd-equipo__foto" data-testid={`img-team-member-${member.slug}`}>
       {src ? (
         <img
           src={src}
           alt=""
           loading="lazy"
           decoding="async"
-          className="ss-photo absolute inset-0 h-full w-full object-cover object-top"
           onError={() => setSrc(src !== member.imageUrl ? member.imageUrl || undefined : undefined)}
         />
       ) : (
-        <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center font-heading text-[20px] text-ss-marino">
-          {initials}
-        </span>
+        <span aria-hidden="true" className="pd-equipo__ini">{initials}</span>
       )}
-    </div>
+    </span>
   );
 }
 
 interface TranslatedMatterCardProps {
   matter: RepresentativeMatterDb;
   language: string;
-  t: {
-    featured: string;
-    client: string;
-  };
+  t: { featured: string; client: string };
 }
 
+// Caso representativo: fila abierta con filete superior; año y «Destacado» como etiquetas
 function TranslatedMatterCard({ matter, language, t }: TranslatedMatterCardProps) {
   const { translatedFields } = useTranslatedContent({
-    contentType: 'representative_matter',
+    contentType: "representative_matter",
     entityId: matter.id.toString(),
     fields: {
       title: matter.title,
@@ -150,48 +146,41 @@ function TranslatedMatterCard({ matter, language, t }: TranslatedMatterCardProps
   const displayDescription = translatedFields.description || matter.description;
   const displayClient = translatedFields.client || matter.client;
 
-  // Fila abierta con filete superior (sin tarjeta oscura ni barra lima): año y "Destacado"
-  // como etiquetas, titular en romana Azul Marino, texto en Gris Tinta.
   return (
-    <article
-      className="border-t border-ss-rule pt-6"
-      data-testid={`card-matter-${matter.id}`}
-    >
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-2">
-        {matter.isHighlight && (
-          <span className="ss-label text-ss-marino">{t.featured}</span>
-        )}
-        <span
-          className="ss-label text-ss-medio"
-          data-testid={`badge-matter-year-${matter.id}`}
-        >
-          {matter.year}
-        </span>
-      </div>
-      <h3
-        className="ss-h3"
-        data-testid={`text-matter-title-${matter.id}`}
-      >
-        {displayTitle}
-      </h3>
-      <p
-        className="mt-2 text-base leading-[1.6] text-ss-tinta"
-        data-testid={`text-matter-description-${matter.id}`}
-      >
-        {displayDescription}
+    <article className="pd-caso" data-testid={`card-matter-${matter.id}`}>
+      <p className="pd-caso__k">
+        {matter.isHighlight ? <span className="pd-caso__dest">{t.featured}</span> : null}
+        <span data-testid={`badge-matter-year-${matter.id}`}>{matter.year}</span>
       </p>
-      {displayClient && (
-        <p
-          className="mt-3 text-sm text-ss-medio"
-          data-testid={`text-matter-client-${matter.id}`}
-        >
-          <span className="text-sm font-semibold text-ss-tinta">
-            {t.client}{" "}
-          </span>
+      <h3 className="sh-h3 pd-caso__t" data-testid={`text-matter-title-${matter.id}`}>{displayTitle}</h3>
+      <p className="pd-caso__d" data-testid={`text-matter-description-${matter.id}`}>{displayDescription}</p>
+      {displayClient ? (
+        <p className="pd-caso__c" data-testid={`text-matter-client-${matter.id}`}>
+          <span>{t.client} </span>
           {displayClient}
         </p>
-      )}
+      ) : null}
     </article>
+  );
+}
+
+/** Las láminas de la página, numeradas en el orden en que aparecen (n/total) */
+function Laminas({ cfg, lang, attrs }: { cfg: PracticeV3; lang: "es" | "en"; attrs: { lang?: string; dir?: "ltr" } }) {
+  const total = cfg.plates.reduce((n, p) => n + (p.kind === "anatomia" ? p.sheets.length : 1), 0);
+  if (!total) return null;
+  let n = 0;
+  return (
+    <div className="pd-laminas">
+      {cfg.plates.map((p) => {
+        if (p.kind === "anatomia") {
+          const nums: Partial<Record<SheetId, string>> = {};
+          p.sheets.forEach((id) => { nums[id] = `${++n}/${total}`; });
+          return <Anatomia key={`an-${lang}`} sheets={p.sheets} nums={nums} lang={lang} attrs={attrs} />;
+        }
+        n += 1;
+        return <Figura key={`fg-${p.area}-${lang}`} area={p.area} n={n} total={total} lang={lang} attrs={attrs} />;
+      })}
+    </div>
   );
 }
 
@@ -199,23 +188,30 @@ export default function PracticeGroupDetail() {
   const { name: practiceName } = usePracticeNames();
   const cmsChrome = useCmsContent("chrome", chrome26);
   const { language } = useLanguage();
+  const { lang, attrs } = useV3Lang();
   const params = useParams<{ slug: string }>();
-  const slug = params.slug;
+  // Direcciones de la demo con otro nombre de práctica: a la del sitio, sin pedir la que no existe
+  const legacy = params.slug ? LEGACY_SLUGS[params.slug] : undefined;
+  const slug = legacy ? undefined : params.slug;
 
-  const { data: practiceGroup, isLoading, error } = useContentEntity<PracticeGroup>("practices",slug);
+  const { data: practiceGroup, isLoading, error } = useContentEntity<PracticeGroup>("practices", slug);
 
   const { data: allTeamMembers } = useQuery<TeamMember[]>({
     queryKey: ["/api/team"],
   });
 
+  const { data: allGroups } = useQuery<PracticeGroup[]>({
+    queryKey: ["/api/practice-groups"],
+  });
+
   const { data: representativeMatters } = useQuery<RepresentativeMatterDb[]>({
-    queryKey: ['/api/practice-groups', slug, 'representative-matters'],
+    queryKey: ["/api/practice-groups", slug, "representative-matters"],
     enabled: !!slug,
   });
 
   const { translatedFields, isTranslating, isLoading: isTranslationLoading } = useTranslatedContent({
-    contentType: 'practice_group',
-    entityId: practiceGroup?.id?.toString() || '',
+    contentType: "practice_group",
+    entityId: practiceGroup?.id?.toString() || "",
     fields: {
       name: practiceGroup?.name,
       nameEs: practiceGroup?.nameEs,
@@ -335,7 +331,7 @@ export default function PracticeGroupDetail() {
       successCasesSubtitle: "Affaires représentatives traitées avec succès par notre cabinet.",
       errorMessage: "Domaine de pratique non trouvé",
       featured: "En vedette",
-      client: "Client\u202f:",
+      client: "Client :",
     },
     it: {
       ourTeam: "Il nostro team",
@@ -373,16 +369,17 @@ export default function PracticeGroupDetail() {
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   }, [allTeamMembers, slug, practiceGroup?.teamMemberIds]);
 
-  const practiceRankings: PracticeRanking[] = [];
+  // Las cuatro prácticas (en el orden del panel) para la fila del final y la página siguiente
+  const ordered = useMemo(
+    () => (allGroups ? [...allGroups].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)) : []),
+    [allGroups],
+  );
+  const nameOf = (g: PracticeGroup) =>
+    language === "es" ? g.nameEs || g.name : language === "en" ? g.name : practiceName(g.slug, language) || g.name;
 
-  const getBadgeStyles = (badgeType: string) => {
-    if (badgeType === "band" || badgeType === "tier" || badgeType === "star") {
-      return "border border-ss-marino text-ss-marino bg-transparent";
-    }
-    return "border border-ss-rule text-ss-tinta bg-transparent";
-  };
+  if (legacy) return <Redirect to={`/practice-groups/${legacy}`} replace />;
 
-  const getBadgeIcon = (_badgeType: string) => null;
+  const cfg = (slug && PRACTICE_V3[slug]) || FALLBACK_V3;
 
   // Práctica inexistente (enlace viejo o mal escrito): la misma vista 404 que la ficha de socio
   // (not-found.tsx): SEOHead page="notFound" (título propio y noindex), encabezado azul con
@@ -409,26 +406,25 @@ export default function PracticeGroupDetail() {
     );
   }
 
-  if (isLoading) {
+  // Cargando: la foto de la práctica ya está en la tabla; el título y la entrada esperan
+  if (isLoading || !practiceGroup) {
     return (
-      <div className="min-h-screen bg-background" data-testid="page-practice-group-loading">
+      <div className="ss26 min-h-screen" data-testid="page-practice-group-loading">
         <Header />
-        <main id="main-content">
-          <section className="pt-36 pb-20 editorial-page-hero">
-            <Column>
-              <Skeleton className="h-5 w-48 bg-white/10 mb-6" />
-              <Skeleton className="h-12 w-64 bg-white/10" />
-            </Column>
-          </section>
-          <div className="py-16 lg:py-20">
-            <Column>
-              <Skeleton className="h-6 w-full mb-4" />
-              <Skeleton className="h-6 w-full mb-4" />
-              <Skeleton className="h-6 w-3/4 mb-4" />
-              <Skeleton className="h-6 w-5/6 mb-4" />
-            </Column>
-          </div>
-        </main>
+        <V3Main vista={cfg.vista} className="pd">
+          <header className="sh-pp sh-cab" aria-busy="true">
+            <figure className="sh-pp__foto">
+              <img src={`${BASE}${cfg.photo.src}`} alt="" width={cfg.photo.w} height={cfg.photo.h} decoding="async" style={{ objectPosition: cfg.photo.pos }} />
+            </figure>
+            <div className="sh-wrap sh-pp__cuerpo">
+              <div className="pd-cargando">
+                <Skeleton className="h-14 w-2/3 max-w-xl bg-[rgba(15,63,107,.08)]" />
+                <Skeleton className="mt-8 h-5 w-full max-w-lg bg-[rgba(15,63,107,.08)]" />
+                <Skeleton className="mt-3 h-5 w-5/6 max-w-md bg-[rgba(15,63,107,.08)]" />
+              </div>
+            </div>
+          </header>
+        </V3Main>
         <Footer />
       </div>
     );
@@ -436,27 +432,34 @@ export default function PracticeGroupDetail() {
 
   // Otros idiomas: el inglés de origen de inmediato, marcado como inglés (EN_SOURCE), y la
   // traducción automática solo si llega (sin h1 vacío ni indicador mientras se espera).
-  const isOtherLanguage = language !== 'es' && language !== 'en';
+  const isOtherLanguage = language !== "es" && language !== "en";
   const translationPending = isTranslating || isTranslationLoading;
-  const sourceDescription = practiceGroup?.fullDescription || practiceGroup?.description;
+  const sourceDescription = practiceGroup.fullDescription || practiceGroup.description;
   // Fuera de ES/EN, el nombre de la práctica en el idioma de la página (practiceNames.ts): el
   // mismo término de la lista, la descripción SEO y el select de Contacto
   const localName = isOtherLanguage && slug ? practiceName(slug, language) : undefined;
-  const displayName = language === 'es' 
-    ? (practiceGroup?.nameEs || practiceGroup?.name)
-    : language === 'en'
-      ? practiceGroup?.name
-      : (localName || translatedFields.name || practiceGroup?.name);
-  const displayDescription = language === 'es'
-    ? (practiceGroup?.fullDescriptionEs || practiceGroup?.descriptionEs || practiceGroup?.fullDescription || practiceGroup?.description)
-    : language === 'en'
+  const shownName = language === "es"
+    ? (practiceGroup.nameEs || practiceGroup.name)
+    : language === "en"
+      ? practiceGroup.name
+      : (localName || translatedFields.name || practiceGroup.name);
+  const displayDescription = language === "es"
+    ? (practiceGroup.fullDescriptionEs || practiceGroup.descriptionEs || practiceGroup.fullDescription || practiceGroup.description)
+    : language === "en"
       ? sourceDescription
       : (translatedFields.fullDescription || translatedFields.description || sourceDescription);
-  const shownName = displayName;
   // Con nombre propio del idioma no es texto de origen (fr "Immigration" coincide con el inglés)
-  const nameIsSource = isOtherLanguage && !localName && !!shownName && shownName === practiceGroup?.name;
+  const nameIsSource = isOtherLanguage && !localName && !!shownName && shownName === practiceGroup.name;
   const descriptionSource = isOtherLanguage && !!displayDescription &&
-    (displayDescription === practiceGroup?.fullDescription || displayDescription === practiceGroup?.description);
+    (displayDescription === practiceGroup.fullDescription || displayDescription === practiceGroup.description);
+
+  // Resumen de la práctica (la entrada bajo el título): el mismo de la lista de prácticas
+  const summary = language === "es"
+    ? (practiceGroup.descriptionEs || practiceGroup.description)
+    : language === "en"
+      ? practiceGroup.description
+      : (translatedFields.description || practiceGroup.description);
+  const summaryIsSource = isOtherLanguage && !!summary && summary === practiceGroup.description;
 
   const practiceText = displayDescription ? parsePracticeText(displayDescription) : null;
   // Bloque largo en inglés de origen (fuera de ES/EN): LTR y lang="en", también en árabe
@@ -467,267 +470,185 @@ export default function PracticeGroupDetail() {
   // de la práctica; sin traducción (fuera de ES/EN), la descripción general de Prácticas en
   // ese idioma (SEOHead) en lugar del inglés de origen.
   const seoDescription = language === "es"
-    ? practiceGroup?.descriptionEs || practiceGroup?.description
+    ? practiceGroup.descriptionEs || practiceGroup.description
     : language === "en"
-      ? practiceGroup?.description
-      : translatedFields.description && translatedFields.description !== practiceGroup?.description
+      ? practiceGroup.description
+      : translatedFields.description && translatedFields.description !== practiceGroup.description
         ? translatedFields.description
         : undefined;
 
+  // Fila de las cuatro prácticas y la siguiente (la que sigue en el orden del panel; tras la
+  // última, Industrias)
+  const here = ordered.findIndex((g) => g.slug === practiceGroup.slug);
+  const nextGroup = here >= 0 && here < ordered.length - 1 ? ordered[here + 1] : null;
+  const P = PAGINA[lang];
+  const practicesRow = ordered.map((g) => ({ href: `/practice-groups/${g.slug}`, label: nameOf(g) }));
+
+  const sortedMatters = representativeMatters
+    ? [...representativeMatters].sort((a, b) => {
+        if (a.isHighlight && !b.isHighlight) return -1;
+        if (!a.isHighlight && b.isHighlight) return 1;
+        return b.year - a.year;
+      })
+    : [];
+
+  const firm = (s: string): ReactNode => keepFirmName(s);
+  const hasText = !!practiceText && (!!practiceText.tagline || practiceText.intro.length > 0 || practiceText.services.length > 0);
+
   return (
-    <div className="min-h-screen bg-background" data-testid="page-practice-group-detail">
-      {practiceGroup && (
-        <SEOHead
-          page="practiceGroups"
-          language={language}
-          customTitle={shownName ? `${shownName} | Santos & Saucedo` : undefined}
-          customDescription={seoDescription || undefined}
-          customPath={`/practice-groups/${practiceGroup.slug}`}
-        />
-      )}
+    <div className="ss26 min-h-screen" data-testid="page-practice-group-detail">
+      <SEOHead
+        page="practiceGroups"
+        language={language}
+        customTitle={shownName ? `${shownName} | Santos & Saucedo` : undefined}
+        customDescription={seoDescription || undefined}
+        customPath={`/practice-groups/${practiceGroup.slug}`}
+      />
       <Header />
 
-      {/* Encabezado dentro de <main> (el salto al contenido no se salta el h1). Encabezado en la
-          columna de lectura (Column) y cuerpo en ss-container: mismo borde izquierdo que el
-          logotipo y el pie. */}
-      <main id="main-content">
-        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-practice-group-hero">
-          <Column>
-            <div>
-              <Link href="/practice-groups">
-                <span
-                  className="inline-flex items-center gap-2 mb-6 cursor-pointer"
-                  data-testid="link-back-to-practice-groups"
-                >
-                  <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-                  {backToAll}
-                </span>
-              </Link>
-              <Eyebrow num="02" tone="navy" className="mb-4" />
-              <div>
-                <h1
-                  className="ss-hero-detail"
-                  data-testid="text-practice-group-title"
-                  lang={nameIsSource ? "en" : undefined}
-                >
-                  {nameIsSource ? <bdi lang="en" dir="ltr">{shownName}</bdi> : shownName}
-                </h1>
-                {practiceText?.tagline && (
-                  <p data-testid="text-practice-group-tagline" lang={descriptionSource ? "en" : undefined}>
-                    {descriptionSource ? <bdi lang="en" dir="ltr">{keepFirmName(practiceText.tagline)}</bdi> : keepFirmName(practiceText.tagline)}
-                  </p>
-                )}
-              </div>
-            </div>
-          </Column>
-        </section>
-
-        {/* Entrada a la izquierda (≈ 8 columnas) y, a la derecha, los socios de la práctica
-            (solo si su registro la menciona). Debajo, los servicios en una lista de filetes de
-            dos columnas a todo el ancho del contenedor. */}
-        <section className="bg-background py-16 lg:py-20">
-          <div className="ss-container">
-            <div className="grid grid-cols-1 gap-y-12 lg:grid-cols-12 lg:gap-x-12">
-              <div className="lg:col-span-8 xl:col-span-7" data-testid="container-practice-group-description">
-                {serviceItems.length > 0 && (
-                  <section
-                    aria-labelledby="practice-what-title"
-                    className="mb-12 lg:mb-14"
-                    data-testid="list-practice-what-we-do"
-                    {...(language !== "es" && language !== "en" ? EN_SOURCE : {})}
-                  >
-                    <h2 id="practice-what-title" className="ss-h3 mb-4">{servicesCopy.title}</h2>
-                    <ul className="border-b border-ss-rule">
-                      {serviceItems.map((item, i) => (
-                        <li key={i} className="border-t border-ss-rule py-3 text-[18px] leading-[1.5] text-ss-tinta">
-                          {keepFirmName(item)}
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                )}
-                {practiceText && practiceText.intro.length > 0 ? (
-                  <div {...sourceAttrs}>
-                    {/* "Santos & Saucedo" sin partirse entre líneas (espacios duros) */}
-                    <LeadParagraph
-                      firstParagraph={keepFirmName(practiceText.intro[0])}
-                      restParagraphs={practiceText.intro.slice(1).map(keepFirmName)}
-                      testId="lead-practice-group"
-                    />
-                  </div>
-                ) : !displayDescription && (practiceGroup?.descriptionEs || practiceGroup?.description) && translationPending ? (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                    <span data-testid="text-translation-pending">
-                      {language === 'de' ? 'Übersetzung lädt…' :
-                       language === 'zh' ? '翻译加载中…' :
-                       language === 'ko' ? '번역 로딩 중…' :
-                       language === 'ja' ? '翻訳を読み込み中…' :
-                       language === 'ar' ? 'جاري تحميل الترجمة…' :
-                       language === 'ru' ? 'Загрузка перевода…' :
-                       language === 'fr' ? 'Traduction en cours…' :
-                       language === 'it' ? 'Caricamento traduzione…' :
-                       'Loading translation…'}
-                    </span>
-                  </div>
-                ) : null}
-              </div>
-
-              {/* Socios de la práctica: retrato cuadrado pequeño, nombre y cargo. Sin nadie
-                  confirmado, la columna no se pinta. */}
-              {practiceMembers.length > 0 && (
-                <aside
-                  className="lg:col-span-4 lg:col-start-9"
-                  aria-labelledby="practice-people-title"
-                  data-testid="section-team-members"
-                >
-                  {/* Encabezado de columna lateral: romana de 20 px, no etiqueta */}
-                  <h2
-                    id="practice-people-title"
-                    className="ss-h3 text-[22px] mb-4"
-                    data-testid="text-our-team-title"
-                  >
-                    {allPartners ? t.partners : t.ourTeam}
-                  </h2>
-                  {/* Filete de cierre solo desde lg: debajo, el primer servicio (border-t) ya cierra
-                      la lista y dos filetes paralelos sin nada entre ellos sobran. Sin servicios,
-                      la lista conserva su cierre. */}
-                  <ul
-                    className={practiceText && practiceText.services.length > 0 ? "lg:border-b lg:border-ss-rule" : "border-b border-ss-rule"}
-                    data-testid="section-partners"
-                  >
-                    {practiceMembers.map((member) => {
-                      const role = memberTitle(member, language);
-                      return (
-                        <li key={member.id} className="border-t border-ss-rule" data-testid={`card-team-member-${member.slug}`}>
-                          <Link
-                            href={`/team/${member.slug}`}
-                            className="inline-link group flex items-center gap-4 py-4"
-                          >
-                            <MemberThumb member={member} />
-                            <span className="min-w-0">
-                              <span
-                                className="block font-heading text-[22px] leading-[1.25] text-ss-marino group-hover:underline decoration-1 underline-offset-4"
-                                data-testid={`text-team-member-name-${member.slug}`}
-                              >
-                                {member.name}
-                              </span>
-                              <span
-                                className="ss-label block mt-1 text-[14px] text-ss-medio"
-                                data-testid={`text-team-member-role-${member.slug}`}
-                                lang={role.source ? "en" : undefined}
-                              >
-                                {/* Fuera de ES/EN el cargo es el inglés de origen, aislado */}
-                                {role.source ? <bdi lang="en" dir="ltr">{role.text}</bdi> : role.text}
-                              </span>
-                            </span>
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </aside>
-              )}
-            </div>
-
-            {practiceText && practiceText.services.length > 0 && (
-              <ul
-                className="mt-16 grid grid-cols-1 gap-x-12 md:grid-cols-2 lg:mt-20"
-                data-testid="list-practice-services"
-                {...sourceAttrs}
-              >
-                {practiceText.services.map((service, index) => (
-                  <li
-                    key={index}
-                    className="border-t border-ss-rule pt-6 pb-10"
-                    data-testid={`item-practice-service-${index}`}
-                  >
-                    {/* h2 con el aspecto de h3: cada servicio es una sección de la práctica */}
-                    <h2 className="ss-h3 mb-3">{keepFirmName(service.title)}</h2>
-                    {service.paragraphs.map((paragraph, i) => (
-                      <p key={i} className={`ss-prose text-[18px] leading-[1.6] text-ss-tinta ${i > 0 ? "mt-4" : ""}`}>
-                        {keepFirmName(paragraph)}
-                      </p>
-                    ))}
-                  </li>
-                ))}
+      <V3Main vista={cfg.vista} className="pd">
+        {/* Foto a todo lo ancho; debajo, el nombre, el resumen y, a su lado, quienes llevan la práctica */}
+        <V3PageHeader
+          id={H1}
+          img={`${BASE}${cfg.photo.src}`}
+          alt={cfg.photo.alt[lang]}
+          width={cfg.photo.w}
+          height={cfg.photo.h}
+          position={cfg.photo.pos}
+          title={
+            <span data-testid="text-practice-group-title" lang={nameIsSource ? "en" : undefined}>
+              {nameIsSource ? <bdi lang="en" dir="ltr">{shownName}</bdi> : shownName}
+            </span>
+          }
+          lead={summary ? (
+            <span className="pd-lead" data-testid="text-practice-group-summary" {...(summaryIsSource ? EN_SOURCE : {})}>
+              {firm(summary)}
+            </span>
+          ) : undefined}
+        >
+          {practiceMembers.length > 0 ? (
+            <aside className="pd-equipo" aria-labelledby="practice-people-title" data-testid="section-team-members">
+              <h2 id="practice-people-title" className="pd-k" data-testid="text-our-team-title">
+                {allPartners ? t.partners : t.ourTeam}
+              </h2>
+              <ul data-testid="section-partners">
+                {practiceMembers.map((member) => {
+                  const role = memberTitle(member, language);
+                  return (
+                    <li key={member.id} data-testid={`card-team-member-${member.slug}`}>
+                      <Link href={`/team/${member.slug}`} className="pd-equipo__a">
+                        <MemberThumb member={member} />
+                        <span className="pd-equipo__txt">
+                          <span className="pd-equipo__n" data-testid={`text-team-member-name-${member.slug}`}>{member.name}</span>
+                          <span className="pd-equipo__c" data-testid={`text-team-member-role-${member.slug}`} lang={role.source ? "en" : undefined}>
+                            {/* Fuera de ES/EN el cargo es el inglés de origen, aislado */}
+                            {role.source ? <bdi lang="en" dir="ltr">{role.text}</bdi> : role.text}
+                          </span>
+                        </span>
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
-            )}
-          </div>
-        </section>
+            </aside>
+          ) : null}
+        </V3PageHeader>
 
-        {/* Casos de éxito: blanco, filete de sección y filas abiertas */}
-        {representativeMatters && representativeMatters.length > 0 && (
-          <section className="bg-background border-t border-ss-rule py-16 lg:py-20" data-testid="section-representative-matters">
-            <Column>
-              <div>
-                <h2
-                  className="ss-h2 mb-3"
-                  data-testid="text-success-cases-title"
+        {/* El texto de la práctica a la izquierda; «Qué hacemos» a la derecha (arriba en teléfono) */}
+        {hasText || serviceItems.length > 0 || translationPending ? (
+          <div className="pd-cuerpo">
+            <div className="sh-wrap pd-cuerpo__in">
+              {serviceItems.length > 0 ? (
+                <section
+                  className="pd-hacemos"
+                  aria-labelledby="practice-what-title"
+                  data-testid="list-practice-what-we-do"
+                  {...(isOtherLanguage ? EN_SOURCE : {})}
                 >
-                  {t.successCasesTitle}
-                </h2>
-                <p
-                  className="text-base text-ss-medio mb-8 max-w-2xl"
-                  data-testid="text-success-cases-subtitle"
-                >
-                  {t.successCasesSubtitle}
-                </p>
-                <div className="grid grid-cols-1 gap-8">
-                  {representativeMatters
-                    .sort((a, b) => {
-                      if (a.isHighlight && !b.isHighlight) return -1;
-                      if (!a.isHighlight && b.isHighlight) return 1;
-                      return b.year - a.year;
-                    })
-                    .map((matter) => (
-                      <TranslatedMatterCard
-                        key={matter.id}
-                        matter={matter}
-                        language={language}
-                        t={{ featured: t.featured, client: t.client }}
-                      />
-                    ))}
+                  <h2 id="practice-what-title" className="pd-k">{servicesCopy.title}</h2>
+                  <ul>
+                    {serviceItems.map((item, i) => <li key={i}>{firm(item)}</li>)}
+                  </ul>
+                </section>
+              ) : null}
+
+              {hasText && practiceText ? (
+                <div className="pd-texto" data-testid="container-practice-group-description" {...sourceAttrs}>
+                  {practiceText.tagline ? (
+                    <h2 className="pd-lema" data-testid="text-practice-group-tagline">{firm(practiceText.tagline)}</h2>
+                  ) : null}
+                  {practiceText.intro.length > 0 ? (
+                    <div className="pd-entrada" data-testid="lead-practice-group">
+                      {practiceText.intro.map((p, i) => <p key={i}>{firm(p)}</p>)}
+                    </div>
+                  ) : null}
                 </div>
-              </div>
-            </Column>
-          </section>
-        )}
+              ) : null}
 
-        {/* Rankings: lista de filetes */}
-        {practiceRankings.length > 0 && (
-          <section className="bg-background border-t border-ss-rule py-16 lg:py-20" data-testid="section-rankings">
-            <Column>
-              <div>
-                <Eyebrow label={t.rankingsTitle} className="mb-4" testId="eyebrow-rankings" />
-                <h2
-                  className="ss-h2 mb-3"
-                  data-testid="text-rankings-title"
-                >
-                  {t.rankingsTitle}
-                </h2>
-                <p
-                  className="text-base text-ss-medio mb-8 max-w-2xl"
-                  data-testid="text-rankings-subtitle"
-                >
-                  {t.rankingsSubtitle}
-                </p>
-                <RankingsList
-                  items={practiceRankings as RankingItem[]}
-                  language={language}
-                  getBadgeStyles={getBadgeStyles}
-                  getBadgeIcon={getBadgeIcon}
-                  testIdPrefix="ranking"
-                />
-              </div>
-            </Column>
-          </section>
-        )}
+              {/* Los servicios del texto («## »), a lo ancho de la retícula en dos columnas */}
+              {hasText && practiceText && practiceText.services.length > 0 ? (
+                <div className="pd-areas" data-testid="list-practice-services" {...sourceAttrs}>
+                  {practiceText.services.map((service, index) => (
+                    <section key={index} className="pd-area" data-testid={`item-practice-service-${index}`}>
+                      {/* h3: cada servicio es una parte del texto de la práctica */}
+                      <h3 className="sh-h3">{firm(service.title)}</h3>
+                      {service.paragraphs.map((paragraph, i) => <p key={i}>{firm(paragraph)}</p>)}
+                    </section>
+                  ))}
+                </div>
+              ) : null}
 
-        {/* Al final, contra el pie: una sala de juntas de la oficina, de borde a borde de la
-            ventana (PhotoBand), sin marco ni pie */}
-        <PhotoBand photo="salaJuntas2" height="medium" position="object-[50%_55%]" testId="band-practice-office" />
-      </main>
+              {!hasText && translationPending ? (
+                <div className="pd-texto pd-espera">
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  <span data-testid="text-translation-pending">
+                    {language === "de" ? "Übersetzung lädt…" :
+                     language === "zh" ? "翻译加载中…" :
+                     language === "ko" ? "번역 로딩 중…" :
+                     language === "ja" ? "翻訳を読み込み中…" :
+                     language === "ar" ? "جاري تحميل الترجمة…" :
+                     language === "ru" ? "Загрузка перевода…" :
+                     language === "fr" ? "Traduction en cours…" :
+                     language === "it" ? "Caricamento traduzione…" :
+                     "Loading translation…"}
+                  </span>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
+
+        {/* Casos representativos (los que la firma cargue en el panel) */}
+        {sortedMatters.length > 0 ? (
+          <section className="pd-casos" aria-labelledby="practice-cases-title" data-testid="section-representative-matters">
+            <div className="sh-wrap">
+              <div className="pd-casos__cab">
+                <h2 id="practice-cases-title" className="sh-h2" data-testid="text-success-cases-title">{t.successCasesTitle}</h2>
+                <p data-testid="text-success-cases-subtitle">{t.successCasesSubtitle}</p>
+              </div>
+              <div className="pd-casos__lista">
+                {sortedMatters.map((matter) => (
+                  <TranslatedMatterCard key={matter.id} matter={matter} language={language} t={{ featured: t.featured, client: t.client }} />
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        {/* Las láminas isométricas de la práctica */}
+        <Laminas cfg={cfg} lang={lang} attrs={attrs} />
+
+        {/* Las cuatro prácticas y la página siguiente */}
+        <V3NextPage
+          href={nextGroup ? `/practice-groups/${nextGroup.slug}` : "/industries"}
+          label={P.next}
+          title={nextGroup ? nameOf(nextGroup) : P.industries}
+          ariaLabel={P.nextAria}
+          practices={practicesRow}
+          practicesLabel={P.practicesAria}
+          current={`/practice-groups/${practiceGroup.slug}`}
+        />
+      </V3Main>
 
       <Footer />
     </div>

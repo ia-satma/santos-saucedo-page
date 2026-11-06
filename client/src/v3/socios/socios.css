@@ -1,0 +1,86 @@
+/* Página «Socios» (/team) con el diseño de la demo v3: ajustes propios del sitio sobre demo.css.
+   Todo bajo .v3; demo.css no se edita (se genera desde la demo). */
+
+/* ---------- Del sitio a la demo ---------- */
+/* index.css limita los <header> a 80 px en teléfono; el encabezado del Lienzo es un header */
+.v3 .pe-head{ max-height: none }
+/* Los nombres del índice son enlaces a la ficha: sin el subrayado ni el alto mínimo del sitio */
+.v3 a.pe-lz-name{ text-decoration: none; min-height: 0 }
+.v3 a.pe-lz-name:hover .pe-lz-n{ text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .16em; text-decoration-color: rgba(243,241,234,.42) }
+/* El retrato in memoriam lleva ss-photo (tratamiento conmemorativo de ss26.css): sin su radio */
+.v3 .pe-lz-img.ss-photo{ border-radius: 0 }
+
+/* Índice de nombres (enlaces) en escritorio y tableta; segmentos (botones) en teléfono */
+@media (min-width: 720px){
+  .v3 .pe-lz-names.sc-segs{ display: none }
+  /* En escritorio el retrato abre la ficha del socio en turno */
+  .v3 .pe-lz-q{ cursor: pointer }
+}
+@media (max-width: 719px){
+  .v3 .pe-lz-names.sc-idx{ display: none }
+}
+
+/* ---------- Modo Mario ----------
+   demo.css trae estas reglas como `.v3 .rm X`, pero la clase rm vive en <html> (por encima de .v3) y
+   no aplicaban: sin control de turno, fundido corto, sin acercamiento ni trazo. */
+html.rm .v3 .pe-turno{ display: none }
+html.rm .v3 .pe-lz-canvas{ transition: opacity var(--dur-quick) var(--ease-out) }
+html.rm .v3 .pe-lz-img{ transform: none; transition: none }
+html.rm .v3 .pe-lz-chy.is-entra .pe-lz-chy-f{ animation: none }
+html.rm .v3 .pe-lz-chy.is-entra .pe-lz-chy-n,
+html.rm .v3 .pe-lz-chy.is-entra .pe-lz-chy-a,
+html.rm .v3 .pe-lz-chy.is-entra .sc-perfil{ animation: pe-funde var(--dur-quick) var(--ease-out) both }
+
+/* ---------- Cintillo: «Ver perfil» del socio en turno ---------- */
+.v3 .sc-perfil{
+  pointer-events: auto;              /* el cintillo deja pasar el cursor al retrato; el enlace no */
+  display: inline-flex; align-items: center; gap: 10px;
+  margin-top: 12px; padding-block: 6px; min-height: 0;
+  font: 500 var(--t-ui)/1.2 var(--sans); letter-spacing: .01em;
+  color: var(--hueso);
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .32em;
+  text-decoration-color: rgba(243,241,234,.42);
+  transition: text-decoration-color var(--dur-quick) var(--ease-out);
+}
+.v3 .sc-perfil span{ font-size: inherit }
+.v3 .sc-perfil .pe-ico{ transition: transform var(--dur-quick) var(--ease-out) }
+.v3 .sc-perfil:hover{ text-decoration-color: var(--hueso) }
+.v3 .sc-perfil:hover .pe-ico{ transform: translateX(3px) }
+.v3 .sc-perfil:focus-visible{ outline: 2px solid var(--lima); outline-offset: 4px }
+.v3 .pe-lz-chy.is-sale .sc-perfil{ opacity: 0; transition: opacity 120ms var(--ease-out) }
+.v3 .pe-lz-chy.is-entra .sc-perfil{ animation: pe-chy-sube 420ms var(--ease-out) 300ms both }
+html.rm .v3 .sc-perfil .pe-ico{ transition: none }
+
+/* ---------- Carga y error ---------- */
+.v3 .sc-sk{ display: block; width: 62%; height: 1.06em; background: linear-gradient(rgba(243,241,234,.08), rgba(243,241,234,.08)) left center / 100% .62em no-repeat }
+.v3 .sc-lz-espera .pe-lz-names li:nth-child(2n) .sc-sk{ width: 48% }
+.v3 .sc-sk-foto{ opacity: 1; background: rgba(243,241,234,.06) }
+.v3 .sc-error{ margin: 0; color: var(--sobre-azul) }
+
+/* ---------- Of Counsel (si el panel los tiene), bajo el Lienzo ---------- */
+.v3 .sc-oc{ margin-top: clamp(64px, 8vw, 120px); padding-top: clamp(32px, 4vw, 48px); border-top: 1px solid var(--linea-azul) }
+.v3 .sc-oc-h{ margin: 0 0 clamp(24px, 3vw, 40px); font-family: var(--serif); font-weight: 400; font-size: var(--t-h3); line-height: 1.1; letter-spacing: -.01em; color: var(--hueso) }
+.v3 .sc-oc-list{ list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 24px clamp(24px, 4vw, 64px) }
+.v3 .sc-oc-a{ display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; gap: 20px; min-height: 0; color: var(--hueso); text-decoration: none }
+.v3 .sc-oc-foto{ position: relative; display: block; width: 96px; aspect-ratio: 1; overflow: hidden; background: rgba(243,241,234,.06) }
+.v3 .sc-oc-foto img{ position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; border-radius: 0 }
+.v3 .sc-oc-t{ display: grid; gap: 8px }
+.v3 .sc-oc-n{ font-family: var(--serif); font-weight: 400; font-size: clamp(1.25rem, 1.1rem + .5vw, 1.5rem); line-height: 1.15; letter-spacing: -.01em }
+.v3 .sc-oc-c{ font: 500 var(--t-label)/1.3 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--sobre-azul-2) }
+.v3 .sc-oc-a:hover .sc-oc-n, .v3 .sc-oc-a:focus-visible .sc-oc-n{ text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .16em }
+.v3 .sc-oc-a:focus-visible{ outline: 2px solid var(--lima); outline-offset: 4px }
+
+/* ---------- El equipo ---------- */
+.v3 .sc-eq-txt{ display: grid; gap: 20px; justify-items: start }
+.v3 .sc-eq-car{ margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px }
+.v3 .sc-eq-car .sh-cap{ color: var(--gris) }
+.v3 .sc-eq-car .sh-mas{ margin-top: 0; min-height: 0 }
+.v3 .sc-eq-car span{ font-size: var(--t-label) }
+/* Loseta con el encuadre óptico del sitio (squareFraming en Equipo.tsx) */
+.v3 .sh-eq__t{ position: relative }
+.v3 .sh-eq__t img.sc-enc{ position: absolute; height: auto; max-width: none; object-fit: fill }
+
+/* Subtítulo del panel (solo si algún idioma lo trae), bajo el título */
+.v3 .sc-lead{ flex-basis: 100%; max-width: 40em; margin: 0; font-family: var(--serif); font-size: var(--t-lead); line-height: 1.4; color: var(--sobre-azul-2) }
+.v3 .sc-sk-chy{ visibility: hidden }
+.v3 .sc-oc-ini{ position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--serif); font-size: 1.5rem; color: var(--sobre-azul-2) }

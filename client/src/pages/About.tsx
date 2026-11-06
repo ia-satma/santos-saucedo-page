@@ -1,19 +1,25 @@
-import "@/styles/folio-pages.css";
-import type { CSSProperties } from "react";
-import { OfficePhotography } from "@/components/editorial/OfficePhotography";
-import { HeroKicker } from "@/components/editorial/HeroKicker";
+// «Nuestra firma» (/about) con el diseño de la demo v3 aprobada (5-11-2026): cabecera con la luna sobre la
+// sierra, el texto de la firma con sus cifras, el tríptico solo «como un cuadro colgado», «Cómo trabajamos»,
+// el lema de la prioridad, las láminas 1/7 (carnero) y 2/7 (turbina → avión), la oficina y la siguiente página.
+// Los textos que el sitio ya tenía en diez idiomas (historia, principios, cifras) siguen aquí y en el CMS
+// ("about"); los nuevos de la demo están en español e inglés en v3/firma/textos.ts.
+import { useQuery } from "@tanstack/react-query";
+import i18n from "@/i18n";
 import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Lineas, TextLink } from "@/components/home26/primitives";
 import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
 import { useOfficeLabel } from "@/lib/officeLabel";
-import type { LanguageCode } from "@shared/schema";
-import "@/components/about/about.css";
+import { practiceName, usePracticeNames } from "@/lib/practiceNames";
+import type { LanguageCode, PracticeGroup } from "@shared/schema";
+import { V3Main, V3NextPage, V3PageHeader, useV3Lang } from "@/v3/shared";
+import { FirmaRaiz, FirmaTexto, Laminas, Oficina, Prioridad, Principios } from "@/v3/firma/Firma";
+import { HOME_FIRMA, TEXTOS } from "@/v3/firma/textos";
+import { v3Asset } from "@/v3/asset";
 
 // Cifras de /about: "40+" (sin tocar) y "72+" ciudades con presencia, la forma en cifras de
 // "más de 72" (redacción aprobada de la portada: "Ciudades en nuestra red de alianzas"). Fuera el conteo de
@@ -46,7 +52,8 @@ const receptionAlt: Record<LanguageCode, string> = {
 };
 
 export default function About() {
-  const { photos } = useCmsMedia();
+  const media = useCmsMedia();
+  const { photos } = media;
   const officeNameFor = useOfficeLabel();
   const { language } = useLanguage();
 
@@ -412,126 +419,109 @@ export default function About() {
   }
 };
 
+
   const editableContent = useCmsContent("about", content);
   const baseT = editableContent[language] || editableContent.en;
   const cmsChrome = useCmsContent("chrome", chrome26);
   const nav = cmsChrome[language].nav;
   const t = { ...baseT, title: nav[0].label };
+  const { lang, attrs } = useV3Lang();
+  const T = TEXTOS[lang];
+  // La fachada: pie y texto alternativo de la antigua «La firma» de la portada (CMS home.firma)
+  const fachada = useCmsContent("home", HOME_FIRMA)[lang].firma;
+
+  // Siguiente página: la primera práctica, con el nombre que da el sitio (base de datos y CMS)
+  const { data: groups = [] } = useQuery<PracticeGroup[]>({ queryKey: ["/api/practice-groups"] });
+  const { name: cmsPracticeName } = usePracticeNames();
+  const first = [...groups].filter((g) => g.published !== false).sort((a, b) => (a.order ?? 0) - (b.order ?? 0))[0];
+  const firstSlug = first?.slug ?? "laboral-seguridad-social";
+  const firstName = first
+    ? language === "es" ? first.nameEs || first.name
+      : language === "en" ? first.name
+        : cmsPracticeName(first.slug, language) ?? practiceName(first.slug, language) ?? first.name
+    : cmsPracticeName(firstSlug, language) ?? practiceName(firstSlug, language) ?? "";
+  const nextLabel = language === "es" || language === "en" ? T.siguiente : i18n.getFixedT(language)("cta.next");
+
+  // Textos alternativos de la galería de la oficina (CMS); en otros idiomas, el inglés con su lang
+  const altOficina = (photo: string) => {
+    const item = media.officeGallery.find((g) => g.photo === photo);
+    return (lang === "es" ? item?.altEs : item?.alt) || "Santos & Saucedo";
+  };
+  const srcSet = (p: { url: string; smallUrl?: string }, small = 768, big = 1536) =>
+    p.smallUrl && p.smallUrl !== p.url ? `${p.smallUrl} ${small}w, ${p.url} ${big}w` : undefined;
 
   return (
-    <div className="ss26 min-h-[100dvh] bg-background" data-testid="page-about">
+    <div className="ss26 min-h-[100dvh]" data-testid="page-about">
       <SEOHead page="about" language={language} />
       <Header />
 
-      {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo
-          salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
-          siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
-      <main id="main-content">
-        <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-about-hero">
-          <div className="ss-container">
-            <div className="max-w-3xl">
-              <HeroKicker page="about" testId="text-about-kicker" />
-              <h1 className="ss-display mb-5 text-[clamp(3rem,7vw,6rem)]" data-testid="text-about-title">
-                <Lineas text={t.title} />
-              </h1>
-              <p className="ss-lead max-w-2xl" data-testid="text-about-subtitle">
-                {t.subtitle}
-              </p>
-            </div>
+      <V3Main vista="firma">
+        <FirmaRaiz>
+          <V3PageHeader
+            id="cab-firma-h"
+            img={v3Asset("/v3/c-cerro-luna.webp")}
+            alt={T.cabAlt}
+            width={2400}
+            height={1600}
+            position="50% 62%"
+            title={t.title}
+            lead={<span className="nf-in" {...attrs}>{keepFirmName(T.lead)}</span>}
+          >
+            <p {...attrs}>{T.cabP}</p>
+          </V3PageHeader>
+
+          <FirmaTexto
+            titulo={t.subtitle}
+            parrafos={[keepFirmName(t.historyText1), t.historyText2]}
+            cifras={t.stats}
+            cuadro={{ src: photos.arteColor.url, srcSet: srcSet(photos.arteColor) }}
+            attrs={attrs}
+            t={T}
+          />
+
+          <Principios titulo={t.valuesTitle} valores={t.values} />
+
+          <Prioridad t={T} attrs={attrs} />
+
+          <Laminas t={T} attrs={attrs} logo={media.brand.logoLight} />
+
+          <Oficina
+            titulo={officeNameFor(language)}
+            href="/offices"
+            lead={fachada.caption}
+            leadAttrs={attrs}
+            fotos={{
+              fachada: { src: photos.fachada.url, srcSet: srcSet(photos.fachada, 768, 1159), alt: fachada.alt, attrs, w: 1159, h: 900 },
+              biblioteca: { src: photos.biblioteca.url, srcSet: srcSet(photos.biblioteca), alt: altOficina("biblioteca"), attrs, w: 1536, h: 1024 },
+              detalle: { src: photos.detalle.url, srcSet: srcSet(photos.detalle), alt: altOficina("detalle"), attrs, w: 1536, h: 1024 },
+              privada: { src: photos.oficinaPrivada.url, srcSet: srcSet(photos.oficinaPrivada), alt: altOficina("oficinaPrivada"), attrs, w: 1536, h: 1024 },
+              recepcion: {
+                src: photos.recepcionBanda.url,
+                srcSet: srcSet(photos.recepcionBanda, 761, 1522),
+                alt: keepFirmName(receptionAlt[language] ?? receptionAlt.en),
+                w: 1522,
+                h: 694,
+              },
+            }}
+          />
+
+          {/* El final de la demo (la siguiente parte de la historia) con los enlaces que la página ya tenía */}
+          <div data-testid="nav-about-related">
+            <V3NextPage
+              href={`/practice-groups/${firstSlug}`}
+              title={firstName}
+              label={nextLabel}
+              ariaLabel={t.title}
+              practices={[
+                { href: "/team", label: nav[2].label },
+                { href: "/practice-groups", label: nav[1].label },
+                { href: "/news", label: nav[3].label },
+                { href: "/offices", label: officeNameFor(language) },
+              ]}
+            />
           </div>
-        </section>
-
-        <div className="ss-about" data-surface="light">
-          <div className="ss-container">
-            <section className="ss-about-intro" data-testid="section-history">
-              <div className="ss-about-copy">
-                <p className="ss-lead" data-testid="text-about-lead">
-                  {keepFirmName(t.historyText1)}
-                </p>
-                <p className="ss-prose text-ss-tinta">
-                  {t.historyText2}
-                </p>
-                <dl className="ss-about-stats" data-testid="section-stats">
-                  {t.stats.map((stat, index) => (
-                    <div key={index} className="ss-about-stat" data-testid={`stat-${index}`}>
-                      <dt className="ss-label text-ss-medio">{stat.label}</dt>
-                      <dd className="ss-figure">{stat.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-            </section>
-
-            <section className="ss-about-values" aria-labelledby="about-values-title" data-testid="section-values">
-              <div className="ss-about-values-heading">
-                <h2 id="about-values-title" className="ss-h2"><Lineas text={t.valuesTitle} /></h2>
-              </div>
-              {/* Los cuatro principios como artículos numerados: numeral grande en la romana, filete
-                  que se dibuja y texto que sube, escalonados por columna */}
-              <ol className="ss-about-values-grid">
-                {t.values.map((value, index) => (
-                  <li
-                    key={index}
-                    className="ss-about-article"
-                    data-reveal=""
-                    style={index % 2 ? ({ "--reveal-delay": "0.12s" } as CSSProperties) : undefined}
-                    data-testid={`card-value-${index}`}
-                  >
-                    <span aria-hidden="true" data-trazo="" className="ss-about-article-rule" />
-                    <span aria-hidden="true" className="ss-about-article-num">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <h3 className="ss-h3">{value.title}</h3>
-                    <p>{value.text}</p>
-                  </li>
-                ))}
-              </ol>
-            </section>
-
-            <div role="group" className="ss-about-gallery" aria-label={officeNameFor(language)} data-testid="gallery-about-office">
-              {/* La pieza grande es el tríptico de la sala de juntas, el cuadro emblemático de la
-                  firma (petición del cliente, 24-10-2026: la recepción no debe ser la protagonista).
-                  Mismo hueco y proporción que tenía la recepción; la recepción pasa a un hueco chico. */}
-              <figure className="ss-about-gallery-reception ss-about-gallery-feature" data-curtain="" data-testid="figure-about-reception">
-                <OfficePhotography photo="arteColor" sizes="(min-width: 1464px) 1320px, 100vw" />
-              </figure>
-              <figure data-curtain="">
-                <OfficePhotography photo="oficinaPrivada" sizes="(min-width: 1464px) 648px, (min-width: 421px) 44vw, 90vw" />
-              </figure>
-              <figure data-curtain="" style={{ "--reveal-delay": "0.12s" } as CSSProperties}>
-                <img
-                  src={photos.recepcionBanda.url}
-                  srcSet={photos.recepcionBanda.smallUrl && photos.recepcionBanda.smallUrl !== photos.recepcionBanda.url ? `${photos.recepcionBanda.smallUrl} 761w, ${photos.recepcionBanda.url} 1522w` : undefined}
-                  sizes="(min-width: 1464px) 648px, (min-width: 421px) 44vw, 90vw"
-                  alt={keepFirmName(receptionAlt[language] ?? receptionAlt.en)}
-                  loading="lazy"
-                  decoding="async"
-                  width={1522}
-                  height={694}
-                  className="ss-photo block h-auto w-full"
-                  data-testid="img-about-reception"
-                />
-              </figure>
-            </div>
-
-            <nav aria-label={t.title} className="ss-about-related" data-testid="nav-about-related">
-                <span data-testid="button-view-team">
-                  <TextLink href="/team">{nav[2].label}</TextLink>
-                </span>
-                <span data-testid="button-view-practices">
-                  <TextLink href="/practice-groups">{nav[1].label}</TextLink>
-                </span>
-                <span data-testid="link-view-news">
-                  <TextLink href="/news">{nav[3].label}</TextLink>
-                </span>
-                <span data-testid="link-about-offices">
-                  <TextLink href="/offices">{officeNameFor(language)}</TextLink>
-                </span>
-              </nav>
-
-          </div>
-        </div>
-      </main>
+        </FirmaRaiz>
+      </V3Main>
 
       <Footer />
     </div>

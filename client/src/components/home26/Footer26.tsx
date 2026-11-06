@@ -9,6 +9,7 @@ import { useOfficeLabel } from "@/lib/officeLabel";
 import { useChrome26 } from "./chrome26";
 import { useSiteContact } from "./useSiteContact";
 import { PaletteSwitcher } from "./PaletteSwitcher";
+import PieMarca from "@/v3/marca/PieMarca";
 
 // Filas compactas en escritorio; se conserva un área táctil amplia en móvil.
 const linkCls = "inline-flex min-h-11 items-center md:min-h-7 text-start text-[17px] transition-colors";
@@ -51,15 +52,17 @@ export default function Footer26({ localized = false }: Footer26Props) {
     <footer
       id="footer"
       {...chrome.attrs}
-      className="ss26 border-t border-white/[.14] bg-ss-navy text-white"
+      className="ss26 relative isolate border-t border-white/[.14] bg-ss-navy text-white"
       data-testid="footer"
     >
       {/* Filete superior de 1 px (blanco al 14 %, border-t): separa el pie de un bloque Azul
-          Profundo que lo preceda, como el 404; junto a un cuerpo blanco apenas se nota.
-          El pie queda limpio: la marca decorativa se reserva a los encabezados editoriales. */}
+          Profundo que lo preceda, como el 404; junto a un cuerpo blanco apenas se nota. */}
+      {/* La § oficial, entera y tenue, sube y se asienta al llegar al pie (demo v3, módulo marca):
+          capa decorativa debajo del contenido, que va en relative z-[1] */}
+      <PieMarca />
       {/* Cierre (equipo gráfico): el logotipo funciona como una firma compacta del pie; se abre de
           abajo hacia arriba al llegar */}
-      <div className="ss-container pt-8 lg:pt-12">
+      <div className="ss-container relative z-[1] pt-8 lg:pt-12">
         <img
           src={media.brand.logoLight}
           alt={media.brand.name}
@@ -69,7 +72,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
           height={393}
         />
       </div>
-      <div className="ss-container grid grid-cols-2 gap-x-6 gap-y-7 py-8 md:grid-cols-3 lg:grid-cols-12 lg:pb-7 lg:pt-10">
+      <div className="ss-container relative z-[1] grid grid-cols-2 gap-x-6 gap-y-7 py-8 md:grid-cols-3 lg:grid-cols-12 lg:pb-7 lg:pt-10">
         <div className="col-span-2 md:col-span-3 lg:col-span-4" aria-hidden="true">
           <span data-trazo="" className="block h-px w-24 bg-white/40" />
         </div>
@@ -170,7 +173,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
         </div>
       </div>
 
-      <div className="ss-container">
+      <div className="ss-container relative z-[1]">
         <div className="flex flex-col gap-3 border-t border-white/15 py-5 text-[15px] leading-relaxed text-white/75 md:flex-row md:items-center md:justify-between md:gap-10">
           <p>{t.disclaimer}</p>
           <div className="flex shrink-0 items-center gap-3">

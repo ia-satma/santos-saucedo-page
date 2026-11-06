@@ -1,0 +1,45 @@
+/* Telón de la portada en el sitio: lo que el puerto añade a demo.css (que no se toca).
+   Todo dentro de .v3. */
+
+/* Con el encabezado del sitio (Header26, transparente sobre la portada del Inicio) la portada sube
+   su alto para quedar debajo de él, como el héroe anterior: la escena ocupa toda la pantalla. */
+.ss26:has(> .ss-header) .v3.mk-raiz{margin-top:calc(-1 * var(--ss-header-h))}
+
+/* Fondo del encabezado mientras la § está cerrada sobre el claro: Header26 va en blanco (logo blanco
+   y lima); arriba del todo es transparente y, al bajar, Azul noche sólido. Esta franja le da ese
+   mismo fondo desde el primer cuadro; se retira cuando la escena cubre la pantalla (el mismo momento
+   en que la demo pasaba su barra a blanco). */
+.v3 .mk-telon__barra{display:none}
+.ss26:has(> .ss-header) .v3 .mk-telon__barra{
+  display:block; position:absolute; left:0; right:0; top:0; z-index:5;
+  height:var(--ss-header-h);
+  background:rgb(var(--ss-navy-rgb, 12 35 64));
+  pointer-events:none;
+  transition:opacity var(--dur-quick) linear, visibility 0s;
+}
+.v3 .mk-telon.is-cubre .mk-telon__barra{opacity:0; visibility:hidden; transition:opacity var(--dur-quick) linear, visibility 0s linear var(--dur-quick)}
+
+/* «San Pedro Garza García · Desde 2010»: cada parte en un renglón entero. En los teléfonos más
+   angostos, donde no cabe en uno, va en dos renglones centrados y sin el punto suelto al final. */
+.v3 .sh-portada__lugar .mk-lugar{white-space:nowrap}
+@media (max-width:380px){
+  .v3 .sh-portada__lugar .mk-lugar{display:block}
+  .v3 .sh-portada__lugar .mk-lugar__punto{display:none}
+}
+
+/* Modo Mario, § cerrada: del mismo tamaño que con movimiento (70 % del alto sin pasar del 78 % del
+   ancho; demo.css solo la ajustaba al alto y en el teléfono se salía por los lados) y centrada.
+   El medio se contrapone para que la foto quede quieta, a sangre, detrás de la ventana. */
+.v3 .mk-js.rm .mk-telon__escena{
+  --mk-E:max(100vh, 540px);
+  --mk-H:min(calc(var(--mk-E) * .7), 119.57vw);
+  --mk-W:calc(var(--mk-H) * 1409 / 2160);
+}
+.v3 .mk-js.rm .mk-telon__marco{
+  top:calc((var(--mk-E) - var(--mk-H)) / 2); left:calc(50% - var(--mk-W) / 2);
+  width:var(--mk-W); height:var(--mk-H);
+}
+.v3 .mk-js.rm .mk-telon__medio{
+  top:calc((var(--mk-H) - var(--mk-E)) / 2); left:calc(var(--mk-W) / 2 - 50vw);
+  width:100vw; height:var(--mk-E);
+}

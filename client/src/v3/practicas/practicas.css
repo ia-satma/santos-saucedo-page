@@ -1,0 +1,154 @@
+/* Páginas de práctica (/practice-groups/<slug>): lo propio de la página sobre el CSS de la demo
+   (client/src/v3/demo.css, que no se toca). Prefijo pd-. Todo dentro de .v3.
+   Retícula: la misma de la cabecera de la demo (6fr / 5fr). A la izquierda el texto; a la derecha,
+   quienes llevan la práctica (en la cabecera) y «Qué hacemos» (en el cuerpo). */
+
+/* ---------- Escenario fijo de la anatomía ----------
+   La demo lo ponía bajo su barra de 60 px, que en sus páginas interiores no se retira nunca. La cabecera
+   del sitio (Header26: 68 px, 80 px desde 1024) sí se retira al bajar: con el escenario a top: 68/80 px
+   quedaba una franja azul vacía arriba durante todo el recorrido. Por eso el escenario ocupa la pantalla
+   entera y su contenido arranca debajo de la cabecera (padding con --ss-header-h): con la cabecera
+   puesta, lo que ella tapa es solo el margen del plano; al retirarse, aparece el marco completo y
+   nada se mueve ni cambia de tamaño. */
+@media (min-width: 821px) {
+  html:not(.rm) .v3[data-vista]:not([data-vista="inicio"]) .pd-laminas .an:not(.an-nogl) .an-stage {
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    min-height: calc(600px + var(--ss-header-h, 80px));
+    /* el margen superior del plano (inset) queda bajo la cabecera: así el plano tiene el mismo alto
+       útil que en la demo (con el inset encima, la nota al pie de la lista llegaba al marco) */
+    padding-top: calc(var(--ss-header-h, 80px) + clamp(22px, 3.4vh, 40px));
+  }
+  /* una sola lámina (sin pestañas): recorrido de una lámina, no de dos */
+  html:not(.rm) .v3 .pd-laminas .an[data-an-solo]:not(.an-nogl) { height: 340vh; }
+}
+/* Sin WebGL: el texto entero. En demo.css la regla de las páginas interiores (top: 60px; alto fijo)
+   le gana a la de .an-nogl (alto automático) y el texto quedaba cortado. */
+html .v3[data-vista] .pd-laminas .an.an-nogl .an-stage { top: auto; height: auto; min-height: 0; }
+/* una sola lámina sin WebGL: el texto en una columna, no en dos */
+.v3 .an[data-an-solo].an-nogl .an-stage { grid-template-columns: minmax(0, 1fr); }
+.v3 .an[data-an-solo].an-nogl [data-sheet] { grid-column: 1 !important; }
+.v3 .an[data-an-solo].an-nogl .an-copy, .v3 .an[data-an-solo].an-nogl .an-p { max-width: 34em; }
+.v3 .an[data-an-solo].an-nogl .an-cajetin { grid-column: 1; justify-self: end; }
+@media (max-width: 820px) { .v3 .an[data-an-solo].an-nogl .an-cajetin { justify-self: stretch; } }
+
+/* ---------- Cabecera: el resumen a la izquierda y, a su lado, el equipo ---------- */
+/* index.css (≤639 px) limita a 80 px todo <header> que no sea .ss26: la cabecera de la página
+   (header.sh-pp) y la de cada lámina (header.fg-cab) quedaban cortadas y encimadas con lo que sigue. */
+.v3.pd header { max-height: none; }
+.v3 .pd .sh-pp__texto > .sh-lead { max-width: 30em; }
+.v3 .pd-lead { display: block; }
+.v3 .pd .sh-pp__texto > .pd-equipo { grid-column: 2; grid-row: 2 / span 3; align-self: start; padding-top: .35em; }
+
+/* rótulo de columna: versalita, una sola medida */
+.v3 .pd-k {
+  display: block; margin: 0 0 14px;
+  font-family: var(--sans); font-weight: 500; font-size: var(--t-label); letter-spacing: var(--tr-label);
+  line-height: 1.3; text-transform: uppercase; color: var(--gris);
+}
+
+.v3 .pd-equipo ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linea-fuerte); }
+.v3 .pd-equipo li { border-bottom: 1px solid var(--linea); }
+.v3 .pd-equipo__a {
+  display: grid; grid-template-columns: 52px minmax(0, 1fr); align-items: start; column-gap: 16px;
+  padding: 12px 0; text-decoration: none; color: var(--azul);
+}
+.v3 .pd-equipo__foto {
+  display: block; width: 52px; height: 52px; overflow: hidden; background: var(--hueso-2);
+}
+.v3 .pd-equipo__foto img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
+.v3 .pd-equipo__ini {
+  display: grid; place-items: center; width: 100%; height: 100%;
+  font-family: var(--serif); font-size: 1.1rem; color: var(--azul);
+}
+.v3 .pd-equipo__txt { display: grid; gap: 5px; min-width: 0; padding-top: 3px; }
+.v3 .pd-equipo__n {
+  font-family: var(--serif); font-weight: 400; font-size: 1.1875rem; line-height: 1.2; letter-spacing: -.005em;
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em;
+  text-decoration-color: transparent; transition: text-decoration-color var(--dur-quick) var(--ease-out);
+}
+.v3 .pd-equipo__a:hover .pd-equipo__n, .v3 .pd-equipo__a:focus-visible .pd-equipo__n { text-decoration-color: var(--azul); }
+.v3 .pd-equipo__c {
+  font-family: var(--sans); font-weight: 500; font-size: var(--t-label); letter-spacing: var(--tr-label);
+  line-height: 1.3; text-transform: uppercase; color: var(--gris);
+}
+@media (max-width: 980px) {
+  .v3 .pd .sh-pp__texto > .pd-equipo { grid-row: auto; padding-top: 18px; }
+  .v3 .pd-equipo ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 228px), 1fr)); column-gap: clamp(16px, 3vw, 32px); border-top: 0; }
+  .v3 .pd-equipo li { border-top: 1px solid var(--linea-fuerte); border-bottom: 0; }
+}
+
+/* ---------- Cuerpo: el texto de la práctica y «Qué hacemos» ---------- */
+.v3 .pd-cuerpo { background: var(--hueso); padding-bottom: var(--sec-y); }
+.v3 .pd-cuerpo__in {
+  display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  column-gap: clamp(28px, 6vw, 112px); align-items: start;
+}
+.v3 .pd-cuerpo__in::before {
+  /* el filete que separa la cabecera del texto, al ancho de la retícula */
+  content: ""; grid-column: 1 / -1; grid-row: 1; height: 1px; background: var(--linea);
+  margin-bottom: clamp(40px, 6vw, 88px);
+}
+.v3 .pd-texto { grid-column: 1; grid-row: 2; min-width: 0; }
+.v3 .pd-hacemos { grid-column: 2; grid-row: 2; min-width: 0; padding-top: .55em; }
+.v3 .pd-areas { grid-column: 1 / -1; grid-row: 3; }
+
+.v3 .pd-lema {
+  font-family: var(--serif); font-weight: 300; font-size: var(--t-h2); line-height: 1.06; letter-spacing: -.018em;
+  color: var(--azul); text-wrap: balance; max-width: 14em; margin: 0 0 clamp(24px, 3vw, 36px);
+}
+.v3 .pd-entrada { display: grid; gap: 1em; }
+.v3 .pd-entrada p, .v3 .pd-area p { color: var(--gris); max-width: 29.3em; text-wrap: pretty; }
+/* el primer párrafo abre el texto: en tinta */
+.v3 .pd-entrada p:first-child { color: var(--tinta); }
+
+.v3 .pd-hacemos ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linea-fuerte); }
+.v3 .pd-hacemos li {
+  padding: 12px 0 13px; border-bottom: 1px solid var(--linea);
+  font-size: var(--t-ui); line-height: 1.45; color: var(--tinta); text-wrap: pretty;
+}
+
+/* los servicios de la práctica (los «## » del texto): dos columnas sobre la misma retícula */
+.v3 .pd-areas {
+  display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  column-gap: clamp(28px, 6vw, 112px); row-gap: clamp(40px, 5vw, 64px);
+  margin-top: clamp(56px, 7vw, 104px);
+}
+.v3 .pd-area { min-width: 0; border-top: 1px solid var(--linea-fuerte); padding-top: clamp(20px, 2.4vw, 28px); }
+.v3 .pd-area .sh-h3 { margin: 0 0 16px; max-width: 18em; }
+.v3 .pd-area p + p { margin-top: 1em; }
+
+.v3 .pd-espera { display: flex; align-items: center; gap: 10px; color: var(--gris); font-size: var(--t-small); }
+
+@media (max-width: 980px) {
+  .v3 .pd-cuerpo__in, .v3 .pd-areas { grid-template-columns: minmax(0, 1fr); }
+  .v3 .pd-hacemos { grid-column: 1; grid-row: 2; padding-top: 0; margin-bottom: clamp(48px, 7vw, 72px); }
+  .v3 .pd-texto { grid-row: 3; }
+  .v3 .pd-areas { grid-row: 4; }
+  .v3 .pd-entrada p, .v3 .pd-area p { max-width: 36em; }
+}
+/* entre teléfono y escritorio, la lista en dos columnas para no alargar la página */
+@media (min-width: 700px) and (max-width: 980px) {
+  .v3 .pd-hacemos ul { columns: 2; column-gap: clamp(24px, 4vw, 40px); border-top: 0; }
+  .v3 .pd-hacemos li { break-inside: avoid; border-top: 1px solid var(--linea); border-bottom: 0; }
+}
+
+/* ---------- Casos representativos (los que la firma cargue en el panel) ---------- */
+.v3 .pd-casos { background: var(--hueso); padding-bottom: var(--sec-y); }
+.v3 .pd-casos__cab { display: grid; gap: 14px; margin-bottom: clamp(28px, 4vw, 48px); }
+.v3 .pd-casos__cab p { color: var(--gris); max-width: 29.3em; }
+.v3 .pd-casos__lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: clamp(28px, 4vw, 48px) clamp(24px, 3vw, 40px); }
+.v3 .pd-caso { border-top: 1px solid var(--linea-fuerte); padding-top: 18px; display: grid; gap: 10px; align-content: start; }
+.v3 .pd-caso__k {
+  display: flex; gap: 14px;
+  font-family: var(--sans); font-weight: 500; font-size: var(--t-label); letter-spacing: var(--tr-label);
+  line-height: 1.3; text-transform: uppercase; color: var(--gris);
+}
+.v3 .pd-caso__dest { color: var(--oliva); }
+.v3 .pd-caso__d { color: var(--gris); }
+.v3 .pd-caso__c { font-size: var(--t-small); color: var(--tinta); }
+.v3 .pd-caso__c span { color: var(--gris); }
+
+/* ---------- Cargando ---------- */
+.v3 .pd-cargando { min-height: 220px; }

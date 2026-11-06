@@ -1,0 +1,161 @@
+/* «Nuestra firma» (/about): lo propio de la página sobre el CSS de la demo (client/src/v3/demo.css, que no se toca).
+   Prefijo nf-. Todo dentro de .v3. */
+
+/* ---------- Escenario fijo de la turbina (lámina 2/7) ----------
+   La demo lo ponía bajo su barra de 60 px; aquí va bajo la cabecera del sitio (Header26: 68 px, 80 px desde 1024). */
+@media (min-width: 1200px) and (min-height: 860px) {
+  html:not(.rm) .v3[data-vista="firma"]:not([data-vista="inicio"]) .nf .fi-reaccion .fi-escena {
+    top: var(--ss-header-h, 80px);
+    height: calc(100vh - var(--ss-header-h, 80px));
+    height: calc(100dvh - var(--ss-header-h, 80px));
+  }
+}
+
+/* index.css limita todo <header> que no sea .ss26 a 80 px por debajo de 640 px: la cabecera de la página no lo es */
+.v3 .nf header { max-height: none; }
+
+/* ---------- La firma: texto, cifras y el tríptico ---------- */
+/* Misma retícula que el texto de la cabecera (6fr / 5fr), separada por un filete */
+.v3 .nf-texto {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  column-gap: clamp(28px, 6vw, 112px);
+  row-gap: 24px;
+  align-items: start;
+  border-top: 1px solid var(--linea);
+  padding-top: clamp(40px, 5vw, 72px);
+}
+.v3 .nf-texto__h {
+  grid-column: 1;
+  margin: 0;
+  max-width: 15em;
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(1.65rem, 1.05rem + 2.1vw, 2.9rem);
+  line-height: 1.16;
+  letter-spacing: -.012em;
+  color: var(--azul);
+  text-wrap: balance;
+}
+.v3 .nf-texto__cuerpo { grid-column: 2; display: grid; gap: 1em; max-width: 32rem; padding-top: .35em; }
+.v3 .nf-texto__cuerpo p { margin: 0; color: var(--gris); text-wrap: pretty; }
+.v3 .nf-texto__cuerpo .nf-texto__p1 { color: var(--tinta); }
+/* Las cifras de la firma, sobre la línea de cota de la demo; cada una arranca en su columna de texto */
+.v3 .nf-cifras {
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  column-gap: clamp(28px, 6vw, 112px);
+  margin-top: clamp(20px, 3vw, 44px);
+}
+.v3 .nf-cifras > div,
+.v3 .nf-cifras > div:first-child { border-left: 0; padding-left: 0; padding-right: 0; }
+.v3 .nf-cifras dt { max-width: 22em; }
+@media (max-width: 980px) {
+  .v3 .nf-texto { grid-template-columns: minmax(0, 1fr); }
+  .v3 .nf-texto > * { grid-column: 1 !important; }
+  .v3 .nf-texto__cuerpo { padding-top: 0; max-width: 36rem; }
+  .v3 .nf-cifras { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(20px, 5vw, 40px); margin-top: 16px; }
+}
+/* El tríptico, a todo el ancho de la retícula y entero (la foto no se recorta) */
+.v3 .nf .sh-firma__cuadro figcaption { max-width: 34em; }
+
+/* ---------- Cómo trabajamos ---------- */
+/* Sin fondo propio: queda el suelo de .v3 (piedra con grano, tema.css) */
+.v3 .nf-principios { padding-bottom: var(--sec-y); }
+.v3 .nf-principios__in {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  column-gap: clamp(32px, 6vw, 112px);
+  row-gap: 36px;
+  align-items: start;
+  border-top: 1px solid var(--linea);
+  padding-top: clamp(40px, 5vw, 72px);
+}
+.v3 .nf-principios__in > .sh-h2 { margin: 0; }
+.v3 .nf-principios__lista {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(28px, 4vw, 64px); row-gap: clamp(40px, 4.4vw, 64px);
+}
+.v3 .nf-principio { display: grid; gap: 12px; align-content: start; padding-top: 20px; border-top: 1px solid var(--linea-fuerte); }
+.v3 .nf-principio__n {
+  font-family: var(--sans); font-weight: 500; font-size: var(--t-label); letter-spacing: var(--tr-label, .16em);
+  line-height: 1.3; color: var(--gris); font-variant-numeric: tabular-nums lining-nums;
+}
+.v3 .nf-principio__t {
+  margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(1.4rem, 1.15rem + .8vw, 1.85rem);
+  line-height: 1.12; letter-spacing: -.01em; color: var(--azul);
+}
+.v3 .nf-principio__p { margin: 0; color: var(--gris); max-width: 34em; text-wrap: pretty; }
+@media (max-width: 1100px) {
+  .v3 .nf-principios__in { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) {
+  .v3 .nf-principios__lista { grid-template-columns: minmax(0, 1fr); row-gap: 36px; }
+}
+
+/* ---------- La oficina: la fachada y las salas (rejilla sh-ofi de la demo, 12 columnas) ---------- */
+.v3 .nf-oficina { padding-block: var(--sec-y) clamp(64px, 8vw, 120px); }
+.v3 .nf-oficina__cab {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
+  column-gap: clamp(32px, 6vw, 96px); row-gap: 16px; align-items: end;
+  margin-bottom: clamp(32px, 4vw, 56px);
+}
+.v3 .nf-oficina__cab .sh-h2 { margin: 0; }
+/* El título lleva a /offices, con el subrayado del enlace «Siguiente» de la demo (sh-sigue__t) */
+.v3 .nf-oficina__a {
+  color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em;
+  text-decoration-color: rgba(15, 63, 107, .28); transition: text-decoration-color var(--dur-base) var(--ease-out);
+}
+.v3 .nf-oficina__a:hover, .v3 .nf-oficina__a:focus-visible { text-decoration-color: var(--azul); }
+.v3 .nf-oficina__a:focus-visible { outline: 2px solid var(--azul); outline-offset: 6px; }
+.v3 .nf-oficina__lead { margin: 0; color: var(--gris); font-size: var(--t-body); line-height: 1.6; max-width: 34rem; text-wrap: pretty; }
+
+/* La fachada (7 columnas, dos filas) fija el alto de la biblioteca y del detalle, a su derecha;
+   abajo, al revés: la oficina privada (5 columnas, 3:2) fija el de la recepción. Sin huecos ni desfases. */
+.v3 .nf-ofi__f--fachada { grid-column: 1 / span 7; grid-row: 1 / span 2; }
+.v3 .nf-ofi__f--fachada .sh-ofi__m { aspect-ratio: 1159 / 900; }
+.v3 .nf-ofi__f--biblioteca { grid-column: 8 / span 5; grid-row: 1; }
+.v3 .nf-ofi__f--detalle { grid-column: 8 / span 5; grid-row: 2; }
+.v3 .nf-ofi__f--detalle img { object-position: 55% 50%; }
+.v3 .nf-ofi__f--privada { grid-column: 1 / span 5; grid-row: 3; }
+.v3 .nf-ofi__f--privada .sh-ofi__m { aspect-ratio: 3 / 2; }
+.v3 .nf-ofi__f--recepcion { grid-column: 6 / span 7; grid-row: 3; }
+/* Las que rellenan: toman el alto de la fila y la foto lo cubre */
+.v3 .nf-ofi__f--biblioteca, .v3 .nf-ofi__f--detalle, .v3 .nf-ofi__f--recepcion {
+  align-self: stretch; align-content: stretch; grid-template-rows: minmax(0, 1fr);
+}
+.v3 .nf-ofi__f--biblioteca .sh-ofi__m, .v3 .nf-ofi__f--detalle .sh-ofi__m, .v3 .nf-ofi__f--recepcion .sh-ofi__m { min-height: 0; }
+.v3 .nf-ofi__f--biblioteca img, .v3 .nf-ofi__f--detalle img, .v3 .nf-ofi__f--recepcion img { position: absolute; inset: 0; }
+
+/* Tableta (la demo pasa sh-ofi a 6 columnas): fachada entera; biblioteca 4 + detalle 2; oficina 2 + recepción 4 */
+@media (max-width: 900px) {
+  .v3 .nf-oficina__cab { grid-template-columns: minmax(0, 1fr); }
+  .v3 .nf-ofi__f--fachada { grid-column: 1 / -1; grid-row: 1; }
+  .v3 .nf-ofi__f--biblioteca { grid-column: 1 / span 4; grid-row: 2; align-self: start; }
+  .v3 .nf-ofi__f--biblioteca .sh-ofi__m { aspect-ratio: 3 / 2; }
+  .v3 .nf-ofi__f--biblioteca img { position: static; }
+  .v3 .nf-ofi__f--detalle { grid-column: 5 / span 2; grid-row: 2; }
+  .v3 .nf-ofi__f--privada { grid-column: 1 / span 2; grid-row: 3; align-self: stretch; align-content: stretch; grid-template-rows: minmax(0, 1fr); }
+  .v3 .nf-ofi__f--privada .sh-ofi__m { aspect-ratio: auto; min-height: 0; }
+  .v3 .nf-ofi__f--privada img { position: absolute; inset: 0; object-position: 62% 50%; }
+  .v3 .nf-ofi__f--recepcion { grid-column: 3 / span 4; grid-row: 3; align-self: start; }
+  .v3 .nf-ofi__f--recepcion .sh-ofi__m { aspect-ratio: 1522 / 694; }
+  .v3 .nf-ofi__f--recepcion img { position: static; }
+}
+/* Teléfono (una columna): cada foto con su proporción */
+@media (max-width: 560px) {
+  .v3 .nf-ofi__f--fachada, .v3 .nf-ofi__f--biblioteca, .v3 .nf-ofi__f--detalle,
+  .v3 .nf-ofi__f--privada, .v3 .nf-ofi__f--recepcion { grid-column: 1; grid-row: auto; align-self: start; }
+  .v3 .nf-ofi__f--biblioteca .sh-ofi__m, .v3 .nf-ofi__f--detalle .sh-ofi__m, .v3 .nf-ofi__f--privada .sh-ofi__m { aspect-ratio: 3 / 2; }
+  .v3 .nf-ofi__f--detalle img, .v3 .nf-ofi__f--privada img { position: static; }
+}
+
+/* index.css (regla global del teléfono, sin capa) lleva todo <span> a 16 px por debajo de 640 px: aquí heredan,
+   como en la demo (el lema, el cajetín de las láminas y la entrada de la cabecera) */
+.v3 .nf .mk-prioridad__linea,
+.v3 .nf .fi-cajetin span,
+.v3 .nf .fi-tag-t,
+.v3 .nf .nf-in { font-size: inherit; }
+.v3 .nf .nf-texto__cuerpo p,
+.v3 .nf .nf-principio__p,
+.v3 .nf .nf-oficina__lead { font-size: var(--t-body); line-height: 1.6; }

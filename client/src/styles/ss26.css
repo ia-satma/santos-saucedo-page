@@ -59,7 +59,9 @@
 @font-face {
   font-family: "SS Sans";
   src: url("./fonts/SourceSans3-r-cyrillic.woff2") format("woff2");
-  font-weight: 400 700;
+  /* El mismo rango que Hanken: con uno más estrecho, Chrome elige esta cara para 400–700 y el
+     texto latino (fuera de su unicode-range) cae a la letra del sistema */
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
   unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
@@ -75,7 +77,7 @@
 @font-face {
   font-family: "SS Sans";
   src: url("./fonts/SourceSans3-i-cyrillic.woff2") format("woff2");
-  font-weight: 400 600;
+  font-weight: 100 900;
   font-style: italic;
   font-display: swap;
   unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
@@ -566,11 +568,9 @@ a:focus-visible > .ss-arrow:dir(rtl) {
   .ss-team-portrait { transition: none; }
 }
 
-/* Retrato conmemorativo: blanco y negro de contraste suave, sin modificar el original.
-   Se identifica por persona para conservar el tratamiento aunque se cambie la foto en el CMS. */
-.ss-photo[data-portrait-slug="mario-saucedo-rodriguez"] {
-  filter: grayscale(1) contrast(0.94) brightness(1.04);
-}
+/* Retrato conmemorativo de Mario Saucedo Rodríguez: a color, como en la demo v3 aprobada el
+   5-11-2026 y como el resto de las fotos del sitio (pedido del cliente). El blanco y negro anterior
+   era este filtro: filter: grayscale(1) contrast(0.94) brightness(1.04). */
 
 .ss-hero {
   --u: min(0.05208vw, 0.09259vh);

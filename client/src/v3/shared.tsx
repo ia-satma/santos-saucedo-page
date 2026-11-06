@@ -2,6 +2,9 @@
    El CSS de la demo vive en ./demo.css, encerrado en .v3 para no tocar el resto del sitio.
    Ver client/src/v3/README.md. */
 import "./demo.css";
+// Fondo «piedra» con grano: el que la demo aprobada mostraba por omisión
+import "./tema.css";
+import "./sitio.css";
 import { useEffect, type ReactNode } from "react";
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -54,16 +57,18 @@ export function V3PageHeader({
 
 /** Final de cada página: la siguiente parte de la historia (y, en las prácticas, las otras prácticas). */
 export function V3NextPage({
-  href, title, label, practices, current, ariaLabel,
+  href, title, label, practices, current, ariaLabel, practicesLabel,
 }: {
   href: string; title: string; label: string; ariaLabel: string;
   practices?: { href: string; label: string }[]; current?: string;
+  /** Nombre de la lista de prácticas para lectores de pantalla («Prácticas») */
+  practicesLabel?: string;
 }) {
   return (
     <nav className="sh-sigue" aria-label={ariaLabel}>
       <div className="sh-wrap sh-sigue__in">
         {practices && practices.length ? (
-          <ul className="sh-sigue__pr">
+          <ul className="sh-sigue__pr" aria-label={practicesLabel}>
             {practices.map((p) => (
               <li key={p.href}>
                 <Link href={p.href} aria-current={p.href === current ? "page" : undefined}>{p.label}</Link>

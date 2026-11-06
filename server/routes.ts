@@ -1036,6 +1036,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         { loc: '/about', changefreq: 'monthly', priority: '0.8' },
         { loc: '/team', changefreq: 'weekly', priority: '0.9' },
         { loc: '/practice-groups', changefreq: 'monthly', priority: '0.8' },
+        { loc: '/industries', changefreq: 'monthly', priority: '0.7' },
         { loc: '/news', changefreq: 'daily', priority: '0.9' },
         { loc: '/contact', changefreq: 'monthly', priority: '0.7' },
         { loc: '/offices', changefreq: 'monthly', priority: '0.6' },

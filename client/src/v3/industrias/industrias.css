@@ -1,0 +1,36 @@
+/* Página «Industrias» (demo v3): ajustes del puerto sobre demo.css (que no se edita).
+   Especificidad un punto mayor que la de demo.css ([data-in] / [data-mp]) para no depender del orden de carga. */
+
+/* ---- Industrias: la foto fija y los saltos quedan bajo el encabezado del sitio (Header26: 68 / 80 px),
+   no bajo la barra de 60 px de la demo ---- */
+.v3 .in[data-in]{ --in-top: var(--ss-header-h, 68px) }
+/* La foto fija, en cambio, va a toda la altura de la ventana, bajo el encabezado: Header26 se retira al
+   bajar (is-tucked) y vuelve al subir; con top = alto del encabezado quedaba una franja vacía de 68/80 px
+   sobre la foto mientras se lee. Así la foto queda a sangre y el encabezado, cuando vuelve, la cubre. */
+@media (min-width: 1000px){
+  html:not(.rm) .v3 .in[data-in] .in-media__fija{ top: 0; height: 100vh; height: 100svh }
+}
+
+/* ---- Mapa: el escenario fijo queda bajo el encabezado del sitio (la demo lo ponía a 60 px en las páginas
+   interiores, con .v3[data-vista]:not([data-vista="inicio"]) .mp) y conserva el aire de la demo debajo
+   (60 px arriba, 100svh − 112 px de mapa, 52 px abajo) ---- */
+.v3[data-vista="industrias"] .mp.sobre-azul[data-mp]{ --mp-top: var(--ss-header-h, 68px) }
+@media (min-width: 1100px){
+  .v3 .mp[data-mp] .mp-escena{ --mp-w: min(100%, calc((100svh - var(--mp-top) - 52px) * var(--mp-ar))) }
+}
+
+/* ---- Pie del mapa sin la nota para la junta: «Pausar» queda solo, alineado con el texto;
+   en Modo Mario no hay botón y el pie no deja una franja vacía ---- */
+@media (max-width: 1099.98px){
+  .v3 .mp[data-mp] .mp-pie{ flex-direction: row; justify-content: flex-start }
+}
+html.rm .v3 .mp[data-mp] .mp-pie{ display: none }
+
+/* ---- Teléfono: el letrero de la sede («MONTERREY · SEDE», al norte) llega al borde derecho de la
+   pantalla: a 390 px le sobraban 2 px y a 375 px se cortaba, igual que en la demo; en inglés
+   («MONTERREY OFFICE») se cortaba ya a 390. Espaciado .1em (la demo, .14em) y, si aun así no cabe,
+   pasa a dos renglones en vez de cortarse. ---- */
+@media (max-width: 699.98px){
+  .v3[data-vista="industrias"] .mp-letrero--norte{ white-space: normal; max-width: calc(100% - var(--x) + 4px) }
+  .v3[data-vista="industrias"] .mp-letrero--norte .mp-letrero-titulo{ letter-spacing: .1em }
+}

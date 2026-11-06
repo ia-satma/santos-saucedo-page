@@ -1,0 +1,7 @@
+/* Capa de la § del pie: un .v3 propio (para demo.css) que no pinta nada más que la §.
+   Ocupa todo el pie, debajo de su contenido. */
+.v3.mk-pie-capa{
+  position:absolute; inset:0; z-index:0;
+  overflow:hidden; pointer-events:none;
+  background:none; padding:0; margin:0;
+}

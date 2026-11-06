@@ -293,7 +293,6 @@ html.rm .v3 .sh-step{transform:none!important}
   .v3 .sh-barra.is-on{transform:none}
   .v3 .sh-barra button{display:flex;align-items:center;justify-content:center;gap:10px;min-height:46px;border:1px solid var(--linea-azul);background:transparent;color:var(--sobre-azul);font-weight:600;font-size:.95rem;cursor:pointer}
   .v3 .sh-barra button:last-child{background:var(--hueso);color:var(--azul-noche);border-color:var(--hueso)}
-  .v3{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
 }
 .v3 .sh-hoja{position:fixed;left:0;right:0;bottom:0;z-index:81;max-height:92dvh;overflow:auto;background:var(--azul);color:var(--sobre-azul);padding:10px max(18px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));box-sizing:border-box;transform:translateY(100%);transition:transform 280ms var(--ease-in)}
 .v3 .sh-hoja.is-open{transform:none;transition:transform 420ms var(--ease-out)}
@@ -463,12 +462,12 @@ html.rm .v3 .sh-menu__list li{transform:none;opacity:1;transition:none}
 .v3 .sh-ofi__f--mezanine{grid-column:8 / span 5;grid-row:3;align-self:center}
 .v3 .sh-ofi__f--mezanine .sh-ofi__m{aspect-ratio:3 / 2}
 /* Entrada: cada foto se descubre de abajo hacia arriba y la imagen se asienta (de 1.08 a 1). Una vez. */
-.v3 .sh-js-ofi .sh-ofi__f .sh-ofi__m{clip-path:inset(100% 0 0 0)}
-.v3 .sh-js-ofi .sh-ofi__f .sh-ofi__m img{transform:scale(1.08)}
-.v3 .sh-js-ofi .sh-ofi__f figcaption{opacity:0;transform:translate3d(0,8px,0)}
-.v3 .sh-js-ofi .sh-ofi__f.is-visto .sh-ofi__m{clip-path:inset(0 0 0 0);transition:clip-path 1100ms var(--ease-out) var(--d,0ms)}
-.v3 .sh-js-ofi .sh-ofi__f.is-visto .sh-ofi__m img{transform:none;transition:transform 1600ms var(--ease-out) var(--d,0ms)}
-.v3 .sh-js-ofi .sh-ofi__f.is-visto figcaption{opacity:1;transform:none;transition:opacity var(--dur-slow) var(--ease-out) calc(var(--d,0ms) + 420ms),transform var(--dur-slow) var(--ease-out) calc(var(--d,0ms) + 420ms)}
+html.sh-js-ofi .v3 .sh-ofi__f .sh-ofi__m, .v3 .sh-js-ofi .sh-ofi__f .sh-ofi__m{clip-path:inset(100% 0 0 0)}
+html.sh-js-ofi .v3 .sh-ofi__f .sh-ofi__m img, .v3 .sh-js-ofi .sh-ofi__f .sh-ofi__m img{transform:scale(1.08)}
+html.sh-js-ofi .v3 .sh-ofi__f figcaption, .v3 .sh-js-ofi .sh-ofi__f figcaption{opacity:0;transform:translate3d(0,8px,0)}
+html.sh-js-ofi .v3 .sh-ofi__f.is-visto .sh-ofi__m, .v3 .sh-js-ofi .sh-ofi__f.is-visto .sh-ofi__m{clip-path:inset(0 0 0 0);transition:clip-path 1100ms var(--ease-out) var(--d,0ms)}
+html.sh-js-ofi .v3 .sh-ofi__f.is-visto .sh-ofi__m img, .v3 .sh-js-ofi .sh-ofi__f.is-visto .sh-ofi__m img{transform:none;transition:transform 1600ms var(--ease-out) var(--d,0ms)}
+html.sh-js-ofi .v3 .sh-ofi__f.is-visto figcaption, .v3 .sh-js-ofi .sh-ofi__f.is-visto figcaption{opacity:1;transform:none;transition:opacity var(--dur-slow) var(--ease-out) calc(var(--d,0ms) + 420ms),transform var(--dur-slow) var(--ease-out) calc(var(--d,0ms) + 420ms)}
 html.rm.sh-js-ofi .v3 .sh-ofi__f .sh-ofi__m{clip-path:none}
 html.rm.sh-js-ofi .v3 .sh-ofi__f .sh-ofi__m img,html.rm.sh-js-ofi .v3 .sh-ofi__f figcaption{transform:none}
 html.rm.sh-js-ofi .v3 .sh-ofi__f .sh-ofi__m{opacity:0}
@@ -612,27 +611,27 @@ html.rm.sh-js-ofi .v3 .sh-ofi__f.is-visto .sh-ofi__m,html.rm.sh-js-ofi .v3 .sh-o
   background:var(--hueso);
   color:var(--sobre-azul);
 }
-.v3 .mk-js .mk-telon{height:240vh}
+html.mk-js .v3 .mk-telon, .v3 .mk-js .mk-telon{height:240vh}
 .v3 .mk-telon__escena{
   position:relative;
   height:100vh; min-height:540px;
   overflow:hidden; isolation:isolate;
   background:var(--hueso);
 }
-.v3 .mk-js .mk-telon__escena{position:sticky; top:0}
+html.mk-js .v3 .mk-telon__escena, .v3 .mk-js .mk-telon__escena{position:sticky; top:0}
 
 /* Escena: sin JS, a sangre. Con JS, ventana con la forma de la § (70 % del alto, centrada); el
    script recalcula todo en px. El medio se contraposiciona para que la escena no se mueva. */
 .v3 .mk-telon__marco{position:absolute; inset:0; z-index:0; transform-origin:0 0}
 .v3 .mk-telon__medio{position:absolute; inset:0; transform-origin:50% 50%}
-.v3 .mk-js .mk-telon__marco{
+html.mk-js .v3 .mk-telon__marco, .v3 .mk-js .mk-telon__marco{
   inset:auto; top:15%; left:calc(50% - 22.83vh);
   width:45.66vh; height:70%;
   -webkit-mask:var(--mk-art) 0 0 / 100% 100% no-repeat;
           mask:var(--mk-art) 0 0 / 100% 100% no-repeat;
 }
-.v3 .mk-js .mk-telon__medio{inset:auto; top:-15vh; left:calc(22.83vh - 50vw); width:100vw; height:100vh}
-.v3 .mk-js .mk-telon.is-abierta .mk-telon__marco{-webkit-mask:none; mask:none}
+html.mk-js .v3 .mk-telon__medio, .v3 .mk-js .mk-telon__medio{inset:auto; top:-15vh; left:calc(22.83vh - 50vw); width:100vw; height:100vh}
+html.mk-js .v3 .mk-telon.is-abierta .mk-telon__marco, .v3 .mk-js .mk-telon.is-abierta .mk-telon__marco{-webkit-mask:none; mask:none}
 .v3 .mk-telon.is-mueve .mk-telon__marco,
 .v3 .mk-telon.is-mueve .mk-telon__medio{will-change:transform}
 .v3 .mk-telon__quieta,
@@ -648,8 +647,8 @@ html.rm.sh-js-ofi .v3 .sh-ofi__f.is-visto .sh-ofi__m,html.rm.sh-js-ofi .v3 .sh-o
 
 /* Velo: solo con la escena abierta, para que se lean el logo y la firma. */
 .v3 .mk-telon .sh-portada__velo{z-index:2}
-.v3 .mk-js .mk-telon .sh-portada__velo{opacity:0; transition:opacity var(--dur-quick) var(--ease-in)}
-.v3 .mk-js .mk-telon.is-abierta .sh-portada__velo{opacity:1; transition:opacity var(--dur-slow) var(--ease-out)}
+html.mk-js .v3 .mk-telon .sh-portada__velo, .v3 .mk-js .mk-telon .sh-portada__velo{opacity:0; transition:opacity var(--dur-quick) var(--ease-in)}
+html.mk-js .v3 .mk-telon.is-abierta .sh-portada__velo, .v3 .mk-js .mk-telon.is-abierta .sh-portada__velo{opacity:1; transition:opacity var(--dur-slow) var(--ease-out)}
 
 /* Marca de agua: la misma § del telón, del mismo tamaño y en el mismo lugar, blanca al 12 %. */
 .v3 .mk-telon .mk-portada{z-index:3}
@@ -658,18 +657,18 @@ html.rm.sh-js-ofi .v3 .sh-ofi__f.is-visto .sh-ofi__m,html.rm.sh-js-ofi .v3 .sh-o
 .v3 .mk-telon .mk-portada .mk-mitad{animation:none}
 .v3 .mk-telon .mk-portada.is-hecho .mk-mitad--sup{clip-path:none}
 .v3 .mk-telon .mk-portada.is-hecho .mk-mitad--inf{visibility:hidden}
-.v3 .mk-js .mk-telon .mk-portada{opacity:0; visibility:hidden; transition:opacity var(--dur-quick) linear, visibility 0s linear var(--dur-quick)}
-.v3 .mk-js .mk-telon.is-abierta .mk-portada{opacity:1; visibility:visible; transition:opacity var(--dur-quick) linear, visibility 0s}
+html.mk-js .v3 .mk-telon .mk-portada, .v3 .mk-js .mk-telon .mk-portada{opacity:0; visibility:hidden; transition:opacity var(--dur-quick) linear, visibility 0s linear var(--dur-quick)}
+html.mk-js .v3 .mk-telon.is-abierta .mk-portada, .v3 .mk-js .mk-telon.is-abierta .mk-portada{opacity:1; visibility:visible; transition:opacity var(--dur-quick) linear, visibility 0s}
 /* Al abrirse, sus dos S encajan deslizándose por su corte (1.4 s) y queda una sola pieza. */
-.v3 .mk-js .mk-telon.is-abierta .mk-portada:not(.is-hecho) .mk-mitad--sup{animation:mk-entra-sup 1400ms var(--ease-out) 120ms both}
-.v3 .mk-js .mk-telon.is-abierta .mk-portada:not(.is-hecho) .mk-mitad--inf{animation:mk-entra-inf 1400ms var(--ease-out) 120ms both}
+html.mk-js .v3 .mk-telon.is-abierta .mk-portada:not(.is-hecho) .mk-mitad--sup, .v3 .mk-js .mk-telon.is-abierta .mk-portada:not(.is-hecho) .mk-mitad--sup{animation:mk-entra-sup 1400ms var(--ease-out) 120ms both}
+html.mk-js .v3 .mk-telon.is-abierta .mk-portada:not(.is-hecho) .mk-mitad--inf, .v3 .mk-js .mk-telon.is-abierta .mk-portada:not(.is-hecho) .mk-mitad--inf{animation:mk-entra-inf 1400ms var(--ease-out) 120ms both}
 
 /* Logo, frase que cambia y San Pedro: al centro, sobre la marca de agua. */
 .v3 .mk-telon .sh-portada__centro{position:absolute; inset:0; z-index:4; display:grid; place-content:center; justify-items:center}
-.v3 .mk-js .mk-telon .sh-portada__centro > *{opacity:0; transform:translate3d(0,14px,0); transition:opacity var(--dur-quick) var(--ease-in), transform var(--dur-quick) var(--ease-in)}
-.v3 .mk-js .mk-telon.is-abierta .sh-portada__centro > *{opacity:1; transform:none; transition:opacity var(--dur-slow) var(--ease-out) 240ms, transform var(--dur-slow) var(--ease-out) 240ms}
-.v3 .mk-js .mk-telon.is-abierta .sh-portada__centro > :nth-child(2){transition-delay:400ms}
-.v3 .mk-js .mk-telon.is-abierta .sh-portada__centro > :nth-child(n+3){transition-delay:560ms}
+html.mk-js .v3 .mk-telon .sh-portada__centro > *, .v3 .mk-js .mk-telon .sh-portada__centro > *{opacity:0; transform:translate3d(0,14px,0); transition:opacity var(--dur-quick) var(--ease-in), transform var(--dur-quick) var(--ease-in)}
+html.mk-js .v3 .mk-telon.is-abierta .sh-portada__centro > *, .v3 .mk-js .mk-telon.is-abierta .sh-portada__centro > *{opacity:1; transform:none; transition:opacity var(--dur-slow) var(--ease-out) 240ms, transform var(--dur-slow) var(--ease-out) 240ms}
+html.mk-js .v3 .mk-telon.is-abierta .sh-portada__centro > :nth-child(2), .v3 .mk-js .mk-telon.is-abierta .sh-portada__centro > :nth-child(2){transition-delay:400ms}
+html.mk-js .v3 .mk-telon.is-abierta .sh-portada__centro > :nth-child(n+3), .v3 .mk-js .mk-telon.is-abierta .sh-portada__centro > :nth-child(n+3){transition-delay:560ms}
 
 /* La firma: abajo, a la izquierda, como el renglón final de la portada. */
 .v3 .mk-telon__firma{
@@ -682,26 +681,26 @@ html.rm.sh-js-ofi .v3 .sh-ofi__f.is-visto .sh-ofi__m,html.rm.sh-js-ofi .v3 .sh-o
   line-height:1.1; letter-spacing:-.012em; text-wrap:balance;
   color:var(--sobre-azul);
 }
-.v3 .mk-js .mk-telon__firma{opacity:0; transform:translate3d(0,18px,0); transition:opacity var(--dur-quick) var(--ease-in), transform var(--dur-quick) var(--ease-in)}
-.v3 .mk-js .mk-telon.is-firma .mk-telon__firma{opacity:1; transform:none; transition:opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out)}
+html.mk-js .v3 .mk-telon__firma, .v3 .mk-js .mk-telon__firma{opacity:0; transform:translate3d(0,18px,0); transition:opacity var(--dur-quick) var(--ease-in), transform var(--dur-quick) var(--ease-in)}
+html.mk-js .v3 .mk-telon.is-firma .mk-telon__firma, .v3 .mk-js .mk-telon.is-firma .mk-telon__firma{opacity:1; transform:none; transition:opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out)}
 
 /* Barra y pausa: con la § cerrada, sobre el fondo claro, en azul y con el logo marino a la izquierda. */
 .v3 .mk-telon .sh-nav,
 .v3 .mk-telon .sh-pausa{z-index:5}
 .v3 .mk-telon .sh-nav__mini{visibility:visible; opacity:0; pointer-events:none; transition:opacity var(--dur-quick) linear}
-.v3 .mk-js .mk-telon:not(.is-cubre) .sh-nav__mini{opacity:1; pointer-events:auto}
+html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-nav__mini, .v3 .mk-js .mk-telon:not(.is-cubre) .sh-nav__mini{opacity:1; pointer-events:auto}
 .v3 .mk-telon .sh-nav__list a,
 .v3 .mk-telon .sh-nav__menu,
 .v3 .mk-telon .sh-pausa{transition:color var(--dur-quick) linear, border-color var(--dur-quick) linear, background-color var(--dur-quick) linear}
-.v3 .mk-js .mk-telon:not(.is-cubre) .sh-nav__list a,
-.v3 .mk-js .mk-telon:not(.is-cubre) .sh-nav__menu,
-.v3 .mk-js .mk-telon:not(.is-cubre) .sh-pausa{color:var(--azul)}
-.v3 .mk-js .mk-telon:not(.is-cubre) .sh-nav__cta,
-.v3 .mk-js .mk-telon:not(.is-cubre) .sh-nav__menu,
-.v3 .mk-js .mk-telon:not(.is-cubre) .sh-pausa{border-color:var(--linea-fuerte); background-color:transparent}
-.v3 .mk-js .mk-telon:not(.is-cubre) .sh-nav__list a::after{background:var(--azul)}
-.v3 .mk-js .mk-telon:not(.is-cubre) .sh-nav :focus-visible,
-.v3 .mk-js .mk-telon:not(.is-cubre) .sh-pausa:focus-visible{outline-color:var(--azul)}
+html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-nav__list a, .v3 .mk-js .mk-telon:not(.is-cubre) .sh-nav__list a,
+html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-nav__menu, .v3 .mk-js .mk-telon:not(.is-cubre) .sh-nav__menu,
+html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-pausa, .v3 .mk-js .mk-telon:not(.is-cubre) .sh-pausa{color:var(--azul)}
+html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-nav__cta, .v3 .mk-js .mk-telon:not(.is-cubre) .sh-nav__cta,
+html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-nav__menu, .v3 .mk-js .mk-telon:not(.is-cubre) .sh-nav__menu,
+html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-pausa, .v3 .mk-js .mk-telon:not(.is-cubre) .sh-pausa{border-color:var(--linea-fuerte); background-color:transparent}
+html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-nav__list a::after, .v3 .mk-js .mk-telon:not(.is-cubre) .sh-nav__list a::after{background:var(--azul)}
+html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-nav :focus-visible, .v3 .mk-js .mk-telon:not(.is-cubre) .sh-nav :focus-visible,
+html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-pausa:focus-visible, .v3 .mk-js .mk-telon:not(.is-cubre) .sh-pausa:focus-visible{outline-color:var(--azul)}
 
 /* =====================================================================
    3 · mk-prioridad — el lema y las dos S (franja azul)
@@ -780,40 +779,40 @@ html.rm.sh-js-ofi .v3 .sh-ofi__f.is-visto .sh-ofi__m,html.rm.sh-js-ofi .v3 .sh-o
 .v3 .mk-prioridad .mk-mitad--inf{visibility:hidden}
 
 /* Armado: una sola § entera y quieta en Hueso al 12 % (sin costura); las frases a media luz (≥ 3:1). */
-.v3 .mk-js .mk-prioridad:not(.is-hecho) .mk-mitad{background-color:var(--mk-hueso-12)}
+html.mk-js .v3 .mk-prioridad:not(.is-hecho) .mk-mitad, .v3 .mk-js .mk-prioridad:not(.is-hecho) .mk-mitad{background-color:var(--mk-hueso-12)}
 /* En juego (de is-1 a is-hecho): dos mitades recortadas por el corte medido. */
-.v3 .mk-js .mk-prioridad.is-1:not(.is-hecho) .mk-mitad--sup{clip-path:var(--mk-corte-sup)}
-.v3 .mk-js .mk-prioridad.is-1:not(.is-hecho) .mk-mitad--inf{clip-path:var(--mk-corte-inf); visibility:visible}
-.v3 .mk-js .mk-prioridad:not(.is-hecho) .mk-prioridad__linea{opacity:.56}
+html.mk-js .v3 .mk-prioridad.is-1:not(.is-hecho) .mk-mitad--sup, .v3 .mk-js .mk-prioridad.is-1:not(.is-hecho) .mk-mitad--sup{clip-path:var(--mk-corte-sup)}
+html.mk-js .v3 .mk-prioridad.is-1:not(.is-hecho) .mk-mitad--inf, .v3 .mk-js .mk-prioridad.is-1:not(.is-hecho) .mk-mitad--inf{clip-path:var(--mk-corte-inf); visibility:visible}
+html.mk-js .v3 .mk-prioridad:not(.is-hecho) .mk-prioridad__linea, .v3 .mk-js .mk-prioridad:not(.is-hecho) .mk-prioridad__linea{opacity:.56}
 /* 1 · se separan a lo largo de la perpendicular del corte; la S de arriba y la primera frase se encienden */
-.v3 .mk-js .mk-prioridad.is-1:not(.is-3) .mk-mitad--sup{transform:translate3d(3.63%,-4.28%,0)}
-.v3 .mk-js .mk-prioridad.is-1:not(.is-3) .mk-mitad--inf{transform:translate3d(-3.63%,4.28%,0)}
+html.mk-js .v3 .mk-prioridad.is-1:not(.is-3) .mk-mitad--sup, .v3 .mk-js .mk-prioridad.is-1:not(.is-3) .mk-mitad--sup{transform:translate3d(3.63%,-4.28%,0)}
+html.mk-js .v3 .mk-prioridad.is-1:not(.is-3) .mk-mitad--inf, .v3 .mk-js .mk-prioridad.is-1:not(.is-3) .mk-mitad--inf{transform:translate3d(-3.63%,4.28%,0)}
 /* Mientras alguna mitad sigue en Hueso 12 % (translúcida), corte sin solape: así no aparece una línea
    más clara en el primer cuadro. El solape vuelve en is-3, cuando ambas ya son lima y opacas. */
-.v3 .mk-js .mk-prioridad.is-1:not(.is-3) .mk-mitad--sup{clip-path:var(--mk-corte-sup-0)}
-.v3 .mk-js .mk-prioridad.is-1 .mk-mitad--sup{background-color:var(--lima)}
-.v3 .mk-js .mk-prioridad.is-1 .mk-prioridad__linea--1{opacity:1}
+html.mk-js .v3 .mk-prioridad.is-1:not(.is-3) .mk-mitad--sup, .v3 .mk-js .mk-prioridad.is-1:not(.is-3) .mk-mitad--sup{clip-path:var(--mk-corte-sup-0)}
+html.mk-js .v3 .mk-prioridad.is-1 .mk-mitad--sup, .v3 .mk-js .mk-prioridad.is-1 .mk-mitad--sup{background-color:var(--lima)}
+html.mk-js .v3 .mk-prioridad.is-1 .mk-prioridad__linea--1, .v3 .mk-js .mk-prioridad.is-1 .mk-prioridad__linea--1{opacity:1}
 /* 2 · la S de abajo y la segunda frase */
-.v3 .mk-js .mk-prioridad.is-2 .mk-mitad--inf{background-color:var(--lima)}
-.v3 .mk-js .mk-prioridad.is-2 .mk-prioridad__linea--2{opacity:1}
+html.mk-js .v3 .mk-prioridad.is-2 .mk-mitad--inf, .v3 .mk-js .mk-prioridad.is-2 .mk-mitad--inf{background-color:var(--lima)}
+html.mk-js .v3 .mk-prioridad.is-2 .mk-prioridad__linea--2, .v3 .mk-js .mk-prioridad.is-2 .mk-prioridad__linea--2{opacity:1}
 /* 3 · se unen: la § completa (is-3 quita el desplazamiento; is-hecho deja una sola pieza) */
 
 /* Variante opcional .mk-prioridad--hueso: el lima solo marca la mitad activa (foco) y la § termina
    en Hueso. Para una franja más callada; por omisión termina en lima, como la § del logo. */
 .v3 .mk-prioridad--hueso .mk-mitad{background-color:var(--hueso)}
-.v3 .mk-js .mk-prioridad--hueso.is-2 .mk-mitad--sup{background-color:var(--hueso)}
-.v3 .mk-js .mk-prioridad--hueso.is-3 .mk-mitad--inf{background-color:var(--hueso)}
+html.mk-js .v3 .mk-prioridad--hueso.is-2 .mk-mitad--sup, .v3 .mk-js .mk-prioridad--hueso.is-2 .mk-mitad--sup{background-color:var(--hueso)}
+html.mk-js .v3 .mk-prioridad--hueso.is-3 .mk-mitad--inf, .v3 .mk-js .mk-prioridad--hueso.is-3 .mk-mitad--inf{background-color:var(--hueso)}
 
 /* Ronda 10: la § del lema, callada (el dueño, 5-nov: «el logo es too much»). Tono sobre tono, sin lima:
    en reposo Hueso al 6 %; se enciende al 15 % solo la mitad de la frase que se lee; al unirse, al 9 %. */
 .v3 .mk-prioridad{--mk-pr-reposo:rgba(243,241,234,.06); --mk-pr-activa:rgba(243,241,234,.15); --mk-pr-final:rgba(243,241,234,.09)}
 .v3 .mk-prioridad .mk-mitad{background-color:var(--mk-pr-final)}
-.v3 .mk-js .mk-prioridad:not(.is-hecho) .mk-mitad{background-color:var(--mk-pr-reposo)}
-.v3 .mk-js .mk-prioridad.is-1:not(.is-hecho) .mk-mitad--sup{clip-path:var(--mk-corte-sup-0); background-color:var(--mk-pr-activa)}
-.v3 .mk-js .mk-prioridad.is-2:not(.is-hecho) .mk-mitad--sup{background-color:var(--mk-pr-reposo)}
-.v3 .mk-js .mk-prioridad.is-2:not(.is-hecho) .mk-mitad--inf{background-color:var(--mk-pr-activa)}
-.v3 .mk-js .mk-prioridad.is-3:not(.is-hecho) .mk-mitad{background-color:var(--mk-pr-final)}
-.v3 .mk-js .mk-prioridad.is-hecho .mk-mitad{background-color:var(--mk-pr-final)}
+html.mk-js .v3 .mk-prioridad:not(.is-hecho) .mk-mitad, .v3 .mk-js .mk-prioridad:not(.is-hecho) .mk-mitad{background-color:var(--mk-pr-reposo)}
+html.mk-js .v3 .mk-prioridad.is-1:not(.is-hecho) .mk-mitad--sup, .v3 .mk-js .mk-prioridad.is-1:not(.is-hecho) .mk-mitad--sup{clip-path:var(--mk-corte-sup-0); background-color:var(--mk-pr-activa)}
+html.mk-js .v3 .mk-prioridad.is-2:not(.is-hecho) .mk-mitad--sup, .v3 .mk-js .mk-prioridad.is-2:not(.is-hecho) .mk-mitad--sup{background-color:var(--mk-pr-reposo)}
+html.mk-js .v3 .mk-prioridad.is-2:not(.is-hecho) .mk-mitad--inf, .v3 .mk-js .mk-prioridad.is-2:not(.is-hecho) .mk-mitad--inf{background-color:var(--mk-pr-activa)}
+html.mk-js .v3 .mk-prioridad.is-3:not(.is-hecho) .mk-mitad, .v3 .mk-js .mk-prioridad.is-3:not(.is-hecho) .mk-mitad{background-color:var(--mk-pr-final)}
+html.mk-js .v3 .mk-prioridad.is-hecho .mk-mitad, .v3 .mk-js .mk-prioridad.is-hecho .mk-mitad{background-color:var(--mk-pr-final)}
 
 /* =====================================================================
    4 · mk-sello — la § pequeña junto a los títulos (aparición intermitente)
@@ -839,10 +838,10 @@ html.rm.sh-js-ofi .v3 .sh-ofi__f.is-visto .sh-ofi__m,html.rm.sh-js-ofi .v3 .sh-o
   transition:transform var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease-out);
 }
 .v3 .mk-sello::after{visibility:hidden}
-.v3 .mk-js .mk-sello:not(.is-hecho)::before{clip-path:var(--mk-corte-sup)}
-.v3 .mk-js .mk-sello:not(.is-hecho)::after{clip-path:var(--mk-corte-inf); visibility:visible}
-.v3 .mk-js .mk-sello:not(.is-visto)::before{transform:translate3d(-26.2%,-9.5%,0); opacity:0}
-.v3 .mk-js .mk-sello:not(.is-visto)::after{transform:translate3d(26.2%,9.5%,0); opacity:0}
+html.mk-js .v3 .mk-sello:not(.is-hecho)::before, .v3 .mk-js .mk-sello:not(.is-hecho)::before{clip-path:var(--mk-corte-sup)}
+html.mk-js .v3 .mk-sello:not(.is-hecho)::after, .v3 .mk-js .mk-sello:not(.is-hecho)::after{clip-path:var(--mk-corte-inf); visibility:visible}
+html.mk-js .v3 .mk-sello:not(.is-visto)::before, .v3 .mk-js .mk-sello:not(.is-visto)::before{transform:translate3d(-26.2%,-9.5%,0); opacity:0}
+html.mk-js .v3 .mk-sello:not(.is-visto)::after, .v3 .mk-js .mk-sello:not(.is-visto)::after{transform:translate3d(26.2%,9.5%,0); opacity:0}
 /* Color: el del título (currentColor), como el logo marino sobre claro. Sobre fondo oscuro
    (.sobre-azul, la convención del sitio) toma el lima, como la § del logo blanco y lima.
    .mk-sello--lima lo fuerza; .mk-sello--tinta lo devuelve al color del título. */
@@ -904,39 +903,39 @@ html.rm.sh-js-ofi .v3 .sh-ofi__f.is-visto .sh-ofi__m,html.rm.sh-js-ofi .v3 .sh-o
 /* =====================================================================
    Modo Mario (.rm en <html>): estado final, quieto. Solo fundidos de 240 ms.
    ===================================================================== */
-.v3 .rm .mk-portada .mk-mitad,
+html.rm .v3 .mk-portada .mk-mitad, .v3 .rm .mk-portada .mk-mitad,
 html.rm .v3[data-seccion="agua"] .mk-portada .mk-mitad{animation:mk-fundido var(--dur-quick) linear 600ms both}
-.v3 .rm .mk-portada.is-hecho .mk-mitad,
+html.rm .v3 .mk-portada.is-hecho .mk-mitad, .v3 .rm .mk-portada.is-hecho .mk-mitad,
 html.rm .v3[data-seccion="agua"] .mk-portada.is-hecho .mk-mitad{animation:none}
-.v3 .rm .mk-portada__deriva{transform:none !important; will-change:auto}
+html.rm .v3 .mk-portada__deriva, .v3 .rm .mk-portada__deriva{transform:none !important; will-change:auto}
 
 /* Telón en modo Mario: el mismo guion por fundidos de 240 ms, sin acercamiento ni video.
    Cerrada: la § completa con la escena fija dentro. Al bajar un poco, la escena aparece a sangre por
    fundido y llegan la marca de agua, el logo y, más abajo, la firma. 170vh, para que se pueda leer. */
-.v3 .mk-js.rm .mk-telon{height:170vh}
-.v3 .rm .mk-telon__video{display:none}
-.v3 .rm .mk-telon .mk-portada .mk-mitad{animation:none !important}
-.v3 .rm .mk-telon.is-abierta .mk-telon__fija{opacity:1; visibility:visible; transition:opacity var(--dur-quick) linear, visibility 0s}
-.v3 .rm .mk-telon .mk-telon__fija{transition:opacity var(--dur-quick) linear, visibility 0s linear var(--dur-quick)}
-.v3 .rm .mk-telon .sh-portada__centro > *,
-.v3 .rm .mk-telon .mk-telon__firma{transform:none !important}
-.v3 .rm .mk-telon .sh-portada__velo,
-.v3 .rm .mk-telon .mk-portada,
-.v3 .rm .mk-telon .sh-portada__centro > *,
-.v3 .rm .mk-telon .mk-telon__firma{transition-duration:var(--dur-quick) !important; transition-timing-function:linear !important}
-.v3 .rm .mk-telon.is-abierta .sh-portada__centro > *{transition-delay:0s !important}
+html.mk-js.rm .v3 .mk-telon, .v3 .mk-js.rm .mk-telon{height:170vh}
+html.rm .v3 .mk-telon__video, .v3 .rm .mk-telon__video{display:none}
+html.rm .v3 .mk-telon .mk-portada .mk-mitad, .v3 .rm .mk-telon .mk-portada .mk-mitad{animation:none !important}
+html.rm .v3 .mk-telon.is-abierta .mk-telon__fija, .v3 .rm .mk-telon.is-abierta .mk-telon__fija{opacity:1; visibility:visible; transition:opacity var(--dur-quick) linear, visibility 0s}
+html.rm .v3 .mk-telon .mk-telon__fija, .v3 .rm .mk-telon .mk-telon__fija{transition:opacity var(--dur-quick) linear, visibility 0s linear var(--dur-quick)}
+html.rm .v3 .mk-telon .sh-portada__centro > *, .v3 .rm .mk-telon .sh-portada__centro > *,
+html.rm .v3 .mk-telon .mk-telon__firma, .v3 .rm .mk-telon .mk-telon__firma{transform:none !important}
+html.rm .v3 .mk-telon .sh-portada__velo, .v3 .rm .mk-telon .sh-portada__velo,
+html.rm .v3 .mk-telon .mk-portada, .v3 .rm .mk-telon .mk-portada,
+html.rm .v3 .mk-telon .sh-portada__centro > *, .v3 .rm .mk-telon .sh-portada__centro > *,
+html.rm .v3 .mk-telon .mk-telon__firma, .v3 .rm .mk-telon .mk-telon__firma{transition-duration:var(--dur-quick) !important; transition-timing-function:linear !important}
+html.rm .v3 .mk-telon.is-abierta .sh-portada__centro > *, .v3 .rm .mk-telon.is-abierta .sh-portada__centro > *{transition-delay:0s !important}
 
-.v3 .rm .mk-prioridad .mk-mitad,
-.v3 .rm .mk-prioridad .mk-prioridad__linea{transform:none !important; transition:opacity var(--dur-quick) linear, background-color var(--dur-quick) linear}
+html.rm .v3 .mk-prioridad .mk-mitad, .v3 .rm .mk-prioridad .mk-mitad,
+html.rm .v3 .mk-prioridad .mk-prioridad__linea, .v3 .rm .mk-prioridad .mk-prioridad__linea{transform:none !important; transition:opacity var(--dur-quick) linear, background-color var(--dur-quick) linear}
 
-.v3 .rm .mk-sello::before,
-.v3 .rm .mk-sello::after{transform:none !important; transition:opacity var(--dur-quick) linear}
+html.rm .v3 .mk-sello::before, .v3 .rm .mk-sello::before,
+html.rm .v3 .mk-sello::after, .v3 .rm .mk-sello::after{transform:none !important; transition:opacity var(--dur-quick) linear}
 
-.v3 .rm .mk-pie__sube{transform:none !important; will-change:auto}
+html.rm .v3 .mk-pie__sube, .v3 .rm .mk-pie__sube{transform:none !important; will-change:auto}
 
 /* Telón en teléfono: 200vh; la § empieza al 78 % del ancho y entra por el nudo derecho. */
 @media (max-width:699px){
-  .v3 .mk-js .mk-telon{height:200vh}
+  html.mk-js .v3 .mk-telon, .v3 .mk-js .mk-telon{height:200vh}
   .v3 .mk-telon__firma{left:max(18px, env(safe-area-inset-left, 0px)); right:calc(max(16px, env(safe-area-inset-right, 0px)) + 58px); bottom:max(22px, env(safe-area-inset-bottom, 0px)); max-width:none; font-size:clamp(1.3rem, .95rem + 1.6vw, 1.6rem)}
   .v3 .mk-telon__quieta,.v3 .mk-telon__video,.v3 .mk-telon__fija img{object-position:42% 50%}
 }
@@ -1374,17 +1373,17 @@ html.rm .v3[data-seccion="agua"] .mk-portada.is-hecho .mk-mitad{animation:none}
 /* =====================================================================
    MODO MARIO (html.rm): cambios al instante, el degradado quieto
    ===================================================================== */
-.v3 .rm .pr-bk-fluido{ animation: none; transform: none }
-.v3 .rm .pr-bk-fondo,
-.v3 .rm .pr-bk-panel,
-.v3 .rm .pr-bk-ver::after,
-.v3 .rm .pr-bk-cuadro{ transition: none !important }
+html.rm .v3 .pr-bk-fluido, .v3 .rm .pr-bk-fluido{ animation: none; transform: none }
+html.rm .v3 .pr-bk-fondo, .v3 .rm .pr-bk-fondo,
+html.rm .v3 .pr-bk-panel, .v3 .rm .pr-bk-panel,
+html.rm .v3 .pr-bk-ver::after, .v3 .rm .pr-bk-ver::after,
+html.rm .v3 .pr-bk-cuadro, .v3 .rm .pr-bk-cuadro{ transition: none !important }
 /* Industrias: la foto cambia con un fundido de 240 ms; la línea aparece sin desplegarse */
-.v3 .rm .pr-industrias{ --pr-ind-cambio: var(--dur-quick) }
-.v3 .rm .pr-ind-img, .v3 .rm .pr-ind-img.pr-ve{ transform: scale(var(--pr-zoom, 1)) }
-.v3 .rm .pr-ind-img{ transition: opacity var(--dur-quick) linear, visibility 0s linear var(--dur-quick) }
-.v3 .rm .pr-ind-img.pr-ve{ transition: opacity var(--dur-quick) linear, visibility 0s }
-.v3 .rm .pr-industrias.pr-js .pr-ind, .v3 .rm .pr-industrias.pr-js .pr-ind.pr-activa{ transition: none }
+html.rm .v3 .pr-industrias, .v3 .rm .pr-industrias{ --pr-ind-cambio: var(--dur-quick) }
+html.rm .v3 .pr-ind-img, .v3 .rm .pr-ind-img, html.rm .v3 .pr-ind-img.pr-ve, .v3 .rm .pr-ind-img.pr-ve{ transform: scale(var(--pr-zoom, 1)) }
+html.rm .v3 .pr-ind-img, .v3 .rm .pr-ind-img{ transition: opacity var(--dur-quick) linear, visibility 0s linear var(--dur-quick) }
+html.rm .v3 .pr-ind-img.pr-ve, .v3 .rm .pr-ind-img.pr-ve{ transition: opacity var(--dur-quick) linear, visibility 0s }
+html.rm .v3 .pr-industrias.pr-js .pr-ind, .v3 .rm .pr-industrias.pr-js .pr-ind, html.rm .v3 .pr-industrias.pr-js .pr-ind.pr-activa, .v3 .rm .pr-industrias.pr-js .pr-ind.pr-activa{ transition: none }
 
 
 /* ===== modules/anatomia/style.css ===== */
@@ -2182,7 +2181,7 @@ html.rm .v3 .an-row.is-on::after{ opacity: 1; }
 }
 
 /* Modo Mario: todo quieto; solo fundidos cortos de color y opacidad */
-.v3 .rm .fg-pz { transition-duration: 180ms; }
+html.rm .v3 .fg-pz, .v3 .rm .fg-pz { transition-duration: 180ms; }
 @media (prefers-reduced-motion: reduce) {
   .v3 .fg-pz { transition-duration: 180ms; }
 }
@@ -2551,8 +2550,8 @@ html.rm .v3 .an-row.is-on::after{ opacity: 1; }
 }
 
 /* Modo Mario: todo quieto; el color cambia sin transición y solo quedan fundidos de opacidad de 240 ms */
-.v3 .rm .fi-pz, .v3 .rm .fi-n, .v3 .rm .fi-nom, .v3 .rm .fi-fila { transition: none; }
-.v3 .rm .fi-tag, .v3 .rm .fi-guia, .v3 .rm .fi-punto { transition-duration: 240ms; }
+html.rm .v3 .fi-pz, .v3 .rm .fi-pz, html.rm .v3 .fi-n, .v3 .rm .fi-n, html.rm .v3 .fi-nom, .v3 .rm .fi-nom, html.rm .v3 .fi-fila, .v3 .rm .fi-fila { transition: none; }
+html.rm .v3 .fi-tag, .v3 .rm .fi-tag, html.rm .v3 .fi-guia, .v3 .rm .fi-guia, html.rm .v3 .fi-punto, .v3 .rm .fi-punto { transition-duration: 240ms; }
 
 /* ===== modules/mapa/style.css ===== */
 /* ===== Módulo «mapa» (prefijo mp-) · presencia nacional · ronda 10
@@ -2737,7 +2736,7 @@ html.rm .v3 .an-row.is-on::after{ opacity: 1; }
 }
 .v3 .mp-pausa:hover{ border-color: rgba(243,241,234,.62); background-color: rgba(243,241,234,.08) }
 .v3 .mp.mp-completa .mp-pausa{ visibility: visible; opacity: 1; transition-delay: 0s }
-.v3 .mp:not(.mp-js) .mp-pausa, .v3 .rm .mp-pausa{ display: none }   /* sin JS o en Mario nada se mueve solo */
+.v3 .mp:not(.mp-js) .mp-pausa, html.rm .v3 .mp-pausa, .v3 .rm .mp-pausa{ display: none }   /* sin JS o en Mario nada se mueve solo */
 .v3 .mp-validar{
   margin: 0; max-width: 34ch;
   font-size: var(--t-small); line-height: 1.45;
@@ -2761,9 +2760,9 @@ html.rm .v3 .an-row.is-on::after{ opacity: 1; }
 .v3 .mp.mp-quieto *, .v3 .mp.mp-quieto *::before{ transition: none !important; animation: none !important }
 
 /* Modo Mario: todo completo y quieto; la red aparece con un fundido de 240 ms */
-.v3 .rm .mp-red, .v3 .rm .mp-nodos, .v3 .rm .mp-edo{ transition: opacity 240ms linear, fill-opacity var(--dur-quick) var(--ease-out) }
-.v3 .rm .mp-nodo{ transition: none }
-.v3 .rm .mp.mp-espera .mp-red, .v3 .rm .mp.mp-espera .mp-nodos, .v3 .rm .mp.mp-espera .mp-edo:not(.mp-edo--sede){ opacity: 0 }
+html.rm .v3 .mp-red, .v3 .rm .mp-red, html.rm .v3 .mp-nodos, .v3 .rm .mp-nodos, html.rm .v3 .mp-edo, .v3 .rm .mp-edo{ transition: opacity 240ms linear, fill-opacity var(--dur-quick) var(--ease-out) }
+html.rm .v3 .mp-nodo, .v3 .rm .mp-nodo{ transition: none }
+html.rm .v3 .mp.mp-espera .mp-red, .v3 .rm .mp.mp-espera .mp-red, html.rm .v3 .mp.mp-espera .mp-nodos, .v3 .rm .mp.mp-espera .mp-nodos, html.rm .v3 .mp.mp-espera .mp-edo:not(.mp-edo--sede), .v3 .rm .mp.mp-espera .mp-edo:not(.mp-edo--sede){ opacity: 0 }
 
 /* =========================================================
    Escritorio amplio (≥1100 px): lámina de atlas en un escenario fijo.
@@ -2774,8 +2773,8 @@ html.rm .v3 .an-row.is-on::after{ opacity: 1; }
   .v3 .mp-escena{ --mp-w: min(100%, calc((100svh - 112px) * var(--mp-ar))) }
   .v3 .mp.mp-js .mp-escena{ position: sticky; top: var(--mp-top) }
   .v3 .mp.mp-js .mp-recorrido{ height: 60svh }
-  .v3 .rm .mp.mp-js .mp-escena{ position: relative; top: auto }
-  .v3 .rm .mp.mp-js .mp-recorrido{ height: 0 }
+  html.rm .v3 .mp.mp-js .mp-escena, .v3 .rm .mp.mp-js .mp-escena{ position: relative; top: auto }
+  html.rm .v3 .mp.mp-js .mp-recorrido, .v3 .rm .mp.mp-js .mp-recorrido{ height: 0 }
   .v3 .mp-cabeza{
     position: absolute; top: 0; z-index: 2;
     left: calc(var(--mp-w) * .64);
@@ -2949,7 +2948,7 @@ html.rm .v3 .an-row.is-on::after{ opacity: 1; }
 }
 @keyframes pe-trazo{ from{ transform: scaleX(0) } to{ transform: scaleX(1) } }
 @keyframes pe-funde{ from{ opacity: 0 } to{ opacity: 1 } }
-.v3 .rm .is-on > .pe-lz-mark, .v3 .rm .is-on .pe-lz-meta > .pe-lz-mark{ animation: pe-funde var(--dur-quick) var(--ease-out) both }
+html.rm .v3 .is-on > .pe-lz-mark, .v3 .rm .is-on > .pe-lz-mark, html.rm .v3 .is-on .pe-lz-meta > .pe-lz-mark, .v3 .rm .is-on .pe-lz-meta > .pe-lz-mark{ animation: pe-funde var(--dur-quick) var(--ease-out) both }
 
 /* =====================================================================
    1 · NUESTROS SOCIOS — un retrato a la vez (ronda 11)
@@ -2986,7 +2985,7 @@ html.rm .v3 .an-row.is-on::after{ opacity: 1; }
 .v3 .pe-turno .pe-ico-play{ display: none }
 .v3 .pe-turno.is-paused .pe-ico-play{ display: inline-block }
 .v3 .pe-turno.is-paused .pe-ico-pause{ display: none }
-.v3 .rm .pe-turno, .v3 .rm [data-pe-op-pause]{ display: none }   /* modo Mario: nada cambia solo, no hay nada que pausar */
+html.rm .v3 .pe-turno, .v3 .rm .pe-turno, html.rm .v3 [data-pe-op-pause], .v3 .rm [data-pe-op-pause]{ display: none }   /* modo Mario: nada cambia solo, no hay nada que pausar */
 
 .v3 .pe-lz{
   display: grid;
@@ -3079,10 +3078,10 @@ html.rm .v3 .an-row.is-on::after{ opacity: 1; }
 @keyframes pe-chy-sube{ from{ opacity: 0; transform: translateY(6px) } to{ opacity: 1; transform: none } }
 
 /* Modo Mario: nada se desliza ni se acerca; lo que el usuario cambia, cambia con un fundido corto */
-.v3 .rm .pe-lz-canvas{ transition: opacity var(--dur-quick) var(--ease-out) }
-.v3 .rm .pe-lz-img{ transform: none; transition: none }
-.v3 .rm .pe-lz-chy.is-entra .pe-lz-chy-f{ animation: none }
-.v3 .rm .pe-lz-chy.is-entra .pe-lz-chy-n, .v3 .rm .pe-lz-chy.is-entra .pe-lz-chy-a{ animation: pe-funde var(--dur-quick) var(--ease-out) both }
+html.rm .v3 .pe-lz-canvas, .v3 .rm .pe-lz-canvas{ transition: opacity var(--dur-quick) var(--ease-out) }
+html.rm .v3 .pe-lz-img, .v3 .rm .pe-lz-img{ transform: none; transition: none }
+html.rm .v3 .pe-lz-chy.is-entra .pe-lz-chy-f, .v3 .rm .pe-lz-chy.is-entra .pe-lz-chy-f{ animation: none }
+html.rm .v3 .pe-lz-chy.is-entra .pe-lz-chy-n, .v3 .rm .pe-lz-chy.is-entra .pe-lz-chy-n, html.rm .v3 .pe-lz-chy.is-entra .pe-lz-chy-a, .v3 .rm .pe-lz-chy.is-entra .pe-lz-chy-a{ animation: pe-funde var(--dur-quick) var(--ease-out) both }
 
 /* Tableta: las mismas dos columnas, más compactas */
 @media (max-width: 1023px){
@@ -3257,8 +3256,8 @@ html.rm .v3 .an-row.is-on::after{ opacity: 1; }
     animation: pe-chy-asienta var(--dur-quick) var(--ease-out) 250ms both;
   }
   /* Modo Mario: el cintillo aparece completo con un fundido */
-  .v3 .rm .pe-card .pe-chy-filete, .v3 .rm .pe-card .pe-chy-main, .v3 .rm .pe-card .pe-chy-data, .v3 .rm .pe-card .pe-chy-main > *, .v3 .rm .pe-card .pe-chy-data > *{ animation: none !important }
-  .v3 .rm .pe-card:hover .pe-chy, .v3 .rm .pe-card:focus-within .pe-chy, .v3 .rm .pe-card.is-open .pe-chy{
+  html.rm .v3 .pe-card .pe-chy-filete, .v3 .rm .pe-card .pe-chy-filete, html.rm .v3 .pe-card .pe-chy-main, .v3 .rm .pe-card .pe-chy-main, html.rm .v3 .pe-card .pe-chy-data, .v3 .rm .pe-card .pe-chy-data, html.rm .v3 .pe-card .pe-chy-main > *, .v3 .rm .pe-card .pe-chy-main > *, html.rm .v3 .pe-card .pe-chy-data > *, .v3 .rm .pe-card .pe-chy-data > *{ animation: none !important }
+  html.rm .v3 .pe-card:hover .pe-chy, .v3 .rm .pe-card:hover .pe-chy, html.rm .v3 .pe-card:focus-within .pe-chy, .v3 .rm .pe-card:focus-within .pe-chy, html.rm .v3 .pe-card.is-open .pe-chy, .v3 .rm .pe-card.is-open .pe-chy{
     animation: pe-funde var(--dur-quick) var(--ease-out) both;
   }
 }
@@ -3413,7 +3412,7 @@ html:not(.con-resenas) .v3 #pe-opiniones{ display: none }
 .v3 .pe-op-anim .pe-op-slide.is-out{ visibility: visible; animation: pe-op-sale 300ms var(--ease-in) forwards }
 @keyframes pe-op-entra{ from{ opacity: 0; transform: translateY(8px) } to{ opacity: 1; transform: none } }
 @keyframes pe-op-sale{ from{ opacity: 1 } to{ opacity: 0 } }
-.v3 .rm .pe-op-anim .pe-op-slide.is-on{ animation-name: pe-funde }
+html.rm .v3 .pe-op-anim .pe-op-slide.is-on, .v3 .rm .pe-op-anim .pe-op-slide.is-on{ animation-name: pe-funde }
 
 .v3 .pe-op-top{ display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px }
 .v3 .pe-stars{ display: inline-flex; line-height: 0 }
@@ -3932,10 +3931,10 @@ html.rm .v3 .in-art__foto img{ transform: none !important }
 
 /* ---- Menú «Prácticas» (barra de la portada y barra fija) ---- */
 .v3 .mk-telon .sh-sub__btn{transition:color var(--dur-quick) linear}
-.v3 .mk-js .mk-telon:not(.is-cubre) .sh-sub__btn{color:var(--azul)}
-.v3 .mk-js .mk-telon:not(.is-cubre) .sh-sub__btn::after{background:var(--azul)}
-.v3 .sh-sub__panel a,.v3 .mk-js .mk-telon:not(.is-cubre) .sh-sub__panel a{color:var(--sobre-azul)}
-.v3 .mk-js .mk-telon:not(.is-cubre) .sh-sub__panel a::after{background:var(--lima)}
+html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-sub__btn, .v3 .mk-js .mk-telon:not(.is-cubre) .sh-sub__btn{color:var(--azul)}
+html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-sub__btn::after, .v3 .mk-js .mk-telon:not(.is-cubre) .sh-sub__btn::after{background:var(--azul)}
+.v3 .sh-sub__panel a,html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-sub__panel a, .v3 .mk-js .mk-telon:not(.is-cubre) .sh-sub__panel a{color:var(--sobre-azul)}
+html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-sub__panel a::after, .v3 .mk-js .mk-telon:not(.is-cubre) .sh-sub__panel a::after{background:var(--lima)}
 .v3 .sh-sub{position:relative}
 .v3 .sh-sub__btn{appearance:none;background:none;border:0;margin:0;padding:8px 0;color:var(--sobre-azul);text-transform:uppercase;cursor:pointer;position:relative;display:inline-flex;align-items:center;gap:8px}
 .v3 .sh-fija .sh-sub__btn{padding:10px 0}

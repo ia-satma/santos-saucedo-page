@@ -1,0 +1,88 @@
+/* Inicio v3 · ajustes propios sobre demo.css (que no se edita: se regenera desde la demo).
+   Todo va encerrado en .hm-page (la página del Inicio) o en .v3. */
+
+/* La demo reservaba 64 px al pie del <body> para su barra del teléfono (sh-barra, que el sitio no
+   usa); en demo.css esa regla cae en cada .v3 y, en cada envoltura de banda, abría un hueco de papel
+   entre bandas bajo 760 px. */
+.hm-page .hm-band.v3{ padding-bottom: 0 }
+
+/* ---- Nuestras prácticas: el cuadro de Litigio ----
+   La foto de los rollos de acero era la del tercer cuadro en la demo aprobada; mismo encuadre y velo. */
+.v3 .pr-bk-fondo[data-clave="litigio"]{ --pr-bk-foco: 52% 50%; --pr-bk-velo: .56 }
+
+/* ---- Unión de bandas del mismo tono ----
+   El orden lo decide el panel (layout.homeOrder). En el de la demo las bandas alternan azul y papel;
+   si el panel deja dos del mismo tono juntas, la segunda empieza con un filete, como la demo une dos
+   capítulos oscuros (mk-prioridad--enlaza): el arranque de cada sección sigue a la vista. */
+.hm-page [data-start]{ position: relative }
+
+/* azul → azul: filete Hueso a todo lo ancho, por encima de la foto o del degradado */
+.hm-page [data-end="dark"] + [data-start="dark"]::before{
+  content: ""; position: absolute; left: 0; right: 0; top: 0; z-index: 4;
+  height: 1px; background: rgba(243,241,234,.24); pointer-events: none;
+}
+/* El bloque de Baker: el filete es la línea de su propia retícula, que así queda cerrada arriba */
+.hm-page [data-end="dark"] + .hm-band--practicas::before{ background: rgba(243,241,234,.6) }
+
+/* papel → papel (bandas v3): menos aire y un filete a la medida de la columna */
+.hm-page .hm-band[data-end="light"]:has(+ .hm-band[data-start="light"]) > section:last-child,
+.hm-page .hm-band[data-end="light"]:has(+ #news) > section:last-child{ padding-bottom: 64px }
+.hm-page .hm-band[data-end="light"] + .hm-band[data-start="light"] > section:first-child,
+.hm-page #news + .hm-band[data-start="light"] > section:first-child{ padding-top: 64px }
+.hm-page .hm-band[data-end="light"] + .hm-band[data-start="light"]::before,
+.hm-page #news + .hm-band[data-start="light"]::before{
+  content: ""; position: absolute; top: 0; left: 0; right: 0; margin-inline: auto; z-index: 1;
+  width: min(100% - 2 * var(--gutter-desk), var(--ancho));
+  height: 1px; background: var(--linea-fuerte); pointer-events: none;
+}
+@media (max-width: 640px){
+  .hm-page .hm-band[data-end="light"] + .hm-band[data-start="light"]::before,
+  .hm-page #news + .hm-band[data-start="light"]::before{ width: calc(100% - 36px) }
+}
+@media (min-width: 768px){
+  .hm-page .hm-band[data-end="light"]:has(+ .hm-band[data-start="light"]) > section:last-child,
+  .hm-page .hm-band[data-end="light"]:has(+ #news) > section:last-child{ padding-bottom: 80px }
+  .hm-page .hm-band[data-end="light"] + .hm-band[data-start="light"] > section:first-child,
+  .hm-page #news + .hm-band[data-start="light"] > section:first-child{ padding-top: 80px }
+}
+@media (min-width: 1024px){
+  .hm-page .hm-band[data-end="light"]:has(+ .hm-band[data-start="light"]) > section:last-child,
+  .hm-page .hm-band[data-end="light"]:has(+ #news) > section:last-child{ padding-bottom: 96px }
+  .hm-page .hm-band[data-end="light"] + .hm-band[data-start="light"] > section:first-child,
+  .hm-page #news + .hm-band[data-start="light"] > section:first-child{ padding-top: 96px }
+}
+
+/* ---- Monitor Laboral (pieza del sitio, fuera de .v3) ----
+   Tras una banda de papel, el Monitor se une como ya lo hacía tras «Socios»: sin aire arriba y con su
+   filete de unión (JoinRule), con el mismo aire arriba y abajo que deja la banda anterior. */
+.hm-page .hm-band[data-end="light"] + #news{ padding-top: 0 }
+.hm-page .hm-band[data-end="light"] + #news > .ss-container > div[aria-hidden="true"]:first-child{ display: block }
+.hm-page #news:has(+ .hm-band[data-start="light"]){ padding-bottom: 64px }
+@media (min-width: 768px){ .hm-page #news:has(+ .hm-band[data-start="light"]){ padding-bottom: 80px } }
+@media (min-width: 1024px){ .hm-page #news:has(+ .hm-band[data-start="light"]){ padding-bottom: 96px } }
+/* El filete de unión, con el trazo de las líneas de cota de la demo (el Línea del sitio casi no se ve) */
+.hm-page .hm-band[data-end="light"] + #news > .ss-container > div[aria-hidden="true"]:first-child{ background: rgba(15,63,107,.32) }
+/* El mismo papel Hueso, liso, que las bandas v3: sin el grano del sitio, que lo agrisaba al lado de Socios */
+.hm-page #news.ss-paper::after{ display: none }
+/* El fondo «piedra» de las bandas v3 (tema.css), para que el Monitor no se vea más claro que ellas */
+.hm-page #news.ss-paper{ background-color: #E4E2DC }
+/* Su columna, a la medida de las bandas v3 (1240 px): sus bordes caen donde caen los de Socios */
+.hm-page #news > .ss-container{ max-width: calc(1240px + 2 * var(--ss-pad)) }
+/* Sin «§ 04» ni la § de la primera nota: en el Inicio v3 ninguna sección se numera y la § no va como
+   viñeta junto a un titular (solo decoración, aria-hidden) */
+.hm-page #news p.ss-label:has(> .ss-num > span){ display: none }
+.hm-page #news #ss26-monitor{ margin-top: 0 }
+.hm-page #news span.ss-display[aria-hidden="true"]{ display: none }
+
+/* ---- Titulares de las dos piezas del sitio ----
+   La misma escala que los h2 de las bandas v3 (sh-h2): a 820 px el Monitor quedaba en 34 px bajo
+   «Nuestros socios» en 42. */
+.hm-page #ss26-monitor,
+.hm-page #ss26-extranjeras{
+  font-size: clamp(2rem, 1.4rem + 2.4vw, 3.6rem);
+  font-weight: 350;
+  line-height: 1.04;
+  letter-spacing: -.018em;
+}
+/* En su columna de texto (desde 1280, al lado de la foto) no pasa del tamaño que ya tenía: dos líneas */
+.hm-page #ss26-extranjeras{ font-size: clamp(2rem, 1.4rem + 2.4vw, 3.2rem) }

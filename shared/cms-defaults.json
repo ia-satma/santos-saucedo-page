@@ -1164,6 +1164,33 @@
       },
       "path": "/offices"
     },
+    "industries": {
+      "title": {
+        "en": "Industries | Santos & Saucedo",
+        "es": "Industrias | Santos & Saucedo",
+        "de": "Branchen | Santos & Saucedo",
+        "zh": "行业 | Santos & Saucedo",
+        "ko": "산업 분야 | Santos & Saucedo",
+        "ja": "業種 | Santos & Saucedo",
+        "ar": "القطاعات | Santos & Saucedo",
+        "ru": "Отрасли | Santos & Saucedo",
+        "fr": "Secteurs | Santos & Saucedo",
+        "it": "Settori | Santos & Saucedo"
+      },
+      "description": {
+        "en": "Soft drinks and beverages, automotive, steel and energy: the industries Santos & Saucedo advises on labor, corporate and immigration matters.",
+        "es": "Refresqueras y bebidas, automotriz, acero y energía: las industrias que Santos & Saucedo asesora en materia laboral, corporativa y migratoria.",
+        "de": "Erfrischungsgetränke und Getränke, Automobilindustrie, Stahl und Energie: die Branchen, die Santos & Saucedo in arbeits-, gesellschafts- und migrationsrechtlichen Fragen berät.",
+        "zh": "软饮料与饮品、汽车、钢铁和能源：Santos & Saucedo在劳动、公司和移民事务方面提供咨询的行业。",
+        "ko": "청량음료·음료, 자동차, 철강, 에너지: Santos & Saucedo가 노동, 기업, 이민 분야에서 자문하는 산업.",
+        "ja": "清涼飲料・飲料、自動車、鉄鋼、エネルギー：Santos & Saucedoが労働、企業法務、移民の分野で助言する業種。",
+        "ar": "المشروبات الغازية والمشروبات، والسيارات، والصلب، والطاقة: القطاعات التي يقدم لها Santos & Saucedo المشورة في مسائل العمل والشركات والهجرة.",
+        "ru": "Безалкогольные напитки, автомобильная промышленность, сталь и энергетика: отрасли, которые Santos & Saucedo консультирует по вопросам трудового, корпоративного и миграционного права.",
+        "fr": "Boissons, automobile, acier et énergie : les secteurs que Santos & Saucedo conseille en droit du travail, droit des sociétés et immigration.",
+        "it": "Bevande, automotive, acciaio ed energia: i settori che Santos & Saucedo assiste in materia di lavoro, diritto societario e immigrazione."
+      },
+      "path": "/industries"
+    },
     "privacyPolicy": {
       "title": {
         "en": "Privacy notice | Santos & Saucedo",
@@ -5653,10 +5680,10 @@
     "monitorLimit": 3,
     "homeOrder": [
       "firma",
-      "creemos",
       "practicas",
-      "extranjeras",
+      "creemos",
       "socios",
+      "extranjeras",
       "monitor"
     ]
   },
@@ -6158,6 +6185,25 @@
         "visible": true,
         "order": 2,
         "children": []
+      },
+      {
+        "id": "industries",
+        "href": "/industries",
+        "labels": {
+          "es": "Industrias",
+          "en": "Industries",
+          "de": "Branchen",
+          "zh": "行业",
+          "ko": "산업 분야",
+          "ja": "業種",
+          "ar": "القطاعات",
+          "ru": "Отрасли",
+          "fr": "Secteurs",
+          "it": "Settori"
+        },
+        "visible": true,
+        "order": 1,
+        "children": []
       }
     ],
     "footerItems": [
@@ -6211,6 +6257,24 @@
           "ru": "Практики",
           "fr": "Domaines de pratique",
           "it": "Aree di pratica"
+        },
+        "visible": true,
+        "order": 2
+      },
+      {
+        "id": "industries",
+        "href": "/industries",
+        "labels": {
+          "es": "Industrias",
+          "en": "Industries",
+          "de": "Branchen",
+          "zh": "行业",
+          "ko": "산업 분야",
+          "ja": "業種",
+          "ar": "القطاعات",
+          "ru": "Отрасли",
+          "fr": "Secteurs",
+          "it": "Settori"
         },
         "visible": true,
         "order": 2

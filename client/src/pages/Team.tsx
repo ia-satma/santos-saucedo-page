@@ -1,58 +1,46 @@
-import { useCmsMedia } from "@/lib/cmsMedia";
-import { teamPortraitFraming } from "@/lib/teamPortraitFraming";
-import { useCmsContent } from "@/hooks/useCmsContent";
-import { useMemo, type CSSProperties, type ReactNode, type SyntheticEvent } from "react";
-import { Link } from "wouter";
+// Página «Socios» (/team) con el diseño de la demo v3 (vista #socios, aprobada el 5-11-2026):
+// «Nuestros socios» (un retrato a la vez, los nombres como índice y el cintillo; ver
+// v3/socios/Lienzo.tsx), los Of Counsel si el panel los tiene, «El equipo» (el muro de retratos
+// en tres filas que se deslizan; v3/socios/Equipo.tsx) con el enlace a Carreras, y al final
+// «Siguiente: Contacto».
+// Lo que viene del sitio se conserva: socios y Of Counsel de /api/team (orden y visibilidad del
+// panel, isNamedOnTeamPage), retratos con su srcset y el tratamiento in memoriam, enlaces a cada
+// ficha, mosaico del CMS con su encuadre, textos del panel ("team") en 10 idiomas y SEO.
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Skeleton } from "@/components/ui/skeleton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { HeroKicker } from "@/components/editorial/HeroKicker";
-import { equipoMosaicPhotos as equipoPhotos } from "@/lib/equipoMosaicPhotos";
-import { fallbackToOriginalSrc, getTeamPhotoSrcSet, isNamedOnTeamPage } from "@/lib/teamPhotoSources";
-import { TextLink } from "@/components/home26/primitives";
+import { useCmsContent } from "@/hooks/useCmsContent";
+import { useCmsMedia } from "@/lib/cmsMedia";
+import { isNamedOnTeamPage } from "@/lib/teamPhotoSources";
 import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
+import defaults from "@shared/cms-defaults.json";
 import type { TeamMember } from "@shared/schema";
+import { V3Main, V3NextPage, useV3Lang } from "@/v3/shared";
+import { SociosLienzo, SociosLienzoPlaceholder, OfCounsel, type LienzoPartner } from "@/v3/socios/Lienzo";
+import { EquipoMuro } from "@/v3/socios/Equipo";
+import { SOCIOS_TEXTS } from "@/v3/socios/texts";
 
-// Mosaico "Integrantes del equipo": columnas por tramo (teléfono, md, lg en adelante)
-const EQUIPO_COLUMNS = { phone: 2, md: 4, lg: 6 } as const;
-
-// Clases completas de col-span por tramo (Tailwind solo genera las que aparecen escritas)
-const EQUIPO_SPAN_CLASSES = {
-  phone: ["col-span-1", "col-span-2", "col-span-3", "col-span-4"],
-  md: ["md:col-span-1", "md:col-span-2", "md:col-span-3", "md:col-span-4", "md:col-span-5", "md:col-span-6"],
-  lg: ["lg:col-span-1", "lg:col-span-2", "lg:col-span-3", "lg:col-span-4", "lg:col-span-5", "lg:col-span-6", "lg:col-span-7", "lg:col-span-8"],
-} as const;
-
-// Columnas que ocupa la celda Hueso de cierre: las que la última fila deja vacías; si la
-// cuenta cierra la fila, una fila entera (la celda lleva el enlace a Carreras y no se omite)
-function closingColumns(total: number, columns: number): number {
-  return (columns - (total % columns)) % columns || columns;
-}
-
-// Retrato de la tarjeta: 112 px en teléfono, media columna desde sm y un cuarto desde lg
-const CARD_PHOTO_SIZES = "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 112px";
-
-// Rejilla de tarjetas y letra del nombre, compartidas por la vista y su carga (misma altura).
-// Desde sm el nombre reserva dos líneas (interlineado 1.15 × 2): "Mario Saucedo Montemayor" pasa
-// a dos a 1024–1440 y su cargo quedaba más abajo que los de al lado.
-const CARD_GRID = "grid grid-cols-1 gap-x-[clamp(24px,3vw,48px)] gap-y-10 sm:grid-cols-2 sm:gap-y-14 lg:grid-cols-4";
-const CARD_NAME = "ss-display block text-[clamp(24px,1.9vw,28px)] font-normal leading-[1.15] tracking-[-0.01em] sm:min-h-[2.3em]";
+// "(in memoriam)" con espacio duro, como en la ficha (TeamMemberDetail): no se parte entre líneas
+const keepInMemoriam = (text: string) => text.replace(/\((in)\s+(memoriam)\)/gi, "($1\u00a0$2)");
 
 export default function Team() {
   const { teamMosaic: equipoPhotos } = useCmsMedia();
   const cmsChrome = useCmsContent("chrome", chrome26);
+  const cmsLinks = useCmsContent("links", defaults.links);
   const { language } = useLanguage();
+  const { lang, attrs } = useV3Lang();
+  const tv = SOCIOS_TEXTS[lang];
+  // Español o inglés: los textos de la demo; los demás idiomas: lo que el sitio ya tiene traducido
+  const ownLang = language === "es" || language === "en";
 
   const { data: allTeamMembers, isLoading: isLoadingAll, error: errorAll } = useQuery<TeamMember[]>({
     queryKey: ["/api/team"],
   });
 
-  // Sin título ni subtítulo propios: el h1 es la etiqueta del menú (chrome26, E5) y el
-  // encabezado no lleva subtítulo (E3); el párrafo solo se pinta si algún idioma lo trae.
   const content: Record<string, {
     subtitle?: string;
     errorMessage: string;
@@ -202,270 +190,98 @@ export default function Team() {
   const editableContent = useCmsContent("team", content);
   const t = editableContent[language] || editableContent.en;
 
-  // Nombres del menú en cada idioma (E5): el h1 es "Socios" (nav[2]) y la celda Hueso de
-  // cierre del mosaico lleva "Carreras" (nav[4]) con el enlace al Pasantías S&S (el nombre del
-  // programa no se traduce)
+  // Nombres del menú en cada idioma (E5): "Socios" (nav[2]), "Carreras" (nav[4]) y "Contacto" (nav[5])
   const navLabels = (cmsChrome[language] ?? cmsChrome.es).nav;
-  const pageTitle = navLabels[2].label;
+  const pageTitle = ownLang ? tv.title : navLabels[2].label;
+  const listLabel = ownLang ? tv.list : navLabels[2].label;
   const careersLabel = navLabels[4].label;
+  const teamTitle = ownLang ? tv.teamTitle : t.associatesTitle;
+  const internal = (href: string | undefined, fallback: string) => (href && href.startsWith("/") ? href : fallback);
+
+  // Cargo de cada persona: titleEs en español; en los demás idiomas, title. Fuera de es y en ese
+  // título es inglés y lo declara (lang="en").
+  const toPerson = (member: TeamMember, fallback: string): LienzoPartner => {
+    const englishFallback = language !== "es" && language !== "en" && !!member.title;
+    const role = language === "es" ? (member.titleEs || member.title || fallback) : (member.title || fallback);
+    return {
+      slug: member.slug,
+      name: member.name,
+      role: keepInMemoriam(role),
+      roleLang: englishFallback ? "en" : undefined,
+      imageUrl: member.imageUrl,
+    };
+  };
 
   const groupedMembers = useMemo(() => {
-    if (!allTeamMembers) return { partners: [], ofCounsel: [] };
-
+    if (!allTeamMembers) return { partners: [] as TeamMember[], ofCounsel: [] as TeamMember[] };
     const byConfiguredOrder = (a: TeamMember, b: TeamMember) => {
       const orderA = a.order ?? 0;
       const orderB = b.order ?? 0;
-
       if (orderA !== orderB) return orderA - orderB;
       return a.name.localeCompare(b.name);
     };
-
-    // Solo los socios con retrato 2026 confirmado por nombre y los Of Counsel llevan tarjeta
+    // Solo los socios con retrato 2026 confirmado por nombre y los Of Counsel llevan nombre
     // (isNamedOnTeamPage, shared/teamVisibility, la misma regla de "Equipo relacionado", el
-    // buscador y el mapa del sitio). Los asociados van en el mosaico, sin nombres.
+    // buscador y el mapa del sitio). Los asociados van en el muro, sin nombres.
     const partners = allTeamMembers.filter(m => m.isPartner && isNamedOnTeamPage(m)).sort(byConfiguredOrder);
     const ofCounsel = allTeamMembers.filter(m => !m.isPartner && isNamedOnTeamPage(m)).sort(byConfiguredOrder);
     return { partners, ofCounsel };
   }, [allTeamMembers]);
 
-  // Celda Hueso de cierre: un elemento más de la rejilla que ocupa las columnas que la última
-  // fila deja vacías en cada tramo (o una fila entera si la cuenta la cierra)
-  const equipoClosingSpanClass = [
-    EQUIPO_SPAN_CLASSES.phone[closingColumns(equipoPhotos.length, EQUIPO_COLUMNS.phone) - 1],
-    EQUIPO_SPAN_CLASSES.md[closingColumns(equipoPhotos.length, EQUIPO_COLUMNS.md) - 1],
-    EQUIPO_SPAN_CLASSES.lg[closingColumns(equipoPhotos.length, EQUIPO_COLUMNS.lg) - 1],
-  ].join(" ");
-
-  const getInitials = (name: string) =>
-    name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
-
-  // Retratos: WebP con srcset (360w y 652w); si la variante falla, vuelve al original
-  const photoSrcSetProps = (member: TeamMember) => {
-    const srcSet = getTeamPhotoSrcSet(member.imageUrl);
-    return srcSet ? { srcSet, sizes: CARD_PHOTO_SIZES } : {};
-  };
-  const handlePhotoError = (e: SyntheticEvent<HTMLImageElement>) => {
-    if (!fallbackToOriginalSrc(e)) e.currentTarget.style.display = "none";
-  };
-
-  // Cargo de cada persona (no la etiqueta plural de la sección): titleEs en español; en los
-  // demás idiomas, title. Fuera de en ese título es inglés: va en <bdi lang="en"> (aislado
-  // del árabe sin cambiar la alineación del pie). "(in memoriam)" con espacio duro, como en la
-  // ficha (TeamMemberDetail): no se parte entre líneas.
-  const renderMemberRole = (member: TeamMember, fallback: string) => {
-    const englishFallback = language !== "es" && language !== "en" && !!member.title;
-    const role = language === "es" ? (member.titleEs || member.title || fallback) : (member.title || fallback);
-    const text = role.replace(/\((in)\s+(memoriam)\)/gi, "($1\u00a0$2)");
-    return (
-      <span className="ss-label mt-3 block text-ss-medio">
-        {englishFallback ? <bdi lang="en" dir="ltr">{text}</bdi> : text}
-      </span>
-    );
-  };
-
-  // Tarjeta de socio: la misma de la portada (Socios26, home26/Sections26): retrato 4/5 en
-  // color, nombre en la romana y cargo en etiqueta debajo; sin velo ni paneles que se
-  // expanden. Teléfono: retrato de 112 px al lado del nombre; desde sm, apilado. El enlace
-  // lleva inline-link: la regla móvil de index.css volvería inline-flex la tarjeta.
-  // «Galería» (equipos de UX y gráfico, 25-10-2026): cada socio es una obra enmarcada, con
-  // paspartú blanco, filete de 1 px y cédula de museo debajo. Se cuelgan uno tras otro al
-  // aparecer; al pasar el cursor el marco se eleva y el retrato se acerca dentro de él, sin
-  // atenuar a los demás. El retrato lleva su nombre de transición para pasar a la ficha.
-  const renderPersonCard = (member: TeamMember, fallbackRole: string, eager: boolean, index = 0) => (
-    <li key={member.id}>
-      <Link
-        href={`/team/${member.slug}`}
-        className="inline-link group block"
-        data-testid={`card-team-member-${member.slug}`}
-      >
-        <span className="grid grid-cols-[112px_1fr] items-end gap-x-5 sm:block">
-          <span
-            data-curtain=""
-            className="ss-plate block"
-            style={{ "--reveal-delay": `${index * 0.12}s`, viewTransitionName: `retrato-${member.slug}` } as CSSProperties}
-          >
-          <span className="ss-portrait-frame relative block overflow-hidden bg-ss-paper aspect-[4/5]">
-            <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center font-heading text-2xl text-ss-marino/50 select-none">
-              {getInitials(member.name)}
-            </span>
-            {member.imageUrl && (
-              // alt vacío: el nombre ya es el texto del enlace
-              <img
-                src={member.imageUrl}
-                data-portrait-slug={member.slug}
-                {...photoSrcSetProps(member)}
-                alt=""
-                loading={eager ? "eager" : "lazy"}
-                decoding="async"
-                width={652}
-                height={652}
-                className="ss-photo absolute inset-0 h-full w-full object-cover object-[50%_28%] transition-transform [transition-duration:var(--ss-dur-slow)] [transition-timing-function:var(--ss-ease-out)] motion-safe:group-hover:scale-[1.05] motion-reduce:transform-none motion-reduce:transition-none"
-                onError={handlePhotoError}
-              />
-            )}
-          </span>
-          </span>
-          <span className="block sm:mt-6">
-            <span className={`${CARD_NAME} text-ss-marino decoration-1 underline-offset-4 group-hover:underline group-focus-visible:underline`}>
-              {member.name}
-            </span>
-            {renderMemberRole(member, fallbackRole)}
-            <span aria-hidden="true" className="ss-plate-more ss-label mt-4 hidden text-ss-marino sm:block">
-              {language === "es" ? "Ver perfil" : "View profile"} <span className="ss-arrow">→</span>
-            </span>
-          </span>
-        </span>
-      </Link>
-    </li>
-  );
-
-  // Sección con tarjetas, dentro del contenedor (el primer retrato arranca en el borde del logo).
-  // Los socios van sin h2: el h1 de la página ya es "Socios" (E5).
-  const renderCardSection = (testId: string, title: string | null, children: ReactNode) => (
-    <section className="ss-container pt-16 lg:pt-20" data-testid={testId}>
-      {title && <h2 className="ss-h2 mb-10 lg:mb-12">{title}</h2>}
-      <ul className={CARD_GRID}>
-        {children}
-      </ul>
-    </section>
-  );
-
-  // Contenido de la celda de cierre: etiqueta "Carreras" y enlace de texto al Pasantías S&S.
-  // [&_span]: la regla móvil de index.css (span a 16 px) agrandaba el texto del enlace; aquí
-  // hereda los 12 px de la etiqueta, como en la portada.
-  const closingContent = (
-    <>
-      <p className="ss-label text-ss-medio">{careersLabel}</p>
-      <div className="mt-2 [&_span]:[font-size:inherit]">
-        <TextLink href="/careers/interns">Pasantías S&amp;S</TextLink>
-      </div>
-    </>
-  );
+  const partners = groupedMembers.partners.map(m => toPerson(m, t.positions.partner));
+  const ofCounsel = groupedMembers.ofCounsel.map(m => toPerson(m, t.ofCounsel));
+  // El Lienzo se vuelve a montar (y su turno empieza de nuevo) si cambian los socios o el idioma
+  const lienzoKey = `${language}|${partners.map(p => `${p.slug}:${p.name}:${p.role}:${p.imageUrl ?? ""}`).join("|")}`;
 
   return (
-    <div className="min-h-screen bg-background" data-testid="page-team">
+    <div className="ss26 min-h-screen" data-testid="page-team">
       <SEOHead page="team" language={language} />
       <Header />
 
-      {/* El encabezado va dentro de main: "Saltar al contenido" y el landmark incluyen el h1 */}
-      <main id="main-content" data-testid="section-team-main">
-        <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-team-hero">
-          <div className="ss-container">
-            <div>
-              <HeroKicker page="team" testId="text-team-kicker" />
-              {/* h1 = etiqueta del menú; mb-5 solo si sigue un subtítulo */}
-              <h1
-                className={t.subtitle ? "mb-5" : undefined}
-                data-testid="text-team-title"
-              >
-                {pageTitle}
-              </h1>
-              {t.subtitle && (
-                <p data-testid="text-team-subtitle">{keepFirmName(t.subtitle)}</p>
-              )}
-            </div>
-          </div>
-        </section>
-
-        {/* Sin barra de búsqueda, filtros ni cuenta: la página nombra a los socios y muestra el
-            mosaico del equipo; no hay nada que buscar. */}
-        {errorAll ? (
-          <div className="ss-container py-24" data-testid="container-team-error">
-            <p className="text-ss-tinta" data-testid="text-team-error">{t.errorMessage}</p>
-          </div>
-        ) : isLoadingAll ? (
-          // Carga con la misma retícula, el mismo relleno y la misma letra que las tarjetas finales
-          // (nombre de dos líneas desde sm, cargo en etiqueta): la altura no cambia al llegar los datos
-          <div className="ss-container pt-16 lg:pt-20" aria-busy="true">
-            <div className={CARD_GRID}>
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="grid grid-cols-[112px_1fr] items-end gap-x-5 sm:block" data-testid={`skeleton-team-member-${i}`}>
-                  <Skeleton className="aspect-[4/5] w-full rounded-none bg-ss-rule" />
-                  <div className="sm:mt-5">
-                    <div className={CARD_NAME}>
-                      <Skeleton className="inline-block h-[0.8em] w-4/5 bg-ss-rule align-middle" />
-                    </div>
-                    <div className="ss-label mt-3">
-                      <Skeleton className="inline-block h-[0.8em] w-1/2 bg-ss-rule align-middle" />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+      <V3Main vista="socios">
+        {errorAll || isLoadingAll ? (
+          // Carga (o error): la misma sección con la misma altura, sin turno
+          <SociosLienzoPlaceholder
+            title={pageTitle}
+            busy={!errorAll}
+            message={errorAll ? t.errorMessage : tv.loading}
+          />
         ) : (
-          <>
-            {/* ─── SOCIOS ──────────────────────────────────────── */}
-            {groupedMembers.partners.length > 0 &&
-              renderCardSection(
-                "section-partners",
-                null,
-                groupedMembers.partners.map((member, i) => renderPersonCard(member, t.positions.partner, i < 2, i)),
-              )}
-
-            {/* ─── OF COUNSEL ──────────────────────────────────── */}
-            {groupedMembers.ofCounsel.length > 0 &&
-              renderCardSection(
-                "section-ofcounsel",
-                t.ofCounsel,
-                groupedMembers.ofCounsel.map((member) => renderPersonCard(member, t.ofCounsel, false)),
-              )}
-          </>
+          <SociosLienzo
+            key={lienzoKey}
+            partners={partners}
+            t={tv}
+            attrs={attrs}
+            title={pageTitle}
+            list={listLabel}
+            // Subtítulo del panel: solo si algún idioma lo trae (E3)
+            lead={t.subtitle ? keepFirmName(t.subtitle) : undefined}
+          >
+            <OfCounsel title={t.ofCounsel} people={ofCounsel} />
+          </SociosLienzo>
         )}
 
-        {/* ─── INTEGRANTES DEL EQUIPO (mosaico anónimo: aún sin nombres) ─────── */}
-        {/* Fuera de la carga: las fotos son estáticas (equipoMosaicPhotos), así que el bloque y su
-            rejilla ocupan su sitio desde el principio y el pie no salta cuando llega /api/team
-            (CLS de 0.14–0.28 en pantallas altas en la ronda 4) */}
-        {equipoPhotos.length > 0 && (
-          <section id="equipo" className="ss-container pt-20 pb-24 lg:pt-24 lg:pb-32" data-testid="section-associates">
-            <div className="pb-10 lg:pb-12">
-              {/* No repite el h1 "Socios": "Integrantes del equipo", como en la redacción */}
-              <h2 className="ss-h2">
-                {t.associatesTitle}
-              </h2>
-              {/* Los retratos son decorativos (alt vacío) hasta que exista la relación de nombres;
-                  sin cifra: el número de integrantes no está confirmado */}
-              <p className="sr-only">{t.mosaicNote}</p>
-            </div>
-            {/* Rejilla de 2, 4 y 6 columnas con encuadres ópticos individuales.
-                La elevación al pasar el cursor es decorativa: los retratos no son enlaces.
-                La celda Hueso de cierre es un
-                elemento más que ocupa las columnas sobrantes de la última fila. */}
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-6 md:grid-cols-4 md:gap-x-6 md:gap-y-8 lg:grid-cols-6 lg:gap-x-8 lg:gap-y-10">
-              {equipoPhotos.map((photo, idx) => (
-                // aria-hidden en el elemento: la lista no anuncia 37 elementos vacíos
-                <li
-                  key={`${photo}-${idx}`}
-                  aria-hidden="true"
-                  data-curtain=""
-                  // Muro de salón: cada fila se descubre de izquierda a derecha (50 ms entre retratos)
-                  style={{ "--reveal-delay": `${(idx % EQUIPO_COLUMNS.lg) * 0.05}s` } as CSSProperties}
-                  className="ss-team-portrait ss-salon ss-portrait-frame relative aspect-[4/5] overflow-hidden bg-ss-paper"
-                  data-testid={`img-equipo-${idx}`}
-                >
-                  <img
-                    src={photo}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                    width={295}
-                    height={295}
-                    className="ss-photo absolute h-auto max-w-none"
-                    style={teamPortraitFraming(photo)}
-                  />
-                </li>
-              ))}
-              <li
-                data-testid="cell-equipo-closing"
-                className={`flex flex-col items-start justify-end border-t border-ss-marino/40 pt-4 ${equipoClosingSpanClass}`}
-              >
-                {closingContent}
-              </li>
-            </ul>
-          </section>
-        )}
-      </main>
+        {/* El equipo: muro de retratos sin nombres (mosaico del CMS), fuera de la carga: las fotos son
+            estáticas y el bloque ocupa su sitio desde el principio */}
+        <EquipoMuro
+          photos={equipoPhotos}
+          title={teamTitle}
+          lead={tv.teamLead}
+          leadAttrs={attrs}
+          wallLabel={t.mosaicNote}
+          careersLabel={careersLabel}
+          careersHref={internal(cmsLinks.interns, "/careers/interns")}
+        />
+
+        <div {...attrs}>
+          <V3NextPage
+            href={internal(cmsLinks.contact, "/contact")}
+            label={tv.next}
+            title={ownLang ? navLabels[5].label : tv.nextTitle}
+            ariaLabel={tv.nextAria}
+          />
+        </div>
+      </V3Main>
 
       <Footer />
     </div>

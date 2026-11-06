@@ -1,6 +1,6 @@
 import { useSiteNavigation } from "./useSiteNavigation";
 import { useCmsMedia } from "@/lib/cmsMedia";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { useLocation } from "wouter";
 import { SiteLink as Link } from "./SiteLink";
@@ -60,6 +60,14 @@ export default function Header26({ localized = false, overlay = false }: Header2
   const restoreFocusRef = useRef<FocusTarget>(null);
   const panelRef = useRef(panel);
   panelRef.current = panel;
+  // Desde 1280px el menú va completo en la barra, salvo que no quepa (idiomas con etiquetas
+  // largas, o un menú con más entradas desde el panel): entonces queda el botón Menú, como en
+  // pantallas menores. Se mide la fila completa antes de pintar y se marca data-compact en el
+  // <header> sin pasar por React, para que no parpadee.
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [compact, setCompact] = useState(false);
+  const compactRef = useRef(false);
+  const navSignature = items.map((i) => i.label).join("|");
 
   const closePanel = (restoreFocus: FocusTarget) => {
     restoreFocusRef.current = restoreFocus;
@@ -96,8 +104,45 @@ export default function Header26({ localized = false, overlay = false }: Header2
     onEscape: () => closePanel("menu"),
     onClosed: restoreFocus,
     // Al pasar a escritorio el diálogo se oculta (xl:hidden): se cierra para no dejar la página inerte
-    closeWhen: { query: "(min-width: 1280px)", onMatch: () => closePanel("nav") },
+    closeWhen: { query: "(min-width: 1280px)", onMatch: () => { if (!compactRef.current) closePanel("nav"); } },
   });
+
+  useLayoutEffect(() => {
+    const row = rowRef.current;
+    const header = row?.closest("header");
+    if (!row || !header) return;
+    const wide = window.matchMedia("(min-width: 1280px)");
+    const check = () => {
+      let next = false;
+      if (wide.matches) {
+        header.removeAttribute("data-compact");
+        const style = getComputedStyle(row);
+        const room = row.clientWidth - (parseFloat(style.paddingLeft) || 0) - (parseFloat(style.paddingRight) || 0);
+        const parts = Array.from(row.children).filter((c) => c.getBoundingClientRect().width > 0);
+        const used = parts.reduce((sum, c) => sum + c.getBoundingClientRect().width, 0);
+        const gaps = (parseFloat(style.columnGap) || 0) * Math.max(parts.length - 1, 0);
+        // Holgura mínima entre el logotipo y el menú, para que no se vea apretado
+        next = room - used - gaps < 32;
+      }
+      if (next) header.setAttribute("data-compact", "");
+      else header.removeAttribute("data-compact");
+      if (compactRef.current !== next) {
+        compactRef.current = next;
+        setCompact(next);
+      }
+    };
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(row);
+    wide.addEventListener("change", check);
+    let alive = true;
+    document.fonts?.ready.then(() => { if (alive) check(); });
+    return () => {
+      alive = false;
+      ro.disconnect();
+      wide.removeEventListener("change", check);
+    };
+  }, [navSignature, code, navigation.header.searchEnabled, navigation.header.languageEnabled]);
 
   // Cambio de ruta: cierra el panel y devuelve el foco solo si estaba abierto
   useEffect(() => {
@@ -120,7 +165,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
     <>
       <header
         {...t.attrs}
-        className={`ss26 ss-header sticky top-0 z-50 text-white ${overlay ? "ss-header--home-hero" : ""} ${
+        className={`ss26 ss-header group/hdr sticky top-0 z-50 text-white ${overlay ? "ss-header--home-hero" : ""} ${
           solid ? "bg-ss-navy" : "bg-transparent"
         } ${scrolled ? "shadow-[0_1px_0_rgba(255,255,255,0.08)]" : ""} ${tucked && !panel ? "is-tucked" : ""}`}
         onFocus={() => setTucked(false)}
@@ -128,7 +173,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
       >
         {/* La navegación completa aparece desde 1280px para mantener etiquetas legibles.
             En pantallas menores se conserva el menú desplegable. */}
-        <div className="ss-container flex h-[68px] items-center justify-between gap-4 lg:h-20 lg:gap-6 xl:gap-5">
+        <div ref={rowRef} className="ss-container flex h-[68px] items-center justify-between gap-4 lg:h-20 lg:gap-6 xl:gap-5">
           <Link href="/" aria-label="Santos & Saucedo" className="shrink-0" data-testid="link-logo">
             <img
               src={media.brand.logoLight}
@@ -146,7 +191,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
             aria-label={t.header.nav}
             className="flex items-center gap-5 lg:ms-auto xl:gap-5"
           >
-            <ul className="hidden items-center gap-4 xl:flex xl:gap-[clamp(16px,1.5vw,28px)]">
+            <ul className="hidden items-center gap-4 xl:flex xl:gap-[clamp(14px,1.2vw,24px)] xl:group-data-[compact]/hdr:hidden">
               {items.map((item) => (
                 // flex + pt-[2px] (compensa el padding-bottom de .ss-link): mismo centro que Buscar y ES/EN.
                 // Elemento actual (página o subruta): blanco y filete lima de 2 px (.ss-link--lime);
@@ -155,7 +200,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
                   <Link
                     href={item.href}
                     aria-current={currentFor(item.href)}
-                    className="ss-label ss-link ss-link--lime whitespace-nowrap pt-[2px] tracking-[0.10em] text-white/80 transition-colors hover:text-white aria-[current=page]:bg-[length:100%_2px] aria-[current=page]:text-white aria-[current=true]:bg-[length:100%_2px] aria-[current=true]:text-white"
+                    className="ss-label ss-link ss-link--lime whitespace-nowrap pt-[2px] tracking-[0.08em] text-white/80 transition-colors hover:text-white aria-[current=page]:bg-[length:100%_2px] aria-[current=page]:text-white aria-[current=true]:bg-[length:100%_2px] aria-[current=true]:text-white"
                   >
                     {item.label}
                   </Link>
@@ -164,8 +209,8 @@ export default function Header26({ localized = false, overlay = false }: Header2
               ))}
             </ul>
 
-            {/* Buscador: icono con nombre accesible; el texto se ve desde 1280px.
-                Márgenes negativos: área táctil de 44px sin ensanchar la fila */}
+            {/* Buscador: icono con nombre accesible (el texto solo para lectores de pantalla, para que
+                el menú completo quepa). Márgenes negativos: área táctil de 44px sin ensanchar la fila */}
             {navigation.header.searchEnabled&&<button
               ref={searchButtonRef}
               type="button"
@@ -174,10 +219,10 @@ export default function Header26({ localized = false, overlay = false }: Header2
               aria-controls="search-dialog"
               data-testid="button-search"
               onClick={() => setPanel("search")}
-              className="ss-label -mx-3 flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 tracking-[0.10em] text-white/80 transition-colors hover:text-white min-[1440px]:mx-0 min-[1440px]:min-w-0"
+              className="ss-label -mx-3 flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 tracking-[0.10em] text-white/80 transition-colors hover:text-white"
             >
               <SearchIcon />
-              <span className="sr-only min-[1440px]:not-sr-only">{t.search.open}</span>
+              <span className="sr-only">{t.search.open}</span>
             </button>}
 
             {/* El selector de paletas vive en el pie (Footer26), visible para todos */}
@@ -185,7 +230,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
             <button
               ref={menuButtonRef}
               type="button"
-              className="ss-label flex min-h-[44px] items-center gap-3 tracking-[0.10em] text-white xl:hidden"
+              className="ss-label flex min-h-[44px] items-center gap-3 tracking-[0.10em] text-white xl:hidden xl:group-data-[compact]/hdr:flex"
               aria-expanded={panel === "menu"}
               aria-controls="mobile-menu"
               aria-haspopup="dialog"
@@ -200,7 +245,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
             </button>
           </nav>
 
-          {navigation.header.languageEnabled&&<LangSwitch26 lang={code} className="hidden xl:flex" />}
+          {navigation.header.languageEnabled&&<LangSwitch26 lang={code} className="hidden xl:flex xl:group-data-[compact]/hdr:hidden" />}
         </div>
       </header>
 
@@ -216,7 +261,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
             aria-label={t.header.menu}
             {...t.attrs}
             data-testid="modal-mobile-menu"
-            className="ss26 fixed inset-0 z-[70] flex flex-col overflow-y-auto overscroll-contain bg-ss-navy text-white xl:hidden"
+            className={`ss26 fixed inset-0 z-[70] flex flex-col overflow-y-auto overscroll-contain bg-ss-navy text-white ${compact ? "" : "xl:hidden"}`}
           >
             <div className="ss-container relative flex h-[68px] shrink-0 items-center justify-between">
               <img src={media.brand.logoLight} alt={media.brand.name} className="h-[26px] w-auto" width={159} height={26} />

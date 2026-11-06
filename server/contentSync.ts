@@ -1,6 +1,6 @@
 import { createHash } from "crypto";
 import { newsData, practiceGroupsData, teamMembersData } from "./seed";
-import { cmsDefaults, isCmsSection } from "@shared/cms";
+import { cmsDefaults, isCmsSection, mergeCms, validateCmsValue } from "@shared/cms";
 
 /* Pone al día, en una base ya poblada, los textos de prácticas/equipo y las imágenes de
    prácticas que vienen de la semilla. seed() solo inserta en tablas vacías: sin esto, el sitio publicado seguiría con los
@@ -68,6 +68,12 @@ const PREVIOUS_NEWS: Previous = {
 // Contenido editable (cms-defaults.json): huellas del texto predeterminado anterior, por sección
 // y ruta dentro de la sección (los índices de listas como números)
 const PREVIOUS_CMS: Previous = {
+  // Azules anteriores (índigo); desde la demo v3 (junta del 5-11-2026): azul noche #0C2340 y
+  // azul de la junta #0F3F6B. Un color elegido en el panel se respeta.
+  "theme": {
+    "navy": ["60673c94cf0d33debc2b0366", "5115b48f79b25b051ba8e0b8"],
+    "marino": ["ddb51e3d21c6e3690a765f3d", "e013aaba13a6187d558e5a06"],
+  },
   "seo": {
     "home.description.en": ["0c24ab9c819464f6549a97f3"],
     "home.description.es": ["a9ea4afcf2a1c65835c6bc05"],
@@ -276,6 +282,81 @@ export async function syncSeedContent() {
 
   const sections = await syncCmsDefaults(db);
   if (sections > 0) console.log(`[seed] Textos predeterminados actualizados en ${sections} secciones guardadas del contenido editable`);
+
+  if (await addIndustriesToNavigation(db)) console.log("[seed] «Industrias» añadida al menú y al pie guardados");
+  if (await reorderHome(db)) console.log("[seed] Orden del inicio actualizado al de la demo v3");
+}
+
+// Una sola vez: el inicio de la demo v3 alterna bandas claras y azules con este orden. Solo si el
+// orden guardado en el panel sigue siendo el predeterminado anterior; uno elegido se respeta.
+const HOME_ORDER_MARK = "infrastructure.v3-home-order";
+const PREVIOUS_HOME_ORDER = ["firma", "creemos", "practicas", "extranjeras", "socios", "monitor"];
+
+async function reorderHome(db: typeof import("./db").db) {
+  const { and, eq } = await import("drizzle-orm");
+  const { siteConfig } = await import("@shared/schema");
+  const [done] = await db.select().from(siteConfig).where(eq(siteConfig.key, HOME_ORDER_MARK));
+  if (done) return false;
+  const mark = () => db.insert(siteConfig).values({
+    key: HOME_ORDER_MARK, type: "json", category: "infrastructure", value: '{"complete":true}',
+  }).onConflictDoNothing();
+  const [row] = await db.select().from(siteConfig).where(eq(siteConfig.key, "editorial.layout"));
+  let stored: { content?: Record<string, unknown> } | null = null;
+  try { stored = row?.value ? JSON.parse(row.value) : null; } catch { stored = null; }
+  const order = stored?.content?.homeOrder;
+  const next = (cmsDefaults.layout as { homeOrder?: unknown }).homeOrder;
+  if (!row || !stored?.content || !Array.isArray(next) || JSON.stringify(order) !== JSON.stringify(PREVIOUS_HOME_ORDER)) {
+    await mark();
+    return false;
+  }
+  stored.content.homeOrder = [...next];
+  const result = await db.update(siteConfig).set({ value: JSON.stringify(stored), updatedAt: new Date() })
+    .where(and(eq(siteConfig.key, row.key), eq(siteConfig.value, row.value!))).returning();
+  if (!result.length) return false;
+  await mark();
+  return true;
+}
+
+// Una sola vez: la página «Industrias» (demo v3) entra al menú y al pie que se guardaron desde el
+// panel, después de «Prácticas». La marca impide volver a añadirla si alguien la quita después.
+const INDUSTRIES_MARK = "infrastructure.v3-nav-industries";
+
+async function addIndustriesToNavigation(db: typeof import("./db").db) {
+  const { and, eq } = await import("drizzle-orm");
+  const { siteConfig } = await import("@shared/schema");
+  const [done] = await db.select().from(siteConfig).where(eq(siteConfig.key, INDUSTRIES_MARK));
+  if (done) return false;
+  const mark = () => db.insert(siteConfig).values({
+    key: INDUSTRIES_MARK, type: "json", category: "infrastructure", value: '{"complete":true}',
+  }).onConflictDoNothing();
+  const [row] = await db.select().from(siteConfig).where(eq(siteConfig.key, "editorial.navigation"));
+  let stored: { content?: Record<string, unknown> } | null = null;
+  try { stored = row?.value ? JSON.parse(row.value) : null; } catch { stored = null; }
+  const content = stored?.content;
+  if (!row || !content || typeof content !== "object") { await mark(); return false; }
+  const defaults = cmsDefaults.navigation as unknown as Record<string, Array<Record<string, unknown>>>;
+  let changed = 0;
+  for (const list of ["items", "footerItems"] as const) {
+    const items = content[list];
+    if (!Array.isArray(items)) continue;
+    if (items.some((i) => i && typeof i === "object" && (i as { href?: unknown }).href === "/industries")) continue;
+    const entry = defaults[list]?.find((i) => i.href === "/industries");
+    if (!entry) continue;
+    const at = items.findIndex((i) => i && typeof i === "object" && (i as { href?: unknown }).href === "/practice-groups");
+    const practices = at >= 0 ? (items[at] as { order?: unknown }) : null;
+    const order = typeof practices?.order === "number" ? practices.order : entry.order;
+    items.splice(at >= 0 ? at + 1 : items.length, 0, { ...structuredClone(entry), order });
+    changed++;
+  }
+  if (changed === 0) { await mark(); return false; }
+  // Si el menú guardado ya no admite otra entrada (máximo de elementos), se deja como está
+  if (validateCmsValue("navigation", mergeCms(cmsDefaults.navigation, content)).length) { await mark(); return false; }
+  // Solo si la sección sigue como se leyó: un guardado del panel entretanto no se pisa
+  const result = await db.update(siteConfig).set({ value: JSON.stringify(stored), updatedAt: new Date() })
+    .where(and(eq(siteConfig.key, row.key), eq(siteConfig.value, row.value!))).returning();
+  if (!result.length) return false;
+  await mark();
+  return true;
 }
 
 /** Valor de una ruta ("es.stats.0.value") dentro de un objeto o lista */

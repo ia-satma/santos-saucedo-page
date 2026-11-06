@@ -1,0 +1,151 @@
+/* Textos nuevos del Inicio v3 (demo aprobada el 5-11-2026). El español es el de la demo, al pie de la
+   letra; el inglés, en el mismo registro institucional. Los nombres y resúmenes de las prácticas y los
+   cargos de los socios NO viven aquí: vienen de la base (/api/practice-groups y /api/team), que edita
+   el panel.
+   Cifras: las que el sitio ya afirma (más de 40 años de experiencia de los socios, más de 72 ciudades
+   en la red de despachos aliados) más las 32 entidades de esa red y las cuatro áreas de práctica.
+   Sin año de fundación: el sitio dice 2009 en «La firma» y «Desde 2010» en la portada. */
+import type { V3Lang } from "@/v3/shared";
+import { v3Asset } from "../asset";
+
+export type Industria = { clave: string; img: string; pos: string; nombre: string; linea: string; alt: string };
+
+export const homeCopy = {
+  es: {
+    intro: {
+      h: "Nuestra firma",
+      frase:
+        "Desde San Pedro Garza García, Santos & Saucedo asesora a grupos industriales mexicanos, a multinacionales y a empresas de capital asiático en las decisiones que involucran a su personal.",
+      boton: "Conozca la firma",
+      cifras: {
+        anos: "Años de experiencia",
+        ciudades: "Ciudades con presencia",
+        entidades: "Entidades federativas",
+        areas: "Áreas de práctica",
+      },
+    },
+    practicas: {
+      titulo: "Nuestras prácticas",
+      entrada: "La práctica laboral es el centro de la firma; las demás la acompañan.",
+      ver: "Ver la práctica",
+    },
+    industrias: {
+      titulo: "Industrias que asesoramos",
+      boton: "Ver las industrias",
+      items: [
+        {
+          clave: "bebidas", img: v3Asset("/v3/c-ind-bebidas.webp"), pos: "40% 50%",
+          nombre: "Refresqueras y bebidas",
+          linea: "Contratos colectivos, centros de distribución y personal de reparto en operación continua.",
+          alt: "Botellas verdes en la línea de llenado de una planta embotelladora",
+        },
+        {
+          clave: "automotriz", img: v3Asset("/v3/c-ind-automotriz.webp"), pos: "64% 60%",
+          nombre: "Automotriz",
+          linea: "Relaciones colectivas, inspecciones y cumplimiento en plantas con varios turnos.",
+          alt: "Carrocería de una camioneta en la línea de ensamble",
+        },
+        {
+          clave: "acero", img: v3Asset("/v3/c-ind-acero.webp"), pos: "40% 55%",
+          nombre: "Acero",
+          linea: "Seguridad e higiene, riesgos de trabajo y relaciones sindicales en procesos que no se detienen.",
+          alt: "Colada de acero fundido entre chispas en una acería",
+        },
+        {
+          clave: "energia", img: v3Asset("/v3/c-ind-energia.webp"), pos: "62% 70%",
+          nombre: "Energía",
+          linea: "Servicios especializados (REPSE), contratistas y cumplimiento en proyectos de generación y transmisión.",
+          alt: "Torres de transmisión eléctrica al atardecer",
+        },
+      ] as Industria[],
+    },
+    filosofia: {
+      frase: "Preparamos cada asunto como si fuera a llegar a juicio.",
+      texto:
+        "Esa preparación respalda cada negociación: se negocia mejor cuando el caso ya está listo para defenderse. Prevención primero y, si hay conflicto, capacidad de reacción.",
+      boton: "Nuestra filosofía",
+    },
+    socios: {
+      titulo: "Nuestros socios",
+      boton: "Conozca a los socios y al equipo",
+    },
+  },
+  en: {
+    intro: {
+      h: "Our firm",
+      frase:
+        "From San Pedro Garza García, Santos & Saucedo advises Mexican industrial groups, multinationals and Asian-owned companies on the decisions that involve their people.",
+      boton: "Discover the firm",
+      cifras: {
+        anos: "Years of experience",
+        ciudades: "Cities in our alliance network",
+        entidades: "States and Mexico City",
+        areas: "Practice areas",
+      },
+    },
+    practicas: {
+      titulo: "Our practices",
+      entrada: "Labor law is the core of the firm; the other practices support it.",
+      ver: "View the practice",
+    },
+    industrias: {
+      titulo: "Industries we advise",
+      boton: "View the industries",
+      items: [
+        {
+          clave: "bebidas", img: v3Asset("/v3/c-ind-bebidas.webp"), pos: "40% 50%",
+          nombre: "Soft drinks and beverages",
+          linea: "Collective agreements, distribution centers and delivery staff in continuous operation.",
+          alt: "Green bottles on the filling line of a bottling plant",
+        },
+        {
+          clave: "automotriz", img: v3Asset("/v3/c-ind-automotriz.webp"), pos: "64% 60%",
+          nombre: "Automotive",
+          linea: "Collective relations, inspections and compliance in plants that run several shifts.",
+          alt: "A pickup truck body on the assembly line",
+        },
+        {
+          clave: "acero", img: v3Asset("/v3/c-ind-acero.webp"), pos: "40% 55%",
+          nombre: "Steel",
+          linea: "Health and safety, occupational risks and union relations in processes that never stop.",
+          alt: "Molten steel pouring amid sparks in a steel mill",
+        },
+        {
+          clave: "energia", img: v3Asset("/v3/c-ind-energia.webp"), pos: "62% 70%",
+          nombre: "Energy",
+          linea: "Specialized services (REPSE), contractors and compliance in generation and transmission projects.",
+          alt: "Power transmission towers at dusk",
+        },
+      ] as Industria[],
+    },
+    filosofia: {
+      frase: "We prepare every matter as if it were going to trial.",
+      texto:
+        "That preparation supports every negotiation: one negotiates better when the case is already ready to be defended. Prevention first and, if a dispute arises, the capacity to respond.",
+      boton: "Our philosophy",
+    },
+    socios: {
+      titulo: "Our partners",
+      boton: "Meet the partners and the team",
+    },
+  },
+} satisfies Record<V3Lang, unknown>;
+
+/* Foto de cada práctica en el bloque de Baker, por el slug de la base. Litigio toma la foto que la
+   demo aprobada tenía en ese mismo cuadro (los rollos de acero de «seguridad social», práctica que el
+   sitio ya integra en Laboral): no es la cabecera de ninguna página de práctica, así que no le roba
+   la imagen a otra, y su tono hondo y monocromo se lee bien bajo el velo. */
+export const PRACTICE_PHOTOS: Record<string, { clave: string; img: string; w: number; h: number }> = {
+  "laboral-seguridad-social": { clave: "laboral", img: v3Asset("/v3/c-laboral.webp"), w: 2000, h: 1334 },
+  "corporativo-contractual": { clave: "corporativo", img: v3Asset("/v3/c-corporativo.webp"), w: 2000, h: 1333 },
+  migratorio: { clave: "migratorio", img: v3Asset("/v3/c-migratorio.webp"), w: 2000, h: 1333 },
+  "litigio-contencioso": { clave: "litigio", img: v3Asset("/v3/c-acumulado.webp"), w: 2400, h: 1600 },
+};
+
+/* Los cuatro socios, siempre en este orden (y su respaldo si /api/team no responde). */
+export const PARTNERS_FALLBACK = [
+  { slug: "mario-saucedo-montemayor", name: "Mario Saucedo Montemayor", es: "Socio director", en: "Managing partner", imageUrl: v3Asset("/team_photos/mario-saucedo-montemayor.png") },
+  { slug: "enrique-santos-guzman", name: "Enrique Santos Guzmán", es: "Socio director", en: "Managing partner", imageUrl: v3Asset("/team_photos/enrique-santos-guzman.png") },
+  { slug: "enrique-santos-arce", name: "Enrique Santos Arce", es: "Socio fundador", en: "Founding partner", imageUrl: v3Asset("/team_photos/enrique-santos-arce.png") },
+  { slug: "mario-saucedo-rodriguez", name: "Mario Saucedo Rodríguez", es: "Socio fundador (in memoriam)", en: "Founding partner (in memoriam)", imageUrl: v3Asset("/team_photos/mario-saucedo-rodriguez-color.png") },
+] as const;

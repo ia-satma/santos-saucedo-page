@@ -1,0 +1,13 @@
+/* Ajustes para que el CSS del sitio no altere las páginas v3 */
+
+/* index.css limita a 80 px de alto todo <header> en teléfonos (pensado para encabezados fijos
+   antiguos). En las páginas v3, <header> es la cabecera de página (foto, título y entrada) o la de
+   un módulo: sin el límite, no se recortan ni se montan sobre la sección siguiente. */
+.v3 header{ max-height: none }
+
+/* index.css pone en teléfonos p, span, li… a 16 px como mínimo. En las páginas v3 cada texto ya
+   tiene su medida (los spans de un lema o de una cifra heredan la de su bloque): se hereda. Las
+   reglas con clase de demo.css siguen mandando (más especificidad). */
+@media screen and (max-width: 639px){
+  .v3 :where(p, span, li, td, th, label){ font-size: inherit }
+}

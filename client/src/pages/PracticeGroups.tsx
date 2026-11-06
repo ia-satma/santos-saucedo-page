@@ -6,17 +6,23 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { PhotoBand } from "@/components/home26/PhotoBand";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { HeroKicker } from "@/components/editorial/HeroKicker";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { chrome26 } from "@/components/home26/chrome26";
 import { usePracticeNames } from "@/lib/practiceNames";
 import { getPracticeImage } from "@/lib/practiceIndustryImages";
+import { V3Main, V3NextPage, useV3Lang } from "@/v3/shared";
+import { PAGINA } from "@/v3/practicas/textos";
+import { PRACTICE_PHOTOS } from "@/v3/home/copy";
 import type { PracticeGroup } from "@shared/schema";
 import "./PracticeGroups.css";
+
+// Listado de prácticas con el diseño de la demo v3 (como sus cuatro páginas): título y entrada de la
+// página, y las cuatro prácticas en una retícula de dos, cada una con la misma foto que tiene en el
+// bloque de prácticas del Inicio (PRACTICE_PHOTOS, client/src/v3/home/copy.ts). Nombre, resumen y
+// entrada siguen viniendo de la base y del panel, en los 10 idiomas.
 
 // English source copy stays explicitly isolated from the active page language and direction.
 function EnglishSource({ children }: { children: ReactNode }) {
@@ -54,61 +60,42 @@ function PracticeGroupRow({ group, index }: PracticeGroupRowProps) {
 
   const nameId = `practice-name-${group.slug}`;
   const descriptionId = `practice-desc-${group.slug}`;
-  // Misma serie aprobada que en el inicio; conservar las imágenes guardadas sin borrarlas.
-  const imageUrl = getPracticeImage(group.slug);
+  // La foto del bloque de prácticas del Inicio; una práctica nueva del panel, la del catálogo
+  const photo = PRACTICE_PHOTOS[group.slug];
+  const imageUrl = photo?.img ?? getPracticeImage(group.slug);
 
   return (
-    <li
-      className="practice-entry border-b border-ss-rule"
-      data-testid={`card-practice-group-${group.slug}`}
-    >
+    <li className="pg-item" data-testid={`card-practice-group-${group.slug}`}>
       <Link
         href={`/practice-groups/${group.slug}`}
         aria-labelledby={nameId}
         aria-describedby={descriptionId}
-        className="practice-entry-link group inline-link"
+        className="pg-a inline-link"
         data-testid={`link-practice-group-${group.slug}`}
       >
-        <div className="practice-entry-image">
-          <img
-            src={imageUrl}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            className="practice-entry-photo"
-          />
-        </div>
-
-        <div className="practice-entry-copy">
-          <span aria-hidden="true" className="practice-entry-number ss-label ss-num">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-          <div className="practice-entry-heading">
-            <h2
-              id={nameId}
-              className="practice-entry-title ss-h2-sm"
-              data-testid={`text-practice-group-name-${group.slug}`}
-              lang={nameIsSource ? "en" : undefined}
-            >
-              {nameIsSource ? <EnglishSource>{displayName}</EnglishSource> : displayName}
-              {showTranslatingIndicator && (
-                <Loader2
-                  className="ms-3 inline-block h-4 w-4 animate-spin align-middle text-ss-medio"
-                  aria-hidden="true"
-                />
-              )}
-            </h2>
-            <span aria-hidden="true" className="practice-entry-arrow ss-arrow">→</span>
-          </div>
-          <p
-            id={descriptionId}
-            className="practice-entry-description ss-prose"
-            data-testid={`text-practice-group-desc-${group.slug}`}
-            lang={descriptionIsSource ? "en" : undefined}
-          >
-            {descriptionIsSource ? <EnglishSource>{displayDescription}</EnglishSource> : displayDescription}
-          </p>
-        </div>
+        <span className="pg-foto">
+          <img src={imageUrl} alt="" width={photo?.w ?? 1536} height={photo?.h ?? 1024} loading="lazy" decoding="async" />
+        </span>
+        <span aria-hidden="true" className="pg-n">{String(index + 1).padStart(2, "0")}</span>
+        <h2
+          id={nameId}
+          className="pg-t"
+          data-testid={`text-practice-group-name-${group.slug}`}
+          lang={nameIsSource ? "en" : undefined}
+        >
+          <span className="pg-t-txt">{nameIsSource ? <EnglishSource>{displayName}</EnglishSource> : displayName}</span>
+          {showTranslatingIndicator && (
+            <Loader2 className="ms-3 inline-block h-4 w-4 animate-spin align-middle" aria-hidden="true" />
+          )}
+        </h2>
+        <p
+          id={descriptionId}
+          className="pg-d"
+          data-testid={`text-practice-group-desc-${group.slug}`}
+          lang={descriptionIsSource ? "en" : undefined}
+        >
+          {descriptionIsSource ? <EnglishSource>{displayDescription}</EnglishSource> : displayDescription}
+        </p>
       </Link>
     </li>
   );
@@ -173,20 +160,13 @@ const content: Record<string, { subtitle: string; errorMessage: string }> = {
 
 function PracticeGroupSkeleton({ index }: { index: number }) {
   return (
-    <li
-      className="practice-entry practice-entry-skeleton border-b border-ss-rule"
-      data-testid={`skeleton-practice-group-${index}`}
-      aria-hidden="true"
-    >
-      <div className="practice-entry-link">
-        <Skeleton className="practice-skeleton-image bg-ss-paper" />
-        <div className="practice-entry-copy">
-          <Skeleton className="mb-5 h-3 w-10 bg-ss-rule" />
-          <Skeleton className="mb-4 h-8 w-4/5 max-w-md bg-ss-rule" />
-          <Skeleton className="mb-2 h-4 w-full bg-ss-rule" />
-          <Skeleton className="mb-2 h-4 w-11/12 bg-ss-rule" />
-          <Skeleton className="h-4 w-3/4 bg-ss-rule" />
-        </div>
+    <li className="pg-item pg-item--esqueleto" data-testid={`skeleton-practice-group-${index}`} aria-hidden="true">
+      <div className="pg-a">
+        <Skeleton className="pg-foto bg-[rgba(15,63,107,.08)]" />
+        <Skeleton className="mt-6 h-3 w-10 bg-[rgba(15,63,107,.08)]" />
+        <Skeleton className="mt-4 h-8 w-4/5 max-w-md bg-[rgba(15,63,107,.08)]" />
+        <Skeleton className="mt-4 h-4 w-full bg-[rgba(15,63,107,.08)]" />
+        <Skeleton className="mt-2 h-4 w-3/4 bg-[rgba(15,63,107,.08)]" />
       </div>
     </li>
   );
@@ -204,55 +184,53 @@ export default function PracticeGroups() {
   const t = editableContent[language] || editableContent.en;
   const title = (cmsChrome[language as keyof typeof chrome26] ?? cmsChrome.en).nav[1].label;
   const emptyMessage = emptyMessages[language] || emptyMessages.en;
+  const P = PAGINA[useV3Lang().lang];
 
   return (
-    <div className="min-h-screen bg-background" data-testid="page-practice-groups">
+    <div className="ss26 min-h-screen" data-testid="page-practice-groups">
       <SEOHead page="practiceGroups" language={language} />
       <Header />
 
-      <main id="main-content">
-        <section className="practice-directory-hero editorial-page-hero ss-principal-page-hero" data-testid="section-practice-groups-hero">
-          <div className="ss-container">
-            <div className="practice-directory-intro">
-              <HeroKicker page="practices" testId="text-practice-groups-kicker" />
-              <h1 data-testid="text-practice-groups-title">{title}</h1>
-              <p className="practice-directory-subtitle ss-lead" data-testid="text-practice-groups-subtitle">
-                {t.subtitle}
-              </p>
+      <V3Main vista="practicas" className="pg">
+        {/* Cabecera de página de la demo, sin foto: las fotos van en cada práctica */}
+        <header className="sh-pp sh-cab pg-cab" aria-labelledby="pg-h" data-testid="section-practice-groups-hero">
+          <div className="sh-wrap sh-pp__cuerpo">
+            <div className="sh-pp__texto">
+              <h1 id="pg-h" className="sh-h1" tabIndex={-1} data-testid="text-practice-groups-title">{title}</h1>
+              <p className="sh-lead" data-testid="text-practice-groups-subtitle">{t.subtitle}</p>
             </div>
           </div>
-        </section>
+        </header>
 
-        <section className="practice-directory-list" aria-label={title} aria-busy={isLoading}>
-          <div className="ss-container">
+        <section className="pg-lista" aria-label={title} aria-busy={isLoading}>
+          <div className="sh-wrap">
             {error ? (
-              <div className="py-12" role="alert" data-testid="container-practice-groups-error">
-                <p className="text-base text-ss-medio" data-testid="text-practice-groups-error">
-                  {t.errorMessage}
-                </p>
+              <div className="pg-aviso" role="alert" data-testid="container-practice-groups-error">
+                <p data-testid="text-practice-groups-error">{t.errorMessage}</p>
               </div>
             ) : isLoading ? (
-              <ol className="practice-directory-entries border-t border-ss-rule" aria-label={title}>
+              <ol className="pg-grid" aria-label={title}>
                 {Array.from({ length: 4 }).map((_, index) => (
                   <PracticeGroupSkeleton key={index} index={index} />
                 ))}
               </ol>
             ) : practiceGroups?.length ? (
-              <ol className="practice-directory-entries border-t border-ss-rule">
+              <ol className="pg-grid">
                 {practiceGroups.map((group, index) => (
                   <PracticeGroupRow key={group.id} group={group} index={index} />
                 ))}
               </ol>
             ) : (
-              <div className="practice-directory-empty" role="status" data-testid="container-practice-groups-empty">
+              <div className="pg-aviso" role="status" data-testid="container-practice-groups-empty">
                 <p>{emptyMessage}</p>
               </div>
             )}
           </div>
         </section>
 
-        <PhotoBand photo="biblioteca" height="medium" position="object-[50%_45%]" testId="band-practices-office" />
-      </main>
+        {/* Al final, como en cada página de la demo: la siguiente parte, Industrias */}
+        <V3NextPage href="/industries" label={P.next} title={P.industries} ariaLabel={P.nextAria} />
+      </V3Main>
 
       <Footer />
     </div>
