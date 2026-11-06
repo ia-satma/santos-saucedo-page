@@ -30,6 +30,19 @@ export function initIndustrias(root: HTMLElement): () => void {
   poner(0);
   root.classList.add("in-js");
 
+  /* las fotos de la escena fija (2000 px) se descifran en cuanto llegan, no en el cambio: el fundido de
+     una industria a otra no espera a la foto */
+  fotos.forEach((f) => {
+    const img = f.querySelector("img");
+    if (!img || typeof img.decode !== "function") return;
+    const descifrar = () => { img.decode().catch(() => {}); };
+    if (img.complete && img.naturalWidth) descifrar();
+    else {
+      img.addEventListener("load", descifrar, { once: true });
+      limpiar.push(() => img.removeEventListener("load", descifrar));
+    }
+  });
+
   if ("IntersectionObserver" in window) {
     const centro = new IntersectionObserver((es) => {
       es.forEach((e) => { if (e.isIntersecting) poner(+((e.target as HTMLElement).dataset.i || 0)); });

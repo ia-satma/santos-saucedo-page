@@ -16,7 +16,7 @@ export const siteContentData: SiteContent = {
   quoteRole: "",
   address: "Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220, México",
   phone: "+52 81 8335 2086",
-  email: "info@santossaucedo.com",
+  email: "administracion@santossaucedo.com",
 };
 
 export const statsData: Stat[] = [];
@@ -89,7 +89,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Mario Saucedo Montemayor is a managing partner at Santos & Saucedo Abogados, a firm specialized in labor law for companies whose partners have more than 40 years of combined experience advising national and international companies.",
     bioEs: "Mario Saucedo Montemayor es socio director de Santos & Saucedo Abogados, firma especializada en derecho laboral para empresas cuyos socios suman más de 40 años de experiencia asesorando a empresas nacionales e internacionales.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     phone: "+52 81 8335 2086",
     isPartner: true,
     order: 1
@@ -104,7 +104,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Enrique Santos Guzmán is a managing partner at Santos & Saucedo Abogados, focused on preventive labor counsel and consulting for companies.",
     bioEs: "Enrique Santos Guzmán es socio director de Santos & Saucedo Abogados, con enfoque en asesoría preventiva y consultoría legal laboral para empresas.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     phone: "+52 81 8335 2086",
     isPartner: true,
     order: 2
@@ -119,7 +119,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Enrique Santos Arce is a founding partner of Santos & Saucedo Abogados.",
     bioEs: "Enrique Santos Arce es socio fundador de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     phone: "+52 81 8335 2086",
     isPartner: true,
     order: 3
@@ -148,7 +148,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Jaime Herrera de Herrera is a partner at Santos & Saucedo Abogados.",
     bioEs: "Jaime Herrera de Herrera es socio de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     phone: "+52 81 8335 2086",
     isPartner: true,
     order: 5
@@ -163,7 +163,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "David Martínez Saucedo is a partner at Santos & Saucedo Abogados.",
     bioEs: "David Martínez Saucedo es socio de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     phone: "+52 81 8335 2086",
     isPartner: true,
     order: 6
@@ -178,7 +178,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Jorge A. Garza Martínez is a senior associate at Santos & Saucedo Abogados.",
     bioEs: "Jorge A. Garza Martínez es asociado senior de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 7
   },
@@ -192,7 +192,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Carlos A. Cerda Ramos is a senior associate at Santos & Saucedo Abogados.",
     bioEs: "Carlos A. Cerda Ramos es asociado senior de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 8
   },
@@ -206,7 +206,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Orlando Cantú Garza is a senior associate at Santos & Saucedo Abogados.",
     bioEs: "Orlando Cantú Garza es asociado senior de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 9
   },
@@ -220,7 +220,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Rubén A. Frías García is an associate at Santos & Saucedo Abogados.",
     bioEs: "Rubén A. Frías García es asociado de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 10
   },
@@ -234,7 +234,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "María Elena Mata Martínez is an associate at Santos & Saucedo Abogados.",
     bioEs: "María Elena Mata Martínez es asociada de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 11
   },
@@ -248,7 +248,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Pedro A. Sanvicente Romero is an associate at Santos & Saucedo Abogados.",
     bioEs: "Pedro A. Sanvicente Romero es asociado de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 12
   },
@@ -262,7 +262,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Eduardo Castillo Cervantes is an associate at Santos & Saucedo Abogados.",
     bioEs: "Eduardo Castillo Cervantes es asociado de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 13
   },
@@ -276,7 +276,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "José María Ureña Flores is an associate at Santos & Saucedo Abogados.",
     bioEs: "José María Ureña Flores es asociado de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 14
   },
@@ -290,7 +290,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Lillia Cardoza Díaz de León is an associate at Santos & Saucedo Abogados.",
     bioEs: "Lillia Cardoza Díaz de León es asociada de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 15
   },
@@ -304,7 +304,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Erick Estrada Márquez is an associate at Santos & Saucedo Abogados.",
     bioEs: "Erick Estrada Márquez es asociado de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 16
   },
@@ -318,7 +318,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Huán José Treviño Cavazos is an associate at Santos & Saucedo Abogados.",
     bioEs: "Huán José Treviño Cavazos es asociado de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 17
   },
@@ -332,7 +332,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Misden Castillo Chávez is an associate at Santos & Saucedo Abogados.",
     bioEs: "Misden Castillo Chávez es asociada de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 18
   },
@@ -346,7 +346,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Ancella Reynoso Pámanes is an associate at Santos & Saucedo Abogados.",
     bioEs: "Ancella Reynoso Pámanes es asociada de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 19
   },
@@ -360,7 +360,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Diana G. Lopez Rodríguez is an associate at Santos & Saucedo Abogados.",
     bioEs: "Diana G. Lopez Rodríguez es asociada de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 20
   },
@@ -374,7 +374,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Carlos F. Rodríguez Mirelles is a junior associate at Santos & Saucedo Abogados.",
     bioEs: "Carlos F. Rodríguez Mirelles es asociado junior de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 21
   },
@@ -388,7 +388,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Rubí Quintanilla Martínez is a junior associate at Santos & Saucedo Abogados.",
     bioEs: "Rubí Quintanilla Martínez es asociada junior de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 22
   },
@@ -402,7 +402,7 @@ export const teamMembersData = [
     roleEs: "Derecho laboral",
     bio: "Gabriela L. García Vásquez is a junior associate at Santos & Saucedo Abogados.",
     bioEs: "Gabriela L. García Vásquez es asociada junior de Santos & Saucedo Abogados.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 23
   },
@@ -416,7 +416,7 @@ export const teamMembersData = [
     roleEs: "Operación del despacho",
     bio: "Luis A. Saucedo Rodríguez is part of the Santos & Saucedo staff.",
     bioEs: "Luis A. Saucedo Rodríguez forma parte del personal de Santos & Saucedo.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 24
   },
@@ -430,7 +430,7 @@ export const teamMembersData = [
     roleEs: "Operación del despacho",
     bio: "Jorge A. Melchor Ortíz is part of the Santos & Saucedo staff.",
     bioEs: "Jorge A. Melchor Ortíz forma parte del personal de Santos & Saucedo.",
-    email: "info@santossaucedo.com",
+    email: "administracion@santossaucedo.com",
     isPartner: false,
     order: 25
   },

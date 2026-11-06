@@ -33,6 +33,7 @@ function ScrollToTop() {
 
 import Home from "@/pages/Home";
 const NotFound = lazy(() => import("@/pages/not-found"));
+const BarraTelefono = lazy(() => import("@/v3/contacto/BarraTelefono"));
 
 const PracticeGroups = lazy(() => import("@/pages/PracticeGroups"));
 const PracticeGroupDetail = lazy(() => import("@/pages/PracticeGroupDetail"));
@@ -167,6 +168,13 @@ function SkipLinks() {
 }
 
 function PublicCookiePreferences(){const {language}=useLanguage();return <CookieBanner language={language}/>;}
+
+// Barra «Llamar · Escribir» del teléfono: solo en Contacto, como en la demo aprobada; se carga aparte
+function ContactPhoneBar() {
+  const [location] = useLocation();
+  if (location.replace(/\/+$/, "") !== "/contact") return null;
+  return <Suspense fallback={null}><BarraTelefono /></Suspense>;
+}
 
 function StaticAdminUnavailable() {
   return (
@@ -327,6 +335,7 @@ function App() {
               <Toaster />
               <Router />
               <PublicCookiePreferences/>
+              <ContactPhoneBar/>
             </WouterRouter>
           </LanguageProvider>
         </TooltipProvider>

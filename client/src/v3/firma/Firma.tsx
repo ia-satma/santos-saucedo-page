@@ -2,11 +2,10 @@
    «Cómo trabajamos», el lema de la prioridad, las láminas 1/7 y 2/7 y las fotos de la oficina.
    Marcado y clases de la demo (demo.css); lo propio de la página va en ./firma.css con el prefijo nf-. */
 import "./firma.css";
-import { useRef, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { Link } from "wouter";
 import { useV3Module } from "@/v3/shared";
 import carneroSvg from "./carnero.svg?raw";
-import reaccionSvg from "./reaccion.svg?raw";
 import reaccionDatos from "./reaccion-datos.json";
 import { initFilosofia, type ReaccionDatos } from "./filosofia";
 import { initPrioridad } from "./prioridad";
@@ -17,7 +16,27 @@ type LangAttrs = { lang?: string; dir?: "ltr" };
 /** El contenido del <svg> generado por la demo (build/*.mjs), sin la etiqueta raíz: React pone la raíz. */
 const interior = (svg: string) => ({ __html: svg.slice(svg.indexOf(">") + 1, svg.lastIndexOf("</svg>")) });
 const CARNERO = interior(carneroSvg);
-const REACCION = interior(reaccionSvg);
+
+/* El dibujo de la turbina (reaccion.svg, unos 380 KB) no va en el paquete de la página: se pide aparte
+   cuando la lámina está a una pantalla de distancia, y queda guardado para la próxima visita. Mientras
+   llega, la caja ya tiene su tamaño (aspect-ratio y viewBox), así que nada salta. */
+type Html = { __html: string };
+let reaccionGuardada: Html | null = null;
+let reaccionPedida: Promise<Html> | null = null;
+function pedirReaccion(): Promise<Html> {
+  if (!reaccionPedida) {
+    reaccionPedida = import("./reaccion.svg?raw")
+      .then((m) => (reaccionGuardada = interior(m.default)))
+      .catch((e) => { reaccionPedida = null; throw e; });
+  }
+  return reaccionPedida;
+}
+
+/** Nombres propios que no se parten al final de una línea (dirección y cerro, en los textos del CMS) */
+const SIN_CORTE = /(San Pedro Garza García|Cerro de la Silla|Río Tamazunchale 205)/g;
+const sinCortes = (s: string) => s.replace(SIN_CORTE, (m) => m.replace(/ /g, "\u00a0"));
+/** Las frases de un texto, cada una con su punto (sin «lookbehind», que Safari < 16.4 no entiende) */
+const frases = (s: string) => { const p = s.split(/\.\s+(?=\S)/); return p.map((f, i) => (i < p.length - 1 ? `${f}.` : f)); };
 
 /** Envoltorio de la página. El marcador mk-js (la demo lo ponía en <html> desde el módulo «marca»)
     activa los estados de reposo de sus piezas: demo.css lo admite en <html> o en un antepasado dentro de .v3. */
@@ -32,7 +51,8 @@ export function FirmaTexto({
   titulo: string;
   parrafos: [ReactNode, ReactNode];
   cifras: { value: string; label: string }[];
-  cuadro: { src: string; srcSet?: string };
+  /** alt: el del panel (galería de la oficina, foto «arteColor»), con el texto de la demo de respaldo */
+  cuadro: { src: string; srcSet?: string; alt: string };
   attrs: LangAttrs;
   t: FirmaTextos;
 }) {
@@ -60,7 +80,7 @@ export function FirmaTexto({
               src={cuadro.src}
               srcSet={cuadro.srcSet}
               sizes="(min-width: 1416px) 1240px, 92vw"
-              alt={t.cuadroAlt}
+              alt={cuadro.alt}
               {...attrs}
               loading="lazy"
               decoding="async"
@@ -68,7 +88,7 @@ export function FirmaTexto({
               height={1024}
             />
           </div>
-          <figcaption {...attrs}><span className="sh-cap">{t.cuadroCap}</span> {t.cuadroTexto}</figcaption>
+          <figcaption {...attrs}><span className="sh-cap">{t.cuadroCap}</span> {sinCortes(t.cuadroTexto)}</figcaption>
         </figure>
       </div>
     </section>
@@ -166,13 +186,28 @@ const TAGS_CARNERO: { x: string; y: string; izq?: boolean }[] = [
 ];
 
 export function Laminas({ t, attrs, logo }: { t: FirmaTextos; attrs: LangAttrs; logo: string }) {
-  const ref = useRef<HTMLElement>(null);
-  // las dos láminas comparten un solo requestAnimationFrame: el módulo busca .fi-lamina en el padre
-  useV3Module(ref, (el) => initFilosofia(el.parentElement || el, reaccionDatos as ReaccionDatos));
+  const refC = useRef<HTMLElement>(null);
+  const refR = useRef<HTMLElement>(null);
+  const [reaccion, setReaccion] = useState<Html | null>(reaccionGuardada);
+  // cada lámina arranca por su cuenta: la turbina, cuando su dibujo ya está en la página
+  useV3Module(refC, (el) => initFilosofia(el, reaccionDatos as ReaccionDatos));
+  useV3Module(refR, (el) => (reaccion ? initFilosofia(el, reaccionDatos as ReaccionDatos) : undefined), [reaccion]);
+  // se pide cuando la lámina está a una pantalla (arriba o abajo); si falla la red, se vuelve a intentar
+  // la próxima vez que se acerque
+  useEffect(() => {
+    const el = refR.current;
+    if (reaccion || !el) return;
+    let vivo = true;
+    const pedir = () => { pedirReaccion().then((h) => { if (vivo) setReaccion(h); }).catch(() => { /* reintento al volver */ }); };
+    if (!("IntersectionObserver" in window)) { pedir(); return () => { vivo = false; }; }
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) pedir(); }, { rootMargin: "100% 0px 100% 0px" });
+    io.observe(el);
+    return () => { vivo = false; io.disconnect(); };
+  }, [reaccion]);
   const C = t.carnero, R = t.reaccion;
   return (
     <>
-      <section ref={ref} className="fi-lamina fi-carnero sobre-azul" id="carnero" data-fi-lamina="1/7" data-fi-lean="5" aria-labelledby="carnero-t" {...attrs}>
+      <section ref={refC} className="fi-lamina fi-carnero sobre-azul" id="carnero" data-fi-lamina="1/7" data-fi-lean="5" aria-labelledby="carnero-t" {...attrs}>
         <div className="fi-escena">
           <div className="fi-marco" aria-hidden="true" />
           <div className="fi-texto">
@@ -200,7 +235,7 @@ export function Laminas({ t, attrs, logo }: { t: FirmaTextos; attrs: LangAttrs; 
         </div>
       </section>
 
-      <section className="fi-lamina fi-reaccion sobre-azul" id="reaccion" data-fi-lamina="2/7" aria-labelledby="reaccion-t" {...attrs}>
+      <section ref={refR} className="fi-lamina fi-reaccion sobre-azul" id="reaccion" data-fi-lamina="2/7" aria-labelledby="reaccion-t" {...attrs}>
         <div className="fi-escena">
           <div className="fi-marco" aria-hidden="true" />
           <div className="fi-texto">
@@ -209,7 +244,7 @@ export function Laminas({ t, attrs, logo }: { t: FirmaTextos; attrs: LangAttrs; 
             <Lista n="2" L={R} />
           </div>
           <div className="fi-plano">
-            <svg className="fi-fig" viewBox="-240.4 -211.9 970.1 578.1" preserveAspectRatio="xMidYMid meet" role="img" aria-label={R.svgLabel} focusable="false" dangerouslySetInnerHTML={REACCION} />
+            <svg className="fi-fig" viewBox="-240.4 -211.9 970.1 578.1" preserveAspectRatio="xMidYMid meet" role="img" aria-label={R.svgLabel} focusable="false" dangerouslySetInnerHTML={reaccion ?? undefined} />
             <div className="fi-tags" aria-hidden="true">
               {R.piezas.map((pz, i) => (
                 <span key={i} className="fi-tag" data-p={String(i + 1)}>
@@ -274,7 +309,10 @@ export function Oficina({
         <h2 id="nf-oficina-h" className="sh-h2">
           <Link className="nf-oficina__a" href={href} data-testid="link-about-offices">{titulo}</Link>
         </h2>
-        <p className="nf-oficina__lead" {...leadAttrs}>{lead}</p>
+        {/* la dirección y la frase del cristal, cada una en su línea (si no, «En / el cristal» en el teléfono) */}
+        <p className="nf-oficina__lead" {...leadAttrs}>
+          {frases(sinCortes(lead)).map((frase, i) => <span key={i} className="nf-oficina__frase">{frase} </span>)}
+        </p>
       </div>
       <div className="sh-wrap">
         <div className="sh-ofi nf-ofi">

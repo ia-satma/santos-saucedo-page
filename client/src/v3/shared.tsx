@@ -32,17 +32,62 @@ export function V3Main({ vista, children, className = "" }: { vista: string; chi
   );
 }
 
+/** Fotos de client/public/v3 que tienen, junto al original, variantes WebP de 640 y 1200 px de ancho
+    (<nombre>-640.webp y <nombre>-1200.webp: mismo encuadre y mismo color). */
+const V3_VARIANTES = new Set([
+  "c-acumulado", "c-atardecer", "c-cerro-luna", "c-corporativo", "c-estructura", "c-ind-acero", "c-ind-automotriz",
+  "c-ind-bebidas", "c-ind-energia", "c-laboral", "c-migratorio", "c-prevencion", "c-reaccion", "c-san-pedro",
+]);
+
+/** srcset de una foto de /v3/ con variantes: «/v3/c-laboral.webp» (con la base del sitio delante o sin
+    ella) y su ancho real → «…/c-laboral-640.webp 640w, …/c-laboral-1200.webp 1200w, …/c-laboral.webp 2000w».
+    undefined si la foto no tiene variantes. */
+export function v3SrcSet(src: string, width: number): string | undefined {
+  const m = /^(.*\/v3\/)([\w-]+)\.webp$/.exec(src);
+  if (!m || !V3_VARIANTES.has(m[2]) || width <= 1200) return undefined;
+  return `${m[1]}${m[2]}-640.webp 640w, ${m[1]}${m[2]}-1200.webp 1200w, ${src} ${width}w`;
+}
+
+/** sizes de la foto de V3PageHeader: el ancho que ocupa recortada con cover. Hasta 640 px el marco es 4:3
+    (una foto más apaisada queda más ancha que la pantalla); después va a todo lo ancho (21:8 y 12:4). */
+export function v3HeaderSizes(width: number, height: number): string {
+  return `(max-width: 640px) ${Math.max(100, Math.ceil((75 * width) / height))}vw, 100vw`;
+}
+
+// La cabecera de Industrias acerca su foto con scale (×1,15 / ×1,3 / ×1,7 en el teléfono, industrias.css):
+// el navegador no cuenta esa escala al elegir del srcset, así que esa foto va sin él.
+const SIN_SRCSET_AUTO = /\/v3\/c-atardecer\.webp$/;
+// fetchpriority en minúsculas: React 18 no conoce fetchPriority (lo pasa, pero avisa en desarrollo)
+const PRIORIDAD_ALTA = { fetchpriority: "high" } as Record<string, string>;
+
 /** Cabecera de página de la demo: foto horizontal a todo lo ancho y, debajo, el título y la entrada. */
 export function V3PageHeader({
-  id, img, alt, width, height, position = "50% 50%", title, lead, children,
+  id, img, alt, width, height, position = "50% 50%", title, lead, children, imgAttrs, srcSet, sizes,
 }: {
   id: string; img: string; alt: string; width: number; height: number; position?: string;
   title: ReactNode; lead?: ReactNode; children?: ReactNode;
+  /** lang/dir del texto alternativo cuando viene de la copia v3 (inglés en los otros 8 idiomas) */
+  imgAttrs?: { lang?: string; dir?: "ltr" | "rtl" };
+  /** srcset de la foto. Sin él, las fotos de /v3/ con variantes lo arman solas (v3SrcSet); null: ninguno. */
+  srcSet?: string | null;
+  /** sizes de la foto. Sin él: v3HeaderSizes(width, height). */
+  sizes?: string;
 }) {
+  const set = srcSet === null ? undefined : srcSet ?? (SIN_SRCSET_AUTO.test(img) ? undefined : v3SrcSet(img, width));
   return (
     <header className="sh-pp sh-cab" aria-labelledby={id}>
       <figure className="sh-pp__foto">
-        <img src={img} alt={alt} width={width} height={height} decoding="async" style={{ objectPosition: position }} />
+        <img
+          src={img}
+          srcSet={set}
+          sizes={set ? sizes ?? v3HeaderSizes(width, height) : undefined}
+          alt={alt}
+          width={width}
+          height={height}
+          {...PRIORIDAD_ALTA}
+          style={{ objectPosition: position }}
+          {...imgAttrs}
+        />
       </figure>
       <div className="sh-wrap sh-pp__cuerpo">
         <div className="sh-pp__texto">

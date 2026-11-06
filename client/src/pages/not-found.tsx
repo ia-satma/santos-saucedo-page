@@ -1,10 +1,14 @@
+// Página no encontrada con el lenguaje de la demo v3 aprobada (5-11-2026), que no la tenía: sobre la piedra, el
+// título y la entrada de una cabecera de la demo, los dos enlaces de siempre y, cerrando, la línea de cota con
+// el «404» como una cifra del inicio. Textos de siempre (10 idiomas, panel: "not-found").
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
-import { Eyebrow } from "@/components/editorial";
+import { V3Main } from "@/v3/shared";
+import { Flecha } from "@/v3/paginas-extra/piezas";
 
 export default function NotFound() {
   const { language } = useLanguage();
@@ -77,53 +81,45 @@ export default function NotFound() {
   const isRTL = language === "ar";
 
   return (
-    <div className="min-h-screen bg-background flex flex-col" dir={isRTL ? "rtl" : "ltr"} data-testid="page-not-found">
+    <div className="ss26 min-h-[100dvh] flex flex-col" dir={isRTL ? "rtl" : "ltr"} data-testid="page-not-found">
       {/* Título de pestaña y descripción propios en el idioma de la página; noindex (SEOHead) */}
       <SEOHead page="notFound" language={language} />
       <Header />
 
-      {/* Mismo encabezado de marca que las páginas internas (Azul Profundo, eyebrow §, titular en romana),
-          con enlaces de texto en vez de botones */}
-      <main id="main-content" className="flex-1 pt-36 pb-20 editorial-page-hero" data-testid="section-not-found-hero">
-        {/* ss-container: mismo borde izquierdo que logotipo y pie. Eyebrow "§ —— Error 404"
-            (§ solo, sin número de menú) con el mismo marcado que las demás páginas */}
-        <div className="ss-container">
-          <Eyebrow num="" tone="navy" label="Error 404" className="mb-6" />
+      <V3Main vista="no-encontrada" className="px flex-1">
+        <section className="px-404" aria-labelledby="px-404-h" data-testid="section-not-found-hero">
+          <div className="sh-wrap px-404__in">
+            <h1 id="px-404-h" className="sh-h1" data-testid="text-404-title">
+              {t.title}
+            </h1>
+            <p className="sh-lead" data-testid="text-404-subtitle">{t.subtitle}</p>
 
-          <h1 className="mb-5" data-testid="text-404-title">
-            {t.title}
-          </h1>
+            {/* Enlaces de texto, sin botones grandes: el inicio (con el marco de la demo) y volver */}
+            <div className="px-404__enlaces">
+              <Link href="/" className="sh-boton" data-testid="button-go-home">
+                {t.goHome}
+              </Link>
+              <button
+                type="button"
+                onClick={() => window.history.back()}
+                className="px-404__volver"
+                data-testid="button-go-back"
+              >
+                <Flecha c="←" />
+                <span>{t.goBack}</span>
+              </button>
+            </div>
 
-          <p data-testid="text-404-subtitle">{t.subtitle}</p>
-
-          <div className="mt-10 flex flex-wrap items-center gap-x-10 gap-y-2">
-            <Link
-              href="/"
-              className="ss-label group inline-flex min-h-[44px] items-center gap-3 text-white"
-              data-testid="button-go-home"
-            >
-              <span className="ss-link">{t.goHome}</span>
-              {/* Siempre "→": en árabe la espeja .ss-arrow:dir(rtl) (ss26.css), como en Carreras */}
-              <span aria-hidden="true" className="ss-arrow">
-                →
-              </span>
-            </Link>
-            <button
-              type="button"
-              onClick={() => window.history.back()}
-              className="ss-label group inline-flex min-h-[44px] items-center gap-3 text-white/75 transition-colors hover:text-white"
-              data-testid="button-go-back"
-            >
-              <span aria-hidden="true">
-                {isRTL ? "→" : "←"}
-              </span>
-              <span className="ss-link group-hover:[background-size:100%_1px] group-focus-visible:[background-size:100%_1px]">
-                {t.goBack}
-              </span>
-            </button>
+            {/* «Error 404» sobre la línea de cota, como las cifras de la firma */}
+            <dl className="sh-cifras" dir="ltr">
+              <div>
+                <dt>Error</dt>
+                <dd>404</dd>
+              </div>
+            </dl>
           </div>
-        </div>
-      </main>
+        </section>
+      </V3Main>
 
       <Footer />
     </div>

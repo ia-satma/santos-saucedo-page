@@ -4,12 +4,14 @@
    fijo bajo el encabezado del sitio); en teléfono la secuencia corre una vez; en Modo Mario, quieta.
    `sheets` dice cuáles van en la página: las dos (con pestañas, un solo recorrido, como en la demo)
    o una sola (sin pestañas, recorrido propio). Mismo marcado y clases que la demo.
-   Comportamiento: anatomia.js (el script de la demo, con limpieza al desmontar). */
+   Comportamiento: anatomia.js (el script de la demo, con limpieza al desmontar). El script y three.js
+   se piden solo cuando la lámina está a una pantalla de la ventana (cerca.ts), no al cargar la página.
+   Números: los de la demo (3/7 y 4/7), que da la página. */
 import { Fragment, useLayoutEffect, useRef } from "react";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import type { V3Lang } from "@/v3/shared";
 import { ANATOMIA, type SheetId } from "./textos";
-import { initAnatomia, setThreeUrl } from "./anatomia.js";
+import { cerca } from "./cerca";
 
 export function Anatomia({ sheets, nums, lang, attrs }: {
   sheets: SheetId[];
@@ -28,8 +30,21 @@ export function Anatomia({ sheets, nums, lang, attrs }: {
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    setThreeUrl(`${import.meta.env.BASE_URL}v3/libs/three.min.js`);
-    return initAnatomia(el);
+    let vivo = true;
+    let limpiar: (() => void) | undefined;
+    const dejar = cerca(el, () => {
+      import("./anatomia.js").then((m) => {
+        if (!vivo) return;
+        m.setThreeUrl(`${import.meta.env.BASE_URL}v3/libs/three.min.js`);
+        limpiar = m.initAnatomia(el);
+      }).catch(() => {
+        // sin el script (red caída): queda el texto de las láminas, como sin WebGL
+        if (!vivo) return;
+        el.classList.add("an-nogl");
+        el.querySelectorAll<HTMLElement>("[data-sheet][hidden]").forEach((n) => { n.hidden = false; });
+      });
+    });
+    return () => { vivo = false; dejar(); limpiar?.(); };
   }, []);
 
   return (

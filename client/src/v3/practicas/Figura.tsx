@@ -1,14 +1,17 @@
 /* Lámina isométrica «figuras» de la demo v3 (modules/figuras): corporativo (archivero), seguridad social
    (calendario de obligaciones del IMSS y el INFONAVIT) o migratorio (torre de charolas).
-   Mismo marcado y clases que la demo; el dibujo es el SVG generado por la demo (figurasSvg.ts), con el
+   Mismo marcado y clases que la demo; el dibujo es el SVG generado por la demo (dibujos/<área>.ts), con el
    número de la lámina que le toca en la página. El texto, en español o inglés (textos.ts).
-   Comportamiento: figuras.ts (despiece una vez al entrar, letreros, Modo Mario). */
-import { useLayoutEffect, useMemo, useRef, type CSSProperties, type ReactNode } from "react";
+   Comportamiento: figuras.ts (despiece una vez al entrar, letreros, Modo Mario).
+   El dibujo de su área (dibujos/<área>.ts, 32–125 kB) y el script se piden solo cuando la lámina está a una pantalla de
+   la ventana (cerca.ts); hasta entonces la lámina guarda su sitio con el marco, el título y el cajetín.
+   Número: el de la demo (n/7), que da la página. */
+import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import type { V3Lang } from "@/v3/shared";
-import { DIBUJOS, type FgArea } from "./figurasSvg";
+import { cargarDibujo, type FgArea, type FgDibujo } from "./figurasSvg";
 import { FIGURAS } from "./textos";
-import { initFiguras } from "./figuras";
+import { cerca } from "./cerca";
 
 // Marcas del calendario (la marca es también la leyenda de cada letrero)
 const MARCAS: ReactNode[] = [
@@ -35,32 +38,47 @@ export function Figura({ area, n, total, lang, attrs }: {
   area: FgArea; n: number; total: number; lang: V3Lang; attrs: { lang?: string; dir?: "ltr" };
 }) {
   const ref = useRef<HTMLElement>(null);
-  const d = DIBUJOS[area];
+  // dibujo y script, cuando la lámina se acerca
+  const [carga, setCarga] = useState<{ d: FgDibujo; init: (root: HTMLElement) => () => void } | null>(null);
+  const d = carga?.d;
   const T = FIGURAS[lang];
   const t = T.laminas[area];
-  const ids = d.piezas.map((_, k) => `${n}.${k + 1}`);
+  const ids = t.items.map((_, k) => `${n}.${k + 1}`);
   const tituloId = `fg-${area}-t`;
 
   const escena = useMemo(() => {
+    if (!d) return "";
     const aria = t.aria.replace("{a}", ids[0]).replace("{b}", ids[ids.length - 1]);
     let s = d.escena.split("@N@").join(String(n)).replace("@ARIA@", esc(aria));
     const meses = T.meses;
     if (meses) s = s.replace(/(<text class="fg-mes"[^>]*>)([A-Z]{3})(<\/text>)/g, (_m, a: string, b: string, c: string) => a + (meses[b] || b) + c);
     return s;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [area, n, lang]);
-  const datos = useMemo(() => JSON.stringify(d.fg).split("@N@").join(String(n)), [d, n]);
+  }, [d, area, n, lang]);
+  const datos = useMemo(() => (d ? JSON.stringify(d.fg).split("@N@").join(String(n)) : ""), [d, n]);
 
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    return initFiguras(el);
-  }, []);
+    let vivo = true;
+    const dejar = cerca(el, () => {
+      Promise.all([cargarDibujo(area), import("./figuras")]).then(([dibujo, mod]) => {
+        if (vivo) setCarga({ d: dibujo, init: mod.initFiguras });
+      }).catch(() => { /* sin el dibujo queda la cabecera de la lámina */ });
+    });
+    return () => { vivo = false; dejar(); };
+  }, [area]);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el || !carga) return;
+    return carga.init(el);
+  }, [carga]);
 
   return (
     <section ref={ref} className="fg-lamina" data-area={area} aria-labelledby={tituloId} {...attrs}>
       <div className="fg-marco" aria-hidden="true" />
-      <div className="fg-hoja" data-nota="" style={cssVars(d.hoja)}>
+      <div className="fg-hoja" data-nota="" style={d ? cssVars(d.hoja) : undefined}>
         <header className="fg-cab">
           <h2 className="fg-titulo" id={tituloId}>{t.titulo}</h2>
           <p className="fg-entrada">
@@ -68,26 +86,31 @@ export function Figura({ area, n, total, lang, attrs }: {
             {t.fuente ? <span className="fg-fuente">{t.fuente}</span> : null}
           </p>
         </header>
-        <div className="fg-plano" style={cssVars(d.plano)} data-fg={datos}>
-          <div className="fg-escena" dangerouslySetInnerHTML={{ __html: escena }} />
-          <ol className="fg-piezas" aria-label={T.listLabel(n)}>
-            {t.items.map((it, k) => (
-              <li key={k} className="fg-pieza" data-p={ids[k]} style={{ "--x": d.piezas[k].x, "--y": d.piezas[k].y } as CSSProperties}>
-                <button type="button" className="fg-et" data-p={ids[k]} aria-pressed="false">
-                  <span className="fg-n">{ids[k]}</span>
-                  {area === "seguridad" ? (
-                    <svg className="fg-marca" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" focusable="false">{MARCAS[k]}</svg>
-                  ) : null}
-                  <span className="fg-nom">
-                    {it.nom}
-                    {it.dato ? <span className="fg-dato">{it.dato}</span> : null}
-                  </span>
-                </button>
-                <p className="fg-desc">{it.desc}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
+        {d ? (
+          <div className="fg-plano" style={cssVars(d.plano)} data-fg={datos}>
+            <div className="fg-escena" dangerouslySetInnerHTML={{ __html: escena }} />
+            <ol className="fg-piezas" aria-label={T.listLabel(n)}>
+              {t.items.map((it, k) => (
+                <li key={k} className="fg-pieza" data-p={ids[k]} style={{ "--x": d.piezas[k].x, "--y": d.piezas[k].y } as CSSProperties}>
+                  <button type="button" className="fg-et" data-p={ids[k]} aria-pressed="false">
+                    <span className="fg-n">{ids[k]}</span>
+                    {area === "seguridad" ? (
+                      <svg className="fg-marca" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" focusable="false">{MARCAS[k]}</svg>
+                    ) : null}
+                    <span className="fg-nom">
+                      {it.nom}
+                      {it.dato ? <span className="fg-dato">{it.dato}</span> : null}
+                    </span>
+                  </button>
+                  <p className="fg-desc">{it.desc}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ) : (
+          // el sitio del dibujo mientras llega (mismo formato que el plano: 1000 × 600)
+          <div className="fg-plano fg-plano--espera" aria-hidden="true" />
+        )}
         <footer className="fg-pie">
           <div className="fg-aviso"><p className="fg-lectura" aria-hidden="true" /></div>
         </footer>

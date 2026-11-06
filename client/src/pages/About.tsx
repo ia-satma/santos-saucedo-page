@@ -443,9 +443,9 @@ export default function About() {
   const nextLabel = language === "es" || language === "en" ? T.siguiente : i18n.getFixedT(language)("cta.next");
 
   // Textos alternativos de la galería de la oficina (CMS); en otros idiomas, el inglés con su lang
-  const altOficina = (photo: string) => {
+  const altOficina = (photo: string, respaldo = "Santos & Saucedo") => {
     const item = media.officeGallery.find((g) => g.photo === photo);
-    return (lang === "es" ? item?.altEs : item?.alt) || "Santos & Saucedo";
+    return (lang === "es" ? item?.altEs : item?.alt) || respaldo;
   };
   const srcSet = (p: { url: string; smallUrl?: string }, small = 768, big = 1536) =>
     p.smallUrl && p.smallUrl !== p.url ? `${p.smallUrl} ${small}w, ${p.url} ${big}w` : undefined;
@@ -461,6 +461,7 @@ export default function About() {
             id="cab-firma-h"
             img={v3Asset("/v3/c-cerro-luna.webp")}
             alt={T.cabAlt}
+            imgAttrs={attrs}
             width={2400}
             height={1600}
             position="50% 62%"
@@ -474,7 +475,7 @@ export default function About() {
             titulo={t.subtitle}
             parrafos={[keepFirmName(t.historyText1), t.historyText2]}
             cifras={t.stats}
-            cuadro={{ src: photos.arteColor.url, srcSet: srcSet(photos.arteColor) }}
+            cuadro={{ src: photos.arteColor.url, srcSet: srcSet(photos.arteColor), alt: altOficina("arteColor", T.cuadroAlt) }}
             attrs={attrs}
             t={T}
           />
@@ -511,7 +512,7 @@ export default function About() {
               href={`/practice-groups/${firstSlug}`}
               title={firstName}
               label={nextLabel}
-              ariaLabel={t.title}
+              ariaLabel={language === "es" || language === "en" ? T.siguienteLabel : nextLabel}
               practices={[
                 { href: "/team", label: nav[2].label },
                 { href: "/practice-groups", label: nav[1].label },

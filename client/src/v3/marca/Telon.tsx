@@ -116,6 +116,8 @@ export default function Telon({ lang }: { lang: V3Lang }) {
     return (small ? media.hero.videoMobile || media.hero.videoDesktop : media.hero.videoDesktop || media.hero.videoMobile) || undefined;
   }, [ready, failed, videoEnabled, media.hero.videoDesktop, media.hero.videoMobile]);
   const poster = media.hero.poster;
+  // El póster predeterminado, en WebP (203 KB en lugar de 257 KB, idéntico a la vista); uno del panel va tal cual
+  const posterSrc = poster && /\/video\/portada-color-poster\.jpg$/.test(poster) ? poster.replace(/\.jpg$/, "-1600.webp") : poster;
 
   // Comportamiento (demo: modules/marca/script.js + shell.js)
   const rootRef = useRef<HTMLDivElement>(null);
@@ -124,14 +126,21 @@ export default function Telon({ lang }: { lang: V3Lang }) {
   pausedRef.current = paused;
   // El navegador rechazó la reproducción: el botón pasa a "Reproducir" sin guardar preferencia
   const onBlocked = useCallback(() => setPaused(true), []);
+  // El módulo se monta una vez (y otra solo si la frase pasa de rotar a fija o al revés: cambia su
+  // marcado). Un cambio de idioma o de la frase del panel solo cambia las palabras (efecto de abajo):
+  // la portada no se cierra ni repite su entrada.
+  const rota = !!parts;
+  const wordsRef = useRef(wordsKey);
+  wordsRef.current = wordsKey;
   useEffect(() => {
     const el = rootRef.current;
     if (!el) return;
-    const a = initTelon(el, { words: wordsKey ? wordsKey.split("|") : null, paused: pausedRef.current, onBlocked });
+    const k = wordsRef.current;
+    const a = initTelon(el, { words: k ? k.split("|") : null, paused: pausedRef.current, onBlocked });
     api.current = a;
     return () => { a.destroy(); if (api.current === a) api.current = null; };
-    // tagline: si el panel cambia la frase, React rehace su marcado y el módulo vuelve a empezar
-  }, [wordsKey, tagline, onBlocked]);
+  }, [rota, onBlocked]);
+  useEffect(() => { api.current?.palabras(wordsKey ? wordsKey.split("|") : null); }, [wordsKey, tagline]);
   useEffect(() => { api.current?.pausa(paused); }, [paused]);
   useEffect(() => { api.current?.video(); }, [videoSrc]);
 
@@ -159,12 +168,12 @@ export default function Telon({ lang }: { lang: V3Lang }) {
           <div className="mk-telon__escena">
             <div className="mk-telon__marco" aria-hidden="true">
               <div className="mk-telon__medio">
-                <img className="mk-telon__quieta" src={poster} alt="" width={1600} height={726} decoding="async" />
+                <img className="mk-telon__quieta" src={posterSrc} alt="" width={1600} height={726} {...{ fetchpriority: "high" }} />
                 {videoEnabled && (
                   <video
                     className="mk-telon__video"
                     src={videoSrc}
-                    poster={poster}
+                    poster={posterSrc}
                     muted
                     loop
                     playsInline
@@ -177,7 +186,7 @@ export default function Telon({ lang }: { lang: V3Lang }) {
               </div>
             </div>
             <div className="mk-telon__fija" aria-hidden="true">
-              <img src={poster} alt="" width={1600} height={726} decoding="async" />
+              <img src={posterSrc} alt="" width={1600} height={726} decoding="async" />
             </div>
             <div className="sh-portada__velo" aria-hidden="true" />
             {/* La § como marca de agua (módulo marca, pieza 1), del tamaño y en el lugar de la ventana */}

@@ -11,6 +11,10 @@
      demo, tocar uno le da el turno).
    - El cintillo lleva «Ver perfil», que sigue al socio en turno; en escritorio el retrato también
      abre la ficha (en teléfono, tocarlo pasa al siguiente socio, como en la demo).
+   - El retrato en turno lleva el nombre de transición de su ficha (retrato-<slug>), para que viaje
+     a la cabecera de la ficha al abrirla.
+   - Tras un toque, el socio elegido se queda 8 s (como en la demo) y su segmento se llena en esos
+     8 s; en la demo el reloj quedaba en cero 5 s y ningún segmento decía cuál estaba en turno.
    Las reseñas, El equipo con tarjetas y las afiliaciones del módulo no se portan (ocultas en la demo). */
 
 export type LienzoOptions = {
@@ -51,7 +55,8 @@ export function initLienzo(socios: HTMLElement, opts: LienzoOptions): () => void
 
   let act = 0;
   const MAX_STEPS = n * 2;
-  const st = { inView: false, hover: false, focus: false, paused: false, done: false, elapsed: 0, steps: 0 };
+  // span: lo que dura el turno en curso (3 s; 8 s tras un toque)
+  const st = { inView: false, hover: false, focus: false, paused: false, done: false, elapsed: 0, steps: 0, span: CYCLE };
   let chyTimer = 0;
 
   /* ---------- Reloj único (un rAF) ---------- */
@@ -110,10 +115,14 @@ export function initLienzo(socios: HTMLElement, opts: LienzoOptions): () => void
   }
   function show(i: number) {
     if (i === act) return;
-    act = i; st.elapsed = 0; setReloj(0);
+    act = i; st.elapsed = 0; st.span = CYCLE; setReloj(0);
     mark(names, i);
     mark(segs, i);
-    canv.forEach((c, k) => c.classList.toggle("is-on", k === i));
+    canv.forEach((c, k) => {
+      c.classList.toggle("is-on", k === i);
+      const slug = c.getAttribute("data-slug");
+      c.style.viewTransitionName = k === i && slug ? `retrato-${slug}` : "";
+    });
     cintillo(i, !isRM());
   }
   function setPauseUI() {
@@ -131,8 +140,8 @@ export function initLienzo(socios: HTMLElement, opts: LienzoOptions): () => void
   function tick(dt: number) {
     if (!running()) return;
     st.elapsed += dt;
-    setReloj(st.elapsed / CYCLE);
-    if (st.elapsed >= CYCLE) {
+    setReloj(st.elapsed / st.span);
+    if (st.elapsed >= st.span) {
       st.steps++;
       if (st.steps >= MAX_STEPS) { st.done = true; setReloj(0); setPauseUI(); return; }
       show((act + 1) % n);
@@ -145,7 +154,7 @@ export function initLienzo(socios: HTMLElement, opts: LienzoOptions): () => void
     st.inView = vis;
     if (vis && !isRM()) {
       st.done = false; st.steps = 0; setPauseUI();
-      if (act === 0) { st.elapsed = 0; setReloj(0); } else show(0);
+      if (act === 0) { st.elapsed = 0; st.span = CYCLE; setReloj(0); } else show(0);
     }
     if (vis) kick();
   }
@@ -168,8 +177,8 @@ export function initLienzo(socios: HTMLElement, opts: LienzoOptions): () => void
   on(box, "pointerdown", ((e: PointerEvent) => { lastPointer = e.pointerType; }) as EventListener, true);
   function tapOpen(i: number) {
     show(i);
-    // Táctil: el socio elegido se queda 8 s y luego sigue el turno
-    if (lastPointer !== "mouse") st.elapsed = CYCLE - TAP_HOLD;
+    // Táctil: el socio elegido se queda 8 s (su segmento se llena en ese tiempo) y luego sigue el turno
+    if (lastPointer !== "mouse") { st.elapsed = 0; st.span = TAP_HOLD; setReloj(0); }
   }
   // Nombres (enlaces a la ficha): cursor o foco del teclado le dan el turno; el clic lo lleva wouter
   names.forEach((b, i) => {
@@ -221,7 +230,7 @@ export function initLienzo(socios: HTMLElement, opts: LienzoOptions): () => void
   on(window, "rmchange", ((e: CustomEvent<{ rm?: boolean }>) => {
     const rm = typeof e?.detail?.rm === "boolean" ? e.detail.rm : isRM();
     if (rm) { setReloj(0); setRelojMode(); }
-    else { st.elapsed = 0; st.done = false; st.steps = 0; setPauseUI(); kick(); }
+    else { st.elapsed = 0; st.span = CYCLE; st.done = false; st.steps = 0; setPauseUI(); kick(); }
   }) as EventListener);
 
   setRelojMode();

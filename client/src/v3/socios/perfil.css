@@ -1,0 +1,276 @@
+/* Ficha de un socio, Of Counsel o integrante (/team/<slug>) con el lenguaje de la demo v3.
+   La demo no tiene ficha: esta sigue a «Nuestros socios» (/team) para que no parezca otro sitio.
+   - Cabecera en el azul de «Nuestros socios»: el retrato a la derecha, que se disuelve en el azul
+     como el del Lienzo, y a la izquierda el nombre (h1) con el cintillo (filete con la marca lima,
+     cargo y área). En teléfono el retrato va arriba a todo lo ancho y el cintillo entra sobre su pie.
+   - Cuerpo en piedra (el fondo con grano de .v3), en la retícula de las cabeceras de la demo
+     (sh-pp__texto, 6/5): la biografía a la izquierda, con su entrada en la romana grande, y a la
+     derecha la ficha: rótulos en versalita sobre listas de filetes, como «Socios» y «Qué hacemos» en
+     las prácticas.
+   - Al final, la nota del Monitor si la hay y «Siguiente» (V3NextPage).
+   Todo bajo .v3; demo.css no se edita. */
+
+/* ---------- Cabecera ---------- */
+.v3 .pf-cab{
+  --pf-w: clamp(320px, 30vw, 440px);   /* lado del retrato */
+  background: var(--azul-noche);
+  color: var(--hueso);
+  padding-block: clamp(20px, 2.6vw, 36px) clamp(64px, 8vw, 120px);
+}
+.v3 .pf-cab__in{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--pf-w);
+  grid-template-areas: "vuelta vuelta" "id foto";
+  column-gap: clamp(48px, 7vw, 128px);
+}
+.v3 .pf-vuelta-fila{ grid-area: vuelta; margin: 0 0 clamp(28px, 4vw, 56px) }
+.v3 .pf-id{ grid-area: id; align-self: end; min-width: 0; position: relative; z-index: 2 }
+.v3 .pf-retrato{ grid-area: foto }
+
+/* Vuelta a /team: versalita con flecha, como los rótulos de la demo; área táctil de 44 px */
+.v3 .pf-vuelta{
+  display: inline-flex; align-items: center; gap: 12px;
+  min-height: 44px; margin-left: -2px; padding-inline: 2px;
+  font: 500 var(--t-label)/1.3 var(--sans); letter-spacing: var(--tr-label); text-transform: uppercase;
+  color: var(--sobre-azul-2); text-decoration: none;
+  transition: color var(--dur-quick) var(--ease-out);
+}
+.v3 .pf-vuelta span{ font-size: inherit }
+.v3 .pf-vuelta .pe-ico{ width: 14px; height: 14px; transition: transform var(--dur-quick) var(--ease-out) }
+.v3 .pf-vuelta:hover, .v3 .pf-vuelta:focus-visible{ color: var(--hueso) }
+.v3 .pf-vuelta:hover .pe-ico{ transform: translateX(-3px) }
+.v3 [dir="rtl"] .pf-vuelta .pe-ico, .v3 .pf-vuelta:dir(rtl) .pe-ico{ scale: -1 1 }
+.v3 .pf-vuelta:focus-visible{ outline: 2px solid var(--lima); outline-offset: 4px }
+
+/* Categoría (Of Counsel, Asociado) cuando el cargo no la dice ya */
+.v3 .pf-cat{
+  margin: 0 0 clamp(16px, 1.8vw, 24px);
+  font: 500 var(--t-label)/1.3 var(--sans); letter-spacing: var(--tr-label); text-transform: uppercase;
+  color: var(--sobre-azul-2);
+}
+.v3 .pf-h1{
+  margin: 0;
+  font-family: var(--serif); font-weight: 300; font-size: var(--t-h1);
+  line-height: 1.02; letter-spacing: -.022em;
+  color: var(--hueso); text-wrap: balance; font-optical-sizing: auto;
+}
+.v3 .pf-h1:focus{ outline: none }
+
+/* Cintillo: el del Lienzo, en grande. Filete con la marca lima; el cargo en versalita y el área */
+.v3 .pf-chy{ margin-top: clamp(24px, 2.6vw, 36px) }
+.v3 .pf-chy-f{ position: relative; display: block; height: 1px; background: rgba(243,241,234,.4); transform-origin: left center }
+.v3 .pf-chy-m{ position: absolute; left: 0; top: -.5px; width: 40px; height: 2px; background: var(--lima) }
+/* In memoriam: la marca, en el tono del texto secundario (sin el acento vivo) */
+.v3 .pf-cab.is-memoria .pf-chy-m{ background: var(--sobre-azul-2) }
+.v3 .pf-cargo{
+  margin: 18px 0 0;
+  font: 500 var(--t-label)/1.35 var(--sans); letter-spacing: var(--tr-label); text-transform: uppercase;
+  color: var(--hueso);
+}
+.v3 .pf-area{
+  margin: 10px 0 0;
+  font-family: var(--serif); font-weight: 400; font-size: clamp(1.125rem, 1.02rem + .4vw, 1.375rem);
+  line-height: 1.3; letter-spacing: -.005em;
+  color: var(--sobre-azul-2);
+}
+.v3 .pf-cargo span, .v3 .pf-area span, .v3 .pf-cargo bdi, .v3 .pf-area bdi{ font-size: inherit }
+.v3 .pf-giro{ display: inline-block; width: 14px; height: 14px; margin-inline-start: 10px; vertical-align: -2px; color: var(--sobre-azul-2) }
+html:not(.rm) .v3 .pf-giro{ animation: pf-gira 900ms linear infinite }
+@keyframes pf-gira{ to{ transform: rotate(360deg) } }
+
+/* Botones (vCard; correo y teléfono solo si son directos): los del azul de la demo */
+.v3 .pf-acc{ display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(28px, 3vw, 40px) }
+.v3 .pf-boton{
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 44px; padding: 0 20px 0 18px; box-sizing: border-box;
+  font: 500 var(--t-ui)/1.2 var(--sans); letter-spacing: .01em;
+  color: var(--hueso); background: transparent; cursor: pointer; text-decoration: none;
+  border: 1px solid rgba(243,241,234,.42); border-radius: 0;
+  transition: border-color var(--dur-quick) var(--ease-out), color var(--dur-quick) var(--ease-out);
+}
+.v3 .pf-boton span{ font-size: inherit }
+.v3 .pf-boton:hover, .v3 .pf-boton:focus-visible{ border-color: var(--lima); color: var(--lima) }
+.v3 .pf-boton:focus-visible{ outline: 2px solid var(--lima); outline-offset: 3px }
+.v3 .pf-boton:active{ transform: translateY(1px) }
+
+/* Retrato: el del Lienzo, que se disuelve en el azul por el pie */
+.v3 .pf-retrato{
+  position: relative; margin: 0;
+  width: var(--pf-w); aspect-ratio: 1 / 1; overflow: hidden;
+  background: rgba(243,241,234,.06);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 56%, rgba(0,0,0,.62) 76%, rgba(0,0,0,.2) 90%, transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 0%, #000 56%, rgba(0,0,0,.62) 76%, rgba(0,0,0,.2) 90%, transparent 100%);
+}
+.v3 .pf-retrato img{
+  position: absolute; inset: 0; display: block;
+  width: 100%; height: 100%; max-width: none; object-fit: cover;
+  border-radius: 0;                      /* ss-photo (ss26.css) le pondría radio */
+  user-select: none; -webkit-user-drag: none;
+}
+.v3 .pf-ini{
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-family: var(--serif); font-weight: 300; font-size: clamp(3rem, 2rem + 3vw, 5rem); color: var(--sobre-azul-2);
+}
+/* Al llegar: el retrato se asienta y el filete se traza (como la foto de cabecera y el cintillo de
+   la demo). En Modo Mario, nada. */
+html:not(.rm) .v3 .pf-retrato img{ animation: sh-asienta 1.6s var(--ease-out) both }
+html:not(.rm) .v3 .pf-chy-f{ animation: pe-trazo 700ms var(--ease-out) 200ms both }
+
+/* Tableta: las mismas dos columnas, más compactas (como el Lienzo) */
+@media (max-width: 1023px){
+  .v3 .pf-cab{ --pf-w: clamp(260px, 36vw, 340px) }
+  .v3 .pf-cab__in{ column-gap: 40px }
+}
+/* Teléfono: el retrato arriba a todo lo ancho y el cintillo sobre su pie, como en /team */
+@media (max-width: 719px){
+  .v3 .pf-cab{ --pf-w: 100%; padding-block: 8px 64px }
+  .v3 .pf-cab__in{ grid-template-columns: minmax(0, 1fr); grid-template-areas: "vuelta" "foto" "id" }
+  .v3 .pf-vuelta-fila{ margin-bottom: 12px }
+  .v3 .pf-id{ margin-top: -9% }
+  .v3 .pf-chy{ margin-top: 20px }
+  .v3 .pf-acc{ margin-top: 28px }
+  .v3 .pf-boton{ flex: 1 1 auto }
+}
+
+/* ---------- Carga: la misma cabecera, sin datos ---------- */
+.v3 .pf-sk{ display: block; background: rgba(243,241,234,.08) }
+.v3 .pf-sk--h1{ height: calc(var(--t-h1) * .78); margin-top: calc(var(--t-h1) * .24) }
+.v3 .pf-sk--h1:first-child{ margin-top: 0 }
+.v3 .pf-sk--t{ height: 12px; margin-top: 18px; width: 9rem }
+.v3 .pf-sk--claro{ background: rgba(15,63,107,.07) }
+
+/* ---------- Cuerpo: biografía y ficha ---------- */
+.v3 .pf-cuerpo{ padding-block: clamp(56px, 7vw, 112px) clamp(72px, 9vw, 136px) }
+.v3 .pf-cuerpo__in{
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  column-gap: clamp(28px, 6vw, 112px); row-gap: clamp(48px, 6vw, 72px);
+  align-items: start;
+}
+@media (max-width: 980px){
+  .v3 .pf-cuerpo__in{ grid-template-columns: minmax(0, 1fr) }
+}
+
+/* Rótulo de cada bloque: versalita, una sola medida (el .pd-k de las prácticas) */
+.v3 .pf-k{
+  display: flex; align-items: baseline; gap: 12px;
+  margin: 0 0 14px;
+  font: 500 var(--t-label)/1.3 var(--sans); letter-spacing: var(--tr-label); text-transform: uppercase;
+  color: var(--gris);
+}
+.v3 .pf-k span{ font-size: inherit }
+.v3 .pf-k .pf-num{ margin-inline-start: auto; color: var(--azul); font-variant-numeric: lining-nums tabular-nums }
+.v3 .pf-k .pf-giro{ color: var(--gris); margin-inline-start: 0 }
+.v3 .pf-k3{
+  margin: 24px 0 10px;
+  font: 500 var(--t-label)/1.3 var(--sans); letter-spacing: var(--tr-label); text-transform: uppercase;
+  color: var(--gris);
+}
+
+/* Biografía: la entrada en la romana grande y el resto en el texto corrido (LeadParagraph) */
+.v3 .pf-bio{ max-width: 38rem }
+.v3 .pf-bio .ss-lead, .v3 .pf-bio p.ss-lead{
+  margin: 0;
+  font-family: var(--serif); font-weight: 400; font-size: var(--t-lead);
+  line-height: 1.42; letter-spacing: 0; color: var(--tinta); text-wrap: pretty;
+}
+.v3 .pf-bio p.ss-prose, .v3 .pf-bio .ss-prose{
+  margin: 1.1em 0 0; font-family: var(--sans); font-size: var(--t-body); line-height: 1.65; color: var(--tinta); text-wrap: pretty;
+}
+.v3 .pf-bio p.ss-lead + p.ss-prose{ margin-top: 1.4em }
+.v3 .pf-espera{ display: flex; align-items: center; gap: 10px; color: var(--gris) }
+.v3 .pf-espera span{ font-size: inherit }
+
+/* Ficha: bloques apilados, cada uno con su rótulo y su lista de filetes */
+.v3 .pf-ficha{ min-width: 0 }
+.v3 .pf-bloque + .pf-bloque{ margin-top: clamp(40px, 4.5vw, 60px) }
+.v3 .pf-lista{ list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linea-fuerte) }
+.v3 .pf-lista > li{ border-bottom: 1px solid var(--linea) }
+.v3 .pf-fila{ display: grid; gap: 4px; padding: 14px 0 15px }
+.v3 .pf-fila__t{ font-size: var(--t-body); line-height: 1.4; color: var(--tinta) }
+.v3 .pf-fila__t--s{ font-family: var(--serif); font-weight: 400; font-size: 1.1875rem; line-height: 1.25; letter-spacing: -.005em; color: var(--azul) }
+.v3 .pf-fila__s{ font-size: var(--t-small); line-height: 1.45; color: var(--gris) }
+.v3 .pf-fila__s span, .v3 .pf-fila__t span{ font-size: inherit }
+.v3 .pf-fila__s a{ color: var(--azul); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; text-decoration-color: rgba(15,63,107,.42) }
+.v3 .pf-fila__s a:hover{ text-decoration-color: var(--azul) }
+.v3 .pf-fila__k{ font: 500 var(--t-label)/1.3 var(--sans); letter-spacing: var(--tr-label); text-transform: uppercase; color: var(--gris) }
+.v3 .pf-fila__k + .pf-fila__t{ margin-top: 2px }
+/* Dos columnas de filas cortas en escritorio (otros reconocimientos) */
+@media (min-width: 640px){ .v3 .pf-lista--2{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; border-top: 0 } .v3 .pf-lista--2 > li{ border-top: 1px solid var(--linea-fuerte); border-bottom: 0 } }
+
+/* Prácticas de la persona: enlaces en la romana, con flecha */
+.v3 .pf-enlace{
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 14px 0 15px; min-height: 0;
+  font-family: var(--serif); font-weight: 400; font-size: 1.1875rem; line-height: 1.25; letter-spacing: -.005em;
+  color: var(--azul); text-decoration: none;
+}
+.v3 .pf-enlace > span{ font-size: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em; text-decoration-color: transparent; transition: text-decoration-color var(--dur-quick) var(--ease-out) }
+.v3 .pf-enlace .pe-ico{ flex: none; align-self: center; color: var(--azul); transition: transform var(--dur-quick) var(--ease-out) }
+.v3 .pf-enlace:hover > span, .v3 .pf-enlace:focus-visible > span{ text-decoration-color: var(--azul) }
+.v3 .pf-enlace:hover .pe-ico{ transform: translateX(3px) }
+.v3 .pf-enlace:focus-visible{ outline: 2px solid var(--azul); outline-offset: 4px }
+.v3 .pf-enlace bdi{ font-size: inherit }
+
+/* Una línea de valores cortos (idiomas): separados por punto medio */
+.v3 .pf-linea{ list-style: none; margin: 0; padding: 14px 0 15px; border-top: 1px solid var(--linea-fuerte); border-bottom: 1px solid var(--linea); display: flex; flex-wrap: wrap; gap: 4px 0; color: var(--tinta) }
+.v3 .pf-linea > li{ font-size: var(--t-body); line-height: 1.4 }
+.v3 .pf-linea > li + li::before{ content: "·"; padding-inline: .55em; color: var(--gris) }
+
+/* Contacto directo: oficina, teléfono, correo */
+.v3 .pf-datos{ margin: 0; border-top: 1px solid var(--linea-fuerte) }
+.v3 .pf-datos > div{ display: grid; gap: 4px; padding: 14px 0 15px; border-bottom: 1px solid var(--linea) }
+.v3 .pf-datos dt{ font: 500 var(--t-label)/1.3 var(--sans); letter-spacing: var(--tr-label); text-transform: uppercase; color: var(--gris) }
+.v3 .pf-datos dd{ margin: 0; font-size: var(--t-body); line-height: 1.45; color: var(--tinta); overflow-wrap: anywhere }
+.v3 .pf-datos a{ color: var(--azul); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; text-decoration-color: rgba(15,63,107,.42) }
+.v3 .pf-datos a:hover{ text-decoration-color: var(--azul) }
+
+/* Reconocimiento destacado: la cifra en la romana fina, como las cifras de la demo */
+.v3 .pf-cifra{ display: flex; align-items: baseline; gap: 14px; padding: 18px 0 20px; border-top: 1px solid var(--linea-fuerte); border-bottom: 1px solid var(--linea) }
+.v3 .pf-cifra__n{ font-family: var(--serif); font-weight: 300; font-size: var(--t-h2); line-height: 1; letter-spacing: -.02em; color: var(--azul); font-variant-numeric: lining-nums }
+.v3 .pf-cifra__l{ font: 500 var(--t-label)/1.3 var(--sans); letter-spacing: var(--tr-label); text-transform: uppercase; color: var(--gris) }
+
+/* Equipo relacionado: la lista de «Socios» de las prácticas (retrato de 52 px, nombre y cargo) */
+.v3 .pf-eq__a{
+  display: grid; grid-template-columns: 52px minmax(0, 1fr); align-items: start; column-gap: 16px;
+  padding: 12px 0; min-height: 0; text-decoration: none; color: var(--azul);
+}
+.v3 .pf-eq__foto{ position: relative; display: block; width: 52px; height: 52px; overflow: hidden; background: var(--hueso-2) }
+.v3 .pf-eq__foto img{ position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; border-radius: 0 }
+.v3 .pf-eq__ini{ position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--serif); font-size: 1.1rem; color: var(--azul) }
+.v3 .pf-eq__txt{ display: grid; gap: 5px; min-width: 0; padding-top: 3px }
+.v3 .pf-eq__n{
+  font-family: var(--serif); font-weight: 400; font-size: 1.1875rem; line-height: 1.2; letter-spacing: -.005em;
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em;
+  text-decoration-color: transparent; transition: text-decoration-color var(--dur-quick) var(--ease-out);
+}
+.v3 .pf-eq__a:hover .pf-eq__n, .v3 .pf-eq__a:focus-visible .pf-eq__n{ text-decoration-color: var(--azul) }
+.v3 .pf-eq__a:focus-visible{ outline: 2px solid var(--azul); outline-offset: 4px }
+.v3 .pf-eq__c{ font: 500 var(--t-label)/1.35 var(--sans); letter-spacing: var(--tr-label); text-transform: uppercase; color: var(--gris) }
+.v3 .pf-eq__c bdi, .v3 .pf-eq__n span{ font-size: inherit }
+.v3 .pf-sk-fila{ display: grid; grid-template-columns: 52px minmax(0, 1fr); column-gap: 16px; padding: 12px 0 }
+.v3 .pf-sk-fila > span:first-child{ width: 52px; height: 52px }
+.v3 .pf-sk-fila > span:last-child{ height: 14px; width: 60%; margin-top: 8px }
+/* En tableta la ficha va a todo lo ancho: cada persona en una fila, nombre y cargo en la misma
+   línea (en columnas, los nombres y el «(in memoriam)» se partían en tres renglones) */
+@media (max-width: 980px) and (min-width: 600px){
+  .v3 .pf-eq__a{ align-items: center }
+  .v3 .pf-eq__txt{ grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: baseline; column-gap: 24px; padding-top: 0 }
+}
+
+/* ---------- Del Monitor Laboral: notas de la persona ---------- */
+.v3 .pf-notas{ padding-block: 0 clamp(72px, 9vw, 136px) }
+.v3 .pf-notas__lista{ list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linea-fuerte) }
+.v3 .pf-nota{
+  display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  column-gap: clamp(28px, 6vw, 112px); row-gap: 10px;
+  padding: clamp(24px, 2.6vw, 36px) 0; border-bottom: 1px solid var(--linea);
+}
+.v3 .pf-nota__k{ margin: 0; padding-top: .5em; font: 500 var(--t-label)/1.3 var(--sans); letter-spacing: var(--tr-label); text-transform: uppercase; color: var(--gris) }
+.v3 .pf-nota__k span{ font-size: inherit }
+.v3 .pf-nota__k .pf-nota__cat{ color: var(--azul) }
+.v3 .pf-nota__t{ margin: 0; font-family: var(--serif); font-weight: 400; font-size: var(--t-h3); line-height: 1.18; letter-spacing: -.01em; color: var(--azul); text-wrap: balance }
+.v3 .pf-nota__t a{ color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; text-decoration-color: transparent; transition: text-decoration-color var(--dur-quick) var(--ease-out) }
+.v3 .pf-nota__t a:hover, .v3 .pf-nota__t a:focus-visible{ text-decoration-color: var(--azul) }
+.v3 .pf-nota__p{ margin: 12px 0 0; max-width: 40em; color: var(--gris); text-wrap: pretty }
+@media (max-width: 760px){ .v3 .pf-nota{ grid-template-columns: minmax(0, 1fr) } .v3 .pf-nota__k{ padding-top: 0 } }

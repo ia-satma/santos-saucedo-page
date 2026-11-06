@@ -26,11 +26,49 @@
 }
 html.rm .v3 .mp[data-mp] .mp-pie{ display: none }
 
-/* ---- Teléfono: el letrero de la sede («MONTERREY · SEDE», al norte) llega al borde derecho de la
-   pantalla: a 390 px le sobraban 2 px y a 375 px se cortaba, igual que en la demo; en inglés
-   («MONTERREY OFFICE») se cortaba ya a 390. Espaciado .1em (la demo, .14em) y, si aun así no cabe,
-   pasa a dos renglones en vez de cortarse. ---- */
+/* ---- Teléfono: el letrero de la sede al norte («MONTERREY · SEDE») llegaba al borde derecho de la
+   pantalla (a 390 px quedaban 10 px; a 375 se partía como «MONTERREY ·» / «SEDE»; en inglés, «MONTERREY
+   OFFICE», igual). En el teléfono va siempre en dos renglones, sin el separador: «MONTERREY» / «SEDE». ---- */
+.v3[data-vista="industrias"] .mp-letrero-l{ white-space: nowrap }
 @media (max-width: 699.98px){
-  .v3[data-vista="industrias"] .mp-letrero--norte{ white-space: normal; max-width: calc(100% - var(--x) + 4px) }
-  .v3[data-vista="industrias"] .mp-letrero--norte .mp-letrero-titulo{ letter-spacing: .1em }
+  .v3[data-vista="industrias"] .mp-letrero--norte .mp-letrero-l{ display: block }
+  .v3[data-vista="industrias"] .mp-letrero--norte .mp-letrero-sep{ display: none }
+}
+
+/* ---- Mapa con teclado: el plano es la lista de entidades. Foco visible del sitio (lima sobre azul, de
+   .ss26 [tabindex]:focus-visible), un poco separado del país para no montarse en las costas. ---- */
+.v3 .mp[data-mp] .mp-plano:focus{ outline: none }
+.v3 .mp[data-mp] .mp-plano:focus-visible{ outline: 3px solid var(--ss-lime, var(--lima)); outline-offset: 6px; box-shadow: none }
+/* teléfono: el mapa va casi a sangre (6 px por lado): el anillo, pegado, para que no se corte */
+@media (max-width: 699.98px){
+  .v3 .mp[data-mp] .mp-plano:focus-visible{ outline-offset: 2px }
+}
+/* escritorio amplio: el título y la entrada van encima del mapa (en el hueco de Texas) y llegan hasta
+   16 px del borde de la ventana (.mp-cabeza, right: 16px − gutter); el borde del plano los cruzaba.
+   El anillo rodea todo el escenario: mapa, título, entrada y «Pausar». */
+@supports selector(:has(*)){
+  @media (min-width: 1100px){
+    .v3 .mp[data-mp] .mp-plano:focus-visible{ outline: none }
+    .v3 .mp[data-mp] .mp-escena:has(.mp-plano:focus-visible)::after{
+      content: ""; position: absolute; z-index: 3; pointer-events: none;
+      top: -10px; bottom: -10px; left: -10px; right: calc(6px - var(--gutter-desk));
+      border: 3px solid var(--ss-lime, var(--lima));
+    }
+  }
+}
+
+/* ---- Cabecera: el Cerro de la Silla tiene que leerse a cualquier ancho. La foto (4:3) se recorta a 21:8
+   (12:4 desde 1600 px) y, en el teléfono, se ve entera a 4:3: por debajo de 1280 px el cerro quedaba
+   chico (a 820 px, 230 px de ancho; a 390, 110 px, casi una línea en el horizonte). Se acerca la foto
+   sobre el cerro, sin tocar el alto de la cabecera ni el asentado de la demo (scale y transform-origin
+   se suman a la animación sh-asienta, que mueve transform):
+   1100–1279 px ×1,15 · tableta ×1,3 (el cerro, ~37 % del ancho) · teléfono ×1,7 (~48 %, cielo arriba). ---- */
+@media (min-width: 1100px) and (max-width: 1279.98px){
+  .v3[data-vista="industrias"] .sh-cab .sh-pp__foto img{ scale: 1.15; transform-origin: 62% 50% }
+}
+@media (max-width: 1099.98px){
+  .v3[data-vista="industrias"] .sh-cab .sh-pp__foto img{ scale: 1.3; transform-origin: 65% 50% }
+}
+@media (max-width: 640px){
+  .v3[data-vista="industrias"] .sh-cab .sh-pp__foto img{ scale: 1.7; transform-origin: 59% 71% }
 }

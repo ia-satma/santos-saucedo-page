@@ -1,6 +1,7 @@
 import { createHash } from "crypto";
 import { newsData, practiceGroupsData, teamMembersData } from "./seed";
 import { cmsDefaults, isCmsSection, mergeCms, validateCmsValue } from "@shared/cms";
+import { FIRM_PUBLIC_EMAIL } from "@shared/teamVisibility";
 
 /* Pone al día, en una base ya poblada, los textos de prácticas/equipo y las imágenes de
    prácticas que vienen de la semilla. seed() solo inserta en tablas vacías: sin esto, el sitio publicado seguiría con los
@@ -202,7 +203,119 @@ const PREVIOUS_CMS: Previous = {
     "litigio-contencioso.fr": ["ee2f884c4dee21536a8367a3"],
     "litigio-contencioso.it": ["cf9fba883b3d63994a0ad000"],
   },
+  // /team v3: «El equipo» y la etiqueta del muro de retratos con la redacción de la demo
+  "team": {
+    "es.associatesTitle": ["df97a9c4623d5e54214ab8d2"],
+    "en.associatesTitle": ["74156382383b39d14d4b01e5"],
+    "es.mosaicNote": ["7b32ae90cdb5f3d29fa8a551"],
+    "en.mosaicNote": ["4d25260f147a5f11c5128df0"],
+  },
+  // Botón de pausa de la portada: detiene el video y la frase que cambia (como en la demo v3)
+  "chrome": {
+    "es.heroVideo.pause": ["f632113bcde7625bd8e4e06e"],
+    "es.heroVideo.play": ["e68f1bf60087bcd85fcbb367"],
+    "en.heroVideo.pause": ["7e33eadb5406efbebd870aea"],
+    "en.heroVideo.play": ["93fcb3f081961ac0ba5287aa"],
+    "de.heroVideo.pause": ["accdc84c878f1b74307f9c68"],
+    "de.heroVideo.play": ["7ce5fd0445906a7428244af4"],
+    "zh.heroVideo.pause": ["56ce1ff056c4f310898662e8"],
+    "zh.heroVideo.play": ["4be5b0d5c795c9b53ab41c73"],
+    "ko.heroVideo.pause": ["9a0d0444132eae426d58ddb3"],
+    "ko.heroVideo.play": ["2575e946545484c8bdf29155"],
+    "ja.heroVideo.pause": ["3869dd577484aaa3faeacead"],
+    "ja.heroVideo.play": ["e8fdf442ce526eecbb858707"],
+    "ar.heroVideo.pause": ["3fd4430db250f624bf734336"],
+    "ar.heroVideo.play": ["282480cc284f74d3a9548a8f"],
+    "ru.heroVideo.pause": ["0bffba83d14a87e47ba79c99"],
+    "ru.heroVideo.play": ["a0bb3ffd9b421e88d37977c4"],
+    "fr.heroVideo.pause": ["6bdf2f6668c46a8cafe47814"],
+    "fr.heroVideo.play": ["59a6bbd139245d9945495a7c"],
+    "it.heroVideo.pause": ["bbe334e6330f1f8c279b2f03"],
+    "it.heroVideo.play": ["5f61f720e35f1151ee8128a0"],
+  },
+  // Inicio v3 (demo aprobada el 5-11-2026): «La firma» pasa a ser la frase de la firma, «Lo que
+  // creemos» la filosofía de la preparación para juicio y los títulos, «Nuestras prácticas» y
+  // «Nuestros socios». Los párrafos sobrantes del texto anterior
+  // (body.1) se quitan: el nuevo predeterminado tiene uno solo.
+  "home": {
+    "es.firma.title": ["4c338914ae1d3c7546e49815"],
+    "es.firma.body.0": ["ad104adac365c755e387b584"],
+    "es.firma.body.1": ["99ab70b4acf417c1f33e69ad"],
+    "es.creemos.label": ["757a723701a61d736efd370c"],
+    "es.creemos.quote": ["68f4db8a99ba84b23fc408a1"],
+    "es.creemos.body.0": ["69411a228c4e08cb39f90fc0"],
+    "es.creemos.body.1": ["aa6e19d8c9c1ea77fa80fb74"],
+    "en.firma.title": ["4b4c853f5b5e71278689a271"],
+    "en.firma.body.0": ["7b4f57ede3276fe39d371c30"],
+    "en.firma.body.1": ["af80e9e094dc417ab1684922"],
+    "en.creemos.label": ["0e1aadb565a5fdf961b977dc"],
+    "en.creemos.quote": ["9e547b7b8dbf14d9121bfef8"],
+    "en.creemos.body.0": ["c7a66f6e849c1219fac1e18f"],
+    "en.creemos.body.1": ["f68e3012a9be60b0c6c79f1e"],
+    "es.practicas.title": ["aa456b778d7e9e3227b0f4e9"],
+    "en.practicas.title": ["cdb7fb6d04abc5e38a7a10b9"],
+    "es.socios.title": ["01d596a28575c75abeb44632"],
+    "en.socios.title": ["5dab502bfba3c3dfc2c9308a"],
+  },
+  // Junta del 5-11-2026: el correo general info@ se retira; el nuevo es administracion@. Y la
+  // «Empresa» del formulario de contacto pasa a ser obligatoria: su etiqueta pierde el «(opcional)».
+  "contact": {
+    "en.email": ["b41dc652bccc39d88e05a30f"],
+    "es.email": ["b41dc652bccc39d88e05a30f"],
+    "de.email": ["b41dc652bccc39d88e05a30f"],
+    "zh.email": ["b41dc652bccc39d88e05a30f"],
+    "ko.email": ["b41dc652bccc39d88e05a30f"],
+    "ja.email": ["b41dc652bccc39d88e05a30f"],
+    "ar.email": ["b41dc652bccc39d88e05a30f"],
+    "ru.email": ["b41dc652bccc39d88e05a30f"],
+    "fr.email": ["b41dc652bccc39d88e05a30f"],
+    "it.email": ["b41dc652bccc39d88e05a30f"],
+    "en.companyLabel": ["a4d94713068bed27877ca632"],
+    "es.companyLabel": ["07cd5f4864db3d65e9cfdbdc"],
+    "de.companyLabel": ["4be7a97c7862a3d03d7e0ba6"],
+    "zh.companyLabel": ["faa47dee870dfcb69f2d4851"],
+    "ko.companyLabel": ["0153f8fbd6e012cbb3f2c441"],
+    "ja.companyLabel": ["ef491a760521e97e18644690"],
+    "ar.companyLabel": ["737625e76eab862f267613bf"],
+    "ru.companyLabel": ["6af80ab91aa9d861a2075ad4"],
+    "fr.companyLabel": ["fc261071914b607432acdcdf"],
+    "it.companyLabel": ["26d2fb1023c44dda75b45d92"],
+  },
+  // El correo de /api/site-content: el de la semilla (siteContentData, sin tabla) queda debajo de este
+  "contactData": {
+    "email": ["b41dc652bccc39d88e05a30f"],
+  },
+  "privacy": {
+    "en.sections.11.content": ["fc84761004f219f5e3ebded6"],
+    "de.sections.11.content": ["6d37eee2b4a747613ba5fcf4"],
+    "zh.sections.11.content": ["fcb1dd9ccbcfdf1dd0d74068"],
+    "ko.sections.11.content": ["6464b2952d1ac4c02a4a6b08"],
+    "ja.sections.11.content": ["fd0ced9aa50061b856a9e4e6"],
+    "ar.sections.11.content": ["c6d77fb87cabca883ec5b495"],
+    "ru.sections.11.content": ["c968c2935062517a3406f31b"],
+    "fr.sections.11.content": ["25b4de009f5fe25d286c477a"],
+    "it.sections.11.content": ["50653520f5aa0db221dea004"],
+  },
+  "terms": {
+    "en.sections.2.content": ["fdb0537a7bd6d96631491d9f"],
+    "en.sections.8.content": ["3b827f5191bd8567027058b0"],
+    "en.sections.9.content": ["139e48cc718d43c30ecafe41"],
+    "es.sections.2.content": ["f143eefbba38f1ed36767bbb"],
+    "es.sections.9.content": ["5ac0db9b8234571c70860eb4"],
+    "de.sections.9.content": ["f8145b9875a754070263736a"],
+    "zh.sections.9.content": ["53e7637726d54a64e8b32bb3"],
+    "ko.sections.9.content": ["dbac3ea64527fa5dbd86d2a7"],
+    "ja.sections.9.content": ["9ed2631fa0578e2dfb47cb41"],
+    "ar.sections.9.content": ["560ea7e547c668ed087f5ec5"],
+    "ru.sections.9.content": ["d83eadb557c246a6310a36fe"],
+    "fr.sections.9.content": ["247a455148883c55603da0d8"],
+    "it.sections.9.content": ["844a3efe3026fa63d4522929"],
+  },
 };
+
+// Correo general retirado en la junta del 5-11-2026. TEAM_FIELDS no incluye el correo: las fichas
+// del equipo que aún guardan exactamente este pasan al nuevo; un correo propio del panel se respeta.
+const RETIRED_FIRM_EMAIL = "info@santossaucedo.com";
 
 const fingerprint = (value: string) => createHash("sha256").update(value, "utf8").digest("hex").slice(0, 24);
 
@@ -233,7 +346,7 @@ function staleFields(
 
 export async function syncSeedContent() {
   const { syncMarioPortrait } = await import("./cms/marioPortrait");
-  await syncMarioPortrait();
+  try { await syncMarioPortrait(); } catch (error) { console.error("[seed] syncMarioPortrait falló:", error); }
   const { db } = await import("./db");
   const { and, eq, isNull } = await import("drizzle-orm");
   const { practiceGroups, teamMembers, news } = await import("@shared/schema");
@@ -267,6 +380,10 @@ export async function syncSeedContent() {
     await db.update(teamMembers).set(changes).where(and(eq(teamMembers.id, row.id), ...unchanged(teamMembers, row, changes)));
     updated++;
   }
+  // Una sola sentencia, condicionada al valor exacto: idempotente y sin pisar una edición del panel
+  const moved = await db.update(teamMembers).set({ email: FIRM_PUBLIC_EMAIL })
+    .where(eq(teamMembers.email, RETIRED_FIRM_EMAIL)).returning({ id: teamMembers.id });
+  updated += moved.length;
 
   const notes = await db.select().from(news);
   for (const item of newsData) {
@@ -280,11 +397,21 @@ export async function syncSeedContent() {
 
   if (updated > 0) console.log(`[seed] Textos de la semilla actualizados en ${updated} filas (prácticas, equipo y notas)`);
 
-  const sections = await syncCmsDefaults(db);
-  if (sections > 0) console.log(`[seed] Textos predeterminados actualizados en ${sections} secciones guardadas del contenido editable`);
-
-  if (await addIndustriesToNavigation(db)) console.log("[seed] «Industrias» añadida al menú y al pie guardados");
-  if (await reorderHome(db)) console.log("[seed] Orden del inicio actualizado al de la demo v3");
+  // Cada paso por separado: si uno falla, los demás corren igual (y el fallido se reintenta al
+  // siguiente arranque)
+  const step = async (name: string, run: () => Promise<void>) => {
+    try { await run(); } catch (error) { console.error(`[seed] ${name} falló:`, error); }
+  };
+  await step("syncCmsDefaults", async () => {
+    const sections = await syncCmsDefaults(db);
+    if (sections > 0) console.log(`[seed] Textos predeterminados actualizados en ${sections} secciones guardadas del contenido editable`);
+  });
+  await step("Industrias en el menú", async () => {
+    if (await addIndustriesToNavigation(db)) console.log("[seed] «Industrias» añadida al menú y al pie guardados");
+  });
+  await step("Orden del inicio", async () => {
+    if (await reorderHome(db)) console.log("[seed] Orden del inicio actualizado al de la demo v3");
+  });
 }
 
 // Una sola vez: el inicio de la demo v3 alterna bandas claras y azules con este orden. Solo si el
@@ -339,18 +466,30 @@ async function addIndustriesToNavigation(db: typeof import("./db").db) {
   for (const list of ["items", "footerItems"] as const) {
     const items = content[list];
     if (!Array.isArray(items)) continue;
-    if (items.some((i) => i && typeof i === "object" && (i as { href?: unknown }).href === "/industries")) continue;
+    const isIndustries = (i: unknown) => {
+      if (!i || typeof i !== "object") return false;
+      const { id, href } = i as { id?: unknown; href?: unknown };
+      return id === "industries" || String(href ?? "").split(/[?#]/)[0].replace(/\/+$/, "") === "/industries";
+    };
+    if (items.some(isIndustries)) continue;
     const entry = defaults[list]?.find((i) => i.href === "/industries");
     if (!entry) continue;
     const at = items.findIndex((i) => i && typeof i === "object" && (i as { href?: unknown }).href === "/practice-groups");
     const practices = at >= 0 ? (items[at] as { order?: unknown }) : null;
     const order = typeof practices?.order === "number" ? practices.order : entry.order;
-    items.splice(at >= 0 ? at + 1 : items.length, 0, { ...structuredClone(entry), order });
+    const index = at >= 0 ? at + 1 : items.length;
+    items.splice(index, 0, { ...structuredClone(entry), order });
+    // Cada lista por separado: si una ya no admite otra entrada (máximo de elementos), esa se deja
+    // como estaba y la otra sí recibe «Industrias»
+    const errors = validateCmsValue("navigation", mergeCms(cmsDefaults.navigation, content));
+    if (errors.length) {
+      items.splice(index, 1);
+      console.warn(`[contentSync] «Industrias» no se añadió a navigation.${list}: ${errors.slice(0, 3).join("; ")}`);
+      continue;
+    }
     changed++;
   }
   if (changed === 0) { await mark(); return false; }
-  // Si el menú guardado ya no admite otra entrada (máximo de elementos), se deja como está
-  if (validateCmsValue("navigation", mergeCms(cmsDefaults.navigation, content)).length) { await mark(); return false; }
   // Solo si la sección sigue como se leyó: un guardado del panel entretanto no se pisa
   const result = await db.update(siteConfig).set({ value: JSON.stringify(stored), updatedAt: new Date() })
     .where(and(eq(siteConfig.key, row.key), eq(siteConfig.value, row.value!))).returning();
@@ -382,7 +521,19 @@ async function syncCmsDefaults(db: typeof import("./db").db) {
     if (!previous || !isCmsSection(section) || !row.value) continue;
     let stored: { content?: unknown };
     try { stored = JSON.parse(row.value); } catch { continue; }
+    // Colores: se cambian juntos o ninguno, para no dejar una paleta mezclada (un azul elegido en el
+    // panel junto al otro de la demo)
+    if (section === "theme") {
+      const allOld = Object.entries(previous).every(([route, prints]) => {
+        const now = valueAt(stored.content, route.split("."));
+        return typeof now === "string" && (now === valueAt(cmsDefaults[section], route.split(".")) || prints.includes(fingerprint(now)));
+      });
+      if (!allOld) continue;
+    }
     let changed = 0;
+    // Elementos de lista que el nuevo predeterminado ya no tiene (un párrafo de más): se quitan al
+    // final, del índice mayor al menor, y solo si todavía tienen el texto anterior
+    const drops: { list: unknown[]; index: number }[] = [];
     for (const [route, prints] of Object.entries(previous)) {
       const path = route.split(".");
       const holder = valueAt(stored.content, path.slice(0, -1));
@@ -390,9 +541,22 @@ async function syncCmsDefaults(db: typeof import("./db").db) {
       if (holder === null || typeof holder !== "object") continue;
       const now = (holder as Record<string, unknown>)[key];
       const next = valueAt(cmsDefaults[section], path);
-      if (typeof now !== "string" || typeof next !== "string" || now === next) continue;
-      if (!prints.includes(fingerprint(now))) continue;
-      (holder as Record<string, unknown>)[key] = next;
+      if (typeof now !== "string" || now === next || !prints.includes(fingerprint(now))) continue;
+      if (typeof next === "string") {
+        (holder as Record<string, unknown>)[key] = next;
+        changed++;
+        continue;
+      }
+      const nextList = valueAt(cmsDefaults[section], path.slice(0, -1));
+      const index = Number(key);
+      if (next === undefined && Array.isArray(holder) && Array.isArray(nextList) && Number.isInteger(index) && index >= nextList.length)
+        drops.push({ list: holder, index });
+    }
+    drops.sort((a, b) => b.index - a.index);
+    for (const { list, index } of drops) {
+      // Solo el último elemento: lo que el panel haya añadido después se respeta
+      if (index !== list.length - 1) continue;
+      list.splice(index, 1);
       changed++;
     }
     if (changed === 0) continue;

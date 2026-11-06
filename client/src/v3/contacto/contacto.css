@@ -1,0 +1,64 @@
+/* Contacto (demo v3): ajustes del sitio sobre demo.css, todos bajo .v3. demo.css no se toca. */
+
+/* La barra y la hoja del teléfono viven fuera de <main class="v3">: su envoltorio .v3 solo da las
+   variables y la letra de la demo, sin caja propia (sin fondo, sin alto). */
+.v3.ct-raiz { display: contents; }
+
+/* index.css, en teléfono, lleva todo span/label a 16 px y da a los enlaces y botones 44 px de alto con
+   inline-flex. Aquí mandan las medidas de la demo; el área táctil de los enlaces sueltos se amplía
+   sin cambiar cómo se ven. */
+.v3 .sh-dir span, .v3 .sh-check span, .v3 .sh-req { font-size: inherit; }
+.v3 .sh-datos a, .v3 .sh-llegar a, .v3 .sh-check a, .v3 .ct-ofi-mas a, .v3 .ct-form__correo,
+.v3 .sh-ofi__f--mapa figcaption a { min-height: 0; display: inline; }
+.v3 .sh-datos a, .v3 .sh-llegar a, .v3 .ct-ofi-mas a { position: relative; }
+.v3 .sh-datos a::after, .v3 .sh-llegar a::after, .v3 .ct-ofi-mas a::after { content: ""; position: absolute; inset: -12px -4px; }
+/* Las cifras del teléfono no se separan */
+.v3 .sh-datos a[href^="tel:"] { white-space: nowrap; }
+
+/* Nota de los socios (solo si alguno tiene datos propios en su ficha) */
+.v3 .ct-nota { margin: 0; font-size: var(--t-small); line-height: 1.55; color: var(--gris); max-width: 30em; }
+
+/* ---------- Formulario ---------- */
+.v3 .ct-check { display: grid; gap: 6px; }
+.v3 .ct-form .sh-btn[disabled] { opacity: .7; cursor: progress; }
+.v3 .ct-form__ok-k { font-family: var(--sans); font-weight: 500; font-size: var(--t-label); letter-spacing: var(--tr-label); text-transform: uppercase; line-height: 1.3; color: var(--lima); }
+.v3 .ct-form .sh-step[data-step="3"] { gap: 14px; }
+.v3 .ct-form .sh-step[data-step="3"] .sh-btn { margin-top: 10px; }
+.v3 .ct-form__fallo { margin: -4px 0 0; }
+.v3 .sh-form__resp + .ct-form__aviso { margin-top: -10px; }
+.v3 .ct-form--off { gap: 14px; min-height: 0; }
+.v3 .ct-form__correo { color: var(--sobre-azul); text-decoration: none; border-bottom: 1px solid rgba(243,241,234,.4); overflow-wrap: anywhere; }
+.v3 .ct-form__correo:hover { border-bottom-color: var(--lima); }
+
+/* ---------- Nuestras oficinas: enlace a /offices y el mapa al final del mosaico ---------- */
+.v3 .ct-ofi-texto { display: grid; gap: 18px; align-content: end; }
+.v3 .ct-ofi-mas { margin: 0; }
+.v3 .ct-ofi-mas a { color: var(--azul); font-weight: 500; font-size: var(--t-ui); letter-spacing: .01em; text-decoration: none; border-bottom: 1px solid var(--linea-fuerte); transition: border-color var(--dur-quick) var(--ease-out); }
+.v3 .ct-ofi-mas a:hover { border-bottom-color: var(--azul); }
+
+.v3 .sh-ofi__f--mapa { grid-column: 1 / -1; grid-row: 4; }
+.v3 .sh-ofi__f--mapa .sh-ofi__m { aspect-ratio: 3 / 1; }
+.v3 .sh-ofi__f--mapa iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; filter: grayscale(.85) contrast(1.02); }
+.v3 .sh-ofi__f--mapa figcaption a { color: var(--azul); text-decoration: none; border-bottom: 1px solid var(--linea-fuerte); }
+.v3 .sh-ofi__f--mapa figcaption a:hover { border-bottom-color: var(--azul); }
+@media (max-width: 900px) {
+  .v3 .sh-ofi__f--mapa { grid-row: auto; }
+  .v3 .sh-ofi__f--mapa .sh-ofi__m { aspect-ratio: 2 / 1; }
+}
+@media (max-width: 560px) {
+  .v3 .sh-ofi__f--mapa .sh-ofi__m { aspect-ratio: 4 / 3; }
+}
+
+/* ---------- Hoja del teléfono ---------- */
+.v3 .sh-hoja { overscroll-behavior: contain; }
+.v3 .sh-hoja__head h2 { color: inherit; }
+/* Se arrastra hacia abajo desde el asa o la cabecera: el navegador no se queda el gesto */
+.v3 .sh-hoja__asa, .v3 .sh-hoja__head { touch-action: none; }
+.v3 .sh-hoja__num a { color: inherit; text-decoration: none; }
+
+/* Con la barra montada: en el teléfono el pie termina por encima de ella y lo que se enfoca o se
+   salta no queda debajo (el alto de la barra: 8 + 46 + 8 px y el filete) */
+@media (max-width: 760px) {
+  html.ss-con-barra { scroll-padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+  html.ss-con-barra #footer::after { content: ""; display: block; height: calc(63px + env(safe-area-inset-bottom, 0px)); }
+}

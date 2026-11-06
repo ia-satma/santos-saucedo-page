@@ -92,8 +92,9 @@ export default function Footer26({ localized = false }: Footer26Props) {
             <a href={phoneHref} dir="ltr" className={`${linkCls} ss-num text-white`} data-testid="link-footer-phone">
               <span className="ss-link">{phone}</span>
             </a>
-            <a href={`mailto:${email}`} dir="ltr" className={`${linkCls} text-white [overflow-wrap:anywhere]`} data-testid="link-footer-email">
-              <span className="ss-link">{email}</span>
+            {/* Si no cabe, el correo se corta antes de la @ (nunca a media palabra) */}
+            <a href={`mailto:${email}`} dir="ltr" className={`${linkCls} text-white`} data-testid="link-footer-email">
+              <span className="ss-link">{email.includes("@") ? <>{email.slice(0, email.indexOf("@"))}<wbr />{email.slice(email.indexOf("@"))}</> : email}</span>
             </a>
           </div>
         </address>}

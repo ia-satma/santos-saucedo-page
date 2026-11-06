@@ -8,6 +8,7 @@ import { useLayoutEffect, useRef } from "react";
 import "./industrias.css";
 import { initIndustrias } from "./initIndustrias";
 import type { IndustriasTexts } from "./texts";
+import { v3SrcSet } from "../shared";
 
 export function Sectores({ t, headingId }: { t: IndustriasTexts; headingId: string }) {
   const ref = useRef<HTMLElement>(null);
@@ -22,10 +23,11 @@ export function Sectores({ t, headingId }: { t: IndustriasTexts; headingId: stri
       <div className="in-esc">
         <div className="in-media">
           <div className="in-media__fija">
+            {/* La foto fija solo se ve desde 1000 px; debajo, sizes de 1 px hace que no pida la grande */}
             <div className="in-fotos" aria-hidden="true">
               {t.industrias.map((ind, i) => (
                 <figure key={ind.id} className={i === 0 ? "in-foto is-on" : "in-foto"} data-i={i}>
-                  <img src={ind.img} alt="" width={ind.w} height={ind.h} decoding="async" loading="lazy" style={{ objectPosition: ind.pos }} />
+                  <img src={ind.img} srcSet={v3SrcSet(ind.img, ind.w)} sizes="(max-width: 999.98px) 1px, max(50vw, 150vh)" alt="" width={ind.w} height={ind.h} decoding="async" loading="lazy" style={{ objectPosition: ind.pos }} />
                 </figure>
               ))}
             </div>
@@ -47,7 +49,7 @@ export function Sectores({ t, headingId }: { t: IndustriasTexts; headingId: stri
           {t.industrias.map((ind, i) => (
             <article key={ind.id} className={i === 0 ? "in-art is-on" : "in-art"} id={`in-${ind.id}`} data-i={i} aria-labelledby={`in-${ind.id}-h`}>
               <figure className="in-art__foto" aria-hidden="true">
-                <img src={ind.img} alt="" width={ind.w} height={ind.h} decoding="async" loading="lazy" style={{ objectPosition: ind.pos }} />
+                <img src={ind.img} srcSet={v3SrcSet(ind.img, ind.w)} sizes="100vw" alt="" width={ind.w} height={ind.h} decoding="async" loading="lazy" style={{ objectPosition: ind.pos }} />
               </figure>
               <h2 className="in-nombre" id={`in-${ind.id}-h`}>{ind.nombre}</h2>
               <p className="in-linea">{ind.linea}</p>

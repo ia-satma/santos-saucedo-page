@@ -2,9 +2,11 @@
    Port de v3/modules/filosofia/script.js: las mismas curvas, tiempos y cortes. Diferencias con la demo:
    - busca dentro de la raíz que recibe y devuelve una limpieza que quita escuchas, observadores, rAF y relojes;
    - los datos de la turbina llegan como argumento (en la demo, un <script type="application/json">);
-   - la lectura toma la descripción de la lista al momento (React cambia el idioma sin volver a montar).
-   Un solo requestAnimationFrame para las dos láminas; duerme fuera de pantalla, con la pestaña oculta y
-   cuando nada se mueve. Modo Mario: html.rm y el evento 'rmchange'.
+   - la lectura toma la descripción de la lista al momento (React cambia el idioma sin volver a montar);
+   - cada lámina arranca por su cuenta (la raíz puede ser la propia .fi-lamina): el dibujo de la turbina
+     llega aparte, cuando la lámina se acerca, y arrancarla entonces no reinicia el carnero.
+   Un requestAnimationFrame por raíz; duerme fuera de pantalla, con la pestaña oculta y cuando nada se mueve.
+   Modo Mario: html.rm y el evento 'rmchange'.
    #reaccion: escritorio ancho y alto, el avance del scroll dentro del escenario fijo; si no, una sola vez al entrar.
    #carnero: una sola vez al entrar (construcción → contorno → guías → embestida → números). */
 
@@ -32,7 +34,7 @@ type Pos = { a: number[]; t: number[]; o: number; od?: number };
 
 export function initFilosofia(root: HTMLElement, datos: ReaccionDatos): () => void {
   const html = document.documentElement;
-  const secs = Array.from(root.querySelectorAll<HTMLElement>(".fi-lamina"));
+  const secs = root.classList.contains("fi-lamina") ? [root] : Array.from(root.querySelectorAll<HTMLElement>(".fi-lamina"));
   if (!secs.length) return () => {};
 
   const undo: (() => void)[] = [];

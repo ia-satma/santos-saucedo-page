@@ -5,3 +5,10 @@
   overflow:hidden; pointer-events:none;
   background:none; padding:0; margin:0;
 }
+
+/* En árabe (html dir="rtl") el pie se lee de derecha a izquierda: la § pasa al lado izquierdo, con la
+   misma distancia al borde que tiene a la derecha en las demás lenguas */
+html[dir="rtl"] .v3.mk-pie-capa .mk-pie__sitio{ right:auto; left:clamp(24px, 7vw, 120px) }
+@media (max-width: 699px){
+  html[dir="rtl"] .v3.mk-pie-capa .mk-pie__sitio{ right:auto; left:var(--gutter) }
+}

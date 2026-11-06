@@ -1,5 +1,8 @@
+// Términos de uso (/terms) con el lenguaje de la demo v3 aprobada (5-11-2026), que no tenía esta
+// página: cabecera con foto, índice fijo y el texto a una medida de lectura cómoda, la banda azul con el correo
+// y el teléfono, y la página siguiente (el otro aviso). El texto legal de cada idioma no cambia (panel: "terms");
+// la maquetación está en v3/paginas-extra/Legal.tsx.
 import { useCmsContent } from "@/hooks/useCmsContent";
-import type { ReactNode } from "react";
 // Los iconos solo quedan en los datos de cada sección; la página ya no los dibuja.
 import { FileText, Scale, Globe, AlertTriangle, Users, Shield, Gavel, BookOpen, Bell, Phone } from "lucide-react";
 import Header from "@/components/Header";
@@ -8,56 +11,9 @@ import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContact, useSiteDetails } from "@/components/home26/useSiteContact";
 import { chrome26 } from "@/components/home26/chrome26";
-import { keepFirmName } from "@/lib/firmName";
-import { SplitSection } from "@/components/home26/primitives";
-
-// Teléfonos aislados de izquierda a derecha (<bdi dir="ltr">): en árabe, dentro del texto
-// corrido, los grupos de cifras salían invertidos ("2086 8335 81 52+"). "Santos & Saucedo"
-// con espacios duros: el nombre no se parte entre líneas.
-function isolatePhones(text: string): ReactNode[] {
-  return keepFirmName(text)
-    .split(/(\+\d[\d ]{6,}\d)/)
-    .map((part, i) => (i % 2 === 1 ? <bdi key={i} dir="ltr">{part}</bdi> : part));
-}
-
-// Texto de una sección: párrafos separados por línea en blanco; las líneas que empiezan por
-// "• " pasan a una lista real con sangría francesa (al partirse, el texto queda alineado y no
-// bajo la viñeta). El resto conserva sus saltos de línea (direcciones, horarios).
-function renderLegalText(text: string): ReactNode[] {
-  return text.split(/\n{2,}/).map((block, blockIndex) => {
-    const parts: ReactNode[] = [];
-    let lines: string[] = [];
-    let items: string[] = [];
-    const flushLines = () => {
-      if (lines.length) {
-        parts.push(<p key={`p${parts.length}`} className="whitespace-pre-line">{isolatePhones(lines.join("\n"))}</p>);
-        lines = [];
-      }
-    };
-    const flushItems = () => {
-      if (items.length) {
-        parts.push(
-          <ul key={`u${parts.length}`} className="list-disc ps-6 space-y-1 marker:text-ss-marino/50">
-            {items.map((item, i) => <li key={i} className="ps-1">{isolatePhones(item)}</li>)}
-          </ul>
-        );
-        items = [];
-      }
-    };
-    for (const line of block.split("\n")) {
-      if (line.startsWith("• ")) {
-        flushLines();
-        items.push(line.slice(2));
-      } else {
-        flushItems();
-        lines.push(line);
-      }
-    }
-    flushLines();
-    flushItems();
-    return <div key={blockIndex} className="space-y-2">{parts}</div>;
-  });
-}
+import { V3Main, V3NextPage, V3PageHeader } from "@/v3/shared";
+import { LegalBody } from "@/v3/paginas-extra/Legal";
+import { nextLabel, useFotoOficina } from "@/v3/paginas-extra/piezas";
 
 type SupportedLanguage = 'en' | 'es' | 'de' | 'zh' | 'ko' | 'ja' | 'ar' | 'ru' | 'fr' | 'it';
 
@@ -141,7 +97,7 @@ Subject to these Terms, S&S grants you a limited, non-exclusive, non-transferabl
 • Any use of data mining, robots, or similar data gathering and extraction tools
 
 Copyright infringement:
-If you believe that any Content on the Website infringes your copyright, please contact us at info@santossaucedo.com with:
+If you believe that any Content on the Website infringes your copyright, please contact us at administracion@santossaucedo.com with:
 • A description of the copyrighted work you claim has been infringed
 • A description of where the material is located on the Website
 • Your contact information
@@ -303,7 +259,7 @@ Effect of continued use:
 Your continued use of the Website following the posting of revised Terms means that you accept and agree to the changes. If you do not agree to the new Terms, you must stop using the Website.
 
 Version history:
-We maintain previous versions of these Terms for reference purposes. You may request access to prior versions by contacting us at info@santossaucedo.com.
+We maintain previous versions of these Terms for reference purposes. You may request access to prior versions by contacting us at administracion@santossaucedo.com.
 
 Severability:
 If any provision of these Terms is held by a court or other tribunal of competent jurisdiction to be invalid, illegal, or unenforceable for any reason, such provision shall be eliminated or limited to the minimum extent necessary, and the remaining provisions of these Terms will continue in full force and effect.
@@ -326,7 +282,7 @@ Río Tamazunchale 205 Norte
 San Pedro Garza García, Nuevo León, México
 
 Telephone: +52 81 8335 2086
-Email: info@santossaucedo.com
+Email: administracion@santossaucedo.com
 Website: www.santossaucedo.com
 
 Office hours:
@@ -393,7 +349,7 @@ Licencia limitada:
 Sujeto a estos Términos, S&S le otorga una licencia limitada, no exclusiva, intransferible y revocable para acceder y usar el Sitio Web y su Contenido únicamente para su uso personal y no comercial.
 
 Infracción de derechos de autor:
-Si cree que algún Contenido del Sitio Web infringe sus derechos de autor, comuníquese con nosotros en info@santossaucedo.com.`
+Si cree que algún Contenido del Sitio Web infringe sus derechos de autor, comuníquese con nosotros en administracion@santossaucedo.com.`
         },
         {
           id: "no-legal-advice",
@@ -501,7 +457,7 @@ Río Tamazunchale 205 Norte
 San Pedro Garza García, Nuevo León, México
 
 Teléfono: +52 81 8335 2086
-Correo electrónico: info@santossaucedo.com
+Correo electrónico: administracion@santossaucedo.com
 Sitio Web: www.santossaucedo.com
 
 Horario de atención:
@@ -686,7 +642,7 @@ Río Tamazunchale 205 Norte
 San Pedro Garza García, Nuevo León, México
 
 Telefon: +52 81 8335 2086
-E-Mail: info@santossaucedo.com
+E-Mail: administracion@santossaucedo.com
 Website: www.santossaucedo.com
 
 Öffnungszeiten:
@@ -873,7 +829,7 @@ Río Tamazunchale 205 Norte, 18楼
 San Pedro Garza García, Nuevo León, México
 
 电话：+52 81 8335 2086
-电子邮件：info@santossaucedo.com
+电子邮件：administracion@santossaucedo.com
 网站：www.santossaucedo.com
 
 办公时间：
@@ -1059,7 +1015,7 @@ Río Tamazunchale 205 Norte, 18층
 San Pedro Garza García, Nuevo León, México
 
 전화: +52 81 8335 2086
-이메일: info@santossaucedo.com
+이메일: administracion@santossaucedo.com
 웹사이트: www.santossaucedo.com
 
 영업 시간:
@@ -1245,7 +1201,7 @@ Río Tamazunchale 205 Norte, 18階
 San Pedro Garza García, Nuevo León, México
 
 電話：+52 81 8335 2086
-メール：info@santossaucedo.com
+メール：administracion@santossaucedo.com
 ウェブサイト：www.santossaucedo.com
 
 営業時間：
@@ -1431,7 +1387,7 @@ Río Tamazunchale 205 Norte، الطابق 18
 San Pedro Garza García, Nuevo León، المكسيك
 
 الهاتف: +52 81 8335 2086
-البريد الإلكتروني: info@santossaucedo.com
+البريد الإلكتروني: administracion@santossaucedo.com
 الموقع الإلكتروني: www.santossaucedo.com
 
 ساعات العمل:
@@ -1617,7 +1573,7 @@ Río Tamazunchale 205 Norte, 18 этаж
 San Pedro Garza García, Nuevo León, México
 
 Телефон: +52 81 8335 2086
-Электронная почта: info@santossaucedo.com
+Электронная почта: administracion@santossaucedo.com
 Веб-сайт: www.santossaucedo.com
 
 Часы работы:
@@ -1803,7 +1759,7 @@ Río Tamazunchale 205 Norte, 18e étage
 San Pedro Garza García, Nuevo León, Mexique
 
 Téléphone\u202f: +52 81 8335 2086
-E-mail\u202f: info@santossaucedo.com
+E-mail\u202f: administracion@santossaucedo.com
 Site web\u202f: www.santossaucedo.com
 
 Heures d’ouverture\u202f:
@@ -1989,7 +1945,7 @@ Río Tamazunchale 205 Norte
 San Pedro Garza García, Nuevo León, Messico
 
 Telefono: +52 81 8335 2086
-E-mail: info@santossaucedo.com
+E-mail: administracion@santossaucedo.com
 Sito web: www.santossaucedo.com
 
 Orari di ufficio:
@@ -2018,108 +1974,45 @@ Escluse le festività federali messicane`
     it: "Per domande su questi termini:"
   });
 
+  const foto = useFotoOficina()("biblioteca", language as SupportedLanguage);
+  const nextTitle = (cmsChrome[language] ?? cmsChrome.en).footer.privacy;
+
   return (
-    <div className="min-h-screen bg-background" data-testid="page-terms">
+    <div className="ss26 min-h-[100dvh]" data-testid="page-terms">
       <SEOHead page="terms" language={language} />
       <Header />
-      
-      {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo salta.
-          El relleno del cuerpo va en su propio envoltorio. */}
-      <main id="main-content">
-        {/* Encabezado de papel ("memorándum impreso"), como los artículos: Hueso, h1 Azul Marino */}
-        <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" data-testid="section-terms-hero">
-          {/* Mismo contenedor que el cuerpo (ss-container): titular, subtítulo y fecha en el
-              borde izquierdo de la rejilla, sobre los títulos de sección del aside (G1) */}
-          <div className="ss-container">
-            <div className="max-w-3xl">
-              {/* Sin cejilla: las páginas legales no están en el menú y no llevan "§" */}
-              <h1
-                className="mb-5"
-                data-testid="text-terms-title"
-              >
-                {title}
-              </h1>
-              <p
-                className="mb-4"
-                data-testid="text-terms-subtitle"
-              >
-                {t.subtitle}
-              </p>
-              <p
-                className="text-sm"
-                data-testid="text-terms-updated"
-              >
-                {t.lastUpdated}
-              </p>
-            </div>
-          </div>
-        </section>
 
-        <div className="py-16 lg:py-20">
-        <div className="ss-container">
-          {/* Secciones abiertas en la rejilla editorial de la portada (SplitSection, G1): desde lg,
-              el número y el título de cada sección en el aside (columnas 1–4) y el texto en prosa
-              en el cuerpo (6–12); en teléfono y tableta, apilados. Filete superior entre secciones,
-              no en la primera: el encabezado de papel ya la cierra con el suyo (G10). Sin cajas,
-              iconos ni entrada al aparecer (G3). Solo maquetación: el texto legal no cambia. */}
-          <div className="space-y-12">
-            {t.sections.map((section) => (
-              <section
-                key={section.id}
-                className="border-t border-ss-rule pt-8 first:border-t-0 first:pt-0"
-                data-testid={`section-terms-${section.id}`}
-              >
-                <SplitSection
-                  prose
-                  className="max-lg:gap-y-4"
-                  aside={
-                    <h2
-                      className="ss-h2-sm"
-                      data-testid={`text-section-title-${section.id}`}
-                    >
-                      {section.title}
-                    </h2>
-                  }
-                >
-                  <div
-                    className="ss-prose max-w-[42rem] text-ss-tinta text-[19px] md:text-[20px] space-y-5"
-                    data-testid={`text-section-content-${section.id}`}
-                  >
-                    {renderLegalText(section.content)}
-                  </div>
-                </SplitSection>
-              </section>
-            ))}
-          </div>
+      <V3Main vista="terminos" className="px">
+        {/* Sin cejilla: las páginas legales no están en el menú */}
+        <div data-testid="section-terms-hero">
+          <V3PageHeader
+            id="px-terminos-h"
+            img={foto.src}
+            alt={foto.alt}
+            width={1536}
+            height={1024}
+            position="50% 45%"
+            title={<span data-testid="text-terms-title">{title}</span>}
+            lead={<span data-testid="text-terms-subtitle">{t.subtitle}</span>}
+          >
+            <p className="px-fecha" data-testid="text-terms-updated">{t.lastUpdated}</p>
+          </V3PageHeader>
+        </div>
 
-          {/* Contacto: bloque Hueso con dos enlaces de texto, en la columna del texto y con su
-              medida (42rem, ~80 caracteres por línea, como la prosa de las secciones) */}
-          <SplitSection prose className="mt-16" asideClassName="hidden lg:block">
-            <div className="max-w-[42rem] bg-ss-paper p-8 lg:p-10">
-              <p className="text-base text-ss-tinta mb-4">
-                {contactText[language as keyof typeof contactText] || contactText.en}
-              </p>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-x-8 gap-y-2">
-                <a
-                  href={`mailto:${contact.email}`}
-                  className="font-semibold text-ss-marino underline decoration-1 underline-offset-4 hover:decoration-2"
-                  data-testid="link-terms-email"
-                >
-                  {contact.email}
-                </a>
-                <a
-                  href={phoneHref}
-                  className="font-semibold text-ss-marino underline decoration-1 underline-offset-4 hover:decoration-2"
-                  data-testid="link-terms-phone"
-                >
-                  <span dir="ltr">{phone}</span>
-                </a>
-              </div>
-            </div>
-          </SplitSection>
-        </div>
-        </div>
-      </main>
+        <LegalBody
+          sections={t.sections}
+          testPrefix="terms"
+          anchorPrefix="terminos"
+          contactText={contactText[language as keyof typeof contactText] || contactText.en}
+          email={contact.email}
+          emailTestId="link-terms-email"
+          phone={phone}
+          phoneHref={phoneHref}
+          phoneTestId="link-terms-phone"
+        />
+
+        <V3NextPage href="/privacy-policy" title={nextTitle} label={nextLabel(language as SupportedLanguage)} ariaLabel={title} />
+      </V3Main>
 
       <Footer />
     </div>

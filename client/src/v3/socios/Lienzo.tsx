@@ -5,7 +5,7 @@
    Datos del sitio (/api/team, orden y visibilidad del panel): nombre, cargo, retrato (srcset de
    teamPhotoSources) y el tratamiento conmemorativo del retrato in memoriam (ss-photo +
    data-portrait-slug, ss26.css). Cada socio lleva a su ficha /team/<slug>. */
-import { useLayoutEffect, useRef, type ReactNode } from "react";
+import { useLayoutEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import "./socios.css";
 import { initLienzo } from "./initLienzo";
@@ -37,13 +37,20 @@ function Arrow() {
   );
 }
 
+const lowerFirst = (text: string, lang: string) => {
+  if (!text) return text;
+  try { return text.charAt(0).toLocaleLowerCase(lang) + text.slice(1); } catch { return text.charAt(0).toLowerCase() + text.slice(1); }
+};
+
 export function SociosLienzo({
-  partners, t, attrs, title, list, lead, children,
+  partners, t, attrs, lang, title, list, lead, children,
 }: {
   partners: LienzoPartner[];
   t: SociosTexts;
   /** lang="en" en los textos nuevos cuando el visitante eligió otro idioma */
   attrs: Attrs;
+  /** idioma de la página (para la minúscula del cargo que se lee tras el nombre) */
+  lang: string;
   title: string;
   list: string;
   /** subtítulo del panel bajo el título (solo si algún idioma lo trae) */
@@ -69,6 +76,8 @@ export function SociosLienzo({
 
   const first = partners[0];
   const profileLabel = (p: LienzoPartner) => `${t.profile}: ${p.name}`;
+  // Tras el nombre, el lector dice el cargo en minúscula, como la demo («…, socio director»)
+  const srRole = (p: LienzoPartner) => lowerFirst(p.role, p.roleLang || lang);
 
   return (
     <section ref={ref} className="pe pe-socios sobre-azul" id="pe-socios" aria-labelledby="pe-socios-h" data-testid="section-partners">
@@ -103,7 +112,7 @@ export function SociosLienzo({
                   data-testid={`card-team-member-${p.slug}`}
                 >
                   <span className="pe-lz-n">{p.name}</span>
-                  <span className="pe-sr">, {p.roleLang ? <span lang={p.roleLang}>{p.role}</span> : p.role}</span>
+                  <span className="pe-sr">, {p.roleLang ? <span lang={p.roleLang}>{srRole(p)}</span> : srRole(p)}</span>
                   <Reloj />
                 </Link>
               </li>
@@ -117,7 +126,15 @@ export function SociosLienzo({
               {partners.map((p, i) => {
                 const srcSet = getTeamPhotoSrcSet(p.imageUrl);
                 return (
-                  <figure key={p.slug} className={i === 0 ? "pe-lz-canvas is-on" : "pe-lz-canvas"} data-i={i}>
+                  // El retrato en turno lleva el nombre de transición de su ficha (retrato-<slug>):
+                  // al abrirla, viaja hasta el de la cabecera (initLienzo lo pasa al cambiar el turno)
+                  <figure
+                    key={p.slug}
+                    className={i === 0 ? "pe-lz-canvas is-on" : "pe-lz-canvas"}
+                    data-i={i}
+                    data-slug={p.slug}
+                    style={i === 0 ? ({ viewTransitionName: `retrato-${p.slug}` } as CSSProperties) : undefined}
+                  >
                     {p.imageUrl ? (
                       <img
                         className="pe-lz-img ss-photo"
@@ -154,7 +171,7 @@ export function SociosLienzo({
 
           {/* Teléfono: cuatro segmentos que avanzan con el turno, como en las historias; no repiten el
               nombre que ya dice el cintillo. Botones de 44 px con el nombre para lectores. */}
-          <ul className="pe-lz-names sc-segs" role="list" aria-label={list}>
+          <ul className="pe-lz-names sc-segs" role="list" aria-label={list} style={{ "--sc-n": partners.length } as CSSProperties}>
             {partners.map((p, i) => (
               <li key={p.slug}>
                 <button
@@ -167,7 +184,7 @@ export function SociosLienzo({
                   aria-controls="pe-lz-stage"
                 >
                   <span className="pe-lz-n">{p.name}</span>
-                  <span className="pe-sr">, {p.roleLang ? <span lang={p.roleLang}>{p.role}</span> : p.role}</span>
+                  <span className="pe-sr">, {p.roleLang ? <span lang={p.roleLang}>{srRole(p)}</span> : srRole(p)}</span>
                   <Reloj />
                 </button>
               </li>
@@ -175,43 +192,6 @@ export function SociosLienzo({
           </ul>
         </div>
         {children}
-      </div>
-    </section>
-  );
-}
-
-/** Mientras llega /api/team (o si falla): la misma sección y la misma altura, sin turno. */
-export function SociosLienzoPlaceholder({ title, message, busy }: { title: string; message: string; busy: boolean }) {
-  return (
-    <section className="pe pe-socios sobre-azul" aria-labelledby="pe-socios-h" aria-busy={busy || undefined} data-testid={busy ? "section-partners-loading" : "container-team-error"}>
-      <div className="pe-wrap">
-        <header className="pe-head pe-head--lz">
-          <h1 className="pe-h2" id="pe-socios-h" tabIndex={-1} data-testid="text-team-title">{title}</h1>
-          <span className="pe-turno sc-sk-chy" aria-hidden="true">&nbsp;</span>
-        </header>
-        {busy ? <div className="pe-lz sc-lz-espera">
-          <ul className="pe-lz-names sc-idx" role="list">
-            {[0, 1, 2, 3].map((i) => (
-              <li key={i}><span className="pe-lz-name"><span className="pe-lz-n sc-sk" aria-hidden="true">&nbsp;</span><Reloj /></span></li>
-            ))}
-          </ul>
-          <div className="pe-lz-stage">
-            <div className="pe-lz-q"><div className="pe-lz-canvas is-on sc-sk-foto" /></div>
-            {/* El cintillo, invisible: el escenario mide lo mismo que con los datos */}
-            <div className="pe-lz-chy sc-sk-chy" aria-hidden="true">
-              <span className="pe-lz-chy-f"></span>
-              <p className="pe-lz-chy-n">&nbsp;</p>
-              <p className="pe-lz-chy-a">&nbsp;</p>
-              <span className="sc-perfil"><span>&nbsp;</span></span>
-            </div>
-          </div>
-          <ul className="pe-lz-names sc-segs" role="list" aria-hidden="true">
-            {[0, 1, 2, 3].map((i) => (
-              <li key={i}><span className="pe-lz-name"><Reloj /></span></li>
-            ))}
-          </ul>
-        </div> : null}
-        <p className={busy ? "pe-sr" : "sc-error"} role="status" data-testid={busy ? undefined : "text-team-error"}>{message}</p>
       </div>
     </section>
   );

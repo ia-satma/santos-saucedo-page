@@ -1,30 +1,24 @@
-import "@/styles/careers-contact.css";
-import type { CSSProperties } from "react";
-import { OfficePhotography } from "@/components/editorial/OfficePhotography";
-import { HeroKicker } from "@/components/editorial/HeroKicker";
-import { CareerForm } from "@/features/public-forms/CareerForm";
+// Carreras (/careers) con el lenguaje de la demo v3 aprobada (5-11-2026), que no tenía esta página: cabecera con
+// la foto del área de trabajo, el perfil junto a la mesa de trabajo, lo que se aprende y la firma sobre una línea
+// de cota, la banda azul de Pasantías S&S, las vacantes, «Cómo postularse» con el formulario azul de la demo y
+// la página siguiente. Los textos son los de siempre (10 idiomas, panel: "careers"); el formulario y su envío
+// (CV en PDF, consentimiento, panel "forms") están en v3/paginas-extra/Candidatura.tsx.
 import { useQuery } from "@tanstack/react-query";
 import { jobTypes, type JobOpening } from "@shared/schema";
+import { Link } from "wouter";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
-import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { TextLink } from "@/components/home26/primitives";
 // "Santos & Saucedo" con espacios duros al pintarlo: el nombre no se parte al final de línea.
 // Para la frase de los 40 años, actualizada por indicación del cliente.
 import { keepFirmName } from "@/lib/firmName";
 import type { LanguageCode } from "@shared/schema";
-// El área de trabajo de la oficina (oficina/area-trabajo, 1536 × 1024), junto a la entrada
-import areaTrabajo768 from "@assets/ss26/oficina/area-trabajo-768.webp";
-import areaTrabajo1536 from "@assets/ss26/oficina/area-trabajo-1536.webp";
-
-// "Clásica": titulares con la escala única de index.css (.ss-h2 para las secciones, .ss-h2-sm
-// para los sub-bloques, .ss-h3 para filas); entrada en romana 400 Gris Tinta (solo el primer
-// párrafo); texto en sans 400 Gris Tinta.
-const leadClass = "font-serif font-normal text-ss-tinta text-[clamp(21px,0.6vw_+_15px,23px)] leading-[1.55] tracking-[-0.003em] [text-wrap:pretty]";
+import { V3Main, V3NextPage, V3PageHeader } from "@/v3/shared";
+import { BandaFoto, Flecha, nextLabel, useChrome, useFotoOficina } from "@/v3/paginas-extra/piezas";
+import { Candidatura } from "@/v3/paginas-extra/Candidatura";
 
 // Vacantes abiertas. La redacción aprobada dice que hoy no hay ninguna: la lista va vacía en
 // cada idioma y la página muestra esa frase. Para publicar una, añadir su ficha aquí.
@@ -51,7 +45,6 @@ const workAreaAlt: Record<LanguageCode, string> = {
 
 export default function Careers() {
   const siteDetails = useSiteDetails();
-  const { photos } = useCmsMedia();
   const { language } = useLanguage();
 
   // Textos de la redacción aprobada (sección "Carreras"; la única página en tú). Sin valores
@@ -268,158 +261,144 @@ export default function Careers() {
   const positions = jobs.map(j => ({ ...j, title: language === "es" ? j.titleEs : j.title, department: (language === "es" ? j.departmentEs : j.department) || "", location: (language === "es" ? j.locationEs : j.location) || "", description: language === "es" ? j.descriptionEs : j.description, type: jobTypes.find(type => type.value === j.type)?.[language === "es" ? "es" : "en"] || j.type }));
   const t = { ...baseT, applyEmail: siteDetails.recruitmentEmail, positions };
 
-  // Enlace de texto con el aspecto de TextLink (etiqueta, subrayado, flecha y área táctil
-  // ampliada); propio porque es mailto y conserva su data-testid
-  const textLinkClass = "ss-label group relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3";
+  const chrome = useChrome(language as LanguageCode);
+  const foto = useFotoOficina();
   // Correo de reclutamiento en dos piezas: se parte tras la arroba si la columna es estrecha
   const [emailUser, emailDomain] = t.applyEmail.split("@");
-  // Texto de las secciones editoriales.
-  const rowTextClass = "text-[18px] text-ss-tinta leading-[1.65]";
+  const areaTrabajo = foto("areaTrabajo", language as LanguageCode);
+  const mesaTrabajo = foto("mesaTrabajo", language as LanguageCode);
+  // La banda de Pasantías S&S lleva la foto de la cabecera de su página (el mezanine)
+  const mezanine = foto("mezanine", language as LanguageCode);
+  const contacto = chrome.nav.find((n) => n.href === "/contact")?.label ?? chrome.nav[5].label;
 
   return (
-    <div className="min-h-screen bg-background" data-testid="page-careers">
+    <div className="ss26 min-h-[100dvh]" data-testid="page-careers">
       <SEOHead page="careers" language={language} />
       <Header />
 
-      {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo
-          salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
-          siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie.
-          Sin entrada al aparecer (G3): todo se ve completo desde el inicio. */}
-      <main id="main-content">
-      <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-careers-hero">
-        <div className="ss-container">
-          <div className="max-w-3xl">
-            <HeroKicker page="careers" testId="text-careers-kicker" />
-            <h1
-              data-testid="text-careers-title"
-            >
-              {t.heroTitle}
-            </h1>
-            <p data-testid="text-careers-subtitle">
-              {t.heroSubtitle}
-            </p>
+      <V3Main vista="carreras" className="px">
+        <div data-testid="section-careers-hero">
+          <V3PageHeader
+            id="px-carreras-h"
+            img={areaTrabajo.src}
+            alt={keepFirmName(workAreaAlt[language as LanguageCode] ?? workAreaAlt.en)}
+            width={1536}
+            height={1024}
+            position="50% 60%"
+            title={<span data-testid="text-careers-title">{t.heroTitle}</span>}
+            lead={<span data-testid="text-careers-subtitle">{t.heroSubtitle}</span>}
+          >
+            <p data-testid="text-careers-intro">{t.introText}</p>
+          </V3PageHeader>
+        </div>
+
+        {/* A quién buscamos, junto a la mesa de trabajo; debajo, lo que se aprende y la firma sobre la línea de cota */}
+        <section className="px-sec px-perfil" aria-labelledby="px-aprende-1" data-testid="section-why-join">
+          <div className="sh-wrap">
+            <div className="px-perfil__grid px-filete">
+              <p className="px-perfil__p">{t.whyJoinSubtitle}</p>
+              <figure className="px-perfil__foto" data-testid="figure-careers-workspace">
+                <div className="sh-firma__marco">
+                  <img
+                    src={mesaTrabajo.src}
+                    srcSet={mesaTrabajo.srcSet}
+                    sizes="(min-width: 1416px) 720px, (min-width: 901px) 54vw, 92vw"
+                    alt={mesaTrabajo.alt}
+                    {...(mesaTrabajo.altIsEnglish ? { lang: "en" } : {})}
+                    loading="lazy"
+                    decoding="async"
+                    width={1536}
+                    height={1024}
+                    data-testid="img-careers-workspace"
+                  />
+                </div>
+              </figure>
+            </div>
+            <div className="px-cota px-aprende">
+              <article data-testid="card-culture">
+                <h2 id="px-aprende-1" className="px-cota__h">{t.cultureTitle}</h2>
+                <p>{t.cultureText}</p>
+              </article>
+              <article data-testid="card-environment">
+                <h2 className="px-cota__h">{t.environmentTitle}</h2>
+                <p>{keepFirmName(t.environmentText)}</p>
+              </article>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <div className="careers-body py-16 lg:py-20">
-        <div className="ss-container">
-          
-          <section className="careers-overview" data-testid="section-why-join">
-            <div className="careers-introduction">
-              <p className={leadClass} data-testid="text-careers-intro">{t.introText}</p>
-              <p className="careers-introduction-support text-[17px] md:text-[18px] text-ss-tinta leading-[1.65] [text-wrap:pretty]">
-                {t.whyJoinSubtitle}
-              </p>
-            </div>
+        {/* Pasantías S&S: la banda azul con foto del inicio de la demo; el título lleva a su página */}
+        <BandaFoto img={mezanine} labelledBy="px-pasantias-h" testId="section-internship">
+          <h2 id="px-pasantias-h" className="sh-h2 px-banda__h" data-testid="text-internship-title">
+            <Link className="px-banda__a" href="/careers/interns" data-testid="card-internship-cta">
+              <span className="px-banda__t">{keepProgramName(t.internshipTitle)}</span> <Flecha />
+            </Link>
+          </h2>
+          <p className="sh-filo__p" data-testid="card-internship-overview">{keepProgramName(t.internshipSubtitle)}</p>
+        </BandaFoto>
 
-            <figure className="careers-photo-story" data-testid="figure-careers-workspace">
-              <div className="careers-photo-primary" data-curtain="">
-                <img
-                  src={photos.areaTrabajo.url}
-                  srcSet={photos.areaTrabajo.smallUrl && photos.areaTrabajo.smallUrl !== photos.areaTrabajo.url ? `${photos.areaTrabajo.smallUrl} 768w, ${photos.areaTrabajo.url} 1536w` : undefined}
-                  sizes="(min-width: 1024px) min(780px, 60vw), (min-width: 768px) 54vw, 90vw"
-                  alt={keepFirmName(workAreaAlt[language as LanguageCode] ?? workAreaAlt.en)}
-                  loading="lazy"
-                  decoding="async"
-                  width={1536}
-                  height={1024}
-                  className="ss-photo block h-auto w-full"
-                  data-testid="img-careers-workspace"
-                />
+        {/* Vacantes */}
+        <section className="px-sec px-vac" aria-labelledby="px-vacantes-h" data-testid="section-positions">
+          <div className="sh-wrap">
+            <div className="px-dos px-filete">
+              <h2 id="px-vacantes-h" className="sh-h2" data-testid="text-positions-title">{t.positionsTitle}</h2>
+              <div>
+                {!jobsError && t.positions.length === 0 && (
+                  <p className="px-vac__vacio" data-testid="text-positions-empty">{keepProgramName(t.positionsEmpty)}</p>
+                )}
+                {jobsError && (
+                  <p role="status" className="px-vac__error">
+                    {language === "es" ? "No se pudieron cargar las vacantes. Puede postularse por correo." : "Openings could not be loaded. You can apply by email."}
+                  </p>
+                )}
+                {t.positions.length > 0 && (
+                  <ul className="px-vac__lista">
+                    {t.positions.map((position, index) => (
+                      <li key={index} className="px-vac__item" data-testid={`card-position-${index}`}>
+                        <p className="sh-cap px-vac__meta">
+                          {[position.type, position.department, position.location].filter(Boolean).join(" · ")}
+                        </p>
+                        <h3 className="px-vac__t">{position.title}</h3>
+                        <p className="px-vac__p">{position.description}</p>
+                        {(position.applicationEmail || position.applicationUrl) && (
+                          <a className="sh-mas" href={position.applicationUrl || `mailto:${position.applicationEmail}`}>
+                            {t.sendApplication} <Flecha />
+                          </a>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
-              <div className="careers-photo-secondary-frame" data-curtain="" style={{ "--reveal-delay": "0.12s" } as CSSProperties}>
-                <OfficePhotography photo="mesaTrabajo" className="careers-photo-secondary" sizes="(min-width: 1024px) min(520px, 40vw), (min-width: 768px) 36vw, 90vw" />
-              </div>
-            </figure>
-
-            <div className="careers-culture-grid">
-              <article className="careers-culture-item folio-split" data-testid="card-culture">
-                <h2 className="ss-h2-sm mb-4">{t.cultureTitle}</h2>
-                <p className={rowTextClass}>{t.cultureText}</p>
-              </article>
-              <article className="careers-culture-item folio-split" data-testid="card-environment">
-                <h2 className="ss-h2-sm mb-4">{t.environmentTitle}</h2>
-                <p className={rowTextClass}>{keepFirmName(t.environmentText)}</p>
-              </article>
             </div>
-          </section>
+          </div>
+        </section>
 
-          <section className="careers-program folio-split" data-testid="section-internship">
-            <div className="careers-program-copy">
-              <h2 className="ss-h2" data-testid="text-internship-title">{t.internshipTitle}</h2>
-              <p className={rowTextClass} data-testid="card-internship-overview">
-                {keepProgramName(t.internshipSubtitle)}
-              </p>
-            </div>
-            <div className="careers-program-action" data-testid="card-internship-cta">
-              <TextLink href="/careers/interns">{t.internshipTitle}</TextLink>
-            </div>
-          </section>
-
-          <section className="careers-positions folio-split" data-testid="section-positions">
-            <h2 className="ss-h2" data-testid="text-positions-title">{t.positionsTitle}</h2>
-            {!jobsError && t.positions.length === 0 && (
-              <p className="careers-positions-empty" data-testid="text-positions-empty">
-                {keepProgramName(t.positionsEmpty)}
-              </p>
-            )}
-            {jobsError && <p role="status" className="careers-positions-error">{language === "es" ? "No se pudieron cargar las vacantes. Puede postularse por correo." : "Openings could not be loaded. You can apply by email."}</p>}
-            {t.positions.length > 0 && (
-              <div className="careers-position-list">
-                {t.positions.map((position, index) => (
-                  <article
-                    key={index}
-                    className="careers-position"
-                    data-testid={`card-position-${index}`}
-                  >
-                    <p className="ss-label text-ss-medio mb-3">
-                      {position.type} · {position.department} · {position.location}
-                    </p>
-                    <h3 className="ss-h3 mb-3">{position.title}</h3>
-                    <p className={rowTextClass}>{position.description}</p>
-                    {(position.applicationEmail || position.applicationUrl) && <a className="underline text-ss-marino mt-4 inline-block" href={position.applicationUrl || `mailto:${position.applicationEmail}`}>{t.sendApplication}</a>}
-                  </article>
-                ))}
-              </div>
-            )}
-          </section>
-
-          <section className="careers-apply folio-split" data-testid="section-apply">
-            <h2 className="ss-h2" data-testid="text-apply-title">{t.applyTitle}</h2>
-            <div className="careers-apply-intro" data-testid="card-apply-instructions">
-                <p className="text-base text-ss-tinta leading-[1.55] max-w-2xl mb-3">
-                  {t.applyInstructions}
-                </p>
-                {/* El correo como enlace de texto, no dentro de un botón. A 320 px no cabía en la
-                    columna: corte tras la arroba (<wbr>) y, por si acaso, overflow-wrap:anywhere */}
-                <a 
-                  href={`mailto:${t.applyEmail}`}
-                  className="inline-block max-w-full text-[19px] text-ss-marino underline decoration-ss-input underline-offset-4 [overflow-wrap:anywhere] hover:decoration-ss-marino mb-4"
-                  data-testid="link-apply-email"
-                >
-                  {emailUser}@<wbr />{emailDomain}
+        {/* Cómo postularse: el correo y lo que conviene indicar, junto al formulario azul (Contacto de la demo) */}
+        <section className="sh-contacto px-post" aria-labelledby="px-postular-h" data-testid="section-apply">
+          <div className="sh-wrap">
+            <div className="sh-contacto__grid px-filete">
+              <div className="px-post__datos" data-testid="card-apply-instructions">
+                <h2 id="px-postular-h" className="sh-h2" data-testid="text-apply-title">{t.applyTitle}</h2>
+                <div className="px-post__correo">
+                  <p className="px-post__p">{t.applyInstructions}</p>
+                  {/* A 320 px el correo no cabía: corte tras la arroba (<wbr>) y overflow-wrap:anywhere */}
+                  <a href={`mailto:${t.applyEmail}`} className="px-correo" data-testid="link-apply-email">
+                    {emailUser}@<wbr />{emailDomain}
+                  </a>
+                </div>
+                <p className="px-post__nota">{t.applyNote}</p>
+                <a href={`mailto:${t.applyEmail}`} className="sh-mas" data-testid="button-send-application">
+                  {t.sendApplication} <Flecha />
                 </a>
-                <p className="text-base text-ss-medio leading-[1.55] max-w-2xl">
-                  {t.applyNote}
-                </p>
-                <a
-                  href={`mailto:${t.applyEmail}`}
-                  className={`${textLinkClass} mt-8`}
-                  data-testid="button-send-application"
-                >
-                  <span className="ss-link">{t.sendApplication}</span>
-                  <span aria-hidden="true" className="ss-arrow">
-                    →
-                  </span>
-                </a>
+              </div>
+              <Candidatura source="careers" idPrefix="px-cand" />
             </div>
-            <CareerForm source="careers" className="careers-form"/>
-          </section>
+          </div>
+        </section>
 
-        </div>
-      </div>
-      </main>
+        <V3NextPage href="/contact" title={contacto} label={nextLabel(language as LanguageCode)} ariaLabel={t.heroTitle} />
+      </V3Main>
 
       <Footer />
     </div>

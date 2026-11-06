@@ -65,6 +65,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
   // pantallas menores. Se mide la fila completa antes de pintar y se marca data-compact en el
   // <header> sin pasar por React, para que no parpadee.
   const rowRef = useRef<HTMLDivElement>(null);
+  const navListRef = useRef<HTMLUListElement>(null);
   const [compact, setCompact] = useState(false);
   const compactRef = useRef(false);
   const navSignature = items.map((i) => i.label).join("|");
@@ -126,23 +127,48 @@ export default function Header26({ localized = false, overlay = false }: Header2
       }
       if (next) header.setAttribute("data-compact", "");
       else header.removeAttribute("data-compact");
+      // Si la lista del menú se oculta (pantalla menor o menú que ya no cabe) con un desplegable
+      // abierto o el foco dentro, se cierran los desplegables y el foco pasa al botón Menú
+      const list = navListRef.current;
+      if (list && (!wide.matches || next)) {
+        list.querySelectorAll("details[open]").forEach((d) => d.removeAttribute("open"));
+        if (list.contains(document.activeElement)) menuButtonRef.current?.focus();
+      }
       if (compactRef.current !== next) {
         compactRef.current = next;
         setCompact(next);
       }
     };
     check();
+    // También cuando cambia el contenido sin que cambie el ancho de la fila: otra lengua en el
+    // selector, un submenú añadido desde el panel, un logotipo de otra proporción o una fuente tardía
     const ro = new ResizeObserver(check);
-    ro.observe(row);
+    const observeAll = () => {
+      ro.disconnect();
+      ro.observe(row);
+      Array.from(row.children).forEach((c) => ro.observe(c));
+    };
+    observeAll();
+    const mo = new MutationObserver(() => { observeAll(); check(); });
+    mo.observe(row, { childList: true, subtree: true, characterData: true });
     wide.addEventListener("change", check);
     let alive = true;
     document.fonts?.ready.then(() => { if (alive) check(); });
+    document.fonts?.addEventListener?.("loadingdone", check);
     return () => {
       alive = false;
       ro.disconnect();
+      mo.disconnect();
       wide.removeEventListener("change", check);
+      document.fonts?.removeEventListener?.("loadingdone", check);
     };
   }, [navSignature, code, navigation.header.searchEnabled, navigation.header.languageEnabled]);
+
+  // En escritorio, si el menú vuelve a caber completo con el diálogo abierto (ventana más ancha), el
+  // diálogo se oculta (xl:hidden): se cierra para no dejar la página inerte
+  useEffect(() => {
+    if (!compact && panelRef.current === "menu" && window.matchMedia("(min-width: 1280px)").matches) closePanel("nav");
+  }, [compact]);
 
   // Cambio de ruta: cierra el panel y devuelve el foco solo si estaba abierto
   useEffect(() => {
@@ -191,7 +217,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
             aria-label={t.header.nav}
             className="flex items-center gap-5 lg:ms-auto xl:gap-5"
           >
-            <ul className="hidden items-center gap-4 xl:flex xl:gap-[clamp(14px,1.2vw,24px)] xl:group-data-[compact]/hdr:hidden">
+            <ul ref={navListRef} className="hidden items-center gap-4 xl:flex xl:gap-[clamp(14px,1.2vw,24px)] xl:group-data-[compact]/hdr:hidden">
               {items.map((item) => (
                 // flex + pt-[2px] (compensa el padding-bottom de .ss-link): mismo centro que Buscar y ES/EN.
                 // Elemento actual (página o subruta): blanco y filete lima de 2 px (.ss-link--lime);

@@ -1,12 +1,15 @@
+// Ficha de un socio, Of Counsel o integrante (/team/<slug>) con el lenguaje de la demo v3 (la demo
+// no tiene ficha; ver v3/socios/perfil.css): cabecera en el azul de «Nuestros socios» con el retrato
+// y el cintillo, cuerpo en piedra con la biografía y la ficha, y «Siguiente» al final.
+// Se conserva todo lo del sitio: textos del panel ("profile") en 10 idiomas, traducción automática
+// con su respaldo marcado lang, vCard, contacto directo, el trato in memoriam (sin contacto ni vCard,
+// «(in memoriam)» sin partirse, retrato a color), la 404 de quien el sitio no nombra (E11), SEO y
+// JSON-LD, la vista previa del panel y los data-testid.
 import { useContentEntity, useContentPreview } from "@/features/admin/ContentPreview";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { lazy, Suspense, useState, useMemo, type CSSProperties, type ReactNode, type SyntheticEvent } from "react";
 import { Link, useParams } from "wouter";
-import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead, { detailTitle, metaDescription } from "@/components/SEOHead";
@@ -17,44 +20,24 @@ import { isStaticSite } from "@/lib/queryClient";
 import { formatNewsDate } from "@/lib/newsDate";
 import { getTeamPhotoObjectPosition } from "@/lib/teamPhotoPosition";
 import { fallbackToOriginalSrc, getTeamPhotoSrcSet, getTeamPhotoThumb, highFetchPriority, isNamedOnTeamPage } from "@/lib/teamPhotoSources";
-import { Eyebrow, LeadParagraph } from "@/components/editorial";
+import { LeadParagraph } from "@/components/editorial";
 import { chrome26 } from "@/components/home26/chrome26";
 import { useSiteContact } from "@/components/home26/useSiteContact";
-import { SplitSection } from "@/components/home26/primitives";
 import { directContact, isInMemoriamMember } from "@/lib/partnerContact";
 import { keepFirmName } from "@/lib/firmName";
+import defaults from "@shared/cms-defaults.json";
 import type { TeamMember, PracticeGroup, IndustryGroup, Education, Affiliation, Ranking, Publication, RepresentativeMatter, BarAdmission, News, LanguageCode } from "@shared/schema";
+import { V3Main, V3NextPage, useV3Lang } from "@/v3/shared";
+import { PERFIL_TEXTS } from "@/v3/socios/texts";
+import { firmPartnerFallback, firmPartners } from "@/v3/socios/partners";
+import "@/v3/socios/perfil.css";
 
 // Vista 404 del sitio (la misma carga diferida que usa App): fichas que no existen y personas
 // que el sitio no nombra (E11)
 const NotFound = lazy(() => import("@/pages/not-found"));
 
-// Retícula del encabezado del perfil, compartida por la vista y su carga para que no se
-// desalineen (cada bloque se coloca en su celda; el DOM sigue nombre, botones, foto).
-// Teléfono: retrato 4/5 de 112 px al lado del nombre y el cargo, como la tarjeta de /team
-// (grid-cols-[112px_1fr], al pie de la fila), y los botones debajo de ese bloque, a todo lo
-// ancho. Bajo 360 px el retrato baja a 88 px: a 320 la columna del nombre no llegaba a la
-// palabra más larga ("Montemayor") y el h1 la partía por dentro. md: foto en la columna 1 (dos
-// filas, al menos cuadrada), filete de 1 px y el texto en
-// la 3 alineado con la foto; los botones debajo, en una fila a todo lo ancho. lg: los botones
-// vuelven a la columna del texto, al pie, alineados con el borde inferior del retrato (240 px
-// en md, 260 en lg).
-const PROFILE_GRID = "grid grid-cols-[112px_minmax(0,1fr)] items-end gap-x-5 max-[359px]:grid-cols-[88px_minmax(0,1fr)] max-[359px]:gap-x-4 md:grid-cols-[240px_1px_minmax(0,1fr)] md:grid-rows-[auto_1fr] md:items-stretch md:gap-x-0 lg:grid-cols-[300px_1px_minmax(0,1fr)]";
-const PROFILE_PHOTO_CELL = "col-start-1 row-start-1 aspect-[4/5] w-full md:row-span-2 md:aspect-auto md:min-h-[300px] lg:min-h-[375px]";
-// Ancho del retrato en cada tramo, para que srcset elija la variante WebP adecuada
-const PROFILE_PHOTO_SIZES = "(min-width: 1024px) 300px, (min-width: 768px) 240px, 112px";
-const PROFILE_IDENTITY_CELL = "col-start-2 row-start-1 md:col-start-3 md:px-10 md:pb-6";
-const PROFILE_ACTIONS_CELL = "col-span-2 col-start-1 row-start-2 pt-6 md:col-span-3 md:row-start-3 md:pt-8 lg:col-span-1 lg:col-start-3 lg:row-start-2 lg:self-end lg:px-10 lg:pt-0";
-// Columnas de la fila de botones: hoy solo "Descargar vCard" (G6), de 240 px (en lg la celda
-// suma 80 px de relleno lateral)
-const ACTIONS_COLUMNS = ["sm:max-w-[15rem] lg:max-w-[20rem]", "sm:grid-cols-2 lg:max-w-[32rem]", "sm:grid-cols-3 lg:max-w-[48rem]"] as const;
-
-// Relleno del encabezado: el mismo de los demás encabezados internos, escrito aquí y sin las
-// clases pt-36/pb-20 (la regla propia de la ficha en index.css dejaba 86/64 px a 1440).
-const PROFILE_HERO = "pt-[clamp(56px,4vw,72px)] pb-[clamp(40px,3.6vw,56px)]";
-// Botones sobre Hueso: contorno y texto Azul Marino; relleno Azul Marino al pasar el cursor
-// (twMerge sustituye el border-primary/text-primary de la variante outline)
-const PROFILE_BUTTON = "min-h-[44px] w-full whitespace-normal text-center leading-[1.2] border-ss-marino text-ss-marino transition-colors duration-200 hover:bg-ss-marino hover:text-white";
+// Lado del retrato en cada tramo (--pf-w de perfil.css), para que srcset elija la variante WebP
+const PROFILE_PHOTO_SIZES = "(max-width: 719px) calc(100vw - 32px), (max-width: 1023px) clamp(260px, 36vw, 340px), clamp(320px, 30vw, 440px)";
 
 // Texto sin traducción (la traducción automática falló o no llegó): se muestra el original
 // en inglés, marcado lang="en"; si tampoco hay inglés, el español (lang="es"). `translated`
@@ -75,56 +58,56 @@ function pickLocalized(
 }
 // Textos cortos de respaldo (cargo, práctica): aislados en <bdi lang dir="ltr">, como en las
 // prácticas. El bloque conserva la dirección de la página (en árabe, alineado a la derecha
-// como el eyebrow y el nombre) y el punto final no salta al otro extremo.
+// como el nombre) y el punto final no salta al otro extremo.
 // "(in memoriam)" sin partirse entre líneas, en todos los idiomas (espacio duro): a 320 y 390 px
 // quedaba "Socio fundador (in / memoriam)"
 const keepInMemoriam = (text: string | null | undefined) =>
-  text?.replace(/\((in)\s+(memoriam)\)/gi, "($1\u00a0$2)");
+  text?.replace(/\((in)\s+(memoriam)\)/gi, "($1 $2)");
 function LocalizedRun({ value }: { value: LocalizedText }) {
   const text = keepInMemoriam(value.text);
   return value.lang ? <bdi lang={value.lang} dir="ltr">{text}</bdi> : <>{text}</>;
 }
 
-// Enlace de vuelta con el lenguaje de TextLink (home26/primitives): etiqueta y flecha, sin
-// botón. La flecha apunta hacia atrás (en árabe, a la derecha). inline-link: fuera de la regla
-// móvil que vuelve inline-flex todo <a>; el área táctil la amplía before (~44 px). [&_span]: la
-// regla móvil que pone todo span a 16 px no agranda la etiqueta.
-function BackTextLink({ href, children, testId }: { href: string; children: ReactNode; testId?: string }) {
+// Iconos de trazo fino de la demo (pe-ico): flecha de vuelta, flecha de enlace y descarga
+function ArrowBack() {
+  return <svg className="pe-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 8h-10M7 4.5L3.5 8 7 11.5" /></svg>;
+}
+function ArrowNext() {
+  return <svg className="pe-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8h10M9 4.5L12.5 8 9 11.5" /></svg>;
+}
+function Download() {
+  return <svg className="pe-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v8M4.5 7.5L8 11l3.5-3.5M3 13.5h10" /></svg>;
+}
+// Indicador de traducción en curso: un arco que gira (quieto en Modo Mario)
+function Spinner() {
   return (
-    <Link
-      href={href}
-      className="inline-link ss-label relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3 [&_span]:[font-size:inherit]"
-      data-testid={testId}
-    >
-      <span aria-hidden="true" className="inline-block rtl:-scale-x-100">←</span>
-      <span className="ss-link">{children}</span>
+    <svg className="pf-giro" viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M8 2a6 6 0 1 1-6 6" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+// Vuelta a /team: versalita con flecha (en árabe apunta a la derecha)
+function BackLink({ href, children, testId }: { href: string; children: ReactNode; testId?: string }) {
+  return (
+    <Link href={href} className="pf-vuelta" data-testid={testId}>
+      <ArrowBack />
+      <span>{children}</span>
     </Link>
   );
 }
 
-// Retícula de "Equipo relacionado" (vista, carga y espera de /api/team): una columna con filete
-// final en el teléfono; tres iguales en tableta; desde lg, en las ocho columnas del cuerpo, otra
-// vez una lista de filas con filete final, como las prácticas de la portada (en tres columnas los
-// nombres y cargos se partían en dos y tres líneas)
-const RELATED_GRID = "grid grid-cols-1 md:grid-cols-3 gap-x-8 lg:grid-cols-1 border-b border-ss-rule md:border-b-0 lg:border-b";
-
-// "Equipo relacionado" mientras carga: tres filas del mismo alto (filete, retrato de 56 px y dos
-// líneas), para que el pie no salte cuando llegan la ficha o la lista del equipo
-function RelatedTeamSkeleton() {
+// «Equipo relacionado» mientras llega /api/team: tres filas del mismo alto, para que el pie no salte
+function RelatedTeamSkeleton({ title }: { title: string }) {
   return (
-    <SplitSection aside={<Skeleton className="h-7 w-48 bg-ss-rule" />}>
-      <div className={RELATED_GRID} aria-busy="true">
+    <div className="pf-bloque" aria-busy="true">
+      <h2 className="pf-k">{title}</h2>
+      <ul className="pf-lista pf-lista--eq" role="list">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="flex items-start gap-4 py-4 border-t border-ss-rule">
-            <Skeleton className="h-14 w-14 shrink-0 rounded-none bg-ss-rule" />
-            <div className="flex-1 min-w-0">
-              <Skeleton className="h-5 w-1/2 mb-2 bg-ss-rule" />
-              <Skeleton className="h-3 w-1/3 bg-ss-rule" />
-            </div>
-          </div>
+          <li key={i} className="pf-sk-fila" aria-hidden="true"><span className="pf-sk pf-sk--claro" /><span className="pf-sk pf-sk--claro" /></li>
         ))}
-      </div>
-    </SplitSection>
+      </ul>
+    </div>
   );
 }
 
@@ -149,33 +132,28 @@ function RelatedTeamMemberCard({
   const displayTitle = pickLocalized(language, hasTranslation ? translatedFields.title : null, relatedMember.title, relatedMember.titleEs);
 
   // Miniatura WebP de 128 px; si no existe donde se sirven las fotos, el original; si tampoco,
-  // quedan las iniciales sobre Hueso
+  // quedan las iniciales sobre la piedra
   const originalSrc = relatedMember.imageUrl || undefined;
   const [avatarSrc, setAvatarSrc] = useState(() => getTeamPhotoThumb(originalSrc));
 
   return (
-    <Link href={`/team/${relatedMember.slug}`} className="inline-link block w-full">
-      {/* Fila con filete superior a todo lo ancho; retrato cuadrado de 56 px (sin círculo), en
-          grises como todos los retratos */}
-      <div
-        className="group flex w-full items-start gap-4 py-4 border-t border-ss-rule cursor-pointer"
-        data-testid={`card-related-member-${relatedMember.slug}`}
-      >
-        <span className="relative block h-14 w-14 shrink-0 overflow-hidden bg-ss-paper">
-          <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center font-heading text-sm text-ss-marino">
-            {getInitials(relatedMember.name)}
-          </span>
+    <li>
+      {/* Retrato cuadrado de 52 px, nombre en la romana y cargo en versalita: la lista de «Socios»
+          de las prácticas */}
+      <Link href={`/team/${relatedMember.slug}`} className="pf-eq__a" data-testid={`card-related-member-${relatedMember.slug}`}>
+        <span className="pf-eq__foto" aria-hidden="true">
+          <span className="pf-eq__ini">{getInitials(relatedMember.name)}</span>
           {avatarSrc && (
             <img
               src={avatarSrc}
               data-portrait-slug={relatedMember.slug}
-              // alt vacío: el nombre ya es el texto del enlace (antes se leía dos veces)
+              // alt vacío: el nombre ya es el texto del enlace
               alt=""
-              width={56}
-              height={56}
+              width={52}
+              height={52}
               loading="lazy"
               decoding="async"
-              className="ss-photo absolute inset-0 h-full w-full object-cover object-top"
+              className="ss-photo"
               onError={(e) => {
                 if (avatarSrc !== originalSrc) setAvatarSrc(originalSrc);
                 else e.currentTarget.style.display = "none";
@@ -183,18 +161,14 @@ function RelatedTeamMemberCard({
             />
           )}
         </span>
-        <div className="flex-1 min-w-0">
-          {/* Nombre y cargo completos: si no caben, pasan a una segunda línea (antes "Mario Saucedo M…") */}
-          <p className="font-heading text-[17px] leading-[1.2] tracking-[-0.01em] text-ss-marino group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1">
-            {relatedMember.name}
-          </p>
+        <span className="pf-eq__txt">
+          {/* Nombre y cargo completos: si no caben, pasan a una segunda línea */}
+          <span className="pf-eq__n">{relatedMember.name}</span>
           {/* Sin traducción, el cargo en inglés va en <bdi>: aislado del árabe sin cambiar la alineación */}
-          <p className="ss-label text-ss-medio mt-1">
-            <LocalizedRun value={displayTitle} />
-          </p>
-        </div>
-      </div>
-    </Link>
+          <span className="pf-eq__c"><LocalizedRun value={displayTitle} /></span>
+        </span>
+      </Link>
+    </li>
   );
 }
 
@@ -212,7 +186,7 @@ function EducationItemTranslated({
   const { translatedFields } = useTranslatedContent({
     contentType: 'team_member',
     entityId: `${memberId}_edu_${index}`,
-    fields: { 
+    fields: {
       degree: edu.degreeEs || edu.degree,
       degreeEs: edu.degreeEs,
     },
@@ -226,22 +200,17 @@ function EducationItemTranslated({
   const displaySchool = language === 'es' && edu.schoolEs ? edu.schoolEs : edu.school;
 
   return (
-    <div 
-      className="border-s border-ss-rule ps-4 py-1"
-      data-testid={`item-education-${index}`}
-    >
-      <p className="font-semibold text-ss-tinta">
-        {displayDegree}
-      </p>
-      <p className="text-ss-medio">
+    <li className="pf-fila" data-testid={`item-education-${index}`}>
+      <span className="pf-fila__t">{displayDegree}</span>
+      <span className="pf-fila__s">
         {displaySchool}
-        {edu.year && <span className="ml-2 text-base">({edu.year})</span>}
-      </p>
-    </div>
+        {edu.year && <span className="ss-num">{displaySchool ? " · " : ""}{edu.year}</span>}
+      </span>
+    </li>
   );
 }
 
-function PracticeGroupBadge({
+function PracticeGroupLink({
   group,
   language,
 }: {
@@ -259,20 +228,16 @@ function PracticeGroupBadge({
   const displayName = pickLocalized(language, hasTranslation ? translatedFields.name : null, group.name, group.nameEs);
 
   return (
-    <Link href={`/practice-groups/${group.slug}`}>
-      {/* Chip de 14 px con filete Línea; al pasar el cursor, filete y texto Azul Marino */}
-      <Badge
-        variant="outline"
-        className="cursor-pointer px-3 py-1.5 no-default-hover-elevate no-default-active-elevate transition-colors duration-200 hover:border-ss-marino hover:text-ss-marino"
-        data-testid={`badge-practice-group-${group.slug}`}
-      >
-        <LocalizedRun value={displayName} />
-      </Badge>
-    </Link>
+    <li>
+      <Link href={`/practice-groups/${group.slug}`} className="pf-enlace" data-testid={`badge-practice-group-${group.slug}`}>
+        <span><LocalizedRun value={displayName} /></span>
+        <ArrowNext />
+      </Link>
+    </li>
   );
 }
 
-function IndustryGroupBadge({
+function IndustryGroupItem({
   group,
   language,
 }: {
@@ -288,15 +253,11 @@ function IndustryGroupBadge({
 
   const displayName = pickLocalized(language, hasTranslation ? translatedFields.name : null, group.name, group.nameEs);
 
-  // Sin enlace: el sitio no tiene páginas públicas de industrias (rutas retiradas en 4f995a6)
+  // Sin enlace: las industrias del registro no tienen página propia
   return (
-    <Badge
-      variant="outline"
-      className="px-3 py-1.5 no-default-hover-elevate no-default-active-elevate"
-      data-testid={`badge-industry-group-${group.slug}`}
-    >
-      <LocalizedRun value={displayName} />
-    </Badge>
+    <li className="pf-fila" data-testid={`badge-industry-group-${group.slug}`}>
+      <span className="pf-fila__t pf-fila__t--s"><LocalizedRun value={displayName} /></span>
+    </li>
   );
 }
 
@@ -306,19 +267,17 @@ function RankingItemTranslated({
   language,
   memberId,
   isTiered,
-  getPublicationIcon,
 }: {
   ranking: Ranking;
   index: number;
   language: LanguageCode;
   memberId: string;
   isTiered: boolean;
-  getPublicationIcon: (publication: string) => JSX.Element | null;
 }) {
   const { translatedFields } = useTranslatedContent({
     contentType: 'team_member',
     entityId: `${memberId}_ranking_${index}`,
-    fields: { 
+    fields: {
       ranking: ranking.rankingEs || ranking.ranking,
       rankingEs: ranking.rankingEs,
       area: ranking.areaEs || ranking.area,
@@ -337,58 +296,23 @@ function RankingItemTranslated({
 
   if (isTiered) {
     return (
-      // Fila con filete superior: publicación, banda en chip, año como etiqueta
-      <div 
-        className="border-t border-ss-rule py-4"
-        data-testid={`card-ranking-tiered-${index}`}
-      >
-        <div className="flex items-start gap-3">
-          {getPublicationIcon(ranking.publication)}
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-ss-tinta">
-              {ranking.publication}
-            </p>
-            <div className="flex flex-wrap items-center gap-3 mt-2">
-              <Badge 
-                variant="outline"
-                data-testid={`badge-ranking-band-${index}`}
-              >
-                {displayRanking}
-              </Badge>
-              {ranking.year && (
-                <span className="ss-label ss-num text-ss-medio">
-                  {ranking.year}
-                </span>
-              )}
-            </div>
-            {displayArea && (
-              <p className="text-base text-ss-tinta mt-2">
-                {displayArea}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
+      // Fila: publicación, banda y año en versalita, área debajo
+      <li className="pf-fila" data-testid={`card-ranking-tiered-${index}`}>
+        <span className="pf-fila__t pf-fila__t--s">{ranking.publication}</span>
+        <span className="pf-fila__k">
+          <span data-testid={`badge-ranking-band-${index}`}>{displayRanking}</span>
+          {ranking.year && <span className="ss-num"> · {ranking.year}</span>}
+        </span>
+        {displayArea && <span className="pf-fila__s">{displayArea}</span>}
+      </li>
     );
   }
 
   return (
-    <div
-      className="flex items-center gap-3 py-3 border-t border-ss-rule"
-      data-testid={`item-ranking-simple-${index}`}
-    >
-      {getPublicationIcon(ranking.publication)}
-      <div className="flex-1 min-w-0">
-        <p className="font-semibold text-ss-tinta truncate">
-          {ranking.publication}
-        </p>
-        {ranking.year && (
-          <p className="ss-label ss-num text-ss-medio mt-1">
-            {ranking.year}
-          </p>
-        )}
-      </div>
-    </div>
+    <li className="pf-fila" data-testid={`item-ranking-simple-${index}`}>
+      <span className="pf-fila__t">{ranking.publication}</span>
+      {ranking.year && <span className="pf-fila__s ss-num">{ranking.year}</span>}
+    </li>
   );
 }
 
@@ -408,7 +332,7 @@ function PublicationItemTranslated({
   const { translatedFields } = useTranslatedContent({
     contentType: 'team_member',
     entityId: `${memberId}_pub_${index}`,
-    fields: { 
+    fields: {
       title: pub.titleEs || pub.title,
       titleEs: pub.titleEs,
     },
@@ -419,29 +343,22 @@ function PublicationItemTranslated({
     ? pub.titleEs
     : (translatedFields.title || pub.titleEs || pub.title);
 
+  const meta = [pub.journal, pub.year].filter(Boolean).join(" · ");
   return (
-    <div 
-      className="border-s border-ss-rule ps-4 py-1"
-      data-testid={`item-publication-${index}`}
-    >
-      <p className="font-semibold text-ss-tinta">
-        {displayTitle}
-      </p>
-      <div className="flex flex-wrap items-center gap-2 mt-1 text-base text-ss-medio">
-        {pub.journal && <span>{pub.journal}</span>}
-        {pub.year && <span>• {pub.year}</span>}
-        {pub.url && (
-          <a 
-            href={pub.url} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-ss-marino underline-offset-4 hover:underline"
-          >
-            {viewPublicationText}
-          </a>
-        )}
-      </div>
-    </div>
+    <li className="pf-fila" data-testid={`item-publication-${index}`}>
+      <span className="pf-fila__t pf-fila__t--s">{displayTitle}</span>
+      {(meta || pub.url) && (
+        <span className="pf-fila__s">
+          {meta}
+          {meta && pub.url ? " · " : ""}
+          {pub.url && (
+            <a href={pub.url} target="_blank" rel="noopener noreferrer">
+              {viewPublicationText}
+            </a>
+          )}
+        </span>
+      )}
+    </li>
   );
 }
 
@@ -459,7 +376,7 @@ function AffiliationItemTranslated({
   const { translatedFields } = useTranslatedContent({
     contentType: 'team_member',
     entityId: `${memberId}_affil_${index}`,
-    fields: { 
+    fields: {
       organization: affiliation.organizationEs || affiliation.organization,
       organizationEs: affiliation.organizationEs,
       role: affiliation.roleEs || affiliation.role,
@@ -479,21 +396,10 @@ function AffiliationItemTranslated({
     : null;
 
   return (
-    <div 
-      className="border-t border-ss-rule pt-3"
-      data-testid={`item-affiliation-${index}`}
-    >
-      <div>
-        <p className="text-ss-tinta">
-          {displayOrganization}
-        </p>
-        {displayRole && (
-          <p className="text-base text-ss-medio">
-            {displayRole}
-          </p>
-        )}
-      </div>
-    </div>
+    <li className="pf-fila" data-testid={`item-affiliation-${index}`}>
+      <span className="pf-fila__t">{displayOrganization}</span>
+      {displayRole && <span className="pf-fila__s">{displayRole}</span>}
+    </li>
   );
 }
 
@@ -511,7 +417,7 @@ function BarAdmissionItemTranslated({
   const { translatedFields } = useTranslatedContent({
     contentType: 'team_member',
     entityId: `${memberId}_bar_${index}`,
-    fields: { 
+    fields: {
       jurisdiction: admission.jurisdictionEs || admission.jurisdiction,
       jurisdictionEs: admission.jurisdictionEs,
     },
@@ -523,14 +429,12 @@ function BarAdmissionItemTranslated({
     : (translatedFields.jurisdiction || admission.jurisdictionEs || admission.jurisdiction);
 
   return (
-    <Badge 
-      variant="outline"
-      className="px-3 py-1.5"
-      data-testid={`badge-bar-admission-${index}`}
-    >
-      {displayJurisdiction}
-      {admission.year && <span className="ml-1 opacity-70">({admission.year})</span>}
-    </Badge>
+    <li className="pf-fila" data-testid={`badge-bar-admission-${index}`}>
+      <span className="pf-fila__t">
+        {displayJurisdiction}
+        {admission.year && <span className="pf-fila__s ss-num"> · {admission.year}</span>}
+      </span>
+    </li>
   );
 }
 
@@ -548,7 +452,7 @@ function LanguageItemTranslated({
   const { translatedFields } = useTranslatedContent({
     contentType: 'team_member',
     entityId: `${memberId}_lang_${index}`,
-    fields: { 
+    fields: {
       language: lang,
     },
     enabled: language !== 'es',
@@ -558,15 +462,7 @@ function LanguageItemTranslated({
     ? lang
     : (translatedFields.language || lang);
 
-  return (
-    <Badge 
-      variant="outline"
-      className="px-3 py-1.5"
-      data-testid={`badge-language-${index}`}
-    >
-      {displayLanguage}
-    </Badge>
-  );
+  return <li data-testid={`badge-language-${index}`}>{displayLanguage}</li>;
 }
 
 function RepresentativeMatterTranslated({
@@ -583,7 +479,7 @@ function RepresentativeMatterTranslated({
   const { translatedFields } = useTranslatedContent({
     contentType: 'team_member',
     entityId: `${memberId}_matter_${index}`,
-    fields: { 
+    fields: {
       description: matter.descriptionEs || matter.description,
       descriptionEs: matter.descriptionEs,
     },
@@ -594,24 +490,22 @@ function RepresentativeMatterTranslated({
     ? matter.descriptionEs
     : (translatedFields.description || matter.descriptionEs || matter.description);
 
+  const meta = [matter.client, matter.year].filter(Boolean).join(" · ");
   return (
-    <div 
-      className="border-t border-ss-rule pt-3"
-      data-testid={`item-representative-matter-${index}`}
-    >
-      <div>
-        <p className="text-ss-tinta">
-          {displayDescription}
-        </p>
-        {(matter.client || matter.year) && (
-          <p className="text-base text-ss-medio mt-1">
-            {matter.client && <span>{matter.client}</span>}
-            {matter.client && matter.year && <span> • </span>}
-            {matter.year && <span>{matter.year}</span>}
-          </p>
-        )}
-      </div>
-    </div>
+    <li className="pf-fila" data-testid={`item-representative-matter-${index}`}>
+      <span className="pf-fila__t">{displayDescription}</span>
+      {meta && <span className="pf-fila__s">{meta}</span>}
+    </li>
+  );
+}
+
+// Bloque de la ficha: rótulo en versalita (h2) y su contenido
+function Bloque({ title, testId, titleTestId, children }: { title: ReactNode; testId: string; titleTestId: string; children: ReactNode }) {
+  return (
+    <section className="pf-bloque" data-testid={testId}>
+      <h2 className="pf-k" data-testid={titleTestId}>{title}</h2>
+      {children}
+    </section>
   );
 }
 
@@ -621,7 +515,10 @@ export default function TeamMemberDetail() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
 
-  const { data: member, isLoading, error } = useContentEntity<TeamMember>("team",slug);
+  const { data: memberData, isLoading, error } = useContentEntity<TeamMember>("team",slug);
+  // Los cuatro socios siempre tienen ficha (regla del cliente, como en /team): si la API no da a uno
+  // (el panel lo marcó como no público), su ficha con nombre, cargo y retrato de respaldo
+  const member = memberData ?? (error ? firmPartnerFallback(slug) : undefined);
 
   const { data: practiceGroups } = useQuery<PracticeGroup[]>({
     queryKey: ["/api/practice-groups"],
@@ -678,6 +575,7 @@ export default function TeamMemberDetail() {
     publications: string;
     representativeMatters: string;
     experience: string;
+    present: string;
     contactCta: string;
     officeLabel: string;
     phoneLabel: string;
@@ -723,6 +621,7 @@ export default function TeamMemberDetail() {
       publications: "Publications",
       representativeMatters: "Representative matters",
       experience: "Professional experience",
+      present: "Present",
       contactCta: "Contact",
       officeLabel: "Office",
       phoneLabel: "Telephone",
@@ -767,6 +666,7 @@ export default function TeamMemberDetail() {
       publications: "Publicaciones",
       representativeMatters: "Asuntos representativos",
       experience: "Experiencia profesional",
+      present: "Actualidad",
       contactCta: "Contacto",
       officeLabel: "Oficina",
       phoneLabel: "Teléfono",
@@ -811,6 +711,7 @@ export default function TeamMemberDetail() {
       publications: "Publikationen",
       representativeMatters: "Referenzmandate",
       experience: "Erfahrung",
+      present: "heute",
       contactCta: "Kontakt",
       officeLabel: "Büro",
       phoneLabel: "Telefon",
@@ -855,6 +756,7 @@ export default function TeamMemberDetail() {
       publications: "出版物",
       representativeMatters: "代表案例",
       experience: "工作经历",
+      present: "至今",
       contactCta: "联系方式",
       officeLabel: "办公室",
       phoneLabel: "电话",
@@ -899,6 +801,7 @@ export default function TeamMemberDetail() {
       publications: "출판물",
       representativeMatters: "대표 사건",
       experience: "경력",
+      present: "현재",
       contactCta: "연락처",
       officeLabel: "사무소",
       phoneLabel: "전화",
@@ -943,6 +846,7 @@ export default function TeamMemberDetail() {
       publications: "出版物",
       representativeMatters: "代表的案件",
       experience: "経験",
+      present: "現在",
       contactCta: "連絡先",
       officeLabel: "事務所",
       phoneLabel: "電話",
@@ -988,6 +892,7 @@ export default function TeamMemberDetail() {
       publications: "المنشورات",
       representativeMatters: "القضايا التمثيلية",
       experience: "الخبرة",
+      present: "حتى الآن",
       contactCta: "التواصل",
       officeLabel: "المكتب",
       phoneLabel: "الهاتف",
@@ -1032,6 +937,7 @@ export default function TeamMemberDetail() {
       publications: "Публикации",
       representativeMatters: "Показательные дела",
       experience: "Опыт",
+      present: "по настоящее время",
       contactCta: "Контакты",
       officeLabel: "Офис",
       phoneLabel: "Телефон",
@@ -1076,6 +982,7 @@ export default function TeamMemberDetail() {
       publications: "Publications",
       representativeMatters: "Affaires représentatives",
       experience: "Expérience",
+      present: "aujourd’hui",
       contactCta: "Contact",
       officeLabel: "Bureau",
       phoneLabel: "Téléphone",
@@ -1120,6 +1027,7 @@ export default function TeamMemberDetail() {
       publications: "Pubblicazioni",
       representativeMatters: "Casi rappresentativi",
       experience: "Esperienza",
+      present: "oggi",
       contactCta: "Contatti",
       officeLabel: "Ufficio",
       phoneLabel: "Telefono",
@@ -1178,12 +1086,14 @@ export default function TeamMemberDetail() {
 
   // Misma regla que /team (isNamedOnTeamPage): un socio sin foto confirmada tampoco aparece aquí.
   // Tres como máximo: una fila de tres desde md, sin celdas vacías.
-  const relatedMembers = allTeamMembers?.filter(m => 
-    m.id !== member?.id && 
-    isNamedOnTeamPage(m) &&
-    ((m.isPartner && member?.isPartner) || 
-     (m.title === member?.title))
-  ).slice(0, 3);
+  // Socios: los otros de los cuatro (siempre, en el orden de la firma; v3/socios/partners)
+  const relatedMembers = member?.isPartner
+    ? (allTeamMembers || error ? firmPartners(allTeamMembers).filter(m => m.slug !== member.slug).slice(0, 3) : undefined)
+    : allTeamMembers?.filter(m =>
+        m.id !== member?.id &&
+        isNamedOnTeamPage(m) &&
+        m.title === member?.title
+      ).slice(0, 3);
 
   // Áreas de práctica e industrias de la persona: solo las que trae su propio registro (ids o
   // slugs en practiceGroupIds / industryGroupIds, de la tabla team_member_practice_groups). Hoy
@@ -1198,9 +1108,6 @@ export default function TeamMemberDetail() {
   // Sin correo ni teléfono (el socio fundador in memoriam) no hay botones ni vCard, como no hay
   // bloque de contacto
   const isInMemoriam = isInMemoriamMember({ title: member?.title });
-
-  // Sin viñeta: la jerarquía la dan la letra y los filetes
-  const getPublicationIcon = (_publication: string): JSX.Element | null => null;
 
   const getPublicationPriority = (publication: string): number => {
     const pubLower = publication.toLowerCase();
@@ -1258,10 +1165,26 @@ export default function TeamMemberDetail() {
     return areas.length > 0 ? areas.slice(0, 10) : undefined;
   };
 
+  // Textos nuevos de la v3 (es/en; los demás idiomas ven el inglés, marcado lang="en") y enlaces
+  const { lang, attrs } = useV3Lang();
+  const P = PERFIL_TEXTS[lang];
+  const cmsLinks = useCmsContent("links", defaults.links);
+
+  // «Siguiente»: la próxima persona de su grupo en el orden del panel (los cuatro socios, en el
+  // orden de /team); tras la última, Contacto, como al final de /team
+  const groupList = useMemo(() => {
+    if (!member) return [] as TeamMember[];
+    if (member.isPartner) return firmPartners(allTeamMembers);
+    if (!allTeamMembers) return [] as TeamMember[];
+    return allTeamMembers
+      .filter((m) => !m.isPartner && isNamedOnTeamPage(m))
+      .sort((a, b) => ((a.order ?? 0) - (b.order ?? 0)) || a.name.localeCompare(b.name));
+  }, [allTeamMembers, member]);
+
   // Ficha inexistente o de alguien que el sitio no nombra (socios sin confirmar, asociados):
   // la vista 404 del sitio, con su SEOHead page="notFound" (noindex), igual en el servidor y
   // en el build estático (E11)
-  if (error || (member && !isNamed)) {
+  if ((error && !member) || (member && !isNamed)) {
     return (
       <Suspense fallback={null}>
         <NotFound />
@@ -1271,46 +1194,40 @@ export default function TeamMemberDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background" data-testid="page-team-member-loading">
+      <div className="ss26 min-h-screen" data-testid="page-team-member-loading">
         <Header />
-        <main id="main-content">
-          {/* Carga con el mismo encabezado Hueso y el mismo orden que la vista final */}
-          <section className={`${PROFILE_HERO} editorial-page-hero editorial-page-hero--paper`} aria-busy="true">
-            <div className="ss-container">
-              {/* Enlace de vuelta: barra en línea dentro del mismo bloque mb-6, con su alto de línea */}
-              <div className="mb-6">
-                <Skeleton className="inline-block h-4 w-24 bg-ss-rule align-middle" />
+        <V3Main vista="perfil">
+          {/* Carga: la misma cabecera azul y el mismo cuerpo, sin datos, para que nada salte */}
+          <header className="pf-cab sobre-azul" aria-busy="true">
+            <div className="sh-wrap pf-cab__in">
+              <div className="pf-vuelta-fila">
+                <BackLink href="/team" testId="link-back-to-team">{partnersLabel}</BackLink>
               </div>
-              <div className={PROFILE_GRID}>
-                <div className={PROFILE_IDENTITY_CELL}>
-                  <Skeleton className="h-3 w-28 bg-ss-rule mb-4" />
-                  <Skeleton className="h-12 w-4/5 bg-ss-rule mb-3" />
-                  <Skeleton className="h-12 w-3/5 bg-ss-rule mb-4" />
-                  <Skeleton className="h-5 w-40 bg-ss-rule" />
+              <div className="pf-id" aria-hidden="true">
+                <span className="pf-sk pf-sk--h1" style={{ width: "84%" }} />
+                <span className="pf-sk pf-sk--h1" style={{ width: "56%" }} />
+                <div className="pf-chy">
+                  <span className="pf-chy-f" />
+                  <span className="pf-sk pf-sk--t" />
                 </div>
-                <div className={PROFILE_ACTIONS_CELL}>
-                  <Skeleton className="h-[44px] w-full bg-ss-rule sm:max-w-[15rem]" />
-                </div>
-                <Skeleton className={`${PROFILE_PHOTO_CELL} rounded-none bg-ss-rule`} />
               </div>
+              <div className="pf-retrato" aria-hidden="true" />
             </div>
-          </section>
-          {/* Cuerpo en la rejilla de la vista final (SplitSection): título a la izquierda desde lg;
-              biografía y las tres filas de "Equipo relacionado", para que el pie no salte. La
-              biografía empieza en la misma columna que la lista (sin prose), con 44rem de medida */}
-          <div className="py-16 lg:py-20">
-            <div className="ss-container space-y-12 lg:space-y-16">
-              <SplitSection aside={<Skeleton className="h-7 w-40 bg-ss-rule" />}>
-                <div className="max-w-[44rem] space-y-4">
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-6 w-3/4" />
-                </div>
-              </SplitSection>
-              <RelatedTeamSkeleton />
+          </header>
+          <div className="pf-cuerpo">
+            <div className="sh-wrap pf-cuerpo__in">
+              <div className="pf-bio" aria-hidden="true">
+                <span className="pf-sk pf-sk--claro" style={{ height: 12, width: "7rem", marginBottom: 18 }} />
+                <span className="pf-sk pf-sk--claro" style={{ height: 22, width: "100%", marginBottom: 12 }} />
+                <span className="pf-sk pf-sk--claro" style={{ height: 22, width: "100%", marginBottom: 12 }} />
+                <span className="pf-sk pf-sk--claro" style={{ height: 22, width: "70%" }} />
+              </div>
+              <div className="pf-ficha">
+                <RelatedTeamSkeleton title={t.relatedTeam} />
+              </div>
             </div>
           </div>
-        </main>
+        </V3Main>
         <Footer />
       </div>
     );
@@ -1335,14 +1252,47 @@ export default function TeamMemberDetail() {
   const ownContact = directContact(member, firmContact);
   const showContactList = !!(ownContact.email || ownContact.phone);
 
-  // Botones del encabezado: correo y teléfono solo si son directos; "Descargar vCard" se queda
+  // Botones de la cabecera: correo y teléfono solo si son directos; "Descargar vCard" se queda
   // (salvo in memoriam y en el build estático, donde no hace nada)
   const showVCard = !isStaticSite && !isInMemoriam && !!(member?.email || member?.phone);
-  const actionCount = (ownContact.email ? 1 : 0) + (ownContact.phone ? 1 : 0) + (showVCard ? 1 : 0);
-  const showActions = actionCount > 0;
+  const showActions = !!(ownContact.email || ownContact.phone || showVCard);
+
+  // Categoría (Socio, Of Counsel, Asociado) y cargo: si el cargo es la categoría, solo la
+  // categoría; si el cargo ya la dice («Socio director»), solo el cargo: sin «Socio» dos veces
+  const normalize = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").trim().toLowerCase();
+  const seniorityLabel = getSeniorityLabel();
+  const titleMatchesSeniority = !!displayTitle && !!seniorityLabel && normalize(displayTitle) === normalize(seniorityLabel);
+  const titleSaysSeniority = !!displayTitle && !!seniorityLabel && normalize(displayTitle).includes(normalize(seniorityLabel));
+  const showTitle = !!displayTitle && !titleMatchesSeniority;
+  const showCategory = !!seniorityLabel && (!titleSaysSeniority || titleMatchesSeniority);
+
+  const hasBio = !!(displayBio || ((member?.bio || member?.bioEs) && isTranslating));
+  const memberId = member?.id?.toString() || "";
+  const education = (member?.education as Education[] | null | undefined) ?? [];
+  const barAdmissions = (member?.barAdmissions as BarAdmission[] | null | undefined) ?? [];
+  const languagesList = (member?.languages as string[] | null | undefined) ?? [];
+  const affiliations = (member?.affiliations as Affiliation[] | null | undefined) ?? [];
+  const publications = (member?.publications as Publication[] | null | undefined) ?? [];
+  const matters = (member?.representativeMatters as RepresentativeMatter[] | null | undefined) ?? [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const experience = (member?.experience as any[] | null | undefined) ?? [];
+  const showRelated = !!relatedMembers && relatedMembers.length > 0;
+  // Columna principal: la biografía y lo que se lee como texto (experiencia, publicaciones, asuntos)
+  const hasMain = hasBio || experience.length > 0 || publications.length > 0 || matters.length > 0;
+  // Ficha: los datos cortos y el equipo relacionado
+  const hasFicha = memberPracticeGroups.length > 0 || memberIndustryGroups.length > 0 || showContactList ||
+    education.length > 0 || barAdmissions.length > 0 || languagesList.length > 0 || affiliations.length > 0 ||
+    !!processedRankings || isLoadingTeam || showRelated;
+
+  // «Siguiente»
+  const here = groupList.findIndex((m) => m.slug === member?.slug);
+  const nextMember = here >= 0 && here < groupList.length - 1 ? groupList[here + 1] : null;
+  const ownLang = language === "es" || language === "en";
+  const navLabels = (cmsChrome[language] ?? cmsChrome.es).nav;
+  const internal = (href: string | undefined, fallback: string) => (href && href.startsWith("/") ? href : fallback);
 
   return (
-    <div className="min-h-screen bg-background" data-testid="page-team-member-detail">
+    <div className="ss26 min-h-screen" data-testid="page-team-member-detail">
       {member && (
         <SEOHead
           page="team"
@@ -1353,7 +1303,7 @@ export default function TeamMemberDetail() {
         />
       )}
       <Header />
-      
+
       {/* JSON-LD solo de quien el sitio nombra (isNamedOnTeamPage): ni socios sin confirmar ni
           asociados (los demás reciben la 404). Person enlaza con la firma por @id (#organization)
           y su imagen va con URL absoluta (PersonJsonLd, E18); la miga de pan nombra la sección
@@ -1384,757 +1334,442 @@ export default function TeamMemberDetail() {
           />
         </>
       )}
-      
-      {/* El encabezado va dentro de main (el h1 queda en el landmark y en "Saltar al contenido");
-          el relleno vertical está en el envoltorio del cuerpo, no en main, para que la banda
-          siga pegada a la cabecera. Encabezado en papel, como el del artículo
-          (.editorial-page-hero--paper): Hueso, nombre en Azul Marino, filete inferior en Línea,
-          § y foco en Azul Marino; la cabecera sigue en Azul Profundo. */}
-      <main id="main-content">
-        <section className={`${PROFILE_HERO} editorial-page-hero editorial-page-hero--paper`} data-testid="section-team-member-hero">
-          {/* Mismo contenedor que la cabecera y el cuerpo: la foto arranca en el borde del logo */}
-          <div className="ss-container">
-            <div>
-              {/* Vuelta a /team: enlace de texto (etiqueta con flecha), como toda navegación */}
-              <div className="mb-6">
-                <BackTextLink href="/team" testId="link-back-to-team">
-                  {partnersLabel}
-                </BackTextLink>
-              </div>
-              {/* Lectores de pantalla: nombre, botones y foto, en ese orden. Teléfono: retrato de
-                  112 px al lado del nombre y el cargo, y los botones debajo. Desde md cada bloque
-                  va a su celda: foto a la izquierda en las dos filas y el texto alineado con su
-                  borde superior. */}
-              <div className={PROFILE_GRID}>
-                {/* Texto al inicio de la línea (a la derecha en árabe, junto al retrato) */}
-                <div className={`min-w-0 text-start ${PROFILE_IDENTITY_CELL}`}>
-                  {/* Eyebrow del expediente: "§ 03 —— Socio" (sobre Hueso, § y cifras en Azul Marino;
-                      la lima solo va sobre Azul Profundo). La categoría va aquí y no en una píldora. */}
-                  <Eyebrow
-                    num="03"
-                    tone="paper"
-                    label={getSeniorityLabel()}
-                    labelTestId="badge-seniority"
-                    className="mb-4"
-                  />
-                  <h1 
-                    className="ss-hero-detail mb-3"
-                    data-testid="text-team-member-name"
-                  >
-                    {member?.name}
-                  </h1>
-                  {(() => {
-                    const normalize = (s: string) =>
-                      s
-                        .normalize("NFD")
-                        .replace(/[\u0300-\u036f]/g, "")
-                        .trim()
-                        .toLowerCase();
-                    const seniorityLabel = getSeniorityLabel();
-                    const titleMatchesSeniority =
-                      displayTitle &&
-                      seniorityLabel &&
-                      normalize(displayTitle) === normalize(seniorityLabel);
-                    if (titleMatchesSeniority) return null;
-                    // Sin traducción, el cargo y la práctica en inglés van en <bdi lang="en">: el
-                    // párrafo sigue la dirección de la página (en árabe, a la derecha bajo el nombre)
-                    return (
-                      <p
-                        className="mb-1"
-                        data-testid="text-team-member-title"
-                      >
-                        <LocalizedRun value={localizedTitle} />
-                        {isTranslating && (
-                          <Loader2 className="inline-block w-4 h-4 ms-2 animate-spin text-ss-medio" aria-hidden="true" />
-                        )}
-                      </p>
-                    );
-                  })()}
-                  <p
-                    data-testid="text-team-member-role"
-                  >
+
+      <V3Main vista="perfil">
+        {/* Cabecera en el azul de «Nuestros socios» (se vuelve a montar con cada ficha: el retrato se
+            asienta otra vez). Lectores de pantalla: vuelta, nombre, cargo, botones y retrato. */}
+        <header
+          key={member?.slug}
+          className={`pf-cab sobre-azul${isInMemoriam ? " is-memoria" : ""}`}
+          aria-labelledby="pf-h"
+          data-testid="section-team-member-hero"
+        >
+          <div className="sh-wrap pf-cab__in">
+            <div className="pf-vuelta-fila">
+              {/* Vuelta a /team con el nombre del menú en cada idioma */}
+              <BackLink href="/team" testId="link-back-to-team">{partnersLabel}</BackLink>
+            </div>
+
+            <div className="pf-id">
+              {showCategory && <p className="pf-cat" data-testid="badge-seniority">{seniorityLabel}</p>}
+              <h1 id="pf-h" className="pf-h1" tabIndex={-1} data-testid="text-team-member-name">
+                {member?.name}
+              </h1>
+              {/* Cintillo: filete con la marca lima (in memoriam, sin el acento vivo), cargo y área.
+                  Sin traducción, el cargo y el área en inglés van en <bdi lang="en">. */}
+              <div className="pf-chy">
+                <span className="pf-chy-f" aria-hidden="true"><span className="pf-chy-m" /></span>
+                {showTitle && (
+                  <p className="pf-cargo" data-testid="text-team-member-title">
+                    <LocalizedRun value={localizedTitle} />
+                    {isTranslating && <Spinner />}
+                  </p>
+                )}
+                {localizedRole.text && (
+                  <p className="pf-area" data-testid="text-team-member-role">
                     <LocalizedRun value={localizedRole} />
                   </p>
-                </div>
-
-                {/* Botones iguales de contorno Azul Marino de 1 px, texto Azul Marino y, al pasar el
-                    cursor, relleno Azul Marino con texto blanco; sin iconos: ninguno pesa más que el
-                    nombre. Teléfono: uno debajo de otro, bajo el retrato y el nombre. Desde sm, una
-                    fila de columnas iguales (en md, a todo lo ancho bajo el retrato y el nombre;
-                    desde lg, al pie de la columna del texto). "Enviar correo" y "Llamar" solo con
-                    datos directos (G6); in memoriam, ni botones ni vCard; en el build estático,
-                    sin vCard. */}
-                {showActions && (
-                  <div className={`grid grid-cols-1 ${ACTIONS_COLUMNS[actionCount - 1] ?? ""} content-start gap-3 ${PROFILE_ACTIONS_CELL}`}>
-                    {ownContact.email && (
-                      <Button
-                        variant="outline"
-                        className={PROFILE_BUTTON}
-                        asChild
-                        data-testid="button-email"
-                      >
-                        <a href={`mailto:${ownContact.email}`}>
-                          {t.emailUs}
-                        </a>
-                      </Button>
-                    )}
-                    {ownContact.phone && (
-                      <Button
-                        variant="outline"
-                        className={PROFILE_BUTTON}
-                        asChild
-                        data-testid="button-phone"
-                      >
-                        {/* Sin espacios (RFC 3966): el mismo href que el del bloque de contacto */}
-                        <a href={`tel:${ownContact.phone.replace(/\s+/g, "")}`}>
-                          {t.callUs}
-                        </a>
-                      </Button>
-                    )}
-                    {showVCard && (
-                      <Button
-                        variant="outline"
-                        className={PROFILE_BUTTON}
-                        onClick={handleDownloadVCard}
-                        data-testid="button-download-vcard"
-                      >
-                        {t.downloadVCard}
-                      </Button>
-                    )}
-                  </div>
                 )}
-                {/* Retrato enmarcado («Galería»); llega desde la portada o /team con la transición
-                    del navegador (retrato-<slug>) */}
-                <div
-                  className={`group relative overflow-hidden ss-plate-frame ${PROFILE_PHOTO_CELL}`}
-                  style={member?.slug ? ({ viewTransitionName: `retrato-${member.slug}` } as CSSProperties) : undefined}
-                  data-testid="container-profile-photo"
-                >
-                  {member?.imageUrl ? (
-                    <>
-                      <img
-                        src={member.imageUrl}
-                        data-portrait-slug={member.slug}
-                        // WebP de 360/652 px en vez del PNG de 0,5–1 MB; si la variante no
-                        // existe donde se sirven las fotos, onError vuelve al original (src)
-                        {...(profilePhotoSrcSet ? { srcSet: profilePhotoSrcSet, sizes: PROFILE_PHOTO_SIZES } : {})}
-                        // alt vacío: el nombre ya está en el h1 de al lado (antes se leía dos veces)
-                        alt=""
-                        // El tratamiento conmemorativo de Mario se aplica desde ss26.css.
-                        className="ss-photo absolute inset-0 h-full w-full object-cover object-top"
-                        style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }}
-                        loading="eager"
-                        {...highFetchPriority}
-                        decoding="async"
-                        onError={(e: SyntheticEvent<HTMLImageElement>) => {
-                          if (!fallbackToOriginalSrc(e)) e.currentTarget.style.display = "none";
-                        }}
-                        data-testid="img-profile-photo"
-                      />
-                    </>
-                  ) : (
-                    <div
-                      className="absolute inset-0 flex items-center justify-center bg-ss-rule text-ss-marino text-6xl font-heading font-normal"
-                      data-testid="avatar-fallback"
-                    >
-                      {member?.name ? getInitials(member.name) : ''}
-                    </div>
+              </div>
+
+              {/* "Enviar correo" y "Llamar" solo con datos directos (G6); in memoriam, ni botones ni
+                  vCard; en el build estático, sin vCard */}
+              {showActions && (
+                <div className="pf-acc">
+                  {ownContact.email && (
+                    <a className="pf-boton" href={`mailto:${ownContact.email}`} data-testid="button-email">
+                      <span>{t.emailUs}</span>
+                    </a>
+                  )}
+                  {ownContact.phone && (
+                    // Sin espacios (RFC 3966): el mismo href que el del bloque de contacto
+                    <a className="pf-boton" href={`tel:${ownContact.phone.replace(/\s+/g, "")}`} data-testid="button-phone">
+                      <span>{t.callUs}</span>
+                    </a>
+                  )}
+                  {showVCard && (
+                    <button type="button" className="pf-boton" onClick={handleDownloadVCard} data-testid="button-download-vcard">
+                      <Download />
+                      <span>{t.downloadVCard}</span>
+                    </button>
                   )}
                 </div>
-                <div
-                  aria-hidden="true"
-                  className="hidden md:col-start-2 md:row-span-2 md:row-start-1 md:block bg-ss-rule"
-                />
-              </div>
+              )}
             </div>
+
+            {/* Retrato (decorativo: el nombre está en el h1); llega desde /team o la portada con la
+                transición del navegador (retrato-<slug>) */}
+            <figure
+              className="pf-retrato"
+              style={member?.slug ? ({ viewTransitionName: `retrato-${member.slug}` } as CSSProperties) : undefined}
+              data-testid="container-profile-photo"
+            >
+              {member?.imageUrl ? (
+                <img
+                  src={member.imageUrl}
+                  data-portrait-slug={member.slug}
+                  // WebP de 360/652 px en vez del PNG; si la variante no existe donde se sirven las
+                  // fotos, onError vuelve al original (src)
+                  {...(profilePhotoSrcSet ? { srcSet: profilePhotoSrcSet, sizes: PROFILE_PHOTO_SIZES } : {})}
+                  alt=""
+                  width={652}
+                  height={652}
+                  // ss-photo: el retrato in memoriam conserva el trato del sitio (ss26.css)
+                  className="ss-photo"
+                  style={{ objectPosition: getTeamPhotoObjectPosition(member.slug) }}
+                  loading="eager"
+                  {...highFetchPriority}
+                  decoding="async"
+                  draggable={false}
+                  onError={(e: SyntheticEvent<HTMLImageElement>) => {
+                    if (!fallbackToOriginalSrc(e)) e.currentTarget.style.display = "none";
+                  }}
+                  data-testid="img-profile-photo"
+                />
+              ) : (
+                <span className="pf-ini" aria-hidden="true" data-testid="avatar-fallback">
+                  {member?.name ? getInitials(member.name) : ""}
+                </span>
+              )}
+            </figure>
           </div>
-        </section>
+        </header>
 
-        {/* Relleno vertical del cuerpo (antes en main, que ahora también contiene el encabezado) */}
-        <div className="py-16 lg:py-20">
-          {/* Rejilla editorial de la portada (SplitSection, G1): desde lg, cada h2 en las columnas
-              1–4 y su contenido desde la 5 (también la biografía, con su medida de lectura: así
-              empieza en la misma columna que "Equipo relacionado"); en teléfono y tableta, apilado. Las secciones del antiguo lateral (contacto, reconocimiento
-              destacado) son filas más. Sin aparición al hacer scroll (G3). */}
-          <div className="ss-container space-y-12 lg:space-y-16">
-            {(displayBio || ((member?.bio || member?.bioEs) && isTranslating)) && (
-              <section data-testid="section-biography">
-                <SplitSection
-                  aside={
-                    <h2
-                      className="ss-h2-sm flex items-center gap-3"
-                      data-testid="text-biography-title"
-                    >
-                      {t.biography}
-                      {isTranslating && (
-                        <Loader2 className="w-4 h-4 animate-spin text-ss-medio" aria-hidden="true" />
-                      )}
-                    </h2>
-                  }
-                >
-                  {/* Biografía sin traducción: bloque largo en el idioma de origen, marcado lang y
-                      dir="ltr" (en árabe, alineado a la izquierda, como el resumen de las prácticas
-                      y el cuerpo de las notas); los textos cortos de respaldo van en <bdi>. Medida
-                      de lectura de 44rem en todos los anchos, desde el inicio de la columna del
-                      cuerpo (en árabe, a la derecha, donde empiezan las demás filas). */}
-                  <div
-                    className="max-w-[44rem]"
-                    data-testid="container-biography"
-                    lang={localizedBio.lang}
-                    dir={localizedBio.lang ? "ltr" : undefined}
-                  >
-                    {displayBio ? (() => {
-                      // "Santos & Saucedo" sin partirse entre líneas (espacios duros, E16)
-                      const bioText = keepFirmName(displayBio);
-                      const paragraphs = bioText.split(/\n\s*\n/).map((p: string) => p.trim()).filter(Boolean);
-                      const [first, ...rest] = paragraphs.length ? paragraphs : [bioText];
-                      return (
-                        <LeadParagraph
-                          firstParagraph={first}
-                          restParagraphs={rest}
-                          testId="lead-biography"
-                        />
-                      );
-                    })() : (
-                      <div className="flex items-center gap-2 text-ss-medio">
-                        <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                        <span data-testid="text-translation-pending">
-                          {language === 'de' ? 'Übersetzung lädt…' :
-                           language === 'zh' ? '翻译加载中…' :
-                           language === 'ko' ? '번역 로딩 중…' :
-                           language === 'ja' ? '翻訳を読み込み中…' :
-                           language === 'ar' ? 'جاري تحميل الترجمة…' :
-                           language === 'ru' ? 'Загрузка перевода…' :
-                           language === 'fr' ? 'Traduction en cours…' :
-                           language === 'it' ? 'Caricamento traduzione…' :
-                           'Loading translation…'}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </SplitSection>
-              </section>
-            )}
-
-            {/* Contacto: lista de datos con filete superior, sin fondo (oficina, teléfono, correo),
-                sin botones ni frase de venta. Solo con un teléfono o un correo propios, y solo esos:
-                los generales de la firma ya están en el pie (E7, G6). In memoriam, nada. */}
-            {showContactList && (
-              <section data-testid="section-contact-cta">
-                <SplitSection
-                  aside={
-                    <h2
-                      className="ss-h2-sm"
-                      data-testid="text-contact-cta-title"
-                    >
-                      {t.contactCta}
-                    </h2>
-                  }
-                >
-                  <dl className="grid gap-4 border-t border-ss-rule pt-6 text-base leading-[1.5] text-ss-tinta sm:grid-cols-3 sm:gap-x-6" data-testid="text-contact-cta-subtitle">
-                    <div>
-                      <dt className="ss-label text-ss-medio">{t.officeLabel}</dt>
-                      {/* <bdi>: en árabe el punto de "N.L." saltaba al principio de la línea */}
-                      <dd className="mt-1"><bdi>San Pedro Garza García, N.L.</bdi></dd>
-                    </div>
-                    {ownContact.phone && (
-                      <div>
-                        <dt className="ss-label text-ss-medio">{t.phoneLabel}</dt>
-                        <dd className="mt-1">
-                          {/* dir="ltr": en árabe el número se leía "2086 8335 81 52+" */}
-                          <a
-                            href={`tel:${ownContact.phone.replace(/\s+/g, "")}`}
-                            dir="ltr"
-                            className="text-ss-marino underline-offset-4 hover:underline"
-                            data-testid="button-call-contact"
-                          >
-                            {ownContact.phone}
-                          </a>
-                        </dd>
-                      </div>
-                    )}
-                    {ownContact.email && (
-                      <div>
-                        <dt className="ss-label text-ss-medio">{t.emailLabel}</dt>
-                        <dd className="mt-1 [overflow-wrap:anywhere]">
-                          <a
-                            href={`mailto:${ownContact.email}`}
-                            dir="ltr"
-                            className="text-ss-marino underline-offset-4 hover:underline"
-                            data-testid="button-email-contact"
-                          >
-                            {ownContact.email}
-                          </a>
-                        </dd>
-                      </div>
-                    )}
-                  </dl>
-                </SplitSection>
-              </section>
-            )}
-
-            {processedRankings && (
-              <section data-testid="section-rankings">
-                <SplitSection
-                  aside={
-                    <h2
-                      className="ss-h2-sm flex items-baseline gap-3"
-                      data-testid="text-rankings-title"
-                    >
-                      <span>{t.rankings}</span>
-                      <span
-                        className="ms-auto ss-label ss-num text-ss-medio"
-                        data-testid="badge-rankings-count"
+        {/* Cuerpo en piedra: la biografía a la izquierda (con lo que se lee como texto) y la ficha a
+            la derecha; en tableta y teléfono, una debajo de otra. Sin aparición al hacer scroll. */}
+        {(hasMain || hasFicha) && (
+          <div className="pf-cuerpo">
+            <div className="sh-wrap pf-cuerpo__in">
+              {hasMain && (
+                <div className="pf-principal">
+                  {hasBio && (
+                    <section className="pf-bloque pf-bio" data-testid="section-biography">
+                      <h2 className="pf-k" data-testid="text-biography-title">
+                        <span>{t.biography}</span>
+                        {isTranslating && <Spinner />}
+                      </h2>
+                      {/* Biografía sin traducción: bloque en el idioma de origen, marcado lang y
+                          dir="ltr" (en árabe, alineado a la izquierda, como el resumen de las
+                          prácticas); la entrada en la romana grande y el resto en el texto corrido */}
+                      <div
+                        data-testid="container-biography"
+                        lang={localizedBio.lang}
+                        dir={localizedBio.lang ? "ltr" : undefined}
                       >
-                        {processedRankings.totalCount}
-                      </span>
-                    </h2>
-                  }
-                >
-                  {processedRankings.tieredRankings.length > 0 && (
-                    <div className="mb-6" data-testid="container-tiered-rankings">
-                      <h3 className="ss-label text-ss-medio mb-2">
-                        {t.tieredRankings}
-                      </h3>
-                      <div>
-                        {processedRankings.tieredRankings.map((ranking, index) => (
-                          <RankingItemTranslated
+                        {displayBio ? (() => {
+                          // "Santos & Saucedo" sin partirse entre líneas (espacios duros, E16)
+                          const bioText = keepFirmName(displayBio);
+                          const paragraphs = bioText.split(/\n\s*\n/).map((p: string) => p.trim()).filter(Boolean);
+                          const [first, ...rest] = paragraphs.length ? paragraphs : [bioText];
+                          return (
+                            <LeadParagraph
+                              firstParagraph={first}
+                              restParagraphs={rest}
+                              testId="lead-biography"
+                            />
+                          );
+                        })() : (
+                          <p className="pf-espera">
+                            <Spinner />
+                            <span data-testid="text-translation-pending">
+                              {language === 'de' ? 'Übersetzung lädt…' :
+                               language === 'zh' ? '翻译加载中…' :
+                               language === 'ko' ? '번역 로딩 중…' :
+                               language === 'ja' ? '翻訳を読み込み中…' :
+                               language === 'ar' ? 'جاري تحميل الترجمة…' :
+                               language === 'ru' ? 'Загрузка перевода…' :
+                               language === 'fr' ? 'Traduction en cours…' :
+                               language === 'it' ? 'Caricamento traduzione…' :
+                               'Loading translation…'}
+                            </span>
+                          </p>
+                        )}
+                      </div>
+                    </section>
+                  )}
+
+                  {experience.length > 0 && (
+                    <Bloque title={t.experience} testId="section-experience" titleTestId="text-experience-title">
+                      <ul className="pf-lista" role="list">
+                        {experience.map((exp, index) => (
+                          <li key={index} className="pf-fila" data-testid={`item-experience-${index}`}>
+                            <span className="pf-fila__t">{language === "es" && exp.positionEs ? exp.positionEs : exp.position}</span>
+                            <span className="pf-fila__s">
+                              {exp.company}
+                              {(exp.startYear || exp.endYear) && (
+                                <span className="ss-num">
+                                  {exp.company ? " · " : ""}{exp.startYear}{exp.endYear ? `–${exp.endYear}` : ` – ${t.present}`}
+                                </span>
+                              )}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </Bloque>
+                  )}
+
+                  {publications.length > 0 && (
+                    <Bloque title={t.publications} testId="section-publications" titleTestId="text-publications-title">
+                      <ul className="pf-lista" role="list">
+                        {publications.map((pub, index) => (
+                          <PublicationItemTranslated
                             key={index}
-                            ranking={ranking}
+                            pub={pub}
                             index={index}
                             language={language}
-                            memberId={member?.id?.toString() || ''}
-                            isTiered={true}
-                            getPublicationIcon={getPublicationIcon}
+                            memberId={memberId}
+                            viewPublicationText={t.viewPublication}
                           />
                         ))}
-                      </div>
-                    </div>
+                      </ul>
+                    </Bloque>
                   )}
 
-                  {processedRankings.simpleRankings.length > 0 && (
-                    <div data-testid="container-simple-rankings">
-                      {processedRankings.tieredRankings.length > 0 && (
-                        <h3 className="ss-label text-ss-medio mb-2">
-                          {t.otherRecognitions}
-                        </h3>
-                      )}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-                        {processedRankings.simpleRankings.map((ranking, index) => (
-                          <RankingItemTranslated
+                  {matters.length > 0 && (
+                    <Bloque title={t.representativeMatters} testId="section-representative-matters" titleTestId="text-representative-matters-title">
+                      <ul className="pf-lista" role="list">
+                        {matters.map((matter, index) => (
+                          <RepresentativeMatterTranslated
                             key={index}
-                            ranking={ranking}
-                            index={processedRankings.tieredRankings.length + index}
+                            matter={matter}
+                            index={index}
                             language={language}
-                            memberId={member?.id?.toString() || ''}
-                            isTiered={false}
-                            getPublicationIcon={getPublicationIcon}
+                            memberId={memberId}
                           />
                         ))}
-                      </div>
-                    </div>
+                      </ul>
+                    </Bloque>
                   )}
-                </SplitSection>
-              </section>
-            )}
+                </div>
+              )}
 
-            {/* Reconocimiento destacado (antes en el lateral): cifra y publicaciones principales */}
-            {processedRankings && (
-              <section data-testid="section-featured-recognition">
-                <SplitSection
-                  aside={
-                    <h2
-                      className="ss-h2-sm"
-                      data-testid="text-featured-recognition-title"
-                    >
-                      {t.featuredRecognition}
-                    </h2>
-                  }
-                >
-                  <div className="flex items-baseline gap-3 mb-5">
-                    <span
-                      className="ss-figure text-[44px]"
-                      data-testid="text-total-recognitions-count"
-                    >
-                      {processedRankings.totalCount}
-                    </span>
-                    <span className="ss-label text-ss-medio">
-                      {t.totalRecognitions}
-                    </span>
-                  </div>
-
-                  {processedRankings.topPublications.length > 0 && (
-                    <div data-testid="container-top-publications">
-                      <p className="ss-label text-ss-medio mb-2">
-                        {t.topPublications}
-                      </p>
-                      <div className="space-y-2">
-                        {processedRankings.topPublications.map((pub, index) => (
-                          <div
-                            key={index}
-                            className="text-base text-ss-tinta"
-                            data-testid={`item-top-publication-${index}`}
-                          >
-                            <span className="block truncate">{pub}</span>
-                          </div>
+              {hasFicha && (
+                <div className="pf-ficha">
+                  {/* Prácticas e industrias: solo las que trae el registro de la persona */}
+                  {memberPracticeGroups.length > 0 && (
+                    <Bloque title={t.practiceAreas} testId="section-practice-areas" titleTestId="text-practice-areas-title">
+                      <ul className="pf-lista" role="list">
+                        {memberPracticeGroups.map((group) => (
+                          <PracticeGroupLink key={group.id} group={group} language={language} />
                         ))}
-                      </div>
-                    </div>
+                      </ul>
+                    </Bloque>
                   )}
-                </SplitSection>
-              </section>
-            )}
 
-            {memberPracticeGroups.length > 0 && (
-              <section data-testid="section-practice-areas">
-                <SplitSection
-                  aside={
-                    <h2
-                      className="ss-h2-sm"
-                      data-testid="text-practice-areas-title"
-                    >
-                      {t.practiceAreas}
-                    </h2>
-                  }
-                >
-                  <div className="flex flex-wrap gap-2">
-                    {memberPracticeGroups.map((group) => (
-                      <PracticeGroupBadge
-                        key={group.id}
-                        group={group}
-                        language={language}
-                      />
-                    ))}
-                  </div>
-                </SplitSection>
-              </section>
-            )}
+                  {memberIndustryGroups.length > 0 && (
+                    <Bloque title={t.industryGroups} testId="section-industry-groups" titleTestId="text-industry-groups-title">
+                      <ul className="pf-lista" role="list">
+                        {memberIndustryGroups.map((group) => (
+                          <IndustryGroupItem key={group.id} group={group} language={language} />
+                        ))}
+                      </ul>
+                    </Bloque>
+                  )}
 
-            {memberIndustryGroups.length > 0 && (
-              <section data-testid="section-industry-groups">
-                <SplitSection
-                  aside={
-                    <h2
-                      className="ss-h2-sm"
-                      data-testid="text-industry-groups-title"
-                    >
-                      {t.industryGroups}
-                    </h2>
-                  }
-                >
-                  <div className="flex flex-wrap gap-2">
-                    {memberIndustryGroups.map((group) => (
-                      <IndustryGroupBadge
-                        key={group.id}
-                        group={group}
-                        language={language}
-                      />
-                    ))}
-                  </div>
-                </SplitSection>
-              </section>
-            )}
-
-            {member?.education && member.education.length > 0 && (
-              <section data-testid="section-education">
-                <SplitSection
-                  aside={
-                    <h2
-                      className="ss-h2-sm"
-                      data-testid="text-education-title"
-                    >
-                      {t.education}
-                    </h2>
-                  }
-                >
-                  <div className="space-y-4">
-                    {(member.education as Education[]).map((edu, index) => (
-                      <EducationItemTranslated
-                        key={index}
-                        edu={edu}
-                        index={index}
-                        language={language}
-                        memberId={member.id.toString()}
-                      />
-                    ))}
-                  </div>
-                </SplitSection>
-              </section>
-            )}
-
-            {member?.barAdmissions && member.barAdmissions.length > 0 && (
-              <section data-testid="section-bar-admissions">
-                <SplitSection
-                  aside={
-                    <h2
-                      className="ss-h2-sm"
-                      data-testid="text-bar-admissions-title"
-                    >
-                      {t.barAdmissions}
-                    </h2>
-                  }
-                >
-                  <div className="flex flex-wrap gap-3">
-                    {(member.barAdmissions as BarAdmission[]).map((admission, index) => (
-                      <BarAdmissionItemTranslated
-                        key={index}
-                        admission={admission}
-                        index={index}
-                        language={language}
-                        memberId={member.id.toString()}
-                      />
-                    ))}
-                  </div>
-                </SplitSection>
-              </section>
-            )}
-
-            {member?.languages && member.languages.length > 0 && (
-              <section data-testid="section-languages">
-                <SplitSection
-                  aside={
-                    <h2
-                      className="ss-h2-sm"
-                      data-testid="text-languages-title"
-                    >
-                      {t.languages}
-                    </h2>
-                  }
-                >
-                  <div className="flex flex-wrap gap-3">
-                    {(member.languages as string[]).map((lang, index) => (
-                      <LanguageItemTranslated
-                        key={index}
-                        lang={lang}
-                        index={index}
-                        language={language}
-                        memberId={member.id.toString()}
-                      />
-                    ))}
-                  </div>
-                </SplitSection>
-              </section>
-            )}
-
-            {member?.affiliations && member.affiliations.length > 0 && (
-              <section data-testid="section-affiliations">
-                <SplitSection
-                  aside={
-                    <h2
-                      className="ss-h2-sm"
-                      data-testid="text-affiliations-title"
-                    >
-                      {t.affiliations}
-                    </h2>
-                  }
-                >
-                  <div className="space-y-3">
-                    {(member.affiliations as Affiliation[]).map((affiliation, index) => (
-                      <AffiliationItemTranslated
-                        key={index}
-                        affiliation={affiliation}
-                        index={index}
-                        language={language}
-                        memberId={member.id.toString()}
-                      />
-                    ))}
-                  </div>
-                </SplitSection>
-              </section>
-            )}
-
-            {member?.publications && member.publications.length > 0 && (
-              <section data-testid="section-publications">
-                <SplitSection
-                  aside={
-                    <h2
-                      className="ss-h2-sm"
-                      data-testid="text-publications-title"
-                    >
-                      {t.publications}
-                    </h2>
-                  }
-                >
-                  <div className="space-y-4">
-                    {(member.publications as Publication[]).map((pub, index) => (
-                      <PublicationItemTranslated
-                        key={index}
-                        pub={pub}
-                        index={index}
-                        language={language}
-                        memberId={member.id.toString()}
-                        viewPublicationText={t.viewPublication}
-                      />
-                    ))}
-                  </div>
-                </SplitSection>
-              </section>
-            )}
-
-            {member?.representativeMatters && member.representativeMatters.length > 0 && (
-              <section data-testid="section-representative-matters">
-                <SplitSection
-                  aside={
-                    <h2
-                      className="ss-h2-sm"
-                      data-testid="text-representative-matters-title"
-                    >
-                      {t.representativeMatters}
-                    </h2>
-                  }
-                >
-                  <div className="space-y-3">
-                    {(member.representativeMatters as RepresentativeMatter[]).map((matter, index) => (
-                      <RepresentativeMatterTranslated
-                        key={index}
-                        matter={matter}
-                        index={index}
-                        language={language}
-                        memberId={member.id.toString()}
-                      />
-                    ))}
-                  </div>
-                </SplitSection>
-              </section>
-            )}
-
-            {member?.experience && member.experience.length > 0 && (
-              <section data-testid="section-experience">
-                <SplitSection
-                  aside={
-                    <h2
-                      className="ss-h2-sm"
-                      data-testid="text-experience-title"
-                    >
-                      {t.experience}
-                    </h2>
-                  }
-                >
-                  <div className="space-y-4">
-                    {(member.experience as any[]).map((exp, index) => (
-                      <div
-                        key={index}
-                        className="border-s border-ss-rule ps-4 py-1"
-                        data-testid={`item-experience-${index}`}
-                      >
-                        <p className="font-semibold text-ss-tinta">
-                          {language === "es" && exp.positionEs ? exp.positionEs : exp.position}
-                        </p>
-                        <p className="text-ss-medio">
-                          {exp.company}
-                          {(exp.startYear || exp.endYear) && (
-                            <span className="ml-2 text-base">
-                              ({exp.startYear}{exp.endYear ? ` - ${exp.endYear}` : ' - Present'})
-                            </span>
-                          )}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </SplitSection>
-              </section>
-            )}
-
-            {/* Equipo relacionado: el h2 en el aside y las personas en el cuerpo, con filete
-                superior en cada una (como mucho tres: la fila de tableta se llena). Mientras llega
-                /api/team, su esqueleto ocupa el sitio. */}
-            {isLoadingTeam && <RelatedTeamSkeleton />}
-            {relatedMembers && relatedMembers.length > 0 && (
-              <section data-testid="section-related-team">
-                <SplitSection
-                  aside={
-                    // Mismo nivel que "Biografía" y "Más del Monitor Laboral" (.ss-h2-sm, E7)
-                    <h2
-                      className="ss-h2-sm"
-                      data-testid="text-related-team-title"
-                    >
-                      {t.relatedTeam}
-                    </h2>
-                  }
-                >
-                  <div className={RELATED_GRID}>
-                    {relatedMembers.map((relatedMember) => (
-                      <RelatedTeamMemberCard
-                        key={relatedMember.id}
-                        relatedMember={relatedMember}
-                        language={language}
-                        getInitials={getInitials}
-                      />
-                    ))}
-                  </div>
-                </SplitSection>
-              </section>
-            )}
-          </div>
-
-          {relatedNews && relatedNews.length > 0 && (
-            <section
-              className="mt-16 pt-12"
-              data-testid="section-related-news"
-            >
-              <div className="ss-container">
-                <h2 
-                  className="ss-h2-sm mb-8"
-                  data-testid="text-related-news-title"
-                >
-                  {t.relatedNews}
-                </h2>
-                {/* Filas de filete, como la lista del Monitor Laboral: categoría y fecha en etiqueta,
-                    titular en la romana que es el enlace y entradilla; sin foto, loseta ni "Leer más" */}
-                <ul className="border-t border-ss-rule">
-                  {relatedNews.map((article) => {
-                    const headline = language === "es" ? article.titleEs : article.title;
-                    const category = article.category
-                      ? (language === "es" ? article.categoryEs : article.category.charAt(0).toUpperCase() + article.category.slice(1))
-                      : null;
-                    const date = formatDate(article.date);
-                    return (
-                      <li
-                        key={article.id}
-                        className="grid grid-cols-1 gap-y-3 border-b border-ss-rule py-8 lg:grid-cols-12 lg:gap-x-6"
-                        data-testid={`card-related-news-${article.slug}`}
-                      >
-                        <p className="ss-label ss-num lg:col-span-4 lg:pt-2 [&_span]:[font-size:inherit]">
-                          {category && (
-                            <span className="text-ss-marino" data-testid={`badge-news-category-${article.slug}`}>
-                              {category}
-                            </span>
-                          )}
-                          {category && date && <span aria-hidden="true" className="text-ss-medio"> · </span>}
-                          <span className="text-ss-medio" data-testid={`text-news-date-${article.slug}`}>
-                            {date}
-                          </span>
-                        </p>
-                        <div className="lg:col-span-7 lg:col-start-5 xl:col-span-6">
-                          <h3
-                            className="ss-display text-[clamp(22px,1.7vw,25px)] font-normal leading-[1.25] tracking-[-0.01em] text-ss-marino"
-                            data-testid={`text-news-title-${article.slug}`}
-                          >
-                            <Link
-                              href={`/news/${article.slug}`}
-                              className="inline-link hover:underline decoration-1 underline-offset-4"
-                            >
-                              {headline}
-                            </Link>
-                          </h3>
-                          {(language === "es" ? article.excerptEs : article.excerpt) && (
-                            <p
-                              className="mt-3 text-[16px] leading-[1.55] text-ss-tinta [text-wrap:pretty]"
-                              data-testid={`text-news-excerpt-${article.slug}`}
-                            >
-                              {language === "es" ? article.excerptEs : article.excerpt}
-                            </p>
-                          )}
+                  {/* Contacto: solo con un teléfono o un correo propios, y solo esos; los generales
+                      de la firma ya están en el pie (E7, G6). In memoriam, nada. */}
+                  {showContactList && (
+                    <Bloque title={t.contactCta} testId="section-contact-cta" titleTestId="text-contact-cta-title">
+                      <dl className="pf-datos" data-testid="text-contact-cta-subtitle">
+                        <div>
+                          <dt>{t.officeLabel}</dt>
+                          {/* <bdi>: en árabe el punto de "N.L." saltaba al principio de la línea */}
+                          <dd><bdi>San Pedro Garza García, N.L.</bdi></dd>
                         </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            </section>
-          )}
+                        {ownContact.phone && (
+                          <div>
+                            <dt>{t.phoneLabel}</dt>
+                            <dd>
+                              {/* dir="ltr": en árabe el número se leía al revés */}
+                              <a href={`tel:${ownContact.phone.replace(/\s+/g, "")}`} dir="ltr" data-testid="button-call-contact">
+                                {ownContact.phone}
+                              </a>
+                            </dd>
+                          </div>
+                        )}
+                        {ownContact.email && (
+                          <div>
+                            <dt>{t.emailLabel}</dt>
+                            <dd>
+                              <a href={`mailto:${ownContact.email}`} dir="ltr" data-testid="button-email-contact">
+                                {ownContact.email}
+                              </a>
+                            </dd>
+                          </div>
+                        )}
+                      </dl>
+                    </Bloque>
+                  )}
+
+                  {education.length > 0 && (
+                    <Bloque title={t.education} testId="section-education" titleTestId="text-education-title">
+                      <ul className="pf-lista" role="list">
+                        {education.map((edu, index) => (
+                          <EducationItemTranslated key={index} edu={edu} index={index} language={language} memberId={memberId} />
+                        ))}
+                      </ul>
+                    </Bloque>
+                  )}
+
+                  {barAdmissions.length > 0 && (
+                    <Bloque title={t.barAdmissions} testId="section-bar-admissions" titleTestId="text-bar-admissions-title">
+                      <ul className="pf-lista" role="list">
+                        {barAdmissions.map((admission, index) => (
+                          <BarAdmissionItemTranslated key={index} admission={admission} index={index} language={language} memberId={memberId} />
+                        ))}
+                      </ul>
+                    </Bloque>
+                  )}
+
+                  {languagesList.length > 0 && (
+                    <Bloque title={t.languages} testId="section-languages" titleTestId="text-languages-title">
+                      <ul className="pf-linea" role="list">
+                        {languagesList.map((l, index) => (
+                          <LanguageItemTranslated key={index} lang={l} index={index} language={language} memberId={memberId} />
+                        ))}
+                      </ul>
+                    </Bloque>
+                  )}
+
+                  {affiliations.length > 0 && (
+                    <Bloque title={t.affiliations} testId="section-affiliations" titleTestId="text-affiliations-title">
+                      <ul className="pf-lista" role="list">
+                        {affiliations.map((affiliation, index) => (
+                          <AffiliationItemTranslated key={index} affiliation={affiliation} index={index} language={language} memberId={memberId} />
+                        ))}
+                      </ul>
+                    </Bloque>
+                  )}
+
+                  {processedRankings && (
+                    <Bloque
+                      title={<><span>{t.rankings}</span><span className="pf-num" data-testid="badge-rankings-count">{processedRankings.totalCount}</span></>}
+                      testId="section-rankings"
+                      titleTestId="text-rankings-title"
+                    >
+                      {processedRankings.tieredRankings.length > 0 && (
+                        <div data-testid="container-tiered-rankings">
+                          <h3 className="pf-k3">{t.tieredRankings}</h3>
+                          <ul className="pf-lista" role="list">
+                            {processedRankings.tieredRankings.map((ranking, index) => (
+                              <RankingItemTranslated key={index} ranking={ranking} index={index} language={language} memberId={memberId} isTiered />
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {processedRankings.simpleRankings.length > 0 && (
+                        <div data-testid="container-simple-rankings">
+                          {processedRankings.tieredRankings.length > 0 && <h3 className="pf-k3">{t.otherRecognitions}</h3>}
+                          <ul className="pf-lista pf-lista--2" role="list">
+                            {processedRankings.simpleRankings.map((ranking, index) => (
+                              <RankingItemTranslated
+                                key={index}
+                                ranking={ranking}
+                                index={processedRankings.tieredRankings.length + index}
+                                language={language}
+                                memberId={memberId}
+                                isTiered={false}
+                              />
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </Bloque>
+                  )}
+
+                  {/* Reconocimiento destacado: la cifra y las publicaciones principales */}
+                  {processedRankings && (
+                    <Bloque title={t.featuredRecognition} testId="section-featured-recognition" titleTestId="text-featured-recognition-title">
+                      <div className="pf-cifra">
+                        <span className="pf-cifra__n" data-testid="text-total-recognitions-count">{processedRankings.totalCount}</span>
+                        <span className="pf-cifra__l">{t.totalRecognitions}</span>
+                      </div>
+                      {processedRankings.topPublications.length > 0 && (
+                        <div data-testid="container-top-publications">
+                          <h3 className="pf-k3">{t.topPublications}</h3>
+                          <ul className="pf-lista" role="list">
+                            {processedRankings.topPublications.map((pub, index) => (
+                              <li key={index} className="pf-fila" data-testid={`item-top-publication-${index}`}>
+                                <span className="pf-fila__t">{pub}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </Bloque>
+                  )}
+
+                  {/* Equipo relacionado: como mucho tres. Mientras llega /api/team, su esqueleto. */}
+                  {isLoadingTeam && <RelatedTeamSkeleton title={t.relatedTeam} />}
+                  {showRelated && (
+                    <Bloque title={t.relatedTeam} testId="section-related-team" titleTestId="text-related-team-title">
+                      <ul className="pf-lista pf-lista--eq" role="list">
+                        {relatedMembers!.map((relatedMember) => (
+                          <RelatedTeamMemberCard
+                            key={relatedMember.id}
+                            relatedMember={relatedMember}
+                            language={language}
+                            getInitials={getInitials}
+                          />
+                        ))}
+                      </ul>
+                    </Bloque>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Notas del Monitor Laboral de la persona: filas de filete con categoría y fecha en
+            versalita, titular en la romana (el enlace) y entradilla */}
+        {relatedNews && relatedNews.length > 0 && (
+          <section className="pf-notas" data-testid="section-related-news">
+            <div className="sh-wrap">
+              <h2 className="pf-k" data-testid="text-related-news-title">{t.relatedNews}</h2>
+              <ul className="pf-notas__lista" role="list">
+                {relatedNews.map((article) => {
+                  const headline = language === "es" ? article.titleEs : article.title;
+                  const category = article.category
+                    ? (language === "es" ? article.categoryEs : article.category.charAt(0).toUpperCase() + article.category.slice(1))
+                    : null;
+                  const date = formatDate(article.date);
+                  const excerpt = language === "es" ? article.excerptEs : article.excerpt;
+                  return (
+                    <li key={article.id} className="pf-nota" data-testid={`card-related-news-${article.slug}`}>
+                      <p className="pf-nota__k ss-num">
+                        {category && (
+                          <span className="pf-nota__cat" data-testid={`badge-news-category-${article.slug}`}>{category}</span>
+                        )}
+                        {category && date && <span aria-hidden="true"> · </span>}
+                        <span data-testid={`text-news-date-${article.slug}`}>{date}</span>
+                      </p>
+                      <div>
+                        <h3 className="pf-nota__t" data-testid={`text-news-title-${article.slug}`}>
+                          <Link href={`/news/${article.slug}`}>{headline}</Link>
+                        </h3>
+                        {excerpt && (
+                          <p className="pf-nota__p" data-testid={`text-news-excerpt-${article.slug}`}>{excerpt}</p>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </section>
+        )}
+
+        {/* Siguiente: el próximo socio (o la próxima persona de su grupo); tras el último, Contacto */}
+        <div {...attrs}>
+          <V3NextPage
+            href={nextMember ? `/team/${nextMember.slug}` : internal(cmsLinks.contact, "/contact")}
+            label={nextMember && member?.isPartner ? P.nextPartner : P.next}
+            title={nextMember ? nextMember.name : (ownLang ? navLabels[5].label : P.nextTitle)}
+            ariaLabel={P.nextAria}
+          />
         </div>
-      </main>
+      </V3Main>
 
       <Footer />
     </div>

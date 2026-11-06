@@ -1,32 +1,29 @@
+/* Suscripción al Monitor Laboral (/newsletter) con el diseño de la demo v3 (aprobada el 5-11-2026): como
+   Contacto en la demo, el título y la frase a la izquierda y el formulario en el panel azul (sh-form) a la
+   derecha; al final, la página siguiente (el Monitor Laboral). El formulario es el de siempre: el correo,
+   la casilla del aviso de privacidad y el campo trampa, POST /api/newsletter (en el build estático, el
+   programa de correo), con los avisos de éxito, error y límite de envíos. Textos: panel «newsletter»
+   (10 idiomas) y «forms» (activar o desactivar el formulario). */
 import cmsDefaults from "@shared/cms-defaults.json";
-import { HeroKicker } from "@/components/editorial/HeroKicker";
-import "@/styles/careers-contact.css";
 import { useCmsContent } from "@/hooks/useCmsContent";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link } from "wouter";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, isStaticSite } from "@/lib/queryClient";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead, { detailTitle } from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { SplitSection } from "@/components/home26/primitives";
 import { useSiteContact } from "@/components/home26/useSiteContact";
-import type { LanguageCode } from "@shared/schema";
+import { chrome26 } from "@/components/home26/chrome26";
+import type { LanguageCode, News } from "@shared/schema";
+import { V3Main, V3NextPage } from "@/v3/shared";
+import { MONITOR_RELATED, etiquetaSiguiente, useMonitorIntro } from "@/v3/paginas-sitio/textos";
+import { MonitorNotas } from "@/v3/paginas-sitio/Monitor";
+import "@/v3/paginas-sitio/paginas.css";
 
 // Boletín (redacción, "Al pie del Monitor"): una frase, el correo, la casilla del aviso de
 // privacidad y "Suscribirme". Sin beneficios, frecuencia ni "nunca será compartida", y sin
@@ -277,6 +274,17 @@ export default function Newsletter() {
   // Correo de la firma (/api/site-content, el mismo del pie y de Contacto) para el respaldo del
   // build estático
   const firmEmail = useSiteContact(language === "en" ? "en" : "es").email;
+  // Página siguiente: el Monitor Laboral, con la etiqueta del menú (nav[3]) en cada idioma
+  const liveChrome = useCmsContent("chrome", chrome26);
+  const nav = (liveChrome[language as keyof typeof chrome26] ?? liveChrome.en).nav;
+  const nextLabel = etiquetaSiguiente(language);
+  // La entrada: la frase con que el sitio presenta el Monitor (la de /news y la portada)
+  const intro = useMonitorIntro(language);
+  // Al pie, las tres notas más recientes (si hay alguna publicada), como al pie de cada nota
+  const related = useCmsContent("news-detail", MONITOR_RELATED);
+  const relatedTitle = (related[language] ?? related.en).relatedNews;
+  const { data: allNews } = useQuery<News[]>({ queryKey: ["/api/news"] });
+  const hasNews = !!allNews?.some((item) => item.published !== false);
 
   const formSettings = useCmsContent("forms",cmsDefaults.forms).newsletter;
   const form = useForm<NewsletterFormData>({
@@ -287,6 +295,7 @@ export default function Newsletter() {
       website: "",
     },
   });
+  const { errors, submitCount } = form.formState;
 
   const newsletterMutation = useMutation({
     // El correo y el idioma de la interfaz (preferredLanguage: el servidor guarda solo los
@@ -334,137 +343,119 @@ export default function Newsletter() {
     newsletterMutation.mutate(data);
   };
 
+  const emailError = errors.email?.message;
+  const consentError = submitCount > 0 ? errors.consent?.message : undefined;
+
   return (
-    <div className="min-h-screen bg-background" data-testid="page-newsletter">
+    <div className="ss26 min-h-screen" data-testid="page-newsletter">
       {/* Título de la pestaña = h1 (E5) */}
       <SEOHead page="newsletter" language={language} customTitle={detailTitle(t.title)} />
       <Header />
 
-      {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo
-          salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
-          siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
-      <main id="main-content">
-      <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-newsletter-hero">
-        <div className="ss-container">
-          <div className="max-w-3xl">
-            <HeroKicker page="newsletter" testId="text-newsletter-kicker" />
-            {/* Sin subtítulo en el héroe: la frase va en el cuerpo, sobre el formulario (G1) */}
-            <h1
-              id="newsletter-title"
-              data-testid="text-newsletter-title"
-            >
-              {t.title}
-            </h1>
-          </div>
-        </div>
-      </section>
+      <V3Main vista="boletin">
+        <div className="ps">
+          <section className="sh-contacto ps-bol" aria-labelledby="newsletter-title">
+            <div className="sh-wrap sh-contacto__grid">
+              {/* El título (h1) y la frase que presenta el Monitor, como los datos de Contacto en la demo */}
+              <div className="sh-contacto__datos" data-testid="section-newsletter-hero">
+                <h1 id="newsletter-title" className="sh-h2" tabIndex={-1} data-testid="text-newsletter-title">{t.title}</h1>
+                {intro ? <p className="sh-lead">{intro}</p> : null}
+              </div>
 
-      <div className="py-16 lg:py-20">
-        <div className="ss-container">
-          {/* Rejilla editorial de la portada (SplitSection, G1): la frase y el formulario en el
-              cuerpo, desde la columna 5; el aside queda vacío (y no ocupa sitio bajo lg). Sin
-              entrada al aparecer (G3). */}
-          <section aria-labelledby="newsletter-title" data-testid="section-newsletter-form">
-            <SplitSection asideClassName="hidden lg:block">
-              <div className="max-w-xl">
-                <p className="ss-lead mb-8" data-testid="text-newsletter-subtitle">
-                  {t.subtitle}
-                </p>
-                {!formSettings.enabled?<p role="status" className="border-t border-ss-rule py-6">{formSettings.disabledMessage[language as "es"|"en"]||formSettings.disabledMessage.en}</p>:<Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="public-form-card public-form-card--newsletter space-y-6" data-testid="form-newsletter">
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel data-testid="label-email">{t.emailLabel}</FormLabel>
-                          <FormControl>
-                            {/* 44 px: el objetivo táctil del sitio. En px y no h-11 (rem): bajo 360 px
-                                el html baja a 14 px y h-11 quedaba en 38,5 px */}
-                            <Input
-                              className="h-[44px]"
-                              type="email"
-                              autoComplete="email"
-                              {...field}
-                              data-testid="input-email"
-                            />
-                          </FormControl>
-                          <FormMessage data-testid="error-email" />
-                        </FormItem>
-                      )}
-                    />
+              {/* El formulario en el panel azul. Sin entrada al aparecer (G3). */}
+              <div data-testid="section-newsletter-form">
+                {!formSettings.enabled ? (
+                  <div className="sh-form">
+                    <h2 className="sh-form__h" data-testid="text-newsletter-subtitle">{t.subtitle}</h2>
+                    <p role="status" className="ps-bol__p">
+                      {formSettings.disabledMessage[language as "es" | "en"] || formSettings.disabledMessage.en}
+                    </p>
+                  </div>
+                ) : (
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="sh-form"
+                    noValidate
+                    aria-labelledby="newsletter-form-h"
+                    data-testid="form-newsletter"
+                  >
+                    {/* La frase del panel (con su punto), como «Escríbanos» en el formulario de la demo */}
+                    <h2 id="newsletter-form-h" className="sh-form__h" data-testid="text-newsletter-subtitle">{t.subtitle}</h2>
+                    <div className="sh-campo">
+                      <label htmlFor="bol-correo" data-testid="label-email">{t.emailLabel}</label>
+                      <input
+                        id="bol-correo"
+                        type="email"
+                        autoComplete="email"
+                        aria-invalid={emailError ? true : undefined}
+                        aria-describedby={emailError ? "bol-correo-error" : undefined}
+                        {...form.register("email")}
+                        data-testid="input-email"
+                      />
+                      {emailError ? (
+                        <p id="bol-correo-error" className="sh-error" data-testid="error-email">{emailError}</p>
+                      ) : null}
+                    </div>
 
-                    {/* Casilla del aviso de privacidad: el ::before amplía el área táctil a 44 px
-                        (min-h-0: en teléfono, index.css da 44 px de alto a todo botón y la casilla
-                        salía estirada); la etiqueta entera también la marca (el enlace no: navega).
-                        inline-link: el enlace sigue en la línea, sin el alto mínimo de los enlaces. */}
-                    <FormField
-                      control={form.control}
-                      name="consent"
-                      render={({ field }) => (
-                        <FormItem>
-                          <div className="flex items-start gap-3">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={(checked) => field.onChange(checked === true)}
-                                onBlur={field.onBlur}
-                                name={field.name}
-                                ref={field.ref}
-                                className="relative mt-[3px] h-5 min-h-0 w-5 border-ss-medio data-[state=checked]:border-primary before:absolute before:-inset-3"
-                                data-testid="checkbox-consent"
-                              />
-                            </FormControl>
-                            <FormLabel
-                              className="text-[18px] font-normal leading-[1.5] text-ss-tinta"
-                              data-testid="label-consent"
-                            >
-                              {t.consentBefore}
-                              <Link
-                                href="/privacy-policy"
-                                className="inline-link text-ss-marino underline decoration-ss-input underline-offset-4 hover:decoration-ss-marino"
-                                data-testid="link-consent-privacy"
-                              >
-                                {t.consentLink}
-                              </Link>
-                              {t.consentAfter}
-                            </FormLabel>
-                          </div>
-                          {form.formState.submitCount>0&&<FormMessage data-testid="error-consent" />}
-                        </FormItem>
-                      )}
-                    />
+                    {/* La casilla del aviso de privacidad: la etiqueta entera la marca (el enlace no:
+                        navega). El aviso de error, solo después del primer envío. */}
+                    <div className="ps-bol__campo-check">
+                      <label className="sh-check" data-testid="label-consent">
+                        <input
+                          type="checkbox"
+                          aria-invalid={consentError ? true : undefined}
+                          aria-describedby={consentError ? "bol-aviso-error" : undefined}
+                          {...form.register("consent")}
+                          data-testid="checkbox-consent"
+                        />
+                        <span>
+                          {t.consentBefore}
+                          <Link href="/privacy-policy" data-testid="link-consent-privacy">{t.consentLink}</Link>
+                          {t.consentAfter}
+                        </span>
+                      </label>
+                      {consentError ? (
+                        <p id="bol-aviso-error" className="sh-error" data-testid="error-consent">{consentError}</p>
+                      ) : null}
+                    </div>
 
                     {/* Campo trampa (J4): fuera de la vista (sr-only, sin desbordar en árabe) y de
                         los lectores de pantalla (aria-hidden), fuera del orden del teclado y sin
                         autocompletar. Solo un programa lo rellena. */}
                     <div className="sr-only" aria-hidden="true">
-                      <input
-                        type="text"
-                        tabIndex={-1}
-                        autoComplete="off"
-                        {...form.register("website")}
-                        data-testid="input-website"
-                      />
+                      <input type="text" tabIndex={-1} autoComplete="off" {...form.register("website")} data-testid="input-website" />
                     </div>
 
-                    {/* Enviar: el único botón Azul Marino lleno, 44 px de alto */}
-                    <Button
-                      type="submit"
-                      className="min-h-[44px] w-full px-6 sm:w-auto"
-                      disabled={newsletterMutation.isPending}
-                      data-testid="button-subscribe"
-                    >
+                    <button type="submit" className="sh-btn" disabled={newsletterMutation.isPending} data-testid="button-subscribe">
                       {newsletterMutation.isPending ? t.submitting : t.submit}
-                    </Button>
+                    </button>
                   </form>
-                </Form>}
+                )}
               </div>
-            </SplitSection>
+            </div>
           </section>
+
+          {hasNews ? (
+            <section className="ps-rel ps-rel--bol" aria-labelledby="bol-rel-h" data-testid="section-newsletter-news">
+              <div className="sh-wrap">
+                <div className="ps-rel__cab">
+                  <h2 id="bol-rel-h" className="sh-h2">{relatedTitle}</h2>
+                </div>
+                <MonitorNotas
+                  limit={3}
+                  headingLevel="h3"
+                  testIds={{
+                    row: (item) => `card-newsletter-news-${item.id}`,
+                    title: (item) => `text-newsletter-news-title-${item.id}`,
+                  }}
+                />
+              </div>
+            </section>
+          ) : null}
+
+          <V3NextPage href="/news" label={nextLabel} title={nav[3].label} ariaLabel={nextLabel} />
         </div>
-      </div>
-      </main>
+      </V3Main>
 
       <Footer />
     </div>

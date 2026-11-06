@@ -69,6 +69,9 @@ export function initPie(capa: HTMLElement): () => void {
     else { recienVista = true; despertar(); }
   }
   if (rm) { sube.style.transform = ""; sube.style.opacity = ""; }
+  // Primer cuadro al montar (antes de pintar, desde useLayoutEffect): con el pie ya a la vista (páginas
+  // cortas), la § no aparece asentada para luego saltar a su posición de entrada
+  else cuadroPie(16.7);
 
   if ("IntersectionObserver" in w) {
     const io = new IntersectionObserver((es) => {

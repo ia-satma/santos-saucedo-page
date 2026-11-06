@@ -100,6 +100,9 @@ function paint() {
   const navy = channels(current.navy), marino = channels(current.marino);
   const lime = channels(current.lime), paper = channels(current.paper);
   if (navy) set("--ss-navy-rgb", navy.join(" "));
+  // Páginas v3 (client/src/v3/tema.css): con un azul distinto del de la junta, sus tonos claro y hondo
+  // salen del azul elegido; con el de la junta quedan los de la demo aprobada
+  html.toggleAttribute("data-ss-azul-propio", !!marino && (current.marino ?? "").toLowerCase() !== "#0f3f6b");
   if (marino) {
     set("--ss-marino-rgb", marino.join(" "));
     set("--primary", hsl(marino));

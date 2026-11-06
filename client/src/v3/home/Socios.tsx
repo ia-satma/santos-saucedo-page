@@ -7,6 +7,8 @@ import { useMemo, useRef } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import type { TeamMember } from "@shared/schema";
+import { useCmsContent } from "@/hooks/useCmsContent";
+import { home26 } from "@/components/home26/content";
 import { CONFIRMED_PARTNER_SLUGS, fallbackToOriginalSrc, getTeamPhotoSrcSet } from "@/lib/teamPhotoSources";
 import { useV3Module, type V3Lang } from "@/v3/shared";
 import { homeCopy, PARTNERS_FALLBACK } from "./copy";
@@ -31,6 +33,8 @@ function usePartners(lang: V3Lang): Partner[] {
 export function SociosBand({ lang }: { lang: V3Lang }) {
   const ref = useRef<HTMLElement>(null);
   const t = homeCopy[lang].socios;
+  // El titular, del panel (home.socios.title); el botón, de copy.ts
+  const titulo = useCmsContent("home", home26)[lang].socios.title;
   const people = usePartners(lang);
   useV3Module(ref, initSocini, [people.map((p) => p.slug + p.imageUrl).join("|")]);
 
@@ -38,7 +42,7 @@ export function SociosBand({ lang }: { lang: V3Lang }) {
     <section ref={ref} className="sh-socini" aria-labelledby="ini-socios-h" data-socini="">
       <div className="sh-wrap sh-socini__grid">
         <div className="sh-socini__cab">
-          <h2 id="ini-socios-h" className="sh-h2">{t.titulo}</h2>
+          <h2 id="ini-socios-h" className="sh-h2">{titulo}</h2>
           <figure className="sh-socini__foto" aria-hidden="true">
             {people.map((p, i) => {
               const srcSet = getTeamPhotoSrcSet(p.imageUrl);

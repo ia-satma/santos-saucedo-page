@@ -22,7 +22,6 @@ export type SociosTexts = {
   next: string;
   nextAria: string;
   nextTitle: string;
-  loading: string;
 };
 
 export const SOCIOS_TEXTS: Record<V3Lang, SociosTexts> = {
@@ -39,7 +38,6 @@ export const SOCIOS_TEXTS: Record<V3Lang, SociosTexts> = {
     next: "Siguiente",
     nextAria: "Siguiente página",
     nextTitle: "Contacto",
-    loading: "Cargando a los socios",
   },
   en: {
     title: "Our partners",
@@ -54,6 +52,22 @@ export const SOCIOS_TEXTS: Record<V3Lang, SociosTexts> = {
     next: "Next",
     nextAria: "Next page",
     nextTitle: "Contact",
-    loading: "Loading the partners",
   },
+};
+
+/* Ficha de cada persona (/team/<slug>): solo lo nuevo de la v3, el final «Siguiente». Lo demás
+   (rótulos, cargos, biografía) ya está en 10 idiomas (TeamMemberDetail.tsx, CMS "profile"). */
+export type PerfilTexts = {
+  /** «Siguiente» hacia el próximo socio (en el orden del panel) */
+  nextPartner: string;
+  /** «Siguiente» hacia la próxima persona de su grupo (Of Counsel) o hacia Contacto */
+  next: string;
+  nextAria: string;
+  /** Contacto, cuando la ficha es la última de su grupo (fuera de es/en se usa la del menú) */
+  nextTitle: string;
+};
+
+export const PERFIL_TEXTS: Record<V3Lang, PerfilTexts> = {
+  es: { nextPartner: "Siguiente socio", next: "Siguiente", nextAria: "Siguiente página", nextTitle: "Contacto" },
+  en: { nextPartner: "Next partner", next: "Next", nextAria: "Next page", nextTitle: "Contact" },
 };

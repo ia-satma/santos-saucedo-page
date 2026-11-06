@@ -1,15 +1,21 @@
-import { CareerForm } from "@/features/public-forms/CareerForm";
-import { HeroKicker } from "@/components/editorial/HeroKicker";
+// Pasantías S&S (/careers/interns) con el lenguaje de la demo v3 aprobada (5-11-2026), que no tenía esta página:
+// cabecera con la foto del mezanine, «Cómo postularse» con el correo junto al formulario azul de la demo (como
+// Contacto) y, al final, la vuelta a Carreras. Textos de siempre (10 idiomas, panel: "interns"); el formulario y su
+// envío (CV en PDF, consentimiento, panel "forms") están en v3/paginas-extra/Candidatura.tsx.
 import { useSiteDetails } from "@/components/home26/useSiteContact";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Link } from "wouter";
-import { SplitSection } from "@/components/home26/primitives";
+import type { LanguageCode } from "@shared/schema";
+import { V3Main, V3NextPage, V3PageHeader, useV3Lang } from "@/v3/shared";
+import { nextLabel, useFotoOficina } from "@/v3/paginas-extra/piezas";
+import { Candidatura } from "@/v3/paginas-extra/Candidatura";
+import { PX } from "@/v3/paginas-extra/textos";
 
-// "Clásica": titular de sección .ss-h2 (escala única de index.css); texto en sans 400 Gris Tinta.
+// "Pasantías S&S" con espacio duro al pintarlo: el nombre del programa no se parte entre líneas
+const keepProgramName = (text: string) => text.replace(/Pasantías S&S/g, "Pasantías\u00a0S&S").replace(/S&S Internships/g, "S&S\u00a0Internships");
 
 export default function Interns() {
   const siteDetails = useSiteDetails();
@@ -118,91 +124,57 @@ export default function Interns() {
   const baseT = editableContent[language as keyof typeof content] || editableContent.en;
   const t = { ...baseT, applyEmail: siteDetails.recruitmentEmail };
 
-  // Enlace de texto con el aspecto de TextLink (etiqueta, subrayado, flecha y área táctil
-  // ampliada); propio para conservar su data-testid
-  const textLinkClass = "ss-label group relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3";
+  const { lang } = useV3Lang();
+  const foto = useFotoOficina();
+  const mezanine = foto("mezanine", language as LanguageCode, PX[lang].mezanineAlt);
   const applyHref = `mailto:${t.applyEmail}?subject=${encodeURIComponent(t.heroTitle)}`;
   // Correo de reclutamiento en dos piezas: se parte tras la arroba si la columna es estrecha
   const [emailUser, emailDomain] = t.applyEmail.split("@");
 
   return (
-    <div className="min-h-screen bg-background" data-testid="page-interns">
+    <div className="ss26 min-h-[100dvh]" data-testid="page-interns">
       <SEOHead page="interns" language={language} />
       <Header />
 
-      {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo
-          salta. El relleno del cuerpo va en un envoltorio propio para que el encabezado
-          siga pegado a la cabecera. ss-container: mismo borde izquierdo que logotipo y pie. */}
-      <main id="main-content">
-      <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-interns-hero">
-        <div className="ss-container">
-          <div className="max-w-3xl">
-            <HeroKicker page="interns" testId="text-interns-kicker" />
-            <h1
-              data-testid="text-interns-title"
-            >
-              {t.heroTitle}
-            </h1>
-            <p data-testid="text-interns-subtitle">
-              {t.heroSubtitle}
-            </p>
-          </div>
+      <V3Main vista="pasantias" className="px">
+        <div data-testid="section-interns-hero">
+          <V3PageHeader
+            id="px-pasantias-h"
+            img={mezanine.src}
+            alt={mezanine.alt}
+            width={1536}
+            height={1024}
+            position="50% 52%"
+            title={<span data-testid="text-interns-title">{keepProgramName(t.heroTitle)}</span>}
+            lead={<span data-testid="text-interns-subtitle">{keepProgramName(t.heroSubtitle)}</span>}
+          />
         </div>
-      </section>
 
-      <div className="py-16 lg:py-20">
-        <div className="ss-container">
-          
-          {/* Solicitud, en la rejilla editorial de la portada (SplitSection, G1): el h2 en el
-              aside y, en el cuerpo, la frase del Pasantías S&S, el correo como enlace de texto (el
-              único mailto) y el enlace a Carreras. Sin tarjeta, sin un segundo "Enviar solicitud"
-              ni la llamada "¿Listo para iniciar tu carrera legal?". Sin entrada al aparecer (G3). */}
-          <section data-testid="section-cta">
-            <SplitSection
-              aside={
-                <h2 
-                  className="ss-h2"
-                  data-testid="text-cta-title"
-                >
-                  {t.ctaTitle}
-                </h2>
-              }
-            >
-              <div className="max-w-[44rem]">
-                <p className="text-[19px] md:text-[20px] text-ss-tinta leading-[1.65] max-w-2xl mb-6 [text-wrap:pretty]">
-                  {t.ctaIntro}
-                </p>
-                <p className="text-base text-ss-tinta leading-[1.55] mb-2">
-                  {t.ctaInstructions}
-                </p>
-                {/* A 320 px el correo no cabía: corte tras la arroba y overflow-wrap:anywhere */}
-                <a
-                  href={applyHref}
-                  className="inline-block max-w-full text-[21px] text-ss-marino underline decoration-ss-input underline-offset-4 [overflow-wrap:anywhere] hover:decoration-ss-marino"
-                  data-testid="link-cta-email"
-                >
-                  {emailUser}@<wbr />{emailDomain}
-                </a>
-                <div className="mt-10">
-                  <Link
-                    href="/careers"
-                    className={textLinkClass}
-                    data-testid="button-view-careers"
-                  >
-                    <span className="ss-link">{t.viewCareers}</span>
-                    <span aria-hidden="true" className="ss-arrow">
-                      →
-                    </span>
-                  </Link>
+        {/* Cómo postularse: la frase de Pasantías S&S y el correo (el único mailto), junto al formulario azul */}
+        <section className="sh-contacto px-post" aria-labelledby="px-postular-h" data-testid="section-cta">
+          <div className="sh-wrap">
+            <div className="sh-contacto__grid px-filete">
+              <div className="px-post__datos">
+                <h2 id="px-postular-h" className="sh-h2" data-testid="text-cta-title">{t.ctaTitle}</h2>
+                <p className="px-post__p">{keepProgramName(t.ctaIntro)}</p>
+                <div className="px-post__correo">
+                  <p className="px-post__p">{t.ctaInstructions}</p>
+                  {/* A 320 px el correo no cabía: corte tras la arroba y overflow-wrap:anywhere */}
+                  <a href={applyHref} className="px-correo" data-testid="link-cta-email">
+                    {emailUser}@<wbr />{emailDomain}
+                  </a>
                 </div>
               </div>
-            </SplitSection>
-            <CareerForm source="interns"/>
-          </section>
+              <Candidatura source="interns" idPrefix="px-cand" />
+            </div>
+          </div>
+        </section>
 
+        {/* La vuelta a Carreras: la página siguiente de la demo */}
+        <div data-testid="button-view-careers">
+          <V3NextPage href="/careers" title={t.viewCareers} label={nextLabel(language as LanguageCode)} ariaLabel={keepProgramName(t.heroTitle)} />
         </div>
-      </div>
-      </main>
+      </V3Main>
 
       <Footer />
     </div>

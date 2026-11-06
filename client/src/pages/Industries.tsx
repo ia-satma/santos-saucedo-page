@@ -32,6 +32,7 @@ export default function Industries() {
             id={H1}
             img={v3Asset("/v3/c-atardecer.webp")}
             alt={t.cab.alt}
+            imgAttrs={attrs}
             width={1800}
             height={1350}
             position="50% 64%"

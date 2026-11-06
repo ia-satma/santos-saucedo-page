@@ -166,5 +166,5 @@ En modo oscuro:
 
 - **Dirección:** Río Tamazunchale 205 Norte, San Pedro Garza García, N.L., México
 - **Teléfono:** (81) 8335 2086
-- **Email:** info@santossaucedo.com
+- **Email:** administracion@santossaucedo.com
 - **Horario:** Lunes–Viernes, 9:00–19:00

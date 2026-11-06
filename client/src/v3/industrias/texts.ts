@@ -28,11 +28,17 @@ export interface IndustriasTexts {
     entrada: string;
     desc: string;
     sedeTitulo: string;
+    /** el mismo letrero, en dos piezas: en el teléfono va en dos renglones (sin el separador) para no
+        llegar al borde de la pantalla */
+    sedeTituloNorte: { a: string; sep: string; b: string };
     sedeNombre: string;
     pausar: string;
     reanudar: string;
     pausarAria: string;
     reanudarAria: string;
+    /** teclado: nombre de la lista de entidades (el mapa) y cómo se recorre */
+    lista: string;
+    ayuda: string;
     /** nombres de las entidades que cambian en inglés (clave: data-e del mapa) */
     nombres: Record<string, string>;
   };
@@ -110,11 +116,14 @@ const es: IndustriasTexts = {
       "Desde Monterrey, la firma atiende a sus clientes en las 32 entidades federativas, a través de una alianza de despachos con presencia en más de 72 ciudades.",
     desc: "Mapa de México. Desde la sede de la firma, en San Pedro Garza García, Nuevo León, una red de rutas llega a las otras 31 entidades federativas.",
     sedeTitulo: "Monterrey · Sede",
+    sedeTituloNorte: { a: "Monterrey", sep: " · ", b: "Sede" },
     sedeNombre: "Sede en San Pedro Garza García",
     pausar: "Pausar",
     reanudar: "Reanudar",
     pausarAria: "Pausar el movimiento del mapa",
     reanudarAria: "Reanudar el movimiento del mapa",
+    lista: "Entidades federativas de la red",
+    ayuda: "Con las flechas se recorren las entidades; con Intro o Espacio se fija una y con Escape se suelta.",
     nombres: {},
   },
   sigue: { label: "Siguiente", title: "Nuestros socios", aria: "Siguiente página" },
@@ -184,11 +193,14 @@ const en: IndustriasTexts = {
       "From Monterrey, the firm serves its clients in all 32 federal entities of Mexico, through an alliance of law firms present in more than 72 cities.",
     desc: "Map of Mexico. From the firm’s head office in San Pedro Garza García, Nuevo León, a network of routes reaches the other 31 federal entities.",
     sedeTitulo: "Monterrey office",
+    sedeTituloNorte: { a: "Monterrey", sep: " ", b: "office" },
     sedeNombre: "Head office in San Pedro Garza García",
     pausar: "Pause",
     reanudar: "Resume",
     pausarAria: "Pause the map animation",
     reanudarAria: "Resume the map animation",
+    lista: "Federal entities in the firm’s network",
+    ayuda: "Use the arrow keys to move between entities; Enter or Space pins one and Escape releases it.",
     nombres: { df: "Mexico City", mx: "State of Mexico" },
   },
   sigue: { label: "Next", title: "Our partners", aria: "Next page" },

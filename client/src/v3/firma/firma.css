@@ -2,14 +2,32 @@
    Prefijo nf-. Todo dentro de .v3. */
 
 /* ---------- Escenario fijo de la turbina (lámina 2/7) ----------
-   La demo lo ponía bajo su barra de 60 px; aquí va bajo la cabecera del sitio (Header26: 68 px, 80 px desde 1024). */
+   La demo lo ponía bajo su barra de 60 px, que nunca se retira. La cabecera del sitio (Header26: 80 px aquí)
+   se retira al bajar: con el escenario a top: 80 px quedaba arriba una franja vacía de 80 px durante todo el
+   recorrido y el avión se veía hasta abajo. Ahora el escenario ocupa la pantalla entera (el marco llega a
+   20 px del borde) y su contenido arranca debajo de la cabecera: con la cabecera puesta se ve como antes;
+   al retirarse, el texto y el dibujo suben media cabecera, con la misma curva y duración que ella, y quedan
+   centrados en el marco completo. Solo se mueven (transform): nada cambia de tamaño ni se vuelve a medir. */
 @media (min-width: 1200px) and (min-height: 860px) {
   html:not(.rm) .v3[data-vista="firma"]:not([data-vista="inicio"]) .nf .fi-reaccion .fi-escena {
-    top: var(--ss-header-h, 80px);
-    height: calc(100vh - var(--ss-header-h, 80px));
-    height: calc(100dvh - var(--ss-header-h, 80px));
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    padding-top: calc(var(--ss-header-h, 80px) + var(--fi-inset) + clamp(32px, 3vw, 52px));
+  }
+  /* .fi-lectura queda fuera: va en la esquina del marco y su caja de referencia es el escenario
+     (un transform en .fi-texto la volvería relativa a la columna) */
+  html:not(.rm) .v3[data-vista="firma"] .nf .fi-reaccion :is(.fi-texto > :not(.fi-lectura), .fi-plano) {
+    transition: transform 400ms var(--ss-ease-inout, cubic-bezier(.65, 0, .35, 1));
+  }
+  html:not(.rm) .ss26:has(> .ss-header.is-tucked) .v3[data-vista="firma"] .nf .fi-reaccion :is(.fi-texto > :not(.fi-lectura), .fi-plano) {
+    transform: translate3d(0, calc(var(--ss-header-h, 80px) / -2), 0);
   }
 }
+
+/* El dibujo de la turbina llega aparte (Firma.tsx): hasta que el módulo arranca (fi-js), los números de las
+   piezas no tienen dónde ir y quedarían amontonados en la esquina del plano */
+.v3 .nf .fi-reaccion:not(.fi-js) .fi-tags { visibility: hidden; }
 
 /* index.css limita todo <header> que no sea .ss26 a 80 px por debajo de 640 px: la cabecera de la página no lo es */
 .v3 .nf header { max-height: none; }
@@ -48,7 +66,9 @@
 }
 .v3 .nf-cifras > div,
 .v3 .nf-cifras > div:first-child { border-left: 0; padding-left: 0; padding-right: 0; }
-.v3 .nf-cifras dt { max-width: 22em; }
+/* la etiqueta ocupa su columna (con 22em, «Ciudades en nuestra red de alianzas» dejaba «alianzas» sola en
+   otra línea); si no cabe, se parte en dos líneas parejas */
+.v3 .nf-cifras dt { max-width: 30em; text-wrap: balance; }
 @media (max-width: 980px) {
   .v3 .nf-texto { grid-template-columns: minmax(0, 1fr); }
   .v3 .nf-texto > * { grid-column: 1 !important; }
@@ -108,7 +128,12 @@
 }
 .v3 .nf-oficina__a:hover, .v3 .nf-oficina__a:focus-visible { text-decoration-color: var(--azul); }
 .v3 .nf-oficina__a:focus-visible { outline: 2px solid var(--azul); outline-offset: 6px; }
-.v3 .nf-oficina__lead { margin: 0; color: var(--gris); font-size: var(--t-body); line-height: 1.6; max-width: 34rem; text-wrap: pretty; }
+.v3 .nf-oficina__lead { margin: 0; color: var(--gris); font-size: var(--t-body); line-height: 1.6; max-width: 34rem; }
+.v3 .nf-oficina__frase { display: block; text-wrap: balance; }
+
+/* Sin pies de foto (la demo los tenía y por eso su rejilla separa más las filas que las columnas):
+   el mismo canal en las dos direcciones, como un mosaico */
+.v3 .nf-ofi { row-gap: clamp(12px, 1.6vw, 24px); }
 
 /* La fachada (7 columnas, dos filas) fija el alto de la biblioteca y del detalle, a su derecha;
    abajo, al revés: la oficina privada (5 columnas, 3:2) fija el de la recepción. Sin huecos ni desfases. */
@@ -127,14 +152,17 @@
 .v3 .nf-ofi__f--biblioteca .sh-ofi__m, .v3 .nf-ofi__f--detalle .sh-ofi__m, .v3 .nf-ofi__f--recepcion .sh-ofi__m { min-height: 0; }
 .v3 .nf-ofi__f--biblioteca img, .v3 .nf-ofi__f--detalle img, .v3 .nf-ofi__f--recepcion img { position: absolute; inset: 0; }
 
-/* Tableta (la demo pasa sh-ofi a 6 columnas): fachada entera; biblioteca 4 + detalle 2; oficina 2 + recepción 4 */
+/* Tableta (la demo pasa sh-ofi a 6 columnas): fachada entera; biblioteca 3 + detalle 3, las dos enteras en 3:2
+   (con 4 + 2 el cuadro del detalle quedaba en una tira vertical, cortado por un lado); oficina 2 + recepción 4 */
 @media (max-width: 900px) {
   .v3 .nf-oficina__cab { grid-template-columns: minmax(0, 1fr); }
   .v3 .nf-ofi__f--fachada { grid-column: 1 / -1; grid-row: 1; }
-  .v3 .nf-ofi__f--biblioteca { grid-column: 1 / span 4; grid-row: 2; align-self: start; }
+  .v3 .nf-ofi__f--biblioteca { grid-column: 1 / span 3; grid-row: 2; align-self: start; }
   .v3 .nf-ofi__f--biblioteca .sh-ofi__m { aspect-ratio: 3 / 2; }
   .v3 .nf-ofi__f--biblioteca img { position: static; }
-  .v3 .nf-ofi__f--detalle { grid-column: 5 / span 2; grid-row: 2; }
+  .v3 .nf-ofi__f--detalle { grid-column: 4 / span 3; grid-row: 2; align-self: start; }
+  .v3 .nf-ofi__f--detalle .sh-ofi__m { aspect-ratio: 3 / 2; }
+  .v3 .nf-ofi__f--detalle img { position: static; object-position: 50% 50%; }
   .v3 .nf-ofi__f--privada { grid-column: 1 / span 2; grid-row: 3; align-self: stretch; align-content: stretch; grid-template-rows: minmax(0, 1fr); }
   .v3 .nf-ofi__f--privada .sh-ofi__m { aspect-ratio: auto; min-height: 0; }
   .v3 .nf-ofi__f--privada img { position: absolute; inset: 0; object-position: 62% 50%; }
@@ -155,7 +183,8 @@
 .v3 .nf .mk-prioridad__linea,
 .v3 .nf .fi-cajetin span,
 .v3 .nf .fi-tag-t,
-.v3 .nf .nf-in { font-size: inherit; }
+.v3 .nf .nf-in,
+.v3 .nf .nf-oficina__frase { font-size: inherit; }
 .v3 .nf .nf-texto__cuerpo p,
 .v3 .nf .nf-principio__p,
 .v3 .nf .nf-oficina__lead { font-size: var(--t-body); line-height: 1.6; }

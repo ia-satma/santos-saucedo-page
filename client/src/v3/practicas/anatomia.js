@@ -1,9 +1,13 @@
 /* ===== Santos & Saucedo · módulo «anatomia» de la demo v3 (prefijo an-), portado al sitio =====
-   Copia de modules/anatomia/script.js (aprobada el 5-11-2026) con tres cambios y nada más:
+   Copia de modules/anatomia/script.js (aprobada el 5-11-2026) con cinco cambios y nada más:
    1. Es una función: initAnatomia(sección) arranca dentro de esa sección y devuelve la limpieza
       (escuchas, observadores, cuadros, temporizadores, el contexto WebGL y lo que el módulo agregó al DOM).
    2. three.js r149 se carga bajo demanda desde /v3/libs/three.min.js; sin él o sin WebGL queda el texto (an-nogl).
    3. data-an-solo="orden|solucion": una sola lámina, sin pestañas, con su propio recorrido (G1).
+   4. El hueco del cajetín se mide sin el desplazamiento que el sitio da al dibujo cuando la cabecera
+      se retira (drawShift).
+   5. Los colores CSS pasan por un píxel de lienzo antes de llegar a three.js (toRGB): el tema del sitio
+      los escribe como rgb(12 35 64), que three.js r149 no entiende (el dibujo salía blanco).
    Tiempos, cortes, modo Mario y teléfono: idénticos a la demo. */
 /* eslint-disable */
 /* ===== Santos & Saucedo · módulo «anatomia» (prefijo an-) =====
@@ -133,9 +137,22 @@ export function initAnatomia(sec) {
 
     /* ---------- color: todo sale de CSS ---------- */
     var C = { bg: new T.Color(), ink: new T.Color(), acc: new T.Color() };
+    /* cambio 5: el color se resuelve con el navegador (un píxel de lienzo) antes de pasarlo a three.js:
+       r149 no entiende rgb(12 35 64), color-mix() ni otras formas que el tema del sitio usa */
+    var pxCtx = null;
+    function toRGB(v, fallback) {
+      try {
+        if (!pxCtx) { var cv = document.createElement('canvas'); cv.width = cv.height = 1; pxCtx = cv.getContext('2d', { willReadFrequently: true }); }
+        if (!pxCtx) return fallback;
+        pxCtx.clearRect(0, 0, 1, 1); pxCtx.fillStyle = '#000'; pxCtx.fillStyle = fallback; pxCtx.fillStyle = v;
+        pxCtx.fillRect(0, 0, 1, 1);
+        var d = pxCtx.getImageData(0, 0, 1, 1).data;
+        return 'rgb(' + d[0] + ',' + d[1] + ',' + d[2] + ')';
+      } catch (e) { return fallback; }
+    }
     function readPalette() {
       var cs = getComputedStyle(sec);
-      var pick = function (name, fallback) { var v = (cs.getPropertyValue(name) || '').trim(); return v || fallback; };
+      var pick = function (name, fallback) { var v = (cs.getPropertyValue(name) || '').trim(); return toRGB(v || fallback, '#0C2340'); };
       C.bg.setStyle(pick('--an-bg', cs.backgroundColor));
       C.ink.setStyle(pick('--an-ink', cs.color));
       C.acc.setStyle(pick('--an-acc', cs.color));
@@ -741,13 +758,24 @@ export function initAnatomia(sec) {
       return camM;
     }
 
+    /* desplazamiento vertical actual de la zona del dibujo (el sitio la sube con la cabecera retirada) */
+    var drawEl = view.closest('.an-draw');
+    function drawShift() {
+      if (!drawEl || !window.DOMMatrixReadOnly) return 0;
+      var tf = getComputedStyle(drawEl).transform;
+      if (!tf || tf === 'none') return 0;
+      try { return new DOMMatrixReadOnly(tf).m42 || 0; } catch (e) { return 0; }
+    }
     /* ---------- disposición: columna de números junto al dibujo ---------- */
     function layoutSheet(S) {
       S.usePack(COMPACT ? 'c' : 'd');
       var tags = S.tags, prev = S.tagBox.style.display;
       S.tagBox.style.display = '';
       var cr = caj.getBoundingClientRect(), vr = view.getBoundingClientRect();
-      var cajTop = (cr.width && !COMPACT && cr.left < vr.right && cr.top < vr.bottom) ? cr.top - vr.top : VH;
+      // sitio: con la cabecera retirada el dibujo sube (practicas.css, translateY en .an-draw); el
+      // cajetín no. Se mide contra la posición más baja del dibujo (cabecera puesta), la que más se le acerca.
+      var ty = drawShift(), vTop = vr.top - ty, vBot = vr.bottom - ty;
+      var cajTop = (cr.width && !COMPACT && cr.left < vr.right && cr.top < vBot) ? cr.top - vTop : VH;
       tags.forEach(function (t) { t.w = t.el.offsetWidth; t.h = t.el.offsetHeight; });
       S.tagBox.style.display = prev;
       var nw = tags.reduce(function (m, t) { return Math.max(m, t.w); }, 0);

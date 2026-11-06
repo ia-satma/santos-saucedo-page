@@ -2,7 +2,10 @@
    (la § oficial como máscara) y la red que llega a las capitales de las otras 31 entidades; botón «Pausar».
    Marcado y clases: modules/mapa/section.html; la geometría del SVG, tal cual, en ./mapaSvg.ts.
    La dirección de la sede viene de /api/site-content (la misma del pie y de /contact).
-   Fuera del puerto: la línea «Para la junta: la cobertura en cada entidad la valida la firma» (nota de la demo). */
+   Fuera del puerto: la línea «Para la junta: la cobertura en cada entidad la valida la firma» (nota de la demo).
+   Teclado (no estaba en la demo): el mapa es una lista de las 32 entidades (role="listbox", un solo paso
+   de tabulador). Con las flechas se recorren —la entidad se tiñe y su nombre aparece igual que con el
+   cursor—; Intro o Espacio la fija, Escape la suelta. Las opciones las crea el módulo (initMapa). */
 import { useEffect, useLayoutEffect, useMemo, useRef, type CSSProperties } from "react";
 import "./industrias.css";
 import { initMapa, type MapaApi, type MapaTexts } from "./initMapa";
@@ -53,8 +56,11 @@ export function Mapa({ t, address }: { t: IndustriasTexts["mapa"]; address: stri
 
             <figure className="mp-figura" aria-labelledby="mp-desc">
               <p className="mp-sr" id="mp-desc">{t.desc}</p>
+              <p className="mp-sr" id="mp-ayuda">{t.ayuda}</p>
               <div className="mp-lienzo">
-                <div className="mp-plano">
+                {/* la lista de entidades: sus opciones (sólo para lectores de pantalla) las agrega el módulo
+                    al final de este nodo; el foco visible (lima del sitio) está en industrias.css */}
+                <div className="mp-plano" role="listbox" tabIndex={0} aria-label={t.lista} aria-describedby="mp-ayuda">
                   <svg className="mp-svg" viewBox={MAPA_VIEWBOX} preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false" dangerouslySetInnerHTML={svg} />
                   <div className="mp-capa" aria-hidden="true">
                     <span className="mp-sede" style={{ ...pos(MAPA_SEDE), WebkitMaskImage: SECCION, maskImage: SECCION }} />
@@ -64,7 +70,12 @@ export function Mapa({ t, address }: { t: IndustriasTexts["mapa"]; address: stri
                       {ciudad ? <span className="mp-letrero-dato">{ciudad}</span> : null}
                     </div>
                     <div className="mp-letrero mp-letrero--norte" style={pos(MAPA_LETRERO_NORTE)}>
-                      <span className="mp-letrero-titulo">{t.sedeTitulo}</span>
+                      {/* en el teléfono, dos renglones sin el separador (industrias.css) */}
+                      <span className="mp-letrero-titulo">
+                        <span className="mp-letrero-l">{t.sedeTituloNorte.a}</span>
+                        <span className="mp-letrero-sep">{t.sedeTituloNorte.sep}</span>
+                        <span className="mp-letrero-l">{t.sedeTituloNorte.b}</span>
+                      </span>
                     </div>
                   </div>
                 </div>

@@ -1,26 +1,22 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import "@/styles/careers-contact.css";
 import { Link } from "wouter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
-import { Eyebrow } from "@/components/editorial";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
 import { TESTIMONIAL_QUOTE_MAX } from "@shared/schema";
+import { V3Main } from "@/v3/shared";
+import { Flecha } from "@/v3/paginas-extra/piezas";
 import { useTestimonialsCopy } from "./Testimonials";
 
 // Formulario del enlace de invitación (/testimonios/escribir?t=…). Solo funciona con un enlace
 // vigente y sin usar, que el despacho genera en el panel; se consume al enviar. El comentario
 // entra como pendiente y no se publica sin aprobación. No se indexa (SEOHead testimonialWrite).
+// Con el lenguaje de la demo v3 (que no tenía esta página): la forma de Contacto, con el título y la entrada a
+// la izquierda y el formulario azul de la demo (sh-form, sh-campo, sh-check, sh-btn) a la derecha.
 
 type Field = "fullName" | "title" | "company" | "quote" | "consent";
 const MIN: Record<Exclude<Field, "consent" | "quote">, number> = { fullName: 3, title: 2, company: 2 };
-const inputCls = "h-[44px]";
-const linkCls = "inline-link text-ss-marino underline decoration-ss-input underline-offset-4 hover:decoration-ss-marino";
 
 export default function TestimonialWrite() {
   const { language, t, form: f } = useTestimonialsCopy();
@@ -91,23 +87,24 @@ export default function TestimonialWrite() {
   };
 
   const field = (key: Exclude<Field, "consent" | "quote">, label: string, autoComplete: string) => (
-    <div className="space-y-2">
-      <label htmlFor={`testimonial-${key}`} className="block text-[17px] text-ss-tinta">
+    <div className="sh-campo">
+      <label htmlFor={`testimonial-${key}`}>
         {label}
+        <span className="sh-req" aria-hidden="true"> *</span>
       </label>
-      <Input
+      <input
         id={`testimonial-${key}`}
-        className={inputCls}
         value={values[key]}
         maxLength={160}
         autoComplete={autoComplete}
+        aria-required="true"
         aria-invalid={!!errors[key] || undefined}
         aria-describedby={errors[key] ? `testimonial-${key}-error` : undefined}
         onChange={(e) => setValues({ ...values, [key]: e.target.value })}
         data-testid={`input-testimonial-${key}`}
       />
       {errors[key] && (
-        <p id={`testimonial-${key}-error`} className="text-[15px] text-destructive">
+        <p id={`testimonial-${key}-error`} className="sh-error">
           {errors[key]}
         </p>
       )}
@@ -115,9 +112,9 @@ export default function TestimonialWrite() {
   );
 
   const googleLine = googleReviewsUrl ? (
-    <p className="mt-6 text-[18px] leading-[1.55] text-ss-tinta" data-testid="text-google-review-invite">
+    <p className="px-google" data-testid="text-google-review-invite">
       {f.googleBefore}
-      <a href={googleReviewsUrl} target="_blank" rel="noopener noreferrer" className={linkCls}>
+      <a href={googleReviewsUrl} target="_blank" rel="noopener noreferrer">
         {f.googleLink}
         <span className="sr-only">{` ${t.newTab}`}</span>
       </a>
@@ -125,115 +122,113 @@ export default function TestimonialWrite() {
     </p>
   ) : null;
 
+  // Enlace inválido: una sola columna (no hay formulario)
+  const solo = state === "invalid";
+
   return (
-    <div className="min-h-screen bg-background" data-testid="page-testimonial-write">
+    <div className="ss26 min-h-[100dvh]" data-testid="page-testimonial-write">
       <SEOHead page="testimonialWrite" language={language} customPath="/testimonios/escribir" />
       <Header />
-      <main id="main-content">
-        <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-testimonial-write-hero">
-          <div className="ss-container">
-            <div className="max-w-3xl">
-              <Eyebrow num="" tone="navy" label={t.title} className="mb-6" />
-              <h1 className="mb-5" data-testid="text-testimonial-write-title">
+      <V3Main vista="testimonio-escribir" className="px">
+        <section className={`sh-contacto px-escribir${solo ? " px-escribir--solo" : ""}`} aria-labelledby="px-escribir-h" data-testid="section-testimonial-write-hero">
+          <div className="sh-wrap sh-contacto__grid">
+            <div className="sh-contacto__datos">
+              <p className="sh-cap px-escribir__k">{t.title}</p>
+              <h1 id="px-escribir-h" className="sh-h2" data-testid="text-testimonial-write-title">
                 {state === "invalid" ? f.invalidTitle : f.title}
               </h1>
-              {/* Tras enviar, el agradecimiento va abajo; aquí no se repite */}
-              {(state === "valid" || state === "checking") && <p>{f.intro}</p>}
-            </div>
-          </div>
-        </section>
-
-        <div className="py-16 lg:py-20">
-          <div className="ss-container">
-            <div className="max-w-2xl">
-              {state === "checking" && (
-                <p role="status" className="text-ss-medio">
-                  {f.checking}
-                </p>
-              )}
+              {/* Tras enviar, el agradecimiento va en el panel; aquí no se repite */}
+              {(state === "valid" || state === "checking") && <p className="px-escribir__p">{f.intro}</p>}
 
               {state === "invalid" && (
-                <div role="status" data-testid="text-invite-invalid">
-                  <p className="text-[19px] leading-[1.6] text-ss-tinta [text-wrap:pretty]">{f.invalidBody}</p>
-                  <p className="mt-8">
-                    <Link href="/testimonios" className={linkCls}>
-                      {t.title}
+                <div role="status" className="px-escribir__invalido" data-testid="text-invite-invalid">
+                  <p className="px-escribir__cuerpo">{f.invalidBody}</p>
+                  <p className="px-escribir__volver">
+                    <Link href="/testimonios" className="sh-mas">
+                      {t.title} <Flecha />
                     </Link>
                   </p>
                 </div>
               )}
+            </div>
 
-              {state === "sent" && (
-                <div role="status" data-testid="text-testimonial-sent">
-                  <p className="text-[19px] leading-[1.6] text-ss-tinta [text-wrap:pretty]">{f.success}</p>
-                  {googleLine}
-                </div>
-              )}
+            {state === "checking" && (
+              <div className="sh-form px-form">
+                <p role="status" className="px-estado">{f.checking}</p>
+              </div>
+            )}
 
-              {state === "valid" && (
-                <form onSubmit={send} noValidate className="public-form-card public-form-card--testimonial space-y-6" data-testid="form-testimonial">
+            {state === "sent" && (
+              <div className="sh-form px-form" role="status" data-testid="text-testimonial-sent">
+                <p className="sh-form__ok">{f.success}</p>
+                {googleLine}
+              </div>
+            )}
+
+            {state === "valid" && (
+              <form onSubmit={send} noValidate className="sh-form px-form" aria-labelledby="px-escribir-h" data-testid="form-testimonial">
+                <div className="px-form__f">
                   {field("fullName", f.fullName, "name")}
-                  <div className="grid gap-6 sm:grid-cols-2">
+                  <div className="px-form__par">
                     {field("title", f.jobTitle, "organization-title")}
                     {field("company", f.company, "organization")}
                   </div>
-                  <div className="space-y-2">
-                    <label htmlFor="testimonial-quote" className="block text-[17px] text-ss-tinta">
+                  <div className="sh-campo">
+                    <label htmlFor="testimonial-quote">
                       {f.quote}
+                      <span className="sh-req" aria-hidden="true"> *</span>
                     </label>
-                    <Textarea
+                    <textarea
                       id="testimonial-quote"
-                      className="min-h-[200px]"
+                      rows={7}
                       value={values.quote}
                       maxLength={TESTIMONIAL_QUOTE_MAX}
+                      aria-required="true"
                       aria-invalid={!!errors.quote || undefined}
                       aria-describedby="testimonial-quote-count"
                       onChange={(e) => setValues({ ...values, quote: e.target.value })}
                       data-testid="input-testimonial-quote"
                     />
-                    <p id="testimonial-quote-count" className="text-[15px] text-ss-medio" aria-live="polite">
+                    <p id="testimonial-quote-count" className="px-cuenta" aria-live="polite">
                       {errors.quote ? (
-                        <span className="text-destructive">{errors.quote}</span>
+                        <span className="sh-error">{errors.quote}</span>
                       ) : (
                         fill(f.count, { n: values.quote.length, max: TESTIMONIAL_QUOTE_MAX })
                       )}
                     </p>
                   </div>
 
-                  {/* Autorización obligatoria y, aparte, si se muestra la empresa. El ::before
-                      amplía el área táctil de la casilla, como en Contacto */}
-                  <div className="space-y-5 border-t border-ss-rule pt-6">
+                  {/* Autorización obligatoria y, aparte, si se muestra la empresa */}
+                  <div className="px-checks">
                     <div>
-                      <div className="flex items-start gap-3">
-                        <Checkbox
+                      <label className="sh-check">
+                        <input
+                          type="checkbox"
                           id="testimonial-consent"
                           checked={consent}
-                          onCheckedChange={(v) => setConsent(v === true)}
+                          onChange={(e) => setConsent(e.target.checked)}
+                          aria-required="true"
                           aria-invalid={!!errors.consent || undefined}
-                          className="relative mt-[3px] h-5 min-h-0 w-5 border-ss-medio data-[state=checked]:border-primary before:absolute before:-inset-3"
+                          aria-describedby={errors.consent ? "testimonial-consent-error" : undefined}
                           data-testid="checkbox-testimonial-consent"
                         />
-                        <label htmlFor="testimonial-consent" className="text-[18px] leading-[1.5] text-ss-tinta">
-                          {f.consent}
-                        </label>
-                      </div>
-                      {errors.consent && <p className="mt-2 ps-8 text-[15px] text-destructive">{errors.consent}</p>}
+                        <span>{f.consent}</span>
+                      </label>
+                      {errors.consent && <p id="testimonial-consent-error" className="sh-error px-check-err">{errors.consent}</p>}
                     </div>
-                    <div className="flex items-start gap-3">
-                      <Checkbox
+                    <label className="sh-check">
+                      <input
+                        type="checkbox"
                         id="testimonial-show-company"
                         checked={showCompany}
-                        onCheckedChange={(v) => setShowCompany(v === true)}
-                        className="relative mt-[3px] h-5 min-h-0 w-5 border-ss-medio data-[state=checked]:border-primary before:absolute before:-inset-3"
+                        onChange={(e) => setShowCompany(e.target.checked)}
                         data-testid="checkbox-testimonial-show-company"
                       />
-                      <label htmlFor="testimonial-show-company" className="text-[18px] leading-[1.5] text-ss-tinta">
-                        {f.showCompany}
-                      </label>
-                    </div>
-                    <p className="text-[17px] leading-[1.5] text-ss-medio">
+                      <span>{f.showCompany}</span>
+                    </label>
+                    <p className="px-aviso">
                       {f.privacyBefore}
-                      <Link href="/privacy-policy" className={linkCls} data-testid="link-testimonial-privacy">
+                      <Link href="/privacy-policy" data-testid="link-testimonial-privacy">
                         {f.privacyLink}
                       </Link>
                       {f.privacyAfter}
@@ -252,24 +247,21 @@ export default function TestimonialWrite() {
                   </div>
 
                   {formError && (
-                    <p role="alert" className="text-[16px] text-destructive" data-testid="text-testimonial-error">
+                    <p role="alert" className="sh-error" data-testid="text-testimonial-error">
                       {formError}
                     </p>
                   )}
-                  <Button
-                    type="submit"
-                    className="min-h-[44px] w-full px-6 sm:w-auto"
-                    disabled={busy}
-                    data-testid="button-submit-testimonial"
-                  >
-                    {busy ? f.sending : f.submit}
-                  </Button>
-                </form>
-              )}
-            </div>
+                  <div className="sh-form__acciones">
+                    <button type="submit" className="sh-btn" disabled={busy} data-testid="button-submit-testimonial">
+                      {busy ? f.sending : f.submit}
+                    </button>
+                  </div>
+                </div>
+              </form>
+            )}
           </div>
-        </div>
-      </main>
+        </section>
+      </V3Main>
       <Footer />
     </div>
   );

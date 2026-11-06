@@ -17,24 +17,22 @@
         ]
       },
       "firma": {
-        "title": "La firma",
+        "title": "Nuestra firma",
         "body": [
-          "Santos & Saucedo nació en San Pedro Garza García en 2009 con una práctica dedicada a las empresas. Desde entonces asesora a grupos industriales mexicanos, a multinacionales y a empresas de capital asiático en las decisiones que involucran a su personal: la contratación, la organización del trabajo, la relación con el sindicato, la terminación de una relación laboral y la defensa ante las autoridades y los tribunales.",
-          "El trabajo de la firma se apoya en una alianza de despachos especializados que le da presencia en más de 72 ciudades. Un cliente con plantas o sucursales en varios estados recibe el mismo criterio en todas ellas."
+          "Desde San Pedro Garza García, Santos & Saucedo asesora a grupos industriales mexicanos, a multinacionales y a empresas de capital asiático en las decisiones que involucran a su personal."
         ],
         "caption": "Río Tamazunchale 205 Norte, San Pedro Garza García. En el cristal, el Cerro de la Silla.",
         "alt": "Fachada de cristal de las oficinas de Santos & Saucedo con el Cerro de la Silla reflejado"
       },
       "creemos": {
-        "label": "Lo que creemos",
-        "quote": "La prevención es la primera defensa.",
+        "label": "Nuestra filosofía",
+        "quote": "Preparamos cada asunto como si fuera a llegar a juicio.",
         "body": [
-          "Estamos convencidos de que la mayoría de los conflictos laborales se resuelven antes de llegar a un tribunal: en un contrato bien redactado, en un expediente en orden, en una negociación preparada con tiempo.",
-          "Por eso la mayor parte de nuestro trabajo es preventivo. Cuando el litigio es inevitable, lo conduce el mismo equipo que conoce la operación del cliente."
+          "Esa preparación respalda cada negociación: se negocia mejor cuando el caso ya está listo para defenderse. Prevención primero y, si hay conflicto, capacidad de reacción."
         ]
       },
       "practicas": {
-        "title": "Prácticas"
+        "title": "Nuestras prácticas"
       },
       "extranjeras": {
         "title": "Empresas extranjeras en México",
@@ -58,7 +56,7 @@
         "intro": "Análisis de la firma sobre los cambios que afectan a las empresas."
       },
       "socios": {
-        "title": "Socios"
+        "title": "Nuestros socios"
       }
     },
     "en": {
@@ -78,24 +76,22 @@
         ]
       },
       "firma": {
-        "title": "The firm",
+        "title": "Our firm",
         "body": [
-          "Santos & Saucedo was founded in San Pedro Garza García in 2009 with a practice devoted to employers. Since then it has advised Mexican industrial groups, multinationals and Asian-owned companies on the decisions that involve their people: hiring, the organization of work, union relations, terminations and the defense before authorities and courts.",
-          "The firm works with an alliance of specialized law firms that gives it presence in more than 72 cities. A client with plants or branches in several states receives the same judgment in all of them."
+          "From San Pedro Garza García, Santos & Saucedo advises Mexican industrial groups, multinationals and Asian-owned companies on the decisions that involve their people."
         ],
         "caption": "Río Tamazunchale 205 Norte, San Pedro Garza García. In the glass, the Cerro de la Silla.",
         "alt": "Glass facade of the Santos & Saucedo offices reflecting the Cerro de la Silla"
       },
       "creemos": {
-        "label": "What we believe",
-        "quote": "Prevention is the first defense.",
+        "label": "Our philosophy",
+        "quote": "We prepare every matter as if it were going to trial.",
         "body": [
-          "We are convinced that most labor disputes are resolved before they reach a court: in a well-drafted contract, in a file kept in order, in a negotiation prepared in advance.",
-          "That is why most of our work is preventive. When litigation is unavoidable, it is handled by the same team that knows the client’s operation."
+          "That preparation supports every negotiation: one negotiates better when the case is already ready to be defended. Prevention first and, if a dispute arises, the capacity to respond."
         ]
       },
       "practicas": {
-        "title": "Practices"
+        "title": "Our practices"
       },
       "extranjeras": {
         "title": "Foreign companies in Mexico",
@@ -119,7 +115,7 @@
         "intro": "The firm’s analysis of the changes that affect employers."
       },
       "socios": {
-        "title": "Partners"
+        "title": "Our partners"
       }
     }
   },
@@ -182,8 +178,8 @@
         }
       },
       "heroVideo": {
-        "pause": "Pausar el video de fondo",
-        "play": "Reproducir el video de fondo"
+        "pause": "Pausar el video y la frase",
+        "play": "Reanudar el video y la frase"
       },
       "toast": {
         "item": "Aviso",
@@ -263,8 +259,8 @@
         }
       },
       "heroVideo": {
-        "pause": "Pause background video",
-        "play": "Play background video"
+        "pause": "Pause the video and the phrase",
+        "play": "Resume the video and the phrase"
       },
       "toast": {
         "item": "Notification",
@@ -344,8 +340,8 @@
         }
       },
       "heroVideo": {
-        "pause": "Hintergrundvideo anhalten",
-        "play": "Hintergrundvideo abspielen"
+        "pause": "Video und Satz anhalten",
+        "play": "Video und Satz fortsetzen"
       },
       "toast": {
         "item": "Hinweis",
@@ -425,8 +421,8 @@
         }
       },
       "heroVideo": {
-        "pause": "暂停背景视频",
-        "play": "播放背景视频"
+        "pause": "暂停视频和标语",
+        "play": "继续播放视频和标语"
       },
       "toast": {
         "item": "通知",
@@ -506,8 +502,8 @@
         }
       },
       "heroVideo": {
-        "pause": "배경 동영상 일시 정지",
-        "play": "배경 동영상 재생"
+        "pause": "동영상과 문구 일시정지",
+        "play": "동영상과 문구 다시 재생"
       },
       "toast": {
         "item": "알림",
@@ -587,8 +583,8 @@
         }
       },
       "heroVideo": {
-        "pause": "背景動画を一時停止",
-        "play": "背景動画を再生"
+        "pause": "動画とフレーズを一時停止",
+        "play": "動画とフレーズを再開"
       },
       "toast": {
         "item": "お知らせ",
@@ -668,8 +664,8 @@
         }
       },
       "heroVideo": {
-        "pause": "إيقاف فيديو الخلفية مؤقتًا",
-        "play": "تشغيل فيديو الخلفية"
+        "pause": "إيقاف الفيديو والعبارة مؤقتًا",
+        "play": "استئناف الفيديو والعبارة"
       },
       "toast": {
         "item": "إشعار",
@@ -749,8 +745,8 @@
         }
       },
       "heroVideo": {
-        "pause": "Приостановить фоновое видео",
-        "play": "Воспроизвести фоновое видео"
+        "pause": "Приостановить видео и фразу",
+        "play": "Возобновить видео и фразу"
       },
       "toast": {
         "item": "Уведомление",
@@ -830,8 +826,8 @@
         }
       },
       "heroVideo": {
-        "pause": "Mettre en pause la vidéo d’arrière-plan",
-        "play": "Lire la vidéo d’arrière-plan"
+        "pause": "Mettre en pause la vidéo et la phrase",
+        "play": "Reprendre la vidéo et la phrase"
       },
       "toast": {
         "item": "Notification",
@@ -911,8 +907,8 @@
         }
       },
       "heroVideo": {
-        "pause": "Mettere in pausa il video di sfondo",
-        "play": "Riprodurre il video di sfondo"
+        "pause": "Metti in pausa il video e la frase",
+        "play": "Riprendi il video e la frase"
       },
       "toast": {
         "item": "Avviso",
@@ -1942,7 +1938,7 @@
       "city": "San Pedro Garza García, N.L., C.P. 66220, México",
       "phone": "+52 81 8335 2086",
       "fax": "+52 81 8335 2086",
-      "email": "info@santossaucedo.com",
+      "email": "administracion@santossaucedo.com",
       "hours": "Office hours",
       "hoursDetails": "Monday to Friday, 9:00–19:00",
       "getDirections": "Get directions",
@@ -1956,7 +1952,7 @@
       "formSectionLead": "Share your details and tell us how we can help. Our team will be in touch.",
       "fullName": "Full name",
       "emailLabel": "Email",
-      "companyLabel": "Company (optional)",
+      "companyLabel": "Company",
       "practiceAreaLabel": "Practice (optional)",
       "messageLabel": "Message",
       "submit": "Send message",
@@ -1976,7 +1972,7 @@
       "city": "San Pedro Garza García, N.L., C.P. 66220, México",
       "phone": "+52 81 8335 2086",
       "fax": "+52 81 8335 2086",
-      "email": "info@santossaucedo.com",
+      "email": "administracion@santossaucedo.com",
       "hours": "Horario de oficina",
       "hoursDetails": "Lunes a viernes, 9:00–19:00 h",
       "getDirections": "Cómo llegar",
@@ -1990,7 +1986,7 @@
       "formSectionLead": "Déjanos tus datos y cuéntanos cómo podemos ayudarte. Nuestro equipo se pondrá en contacto contigo.",
       "fullName": "Nombre completo",
       "emailLabel": "Correo electrónico",
-      "companyLabel": "Empresa (opcional)",
+      "companyLabel": "Empresa",
       "practiceAreaLabel": "Práctica (opcional)",
       "messageLabel": "Mensaje",
       "submit": "Enviar mensaje",
@@ -2007,7 +2003,7 @@
       "city": "San Pedro Garza García, N.L., C.P. 66220, México",
       "phone": "+52 81 8335 2086",
       "fax": "+52 81 8335 2086",
-      "email": "info@santossaucedo.com",
+      "email": "administracion@santossaucedo.com",
       "hours": "Öffnungszeiten",
       "hoursDetails": "Montag bis Freitag, 9:00–19:00 Uhr",
       "getDirections": "Anfahrt",
@@ -2019,7 +2015,7 @@
       "formSubtitle": "Die Übermittlung dieses Formulars begründet kein Mandatsverhältnis.",
       "fullName": "Name",
       "emailLabel": "E-Mail",
-      "companyLabel": "Unternehmen (optional)",
+      "companyLabel": "Unternehmen",
       "practiceAreaLabel": "Praxisbereich (optional)",
       "messageLabel": "Nachricht",
       "submit": "Nachricht senden",
@@ -2036,7 +2032,7 @@
       "city": "San Pedro Garza García, N.L., C.P. 66220, México",
       "phone": "+52 81 8335 2086",
       "fax": "+52 81 8335 2086",
-      "email": "info@santossaucedo.com",
+      "email": "administracion@santossaucedo.com",
       "hours": "办公时间",
       "hoursDetails": "周一至周五 9:00–19:00",
       "getDirections": "获取路线",
@@ -2048,7 +2044,7 @@
       "formSubtitle": "提交本表格并不构成律师与客户之间的委托关系。",
       "fullName": "姓名",
       "emailLabel": "电子邮件",
-      "companyLabel": "公司 (可选)",
+      "companyLabel": "公司",
       "practiceAreaLabel": "业务领域 (可选)",
       "messageLabel": "留言",
       "submit": "发送消息",
@@ -2065,7 +2061,7 @@
       "city": "San Pedro Garza García, N.L., C.P. 66220, México",
       "phone": "+52 81 8335 2086",
       "fax": "+52 81 8335 2086",
-      "email": "info@santossaucedo.com",
+      "email": "administracion@santossaucedo.com",
       "hours": "업무 시간",
       "hoursDetails": "월요일–금요일 9:00–19:00",
       "getDirections": "길찾기",
@@ -2077,7 +2073,7 @@
       "formSubtitle": "이 양식을 제출하는 것만으로 변호사와 의뢰인 관계가 성립하지는 않습니다.",
       "fullName": "이름",
       "emailLabel": "이메일",
-      "companyLabel": "회사명 (선택사항)",
+      "companyLabel": "회사명",
       "practiceAreaLabel": "업무 분야 (선택사항)",
       "messageLabel": "메시지",
       "submit": "메시지 전송",
@@ -2094,7 +2090,7 @@
       "city": "San Pedro Garza García, N.L., C.P. 66220, México",
       "phone": "+52 81 8335 2086",
       "fax": "+52 81 8335 2086",
-      "email": "info@santossaucedo.com",
+      "email": "administracion@santossaucedo.com",
       "hours": "営業時間",
       "hoursDetails": "月曜日〜金曜日 9:00–19:00",
       "getDirections": "アクセス",
@@ -2106,7 +2102,7 @@
       "formSubtitle": "本フォームの送信によって、弁護士と依頼者の関係が成立するものではありません。",
       "fullName": "氏名",
       "emailLabel": "メールアドレス",
-      "companyLabel": "会社名 (任意)",
+      "companyLabel": "会社名",
       "practiceAreaLabel": "業務分野 (任意)",
       "messageLabel": "メッセージ",
       "submit": "メッセージを送信",
@@ -2123,7 +2119,7 @@
       "city": "San Pedro Garza García, N.L., C.P. 66220, México",
       "phone": "+52 81 8335 2086",
       "fax": "+52 81 8335 2086",
-      "email": "info@santossaucedo.com",
+      "email": "administracion@santossaucedo.com",
       "hours": "ساعات العمل",
       "hoursDetails": "من الاثنين إلى الجمعة، ⁦9:00–19:00⁩",
       "getDirections": "كيفية الوصول",
@@ -2135,7 +2131,7 @@
       "formSubtitle": "إرسال هذا النموذج لا يُنشئ علاقة بين محامٍ وموكّل.",
       "fullName": "الاسم الكامل",
       "emailLabel": "البريد الإلكتروني",
-      "companyLabel": "الشركة (اختياري)",
+      "companyLabel": "الشركة",
       "practiceAreaLabel": "مجال الممارسة (اختياري)",
       "messageLabel": "الرسالة",
       "submit": "إرسال الرسالة",
@@ -2152,7 +2148,7 @@
       "city": "San Pedro Garza García, N.L., C.P. 66220, México",
       "phone": "+52 81 8335 2086",
       "fax": "+52 81 8335 2086",
-      "email": "info@santossaucedo.com",
+      "email": "administracion@santossaucedo.com",
       "hours": "Часы работы",
       "hoursDetails": "Понедельник — пятница, 9:00–19:00",
       "getDirections": "Как добраться",
@@ -2164,7 +2160,7 @@
       "formSubtitle": "Отправка этой формы не устанавливает отношений адвоката и клиента.",
       "fullName": "Имя",
       "emailLabel": "Эл. почта",
-      "companyLabel": "Компания (необязательно)",
+      "companyLabel": "Компания",
       "practiceAreaLabel": "Практика (необязательно)",
       "messageLabel": "Сообщение",
       "submit": "Отправить сообщение",
@@ -2181,7 +2177,7 @@
       "city": "San Pedro Garza García, N.L., C.P. 66220, México",
       "phone": "+52 81 8335 2086",
       "fax": "+52 81 8335 2086",
-      "email": "info@santossaucedo.com",
+      "email": "administracion@santossaucedo.com",
       "hours": "Heures d’ouverture",
       "hoursDetails": "Du lundi au vendredi, de 9 h à 19 h",
       "getDirections": "Itinéraire",
@@ -2193,7 +2189,7 @@
       "formSubtitle": "L’envoi de ce formulaire ne crée pas de relation avocat-client.",
       "fullName": "Nom complet",
       "emailLabel": "E-mail",
-      "companyLabel": "Entreprise (facultatif)",
+      "companyLabel": "Entreprise",
       "practiceAreaLabel": "Domaine de pratique (facultatif)",
       "messageLabel": "Message",
       "submit": "Envoyer le message",
@@ -2210,7 +2206,7 @@
       "city": "San Pedro Garza García, N.L., C.P. 66220, México",
       "phone": "+52 81 8335 2086",
       "fax": "+52 81 8335 2086",
-      "email": "info@santossaucedo.com",
+      "email": "administracion@santossaucedo.com",
       "hours": "Orari di apertura",
       "hoursDetails": "Dal lunedì al venerdì, 9:00–19:00",
       "getDirections": "Indicazioni stradali",
@@ -2222,7 +2218,7 @@
       "formSubtitle": "L’invio di questo modulo non costituisce un rapporto avvocato-cliente.",
       "fullName": "Nome",
       "emailLabel": "E-mail",
-      "companyLabel": "Azienda (opzionale)",
+      "companyLabel": "Azienda",
       "practiceAreaLabel": "Area di pratica (opzionale)",
       "messageLabel": "Messaggio",
       "submit": "Inviare il messaggio",
@@ -2601,8 +2597,8 @@
     "en": {
       "errorMessage": "Failed to load team members",
       "ofCounsel": "Of Counsel",
-      "associatesTitle": "Team members",
-      "mosaicNote": "Portraits of team members.",
+      "associatesTitle": "The team",
+      "mosaicNote": "Portraits of the members of the Santos & Saucedo team",
       "positions": {
         "foundingPartner": "Founding partner",
         "partner": "Partner",
@@ -2614,8 +2610,8 @@
     "es": {
       "errorMessage": "Error al cargar los miembros del equipo",
       "ofCounsel": "Of Counsel",
-      "associatesTitle": "Integrantes del equipo",
-      "mosaicNote": "Retratos de integrantes del equipo.",
+      "associatesTitle": "El equipo",
+      "mosaicNote": "Retratos de los integrantes del equipo de Santos & Saucedo",
       "positions": {
         "foundingPartner": "Socio fundador",
         "partner": "Socio",
@@ -3650,7 +3646,7 @@
         {
           "id": "contact",
           "title": "12. Contact information",
-          "content": "For any questions, concerns, or requests related to this Privacy Policy or our data protection practices, please contact:\n\nData Protection Officer\nSantos & Saucedo Abogados\n\nAddress:\nRío Tamazunchale 205 Norte\nSan Pedro Garza García, Nuevo León, México\n\nEmail: privacidad@santossaucedo.com\nPhone: +52 81 8335 2086\n\nOffice hours: Monday to Friday, 9:00 AM to 6:00 PM (Mexico City time)\n\nFor general inquiries about our legal services:\nEmail: info@santossaucedo.com\nWebsite: www.santossaucedo.com"
+          "content": "For any questions, concerns, or requests related to this Privacy Policy or our data protection practices, please contact:\n\nData Protection Officer\nSantos & Saucedo Abogados\n\nAddress:\nRío Tamazunchale 205 Norte\nSan Pedro Garza García, Nuevo León, México\n\nEmail: privacidad@santossaucedo.com\nPhone: +52 81 8335 2086\n\nOffice hours: Monday to Friday, 9:00 AM to 6:00 PM (Mexico City time)\n\nFor general inquiries about our legal services:\nEmail: administracion@santossaucedo.com\nWebsite: www.santossaucedo.com"
         }
       ]
     },
@@ -3782,7 +3778,7 @@
         {
           "id": "contact",
           "title": "12. Kontakt",
-          "content": "Bei Fragen, Bedenken oder Anfragen zu dieser Datenschutzrichtlinie kontaktieren Sie bitte:\n\nDatenschutzbeauftragter\nSantos & Saucedo Abogados\n\nAdresse:\nRío Tamazunchale 205 Norte\nSan Pedro Garza García, Nuevo León, México\n\nE-Mail: privacidad@santossaucedo.com\nTelefon: +52 81 8335 2086\n\nÖffnungszeiten: Montag bis Freitag, 9:00 bis 18:00 Uhr (Ortszeit Mexiko-Stadt)\n\nFür allgemeine Anfragen zu unseren Rechtsdienstleistungen:\nE-Mail: info@santossaucedo.com\nWebsite: www.santossaucedo.com"
+          "content": "Bei Fragen, Bedenken oder Anfragen zu dieser Datenschutzrichtlinie kontaktieren Sie bitte:\n\nDatenschutzbeauftragter\nSantos & Saucedo Abogados\n\nAdresse:\nRío Tamazunchale 205 Norte\nSan Pedro Garza García, Nuevo León, México\n\nE-Mail: privacidad@santossaucedo.com\nTelefon: +52 81 8335 2086\n\nÖffnungszeiten: Montag bis Freitag, 9:00 bis 18:00 Uhr (Ortszeit Mexiko-Stadt)\n\nFür allgemeine Anfragen zu unseren Rechtsdienstleistungen:\nE-Mail: administracion@santossaucedo.com\nWebsite: www.santossaucedo.com"
         }
       ]
     },
@@ -3848,7 +3844,7 @@
         {
           "id": "contact",
           "title": "12. 联系方式",
-          "content": "如对本隐私政策或我们的数据保护做法有任何问题、疑虑或请求，请联系：\n\n数据保护官\nSantos & Saucedo Abogados\n\n地址：\nRío Tamazunchale 205 Norte, 18楼\nSan Pedro Garza García, Nuevo León, México\n\n电子邮件：privacidad@santossaucedo.com\n电话：+52 81 8335 2086\n\n办公时间：周一至周五，上午9:00至下午6:00（墨西哥城时间）\n\n如需了解我们的法律服务：\n电子邮件：info@santossaucedo.com\n网站：www.santossaucedo.com"
+          "content": "如对本隐私政策或我们的数据保护做法有任何问题、疑虑或请求，请联系：\n\n数据保护官\nSantos & Saucedo Abogados\n\n地址：\nRío Tamazunchale 205 Norte, 18楼\nSan Pedro Garza García, Nuevo León, México\n\n电子邮件：privacidad@santossaucedo.com\n电话：+52 81 8335 2086\n\n办公时间：周一至周五，上午9:00至下午6:00（墨西哥城时间）\n\n如需了解我们的法律服务：\n电子邮件：administracion@santossaucedo.com\n网站：www.santossaucedo.com"
         }
       ]
     },
@@ -3914,7 +3910,7 @@
         {
           "id": "contact",
           "title": "12. 연락처",
-          "content": "이 개인정보 처리방침 또는 데이터 보호 관행에 관한 질문, 우려 사항 또는 요청이 있으시면 연락해 주세요:\n\n데이터 보호 책임자\nSantos & Saucedo Abogados\n\n주소:\nRío Tamazunchale 205 Norte, 18층\nSan Pedro Garza García, Nuevo León, México\n\n이메일: privacidad@santossaucedo.com\n전화: +52 81 8335 2086\n\n영업 시간: 월요일~금요일, 오전 9:00 ~ 오후 6:00 (멕시코시티 시간)\n\n법률 서비스에 관한 일반 문의:\n이메일: info@santossaucedo.com\n웹사이트: www.santossaucedo.com"
+          "content": "이 개인정보 처리방침 또는 데이터 보호 관행에 관한 질문, 우려 사항 또는 요청이 있으시면 연락해 주세요:\n\n데이터 보호 책임자\nSantos & Saucedo Abogados\n\n주소:\nRío Tamazunchale 205 Norte, 18층\nSan Pedro Garza García, Nuevo León, México\n\n이메일: privacidad@santossaucedo.com\n전화: +52 81 8335 2086\n\n영업 시간: 월요일~금요일, 오전 9:00 ~ 오후 6:00 (멕시코시티 시간)\n\n법률 서비스에 관한 일반 문의:\n이메일: administracion@santossaucedo.com\n웹사이트: www.santossaucedo.com"
         }
       ]
     },
@@ -3980,7 +3976,7 @@
         {
           "id": "contact",
           "title": "12. お問い合わせ",
-          "content": "このプライバシーポリシーまたは当社のデータ保護慣行に関するご質問、ご懸念、またはご要望がございましたら、以下にお問い合わせください：\n\nデータ保護責任者\nSantos & Saucedo Abogados\n\n住所：\nRío Tamazunchale 205 Norte, 18階\nSan Pedro Garza García, Nuevo León, México\n\nメール：privacidad@santossaucedo.com\n電話：+52 81 8335 2086\n\n営業時間：月曜日〜金曜日、午前9:00〜午後6:00（メキシコシティ時間）\n\n当社の法律サービスに関する一般的なお問い合わせ：\nメール：info@santossaucedo.com\nウェブサイト：www.santossaucedo.com"
+          "content": "このプライバシーポリシーまたは当社のデータ保護慣行に関するご質問、ご懸念、またはご要望がございましたら、以下にお問い合わせください：\n\nデータ保護責任者\nSantos & Saucedo Abogados\n\n住所：\nRío Tamazunchale 205 Norte, 18階\nSan Pedro Garza García, Nuevo León, México\n\nメール：privacidad@santossaucedo.com\n電話：+52 81 8335 2086\n\n営業時間：月曜日〜金曜日、午前9:00〜午後6:00（メキシコシティ時間）\n\n当社の法律サービスに関する一般的なお問い合わせ：\nメール：administracion@santossaucedo.com\nウェブサイト：www.santossaucedo.com"
         }
       ]
     },
@@ -4046,7 +4042,7 @@
         {
           "id": "contact",
           "title": "12. معلومات الاتصال",
-          "content": "لأي أسئلة أو مخاوف أو طلبات تتعلق بسياسة الخصوصية هذه أو ممارسات حماية البيانات لدينا، يرجى الاتصال بـ:\n\nمسؤول حماية البيانات\nSantos & Saucedo Abogados\n\nالعنوان:\nRío Tamazunchale 205 Norte، الطابق 18\nSan Pedro Garza García, Nuevo León، المكسيك\n\nالبريد الإلكتروني: privacidad@santossaucedo.com\nالهاتف: +52 81 8335 2086\n\nساعات العمل: الاثنين إلى الجمعة، 9:00 صباحاً إلى 6:00 مساءً (بتوقيت مدينة مكسيكو)\n\nللاستفسارات العامة حول خدماتنا القانونية:\nالبريد الإلكتروني: info@santossaucedo.com\nالموقع الإلكتروني: www.santossaucedo.com"
+          "content": "لأي أسئلة أو مخاوف أو طلبات تتعلق بسياسة الخصوصية هذه أو ممارسات حماية البيانات لدينا، يرجى الاتصال بـ:\n\nمسؤول حماية البيانات\nSantos & Saucedo Abogados\n\nالعنوان:\nRío Tamazunchale 205 Norte، الطابق 18\nSan Pedro Garza García, Nuevo León، المكسيك\n\nالبريد الإلكتروني: privacidad@santossaucedo.com\nالهاتف: +52 81 8335 2086\n\nساعات العمل: الاثنين إلى الجمعة، 9:00 صباحاً إلى 6:00 مساءً (بتوقيت مدينة مكسيكو)\n\nللاستفسارات العامة حول خدماتنا القانونية:\nالبريد الإلكتروني: administracion@santossaucedo.com\nالموقع الإلكتروني: www.santossaucedo.com"
         }
       ]
     },
@@ -4112,7 +4108,7 @@
         {
           "id": "contact",
           "title": "12. Контактная информация",
-          "content": "По любым вопросам, замечаниям или запросам, связанным с настоящей Политикой конфиденциальности или нашими практиками защиты данных, обращайтесь:\n\nСотрудник по защите данных\nSantos & Saucedo Abogados\n\nАдрес:\nRío Tamazunchale 205 Norte, 18 этаж\nSan Pedro Garza García, Nuevo León, México\n\nЭлектронная почта: privacidad@santossaucedo.com\nТелефон: +52 81 8335 2086\n\nЧасы работы: Понедельник – пятница, 9:00 – 18:00 (по времени Мехико)\n\nПо общим вопросам о наших юридических услугах:\nЭлектронная почта: info@santossaucedo.com\nВеб-сайт: www.santossaucedo.com"
+          "content": "По любым вопросам, замечаниям или запросам, связанным с настоящей Политикой конфиденциальности или нашими практиками защиты данных, обращайтесь:\n\nСотрудник по защите данных\nSantos & Saucedo Abogados\n\nАдрес:\nRío Tamazunchale 205 Norte, 18 этаж\nSan Pedro Garza García, Nuevo León, México\n\nЭлектронная почта: privacidad@santossaucedo.com\nТелефон: +52 81 8335 2086\n\nЧасы работы: Понедельник – пятница, 9:00 – 18:00 (по времени Мехико)\n\nПо общим вопросам о наших юридических услугах:\nЭлектронная почта: administracion@santossaucedo.com\nВеб-сайт: www.santossaucedo.com"
         }
       ]
     },
@@ -4178,7 +4174,7 @@
         {
           "id": "contact",
           "title": "12. Contact",
-          "content": "Pour toute question, préoccupation ou demande relative à cette Politique de confidentialité ou à nos pratiques de protection des données, veuillez contacter :\n\nDélégué à la protection des données\nSantos & Saucedo Abogados\n\nAdresse :\nRío Tamazunchale 205 Norte, 18e étage\nSan Pedro Garza García, Nuevo León, Mexique\n\nE-mail : privacidad@santossaucedo.com\nTéléphone : +52 81 8335 2086\n\nHeures d’ouverture : Lundi au vendredi, 9h00 à 18h00 (heure de Mexico)\n\nPour les demandes générales concernant nos services juridiques :\nE-mail : info@santossaucedo.com\nSite web : www.santossaucedo.com"
+          "content": "Pour toute question, préoccupation ou demande relative à cette Politique de confidentialité ou à nos pratiques de protection des données, veuillez contacter :\n\nDélégué à la protection des données\nSantos & Saucedo Abogados\n\nAdresse :\nRío Tamazunchale 205 Norte, 18e étage\nSan Pedro Garza García, Nuevo León, Mexique\n\nE-mail : privacidad@santossaucedo.com\nTéléphone : +52 81 8335 2086\n\nHeures d’ouverture : Lundi au vendredi, 9h00 à 18h00 (heure de Mexico)\n\nPour les demandes générales concernant nos services juridiques :\nE-mail : administracion@santossaucedo.com\nSite web : www.santossaucedo.com"
         }
       ]
     },
@@ -4244,7 +4240,7 @@
         {
           "id": "contact",
           "title": "12. Contatti",
-          "content": "Per qualsiasi domanda, dubbio o richiesta relativa a questa Informativa sulla privacy o alle nostre pratiche di protezione dei dati, contattaci:\n\nResponsabile della protezione dei dati\nSantos & Saucedo Abogados\n\nIndirizzo:\nRío Tamazunchale 205 Norte\nSan Pedro Garza García, Nuevo León, Messico\n\nE-mail: privacidad@santossaucedo.com\nTelefono: +52 81 8335 2086\n\nOrari di ufficio: Lunedì a venerdì, 9:00 - 18:00 (ora di Città del Messico)\n\nPer richieste generali sui nostri servizi legali:\nE-mail: info@santossaucedo.com\nSito web: www.santossaucedo.com"
+          "content": "Per qualsiasi domanda, dubbio o richiesta relativa a questa Informativa sulla privacy o alle nostre pratiche di protezione dei dati, contattaci:\n\nResponsabile della protezione dei dati\nSantos & Saucedo Abogados\n\nIndirizzo:\nRío Tamazunchale 205 Norte\nSan Pedro Garza García, Nuevo León, Messico\n\nE-mail: privacidad@santossaucedo.com\nTelefono: +52 81 8335 2086\n\nOrari di ufficio: Lunedì a venerdì, 9:00 - 18:00 (ora di Città del Messico)\n\nPer richieste generali sui nostri servizi legali:\nE-mail: administracion@santossaucedo.com\nSito web: www.santossaucedo.com"
         }
       ]
     }
@@ -4267,7 +4263,7 @@
         {
           "id": "intellectual-property",
           "title": "3. Intellectual property rights",
-          "content": "All content on this Website, including but not limited to text, graphics, logos, images, photographs, videos, audio clips, data compilations, software, icons, and the selection and arrangement thereof (collectively, “Content”), is the exclusive property of Santos & Saucedo Abogados or its content suppliers and is protected by Mexican and international copyright, trademark, patent, trade secret, and other intellectual property laws.\n\nTrademarks:\nThe S&S name, logo, and all related names, logos, product and service names, designs, and slogans are trademarks of Santos & Saucedo Abogados or its affiliates. You may not use such marks without the prior written permission of S&S. All other names, logos, product and service names, designs, and slogans on this Website are the trademarks of their respective owners.\n\nLimited license:\nSubject to these Terms, S&S grants you a limited, non-exclusive, non-transferable, revocable license to access and use the Website and its Content for your personal, non-commercial use only. This license does not include:\n• Any resale or commercial use of the Website or its Content\n• Any derivative use of the Website or its Content\n• Any downloading or copying of account information for the benefit of another\n• Any use of data mining, robots, or similar data gathering and extraction tools\n\nCopyright infringement:\nIf you believe that any Content on the Website infringes your copyright, please contact us at info@santossaucedo.com with:\n• A description of the copyrighted work you claim has been infringed\n• A description of where the material is located on the Website\n• Your contact information\n• A statement that you have a good faith belief that the use is not authorized\n• A statement, under penalty of perjury, that the information is accurate and that you are the copyright owner or authorized to act on behalf of the owner"
+          "content": "All content on this Website, including but not limited to text, graphics, logos, images, photographs, videos, audio clips, data compilations, software, icons, and the selection and arrangement thereof (collectively, “Content”), is the exclusive property of Santos & Saucedo Abogados or its content suppliers and is protected by Mexican and international copyright, trademark, patent, trade secret, and other intellectual property laws.\n\nTrademarks:\nThe S&S name, logo, and all related names, logos, product and service names, designs, and slogans are trademarks of Santos & Saucedo Abogados or its affiliates. You may not use such marks without the prior written permission of S&S. All other names, logos, product and service names, designs, and slogans on this Website are the trademarks of their respective owners.\n\nLimited license:\nSubject to these Terms, S&S grants you a limited, non-exclusive, non-transferable, revocable license to access and use the Website and its Content for your personal, non-commercial use only. This license does not include:\n• Any resale or commercial use of the Website or its Content\n• Any derivative use of the Website or its Content\n• Any downloading or copying of account information for the benefit of another\n• Any use of data mining, robots, or similar data gathering and extraction tools\n\nCopyright infringement:\nIf you believe that any Content on the Website infringes your copyright, please contact us at administracion@santossaucedo.com with:\n• A description of the copyrighted work you claim has been infringed\n• A description of where the material is located on the Website\n• Your contact information\n• A statement that you have a good faith belief that the use is not authorized\n• A statement, under penalty of perjury, that the information is accurate and that you are the copyright owner or authorized to act on behalf of the owner"
         },
         {
           "id": "no-legal-advice",
@@ -4297,12 +4293,12 @@
         {
           "id": "modifications",
           "title": "9. Modifications to terms",
-          "content": "Santos & Saucedo Abogados reserves the right, at its sole discretion, to modify, amend, or update these Terms and Conditions at any time without prior notice.\n\nHow changes are communicated:\n• Material changes will be indicated by updating the “Last updated” date at the top of this page\n• Significant modifications may be announced through a notice on the Website’s homepage\n• For registered users or subscribers, we may send email notifications of important changes\n\nYour responsibilities:\nIt is your responsibility to review these Terms periodically to stay informed of updates. You should check this page regularly to ensure you are aware of any changes.\n\nEffect of continued use:\nYour continued use of the Website following the posting of revised Terms means that you accept and agree to the changes. If you do not agree to the new Terms, you must stop using the Website.\n\nVersion history:\nWe maintain previous versions of these Terms for reference purposes. You may request access to prior versions by contacting us at info@santossaucedo.com.\n\nSeverability:\nIf any provision of these Terms is held by a court or other tribunal of competent jurisdiction to be invalid, illegal, or unenforceable for any reason, such provision shall be eliminated or limited to the minimum extent necessary, and the remaining provisions of these Terms will continue in full force and effect.\n\nEntire agreement:\nThese Terms, together with the Privacy Policy and any other legal notices published by S&S on the Website, constitute the entire agreement between you and S&S concerning the use of the Website and supersede all prior or contemporaneous communications, whether electronic, oral, or written."
+          "content": "Santos & Saucedo Abogados reserves the right, at its sole discretion, to modify, amend, or update these Terms and Conditions at any time without prior notice.\n\nHow changes are communicated:\n• Material changes will be indicated by updating the “Last updated” date at the top of this page\n• Significant modifications may be announced through a notice on the Website’s homepage\n• For registered users or subscribers, we may send email notifications of important changes\n\nYour responsibilities:\nIt is your responsibility to review these Terms periodically to stay informed of updates. You should check this page regularly to ensure you are aware of any changes.\n\nEffect of continued use:\nYour continued use of the Website following the posting of revised Terms means that you accept and agree to the changes. If you do not agree to the new Terms, you must stop using the Website.\n\nVersion history:\nWe maintain previous versions of these Terms for reference purposes. You may request access to prior versions by contacting us at administracion@santossaucedo.com.\n\nSeverability:\nIf any provision of these Terms is held by a court or other tribunal of competent jurisdiction to be invalid, illegal, or unenforceable for any reason, such provision shall be eliminated or limited to the minimum extent necessary, and the remaining provisions of these Terms will continue in full force and effect.\n\nEntire agreement:\nThese Terms, together with the Privacy Policy and any other legal notices published by S&S on the Website, constitute the entire agreement between you and S&S concerning the use of the Website and supersede all prior or contemporaneous communications, whether electronic, oral, or written."
         },
         {
           "id": "contact",
           "title": "10. Contact information",
-          "content": "If you have any questions about these Terms and Conditions, please contact us:\n\nSantos & Saucedo Abogados\n\nMailing address:\nRío Tamazunchale 205 Norte\nSan Pedro Garza García, Nuevo León, México\n\nTelephone: +52 81 8335 2086\nEmail: info@santossaucedo.com\nWebsite: www.santossaucedo.com\n\nOffice hours:\nMonday to Friday: 9:00 AM to 6:00 PM (Mexico City time)"
+          "content": "If you have any questions about these Terms and Conditions, please contact us:\n\nSantos & Saucedo Abogados\n\nMailing address:\nRío Tamazunchale 205 Norte\nSan Pedro Garza García, Nuevo León, México\n\nTelephone: +52 81 8335 2086\nEmail: administracion@santossaucedo.com\nWebsite: www.santossaucedo.com\n\nOffice hours:\nMonday to Friday: 9:00 AM to 6:00 PM (Mexico City time)"
         }
       ]
     },
@@ -4323,7 +4319,7 @@
         {
           "id": "intellectual-property",
           "title": "3. Derechos de propiedad intelectual",
-          "content": "Todo el contenido de este Sitio Web, incluyendo pero no limitado a texto, gráficos, logotipos, imágenes, fotografías, videos, clips de audio, compilaciones de datos, software, íconos, y la selección y disposición de los mismos (colectivamente, «Contenido»), es propiedad exclusiva de Santos & Saucedo Abogados o sus proveedores de contenido y está protegido por las leyes de derechos de autor, marcas registradas, patentes, secretos comerciales y otras leyes de propiedad intelectual mexicanas e internacionales.\n\nMarcas registradas:\nEl nombre S&S, el logotipo y todos los nombres, logotipos, nombres de productos y servicios, diseños y eslóganes relacionados son marcas registradas de Santos & Saucedo Abogados o sus afiliados. No puede usar dichas marcas sin el permiso previo por escrito de S&S.\n\nLicencia limitada:\nSujeto a estos Términos, S&S le otorga una licencia limitada, no exclusiva, intransferible y revocable para acceder y usar el Sitio Web y su Contenido únicamente para su uso personal y no comercial.\n\nInfracción de derechos de autor:\nSi cree que algún Contenido del Sitio Web infringe sus derechos de autor, comuníquese con nosotros en info@santossaucedo.com."
+          "content": "Todo el contenido de este Sitio Web, incluyendo pero no limitado a texto, gráficos, logotipos, imágenes, fotografías, videos, clips de audio, compilaciones de datos, software, íconos, y la selección y disposición de los mismos (colectivamente, «Contenido»), es propiedad exclusiva de Santos & Saucedo Abogados o sus proveedores de contenido y está protegido por las leyes de derechos de autor, marcas registradas, patentes, secretos comerciales y otras leyes de propiedad intelectual mexicanas e internacionales.\n\nMarcas registradas:\nEl nombre S&S, el logotipo y todos los nombres, logotipos, nombres de productos y servicios, diseños y eslóganes relacionados son marcas registradas de Santos & Saucedo Abogados o sus afiliados. No puede usar dichas marcas sin el permiso previo por escrito de S&S.\n\nLicencia limitada:\nSujeto a estos Términos, S&S le otorga una licencia limitada, no exclusiva, intransferible y revocable para acceder y usar el Sitio Web y su Contenido únicamente para su uso personal y no comercial.\n\nInfracción de derechos de autor:\nSi cree que algún Contenido del Sitio Web infringe sus derechos de autor, comuníquese con nosotros en administracion@santossaucedo.com."
         },
         {
           "id": "no-legal-advice",
@@ -4358,7 +4354,7 @@
         {
           "id": "contact",
           "title": "10. Información de contacto",
-          "content": "Si tiene alguna pregunta sobre estos Términos y Condiciones, comuníquese con nosotros:\n\nSantos & Saucedo Abogados\n\nDirección postal:\nRío Tamazunchale 205 Norte\nSan Pedro Garza García, Nuevo León, México\n\nTeléfono: +52 81 8335 2086\nCorreo electrónico: info@santossaucedo.com\nSitio Web: www.santossaucedo.com\n\nHorario de atención:\nLunes a viernes: 9:00 AM a 6:00 PM (hora de la Ciudad de México)"
+          "content": "Si tiene alguna pregunta sobre estos Términos y Condiciones, comuníquese con nosotros:\n\nSantos & Saucedo Abogados\n\nDirección postal:\nRío Tamazunchale 205 Norte\nSan Pedro Garza García, Nuevo León, México\n\nTeléfono: +52 81 8335 2086\nCorreo electrónico: administracion@santossaucedo.com\nSitio Web: www.santossaucedo.com\n\nHorario de atención:\nLunes a viernes: 9:00 AM a 6:00 PM (hora de la Ciudad de México)"
         }
       ]
     },
@@ -4414,7 +4410,7 @@
         {
           "id": "contact",
           "title": "10. Kontakt",
-          "content": "Bei Fragen, Bedenken oder Kommentaren zu diesen Nutzungsbedingungen oder der Website kontaktieren Sie uns bitte:\n\nSantos & Saucedo Abogados\n\nPostanschrift:\nRío Tamazunchale 205 Norte\nSan Pedro Garza García, Nuevo León, México\n\nTelefon: +52 81 8335 2086\nE-Mail: info@santossaucedo.com\nWebsite: www.santossaucedo.com\n\nÖffnungszeiten:\nMontag bis Freitag: 9:00 bis 18:00 Uhr (Ortszeit Mexiko-Stadt)\nAußer an mexikanischen Feiertagen"
+          "content": "Bei Fragen, Bedenken oder Kommentaren zu diesen Nutzungsbedingungen oder der Website kontaktieren Sie uns bitte:\n\nSantos & Saucedo Abogados\n\nPostanschrift:\nRío Tamazunchale 205 Norte\nSan Pedro Garza García, Nuevo León, México\n\nTelefon: +52 81 8335 2086\nE-Mail: administracion@santossaucedo.com\nWebsite: www.santossaucedo.com\n\nÖffnungszeiten:\nMontag bis Freitag: 9:00 bis 18:00 Uhr (Ortszeit Mexiko-Stadt)\nAußer an mexikanischen Feiertagen"
         }
       ]
     },
@@ -4470,7 +4466,7 @@
         {
           "id": "contact",
           "title": "10. 联系方式",
-          "content": "如果您对这些条款或本网站有任何问题、疑虑或意见，请通过以下方式联系我们：\n\nSantos & Saucedo Abogados\n\n邮寄地址：\nRío Tamazunchale 205 Norte, 18楼\nSan Pedro Garza García, Nuevo León, México\n\n电话：+52 81 8335 2086\n电子邮件：info@santossaucedo.com\n网站：www.santossaucedo.com\n\n办公时间：\n周一至周五：上午9:00至下午6:00（墨西哥城时间）\n墨西哥联邦节假日除外"
+          "content": "如果您对这些条款或本网站有任何问题、疑虑或意见，请通过以下方式联系我们：\n\nSantos & Saucedo Abogados\n\n邮寄地址：\nRío Tamazunchale 205 Norte, 18楼\nSan Pedro Garza García, Nuevo León, México\n\n电话：+52 81 8335 2086\n电子邮件：administracion@santossaucedo.com\n网站：www.santossaucedo.com\n\n办公时间：\n周一至周五：上午9:00至下午6:00（墨西哥城时间）\n墨西哥联邦节假日除外"
         }
       ]
     },
@@ -4526,7 +4522,7 @@
         {
           "id": "contact",
           "title": "10. 연락처",
-          "content": "이 약관 또는 웹사이트에 대한 질문, 우려 사항 또는 의견이 있으시면 다음을 통해 연락해 주세요:\n\nSantos & Saucedo Abogados\n\n우편 주소:\nRío Tamazunchale 205 Norte, 18층\nSan Pedro Garza García, Nuevo León, México\n\n전화: +52 81 8335 2086\n이메일: info@santossaucedo.com\n웹사이트: www.santossaucedo.com\n\n영업 시간:\n월요일~금요일: 오전 9:00 ~ 오후 6:00 (멕시코시티 시간)\n멕시코 연방 공휴일 제외"
+          "content": "이 약관 또는 웹사이트에 대한 질문, 우려 사항 또는 의견이 있으시면 다음을 통해 연락해 주세요:\n\nSantos & Saucedo Abogados\n\n우편 주소:\nRío Tamazunchale 205 Norte, 18층\nSan Pedro Garza García, Nuevo León, México\n\n전화: +52 81 8335 2086\n이메일: administracion@santossaucedo.com\n웹사이트: www.santossaucedo.com\n\n영업 시간:\n월요일~금요일: 오전 9:00 ~ 오후 6:00 (멕시코시티 시간)\n멕시코 연방 공휴일 제외"
         }
       ]
     },
@@ -4582,7 +4578,7 @@
         {
           "id": "contact",
           "title": "10. お問い合わせ",
-          "content": "これらの規約または本ウェブサイトに関するご質問、ご懸念、またはコメントがございましたら、以下を通じてお問い合わせください：\n\nSantos & Saucedo Abogados\n\n郵送先住所：\nRío Tamazunchale 205 Norte, 18階\nSan Pedro Garza García, Nuevo León, México\n\n電話：+52 81 8335 2086\nメール：info@santossaucedo.com\nウェブサイト：www.santossaucedo.com\n\n営業時間：\n月曜日〜金曜日：午前9:00〜午後6:00（メキシコシティ時間）\nメキシコの祝日を除く"
+          "content": "これらの規約または本ウェブサイトに関するご質問、ご懸念、またはコメントがございましたら、以下を通じてお問い合わせください：\n\nSantos & Saucedo Abogados\n\n郵送先住所：\nRío Tamazunchale 205 Norte, 18階\nSan Pedro Garza García, Nuevo León, México\n\n電話：+52 81 8335 2086\nメール：administracion@santossaucedo.com\nウェブサイト：www.santossaucedo.com\n\n営業時間：\n月曜日〜金曜日：午前9:00〜午後6:00（メキシコシティ時間）\nメキシコの祝日を除く"
         }
       ]
     },
@@ -4638,7 +4634,7 @@
         {
           "id": "contact",
           "title": "10. معلومات الاتصال",
-          "content": "إذا كان لديك أي أسئلة أو مخاوف أو تعليقات بشأن هذه الشروط والأحكام أو الموقع الإلكتروني، يرجى الاتصال بنا من خلال الوسائل التالية:\n\nSantos & Saucedo Abogados\n\nالعنوان البريدي:\nRío Tamazunchale 205 Norte، الطابق 18\nSan Pedro Garza García, Nuevo León، المكسيك\n\nالهاتف: +52 81 8335 2086\nالبريد الإلكتروني: info@santossaucedo.com\nالموقع الإلكتروني: www.santossaucedo.com\n\nساعات العمل:\nمن الاثنين إلى الجمعة: 9:00 صباحاً إلى 6:00 مساءً (بتوقيت مدينة مكسيكو)\nباستثناء العطلات الفيدرالية المكسيكية"
+          "content": "إذا كان لديك أي أسئلة أو مخاوف أو تعليقات بشأن هذه الشروط والأحكام أو الموقع الإلكتروني، يرجى الاتصال بنا من خلال الوسائل التالية:\n\nSantos & Saucedo Abogados\n\nالعنوان البريدي:\nRío Tamazunchale 205 Norte، الطابق 18\nSan Pedro Garza García, Nuevo León، المكسيك\n\nالهاتف: +52 81 8335 2086\nالبريد الإلكتروني: administracion@santossaucedo.com\nالموقع الإلكتروني: www.santossaucedo.com\n\nساعات العمل:\nمن الاثنين إلى الجمعة: 9:00 صباحاً إلى 6:00 مساءً (بتوقيت مدينة مكسيكو)\nباستثناء العطلات الفيدرالية المكسيكية"
         }
       ]
     },
@@ -4694,7 +4690,7 @@
         {
           "id": "contact",
           "title": "10. Контакты",
-          "content": "Если у вас есть вопросы, замечания или комментарии относительно настоящих Условий или Веб-сайта, пожалуйста, свяжитесь с нами:\n\nSantos & Saucedo Abogados\n\nПочтовый адрес:\nRío Tamazunchale 205 Norte, 18 этаж\nSan Pedro Garza García, Nuevo León, México\n\nТелефон: +52 81 8335 2086\nЭлектронная почта: info@santossaucedo.com\nВеб-сайт: www.santossaucedo.com\n\nЧасы работы:\nПонедельник – пятница: 9:00 – 18:00 (по времени Мехико)\nЗа исключением мексиканских федеральных праздников"
+          "content": "Если у вас есть вопросы, замечания или комментарии относительно настоящих Условий или Веб-сайта, пожалуйста, свяжитесь с нами:\n\nSantos & Saucedo Abogados\n\nПочтовый адрес:\nRío Tamazunchale 205 Norte, 18 этаж\nSan Pedro Garza García, Nuevo León, México\n\nТелефон: +52 81 8335 2086\nЭлектронная почта: administracion@santossaucedo.com\nВеб-сайт: www.santossaucedo.com\n\nЧасы работы:\nПонедельник – пятница: 9:00 – 18:00 (по времени Мехико)\nЗа исключением мексиканских федеральных праздников"
         }
       ]
     },
@@ -4750,7 +4746,7 @@
         {
           "id": "contact",
           "title": "10. Contact",
-          "content": "Si vous avez des questions, des préoccupations ou des commentaires concernant ces Conditions ou le Site Web, veuillez nous contacter :\n\nSantos & Saucedo Abogados\n\nAdresse postale :\nRío Tamazunchale 205 Norte, 18e étage\nSan Pedro Garza García, Nuevo León, Mexique\n\nTéléphone : +52 81 8335 2086\nE-mail : info@santossaucedo.com\nSite web : www.santossaucedo.com\n\nHeures d’ouverture :\nLundi au vendredi : 9h00 à 18h00 (heure de Mexico)\nHors jours fériés fédéraux mexicains"
+          "content": "Si vous avez des questions, des préoccupations ou des commentaires concernant ces Conditions ou le Site Web, veuillez nous contacter :\n\nSantos & Saucedo Abogados\n\nAdresse postale :\nRío Tamazunchale 205 Norte, 18e étage\nSan Pedro Garza García, Nuevo León, Mexique\n\nTéléphone : +52 81 8335 2086\nE-mail : administracion@santossaucedo.com\nSite web : www.santossaucedo.com\n\nHeures d’ouverture :\nLundi au vendredi : 9h00 à 18h00 (heure de Mexico)\nHors jours fériés fédéraux mexicains"
         }
       ]
     },
@@ -4806,7 +4802,7 @@
         {
           "id": "contact",
           "title": "10. Contatto",
-          "content": "Se hai domande, dubbi o commenti riguardo a questi Termini e Condizioni o al Sito Web, contattaci:\n\nSantos & Saucedo Abogados\n\nIndirizzo postale:\nRío Tamazunchale 205 Norte\nSan Pedro Garza García, Nuevo León, Messico\n\nTelefono: +52 81 8335 2086\nE-mail: info@santossaucedo.com\nSito web: www.santossaucedo.com\n\nOrari di ufficio:\nDa lunedì a venerdì: 9:00 - 18:00 (ora di Città del Messico)\nEscluse le festività federali messicane"
+          "content": "Se hai domande, dubbi o commenti riguardo a questi Termini e Condizioni o al Sito Web, contattaci:\n\nSantos & Saucedo Abogados\n\nIndirizzo postale:\nRío Tamazunchale 205 Norte\nSan Pedro Garza García, Nuevo León, Messico\n\nTelefono: +52 81 8335 2086\nE-mail: administracion@santossaucedo.com\nSito web: www.santossaucedo.com\n\nOrari di ufficio:\nDa lunedì a venerdì: 9:00 - 18:00 (ora di Città del Messico)\nEscluse le festività federali messicane"
         }
       ]
     }
@@ -5660,7 +5656,7 @@
   "contactData": {
     "address": "Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220, México",
     "phone": "+52 81 8335 2086",
-    "email": "info@santossaucedo.com",
+    "email": "administracion@santossaucedo.com",
     "recruitmentEmail": "reclutamiento@santossaucedo.com",
     "linkedinUrl": "",
     "directionsUrl": "https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Col.+del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220",

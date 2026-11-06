@@ -20,6 +20,15 @@ export function serveStatic(app: Express) {
     }));
   }
 
+  // Photos and the cover video (client/public/v3 and /video) keep their names between versions, so
+  // they are not immutable: 7 days, then the browser revalidates them with the ETag.
+  for (const dir of ["v3", "video"]) {
+    const dirPath = path.join(distPath, dir);
+    if (fs.existsSync(dirPath)) {
+      app.use(`/${dir}`, express.static(dirPath, { index: false, maxAge: "7d" }));
+    }
+  }
+
   app.use(express.static(distPath,{index:false}));
 
   // fall through to index.html if the file doesn't exist

@@ -344,8 +344,8 @@ export default function NewOfficesPopup({ language }: NewOfficesPopupProps) {
     workplacesNum: "+40",
     workplacesLabel: language === "es" ? "años de experiencia acumulada" : "years of combined experience",
     capacityText: language === "es"
-      ? "La atención pública de la firma se concentra en su oficina de San Pedro Garza García y en el correo info@santossaucedo.com."
-      : "Public inquiries are handled through the San Pedro Garza García office and info@santossaucedo.com.",
+      ? "La atención pública de la firma se concentra en su oficina de San Pedro Garza García y en el correo administracion@santossaucedo.com."
+      : "Public inquiries are handled through the San Pedro Garza García office and administracion@santossaucedo.com.",
     quoteText: language === "es"
       ? "Nuestro objetivo es brindar asesoría preventiva y consultoría legal en el área laboral a empresas nacionales e internacionales."
       : "Our objective is to provide preventive counsel and legal consulting in labor matters to national and international companies.",

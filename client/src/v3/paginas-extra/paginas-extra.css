@@ -1,0 +1,370 @@
+/* Páginas que no tenían equivalente en la demo v3 (Carreras, Pasantías S&S, Testimonios, Aviso de
+   privacidad, Términos de uso y 404), con el lenguaje de la demo aprobada: suelo de piedra con grano,
+   cabecera con foto, filetes y líneas de cota, bandas azules y el formulario azul.
+   Sobre el CSS de la demo (client/src/v3/demo.css, que no se toca). Prefijo px-. Todo dentro de .v3. */
+
+/* ---------- Comunes ---------- */
+/* La entrada de la cabecera puede llevar un <span> (para su data-testid): hereda la medida de la entrada */
+.v3 .px .sh-lead span,
+.v3 .px .sh-h1 span { font-size: inherit; }
+/* Texto corrido: la medida de la demo (index.css no lo baja ni lo sube en el teléfono) */
+.v3 .px :where(.px-p, .px-cota p, .px-vac__p, .px-post__p, .px-legal__txt) { font-size: var(--t-body); }
+
+/* Sección con filete superior, como «Cómo trabajamos» en Nuestra firma */
+.v3 .px-sec { padding-bottom: var(--sec-y); }
+.v3 .px-filete { border-top: 1px solid var(--linea); padding-top: clamp(40px, 5vw, 72px); }
+
+/* Retícula de dos columnas de la demo: título a la izquierda, cuerpo a la derecha */
+.v3 .px-dos {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  column-gap: clamp(32px, 6vw, 112px);
+  row-gap: 28px;
+  align-items: start;
+}
+.v3 .px-dos > .sh-h2 { margin: 0; }
+@media (max-width: 1000px) { .v3 .px-dos { grid-template-columns: minmax(0, 1fr); } }
+
+.v3 .px-p { margin: 0; color: var(--gris); line-height: 1.6; max-width: 34em; text-wrap: pretty; }
+.v3 .px-p--tinta { color: var(--tinta); }
+
+/* Enlace de texto de la demo (sh-mas) con flecha */
+.v3 .px .sh-mas { display: inline-flex; align-items: baseline; gap: .5em; }
+.v3 .px-flecha { text-decoration: none; display: inline-block; transition: transform var(--dur-quick) var(--ease-out); }
+html:not(.rm) .v3 .sh-mas:hover .px-flecha { transform: translateX(3px); }
+.v3 [dir="rtl"] .px-flecha, .v3:dir(rtl) .px-flecha { transform: scaleX(-1); }
+
+/* La cabecera: la fecha de los avisos legales va en la segunda columna, como dato */
+.v3 .px .sh-pp__texto > .px-fecha { color: var(--gris); font-size: var(--t-small); line-height: 1.5; padding-top: .55em; }
+.v3 .px .sh-pp__texto > .px-cab-enlaces { grid-column: 1; margin: 6px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 14px 32px; }
+
+/* ---------- Línea de cota (las cifras de la demo, sh-cifras): columnas sobre un filete con sus dos remates ---------- */
+.v3 .px-cota {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid var(--linea-fuerte);
+}
+.v3 .px-cota::before, .v3 .px-cota::after {
+  content: ""; position: absolute; top: -6px; width: 1px; height: 11px; background: var(--linea-fuerte);
+}
+.v3 .px-cota::before { left: 0; }
+.v3 .px-cota::after { right: 0; }
+.v3 .px-cota > * {
+  display: grid; gap: 14px; align-content: start;
+  padding: clamp(24px, 2.8vw, 40px) clamp(20px, 3vw, 48px) 0;
+  border-inline-start: 1px solid var(--linea);
+  margin: 0;
+}
+.v3 .px-cota > *:first-child { border-inline-start: 0; padding-inline-start: 0; }
+.v3 .px-cota > *:last-child { padding-inline-end: 0; }
+.v3 .px-cota__k { color: var(--gris); text-transform: uppercase; }
+.v3 .px-cota__h {
+  margin: 0; font-family: var(--serif); font-weight: 400; font-size: var(--t-h3);
+  line-height: 1.15; letter-spacing: -.01em; color: var(--azul); text-wrap: balance;
+}
+.v3 .px-cota p { margin: 0; color: var(--gris); line-height: 1.6; max-width: 32em; text-wrap: pretty; }
+@media (max-width: 700px) {
+  .v3 .px-cota { grid-template-columns: minmax(0, 1fr); }
+  .v3 .px-cota > * { border-inline-start: 0; padding-inline: 0; }
+  .v3 .px-cota > * + * { border-top: 1px solid var(--linea); margin-top: 28px; }
+}
+
+/* ---------- Carreras: perfil, foto y lo que se aprende ---------- */
+.v3 .px-perfil__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  column-gap: clamp(32px, 6vw, 96px);
+  row-gap: 36px;
+  align-items: start;
+}
+.v3 .px-perfil__p {
+  margin: 0; max-width: 24em;
+  font-family: var(--serif); font-weight: 400; font-size: var(--t-lead); line-height: 1.42;
+  color: var(--tinta); text-wrap: pretty;
+}
+.v3 .px-perfil__foto { margin: 0; }
+.v3 .px-perfil__foto .sh-firma__marco { aspect-ratio: 3 / 2; }
+.v3 .px-perfil__foto img { object-position: 50% 50%; }
+.v3 .px-aprende { margin-top: clamp(56px, 7vw, 104px); }
+@media (max-width: 900px) {
+  .v3 .px-perfil__grid { grid-template-columns: minmax(0, 1fr); }
+  .v3 .px-perfil__p { max-width: 30em; }
+}
+
+/* ---------- Banda azul con foto (la de «filosofía» del inicio, sh-filo): Pasantías S&S ---------- */
+.v3 .px-banda .sh-filo__in { min-height: min(64vh, 620px); padding-block: clamp(96px, 11vw, 168px); }
+/* La foto entra un poco ampliada: recortada a su marco, el degradado la cubre siempre (sin franja suelta debajo) */
+.v3 .px-banda .sh-filo__foto { overflow: hidden; }
+.v3 .px-banda .sh-filo__foto img { object-position: 50% 55%; }
+/* La foto del mezanine es muy clara (techo blanco): en la computadora empieza un poco más a la derecha y el
+   azul la cubre más lejos, para que el texto quede siempre sobre azul y la foto no se vea lechosa */
+@media (min-width: 1001px) {
+  .v3 .px-banda .sh-filo__foto { left: 46%; }
+  .v3 .px-banda .sh-filo__foto::after { background: linear-gradient(90deg, var(--azul-noche) 0%, rgba(12, 35, 64, .62) 20%, rgba(12, 35, 64, .12) 52%, rgba(12, 35, 64, 0) 70%); }
+  .v3 .px-banda .sh-filo__in > * { max-width: min(100%, 42%); }
+  /* De derecha a izquierda (árabe): el texto va a la derecha, así que la foto pasa a la izquierda */
+  .v3 .px-banda:dir(rtl) .sh-filo__foto { left: 0; right: 46%; }
+  .v3 .px-banda:dir(rtl) .sh-filo__foto::after { background: linear-gradient(270deg, var(--azul-noche) 0%, rgba(12, 35, 64, .62) 20%, rgba(12, 35, 64, .12) 52%, rgba(12, 35, 64, 0) 70%); }
+}
+.v3 .px-banda .px-banda__h { margin: 0; color: var(--sobre-azul); }
+.v3 .px-banda__h a { color: inherit; text-decoration: none; }
+.v3 .px-banda .sh-filo__p { font-size: var(--t-lead); font-family: var(--serif); font-weight: 350; line-height: 1.4; max-width: 22em; }
+@media (max-width: 1000px) {
+  .v3 .px-banda .sh-filo__in { min-height: 0; padding-block: calc(min(62vw, 500px) + 8px) clamp(72px, 9vw, 112px); }
+}
+
+/* ---------- Carreras: vacantes ---------- */
+.v3 .px-vac__vacio {
+  margin: 0; max-width: 24em;
+  font-family: var(--serif); font-weight: 400; font-size: var(--t-lead); line-height: 1.42;
+  color: var(--tinta); text-wrap: pretty;
+}
+.v3 .px-vac__error { margin: 0; color: var(--gris); }
+.v3 .px-vac__lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--linea-fuerte); }
+.v3 .px-vac__item { display: grid; gap: 12px; padding: clamp(24px, 2.6vw, 36px) 0; border-bottom: 1px solid var(--linea); }
+.v3 .px-vac__meta { margin: 0; color: var(--gris); text-transform: uppercase; }
+.v3 .px-vac__t { margin: 0; font-family: var(--serif); font-weight: 400; font-size: var(--t-h3); line-height: 1.15; letter-spacing: -.01em; color: var(--azul); }
+.v3 .px-vac__p { margin: 0; color: var(--gris); line-height: 1.6; max-width: 36em; white-space: pre-line; text-wrap: pretty; }
+.v3 .px-vac__item .sh-mas { justify-self: start; }
+
+/* ---------- Cómo postularse: datos a la izquierda y el formulario azul a la derecha (Contacto de la demo) ---------- */
+.v3 .px-post { padding-top: 0; }
+.v3 .px-post .sh-contacto__grid { padding-bottom: var(--sec-y); }
+.v3 .px-post__datos { display: grid; gap: 22px; align-content: start; }
+.v3 .px-post__datos > .sh-h2 { margin: 0 0 6px; }
+.v3 .px-post__p { margin: 0; color: var(--tinta); line-height: 1.6; max-width: 30em; text-wrap: pretty; }
+.v3 .px-post__nota { margin: 0; color: var(--gris); font-size: var(--t-small); line-height: 1.6; max-width: 32em; text-wrap: pretty; }
+/* El correo de reclutamiento: en la romana de la dirección de Contacto (sh-dir) */
+.v3 .px-correo {
+  justify-self: start; max-width: 100%;
+  font-family: var(--serif); font-weight: 400; font-size: clamp(1.3rem, 1.05rem + .9vw, 1.85rem); line-height: 1.25;
+  color: var(--azul); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em;
+  text-decoration-color: var(--linea-fuerte); overflow-wrap: anywhere;
+  transition: text-decoration-color var(--dur-quick) var(--ease-out);
+}
+.v3 .px-correo:hover, .v3 .px-correo:focus-visible { text-decoration-color: var(--azul); }
+.v3 .px-post__k { margin: 0; color: var(--gris); text-transform: uppercase; }
+.v3 .px-post__correo { display: grid; gap: 10px; padding-top: 4px; }
+@media (max-width: 900px) {
+  .v3 .px-post .sh-contacto__grid { row-gap: 48px; }
+}
+
+/* ---------- El formulario azul (sh-form de la demo) en una sola vista, sin pasos ---------- */
+.v3 .px-form { container-type: inline-size; min-height: 0; grid-template-rows: none; align-content: start; gap: 22px; }
+.v3 .px-form .sh-form__h { margin: 0; }
+.v3 .px-form__f { display: grid; gap: 22px; }
+.v3 .px-form__par { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
+@container (min-width: 520px) {
+  .v3 .px-form__par { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; }
+}
+.v3 .px-form .sh-campo textarea { resize: vertical; min-height: 7.5rem; }
+/* Foco de los campos como en la demo (filete lima): sin el anillo oscuro que .ss26 pone a todo foco visible */
+.ss26 .v3 .px-form .sh-campo :is(input, textarea):focus-visible { box-shadow: none; }
+.v3 .px-form .sh-campo label, .v3 .px-form .sh-check span, .v3 .px-form .sh-req { font-size: inherit; }
+.v3 .px-form .sh-campo label { font-size: .86rem; line-height: 1.4; }
+.v3 .px-form .sh-check { font-size: .95rem; line-height: 1.5; color: var(--sobre-azul); }
+.v3 .px-form .sh-check a { color: var(--lima); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em; }
+.v3 .px-form .sh-error { margin: 0; font-size: .9rem; line-height: 1.5; }
+.v3 .px-form .sh-form__ok { margin: 0; }
+.v3 .px-form .sh-btn[disabled] { opacity: .7; cursor: progress; }
+.v3 .px-form--off { gap: 14px; }
+/* El CV: el campo nativo, transparente sobre toda la fila (clic, teclado, arrastrar y soltar); a la vista, el botón
+   de la demo (sh-btn--ghost) y el nombre del archivo, con el filete de los demás campos */
+.v3 .px-archivo__fila {
+  position: relative; display: flex; align-items: center; gap: 16px; min-width: 0;
+  padding: 8px 0 10px; border-bottom: 1px solid rgba(243, 241, 234, .4);
+  transition: border-color var(--dur-quick) var(--ease-out);
+}
+.v3 .px-form .sh-campo .px-archivo__fila input[type="file"] {
+  position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; border: 0;
+  opacity: 0; cursor: pointer; font-size: 1rem; z-index: 1;
+}
+.v3 .px-archivo__btn {
+  flex: none; display: inline-flex; align-items: center; padding: 10px 18px;
+  font-family: var(--sans); font-weight: 500; font-size: .875rem; line-height: 1.2; letter-spacing: .01em;
+  color: var(--sobre-azul); border: 1px solid rgba(243, 241, 234, .4);
+  transition: border-color var(--dur-quick) var(--ease-out), color var(--dur-quick) var(--ease-out);
+}
+.v3 .px-archivo__nombre {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: .95rem; line-height: 1.4; color: var(--sobre-azul-2);
+}
+.v3 .px-archivo__nombre.is-lleno { color: var(--sobre-azul); }
+.v3 .px-archivo__fila:hover { border-bottom-color: var(--sobre-azul); }
+.v3 .px-archivo__fila:hover .px-archivo__btn { border-color: var(--lima); color: var(--lima); }
+.v3 .px-archivo__fila:focus-within { border-bottom-color: var(--lima); }
+.v3 .px-archivo__fila:has(input:focus-visible) .px-archivo__btn { outline: 2px solid var(--lima); outline-offset: 3px; border-color: var(--lima); color: var(--lima); }
+
+/* ---------- Testimonios ---------- */
+.v3 .px-test { background: var(--azul-banda); color: var(--sobre-azul); padding-block: var(--sec-y); }
+.v3 .px-test__lista { list-style: none; margin: 0; padding: 0; }
+.v3 .px-test__uno { margin: 0; padding-top: clamp(22px, 2.4vw, 32px); border-top: 1px solid var(--linea-azul); }
+.v3 .px-test__q { margin: 0; }
+.v3 .px-test__q p {
+  margin: 0; white-space: pre-line;
+  font-family: var(--serif); font-weight: 300; font-size: clamp(1.3rem, 1.02rem + 1vw, 1.8rem);
+  line-height: 1.32; letter-spacing: -.006em; color: var(--sobre-azul); text-wrap: pretty;
+}
+.v3 .px-test__who { margin: 18px 0 0; font-size: 1rem; line-height: 1.5; color: var(--sobre-azul-2); font-weight: 350; }
+.v3 .px-test__who strong { display: block; font-weight: 500; color: var(--sobre-azul); }
+/* El primero, grande, como la reseña de la demo (pe-op-q); los demás en dos columnas que no se parten */
+.v3 .px-test__uno--destacado .px-test__q p { font-size: clamp(1.5rem, 1rem + 1.6vw, 2.4rem); line-height: 1.24; max-width: 30ch; }
+.v3 .px-test__resto { columns: 2; column-gap: clamp(40px, 6vw, 112px); margin-top: clamp(56px, 6vw, 88px); }
+.v3 .px-test__resto > li { break-inside: avoid; margin-bottom: clamp(44px, 4.5vw, 64px); }
+.v3 .px-test__resto > li:last-child { margin-bottom: 0; }
+@media (max-width: 820px) { .v3 .px-test__resto { columns: 1; } }
+/* En una sola columna, cada cita a una medida de lectura (no de lado a lado) */
+.v3 .px-test__resto .px-test__q p { max-width: 26em; }
+.v3 .px-test-vacio { padding-bottom: var(--sec-y); }
+.v3 .px-test-vacio p { margin: 0; color: var(--gris); font-size: var(--t-body); line-height: 1.6; }
+.v3 .px .sh-pp__texto > .px-cab-enlaces .sh-mas { margin: 0; }
+
+/* ---------- Escribir un testimonio (enlace de invitación): Contacto de la demo, título y formulario ---------- */
+.v3 .px-escribir .sh-contacto__datos { gap: 22px; align-content: start; }
+.v3 .px-escribir .sh-contacto__datos .sh-h2 { margin: 0; color: var(--azul); }
+.v3 .px-escribir .sh-contacto__datos .sh-h2:focus { outline: none; }
+.v3 .px-escribir__k { margin: 0; color: var(--gris); text-transform: uppercase; }
+.v3 .px-escribir__p { margin: 0; max-width: 26em; font-family: var(--serif); font-weight: 400; font-size: var(--t-lead); line-height: 1.42; color: var(--tinta); text-wrap: pretty; }
+.v3 .px-escribir__cuerpo { margin: 0; color: var(--gris); line-height: 1.6; max-width: 32em; font-size: var(--t-body); text-wrap: pretty; }
+.v3 .px-escribir--solo .sh-contacto__grid { grid-template-columns: minmax(0, 1fr); }
+.v3 .px-escribir--solo .sh-contacto__datos { max-width: 44rem; }
+.v3 .px-escribir__invalido { display: grid; gap: 26px; justify-items: start; }
+.v3 .px-escribir__volver { margin: 0; }
+.v3 .px-form .px-cuenta { margin: 0; font-size: .82rem; color: var(--sobre-azul-2); }
+.v3 .px-form .px-cuenta .sh-error { font-size: inherit; }
+.v3 .px-form .px-checks { display: grid; gap: 16px; padding-top: 18px; border-top: 1px solid var(--linea-azul); }
+.v3 .px-form .px-check-err { margin: 6px 0 0 28px; }
+.v3 .px-form .px-aviso { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--sobre-azul-2); }
+.v3 .px-form .px-aviso a, .v3 .px-form .px-google a { color: var(--sobre-azul); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em; text-decoration-color: rgba(243, 241, 234, .45); }
+.v3 .px-form .px-aviso a:hover, .v3 .px-form .px-google a:hover { text-decoration-color: var(--lima); }
+.v3 .px-form .px-google { margin: 0; font-size: 1rem; line-height: 1.55; color: var(--sobre-azul-2); }
+.v3 .px-form .sh-campo [aria-invalid="true"] { border-bottom-color: #FFB4A0; }
+.v3 .px-form .px-estado { margin: 0; color: var(--sobre-azul-2); }
+
+/* ---------- Avisos legales: índice fijo a la izquierda y el texto a una medida cómoda ---------- */
+.v3 .px-legal { padding-bottom: var(--sec-y); }
+.v3 .px-legal__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  column-gap: clamp(40px, 6vw, 112px);
+  align-items: start;
+  border-top: 1px solid var(--linea);
+  padding-top: clamp(40px, 5vw, 72px);
+}
+/* Índice: fijo bajo el encabezado del sitio (sube cuando el encabezado se esconde) */
+.v3 .px-legal__nav { position: sticky; top: calc(var(--ss-header-h, 80px) + 32px); transition: top var(--dur-base) var(--ease-out); }
+body:has(.ss-header.is-tucked) .v3 .px-legal__nav { top: 32px; }
+html.rm .v3 .px-legal__nav { transition: none; }
+.v3 .px-indice summary { list-style: none; cursor: pointer; }
+.v3 .px-indice summary::-webkit-details-marker { display: none; }
+.v3 .px-indice__k { color: var(--gris); text-transform: uppercase; }
+.v3 .px-indice__lista { list-style: none; margin: 18px 0 0; padding: 0; border-top: 1px solid var(--linea-fuerte); }
+.v3 .px-indice__lista li { border-bottom: 1px solid var(--linea); }
+.v3 .px-indice__lista a {
+  position: relative; display: grid; grid-template-columns: 2.2em minmax(0, 1fr); align-items: baseline;
+  padding: 9px 0; color: var(--gris); text-decoration: none; font-size: .9375rem; line-height: 1.35;
+  transition: color var(--dur-quick) var(--ease-out);
+}
+.v3 .px-indice__lista a::before {
+  content: ""; position: absolute; inset-inline-start: 0; top: -1px; width: 32px; height: 2px; background: var(--azul);
+  transform: scaleX(0); transform-origin: left; transition: transform var(--dur-base) var(--ease-out);
+}
+.v3 .px-indice__lista a:dir(rtl)::before { transform-origin: right; }
+.v3 .px-indice__lista a:hover, .v3 .px-indice__lista a.is-on { color: var(--azul); }
+.v3 .px-indice__lista a.is-on::before { transform: scaleX(1); }
+html.rm .v3 .px-indice__lista a::before { transition: none; }
+.v3 .px-indice__n { font-variant-numeric: tabular-nums lining-nums; color: var(--gris); font-size: .8125rem; letter-spacing: .04em; }
+.v3 .px-indice__lista a.is-on .px-indice__n { color: var(--azul); }
+
+/* El texto */
+.v3 .px-legal__docs { display: grid; gap: clamp(48px, 5vw, 72px); min-width: 0; }
+.v3 .px-legal__sec { scroll-margin-top: calc(var(--ss-header-h, 80px) + 28px); display: grid; gap: 22px; max-width: 40rem; }
+.v3 .px-legal__sec + .px-legal__sec { border-top: 1px solid var(--linea); padding-top: clamp(40px, 4.4vw, 64px); }
+.v3 .px-legal__h {
+  margin: 0; display: grid; gap: 10px;
+  font-family: var(--serif); font-weight: 400; font-size: var(--t-h3); line-height: 1.15;
+  letter-spacing: -.01em; color: var(--azul); text-wrap: balance;
+}
+.v3 .px-legal__h .px-legal__n {
+  font-family: var(--sans); font-weight: 500; font-size: var(--t-label); letter-spacing: var(--tr-label, .14em);
+  line-height: 1.3; color: var(--gris); font-variant-numeric: tabular-nums lining-nums;
+}
+.v3 .px-legal__txt { display: grid; gap: 1.15em; color: var(--tinta); line-height: 1.72; overflow-wrap: break-word; }
+.v3 .px-legal__txt > div { display: grid; gap: .55em; }
+.v3 .px-legal__txt p { margin: 0; text-wrap: pretty; }
+.v3 .px-legal__txt .px-legal__sub { font-weight: 500; color: var(--azul); }
+.v3 .px-legal__txt ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .4em; }
+.v3 .px-legal__txt li { position: relative; padding-inline-start: 1.5em; }
+.v3 .px-legal__txt li::before {
+  content: ""; position: absolute; inset-inline-start: 0; top: .86em; width: .8em; height: 1px; background: var(--azul); opacity: .55;
+}
+.v3 .px-legal__txt bdi { unicode-bidi: isolate; }
+
+@media (max-width: 1000px) {
+  .v3 .px-legal__grid { grid-template-columns: minmax(0, 1fr); row-gap: clamp(36px, 6vw, 56px); }
+  .v3 .px-legal__nav { position: static; }
+  .v3 .px-indice summary {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    min-height: 48px; padding: 6px 0; border-bottom: 1px solid var(--linea-fuerte);
+  }
+  .v3 .px-indice summary::after {
+    content: ""; width: 9px; height: 9px; margin-inline-end: 4px; border-right: 1.5px solid var(--azul); border-bottom: 1.5px solid var(--azul);
+    transform: translateY(-3px) rotate(45deg); transition: transform var(--dur-base) var(--ease-out);
+  }
+  .v3 .px-indice[open] summary::after { transform: translateY(2px) rotate(-135deg); }
+  html.rm .v3 .px-indice summary::after { transition: none; }
+  .v3 .px-indice__lista { margin-top: 0; border-top: 0; columns: 2; column-gap: 40px; }
+  .v3 .px-indice__lista li { break-inside: avoid; }
+}
+@media (max-width: 640px) {
+  .v3 .px-indice__lista { columns: 1; }
+  .v3 .px-legal__sec { gap: 18px; }
+}
+@media (min-width: 1001px) {
+  .v3 .px-indice summary { pointer-events: none; }
+}
+
+/* Contacto del aviso: banda azul con el correo y el teléfono en la romana */
+.v3 .px-legal-contacto { background: var(--azul-noche); color: var(--sobre-azul); padding-block: clamp(72px, 9vw, 136px); }
+.v3 .px-legal-contacto__in {
+  display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); column-gap: clamp(40px, 6vw, 112px); row-gap: 28px; align-items: start;
+}
+.v3 .px-legal-contacto__p { margin: 0; max-width: 22em; color: var(--sobre-azul-2); font-size: var(--t-body); line-height: 1.6; }
+.v3 .px-legal-contacto__datos { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; justify-items: start; }
+.v3 .px-legal-contacto__datos a {
+  font-family: var(--serif); font-weight: 300; font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.6rem); line-height: 1.15; letter-spacing: -.012em;
+  color: var(--sobre-azul); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em;
+  text-decoration-color: rgba(243, 241, 234, .35); overflow-wrap: anywhere;
+  transition: text-decoration-color var(--dur-quick) var(--ease-out);
+}
+.v3 .px-legal-contacto__datos a:hover, .v3 .px-legal-contacto__datos a:focus-visible { text-decoration-color: var(--lima); }
+@media (max-width: 1000px) { .v3 .px-legal-contacto__in { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- 404 ---------- */
+.v3 .px-404 { padding-block: clamp(88px, 11vw, 168px) clamp(64px, 7vw, 112px); min-height: calc(100dvh - var(--ss-header-h, 80px) - 120px); box-sizing: border-box; display: grid; align-content: center; }
+.v3 .px-404__in { display: grid; gap: clamp(22px, 2.6vw, 32px); justify-items: start; }
+.v3 .px-404 .sh-h1 { max-width: 20ch; }
+.v3 .px-404 .sh-lead { margin: 0; max-width: 26em; color: var(--tinta); }
+.v3 .px-404__enlaces { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 36px; margin-top: 8px; }
+.v3 .px-404__volver {
+  appearance: none; background: none; border: 0; padding: 0; cursor: pointer;
+  font: 500 var(--t-ui)/1.3 var(--sans); letter-spacing: .01em; color: var(--azul);
+  display: inline-flex; align-items: baseline; gap: .5em; min-height: 44px; align-items: center;
+}
+.v3 .px-404__volver span:last-child { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .34em; text-decoration-color: rgba(15, 63, 107, .42); transition: text-decoration-color var(--dur-quick) var(--ease-out); }
+.v3 .px-404__volver:hover span:last-child, .v3 .px-404__volver:focus-visible span:last-child { text-decoration-color: var(--azul); }
+.v3 .px-404 .sh-cifras { width: 100%; grid-template-columns: minmax(0, 1fr); margin-top: clamp(40px, 6vw, 88px); }
+.v3 .px-404 .sh-cifras > div { padding-inline-start: 0; }
+
+/* El título de la banda de Pasantías S&S es el enlace a su página (como «Siguiente» de la demo, sh-sigue__t) */
+.v3 .px-banda__a { color: inherit; text-decoration: none; }
+.v3 .px-banda__t {
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .16em;
+  text-decoration-color: rgba(243, 241, 234, .38); transition: text-decoration-color var(--dur-base) var(--ease-out);
+}
+.v3 .px-banda__a:hover .px-banda__t, .v3 .px-banda__a:focus-visible .px-banda__t { text-decoration-color: var(--lima); }
+.v3 .px-banda__a .px-flecha { font-size: .62em; vertical-align: .14em; color: var(--lima); margin-inline-start: .1em; }
+html:not(.rm) .v3 .px-banda__a:hover .px-flecha { transform: translateX(4px); }
+.v3 .px-banda__a:focus-visible { outline: 2px solid var(--lima); outline-offset: 6px; }

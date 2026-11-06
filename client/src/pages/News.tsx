@@ -1,32 +1,26 @@
+// Monitor Laboral (/news) con el diseño de la demo v3 (aprobada el 5-11-2026): cabecera con la biblioteca
+// jurídica de la oficina, las notas en tarjetas con su foto (la más reciente, destacada), filtros, búsqueda
+// y páginas como antes, la banda azul de la suscripción con la estancia del mapamundi y la página siguiente.
+// Textos: los del sitio en 10 idiomas (menú, portada, panel «news-intro», «monitor-ui», «monitor-subscribe»).
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useCallback, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { PhotoBand } from "@/components/home26/PhotoBand";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { HeroKicker } from "@/components/editorial/HeroKicker";
-import { MonitorList, MonitorSubscribe } from "@/components/monitor/MonitorList";
 import { chrome26 } from "@/components/home26/chrome26";
-import { home26 } from "@/components/home26/content";
+import { useCmsMedia } from "@/lib/cmsMedia";
+import { V3Main, V3NextPage, V3PageHeader } from "@/v3/shared";
+import { MonitorNotas, MonitorSuscripcion, etiquetaSiguiente } from "@/v3/paginas-sitio/Monitor";
+import { useMonitorIntro } from "@/v3/paginas-sitio/textos";
 
 export default function NewsPage() {
   const { language } = useLanguage();
   // h1: el rótulo del menú en cada idioma (chrome26.ts), el mismo de la pestaña y del artículo
   // ("Monitor Laboral" en español, "Labor Monitor" en inglés). Subtítulo: la misma frase con que
-  // la portada presenta el Monitor (home26.monitor.intro); en los demás idiomas, su traducción.
-  const subtitles: Record<string, string> = {
-    es: home26.es.monitor.intro,
-    en: home26.en.monitor.intro,
-    de: "Analysen der Kanzlei zu den Änderungen, die Unternehmen betreffen.",
-    zh: "本所对影响企业的各项变化的分析。",
-    ko: "기업에 영향을 미치는 변화에 관한 법인의 분석.",
-    ja: "企業に影響する変化についての事務所の分析。",
-    ar: "تحليلات المكتب للتغييرات التي تمسّ الشركات.",
-    ru: "Аналитика фирмы об изменениях, которые касаются компаний.",
-    fr: "Les analyses du cabinet sur les évolutions qui concernent les entreprises.",
-    it: "Le analisi dello studio sui cambiamenti che riguardano le imprese.",
-  };
+  // la portada presenta el Monitor (home26.monitor.intro); en los demás idiomas, su traducción
+  // (panel «news-intro»; v3/paginas-sitio/textos.ts).
+  const subtitle = useMonitorIntro(language);
 
   // Aviso solo si de verdad llegó una traducción automática (nunca en español ni en inglés)
   const translationBannerMessages: Record<string, string> = {
@@ -44,83 +38,80 @@ export default function NewsPage() {
   const handleTranslated = useCallback(() => setTranslatedFor(language), [language]);
 
   const liveChrome = useCmsContent("chrome", chrome26);
-  const title = (liveChrome[language as keyof typeof chrome26] ?? liveChrome.en).nav[3].label;
-  const liveSubtitles = useCmsContent("news-intro", subtitles);
-  const liveHome = useCmsContent("home", home26);
-  const subtitle = language === "es" || language === "en" ? liveHome[language].monitor.intro : (liveSubtitles[language] || liveSubtitles.en);
+  const nav = (liveChrome[language as keyof typeof chrome26] ?? liveChrome.en).nav;
+  const title = nav[3].label;
   const translationBanner = translatedFor === language ? translationBannerMessages[language] ?? null : null;
 
+  // Fotos de la oficina (panel → Medios): la biblioteca jurídica en la cabecera y la estancia del
+  // mapamundi en la banda de la suscripción (la que antes cerraba la página)
+  const media = useCmsMedia();
+  const { biblioteca, estancia } = media.photos;
+  const bibliotecaInfo = media.officeGallery.find((g) => g.photo === "biblioteca");
+  const bibliotecaAlt = (language === "es" ? bibliotecaInfo?.altEs : bibliotecaInfo?.alt) || "";
+  const srcSet = (p: { url: string; smallUrl?: string }) => (p.smallUrl && p.smallUrl !== p.url ? `${p.smallUrl} 768w, ${p.url} 1536w` : undefined);
+  const nextLabel = etiquetaSiguiente(language);
+
   return (
-    <div className="min-h-screen bg-background" data-testid="page-news">
+    <div className="ss26 min-h-screen" data-testid="page-news">
       <SEOHead page="news" language={language} />
       <Header />
 
-      {/* Encabezado dentro de <main> (el salto al contenido no se salta el h1); el relleno
-          del cuerpo va en su propio envoltorio. ss-container: borde de logotipo y pie. */}
-      <main id="main-content">
-        <section className="editorial-page-hero ss-principal-page-hero" data-testid="section-news-hero">
-          <div className="ss-container">
-            <div className="max-w-3xl">
-              <HeroKicker page="news" testId="text-news-kicker" />
-              <h1
-                className="mb-5"
-                data-testid="text-news-title"
-              >
-                {title}
-              </h1>
-              {subtitle && (
-                <p data-testid="text-news-subtitle">
-                  {subtitle}
-                </p>
-              )}
-              {translationBanner && (
-                <p
-                  className="mt-4 text-sm"
-                  data-testid="text-translation-banner"
-                >
-                  {translationBanner}
-                </p>
-              )}
+      <V3Main vista="monitor">
+        <div className="ps">
+          <div data-testid="section-news-hero">
+            <V3PageHeader
+              id="cab-monitor-h"
+              img={biblioteca.url}
+              alt={bibliotecaAlt}
+              width={1536}
+              height={1024}
+              position="50% 58%"
+              title={<span data-testid="text-news-title">{title}</span>}
+              lead={subtitle ? <span data-testid="text-news-subtitle">{subtitle}</span> : undefined}
+            >
+              {translationBanner ? <p data-testid="text-translation-banner">{translationBanner}</p> : null}
+            </V3PageHeader>
+          </div>
+
+          {/* Lista del Monitor. Los filtros solo aparecen si al menos dos categorías tienen notas
+              publicadas (no se ofrece una categoría vacía); la búsqueda, desde 12 notas */}
+          <section className="ps-monitor" aria-labelledby="cab-monitor-h">
+            <div className="sh-wrap">
+              <MonitorNotas
+                archive
+                filters
+                search
+                onTranslated={handleTranslated}
+                testIds={{
+                  row: (item) => `card-news-${item.slug}`,
+                  category: (item) => `badge-category-${item.slug}`,
+                  date: (item) => `text-news-date-${item.slug}`,
+                  title: (item) => `text-news-title-${item.slug}`,
+                  excerpt: (item) => `text-news-excerpt-${item.slug}`,
+                  filters: "container-category-filters",
+                  filter: (value) => `button-filter-${value}`,
+                  search: "input-search-news",
+                  error: "container-news-error",
+                  errorText: "text-news-error",
+                  empty: "container-news-empty",
+                  noResults: "container-news-empty",
+                  skeleton: (i) => `skeleton-news-${i}`,
+                }}
+              />
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* Lista única del Monitor (filas de filete). Los filtros solo aparecen si al menos dos
-            categorías tienen notas publicadas: no se ofrece una categoría vacía ("Rankings") */}
-        <div className="py-16 lg:py-20">
-          <div className="ss-container">
-            <MonitorList
-              presentation="archive"
-              filters
-              search
-              onTranslated={handleTranslated}
-              testIds={{
-                row: (item) => `card-news-${item.slug}`,
-                category: (item) => `badge-category-${item.slug}`,
-                date: (item) => `text-news-date-${item.slug}`,
-                title: (item) => `text-news-title-${item.slug}`,
-                excerpt: (item) => `text-news-excerpt-${item.slug}`,
-                filters: "container-category-filters",
-                filter: (value) => `button-filter-${value}`,
-                search: "input-search-news",
-                error: "container-news-error",
-                errorText: "text-news-error",
-                empty: "container-news-empty",
-                noResults: "container-news-empty",
-                skeleton: (i) => `skeleton-news-${i}`,
-              }}
-            />
+          {/* Al pie del Monitor: la suscripción por correo (/newsletter) */}
+          <MonitorSuscripcion
+            foto={{ src: estancia.url, srcSet: srcSet(estancia) }}
+            testId="section-news-subscribe"
+            linkTestId="link-news-subscribe"
+            fotoTestId="band-news-office"
+          />
 
-            {/* Al pie del Monitor: la suscripción por correo (/newsletter), sin filete propio: el
-                último filete de la lista es el único cierre */}
-            <MonitorSubscribe rule={false} className="mt-8 lg:mt-10" testId="section-news-subscribe" linkTestId="link-news-subscribe" />
-          </div>
+          <V3NextPage href="/contact" label={nextLabel} title={nav[5].label} ariaLabel={nextLabel} />
         </div>
-
-        {/* Después de la lista y la suscripción, contra el pie (no interrumpe la lectura): la
-            estancia del mapamundi, de borde a borde de la ventana (PhotoBand), sin marco ni pie */}
-        <PhotoBand photo="estancia" height="medium" position="object-[50%_40%]" testId="band-news-office" />
-      </main>
+      </V3Main>
 
       <Footer />
     </div>

@@ -23,6 +23,8 @@ export function isOfCounselMember(member: Pick<VisibilityFields, "title">): bool
  * Socios confirmados y Of Counsel (los asociados van en el mosaico sin nombres).
  */
 export function isNamedOnTeamPage(member: VisibilityFields): boolean {
+  // Los cuatro socios salen siempre (regla del cliente), aunque el panel los marque como no públicos
+  if (CONFIRMED_PARTNER_SLUGS.has(member.slug)) return true;
   if (typeof member.isPublic === "boolean") return member.isPublic;
   if (member.isPartner) return CONFIRMED_PARTNER_SLUGS.has(member.slug);
   return isOfCounselMember(member);
@@ -80,11 +82,11 @@ function pickFields<K extends keyof TeamMember>(member: Partial<TeamMember>, fie
 }
 
 // Datos personales (junta del 16-10-2026, Gabriel): de los socios solo sale lo institucional.
-// El correo y el teléfono públicos son siempre los generales de la firma (info@ y conmutador),
+// El correo y el teléfono públicos son siempre los generales de la firma (administracion@ y conmutador),
 // aunque el panel guarde un celular o un correo propio; el in memoriam, sin contacto. Sin
 // LinkedIn ni otras redes personales. Lo usan /api/team*, la vCard, el JSON-LD (que lee la
 // ficha pública) y el build estático.
-export const FIRM_PUBLIC_EMAIL = "info@santossaucedo.com";
+export const FIRM_PUBLIC_EMAIL = "administracion@santossaucedo.com";
 export const FIRM_PUBLIC_PHONE = "+52 81 8335 2086";
 
 function institutionalContact<T extends { email: string | null; phone: string | null; title: string }>(out: T): T {

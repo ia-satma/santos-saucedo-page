@@ -3,7 +3,7 @@ import type { SiteContent } from "@shared/schema";
 import { home26, type Lang26 } from "./content";
 
 // content.ts no trae correo: mismo respaldo que el pie anterior (Footer.tsx).
-const FALLBACK_EMAIL = "info@santossaucedo.com";
+const FALLBACK_EMAIL = "administracion@santossaucedo.com";
 
 // La API da la dirección en una línea. Se compone como membrete en cuatro líneas:
 // calle / colonia / ciudad y estado / código postal y país. La colonia se escribe como en
@@ -34,5 +34,5 @@ export function useSiteContact(lang: Lang26) {
 
 export function useSiteDetails() {
   const { data } = useQuery<SiteContent & { privacyEmail: string; recruitmentEmail: string; linkedinUrl: string; directionsUrl: string; googleReviewsUrl?: string }>({ queryKey: ["/api/site-content"], staleTime: 15000, refetchOnWindowFocus: true, refetchInterval: 30000 });
-  return { privacyEmail: data?.privacyEmail ?? "privacidad@santossaucedo.com", address: data?.address ?? "", phone: data?.phone ?? "", email: data?.email ?? "info@santossaucedo.com", recruitmentEmail: data?.recruitmentEmail ?? "reclutamiento@santossaucedo.com", linkedinUrl: data?.linkedinUrl ?? "", directionsUrl: data?.directionsUrl ?? "https://www.google.com/maps/search/?api=1&query=Santos+Saucedo+San+Pedro", googleReviewsUrl: data?.googleReviewsUrl?.trim() || "" };
+  return { privacyEmail: data?.privacyEmail ?? "privacidad@santossaucedo.com", address: data?.address ?? "", phone: data?.phone ?? "", email: data?.email ?? "administracion@santossaucedo.com", recruitmentEmail: data?.recruitmentEmail ?? "reclutamiento@santossaucedo.com", linkedinUrl: data?.linkedinUrl ?? "", directionsUrl: data?.directionsUrl ?? "https://www.google.com/maps/search/?api=1&query=Santos+Saucedo+San+Pedro", googleReviewsUrl: data?.googleReviewsUrl?.trim() || "" };
 }

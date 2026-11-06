@@ -31,27 +31,26 @@ export const home26 = {
       secondaryCta: "Hable con nosotros",
     },
     firma: {
-      // h2 de § 01 (documento de redacción): el nombre de la sección, como Socios y Monitor Laboral
-      title: "La firma",
+      // Inicio v3 (demo aprobada): título (h2 oculto) y la frase de la firma sobre sus cifras.
+      // Los mismos valores que shared/cms-defaults.json (home.es.firma).
+      title: "Nuestra firma",
       body: [
-        "Santos & Saucedo nació en San Pedro Garza García en 2009 con una práctica dedicada a las empresas. Desde entonces asesora a grupos industriales mexicanos, a multinacionales y a empresas de capital asiático en las decisiones que involucran a su personal: la contratación, la organización del trabajo, la relación con el sindicato, la terminación de una relación laboral y la defensa ante las autoridades y los tribunales.",
-        "El trabajo de la firma se apoya en una alianza de despachos especializados que le da presencia en más de 72 ciudades. Un cliente con plantas o sucursales en varios estados recibe el mismo criterio en todas ellas.",
+        "Desde San Pedro Garza García, Santos & Saucedo asesora a grupos industriales mexicanos, a multinacionales y a empresas de capital asiático en las decisiones que involucran a su personal.",
       ],
       caption: "Río Tamazunchale 205 Norte, San Pedro Garza García. En el cristal, el Cerro de la Silla.",
       alt: "Fachada de cristal de las oficinas de Santos & Saucedo con el Cerro de la Silla reflejado",
     },
     creemos: {
-      // Etiqueta de la banda (redacción: "Lo que creemos"), tras "§ ——"
-      label: "Lo que creemos",
-      quote: "La prevención es la primera defensa.",
+      // Inicio v3: la banda de la turbina. label = el botón; quote = el titular; body[0] = el párrafo.
+      label: "Nuestra filosofía",
+      quote: "Preparamos cada asunto como si fuera a llegar a juicio.",
       body: [
-        "Estamos convencidos de que la mayoría de los conflictos laborales se resuelven antes de llegar a un tribunal: en un contrato bien redactado, en un expediente en orden, en una negociación preparada con tiempo.",
-        "Por eso la mayor parte de nuestro trabajo es preventivo. Cuando el litigio es inevitable, lo conduce el mismo equipo que conoce la operación del cliente.",
+        "Esa preparación respalda cada negociación: se negocia mejor cuando el caso ya está listo para defenderse. Prevención primero y, si hay conflicto, capacidad de reacción.",
       ],
     },
     practicas: {
-      // h2 de § 02: el nombre de la sección (documento de redacción)
-      title: "Prácticas",
+      // h2 del bloque de prácticas del Inicio v3 (el mismo valor que shared/cms-defaults.json)
+      title: "Nuestras prácticas",
       // slug: el de la base; la fila enlaza a /practice-groups/<slug>
       items: [
         {
@@ -93,7 +92,8 @@ export const home26 = {
       intro: "Análisis de la firma sobre los cambios que afectan a las empresas.",
     },
     socios: {
-      title: "Socios",
+      // h2 de la banda de los socios del Inicio v3 (el mismo valor que shared/cms-defaults.json)
+      title: "Nuestros socios",
       // Nombres, cargos (team_members.title_es) y orden ("order") tomados del panel, como en /team.
       // photo: el slug del socio en /team (sus retratos en team_photos).
       people: [
@@ -125,24 +125,22 @@ export const home26 = {
       secondaryCta: "Talk to our team",
     },
     firma: {
-      title: "The firm",
+      title: "Our firm",
       body: [
-        "Santos & Saucedo was founded in San Pedro Garza García in 2009 with a practice devoted to employers. Since then it has advised Mexican industrial groups, multinationals and Asian-owned companies on the decisions that involve their people: hiring, the organization of work, union relations, terminations and the defense before authorities and courts.",
-        "The firm works with an alliance of specialized law firms that gives it presence in more than 72 cities. A client with plants or branches in several states receives the same judgment in all of them.",
+        "From San Pedro Garza García, Santos & Saucedo advises Mexican industrial groups, multinationals and Asian-owned companies on the decisions that involve their people.",
       ],
       caption: "Río Tamazunchale 205 Norte, San Pedro Garza García. In the glass, the Cerro de la Silla.",
       alt: "Glass facade of the Santos & Saucedo offices reflecting the Cerro de la Silla",
     },
     creemos: {
-      label: "What we believe",
-      quote: "Prevention is the first defense.",
+      label: "Our philosophy",
+      quote: "We prepare every matter as if it were going to trial.",
       body: [
-        "We are convinced that most labor disputes are resolved before they reach a court: in a well-drafted contract, in a file kept in order, in a negotiation prepared in advance.",
-        "That is why most of our work is preventive. When litigation is unavoidable, it is handled by the same team that knows the client’s operation.",
+        "That preparation supports every negotiation: one negotiates better when the case is already ready to be defended. Prevention first and, if a dispute arises, the capacity to respond.",
       ],
     },
     practicas: {
-      title: "Practices",
+      title: "Our practices",
       items: [
         {
           slug: "laboral-seguridad-social",
@@ -181,7 +179,7 @@ export const home26 = {
       intro: "The firm’s analysis of the changes that affect employers.",
     },
     socios: {
-      title: "Partners",
+      title: "Our partners",
       people: [
         { name: "Mario Saucedo Montemayor", photo: "mario-saucedo-montemayor", role: "Managing partner" },
         { name: "Enrique Santos Guzmán", photo: "enrique-santos-guzman", role: "Managing partner" },

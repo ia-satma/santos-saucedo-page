@@ -36,7 +36,7 @@ export const TEXTOS: Record<V3Lang, FirmaTextos> = {
     cabAlt: "La luna llena sale entre dos crestas de la sierra, al anochecer",
     lead: "Santos & Saucedo nació en San Pedro Garza García con una práctica dedicada a las empresas. Desde entonces asesora a grupos industriales mexicanos, a multinacionales y a empresas de capital asiático en las decisiones que involucran a su personal.",
     cabP: "La contratación, la organización del trabajo, la relación con el sindicato, la terminación de una relación laboral y la defensa ante las autoridades y los tribunales. Un cliente con plantas en varios estados recibe el mismo criterio en todas ellas, a través de una alianza de despachos especializados.",
-    cuadroAlt: "El tríptico de la firma en la sala de juntas: tres lienzos abstractos de color con las líneas del Cerro de la Silla",
+    cuadroAlt: "Sala de juntas de Santos & Saucedo con el tríptico de la firma: tres lienzos abstractos de color con las líneas del Cerro de la Silla",
     cuadroCap: "El cuadro principal",
     cuadroTexto: "Tríptico de la sala de juntas, con las líneas del Cerro de la Silla.",
     lema: [
@@ -91,7 +91,7 @@ export const TEXTOS: Record<V3Lang, FirmaTextos> = {
     cabAlt: "The full moon rises between two mountain ridges at dusk",
     lead: "Santos & Saucedo was founded in San Pedro Garza García with a practice devoted to employers. Since then it has advised Mexican industrial groups, multinational companies and Asian-owned businesses on the decisions that involve their workforce.",
     cabP: "Hiring, the organization of work, the relationship with the union, the termination of employment, and the defense before the authorities and the courts. A client with plants in several states receives the same judgment in all of them, through an alliance of specialized firms.",
-    cuadroAlt: "The firm’s triptych in the boardroom: three abstract canvases in color crossed by the lines of the Cerro de la Silla",
+    cuadroAlt: "The Santos & Saucedo boardroom with the firm’s triptych: three abstract canvases in color with the lines of the Cerro de la Silla",
     cuadroCap: "The principal painting",
     cuadroTexto: "The boardroom triptych, with the lines of the Cerro de la Silla.",
     lema: [
@@ -99,7 +99,7 @@ export const TEXTOS: Record<V3Lang, FirmaTextos> = {
       { antes: "In the event of a dispute: ", em: "resolution", fin: "." },
     ],
     notas: [
-      "We prepare each company to comply with labor law before a dispute arises: well-drafted contracts, files in order, negotiations prepared well in advance. The best labor compliance is the best defense.",
+      "We prepare each company to comply with labor law before a dispute arises: well-drafted contracts, files in order, negotiations prepared well in advance. Sound labor compliance is the best defense.",
       "When a dispute arrives, we work as trial lawyers: the same team that knows the client’s operations prepares each matter as if it were going to court. That preparation is what allows us to negotiate better and, often, to resolve matters sooner.",
     ],
     lamina: "Plate",

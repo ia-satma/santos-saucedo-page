@@ -20,9 +20,15 @@ import { keepFirmName } from "@/lib/firmName";
 import defaults from "@shared/cms-defaults.json";
 import type { TeamMember } from "@shared/schema";
 import { V3Main, V3NextPage, useV3Lang } from "@/v3/shared";
-import { SociosLienzo, SociosLienzoPlaceholder, OfCounsel, type LienzoPartner } from "@/v3/socios/Lienzo";
+import { SociosLienzo, OfCounsel, type LienzoPartner } from "@/v3/socios/Lienzo";
 import { EquipoMuro } from "@/v3/socios/Equipo";
 import { SOCIOS_TEXTS } from "@/v3/socios/texts";
+import { firmPartners } from "@/v3/socios/partners";
+
+// Encabezado del panel: manda si el cliente lo cambió; si sigue con el texto predeterminado del
+// panel (que no es el de la demo), el de la demo aprobada
+const editedInPanel = (value: string | undefined, ...defaultValues: (string | undefined)[]) =>
+  !!value && !defaultValues.includes(value);
 
 // "(in memoriam)" con espacio duro, como en la ficha (TeamMemberDetail): no se parte entre líneas
 const keepInMemoriam = (text: string) => text.replace(/\((in)\s+(memoriam)\)/gi, "($1\u00a0$2)");
@@ -59,7 +65,7 @@ export default function Team() {
       errorMessage: "Failed to load team members",
       ofCounsel: "Of Counsel",
       associatesTitle: "Team members",
-      mosaicNote: "Portraits of team members.",
+      mosaicNote: "Portraits of the members of the Santos & Saucedo team",
       positions: {
         foundingPartner: "Founding partner",
         partner: "Partner",
@@ -72,7 +78,8 @@ export default function Team() {
       errorMessage: "Error al cargar los miembros del equipo",
       ofCounsel: "Of Counsel",
       associatesTitle: "Integrantes del equipo",
-      mosaicNote: "Retratos de integrantes del equipo.",
+      // Nota de los retratos (aria-label del muro): la de la demo
+      mosaicNote: "Retratos de los integrantes del equipo de Santos & Saucedo",
       positions: {
         foundingPartner: "Socio fundador",
         partner: "Socio",
@@ -192,10 +199,21 @@ export default function Team() {
 
   // Nombres del menú en cada idioma (E5): "Socios" (nav[2]), "Carreras" (nav[4]) y "Contacto" (nav[5])
   const navLabels = (cmsChrome[language] ?? cmsChrome.es).nav;
-  const pageTitle = ownLang ? tv.title : navLabels[2].label;
-  const listLabel = ownLang ? tv.list : navLabels[2].label;
+  const chromeDefaults = defaults.chrome as unknown as Record<string, { nav: { label: string }[] }>;
+  const teamDefaults = defaults.team as unknown as Record<string, { associatesTitle?: string; mosaicNote?: string }>;
+  // Títulos de la página leídos del panel (I5): el h1, de la etiqueta «Socios» del menú (nav[2]);
+  // «El equipo», de «Integrantes del equipo» (team.associatesTitle). En español e inglés, mientras
+  // el panel conserve su texto predeterminado, la redacción de la demo («Nuestros socios», «El
+  // equipo»); si el cliente lo edita, manda el panel. Los demás idiomas leen el panel siempre.
+  const navTitleEdited = editedInPanel(navLabels[2].label, (chrome26[language] ?? chrome26.es).nav[2].label, chromeDefaults[language]?.nav[2]?.label);
+  const teamTitleEdited = editedInPanel(t.associatesTitle, content[language]?.associatesTitle, teamDefaults[language]?.associatesTitle);
+  const pageTitle = ownLang && !navTitleEdited ? tv.title : navLabels[2].label;
+  const listLabel = navLabels[2].label;
   const careersLabel = navLabels[4].label;
-  const teamTitle = ownLang ? tv.teamTitle : t.associatesTitle;
+  const teamTitle = ownLang && !teamTitleEdited ? tv.teamTitle : t.associatesTitle;
+  // Nota del muro (M28): la de la demo mientras el panel guarde la predeterminada anterior
+  // («Retratos de integrantes del equipo.»); si el cliente la edita, manda el panel
+  const wallLabel = editedInPanel(t.mosaicNote, teamDefaults[language]?.mosaicNote) ? t.mosaicNote : (content[language] ?? content.en).mosaicNote;
   const internal = (href: string | undefined, fallback: string) => (href && href.startsWith("/") ? href : fallback);
 
   // Cargo de cada persona: titleEs en español; en los demás idiomas, title. Fuera de es y en ese
@@ -213,20 +231,22 @@ export default function Team() {
   };
 
   const groupedMembers = useMemo(() => {
-    if (!allTeamMembers) return { partners: [] as TeamMember[], ofCounsel: [] as TeamMember[] };
     const byConfiguredOrder = (a: TeamMember, b: TeamMember) => {
       const orderA = a.order ?? 0;
       const orderB = b.order ?? 0;
       if (orderA !== orderB) return orderA - orderB;
       return a.name.localeCompare(b.name);
     };
-    // Solo los socios con retrato 2026 confirmado por nombre y los Of Counsel llevan nombre
-    // (isNamedOnTeamPage, shared/teamVisibility, la misma regla de "Equipo relacionado", el
-    // buscador y el mapa del sitio). Los asociados van en el muro, sin nombres.
-    const partners = allTeamMembers.filter(m => m.isPartner && isNamedOnTeamPage(m)).sort(byConfiguredOrder);
-    const ofCounsel = allTeamMembers.filter(m => !m.isPartner && isNamedOnTeamPage(m)).sort(byConfiguredOrder);
+    // Los cuatro socios SIEMPRE, en el orden de la firma (regla del cliente; v3/socios/partners):
+    // de /api/team cuando llega y, si falta alguno (el panel lo oculta, la API falla o aún no
+    // responde), con los datos de respaldo de la banda del inicio. Los demás socios y los Of Counsel
+    // siguen la visibilidad del panel (isNamedOnTeamPage, shared/teamVisibility). Los asociados van
+    // en el muro, sin nombres.
+    const members = errorAll ? [] : allTeamMembers;
+    const partners = firmPartners(members);
+    const ofCounsel = (members ?? []).filter(m => !m.isPartner && isNamedOnTeamPage(m)).sort(byConfiguredOrder);
     return { partners, ofCounsel };
-  }, [allTeamMembers]);
+  }, [allTeamMembers, errorAll]);
 
   const partners = groupedMembers.partners.map(m => toPerson(m, t.positions.partner));
   const ofCounsel = groupedMembers.ofCounsel.map(m => toPerson(m, t.ofCounsel));
@@ -239,27 +259,22 @@ export default function Team() {
       <Header />
 
       <V3Main vista="socios">
-        {errorAll || isLoadingAll ? (
-          // Carga (o error): la misma sección con la misma altura, sin turno
-          <SociosLienzoPlaceholder
-            title={pageTitle}
-            busy={!errorAll}
-            message={errorAll ? t.errorMessage : tv.loading}
-          />
-        ) : (
-          <SociosLienzo
-            key={lienzoKey}
-            partners={partners}
-            t={tv}
-            attrs={attrs}
-            title={pageTitle}
-            list={listLabel}
-            // Subtítulo del panel: solo si algún idioma lo trae (E3)
-            lead={t.subtitle ? keepFirmName(t.subtitle) : undefined}
-          >
-            <OfCounsel title={t.ofCounsel} people={ofCounsel} />
-          </SociosLienzo>
-        )}
+        {/* Los cuatro socios desde el primer momento (con los datos de respaldo mientras llega
+            /api/team: los mismos nombres, cargos y retratos, así que el Lienzo no se vuelve a montar
+            al llegar). Los Of Counsel, cuando responde la API. */}
+        <SociosLienzo
+          key={lienzoKey}
+          partners={partners}
+          t={tv}
+          attrs={attrs}
+          lang={language}
+          title={pageTitle}
+          list={listLabel}
+          // Subtítulo del panel: solo si algún idioma lo trae (E3)
+          lead={t.subtitle ? keepFirmName(t.subtitle) : undefined}
+        >
+          {!isLoadingAll && <OfCounsel title={t.ofCounsel} people={ofCounsel} />}
+        </SociosLienzo>
 
         {/* El equipo: muro de retratos sin nombres (mosaico del CMS), fuera de la carga: las fotos son
             estáticas y el bloque ocupa su sitio desde el principio */}
@@ -268,9 +283,11 @@ export default function Team() {
           title={teamTitle}
           lead={tv.teamLead}
           leadAttrs={attrs}
-          wallLabel={t.mosaicNote}
+          wallLabel={wallLabel}
           careersLabel={careersLabel}
           careersHref={internal(cmsLinks.interns, "/careers/interns")}
+          // «Pasantías S&S» es el nombre del programa: no se traduce y fuera del español se marca lang="es"
+          careersNameLang={language !== "es" ? "es" : undefined}
         />
 
         <div {...attrs}>

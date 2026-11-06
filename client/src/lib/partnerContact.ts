@@ -2,7 +2,7 @@ import { isNamedOnTeamPage } from "@shared/teamVisibility";
 
 // Datos de contacto directos de un socio (G6). Un correo o teléfono solo es "directo" si es
 // distinto de los generales de la firma (pie y /contact, useSiteContact). Hoy todas las fichas
-// repiten info@ y el conmutador: ninguna tiene datos directos, y el sitio no lo da a entender
+// repiten administracion@ y el conmutador: ninguna tiene datos directos, y el sitio no lo da a entender
 // (ni botones "Enviar correo"/"Llamar" en la ficha, ni la frase de /contact).
 
 /** Lo que se compara: el teléfono y el correo generales (basta lo que devuelve useSiteContact). */

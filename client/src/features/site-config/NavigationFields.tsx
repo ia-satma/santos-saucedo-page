@@ -18,12 +18,14 @@ const captions: Record<string, string> = {
 const newEntry = (): NavigationEntry => ({
   id: crypto.randomUUID(),
   href: "/contact",
-  labels: { es: "Nuevo enlace", en: "New link" },
+  // Todas las lenguas, vacías salvo es/en: si faltara una, el sitio heredaría la etiqueta del enlace
+  // predeterminado en la misma posición; vacía, cae al inglés
+  labels: { ...Object.fromEntries(SUPPORTED_LANGUAGES.map((l) => [l.code, ""])), es: "Nuevo enlace", en: "New link" },
   visible: false,
   order: 0,
 });
 function Entries({
-  items,
+  items: stored,
   onChange,
   children = false,
 }: {
@@ -31,6 +33,9 @@ function Entries({
   onChange: (items: any[]) => void;
   children?: boolean;
 }) {
+  // En el orden en que el sitio los muestra (campo order), no en el de la lista guardada: un enlace
+  // añadido al final con un orden intermedio (p. ej. «Industrias») aparece y se mueve en su lugar real
+  const items = [...stored].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   const change = (i: number, next: NavigationEntry) =>
     onChange(items.map((old, j) => (i === j ? next : old)));
   const move = (i: number, delta: number) => {
@@ -136,7 +141,7 @@ function Entries({
             ...items,
             {
               ...newEntry(),
-              order: items.length,
+              order: items.reduce((max, v) => Math.max(max, (v.order ?? 0) + 1), items.length),
               ...(children ? { children: [] } : {}),
             },
           ])

@@ -94,11 +94,16 @@
   line-gap-override: 0%;
 }
 @font-face {
+  /* Calibrado para Hanken Grotesk 400 (unitsPerEm 1000, ascender 1000, descender −303, lineGap 0)
+     sobre Arial (Helvetica tiene las mismas anchuras). Ancho medio de minúsculas, método de
+     capsize: 101.5 % con frecuencias del inglés y 100.8 % con las del español; con párrafos reales
+     del sitio (mayúsculas, signos y kerning), 100.4 % deja el ancho total a ±0.3 % en los dos
+     idiomas. Alturas = métrica / size-adjust: 1000/1004 y 303/1004. */
   font-family: "SS Sans Fallback";
   src: local("Arial"), local("Helvetica");
-  size-adjust: 92%;
-  ascent-override: 103%;
-  descent-override: 29%;
+  size-adjust: 100.4%;
+  ascent-override: 99.6%;
+  descent-override: 30.18%;
   line-gap-override: 0%;
 }
 

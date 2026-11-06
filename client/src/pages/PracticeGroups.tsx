@@ -13,8 +13,9 @@ import { isNativeLanguage } from "@/lib/translationUtils";
 import { chrome26 } from "@/components/home26/chrome26";
 import { usePracticeNames } from "@/lib/practiceNames";
 import { getPracticeImage } from "@/lib/practiceIndustryImages";
-import { V3Main, V3NextPage, useV3Lang } from "@/v3/shared";
+import { V3Main, useV3Lang } from "@/v3/shared";
 import { PAGINA } from "@/v3/practicas/textos";
+import { SiguientePractica } from "@/v3/practicas/Siguiente";
 import { PRACTICE_PHOTOS } from "@/v3/home/copy";
 import type { PracticeGroup } from "@shared/schema";
 import "./PracticeGroups.css";
@@ -65,7 +66,7 @@ function PracticeGroupRow({ group, index }: PracticeGroupRowProps) {
   const imageUrl = photo?.img ?? getPracticeImage(group.slug);
 
   return (
-    <li className="pg-item" data-testid={`card-practice-group-${group.slug}`}>
+    <li className={index === 0 ? "pg-item pg-item--lead" : "pg-item"} data-testid={`card-practice-group-${group.slug}`}>
       <Link
         href={`/practice-groups/${group.slug}`}
         aria-labelledby={nameId}
@@ -160,7 +161,7 @@ const content: Record<string, { subtitle: string; errorMessage: string }> = {
 
 function PracticeGroupSkeleton({ index }: { index: number }) {
   return (
-    <li className="pg-item pg-item--esqueleto" data-testid={`skeleton-practice-group-${index}`} aria-hidden="true">
+    <li className={`pg-item pg-item--esqueleto${index === 0 ? " pg-item--lead" : ""}`} data-testid={`skeleton-practice-group-${index}`} aria-hidden="true">
       <div className="pg-a">
         <Skeleton className="pg-foto bg-[rgba(15,63,107,.08)]" />
         <Skeleton className="mt-6 h-3 w-10 bg-[rgba(15,63,107,.08)]" />
@@ -184,7 +185,11 @@ export default function PracticeGroups() {
   const t = editableContent[language] || editableContent.en;
   const title = (cmsChrome[language as keyof typeof chrome26] ?? cmsChrome.en).nav[1].label;
   const emptyMessage = emptyMessages[language] || emptyMessages.en;
-  const P = PAGINA[useV3Lang().lang];
+  const { lang: v3Lang, attrs: v3Attrs } = useV3Lang();
+  const P = PAGINA[v3Lang];
+  // Industrias: el título de la demo en ES/EN; en los otros idiomas, el rótulo del sitio en ese idioma
+  const chromeL = cmsChrome[language as keyof typeof chrome26] ?? cmsChrome.en;
+  const industriesTitle = language === "es" || language === "en" ? P.industries : chromeL.search.groups.industryGroups;
 
   return (
     <div className="ss26 min-h-screen" data-testid="page-practice-groups">
@@ -228,8 +233,9 @@ export default function PracticeGroups() {
           </div>
         </section>
 
-        {/* Al final, como en cada página de la demo: la siguiente parte, Industrias */}
-        <V3NextPage href="/industries" label={P.next} title={P.industries} ariaLabel={P.nextAria} />
+        {/* Al final, como en cada página de la demo: la siguiente parte, Industrias. «Siguiente» va en
+            inglés fuera de ES/EN, marcado como inglés (lang/dir) */}
+        <SiguientePractica href="/industries" label={P.next} labelAttrs={v3Attrs} title={industriesTitle} />
       </V3Main>
 
       <Footer />

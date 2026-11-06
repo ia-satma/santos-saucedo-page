@@ -1,6 +1,8 @@
 // Página de cada práctica con el diseño de la demo v3 (aprobada el 5-11-2026): foto horizontal a todo lo
-// ancho, el nombre y su resumen; el texto de la práctica con «Qué hacemos» y su equipo; sus láminas
-// isométricas; y al final las cuatro prácticas y la página siguiente.
+// ancho, el nombre y su resumen, y a su lado el equipo; el texto de la práctica con «Qué hacemos»; la
+// primera lámina isométrica; los servicios del texto; las demás láminas (ninguna lámina azul pegada a
+// otra); y al final las cuatro prácticas y la página siguiente. Litigio, sin lámina: sus servicios en
+// una banda azul con una foto de la oficina (config.ts, feature).
 // Todo el texto de la práctica viene de la base y del panel, en los 10 idiomas, como antes: nombre,
 // resumen, texto largo (lema «# », entrada y servicios «## »), lista «Qué hacemos», equipo y casos.
 // Lo nuevo de la demo (láminas y rótulos) va en español o inglés: client/src/v3/practicas/.
@@ -8,7 +10,7 @@ import { useContentEntity } from "@/features/admin/ContentPreview";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import cmsDefaults from "@shared/cms-defaults.json";
 import { Link, Redirect, useParams } from "wouter";
-import { useMemo, useState, type ReactNode } from "react";
+import { lazy, Suspense, useMemo, useState, type ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -25,10 +27,11 @@ import { TextLink } from "@/components/home26/primitives";
 import { isNamedOnTeamPage } from "@shared/teamVisibility";
 import { keepFirmName } from "@/lib/firmName";
 import { usePracticeNames } from "@/lib/practiceNames";
-import { V3Main, V3NextPage, V3PageHeader, useV3Lang } from "@/v3/shared";
-import { Anatomia } from "@/v3/practicas/Anatomia";
+import { V3Main, V3PageHeader, useV3Lang, v3SrcSet, v3HeaderSizes } from "@/v3/shared";
 import { Figura } from "@/v3/practicas/Figura";
-import { LEGACY_SLUGS, PRACTICE_V3, type PracticeV3 } from "@/v3/practicas/config";
+import { Destacado } from "@/v3/practicas/Destacado";
+import { SiguientePractica } from "@/v3/practicas/Siguiente";
+import { LAMINAS_TOTAL, LAMINA_N, LEGACY_SLUGS, PRACTICE_V3, type Plate, type PracticeV3 } from "@/v3/practicas/config";
 import { PAGINA, type SheetId } from "@/v3/practicas/textos";
 import "@/v3/practicas/practicas.css";
 import type { PracticeGroup, TeamMember, RepresentativeMatterDb } from "@shared/schema";
@@ -40,7 +43,16 @@ import type { PracticeGroup, TeamMember, RepresentativeMatterDb } from "@shared/
 const EN_SOURCE = { lang: "en", dir: "ltr" } as const;
 
 const BASE = import.meta.env.BASE_URL;
+
+// La anatomía (three.js) solo en las prácticas que la llevan: su código se pide al montarla
+const Anatomia = lazy(() => import("@/v3/practicas/Anatomia").then((m) => ({ default: m.Anatomia })));
 const H1 = "pp-practica-h";
+
+// Título mientras carga una dirección que no es de las cuatro prácticas conocidas
+const LOADING: Record<string, string> = {
+  es: "Cargando…", en: "Loading…", de: "Wird geladen…", zh: "加载中…", ko: "로딩 중…",
+  ja: "読み込み中…", ar: "جارٍ التحميل…", ru: "Загрузка…", fr: "Chargement…", it: "Caricamento…",
+};
 
 // Quién figura en cada práctica: solo lo que dice el registro de cada persona (campo role).
 // Hoy todos los registros dicen "Labor law" (la comparación no distingue mayúsculas); ninguno
@@ -164,22 +176,25 @@ function TranslatedMatterCard({ matter, language, t }: TranslatedMatterCardProps
   );
 }
 
-/** Las láminas de la página, numeradas en el orden en que aparecen (n/total) */
-function Laminas({ cfg, lang, attrs }: { cfg: PracticeV3; lang: "es" | "en"; attrs: { lang?: string; dir?: "ltr" } }) {
-  const total = cfg.plates.reduce((n, p) => n + (p.kind === "anatomia" ? p.sheets.length : 1), 0);
-  if (!total) return null;
-  let n = 0;
+/** Una lámina de la página, con su número de la demo (n/7: anatomía 3 y 4, figuras 5, 6 y 7). La clave
+    lleva la práctica, la lámina y el idioma: al pasar de una práctica a otra la lámina arranca de nuevo. */
+function Lamina({ plate, slug, lang, attrs }: { plate: Plate; slug: string; lang: "es" | "en"; attrs: { lang?: string; dir?: "ltr" } }) {
+  if (plate.kind === "anatomia") {
+    const nums: Partial<Record<SheetId, string>> = {};
+    plate.sheets.forEach((id) => { nums[id] = `${LAMINA_N[id]}/${LAMINAS_TOTAL}`; });
+    return (
+      <div className="pd-laminas">
+        {/* mientras llega su código, una sección del mismo alto (la del recorrido), sin contenido */}
+        <Suspense fallback={<section className="an sobre-azul" aria-hidden="true" />}>
+          <Anatomia key={`an-${slug}-${plate.sheets.join("+")}-${lang}`} sheets={plate.sheets} nums={nums} lang={lang} attrs={attrs} />
+        </Suspense>
+      </div>
+    );
+  }
+  const n = LAMINA_N[plate.area];
   return (
     <div className="pd-laminas">
-      {cfg.plates.map((p) => {
-        if (p.kind === "anatomia") {
-          const nums: Partial<Record<SheetId, string>> = {};
-          p.sheets.forEach((id) => { nums[id] = `${++n}/${total}`; });
-          return <Anatomia key={`an-${lang}`} sheets={p.sheets} nums={nums} lang={lang} attrs={attrs} />;
-        }
-        n += 1;
-        return <Figura key={`fg-${p.area}-${lang}`} area={p.area} n={n} total={total} lang={lang} attrs={attrs} />;
-      })}
+      <Figura key={`fg-${slug}-${plate.area}-${n}-${LAMINAS_TOTAL}-${lang}`} area={plate.area} n={n} total={LAMINAS_TOTAL} lang={lang} attrs={attrs} />
     </div>
   );
 }
@@ -412,13 +427,17 @@ export default function PracticeGroupDetail() {
       <div className="ss26 min-h-screen" data-testid="page-practice-group-loading">
         <Header />
         <V3Main vista={cfg.vista} className="pd">
-          <header className="sh-pp sh-cab" aria-busy="true">
+          <header className="sh-pp sh-cab" aria-busy="true" aria-labelledby={H1}>
             <figure className="sh-pp__foto">
-              <img src={`${BASE}${cfg.photo.src}`} alt="" width={cfg.photo.w} height={cfg.photo.h} decoding="async" style={{ objectPosition: cfg.photo.pos }} />
+              <img src={`${BASE}${cfg.photo.src}`} srcSet={v3SrcSet(`${BASE}${cfg.photo.src}`, cfg.photo.w)} sizes={v3HeaderSizes(cfg.photo.w, cfg.photo.h)} {...{ fetchpriority: "high" }} alt="" width={cfg.photo.w} height={cfg.photo.h} style={{ objectPosition: cfg.photo.pos }} />
             </figure>
             <div className="sh-wrap sh-pp__cuerpo">
-              <div className="pd-cargando">
-                <Skeleton className="h-14 w-2/3 max-w-xl bg-[rgba(15,63,107,.08)]" />
+              <div className="sh-pp__texto pd-cargando">
+                {/* la página tiene siempre su h1: el nombre de la práctica en el idioma de la página
+                    (practiceNames.ts) o, si la dirección no es de una de las cuatro, «Cargando…» */}
+                <h1 id={H1} className="sh-h1" tabIndex={-1} data-testid="text-practice-group-title-loading">
+                  {(slug && practiceName(slug, language)) || LOADING[language] || LOADING.en}
+                </h1>
                 <Skeleton className="mt-8 h-5 w-full max-w-lg bg-[rgba(15,63,107,.08)]" />
                 <Skeleton className="mt-3 h-5 w-5/6 max-w-md bg-[rgba(15,63,107,.08)]" />
               </div>
@@ -494,6 +513,12 @@ export default function PracticeGroupDetail() {
 
   const firm = (s: string): ReactNode => keepFirmName(s);
   const hasText = !!practiceText && (!!practiceText.tagline || practiceText.intro.length > 0 || practiceText.services.length > 0);
+  const services = practiceText ? practiceText.services : [];
+  const [firstPlate, ...restPlates] = cfg.plates;
+  // Tras la última práctica, Industrias: el título de la demo en ES/EN; en los otros idiomas, el
+  // rótulo de Industrias del sitio en ese idioma (chrome26, el del buscador)
+  const chromeL = cmsChrome[language as keyof typeof chrome26] ?? cmsChrome.en;
+  const nextIndustries = language === "es" || language === "en" ? P.industries : chromeL.search.groups.industryGroups;
 
   return (
     <div className="ss26 min-h-screen" data-testid="page-practice-group-detail">
@@ -512,6 +537,7 @@ export default function PracticeGroupDetail() {
           id={H1}
           img={`${BASE}${cfg.photo.src}`}
           alt={cfg.photo.alt[lang]}
+          imgAttrs={attrs}
           width={cfg.photo.w}
           height={cfg.photo.h}
           position={cfg.photo.pos}
@@ -572,7 +598,7 @@ export default function PracticeGroupDetail() {
                 </section>
               ) : null}
 
-              {hasText && practiceText ? (
+              {practiceText && (practiceText.tagline || practiceText.intro.length > 0) ? (
                 <div className="pd-texto" data-testid="container-practice-group-description" {...sourceAttrs}>
                   {practiceText.tagline ? (
                     <h2 className="pd-lema" data-testid="text-practice-group-tagline">{firm(practiceText.tagline)}</h2>
@@ -582,19 +608,6 @@ export default function PracticeGroupDetail() {
                       {practiceText.intro.map((p, i) => <p key={i}>{firm(p)}</p>)}
                     </div>
                   ) : null}
-                </div>
-              ) : null}
-
-              {/* Los servicios del texto («## »), a lo ancho de la retícula en dos columnas */}
-              {hasText && practiceText && practiceText.services.length > 0 ? (
-                <div className="pd-areas" data-testid="list-practice-services" {...sourceAttrs}>
-                  {practiceText.services.map((service, index) => (
-                    <section key={index} className="pd-area" data-testid={`item-practice-service-${index}`}>
-                      {/* h3: cada servicio es una parte del texto de la práctica */}
-                      <h3 className="sh-h3">{firm(service.title)}</h3>
-                      {service.paragraphs.map((paragraph, i) => <p key={i}>{firm(paragraph)}</p>)}
-                    </section>
-                  ))}
                 </div>
               ) : null}
 
@@ -618,6 +631,38 @@ export default function PracticeGroupDetail() {
           </div>
         ) : null}
 
+        {/* La primera lámina, justo después del texto (como en la demo, tras la cabecera) */}
+        {firstPlate ? <Lamina plate={firstPlate} slug={practiceGroup.slug} lang={lang} attrs={attrs} /> : null}
+
+        {/* Los servicios del texto («## »). Con lámina: en dos columnas sobre el fondo claro, entre la
+            primera lámina y las demás. Sin lámina (litigio): en la banda azul con la foto de la oficina. */}
+        {services.length > 0 && cfg.feature ? (
+          <Destacado feature={cfg.feature} testId="list-practice-services">
+            <div className="pd-dest__txt" {...sourceAttrs}>
+              {services.map((service, index) => (
+                <section key={index} className="pd-dest__area" data-testid={`item-practice-service-${index}`}>
+                  <h2 className="sh-filo__frase pd-dest__t">{firm(service.title)}</h2>
+                  {service.paragraphs.map((paragraph, i) => <p key={i} className="sh-filo__p">{firm(paragraph)}</p>)}
+                </section>
+              ))}
+            </div>
+          </Destacado>
+        ) : services.length > 0 ? (
+          <div className="pd-servicios">
+            <div className="sh-wrap pd-areas" data-testid="list-practice-services" {...sourceAttrs}>
+              {services.map((service, index) => (
+                <section key={index} className="pd-area" data-testid={`item-practice-service-${index}`}>
+                  {/* h3: cada servicio es una parte del texto de la práctica */}
+                  <h3 className="sh-h3">{firm(service.title)}</h3>
+                  <div className="pd-area__txt">
+                    {service.paragraphs.map((paragraph, i) => <p key={i}>{firm(paragraph)}</p>)}
+                  </div>
+                </section>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
         {/* Casos representativos (los que la firma cargue en el panel) */}
         {sortedMatters.length > 0 ? (
           <section className="pd-casos" aria-labelledby="practice-cases-title" data-testid="section-representative-matters">
@@ -635,17 +680,18 @@ export default function PracticeGroupDetail() {
           </section>
         ) : null}
 
-        {/* Las láminas isométricas de la práctica */}
-        <Laminas cfg={cfg} lang={lang} attrs={attrs} />
+        {/* Las demás láminas (laboral: el calendario del IMSS y el INFONAVIT) */}
+        {restPlates.map((plate, i) => <Lamina key={`${practiceGroup.slug}-${i}`} plate={plate} slug={practiceGroup.slug} lang={lang} attrs={attrs} />)}
 
-        {/* Las cuatro prácticas y la página siguiente */}
-        <V3NextPage
+        {/* Las cuatro prácticas y la página siguiente; «Siguiente» en inglés fuera de ES/EN, marcado */}
+        <SiguientePractica
           href={nextGroup ? `/practice-groups/${nextGroup.slug}` : "/industries"}
           label={P.next}
-          title={nextGroup ? nameOf(nextGroup) : P.industries}
-          ariaLabel={P.nextAria}
+          labelAttrs={attrs}
+          title={nextGroup ? nameOf(nextGroup) : nextIndustries}
           practices={practicesRow}
-          practicesLabel={P.practicesAria}
+          practicesLabel={backToAll}
+          allHref="/practice-groups"
           current={`/practice-groups/${practiceGroup.slug}`}
         />
       </V3Main>

@@ -1,9 +1,10 @@
 /* Textos nuevos del Inicio v3 (demo aprobada el 5-11-2026). El español es el de la demo, al pie de la
-   letra; el inglés, en el mismo registro institucional. Los nombres y resúmenes de las prácticas y los
-   cargos de los socios NO viven aquí: vienen de la base (/api/practice-groups y /api/team), que edita
-   el panel.
-   Cifras: las que el sitio ya afirma (más de 40 años de experiencia de los socios, más de 72 ciudades
-   en la red de despachos aliados) más las 32 entidades de esa red y las cuatro áreas de práctica.
+   letra; el inglés, en el mismo registro institucional. NO viven aquí (los edita el panel): la frase de
+   la firma (home.firma: title y body[0]), la banda de la filosofía (home.creemos: quote, body[0] y label),
+   los titulares de las prácticas y de los socios (home.practicas.title, home.socios.title),
+   los nombres y resúmenes de las prácticas y los cargos de los socios (/api/practice-groups, /api/team).
+   Cifras: las que el sitio ya afirma (about.stats del panel: más de 40 años de experiencia de los socios,
+   más de 72 ciudades en la red de despachos aliados) más las 32 entidades de esa red y las cuatro áreas.
    Sin año de fundación: el sitio dice 2009 en «La firma» y «Desde 2010» en la portada. */
 import type { V3Lang } from "@/v3/shared";
 import { v3Asset } from "../asset";
@@ -13,9 +14,6 @@ export type Industria = { clave: string; img: string; pos: string; nombre: strin
 export const homeCopy = {
   es: {
     intro: {
-      h: "Nuestra firma",
-      frase:
-        "Desde San Pedro Garza García, Santos & Saucedo asesora a grupos industriales mexicanos, a multinacionales y a empresas de capital asiático en las decisiones que involucran a su personal.",
       boton: "Conozca la firma",
       cifras: {
         anos: "Años de experiencia",
@@ -25,7 +23,6 @@ export const homeCopy = {
       },
     },
     practicas: {
-      titulo: "Nuestras prácticas",
       entrada: "La práctica laboral es el centro de la firma; las demás la acompañan.",
       ver: "Ver la práctica",
     },
@@ -59,23 +56,13 @@ export const homeCopy = {
         },
       ] as Industria[],
     },
-    filosofia: {
-      frase: "Preparamos cada asunto como si fuera a llegar a juicio.",
-      texto:
-        "Esa preparación respalda cada negociación: se negocia mejor cuando el caso ya está listo para defenderse. Prevención primero y, si hay conflicto, capacidad de reacción.",
-      boton: "Nuestra filosofía",
-    },
     socios: {
-      titulo: "Nuestros socios",
       boton: "Conozca a los socios y al equipo",
     },
   },
   en: {
     intro: {
-      h: "Our firm",
-      frase:
-        "From San Pedro Garza García, Santos & Saucedo advises Mexican industrial groups, multinationals and Asian-owned companies on the decisions that involve their people.",
-      boton: "Discover the firm",
+      boton: "About the firm",
       cifras: {
         anos: "Years of experience",
         ciudades: "Cities in our alliance network",
@@ -84,7 +71,6 @@ export const homeCopy = {
       },
     },
     practicas: {
-      titulo: "Our practices",
       entrada: "Labor law is the core of the firm; the other practices support it.",
       ver: "View the practice",
     },
@@ -118,14 +104,7 @@ export const homeCopy = {
         },
       ] as Industria[],
     },
-    filosofia: {
-      frase: "We prepare every matter as if it were going to trial.",
-      texto:
-        "That preparation supports every negotiation: one negotiates better when the case is already ready to be defended. Prevention first and, if a dispute arises, the capacity to respond.",
-      boton: "Our philosophy",
-    },
     socios: {
-      titulo: "Our partners",
       boton: "Meet the partners and the team",
     },
   },

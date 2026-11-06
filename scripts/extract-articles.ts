@@ -34,8 +34,8 @@ const PRACTICE_AREA_KEYWORDS: Record<string, string[]> = {
 };
 
 const ATTORNEY_EMAIL_MAP: Record<string, string> = {
-  'enrique hernán santos gúzman': 'info@santossaucedo.com',
-  'enrique hernan santos guzman': 'info@santossaucedo.com',
+  'enrique hernán santos gúzman': 'administracion@santossaucedo.com',
+  'enrique hernan santos guzman': 'administracion@santossaucedo.com',
 };
 
 function extractDateFromFilename(filename: string): string | null {

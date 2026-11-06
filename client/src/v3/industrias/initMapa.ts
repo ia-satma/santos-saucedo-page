@@ -11,9 +11,13 @@
      240 ms; sin envíos ni botón. Al volver al movimiento, el armado se repite una vez.
    - Cursor o toque sobre un estado: su nombre (Nuevo León: la sede y su dirección).
    - Un solo requestAnimationFrame: corre mientras haya algo que mover y se duerme solo.
+   - Teclado (añadido en el puerto): el plano es una lista (role="listbox") con una opción por entidad,
+     la sede primero y las demás por orden alfabético. Flechas, Inicio y Fin la recorren (sólo entidades
+     ya alcanzadas por la red, como el cursor); la señalada se tiñe y muestra su etiqueta, igual que al
+     pasar el cursor. Intro o Espacio la fija (aria-selected), Escape la suelta.
    Cambios del puerto: todo se busca dentro de la raíz; los textos (botón, etiqueta, nombres en inglés)
    vienen de React por textos() y se repintan con refrescar() al cambiar de idioma; destruir() quita
-   escuchas, observadores, el rAF y los envíos. */
+   escuchas, observadores, el rAF principal y los auxiliares, los destellos (Web Animations) y los envíos. */
 import { MAPA_SEDE } from "./mapaSvg";
 
 export interface MapaTexts {
@@ -59,6 +63,7 @@ export function initMapa(root: HTMLElement, textos: () => MapaTexts): MapaApi {
   const tagNombre = tag?.querySelector<HTMLElement>(".mp-etiqueta-nombre");
   const tagDato = tag?.querySelector<HTMLElement>(".mp-etiqueta-dato");
   const pausa = root.querySelector<HTMLButtonElement>(".mp-pausa");
+  const uid = root.id || "mp";
   if (!pista || !escena || !plano || !svg || !gTintes || !gRed || !gEnvios || !tag || !tagNombre || !tagDato) return nada;
 
   root.classList.add("mp-js");
@@ -131,6 +136,19 @@ export function initMapa(root: HTMLElement, textos: () => MapaTexts): MapaApi {
   }
   const DMAX = Math.max(1, ...rutas.map((r) => r.t + r.l));   // la llegada más lejana, por la red
 
+  /* ---------- opciones de la lista (teclado y lectores de pantalla) ---------- */
+  const opEl = new Map<Estado, HTMLElement>();
+  for (const s of lista) {
+    const o = document.createElement("div");
+    o.className = "mp-sr mp-opcion";
+    o.id = `${uid}-op-${s.id}`;
+    o.setAttribute("role", "option");
+    o.setAttribute("aria-selected", "false");
+    if (!s.llego) o.setAttribute("aria-disabled", "true");
+    opEl.set(s, o);
+  }
+  let orden: Estado[] = lista;
+
   /* ---------- escala: unidades del viewBox por píxel ---------- */
   let u = 1;
   const RHO_PX = 12;      // las rutas de la sede arrancan fuera de la §
@@ -165,6 +183,7 @@ export function initMapa(root: HTMLElement, textos: () => MapaTexts): MapaApi {
     s.llego = true;
     s.el.classList.add("mp-llega");
     if (s.nodo) s.nodo.classList.add("mp-llega");
+    opEl.get(s)?.removeAttribute("aria-disabled");
   };
   const dibujar = (forzar: boolean) => {
     for (const r of rutas) {
@@ -184,6 +203,7 @@ export function initMapa(root: HTMLElement, textos: () => MapaTexts): MapaApi {
       s.llego = false;
       s.el.classList.remove("mp-llega");
       if (s.nodo) s.nodo.classList.remove("mp-llega");
+      opEl.get(s)?.setAttribute("aria-disabled", "true");
     }
   };
   // sin transición ni animación por un cuadro (para saltos de estado)
@@ -288,12 +308,20 @@ export function initMapa(root: HTMLElement, textos: () => MapaTexts): MapaApi {
     for (const e of envios) e.el.remove();
     envios.length = 0;
   };
+  // destellos en curso (Web Animations, hasta 1,4 s): destruir() los cancela
+  const destellos = new Set<Animation>();
+  const seguir = (a: Animation) => {
+    destellos.add(a);
+    const fuera = () => destellos.delete(a);
+    a.addEventListener("finish", fuera);
+    a.addEventListener("cancel", fuera);
+  };
   const destello = (s: Estado) => {
     if (!s.nodo || !s.nodo.animate) return;
     // claves implícitas al principio y al final: vuelve solo a su valor de siempre
     const w = (parseFloat(getComputedStyle(s.nodo).strokeWidth) || 4) * 1.75 + "px";
-    s.nodo.animate([{ stroke: lima, strokeWidth: w, offset: 0 }, { stroke: lima, strokeWidth: w, offset: 0.35 }], { duration: 1200, easing: "ease-out" });
-    s.el.animate([{ fillOpacity: 0.14, offset: 0.3 }], { duration: 1400, easing: "ease-out" });
+    seguir(s.nodo.animate([{ stroke: lima, strokeWidth: w, offset: 0 }, { stroke: lima, strokeWidth: w, offset: 0.35 }], { duration: 1200, easing: "ease-out" }));
+    seguir(s.el.animate([{ fillOpacity: 0.14, offset: 0.3 }], { duration: 1400, easing: "ease-out" }));
   };
   const salir = (now: number) => {
     const s = destinos[turno % destinos.length]; turno++;
@@ -361,11 +389,17 @@ export function initMapa(root: HTMLElement, textos: () => MapaTexts): MapaApi {
   }
 
   /* ---------- Modo Mario ---------- */
+  // rAF auxiliares (el doble cuadro del fundido): destruir() los cancela
+  const rafsAux = new Set<number>();
+  const enCuadro = (fn: () => void) => {
+    const id = requestAnimationFrame(() => { rafsAux.delete(id); if (!destruido) fn(); });
+    rafsAux.add(id);
+  };
   const fundido = () => {     // la red aparece completa con un fundido de 240 ms
     root.classList.add("mp-quieto", "mp-espera");
     void root.offsetWidth;
     root.classList.remove("mp-quieto");
-    requestAnimationFrame(() => requestAnimationFrame(() => { if (!destruido) root.classList.remove("mp-espera"); }));
+    enCuadro(() => enCuadro(() => root.classList.remove("mp-espera")));
   };
   const final = () => {
     armado = false;
@@ -374,7 +408,7 @@ export function initMapa(root: HTMLElement, textos: () => MapaTexts): MapaApi {
     T = meta = DMAX;
     quieto(() => {
       root.classList.remove("mp-armado");
-      for (const s of lista) s.llego = true;
+      for (const s of lista) { s.llego = true; opEl.get(s)?.removeAttribute("aria-disabled"); }
       dibujar(true);
       root.classList.add("mp-completa");
     });
@@ -443,9 +477,10 @@ export function initMapa(root: HTMLElement, textos: () => MapaTexts): MapaApi {
     tagDato.textContent = t.sedeDato;
     tagDato.hidden = false;
   };
+  const nombreDe = (s: Estado) => textos().nombres[s.id] || s.nombre;
   const rotular = (s: Estado | null) => {
     if (!s || s.sede) { rotularSede(); return; }
-    tagNombre.textContent = textos().nombres[s.id] || s.nombre;
+    tagNombre.textContent = nombreDe(s);
     tagDato.textContent = " ";
     tagDato.hidden = true;
   };
@@ -471,7 +506,42 @@ export function initMapa(root: HTMLElement, textos: () => MapaTexts): MapaApi {
     tag.classList.toggle("mp-izq", izq);
     root.classList.add("mp-foco");
   };
-  const soltar = () => poner(fija);
+  /* teclado: la entidad señalada con las flechas (cursor) mientras el plano tiene el foco */
+  let cursor: Estado | null = null;
+  let teclado = false;
+  const reposo = () => fija || (teclado && document.activeElement === plano ? cursor : null);
+  const soltar = () => poner(reposo());
+  const fijar = (s: Estado | null) => {
+    if (fija) opEl.get(fija)?.setAttribute("aria-selected", "false");
+    fija = s;
+    if (s) opEl.get(s)?.setAttribute("aria-selected", "true");
+  };
+  // la sede primero; las demás por su nombre (el del idioma de la página)
+  const ordenar = () => {
+    const t = textos();
+    orden = [...lista].sort((a, b) => (a.sede ? -1 : b.sede ? 1 : nombreDe(a).localeCompare(nombreDe(b), "es")));
+    for (const s of orden) {
+      const o = opEl.get(s)!;
+      o.textContent = s.sede ? [`${nombreDe(s)}: ${t.sedeNombre}`, t.sedeDato].filter(Boolean).join(", ") : nombreDe(s);
+      plano.appendChild(o);
+    }
+  };
+  const activar = () => {
+    if (!cursor) return;
+    plano.setAttribute("aria-activedescendant", opEl.get(cursor)!.id);
+    poner(cursor);
+  };
+  const mover = (paso: number) => {
+    const vis = orden.filter(visible);
+    if (!vis.length) return;
+    const i = cursor ? vis.indexOf(cursor) : -1;
+    // sin envolver (como una lista); Inicio y Fin (±Infinity) llevan a los extremos
+    const j = paso === Infinity ? vis.length - 1 : i < 0 ? 0 : Math.max(0, Math.min(vis.length - 1, i + paso));
+    cursor = vis[j];
+    teclado = true;
+    activar();
+  };
+  ordenar();
   rotularSede();
 
   // el nodo más cercano al puntero, en píxeles reales (para los estados diminutos)
@@ -497,7 +567,7 @@ export function initMapa(root: HTMLElement, textos: () => MapaTexts): MapaApi {
   function sobre(e: PointerEvent) {
     const s = bajo(e, 12);
     plano!.classList.toggle("mp-sobre", !!s);
-    poner(s || fija);
+    poner(s || reposo());
   }
   const alMover = (e: PointerEvent) => {
     if (e.pointerType === "touch") return;
@@ -511,35 +581,81 @@ export function initMapa(root: HTMLElement, textos: () => MapaTexts): MapaApi {
   };
   const alTocar = (e: MouseEvent) => {
     const s = bajo(e, mqTel.matches ? 18 : 12);
-    fija = s && s !== fija ? s : null;
+    fijar(s && s !== fija ? s : null);
+    if (fija) cursor = fija;
+    teclado = false;
     poner(fija);
   };
   const alTecla = (e: KeyboardEvent) => {
-    if (e.key === "Escape" && (actual || fija)) { fija = null; poner(null); }
+    if (e.key === "Escape" && (actual || fija)) { fijar(null); teclado = false; poner(null); }
+  };
+  const alTeclaPlano = (e: KeyboardEvent) => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    switch (e.key) {
+      case "ArrowRight": case "ArrowDown": mover(1); break;
+      case "ArrowLeft": case "ArrowUp": mover(-1); break;
+      case "Home": mover(-Infinity); break;
+      case "End": mover(Infinity); break;
+      case "Enter": case " ":
+        if (!cursor || !visible(cursor)) mover(0);
+        teclado = true;
+        fijar(fija === cursor ? null : cursor);
+        activar();
+        break;
+      default: return;
+    }
+    e.preventDefault();
+  };
+  // al llegar con el tabulador (no con un clic): la sede, o la última entidad señalada
+  const alEnfocar = () => {
+    let porTeclado = true;
+    try { porTeclado = plano.matches(":focus-visible"); } catch { /* navegador sin :focus-visible */ }
+    if (!porTeclado) return;
+    teclado = true;
+    if (!cursor || !visible(cursor)) cursor = sedeE || orden.find(visible) || null;
+    activar();
+  };
+  const alDesenfocar = () => {
+    teclado = false;
+    plano.removeAttribute("aria-activedescendant");
+    poner(fija);
   };
   plano.addEventListener("pointermove", alMover);
   plano.addEventListener("pointerleave", alSalir);
   plano.addEventListener("click", alTocar);
+  plano.addEventListener("keydown", alTeclaPlano);
+  plano.addEventListener("focus", alEnfocar);
+  plano.addEventListener("blur", alDesenfocar);
   root.addEventListener("keydown", alTecla);
   limpiar.push(() => {
     plano.removeEventListener("pointermove", alMover);
     plano.removeEventListener("pointerleave", alSalir);
     plano.removeEventListener("click", alTocar);
+    plano.removeEventListener("keydown", alTeclaPlano);
+    plano.removeEventListener("focus", alEnfocar);
+    plano.removeEventListener("blur", alDesenfocar);
     root.removeEventListener("keydown", alTecla);
   });
 
   return {
-    refrescar: () => { rotularPausa(); rotular(actual); },
+    refrescar: () => { rotularPausa(); ordenar(); rotular(actual); },
     destruir: () => {
       destruido = true;
       if (raf) cancelAnimationFrame(raf);
       raf = 0;
+      rafsAux.forEach((id) => cancelAnimationFrame(id));
+      rafsAux.clear();
+      Array.from(destellos).forEach((a) => a.cancel());
+      destellos.clear();
       escuchar(false);
       pararVida();
       limpiar.forEach((f) => f());
       // el mismo nodo puede volver a iniciarse (StrictMode, recarga en caliente): sale sin estado
       if (actual) { actual.el.classList.remove("mp-on"); if (actual.nodo) actual.nodo.classList.remove("mp-on"); }
       root.classList.remove("mp-armado", "mp-completa", "mp-espera", "mp-foco", "mp-quieto");
+      plano.classList.remove("mp-sobre");
+      plano.removeAttribute("aria-activedescendant");
+      opEl.forEach((o) => o.remove());
     },
   };
 }

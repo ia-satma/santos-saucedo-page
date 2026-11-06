@@ -11,26 +11,40 @@
      empresa que esta práctica defiende (robo, fraude, abuso de confianza); es también su foto en el
      bloque de prácticas del Inicio.
 
-   Láminas: las de la demo para lo que cada práctica hace según su propio texto.
-   - Laboral: «Prevención» y «Solución» (anatomía; el lema de la firma, como en la página laboral de la
-     demo) y el calendario del IMSS y el INFONAVIT (seguridad social).
-   - Corporativo: el archivero. Migratorio: la torre de charolas.
+   Láminas: las de la demo para lo que cada práctica hace según su propio texto, con el número que
+   tienen en la demo (las siete láminas van en una sola serie n/7, como en Nuestra firma: 1/7 y 2/7 son
+   las de la filosofía).
+   - Laboral: «Prevención» 3/7 y «Solución» 4/7 (anatomía; el lema de la firma, como en la página
+     laboral de la demo) y el calendario del IMSS y el INFONAVIT 6/7 (seguridad social).
+   - Corporativo: el archivero 5/7. Migratorio: la torre de charolas 7/7.
    - Litigio: ninguna. La lámina «Solución» es el juicio LABORAL (Centro de Conciliación, Tribunal
      Laboral, amparo), que en el sitio es parte de la práctica laboral; esta práctica es litigio civil,
-     mercantil y penal patrimonial. Para ponerla aquí de todos modos basta con mover
-     { kind: "anatomia", sheets: ["solucion"] } a "litigio-contencioso" (y dejar ["orden"] en laboral).
-   Las láminas se numeran por página (1/3, 2/3, 3/3 en laboral; 1/1 en las demás). */
+     mercantil y penal patrimonial. En su lugar, sus servicios van en una banda azul con una foto de la
+     oficina de la firma (feature: la pintura del mazo, editable en el panel como foto «obraMazo»).
+
+   Orden de la página: cabecera; el texto de la práctica y «Qué hacemos»; la primera lámina; los
+   servicios del texto; las demás láminas; las cuatro prácticas y la siguiente. Así ninguna lámina azul
+   queda pegada a otra (en laboral, los servicios separan la anatomía del calendario). */
 import type { V3Lang } from "@/v3/shared";
 import type { FgArea } from "./figurasSvg";
 import type { SheetId } from "./textos";
 
+/** Número de cada lámina en la serie de la demo (n/7) */
+export const LAMINAS_TOTAL = 7;
+export const LAMINA_N: Record<SheetId | FgArea, number> = { orden: 3, solucion: 4, corporativo: 5, seguridad: 6, migratorio: 7 };
+
 export type Plate = { kind: "anatomia"; sheets: SheetId[] } | { kind: "figura"; area: FgArea };
+
+/** Banda azul con foto de la oficina (de las fotos del panel, cmsMedia «photos») para los servicios
+    de una práctica sin lámina */
+export interface Feature { photo: "obraMazo" | "biblioteca"; pos: string }
 
 export interface PracticeV3 {
   /** nombre de la página en la demo (data-vista) */
   vista: string;
   photo: { src: string; w: number; h: number; pos: string; alt: Record<V3Lang, string> };
   plates: Plate[];
+  feature?: Feature;
 }
 
 export const PRACTICE_V3: Record<string, PracticeV3> = {
@@ -80,6 +94,7 @@ export const PRACTICE_V3: Record<string, PracticeV3> = {
       },
     },
     plates: [],
+    feature: { photo: "obraMazo", pos: "50% 50%" },
   },
 };
 

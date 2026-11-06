@@ -6,6 +6,29 @@
    entre bandas bajo 760 px. */
 .hm-page .hm-band.v3{ padding-bottom: 0 }
 
+/* ---- Nuestras prácticas: la foto de cada cuadro en el teléfono y con toque ----
+   demo.css la pinta como fondo CSS (no se difiere: ~1.5 MB al cargar la página). Aquí es una <img>
+   diferida dentro del cuadro, con el mismo encuadre (cover, 50% 50%) y debajo del mismo velo
+   (::before); con cursor fino (panel de Baker) no se muestra y no se descarga. */
+.v3 .hm-bk-foto{ display: none }
+@media (max-width: 767.98px), (hover: none), (pointer: coarse){
+  .v3 .hm-practicas .pr-bk-cuadro{ background: #0B2850; isolation: isolate }
+  .v3 .hm-practicas .hm-bk-foto{
+    display: block; position: absolute; inset: 0; z-index: -1;
+    width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: 50% 50%;
+  }
+}
+
+/* ---- Industrias: nombres y líneas alineados entre columnas ----
+   Cuando un nombre ocupa dos renglones (en inglés, «Soft drinks and beverages»), las líneas de las
+   demás columnas ya no empezaban a la misma altura. Cada cuadro comparte las tres filas (foto, nombre,
+   línea) de la lista; los 14 px entre ellas son los de demo.css. */
+@supports (grid-template-rows: subgrid){
+  .hm-page .v3 .sh-indi__item,
+  .hm-page .v3 .sh-indi__a{ display: grid; grid-row: span 3; grid-template-rows: subgrid; row-gap: 14px }
+  .hm-page .v3 .sh-indi__n{ align-self: start }
+}
+
 /* ---- Nuestras prácticas: el cuadro de Litigio ----
    La foto de los rollos de acero era la del tercer cuadro en la demo aprobada; mismo encuadre y velo. */
 .v3 .pr-bk-fondo[data-clave="litigio"]{ --pr-bk-foco: 52% 50%; --pr-bk-velo: .56 }
@@ -52,9 +75,135 @@
   .hm-page #news + .hm-band[data-start="light"] > section:first-child{ padding-top: 96px }
 }
 
-/* ---- Monitor Laboral (pieza del sitio, fuera de .v3) ----
-   Tras una banda de papel, el Monitor se une como ya lo hacía tras «Socios»: sin aire arriba y con su
-   filete de unión (JoinRule), con el mismo aire arriba y abajo que deja la banda anterior. */
+/* =====================================================================
+   Las dos piezas del sitio que el Inicio conserva (Empresas extranjeras, Monitor Laboral) van fuera
+   de .v3 (sus estilos Tailwind no sobreviven a las reglas de base de demo.css), pero se visten con el
+   vocabulario de las bandas v3: los mismos márgenes laterales, titulares, cuerpo, versalitas, cifras
+   sobre línea de cota y botón de filete. Los tokens de demo.css no llegan aquí: sus valores van
+   escritos (los de tokens.css y tema.css). Ganchos hm-* en Sections26.tsx.
+   ===================================================================== */
+.hm-page{
+  --hm-gutter: clamp(20px, 5vw, 88px);          /* --gutter-desk de la demo */
+  --hm-azul: #0F3F6B; --hm-noche: #0C2340; --hm-hueso: #F3F1EA; --hm-piedra: #E4E2DC;
+  --hm-tinta: #1D2733; --hm-gris: #59616B;
+  --hm-linea: rgba(15,63,107,.16); --hm-linea-fuerte: rgba(15,63,107,.32);
+  --hm-sobre-2: rgba(243,241,234,.74); --hm-linea-azul: rgba(243,241,234,.22);
+  --hm-ease: cubic-bezier(.16,1,.3,1);
+}
+@media (max-width: 640px){ .hm-page{ --hm-gutter: 18px } }
+
+/* ---- Botón de filete (sh-boton de la demo) para los enlaces de las dos piezas ---- */
+.hm-page .hm-boton{
+  display: inline-flex; align-items: center; justify-content: center; gap: 0;
+  padding: 15px 24px; border: 1px solid var(--hm-linea-fuerte); color: var(--hm-azul);
+  font-family: var(--ss-font-sans); font-weight: 500; font-size: .74rem; letter-spacing: .14em;
+  line-height: 1.3; text-transform: uppercase; white-space: nowrap; text-decoration: none;
+  transition: background-color 240ms var(--hm-ease), color 240ms var(--hm-ease), border-color 240ms var(--hm-ease);
+}
+.hm-page .hm-boton::before, .hm-page .hm-boton .ss-arrow{ display: none }
+.hm-page .hm-boton .ss-link{ background: none; padding: 0 }
+.hm-page .hm-boton:hover, .hm-page .hm-boton:focus-visible{ background: var(--hm-azul); border-color: var(--hm-azul); color: var(--hm-hueso) }
+.hm-page .hm-boton:focus-visible{ outline: 2px solid var(--hm-azul); outline-offset: 4px }
+.hm-page .ss-navy .hm-boton{ border-color: rgba(243,241,234,.42); color: var(--hm-hueso) }
+.hm-page .ss-navy .hm-boton:hover, .hm-page .ss-navy .hm-boton:focus-visible{ background: transparent; border-color: #B2EB3E; color: #B2EB3E }
+.hm-page .ss-navy .hm-boton:focus-visible{ outline-color: #B2EB3E }
+
+/* ---- Empresas extranjeras: banda azul noche, foto a sangre y texto (como la turbina) ---- */
+.hm-page .hm-ext{ background-color: var(--hm-noche); color: var(--hm-hueso) }
+/* Sin el grano del sitio: las bandas azules v3 son lisas */
+.hm-page .hm-ext.ss-navy::after{ display: none }
+/* La foto, a sangre y en escuadra como las de las bandas v3 (sin el radio de las fotos del sitio)
+   y sin el desplazamiento parallax, que destapaba una franja azul sobre ella */
+.hm-page .hm-ext__foto img{ border-radius: 0 }
+/* Apilada (hasta 1279 px): la foto mide lo que la de la turbina en la misma pantalla */
+.hm-page .hm-ext__foto{ min-height: 0; height: min(62vw, 520px) }
+.hm-page .hm-ext__txt{ padding: clamp(56px, 8vw, 88px) var(--hm-gutter) clamp(72px, 9vw, 112px) }
+.hm-page .hm-ext__in{ max-width: 36em }
+/* Desde 1280: foto y texto lado a lado; el texto termina donde terminan las columnas de las bandas
+   v3 (1240 px centrados) y su columna da al titular dos renglones */
+@media (min-width: 1280px){
+  .hm-page .hm-ext__grid{
+    grid-template-columns: minmax(0, 1fr) minmax(0, clamp(460px, 35vw, 540px));
+    column-gap: clamp(56px, 6vw, 104px);
+    padding-right: max(var(--hm-gutter), (100% - 1240px) / 2);
+  }
+  .hm-page .hm-ext__foto{ height: auto; min-height: min(78vh, 720px) }
+  .hm-page .hm-ext__txt{ padding: clamp(96px, 9vw, 144px) 0 }
+  .hm-page .hm-ext__in{ max-width: none }
+}
+.hm-page #ss26-extranjeras{ color: var(--hm-hueso) }
+/* Cuerpo: el de la banda de la turbina (sh-filo__p) */
+.hm-page .hm-ext__p{
+  margin-top: clamp(24px, 2.8vw, 36px); max-width: 36em;
+  font-family: var(--ss-font-sans); font-size: clamp(1.02rem, .98rem + .2vw, 1.14rem); line-height: 1.6;
+  color: var(--hm-sobre-2);
+}
+/* Cifras: las de la firma (sh-cifras), sobre una línea de cota en tinta clara */
+.hm-page .hm-ext__cifras{
+  position: relative; margin-top: clamp(36px, 4vw, 56px); padding-top: 0; gap: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--hm-linea-azul);
+}
+.hm-page .hm-ext__cifras::before, .hm-page .hm-ext__cifras::after{
+  content: ""; position: absolute; top: -6px; width: 1px; height: 11px; background: var(--hm-linea-azul);
+}
+.hm-page .hm-ext__cifras::before{ left: 0 }
+.hm-page .hm-ext__cifras::after{ right: 0 }
+.hm-page .hm-ext__cifras > div{
+  display: flex; flex-direction: column-reverse; justify-content: flex-end; align-items: flex-start; gap: 10px;
+  padding: clamp(22px, 2.6vw, 34px) clamp(16px, 2vw, 28px) 0; border-left: 1px solid rgba(243,241,234,.14);
+}
+.hm-page .hm-ext__cifras > div:nth-child(odd){ border-left: 0; padding-left: 0 }
+.hm-page .hm-ext__cifras > div:nth-child(n+3){ margin-top: 24px; border-top: 1px solid rgba(243,241,234,.14) }
+.hm-page .hm-ext__cifras dd{
+  margin: 0; min-width: 0;
+  font-family: var(--ss-font-serif); font-weight: 300; font-size: clamp(2rem, 1.4rem + 2.4vw, 3.6rem);
+  line-height: 1; letter-spacing: -.02em; color: var(--hm-hueso); font-variant-numeric: lining-nums;
+}
+.hm-page .hm-ext__cifras dt{
+  font-family: var(--ss-font-sans); font-weight: 500; font-size: .74rem; letter-spacing: .14em; line-height: 1.3;
+  text-transform: uppercase; color: var(--hm-sobre-2);
+}
+/* El «+» en el color de la cifra, como en las cifras de la firma (la lima queda para el logo) */
+.hm-page .hm-ext__mas{ color: inherit }
+.hm-page .hm-ext .hm-boton{ margin-top: clamp(32px, 3.6vw, 48px) }
+
+/* ---- Monitor Laboral ---- */
+/* El ritmo y los márgenes de las bandas v3; su columna, la de ellas (1240 px) */
+.hm-page #news.hm-mon{ padding-block: clamp(80px, 10vw, 160px) }
+.hm-page #news > .ss-container{ max-width: calc(1240px + 2 * var(--hm-gutter)); padding-inline: var(--hm-gutter) }
+/* Cabecera como la de «Industrias que asesoramos»: titular y entrada a la izquierda, botón a la derecha */
+.hm-page .hm-mon__cab{
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end;
+  column-gap: clamp(32px, 6vw, 96px); row-gap: 28px;
+}
+.hm-page .hm-mon__tit{ max-width: 46rem }
+.hm-page .hm-mon__cab .hm-boton{ margin-bottom: .35em }
+@media (max-width: 640px){
+  .hm-page .hm-mon__cab{ grid-template-columns: minmax(0, 1fr) }
+  .hm-page .hm-mon__cab .hm-boton{ margin-bottom: 0 }
+}
+/* Entrada: la de las cabeceras v3 (sh-lead) */
+.hm-page .hm-mon__lead{
+  margin-top: clamp(16px, 1.8vw, 24px); max-width: 34em;
+  font-family: var(--ss-font-serif); font-weight: 350; font-size: clamp(1.22rem, 1.05rem + .6vw, 1.6rem);
+  line-height: 1.38; letter-spacing: 0; color: var(--hm-tinta); text-wrap: pretty;
+}
+/* La lista: filetes con el trazo de las líneas v3, fechas en las versalitas de la demo */
+.hm-page .hm-mon__lista{ margin-top: clamp(36px, 4.5vw, 64px) }
+.hm-page .hm-mon__lista ul{ border-top-color: var(--hm-linea-fuerte) }
+.hm-page .hm-mon__lista li{ border-color: var(--hm-linea) }
+.hm-page .hm-mon__lista li > p.ss-label{
+  font-weight: 500; font-size: .74rem; letter-spacing: .14em; line-height: 1.3; color: var(--hm-gris);
+}
+.hm-page .hm-mon__lista li > p.ss-label :is(time, span){ color: inherit }
+.hm-page .hm-mon__lista li > p.ss-label span:first-child:not([aria-hidden]){ color: var(--hm-azul) }
+.hm-page .hm-mon__lista li > :is(h2, h3){ color: var(--hm-azul); text-wrap: balance }
+.hm-page .hm-mon__lista li > p:not(.ss-label){ color: var(--hm-tinta) }
+
+/* ---- Monitor Laboral tras una banda de papel ----
+   Se une como ya lo hacía tras «Socios»: sin aire arriba y con su filete de unión (JoinRule), con el
+   mismo aire arriba y abajo que deja la banda anterior. */
 .hm-page .hm-band[data-end="light"] + #news{ padding-top: 0 }
 .hm-page .hm-band[data-end="light"] + #news > .ss-container > div[aria-hidden="true"]:first-child{ display: block }
 .hm-page #news:has(+ .hm-band[data-start="light"]){ padding-bottom: 64px }
@@ -62,12 +211,10 @@
 @media (min-width: 1024px){ .hm-page #news:has(+ .hm-band[data-start="light"]){ padding-bottom: 96px } }
 /* El filete de unión, con el trazo de las líneas de cota de la demo (el Línea del sitio casi no se ve) */
 .hm-page .hm-band[data-end="light"] + #news > .ss-container > div[aria-hidden="true"]:first-child{ background: rgba(15,63,107,.32) }
-/* El mismo papel Hueso, liso, que las bandas v3: sin el grano del sitio, que lo agrisaba al lado de Socios */
+/* El mismo papel, liso, que las bandas v3: sin el grano del sitio, que lo agrisaba al lado de Socios */
 .hm-page #news.ss-paper::after{ display: none }
 /* El fondo «piedra» de las bandas v3 (tema.css), para que el Monitor no se vea más claro que ellas */
-.hm-page #news.ss-paper{ background-color: #E4E2DC }
-/* Su columna, a la medida de las bandas v3 (1240 px): sus bordes caen donde caen los de Socios */
-.hm-page #news > .ss-container{ max-width: calc(1240px + 2 * var(--ss-pad)) }
+.hm-page #news.ss-paper{ background-color: var(--hm-piedra) }
 /* Sin «§ 04» ni la § de la primera nota: en el Inicio v3 ninguna sección se numera y la § no va como
    viñeta junto a un titular (solo decoración, aria-hidden) */
 .hm-page #news p.ss-label:has(> .ss-num > span){ display: none }
@@ -75,14 +222,14 @@
 .hm-page #news span.ss-display[aria-hidden="true"]{ display: none }
 
 /* ---- Titulares de las dos piezas del sitio ----
-   La misma escala que los h2 de las bandas v3 (sh-h2): a 820 px el Monitor quedaba en 34 px bajo
-   «Nuestros socios» en 42. */
+   La misma escala que los h2 de las bandas v3 (sh-h2). */
 .hm-page #ss26-monitor,
 .hm-page #ss26-extranjeras{
   font-size: clamp(2rem, 1.4rem + 2.4vw, 3.6rem);
   font-weight: 350;
   line-height: 1.04;
   letter-spacing: -.018em;
+  text-wrap: balance;
 }
-/* En su columna de texto (desde 1280, al lado de la foto) no pasa del tamaño que ya tenía: dos líneas */
+/* En su columna de texto (desde 1280, al lado de la foto) no pasa de 3.2rem: dos renglones */
 .hm-page #ss26-extranjeras{ font-size: clamp(2rem, 1.4rem + 2.4vw, 3.2rem) }

@@ -330,7 +330,7 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
   return (
     <section
       {...langAttrs[lang]}
-      className="ss-navy relative isolate overflow-hidden text-white"
+      className="ss-navy hm-ext relative isolate overflow-hidden text-white"
       aria-labelledby="ss26-extranjeras"
     >
       {/* Foto / texto 7fr / 5fr desde 1280; antes, apilados. La sala (oficina/sala-juntas,
@@ -338,8 +338,9 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
           como mucho 1279 × 420; desde 1280, sin la lista de pasos, el texto (~320 px) queda
           centrado en la fila de 600 px (min-h) y el hueco de la foto no pasa de 1536 de ancho
           (en pantallas mayores, Azul Profundo a la izquierda). */}
-      <div className={`grid grid-cols-1 xl:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] ${GAP_X}`}>
-        <div className="relative min-h-[300px] overflow-hidden sm:min-h-[420px] xl:min-h-[600px]">
+      {/* hm-*: ganchos de estilo del Inicio v3 (client/src/v3/home/home.css) */}
+      <div className={`hm-ext__grid grid grid-cols-1 xl:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] ${GAP_X}`}>
+        <div className="hm-ext__foto relative min-h-[300px] overflow-hidden sm:min-h-[420px] xl:min-h-[600px]">
           {/* Lugar en la portada, sin velo */}
           <ScrollSettle
             src={photos.salaJuntas.url}
@@ -350,28 +351,29 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
             decoding="async"
             width={1536}
             height={1024}
+            data-no-parallax=""
             className="ss-photo absolute inset-y-0 right-0 h-full w-full max-w-[1536px] object-cover object-[50%_42%]"
           />
         </div>
-        <div className="flex items-center px-[var(--ss-pad)] py-20 xl:pl-0 xl:pr-[clamp(48px,6vw,104px)]">
-          <div className="max-w-[560px]">
+        <div className="hm-ext__txt flex items-center px-[var(--ss-pad)] py-20 xl:pl-0 xl:pr-[clamp(48px,6vw,104px)]">
+          <div className="hm-ext__in max-w-[560px]">
             <h2 id="ss26-extranjeras" className="ss-h2 text-white">
               <Lineas text={t.title} />
             </h2>
             <Reveal delay={0.12}>
-              <p className="ss-prose mt-8 text-white/80">{t.body}</p>
+              <p className="hm-ext__p ss-prose mt-8 text-white/80">{t.body}</p>
             </Reveal>
             {/* Cifras de la firma que cuentan al entrar (21st.dev «Count Up»); el sufijo «+»
                 va en el acento de la marca */}
             {t.figures?.length ? (
               <Reveal delay={0.16}>
-                <dl className="mt-12 grid grid-cols-1 gap-y-6 border-t border-white/15 pt-8 sm:grid-cols-2 sm:gap-x-10">
+                <dl className="hm-ext__cifras mt-12 grid grid-cols-1 gap-y-6 border-t border-white/15 pt-8 sm:grid-cols-2 sm:gap-x-10">
                   {t.figures.map((f) => (
                     <div key={f.label} className="flex flex-row-reverse items-center justify-end gap-5 sm:flex-col-reverse sm:items-start sm:justify-end sm:gap-3">
                       <dt className="ss-label text-white/70">{f.label}</dt>
                       <dd className="ss-figure min-w-[2.2em] text-[clamp(40px,3.6vw,56px)] leading-none sm:min-w-0">
                         <CountUp to={parseInt(f.value, 10) || 0} />
-                        {f.suffix && <span className="text-ss-lime">{f.suffix}</span>}
+                        {f.suffix && <span className="hm-ext__mas text-ss-lime">{f.suffix}</span>}
                       </dd>
                     </div>
                   ))}
@@ -380,7 +382,7 @@ export function Extranjeras26({ lang }: { lang: Lang26 }) {
             ) : null}
             {/* Sin lista de pasos (K3): repetía el párrafo. Queda el enlace a Prácticas */}
             <Reveal delay={0.18}>
-              <TextLink href="/practice-groups" tone="dark" className="mt-10">
+              <TextLink href="/practice-groups" tone="dark" className="hm-boton mt-10">
                 {navLabel(lang, "practicas")}
               </TextLink>
             </Reveal>
@@ -404,14 +406,15 @@ export function Monitor26({ lang, limit = 3 }: { lang: Lang26; limit?: number })
       id="news"
       {...langAttrs[lang]}
       data-surface="light"
-      className={`ss-paper ${Y.monitor} ${JOIN_AFTER} ${JOIN_BEFORE}`}
+      className={`ss-paper hm-mon ${Y.monitor} ${JOIN_AFTER} ${JOIN_BEFORE}`}
       aria-labelledby="ss26-monitor"
     >
       <div className="ss-container">
         <JoinRule />
         {/* Cabecera acotada a 60rem con el enlace al Monitor a la derecha, como en Socios */}
-        <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-8">
-          <div className="max-w-[60rem]">
+        {/* hm-*: ganchos de estilo del Inicio v3 (client/src/v3/home/home.css) */}
+        <div className="hm-mon__cab flex flex-wrap items-end justify-between gap-x-10 gap-y-8">
+          <div className="hm-mon__tit max-w-[60rem]">
             <Reveal>
               <SectionHead num="04" />
             </Reveal>
@@ -420,12 +423,12 @@ export function Monitor26({ lang, limit = 3 }: { lang: Lang26; limit?: number })
             </h2>
             {hasItems && (
               <Reveal delay={0.1}>
-                <p className="ss-lead mt-5 max-w-[38em]">{t.intro}</p>
+                <p className="hm-mon__lead ss-lead mt-5 max-w-[38em]">{t.intro}</p>
               </Reveal>
             )}
           </div>
           <Reveal delay={0.1}>
-            <TextLink href="/news">{navLabel(lang, "monitor")}</TextLink>
+            <TextLink href="/news" className="hm-boton">{navLabel(lang, "monitor")}</TextLink>
           </Reveal>
         </div>
 
@@ -435,7 +438,7 @@ export function Monitor26({ lang, limit = 3 }: { lang: Lang26; limit?: number })
             sección blanca viniera después, el filete de cierre de la lista se omite: el de
             unión (JoinRule) ya separa y no quedan dos filetes seguidos. */}
         {hasItems && (
-          <Reveal delay={0.12} className="mt-14 lg:mt-16 [section:has(+[data-surface=light])_&_li:last-child]:border-b-0">
+          <Reveal delay={0.12} className="hm-mon__lista mt-14 lg:mt-16 [section:has(+[data-surface=light])_&_li:last-child]:border-b-0">
             {/* En el idioma que muestra la portada (es/en): sin traducción automática */}
             <MonitorList limit={limit} headingLevel="h3" layout="bulletin" tone="light" language={lang} />
           </Reveal>

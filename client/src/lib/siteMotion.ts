@@ -7,7 +7,9 @@
 // (SPA) se recogen con un MutationObserver.
 // Con "reducir movimiento" o sin IntersectionObserver no se activa y todo se ve desde el inicio.
 const SELECTOR = ":is([data-reveal], [data-curtain], [data-trazo], [data-lineas]):not([data-in])";
-const PANEL_SELECTOR = "main > section, main > [data-testid^=\"section-\"], main [data-testid^=\"section-\"], footer.ss26";
+// El pie ya no entra como panel: en la demo v3 aprobada está quieto (y la entrada lo dejaba en blanco
+// un instante al llegar al final de la página)
+const PANEL_SELECTOR = "main > section, main > [data-testid^=\"section-\"], main [data-testid^=\"section-\"]";
 const IMAGE_SELECTOR = "main img:not([data-no-parallax])";
 
 function clamp(value: number, min: number, max: number) {

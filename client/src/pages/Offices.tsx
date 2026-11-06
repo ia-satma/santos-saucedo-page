@@ -1,24 +1,26 @@
-import { Fragment, useState } from "react";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { ZoomIn, ChevronLeft, ChevronRight } from "lucide-react";
+/* «Nuestras Oficinas» (/offices) con el diseño de la demo v3 (aprobada el 5-11-2026): la cabecera con la
+   primera foto del recorrido, la introducción como entrada, el recorrido de fotos en filas a todo el ancho
+   con las dos historias entre ellas, la dirección con sus datos sobre la línea de cota y «Cómo llegar»
+   (Google Maps y Waze, como en Contacto), y la página siguiente. Fotos y textos: los del panel
+   (Medios → «Galería de la oficina», sección «offices» en 10 idiomas y /api/office-images). */
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { OfficeImage } from "@shared/schema";
-import { useSiteDetails } from "@/components/home26/useSiteContact";
-import { useCmsMedia } from "@/lib/cmsMedia";
+import { useSiteContact, useSiteDetails } from "@/components/home26/useSiteContact";
+import { useCmsMedia, mediaDefaults } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
-import { OfficePhotography } from "@/components/editorial/OfficePhotography";
-import { HeroKicker } from "@/components/editorial/HeroKicker";
-import { mediaDefaults } from "@/lib/cmsMedia";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { SplitSection, TextLink } from "@/components/home26/primitives";
 import { chrome26 } from "@/components/home26/chrome26";
-import { useSiteContact } from "@/components/home26/useSiteContact";
 import { keepFirmName } from "@/lib/firmName";
 import { useOfficeLabel } from "@/lib/officeLabel";
 import type { LanguageCode } from "@shared/schema";
+import { V3Main, V3NextPage, V3PageHeader } from "@/v3/shared";
+import { FotoAmpliada, Recorrido, type FotoRecorrido } from "@/v3/paginas-sitio/Oficina";
+import { etiquetaSiguiente } from "@/v3/paginas-sitio/textos";
+
 type PhotoKey = "fachada" | "recepcion" | "vestibulo" | "vestibulo2" | "salaJuntas2" | "areaTrabajo" | "areaTrabajo2" | "privado" | "escultura" | "obraMazo";
 
 interface OfficesContent {
@@ -330,12 +332,7 @@ const content: Record<LanguageCode, OfficesContent> = {
 const DIRECTIONS_URL =
   "https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Col.+del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220";
 
-// Lista de datos: filas con filete superior, como /contact; etiqueta (dt) en versalitas sans,
-// dato (dd) en la sans de 17 px
-const rowClass = "grid grid-cols-1 gap-y-1 border-t border-ss-rule py-4 sm:grid-cols-[11rem,1fr] sm:gap-x-6";
-const dtClass = "ss-label text-ss-medio sm:pt-1";
-const ddClass = "text-[17px] leading-[1.55] text-ss-tinta";
-const ddLinkClass = "hover:text-ss-marino hover:underline underline-offset-4 transition-colors";
+type MediaFoto = keyof typeof mediaDefaults.photos;
 
 export default function Offices() {
   const siteDetails = useSiteDetails();
@@ -350,174 +347,141 @@ export default function Offices() {
   const title = officeNameFor(language);
   const story = t.story ?? editableContent.en.story;
   const { data: gallery = [] } = useQuery<OfficeImage[]>({ queryKey: ["/api/office-images"] });
-  const photographicTour = [
+  // El recorrido: las fotos de la galería del panel después de la primera (que abre la página), la
+  // fachada al final y las fotos subidas en «Imágenes de la oficina»
+  const photographicTour: FotoRecorrido[] = [
     ...officePhotos.slice(1).map(item => ({
       featured: item.featured,
-      src: media.photos[item.photo as keyof typeof mediaDefaults.photos].url,
-      small: media.photos[item.photo as keyof typeof mediaDefaults.photos].smallUrl,
+      src: media.photos[item.photo as MediaFoto].url,
+      small: media.photos[item.photo as MediaFoto].smallUrl,
       alt: language === "es" ? item.altEs : item.alt,
     })),
-    ...(officePhotos.length ? [{featured:true, src: media.photos.fachada.url, small: media.photos.fachada.smallUrl, alt: t.alt.fachada}] : []),
-    ...gallery.map(item => ({featured:false, src:item.imageUrl, small:item.imageUrl, alt:(language === "es" ? item.altEs : item.alt) || title})),
+    ...(officePhotos.length ? [{ featured: true, src: media.photos.fachada.url, small: media.photos.fachada.smallUrl, alt: t.alt.fachada }] : []),
+    ...gallery.map(item => ({ featured: false, src: item.imageUrl, small: item.imageUrl, alt: (language === "es" ? item.altEs : item.alt) || title })),
   ];
-  const activePhoto = selectedPhoto === null ? undefined : photographicTour[selectedPhoto];
   const nextPhoto = (step: number) => setSelectedPhoto(index => index === null ? null : (index + step + photographicTour.length) % photographicTour.length);
   // Contacto: la etiqueta del menú (nav[5]) en cada idioma
   const nav = (cmsChrome[language] ?? cmsChrome.en).nav;
   // Dirección, teléfono y correo de /api/site-content (los mismos del pie)
   const firm = useSiteContact(language === "en" ? "en" : "es");
+  // Waze, con la dirección del sitio (la misma consulta que Contacto)
+  const direccion = (siteDetails.address || firm.address.join(", ")).trim();
+  const wazeUrl = `https://waze.com/ul?q=${encodeURIComponent(direccion)}&navigate=yes`;
+
+  // La cabecera: la primera foto de la galería del panel (la recepción); sin galería, la fachada
+  const cover = officePhotos[0];
+  const coverPhoto = media.photos[(cover?.photo ?? "fachada") as MediaFoto];
+  const coverAlt = cover ? (language === "es" ? cover.altEs : cover.alt) || "" : t.alt.fachada;
+  const es = language === "es";
+  const nextLabel = etiquetaSiguiente(language);
+
+  // Las historias van después de la foto 6 y de la 12 del recorrido, como antes
+  const historias = story
+    ? [
+        { despuesDe: 5, id: "office-story-5", titulo: story.workTitle, texto: keepFirmName(story.workText), testId: "office-story-5" },
+        { despuesDe: 11, id: "office-story-11", titulo: story.cultureTitle, texto: keepFirmName(story.cultureText), testId: "office-story-11" },
+      ]
+    : [];
 
   return (
-    <div className="min-h-screen bg-background" data-testid="page-offices">
+    <div className="ss26 min-h-screen" data-testid="page-offices">
       <SEOHead page="offices" language={language} />
       <Header />
 
-      {/* El encabezado (con el h1) va dentro de <main>: el salto al contenido no se lo
-          salta. ss-container: mismo borde izquierdo que logotipo y pie. */}
-      <main id="main-content">
-        {/* § 01: la oficina pertenece a Nuestra firma en el menú. Sin subtítulo. */}
-        <section className={`ss-office-cover ${officePhotos.length ? "ss-office-cover-photo" : ""}`} data-surface="dark" data-testid="section-offices-hero">
-          {officePhotos[0] && <OfficePhotography photo={officePhotos[0].photo as keyof typeof mediaDefaults.photos} eager sizes="100vw" />}
-          <div className="ss-office-cover-shade" aria-hidden="true" />
-          <div className="ss-container relative z-10 pb-12 lg:pb-20">
-            <HeroKicker page="offices" testId="text-offices-kicker" light />
-            <h1 className="!text-white" data-testid="text-offices-title">{title}</h1>
+      <V3Main vista="oficinas">
+        <div className="ps">
+          {/* Cabecera: la foto, el nombre de la página (el del menú y del pie) y la introducción del panel.
+              En coreano, keep-all: a 320 px partía "누에보레온주" y "있으며" dentro de la palabra (D18). */}
+          <div data-testid="section-offices-hero">
+            <V3PageHeader
+              id="cab-oficina-h"
+              img={coverPhoto.url}
+              alt={coverAlt}
+              width={1536}
+              height={1024}
+              position="50% 55%"
+              title={<span data-testid="text-offices-title">{title}</span>}
+              lead={
+                t.intro ? (
+                  <span data-testid="section-offices-intro">
+                    <span className={language === "ko" ? "ps-keep" : undefined} data-testid="text-offices-intro">{keepFirmName(t.intro)}</span>
+                  </span>
+                ) : undefined
+              }
+            />
           </div>
-        </section>
 
-        <div className="py-16 lg:py-24">
-          <div className="ss-container">
-            {/* Introducción en el cuerpo de la rejilla editorial. En coreano,
-                keep-all: a 320 px partía "누에보레온주" y "있으며" dentro de la palabra (D18). */}
-            <section className="mb-12 lg:mb-16" data-testid="section-offices-intro">
-              <SplitSection>
-                <p
-                  className={`ss-lead max-w-[44rem] ${language === "ko" ? "[word-break:keep-all]" : ""}`}
-                  data-testid="text-offices-intro"
-                >
-                  {keepFirmName(t.intro)}
-                </p>
-              </SplitSection>
-            </section>
+          {photographicTour.length ? (
+            <Recorrido
+              fotos={photographicTour}
+              historias={historias}
+              label={title}
+              ampliar={es ? "Ampliar fotografía" : "Enlarge photograph"}
+              onAbrir={setSelectedPhoto}
+              testId="section-gallery"
+            />
+          ) : null}
 
-            <section className="mb-20 lg:mb-24" aria-label={title} data-testid="section-gallery">
-              <div className="ss-office-gallery">
-                {photographicTour.map((photo, index) => (
-                  <Fragment key={`${photo.src}-${index}`}>
-                  <figure className={photo.featured ? "ss-office-photo-featured" : "ss-office-photo-support"}>
-                    <button type="button" className="ss-office-photo-button" onClick={()=>setSelectedPhoto(index)} aria-label={`${language === "es" ? "Ampliar fotografía" : "Enlarge photograph"}: ${photo.alt}`}>
-                      <img src={photo.src} srcSet={photo.small !== photo.src ? `${photo.small} 768w, ${photo.src} 1536w` : undefined}
-                        sizes="(min-width: 1024px) 60vw, 90vw" alt={photo.alt} loading="lazy" decoding="async" />
-                      <span className="ss-office-photo-expand" aria-hidden="true"><ZoomIn size={13} strokeWidth={1.5} /></span>
-                    </button>
-                  </figure>
-                  {story && (index === 5 || index === 11) && <section className="ss-office-story" aria-labelledby={`office-story-${index}`} data-testid={`office-story-${index}`}>
-                    <SplitSection aside={<h2 id={`office-story-${index}`} className="ss-h2-sm">{index === 5 ? story.workTitle : story.cultureTitle}</h2>}>
-                      <p className="ss-prose max-w-[44rem]">{keepFirmName(index === 5 ? story.workText : story.cultureText)}</p>
-                    </SplitSection>
-                  </section>}
-                  </Fragment>
-                ))}
-              </div>
-            </section>
-
-            {/* Dirección: el h2 en el aside y en el cuerpo la lista de datos (los del pie) con
-                "Cómo llegar" y "Contacto". Sin límite de medida (I3): los filetes terminan en el
-                mismo borde que las fotos; el límite es solo para texto corrido. */}
-            <section aria-labelledby="offices-address" data-testid="section-main-office">
-              <SplitSection
-                aside={
-                  <h2 id="offices-address" className="ss-h2-sm">
-                    {t.address}
-                  </h2>
-                }
-              >
-                <div data-testid="card-office-info">
-                  <dl className="border-b border-ss-rule">
-                    {/* La dirección ya la nombra el h2: su etiqueta solo para lectores de pantalla
-                        (sr-only la saca de la rejilla) y el dato ocupa las dos columnas desde sm,
-                        desde el borde de la columna, sin celda vacía delante (K5) */}
-                    <div className={rowClass}>
-                      <dt className="sr-only">{t.address}</dt>
-                      {/* bdi: en árabe (RTL) el punto final de "N.L." no salta al principio de la línea */}
-                      <dd className={`${ddClass} sm:col-span-2`} data-testid="text-full-address">
-                        {firm.address.map((line, i) => (
-                          <div key={i}>
-                            <bdi>{line}</bdi>
-                          </div>
-                        ))}
-                      </dd>
-                    </div>
-                    <div className={rowClass}>
-                      <dt className={dtClass}>{t.phone}</dt>
-                      <dd className={ddClass}>
-                        <a href={firm.phoneHref} className={ddLinkClass} data-testid="link-phone">
-                          <span dir="ltr" className="[font-size:inherit]">
-                            {firm.phone}
-                          </span>
-                        </a>
-                      </dd>
-                    </div>
-                    <div className={rowClass}>
-                      <dt className={dtClass}>{t.email}</dt>
-                      <dd className={ddClass}>
-                        <a
-                          href={`mailto:${firm.email}`}
-                          dir="ltr"
-                          className={`${ddLinkClass} [overflow-wrap:anywhere]`}
-                          data-testid="link-email"
-                        >
-                          {firm.email}
-                        </a>
-                      </dd>
-                    </div>
-                    <div className={rowClass}>
-                      <dt className={dtClass}>{t.hours}</dt>
-                      <dd className={ddClass} data-testid="text-office-hours">
-                        {t.hoursDetails}
-                      </dd>
-                    </div>
-                  </dl>
-
-                  <div className="mt-8 flex flex-wrap gap-x-10 gap-y-6">
-                    {/* Mismo aspecto que TextLink; <a> propio porque el destino es externo */}
-                    <a
-                      href={siteDetails.directionsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="ss-label group relative inline-flex items-center gap-3 text-ss-marino before:absolute before:inset-x-0 before:-inset-y-3"
-                      data-testid="button-directions"
-                    >
-                      <span className="ss-link">{t.getDirections}</span>
-                      <span className="sr-only">{` ${t.newTab}`}</span>
-                      <span aria-hidden="true" className="ss-arrow">
-                        →
-                      </span>
+          {/* Dirección: la del sitio en la romana y, sobre la línea de cota, teléfono, correo y horario */}
+          <section className="ps-dir" aria-labelledby="offices-address" data-testid="section-main-office">
+            <div className="sh-wrap">
+              <div className="ps-dir__in" data-testid="card-office-info">
+                <h2 id="offices-address" className="sh-h2">{t.address}</h2>
+                {/* La dirección y, debajo, «Cómo llegar» (Google Maps y Waze, como en Contacto). bdi: en
+                    árabe (RTL) el punto final de "N.L." no salta al principio de la línea */}
+                <div className="ps-dir__lugar">
+                  <address className="sh-dir" data-testid="text-full-address">
+                    {firm.address.map((line, i) => <span key={i}><bdi>{line}</bdi></span>)}
+                  </address>
+                  <p className="sh-llegar">
+                    <span className="sh-cap">{t.getDirections}</span>
+                    <a href={siteDetails.directionsUrl} target="_blank" rel="noopener noreferrer" data-testid="button-directions">
+                      Google Maps<span className="sr-only">{` ${t.newTab}`}</span>
                     </a>
-                    <TextLink href="/contact" data-testid="button-contact">
-                      {nav[5].label}
-                    </TextLink>
-                  </div>
+                    <a href={wazeUrl} target="_blank" rel="noopener noreferrer" data-testid="button-waze">
+                      Waze<span className="sr-only">{` ${t.newTab}`}</span>
+                    </a>
+                  </p>
                 </div>
-              </SplitSection>
-            </section>
+                <dl className="sh-cifras ps-cifras">
+                  <div>
+                    <dt>{t.phone}</dt>
+                    <dd><a href={firm.phoneHref} dir="ltr" data-testid="link-phone">{firm.phone}</a></dd>
+                  </div>
+                  <div>
+                    <dt>{t.email}</dt>
+                    <dd>
+                      {/* <wbr>: si el correo no cabe en su columna, parte después de la @ y no a media palabra */}
+                      <a href={`mailto:${firm.email}`} dir="ltr" data-testid="link-email">
+                        {firm.email.includes("@") ? <>{firm.email.split("@")[0]}@<wbr />{firm.email.split("@").slice(1).join("@")}</> : firm.email}
+                      </a>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>{t.hours}</dt>
+                    {/* «19:00 h» no se separa */}
+                    <dd data-testid="text-office-hours">{t.hoursDetails.replace(/ h$/, "\u00a0h")}</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          </section>
+
+          <div data-testid="button-contact">
+            <V3NextPage href="/contact" label={nextLabel} title={nav[5].label} ariaLabel={nextLabel} />
           </div>
         </div>
-      </main>
+      </V3Main>
 
-      <Dialog open={activePhoto !== undefined} onOpenChange={open=>{if(!open)setSelectedPhoto(null);}}>
-        <DialogContent className="max-w-6xl border-none bg-[#15152a] p-5 text-white sm:p-8" onKeyDown={event=>{if(event.key==='ArrowLeft'){event.preventDefault();nextPhoto(-1);}if(event.key==='ArrowRight'){event.preventDefault();nextPhoto(1);}}}>
-          <DialogTitle className="sr-only">{title}</DialogTitle>
-          {activePhoto && <>
-            <img src={activePhoto.src} alt={activePhoto.alt} className="mx-auto max-h-[72vh] max-w-full rounded-lg object-contain" />
-            <div className="flex items-center justify-between gap-4 pt-3">
-              <button type="button" className="grid size-11 place-items-center rounded-full border border-white/30 hover:bg-white/10" aria-label={language==='es'?'Fotografía anterior':'Previous photograph'} onClick={()=>nextPhoto(-1)}><ChevronLeft /></button>
-              <p aria-live="polite" className="text-sm">{(selectedPhoto ?? 0)+1} / {photographicTour.length}</p>
-              <button type="button" className="grid size-11 place-items-center rounded-full border border-white/30 hover:bg-white/10" aria-label={language==='es'?'Siguiente fotografía':'Next photograph'} onClick={()=>nextPhoto(1)}><ChevronRight /></button>
-            </div>
-          </>}
-        </DialogContent>
-      </Dialog>
+      <FotoAmpliada
+        fotos={photographicTour}
+        indice={selectedPhoto}
+        onCerrar={() => setSelectedPhoto(null)}
+        onPaso={nextPhoto}
+        titulo={title}
+        anterior={es ? "Fotografía anterior" : "Previous photograph"}
+        siguiente={es ? "Siguiente fotografía" : "Next photograph"}
+      />
       <Footer />
     </div>
   );

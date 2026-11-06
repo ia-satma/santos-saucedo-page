@@ -1,13 +1,15 @@
-import "@/styles/folio-pages.css";
-import { useContentEntity, useContentPreview } from "@/features/admin/ContentPreview";
+// Nota del Monitor Laboral (/news/:slug) con el diseño de la demo v3 (aprobada el 5-11-2026): cabecera en
+// la piedra con la vuelta al Monitor, el titular, la fecha y los autores y, al lado, la foto de la nota a
+// color; el texto en su columna de lectura con compartir y el documento a la izquierda; los autores, «Más del
+// Monitor Laboral», la banda de la suscripción y la página siguiente. SEO, JSON-LD (artículo y migas),
+// traducción automática fuera de ES/EN y data-testid, como antes. Estilos: client/src/v3/paginas-sitio.
+import { useContentEntity } from "@/features/admin/ContentPreview";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useState } from "react";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useScroll } from "framer-motion";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -16,24 +18,26 @@ import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/JsonLdSchema";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
-import { Eyebrow, LeadParagraph } from "@/components/editorial";
+import { LeadParagraph } from "@/components/editorial";
 import { formatNewsDate } from "@/lib/newsDate";
-import { MonitorList, MonitorSubscribe } from "@/components/monitor/MonitorList";
 import { chrome26 } from "@/components/home26/chrome26";
-import { Lineas, SectionMark, TextLink } from "@/components/home26/primitives";
+import { SectionMark } from "@/components/home26/primitives";
+import { useCmsMedia } from "@/lib/cmsMedia";
 import { copyToClipboard, emailShareHref, newsShareUrl, sourceLabel, whatsappShareHref } from "@/lib/shareNews";
 import type { News, TeamMember } from "@shared/schema";
+import { V3Main, V3NextPage } from "@/v3/shared";
+import { MonitorNotas, MonitorSuscripcion, etiquetaSiguiente } from "@/v3/paginas-sitio/Monitor";
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
 // lleva su propio idioma y dirección, para que :lang() (la romana, no la sans de CJK) y el
 // algoritmo bidi (en árabe, el punto final al final) lo traten como inglés. El cuerpo largo del
 // artículo va entero en LTR (EN_SOURCE). En los titulares el bloque solo lleva lang="en" y
-// conserva la dirección de la página (en árabe, alineado a la derecha con el eyebrow y la
-// vuelta); el texto va aislado en <bdi lang="en" dir="ltr">, como en Team.tsx.
+// conserva la dirección de la página (en árabe, alineado a la derecha con la vuelta); el texto va
+// aislado en <bdi lang="en" dir="ltr">, como en Team.tsx.
 const EN_SOURCE = { lang: "en", dir: "ltr" } as const;
 
-// Barra de lectura: filete de acento de 2 px fijo arriba, que crece con el avance de la página
-// (scaleX). Sigue al desplazamiento del lector; no se mueve sola.
+// Barra de lectura: filete lima de 2 px fijo arriba, sobre la cabecera azul del sitio, que crece con el
+// avance de la página (scaleX). Sigue al desplazamiento del lector; no se mueve sola.
 function ReadingProgress() {
   const { scrollYProgress } = useScroll();
   return (
@@ -46,38 +50,24 @@ function ReadingProgress() {
   );
 }
 
-// Imagen del artículo: figura al inicio del cuerpo, bajo el encabezado de papel, sin velo.
-// Sin imagen, o si no carga, no se pinta nada (sin foto genérica de reemplazo).
-// alt vacío: el h1 ya dice el título.
-function NewsHeroImage({ src }: { src: string }) {
-  const [hasError, setHasError] = useState(false);
-  if (!src || hasError) return null;
-  return (
-    <figure className="mb-12 overflow-hidden" data-curtain="">
-      <img
-        src={src}
-        alt=""
-        className="block w-full aspect-[16/9] object-cover"
-        loading="eager"
-        decoding="async"
-        onError={() => setHasError(true)}
-        data-testid="img-news-hero"
-      />
-    </figure>
-  );
-}
+// Flecha de las filas de compartir
+const Flecha = () => (
+  <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M4 10h11M11 5.5l4.5 4.5-4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+);
 
+// Autor: retrato a color, nombre, cargo y el inicio de la biografía, con enlace a su ficha
 function AuthorCard({
-  author, 
-  getInitials, 
-  truncateBio 
-}: { 
-  author: TeamMember; 
+  author,
+  getInitials,
+  truncateBio,
+}: {
+  author: TeamMember;
   getInitials: (name: string) => string;
   truncateBio: (bio: string | null | undefined, maxLength?: number) => string;
 }) {
   const { language } = useLanguage();
-  
+  const [photoFailed, setPhotoFailed] = useState(false);
+
   const { translatedFields, isTranslating } = useTranslatedContent({
     contentType: 'team_member',
     entityId: author.id.toString(),
@@ -92,53 +82,24 @@ function AuthorCard({
 
   const displayTitle = translatedFields.title || author.title;
   const displayBio = translatedFields.bio || author.bio;
-  
+
   return (
-    <Link 
-      href={`/team/${author.slug}`}
-      className="group block"
-    >
-      {/* Fila con filete superior, sin caja; retrato en color */}
-      <div
-        className="border-t border-ss-rule pt-6 pb-2"
-        data-testid={`card-author-${author.slug}`}
-      >
-        <div className="flex items-start gap-4">
-          <Avatar className="w-16 h-16 flex-shrink-0" data-testid={`avatar-author-${author.slug}`}>
-            <AvatarImage 
-              src={author.imageUrl || undefined} 
-              alt={author.name}
-              className="object-cover ss-photo"
-            />
-            <AvatarFallback className="bg-ss-paper text-ss-marino text-lg font-heading">
-              {getInitials(author.name)}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <h3 
-              className="ss-h3 text-[22px] transition-colors group-hover:underline group-hover:underline-offset-4 group-hover:decoration-1"
-              data-testid={`text-author-name-${author.slug}`}
-            >
-              {author.name}
-            </h3>
-            <p 
-              className="ss-label text-ss-medio mt-1 mb-2"
-              data-testid={`text-author-title-${author.slug}`}
-            >
-              {displayTitle}
-              {isTranslating && (
-                <Loader2 className="inline-block w-3 h-3 ml-2 animate-spin text-ss-medio" aria-hidden="true" />
-              )}
-            </p>
-            <p 
-              className="text-base leading-[1.55] text-ss-tinta line-clamp-3"
-              data-testid={`text-author-bio-${author.slug}`}
-            >
-              {truncateBio(displayBio)}
-            </p>
-          </div>
-        </div>
-      </div>
+    <Link href={`/team/${author.slug}`} className="ps-autor" data-testid={`card-author-${author.slug}`}>
+      <span className="ps-autor__foto" data-testid={`avatar-author-${author.slug}`}>
+        {author.imageUrl && !photoFailed ? (
+          <img src={author.imageUrl} alt={author.name} loading="lazy" decoding="async" onError={() => setPhotoFailed(true)} />
+        ) : (
+          <span className="ps-autor__ini" aria-hidden="true">{getInitials(author.name)}</span>
+        )}
+      </span>
+      <span className="ps-autor__txt">
+        <h3 className="ps-autor__n" data-testid={`text-author-name-${author.slug}`}>{author.name}</h3>
+        <span className="ps-k ps-autor__c" data-testid={`text-author-title-${author.slug}`}>
+          {displayTitle}
+          {isTranslating && <Loader2 className="ms-2 inline-block h-3 w-3 animate-spin" aria-hidden="true" />}
+        </span>
+        <span className="ps-autor__bio" data-testid={`text-author-bio-${author.slug}`}>{truncateBio(displayBio)}</span>
+      </span>
     </Link>
   );
 }
@@ -151,6 +112,10 @@ export default function NewsDetail() {
   const slug = params.slug;
 
   const { data: newsArticle, isLoading, error } = useContentEntity<News>("news",slug);
+  // Foto de la nota que no cargó: la cabecera pasa a una sola columna (sin foto genérica de reemplazo)
+  const [failedImage, setFailedImage] = useState<string | null>(null);
+  // La estancia del mapamundi (panel → Medios), en la banda de la suscripción
+  const media = useCmsMedia();
 
   const { data: allNews } = useQuery<News[]>({
     queryKey: ["/api/news"],
@@ -358,26 +323,30 @@ export default function NewsDetail() {
     return bio.slice(0, maxLength).trim() + '…';
   };
 
+  const nextLabel = etiquetaSiguiente(language);
+  const estancia = media.photos.estancia;
+  const estanciaSrcSet = estancia.smallUrl && estancia.smallUrl !== estancia.url ? `${estancia.smallUrl} 768w, ${estancia.url} 1536w` : undefined;
+
   // Nota inexistente (enlace viejo o mal escrito): la misma vista 404 que la ficha de socio
-  // (not-found.tsx): SEOHead page="notFound" (título propio y noindex), encabezado azul con
-  // "Error 404" y el mensaje como h1. El enlace lleva al listado con el rótulo del menú (nav[3]).
+  // (not-found.tsx): SEOHead page="notFound" (título propio y noindex), "Error 404" y el mensaje como
+  // h1. El enlace lleva al listado con el rótulo del menú (nav[3]).
   if (error) {
     return (
-      <div className="min-h-screen bg-background flex flex-col" data-testid="page-news-error">
+      <div className="ss26 min-h-screen flex flex-col" data-testid="page-news-error">
         <SEOHead page="notFound" language={language} />
         <Header />
-        <main id="main-content" className="flex-1 pt-36 pb-20 editorial-page-hero" data-testid="section-not-found-hero">
-          <div className="ss-container">
-            <Eyebrow num="" tone="navy" label="Error 404" className="mb-6" />
-            <h1 className="mb-10" data-testid="text-error-title">
-              {t.errorMessage}
-            </h1>
-            {/* Enlace del router (respeta la base de GitHub Pages), no botón */}
-            <TextLink href="/news" tone="dark" data-testid="button-back-to-news">
-              {newsLabel}
-            </TextLink>
+        <V3Main vista="nota" className="flex-1">
+          <div className="ps">
+            <section className="sh-pp ps-error" data-testid="section-not-found-hero">
+              <div className="sh-wrap ps-error__in">
+                <p className="ps-k">Error 404</p>
+                <h1 className="sh-h1" data-testid="text-error-title">{t.errorMessage}</h1>
+                {/* Enlace del router (respeta la base de GitHub Pages), con el marco de la demo */}
+                <Link href="/news" className="sh-boton" data-testid="button-back-to-news">{newsLabel}</Link>
+              </div>
+            </section>
           </div>
-        </main>
+        </V3Main>
         <Footer />
       </div>
     );
@@ -385,32 +354,30 @@ export default function NewsDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background" data-testid="page-news-loading">
+      <div className="ss26 min-h-screen" data-testid="page-news-loading">
         <Header />
-        {/* Carga con el mismo encabezado de papel que la vista final: mismo margen superior
-            y marcadores de vuelta, eyebrow, titular y fecha */}
-        <main id="main-content">
-          <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" aria-busy="true">
-            <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12 w-full">
-              <Skeleton className="h-4 w-36 mb-6 bg-ss-rule" />
-              <Skeleton className="h-3 w-40 mb-5 bg-ss-rule" />
-              <Skeleton className="h-12 w-full mb-3 bg-ss-rule" />
-              <Skeleton className="h-12 w-2/3 bg-ss-rule" />
-              <Skeleton className="h-3 w-32 mt-6 bg-ss-rule" />
-            </div>
-          </section>
-          <div className="py-16 lg:py-20">
-            <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12">
-              <Skeleton className="h-4 w-32 mb-4" />
-              <Skeleton className="h-10 w-full mb-2" />
-              <Skeleton className="h-10 w-3/4 mb-8" />
-              <Skeleton className="h-6 w-full mb-4" />
-              <Skeleton className="h-6 w-full mb-4" />
-              <Skeleton className="h-6 w-5/6 mb-4" />
-              <Skeleton className="h-6 w-full mb-4" />
+        {/* Carga con la forma de la vista final: vuelta, titular y fecha; luego el texto */}
+        <V3Main vista="nota">
+          <div className="ps">
+            <section className="sh-pp ps-art__cab ps-carga" aria-busy="true">
+              <div className="sh-wrap">
+                <span className="ps-esq ps-esq--k" />
+                <span className="ps-esq ps-esq--h" />
+                <span className="ps-esq ps-esq--h ps-esq--h2" />
+                <span className="ps-esq ps-esq--k" style={{ marginTop: 28 }} />
+              </div>
+            </section>
+            <div className="ps-art__cuerpo">
+              <div className="sh-wrap">
+                <div className="ps-art__rejilla ps-carga">
+                  <div className="ps-art__texto">
+                    {[100, 100, 92, 100, 84, 100, 70].map((w, i) => <span key={i} className="ps-esq ps-esq--p" style={{ width: `${w}%` }} />)}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </main>
+        </V3Main>
         <Footer />
       </div>
     );
@@ -424,8 +391,15 @@ export default function NewsDetail() {
   const contentSource = isOtherLanguage && !!displayContent &&
     (displayContent === newsArticle?.content || displayContent === newsArticle?.excerpt) ? EN_SOURCE : undefined;
   const heroImage = newsArticle?.imageUrl || "";
+  const hasPhoto = !!heroImage && failedImage !== heroImage;
 
   const primaryAuthor = relatedAuthors && relatedAuthors.length > 0 ? relatedAuthors[0] : null;
+
+  // Documento de la nota (PDF): el de su idioma si lo hay; el rótulo, en español o en inglés
+  const documentHref = language === "es"
+    ? newsArticle?.documentUrlEs || newsArticle?.documentUrl
+    : newsArticle?.documentUrl || newsArticle?.documentUrlEs;
+  const documentLabel = language === "es" ? "Consultar documento PDF" : "Read PDF document";
 
   // Pestaña y descripción en el idioma de la página: el titular que muestra el h1 y la
   // entradilla traducida; sin traducción (fuera de ES/EN), la descripción general del Monitor
@@ -439,10 +413,10 @@ export default function NewsDetail() {
         : undefined;
 
   return (
-    <div className="min-h-screen bg-background" data-testid="page-news-detail">
+    <div className="ss26 min-h-screen" data-testid="page-news-detail">
       <Header />
       {newsArticle && <ReadingProgress />}
-      
+
       {newsArticle && (
         <>
           <SEOHead
@@ -465,7 +439,7 @@ export default function NewsDetail() {
           <BreadcrumbJsonLd
             items={[
               { name: t.home, url: "https://www.santossaucedo.com" },
-              // La publicación, con el nombre del eyebrow y del menú, y su listado (/news)
+              // La publicación, con el nombre del menú, y su listado (/news)
               { name: newsLabel, url: "https://www.santossaucedo.com/news" },
               { name: language === "es" ? newsArticle.titleEs : newsArticle.title, url: `https://www.santossaucedo.com/news/${newsArticle.slug}` }
             ]}
@@ -473,251 +447,198 @@ export default function NewsDetail() {
           />
         </>
       )}
-      
-      {/* Encabezado de papel ("memorándum impreso"): Hueso, titular Azul Marino, etiquetas en
-          Gris Medio y § en Azul Marino (index.css, .editorial-page-hero--paper). La foto del
-          artículo, si la hay, abre el cuerpo. Va dentro de <main> (el salto al contenido no se
-          salta el h1); el relleno del cuerpo va en su propio envoltorio. */}
-      <main id="main-content">
-        <section className="pt-36 pb-20 editorial-page-hero editorial-page-hero--paper" data-testid="section-news-hero">
-          {/* Columna del artículo (max-w-4xl, ≈800 px útiles): vuelta, titular y cuerpo sobre el mismo borde.
-              Hasta lg, el margen lateral es el de ss-container (--ss-pad): en teléfono el texto
-              empieza bajo el logotipo (x = 20 a 390 px); desde lg la columna va centrada. */}
-          <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12 w-full">
-            <div>
-              {/* Al listado del Monitor (/news) con el router: respeta la base de GitHub Pages.
-                  Texto: el rótulo del menú, como la vuelta de socios y prácticas */}
-              <Link
-                href="/news"
-                className="inline-flex items-center gap-2 mb-6"
-                data-testid="link-back-to-news"
-              >
-                <ArrowLeft className="w-4 h-4 rtl:-scale-x-100" aria-hidden="true" />
-                {newsLabel}
-              </Link>
 
-              {/* Eyebrow del expediente solo con el número, como en la ficha de práctica: la
-                  vuelta ya nombra la publicación */}
-              <Eyebrow
-                num="04"
-                tone="paper"
-                className="mb-4"
-                testId="eyebrow-news"
-              />
-
-              <h1
-                className="ss-news-title"
-                data-testid="text-news-title"
-                lang={titleIsSource ? "en" : undefined}
-              >
-                {/* Titular de origen de inmediato; la traducción lo sustituye solo si llega */}
-                {titleIsSource ? (
-                  <bdi lang="en" dir="ltr"><Lineas text={displayTitle ?? ""} /></bdi>
-                ) : (
-                  <Lineas text={displayTitle ?? ""} />
+      <V3Main vista="nota">
+        <div className="ps">
+          {/* Cabecera en la piedra: la vuelta al Monitor, el titular y la fecha (con los autores, si la
+              nota los tiene); a su lado, la foto de la nota a color. Sin foto, el titular solo. */}
+          <header className="sh-pp ps-art__cab" aria-labelledby="art-h" data-testid="section-news-hero">
+            <div className={`sh-wrap ps-art__cab-in${hasPhoto ? " ps-art__cab-in--foto" : ""}`}>
+              <div className="ps-art__titulo">
+                {/* Al listado del Monitor (/news) con el router: respeta la base de GitHub Pages */}
+                <Link href="/news" className="ps-volver" data-testid="link-back-to-news">
+                  <ArrowLeft size={16} strokeWidth={1.5} aria-hidden="true" />
+                  {newsLabel}
+                </Link>
+                <h1 id="art-h" className="ps-art__h" tabIndex={-1} data-testid="text-news-title" lang={titleIsSource ? "en" : undefined}>
+                  {/* Titular de origen de inmediato; la traducción lo sustituye solo si llega */}
+                  {titleIsSource ? <bdi lang="en" dir="ltr">{displayTitle}</bdi> : displayTitle}
+                </h1>
+                {/* Fecha bajo el titular, como en prensa; si la nota tiene autores capturados, sus
+                    nombres (con enlace a su ficha) en la misma línea. Sin autor, ningún nombre. */}
+                {(newsArticle?.date || primaryAuthor) && (
+                  <p className="ps-art__meta">
+                    {newsArticle?.date && (
+                      <time
+                        // Instante completo: no cambia con la zona del visitante
+                        dateTime={new Date(newsArticle.date).toISOString()}
+                        data-testid="text-news-date"
+                      >
+                        {formatDate(newsArticle.date)}
+                      </time>
+                    )}
+                    {relatedAuthors?.map((author, i) => (
+                      <span key={author.id} data-testid={`text-news-byline-${author.slug}`}>
+                        {(i > 0 || newsArticle?.date) && <span aria-hidden="true">· </span>}
+                        <Link href={`/team/${author.slug}`} className="inline-link">{author.name}</Link>
+                      </span>
+                    ))}
+                  </p>
                 )}
-              </h1>
-
-              {/* Fecha bajo el titular, como en prensa; si la nota tiene autores capturados, sus
-                  nombres (con enlace a su ficha) en la misma línea. Sin autor, ningún nombre. */}
-              {(newsArticle?.date || primaryAuthor) && (
-                <p className="ss-label ss-num mt-6 text-ss-medio">
-                  {newsArticle?.date && (
-                    <time
-                      // Instante completo: no cambia con la zona del visitante
-                      dateTime={new Date(newsArticle.date).toISOString()}
-                      data-testid="text-news-date"
-                    >
-                      {formatDate(newsArticle.date)}
-                    </time>
-                  )}
-                  {relatedAuthors?.map((author, i) => (
-                    <span key={author.id} data-testid={`text-news-byline-${author.slug}`}>
-                      {(i > 0 || newsArticle?.date) && <span aria-hidden="true"> · </span>}
-                      <Link href={`/team/${author.slug}`} className="inline-link text-ss-marino hover:underline underline-offset-4 decoration-1">
-                        {author.name}
-                      </Link>
-                    </span>
-                  ))}
-                </p>
+              </div>
+              {/* alt vacío: el h1 ya dice el título */}
+              {hasPhoto && (
+                <figure className="ps-art__foto">
+                  <img
+                    key={heroImage}
+                    src={heroImage}
+                    alt=""
+                    width={1024}
+                    height={1024}
+                    loading="eager"
+                    decoding="async"
+                    onError={() => setFailedImage(heroImage)}
+                    data-testid="img-news-hero"
+                  />
+                </figure>
               )}
+            </div>
+          </header>
+
+          {/* El texto en su columna de lectura (~38rem) y, a su izquierda, el documento y compartir; en
+              tableta y teléfono, debajo del texto */}
+          <div className="ps-art__cuerpo">
+            <div className="sh-wrap">
+              <div className="ps-art__rejilla">
+                <div className="ps-art__texto">
+                  <div className="relative" data-testid="container-news-content">
+                    {isTranslating && !displayContent && (
+                      <div aria-hidden="true">
+                        {[100, 100, 88, 100, 80].map((w, i) => <span key={i} className="ps-esq ps-esq--p" style={{ width: `${w}%` }} />)}
+                      </div>
+                    )}
+                    {displayContent && (() => {
+                      const paragraphs = displayContent.split('\n');
+                      const firstIdx = paragraphs.findIndex((p) => p.trim().length > 0);
+                      if (firstIdx === -1) return null;
+                      const first = paragraphs[firstIdx];
+                      const rest = paragraphs.slice(firstIdx + 1);
+                      return (
+                        <div className={isTranslating ? "ps-art__cargando" : ""} {...contentSource}>
+                          <LeadParagraph
+                            firstParagraph={first}
+                            restParagraphs={rest}
+                            testId="lead-news-content"
+                          />
+                          {/* Marca de fin: el § de la marca (archivo oficial) cierra el texto */}
+                          <SectionMark className="ps-art__fin" />
+                        </div>
+                      );
+                    })()}
+                    {isTranslating && displayContent && (
+                      <Loader2 className="ps-art__giro h-4 w-4 animate-spin" aria-hidden="true" />
+                    )}
+                  </div>
+
+                  {/* Nota breve con fuente: el análisis es de la firma y la noticia comentada se cita
+                      al pie ("Fuente: El Economista"), con enlace al medio en otra pestaña. */}
+                  {newsArticle?.sourceUrl && (
+                    <p className="ps-art__fuente" data-testid="text-news-source">
+                      {t.source}:{" "}
+                      <a href={newsArticle.sourceUrl} target="_blank" rel="noopener noreferrer" data-testid="link-news-source">
+                        {sourceLabel(newsArticle.sourceName, newsArticle.sourceUrl)}
+                      </a>
+                    </p>
+                  )}
+                </div>
+
+                <div className="ps-art__lado">
+                  {documentHref && (
+                    <div className="ps-doc">
+                      <a
+                        href={documentHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="sh-boton"
+                        lang={isOtherLanguage ? "en" : undefined}
+                        data-testid="link-news-document"
+                      >
+                        <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M5.5 2.5h6l3.5 3.5v11.5h-9.5z" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" /><path d="M11.5 2.5V6H15M7.5 10.5h5M7.5 13.5h5" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" /></svg>
+                        {documentLabel}
+                      </a>
+                    </div>
+                  )}
+                  {/* Compartir: filas de texto (Copiar enlace · WhatsApp · Correo), sin contadores */}
+                  <div className="ps-compartir" role="group" aria-labelledby="news-share-label" data-testid="section-share">
+                    <p id="news-share-label" className="ps-k">{t.share}</p>
+                    <ul className="ps-compartir__lista">
+                      <li>
+                        <button type="button" onClick={handleCopyLink} data-testid="button-share-copy-link">{t.copyLink}<Flecha /></button>
+                      </li>
+                      <li>
+                        <button type="button" onClick={() => handleShare("whatsapp")} data-testid="button-share-whatsapp">WhatsApp<Flecha /></button>
+                      </li>
+                      <li>
+                        <button type="button" onClick={() => handleShare("email")} data-testid="button-share-email">{t.shareEmail}<Flecha /></button>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </section>
 
-        <div className="py-16 lg:py-20">
-          <div className="max-w-4xl mx-auto px-[var(--ss-pad)] lg:px-12">
-            {/* Columna de lectura (~680 px) sobre el borde del titular, texto en bandera, sin entradas
-                al aparecer: el cuerpo se lee quieto */}
-            <div className="folio-article max-w-[680px]">
-              <NewsHeroImage key={heroImage} src={heroImage} />
-
-              {(newsArticle?.documentUrl || newsArticle?.documentUrlEs) && <div className="mb-10 border-y border-ss-rule py-5"><a href={(language==='es'?newsArticle?.documentUrlEs||newsArticle?.documentUrl:newsArticle?.documentUrl||newsArticle?.documentUrlEs)!} target="_blank" rel="noopener noreferrer" className="text-sm underline underline-offset-4">{language==='es'?'Consultar documento PDF':'Read PDF document'}</a></div>}
-              <div
-                className="mb-12 relative"
-                data-testid="container-news-content"
-              >
-                {isTranslating && !displayContent && (
-                  <div className="space-y-4">
-                    <Skeleton className="h-6 w-full" />
-                    <Skeleton className="h-6 w-full" />
-                    <Skeleton className="h-6 w-5/6" />
-                    <Skeleton className="h-6 w-full" />
-                    <Skeleton className="h-6 w-4/5" />
-                  </div>
-                )}
-                {displayContent && (() => {
-                  const paragraphs = displayContent.split('\n');
-                  const firstIdx = paragraphs.findIndex((p) => p.trim().length > 0);
-                  if (firstIdx === -1) return null;
-                  const first = paragraphs[firstIdx];
-                  const rest = paragraphs.slice(firstIdx + 1);
-                  return (
-                    <div className={isTranslating ? "opacity-70" : ""} {...contentSource}>
-                      <LeadParagraph
-                        firstParagraph={first}
-                        restParagraphs={rest}
-                        testId="lead-news-content"
-                      />
-                      {/* Marca de fin: el § de la marca cierra el texto */}
-                      <SectionMark className="folio-endmark" style={{ backgroundColor: "var(--ss-mark)" }} />
-                    </div>
-                  );
-                })()}
-                {isTranslating && displayContent && (
-                  <div className="absolute top-0 right-0">
-                    <Loader2 className="w-4 h-4 animate-spin text-ss-medio" aria-hidden="true" />
-                  </div>
-                )}
-              </div>
-
-              {/* Nota breve con fuente: el análisis es de la firma y la noticia comentada se cita
-                  al pie ("Fuente: El Economista"), con enlace al medio en otra pestaña. */}
-              {newsArticle?.sourceUrl && (
-                <p className="mb-12 text-base text-ss-medio" data-testid="text-news-source">
-                  {t.source}:{" "}
-                  <a
-                    href={newsArticle.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-ss-marino underline underline-offset-4 decoration-1"
-                    data-testid="link-news-source"
-                  >
-                    {sourceLabel(newsArticle.sourceName, newsArticle.sourceUrl)}
-                  </a>
-                </p>
-              )}
-
-              {/* Compartir y suscribirse bajo un solo filete. Apilados hasta lg (a propósito: a 768
-                  no caben en una fila en es, fr, de, ru ni ja); desde lg, compartir a un lado y la
-                  suscripción al otro, y si no caben (ruso) la suscripción baja a su propia línea,
-                  sin otro filete. En el sitio estático MonitorSubscribe no se pinta y queda solo
-                  compartir. */}
-              <div className="mb-16 border-t border-ss-rule pt-8 lg:flex lg:flex-wrap lg:items-center lg:justify-between lg:gap-x-10 lg:gap-y-4">
-                {/* Compartir: fila de etiqueta con botones de texto (Copiar enlace · WhatsApp ·
-                    Correo), sin bordes, iconos ni contadores; 44 px de alto útil por el relleno. Cada "·" va
-                    unido al botón que sigue (whitespace-nowrap): ninguno queda al final de una
-                    línea. Bajo sm, "Compartir" en su propia línea. */}
-                <div data-testid="section-share">
-                  <div
-                    role="group"
-                    aria-labelledby="news-share-label"
-                    className="ss-label flex flex-wrap items-center gap-x-2"
-                  >
-                    <span id="news-share-label" className="basis-full text-ss-medio sm:basis-auto sm:me-2">{t.share}</span>
-                    <button
-                      type="button"
-                      className="ss-label inline-flex min-h-[44px] items-center text-ss-marino underline-offset-[6px] decoration-1 hover:underline"
-                      onClick={handleCopyLink}
-                      data-testid="button-share-copy-link"
-                    >
-                      {t.copyLink}
-                    </button>
-                    <span className="inline-flex items-center gap-x-2 whitespace-nowrap">
-                      <span aria-hidden="true" className="text-ss-medio">·</span>
-                      <button
-                        type="button"
-                        className="ss-label inline-flex min-h-[44px] items-center text-ss-marino underline-offset-[6px] decoration-1 hover:underline"
-                        onClick={() => handleShare("whatsapp")}
-                        data-testid="button-share-whatsapp"
-                      >
-                        WhatsApp
-                      </button>
-                    </span>
-                    <span className="inline-flex items-center gap-x-2 whitespace-nowrap">
-                      <span aria-hidden="true" className="text-ss-medio">·</span>
-                      <button
-                        type="button"
-                        className="ss-label inline-flex min-h-[44px] items-center text-ss-marino underline-offset-[6px] decoration-1 hover:underline"
-                        onClick={() => handleShare("email")}
-                        data-testid="button-share-email"
-                      >
-                        {t.shareEmail}
-                      </button>
-                    </span>
-                  </div>
+          {relatedAuthors && relatedAuthors.length > 0 && (
+            <section className="ps-autores" aria-labelledby="art-autores-h" data-testid="section-related-authors">
+              <div className="sh-wrap">
+                <div className="ps-autores__in">
+                  <h2 id="art-autores-h" className="sh-h2" data-testid="text-authors-title">
+                    {relatedAuthors.length === 1 ? t.aboutTheAuthor : t.aboutTheAuthors}
+                  </h2>
+                  <ul className="ps-autores__lista">
+                    {relatedAuthors.map((author) => (
+                      <li key={author.id}>
+                        <AuthorCard author={author} getInitials={getInitials} truncateBio={truncateBio} />
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-
-                {/* La suscripción al Monitor (/newsletter), sin filete propio */}
-                <MonitorSubscribe
-                  rule={false}
-                  className="mt-4 lg:mt-0"
-                  testId="section-article-subscribe"
-                  linkTestId="link-article-subscribe"
-                />
               </div>
-            </div>
+            </section>
+          )}
 
-            {relatedAuthors && relatedAuthors.length > 0 && (
-              <section
-                className="mb-16"
-                data-testid="section-related-authors"
-              >
-                <h2 
-                  className="ss-h2-sm mb-6"
-                  data-testid="text-authors-title"
-                >
-                  {relatedAuthors.length === 1 ? t.aboutTheAuthor : t.aboutTheAuthors}
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                  {relatedAuthors.map((author) => (
-                    <AuthorCard 
-                      key={author.id}
-                      author={author}
-                      getInitials={getInitials}
-                      truncateBio={truncateBio}
-                    />
-                  ))}
+          {/* Más del Monitor Laboral: las tres notas más recientes, con su foto */}
+          {hasRelatedNews && (
+            <section className="ps-rel" aria-labelledby="art-rel-h" data-testid="section-related-news">
+              <div className="sh-wrap">
+                <div className="ps-rel__cab">
+                  <h2 id="art-rel-h" className="sh-h2" data-testid="text-related-news-title">{t.relatedNews}</h2>
                 </div>
-              </section>
-            )}
-
-            {hasRelatedNews && (
-              <section
-                data-testid="section-related-news"
-              >
-                <h2 
-                  className="ss-h2-sm mb-6"
-                  data-testid="text-related-news-title"
-                >
-                  {t.relatedNews}
-                </h2>
-                <MonitorList
+                <MonitorNotas
                   limit={3}
                   excludeId={newsArticle?.id}
                   headingLevel="h3"
-                  layout="stacked"
                   testIds={{
                     row: (item) => `card-related-news-${item.id}`,
                     date: (item) => `text-related-news-date-${item.id}`,
                     title: (item) => `text-related-news-title-${item.id}`,
                   }}
                 />
-              </section>
-            )}
-          </div>
+              </div>
+            </section>
+          )}
+
+          {/* La suscripción al Monitor (/newsletter) */}
+          <MonitorSuscripcion
+            foto={{ src: estancia.url, srcSet: estanciaSrcSet }}
+            testId="section-article-subscribe"
+            linkTestId="link-article-subscribe"
+          />
+
+          {/* Página siguiente: el Monitor completo */}
+          <V3NextPage href="/news" label={nextLabel} title={newsLabel} ariaLabel={nextLabel} />
         </div>
-      </main>
+      </V3Main>
 
       <Footer />
     </div>

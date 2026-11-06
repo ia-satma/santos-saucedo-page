@@ -51,11 +51,10 @@ html.rm .v3 .pe-lz-chy.is-entra .sc-perfil{ animation: pe-funde var(--dur-quick)
 .v3 .pe-lz-chy.is-entra .sc-perfil{ animation: pe-chy-sube 420ms var(--ease-out) 300ms both }
 html.rm .v3 .sc-perfil .pe-ico{ transition: none }
 
-/* ---------- Carga y error ---------- */
-.v3 .sc-sk{ display: block; width: 62%; height: 1.06em; background: linear-gradient(rgba(243,241,234,.08), rgba(243,241,234,.08)) left center / 100% .62em no-repeat }
-.v3 .sc-lz-espera .pe-lz-names li:nth-child(2n) .sc-sk{ width: 48% }
-.v3 .sc-sk-foto{ opacity: 1; background: rgba(243,241,234,.06) }
-.v3 .sc-error{ margin: 0; color: var(--sobre-azul) }
+/* Teléfono: un segmento por socio (cuatro; si el panel publica otro socio, cabe en la fila) */
+@media (max-width: 719px){
+  .v3 .pe-lz-names.sc-segs{ grid-template-columns: repeat(var(--sc-n, 4), minmax(0, 1fr)) }
+}
 
 /* ---------- Of Counsel (si el panel los tiene), bajo el Lienzo ---------- */
 .v3 .sc-oc{ margin-top: clamp(64px, 8vw, 120px); padding-top: clamp(32px, 4vw, 48px); border-top: 1px solid var(--linea-azul) }
@@ -82,5 +81,32 @@ html.rm .v3 .sc-perfil .pe-ico{ transition: none }
 
 /* Subtítulo del panel (solo si algún idioma lo trae), bajo el título */
 .v3 .sc-lead{ flex-basis: 100%; max-width: 40em; margin: 0; font-family: var(--serif); font-size: var(--t-lead); line-height: 1.4; color: var(--sobre-azul-2) }
-.v3 .sc-sk-chy{ visibility: hidden }
 .v3 .sc-oc-ini{ position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--serif); font-size: 1.5rem; color: var(--sobre-azul-2) }
+
+/* ---------- Modo Mario: la retícula del equipo sin última fila coja ----------
+   Los retratos (sc-eq-fotos) se reparten en la retícula de demo.css; si la última fila queda
+   incompleta, Carreras ocupa lo que falta (--fin columnas, Equipo.tsx) y sale de la cabecera. */
+.v3 .sc-eq-fin{ display: none }
+html.rm .v3 .sc-eq-fotos{ display: contents }
+html.rm .v3 .sh-eq[data-fin] .sc-eq-car{ display: none }
+html.rm .v3 .sh-eq[data-fin] .sc-eq-fin{
+  grid-column: span var(--fin, 1);
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 10px;
+  min-width: 0; min-height: 0; box-sizing: border-box;
+  padding: clamp(14px, 1.8vw, 28px);
+  background: var(--azul-noche); color: var(--hueso); text-decoration: none;
+}
+.v3 .sc-eq-fin .sh-cap{ color: var(--sobre-azul-2) }
+.v3 .sc-eq-fin__n{
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  font-family: var(--serif); font-weight: 400; font-size: clamp(1.125rem, .95rem + .8vw, 1.75rem);
+  line-height: 1.15; letter-spacing: -.01em; color: var(--hueso);
+}
+.v3 .sc-eq-fin__n > span{
+  font-size: inherit;
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em;
+  text-decoration-color: rgba(243,241,234,.45); transition: text-decoration-color var(--dur-quick) var(--ease-out);
+}
+.v3 .sc-eq-fin .pe-ico{ align-self: center; flex: none }
+.v3 .sc-eq-fin:hover .sc-eq-fin__n > span, .v3 .sc-eq-fin:focus-visible .sc-eq-fin__n > span{ text-decoration-color: var(--lima) }
+.v3 .sc-eq-fin:focus-visible{ outline: 2px solid var(--azul); outline-offset: 3px }

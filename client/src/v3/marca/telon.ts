@@ -65,6 +65,9 @@ export interface TelonOptions {
 export interface TelonApi {
   /** Pausa (o reanuda) el video y la frase: el botón de la portada. */
   pausa(on: boolean): void;
+  /** Cambia las palabras que rotan (cambio de idioma o de la frase del panel) sin rehacer el telón:
+      la portada se queda como está y la frase vuelve a empezar por la primera palabra. */
+  palabras(nuevas: string[] | null): void;
   /** El video recibió (o cambió) su fuente: se reproduce si toca. */
   video(): void;
   destroy(): void;
@@ -77,7 +80,7 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
   const escena = sec?.querySelector<HTMLElement>(".mk-telon__escena");
   const marco = sec?.querySelector<HTMLElement>(".mk-telon__marco");
   const medio = sec?.querySelector<HTMLElement>(".mk-telon__medio");
-  if (!sec || !escena || !marco || !medio) return { pausa() {}, video() {}, destroy() {} };
+  if (!sec || !escena || !marco || !medio) return { pausa() {}, palabras() {}, video() {}, destroy() {} };
   const video = sec.querySelector<HTMLVideoElement>(".mk-telon__video");
   const agua = sec.querySelector<HTMLElement>(".mk-portada");
   const aguaSup = agua?.querySelector<HTMLElement>(".mk-mitad--sup") || null;
@@ -289,7 +292,8 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
   /* ---------- Cambio de modo en vivo ---------- */
   /* Se guarda continuamente la última posición de scroll y la geometría del telón (240vh en
      movimiento, 170vh en modo Mario) y se calcula un destino absoluto, como en la demo. */
-  let ultimoY = w.pageYOffset, geo: { top: number; alto: number } | null = null;
+  let ultimoY = w.pageYOffset, geo: { top: number; alto: number } | null = null, rafConfirma = 0;
+  limpiar.push(() => { if (rafConfirma) w.cancelAnimationFrame(rafConfirma); rafConfirma = 0; });
   function geometria() { geo = { top: sec!.getBoundingClientRect().top + w.pageYOffset, alto: sec!.offsetHeight }; }
   function cambiarRM(si: boolean) {
     if (si === rm) return;
@@ -311,9 +315,12 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
     /* Dentro del telón se confirma el destino unos cuadros después (el anclaje del navegador). */
     if (dentro) {
       let veces = 0;
+      if (rafConfirma) w.cancelAnimationFrame(rafConfirma);
       const confirmar = () => {
+        rafConfirma = 0;
         if (!vivo || ++veces > 4) return;
-        w.requestAnimationFrame(() => {
+        rafConfirma = w.requestAnimationFrame(() => {
+          rafConfirma = 0;
           if (!vivo) return;
           if (Math.abs(w.pageYOffset - destino) > 1) { w.scrollTo(0, destino); ultimoY = w.pageYOffset; }
           confirmar();
@@ -331,7 +338,7 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
   const tag = sec.querySelector<HTMLElement>(".sh-tag[data-frase]");
   const slot = tag?.querySelector<HTMLElement>(".sh-tag__slot") || null;
   const pal = tag?.querySelector<HTMLElement>(".sh-tag__w") || null;
-  const words = opts.words && opts.words.length ? opts.words : null;
+  let words = opts.words && opts.words.length ? opts.words : null;
   let W: number[] = [], idx = 0, vueltas = 0, timer = 0, enVista = false, corriendo = false, portadaVista = true;
   const animaciones = new Set<Animation>();
   function anima(el: HTMLElement, k: Keyframe[], o: KeyframeAnimationOptions) {
@@ -474,6 +481,8 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
 
   /* ---------- Arranque ---------- */
   sec.setAttribute("data-pausa", pausado ? "1" : "0");
+  /* Se pinta ya en la posición de scroll actual (un montaje a media portada no parte de cerrado) */
+  actual = progreso();
   medir();
   if (rm) pintarRM();
   geometria();
@@ -482,6 +491,18 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
 
   return {
     pausa(si: boolean) { if (vivo && si !== pausado) setPausa(si); },
+    palabras(nuevas: string[] | null) {
+      if (!vivo || !pal || !slot) return;
+      const lista = nuevas && nuevas.length ? nuevas : null;
+      if ((lista ? lista.join("|") : "") === (words ? words.join("|") : "")) return;
+      detener();
+      words = lista;
+      idx = 0; vueltas = 0;
+      if (!words) return;
+      pal.textContent = words[0];
+      medirFrase();
+      if (enVista) arrancar(true);
+    },
     video() { if (vivo) reproducir(visible); },
     destroy() {
       vivo = false;

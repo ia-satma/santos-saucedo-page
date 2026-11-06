@@ -5,14 +5,14 @@
    Comportamiento: ./pie.ts. */
 import "@/v3/shared";
 import "./pie.css";
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useLayoutEffect, useRef, type CSSProperties } from "react";
 import { initPie } from "./pie";
 
 const capaStyle = { "--mk-art": `url("${import.meta.env.BASE_URL}v3/seccion-blanca.png")` } as CSSProperties;
 
 export default function PieMarca() {
   const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = ref.current;
     return el ? initPie(el) : undefined;
   }, []);
