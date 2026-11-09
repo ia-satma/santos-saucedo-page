@@ -6,6 +6,7 @@ import { useLocation } from "wouter";
 import { z } from "zod";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { setToken, isAuthenticated } from "@/lib/adminAuth";
+import { careersOnlyLanding, isCareersOnlyAdmin } from "@shared/adminAccess";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -221,7 +222,10 @@ export default function AdminLogin() {
       toast({
         title: t.loginSuccess,
       });
-      setLocation("/admin/dashboard");
+      // Recursos humanos (solo Carreras) entra directo a candidaturas
+      setLocation(
+        isCareersOnlyAdmin(data?.user) ? careersOnlyLanding : "/admin/dashboard",
+      );
     },
     onError: (error: Error) => {
       toast({

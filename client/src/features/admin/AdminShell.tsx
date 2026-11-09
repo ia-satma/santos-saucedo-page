@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Link, useLocation } from "wouter";
+import { Link, Redirect, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import {
   MagnifyingGlassIcon,
@@ -23,10 +23,17 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { adminNavigation, allAdminLinks, activeAdminLink } from "./navigation";
+import {
+  adminNavigation,
+  allAdminLinks,
+  activeAdminLink,
+  careersAdminNavigation,
+} from "./navigation";
 import {
   adminRoleLabels,
   canVisitAdminPath,
+  careersOnlyLanding,
+  isCareersOnlyAdmin,
   isReadOnlyAdmin,
   type AccessUser,
 } from "@shared/adminAccess";
@@ -37,15 +44,30 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const [path] = useLocation();
   const { isAuthenticated, isLoading, requireAuth, logout } = useAdminAuth();
   const media = useCmsMedia();
+  const me = useQuery<AccessUser>({
+    queryKey: ["/api/admin/me"],
+    enabled: isAuthenticated,
+    staleTime: 60000,
+    queryFn: async () => {
+      const r = await adminApiRequest("GET", "/api/admin/me");
+      if (!r.ok) throw new Error("Sesión no disponible");
+      return r.json();
+    },
+  });
+  // Recursos Humanos (solo Carreras) ve únicamente candidaturas, vacantes y su contraseña
+  const careersOnly = isCareersOnlyAdmin(me.data);
+  const groups = careersOnly ? careersAdminNavigation : adminNavigation;
+  const home = careersOnly ? careersOnlyLanding : "/admin/dashboard";
   const [mobile, setMobile] = useState(false);
   const [expanded, setExpanded] = useState<Set<string>>(() => {
+    const everyGroup = [...adminNavigation, ...careersAdminNavigation].map(
+      (g) => g.id,
+    );
     try {
       const saved = localStorage.getItem("ss-admin-open-groups");
-      return new Set(
-        saved ? JSON.parse(saved) : adminNavigation.map((g) => g.id),
-      );
+      return new Set(saved ? JSON.parse(saved) : everyGroup);
     } catch {
-      return new Set(adminNavigation.map((g) => g.id));
+      return new Set(everyGroup);
     }
   });
   const toggleGroup = (id: string) =>
@@ -62,24 +84,14 @@ export function AdminShell({ children }: { children: ReactNode }) {
     });
   useEffect(() => {
     const active = activeAdminLink(path);
-    const group = adminNavigation.find((g) =>
+    const group = groups.find((g) =>
       g.items.some((i) => i.href === active?.href),
     );
     if (group) setExpanded((old) => new Set(Array.from(old).concat(group.id)));
-  }, [path]);
+  }, [path, groups]);
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const me = useQuery<AccessUser>({
-    queryKey: ["/api/admin/me"],
-    enabled: isAuthenticated,
-    staleTime: 60000,
-    queryFn: async () => {
-      const r = await adminApiRequest("GET", "/api/admin/me");
-      if (!r.ok) throw new Error("Sesión no disponible");
-      return r.json();
-    },
-  });
   useEffect(() => {
     requireAuth();
   }, [requireAuth]);
@@ -98,7 +110,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("keydown", key);
   }, []);
   const active = activeAdminLink(path);
-  const activeGroup = adminNavigation.find(g => g.items.some(i => i.href === active?.href));
+  const activeGroup = groups.find(g => g.items.some(i => i.href === active?.href));
   const pageTone = adminLinkTone(active?.href || path, activeGroup?.tone);
   const signOut = async () => {
     if (!window.confirm("¿Cerrar la sesión del panel?")) return;
@@ -111,9 +123,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const navigation = (
     <>
       <Link
-        href="/admin/dashboard"
+        href={home}
         className="admin-brand"
-        aria-label="Santos y Saucedo, resumen del panel"
+        aria-label={
+          careersOnly
+            ? "Santos y Saucedo, candidaturas"
+            : "Santos y Saucedo, resumen del panel"
+        }
       >
         <img src={media.brand.logoDark} alt="Santos & Saucedo" />
         <span>Administración del sitio</span>
@@ -131,7 +147,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         aria-label="Navegación de administración"
         className="admin-navigation"
       >
-        {adminNavigation.map((group) => {
+        {groups.map((group) => {
           const visibleItems = group.items.filter((item) =>
             canVisitAdminPath(me.data, item.href),
           );
@@ -187,7 +203,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       <div className="admin-sidebar-foot">
         <span className="admin-account-mark">SS</span>
         <div>
-          <strong>Equipo editorial</strong>
+          <strong>{careersOnly ? "Recursos humanos" : "Equipo editorial"}</strong>
           <span>
             {adminRoleLabels[me.data?.role || ""] || "Sesión de administración"}
           </span>
@@ -209,6 +225,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
       </div>
     );
   if (!isAuthenticated) return null;
+  // El resumen del panel no es para estas cuentas: entran directo a candidaturas
+  if (careersOnly && (path === "/admin" || path === "/admin/dashboard"))
+    return <Redirect to={careersOnlyLanding} replace />;
   const matches = allAdminLinks.filter(
     (x) =>
       canVisitAdminPath(me.data, x.href) &&
@@ -282,6 +301,15 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <AdminLanguageScope>
             {canVisitAdminPath(me.data, path) ? (
               children
+            ) : careersOnly ? (
+              <main className="admin-management-page">
+                <h1>Sin acceso</h1>
+                <p>
+                  Su cuenta solo puede consultar Carreras: candidaturas y
+                  vacantes.
+                </p>
+                <Link href={careersOnlyLanding}>Ir a candidaturas</Link>
+              </main>
             ) : (
               <main className="admin-management-page">
                 <h1>Acceso restringido</h1>

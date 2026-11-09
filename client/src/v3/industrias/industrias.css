@@ -72,3 +72,18 @@ html.rm .v3 .mp[data-mp] .mp-pie{ display: none }
 @media (max-width: 640px){
   .v3[data-vista="industrias"] .sh-cab .sh-pp__foto img{ scale: 1.7; transform-origin: 59% 71% }
 }
+
+/* ---- Nueve industrias (9-11-2026, con la lista de Von Wobeser): el índice sobre la foto fija pasa de
+   cuatro a nueve renglones; se aprieta para que quepa sobre la foto aun en laptops bajas (768 px) ---- */
+@media (min-width: 1000px){
+  html:not(.rm) .v3 .in[data-in] .in-indice a{ padding: 4px 0; font-size: clamp(17px, 1.2vw, 21px) }
+}
+/* El índice de nueve ocupa casi la mitad baja de la foto: el velo marino empieza más arriba y es un poco más
+   firme a la izquierda, para que los nombres se lean aun sobre fotos claras (farmacéutica, financieros) */
+@media (min-width: 1000px){
+  html:not(.rm) .v3 .in[data-in] .in-fotos::after{
+    background:
+      linear-gradient(180deg, rgba(12,35,64,0) 30%, rgba(12,35,64,.6) 56%, rgba(12,35,64,.92) 100%),
+      linear-gradient(90deg, rgba(12,35,64,.55) 0%, rgba(12,35,64,0) 52%);
+  }
+}

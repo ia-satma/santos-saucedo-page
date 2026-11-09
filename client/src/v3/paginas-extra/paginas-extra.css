@@ -97,16 +97,19 @@ html:not(.rm) .v3 .sh-mas:hover .px-flecha { transform: translateX(3px); }
 .v3 .px-banda .sh-filo__in { min-height: min(64vh, 620px); padding-block: clamp(96px, 11vw, 168px); }
 /* La foto entra un poco ampliada: recortada a su marco, el degradado la cubre siempre (sin franja suelta debajo) */
 .v3 .px-banda .sh-filo__foto { overflow: hidden; }
-.v3 .px-banda .sh-filo__foto img { object-position: 50% 55%; }
+/* Junta del 6-11-2026 («que recorra lo azul y que no quede esa pared ahí», dicho de la banda del Monitor):
+   el mismo arreglo aquí. Del mezanine queda la franja de las estaciones y el barandal; el techo y el muro
+   blancos de arriba y de abajo salen del cuadro, y un velo azul parejo cruza la foto hasta la orilla. */
+.v3 .px-banda .sh-filo__foto img { position: absolute; left: 0; top: -17%; width: 100%; height: 134%; max-width: none; object-position: 50% 52%; }
 /* La foto del mezanine es muy clara (techo blanco): en la computadora empieza un poco más a la derecha y el
    azul la cubre más lejos, para que el texto quede siempre sobre azul y la foto no se vea lechosa */
 @media (min-width: 1001px) {
   .v3 .px-banda .sh-filo__foto { left: 46%; }
-  .v3 .px-banda .sh-filo__foto::after { background: linear-gradient(90deg, var(--azul-noche) 0%, rgba(12, 35, 64, .62) 20%, rgba(12, 35, 64, .12) 52%, rgba(12, 35, 64, 0) 70%); }
+  .v3 .px-banda .sh-filo__foto::after { background: linear-gradient(90deg, var(--azul-noche) 0%, rgba(12, 35, 64, .62) 20%, rgba(12, 35, 64, .26) 52%, rgba(12, 35, 64, .26) 80%, rgba(12, 35, 64, .7) 100%); }
   .v3 .px-banda .sh-filo__in > * { max-width: min(100%, 42%); }
   /* De derecha a izquierda (árabe): el texto va a la derecha, así que la foto pasa a la izquierda */
   .v3 .px-banda:dir(rtl) .sh-filo__foto { left: 0; right: 46%; }
-  .v3 .px-banda:dir(rtl) .sh-filo__foto::after { background: linear-gradient(270deg, var(--azul-noche) 0%, rgba(12, 35, 64, .62) 20%, rgba(12, 35, 64, .12) 52%, rgba(12, 35, 64, 0) 70%); }
+  .v3 .px-banda:dir(rtl) .sh-filo__foto::after { background: linear-gradient(270deg, var(--azul-noche) 0%, rgba(12, 35, 64, .62) 20%, rgba(12, 35, 64, .26) 52%, rgba(12, 35, 64, .26) 80%, rgba(12, 35, 64, .7) 100%); }
 }
 .v3 .px-banda .px-banda__h { margin: 0; color: var(--sobre-azul); }
 .v3 .px-banda__h a { color: inherit; text-decoration: none; }

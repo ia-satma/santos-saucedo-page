@@ -31,7 +31,7 @@ export default function Interns() {
     en: {
       heroTitle: "S&S Internships",
       heroSubtitle: "S&S Internships is the firm’s internship program.",
-      applyEmail: "reclutamiento@santossaucedo.com",
+      applyEmail: "administracion@santossaucedo.com",
       ctaTitle: "How to apply",
       ctaIntro: "If there is no vacancy for your profile today, you can leave your details with S&S Internships. We review the profiles every time a position opens.",
       ctaInstructions: "Send your CV as a PDF to:",
@@ -40,7 +40,7 @@ export default function Interns() {
     es: {
       heroTitle: "Pasantías S&S",
       heroSubtitle: "Pasantías S&S es el programa de pasantes de la firma.",
-      applyEmail: "reclutamiento@santossaucedo.com",
+      applyEmail: "administracion@santossaucedo.com",
       ctaTitle: "Cómo postularse",
       ctaIntro: "Si hoy no hay una vacante para tu perfil, puedes dejar tus datos en Pasantías S&S. Revisamos los perfiles cada vez que se abre una posición.",
       ctaInstructions: "Envía tu CV en PDF a:",
@@ -49,7 +49,7 @@ export default function Interns() {
     de: {
       heroTitle: "Pasantías S&S",
       heroSubtitle: "Pasantías S&S ist das Praktikantenprogramm der Kanzlei.",
-      applyEmail: "reclutamiento@santossaucedo.com",
+      applyEmail: "administracion@santossaucedo.com",
       ctaTitle: "So bewerben Sie sich",
       ctaIntro: "Wenn es heute keine passende Stelle für Ihr Profil gibt, können Sie Ihre Daten bei Pasantías S&S hinterlegen. Wir sehen die Profile jedes Mal durch, wenn eine Stelle frei wird.",
       ctaInstructions: "Senden Sie Ihren Lebenslauf als PDF an:",
@@ -58,7 +58,7 @@ export default function Interns() {
     zh: {
       heroTitle: "Pasantías S&S",
       heroSubtitle: "Pasantías S&S 是本所的实习生项目。",
-      applyEmail: "reclutamiento@santossaucedo.com",
+      applyEmail: "administracion@santossaucedo.com",
       ctaTitle: "如何申请",
       ctaIntro: "如果目前没有适合您的职位，您可以将资料留在 Pasantías S&S。每当有职位空缺时，我们都会审阅这些资料。",
       ctaInstructions: "请将 PDF 格式的简历发送至：",
@@ -67,7 +67,7 @@ export default function Interns() {
     ko: {
       heroTitle: "Pasantías S&S",
       heroSubtitle: "Pasantías S&S는 법인의 인턴십 프로그램입니다.",
-      applyEmail: "reclutamiento@santossaucedo.com",
+      applyEmail: "administracion@santossaucedo.com",
       ctaTitle: "지원 방법",
       ctaIntro: "지금 여러분의 프로필에 맞는 자리가 없다면 Pasantías S&S에 정보를 남길 수 있습니다. 자리가 날 때마다 프로필을 검토합니다.",
       ctaInstructions: "PDF 형식의 이력서를 다음 주소로 보내 주세요:",
@@ -76,7 +76,7 @@ export default function Interns() {
     ja: {
       heroTitle: "Pasantías S&S",
       heroSubtitle: "Pasantías S&S は当事務所のインターンシップ・プログラムです。",
-      applyEmail: "reclutamiento@santossaucedo.com",
+      applyEmail: "administracion@santossaucedo.com",
       ctaTitle: "応募方法",
       ctaIntro: "現在、あなたのプロフィールに合う募集がない場合は、Pasantías S&S に情報を登録できます。募集が出るたびに登録されたプロフィールを確認します。",
       ctaInstructions: "PDF形式の履歴書を次のアドレスにお送りください：",
@@ -85,7 +85,7 @@ export default function Interns() {
     ar: {
       heroTitle: "Pasantías S&S",
       heroSubtitle: "يُعدّ Pasantías S&S برنامج المتدربين في المكتب.",
-      applyEmail: "reclutamiento@santossaucedo.com",
+      applyEmail: "administracion@santossaucedo.com",
       ctaTitle: "كيفية التقديم",
       ctaIntro: "إذا لم تكن هناك اليوم وظيفة شاغرة تناسب ملفك، يمكنك ترك بياناتك في Pasantías S&S. نراجع الملفات كلما أُتيحت وظيفة.",
       ctaInstructions: "أرسل سيرتك الذاتية بصيغة PDF إلى:",
@@ -94,7 +94,7 @@ export default function Interns() {
     ru: {
       heroTitle: "Pasantías S&S",
       heroSubtitle: "Pasantías S&S — программа стажировки фирмы.",
-      applyEmail: "reclutamiento@santossaucedo.com",
+      applyEmail: "administracion@santossaucedo.com",
       ctaTitle: "Как подать заявку",
       ctaIntro: "Если сейчас нет вакансии для вашего профиля, вы можете оставить свои данные в Pasantías S&S. Мы просматриваем профили каждый раз, когда открывается позиция.",
       ctaInstructions: "Отправьте резюме в формате PDF на адрес:",
@@ -103,7 +103,7 @@ export default function Interns() {
     fr: {
       heroTitle: "Pasantías S&S",
       heroSubtitle: "Pasantías S&S est le programme de stage du cabinet.",
-      applyEmail: "reclutamiento@santossaucedo.com",
+      applyEmail: "administracion@santossaucedo.com",
       ctaTitle: "Comment postuler",
       ctaIntro: "S’il n’y a pas aujourd’hui de poste pour votre profil, vous pouvez laisser vos coordonnées à Pasantías S&S. Nous examinons les profils chaque fois qu’un poste s’ouvre.",
       ctaInstructions: "Envoyez votre CV au format PDF à :",
@@ -112,7 +112,7 @@ export default function Interns() {
     it: {
       heroTitle: "Pasantías S&S",
       heroSubtitle: "Pasantías S&S è il programma di tirocinio dello studio.",
-      applyEmail: "reclutamiento@santossaucedo.com",
+      applyEmail: "administracion@santossaucedo.com",
       ctaTitle: "Come candidarsi",
       ctaIntro: "Se oggi non c’è una posizione per il tuo profilo, puoi lasciare i tuoi dati in Pasantías S&S. Esaminiamo i profili ogni volta che si apre una posizione.",
       ctaInstructions: "Invia il tuo CV in PDF a:",

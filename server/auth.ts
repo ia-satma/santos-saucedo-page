@@ -5,7 +5,9 @@ import { storage } from "./storage";
 import type { AdminUser } from "@shared/schema";
 import {
   adminPermissionForPath,
+  careersOnlyMayCall,
   hasAdminPermission,
+  isCareersOnlyAdmin,
   isReadOnlyAdmin,
 } from "@shared/adminAccess";
 
@@ -185,6 +187,14 @@ export async function authMiddleware(
 
     // Attach user to request
     req.adminUser = result.user;
+    // Rol de solo Carreras: lista cerrada de llamadas, antes que la política por módulos. Así
+    // tampoco recibe las rutas que esa política deja a cualquier sesión (resumen, manual…).
+    if (outsideCareersArea(req)) {
+      res
+        .status(403)
+        .json({ error: "Su cuenta no tiene permiso para esta acción." });
+      return;
+    }
     const permission = adminPermissionForPath(req.originalUrl);
     if (
       permission &&
@@ -205,10 +215,23 @@ export async function authMiddleware(
   }
 }
 
+// authMiddleware ya aplica esta lista; requireRole y requirePermission la repiten por si una ruta
+// llegara a montarlos con otra verificación de sesión.
+function outsideCareersArea(req: Request) {
+  return (
+    isCareersOnlyAdmin(req.adminUser) &&
+    !careersOnlyMayCall(req.method, req.originalUrl)
+  );
+}
+
 export function requireRole(...roles: string[]) {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.adminUser) {
       res.status(401).json({ error: "Authentication required" });
+      return;
+    }
+    if (outsideCareersArea(req)) {
+      res.status(403).json({ error: "Insufficient permissions" });
       return;
     }
     // super_admin (el rol que crean el seed y /api/admin/init) pasa cualquier control de rol:
@@ -281,6 +304,7 @@ export function requirePermission(permission: string) {
     }
     if (
       !mapped ||
+      outsideCareersArea(req) ||
       !hasAdminPermission(req.adminUser, mapped) ||
       (isReadOnlyAdmin(req.adminUser) &&
         !["GET", "HEAD", "OPTIONS"].includes(req.method))

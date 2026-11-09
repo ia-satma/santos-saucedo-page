@@ -9,7 +9,11 @@ import {
   adminAccessEvents,
   type AdminUser,
 } from "@shared/schema";
-import { adminPermissions, manageableRoles } from "@shared/adminAccess";
+import {
+  adminPermissions,
+  isCareersOnlyAdmin,
+  manageableRoles,
+} from "@shared/adminAccess";
 import {
   authMiddleware,
   comparePassword,
@@ -37,13 +41,18 @@ const identity = {
     .max(254)
     .transform((v) => v.toLowerCase()),
 };
+// Un rol de solo Carreras no lleva permisos adicionales: su acceso es la lista cerrada de
+// @shared/adminAccess y la cuenta no debe aparentar otro.
+const onlyCareersWithoutGrants = (v: { role: string; permissions: string[] }) =>
+  !isCareersOnlyAdmin(v) || v.permissions.length === 0;
 const createInput = z
   .object({
     ...identity,
     role: z.enum(manageableRoles).default("editor"),
     permissions: grants.default([]),
   })
-  .strict();
+  .strict()
+  .refine(onlyCareersWithoutGrants);
 const updateInput = z
   .object({
     ...identity,
@@ -52,7 +61,8 @@ const updateInput = z
     isActive: z.boolean(),
     revision: z.string().min(1),
   })
-  .strict();
+  .strict()
+  .refine(onlyCareersWithoutGrants);
 function revision(user: AdminUser) {
   return createHash("sha256")
     .update(

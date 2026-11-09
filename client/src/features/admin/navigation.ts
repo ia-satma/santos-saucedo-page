@@ -382,6 +382,27 @@ export const adminNavigation = [
   },
 ];
 export const allAdminLinks = adminNavigation.flatMap((g) => g.items);
+// Cuentas de solo Carreras (rol "reclutamiento"): las mismas entradas, agrupadas para Recursos
+// Humanos. "Carreras" y "Pasantías S&S" de Contenido del sitio editan textos de esas páginas y
+// quedan fuera; las candidaturas de ambas llegan a "Candidaturas y CV privados".
+const linkTo = (href: string) => allAdminLinks.find((x) => x.href === href)!;
+export const careersAdminNavigation = [
+  {
+    id: "carreras",
+    tone: "green",
+    label: "Carreras",
+    description:
+      "Candidaturas recibidas desde Carreras y Pasantías S&S, y vacantes publicadas.",
+    items: [linkTo("/admin/applications"), linkTo("/admin/jobs")],
+  },
+  {
+    id: "mi-cuenta",
+    tone: "amber",
+    label: "Mi cuenta",
+    description: "",
+    items: [linkTo("/admin/account")],
+  },
+];
 export function activeAdminLink(path: string) {
   return (
     [...allAdminLinks]

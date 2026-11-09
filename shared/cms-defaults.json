@@ -1174,16 +1174,16 @@
         "it": "Settori | Santos & Saucedo"
       },
       "description": {
-        "en": "Soft drinks and beverages, automotive, steel and energy: the industries Santos & Saucedo advises on labor, corporate and immigration matters.",
-        "es": "Refresqueras y bebidas, automotriz, acero y energía: las industrias que Santos & Saucedo asesora en materia laboral, corporativa y migratoria.",
-        "de": "Erfrischungsgetränke und Getränke, Automobilindustrie, Stahl und Energie: die Branchen, die Santos & Saucedo in arbeits-, gesellschafts- und migrationsrechtlichen Fragen berät.",
-        "zh": "软饮料与饮品、汽车、钢铁和能源：Santos & Saucedo在劳动、公司和移民事务方面提供咨询的行业。",
-        "ko": "청량음료·음료, 자동차, 철강, 에너지: Santos & Saucedo가 노동, 기업, 이민 분야에서 자문하는 산업.",
-        "ja": "清涼飲料・飲料、自動車、鉄鋼、エネルギー：Santos & Saucedoが労働、企業法務、移民の分野で助言する業種。",
-        "ar": "المشروبات الغازية والمشروبات، والسيارات، والصلب، والطاقة: القطاعات التي يقدم لها Santos & Saucedo المشورة في مسائل العمل والشركات والهجرة.",
-        "ru": "Безалкогольные напитки, автомобильная промышленность, сталь и энергетика: отрасли, которые Santos & Saucedo консультирует по вопросам трудового, корпоративного и миграционного права.",
-        "fr": "Boissons, automobile, acier et énergie : les secteurs que Santos & Saucedo conseille en droit du travail, droit des sociétés et immigration.",
-        "it": "Bevande, automotive, acciaio ed energia: i settori che Santos & Saucedo assiste in materia di lavoro, diritto societario e immigrazione."
+        "en": "Beverages, automotive and manufacturing, steel, energy, consumer goods, pharmaceuticals, technology, construction and financial services: the industries Santos & Saucedo advises on labor matters.",
+        "es": "Bebidas, automotriz y manufactura, acero, energía, bienes de consumo, farmacéutica, tecnología, construcción y servicios financieros: las industrias que Santos & Saucedo asesora en materia laboral.",
+        "de": "Getränke, Automobil und Fertigung, Stahl, Energie, Konsumgüter, Pharma, Technologie, Bau und Finanzdienstleistungen: die Branchen, die Santos & Saucedo im Arbeitsrecht berät.",
+        "zh": "饮品、汽车与制造、钢铁、能源、消费品、制药、科技、建筑和金融服务：Santos & Saucedo在劳动事务方面提供咨询的行业。",
+        "ko": "음료, 자동차·제조, 철강, 에너지, 소비재, 제약, 기술, 건설, 금융 서비스: Santos & Saucedo가 노동 분야에서 자문하는 산업.",
+        "ja": "飲料、自動車・製造、鉄鋼、エネルギー、消費財、製薬、テクノロジー、建設、金融サービス：Santos & Saucedoが労働分野で助言する業種。",
+        "ar": "المشروبات، والسيارات والتصنيع، والصلب، والطاقة، والسلع الاستهلاكية، والأدوية، والتكنولوجيا، والبناء، والخدمات المالية: القطاعات التي يقدم لها Santos & Saucedo المشورة في مسائل العمل.",
+        "ru": "Напитки, автомобилестроение и производство, сталь, энергетика, потребительские товары, фармацевтика, технологии, строительство и финансовые услуги: отрасли, которые Santos & Saucedo консультирует по вопросам трудового права.",
+        "fr": "Boissons, automobile et industrie manufacturière, acier, énergie, biens de consommation, pharmacie, technologie, construction et services financiers : les secteurs que Santos & Saucedo conseille en droit du travail.",
+        "it": "Bevande, automotive e manifattura, acciaio, energia, beni di consumo, farmaceutico, tecnologia, edilizia e servizi finanziari: i settori che Santos & Saucedo assiste in materia di diritto del lavoro."
       },
       "path": "/industries"
     },
@@ -1747,7 +1747,7 @@
       "positionsEmpty": "There are no openings at the moment. You can leave your details with S&S Internships.",
       "applyTitle": "How to apply",
       "applyInstructions": "Send your CV as a PDF to:",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "applyNote": "In the email, include your name, your phone number with area code, your level (student, intern, lawyer or administrative staff) and the practice you are interested in: labor, corporate, immigration or litigation.",
       "sendApplication": "Send application"
     },
@@ -1766,7 +1766,7 @@
       "positionsEmpty": "Por ahora no hay vacantes abiertas. Puedes dejar tus datos en Pasantías S&S.",
       "applyTitle": "Cómo postularse",
       "applyInstructions": "Envía tu CV en PDF a:",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "applyNote": "En el correo, indica tu nombre, tu teléfono con lada, tu nivel (estudiante, pasante, abogado o administrativo) y la práctica de interés: laboral, corporativo, migratorio o litigio.",
       "sendApplication": "Enviar solicitud"
     },
@@ -1785,7 +1785,7 @@
       "positionsEmpty": "Derzeit gibt es keine offenen Stellen. Sie können Ihre Daten im Pasantías S&S hinterlegen.",
       "applyTitle": "So bewerben Sie sich",
       "applyInstructions": "Senden Sie Ihren Lebenslauf als PDF an:",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "applyNote": "Nennen Sie in der E-Mail Ihren Namen, Ihre Telefonnummer mit Vorwahl, Ihre Stufe (Studium, Praktikum, Jurist/in oder Verwaltung) und den gewünschten Bereich: Arbeitsrecht, Gesellschaftsrecht, Migrationsrecht oder Prozessführung.",
       "sendApplication": "Bewerbung senden"
     },
@@ -1804,7 +1804,7 @@
       "positionsEmpty": "目前没有空缺职位。您可以将资料留在 Pasantías S&S。",
       "applyTitle": "如何申请",
       "applyInstructions": "请将 PDF 格式的简历发送至：",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "applyNote": "请在邮件中注明您的姓名、带区号的电话、您的身份（学生、实习生、律师或行政人员）以及感兴趣的业务领域：劳动、公司、移民或诉讼。",
       "sendApplication": "发送申请"
     },
@@ -1823,7 +1823,7 @@
       "positionsEmpty": "현재 채용 중인 자리가 없습니다. Pasantías S&S에 정보를 남길 수 있습니다.",
       "applyTitle": "지원 방법",
       "applyInstructions": "PDF 형식의 이력서를 다음 주소로 보내 주세요:",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "applyNote": "이메일에 이름, 지역번호를 포함한 전화번호, 구분(학생, 인턴, 변호사 또는 행정직)과 관심 업무 분야(노동, 기업, 이민 또는 소송)를 적어 주세요.",
       "sendApplication": "지원서 보내기"
     },
@@ -1842,7 +1842,7 @@
       "positionsEmpty": "現在、募集中の職種はありません。Pasantías S&S に情報を登録できます。",
       "applyTitle": "応募方法",
       "applyInstructions": "PDF形式の履歴書を次のアドレスにお送りください：",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "applyNote": "メールには、氏名、市外局番付きの電話番号、区分（学生、インターン、弁護士、事務職）、希望する業務分野（労働、企業法務、移民、訴訟）をご記入ください。",
       "sendApplication": "応募書類を送信"
     },
@@ -1861,7 +1861,7 @@
       "positionsEmpty": "لا توجد حاليًا وظائف شاغرة. يمكنك ترك بياناتك في Pasantías S&S.",
       "applyTitle": "كيفية التقديم",
       "applyInstructions": "أرسل سيرتك الذاتية بصيغة PDF إلى:",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "applyNote": "اذكر في رسالتك اسمك ورقم هاتفك مع رمز المنطقة ومستواك (طالب أو متدرب أو محامٍ أو موظف إداري) ومجال الممارسة الذي يهمك: العمل أو الشركات أو الهجرة أو التقاضي.",
       "sendApplication": "إرسال الطلب"
     },
@@ -1880,7 +1880,7 @@
       "positionsEmpty": "Сейчас открытых вакансий нет. Вы можете оставить свои данные в Pasantías S&S.",
       "applyTitle": "Как подать заявку",
       "applyInstructions": "Отправьте резюме в формате PDF на адрес:",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "applyNote": "В письме укажите имя, телефон с кодом города, ваш уровень (студент, стажёр, юрист или административный сотрудник) и интересующую практику: трудовое право, корпоративное право, миграционное право или судебные споры.",
       "sendApplication": "Отправить заявку"
     },
@@ -1899,7 +1899,7 @@
       "positionsEmpty": "Il n’y a pas de poste à pourvoir pour le moment. Vous pouvez laisser vos coordonnées à Pasantías S&S.",
       "applyTitle": "Comment postuler",
       "applyInstructions": "Envoyez votre CV au format PDF à :",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "applyNote": "Dans l’e-mail, indiquez votre nom, votre téléphone avec l’indicatif, votre niveau (étudiant, stagiaire, avocat ou personnel administratif) et le domaine qui vous intéresse : travail, sociétés, immigration ou contentieux.",
       "sendApplication": "Envoyer la candidature"
     },
@@ -1918,7 +1918,7 @@
       "positionsEmpty": "Al momento non ci sono posizioni aperte. Puoi lasciare i tuoi dati in Pasantías S&S.",
       "applyTitle": "Come candidarsi",
       "applyInstructions": "Invia il tuo CV in PDF a:",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "applyNote": "Nell’e-mail indica il tuo nome, il telefono con prefisso, il tuo livello (studente, tirocinante, avvocato o personale amministrativo) e l’area di interesse: lavoro, societario, immigrazione o contenzioso.",
       "sendApplication": "Invia candidatura"
     }
@@ -2229,7 +2229,7 @@
     "en": {
       "heroTitle": "S&S Internships",
       "heroSubtitle": "S&S Internships is the firm’s internship program.",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "ctaTitle": "How to apply",
       "ctaIntro": "If there is no vacancy for your profile today, you can leave your details with S&S Internships. We review the profiles every time a position opens.",
       "ctaInstructions": "Send your CV as a PDF to:",
@@ -2238,7 +2238,7 @@
     "es": {
       "heroTitle": "Pasantías S&S",
       "heroSubtitle": "Pasantías S&S es el programa de pasantes de la firma.",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "ctaTitle": "Cómo postularse",
       "ctaIntro": "Si hoy no hay una vacante para tu perfil, puedes dejar tus datos en Pasantías S&S. Revisamos los perfiles cada vez que se abre una posición.",
       "ctaInstructions": "Envía tu CV en PDF a:",
@@ -2247,7 +2247,7 @@
     "de": {
       "heroTitle": "Pasantías S&S",
       "heroSubtitle": "Pasantías S&S ist das Praktikantenprogramm der Kanzlei.",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "ctaTitle": "So bewerben Sie sich",
       "ctaIntro": "Wenn es heute keine passende Stelle für Ihr Profil gibt, können Sie Ihre Daten bei Pasantías S&S hinterlegen. Wir sehen die Profile jedes Mal durch, wenn eine Stelle frei wird.",
       "ctaInstructions": "Senden Sie Ihren Lebenslauf als PDF an:",
@@ -2256,7 +2256,7 @@
     "zh": {
       "heroTitle": "Pasantías S&S",
       "heroSubtitle": "Pasantías S&S 是本所的实习生项目。",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "ctaTitle": "如何申请",
       "ctaIntro": "如果目前没有适合您的职位，您可以将资料留在 Pasantías S&S。每当有职位空缺时，我们都会审阅这些资料。",
       "ctaInstructions": "请将 PDF 格式的简历发送至：",
@@ -2265,7 +2265,7 @@
     "ko": {
       "heroTitle": "Pasantías S&S",
       "heroSubtitle": "Pasantías S&S는 법인의 인턴십 프로그램입니다.",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "ctaTitle": "지원 방법",
       "ctaIntro": "지금 여러분의 프로필에 맞는 자리가 없다면 Pasantías S&S에 정보를 남길 수 있습니다. 자리가 날 때마다 프로필을 검토합니다.",
       "ctaInstructions": "PDF 형식의 이력서를 다음 주소로 보내 주세요:",
@@ -2274,7 +2274,7 @@
     "ja": {
       "heroTitle": "Pasantías S&S",
       "heroSubtitle": "Pasantías S&S は当事務所のインターンシップ・プログラムです。",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "ctaTitle": "応募方法",
       "ctaIntro": "現在、あなたのプロフィールに合う募集がない場合は、Pasantías S&S に情報を登録できます。募集が出るたびに登録されたプロフィールを確認します。",
       "ctaInstructions": "PDF形式の履歴書を次のアドレスにお送りください：",
@@ -2283,7 +2283,7 @@
     "ar": {
       "heroTitle": "Pasantías S&S",
       "heroSubtitle": "يُعدّ Pasantías S&S برنامج المتدربين في المكتب.",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "ctaTitle": "كيفية التقديم",
       "ctaIntro": "إذا لم تكن هناك اليوم وظيفة شاغرة تناسب ملفك، يمكنك ترك بياناتك في Pasantías S&S. نراجع الملفات كلما أُتيحت وظيفة.",
       "ctaInstructions": "أرسل سيرتك الذاتية بصيغة PDF إلى:",
@@ -2292,7 +2292,7 @@
     "ru": {
       "heroTitle": "Pasantías S&S",
       "heroSubtitle": "Pasantías S&S — программа стажировки фирмы.",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "ctaTitle": "Как подать заявку",
       "ctaIntro": "Если сейчас нет вакансии для вашего профиля, вы можете оставить свои данные в Pasantías S&S. Мы просматриваем профили каждый раз, когда открывается позиция.",
       "ctaInstructions": "Отправьте резюме в формате PDF на адрес:",
@@ -2301,7 +2301,7 @@
     "fr": {
       "heroTitle": "Pasantías S&S",
       "heroSubtitle": "Pasantías S&S est le programme de stage du cabinet.",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "ctaTitle": "Comment postuler",
       "ctaIntro": "S’il n’y a pas aujourd’hui de poste pour votre profil, vous pouvez laisser vos coordonnées à Pasantías S&S. Nous examinons les profils chaque fois qu’un poste s’ouvre.",
       "ctaInstructions": "Envoyez votre CV au format PDF à :",
@@ -2310,7 +2310,7 @@
     "it": {
       "heroTitle": "Pasantías S&S",
       "heroSubtitle": "Pasantías S&S è il programma di tirocinio dello studio.",
-      "applyEmail": "reclutamiento@santossaucedo.com",
+      "applyEmail": "administracion@santossaucedo.com",
       "ctaTitle": "Come candidarsi",
       "ctaIntro": "Se oggi non c’è una posizione per il tuo profilo, puoi lasciare i tuoi dati in Pasantías S&S. Esaminiamo i profili ogni volta che si apre una posizione.",
       "ctaInstructions": "Invia il tuo CV in PDF a:",
@@ -5657,7 +5657,7 @@
     "address": "Río Tamazunchale 205 Norte, Col. del Valle, San Pedro Garza García, N.L., C.P. 66220, México",
     "phone": "+52 81 8335 2086",
     "email": "administracion@santossaucedo.com",
-    "recruitmentEmail": "reclutamiento@santossaucedo.com",
+    "recruitmentEmail": "administracion@santossaucedo.com",
     "linkedinUrl": "",
     "directionsUrl": "https://www.google.com/maps/dir//R%C3%ADo+Tamazunchale+205+Norte,+Col.+del+Valle,+San+Pedro+Garza+Garc%C3%ADa,+N.L.,+C.P.+66220",
     "privacyEmail": "privacidad@santossaucedo.com",
