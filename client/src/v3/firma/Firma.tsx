@@ -222,7 +222,7 @@ export function LaminaCarnero({ t, attrs, logo, lang }: { t: FirmaTextos; attrs:
     return () => io.disconnect();
   }, []);
   const C = t.carnero;
-  const src = `${import.meta.env.BASE_URL}v3/laminas/carnero.html?v=1${lang === "en" ? "&lang=en" : ""}`;
+  const src = `${import.meta.env.BASE_URL}v3/laminas/carnero.html?v=2${lang === "en" ? "&lang=en" : ""}`;
   // otro idioma = otro documento: la figura vuelve a empezar abajo
   useEffect(() => { setActiva(0); }, [src]);
   return (

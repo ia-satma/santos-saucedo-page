@@ -14,7 +14,7 @@
 <body>
 <canvas id="c"></canvas>
 <script src="motor.js?v=2"></script>
-<script src="carnero-perfil.js?v=1"></script>
+<script src="carnero-perfil.js?v=2"></script>
 <script>
 /* Lámina 1/7 · Siempre hacia adelante. Un borrego cimarrón sube un risco de la sierra donde no parece
    haber camino. Cada saliente de roca sale de la pared justo antes de que el borrego la necesite (la
@@ -180,12 +180,12 @@
     const M = matriz(g, ps), ML = matriz(g, ps, -LEJOS);
     const fondo = RGB.fondo, claro = RGB.claro, lima = RGB.lima;
     const rel = {
-      papel: g.rgba(fondo, 1),
-      lejos: mix(fondo, claro, 0.035),
+      papel: mix(fondo, claro, 0.055),
+      lejos: mix(fondo, claro, 0.025),
       cuerno: mix(mix3(fondo, claro, 0.06), lima, 0.12 * lCuerno),
       ojo: tinta(1),
     };
-    const tr = { hi: [tinta(0.92), 1.45], mid: [tinta(0.52), 1.0], lo: [tinta(0.22), 0.8], fa: [tinta(0, 0, 0.75), 0.8] };
+    const tr = { hi: [tinta(1), 1.7], mid: [tinta(0.55), 1.05], lo: [tinta(0.22), 0.8], fa: [tinta(0, 0, 0.75), 0.8] };
     ctx.save();
     ctx.globalAlpha = alfaV;
     ctx.lineJoin = "round"; ctx.lineCap = "round";
@@ -316,7 +316,7 @@
       if (salto) rastro(g, salto.de, salto.a, suave(lim((ahora - salto.t0) / salto.dur, 0, 1)), tono(salto.a));
 
       const ps = pose(ahora);
-      const M = carnero(g, ps, alfa.v, 0);
+      const M = carnero(g, ps, alfa.v, pos === 0 && !salto ? f(0) : 0);
 
       // la cima a la vista: la mirada del borrego hasta la apacheta
       const f0 = f(0);
