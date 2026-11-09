@@ -64,6 +64,20 @@ function sourceHash(value: unknown) {
 }
 
 async function translateObject(source: unknown, targetLanguage: LanguageCode): Promise<any> {
+  if (typeof source === "string") {
+    const result = await translateMultipleTexts(
+      [{ key: "value", text: source }],
+      SOURCE_LANGUAGE,
+      targetLanguage,
+    );
+    if (typeof result.value !== "string" || !result.value.trim()) {
+      throw new Error(`La IA no devolvió la traducción (${targetLanguage}).`);
+    }
+    if (result.value.trim() === source.trim() && /[\p{L}]/u.test(source) && !/^[\p{Lu}][\p{L}\s.'’&-]{0,40}$/u.test(source.trim())) {
+      throw new Error(`La IA devolvió el texto fuente sin traducir (${targetLanguage}).`);
+    }
+    return result.value;
+  }
   const fields = flatten(source);
   if (!fields.length) return source;
   const translated: Record<string, string> = {};
