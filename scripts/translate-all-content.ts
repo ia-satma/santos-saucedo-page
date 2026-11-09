@@ -74,16 +74,14 @@ async function translateObject(source: unknown, targetLanguage: LanguageCode): P
       SOURCE_LANGUAGE,
       targetLanguage,
     );
+    const unchanged = chunk.filter((field) => result[field.key]?.trim() === field.text.trim());
+    const isLikelyProperField = (field: Flat) => /(?:titleFirst|titleSecond|place\.\d+)$/i.test(field.key);
+    if (unchanged.length === chunk.length && unchanged.some((field) => !isLikelyProperField(field))) {
+      throw new Error(`La IA devolvió el bloque fuente sin traducir (${targetLanguage}).`);
+    }
     for (const field of chunk) {
       if (typeof result[field.key] !== "string" || !result[field.key].trim()) {
         throw new Error(`La IA no devolvió la traducción ${field.key} (${targetLanguage}).`);
-      }
-      // translateMultipleTexts deliberately remains tolerant for interactive
-      // agent flows. Bulk publication is stricter: an all-original response
-      // almost always means the provider returned invalid/non-translated JSON.
-      if (result[field.key].trim() === field.text.trim() && /[\p{L}]/u.test(field.text)) {
-        const looksLikeProperName = field.text.trim().split(/\s+/).length <= 2 && /^[\p{Lu}\d\s&.'’()/-]+$/u.test(field.text.trim());
-        if (!looksLikeProperName) throw new Error(`La IA devolvió el texto fuente sin traducir en ${field.key} (${targetLanguage}).`);
       }
       translated[field.key] = result[field.key];
     }
