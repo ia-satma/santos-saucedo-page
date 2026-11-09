@@ -15,6 +15,7 @@ import { queryClient } from "@/lib/queryClient";
 import {
   adminPermissions,
   adminRoleLabels,
+  isCareersOnlyAdmin,
   manageableRoles,
   rolePermissions,
   type ManagedAdminUser,
@@ -228,6 +229,8 @@ export default function AdminUsers() {
   const self =
     editor !== null && editor !== "create" && editor.id === me.data?.id;
   const inherited = rolePermissions[draft.role] || [];
+  // Recursos humanos (solo Carreras) no admite secciones adicionales (también lo rechaza el API)
+  const careersOnlyDraft = isCareersOnlyAdmin(draft);
   return (
     <main className="admin-management-page admin-users-page">
       <div className="admin-users-heading">
@@ -327,6 +330,8 @@ export default function AdminUsers() {
                     <span>
                       {u.role === "super_admin"
                         ? "Acceso completo y usuarios"
+                        : isCareersOnlyAdmin(u)
+                        ? "Solo candidaturas y vacantes"
                         : `${(rolePermissions[u.role] || []).length} secciones por rol${u.permissions?.length ? ` · ${u.permissions.length} permisos adicionales` : ""}`}
                     </span>
                   </td>
@@ -519,13 +524,20 @@ export default function AdminUsers() {
                   cambios ni ejecutar procesos.
                 </p>
               )}
+              {careersOnlyDraft && (
+                <p>
+                  Solo verá Candidaturas y CV privados y Vacantes, y podrá
+                  cambiar su propia contraseña. Cualquier otra sección del
+                  panel le aparecerá como sin acceso.
+                </p>
+              )}
             </div>
             <fieldset>
               <legend>Acceso a las secciones</legend>
               <p>
-                Los permisos del rol aparecen marcados. Puede conceder secciones
-                adicionales; la administración de usuarios es exclusiva del
-                administrador principal.
+                {careersOnlyDraft
+                  ? "Este rol se limita a Carreras y no admite secciones adicionales."
+                  : "Los permisos del rol aparecen marcados. Puede conceder secciones adicionales; la administración de usuarios es exclusiva del administrador principal."}
               </p>
               <div className="admin-users-permissions">
                 {adminPermissions.map((p) => {
@@ -536,7 +548,7 @@ export default function AdminUsers() {
                       <input
                         type="checkbox"
                         checked={base || draft.permissions.includes(p.key)}
-                        disabled={base || busy}
+                        disabled={base || busy || careersOnlyDraft}
                         onChange={(e) =>
                           setDraft({
                             ...draft,

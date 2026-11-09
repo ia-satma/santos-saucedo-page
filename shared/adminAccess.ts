@@ -51,6 +51,7 @@ export const manageableRoles = [
   "editor",
   "sistemas",
   "recursos_humanos",
+  "reclutamiento",
   "redactor",
   "viewer",
 ] as const;
@@ -61,6 +62,7 @@ export const adminRoleLabels: Record<string, string> = {
   admin: "Editor (heredado)",
   sistemas: "Administrador técnico",
   recursos_humanos: "Recursos Humanos",
+  reclutamiento: "Recursos humanos (solo Carreras)",
   redactor: "Editor de publicaciones",
   viewer: "Solo consulta",
   author: "Consulta editorial (heredado)",
@@ -72,11 +74,55 @@ export const rolePermissions: Record<string, readonly AdminPermission[]> = {
   admin: all,
   sistemas: ["content", "media", "agents", "advanced"],
   recursos_humanos: ["jobs", "applications"],
+  reclutamiento: ["jobs", "applications"],
   redactor: ["editorial", "media"],
   viewer: ["content", "editorial", "media", "config", "jobs"],
   author: ["editorial", "media"],
 };
 export type AccessUser = { role: string; permissions?: string[] | null };
+
+/**
+ * Cuentas de Recursos Humanos que solo entran a Carreras (minuta del 6 de noviembre de 2026):
+ * vacantes y candidaturas con su CV. No admiten permisos adicionales, y el API no se rige para
+ * ellas por los módulos sino por la lista cerrada de abajo: lo que no está en ella responde 403,
+ * también las rutas que cualquier otra sesión del panel puede abrir (resumen, manual…).
+ */
+export const careersOnlyRoles: readonly string[] = ["reclutamiento"];
+export function isCareersOnlyAdmin(user: AccessUser | null | undefined) {
+  return !!user && careersOnlyRoles.includes(user.role);
+}
+/** Primera pantalla de estas cuentas, al iniciar sesión y en lugar del resumen. */
+export const careersOnlyLanding = "/admin/applications";
+/** Pantallas del panel que pueden abrir: candidaturas, vacantes y su propia contraseña. */
+export const careersOnlyAdminPages: readonly string[] = [
+  "/admin/applications",
+  "/admin/jobs",
+  "/admin/account",
+];
+/** Únicas llamadas al API autenticado que admiten (el inicio de sesión no pasa por la sesión). */
+export const careersOnlyApi: ReadonlyArray<readonly [method: string, path: RegExp]> = [
+  ["GET", /^\/api\/admin\/me$/],
+  ["POST", /^\/api\/admin\/logout$/],
+  ["POST", /^\/api\/admin\/password\/change$/],
+  ["GET", /^\/api\/admin\/career-applications$/],
+  ["PATCH", /^\/api\/admin\/career-applications\/[^/]+$/],
+  ["GET", /^\/api\/admin\/career-applications\/[^/]+\/cv$/],
+  ["GET", /^\/api\/admin\/jobs$/],
+  ["POST", /^\/api\/admin\/jobs$/],
+  ["PUT", /^\/api\/admin\/jobs\/[^/]+$/],
+  ["DELETE", /^\/api\/admin\/jobs\/[^/]+$/],
+];
+// Express enruta sin distinguir mayúsculas y con una barra final opcional: /API/Admin/Team/ llega
+// al mismo controlador que /api/admin/team, así que la política compara la ruta ya normalizada.
+function normalizedPath(raw: string) {
+  return raw.split("?")[0].replace(/\/$/, "").toLowerCase();
+}
+export function careersOnlyMayCall(method: string, rawUrl: string) {
+  const path = normalizedPath(rawUrl);
+  const verb = method.toUpperCase();
+  return careersOnlyApi.some(([m, pattern]) => m === verb && pattern.test(path));
+}
+
 export function hasAdminPermission(
   user: AccessUser | null | undefined,
   permission: AdminPermission | "users",
@@ -84,6 +130,9 @@ export function hasAdminPermission(
   if (!user) return false;
   if (user.role === "super_admin") return true;
   if (permission === "users") return false;
+  // Los permisos adicionales guardados en la cuenta no amplían un rol de solo Carreras
+  if (isCareersOnlyAdmin(user))
+    return (rolePermissions[user.role] || []).includes(permission);
   return (
     (rolePermissions[user.role] || []).includes(permission) ||
     (user.permissions || []).includes(permission)
@@ -97,7 +146,7 @@ export function isReadOnlyAdmin(user: AccessUser) {
 export function adminPermissionForPath(
   raw: string,
 ): AdminPermission | "users" | null {
-  const path = raw.split("?")[0].replace(/\/$/, "");
+  const path = normalizedPath(raw);
   if (/^\/api\/(agents|pipeline)(\/|$)/.test(path)) return "agents";
   if (/^\/api\/(audits|health-check|system)(\/|$)/.test(path))
     return "advanced";
@@ -149,6 +198,8 @@ export function canVisitAdminPath(
   user: AccessUser | null | undefined,
   path: string,
 ) {
+  if (isCareersOnlyAdmin(user))
+    return careersOnlyAdminPages.includes(normalizedPath(path));
   const permission = adminPermissionForPath(path);
   return !permission || hasAdminPermission(user, permission);
 }
