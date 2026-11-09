@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "sourceLanguage": "es",
+  "style": [
+    "Usa registro jurídico corporativo, claro y sobrio, adecuado para una firma laboral mexicana.",
+    "Conserva nombres propios, nombres de la firma, cifras, fechas, enlaces y marcadores exactamente.",
+    "No traduzcas literalmente si el término jurídico equivalente natural requiere otra construcción.",
+    "Mantén la jerarquía, el tono institucional y la diferencia entre prevención, negociación, conciliación y litigio.",
+    "Para chino usa mandarín simplificado; para árabe conserva la lectura RTL sin invertir teléfonos ni enlaces.",
+    "No agregues explicaciones, notas del traductor, promesas ni información que no esté en la fuente."
+  ],
+  "glossary": [
+    { "source": "socio", "translations": { "en": "partner", "de": "Partner", "zh": "合伙人", "ko": "파트너", "ja": "パートナー", "ar": "شريك", "ru": "партнёр", "fr": "associé", "it": "socio" } },
+    { "source": "asociado", "translations": { "en": "associate", "de": "Associate", "zh": "律师", "ko": "변호사", "ja": "アソシエイト", "ar": "محامٍ معاون", "ru": "юрист", "fr": "collaborateur", "it": "associato" } },
+    { "source": "of counsel", "translations": { "en": "of counsel", "de": "Of Counsel", "zh": "顾问律师", "ko": "고문 변호사", "ja": "オブ・カウンセル", "ar": "مستشار قانوني", "ru": "советник", "fr": "Of Counsel", "it": "Of Counsel" } },
+    { "source": "derecho laboral", "translations": { "en": "labor and employment law", "de": "Arbeitsrecht", "zh": "劳动法", "ko": "노동 및 고용법", "ja": "労働法", "ar": "قانون العمل", "ru": "трудовое право", "fr": "droit du travail", "it": "diritto del lavoro" } },
+    { "source": "seguridad social", "translations": { "en": "social security", "de": "Sozialversicherung", "zh": "社会保障", "ko": "사회보장", "ja": "社会保障", "ar": "الضمان الاجتماعي", "ru": "социальное обеспечение", "fr": "sécurité sociale", "it": "previdenza sociale" } },
+    { "source": "contrato colectivo", "translations": { "en": "collective bargaining agreement", "de": "Tarifvertrag", "zh": "集体谈判协议", "ko": "단체협약", "ja": "労働協約", "ar": "اتفاقية العمل الجماعية", "ru": "коллективный договор", "fr": "convention collective", "it": "contratto collettivo" } },
+    { "source": "negociación colectiva", "translations": { "en": "collective bargaining", "de": "Tarifverhandlungen", "zh": "集体谈判", "ko": "단체교섭", "ja": "団体交渉", "ar": "المفاوضة الجماعية", "ru": "коллективные переговоры", "fr": "négociation collective", "it": "contrattazione collettiva" } },
+    { "source": "litigio", "translations": { "en": "litigation", "de": "Prozessführung", "zh": "诉讼", "ko": "소송", "ja": "訴訟", "ar": "التقاضي", "ru": "судебный спор", "fr": "contentieux", "it": "contenzioso" } },
+    { "source": "tribunal laboral", "translations": { "en": "Labor Court", "de": "Arbeitsgericht", "zh": "劳动法院", "ko": "노동법원", "ja": "労働裁判所", "ar": "المحكمة العمالية", "ru": "трудовой суд", "fr": "tribunal du travail", "it": "tribunale del lavoro" } },
+    { "source": "conciliación prejudicial", "translations": { "en": "pre-litigation conciliation", "de": "vorgerichtliche Schlichtung", "zh": "诉前调解", "ko": "소송 전 조정", "ja": "訴訟前調停", "ar": "المصالحة قبل التقاضي", "ru": "досудебная примирительная процедура", "fr": "conciliation précontentieuse", "it": "conciliazione precontenziosa" } },
+    { "source": "inspección laboral", "translations": { "en": "labor inspection", "de": "Arbeitsinspektion", "zh": "劳动检查", "ko": "근로감독", "ja": "労働監督", "ar": "تفتيش العمل", "ru": "трудовая инспекция", "fr": "inspection du travail", "it": "ispezione del lavoro" } },
+    { "source": "prevención", "translations": { "en": "prevention", "de": "Prävention", "zh": "预防", "ko": "예방", "ja": "予防", "ar": "الوقاية", "ru": "профилактика", "fr": "prévention", "it": "prevenzione" } },
+    { "source": "cumplimiento", "translations": { "en": "compliance", "de": "Compliance", "zh": "合规", "ko": "컴플라이언스", "ja": "コンプライアンス", "ar": "الامتثال", "ru": "комплаенс", "fr": "conformité", "it": "compliance" } },
+    { "source": "fusiones y adquisiciones", "translations": { "en": "mergers and acquisitions", "de": "Fusionen und Übernahmen", "zh": "企业并购", "ko": "인수합병", "ja": "合併・買収", "ar": "الاندماج والاستحواذ", "ru": "слияния и поглощения", "fr": "fusions-acquisitions", "it": "fusioni e acquisizioni" } },
+    { "source": "protección de datos", "translations": { "en": "data protection", "de": "Datenschutz", "zh": "数据保护", "ko": "데이터 보호", "ja": "データ保護", "ar": "حماية البيانات", "ru": "защита данных", "fr": "protection des données", "it": "protezione dei dati" } },
+    { "source": "competencia económica", "translations": { "en": "antitrust", "de": "Kartellrecht", "zh": "反垄断", "ko": "공정거래", "ja": "競争法", "ar": "مكافحة الاحتكار", "ru": "антимонопольное право", "fr": "droit de la concurrence", "it": "diritto della concorrenza" } },
+    { "source": "migratorio", "translations": { "en": "immigration", "de": "Einwanderungsrecht", "zh": "移民法", "ko": "이민법", "ja": "移民法", "ar": "قانون الهجرة", "ru": "иммиграционное право", "fr": "immigration", "it": "immigrazione" } },
+    { "source": "empleador", "translations": { "en": "employer", "de": "Arbeitgeber", "zh": "雇主", "ko": "사용자", "ja": "使用者", "ar": "صاحب العمل", "ru": "работодатель", "fr": "employeur", "it": "datore di lavoro" } },
+    { "source": "amparo", "translations": { "en": "constitutional injunction (amparo)", "de": "Amparo-Verfahren", "zh": "宪法保护令（amparo）", "ko": "헌법소원(amparo)", "ja": "アムパロ（憲法上の救済）", "ar": "دعوى الحماية الدستورية (amparo)", "ru": "конституционная защита (amparo)", "fr": "recours constitutionnel (amparo)", "it": "ricorso costituzionale (amparo)" } }
+  ]
+}

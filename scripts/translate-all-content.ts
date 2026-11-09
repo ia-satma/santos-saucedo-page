@@ -96,8 +96,10 @@ async function translateObject(source: unknown, targetLanguage: LanguageCode): P
   const fields = flatten(source);
   if (!fields.length) return source;
   const translated: Record<string, string> = {};
-  for (let index = 0; index < fields.length; index += 40) {
-    const chunk = fields.slice(index, index + 40);
+  // Keep each provider request small and process target languages sequentially
+  // in main(). This avoids a nine-language burst and makes retries idempotent.
+  for (let index = 0; index < fields.length; index += 20) {
+    const chunk = fields.slice(index, index + 20);
     const protectedFields = chunk.map((field) => ({ ...field, protected: protectSensitiveTokens(field.text) }));
     const result = await translateMultipleTexts(
       protectedFields.map(({ key, protected: value }) => ({ key, text: value.safe })),
@@ -234,40 +236,36 @@ async function saveEntityField(contentType: string, entityId: string, field: str
   else await db.insert(translationCache).values(values);
 }
 
-async function translateCatalogEntity(contentType: string, entity: any, fields: string[]) {
+async function translateCatalogEntity(contentType: string, entity: any, fields: string[], targetLanguage: LanguageCode) {
   const source: Record<string, string> = {};
   for (const field of fields) {
     const value = entity[`${field}Es`];
     if (typeof value === "string" && value.trim()) source[field] = value;
   }
   if (!Object.keys(source).length) return;
-  for (const targetLanguage of TARGET_LANGUAGES) {
-    const translated = await translateObject(source, targetLanguage) as Record<string, string>;
-    for (const field of Object.keys(source)) {
-      await saveEntityField(contentType, String(entity.id), field, source[field], targetLanguage, translated[field]);
-    }
+  const translated = await translateObject(source, targetLanguage) as Record<string, string>;
+  for (const field of Object.keys(source)) {
+    await saveEntityField(contentType, String(entity.id), field, source[field], targetLanguage, translated[field]);
   }
 }
 
-async function translateNewsArticle(article: any) {
+async function translateNewsArticle(article: any, targetLanguage: LanguageCode) {
   const source = {
     title: article.titleEs || "",
     excerpt: article.excerptEs || "",
     content: article.contentEs || "",
   };
   if (!source.title.trim() || !source.content.trim()) return;
-  for (const targetLanguage of TARGET_LANGUAGES) {
-    const translated = await translateObject(source, targetLanguage) as typeof source;
-    await db.delete(newsTranslations).where(and(eq(newsTranslations.newsId, article.id), eq(newsTranslations.language, targetLanguage)));
-    await db.insert(newsTranslations).values({
-      newsId: article.id,
-      language: targetLanguage,
-      title: translated.title,
-      excerpt: translated.excerpt,
-      content: translated.content,
-      translatedBy: "ai",
-    });
-  }
+  const translated = await translateObject(source, targetLanguage) as typeof source;
+  await db.delete(newsTranslations).where(and(eq(newsTranslations.newsId, article.id), eq(newsTranslations.language, targetLanguage)));
+  await db.insert(newsTranslations).values({
+    newsId: article.id,
+    language: targetLanguage,
+    title: translated.title,
+    excerpt: translated.excerpt,
+    content: translated.content,
+    translatedBy: "ai",
+  });
 }
 
 async function main() {
@@ -277,12 +275,21 @@ async function main() {
   }
 
   const cms = await getCmsContent();
+  const sectionEntries = Object.entries(cms).filter(([, content]) => isRecord(content) && (content.es || content.en));
+  const [teams, practices, industries, articles] = await Promise.all([
+    db.select().from(teamMembers),
+    db.select().from(practiceGroups),
+    db.select().from(industryGroups),
+    db.select().from(news),
+  ]);
   let sections = 0;
   let errors = 0;
-  for (const [section, content] of Object.entries(cms)) {
-    if (!isRecord(content) || (!content.es && !content.en)) continue;
-    const source = content.es || content.en;
-    for (const target of TARGET_LANGUAGES) {
+  // One target language at a time: all sections and public entities for the
+  // current language finish before the next language starts.
+  for (const target of TARGET_LANGUAGES) {
+    console.log(`[translate-all] iniciando idioma ${target}`);
+    for (const [section, content] of sectionEntries) {
+      const source = (content as Record<string, any>).es || (content as Record<string, any>).en;
       try {
         if (await saveLocalizedSection(section, source, target)) sections++;
       } catch (error) {
@@ -291,18 +298,24 @@ async function main() {
         console.error(`[translate-all] ${section}/${target}: ${(error as Error).message}`);
       }
     }
+    for (const entity of teams) {
+      try { await translateCatalogEntity("team_member", entity, ["title", "role", "bio"], target); }
+      catch (error) { errors++; console.error(`[translate-all] team_member/${entity.id}/${target}: ${(error as Error).message}`); }
+    }
+    for (const entity of practices) {
+      try { await translateCatalogEntity("practice_group", entity, ["name", "description", "fullDescription"], target); }
+      catch (error) { errors++; console.error(`[translate-all] practice_group/${entity.id}/${target}: ${(error as Error).message}`); }
+    }
+    for (const entity of industries) {
+      try { await translateCatalogEntity("industry_group", entity, ["name", "description", "fullDescription"], target); }
+      catch (error) { errors++; console.error(`[translate-all] industry_group/${entity.id}/${target}: ${(error as Error).message}`); }
+    }
+    for (const article of articles.filter((item) => item.published !== false)) {
+      try { await translateNewsArticle(article, target); }
+      catch (error) { errors++; console.error(`[translate-all] news/${article.id}/${target}: ${(error as Error).message}`); }
+    }
+    console.log(`[translate-all] idioma ${target} terminado`);
   }
-
-  const [teams, practices, industries, articles] = await Promise.all([
-    db.select().from(teamMembers),
-    db.select().from(practiceGroups),
-    db.select().from(industryGroups),
-    db.select().from(news),
-  ]);
-  for (const entity of teams) await translateCatalogEntity("team_member", entity, ["title", "role", "bio"]);
-  for (const entity of practices) await translateCatalogEntity("practice_group", entity, ["name", "description", "fullDescription"]);
-  for (const entity of industries) await translateCatalogEntity("industry_group", entity, ["name", "description", "fullDescription"]);
-  for (const article of articles.filter((item) => item.published !== false)) await translateNewsArticle(article);
 
   console.log(`[translate-all] ${sections} secciones localizadas publicadas; ${errors} errores registrados; ${TARGET_LANGUAGES.length} idiomas destino.`);
 }

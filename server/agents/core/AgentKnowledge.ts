@@ -5,6 +5,7 @@ import {
   EDITORIAL_KNOWLEDGE_SEEDS,
   EDITORIAL_KNOWLEDGE_VERSION,
 } from '../knowledge/editorialVoicePlaybook';
+import translationKnowledge from '../../../shared/translation-knowledge.json';
 
 export class AgentKnowledgeStore {
   private initialized: boolean = false;
@@ -178,41 +179,39 @@ export class AgentKnowledgeStore {
   async addLegalGlossary(): Promise<void> {
     const existingDocs = await this.getDocuments('polyglot_translator');
     const glossaryDocs = existingDocs.filter(d => d.category === 'legal_glossary');
+    const existingTitles = new Set(glossaryDocs.map((doc) => doc.title.toLowerCase()));
+    let added = 0;
 
-    if (glossaryDocs.length > 0) {
-      console.log(`[AgentKnowledge] Legal glossary already exists with ${glossaryDocs.length} entries, skipping...`);
-      return;
-    }
-
-    const legalTerms = [
-      { term: 'Partner', translations: { es: 'Socio', de: 'Partner', zh: '合伙人', ko: '파트너', ja: 'パートナー', ar: 'شريك', ru: 'Партнер', fr: 'Associé', it: 'Socio' } },
-      { term: 'Associate', translations: { es: 'Asociado', de: 'Associate', zh: '律师', ko: '변호사', ja: 'アソシエイト', ar: 'محامٍ', ru: 'Юрист', fr: 'Collaborateur', it: 'Associato' } },
-      { term: 'Of Counsel', translations: { es: 'Of Counsel', de: 'Of Counsel', zh: '顾问律师', ko: '고문변호사', ja: 'オブカウンセル', ar: 'مستشار قانوني', ru: 'Советник', fr: 'Of Counsel', it: 'Of Counsel' } },
-      { term: 'Corporate M&A', translations: { es: 'Fusiones y Adquisiciones', de: 'Unternehmenstransaktionen', zh: '企业并购', ko: '기업 인수합병', ja: '企業M&A', ar: 'الاندماج والاستحواذ', ru: 'Слияния и поглощения', fr: 'Fusions-Acquisitions', it: 'Fusioni e Acquisizioni' } },
-      { term: 'Tax', translations: { es: 'Fiscal', de: 'Steuerrecht', zh: '税务', ko: '조세', ja: '税務', ar: 'الضرائب', ru: 'Налоговое право', fr: 'Fiscal', it: 'Fiscale' } },
-      { term: 'Labor & Employment', translations: { es: 'Laboral', de: 'Arbeitsrecht', zh: '劳动法', ko: '노동법', ja: '労働法', ar: 'قانون العمل', ru: 'Трудовое право', fr: 'Droit du travail', it: 'Diritto del lavoro' } },
-      { term: 'Litigation', translations: { es: 'Litigio', de: 'Prozessführung', zh: '诉讼', ko: '소송', ja: '訴訟', ar: 'التقاضي', ru: 'Судебные споры', fr: 'Contentieux', it: 'Contenzioso' } },
-      { term: 'Compliance', translations: { es: 'Cumplimiento', de: 'Compliance', zh: '合规', ko: '컴플라이언스', ja: 'コンプライアンス', ar: 'الامتثال', ru: 'Комплаенс', fr: 'Conformité', it: 'Compliance' } },
-      { term: 'Energy', translations: { es: 'Energía', de: 'Energierecht', zh: '能源', ko: '에너지', ja: 'エネルギー', ar: 'الطاقة', ru: 'Энергетика', fr: 'Énergie', it: 'Energia' } },
-      { term: 'Real Estate', translations: { es: 'Inmobiliario', de: 'Immobilienrecht', zh: '房地产', ko: '부동산', ja: '不動産', ar: 'العقارات', ru: 'Недвижимость', fr: 'Immobilier', it: 'Immobiliare' } },
-      { term: 'Antitrust', translations: { es: 'Competencia Económica', de: 'Kartellrecht', zh: '反垄断', ko: '공정거래', ja: '独占禁止法', ar: 'مكافحة الاحتكار', ru: 'Антимонопольное право', fr: 'Concurrence', it: 'Antitrust' } },
-      { term: 'Data Protection', translations: { es: 'Protección de Datos', de: 'Datenschutz', zh: '数据保护', ko: '데이터 보호', ja: 'データ保護', ar: 'حماية البيانات', ru: 'Защита данных', fr: 'Protection des données', it: 'Protezione dei dati' } },
-    ];
-
-    for (const entry of legalTerms) {
+    for (const entry of translationKnowledge.glossary) {
+      if (existingTitles.has(entry.source.toLowerCase())) continue;
       await this.addDocument({
         agentType: 'polyglot_translator',
         category: 'legal_glossary',
-        title: entry.term,
+        title: entry.source,
         content: JSON.stringify(entry.translations),
-        metadata: { type: 'glossary_entry', term: entry.term },
+        metadata: { type: 'glossary_entry', term: entry.source, knowledgeVersion: translationKnowledge.version },
+        dataClassification: 'internal',
+        approvedForAiAt: new Date(),
+        approvedForAiBy: 'system_seed',
+      });
+      added++;
+    }
+
+    const hasGuide = existingDocs.some((doc) => doc.category === 'translation_style_guide');
+    if (!hasGuide) {
+      await this.addDocument({
+        agentType: 'polyglot_translator',
+        category: 'translation_style_guide',
+        title: 'Santos & Saucedo — guía permanente de traducción jurídica',
+        content: translationKnowledge.style.map((rule) => `- ${rule}`).join('\n'),
+        metadata: { type: 'translation_style_guide', knowledgeVersion: translationKnowledge.version },
         dataClassification: 'internal',
         approvedForAiAt: new Date(),
         approvedForAiBy: 'system_seed',
       });
     }
 
-    console.log(`[AgentKnowledge] Added ${legalTerms.length} legal glossary entries to database`);
+    console.log(`[AgentKnowledge] Legal translation knowledge ready: ${added} glossary entries added; style guide ${hasGuide ? 'already present' : 'added'}.`);
   }
 
   /**
