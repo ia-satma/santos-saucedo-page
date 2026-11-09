@@ -53,7 +53,7 @@ const FOTOS: Record<IndustriaId, Pick<Industria, "img" | "w" | "h" | "pos">> = {
   acero: { img: v3Asset("/v3/c-ind-acero.webp"), w: 2000, h: 1333, pos: "42% 55%" },
   energia: { img: v3Asset("/v3/c-ind-energia.webp"), w: 2000, h: 1333, pos: "62% 62%" },
   // Industrias que se suman con la lista de Von Wobeser (9-11-2026); fotos de Unsplash, licencia libre
-  consumo: { img: v3Asset("/v3/c-ind-consumo.webp"), w: 2000, h: 1333, pos: "50% 62%" },
+  consumo: { img: v3Asset("/v3/c-ind-consumo.webp"), w: 1850, h: 1333, pos: "50% 62%" },  // recortada: sin la marca del equipo a la derecha
   farmaceutica: { img: v3Asset("/v3/c-ind-farmaceutica.webp"), w: 2000, h: 1333, pos: "56% 50%" },
   tecnologia: { img: v3Asset("/v3/c-ind-tecnologia.webp"), w: 2000, h: 1333, pos: "36% 62%" },
   construccion: { img: v3Asset("/v3/c-ind-construccion.webp"), w: 2000, h: 1333, pos: "30% 70%" },

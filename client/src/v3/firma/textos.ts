@@ -12,6 +12,8 @@ export type Lamina = {
   svgLabel: string;
   cajetin: string;
   nota?: string;
+  /** cómo se usa la figura viva (solo el carnero) */
+  instr?: string;
 };
 
 export type FirmaTextos = {
@@ -58,16 +60,19 @@ export const TEXTOS: Record<V3Lang, FirmaTextos> = {
         "El borrego cimarrón sube por las sierras del norte de México donde no parece haber camino. No retrocede ni se detiene hasta llegar. Así llevamos cada asunto: con paso firme y con persistencia, hasta conseguir el resultado.",
         "Esa persistencia descansa en la preparación. Cada asunto se prepara como si fuera a llegar a juicio; por eso se negocia desde una posición firme y casi siempre se resuelve antes.",
       ],
-      listaLabel: "Guías del plano y lo que significan para la firma",
+      listaLabel: "Pasos de la subida y lo que significan para la firma",
+      // La lámina viva (public/v3/laminas/carnero.html): el borrego sube un risco por salientes que salen
+      // de la roca justo antes de cada paso. Cada pieza es un paso de la subida, en este orden.
       piezas: [
-        { nom: "Determinación", parte: "Cuerno", tag: "Cuerno", desc: "Cada asunto tiene un objetivo claro desde el primer día, y la firma no lo suelta hasta conseguirlo." },
-        { nom: "Sin retroceder", parte: "Línea de avance", tag: "Línea de avance", desc: "Ante un obstáculo, la firma no retrocede: busca el camino y sigue. Una negociación respaldada por un caso bien preparado avanza mejor." },
-        { nom: "La prevención", parte: "Centro de masa", tag: "Centro de masa", desc: "El cumplimiento al día —contratos, reglamento interior, contrato colectivo e IMSS— es el peso que da estabilidad a la empresa antes de cualquier conflicto." },
-        { nom: "Paso firme", parte: "Apoyo en la roca", tag: "Apoyo en la roca", desc: "Un expediente en orden es la roca donde se apoya cada paso: documentos completos, firmados y localizables." },
-        { nom: "Persistencia", parte: "Postura", tag: "Postura", desc: "Prevención primero. Si el conflicto llega, la empresa ya está de pie, y la firma sigue con ella hasta el final." },
+        { nom: "Determinación", parte: "La cima a la vista", tag: "La cima", desc: "Cada asunto tiene un objetivo claro desde el primer día, y la firma no lo suelta hasta conseguirlo." },
+        { nom: "Paso firme", parte: "Apoyo en la roca", tag: "Apoyo", desc: "Cada paso se apoya en algo sólido: un expediente en orden, con documentos completos, firmados y localizables." },
+        { nom: "La prevención", parte: "El camino por delante", tag: "El camino", desc: "La prevención construye el camino antes de necesitarlo: contratos, reglamento interior, contrato colectivo e IMSS al día. Cuando llega el momento de dar el paso, la roca ya está ahí." },
+        { nom: "Sin retroceder", parte: "El salto", tag: "El salto", desc: "Ante un obstáculo, la firma no retrocede: busca el camino y sigue. Una negociación respaldada por un caso bien preparado avanza mejor." },
+        { nom: "Persistencia", parte: "La cima", tag: "La cima", desc: "Paso a paso, sin detenerse, hasta conseguir el resultado. Si el conflicto llega, la empresa ya está de pie, y la firma sigue con ella hasta el final." },
       ],
-      svgLabel: "Plano de un borrego cimarrón de perfil, con el cuerno en espiral trazado sobre sus líneas de construcción y guías que marcan la línea de avance, el centro de masa, el peso, el apoyo de las pezuñas en la roca y el ángulo de la postura.",
+      svgLabel: "Lámina 1/7, Siempre hacia adelante: un borrego cimarrón sube un risco de la sierra por salientes de roca que salen justo antes de cada paso, salta una grieta sin retroceder y llega a la apacheta de la cima.",
       cajetin: "Siempre hacia adelante",
+      instr: "Elija un paso en la lista o sobre el risco, y el borrego avanza.",
       nota: "Borrego cimarrón (Ovis canadensis), de las sierras del norte de México.",
     },
     reaccion: {
@@ -113,16 +118,17 @@ export const TEXTOS: Record<V3Lang, FirmaTextos> = {
         "The bighorn sheep climbs the mountain ranges of northern Mexico where there seems to be no path. It does not turn back or stop until it gets there. That is how we carry every matter: with a steady step and with persistence, until the result is achieved.",
         "That persistence rests on preparation. Every matter is prepared as if it were going to trial; that is why we negotiate from a firm position and most matters are resolved sooner.",
       ],
-      listaLabel: "Guides on the drawing and what they mean for the firm",
+      listaLabel: "Steps of the climb and what they mean for the firm",
       piezas: [
-        { nom: "Determination", parte: "Horn", tag: "Horn", desc: "Every matter has a clear objective from the first day, and the firm does not let go of it until it is achieved." },
-        { nom: "No turning back", parte: "Line of advance", tag: "Line of advance", desc: "In the face of an obstacle, the firm does not turn back: it finds the way and keeps going. A negotiation backed by a well-prepared case moves forward better." },
-        { nom: "Prevention", parte: "Center of mass", tag: "Center of mass", desc: "Up-to-date compliance — contracts, internal work rules, the collective bargaining agreement and IMSS — is the weight that keeps the company stable before any dispute." },
-        { nom: "A steady step", parte: "Footing on the rock", tag: "Footing on the rock", desc: "A file in order is the rock on which every step rests: documents that are complete, signed and easy to locate." },
-        { nom: "Persistence", parte: "Stance", tag: "Stance", desc: "Prevention first. If a dispute comes, the company is already on its feet, and the firm stays with it to the end." },
+        { nom: "Determination", parte: "The summit in sight", tag: "The summit", desc: "Every matter has a clear objective from the first day, and the firm does not let go of it until it is achieved." },
+        { nom: "A steady step", parte: "Footing on the rock", tag: "Footing", desc: "Every step rests on something solid: a file in order, with documents that are complete, signed and easy to locate." },
+        { nom: "Prevention", parte: "The path ahead", tag: "The path", desc: "Prevention builds the path before it is needed: contracts, internal work rules, the collective bargaining agreement and IMSS filings up to date. When the time comes to take the step, the rock is already there." },
+        { nom: "No turning back", parte: "The leap", tag: "The leap", desc: "In the face of an obstacle, the firm does not turn back: it finds the way and keeps going. A negotiation backed by a well-prepared case moves forward better." },
+        { nom: "Persistence", parte: "The summit", tag: "The summit", desc: "Step by step, without stopping, until the result is achieved. If a dispute comes, the company is already on its feet, and the firm stays with it to the end." },
       ],
-      svgLabel: "Drawing of a bighorn sheep in profile, with its spiral horn traced over the construction lines and guides that mark the line of advance, the center of mass, the weight, the footing of the hooves on the rock and the angle of the stance.",
+      svgLabel: "Plate 1/7, Always forward: a bighorn sheep climbs a mountain wall on rock ledges that slide out just before each step, leaps a crack without turning back and reaches the cairn on the summit.",
       cajetin: "Always forward",
+      instr: "Choose a step in the list or on the cliff, and the sheep moves forward.",
       nota: "Bighorn sheep (Ovis canadensis), from the mountain ranges of northern Mexico.",
     },
     reaccion: {

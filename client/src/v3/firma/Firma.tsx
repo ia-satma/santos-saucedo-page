@@ -3,10 +3,9 @@
    lámina 2/7 (el avión) también vive aquí y la usa la página de Prácticas.
    Marcado y clases de la demo (demo.css); lo propio de la página va en ./firma.css con el prefijo nf-. */
 import "./firma.css";
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "wouter";
 import { useV3Module } from "@/v3/shared";
-import carneroSvg from "./carnero.svg?raw";
 import reaccionDatos from "./reaccion-datos.json";
 import { initFilosofia, type ReaccionDatos } from "./filosofia";
 import { initPrioridad } from "./prioridad";
@@ -16,7 +15,6 @@ type LangAttrs = { lang?: string; dir?: "ltr" };
 
 /** El contenido del <svg> generado por la demo (build/*.mjs), sin la etiqueta raíz: React pone la raíz. */
 const interior = (svg: string) => ({ __html: svg.slice(svg.indexOf(">") + 1, svg.lastIndexOf("</svg>")) });
-const CARNERO = interior(carneroSvg);
 
 /* El dibujo de la turbina (reaccion.svg, unos 380 KB) no va en el paquete de la página: se pide aparte
    cuando la lámina está a una pantalla de distancia, y queda guardado para la próxima visita. Mientras
@@ -144,15 +142,24 @@ export function Prioridad({ t, attrs }: { t: FirmaTextos; attrs: LangAttrs }) {
 }
 
 /* ---------- Láminas 1/7 (carnero, en «Nuestra firma») y 2/7 (turbina → avión, en Prácticas) ---------- */
-function Lista({ n, L }: { n: string; L: Lamina }) {
+function Lista({ n, L, activa, elegir }: { n: string; L: Lamina; activa?: number; elegir?: (i: number) => void }) {
+  // con «activa» y «elegir», la lista sigue a una figura viva (el carnero); sin ellos, filosofia.ts la maneja
+  const viva = activa != null && !!elegir;
+  const pz = viva && activa >= 0 ? L.piezas[activa] : null;
   return (
     <>
       <ol className="fi-lista" aria-label={L.listaLabel}>
         {L.piezas.map((pz, i) => {
           const p = String(i + 1);
+          const on = viva && i === activa;
           return (
-            <li key={p} className="fi-fila" data-p={p}>
-              <button type="button" className="fi-et" data-p={p} aria-pressed="false">
+            <li key={p} className="fi-fila" data-p={p} data-on={on ? "" : undefined}>
+              <button
+                type="button" className="fi-et" data-p={p} aria-pressed={viva ? on : false}
+                onMouseEnter={viva ? () => elegir(i) : undefined}
+                onFocus={viva ? () => elegir(i) : undefined}
+                onClick={viva ? () => elegir(i) : undefined}
+              >
                 <span className="fi-n">{`${n}.${p}`}</span>
                 <span className="fi-nom">{pz.nom}</span>
               </button>
@@ -161,7 +168,9 @@ function Lista({ n, L }: { n: string; L: Lamina }) {
           );
         })}
       </ol>
-      <p className="fi-lectura" aria-hidden="true" />
+      <p className="fi-lectura" aria-hidden="true" data-on={pz ? "" : undefined}>
+        {pz ? <><span className="fi-parte">{pz.parte}</span> {pz.desc}</> : null}
+      </p>
     </>
   );
 }
@@ -177,42 +186,58 @@ function Cajetin({ lamina, titulo, t, logo }: { lamina: string; titulo: string; 
   );
 }
 
-// Posición de cada número sobre el borrego (la calcula build/l-carnero.mjs de la demo)
-const TAGS_CARNERO: { x: string; y: string; izq?: boolean }[] = [
-  { x: "71.54%", y: "4.20%" },
-  { x: "95.78%", y: "14.71%", izq: true },
-  { x: "49.21%", y: "9.24%", izq: true },
-  { x: "64.80%", y: "94.96%" },
-  { x: "13.32%", y: "63.03%", izq: true },
-];
-
 /** Lámina 1/7, el carnero: la filosofía de la firma (en «Nuestra firma»). */
-export function LaminaCarnero({ t, attrs, logo }: { t: FirmaTextos; attrs: LangAttrs; logo: string }) {
-  const ref = useRef<HTMLElement>(null);
-  useV3Module(ref, (el) => initFilosofia(el, reaccionDatos as ReaccionDatos));
+export function LaminaCarnero({ t, attrs, logo, lang }: { t: FirmaTextos; attrs: LangAttrs; logo: string; lang: "es" | "en" }) {
+  // La figura vive en su propio documento (public/v3/laminas/carnero.html, lienzo y motor de las láminas):
+  // la lista le dice a qué paso ir y la figura avisa en cuál está, también durante su recorrido al entrar.
+  const marco = useRef<HTMLIFrameElement>(null);
+  const [activa, setActiva] = useState(0);
+  useEffect(() => {
+    const oir = (e: MessageEvent) => {
+      const d = e.data;
+      if (!marco.current || e.source !== marco.current.contentWindow || !d || d.lamina !== "carnero") return;
+      if (typeof d.activa === "number" && d.activa >= 0) setActiva(d.activa);
+    };
+    window.addEventListener("message", oir);
+    return () => window.removeEventListener("message", oir);
+  }, []);
+  const elegir = (i: number) => {
+    setActiva(i);
+    marco.current?.contentWindow?.postMessage({ lamina: "carnero", ir: i }, "*");
+  };
+  // teléfono: la figura queda fija arriba (firma.css) y el paso que cruza el centro de la pantalla la mueve
+  const seccion = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const sec = seccion.current;
+    if (!sec || !("IntersectionObserver" in window) || !window.matchMedia("(max-width: 820px)").matches) return;
+    const filas = Array.from(sec.querySelectorAll<HTMLElement>(".fi-fila"));
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => {
+        if (!e.isIntersecting) return;
+        const i = filas.indexOf(e.target as HTMLElement);
+        if (i >= 0) { setActiva(i); marco.current?.contentWindow?.postMessage({ lamina: "carnero", ir: i }, "*"); }
+      });
+    }, { rootMargin: "-62% 0px -30% 0px" });
+    filas.forEach((f) => io.observe(f));
+    return () => io.disconnect();
+  }, []);
   const C = t.carnero;
+  const src = `${import.meta.env.BASE_URL}v3/laminas/carnero.html?v=1${lang === "en" ? "&lang=en" : ""}`;
+  // otro idioma = otro documento: la figura vuelve a empezar abajo
+  useEffect(() => { setActiva(0); }, [src]);
   return (
-    <section ref={ref} className="fi-lamina fi-carnero sobre-azul" id="carnero" data-fi-lamina="1/7" data-fi-lean="5" aria-labelledby="carnero-t" {...attrs}>
+    <section ref={seccion} className="fi-lamina fi-carnero sobre-azul" id="carnero" data-fi-lamina="1/7" data-fi-lean="5" data-foco="" aria-labelledby="carnero-t" {...attrs}>
       <div className="fi-escena">
         <div className="fi-marco" aria-hidden="true" />
         <div className="fi-texto">
           <h2 className="fi-h" id="carnero-t">{C.h}</h2>
           {C.p.map((p, i) => <p key={i} className="fi-p">{p}</p>)}
-          <Lista n="1" L={C} />
+          {C.instr ? <p className="fi-instr">{C.instr}</p> : null}
+          <Lista n="1" L={C} activa={activa} elegir={elegir} />
         </div>
         <div className="fi-plano">
-          <div className="fi-lienzo">
-            <svg className="fi-fig" viewBox="-160 -198 392 238" role="img" aria-label={C.svgLabel} focusable="false" dangerouslySetInnerHTML={CARNERO} />
-            <div className="fi-tags" aria-hidden="true">
-              {C.piezas.map((pz, i) => {
-                const g = TAGS_CARNERO[i];
-                return (
-                  <span key={i} className={`fi-tag${g.izq ? " fi-tag--izq" : ""}`} data-p={String(i + 1)} style={{ "--x": g.x, "--y": g.y } as CSSProperties}>
-                    <span className="fi-tag-n">{`1.${i + 1}`}</span><span className="fi-tag-t">{pz.tag}</span>
-                  </span>
-                );
-              })}
-            </div>
+          <div className="fi-lienzo fi-lienzo--vivo">
+            <iframe ref={marco} className="fi-vivo" src={src} title={C.svgLabel} loading="lazy" />
           </div>
           {C.nota ? <p className="fi-nota">{C.nota}</p> : null}
         </div>
