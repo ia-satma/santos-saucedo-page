@@ -170,9 +170,13 @@ html:not(.rm) .v3 .ps-esq { animation: ps-pulso 1.6s ease-in-out infinite; }
 /* ---------- Banda de la suscripción (como sh-filo: frase y botón; la estancia, a color, a la derecha) ---------- */
 .v3 .ps-sus { position: relative; overflow: hidden; isolation: isolate; background: var(--azul-noche); color: var(--sobre-azul); }
 .v3 .ps-sus__foto { position: absolute; top: 0; bottom: 0; inset-inline-end: 0; inset-inline-start: 44%; margin: 0; z-index: -1; overflow: hidden; }
-.v3 .ps-sus__foto img { width: 100%; height: 100%; object-fit: cover; object-position: 62% 45%; }
-.v3 .ps-sus__foto::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--azul-noche) 0%, rgba(12,35,64,.55) 20%, rgba(12,35,64,0) 46%); }
-[dir="rtl"] .v3 .ps-sus__foto::after { background: linear-gradient(270deg, var(--azul-noche) 0%, rgba(12,35,64,.55) 20%, rgba(12,35,64,0) 46%); }
+/* Junta del 6-11-2026: «que recorra lo azul y que no quede esa pared ahí». La foto se amplía desde su
+   borde izquierdo para que el muro blanco de su orilla derecha quede siempre fuera del cuadro (left: 0
+   también en árabe: el muro es de la foto, no del lado de la página), y el azul de la banda la cruza
+   entera: velo azul parejo sobre toda la foto y el azul pleno de vuelta en la orilla. */
+.v3 .ps-sus__foto img { position: absolute; top: 0; left: 0; width: 122%; max-width: none; height: 100%; object-fit: cover; object-position: 0% 45%; }
+.v3 .ps-sus__foto::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--azul-noche) 0%, rgba(12,35,64,.6) 20%, rgba(12,35,64,.22) 46%, rgba(12,35,64,.22) 78%, rgba(12,35,64,.7) 100%); }
+[dir="rtl"] .v3 .ps-sus__foto::after { background: linear-gradient(270deg, var(--azul-noche) 0%, rgba(12,35,64,.6) 20%, rgba(12,35,64,.22) 46%, rgba(12,35,64,.22) 78%, rgba(12,35,64,.7) 100%); }
 .v3 .ps-sus__in {
   display: grid; gap: clamp(28px, 3vw, 40px); justify-items: start; align-content: center;
   min-height: min(64vh, 560px); padding-block: clamp(96px, 11vw, 168px); box-sizing: border-box;
@@ -185,7 +189,7 @@ html:not(.rm) .v3 .ps-esq { animation: ps-pulso 1.6s ease-in-out infinite; }
 .v3 .ps .ps-sus__boton { max-width: none; white-space: normal; text-align: center; }
 @media (max-width: 1000px) {
   .v3 .ps-sus__foto { inset-inline-start: 0; bottom: auto; height: min(58vw, 460px); }
-  .v3 .ps-sus__foto::after, [dir="rtl"] .v3 .ps-sus__foto::after { background: linear-gradient(180deg, rgba(12,35,64,0) 42%, var(--azul-noche) 100%); }
+  .v3 .ps-sus__foto::after, [dir="rtl"] .v3 .ps-sus__foto::after { background: linear-gradient(180deg, rgba(12,35,64,.22) 0%, rgba(12,35,64,.22) 42%, var(--azul-noche) 100%); }
   .v3 .ps-sus__in { min-height: 0; padding-block: calc(min(58vw, 460px) + 8px) clamp(64px, 9vw, 104px); }
   .v3 .ps-sus__in > * { max-width: 30em; }
 }

@@ -27,6 +27,7 @@ import { copyToClipboard, emailShareHref, newsShareUrl, sourceLabel, whatsappSha
 import type { News, TeamMember } from "@shared/schema";
 import { V3Main, V3NextPage } from "@/v3/shared";
 import { MonitorNotas, MonitorSuscripcion, etiquetaSiguiente } from "@/v3/paginas-sitio/Monitor";
+import { getHomeMonitorImage } from "@shared/monitorEditorial";
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
 // lleva su propio idioma y dirección, para que :lang() (la romana, no la sans de CJK) y el
@@ -390,7 +391,8 @@ export default function NewsDetail() {
   const titleIsSource = isOtherLanguage && !!displayTitle && displayTitle === newsArticle?.title;
   const contentSource = isOtherLanguage && !!displayContent &&
     (displayContent === newsArticle?.content || displayContent === newsArticle?.excerpt) ? EN_SOURCE : undefined;
-  const heroImage = newsArticle?.imageUrl || "";
+  // La misma foto que en la lista (las notas iniciales ya no llevan las ilustraciones hechas con IA)
+  const heroImage = (newsArticle ? getHomeMonitorImage(newsArticle) : null) || "";
   const hasPhoto = !!heroImage && failedImage !== heroImage;
 
   const primaryAuthor = relatedAuthors && relatedAuthors.length > 0 ? relatedAuthors[0] : null;
@@ -432,7 +434,7 @@ export default function NewsDetail() {
             // Sin datePublished: las fechas de las notas son las de la carga inicial (E9)
             authorName={primaryAuthor?.name}
             authorUrl={primaryAuthor ? `https://www.santossaucedo.com/team/${primaryAuthor.slug}` : undefined}
-            imageUrl={newsArticle.imageUrl}
+            imageUrl={heroImage || newsArticle.imageUrl}
             url={`https://www.santossaucedo.com/news/${newsArticle.slug}`}
             language={language}
           />

@@ -564,7 +564,7 @@ export const CONTACT_CONTENT: Record<LanguageCode, ContactContent> = {
 };
 
 /* ---------- Textos nuevos de la demo v3: español tal cual, inglés en el mismo registro ---------- */
-export type FotoClave = "fachada" | "vestibulo" | "trabajo" | "escultura" | "biblioteca" | "mezanine";
+export type FotoClave = "fachada" | "vestibulo" | "sala" | "escultura" | "biblioteca" | "mezanine";
 
 export interface TextosV3 {
   /** Título del formulario (en otros idiomas, el del panel en su idioma) */
@@ -588,6 +588,7 @@ export interface TextosV3 {
   /** Alt de las fotos que no lo tienen en el panel */
   altMezanine: string;
   altBiblioteca: string;
+  altSala: string;
   /** Barra y hoja del teléfono */
   acciones: string;
   llamar: string;
@@ -617,13 +618,14 @@ export const CT: Record<V3Lang, TextosV3> = {
     fotos: {
       fachada: { cap: "La fachada", txt: "En el cristal, el Cerro de la Silla." },
       vestibulo: { cap: "El vestíbulo", txt: "Visto desde el mezanine." },
-      trabajo: { cap: "El área de trabajo", txt: "Frente al jardín interior." },
+      sala: { cap: "La sala de juntas", txt: "Donde se recibe a cada cliente." },
       escultura: { cap: "El jardín interior", txt: "La escultura azul." },
       biblioteca: { cap: "La biblioteca", txt: "Junto a la escalera." },
       mezanine: { cap: "El mezanine", txt: "Donde trabaja el equipo." },
     },
     altMezanine: "Mezanine con estaciones de trabajo y barandal de cristal",
     altBiblioteca: "Librero de madera con los tomos de jurisprudencia junto a la escalera",
+    altSala: "Sala de juntas con mesa de granito, sillas ejecutivas y obra abstracta de colores en el muro",
     acciones: "Acciones rápidas",
     llamar: "Llamar",
     escribir: "Escribir",
@@ -650,12 +652,13 @@ export const CT: Record<V3Lang, TextosV3> = {
     fotos: {
       fachada: { cap: "The facade", txt: "The Cerro de la Silla, reflected in the glass." },
       vestibulo: { cap: "The lobby", txt: "Seen from the mezzanine." },
-      trabajo: { cap: "The work area", txt: "Facing the interior garden." },
+      sala: { cap: "The boardroom", txt: "Where each client is received." },
       escultura: { cap: "The interior garden", txt: "The blue sculpture." },
       biblioteca: { cap: "The library", txt: "Beside the staircase." },
       mezanine: { cap: "The mezzanine", txt: "Where the team works." },
     },
     altMezanine: "Mezzanine with workstations and a glass railing",
+    altSala: "Boardroom with a granite table, executive chairs and colorful abstract artwork on the wall",
     altBiblioteca: "Wooden bookcase with volumes of case law beside the staircase",
     acciones: "Quick actions",
     llamar: "Call",

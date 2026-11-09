@@ -34,5 +34,5 @@ export function useSiteContact(lang: Lang26) {
 
 export function useSiteDetails() {
   const { data } = useQuery<SiteContent & { privacyEmail: string; recruitmentEmail: string; linkedinUrl: string; directionsUrl: string; googleReviewsUrl?: string }>({ queryKey: ["/api/site-content"], staleTime: 15000, refetchOnWindowFocus: true, refetchInterval: 30000 });
-  return { privacyEmail: data?.privacyEmail ?? "privacidad@santossaucedo.com", address: data?.address ?? "", phone: data?.phone ?? "", email: data?.email ?? "administracion@santossaucedo.com", recruitmentEmail: data?.recruitmentEmail ?? "reclutamiento@santossaucedo.com", linkedinUrl: data?.linkedinUrl ?? "", directionsUrl: data?.directionsUrl ?? "https://www.google.com/maps/search/?api=1&query=Santos+Saucedo+San+Pedro", googleReviewsUrl: data?.googleReviewsUrl?.trim() || "" };
+  return { privacyEmail: data?.privacyEmail ?? "privacidad@santossaucedo.com", address: data?.address ?? "", phone: data?.phone ?? "", email: data?.email ?? "administracion@santossaucedo.com", recruitmentEmail: data?.recruitmentEmail ?? "administracion@santossaucedo.com", linkedinUrl: data?.linkedinUrl ?? "", directionsUrl: data?.directionsUrl ?? "https://www.google.com/maps/search/?api=1&query=Santos+Saucedo+San+Pedro", googleReviewsUrl: data?.googleReviewsUrl?.trim() || "" };
 }

@@ -19,13 +19,16 @@ import { initTelon, type TelonApi } from "./escenaTelon";
 const TXT = {
   es: {
     firma: "Al lado de las empresas en cada decisión que involucra a su personal.",
-    // La frase del panel («Derecho laboral para empresas») hace rotar su palabra entre las prácticas
-    words: ["laboral", "migratorio", "corporativo", "contractual"],
+    // La frase del panel («Derecho laboral para empresas») deja fijo «Derecho laboral» y hace rotar a
+    // quién sirve la firma. Antes rotaba entre las prácticas (laboral, migratorio, corporativo,
+    // contractual) y en la junta del 6-11-2026 Mario dijo: «Yo no quisiera venderme como un despacho
+    // multimateria»; «este es un despacho laboral». Lo laboral queda fijo; lo amplio son sus clientes.
+    words: ["empresas", "la industria", "multinacionales"],
     and: "y",
   },
   en: {
     firma: "Alongside companies in every decision that involves their people.",
-    words: ["labor", "immigration", "corporate", "contract"],
+    words: ["companies", "industry", "multinationals"],
     and: "and",
   },
 } as const;
@@ -51,18 +54,16 @@ function savesData() {
 }
 const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-/** Parte la frase del panel alrededor de la palabra que rota. «Derecho laboral para empresas» →
-    antes «Derecho», l2 «para empresas»; «Labor law for companies» → la palabra va primero y «law»
-    queda con ella en el primer renglón. Si el panel cambió la frase y ya no la trae: frase fija. */
-function splitTagline(tagline: string, first: string) {
-  const m = new RegExp(`(^|\\s)(${escapeRe(first)})(?=[\\s,.;:]|$)`, "i").exec(tagline);
+/** La palabra que rota va al final de la frase: «Derecho laboral para empresas» → primer renglón
+    «Derecho laboral», segundo «para» + la palabra. Si la frase del panel ya no termina en ella: null. */
+function splitFinal(tagline: string, first: string) {
+  const t = tagline.trim();
+  const m = new RegExp(`(^|\\s)(${escapeRe(first)})[.]?$`, "i").exec(t);
   if (!m) return null;
-  const start = m.index + m[1].length;
-  const before = tagline.slice(0, start).trim();
-  const rest = tagline.slice(start + first.length).trim();
-  if (before) return { before, after: "", l2: rest };
-  const [w1 = "", ...more] = rest.split(/\s+/);
-  return { before: "", after: w1, l2: more.join(" ") };
+  const before = t.slice(0, m.index + m[1].length).trim().split(/\s+/);
+  if (before.length < 2) return null;
+  const pre2 = before.pop() as string;
+  return { l1: before.join(" "), pre2 };
 }
 
 export default function Telon({ lang }: { lang: V3Lang }) {
@@ -75,13 +76,13 @@ export default function Telon({ lang }: { lang: V3Lang }) {
   const txt = TXT[lang];
 
   const tagline = hero.tagline || "";
-  const parts = useMemo(() => splitTagline(tagline, txt.words[0]), [tagline, txt]);
+  const parts = useMemo(() => splitFinal(tagline, txt.words[0]), [tagline, txt]);
   const words = parts ? [...txt.words] : null;
   const wordsKey = words ? words.join("|") : "";
   const srTag = parts
     ? (() => {
         const list = `${txt.words.slice(0, -1).join(", ")} ${txt.and} ${txt.words[txt.words.length - 1]}`;
-        const s = [parts.before, list, parts.after, parts.l2].filter(Boolean).join(" ");
+        const s = [parts.l1, parts.pre2, list].filter(Boolean).join(" ");
         return s.charAt(0).toUpperCase() + s.slice(1);
       })()
     : tagline;
@@ -213,13 +214,12 @@ export default function Telon({ lang }: { lang: V3Lang }) {
               </h1>
               {parts ? (
                 <p className="sh-tag" aria-hidden="true" data-frase="a">
+                  <span className="sh-tag__l1">{parts.l1}</span>
                   <span className="sh-tag__l1">
-                    {parts.before ? <span className="sh-tag__pre">{parts.before}</span> : null}
+                    <span className="sh-tag__pre">{parts.pre2}</span>
                     {/* La palabra la escribe el módulo (rota); React no la toca */}
                     <span className="sh-tag__slot"><b className="sh-tag__w" /></span>
-                    {parts.after ? <span className="sh-tag__pre">{parts.after}</span> : null}
                   </span>
-                  {parts.l2 ? <span className="sh-tag__l2">{parts.l2}</span> : null}
                 </p>
               ) : (
                 <p className="sh-tag">{tagline}</p>

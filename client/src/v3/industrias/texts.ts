@@ -57,7 +57,9 @@ const es: IndustriasTexts = {
     alt: "Monterrey al atardecer, con el Cerro de la Silla sobre la ciudad",
     title: "Industrias que asesoramos",
     lead: "Conocemos su operación: turnos continuos, contratos colectivos, inspecciones y personal especializado.",
-    text: "Grupos industriales mexicanos, multinacionales y empresas de capital asiático, con plantas en Nuevo León y en otros estados del país.",
+    // «Asesoramos cuando menos a 500 empresas de estas diversas industrias» (Mario, junta del
+    // 6-11-2026): la cifra en lugar de nombres de clientes, que no se muestran
+    text: "Asesoramos a más de 500 empresas: grupos industriales mexicanos, multinacionales y empresas de capital asiático, con plantas en Nuevo León y en otros estados del país.",
   },
   indice: "Industrias",
   industrias: [
@@ -134,7 +136,7 @@ const en: IndustriasTexts = {
     alt: "Monterrey at sunset, with Cerro de la Silla above the city",
     title: "Industries we advise",
     lead: "We know how these operations work: continuous shifts, collective bargaining agreements, inspections and specialized personnel.",
-    text: "Mexican industrial groups, multinationals and Asian-owned companies, with plants in Nuevo León and in other states of Mexico.",
+    text: "We advise more than 500 companies: Mexican industrial groups, multinationals and Asian-owned companies, with plants in Nuevo León and in other states of Mexico.",
   },
   indice: "Industries",
   industrias: [

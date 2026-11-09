@@ -17,14 +17,17 @@ type OfficesCms = Record<string, { intro?: string; alt?: Record<string, string> 
 
 /* Orden y foto del panel de cada lugar del mosaico. La «biblioteca» de la demo es la foto del librero
    junto a la escalera (oficina-escalera en Medios). alt: la clave del texto alternativo en el panel
-   (sección «offices»); si no hay, el de la galería de Medios o el de la demo. */
+   (sección «offices»); si no hay, el de la galería de Medios o el de la demo.
+   Junta del 6-11-2026: la foto del área de trabajo (las sillas, con la escultura vista como reflejo en
+   el cristal) sale del mosaico: «es chido también, pero mejor es la escultura que está en el centro».
+   Su lugar lo toma la sala de juntas y la escultura completa pasa al centro de la última fila. */
 const FOTOS: { k: FotoClave; foto: MediaFoto; alt?: string; w: number; h: number; sizes: string }[] = [
   { k: "fachada", foto: "fachada", alt: "fachada", w: 1159, h: 900, sizes: "(min-width: 1416px) 720px, (min-width: 901px) 56vw, 92vw" },
   { k: "vestibulo", foto: "vestibulo", alt: "vestibulo", w: 1536, h: 1024, sizes: "(min-width: 1416px) 510px, (min-width: 901px) 40vw, (min-width: 561px) 46vw, 92vw" },
-  { k: "trabajo", foto: "areaTrabajo", alt: "areaTrabajo", w: 1536, h: 1024, sizes: "(min-width: 1416px) 510px, (min-width: 901px) 40vw, (min-width: 561px) 46vw, 92vw" },
-  { k: "escultura", foto: "escultura", alt: "escultura", w: 1024, h: 1536, sizes: "(min-width: 1416px) 300px, (min-width: 901px) 24vw, (min-width: 561px) 30vw, 92vw" },
-  { k: "biblioteca", foto: "escalera", w: 1536, h: 1024, sizes: "(min-width: 1416px) 410px, (min-width: 901px) 32vw, (min-width: 561px) 62vw, 92vw" },
-  { k: "mezanine", foto: "mezanine", w: 1536, h: 1024, sizes: "(min-width: 1416px) 510px, (min-width: 901px) 40vw, 92vw" },
+  { k: "sala", foto: "salaJuntas", w: 1536, h: 1024, sizes: "(min-width: 1416px) 510px, (min-width: 901px) 40vw, (min-width: 561px) 46vw, 92vw" },
+  { k: "biblioteca", foto: "escalera", w: 1536, h: 1024, sizes: "(min-width: 1416px) 410px, (min-width: 901px) 32vw, (min-width: 561px) 46vw, 92vw" },
+  { k: "escultura", foto: "escultura", alt: "escultura", w: 1024, h: 1536, sizes: "(min-width: 1416px) 410px, (min-width: 901px) 32vw, (min-width: 561px) 46vw, 92vw" },
+  { k: "mezanine", foto: "mezanine", w: 1536, h: 1024, sizes: "(min-width: 1416px) 410px, (min-width: 901px) 32vw, 92vw" },
 ];
 
 /* La entrada de la demo: cada foto se descubre de abajo hacia arriba, en orden, una sola vez. La clase
@@ -78,7 +81,7 @@ export function Oficinas({
     if (f.alt && officeAlt[f.alt]) return { alt: officeAlt[f.alt] };
     const g = media.officeGallery.find((x) => x.photo === f.foto);
     if (g && (language === "es" ? g.altEs : g.alt)) return { alt: language === "es" ? g.altEs : g.alt, en: language !== "es" && language !== "en" };
-    const txt = f.k === "mezanine" ? ct.altMezanine : ct.altBiblioteca;
+    const txt = f.k === "mezanine" ? ct.altMezanine : f.k === "sala" ? ct.altSala : ct.altBiblioteca;
     return { alt: txt, en: !nativo };
   };
 

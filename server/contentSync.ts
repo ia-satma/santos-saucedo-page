@@ -284,6 +284,8 @@ const PREVIOUS_CMS: Previous = {
   // El correo de /api/site-content: el de la semilla (siteContentData, sin tabla) queda debajo de este
   "contactData": {
     "email": ["b41dc652bccc39d88e05a30f"],
+    // reclutamiento@ no existe (junta del 6-11-2026): las postulaciones van a administracion@
+    "recruitmentEmail": ["2e6ab99d7278a4fb66edc2b8"],
   },
   "privacy": {
     "en.sections.11.content": ["fc84761004f219f5e3ebded6"],

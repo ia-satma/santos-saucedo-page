@@ -50,21 +50,24 @@ export const TEXTOS: Record<V3Lang, FirmaTextos> = {
     lamina: "Lámina",
     lugar: "San Pedro Garza García",
     carnero: {
-      h: "Preparados para el litigio",
+      // Junta del 6-11-2026: Mario leyó el carnero como «choque, litigio» y preguntó por qué; lo que lo
+      // convenció fue la otra lectura: va siempre hacia adelante y persiste hasta conseguir. La lámina
+      // la dice ella misma, porque el visitante no tendrá a nadie que se la explique.
+      h: "Siempre hacia adelante",
       p: [
-        "Preparamos cada asunto como si fuera a llegar a juicio. Esa preparación es la que respalda cada negociación: se negocia mejor cuando el caso ya está listo para defenderse.",
-        "Nuestra prioridad es la prevención. Si hay un conflicto, la empresa ya está lista.",
+        "El borrego cimarrón sube por las sierras del norte de México donde no parece haber camino. No retrocede ni se detiene hasta llegar. Así llevamos cada asunto: con paso firme y con persistencia, hasta conseguir el resultado.",
+        "Esa persistencia descansa en la preparación. Cada asunto se prepara como si fuera a llegar a juicio; por eso se negocia desde una posición firme y casi siempre se resuelve antes.",
       ],
       listaLabel: "Guías del plano y lo que significan para la firma",
       piezas: [
-        { nom: "Preparación de juicio", parte: "Cuerno", tag: "Cuerno", desc: "Cada asunto se arma como si fuera a llegar a juicio: hechos, documentos, testigos y estrategia. Esa preparación es la que resiste el impacto." },
-        { nom: "Negociación respaldada", parte: "Línea de impacto", tag: "Línea de impacto", desc: "Una negociación respaldada por una defensa bien preparada se sostiene mejor. La otra parte sabe que el asunto puede llegar a juicio." },
+        { nom: "Determinación", parte: "Cuerno", tag: "Cuerno", desc: "Cada asunto tiene un objetivo claro desde el primer día, y la firma no lo suelta hasta conseguirlo." },
+        { nom: "Sin retroceder", parte: "Línea de avance", tag: "Línea de avance", desc: "Ante un obstáculo, la firma no retrocede: busca el camino y sigue. Una negociación respaldada por un caso bien preparado avanza mejor." },
         { nom: "La prevención", parte: "Centro de masa", tag: "Centro de masa", desc: "El cumplimiento al día —contratos, reglamento interior, contrato colectivo e IMSS— es el peso que da estabilidad a la empresa antes de cualquier conflicto." },
-        { nom: "Un expediente en orden", parte: "Reacción del suelo", tag: "Reacción del suelo", desc: "La base sobre la que se apoya la defensa: documentos completos, firmados y localizables." },
-        { nom: "Listos si hay conflicto", parte: "Postura", tag: "Postura", desc: "Prevención primero. Si el conflicto llega, la empresa ya está de pie y preparada." },
+        { nom: "Paso firme", parte: "Apoyo en la roca", tag: "Apoyo en la roca", desc: "Un expediente en orden es la roca donde se apoya cada paso: documentos completos, firmados y localizables." },
+        { nom: "Persistencia", parte: "Postura", tag: "Postura", desc: "Prevención primero. Si el conflicto llega, la empresa ya está de pie, y la firma sigue con ella hasta el final." },
       ],
-      svgLabel: "Plano de un borrego cimarrón de perfil, con el cuerno en espiral trazado sobre sus líneas de construcción y guías que marcan la línea de impacto, el centro de masa, el peso, la reacción del suelo en las pezuñas y el ángulo de la postura.",
-      cajetin: "Preparados para el litigio",
+      svgLabel: "Plano de un borrego cimarrón de perfil, con el cuerno en espiral trazado sobre sus líneas de construcción y guías que marcan la línea de avance, el centro de masa, el peso, el apoyo de las pezuñas en la roca y el ángulo de la postura.",
+      cajetin: "Siempre hacia adelante",
       nota: "Borrego cimarrón (Ovis canadensis), de las sierras del norte de México.",
     },
     reaccion: {
@@ -105,21 +108,21 @@ export const TEXTOS: Record<V3Lang, FirmaTextos> = {
     lamina: "Plate",
     lugar: "San Pedro Garza García",
     carnero: {
-      h: "Prepared for litigation",
+      h: "Always forward",
       p: [
-        "We prepare every matter as if it were going to trial. That preparation is what stands behind every negotiation: one negotiates better when the case is already ready to be defended.",
-        "Our priority is prevention. If a dispute arises, the company is already prepared.",
+        "The bighorn sheep climbs the mountain ranges of northern Mexico where there seems to be no path. It does not turn back or stop until it gets there. That is how we carry every matter: with a steady step and with persistence, until the result is achieved.",
+        "That persistence rests on preparation. Every matter is prepared as if it were going to trial; that is why we negotiate from a firm position and most matters are resolved sooner.",
       ],
       listaLabel: "Guides on the drawing and what they mean for the firm",
       piezas: [
-        { nom: "Trial preparation", parte: "Horn", tag: "Horn", desc: "Every matter is built as if it were going to trial: facts, documents, witnesses and strategy. That preparation is what withstands the impact." },
-        { nom: "Negotiation with backing", parte: "Line of impact", tag: "Line of impact", desc: "A negotiation backed by a well-prepared defense holds up better. The other party knows the matter can go to trial." },
+        { nom: "Determination", parte: "Horn", tag: "Horn", desc: "Every matter has a clear objective from the first day, and the firm does not let go of it until it is achieved." },
+        { nom: "No turning back", parte: "Line of advance", tag: "Line of advance", desc: "In the face of an obstacle, the firm does not turn back: it finds the way and keeps going. A negotiation backed by a well-prepared case moves forward better." },
         { nom: "Prevention", parte: "Center of mass", tag: "Center of mass", desc: "Up-to-date compliance — contracts, internal work rules, the collective bargaining agreement and IMSS — is the weight that keeps the company stable before any dispute." },
-        { nom: "A file in order", parte: "Ground reaction", tag: "Ground reaction", desc: "The base on which the defense rests: documents that are complete, signed and easy to locate." },
-        { nom: "Ready if a dispute arises", parte: "Stance", tag: "Stance", desc: "Prevention first. If a dispute comes, the company is already on its feet and prepared." },
+        { nom: "A steady step", parte: "Footing on the rock", tag: "Footing on the rock", desc: "A file in order is the rock on which every step rests: documents that are complete, signed and easy to locate." },
+        { nom: "Persistence", parte: "Stance", tag: "Stance", desc: "Prevention first. If a dispute comes, the company is already on its feet, and the firm stays with it to the end." },
       ],
-      svgLabel: "Drawing of a bighorn sheep in profile, with its spiral horn traced over the construction lines and guides that mark the line of impact, the center of mass, the weight, the ground reaction at the hooves and the angle of the stance.",
-      cajetin: "Prepared for litigation",
+      svgLabel: "Drawing of a bighorn sheep in profile, with its spiral horn traced over the construction lines and guides that mark the line of advance, the center of mass, the weight, the footing of the hooves on the rock and the angle of the stance.",
+      cajetin: "Always forward",
       nota: "Bighorn sheep (Ovis canadensis), from the mountain ranges of northern Mexico.",
     },
     reaccion: {
