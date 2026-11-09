@@ -123,7 +123,7 @@ async function translateObject(source: unknown, targetLanguage: LanguageCode): P
   return output;
 }
 
-async function saveLocalizedSection(section: string, source: unknown, targetLanguage: LanguageCode) {
+async function saveLocalizedSection(section: string, source: unknown, targetLanguage: LanguageCode, editorialTranslation?: unknown) {
   const key = `${LOCALIZED_PREFIX}${section}.${targetLanguage}`;
   const hash = sourceHash(source);
   const [existing] = await db.select({ value: siteConfig.value }).from(siteConfig).where(eq(siteConfig.key, key)).limit(1);
@@ -135,7 +135,9 @@ async function saveLocalizedSection(section: string, source: unknown, targetLang
   } catch {
     // Regenerate malformed rows below.
   }
-  const translated = await translateObject(source, targetLanguage);
+  const translated = editorialTranslation !== undefined
+    ? editorialTranslation
+    : await translateObject(source, targetLanguage);
   const previousRevision = previous?.status === "published" && previous.content
     ? {
         sourceHash: previous.sourceHash,
@@ -290,8 +292,9 @@ async function main() {
     console.log(`[translate-all] iniciando idioma ${target}`);
     for (const [section, content] of sectionEntries) {
       const source = (content as Record<string, any>).es || (content as Record<string, any>).en;
+      const existingEditorialTranslation = (content as Record<string, any>)[target];
       try {
-        if (await saveLocalizedSection(section, source, target)) sections++;
+        if (await saveLocalizedSection(section, source, target, existingEditorialTranslation)) sections++;
       } catch (error) {
         errors++;
         await saveLocalizedFailure(section, source, target, error);
