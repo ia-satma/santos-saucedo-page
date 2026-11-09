@@ -9,8 +9,6 @@
 import type { V3Lang } from "@/v3/shared";
 import { v3Asset } from "../asset";
 
-export type Industria = { clave: string; img: string; pos: string; nombre: string; linea: string; alt: string };
-
 export const homeCopy = {
   es: {
     intro: {
@@ -29,32 +27,7 @@ export const homeCopy = {
     industrias: {
       titulo: "Industrias que asesoramos",
       boton: "Ver las industrias",
-      items: [
-        {
-          clave: "bebidas", img: v3Asset("/v3/c-ind-bebidas.webp"), pos: "40% 50%",
-          nombre: "Refresqueras y bebidas",
-          linea: "Contratos colectivos, centros de distribución y personal de reparto en operación continua.",
-          alt: "Botellas verdes en la línea de llenado de una planta embotelladora",
-        },
-        {
-          clave: "automotriz", img: v3Asset("/v3/c-ind-automotriz.webp"), pos: "64% 60%",
-          nombre: "Automotriz y manufactura",
-          linea: "Relaciones colectivas, inspecciones y cumplimiento en plantas con varios turnos.",
-          alt: "Carrocería de una camioneta en la línea de ensamble",
-        },
-        {
-          clave: "acero", img: v3Asset("/v3/c-ind-acero.webp"), pos: "40% 55%",
-          nombre: "Acero",
-          linea: "Seguridad e higiene, riesgos de trabajo y relaciones sindicales en procesos que no se detienen.",
-          alt: "Colada de acero fundido entre chispas en una acería",
-        },
-        {
-          clave: "energia", img: v3Asset("/v3/c-ind-energia.webp"), pos: "62% 70%",
-          nombre: "Energía y recursos naturales",
-          linea: "Servicios especializados (REPSE), contratistas y cumplimiento en proyectos de generación y transmisión.",
-          alt: "Torres de transmisión eléctrica al atardecer",
-        },
-      ] as Industria[],
+      ver: "Ver la industria",
     },
     socios: {
       boton: "Conozca a los socios y al equipo",
@@ -77,32 +50,7 @@ export const homeCopy = {
     industrias: {
       titulo: "Industries we advise",
       boton: "View the industries",
-      items: [
-        {
-          clave: "bebidas", img: v3Asset("/v3/c-ind-bebidas.webp"), pos: "40% 50%",
-          nombre: "Soft drinks and beverages",
-          linea: "Collective agreements, distribution centers and delivery staff in continuous operation.",
-          alt: "Green bottles on the filling line of a bottling plant",
-        },
-        {
-          clave: "automotriz", img: v3Asset("/v3/c-ind-automotriz.webp"), pos: "64% 60%",
-          nombre: "Automotive and manufacturing",
-          linea: "Collective relations, inspections and compliance in plants that run several shifts.",
-          alt: "A pickup truck body on the assembly line",
-        },
-        {
-          clave: "acero", img: v3Asset("/v3/c-ind-acero.webp"), pos: "40% 55%",
-          nombre: "Steel",
-          linea: "Health and safety, occupational risks and union relations in processes that never stop.",
-          alt: "Molten steel pouring amid sparks in a steel mill",
-        },
-        {
-          clave: "energia", img: v3Asset("/v3/c-ind-energia.webp"), pos: "62% 70%",
-          nombre: "Energy and natural resources",
-          linea: "Specialized services (REPSE), contractors and compliance in generation and transmission projects.",
-          alt: "Power transmission towers at dusk",
-        },
-      ] as Industria[],
+      ver: "View the industry",
     },
     socios: {
       boton: "Meet the partners and the team",
