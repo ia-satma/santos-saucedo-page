@@ -51,3 +51,10 @@
 html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-pausa, .v3 .mk-js .mk-telon:not(.is-cubre) .sh-pausa{
   color:var(--sobre-azul); border-color:rgba(243,241,234,.45); background-color:rgba(0,0,0,.18);
 }
+
+/* Degradado tipo Adinstra (su manual de identidad: #145487 → #0F3F6B → #192F50), pedido del 9-11-2026.
+   Arriba es el mismo Azul noche del menú, para que encabezado y portada se lean como un solo bloque,
+   y baja aclarando hacia los azules del manual detrás de la §. */
+.v3 .mk-telon__escena{
+  background:linear-gradient(180deg, rgb(var(--ss-navy-rgb, 12 35 64)) 0, rgb(var(--ss-navy-rgb, 12 35 64)) var(--ss-header-h, 72px), #0F3F6B 62%, #145487 100%);
+}
