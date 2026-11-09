@@ -43,3 +43,11 @@
   top:calc((var(--mk-H) - var(--mk-E)) / 2); left:calc(var(--mk-W) / 2 - 50vw);
   width:100vw; height:var(--mk-E);
 }
+
+/* Portada sobre Azul noche, el mismo azul del menú (junta del 9-11-2026): la § cerrada ya no va
+   sobre el hueso. La pausa, que con la § cerrada iba en azul sobre el claro, va en claro desde el
+   primer cuadro. */
+.v3 .mk-telon, .v3 .mk-telon__escena{background:rgb(var(--ss-navy-rgb, 12 35 64))}
+html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-pausa, .v3 .mk-js .mk-telon:not(.is-cubre) .sh-pausa{
+  color:var(--sobre-azul); border-color:rgba(243,241,234,.45); background-color:rgba(0,0,0,.18);
+}
