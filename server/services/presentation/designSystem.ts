@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'node:path';
 import { TYPOGRAPHY, TYPOGRAPHY_ASSETS } from '../../../shared/typography';
 import type { PresentationTemplate, RenderOptions } from './contracts';
 
@@ -19,14 +20,26 @@ let svgFontDefsCache: string | null = null;
 
 export function svgFontDefs(): string {
   if (svgFontDefsCache) return svgFontDefsCache;
-  const data = (filePath: string) => fs.readFileSync(filePath).toString('base64');
+  const data = (filePath: string) => {
+    const extension = path.extname(filePath).toLowerCase();
+    const woff2 = extension === '.woff2';
+    return {
+      encoded: fs.readFileSync(filePath).toString('base64'),
+      mime: woff2 ? 'font/woff2' : 'font/ttf',
+      format: woff2 ? 'woff2' : 'truetype',
+    };
+  };
+  const regular = data(TYPOGRAPHY_ASSETS.gelasioRegular);
+  const bold = data(TYPOGRAPHY_ASSETS.gelasioBold);
+  const body = data(TYPOGRAPHY_ASSETS.interRegular);
+  const bodyItalic = data(TYPOGRAPHY_ASSETS.interItalic);
   svgFontDefsCache = `<defs><style><![CDATA[
-@font-face{font-family:'Publico Text';src:url(data:font/ttf;base64,${data(TYPOGRAPHY_ASSETS.gelasioRegular)}) format('truetype');font-style:normal;font-weight:400}
-@font-face{font-family:'Publico Text';src:url(data:font/ttf;base64,${data(TYPOGRAPHY_ASSETS.gelasioBold)}) format('truetype');font-style:normal;font-weight:700}
-@font-face{font-family:'Geomanist';src:url(data:font/ttf;base64,${data(TYPOGRAPHY_ASSETS.interRegular)}) format('truetype');font-style:normal;font-weight:400}
-@font-face{font-family:'Geomanist';src:url(data:font/ttf;base64,${data(TYPOGRAPHY_ASSETS.interRegular)}) format('truetype');font-style:normal;font-weight:500}
-@font-face{font-family:'Geomanist';src:url(data:font/ttf;base64,${data(TYPOGRAPHY_ASSETS.interItalic)}) format('truetype');font-style:italic;font-weight:400}
-@font-face{font-family:'Geomanist';src:url(data:font/ttf;base64,${data(TYPOGRAPHY_ASSETS.interItalic)}) format('truetype');font-style:italic;font-weight:500}
+@font-face{font-family:'Publico Text';src:url(data:${regular.mime};base64,${regular.encoded}) format('${regular.format}');font-style:normal;font-weight:400}
+@font-face{font-family:'Publico Text';src:url(data:${bold.mime};base64,${bold.encoded}) format('${bold.format}');font-style:normal;font-weight:700}
+@font-face{font-family:'Geomanist';src:url(data:${body.mime};base64,${body.encoded}) format('${body.format}');font-style:normal;font-weight:400}
+@font-face{font-family:'Geomanist';src:url(data:${body.mime};base64,${body.encoded}) format('${body.format}');font-style:normal;font-weight:500}
+@font-face{font-family:'Geomanist';src:url(data:${bodyItalic.mime};base64,${bodyItalic.encoded}) format('${bodyItalic.format}');font-style:italic;font-weight:400}
+@font-face{font-family:'Geomanist';src:url(data:${bodyItalic.mime};base64,${bodyItalic.encoded}) format('${bodyItalic.format}');font-style:italic;font-weight:500}
 ]]></style></defs>`;
   return svgFontDefsCache;
 }
