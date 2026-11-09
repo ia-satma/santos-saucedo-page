@@ -28,6 +28,24 @@ const SKIP_KEYS = /(?:^|\.)(?:id|slug|url|href|path|imageUrl|video|poster|email|
 
 type Path = (string | number)[];
 type Flat = { key: string; path: Path; text: string };
+type ProtectedText = { safe: string; restore: (value: string) => string };
+
+function protectSensitiveTokens(text: string): ProtectedText {
+  const values: string[] = [];
+  const token = (value: string) => {
+    const index = values.push(value) - 1;
+    return `[[KEEP_${index}]]`;
+  };
+  // Public contact data is restored after translation. It never crosses the
+  // provider boundary, so the AI governance gate can still block real secrets.
+  const safe = text
+    .replace(/\b[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}\b/gi, token)
+    .replace(/(?:\+?\d[\d\s().-]{7,}\d)/g, token);
+  return {
+    safe,
+    restore: (value: string) => value.replace(/\[\[KEEP_(\d+)\]\]/g, (_match, index) => values[Number(index)] || _match),
+  };
+}
 
 function isRecord(value: unknown): value is Record<string, any> {
   return !!value && typeof value === "object" && !Array.isArray(value);
@@ -65,7 +83,8 @@ function sourceHash(value: unknown) {
 
 async function translateObject(source: unknown, targetLanguage: LanguageCode): Promise<any> {
   if (typeof source === "string") {
-    const result = await translateLegalText(source, SOURCE_LANGUAGE, targetLanguage);
+    const protectedText = protectSensitiveTokens(source);
+    const result = protectedText.restore(await translateLegalText(protectedText.safe, SOURCE_LANGUAGE, targetLanguage));
     if (!result.trim()) {
       throw new Error(`La IA no devolvió la traducción (${targetLanguage}).`);
     }
@@ -79,21 +98,22 @@ async function translateObject(source: unknown, targetLanguage: LanguageCode): P
   const translated: Record<string, string> = {};
   for (let index = 0; index < fields.length; index += 40) {
     const chunk = fields.slice(index, index + 40);
+    const protectedFields = chunk.map((field) => ({ ...field, protected: protectSensitiveTokens(field.text) }));
     const result = await translateMultipleTexts(
-      chunk.map(({ key, text }) => ({ key, text })),
+      protectedFields.map(({ key, protected: value }) => ({ key, text: value.safe })),
       SOURCE_LANGUAGE,
       targetLanguage,
     );
-    const unchanged = chunk.filter((field) => result[field.key]?.trim() === field.text.trim());
+    const unchanged = protectedFields.filter((field) => result[field.key]?.trim() === field.protected.safe.trim());
     const isLikelyProperField = (field: Flat) => /(?:titleFirst|titleSecond|place\.\d+)$/i.test(field.key);
     if (unchanged.length === chunk.length && unchanged.some((field) => !isLikelyProperField(field))) {
       throw new Error(`La IA devolvió el bloque fuente sin traducir (${targetLanguage}).`);
     }
-    for (const field of chunk) {
+    for (const field of protectedFields) {
       if (typeof result[field.key] !== "string" || !result[field.key].trim()) {
         throw new Error(`La IA no devolvió la traducción ${field.key} (${targetLanguage}).`);
       }
-      translated[field.key] = result[field.key];
+      translated[field.key] = field.protected.restore(result[field.key]);
     }
   }
   const output = structuredClone(source);
