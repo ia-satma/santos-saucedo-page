@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
-import { TESTIMONIAL_QUOTE_MAX } from "@shared/schema";
+import { TESTIMONIAL_QUOTE_MAX } from "@shared/constants";
 import { V3Main } from "@/v3/shared";
 import { Flecha } from "@/v3/paginas-extra/piezas";
 import { useTestimonialsCopy } from "./Testimonials";

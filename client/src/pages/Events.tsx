@@ -14,7 +14,7 @@ import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { TextLink } from "@/components/home26/primitives";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import type { Event } from "@shared/schema";
-import { eventTypes } from "@shared/schema";
+import { eventTypes } from "@shared/constants";
 
 const getEventTypeLabel = (eventType: string, language: string): string => {
   const type = eventTypes.find(t => t.value === eventType);

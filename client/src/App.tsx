@@ -1,5 +1,4 @@
 import CookieBanner from "@/components/CookieBanner";
-import { AdminShell } from "@/features/admin/AdminShell";
 import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from "wouter";
 import { useViewTransitionLocation } from "@/lib/viewTransitionLocation";
 import { useEffect, lazy, Suspense } from "react";
@@ -54,6 +53,8 @@ function ScrollToTop() {
 }
 
 import Home from "@/pages/Home";
+// El marco del panel solo se descarga en /admin: el visitante del sitio no lo baja.
+const AdminShell = lazy(() => import("@/features/admin/AdminShell").then((m) => ({ default: m.AdminShell })));
 const NotFound = lazy(() => import("@/pages/not-found"));
 const BarraTelefono = lazy(() => import("@/v3/contacto/BarraTelefono"));
 
@@ -330,7 +331,7 @@ function Router() {
     </Suspense>
   );
   const administrative = location.startsWith("/admin") && !["/admin/login","/admin/setup"].includes(location) && !location.startsWith("/admin/preview/");
-  return administrative ? <AdminShell>{routes}</AdminShell> : routes;
+  return administrative ? <Suspense fallback={null}><AdminShell>{routes}</AdminShell></Suspense> : routes;
 }
 
 // reducedMotion="user": con "reducir movimiento" del sistema, framer-motion deja de mover

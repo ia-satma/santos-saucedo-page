@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { TESTIMONIAL_QUOTE_MAX, type Testimonial, type TestimonialInvite } from "@shared/schema";
+import { TESTIMONIAL_QUOTE_MAX } from "@shared/constants";
+import type { Testimonial, TestimonialInvite } from "@shared/schema";
 
 // Testimonios en el panel: invitaciones de un solo uso, moderación y orden. Nada se publica sin
 // la aprobación del administrador principal (super_admin); los editores generan invitaciones,

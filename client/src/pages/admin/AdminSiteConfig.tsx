@@ -10,7 +10,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { useAdminAuth, adminApiRequest } from '@/lib/adminAuth';
 import { queryClient } from '@/lib/queryClient';
 import { cmsSections, type CmsSection, type CmsValue } from '@shared/cms';
-import { SUPPORTED_LANGUAGES } from '@shared/schema';
+import { SUPPORTED_LANGUAGES } from "@shared/constants";
 import { Button } from '@/components/ui/button';
 import { ConfigFields } from '@/features/site-config/ConfigFields';
 import { notifyCmsSaved } from '@/hooks/useCmsContent';

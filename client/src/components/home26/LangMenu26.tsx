@@ -1,7 +1,7 @@
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { SUPPORTED_LANGUAGES, type LanguageCode } from "@shared/schema";
+import { SUPPORTED_LANGUAGES, type LanguageCode } from "@shared/constants";
 import { chrome26 } from "./chrome26";
 
 // ES y EN van a la vista; los otros 8 (orden de shared/schema) van en la lista compacta

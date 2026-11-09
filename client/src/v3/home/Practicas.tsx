@@ -5,6 +5,7 @@
    #0F3F6B con filete lima solo en ese cuadro. Con toque o bajo 768 px, cada cuadro lleva su foto y un
    toque abre la práctica. Las cuatro prácticas, sus nombres y resúmenes vienen de la base
    (/api/practice-groups, editable en el panel); mientras responde, los del contenido del Inicio. */
+import { useFotosDiferidas } from "@/v3/fotosDiferidas";
 import { useMemo, useRef, type ReactNode } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -60,6 +61,8 @@ export function PracticasBaker({ lang, items, pagina }: { lang: V3Lang; items: P
   useV3Module(ref, initPracticas, [lang, key]);
   const tituloId = pagina?.id ?? "pr-practicas-titulo";
   const Nombre = pagina ? "h2" : "h3";
+  // En el Inicio las fotos esperan a la portada; en «Prácticas» este bloque es la cabecera y van de inmediato
+  const fotos = useFotosDiferidas(!pagina);
 
   return (
     <section ref={ref} className={`pr-practicas sobre-azul hm-practicas${pagina ? " pg-bk" : ""}`} id="pr-practicas" aria-labelledby={tituloId} data-testid={pagina ? "section-practice-groups-hero" : undefined}>
@@ -69,7 +72,7 @@ export function PracticasBaker({ lang, items, pagina }: { lang: V3Lang; items: P
         {items.map((p) =>
           p.img ? (
             <div key={p.slug} className="pr-bk-fondo" data-clave={p.clave}>
-              <img data-no-parallax="" src={p.img} srcSet={v3SrcSet(p.img, p.w)} sizes={FONDO_SIZES} alt="" width={p.w} height={p.h} decoding="async" loading="lazy" />
+              <img data-no-parallax="" src={fotos ? p.img : undefined} srcSet={fotos ? v3SrcSet(p.img, p.w) : undefined} sizes={FONDO_SIZES} alt="" width={p.w} height={p.h} decoding="async" loading="lazy" />
             </div>
           ) : null,
         )}
@@ -107,7 +110,7 @@ export function PracticasBaker({ lang, items, pagina }: { lang: V3Lang; items: P
                     del fondo CSS de demo.css (que no se difiere); con cursor fino no se muestra ni se
                     descarga. Mismo encuadre y velo (home.css). */}
                 {p.img ? (
-                  <img className="hm-bk-foto" data-no-parallax="" src={p.img} srcSet={v3SrcSet(p.img, p.w)} sizes={CUADRO_SIZES} alt="" width={p.w} height={p.h} loading="lazy" decoding="async" />
+                  <img className="hm-bk-foto" data-no-parallax="" src={fotos ? p.img : undefined} srcSet={fotos ? v3SrcSet(p.img, p.w) : undefined} sizes={CUADRO_SIZES} alt="" width={p.w} height={p.h} loading="lazy" decoding="async" />
                 ) : null}
                 <Nombre
                   className="pr-bk-nombre"

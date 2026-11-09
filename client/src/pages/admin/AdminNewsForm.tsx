@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { newsCategories } from "@shared/schema";
+import { newsCategories } from "@shared/constants";
 import { sourceLabel } from "@/lib/shareNews";
 const today = () => {
   const d = new Date();

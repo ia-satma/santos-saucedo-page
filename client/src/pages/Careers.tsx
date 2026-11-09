@@ -4,7 +4,8 @@
 // la página siguiente. Los textos son los de siempre (10 idiomas, panel: "careers"); el formulario y su envío
 // (CV en PDF, consentimiento, panel "forms") están en v3/paginas-extra/Candidatura.tsx.
 import { useQuery } from "@tanstack/react-query";
-import { jobTypes, type JobOpening } from "@shared/schema";
+import { jobTypes } from "@shared/constants";
+import type { JobOpening } from "@shared/schema";
 import { Link } from "wouter";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
 import { useCmsContent } from "@/hooks/useCmsContent";

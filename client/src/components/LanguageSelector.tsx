@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { SUPPORTED_LANGUAGES, type LanguageCode } from "@shared/schema";
+import { SUPPORTED_LANGUAGES, type LanguageCode } from "@shared/constants";
 import { cn } from "@/lib/utils";
 
 interface LanguageSelectorProps {

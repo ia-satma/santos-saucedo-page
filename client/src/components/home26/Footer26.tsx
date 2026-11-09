@@ -3,7 +3,7 @@ import { useCmsMedia } from "@/lib/cmsMedia";
 import { SiteLink as Link } from "./SiteLink";
 import { Settings } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { SUPPORTED_LANGUAGES } from "@shared/schema";
+import { SUPPORTED_LANGUAGES } from "@shared/constants";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import { useOfficeLabel } from "@/lib/officeLabel";
 import { useChrome26 } from "./chrome26";

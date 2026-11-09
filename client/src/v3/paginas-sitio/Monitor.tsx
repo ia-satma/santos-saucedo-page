@@ -13,7 +13,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { formatNewsDate } from "@/lib/newsDate";
 import { isStaticSite } from "@/lib/queryClient";
-import { newsCategories, type LanguageCode, type News } from "@shared/schema";
+import { newsCategories, type LanguageCode } from "@shared/constants";
+import type { News } from "@shared/schema";
 import { getHomeMonitorImage } from "@shared/monitorEditorial";
 import { MONITOR_SUBSCRIBE, MONITOR_UI, type MonitorStrings } from "./textos";
 
