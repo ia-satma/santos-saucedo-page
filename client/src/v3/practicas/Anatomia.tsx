@@ -33,7 +33,7 @@ export function Anatomia({ sheets, nums, lang, attrs }: {
     let vivo = true;
     let limpiar: (() => void) | undefined;
     const dejar = cerca(el, () => {
-      import("./anatomia.js").then((m) => {
+      import("./anatomia-runtime.js").then((m) => {
         if (!vivo) return;
         m.setThreeUrl(`${import.meta.env.BASE_URL}v3/libs/three.min.js`);
         limpiar = m.initAnatomia(el);

@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "NODE_ENV=development node --import tsx server/index.ts",
+    "dev:frontend": "node scripts/dev-frontend.mjs",
     "start:workspace": "node scripts/replit-preflight.mjs && NODE_ENV=development node --import tsx server/index.ts",
     "build": "node --import tsx script/build.ts",
     "build:pages": "VITE_STATIC_SITE=true VITE_BASE_PATH=/santos-saucedo-page/ vite build && node --import tsx script/generate-static-api.ts",

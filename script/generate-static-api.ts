@@ -14,7 +14,11 @@ import {
 import { isNamedOnTeamPage, toPublicTeamMember, toPublicTeamProfile } from "../shared/teamVisibility";
 import { isPublicNews, toPublicNews } from "../shared/publicNews";
 
-const outDir = path.resolve("dist/public");
+// En producción estática escribimos en dist/public. Para trabajar el frontend sin
+// backend usamos `--frontend`, que deja el mismo snapshot en client/public para que
+// Vite lo sirva directamente desde 5173.
+const frontendPreview = process.argv.includes("--frontend");
+const outDir = path.resolve(frontendPreview ? "client/public" : "dist/public");
 const apiDir = path.join(outDir, "static-api");
 const snapshotDate = "2026-07-07T00:00:00.000Z";
 
@@ -193,6 +197,9 @@ async function writeSitemap() {
 }
 
 async function generate() {
+  // Regenerar el snapshot elimina archivos auxiliares de macOS y evita mezclar
+  // datos de una ejecución anterior con la vista pública actual.
+  await rm(apiDir, { recursive: true, force: true });
   await mkdir(apiDir, { recursive: true });
 
   // Mismo formato que /api/detect-language (solo Accept-Language; en Pages no se consulta)
@@ -200,6 +207,8 @@ async function generate() {
   await writeJson("site-content.json", { ...siteContentData, ...cmsDefaults.contactData as object });
   await writeJson("site-config.json", {});
   await writeJson("jobs.json", []);
+  await writeJson("events.json", []);
+  await writeJson("events/upcoming.json", []);
   await writeJson("stats.json", statsData);
   await writeJson("news.json", publishedNews);
   await writeJson("news/published.json", publishedNews);
@@ -261,7 +270,9 @@ async function generate() {
   // Respaldo de GitHub Pages para rutas del SPA: se sirve con estado 404, así que ninguna
   // ruta sin archivo propio (tampoco /experience, /articles ni /events, que el cliente
   // redirige) queda como página indexable.
-  await copyFile(path.join(outDir, "index.html"), path.join(outDir, "404.html"));
+  if (!frontendPreview) {
+    await copyFile(path.join(outDir, "index.html"), path.join(outDir, "404.html"));
+  }
 }
 
 generate().catch((error) => {

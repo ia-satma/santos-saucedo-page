@@ -26,4 +26,9 @@ attached_assets/team_photos/*
 # Official antivirus definitions are prepared in the deployment build artifact.
 /dist/clamav/
 
+# Snapshot generado para `npm run dev:frontend`.
+/client/public/static-api/
+/client/public/team_photos/
+/client/public/sitemap.xml
+
 .cache/clamav/
