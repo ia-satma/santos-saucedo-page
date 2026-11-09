@@ -1,7 +1,7 @@
 /* Bandas del Inicio v3 (demo aprobada el 5-11-2026, vista #inicio): la firma en una frase con sus
    cifras sobre una línea de cota (sh-intro), las industrias (sh-indi) y la filosofía (sh-filo). Mismas
    clases y estructura que la demo para que demo.css las pinte sin cambios. */
-import { useRef, useState, type ReactNode } from "react";
+import { useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { Link } from "wouter";
 import defaults from "@shared/cms-defaults.json";
 import { useCmsContent } from "@/hooks/useCmsContent";
@@ -11,6 +11,7 @@ import { keepFirmName } from "@/lib/firmName";
 import { homeCopy } from "./copy";
 import { INDUSTRIAS_TEXTS } from "@/v3/industrias/texts";
 import { useFotosDiferidas } from "@/v3/fotosDiferidas";
+import { PREVIA_INDUSTRIA } from "@/v3/home/industriasPrevia";
 import { initFilo } from "./scripts";
 import "./home.css";
 import { v3Asset } from "../asset";
@@ -82,9 +83,15 @@ export function IndustriasBand({ lang }: { lang: V3Lang }) {
             return (
               <li key={it.id} className={on ? "hm-acord__it is-on" : "hm-acord__it"}
                 onPointerEnter={(e) => { if (e.pointerType === "mouse") setAbierta(i); }}>
-                <img className="hm-acord__foto" data-no-parallax="" src={fotos ? it.img : undefined} srcSet={fotos ? v3SrcSet(it.img, 2000) : undefined}
-                  sizes="(max-width: 1440px) 100vw, 1440px" alt="" width={it.w} height={it.h} loading="lazy"
-                  decoding="async" style={{ objectPosition: it.pos }} />
+                {/* Debajo, la vista previa diminuta de la misma foto (ya viene en el código); encima, la foto
+                    real, que entra con un fundido al llegar. La franja abierta pide su foto primero. */}
+                <span className="hm-acord__foto" aria-hidden="true"
+                  style={{ "--previa": PREVIA_INDUSTRIA[it.id] ? `url("${PREVIA_INDUSTRIA[it.id]}")` : "none", "--previa-pos": it.pos } as CSSProperties}>
+                  <img data-no-parallax="" src={fotos ? it.img : undefined} srcSet={fotos ? v3SrcSet(it.img, 2000) : undefined}
+                    sizes="(max-width: 1440px) 100vw, 1440px" alt="" width={it.w} height={it.h} loading="lazy"
+                    {...{ fetchpriority: on ? "high" : "low" }} decoding="async" style={{ objectPosition: it.pos }}
+                    onLoad={(e) => { e.currentTarget.dataset.lista = ""; }} />
+                </span>
                 <button type="button" className="hm-acord__cab" aria-expanded={on} aria-controls={panel}
                   onClick={() => setAbierta(i)} onFocus={() => setAbierta(i)}>
                   <span className="hm-acord__num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>

@@ -253,11 +253,22 @@
 }
 .v3 .hm-acord__it.is-on{ height: var(--hm-a-o) }
 .v3 .hm-acord__foto{
-  position: absolute; inset: 0; z-index: -2;
-  width: 100%; height: 100%; object-fit: cover;
+  position: absolute; inset: 0; z-index: -2; overflow: hidden;
   transform: scale(1.08);
   transition: transform 1200ms var(--ease-out);
 }
+/* La vista previa (32 px de la misma foto), desenfocada, mientras llega la foto real */
+.v3 .hm-acord__foto::before{
+  content: ""; position: absolute; inset: -32px;
+  background: var(--previa) var(--previa-pos, 50% 50%) / cover no-repeat;
+  filter: blur(18px);
+}
+.v3 .hm-acord__foto:has(img[data-lista])::before{ opacity: 0; transition: opacity 0s linear 760ms }  /* se va cuando la foto ya cubrió */
+.v3 .hm-acord__foto img{
+  position: relative; display: block; width: 100%; height: 100%; object-fit: cover;
+  opacity: 0; transition: opacity 700ms var(--ease-out);
+}
+.v3 .hm-acord__foto img[data-lista]{ opacity: 1 }
 .v3 .hm-acord__it.is-on .hm-acord__foto{ transform: scale(1) }
 /* El velo: cerrada, casi sólido (la foto apenas asoma); abierta, se retira hacia la derecha para
    que la foto se lea y el texto, a la izquierda, siga sobre azul. */
@@ -331,11 +342,11 @@
     background: linear-gradient(0deg, rgba(12,35,64,.96) 0%, rgba(12,35,64,.8) 45%, rgba(12,35,64,.18) 70%, rgba(12,35,64,.5) 86%, rgba(12,35,64,.85) 100%);
   }
 }
-html.rm .v3 .hm-acord__it, html.rm .v3 .hm-acord__foto, html.rm .v3 .hm-acord__it::before,
+html.rm .v3 .hm-acord__it, html.rm .v3 .hm-acord__foto, html.rm .v3 .hm-acord__foto img, html.rm .v3 .hm-acord__it::before,
 html.rm .v3 .hm-acord__it::after{ transition: none }
 html.rm .v3 .hm-acord__panel{ animation: none }
 @media (prefers-reduced-motion: reduce){
-  .v3 .hm-acord__it, .v3 .hm-acord__foto, .v3 .hm-acord__it::before, .v3 .hm-acord__it::after{ transition: none }
+  .v3 .hm-acord__it, .v3 .hm-acord__foto, .v3 .hm-acord__foto img, .v3 .hm-acord__it::before, .v3 .hm-acord__it::after{ transition: none }
   .v3 .hm-acord__panel{ animation: none }
 }
 .v3 .hm-acord__asuntos{
