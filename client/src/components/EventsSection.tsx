@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import type { Event, LanguageCode } from "@shared/schema";
-import { eventTypes } from "@shared/schema";
+import { eventTypes } from "@shared/constants";
 
 interface EventsSectionProps {
   language: "en" | "es" | "de" | "zh" | "ko" | "ja" | "ar" | "ru" | "fr" | "it";

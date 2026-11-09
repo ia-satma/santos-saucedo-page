@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { SUPPORTED_LANGUAGES, type LanguageCode, type SupportedLanguage } from "@shared/schema";
+import { SUPPORTED_LANGUAGES, type LanguageCode, type SupportedLanguage } from "@shared/constants";
 import { isStaticSite } from "@/lib/queryClient";
 
 type DisplayLanguage = "en" | "es";

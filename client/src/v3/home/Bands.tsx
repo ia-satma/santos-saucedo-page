@@ -10,6 +10,7 @@ import { useV3Lang, useV3Module, v3SrcSet, type V3Lang } from "@/v3/shared";
 import { keepFirmName } from "@/lib/firmName";
 import { homeCopy } from "./copy";
 import { INDUSTRIAS_TEXTS } from "@/v3/industrias/texts";
+import { useFotosDiferidas } from "@/v3/fotosDiferidas";
 import { initFilo } from "./scripts";
 import "./home.css";
 import { v3Asset } from "../asset";
@@ -66,6 +67,7 @@ export function IndustriasBand({ lang }: { lang: V3Lang }) {
   const t = homeCopy[lang].industrias;
   const items = INDUSTRIAS_TEXTS[lang].industrias;
   const [abierta, setAbierta] = useState(0);
+  const fotos = useFotosDiferidas();
   return (
     <section className="sh-indi" aria-labelledby="ini-ind-h">
       <div className="sh-wrap">
@@ -80,7 +82,7 @@ export function IndustriasBand({ lang }: { lang: V3Lang }) {
             return (
               <li key={it.id} className={on ? "hm-acord__it is-on" : "hm-acord__it"}
                 onPointerEnter={(e) => { if (e.pointerType === "mouse") setAbierta(i); }}>
-                <img className="hm-acord__foto" data-no-parallax="" src={it.img} srcSet={v3SrcSet(it.img, 2000)}
+                <img className="hm-acord__foto" data-no-parallax="" src={fotos ? it.img : undefined} srcSet={fotos ? v3SrcSet(it.img, 2000) : undefined}
                   sizes="(max-width: 1440px) 100vw, 1440px" alt="" width={it.w} height={it.h} loading="lazy"
                   decoding="async" style={{ objectPosition: it.pos }} />
                 <button type="button" className="hm-acord__cab" aria-expanded={on} aria-controls={panel}
@@ -111,10 +113,11 @@ export function FilosofiaBand({ lang }: { lang: V3Lang }) {
   const ref = useRef<HTMLElement>(null);
   const c = useCmsContent("home", home26)[lang].creemos;
   useV3Module(ref, initFilo);
+  const fotos = useFotosDiferidas();
   return (
     <section ref={ref} className="sh-filo sobre-azul" aria-labelledby="ini-filo-h">
       <figure className="sh-filo__foto" aria-hidden="true">
-        <img data-no-parallax="" src={v3Asset("/v3/c-reaccion.webp")} alt="" width={2400} height={1600} loading="lazy" decoding="async" />
+        <img data-no-parallax="" src={fotos ? v3Asset("/v3/c-reaccion.webp") : undefined} alt="" width={2400} height={1600} loading="lazy" decoding="async" />
       </figure>
       <div className="sh-wrap sh-filo__in">
         <h2 id="ini-filo-h" className="sh-filo__frase">{sinViuda(c.quote)}</h2>
