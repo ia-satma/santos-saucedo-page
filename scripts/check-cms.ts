@@ -80,7 +80,7 @@ try {
       isPartner: true,
       isPublic: false,
     }),
-    false,
+    true,
   );
   assert.deepEqual(
     mergeCms(
