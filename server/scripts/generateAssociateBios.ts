@@ -25,7 +25,7 @@ Responde SOLO con un JSON válido en este formato:
 
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'gpt-6.1-sol',
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7,
       max_tokens: 500,

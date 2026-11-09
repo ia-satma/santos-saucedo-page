@@ -1,6 +1,7 @@
 import { db } from "../db";
 import { siteConfig } from "@shared/schema";
 import { getCmsContact } from "../cms/siteConfig";
+import { SUPPORTED_LANGUAGES } from "@shared/constants";
 export type ConfigMap = Record<
   string,
   { value: string; valueEs: string; type: string }
@@ -16,7 +17,7 @@ export async function getConfigMap(): Promise<ConfigMap> {
     type: "text",
   });
   const config: ConfigMap = {
-    active_languages: text("es,en"),
+    active_languages: text(SUPPORTED_LANGUAGES.map((language) => language.code).join(",")),
     footer_firm: text("Santos & Saucedo"),
     site_url: text(
       process.env.PUBLIC_SITE_URL || "https://santos-saucedo.replit.app",

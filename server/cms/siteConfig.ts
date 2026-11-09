@@ -10,6 +10,7 @@ import { cmsDefaults, cmsSections, isCmsSection, mergeCms, validateCmsValue, typ
 import { authMiddleware, requireRole } from '../auth';
 import { importBundledMedia, savedMediaImportStatus } from './mediaImport';
 import { storageBucketId, verifyAppStorage } from '../replitStorage';
+import { SUPPORTED_LANGUAGES } from '@shared/constants';
 
 const prefix = 'editorial.';
 type Stored = { content: CmsValue; previous?: CmsValue };
@@ -36,6 +37,15 @@ export async function ensureCmsSchema() {
     value text, value_es text, type text NOT NULL DEFAULT 'text',
     category text DEFAULT 'general', description text, updated_at timestamp DEFAULT now()
   )`);
+  // Existing installations from the two-language CMS are upgraded once to the
+  // complete ten-language catalog. A deliberately customized list remains
+  // untouched so editors can still reduce coverage later from the CMS.
+  const allLanguages = SUPPORTED_LANGUAGES.map(({ code }) => code).join(',');
+  const [languageRow] = await db.select({ value: siteConfig.value }).from(siteConfig).where(eq(siteConfig.key, 'active_languages')).limit(1);
+  const currentLanguages = (languageRow?.value || '').split(',').map((code) => code.trim()).filter(Boolean);
+  if (!languageRow || currentLanguages.length === 0 || (currentLanguages.length === 2 && new Set(currentLanguages).size === 2 && currentLanguages.includes('es') && currentLanguages.includes('en'))) {
+    await db.insert(siteConfig).values({ key: 'active_languages', value: allLanguages, type: 'text', category: 'localization', updatedAt: new Date() }).onConflictDoUpdate({ target: siteConfig.key, set: { value: allLanguages, type: 'text', category: 'localization', updatedAt: new Date() } });
+  }
   await db.execute(sql`ALTER TABLE team_members ADD COLUMN IF NOT EXISTS is_public boolean`);
   await db.execute(sql`ALTER TABLE team_members ADD COLUMN IF NOT EXISTS show_on_home boolean`);
   await db.execute(sql`ALTER TABLE practice_groups ADD COLUMN IF NOT EXISTS team_member_ids jsonb`);
@@ -104,6 +114,21 @@ export function registerCmsRoutes(app: Express) {
     } catch (error) {
       console.error('[CMS] Read failed', error);
       res.status(503).json({ error: 'No se pudo cargar el contenido del sitio.' });
+    }
+  });
+  app.get('/api/localized-content/:section/:language', async (req, res) => {
+    const { section, language } = req.params;
+    if (!isCmsSection(section) || !SUPPORTED_LANGUAGES.some((item) => item.code === language)) {
+      return res.status(400).json({ error: 'Sección o idioma inválido.' });
+    }
+    try {
+      const [row] = await db.select().from(siteConfig).where(eq(siteConfig.key, `localized.${section}.${language}`));
+      const stored = row?.value ? JSON.parse(row.value) : null;
+      res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+      return res.json(stored?.status === 'published' ? stored.content : {});
+    } catch (error) {
+      console.error('[CMS] Localized content read failed', error);
+      return res.status(503).json({ error: 'No se pudo cargar el contenido localizado.' });
     }
   });
   app.get('/api/admin/site-config', authMiddleware, requireRole('editor', 'admin'), (_req, res) => {

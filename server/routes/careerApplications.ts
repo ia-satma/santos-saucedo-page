@@ -26,6 +26,8 @@ import {
 } from "../media/privateDocuments";
 import { persistentMediaIsRequired } from "../media/persistentMedia";
 import { recordAccessEvent } from "../cms/accessAudit";
+import { SUPPORTED_LANGUAGES } from "@shared/constants";
+const languageCodes = SUPPORTED_LANGUAGES.map(({ code }) => code) as [string, ...string[]];
 const formSchema = z.object({
   fullName: z.string().trim().min(2).max(200),
   email: z.string().trim().email().max(254),
@@ -33,7 +35,7 @@ const formSchema = z.object({
   interest: z.string().trim().max(180).optional(),
   message: z.string().trim().max(12000).optional(),
   preferredLanguage: z
-    .enum(["es", "en", "de", "zh", "ko", "ja", "ar", "ru", "fr", "it"])
+    .enum(languageCodes)
     .default("es"),
   consent: z.literal("true"),
 });

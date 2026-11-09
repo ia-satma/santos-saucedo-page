@@ -45,6 +45,21 @@ function isSourceLanguage(lang: string): boolean {
   return isNativeLanguage(lang) || lang === 'en';
 }
 
+/**
+ * CMS records keep English in the base field and Spanish in its `Es` twin.
+ * A few public DTOs intentionally pass the Spanish twin as the displayed base
+ * value, so infer the actual source from the pair instead of always claiming
+ * that the request is Spanish.
+ */
+function inferSourceLanguage(fields: TranslatedFieldsMap, fieldsToTranslate: Record<string, string>): 'es' | 'en' {
+  const englishFields = Object.keys(fieldsToTranslate).filter((key) => {
+    const english = fields[key];
+    const spanish = fields[`${key}Es`];
+    return typeof english === 'string' && !!english.trim() && typeof spanish === 'string' && !!spanish.trim() && english !== spanish;
+  });
+  return englishFields.length > 0 ? 'en' : 'es';
+}
+
 export function useTranslatedContent({
   contentType,
   entityId,
@@ -110,6 +125,11 @@ export function useTranslatedContent({
     return result;
   }, [fields]);
 
+  const sourceLanguage = useMemo(
+    () => inferSourceLanguage(fields, fieldsToTranslate),
+    [fields, fieldsToTranslate],
+  );
+
   const hasCachedTranslations = !!cachedTranslations?.translations && 
     Object.keys(cachedTranslations.translations).length > 0;
   
@@ -125,11 +145,11 @@ export function useTranslatedContent({
         contentType,
         entityId,
         fields: fieldsToTranslate,
-        sourceLanguage: 'es',
+        sourceLanguage,
         targetLanguage: language,
       });
     }
-  }, [needsTranslation, translateMutation.isPending, contentType, entityId, fieldsToTranslate, language, translationKey]);
+  }, [needsTranslation, translateMutation.isPending, contentType, entityId, fieldsToTranslate, sourceLanguage, language, translationKey]);
 
   // Traducciones solo para idiomas que no son de origen
   const translations = canTranslate

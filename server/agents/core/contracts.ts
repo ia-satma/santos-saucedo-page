@@ -1,9 +1,10 @@
 import { z } from 'zod';
 import { ALL_AGENT_IDS, type AgentId } from '@shared/agentConstants';
+import { SUPPORTED_LANGUAGES } from '@shared/constants';
 
 export const agentTypeSchema = z.enum(ALL_AGENT_IDS as [AgentId, ...AgentId[]]);
 export const articleIdSchema = z.string().uuid();
-export const languageSchema = z.enum(['en', 'es', 'de', 'zh', 'ko', 'ja', 'ar', 'ru', 'fr', 'it']);
+export const languageSchema = z.enum(SUPPORTED_LANGUAGES.map(({ code }) => code) as [string, ...string[]]);
 export const aiDataClassificationSchema = z.enum(['public', 'internal', 'personal', 'confidential', 'privileged']);
 
 const articleOnlySchema = z.object({ articleId: articleIdSchema }).strict();
@@ -19,7 +20,7 @@ export const agentPayloadSchemas = {
     articleId: articleIdSchema.optional(),
     content: z.string().max(100_000).optional(),
     title: z.string().max(500).optional(),
-    language: z.enum(['es', 'en']).optional(),
+    language: languageSchema.optional(),
     applyChanges: z.boolean().default(false),
     dataClassification: aiDataClassificationSchema.optional(),
     aiUseConfirmed: z.literal(true).optional(),
@@ -72,11 +73,11 @@ export const agentPayloadSchemas = {
   social_media: articleOnlySchema.extend({
     platforms: z.array(z.enum(['linkedin', 'twitter', 'instagram', 'facebook'])).max(4).optional(),
     aspect: z.enum(['1:1', '16:9', '9:16']).optional(),
-    language: z.enum(['es', 'en']).default('es'),
+    language: languageSchema.default('es'),
   }).strict(),
   newsletter: z.object({
     limit: z.coerce.number().int().min(1).max(20).default(8),
-    language: z.enum(['es', 'en']).default('es'),
+    language: languageSchema.default('es'),
   }).strict(),
   legal_alerts: z.object({
     sourceText: z.string().trim().min(40).max(50_000).optional(),
@@ -100,7 +101,7 @@ export const agentPayloadSchemas = {
     topic: z.string().trim().max(10_000).optional(),
     documentsText: z.string().trim().max(80_000).optional(),
     slideCount: z.coerce.number().int().min(3).max(20).default(8),
-    lang: z.enum(['es', 'en']).default('es'),
+    lang: languageSchema.default('es'),
     template: z.enum(['santossaucedo', 'minimal', 'dark']).default('santossaucedo'),
     branding: z.enum(['santossaucedo', 'custom']).default('santossaucedo'),
     customLogoUrl: localMediaPathSchema.nullable().optional(),

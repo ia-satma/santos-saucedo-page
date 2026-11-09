@@ -76,7 +76,7 @@ const CONFIG: AgentConfig = {
   name: 'Generador de Presentaciones',
   description: 'Genera presentaciones (PPTX/PDF/PNG) con branding de Santos & Saucedo a partir de un tema escrito y/o documentos subidos.',
   systemPrompt: SYSTEM_PROMPT,
-  model: 'gpt-5.4-mini',
+  model: 'gpt-6.1-sol',
   temperature: 0.5,
   maxTokens: 4096,
   skills: ['slide_structuring', 'presentation_design'],

@@ -61,7 +61,7 @@ export default function Home() {
       <JsonLdSchema language={lang} />
 
       {/* Transparente sobre el video del héroe hasta que se hace scroll */}
-      <Header26 overlay={layout.home.hero} />
+      <Header26 localized overlay={layout.home.hero} />
 
       {/* Inicio v3 (demo aprobada el 5-11-2026): tras el telón, bandas que alternan papel y azul.
           Cada banda v3 va en su envoltura .v3 (demo.css) y las piezas del sitio que se conservan
@@ -90,7 +90,7 @@ export default function Home() {
         })}
       </main>
 
-      <Footer26 />
+      <Footer26 localized />
 
     </div>
   );

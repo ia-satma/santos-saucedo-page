@@ -3,17 +3,18 @@ import { AgentConfig, AgentResult, ExecutionContext } from '../core/types';
 import { db } from '../../db';
 import { news, translationCache, newsTeamMembers } from '../../../shared/schema';
 import { getConfigMap } from '../../mirror/siteConfig';
+import { SUPPORTED_LANGUAGES } from '../../../shared/constants';
 
-const LANGUAGES = ['en', 'es', 'de', 'zh', 'ko', 'ja', 'ar', 'ru', 'fr', 'it'] as const;
+const LANGUAGES = SUPPORTED_LANGUAGES.map(({ code }) => code) as readonly string[];
 
 async function getActiveLanguages(): Promise<Set<string>> {
   const config = await getConfigMap();
-  const raw = config.active_languages?.value || 'es,en';
+  const raw = config.active_languages?.value || LANGUAGES.join(',');
   const active = raw
     .split(',')
     .map((language) => language.trim())
     .filter((language) => (LANGUAGES as readonly string[]).includes(language));
-  return new Set(active.length > 0 ? active : ['es', 'en']);
+  return new Set(active.length > 0 ? active : LANGUAGES);
 }
 
 export interface ContentAuditorDependencies {

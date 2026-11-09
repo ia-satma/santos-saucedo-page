@@ -8,6 +8,8 @@ const CHAT_PRICES: Record<string, { in: number; out: number }> = {
   // Los precios pueden actualizarse mediante despliegue; estos valores solo alimentan el
   // presupuesto preventivo y nunca afectan la facturación real de OpenAI.
   "gpt-5.4-mini": { in: 0.75, out: 4.5 },
+  // Estimated production pricing for the current flagship reasoning model.
+  "gpt-6.1-sol": { in: 2, out: 10 },
   "gpt-4o": { in: 2.5, out: 10 },
   "gpt-4o-mini": { in: 0.15, out: 0.6 },
 };

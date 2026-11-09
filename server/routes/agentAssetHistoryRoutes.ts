@@ -30,6 +30,9 @@ import {
 import { storage } from "../storage";
 import { auditLog } from "./routeUtils";
 import { presentationMediaPathSchema, receivePresentationDocument } from "./uploadMiddleware";
+import { SUPPORTED_LANGUAGES } from "@shared/constants";
+
+const languageCodes = SUPPORTED_LANGUAGES.map(({ code }) => code) as [string, ...string[]];
 
 const generatedImagesDir = path.join(process.cwd(), "public", "generated-images");
 const generatedAudioDir = path.join(process.cwd(), "public", "generated-audio");
@@ -237,7 +240,7 @@ export function registerAgentAssetHistoryRoutes(app: Express): void {
           name: z.string().trim().min(1).max(180),
         }).strict()).max(20).default([]),
         slideCount: z.coerce.number().int().min(3).max(20).default(8),
-        lang: z.enum(["es", "en"]).default("es"),
+        lang: z.enum(languageCodes).default("es"),
         template: z.enum(["santossaucedo", "minimal", "dark"]).default("santossaucedo"),
         branding: z.enum(["santossaucedo", "custom"]).default("santossaucedo"),
         customLogoUrl: presentationMediaPathSchema.nullable().optional(),

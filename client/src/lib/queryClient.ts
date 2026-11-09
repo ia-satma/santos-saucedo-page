@@ -135,8 +135,45 @@ async function getStaticQueryData(queryKey: readonly unknown[]) {
     return filterSearchResults(index, url.searchParams.get("q") || "");
   }
 
+  if (pathname.startsWith("localized-content/")) {
+    // Keep this endpoint available in static mode too. The live CMS route and
+    // the static snapshot intentionally return the same section content shape.
+    const [, section, language] = pathname.split("/");
+    try {
+      const snapshot = await readStaticJson("site-config.json") as Record<string, unknown>;
+      const localized = (snapshot[section] as Record<string, unknown> | undefined)?.[language];
+      return localized && typeof localized === "object" ? localized : {};
+    } catch (error) {
+      if (error instanceof Error && error.message.startsWith("404:")) return {};
+      throw error;
+    }
+  }
+
   if (pathname.startsWith("translations/")) {
-    return {};
+    // Static previews cannot call the translation API. The build writes one
+    // snapshot containing the published translations from the CMS; resolve the
+    // same response shape used by the live endpoint from that snapshot.
+    const parts = pathname.split("/").filter(Boolean);
+    const [, contentType, entityId, targetLanguage] = parts;
+    try {
+      const snapshot = await readStaticJson("translations.json") as {
+        entries?: Record<string, Record<string, string>>;
+      };
+      const key = `${contentType}|${entityId}|${targetLanguage}`;
+      return {
+        translations: snapshot.entries?.[key] || {},
+        contentType,
+        entityId,
+        targetLanguage,
+      };
+    } catch (error) {
+      // A static build made before the translation export remains usable; it
+      // simply renders its source-language content until a new snapshot exists.
+      if (error instanceof Error && error.message.startsWith("404:")) {
+        return { translations: {}, contentType, entityId, targetLanguage };
+      }
+      throw error;
+    }
   }
 
   const cleanPath = pathname.replace(/\/$/, "");

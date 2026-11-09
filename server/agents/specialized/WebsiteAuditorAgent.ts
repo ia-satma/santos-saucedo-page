@@ -8,6 +8,7 @@ import { fetchStatusWithPolicy } from '../../security/network';
 import type { InsertWebsiteAuditFinding, WebsiteAuditFinding, TeamMember, PracticeGroup, IndustryGroup, News } from '@shared/schema';
 import { capabilityPath } from '@shared/localizedPublicUrls';
 import { publicImageAssetExists } from './websiteAuditMedia';
+import { SUPPORTED_LANGUAGES as SITE_LANGUAGES } from '@shared/constants';
 import {
   industryGroupContentIssues,
   isPublishedEntity,
@@ -17,17 +18,15 @@ import {
   teamMemberContentIssues,
 } from './websiteAuditPolicy';
 
-const SUPPORTED_LANGUAGES = ['en', 'es', 'de', 'zh', 'ko', 'ja', 'ar', 'ru', 'fr', 'it'];
+const SUPPORTED_LANGUAGES: string[] = SITE_LANGUAGES.map(({ code }) => code);
 
-// Lee `active_languages` de site_config (default "es,en") — solo se piden/reportan hallazgos
-// de traducción faltante para los idiomas realmente en uso, no los 10 soportados por el
-// traductor. Ver [[santossaucedo-cobertura-idioma]]: sin este filtro, el auditor re-encolaba
-// miles de trabajos de polyglot_translator para idiomas que el cliente no usa.
+// Lee `active_languages` de site_config (default los 10 idiomas). El CMS puede reducir
+// explícitamente la cobertura, pero una instalación nueva audita el catálogo completo.
 async function getActiveLanguages(): Promise<string[]> {
   const config = await getConfigMap();
-  const raw = config.active_languages?.value || 'es,en';
+  const raw = config.active_languages?.value || SUPPORTED_LANGUAGES.join(',');
   const active = raw.split(',').map((s) => s.trim()).filter((c) => SUPPORTED_LANGUAGES.includes(c));
-  return active.length > 0 ? active : ['es', 'en'];
+  return active.length > 0 ? active : [...SUPPORTED_LANGUAGES];
 }
 
 // Fallback usado en toda la app cuando una imagen no carga (server/agents/AutoRecoveryAgent.ts,

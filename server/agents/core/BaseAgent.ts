@@ -11,7 +11,6 @@ import {
 } from './types';
 import {
   extractJson,
-  FALLBACK_TEXT_MODEL,
   getOpenAIClient,
   getTextModel,
   textModelParams,
@@ -96,9 +95,8 @@ export abstract class BaseAgent {
       classification?: AiDataClassification;
     }
   ): Promise<string> {
-    const primaryModel = process.env.OPENAI_TEXT_MODEL?.trim() || this.config.model || getTextModel();
-    const fallbackModels = [FALLBACK_TEXT_MODEL];
-    const allModels = [primaryModel, ...fallbackModels.filter(m => m !== primaryModel)];
+    const primaryModel = process.env.OPENAI_TEXT_MODEL?.trim() || getTextModel();
+    const allModels = [primaryModel];
 
     let lastError: Error | null = null;
 
@@ -119,9 +117,8 @@ export abstract class BaseAgent {
         const request = {
           ...textModelParams(model, options?.maxTokens ?? this.config.maxTokens ?? 4096),
           messages: outboundMessages,
-          // Los modelos GPT-5 usan razonamiento sin esfuerzo para priorizar velocidad.
-          // El fallback clásico conserva la temperatura editorial configurada.
-          ...(!/^gpt-5(?:\.|-|$)/i.test(model)
+          // Los modelos de razonamiento no reciben temperature; legacy overrides sí.
+          ...(!/^gpt-(?:5|6)(?:\.|-|$)/i.test(model)
             ? { temperature: options?.temperature ?? this.config.temperature ?? 0.7 }
             : {}),
         } as any;
@@ -149,21 +146,7 @@ export abstract class BaseAgent {
         return options?.jsonMode ? extractJson(content) : content;
       } catch (error: any) {
         lastError = error;
-        const isQuotaError = error?.status === 429 ||
-                            error?.message?.includes('quota') ||
-                            error?.message?.includes('rate limit');
-        const isUnavailableModel = [400, 404].includes(Number(error?.status)) &&
-          /model|unsupported|not found|does not exist|access/i.test(String(error?.message || ''));
-        const status = Number(error?.status || error?.response?.status || 0);
-        const isTransientError = status === 408 || status === 429 || status >= 500 ||
-          /timeout|timed out|ETIMEDOUT|ECONNRESET|network|temporar|unavailable/i.test(
-            String(error?.message || ''),
-          );
-
-        if ((isQuotaError || isUnavailableModel || isTransientError) && model !== allModels[allModels.length - 1]) {
-          console.log(`[${this.name}] Modelo principal no disponible; usando respaldo compatible.`);
-          continue;
-        }
+        // No downgrade silently: the configured model must be enabled for this account.
         throw error;
       }
     }

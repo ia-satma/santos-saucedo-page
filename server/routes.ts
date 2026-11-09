@@ -468,7 +468,7 @@ export async function registerRoutes(
   // Detección del idioma en la primera visita: solo la cabecera Accept-Language del
   // navegador, sin terceros (antes se enviaba la IP del visitante a ipapi.co). Si ningún
   // idioma de la cabecera está entre los 10 del sitio, español.
-  const SUPPORTED_UI_LANGUAGES = ["es", "en", "de", "zh", "ko", "ja", "ar", "ru", "fr", "it"];
+  const SUPPORTED_UI_LANGUAGES: string[] = SUPPORTED_LANGUAGES.map(({ code }) => code);
 
   function parseAcceptLanguage(header: string | undefined): string | null {
     if (!header) return null;

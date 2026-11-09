@@ -48,18 +48,9 @@ function getDisplayLanguage(lang: LanguageCode): DisplayLanguage {
   return "en";
 }
 
-const HTML_LANG_CODES: Record<LanguageCode, string> = {
-  en: "en",
-  es: "es-MX",
-  de: "de",
-  zh: "zh-CN",
-  ko: "ko",
-  ja: "ja",
-  ar: "ar",
-  ru: "ru",
-  fr: "fr",
-  it: "it",
-};
+const HTML_LANG_CODES: Record<LanguageCode, string> = Object.fromEntries(
+  SUPPORTED_LANGUAGES.map(({ code, locale }) => [code, locale]),
+) as Record<LanguageCode, string>;
 
 export function LanguageProvider({ children }: LanguageProviderProps) {
   const { i18n: i18nInstance, ready } = useTranslation();

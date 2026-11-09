@@ -1,6 +1,6 @@
 import { cmsDefaults } from "../shared/cms";
 import { teamPhotoOwner } from "../shared/marioPortrait";
-import { copyFile, mkdir, readdir, rm, writeFile } from "fs/promises";
+import { copyFile, mkdir, readdir, rm, writeFile, readFile } from "fs/promises";
 import path from "path";
 import {
   industryGroupsData,
@@ -100,6 +100,26 @@ async function writeJson(relativePath: string, value: JsonValue) {
   const target = path.join(apiDir, relativePath);
   await mkdir(path.dirname(target), { recursive: true });
   await writeFile(target, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+}
+
+async function readTranslationSnapshot(): Promise<JsonValue> {
+  // `export:translations` writes this file from the live CMS. Keeping the
+  // snapshot outside client/public lets a static build fail safe when the
+  // export has not been run yet, without making the frontend depend on a DB.
+  try {
+    return JSON.parse(await readFile(path.resolve("shared/translation-snapshot.json"), "utf8"));
+  } catch {
+    return { version: 1, generatedAt: null, entries: {} };
+  }
+}
+
+async function readCmsSnapshot(): Promise<JsonValue> {
+  try {
+    const parsed = JSON.parse(await readFile(path.resolve("shared/cms-static-snapshot.json"), "utf8"));
+    return parsed?.content && typeof parsed.content === "object" ? parsed.content : cmsDefaults;
+  } catch {
+    return cmsDefaults;
+  }
 }
 
 function search(query: string) {
@@ -205,7 +225,11 @@ async function generate() {
   // Mismo formato que /api/detect-language (solo Accept-Language; en Pages no se consulta)
   await writeJson("detect-language.json", { language: "es", source: "default" });
   await writeJson("site-content.json", { ...siteContentData, ...cmsDefaults.contactData as object });
-  await writeJson("site-config.json", {});
+  // The static frontend must have the same editable baseline as the live site.
+  // A CMS export can replace this file before deployment; defaults keep local
+  // frontend work functional even when no database is running.
+  await writeJson("site-config.json", await readCmsSnapshot());
+  await writeJson("translations.json", await readTranslationSnapshot());
   await writeJson("jobs.json", []);
   await writeJson("events.json", []);
   await writeJson("events/upcoming.json", []);
