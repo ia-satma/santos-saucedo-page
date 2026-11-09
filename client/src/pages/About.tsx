@@ -486,7 +486,7 @@ export default function About() {
 
           {/* El carnero, la filosofía de la firma. El avión (lámina 2/7, la capacidad de reacción) va en
               la página de Prácticas, que es la que sigue en el recorrido */}
-          <LaminaCarnero t={T} attrs={attrs} logo={media.brand.logoLight} />
+          <LaminaCarnero t={T} attrs={attrs} logo={media.brand.logoLight} lang={lang} />
 
           <Oficina
             titulo={officeNameFor(language)}

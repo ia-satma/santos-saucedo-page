@@ -1,7 +1,7 @@
 /* Bandas del Inicio v3 (demo aprobada el 5-11-2026, vista #inicio): la firma en una frase con sus
    cifras sobre una línea de cota (sh-intro), las industrias (sh-indi) y la filosofía (sh-filo). Mismas
    clases y estructura que la demo para que demo.css las pinte sin cambios. */
-import { useRef, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { Link } from "wouter";
 import defaults from "@shared/cms-defaults.json";
 import { useCmsContent } from "@/hooks/useCmsContent";
@@ -9,6 +9,7 @@ import { home26 } from "@/components/home26/content";
 import { useV3Lang, useV3Module, v3SrcSet, type V3Lang } from "@/v3/shared";
 import { keepFirmName } from "@/lib/firmName";
 import { homeCopy } from "./copy";
+import { INDUSTRIAS_TEXTS } from "@/v3/industrias/texts";
 import { initFilo } from "./scripts";
 import "./home.css";
 import { v3Asset } from "../asset";
@@ -57,13 +58,14 @@ export function IntroBand({ lang, areas }: { lang: V3Lang; areas: number }) {
   );
 }
 
-/* La foto (3:2) se recorta con cover: en el marco 3:4 (cuatro columnas) y en el 4:3 (dos) mide cerca de
-   medio ancho de pantalla; en una columna, todo el ancho. */
-const INDI_SIZES = "(max-width: 520px) 100vw, 50vw";
-
-/** Industrias que asesoramos: cuatro fotos verticales con su nombre y una línea. */
+/** Industrias que asesoramos: las nueve industrias como franjas apiladas (acordeón). Cada franja es
+    una tira de su foto bajo el velo Azul noche; la que se señala (mouse, teclado o toque) se abre,
+    muestra la foto y su línea, y lleva a su apartado en «Industrias». Siempre hay una abierta: el
+    bloque nunca queda plano. Nombres, líneas y fotos son los de la página «Industrias». */
 export function IndustriasBand({ lang }: { lang: V3Lang }) {
   const t = homeCopy[lang].industrias;
+  const items = INDUSTRIAS_TEXTS[lang].industrias;
+  const [abierta, setAbierta] = useState(0);
   return (
     <section className="sh-indi" aria-labelledby="ini-ind-h">
       <div className="sh-wrap">
@@ -71,18 +73,32 @@ export function IndustriasBand({ lang }: { lang: V3Lang }) {
           <h2 id="ini-ind-h" className="sh-h2">{t.titulo}</h2>
           <Link className="sh-boton" href="/industries">{t.boton}</Link>
         </div>
-        <ul className="sh-indi__lista" role="list">
-          {t.items.map((it) => (
-            <li key={it.clave} className="sh-indi__item">
-              <Link className="sh-indi__a" href="/industries">
-                <span className="sh-indi__m">
-                  <img data-no-parallax="" src={it.img} srcSet={v3SrcSet(it.img, 2000)} sizes={INDI_SIZES} alt={it.alt} width={2000} height={1333} loading="lazy" decoding="async" style={{ objectPosition: it.pos }} />
-                </span>
-                <span className="sh-indi__n">{it.nombre}</span>
-                <span className="sh-indi__l">{it.linea}</span>
-              </Link>
-            </li>
-          ))}
+        <ul className="hm-acord" role="list">
+          {items.map((it, i) => {
+            const on = i === abierta;
+            const panel = `hm-acord-${it.id}`;
+            return (
+              <li key={it.id} className={on ? "hm-acord__it is-on" : "hm-acord__it"}
+                onPointerEnter={(e) => { if (e.pointerType === "mouse") setAbierta(i); }}>
+                <img className="hm-acord__foto" data-no-parallax="" src={it.img} srcSet={v3SrcSet(it.img, 2000)}
+                  sizes="(max-width: 1440px) 100vw, 1440px" alt="" width={it.w} height={it.h} loading="lazy"
+                  decoding="async" style={{ objectPosition: it.pos }} />
+                <button type="button" className="hm-acord__cab" aria-expanded={on} aria-controls={panel}
+                  onClick={() => setAbierta(i)} onFocus={() => setAbierta(i)}>
+                  <span className="hm-acord__num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="hm-acord__nom">{it.nombre}</span>
+                  <span className="hm-acord__signo" aria-hidden="true" />
+                </button>
+                <div className="hm-acord__panel" id={panel} hidden={!on}>
+                  <p className="hm-acord__linea">{it.linea}</p>
+                  <ul className="hm-acord__asuntos" role="list">
+                    {it.lista.slice(0, 3).map((x) => <li key={x}>{x}</li>)}
+                  </ul>
+                  <Link className="hm-acord__ir" href={`/industries#in-${it.id}`} tabIndex={on ? 0 : -1}>{t.ver}</Link>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </section>

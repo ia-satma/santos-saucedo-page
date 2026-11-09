@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Siempre hacia adelante</title>
+<style>
+  :root { color-scheme: light; }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: pan-y; outline: none; -webkit-tap-highlight-color: transparent; }
+  canvas:focus-visible { box-shadow: inset 0 0 0 2px #B2EB3E; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="motor.js?v=2"></script>
+<script src="carnero-perfil.js?v=1"></script>
+<script>
+/* Lámina 1/7 · Siempre hacia adelante. Un borrego cimarrón sube un risco de la sierra donde no parece
+   haber camino. Cada saliente de roca sale de la pared justo antes de que el borrego la necesite (la
+   preparación); una grieta corta la pared y el borrego la salta sin retroceder; arriba lo espera la
+   apacheta, el objetivo que tuvo a la vista desde abajo. El borrego nunca da la vuelta: si se elige un
+   paso anterior, se desvanece y reaparece ahí, mirando hacia la cima.
+   Pasos: 0 determinación (la cima a la vista) · 1 paso firme · 2 la prevención · 3 sin retroceder · 4 persistencia. */
+(function () {
+  "use strict";
+  const { suave, tinta, RGB } = Plano;
+  const C30 = Math.cos(Math.PI / 6);
+  const lim = (v, a, b) => Math.max(a, Math.min(b, v));
+  const mezcla = (a, b, t) => a + (b - a) * t;
+  const EN = /[?&]lang=en\b/.test(location.search);
+  const VER_ZONAS = /[?&]zonas=1\b/.test(location.search);
+  let zonasVistas = [];
+
+  /* marco local: u hacia adelante (subiendo), v hacia fuera de la pared, z hacia arriba */
+  const PHI = (15 * Math.PI) / 180;
+  const HD = [Math.sin(PHI), -Math.cos(PHI)], ND = [Math.cos(PHI), Math.sin(PHI)];
+  const W3 = (u, v, z) => [u * HD[0] + v * ND[0], u * HD[1] + v * ND[1], z];
+
+  /* medidas en largos de borrego (R = 1: del anca al hocico) */
+  /* el risco: dos bloques de estratos (capas de roca de 0.15) separados por una grieta */
+  const T = 0.15, FONDO = -0.75;
+  const ruido = (i, k) => { const x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return (x - Math.floor(x)) * 2 - 1; };
+  const capas = (n, f) => Array.from({ length: n }, (_, i) => Object.assign({ z0: i * T, z1: (i + 1) * T, v0: FONDO + 0.012 * i }, f(i)));
+  // bordes de cada capa: la ladera irregular (algunas capas no se recorren, otras sobresalen un poco)
+  const LADERA_A = [-0.46, -0.45, -0.46, -0.44, -0.27, -0.28, -0.26, -0.27, -0.06, -0.05, -0.07, 0.19, 0.2];
+  const LADERA_B = [3.31, 3.3, 3.31, 3.29, 3.12, 3.11, 3.13, 3.12, 3.11, 3.0, 2.99, 3.01, 3.0, 2.92, 2.91, 2.92];
+  const BLOQUES = [
+    // del otro lado de la grieta: la pared de la segunda saliente y la cima
+    capas(16, (i) => ({ u0: 1.27 + 0.026 * ruido(i, 1), u1: LADERA_B[i] + 0.012 * ruido(i, 2), v1: i === 9 ? 0 : 0.026 * ruido(i, 3) })),
+    // de este lado: la pared de la primera saliente
+    capas(13, (i) => ({ u0: LADERA_A[i] + 0.012 * ruido(i, 4), u1: 0.87 + 0.026 * ruido(i, 5) + (i > 9 ? 0.03 : 0), v1: i === 5 ? 0 : 0.026 * ruido(i, 6) })),
+  ];
+  const BASE = { u0: -0.66, u1: 3.48, v0: FONDO - 0.16, v1: 0.84, z0: -0.085 };
+  const CIMA = 16 * T;
+
+  /* salientes: centro en u, altura de la tapa; salen de la pared hacia quien mira */
+  const LARGO = 0.68, SALE = 0.62, GRUESO = 0.1;
+  const REPISAS = [null, { c: 0.42, z: 6 * T }, { c: 1.67, z: 10 * T }];
+  /* dónde pisa el borrego (centro entre pezuñas): abajo, primera saliente, segunda (cruzando la grieta) y la cima */
+  const PASOS = [
+    { u: 0, v: 0.45, z: 0 },
+    { u: 0.42, v: 0.36, z: 6 * T },
+    { u: 1.67, v: 0.36, z: 10 * T },
+    { u: 1.78, v: -0.3, z: CIMA },
+  ];
+  const ARCO = [0, 0.24, 0.3, 0.42];        // altura extra de cada salto
+  const PASO_DE = [0, 1, 1, 2, 3];          // paso de la lámina → dónde está el borrego
+  const APACHETA = { u: 2.66, v: -0.5 };
+
+  /* el borrego: el perfil del plano anterior en el plano vertical de su marcha */
+  const PERFIL = window.CARNERO_PERFIL.map((c) => Object.assign({}, c, { p: new Path2D(c.d) }));
+  const XA = -5, ESC_R = 1 / 236, LEJOS = 0.14;
+  const OJO = [117.5, -137.2];
+
+  const ARIA = EN
+    ? "Isometric drawing: a bighorn sheep climbs a sheer mountain wall on rock ledges that slide out just before each step, leaps a crack without turning back and reaches the cairn on the summit."
+    : "Dibujo isométrico: un borrego cimarrón sube un risco por salientes de roca que salen justo antes de cada paso, salta una grieta sin retroceder y llega a la apacheta de la cima.";
+
+  const caja = [];
+  [[BASE.u0, BASE.v0], [BASE.u1, BASE.v0], [BASE.u1, BASE.v1], [BASE.u0, BASE.v1]].forEach(([u, v]) => { caja.push(W3(u, v, BASE.z0)); caja.push(W3(u, v, 0)); });
+  BLOQUES.forEach((b) => b.forEach((c) => { caja.push(W3(c.u0, c.v0, c.z1)); caja.push(W3(c.u1, c.v0, c.z1)); }));
+  [[1.4, -0.3], [2.44, -0.3], [1.95, -0.45]].forEach(([u, v]) => caja.push(W3(u, v, CIMA + 0.74)));
+  caja.push(W3(-0.4, 0.45, 0.75));
+
+  let pos = 0, meta = 0, salto = null, preparando = 0, listoEn = 0, aterriza = null, fade = null;
+  let alfa = null;
+  const repisa = [null], repMeta = [0, 0, 0];
+  const hunde = [0, 0, 0], hundeT = [0, 0, 0];
+  let piedras = [];
+  let figura = null;
+
+  function sacar(k, v, ahora, retraso) {
+    if (k < 1 || k > 2 || repMeta[k] === v) return;
+    repMeta[k] = v;
+    repisa[k].ir(v, ahora, v ? 760 : 520);
+    repisa[k].t0 = ahora + (Plano.reducido ? 0 : retraso || 0);
+  }
+  /* las salientes que hacen falta: la 1 desde «paso firme», la 2 desde «la prevención» (antes de saltar) */
+  function ajustar(ahora) {
+    const donde = salto ? salto.a : pos;
+    const quiere = (k) => (Math.max(PASO_DE[meta], donde) >= k || (k === 2 && meta >= 2) ? 1 : 0);
+    let r = 0;
+    for (let k = 1; k <= 2; k++) { const q = quiere(k); if (q !== repMeta[k]) { sacar(k, q, ahora, q ? r : 0); if (q) r += 240; } }
+  }
+
+  /* trayectoria de un salto: la pezuña sube en arco y aterriza */
+  function arco(de, a, e) {
+    const A = PASOS[de], B = PASOS[a], alto = ARCO[a];
+    return { u: mezcla(A.u, B.u, e), v: mezcla(A.v, B.v, e * e), z: mezcla(A.z, B.z, e) + alto * 4 * e * (1 - e), alto };
+  }
+  function pose(ahora) {
+    if (salto) {
+      const t = lim((ahora - salto.t0) / salto.dur, 0, 1), e = suave(t);
+      const A = PASOS[salto.de], B = PASOS[salto.a], p = arco(salto.de, salto.a, e);
+      const dz = B.z - A.z + p.alto * 4 * (1 - 2 * e), du = Math.abs(B.u - A.u) + 0.2;
+      const cab = lim(Math.atan2(dz, du) * 0.42, -0.24, 0.42);
+      const aplasta = t < 0.22 ? -0.035 * Math.sin((t / 0.22) * Math.PI) : 0;
+      return { u: p.u, v: p.v, z: p.z, cab, aplasta };
+    }
+    const P0 = PASOS[pos];
+    let ap = 0;
+    if (preparando && listoEn > ahora) { const r = lim(1 - (listoEn - ahora) / 170, 0, 1); ap = 0.06 * Math.sin((r * Math.PI) / 2); }
+    if (aterriza) { const r = (ahora - aterriza.t0) / 320; if (r < 1) ap = Math.max(ap, 0.065 * Math.sin(Math.PI * r)); }
+    return { u: P0.u, v: P0.v, z: P0.z + (pos >= 1 && pos <= 2 ? hunde[pos] : 0), cab: 0, aplasta: ap };
+  }
+  function matriz(g, ps, dv) {
+    const k = ESC_R * g.esc;
+    const a = k * C30 * (HD[0] - HD[1]), b = (k * (HD[0] + HD[1])) / 2, d = k;
+    const w = W3(ps.u, ps.v + (dv || 0), ps.z), o = g.P(w[0], w[1], w[2]);
+    return new DOMMatrix([a, b, 0, d, o[0] - XA * a, o[1] - XA * b])
+      .translate(XA, 0).rotate((-ps.cab * 180) / Math.PI).scale(1 + ps.aplasta * 0.4, 1 - ps.aplasta).translate(-XA, 0);
+  }
+
+  /* ---------- dibujo ---------- */
+  const mix = (a, b, t) => `rgba(${mezcla(a[0], b[0], t) | 0},${mezcla(a[1], b[1], t) | 0},${mezcla(a[2], b[2], t) | 0},1)`;
+  const mix3 = (a, b, t) => [mezcla(a[0], b[0], t), mezcla(a[1], b[1], t), mezcla(a[2], b[2], t)];
+  function fw(g) { return lim(g.esc / 140, 0.62, 1.12); }
+
+  function prisma(g, u0, u1, v0, v1, z0, z1, o) {
+    // caja orientada a la pared: se ven la tapa, la cara de enfrente (v1) y el costado de abajo (u0)
+    o = o || {};
+    const w = fw(g);
+    g.poly([W3(u1, v0, z1), W3(u1, v1, z1), W3(u1, v1, z0), W3(u0, v1, z0), W3(u0, v0, z0), W3(u0, v0, z1)],
+      { r: o.r == null ? 2.2 : o.r, relleno: o.relleno, trazo: o.trazo || tinta(o.a == null ? 0.82 : o.a, o.l || 0), w: (o.w || 1.3) * w });
+    g.linea([W3(u0, v0, z1), W3(u0, v1, z1), W3(u1, v1, z1)], { trazo: o.pliegue || tinta(0.16, (o.l || 0) * 0.6, 0.9), w: 1 * w });
+  }
+
+  /* un bloque de estratos: primero la silueta clara de todas las capas, luego cada capa opaca de abajo
+     hacia arriba con su borde tenue; así solo queda clara la silueta del conjunto (regla 09) */
+  function bloque(g, capasB) {
+    const w = fw(g), fondo = g.rgba(RGB.fondo, 1);
+    const sil = (c) => [W3(c.u1, c.v0, c.z1), W3(c.u1, c.v1, c.z1), W3(c.u1, c.v1, c.z0), W3(c.u0, c.v1, c.z0), W3(c.u0, c.v0, c.z0), W3(c.u0, c.v0, c.z1)];
+    capasB.forEach((c) => g.poly(sil(c), { r: 1, relleno: false, trazo: tinta(0.7), w: 2.8 * w }));
+    capasB.forEach((c, i) => {
+      g.poly(sil(c), { r: 1, relleno: fondo, trazo: tinta(0, 0, 0.5), w: 0.8 * w });
+      if (i === capasB.length - 1) g.linea([W3(c.u0, c.v0, c.z1), W3(c.u0, c.v1, c.z1), W3(c.u1, c.v1, c.z1)], { trazo: tinta(0.12), w: 0.85 * w });
+    });
+  }
+
+  function repisaDibujo(g, k, f) {
+    const R = REPISAS[k], w = fw(g), o = repisa[k].v, z = R.z + hunde[k];
+    const u0 = R.c - LARGO / 2, u1 = R.c + LARGO / 2;
+    // la ranura en la pared: casi no se ve (no parece haber camino)
+    g.linea([W3(u0 + 0.03, 0, z), W3(u1 - 0.03, 0, z)], { trazo: tinta(0, f, 0.3 + 0.25 * f), w: 0.9 * w });
+    if (o < 0.012) return;
+    prisma(g, u0, u1, 0, SALE * o, z - GRUESO, z, { a: 0.88, l: f, r: 2 });
+  }
+
+  function apacheta(g, f) {
+    const { u, v } = APACHETA;
+    const piedra = (lu, lv, h, z) => prisma(g, u - lu, u + lu, v - lv, v + lv, z, z + h, { a: 0.72, l: f, r: 1.4, w: 1.15 });
+    piedra(0.1, 0.09, 0.075, CIMA);
+    piedra(0.072, 0.065, 0.062, CIMA + 0.075);
+    piedra(0.046, 0.042, 0.052, CIMA + 0.137);
+  }
+
+  function carnero(g, ps, alfaV, lCuerno) {
+    const ctx = g.ctx, w = fw(g);
+    const M = matriz(g, ps), ML = matriz(g, ps, -LEJOS);
+    const fondo = RGB.fondo, claro = RGB.claro, lima = RGB.lima;
+    const rel = {
+      papel: g.rgba(fondo, 1),
+      lejos: mix(fondo, claro, 0.035),
+      cuerno: mix(mix3(fondo, claro, 0.06), lima, 0.12 * lCuerno),
+      ojo: tinta(1),
+    };
+    const tr = { hi: [tinta(0.92), 1.45], mid: [tinta(0.52), 1.0], lo: [tinta(0.22), 0.8], fa: [tinta(0, 0, 0.75), 0.8] };
+    ctx.save();
+    ctx.globalAlpha = alfaV;
+    ctx.lineJoin = "round"; ctx.lineCap = "round";
+    for (const c of PERFIL) {
+      const p = new Path2D(); p.addPath(c.p, c.lejana ? ML : M);
+      if (c.f) { ctx.fillStyle = rel[c.f]; ctx.fill(p, "evenodd"); continue; }
+      let [color, ancho] = tr[c.t];
+      if (c.cuerno && lCuerno > 0) color = tinta(c.t === "hi" ? 0.92 : 0.52, lCuerno * (c.t === "hi" ? 1 : 0.7));
+      ctx.strokeStyle = color; ctx.lineWidth = ancho * w; ctx.stroke(p);
+    }
+    ctx.restore();
+    return M;
+  }
+
+  function rastro(g, de, a, hasta, color) {
+    const pts = [], w = fw(g);
+    for (let i = 0; i <= 30; i++) { const p = arco(de, a, (i / 30) * hasta); pts.push(W3(p.u, p.v, p.z + 0.01)); }
+    const ctx = g.ctx;
+    ctx.save(); ctx.setLineDash([0.01, 5.5 * w]);
+    g.linea(pts, { trazo: color, w: 2.2 * w });
+    ctx.restore();
+  }
+
+  function aterrizaje(k, ahora) {
+    aterriza = { t0: ahora };
+    if (k < 1 || k > 2 || Plano.reducido) return;
+    const R = REPISAS[k];
+    hundeT[k] = ahora;
+    for (let i = 0; i < 5; i++) {
+      piedras.push({ u: R.c + (Math.random() - 0.5) * 0.5, v: SALE * repisa[k].v - 0.01, z: R.z - 0.02,
+        vu: (Math.random() - 0.5) * 0.2, vv: 0.15 + Math.random() * 0.22, vz: 0.15 + Math.random() * 0.35, t0: ahora, r: 0.9 + Math.random() * 0.8 });
+    }
+  }
+
+  figura = Plano.figura({
+    id: "carnero", total: 5, reposo: 0, recorrido: [1, 2, 3, 4], pausa: 2500, aria: ARIA, caja, margen: 0.035,
+    crear() {
+      for (let k = 1; k <= 2; k++) repisa.push(Plano.transito(0));
+      alfa = Plano.transito(1);
+    },
+    alElegir(i, previa, ahora) {
+      if (i < 0) return;
+      const donde = salto ? salto.a : pos;
+      meta = i;
+      if (PASO_DE[i] >= donde) { if (!fade) ajustar(ahora); return; }
+      // nunca da la vuelta: se desvanece y reaparece en el paso elegido, mirando a la cima
+      if (!fade) { fade = { fase: 0 }; alfa.ir(0, ahora, 240); }
+    },
+    zonas(g) {
+      const hull = (pts3) => {
+        const p = g.zona(pts3).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+        const cruz = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+        const lo = [], hi = [];
+        for (const q of p) { while (lo.length >= 2 && cruz(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+        for (let i = p.length - 1; i >= 0; i--) { const q = p[i]; while (hi.length >= 2 && cruz(hi[hi.length - 2], hi[hi.length - 1], q) <= 0) hi.pop(); hi.push(q); }
+        return lo.slice(0, -1).concat(hi.slice(0, -1));
+      };
+      const cajaZ = (u0, u1, v0, v1, z0, z1) => {
+        const pts = [];
+        [u0, u1].forEach((u) => [v0, v1].forEach((v) => [z0, z1].forEach((z) => pts.push(W3(u, v, z)))));
+        return hull(pts);
+      };
+      return (zonasVistas = [
+        cajaZ(-0.5, 0.66, 0, 0.86, BASE.z0, 0.74),
+        cajaZ(-0.1, 0.86, 0, 0.7, 0.78, 1.7),
+        cajaZ(0.88, 1.27, -0.45, 0.3, 0.95, 2.2),
+        cajaZ(1.29, 2.05, 0, 0.7, 1.32, 2.2),
+        cajaZ(1.6, 3.4, FONDO, 0.02, 2.22, 3.1),
+      ]);
+    },
+    dibujar(g, est, dt, ahora) {
+      const ctx = g.ctx, w = fw(g);
+      let sigue = false;
+      repisa.forEach((r) => { if (r) { r.paso(ahora); if (!r.listo(ahora) || ahora < r.t0) sigue = true; } });
+      alfa.paso(ahora); if (!alfa.listo(ahora) || ahora < alfa.t0) sigue = true;
+
+      // desvanecer y reaparecer
+      if (fade) {
+        sigue = true;
+        if (fade.fase === 0 && alfa.listo(ahora)) {
+          salto = null; preparando = 0; aterriza = null; piedras = [];
+          pos = PASO_DE[meta];
+          ajustar(ahora);
+          fade.fase = 1; alfa.ir(1, ahora, 460); alfa.t0 = ahora + 160;
+        } else if (fade.fase === 1 && alfa.listo(ahora) && ahora >= alfa.t0) fade = null;
+      }
+      // el siguiente salto: espera a que su saliente esté fuera, se agacha y salta
+      if (!fade && !salto && pos < PASO_DE[meta]) {
+        sigue = true;
+        const k = pos + 1;
+        if (preparando !== k) {
+          preparando = k;
+          ajustar(ahora);
+          const listaRep = k <= 2 ? repisa[k].t0 + 0.6 * repisa[k].dur : 0;
+          listoEn = Math.max(ahora + (Plano.reducido ? 0 : 190), listaRep);
+        }
+        if (ahora >= listoEn) {
+          const largo = PASO_DE[meta] - pos > 1;
+          salto = { de: pos, a: k, t0: ahora, dur: Plano.reducido ? 0 : (k === 2 ? 900 : 720) * (largo ? 0.86 : 1) };
+          preparando = 0;
+        }
+      } else if (!salto) preparando = 0;
+      if (salto) {
+        sigue = true;
+        if (!salto.dur || ahora - salto.t0 >= salto.dur) { pos = salto.a; salto = null; aterrizaje(pos, ahora); ajustar(ahora); }
+      }
+      if (aterriza && ahora - aterriza.t0 < 340) sigue = true;
+      for (let k = 1; k <= 2; k++) {
+        const r = (ahora - hundeT[k]) / 300;
+        hunde[k] = hundeT[k] && r > 0 && r < 1 ? -0.022 * Math.sin(Math.PI * r) * (1 - r * 0.5) : 0;
+        if (hundeT[k] && r > 0 && r < 1) sigue = true;
+      }
+
+      const f = (i) => g.foco(i);
+      // base de la maqueta
+      prisma(g, BASE.u0, BASE.u1, BASE.v0, BASE.v1, BASE.z0, 0, { a: 0.45, r: 3, w: 1.2 });
+      // el risco, del bloque más lejano al más cercano
+      BLOQUES.forEach((b) => bloque(g, b));
+
+      apacheta(g, f(0));
+      repisaDibujo(g, 2, f(2));
+      repisaDibujo(g, 1, f(1));
+
+      // rastro de los saltos dados: tenue; el de la grieta en lima en «sin retroceder»; todos en lima en «persistencia»
+      const tono = (k) => { const l = Math.max(f(4), k === 2 ? f(3) : 0); return tinta(0.25 + 0.6 * l, l, 0.7 + 0.3 * l); };
+      const hechos = salto ? salto.a - 1 : pos;
+      for (let k = 1; k <= hechos; k++) rastro(g, k - 1, k, 1, tono(k));
+      if (salto) rastro(g, salto.de, salto.a, suave(lim((ahora - salto.t0) / salto.dur, 0, 1)), tono(salto.a));
+
+      const ps = pose(ahora);
+      const M = carnero(g, ps, alfa.v, 0);
+
+      // la cima a la vista: la mirada del borrego hasta la apacheta
+      const f0 = f(0);
+      if (f0 > 0.01 && alfa.v > 0.5 && pos === 0 && !salto) {
+        const ojo = M.transformPoint(new DOMPoint(OJO[0] + 8, OJO[1]));
+        const ap = W3(APACHETA.u, APACHETA.v, CIMA + 0.22), q = g.P(ap[0], ap[1], ap[2]);
+        const dx = q[0] - ojo.x, dy = q[1] - ojo.y, L = Math.hypot(dx, dy);
+        const ini = 10 * w, fin = L - 14 * w;
+        ctx.save(); ctx.setLineDash([0.01, 6 * w]); ctx.lineDashOffset = Plano.reducido ? 0 : -((ahora / 70) % (6 * w));
+        ctx.beginPath(); ctx.moveTo(ojo.x + (dx / L) * ini, ojo.y + (dy / L) * ini);
+        ctx.lineTo(ojo.x + (dx / L) * (ini + (fin - ini) * f0), ojo.y + (dy / L) * (ini + (fin - ini) * f0));
+        ctx.strokeStyle = tinta(1, 1, 0.9 * f0 * alfa.v); ctx.lineWidth = 2 * w; ctx.lineCap = "round"; ctx.stroke();
+        ctx.restore();
+        if (!Plano.reducido) sigue = true;
+      }
+
+      // piedritas que caen al aterrizar
+      if (piedras.length) {
+        sigue = true;
+        piedras = piedras.filter((p) => {
+          const t = (ahora - p.t0) / 1000;
+          const z = p.z + p.vz * t - 3.2 * t * t;
+          if (z < 0.005 || t > 1.4) return false;
+          const q = W3(p.u + p.vu * t, p.v + p.vv * t, z), s = g.P(q[0], q[1], q[2]);
+          ctx.beginPath(); ctx.arc(s[0], s[1], p.r * w, 0, Math.PI * 2);
+          ctx.fillStyle = tinta(0.55, 0, lim(1.3 - t, 0, 1)); ctx.fill();
+          return true;
+        });
+      }
+      // ?zonas=1 dibuja las zonas fijas del cursor (solo para revisar)
+      if (VER_ZONAS) zonasVistas.forEach((z, k) => { const poly = Array.isArray(z) ? z : z.poly; ctx.beginPath(); poly.forEach((q, i) => (i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]))); ctx.closePath(); ctx.strokeStyle = ["#f55", "#fb3", "#5df", "#c6f", "#7f7"][Array.isArray(z) ? k : z.i]; ctx.lineWidth = 1; ctx.stroke(); });
+      return sigue;
+    },
+  });
+
+  // el sitio puede pasar su azul exacto
+  window.addEventListener("message", (e) => {
+    const d = e.data;
+    if (d && d.lamina === "carnero" && Array.isArray(d.fondo) && d.fondo.length === 3) { RGB.fondo = d.fondo.map((x) => x | 0); window.dispatchEvent(new Event("resize")); }
+  });
+})();
+</script>
+</body>
+</html>
