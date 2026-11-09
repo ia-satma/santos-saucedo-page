@@ -37,6 +37,7 @@ export function V3Main({ vista, children, className = "" }: { vista: string; chi
 const V3_VARIANTES = new Set([
   "c-acumulado", "c-atardecer", "c-cerro-luna", "c-corporativo", "c-estructura", "c-ind-acero", "c-ind-automotriz",
   "c-ind-bebidas", "c-ind-energia", "c-laboral", "c-migratorio", "c-prevencion", "c-reaccion", "c-san-pedro",
+  "c-ind-consumo", "c-ind-farmaceutica", "c-ind-tecnologia", "c-ind-construccion", "c-ind-financieros",
 ]);
 
 /** srcset de una foto de /v3/ con variantes: «/v3/c-laboral.webp» (con la base del sitio delante o sin

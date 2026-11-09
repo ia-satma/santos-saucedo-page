@@ -38,7 +38,7 @@ export const homeCopy = {
         },
         {
           clave: "automotriz", img: v3Asset("/v3/c-ind-automotriz.webp"), pos: "64% 60%",
-          nombre: "Automotriz",
+          nombre: "Automotriz y manufactura",
           linea: "Relaciones colectivas, inspecciones y cumplimiento en plantas con varios turnos.",
           alt: "Carrocería de una camioneta en la línea de ensamble",
         },
@@ -50,7 +50,7 @@ export const homeCopy = {
         },
         {
           clave: "energia", img: v3Asset("/v3/c-ind-energia.webp"), pos: "62% 70%",
-          nombre: "Energía",
+          nombre: "Energía y recursos naturales",
           linea: "Servicios especializados (REPSE), contratistas y cumplimiento en proyectos de generación y transmisión.",
           alt: "Torres de transmisión eléctrica al atardecer",
         },
@@ -86,7 +86,7 @@ export const homeCopy = {
         },
         {
           clave: "automotriz", img: v3Asset("/v3/c-ind-automotriz.webp"), pos: "64% 60%",
-          nombre: "Automotive",
+          nombre: "Automotive and manufacturing",
           linea: "Collective relations, inspections and compliance in plants that run several shifts.",
           alt: "A pickup truck body on the assembly line",
         },
@@ -98,7 +98,7 @@ export const homeCopy = {
         },
         {
           clave: "energia", img: v3Asset("/v3/c-ind-energia.webp"), pos: "62% 70%",
-          nombre: "Energy",
+          nombre: "Energy and natural resources",
           linea: "Specialized services (REPSE), contractors and compliance in generation and transmission projects.",
           alt: "Power transmission towers at dusk",
         },

@@ -106,6 +106,17 @@ const PREVIOUS_CMS: Previous = {
     "practiceGroups.description.ru": ["4211f1ad234477233b7fb57c"],
     "practiceGroups.description.fr": ["55c12aab7620f6d99e967e49"],
     "practiceGroups.description.it": ["5df46eb381ca0976b14b5795"],
+    // Industrias: de 4 a 9 con la lista de Von Wobeser (9-11-2026)
+    "industries.description.en": ["23f8b5c9daec42eb93e51248"],
+    "industries.description.es": ["0699e8310ea870a466eee757"],
+    "industries.description.de": ["a77dd5869c29bcb78998763b"],
+    "industries.description.zh": ["943d15689496a06342d81737"],
+    "industries.description.ko": ["7abda4bab1f41fd19fef1c3b"],
+    "industries.description.ja": ["2e4bcc672d3a13a932d849ab"],
+    "industries.description.ar": ["daad4d5cbad2e8b62a5e5c4d"],
+    "industries.description.ru": ["9303905102f506fed0f172c9"],
+    "industries.description.fr": ["5541c47eb377ab3b3570e005"],
+    "industries.description.it": ["07cd38f7de713d4ae21d1564"],
   },
   "about": {
     "en.historyText1": ["8192f4823e700c913778323f"],
