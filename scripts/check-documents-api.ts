@@ -8,7 +8,7 @@ import { eq, inArray } from "drizzle-orm";
 import express from "express";
 import JSZip from "jszip";
 import mammoth from "mammoth";
-import { decodePDFRawStream, PDFArray, PDFDict, PDFDocument, PDFName, PDFNumber, PDFRawStream } from "pdf-lib";
+import { decodePDFRawStream, PDFArray, PDFDict, PDFDocument, PDFHexString, PDFName, PDFNumber, PDFRawStream } from "pdf-lib";
 import sharp from "sharp";
 import { PDFParse } from "pdf-parse";
 import { adminSessions, adminUsers, generatedDocuments } from "../shared/schema";
@@ -254,6 +254,80 @@ try {
   createdIds.push(explicitLegacyRow.id);
   assert.equal(explicitLegacyRow.template, null);
 
+  const link = "https://santossaucedo.com/?p=(legal)&lang=es";
+  const richContent = {
+    type: "doc",
+    content: [
+      { type: "heading", attrs: { level: 2 }, content: [{ type: "text", text: "Condiciones laborales" }] },
+      { type: "paragraph", content: [
+        { type: "text", text: "Texto en negritas", marks: [{ type: "bold" }] },
+        { type: "hardBreak" },
+        { type: "text", text: "Texto en cursivas", marks: [{ type: "italic" }] },
+        { type: "text", text: " y subrayado", marks: [{ type: "underline" }] },
+        { type: "text", text: " Enlace oficial", marks: [{ type: "link", attrs: { href: link, target: "_blank", rel: "noopener noreferrer", class: null, title: null } }] },
+      ] },
+      { type: "orderedList", attrs: { start: 3, type: null }, content: [{
+        type: "listItem", content: [
+          { type: "paragraph", content: [{ type: "text", text: "Punto numerado" }] },
+          { type: "bulletList", content: [{
+            type: "listItem", content: [{ type: "paragraph", content: [{ type: "text", text: "Punto anidado" }] }],
+          }] },
+        ],
+      }] },
+      { type: "blockquote", content: [{ type: "paragraph", content: [{ type: "text", text: "Cita con formato" }] }] },
+    ],
+  };
+  const rejectedRichContent = JSON.parse(JSON.stringify(richContent));
+  rejectedRichContent.content[1].content[4].marks[0].attrs.href = "javascript:alert(1)";
+  assert.equal((await call(`${prefix}/generate`, "POST", { richContent: rejectedRichContent })).status, 400);
+  const richResponse = await call(`${prefix}/generate`, "POST", { richContent, template: "trama" });
+  assert.equal(richResponse.status, 201, await richResponse.clone().text());
+  const richRow = await richResponse.json();
+  createdIds.push(richRow.id);
+  assert.equal(richRow.title, "");
+  const richDetail = await (await call(`${prefix}/${richRow.id}`)).json();
+  assert.deepEqual(richDetail.document.richContent, richContent);
+  assert.match(richDetail.document.sourceText, /3\. Punto numerado\n  • Punto anidado/);
+  const richFiles = await verifyExport(call, richRow, [
+    "Condiciones laborales", "Texto en negritas", "Texto en cursivas", "subrayado", "Enlace oficial", "Punto numerado", "Punto anidado", "Cita con formato",
+  ]);
+  const richZip = await JSZip.loadAsync(richFiles.docx);
+  const word = await richZip.file("word/document.xml")!.async("string");
+  const numbers = await richZip.file("word/numbering.xml")!.async("string");
+  const links = await richZip.file("word/_rels/document.xml.rels")!.async("string");
+  assert.match(word, /<w:pStyle w:val="Heading2"\/>/);
+  assert.match(word, /<w:b\/>/);
+  assert.match(word, /<w:i\/>/);
+  assert.match(word, /<w:u w:val="single"\/>/);
+  assert.match(word, /<w:br\/>/);
+  assert.match(word, /<w:hyperlink r:id="rIdLink1">/);
+  assert.match(word, /<w:pBdr><w:left/);
+  assert.match(numbers, /w:startOverride w:val="3"/);
+  assert.match(links, /p=\(legal\)&amp;lang=es" TargetMode="External"/);
+  const richPdf = await PDFDocument.load(richFiles.pdf);
+  const richPage = richPdf.getPage(0);
+  const fontResources = richPage.node.Resources()!.lookup(PDFName.of("Font"), PDFDict);
+  const fonts = fontResources.keys().map(key =>
+    fontResources.lookup(key, PDFDict).lookup(PDFName.of("BaseFont"), PDFName).decodeText(),
+  );
+  assert(fonts.includes("Times-Bold"));
+  assert(fonts.includes("Helvetica-Bold"));
+  assert(fonts.includes("Helvetica-Oblique"));
+  const annotations = richPage.node.Annots();
+  assert.equal(annotations?.size(), 1);
+  const uri = annotations!.lookup(0, PDFDict).lookup(PDFName.of("A"), PDFDict).lookup(PDFName.of("URI"));
+  assert(uri instanceof PDFHexString);
+  assert.equal(uri.decodeText(), link);
+
+  const richRevision = await call(`${prefix}/${richRow.id}`, "PATCH", { title: "Revisión de formato" });
+  assert.equal(richRevision.status, 201, await richRevision.clone().text());
+  const revisedRichRow = await richRevision.json();
+  createdIds.push(revisedRichRow.id);
+  const revisedRich = await (await call(`${prefix}/${revisedRichRow.id}`)).json();
+  assert.deepEqual(revisedRich.document.richContent, richContent);
+  assert((await readExport(call, richRow.docxUrl)).equals(richFiles.docx));
+  assert((await readExport(call, richRow.pdfUrl)).equals(richFiles.pdf));
+
   const organized = await call(`${prefix}/generate`, "POST", {
     title: "Ejemplo editorial", instructions: "Redacta un breve ejemplo.", mode: "organize",
   });
@@ -262,10 +336,13 @@ try {
   createdIds.push(organizedRow.id);
   const organizedDetail = await (await call(`${prefix}/${organizedRow.id}`)).json();
   assert.equal(organizedDetail.document.sourceText, "Texto organizado de prueba.");
+  assert.deepEqual(organizedDetail.document.richContent, {
+    type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Texto organizado de prueba." }] }],
+  });
   const captured = completionRequest as { model?: string; service_tier?: string } | null;
   assert.equal(captured?.model, "gpt-6.1-sol");
   assert.equal(captured?.service_tier, "fast");
-  console.log("Documents API ok: permission checks, input upload, private DOCX/PDF, all four templates, editable text, immutable downloads, legacy inheritance, version conflict, archive/restore and Sol fast transport.");
+  console.log("Documents API ok: permission checks, input upload, private DOCX/PDF, all four templates, native rich formatting, immutable downloads, legacy inheritance, version conflict, archive/restore and Sol fast transport.");
 } finally {
   for (const id of createdIds) {
     await deletePrivateStudioObject(`private/studio/document-${id}.docx`);

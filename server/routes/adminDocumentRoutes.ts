@@ -3,6 +3,7 @@ import type { Express, RequestHandler, Response } from "express";
 import { desc, eq, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { generatedDocuments, type GeneratedDocument } from "@shared/schema";
+import { documentRichTextSchema, plainTextToRichText, richTextToPlainText } from "@shared/documentRichText";
 import { DEFAULT_LETTERHEAD_TEMPLATE, LETTERHEAD_TEMPLATE_IDS } from "@shared/letterheadTemplates";
 import { authMiddleware, requirePermission } from "../auth";
 import { db, editorialDb } from "../db";
@@ -16,10 +17,11 @@ import { organizeDocument } from "../services/documentEditorial";
 const invalidCharacters = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFE\uFFFF]/;
 const sourceTextSchema = z.string().max(200_000).refine((value) => !invalidCharacters.test(value));
 const documentInput = z.object({
-  title: z.string().trim().min(1).max(180).refine((value) => !invalidCharacters.test(value) && !/[\r\n]/.test(value)),
-  sourceText: sourceTextSchema.default(""),
+  title: z.string().trim().max(180).refine((value) => !invalidCharacters.test(value) && !/[\r\n]/.test(value)).optional(),
+  sourceText: sourceTextSchema.optional(),
+  richContent: documentRichTextSchema.optional(),
   instructions: z.string().trim().max(4_000).default(""),
-  mode: z.enum(["preserve", "organize"]).default("organize"),
+  mode: z.enum(["preserve", "organize"]).optional(),
   template: z.enum(LETTERHEAD_TEMPLATE_IDS).nullable().optional(),
   documents: z.array(z.object({
     url: z.string().regex(/^private:presentations\/[a-f0-9]{32}\.[a-z0-9]{1,5}$/),
@@ -71,20 +73,29 @@ function summary(row: GeneratedDocument) {
   };
 }
 
+function readRichContent(value: unknown) {
+  const parsed = documentRichTextSchema.safeParse(value);
+  return parsed.success ? parsed.data : null;
+}
+
 async function saveDocument(raw: unknown, actorId: string | null, current?: GeneratedDocument) {
   const parsed = documentInput.safeParse(raw);
   if (!parsed.success) throw new DocumentError(400, "Los datos del documento no son válidos.");
-  const { title, instructions, mode, documents } = parsed.data;
+  const { instructions, documents } = parsed.data;
+  const mode = parsed.data.mode ?? (parsed.data.richContent || (current && parsed.data.sourceText === undefined) ? "preserve" : "organize");
+  const title = parsed.data.title ?? current?.title ?? "";
   if (parsed.data.template === null && current?.template !== null) {
     throw new DocumentError(400, "Elige una plantilla de membrete válida.");
   }
   const template = parsed.data.template === undefined
     ? (current ? current.template : DEFAULT_LETTERHEAD_TEMPLATE)
     : parsed.data.template;
-  let { sourceText } = parsed.data;
+  let richContent = parsed.data.richContent ??
+    (parsed.data.sourceText === undefined ? readRichContent(current?.richContent) ?? undefined : undefined);
+  let sourceText = richContent ? richTextToPlainText(richContent) : parsed.data.sourceText ?? current?.sourceText ?? "";
   if (documents.length) {
     const { extractText } = await import("../services/documentText");
-    const parts = [sourceText];
+    const parts: string[] = [];
     for (const document of documents) {
       const extracted = await extractText(await hydratePresentationInput(document.url), document.name, { rejectOverLimit: true });
       if (!extracted.ok) {
@@ -92,7 +103,16 @@ async function saveDocument(raw: unknown, actorId: string | null, current?: Gene
       }
       parts.push(extracted.text);
     }
-    sourceText = parts.filter(Boolean).join("\n\n");
+    const appendedText = parts.join("\n\n");
+    if (richContent) {
+      richContent = {
+        type: "doc",
+        content: [...richContent.content, { type: "paragraph" }, ...plainTextToRichText(appendedText).content],
+      };
+      sourceText = richTextToPlainText(richContent);
+    } else {
+      sourceText = [sourceText, appendedText].filter(Boolean).join("\n\n");
+    }
   }
   if (!sourceTextSchema.safeParse(sourceText).success) {
     throw new DocumentError(400, "El texto combinado excede el límite o contiene caracteres no admitidos.");
@@ -107,14 +127,20 @@ async function saveDocument(raw: unknown, actorId: string | null, current?: Gene
     ? await organizeDocument({ title, sourceText, instructions, actorId })
     : sourceText;
   if (!sourceTextSchema.safeParse(finalText).success) throw new DocumentError(422, "El texto generado contiene caracteres no admitidos.");
+  if (mode === "organize") richContent = plainTextToRichText(finalText);
+  if (richContent && !documentRichTextSchema.safeParse(richContent).success) {
+    throw new DocumentError(422, "El contenido combinado tiene demasiados bloques o excede el límite del documento.");
+  }
   const id = randomUUID();
   const docxUrl = storageKey(id, "docx");
   const pdfUrl = storageKey(id, "pdf");
-  const output = { title, sourceText: finalText, mode: "preserve" as const, template };
+  const output = { title, sourceText: finalText, richContent, mode: "preserve" as const, template };
   const [docx, pdf] = await Promise.all([createBrandedDocx(output), createBrandedPdf(output)]);
+  let transactionStarted = false;
   try {
     await uploadPrivateStudioObject(docxUrl, docx);
     await uploadPrivateStudioObject(pdfUrl, pdf);
+    transactionStarted = true;
     return await editorialDb.transaction(async (tx) => {
       const parentId = current ? current.parentId || current.id : null;
       let version = 1;
@@ -129,13 +155,18 @@ async function saveDocument(raw: unknown, actorId: string | null, current?: Gene
         version = latest.version + 1;
       }
       const [saved] = await tx.insert(generatedDocuments).values({
-        id, title, sourceText: finalText, instructions: instructions || null, mode, template, version,
+        id, title, sourceText: finalText, richContent, instructions: instructions || null, mode, template, version,
         parentId, docxUrl, pdfUrl, createdBy: actorId,
       }).returning();
       return saved;
     });
   } catch (error) {
-    await Promise.allSettled([deletePrivateStudioObject(docxUrl), deletePrivateStudioObject(pdfUrl)]);
+    // If a timeout happens after COMMIT, keep the artifacts unless we can
+    // verify that the transaction did not create their document version.
+    const uncommitted = !transactionStarted || error instanceof DocumentError || await db
+      .select({ id: generatedDocuments.id }).from(generatedDocuments).where(eq(generatedDocuments.id, id)).limit(1)
+      .then(rows => rows.length === 0, () => false);
+    if (uncommitted) await Promise.allSettled([deletePrivateStudioObject(docxUrl), deletePrivateStudioObject(pdfUrl)]);
     throw error;
   }
 }
@@ -220,6 +251,6 @@ export function registerAdminDocumentRoutes(app: Express) {
     const versions = await db.select().from(generatedDocuments)
       .where(or(eq(generatedDocuments.id, rootId), eq(generatedDocuments.parentId, rootId)))
       .orderBy(desc(generatedDocuments.version));
-    res.json({ document: { ...summary(row), sourceText: row.sourceText, mode: row.mode }, versions: versions.map(summary) });
+    res.json({ document: { ...summary(row), sourceText: row.sourceText, richContent: readRichContent(row.richContent), mode: row.mode }, versions: versions.map(summary) });
   }));
 }

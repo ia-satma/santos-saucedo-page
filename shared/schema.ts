@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import { pgTable, text, varchar, timestamp, integer, boolean, jsonb, index, uniqueIndex, doublePrecision } from "drizzle-orm/pg-core";
 import type { SocialRevision } from "./socialStudio";
 import type { LetterheadTemplateId } from "./letterheadTemplates";
+import { documentRichTextSchema } from "./documentRichText";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 // Constantes sin base de datos: viven en ./constants para que el sitio público no cargue drizzle ni zod.
@@ -1413,6 +1414,7 @@ export const generatedDocuments = pgTable("generated_documents", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   title: text("title").notNull(),
   sourceText: text("source_text").notNull(),
+  richContent: jsonb("rich_content"),
   instructions: text("instructions"),
   mode: text("mode").notNull().default("organize"),
   template: text("template").$type<LetterheadTemplateId>(),
@@ -1433,6 +1435,7 @@ export const generatedDocuments = pgTable("generated_documents", {
 
 export const insertGeneratedDocumentSchema = createInsertSchema(generatedDocuments, {
   mode: z.enum(["preserve", "organize"]).optional(),
+  richContent: documentRichTextSchema.nullable().optional(),
 }).omit({ id: true, createdAt: true, updatedAt: true, version: true, status: true, archivedAt: true });
 
 export type InsertGeneratedDocument = z.infer<typeof insertGeneratedDocumentSchema>;
