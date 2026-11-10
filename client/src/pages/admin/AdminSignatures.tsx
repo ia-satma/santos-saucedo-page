@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowTopRightIcon, CodeIcon, CopyIcon, DownloadIcon, Pencil1Icon, PlusIcon, ResetIcon, TrashIcon, UploadIcon } from "@radix-ui/react-icons";
+import { ArrowTopRightIcon, CodeIcon, CopyIcon, DownloadIcon, ImageIcon, PlusIcon, ResetIcon, TrashIcon, UploadIcon } from "@radix-ui/react-icons";
 import { adminApiRequest, readAdminJson, useAdminAuth } from "@/lib/adminAuth";
 import { uploadAdminMedia } from "@/lib/adminMediaUpload";
 import { queryClient } from "@/lib/queryClient";
@@ -23,6 +23,59 @@ const groups = [
 ];
 function downloadBlob(html: string, name: string) { const url = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" })); const anchor = document.createElement("a"); anchor.href = url; anchor.download = name; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); }
 async function copyRich(html: string) { const body = html.match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1] || html; if (navigator.clipboard && "ClipboardItem" in window) await navigator.clipboard.write([new ClipboardItem({ "text/html": new Blob([body], { type: "text/html" }), "text/plain": new Blob([body.replace(/<[^>]+>/g, " ")], { type: "text/plain" }) })]); else await navigator.clipboard.writeText(body); }
+function blobAsDataUrl(blob: Blob) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error || new Error("No se pudo leer una imagen."));
+    reader.readAsDataURL(blob);
+  });
+}
+async function inlineSignatureImages(bodyHtml: string) {
+  const parsed = new DOMParser().parseFromString(`<div id="signature-export-root">${bodyHtml}</div>`, "text/html");
+  const images = Array.from(parsed.querySelectorAll("#signature-export-root img"));
+  await Promise.all(images.map(async (image) => {
+    const source = image.getAttribute("src");
+    if (!source || source.startsWith("data:")) return;
+    try {
+      const response = await fetch(new URL(source, window.location.href));
+      if (response.ok) image.setAttribute("src", await blobAsDataUrl(await response.blob()));
+    } catch {
+      // Keep the source URL when an optional image cannot be fetched.
+    }
+  }));
+  return parsed.querySelector("#signature-export-root")?.innerHTML || bodyHtml;
+}
+async function downloadSignaturePng(html: string, name: string, width: number, height: number) {
+  const body = html.match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1] || html;
+  const bodyWithImages = await inlineSignatureImages(body);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xhtml="http://www.w3.org/1999/xhtml" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" style="width:${width}px;height:${height}px;overflow:hidden;background:#fff">${bodyWithImages}</div></foreignObject></svg>`;
+  const svgUrl = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
+  try {
+    const image = new Image();
+    image.decoding = "async";
+    await new Promise<void>((resolve, reject) => { image.onload = () => resolve(); image.onerror = () => reject(new Error("No se pudo renderizar la firma como imagen.")); image.src = svgUrl; });
+    const scale = 2;
+    const canvas = document.createElement("canvas");
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("No se pudo crear el lienzo de descarga.");
+    context.fillStyle = "#fff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    const png = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
+    if (!png) throw new Error("No se pudo generar el PNG.");
+    const downloadUrl = URL.createObjectURL(png);
+    const anchor = document.createElement("a");
+    anchor.href = downloadUrl;
+    anchor.download = name;
+    anchor.click();
+    setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+  } finally {
+    URL.revokeObjectURL(svgUrl);
+  }
+}
 
 export default function AdminSignatures() {
   const auth = useAdminAuth();
@@ -56,11 +109,12 @@ export default function AdminSignatures() {
     try { const media = await uploadAdminMedia(file); setForm((old) => ({ ...old, photoUrl: media.path })); setNotice("Fotografía guardada en la biblioteca de medios."); }
     catch (e) { setError((e as Error).message); } finally { setBusy(false); if (photoInput.current) photoInput.current.value = ""; }
   };
-  const actionFor = (id: string, action: "html" | "rich" | "download") => {
-    const document = generator.build(id);
-    if (action === "html") void navigator.clipboard.writeText(document).then(() => setNotice(`HTML de la firma ${id} copiado.`));
-    if (action === "rich") void copyRich(document).then(() => setNotice(`Firma ${id} copiada.`));
-    if (action === "download") downloadBlob(document, `firma-${id}.html`);
+  const actionFor = (id: string, action: "html" | "rich" | "download" | "image") => {
+    const sourceDocument = generator.build(id);
+    if (action === "html") void navigator.clipboard.writeText(sourceDocument).then(() => setNotice(`HTML de la firma ${id} copiado.`));
+    if (action === "rich") void copyRich(sourceDocument).then(() => setNotice(`Firma ${id} copiada.`));
+    if (action === "download") downloadBlob(sourceDocument, `firma-${id}.html`);
+    if (action === "image") void downloadSignaturePng(sourceDocument, `firma-${id}.png`, id === "12" ? 640 : 600, id === "12" ? 370 : 250).then(() => setNotice(`Imagen PNG de la firma ${id} descargada.`)).catch((error: Error) => setError(error.message));
   };
   if (!auth.isLoading && !auth.isAuthenticated) return null;
 
@@ -108,7 +162,7 @@ export default function AdminSignatures() {
             return <article className={`signature-template-card ${isSelected ? "is-selected" : ""}`} key={id}>
               <header className="signature-template-card-header"><button type="button" className="signature-template-title" onClick={() => setForm((old) => ({ ...old, templateId: id }))}><span>Firma {id}</span><small>{signatureDescriptions[index]}</small></button><button type="button" className="signature-open-template" onClick={() => setForm((old) => ({ ...old, templateId: id }))}>Abrir <ArrowTopRightIcon /></button></header>
               <div className="signature-template-preview"><iframe title={`Vista previa de Firma ${id}`} sandbox="allow-same-origin" srcDoc={templateHtml} className={id === "12" ? "signature-iframe signature-iframe-tall" : "signature-iframe"} /></div>
-              <footer className="signature-template-card-footer"><button type="button" className="signature-copy-html" onClick={() => actionFor(id, "html")}><CodeIcon /> Copiar código HTML</button><button type="button" className="signature-copy-rich" onClick={() => actionFor(id, "rich")}><CopyIcon /> Copiar firma</button><button type="button" className="signature-download" onClick={() => actionFor(id, "download")}><DownloadIcon /> Descargar .html</button><button type="button" className="signature-view-code" onClick={() => setCodeOpen(isCodeOpen ? null : id)}>{isCodeOpen ? "Ocultar código" : "Ver código"}</button></footer>
+              <footer className="signature-template-card-footer"><button type="button" className="signature-copy-html" onClick={() => actionFor(id, "html")}><CodeIcon /> Copiar código HTML</button><button type="button" className="signature-copy-rich" onClick={() => actionFor(id, "rich")}><CopyIcon /> Copiar firma</button><button type="button" className="signature-download" onClick={() => actionFor(id, "download")}><DownloadIcon /> Descargar .html</button><button type="button" className="signature-download signature-image-download" onClick={() => actionFor(id, "image")}><ImageIcon /> Descargar PNG</button><button type="button" className="signature-view-code" onClick={() => setCodeOpen(isCodeOpen ? null : id)}>{isCodeOpen ? "Ocultar código" : "Ver código"}</button></footer>
               {isCodeOpen && <pre className="signature-code-block"><code>{templateHtml}</code></pre>}
             </article>;
           })}
