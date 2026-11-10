@@ -67,7 +67,7 @@ export function DocumentRichTextEditor({
         "aria-label": label,
         "aria-describedby": helpId,
         "aria-multiline": "true",
-        class: "min-h-60 max-w-full break-words px-4 py-3 text-sm leading-relaxed outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#145385] [&_p+p]:mt-2 [&_h2]:mb-1 [&_h2]:mt-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h3]:mb-1 [&_h3]:mt-3 [&_h3]:text-base [&_h3]:font-semibold [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-6 [&_ol]:pl-6 [&_blockquote]:my-3 [&_blockquote]:border-s-2 [&_blockquote]:border-[#8CC63F] [&_blockquote]:ps-3 [&_blockquote]:text-muted-foreground [&_a]:text-[#145385] [&_a]:underline",
+        class: "min-h-60 max-w-full break-words px-4 py-3 text-sm leading-relaxed outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#145385] [&_p]:!text-justify [&_p+p]:mt-2 [&_h2]:!text-left [&_h2]:mb-1 [&_h2]:mt-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h3]:!text-left [&_h3]:mb-1 [&_h3]:mt-3 [&_h3]:text-base [&_h3]:font-semibold [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-6 [&_ol]:pl-6 [&_blockquote]:my-3 [&_blockquote]:border-s-2 [&_blockquote]:border-[#8CC63F] [&_blockquote]:ps-3 [&_blockquote]:text-muted-foreground [&_a]:text-[#145385] [&_a]:underline",
       },
     },
     onUpdate: ({ editor }) => {
