@@ -15,6 +15,7 @@ type RouteMetadata = {
   image: string;
   imageAlt: string;
   brandImage: boolean;
+  alternates?: Array<{ hreflang: string; url: string }>;
 };
 
 const escapeAttr = (value: string) =>
@@ -49,24 +50,31 @@ function absoluteUrl(value: string) {
  * fecha); borradores y programadas conservan las etiquetas generales del sitio.
  */
 async function routeMetadata(pathname: string): Promise<RouteMetadata | undefined> {
-  const match = /^\/news\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/.exec(pathname);
+  const match = /^\/(?:(es|en|de|zh|ko|ja|ar|ru|fr|it)\/)?news\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/.exec(pathname);
   if (!match) return;
-  const item = await storage.getNewsBySlug(match[1]);
+  const language = match[1] || "es";
+  const item = await storage.getNewsBySlug(match[2]);
   if (!item || !isPublicNews(item)) return;
-  const title = plainText(item.titleEs || item.title);
+  const translation = language === "es" ? undefined : await storage.getNewsTranslation(item.id, language);
+  const title = plainText(translation?.title || item.titleEs || item.title);
   const description = clip(
-    plainText(item.excerptEs || item.excerpt) || plainText(item.contentEs || item.content),
+    plainText(translation?.excerpt || item.excerptEs || item.excerpt) || plainText(translation?.content || item.contentEs || item.content),
     200,
   );
   const ownImage = item.imageUrl && !/placeholder/i.test(item.imageUrl) ? item.imageUrl : "";
   return {
     title,
-    documentTitle: `${title} | Monitor Laboral`,
+    documentTitle: title + " | " + (language === "es" ? "Monitor Laboral" : "Labor Monitor"),
     description: description || "Monitor Laboral de Santos & Saucedo.",
-    url: `${SITE}/news/${item.slug}`,
+    url: SITE + "/" + language + "/news/" + item.slug,
     image: absoluteUrl(ownImage || NEWS_SHARE_IMAGE),
     imageAlt: ownImage ? title : "Santos & Saucedo · Monitor Laboral",
     brandImage: !ownImage,
+    alternates: [
+      ["es-MX", "es"], ["en", "en"], ["de", "de"], ["zh-CN", "zh"], ["ko-KR", "ko"],
+      ["ja-JP", "ja"], ["ar", "ar"], ["ru", "ru"], ["fr", "fr"], ["it", "it"],
+    ].map(([hreflang, code]) => ({ hreflang, url: SITE + "/" + code + "/news/" + item.slug }))
+      .concat([{ hreflang: "x-default", url: SITE + "/es/news/" + item.slug }]),
   };
 }
 
@@ -93,7 +101,14 @@ function applyRouteMetadata(html: string, meta: RouteMetadata) {
   out = setMeta(out, "name", "twitter:title", meta.title);
   out = setMeta(out, "name", "twitter:description", meta.description);
   out = setMeta(out, "name", "twitter:image", meta.image);
-  return out.replace(/<link\s+rel=["']canonical["'][^>]*>/i, `<link rel="canonical" href="${escapeAttr(meta.url)}" />`);
+  out = out.replace(/<link\s+rel=["']alternate["'][^>]*hreflang=["'][^"']+["'][^>]*>\s*/gi, "");
+  if (meta.alternates?.length) {
+    const tags = meta.alternates
+      .map((alternate) => '<link rel="alternate" hreflang="' + escapeAttr(alternate.hreflang) + '" href="' + escapeAttr(alternate.url) + '" />')
+      .join("");
+    out = out.replace("</head>", tags + "</head>");
+  }
+  return out.replace(/<link\s+rel=["']canonical["'][^>]*>/i, '<link rel="canonical" href="' + escapeAttr(meta.url) + '" />');
 }
 
 export async function injectSiteMetadata(html: string, requestUrl?: string) {

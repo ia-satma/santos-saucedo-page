@@ -1,10 +1,11 @@
 // Compartir una nota del Monitor Laboral con el enlace de la página de la firma (no el del
 // medio citado). Lo usan la nota pública (/news/:slug) y el panel (/admin/news).
+import { getLanguageFromPath, localizedPath } from "@/lib/localeRouting";
 
 /** Enlace público y estable de la nota, sin consultas ni rutas de vista previa. */
 export function newsShareUrl(slug: string): string {
-  const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
-  return `${window.location.origin}${base}/news/${slug}`;
+  const language = getLanguageFromPath(window.location.pathname) || "es";
+  return window.location.origin + localizedPath(language, "/news/" + slug);
 }
 
 /** WhatsApp (wa.me): el titular y, en la línea siguiente, el enlace; la vista previa la da el servidor. */

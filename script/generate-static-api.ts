@@ -13,6 +13,7 @@ import {
 } from "../server/seed";
 import { isNamedOnTeamPage, toPublicTeamMember, toPublicTeamProfile } from "../shared/teamVisibility";
 import { isPublicNews, toPublicNews } from "../shared/publicNews";
+import { SUPPORTED_LANGUAGES } from "../shared/constants";
 
 // En producción estática escribimos en dist/public. Para trabajar el frontend sin
 // backend usamos `--frontend`, que deja el mismo snapshot en client/public para que
@@ -199,7 +200,10 @@ async function writeSitemap() {
     ...practiceGroups.map((g) => ({ loc: `/practice-groups/${g.slug}`, changefreq: "monthly", priority: "0.7", lastmod: today })),
     ...publishedNews.map((n) => ({ loc: `/news/${n.slug}`, changefreq: "monthly", priority: "0.6", lastmod: day(n.date) })),
   ];
-  const body = entries
+  const localizedEntries = entries.flatMap((entry) =>
+    SUPPORTED_LANGUAGES.map(({ code }) => ({ ...entry, loc: "/" + code + entry.loc })),
+  );
+  const body = localizedEntries
     .map(
       (e) => `  <url>
     <loc>${SITE_URL}${e.loc}</loc>

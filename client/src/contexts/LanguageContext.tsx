@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useEffect, useCallback, useRef, ty
 import { useTranslation } from "react-i18next";
 import { SUPPORTED_LANGUAGES, type LanguageCode, type SupportedLanguage } from "@shared/constants";
 import { isStaticSite } from "@/lib/queryClient";
+import { navigate as browserNavigate } from "wouter/use-browser-location";
+import { getLanguageFromPath, localizeHref, localizedPath, stripLanguagePrefix } from "@/lib/localeRouting";
 
 type DisplayLanguage = LanguageCode;
 
@@ -57,8 +59,9 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   const detectionRef = useRef(false);
   
   const [language, setLanguageState] = useState<LanguageCode>(() => {
+    const pathLanguage = typeof window !== "undefined" ? getLanguageFromPath(window.location.pathname) : null;
     const stored = getStoredLanguage();
-    return stored || DEFAULT_LANGUAGE;
+    return pathLanguage || stored || DEFAULT_LANGUAGE;
   });
   
   const [isDetecting, setIsDetecting] = useState(false);
@@ -66,7 +69,11 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   const displayLanguage = getDisplayLanguage(language);
 
   const setLanguage = useCallback((lang: LanguageCode) => {
-    if (lang === language) return;
+    const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
+    const isAdmin = /^\/(?:[^/]+\/)?admin(?:\/|$)/.test(pathname);
+    const currentRouteLanguage = typeof window !== "undefined" ? getLanguageFromPath(pathname) : null;
+    const shouldNavigate = !isAdmin && (currentRouteLanguage !== lang || lang !== language);
+    if (lang === language && !shouldNavigate) return;
     
     setLanguageState(lang);
     
@@ -77,6 +84,10 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
     try {
       localStorage.setItem(STORAGE_KEY, lang);
     } catch {
+    }
+    if (shouldNavigate && typeof window !== "undefined") {
+      const route = stripLanguagePrefix(pathname);
+      browserNavigate(localizedPath(lang, route) + window.location.search + window.location.hash);
     }
   }, [language, i18nInstance]);
 
@@ -92,12 +103,23 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
     detectionRef.current = true;
     
     const stored = getStoredLanguage();
+    const pathLanguage = typeof window !== "undefined" ? getLanguageFromPath(window.location.pathname) : null;
     let alreadyDetected: string | null = null;
     try {
       alreadyDetected = localStorage.getItem(DETECTION_KEY);
     } catch {
     }
     
+    // A locale in the URL is authoritative. It also gives crawlers a stable language
+    // without depending on localStorage or Accept-Language.
+    if (pathLanguage) {
+      if (pathLanguage !== language) {
+        setLanguageState(pathLanguage);
+        i18nInstance.changeLanguage(pathLanguage);
+      }
+      try { localStorage.setItem(STORAGE_KEY, pathLanguage); } catch {}
+      return;
+    }
     // Only detect if no stored preference AND we haven't detected before
     if (stored || alreadyDetected || isStaticSite) return;
     
@@ -138,8 +160,13 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
     initializedRef.current = true;
     
     const stored = getStoredLanguage();
+    const pathLanguage = typeof window !== "undefined" ? getLanguageFromPath(window.location.pathname) : null;
     
-    if (stored) {
+    if (pathLanguage) {
+      if (pathLanguage !== language) setLanguageState(pathLanguage);
+      if (i18nInstance.language !== pathLanguage) i18nInstance.changeLanguage(pathLanguage);
+      try { localStorage.setItem(STORAGE_KEY, pathLanguage); } catch {}
+    } else if (stored) {
       if (stored !== language) {
         setLanguageState(stored);
       }
@@ -154,8 +181,49 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
       if (i18nInstance.language !== language) {
         i18nInstance.changeLanguage(language);
       }
+      if (typeof window !== "undefined" && !/^\/(?:[^/]+\/)?admin(?:\/|$)/.test(window.location.pathname)) {
+        const route = stripLanguagePrefix(window.location.pathname);
+        const target = localizedPath(language, route);
+        if (target !== window.location.pathname) {
+          browserNavigate(target + window.location.search + window.location.hash);
+        }
+      }
     }
   }, [ready, i18nInstance, language]);
+
+  // Browser back/forward and direct links can change the locale segment without
+  // remounting the provider. Keep the visible copy synchronized with that URL.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const syncFromPath = () => {
+      const pathLanguage = getLanguageFromPath(window.location.pathname);
+      if (pathLanguage && pathLanguage !== language) {
+        setLanguageState(pathLanguage);
+        if (i18nInstance.language !== pathLanguage) i18nInstance.changeLanguage(pathLanguage);
+        try { localStorage.setItem(STORAGE_KEY, pathLanguage); } catch {}
+      }
+    };
+    window.addEventListener("popstate", syncFromPath);
+    return () => window.removeEventListener("popstate", syncFromPath);
+  }, [i18nInstance, language]);
+
+  // Wouter links and legacy anchors share one localization rule. Rewriting the
+  // rendered hrefs keeps internal links crawlable with the active locale.
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const rewrite = () => {
+      document.querySelectorAll<HTMLAnchorElement>("a[href]").forEach((anchor) => {
+        const href = anchor.getAttribute("href");
+        if (!href) return;
+        const localized = localizeHref(href, language);
+        if (localized !== href) anchor.setAttribute("href", localized);
+      });
+    };
+    rewrite();
+    const observer = new MutationObserver(rewrite);
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [language]);
 
   useEffect(() => {
     const htmlElement = document.documentElement;

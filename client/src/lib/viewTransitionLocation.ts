@@ -1,5 +1,7 @@
 import { flushSync } from "react-dom";
 import { navigate as browserNavigate, usePathname } from "wouter/use-browser-location";
+import { getLanguageFromPath, localizeHref } from "@/lib/localeRouting";
+import type { LanguageCode } from "@shared/constants";
 
 // Transición entre páginas (sistema «Folio»): el navegador funde la página vieja con la nueva,
 // el encabezado se queda quieto y el retrato de un socio viaja de la portada o de /team a su
@@ -10,14 +12,20 @@ type Navigate = typeof browserNavigate;
 type Doc = Document & { startViewTransition?: (update: () => Promise<void> | void) => unknown };
 
 const navigateWithTransition: Navigate = (to, options) => {
+  const activeLanguage = typeof window !== "undefined"
+    ? getLanguageFromPath(window.location.pathname)
+    : null;
+  const localizedTo = activeLanguage && typeof to === "string"
+    ? localizeHref(to, activeLanguage as LanguageCode)
+    : to;
   const doc = document as Doc;
   if (!doc.startViewTransition || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    browserNavigate(to, options);
+    browserNavigate(localizedTo, options);
     return;
   }
   const before = document.querySelector("main");
   doc.startViewTransition(async () => {
-    flushSync(() => browserNavigate(to, options));
+    flushSync(() => browserNavigate(localizedTo, options));
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
     // Páginas que se cargan aparte: espera (máx. 800 ms) a que la nueva esté en pantalla
     const start = performance.now();

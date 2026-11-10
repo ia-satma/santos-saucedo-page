@@ -14,6 +14,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
 import { isStaticSite } from "@/lib/queryClient";
 import { chrome26 } from "@/components/home26/chrome26";
+import { usePathname } from "wouter/use-browser-location";
+import { getLanguageFromPath } from "@/lib/localeRouting";
 
 // Usa la misma base que Vite: en local suele ser `/`, mientras que GitHub Pages
 // conserva `/santos-saucedo-page/`. Evita que el preview local quede en blanco
@@ -334,6 +336,24 @@ function Router() {
   return administrative ? <Suspense fallback={null}><AdminShell>{routes}</AdminShell></Suspense> : routes;
 }
 
+function LocalizedRouterFrame() {
+  const pathname = usePathname();
+  const locale = getLanguageFromPath(pathname);
+  const base = routerBase + (locale ? "/" + locale : "");
+  return (
+    <WouterRouter key={base} base={base} hook={useViewTransitionLocation}>
+      <BrandColors />
+      <RmSync />
+      <ScrollToTop />
+      <SkipLinks />
+      <Toaster />
+      <Router />
+      <PublicCookiePreferences/>
+      <ContactPhoneBar/>
+    </WouterRouter>
+  );
+}
+
 // reducedMotion="user": con "reducir movimiento" del sistema, framer-motion deja de mover
 // (translateY, escala) lo poco que aún anima (diálogos); solo queda la opacidad. Las entradas al
 // aparecer y el cambio de página los lleva lib/siteMotion, que tampoco se activa en ese caso.
@@ -350,16 +370,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <LanguageProvider>
-            <WouterRouter base={routerBase} hook={useViewTransitionLocation}>
-              <BrandColors />
-              <RmSync />
-              <ScrollToTop />
-              <SkipLinks />
-              <Toaster />
-              <Router />
-              <PublicCookiePreferences/>
-              <ContactPhoneBar/>
-            </WouterRouter>
+            <LocalizedRouterFrame />
           </LanguageProvider>
         </TooltipProvider>
       </QueryClientProvider>

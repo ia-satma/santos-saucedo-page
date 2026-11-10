@@ -78,6 +78,14 @@ export function serveStatic(app: Express) {
   // preguntar siempre, así que los cambios del panel se ven igual, y el botón «atrás» puede ser instantáneo.
   app.use("*", async (_req, res,next) => {
     try {
+      const requestPath = new URL(_req.originalUrl, "http://localhost").pathname;
+      if (
+        !/^\/(?:es|en|de|zh|ko|ja|ar|ru|fr|it)(?:\/|$)/.test(requestPath) &&
+        !/^\/(?:admin|api|assets|static-api|team_photos|v3|favicon|robots|sitemap)/.test(requestPath)
+      ) {
+        const suffix = _req.originalUrl.slice(requestPath.length);
+        return res.redirect(308, "/es" + (requestPath === "/" ? "/" : requestPath) + suffix);
+      }
       let html=await fs.promises.readFile(path.resolve(distPath,"index.html"),"utf8");
       if (_req.originalUrl === "/" || _req.originalUrl.startsWith("/?")) {
         const p = await portadaInicial();

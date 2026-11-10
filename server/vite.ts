@@ -49,6 +49,14 @@ export async function setupVite(server: Server, app: Express) {
     const url = req.originalUrl;
 
     try {
+      const requestPath = new URL(url, "http://localhost").pathname;
+      if (
+        !/^\/(?:es|en|de|zh|ko|ja|ar|ru|fr|it)(?:\/|$)/.test(requestPath) &&
+        !/^\/(?:admin|api|assets|static-api|team_photos|v3|favicon|robots|sitemap)/.test(requestPath)
+      ) {
+        const suffix = url.slice(requestPath.length);
+        return res.redirect(308, "/es" + (requestPath === "/" ? "/" : requestPath) + suffix);
+      }
       const clientTemplate = path.resolve(
         import.meta.dirname,
         "..",

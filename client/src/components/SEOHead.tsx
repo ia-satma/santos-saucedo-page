@@ -6,6 +6,7 @@ import { useLocation } from "wouter";
 import type { LanguageCode } from "@shared/schema";
 import { chrome26 } from "@/components/home26/chrome26";
 import { OFFICE_LABEL, officeLabel } from "@/lib/officeLabel";
+import { localizedRoute } from "@/lib/localeRouting";
 
 const BASE_URL = "https://www.santossaucedo.com";
 // Miniatura social controlada por CMS; el fallback usa la composición del logo actual.
@@ -440,9 +441,9 @@ export default function SEOHead({
 
     const title = customTitle || config.title[language] || config.title.es;
     const description = customDescription || config.description[language] || config.description.es;
-    // Canonical por página: la ruta propia (las fichas /team/slug, /news/slug… incluidas)
+    // Canonical por página e idioma: cada idioma tiene una URL indexable propia.
     const rawPath = customPath || (location.startsWith("/") ? location : config.path) || "/";
-    const path = rawPath.length > 1 ? rawPath.replace(/\/+$/, "") : rawPath;
+    const path = localizedRoute(language, rawPath);
     const siteUrl = integrations.siteUrl.replace(/\/$/,'');
     const imagePath = customImage || media.brand.socialImage || DEFAULT_IMAGE;
     const image = imagePath.startsWith("http") ? imagePath : `${siteUrl}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
@@ -485,11 +486,35 @@ export default function SEOHead({
     updateOrCreateMeta("twitter:description", description);
     updateOrCreateMeta("twitter:image", image);
 
-    // Sin URL por idioma (el idioma se elige en la página): no hay alternativas hreflang ni
-    // og:locale:alternate que declarar; se borran las que hubiera dejado una versión anterior.
+    // Las páginas localizadas declaran su familia hreflang para que buscadores y
+    // respuestas generativas puedan elegir la versión lingüística correcta.
     document
       .querySelectorAll('link[rel="alternate"][hreflang], meta[property="og:locale:alternate"]')
       .forEach((el) => el.remove());
+    const hreflangCodes: Record<LanguageCode, string> = {
+      es: "es-MX", en: "en", de: "de", zh: "zh-CN", ko: "ko-KR",
+      ja: "ja-JP", ar: "ar", ru: "ru", fr: "fr", it: "it",
+    };
+    if (!config.noindex) {
+      LANGS.forEach((altLanguage) => {
+        const alternate = document.createElement("link");
+        alternate.rel = "alternate";
+        alternate.hreflang = hreflangCodes[altLanguage];
+        alternate.href = siteUrl + localizedRoute(altLanguage, rawPath);
+        document.head.appendChild(alternate);
+        if (altLanguage !== language) {
+          const alternateLocale = document.createElement("meta");
+          alternateLocale.setAttribute("property", "og:locale:alternate");
+          alternateLocale.setAttribute("content", OG_LOCALE_CODES[altLanguage]);
+          document.head.appendChild(alternateLocale);
+        }
+      });
+      const defaultAlternate = document.createElement("link");
+      defaultAlternate.rel = "alternate";
+      defaultAlternate.hreflang = "x-default";
+      defaultAlternate.href = siteUrl + localizedRoute("es", rawPath);
+      document.head.appendChild(defaultAlternate);
+    }
 
     let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
     if (config.noindex) {
