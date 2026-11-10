@@ -317,8 +317,6 @@ function Router() {
         <Route path="/admin/generated-audio" component={AdminGeneratedAudio} />
         <Route path="/admin/presentations" component={AdminPresentations} />
         <Route path="/admin/social" component={AdminSocial} />
-        <Route path="/admin/posts-ai" component={AdminSocial} />
-        <Route path="/admin/carruseles-ai" component={AdminSocial} />
         <Route path="/admin/documents" component={AdminDocuments} />
         <Route path="/admin/copies-ai" component={AdminCopyHistory} />
         <Route path="/admin/processing" component={AdminArticleProcessing} />

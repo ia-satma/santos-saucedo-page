@@ -59,8 +59,10 @@ process.env.AI_INTEGRATIONS_OPENAI_BASE_URL = base;
 const {
   getOpenAIClient,
   getImageClient,
+  getTextModel,
   hasDedicatedImageClient,
   hasManagedOpenAI,
+  textModelParams,
 } = await import("../openai");
 const { requestSpeechAudio, speechModel } = await import(
   "../services/speechProvider"
@@ -70,6 +72,23 @@ after(async () => {
     if (!(key in original)) delete process.env[key];
   Object.assign(process.env, original);
   await new Promise<void>((resolve) => server.close(() => resolve()));
+});
+test("managed text requests send Sol and fast even with legacy environment overrides", async () => {
+  process.env.OPENAI_TEXT_MODEL = "gpt-4o";
+  process.env.OPENAI_SERVICE_TIER = "default";
+  const request = {
+    ...textModelParams(getTextModel(), 1_024),
+    messages: [{ role: "user" as const, content: "Texto sintético de prueba." }],
+    stream: false as const,
+  };
+  await getOpenAIClient().chat.completions.create(request as unknown as import("openai/resources/chat/completions").ChatCompletionCreateParamsNonStreaming);
+  const captured = requests.at(-1)!;
+  assert.equal(captured.url, "/v1/chat/completions");
+  assert(captured.authorized);
+  assert.equal(captured.body.model, "gpt-6.1-sol");
+  assert.equal(captured.body.service_tier, "fast");
+  assert.equal(captured.body.max_completion_tokens, 1_024);
+  assert(!Object.hasOwn(captured.body, "max_tokens"));
 });
 test("managed image calls stay on the Replit endpoint and use its credential", async () => {
   assert(hasManagedOpenAI());

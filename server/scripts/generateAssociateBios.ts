@@ -1,7 +1,9 @@
+import type { ChatCompletionCreateParamsNonStreaming } from 'openai/resources/chat/completions';
 import { db } from '../db';
 import { teamMembers } from '@shared/schema';
 import { eq, or, ilike } from 'drizzle-orm';
-import { openai } from '../openai';
+import { getOpenAIClient, getTextModel, textModelParams } from '../openai';
+import { executeAiProviderCall } from '../ai/gateway';
 
 async function generateBio(name: string, role: string, roleEs: string): Promise<{ bioEs: string; bio: string }> {
   const prompt = `Eres un experto en comunicación corporativa para un despacho de abogados mexicano de primer nivel (Santos & Saucedo).
@@ -24,11 +26,14 @@ Responde SOLO con un JSON válido en este formato:
 }`;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-6.1-sol',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.7,
-      max_tokens: 500,
+    const messages = [{ role: 'user' as const, content: prompt }];
+    const request = { ...textModelParams(getTextModel(), 2_000), messages } as unknown as ChatCompletionCreateParamsNonStreaming;
+    const response = await executeAiProviderCall({
+      context: { classification: 'public', purpose: 'associate_bio_draft', source: 'agent' },
+      payload: messages,
+      provider: 'openai',
+      operation: 'chat',
+      invoke: () => getOpenAIClient().chat.completions.create(request),
     });
 
     const content = response.choices[0]?.message?.content || '{}';

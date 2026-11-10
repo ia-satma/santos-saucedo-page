@@ -80,9 +80,10 @@ const PERSONAL_LOG_KEY = /^(email|fullName|firstName|lastName|name|phone|company
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
+  const logBody = LOG_RESPONSE_BODY && !/^\/api\/admin\/(?:documents|social-assets|presentations|generated-presentations)(?:\/|$)/i.test(path);
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
-  if (LOG_RESPONSE_BODY) {
+  if (logBody) {
     const originalResJson = res.json;
     res.json = function (bodyJson, ...args) {
       capturedJsonResponse = bodyJson;
@@ -94,7 +95,7 @@ app.use((req, res, next) => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (LOG_RESPONSE_BODY && capturedJsonResponse !== undefined) {
+      if (logBody && capturedJsonResponse !== undefined) {
         let body = JSON.stringify(capturedJsonResponse, (key, value) =>
           key && (SECRET_LOG_KEY.test(key) || PERSONAL_LOG_KEY.test(key)) ? "[oculto]" : value,
         );

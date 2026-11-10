@@ -95,63 +95,40 @@ export abstract class BaseAgent {
       classification?: AiDataClassification;
     }
   ): Promise<string> {
-    const primaryModel = getTextModel();
-    const allModels = [primaryModel];
-
-    let lastError: Error | null = null;
-
-    // Conocimiento cargado en /admin/knowledge para este agente (si hay), inyectado como sistema.
+    const model = getTextModel();
     const kbMsg = await this.getKnowledgeSystemMessage();
+    const outboundMessages = [
+      { role: 'system' as const, content: this.config.systemPrompt },
+      ...(kbMsg ? [{ role: 'system' as const, content: kbMsg }] : []),
+      ...(options?.jsonMode ? [{
+        role: 'system' as const,
+        content: 'Respond with ONLY a single valid, parseable JSON value and nothing else. Escape EVERY double quote inside string values as \\" and every newline as \\n. Do not wrap the JSON in markdown code fences. Do not add any text before or after the JSON.',
+      }] : []),
+      ...messages,
+    ];
+    const request = {
+      ...textModelParams(model, options?.maxTokens ?? this.config.maxTokens ?? 4096),
+      messages: outboundMessages,
+    } as any;
+    const response = await executeAiProviderCall({
+      context: {
+        classification: options?.classification || 'internal',
+        purpose: AI_AGENT_RUNTIME_POLICY[this.agentType].purpose,
+        source: 'agent',
+        agentId: this.agentType,
+      },
+      payload: outboundMessages,
+      provider: 'openai',
+      operation: 'chat',
+      invoke: () => getOpenAIClient().chat.completions.create(request, {
+        timeout: 60_000,
+        maxRetries: 0,
+      }),
+    });
 
-    for (const model of allModels) {
-      try {
-        const outboundMessages = [
-          { role: 'system' as const, content: this.config.systemPrompt },
-          ...(kbMsg ? [{ role: 'system' as const, content: kbMsg }] : []),
-          ...(options?.jsonMode ? [{
-            role: 'system' as const,
-            content: 'Respond with ONLY a single valid, parseable JSON value and nothing else. Escape EVERY double quote inside string values as \\" and every newline as \\n. Do not wrap the JSON in markdown code fences. Do not add any text before or after the JSON.',
-          }] : []),
-          ...messages,
-        ];
-        const request = {
-          ...textModelParams(model, options?.maxTokens ?? this.config.maxTokens ?? 4096),
-          messages: outboundMessages,
-          // Los modelos de razonamiento no reciben temperature; legacy overrides sí.
-          ...(!/^gpt-(?:5|6)(?:\.|-|$)/i.test(model)
-            ? { temperature: options?.temperature ?? this.config.temperature ?? 0.7 }
-            : {}),
-        } as any;
-        const response = await executeAiProviderCall({
-          context: {
-            classification: options?.classification || 'internal',
-            purpose: AI_AGENT_RUNTIME_POLICY[this.agentType].purpose,
-            source: 'agent',
-            agentId: this.agentType,
-          },
-          payload: outboundMessages,
-          provider: 'openai',
-          operation: 'chat',
-          invoke: () => getOpenAIClient().chat.completions.create(request, {
-            // Las acciones del panel deben terminar o fallar en un tiempo acotado. El fallback
-            // de modelo se controla explícitamente abajo; desactivar los reintentos internos del
-            // SDK evita duplicar silenciosamente una espera completa.
-            timeout: 60_000,
-            maxRetries: 0,
-          }),
-        });
-
-        recordChatUsage('chat', model, response.usage as any);
-        const content = response.choices[0]?.message?.content || '';
-        return options?.jsonMode ? extractJson(content) : content;
-      } catch (error: any) {
-        lastError = error;
-        // No downgrade silently: the configured model must be enabled for this account.
-        throw error;
-      }
-    }
-
-    throw lastError || new Error('All models failed');
+    recordChatUsage('chat', model, response.usage as any);
+    const content = response.choices[0]?.message?.content || '';
+    return options?.jsonMode ? extractJson(content) : content;
   }
 
   protected async analyzeForLearnings(

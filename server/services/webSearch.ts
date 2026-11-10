@@ -1,4 +1,4 @@
-import { getImageClient, getTextModel, hasDedicatedImageClient } from '../openai';
+import { getImageClient, getTextModel, getTextServiceTier, hasDedicatedImageClient } from '../openai';
 import type { AiDataClassification } from '@shared/aiGovernance';
 import { AiGovernanceBlockedError } from '../ai/dataGovernance';
 import { executeAiProviderCall } from '../ai/gateway';
@@ -25,6 +25,7 @@ export async function webSearchSummary(
     const client: any = getImageClient();
     const request = {
       model: getTextModel(),
+      service_tier: getTextServiceTier(),
       tools: [{ type: 'web_search' }],
       input:
         `Investiga en la web información RECIENTE y verificable sobre: ${q}. ` +

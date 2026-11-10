@@ -4,13 +4,11 @@ El sitio usa diez códigos internos: `es`, `en`, `de`, `zh`, `ko`, `ja`, `ar`, `
 
 ## Generar y publicar traducciones
 
-La traducción masiva usa el agente Polyglot con **GPT-6.1 Sol** (`gpt-6.1-sol`). La clave debe permanecer en Replit Secrets o en el entorno del servidor:
+La traducción masiva usa el agente Polyglot con **GPT-6.1 Sol** (`gpt-6.1-sol`) y el nivel `fast` fijado en el servidor. Guarda la clave en Replit Secrets o en el entorno del servidor.
 
 ```text
 OPENAI_API_KEY=...
-OPENAI_TEXT_MODEL=gpt-6.1-sol
 OPENAI_REASONING_EFFORT=high
-OPENAI_SERVICE_TIER=fast
 ```
 
 Con `DATABASE_URL` y la integración configurada, ejecutar:

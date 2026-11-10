@@ -20,7 +20,7 @@ export async function organizeDocument(input: { title: string; sourceText: strin
     operation: "chat",
     invoke: () => getOpenAIClient().chat.completions.create({
       ...textModelParams(model, 32768), messages,
-    } as ChatCompletionCreateParamsNonStreaming),
+    } as unknown as ChatCompletionCreateParamsNonStreaming),
   });
   recordChatUsage("chat", model, response.usage);
   const result = response.choices[0];

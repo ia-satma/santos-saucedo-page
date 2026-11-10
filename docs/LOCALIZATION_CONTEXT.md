@@ -41,6 +41,9 @@ npm run test:cms
 npm run test:editorial
 npm run test:access
 npm run test:agents
+npm run test:social-studio
+npm run test:documents-api
+npm run test:panel
 npm run test:public-flows
 npm run test:privacy
 npm run build:pages
@@ -54,15 +57,14 @@ La comprobación pública mínima debe revisar `/`, las diez portadas localizada
 La sincronización y publicación se ejecutan manualmente desde el Shell de Replit, sin usar agentes de Replit:
 
 ```bash
-cp shared/translation-snapshot.json /tmp/translation-snapshot.json
 git fetch origin main
-git reset --hard origin/main
-cp /tmp/translation-snapshot.json shared/translation-snapshot.json
+git merge --no-edit origin/main
+npm ci
 npm run check
 npm run build:deploy
 ```
 
-Después se cierra el Shell, se pulsa **Republish** y se verifica el dominio público y el historial de publicación. El snapshot de traducciones debe conservarse antes del `reset` y comprobarse después del build.
+Después se verifica el arranque con `npm run start:deploy` y `/readyz`. Se pulsa **Republish** y se confirma la etapa **Promote**, la versión activa y el dominio público. El merge conserva los commits de publicación de Replit; resuelve cualquier conflicto de snapshots antes de construir.
 
 ## Editor de firmas de correo
 
@@ -81,3 +83,11 @@ Después se cierra el Shell, se pulsa **Republish** y se verifica el dominio pú
 - Verificación real publicada en `https://santos-saucedo.replit.app/admin/signatures`: PNG `1200 × 500` descargado, HTML descargado, enlaces sociales actualizados y rail colapsado/expandido. La carga de fotografía queda cubierta por las pruebas de multipart y chunked upload del CMS. La selección de archivos desde el navegador de pruebas requiere permitir acceso a archivos locales en la extensión de Brave.
 - El guardado conserva los datos comunes, la fotografía y la variante seleccionada. Al editar una versión guardada se regeneran las 12 vistas. La interfaz indica la plantilla seleccionada y la descarga HTML vigente.
 - Las fotos se normalizan a URL pública absoluta y se recortan con `object-fit: cover` y `object-position: center` en los formatos JPG, JPEG, PNG, WebP y GIF. El test del generador comprueba también que no haya referencias a assets estáticos inexistentes.
+
+## Estudio de contenido Santos & Saucedo
+
+- `/admin/presentations` genera presentaciones con la identidad Santos & Saucedo. La entrada institucional se incluye por defecto y puede desactivarse; el cierre institucional se conserva. Ofrece PPTX, PDF y PNG. La clasificación no es un campo obligatorio del formulario y las políticas de salida de datos se aplican en el servidor.
+- `/admin/social` genera piezas para redes, con previsualización, edición, rediseño, copias, historial y descargas de PNG por lámina o ZIP.
+- `/admin/documents` genera documentos con membrete, con edición versionada, descargas de DOCX y PDF e historial con papelera recuperable.
+- Los archivos nuevos de redes y documentos viven en `private/studio/` en App Storage; las presentaciones conservan su espacio privado y el acceso a su historial. Las rutas administrativas verifican sesión y permisos antes de entregar archivos. Las migraciones del estudio usan el cliente TCP de PostgreSQL para que las transacciones también funcionen cuando el cliente web usa Neon HTTP.
+- La configuración de texto se centraliza en `server/openai.ts`: `gpt-6.1-sol` con `service_tier: "fast"`. Los motores especializados siguen produciendo imágenes, audio y archivos. La guía PPTX instalada vive en `.agents/skills/pptx`.

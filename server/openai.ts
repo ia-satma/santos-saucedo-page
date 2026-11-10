@@ -9,11 +9,11 @@ export const DEFAULT_TEXT_MODEL = "gpt-6.1-sol";
 // silently downgrade to an older model when Sol is unavailable.
 export const FALLBACK_TEXT_MODEL = "";
 
-export function getTextModel(): string {
+export function getTextModel(): typeof DEFAULT_TEXT_MODEL {
   return DEFAULT_TEXT_MODEL;
 }
 
-export function getTextServiceTier(): string {
+export function getTextServiceTier(): "fast" {
   return "fast";
 }
 
@@ -27,24 +27,16 @@ export function hasOpenAITextClient(): boolean {
   return hasManagedOpenAI() || Boolean(process.env.OPENAI_API_KEY?.trim());
 }
 
-/**
- * Parámetros compatibles con los modelos de razonamiento y con el fallback clásico.
- * GPT-6 reasoning models use `max_completion_tokens`; legacy models retain
- * `max_tokens` for explicit account-level overrides.
- */
 export function textModelParams(
-  model: string,
+  model: typeof DEFAULT_TEXT_MODEL,
   maxCompletionTokens: number,
-): Record<string, unknown> {
-  if (/^gpt-(?:5|6)(?:\.|-|$)/i.test(model)) {
-    return {
-      model,
-      max_completion_tokens: maxCompletionTokens,
-      reasoning_effort: process.env.OPENAI_REASONING_EFFORT?.trim() || "high",
-      service_tier: getTextServiceTier(),
-    };
-  }
-  return { model, max_tokens: maxCompletionTokens };
+) {
+  return {
+    model,
+    max_completion_tokens: maxCompletionTokens,
+    reasoning_effort: process.env.OPENAI_REASONING_EFFORT?.trim() || "high",
+    service_tier: getTextServiceTier(),
+  };
 }
 
 // Replit-managed credentials take precedence. The direct API is optional compatibility.

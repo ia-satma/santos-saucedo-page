@@ -124,6 +124,8 @@ try {
     "generated-images",
     "generated-audio",
     "generated-presentations",
+    "social-assets",
+    "documents",
     "copies-ai",
     "usage/summary",
     "cms-stats",
@@ -405,7 +407,7 @@ try {
   const form = new FormData();
   form.append(
     "file",
-    new Blob(["Material público QA para una presentación."], {
+    new Blob(["Material público QA para una presentación. El equipo prepara un borrador. La revisión organiza las referencias. Los documentos finales se exportan."], {
       type: "text/plain",
     }),
     "qa.txt",
@@ -442,14 +444,14 @@ try {
       illustrate: false,
       supportImages: [],
       webSearch: false,
-      dataClassification: "public",
-      aiUseConfirmed: true,
+      includeIntroSlide: false,
     }),
     200,
     "presentation generate",
   );
   const presentation = generated.presentation;
   assert(presentation?.id);
+  assert.equal(presentation.includeIntroSlide, false);
   cleanup.push(() =>
     db
       .delete(schema.generatedPresentations)
@@ -493,6 +495,14 @@ try {
   for (const entry of Object.values(zip.files)) assert.ok((await entry.async("nodebuffer")).subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10])));
   count++;
   assert.equal((await fetch(base + zipUrl)).status, 401); count++;
+  const legacyFile = `public/media/document-${suffix}.pdf`;
+  const { uploadAppStorageObject, deleteAppStorageObject } = await import("../server/replitStorage");
+  await uploadAppStorageObject(legacyFile, Buffer.from("Synthetic private export"));
+  cleanup.push(() => deleteAppStorageObject(legacyFile));
+  for (const route of [`/media/${legacyFile}`, `/uploads/${legacyFile}`]) {
+    assert.equal((await fetch(base + route)).status, 404, route);
+    count++;
+  }
   ok(
     await call(
       "DELETE",

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
 function validateAssetUrl(url: string) {
-  if (!/^\/(?:api\/admin\/(?:generated-presentations|copies-ai)\/|generated-(?:images|audio)\/)/.test(url)
+  if (!/^\/(?:api\/admin\/(?:generated-presentations|copies-ai|documents|social-assets)\/|generated-(?:images|audio)\/)/.test(url)
     || url.includes("..") || url.includes("\\")) throw new Error("Ruta de archivo no válida.");
 }
 
