@@ -3,6 +3,7 @@ import { stat } from "node:fs/promises";
 import type { Express, Request, Response } from "express";
 import { z } from "zod";
 import type { SocialAsset, InsertSocialAsset } from "@shared/schema";
+import { MAX_EDITORIAL_NOTES_CHARACTERS, MAX_EDITORIAL_SOURCE_CHARACTERS } from "@shared/editorialSources";
 import {
   socialBackgroundSchema,
   socialContentSchema,
@@ -24,6 +25,7 @@ import { authMiddleware, requirePermission } from "../auth";
 import { hydratePresentationInput } from "../media/presentationInputs";
 import { storage } from "../storage";
 import { downloadPrivateStudioObject } from "../replitStorage";
+import { EditorialSourceError } from "../services/editorialSourceDigest";
 import {
   discardGeneratedSocialImages,
   discardSocialFiles,
@@ -34,6 +36,7 @@ import {
   reviewSocialContent,
   socialHtmlKey,
   socialSlideKey,
+  SocialGenerationError,
   studioDesign,
 } from "../services/socialStudio";
 import { auditLog } from "./routeUtils";
@@ -59,7 +62,7 @@ const generationSchema = z.object({
   background: socialBackgroundSchema.default(defaultDesign.background),
   illustrate: z.boolean().default(defaultDesign.illustrate),
   webSearch: z.boolean().default(defaultDesign.webSearch),
-  sourceNotes: z.string().trim().max(20_000).default(""),
+  sourceNotes: z.string().trim().max(MAX_EDITORIAL_NOTES_CHARACTERS).default(""),
   documents: z.array(socialReferenceDocumentSchema).max(20).default([]),
   supportImages: z.array(socialSupportImageSchema).max(10).default([]),
 }).strict().superRefine((input, context) => {
@@ -108,11 +111,11 @@ async function readReferenceText(documents: NonNullable<SocialPayload["documents
   const sections: string[] = [];
   let chars = 0;
   for (const { file, name } of files) {
-    const result = await extractText(file, name, { rejectOverLimit: true });
+    const result = await extractText(file, name, { rejectOverLimit: true, maxChars: MAX_EDITORIAL_SOURCE_CHARACTERS });
     if (!result.ok) throw new SocialInputError(result.note || "No se pudo leer un documento adjunto.");
     const section = ["Documento: " + result.name, result.text].join("\n");
     chars += section.length;
-    if (chars > 60_000) throw new SocialInputError("El material adjunto excede 60 000 caracteres en total.");
+    if (chars > MAX_EDITORIAL_SOURCE_CHARACTERS) throw new SocialInputError("El material adjunto excede dos millones de caracteres en total. Divide los documentos en varios trabajos.");
     sections.push(section);
   }
   return sections.join("\n\n");
@@ -290,7 +293,8 @@ function respond(handler: (req: Request, res: Response) => Promise<unknown>) {
       return await handler(req, res);
     } catch (error) {
       if (error instanceof z.ZodError) return res.status(422).json({ error: error.issues[0]?.message || "Revisa los campos y el contenido de las piezas.", details: error.flatten() });
-      if (error instanceof SocialInputError) return res.status(422).json({ error: error.message });
+      if (error instanceof SocialInputError || error instanceof EditorialSourceError) return res.status(422).json({ error: error.message });
+      if (error instanceof SocialGenerationError) return res.status(502).json({ error: error.message, code: "SOCIAL_OUTPUT_INVALID" });
       if (error instanceof SocialConflictError) return res.status(409).json({ error: error.message });
       if (error instanceof AiGovernanceBlockedError) return res.status(422).json({ error: "Revisa el material enviado para uso de IA." });
       console.error("[social-studio]", { name: (error as Error).name, route: req.route?.path });
@@ -327,7 +331,7 @@ export function registerSocialAssetRoutes(app: Express): void {
       kind, title, topic, language, format, slideCount, sourceNotes, documents, supportImages,
       palette: requestedPalette, designDirection, background, illustrate, webSearch,
     } = generationSchema.parse(req.body);
-    const { palette, caption, copies, slides, imageRefs, sources } = await generateSocialContent({
+    const { palette, caption, copies, slides, imageRefs, sources, sourceProcessing } = await generateSocialContent({
       title, topic, language, format, slideCount, sourceNotes, supportImages,
       documentsText: await readReferenceText(documents), palette: requestedPalette, designDirection, background, illustrate, webSearch,
     }, req.adminUser!.id);
@@ -337,7 +341,7 @@ export function registerSocialAssetRoutes(app: Express): void {
       id: randomUUID(), kind, title: title || slides[0].title, topic, language, format, slideCount, palette, status: "ready",
     }, payload, freshImageRefs(payload));
     await audit("create", asset, req);
-    res.status(201).json(view(asset, true));
+    res.status(201).json({ ...view(asset, true), sourceProcessing });
   }));
 
   app.get(`${base}/:id`, ...access, respond(async (req, res) => {
@@ -411,7 +415,7 @@ export function registerSocialAssetRoutes(app: Express): void {
       await audit("regenerate_copies", updated, req);
       return res.json(view(updated, true));
     }
-    const { palette, caption, copies, slides, imageRefs: updatedImageRefs, sources } = await generateSocialContent({
+    const { palette, caption, copies, slides, imageRefs: updatedImageRefs, sources, sourceProcessing } = await generateSocialContent({
       title, topic, language, format: socialFormatSchema.parse(format), slideCount, sourceNotes, previousCopy, imageRefs, supportImages,
       documentsText: await readReferenceText(documents),
       designDirection: design.direction,
@@ -423,7 +427,7 @@ export function registerSocialAssetRoutes(app: Express): void {
     const payload = { ...previous, caption, copies, slides, design, imageRefs: updatedImageRefs, sources };
     const updated = await saveRevision(current, { title, format, palette, payload }, req.adminUser!.id, freshImageRefs(payload, previous));
     await audit("regenerate", updated, req);
-    res.json(view(updated, true));
+    res.json({ ...view(updated, true), sourceProcessing });
   }));
 
   app.post(`${base}/:id/copy`, ...access, respond(async (req, res) => {

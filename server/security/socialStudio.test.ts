@@ -26,9 +26,24 @@ const slides = [
 ];
 const caption = "Tres pasos para organizar la documentación de personal.";
 const copies = Object.fromEntries(SOCIAL_NETWORKS.map(network => [network, `${caption} · ${network}`]));
+const longTopic = "Cobertura del material extenso";
+const invalidTopic = "Respuesta de formato inválido";
+const notesMarker = "Primera observación del expediente";
+const documentMarker = "Conclusión de la última sección adjunta";
+const longSlides = [
+  { title: "Reunir los antecedentes", body: "Ordena los hechos y sus fechas antes de contrastar documentos." },
+  { title: "Identificar las partes", body: "Distingue a quienes participaron de quienes solo recibieron notificación." },
+  { title: "Registrar las condiciones", body: "Conserva el acuerdo original y anota sus cambios por separado." },
+  { title: "Ubicar la primera observación", body: "Señala el hallazgo inicial y vincúlalo con su respaldo escrito." },
+  { title: "Revisar las comunicaciones", body: "Compara la fecha de emisión con la constancia de recepción." },
+  { title: "Separar los pendientes", body: "Asigna una persona responsable a cada pregunta que siga abierta." },
+  { title: "Contrastar las conclusiones", body: "Revisa la última sección adjunta antes de cerrar el expediente." },
+  { title: "Preparar la revisión final", body: "Presenta los hallazgos con sus referencias y el orden de seguimiento." },
+];
+let longAttempts = 0;
 const supportFiles: string[] = [];
 const referenceFiles: string[] = [];
-const requests: Array<{ model: string; service_tier: string; messages: Array<{ content: string }> }> = [];
+const requests: Array<{ model: string; service_tier: string; max_completion_tokens: number; messages: Array<{ content: string }> }> = [];
 const provider = createServer(async (req, res) => {
   let raw = "";
   for await (const chunk of req) raw += chunk;
@@ -36,10 +51,26 @@ const provider = createServer(async (req, res) => {
   requests.push(body);
   assert.equal(req.headers.authorization, "Bearer isolated-social-token");
   assert.equal(req.url, "/v1/chat/completions");
-  const review = body.messages[0].content.startsWith("Revisa el texto");
-  const content = review ? { summary: "La secuencia es clara.", suggestions: ["Añade la referencia en el texto de la publicación."] } : { caption, copies, slides: /exactamente 1 (?:pieza|lámina)/i.test(body.messages[0].content) ? slides.slice(0, 1) : slides };
+  const instruction = body.messages[0].content;
+  const data = body.messages[1].content;
+  let content: string;
+  if (instruction.startsWith("Extrae un resumen editorial")) {
+    const facts = [notesMarker, documentMarker].filter(marker => data.includes(marker));
+    content = ["Síntesis editorial de la documentación.", ...facts].join("\n");
+  } else if (instruction.startsWith("Revisa el texto")) {
+    content = JSON.stringify({ summary: "La secuencia es clara.", suggestions: ["Añade la referencia en el texto de la publicación."] });
+  } else if (data.includes(longTopic)) {
+    longAttempts++;
+    content = longAttempts === 1
+      ? JSON.stringify({ caption, slides: longSlides.slice(0, 3) })
+      : JSON.stringify({ caption, copies, slides: longSlides });
+  } else if (data.includes(invalidTopic)) {
+    content = "{texto que no es JSON";
+  } else {
+    content = JSON.stringify({ caption, copies, slides: /exactamente 1 (?:pieza|lámina)/i.test(instruction) ? slides.slice(0, 1) : slides });
+  }
   res.setHeader("Content-Type", "application/json");
-  res.end(JSON.stringify({ choices: [{ message: { content: JSON.stringify(content) } }], usage: {} }));
+  res.end(JSON.stringify({ choices: [{ finish_reason: "stop", message: { content } }], usage: {} }));
 });
 await new Promise<void>(resolve => provider.listen(0, "127.0.0.1", resolve));
 process.env.AI_INTEGRATIONS_OPENAI_API_KEY = "isolated-social-token";
@@ -52,7 +83,7 @@ const { registerSocialInputRoutes } = await import("../routes/socialInputRoutes"
 const { renderSocialSlide } = await import("../services/socialStudio");
 const rows = new Map<string, SocialAsset>();
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: "5mb" }));
 registerSocialInputRoutes(app);
 registerSocialAssetRoutes(app);
 const listener = app.listen(0, "127.0.0.1");
@@ -218,6 +249,57 @@ test("social studio HTTP renders all carousel images, downloads immutable revisi
   assert.match(JSON.stringify(postResult.content), /photographic/);
   assert.equal((await call("POST", "/generate", { kind: "post" })).status, 422);
   assert.equal((await call("POST", "/generate", { kind: "post", topic: "Prueba", supportImages: [{ url: "https://example.com/photo.png", name: "No" }] })).status, 422);
+
+  const longReferenceName = `${randomBytes(16).toString("hex")}.txt`;
+  referenceFiles.push(`${referenceDir}/${longReferenceName}`);
+  const longParagraph = "El registro reúne condiciones acordadas y documentos revisados para ordenar el expediente de trabajo.\n";
+  const longNotes = notesMarker + "\n" + longParagraph.repeat(640);
+  await writeFile(referenceFiles.at(-1)!, longParagraph.repeat(800) + documentMarker);
+  const requestStart = requests.length;
+  const longResponse = await call("POST", "/generate", {
+    kind: "carousel", slideCount: 8, topic: longTopic, sourceNotes: longNotes,
+    documents: [{ url: `private:presentations/${longReferenceName}`, name: "expediente-largo.txt" }],
+  });
+  assert.equal(longResponse.status, 201, await longResponse.clone().text());
+  const longResult = await longResponse.json();
+  assert.equal(longResult.sourceProcessing.summarized, true);
+  assert(longResult.sourceProcessing.sourceCharacters > 80_000);
+  assert.deepEqual(longResult.content.slides, longSlides);
+  assert.equal(longResult.content.sourceNotes, longNotes.trim());
+  assert.deepEqual(longResult.content.copies, copies);
+  assert.equal(longResult.slideUrls.length, 8);
+  assert.equal(longResult.htmlUrls.length, 8);
+  const longRequests = requests.slice(requestStart);
+  const digestRequests = longRequests.filter(request => request.messages[0].content.startsWith("Extrae un resumen editorial"));
+  assert(digestRequests.length >= 2, "Long inputs are digested in multiple calls");
+  assert(digestRequests.some(request => request.messages[1].content.includes(notesMarker)));
+  assert(digestRequests.some(request => request.messages[1].content.includes(documentMarker)));
+  const generations = longRequests.filter(request => request.messages[0].content.startsWith("Escribe contenido para Santos & Saucedo"));
+  assert.equal(generations.length, 2, "One invalid generation gets one correction attempt");
+  for (const generation of generations) {
+    assert(generation.max_completion_tokens >= 16_384);
+    assert(generation.messages[1].content.includes(notesMarker));
+    assert(generation.messages[1].content.includes(documentMarker));
+  }
+  assert.match(generations[1].messages.at(-1)!.content, /slides: Se requieren exactamente 8 piezas distintas/);
+  assert.match(generations[1].messages.at(-1)!.content, /copies:/);
+  assert(longRequests.every(request => request.model === "gpt-6.1-sol" && request.service_tier === "fast"));
+
+  const beforeBlocked = requests.length;
+  const blocked = await call("POST", "/generate", {
+    kind: "post", topic: "Material no autorizado para terceros",
+    sourceNotes: longNotes + longParagraph.repeat(800) + "\nAttorney-client privileged",
+  });
+  assert.equal(blocked.status, 422);
+  assert.equal(requests.length, beforeBlocked, "A blocked fragment at the end prevents every outbound call");
+
+  const rowsBeforeFailure = rows.size;
+  const beforeFailure = requests.length;
+  const invalid = await call("POST", "/generate", { kind: "post", topic: invalidTopic });
+  assert.equal(invalid.status, 502);
+  assert.equal((await invalid.json()).code, "SOCIAL_OUTPUT_INVALID");
+  assert.equal(requests.length, beforeFailure + 2);
+  assert.equal(rows.size, rowsBeforeFailure, "A rejected response must not save a partial piece");
 });
 
 test("every configured format produces a correctly sized PNG", async () => {
