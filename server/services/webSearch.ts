@@ -24,7 +24,7 @@ export async function webSearchSummary(
   try {
     const client: any = getImageClient();
     const request = {
-      model: process.env.OPENAI_SEARCH_MODEL || getTextModel(),
+      model: getTextModel(),
       tools: [{ type: 'web_search' }],
       input:
         `Investiga en la web información RECIENTE y verificable sobre: ${q}. ` +

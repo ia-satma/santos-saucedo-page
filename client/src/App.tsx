@@ -112,6 +112,8 @@ const AdminIndustryGroups = lazy(() => import("@/pages/admin/AdminIndustryGroups
 const AdminGeneratedImages = lazy(() => import("@/pages/admin/AdminGeneratedImages"));
 const AdminGeneratedAudio = lazy(() => import("@/pages/admin/AdminGeneratedAudio"));
 const AdminPresentations = lazy(() => import("@/pages/admin/AdminPresentations"));
+const AdminSocial = lazy(() => import("@/pages/admin/AdminSocial"));
+const AdminDocuments = lazy(() => import("@/pages/admin/AdminDocuments"));
 const AdminCopyHistory = lazy(() => import("@/pages/admin/AdminCopyHistory"));
 const AdminKnowledge = lazy(() => import("@/pages/admin/AdminKnowledge"));
 const AdminTranslations = lazy(() => import("@/pages/admin/AdminTranslations"));
@@ -314,6 +316,10 @@ function Router() {
         <Route path="/admin/generated-images" component={AdminGeneratedImages} />
         <Route path="/admin/generated-audio" component={AdminGeneratedAudio} />
         <Route path="/admin/presentations" component={AdminPresentations} />
+        <Route path="/admin/social" component={AdminSocial} />
+        <Route path="/admin/posts-ai" component={AdminSocial} />
+        <Route path="/admin/carruseles-ai" component={AdminSocial} />
+        <Route path="/admin/documents" component={AdminDocuments} />
         <Route path="/admin/copies-ai" component={AdminCopyHistory} />
         <Route path="/admin/processing" component={AdminArticleProcessing} />
         <Route path="/admin/audits" component={AdminAudits} />

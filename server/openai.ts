@@ -10,11 +10,11 @@ export const DEFAULT_TEXT_MODEL = "gpt-6.1-sol";
 export const FALLBACK_TEXT_MODEL = "";
 
 export function getTextModel(): string {
-  return process.env.OPENAI_TEXT_MODEL?.trim() || DEFAULT_TEXT_MODEL;
+  return DEFAULT_TEXT_MODEL;
 }
 
 export function getTextServiceTier(): string {
-  return process.env.OPENAI_SERVICE_TIER?.trim() || "fast";
+  return "fast";
 }
 
 export function hasManagedOpenAI(): boolean {

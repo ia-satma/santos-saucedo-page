@@ -80,13 +80,16 @@ export class SocialMediaAgent extends BaseAgent {
   constructor() { super(SOCIAL_CONFIG); }
 
   async execute(_context: ExecutionContext, payload: Record<string, unknown>): Promise<AgentResult> {
-    const { articleId, platforms, aspect, language } = payload as {
+    const { articleId, topic, title: titleInput, sourceNotes, platforms, aspect, language } = payload as {
       articleId?: string;
+      topic?: string;
+      title?: string;
+      sourceNotes?: string;
       platforms?: string[];
       aspect?: string;
       language?: 'es' | 'en';
     };
-    if (!articleId) return { success: false, error: 'articleId es requerido' };
+    if (!articleId && !topic) return { success: false, error: 'articleId es requerido cuando no se proporciona topic' };
 
     // Redes elegidas por el usuario (default LinkedIn + X). Se validan contra las permitidas.
     const requested = (Array.isArray(platforms) ? platforms : [])
@@ -95,25 +98,27 @@ export class SocialMediaAgent extends BaseAgent {
     const targets = requested.length ? Array.from(new Set(requested)) : ['linkedin', 'twitter'];
 
     try {
-      const [article] = await db.select().from(news).where(eq(news.id, articleId));
-      if (!article) return { success: false, error: `Noticia no encontrada: ${articleId}` };
+      const [article] = articleId
+        ? await db.select().from(news).where(eq(news.id, articleId))
+        : [];
+      if (articleId && !article) return { success: false, error: `Noticia no encontrada: ${articleId}` };
 
       const targetLanguage = language === 'en' ? 'en' : 'es';
       const title = targetLanguage === 'en'
-        ? (article.title || article.titleEs || '')
-        : (article.titleEs || article.title || '');
+        ? (article?.title || titleInput || topic || '')
+        : (article?.titleEs || titleInput || topic || '');
       const excerpt = targetLanguage === 'en'
-        ? (article.excerpt || article.excerptEs || '')
-        : (article.excerptEs || article.excerpt || '');
+        ? (article?.excerpt || sourceNotes || topic || '')
+        : (article?.excerptEs || sourceNotes || topic || '');
       const content = (targetLanguage === 'en'
-        ? (article.content || article.contentEs || '')
-        : (article.contentEs || article.content || '')).substring(0, 5000);
+        ? (article?.content || article?.contentEs || sourceNotes || topic || '')
+        : (article?.contentEs || article?.content || sourceNotes || topic || '')).substring(0, 5000);
       if (!title.trim()) return { success: false, error: 'La noticia no tiene título.' };
 
       // La imagen suele ser la parte más lenta. Cuando la noticia no tiene una imagen propia,
       // se inicia con un prompt determinista y específico al mismo tiempo que se redactan los
       // copys. Así evitamos sumar la latencia de texto + imagen de forma secuencial.
-      const existingImage = article.imageUrl && article.imageUrl !== FALLBACK_IMAGE ? article.imageUrl : null;
+      const existingImage = article?.imageUrl && article.imageUrl !== FALLBACK_IMAGE ? article.imageUrl : null;
       const imagePrompt = [
         `Realistic editorial documentary photograph about this specific legal news topic: ${title}.`,
         excerpt || content.slice(0, 500),
@@ -122,7 +127,7 @@ export class SocialMediaAgent extends BaseAgent {
       const imagePromise = existingImage
         ? null
         : smartImageGenerator
-            .generateImage(imagePrompt, articleId, typeof aspect === 'string' ? aspect : undefined)
+            .generateImage(imagePrompt, articleId || `social-${Date.now()}`, typeof aspect === 'string' ? aspect : undefined)
             .catch((error) => {
               console.warn('[SocialMediaAgent] La imagen concurrente no pudo completarse:', error?.message || 'error');
               return null;
@@ -176,7 +181,7 @@ Devuelve JSON { "posts": { <red>: { "text", "hashtags" } }, "imagePrompt" } incl
       return {
         success: true,
         data: {
-          articleId,
+          articleId: articleId || null,
           title,
           platforms: targets,
           language: targetLanguage,

@@ -323,6 +323,18 @@ export const adminNavigation = [
         icon: LayersIcon,
       },
       {
+        href: "/admin/social",
+        label: "Post y carruseles IA",
+        hint: "Piezas sociales, previews y versiones",
+        icon: ChatBubbleIcon,
+      },
+      {
+        href: "/admin/documents",
+        label: "Documentos con membrete",
+        hint: "DOCX y PDF con la identidad oficial",
+        icon: FileTextIcon,
+      },
+      {
         href: "/admin/generated-images",
         label: "Imágenes con IA",
         hint: "Generar y reutilizar imágenes",

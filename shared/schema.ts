@@ -1384,6 +1384,7 @@ export const generatedPresentations = pgTable("generated_presentations", {
   branding: text("branding").notNull().default("santossaucedo"),
   lang: text("lang").notNull().default("es"),
   slideCount: integer("slide_count").default(0),
+  includeIntroSlide: boolean("include_intro_slide").notNull().default(true),
   pptxUrl: text("pptx_url"),
   pdfUrl: text("pdf_url"),
   pngUrls: jsonb("png_urls").$type<string[]>().default([]),
@@ -1405,6 +1406,71 @@ export const insertGeneratedPresentationSchema = createInsertSchema(generatedPre
 export type InsertGeneratedPresentation = z.infer<typeof insertGeneratedPresentationSchema>;
 
 export type GeneratedPresentation = typeof generatedPresentations.$inferSelect;
+
+export const generatedDocuments = pgTable("generated_documents", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  sourceText: text("source_text").notNull(),
+  instructions: text("instructions"),
+  mode: text("mode").notNull().default("organize"),
+  language: text("language").notNull().default("es"),
+  docxUrl: text("docx_url"),
+  pdfUrl: text("pdf_url"),
+  version: integer("version").notNull().default(1),
+  parentId: varchar("parent_id"),
+  status: text("status").notNull().default("active"),
+  archivedAt: timestamp("archived_at"),
+  createdBy: varchar("created_by"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  statusCreatedIdx: index("generated_documents_status_created_idx").on(table.status, table.createdAt),
+  parentIdx: index("generated_documents_parent_idx").on(table.parentId),
+}));
+
+export const insertGeneratedDocumentSchema = createInsertSchema(generatedDocuments, {
+  mode: z.enum(["preserve", "organize"]).optional(),
+}).omit({ id: true, createdAt: true, updatedAt: true, version: true, status: true, archivedAt: true });
+
+export type InsertGeneratedDocument = z.infer<typeof insertGeneratedDocumentSchema>;
+export type GeneratedDocument = typeof generatedDocuments.$inferSelect;
+
+/**
+ * AI social assets generated from the CMS. The payload and versions are kept as
+ * JSON so the editor can round-trip copy, format and visual settings without
+ * losing information between revisions.
+ */
+export const socialAssets = pgTable("social_assets", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  kind: text("kind").notNull().default("post"), // post | carousel
+  title: text("title").notNull(),
+  topic: text("topic").notNull(),
+  language: text("language").notNull().default("es"),
+  format: text("format").notNull().default("square"),
+  slideCount: integer("slide_count").notNull().default(1),
+  brand: text("brand").notNull().default("santos-saucedo"),
+  palette: text("palette").notNull().default("navy-lime"),
+  status: text("status").notNull().default("draft"), // draft | ready | archived
+  renderStatus: text("render_status").notNull().default("ready"),
+  payload: jsonb("payload").notNull(),
+  versions: jsonb("versions").$type<Array<{ version: number; payload: unknown; createdAt: string; createdBy?: string }>>().default([]),
+  previewUrl: text("preview_url"),
+  packageUrl: text("package_url"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  archivedAt: timestamp("archived_at"),
+}, (table) => ({
+  statusCreatedIdx: index("social_assets_status_created_idx").on(table.status, table.createdAt),
+  kindIdx: index("social_assets_kind_idx").on(table.kind),
+}));
+
+export const insertSocialAssetSchema = createInsertSchema(socialAssets, {
+  payload: z.record(z.unknown()),
+  versions: z.array(z.object({ version: z.number(), payload: z.unknown(), createdAt: z.string(), createdBy: z.string().optional() })).optional(),
+}).omit({ id: true, createdAt: true, updatedAt: true, archivedAt: true });
+
+export type InsertSocialAsset = z.infer<typeof insertSocialAssetSchema>;
+export type SocialAsset = typeof socialAssets.$inferSelect;
 
 export const mediaDeletionRequests = pgTable("media_deletion_requests", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),

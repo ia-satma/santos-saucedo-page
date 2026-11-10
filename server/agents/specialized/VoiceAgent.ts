@@ -18,7 +18,7 @@ const VOICE_CONFIG: AgentConfig = {
   name: 'Voice Agent',
   description: 'Convierte a audio (voz corporativa vía OpenAI TTS) texto ya generado por newsletter, social_media o legal_alerts.',
   systemPrompt: 'N/A — agente estructural, no llama a un LLM de texto.',
-  model: 'n/a',
+  model: 'gpt-6.1-sol',
   temperature: 0,
   maxTokens: 0,
   skills: ['text_to_speech', 'audio_generation'],

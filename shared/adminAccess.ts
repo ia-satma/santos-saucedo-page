@@ -187,7 +187,7 @@ export function adminPermissionForPath(
   if (/^(inbox|contact-submissions|newsletter-subscribers)(\/|$)/.test(route))
     return "inbox";
   if (
-    /^(agents|knowledge|processing|generated-images|generated-audio|generated-presentations|presentations|copies-ai)(\/|$)/.test(
+    /^(agents|knowledge|processing|generated-images|generated-audio|generated-presentations|presentations|copies-ai|social|posts-ai|carruseles-ai|documents)(\/|$)/.test(
       route,
     )
   )

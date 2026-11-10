@@ -4,6 +4,7 @@ import {
   generatedImages,
   generatedAudio,
   generatedPresentations,
+  socialAssets,
   news,
   type GeneratedImage,
   type InsertGeneratedImage,
@@ -11,6 +12,8 @@ import {
   type InsertGeneratedAudio,
   type GeneratedPresentation,
   type InsertGeneratedPresentation,
+  type SocialAsset,
+  type InsertSocialAsset,
 } from "@shared/schema";
 export class GeneratedAssetsRepository {
   async getGeneratedImages(): Promise<
@@ -127,6 +130,32 @@ export class GeneratedAssetsRepository {
       .delete(generatedPresentations)
       .where(eq(generatedPresentations.id, id))
       .returning();
+    return result.length > 0;
+  }
+
+  async getSocialAssets(kind?: string): Promise<SocialAsset[]> {
+    const query = db.select().from(socialAssets).orderBy(desc(socialAssets.createdAt));
+    if (!kind) return query;
+    return db.select().from(socialAssets).where(eq(socialAssets.kind, kind)).orderBy(desc(socialAssets.createdAt));
+  }
+
+  async getSocialAssetById(id: string): Promise<SocialAsset | undefined> {
+    const [asset] = await db.select().from(socialAssets).where(eq(socialAssets.id, id));
+    return asset;
+  }
+
+  async createSocialAsset(asset: any): Promise<SocialAsset> {
+    const [created] = await db.insert(socialAssets).values(asset).returning();
+    return created;
+  }
+
+  async updateSocialAsset(id: string, data: any): Promise<SocialAsset | undefined> {
+    const [updated] = await db.update(socialAssets).set({ ...data, updatedAt: new Date() }).where(eq(socialAssets.id, id)).returning();
+    return updated;
+  }
+
+  async archiveSocialAsset(id: string): Promise<boolean> {
+    const result = await db.update(socialAssets).set({ status: "archived", archivedAt: new Date(), updatedAt: new Date() }).where(eq(socialAssets.id, id)).returning({ id: socialAssets.id });
     return result.length > 0;
   }
 }

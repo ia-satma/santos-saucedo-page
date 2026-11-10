@@ -9,6 +9,8 @@ import { registerAgentReportRoutes } from "./routes/agentReportRoutes";
 import { servePersistentManagedMedia } from "./routes/managedMedia";
 import { registerAgentUsageRoutes } from "./routes/agentUsageRoutes";
 import { registerAgentAssetHistoryRoutes } from "./routes/agentAssetHistoryRoutes";
+import { registerAdminDocumentRoutes } from "./routes/adminDocumentRoutes";
+import { registerSocialAssetRoutes } from "./routes/socialAssetRoutes";
 import { registerAgentPipelineRoutes } from "./routes/agentPipelineRoutes";
 import { registerAdminKnowledgeRoutes } from "./routes/adminKnowledgeRoutes";
 import { saveTeamMember, teamPracticeIds, validatePracticeRoster } from "./cms/teamEditor";
@@ -217,6 +219,8 @@ export async function registerRoutes(
   registerAgentUsageRoutes(app);
   registerAgentReportRoutes(app);
   registerAgentAssetHistoryRoutes(app);
+  registerAdminDocumentRoutes(app);
+  registerSocialAssetRoutes(app);
   registerCmsRoutes(app);
   registerCatalogOrder(app);
   registerMediaLibrary(app);

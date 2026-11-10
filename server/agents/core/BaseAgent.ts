@@ -95,7 +95,7 @@ export abstract class BaseAgent {
       classification?: AiDataClassification;
     }
   ): Promise<string> {
-    const primaryModel = process.env.OPENAI_TEXT_MODEL?.trim() || getTextModel();
+    const primaryModel = getTextModel();
     const allModels = [primaryModel];
 
     let lastError: Error | null = null;
