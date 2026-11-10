@@ -1,6 +1,8 @@
 import { getCmsIntegrations } from "../cms/siteConfig";
 import { storage } from "../storage";
 import { isPublicNews } from "@shared/publicNews";
+import { SUPPORTED_LANGUAGES } from "@shared/constants";
+import { readStaticCmsSection } from "../localization/staticSnapshots";
 
 // Dominio de las etiquetas del index.html; injectSiteMetadata lo cambia por el siteUrl del CMS.
 const SITE = "https://www.santossaucedo.com";
@@ -15,6 +17,7 @@ type RouteMetadata = {
   image: string;
   imageAlt: string;
   brandImage: boolean;
+  type?: "website" | "article";
   alternates?: Array<{ hreflang: string; url: string }>;
 };
 
@@ -51,31 +54,78 @@ function absoluteUrl(value: string) {
  */
 async function routeMetadata(pathname: string): Promise<RouteMetadata | undefined> {
   const match = /^\/(?:(es|en|de|zh|ko|ja|ar|ru|fr|it)\/)?news\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/.exec(pathname);
-  if (!match) return;
-  const language = match[1] || "es";
-  const item = await storage.getNewsBySlug(match[2]);
-  if (!item || !isPublicNews(item)) return;
-  const translation = language === "es" ? undefined : await storage.getNewsTranslation(item.id, language);
-  const title = plainText(translation?.title || item.titleEs || item.title);
-  const description = clip(
-    plainText(translation?.excerpt || item.excerptEs || item.excerpt) || plainText(translation?.content || item.contentEs || item.content),
-    200,
-  );
-  const ownImage = item.imageUrl && !/placeholder/i.test(item.imageUrl) ? item.imageUrl : "";
+  if (match) {
+    const language = match[1] || "es";
+    const item = await storage.getNewsBySlug(match[2]);
+    if (!item || !isPublicNews(item)) return;
+    const translation = language === "es" ? undefined : await storage.getNewsTranslation(item.id, language);
+    const title = plainText(translation?.title || item.titleEs || item.title);
+    const description = clip(
+      plainText(translation?.excerpt || item.excerptEs || item.excerpt) || plainText(translation?.content || item.contentEs || item.content),
+      200,
+    );
+    const ownImage = item.imageUrl && !/placeholder/i.test(item.imageUrl) ? item.imageUrl : "";
+    return {
+      title,
+      documentTitle: title + " | " + (language === "es" ? "Monitor Laboral" : "Labor Monitor"),
+      description: description || "Monitor Laboral de Santos & Saucedo.",
+      url: SITE + "/" + language + "/news/" + item.slug,
+      image: absoluteUrl(ownImage || NEWS_SHARE_IMAGE),
+      imageAlt: ownImage ? title : "Santos & Saucedo · Monitor Laboral",
+      brandImage: !ownImage,
+      type: "article",
+      alternates: localizedAlternates(`/news/${item.slug}`),
+    };
+  }
+
+  // The client updates these tags after hydration, but crawlers and link
+  // unfurlers need the locale-specific canonical and hreflang tags in the
+  // first HTML response as well. The CMS SEO snapshot already contains the
+  // translated title and description for every public route.
+  const publicMatch = /^\/(es|en|de|zh|ko|ja|ar|ru|fr|it)(\/.*)?\/?$/.exec(pathname);
+  if (!publicMatch) return;
+  const language = publicMatch[1];
+  const route = publicMatch[2] || "/";
+  const normalizedRoute = route === "/" ? "/" : route.replace(/\/$/, "");
+  const seoKey = {
+    "/": "home",
+    "/about": "about",
+    "/team": "team",
+    "/practice-groups": "practiceGroups",
+    "/industries": "industries",
+    "/news": "news",
+    "/contact": "contact",
+    "/offices": "offices",
+    "/careers": "careers",
+    "/careers/interns": "interns",
+    "/privacy-policy": "privacyPolicy",
+    "/terms": "terms",
+    "/testimonios": "testimonials",
+    "/newsletter": "newsletter",
+  } as Record<string, string>;
+  const key = seoKey[normalizedRoute];
+  if (!key) return;
+  const seo = await readStaticCmsSection("seo", language) as { title?: unknown; description?: unknown } | undefined;
+  const title = plainText(typeof seo?.title === "string" ? seo.title : "");
+  const description = clip(plainText(typeof seo?.description === "string" ? seo.description : ""), 200);
+  if (!title) return;
   return {
     title,
-    documentTitle: title + " | " + (language === "es" ? "Monitor Laboral" : "Labor Monitor"),
-    description: description || "Monitor Laboral de Santos & Saucedo.",
-    url: SITE + "/" + language + "/news/" + item.slug,
-    image: absoluteUrl(ownImage || NEWS_SHARE_IMAGE),
-    imageAlt: ownImage ? title : "Santos & Saucedo · Monitor Laboral",
-    brandImage: !ownImage,
-    alternates: [
-      ["es-MX", "es"], ["en", "en"], ["de", "de"], ["zh-CN", "zh"], ["ko-KR", "ko"],
-      ["ja-JP", "ja"], ["ar", "ar"], ["ru", "ru"], ["fr", "fr"], ["it", "it"],
-    ].map(([hreflang, code]) => ({ hreflang, url: SITE + "/" + code + "/news/" + item.slug }))
-      .concat([{ hreflang: "x-default", url: SITE + "/es/news/" + item.slug }]),
+    documentTitle: title,
+    description,
+    url: SITE + "/" + language + (normalizedRoute === "/" ? "/" : normalizedRoute),
+    image: absoluteUrl(NEWS_SHARE_IMAGE),
+    imageAlt: "Santos & Saucedo",
+    brandImage: true,
+    type: "website",
+    alternates: localizedAlternates(normalizedRoute),
   };
+}
+
+function localizedAlternates(route: string): Array<{ hreflang: string; url: string }> {
+  const alternates: Array<{ hreflang: string; url: string }> = SUPPORTED_LANGUAGES
+    .map(({ code, locale }) => ({ hreflang: locale, url: SITE + "/" + code + (route === "/" ? "/" : route) }))
+  return [...alternates, { hreflang: "x-default", url: SITE + "/es" + (route === "/" ? "/" : route) }];
 }
 
 function setMeta(html: string, attr: "name" | "property", key: string, value: string) {
@@ -89,7 +139,7 @@ function applyRouteMetadata(html: string, meta: RouteMetadata) {
   out = setMeta(out, "name", "description", meta.description);
   out = setMeta(out, "property", "og:title", meta.title);
   out = setMeta(out, "property", "og:description", meta.description);
-  out = setMeta(out, "property", "og:type", "article");
+  out = setMeta(out, "property", "og:type", meta.type ?? "website");
   out = setMeta(out, "property", "og:url", meta.url);
   out = setMeta(out, "property", "og:image", meta.image);
   out = setMeta(out, "property", "og:image:alt", meta.imageAlt);
