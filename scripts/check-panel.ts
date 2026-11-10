@@ -33,6 +33,21 @@ process.env.AGENT_AUTO_PROCESSING = "false";
 const app = express();
 app.use(express.json({ limit: "1mb" }));
 const server = createServer(app);
+const editorialProvider = createServer(async (req, res) => {
+  let raw = "";
+  for await (const chunk of req) raw += chunk;
+  const body = JSON.parse(raw);
+  assert.equal(body.model, "gpt-6.1-sol");
+  assert.equal(body.service_tier, "fast");
+  const titles = ["Organización editorial", "Revisión de referencias", "Entrega de documentos"];
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify({
+    choices: [{ finish_reason: "stop", message: { content: JSON.stringify({
+      title: "Prueba editorial",
+      slides: titles.map(title => ({ layout: "bullets", title, bullets: [`Punto de prueba: ${title}`] })),
+    }) } }],
+  }));
+});
 const suffix = randomUUID(),
   ids: string[] = [],
   cleanup: (() => Promise<unknown>)[] = [];
@@ -65,6 +80,9 @@ function ok(
   return result.body;
 }
 try {
+  await new Promise<void>((resolve) => editorialProvider.listen(0, "127.0.0.1", resolve));
+  process.env.AI_INTEGRATIONS_OPENAI_API_KEY = "isolated-panel-token";
+  process.env.AI_INTEGRATIONS_OPENAI_BASE_URL = `http://127.0.0.1:${(editorialProvider.address() as { port: number }).port}/v1`;
   await registerRoutes(server, app);
   await initializeAgents();
   const user = await db
@@ -453,6 +471,7 @@ try {
   const presentation = generated.presentation;
   assert(presentation?.id);
   assert.equal(presentation.includeIntroSlide, false);
+  assert.equal(presentation.slideCount, 4);
   cleanup.push(() =>
     db
       .delete(schema.generatedPresentations)
@@ -542,5 +561,6 @@ try {
     await db.delete(schema.adminUsers).where(eq(schema.adminUsers.id, id));
   }
   server.close();
+  editorialProvider.close();
   process.exit(code);
 }

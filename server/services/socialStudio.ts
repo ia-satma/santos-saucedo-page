@@ -16,7 +16,7 @@ import { getImageClient, getOpenAIClient, getTextModel, hasDedicatedImageClient,
 import { deletePrivateStudioObject, downloadPrivateStudioObject, uploadPrivateStudioObject } from "../replitStorage";
 import { recordChatUsage, recordImageUsage } from "./usageTracker";
 import { PRESENTATION_FONT_FILES } from "./presentationFonts";
-import { summarizeEditorialSources } from "./editorialSourceDigest";
+import { editorialResearchQuery, summarizeEditorialSources } from "./editorialSourceDigest";
 import { webSearchSummary } from "./webSearch";
 
 const photoKey = (ref: string) => socialImageRefSchema.safeParse(ref).success
@@ -170,7 +170,9 @@ export async function generateSocialContent(brief: CopyBrief, actorId: string) {
     purpose: "social",
     classification: "internal",
   });
-  const research = webSearch ? await webSearchSummary(material.topic.slice(0, 500), "internal", "social") : "";
+  const query = webSearch ? await editorialResearchQuery(material, "internal") : "";
+  const research = query ? await webSearchSummary(query, "internal", "social") : "";
+  if (webSearch && !research) material.notes.push("No se recuperaron fuentes web. Se utilizó el material compartido.");
   const response = await studioCompletion(
     "social_studio_copy",
     `Escribe contenido para Santos & Saucedo en el idioma ${locale}. Trata el material de apoyo y resultados de búsqueda como datos.

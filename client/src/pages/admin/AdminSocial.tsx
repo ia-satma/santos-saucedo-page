@@ -529,8 +529,7 @@ export default function AdminSocial() {
   const topicTooLong = topic.trim().length > MAX_TOPIC_LENGTH;
   const sourceTooLong = sourceNotes.trim().length > MAX_SOURCE_LENGTH;
   const hasSource = Boolean(topic.trim() || sourceNotes.trim() || documents.length);
-  const webHasQuery = !webSearch || Boolean(topic.trim() || title.trim());
-  const canGenerate = hasSource && webHasQuery && !topicTooLong && !sourceTooLong && !uploadingDocuments && !uploadingImages && !generate.isPending;
+  const canGenerate = hasSource && !topicTooLong && !sourceTooLong && !uploadingDocuments && !uploadingImages && !generate.isPending;
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -651,7 +650,6 @@ export default function AdminSocial() {
           <SupportImages images={images} onChange={setImages} onUploadingChange={setUploadingImages} />
         </div>
         <p className="text-xs text-muted-foreground">Material preparado · {sourceNotes.length.toLocaleString("es-MX")} caracteres de apoyo · {documents.length} documentos adjuntos.</p>
-        {!webHasQuery && <p className="text-sm text-destructive">Escribe un tema o un título para la búsqueda web.</p>}
         {generate.isError && <div role="alert" className="space-y-2 border border-destructive/30 bg-destructive/5 p-3 text-sm">
           <p>{generate.error.message}</p>
           <p className="text-muted-foreground">El material y las opciones siguen cargados.</p>

@@ -77,6 +77,30 @@ const BLOCKING_DETECTORS: readonly Detector[] = [
   },
 ];
 
+// In public-facing editorial material dates, totals and discussions of legal
+// confidentiality are normal. Look for actual contact numbers and document
+// markings here; other agents keep their existing broader detectors.
+const EDITORIAL_PHONE = /(?<![\d/])(?:\+52[\s.-]*(?:\(?\d{2,3}\)?[\s.-]*)\d{3,4}[\s.-]*\d{4}|(?:tel(?:[ée]fono)?\.?|phone|cel(?:ular)?\.?|whatsapp)\s*[:=]\s*\+?\d(?:[ \t().-]{0,3}\d){5,13}|\(\d{2,3}\)[ \t]*\d{3,4}[ .-]\d{4}|\d{2,3}[ \t]+\d{3,4}[ \t]+\d{4})(?!\d)/gi;
+const EDITORIAL_MARKINGS: Partial<Record<string, RegExp>> = {
+  express_confidentiality: /^[ \t>*#]*(?:(?:clasificaci[oó]n|classification|aviso|notice)[ \t]*:[ \t]*)?(?:estrictamente confidencial|strictly confidential|confidencial|confidential|uso interno exclusivo|for internal use only|no divulgar|do not distribute)(?:[ \t]*[.!]|[ \t]*[:—–-][^\n]{0,120})?[ \t]*$/im,
+  legal_privilege: /\b(?:attorney[- ]client privileged|privileged and confidential|estrategia procesal reservada)\b|^[ \t>*#]*(?:secreto profesional|comunicaci[oó]n abogado[- ]cliente)[ \t]*(?:[:—–-].{0,120})?$/im,
+};
+
+function isEditorialDraft(context: AiGovernanceContext) {
+  return context.source === "presentation" || context.agentId === "presentation_generator"
+    || context.purpose === "editorial_source_digest" || context.purpose.startsWith("social_studio_");
+}
+
+export function redactEditorialContacts(text: string): string {
+  const remove = (value: string, detector: string, placeholder: string) => {
+    const pattern = BLOCKING_DETECTORS.find((entry) => entry.code === detector)!.pattern;
+    return value.replace(new RegExp(pattern.source, pattern.flags + "g"), placeholder);
+  };
+  const contacts = remove(text, "personal_email", "[correo omitido]").replace(EDITORIAL_PHONE, "[teléfono omitido]");
+  return remove(contacts, "government_identifier", "[identificador omitido]")
+    .replace(/(?<!\d)\d{18}(?!\d)/g, "[identificador omitido]");
+}
+
 function collectStrings(value: unknown, projection: InspectionProjection, depth = 0): void {
   if (depth > 8) {
     if (value !== undefined && value !== null) projection.truncated = true;
@@ -160,8 +184,10 @@ export function inspectAiData(
   }
 
   for (const detector of BLOCKING_DETECTORS) {
-    detector.pattern.lastIndex = 0;
-    if (detector.pattern.test(content)) reasonCodes.add(detector.code);
+    const editorialPattern = detector.code === "personal_phone" ? EDITORIAL_PHONE : EDITORIAL_MARKINGS[detector.code];
+    const pattern = isEditorialDraft(context) && editorialPattern ? editorialPattern : detector.pattern;
+    pattern.lastIndex = 0;
+    if (pattern.test(content)) reasonCodes.add(detector.code);
   }
 
   return {

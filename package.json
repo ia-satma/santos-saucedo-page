@@ -19,7 +19,7 @@
     "test:cms": "node --import tsx scripts/check-cms.ts",
     "test:editorial": "node --import tsx scripts/check-editorial.ts",
     "test:access": "node --import tsx scripts/check-access.ts",
-    "test:agents": "node --import tsx --test server/security/agentExecution.test.ts server/security/agentPositiveFlows.test.ts server/security/agentOrchestratorRuntime.test.ts server/security/presentationGeneratorRuntime.test.ts server/security/replitAiTransport.test.ts",
+    "test:agents": "node --import tsx --test server/security/agentExecution.test.ts server/security/agentPositiveFlows.test.ts server/security/agentOrchestratorRuntime.test.ts server/security/editorialSourceDigest.test.ts server/security/presentationGeneratorRuntime.test.ts server/security/presentationContentCount.test.ts server/security/replitAiTransport.test.ts",
     "test:panel": "node --import tsx scripts/check-panel.ts",
     "preview:cms": "node --import tsx scripts/preview-cms.ts",
     "test:public-flows": "node --import tsx scripts/check-public-flows.ts",
@@ -37,7 +37,7 @@
     "test:localization": "node --import tsx scripts/check-localization.ts",
     "test:signatures": "node --import tsx scripts/check-signatures.ts",
     "test:signatures-api": "node --import tsx scripts/check-signatures-api.ts",
-    "test:documents-api": "node --import tsx scripts/check-documents-api.ts",
+    "test:documents-api": "node --import tsx scripts/check-documents-api.ts && node --import tsx --test server/security/documentJustification.test.ts",
     "test:social-studio": "node --import tsx --test server/security/socialStudio.test.ts"
   },
   "dependencies": {

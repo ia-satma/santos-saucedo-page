@@ -45,14 +45,18 @@ declare module "http" {
   }
 }
 
-app.use(
-  express.json({
-    limit: "1mb",
-    verify: (req, _res, buf) => {
-      req.rawBody = buf;
-    },
-  }),
-);
+const parseJson = express.json({
+  limit: "1mb",
+  verify: (req, _res, buf) => {
+    req.rawBody = buf;
+  },
+});
+const parseEditorialJson = express.json({ limit: "5mb" });
+app.use((req, res, next) => {
+  const isEditorialGeneration = req.method === "POST"
+    && /^\/api\/admin\/(?:presentations|social-assets)\/generate\/?$/i.test(req.path);
+  return (isEditorialGeneration ? parseEditorialJson : parseJson)(req, res, next);
+});
 
 app.use(express.urlencoded({ extended: false }));
 

@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import JSZip from "jszip";
-import { PDFDocument, PDFHexString, StandardFonts, rgb, type PDFFont } from "pdf-lib";
+import { PDFDocument, PDFHexString, StandardFonts, rgb, setWordSpacing, type PDFFont } from "pdf-lib";
 import sharp from "sharp";
 import type { LetterheadTemplateId } from "@shared/letterheadTemplates";
 import type { DocumentBlock, DocumentInline, DocumentRichText } from "@shared/documentRichText";
@@ -99,7 +99,7 @@ const linkMark = (inline: Extract<DocumentInline, { type: "text" }>) => inline.m
 function renderWordBody(input: DocumentInput, links: WordRelationship[]) {
   if (!input.richContent) return {
     body: documentLines(input).map(line =>
-      `<w:p><w:pPr><w:spacing w:after="0" w:line="300" w:lineRule="auto"/></w:pPr><w:r>${wordText(line)}</w:r></w:p>`,
+      `<w:p><w:pPr><w:spacing w:after="0" w:line="300" w:lineRule="auto"/><w:jc w:val="both"/></w:pPr><w:r>${wordText(line)}</w:r></w:p>`,
     ).join(""),
     numbering: "",
   };
@@ -130,7 +130,7 @@ function renderWordBody(input: DocumentInput, links: WordRelationship[]) {
       }
       return `<w:hyperlink r:id="${id}">${run}</w:hyperlink>`;
     }).join("");
-    return `<w:p><w:pPr>${style}${number}${quoteRule}${spacing}${indent}</w:pPr>${runs}</w:p>`;
+    return `<w:p><w:pPr>${style}${number}${quoteRule}${spacing}${indent}<w:jc w:val="${heading ? "left" : "both"}"/></w:pPr>${runs}</w:p>`;
   }).join("");
   if (!lists.size) return { body, numbering: "" };
   const abstract = (id: number, format: string, marker: string) =>
@@ -166,7 +166,9 @@ export async function createBrandedDocx(input: DocumentInput): Promise<Buffer> {
   const heading = input.title ? `<w:p><w:pPr><w:keepNext/><w:spacing w:after="260"/></w:pPr><w:r><w:rPr><w:rFonts w:ascii="Lora" w:hAnsi="Lora"/><w:b/><w:color w:val="0B2850"/><w:sz w:val="40"/></w:rPr>${wordText(input.title)}</w:r></w:p>` : "";
   const documentRelationships: WordRelationship[] = [
     ["rId1", "styles", "styles.xml"], ["rId2", "header", "header1.xml"],
+    ["rIdSettings", "settings", "settings.xml"],
   ];
+  zip.file("word/settings.xml", `${xml}<w:settings xmlns:w="${wordNs}"><w:compat><w:doNotExpandShiftReturn/></w:compat></w:settings>`);
   if (!input.template) documentRelationships.push(["rId3", "footer", "footer1.xml"]);
   const { body, numbering } = renderWordBody(input, documentRelationships);
   if (numbering) {
@@ -175,7 +177,7 @@ export async function createBrandedDocx(input: DocumentInput): Promise<Buffer> {
   }
   const override = (name: string, type: string) =>
     `<Override PartName="/word/${name}.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.${type}+xml"/>`;
-  zip.file("[Content_Types].xml", `${xml}<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/>${override("document", "document.main")}${override("styles", "styles")}${override("header1", "header")}${input.template ? "" : override("footer1", "footer")}${numbering ? override("numbering", "numbering") : ""}</Types>`);
+  zip.file("[Content_Types].xml", `${xml}<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/>${override("document", "document.main")}${override("styles", "styles")}${override("settings", "settings")}${override("header1", "header")}${input.template ? "" : override("footer1", "footer")}${numbering ? override("numbering", "numbering") : ""}</Types>`);
   zip.file("_rels/.rels", relationships([["rId1", "officeDocument", "word/document.xml"]]));
   zip.file("word/_rels/document.xml.rels", relationships(documentRelationships));
   zip.file("word/_rels/header1.xml.rels", relationships([["rId1", "image", `media/${filename}`]]));
@@ -225,13 +227,18 @@ function wrap(text: string, font: PDFFont, size: number, lineWidth: number) {
 }
 
 type PdfRun = { text: string; font: PDFFont; width: number; href?: string; underline: boolean; supported: boolean };
+type PdfLine = { runs: PdfRun[]; wrapped: boolean };
 type PdfStyle = Omit<PdfRun, "text" | "width" | "supported">;
 
 function styledPdfLines(content: DocumentInline[], styleFor: (inline: Extract<DocumentInline, { type: "text" }>) => PdfStyle, size: number, limit: number) {
-  const lines: PdfRun[][] = [[]];
+  const lines: PdfLine[] = [{ runs: [], wrapped: false }];
   const fontChars = new Map<PDFFont, Set<number>>();
   let lineWidth = 0;
-  const newLine = () => { lines.push([]); lineWidth = 0; };
+  const newLine = (wrapped = false) => {
+    lines[lines.length - 1].wrapped = wrapped;
+    lines.push({ runs: [], wrapped: false });
+    lineWidth = 0;
+  };
   for (const inline of content) {
     if (inline.type === "hardBreak") { newLine(); continue; }
     const style = styleFor(inline);
@@ -249,12 +256,12 @@ function styledPdfLines(content: DocumentInline[], styleFor: (inline: Extract<Do
       });
       const tokenWidth = metrics.reduce((sum, glyph) => sum + glyph.width, 0);
       if (lineWidth && lineWidth + tokenWidth > limit) {
-        newLine();
+        newLine(true);
         if (!part.trim()) continue;
       }
       for (const { char, width, supported } of metrics) {
-        if (lineWidth && lineWidth + width > limit) newLine();
-        const runs = lines[lines.length - 1];
+        if (lineWidth && lineWidth + width > limit) newLine(true);
+        const runs = lines[lines.length - 1].runs;
         const last = runs[runs.length - 1];
         if (last && last.font === style.font && last.href === style.href && last.underline === style.underline && last.supported === supported) {
           last.text += char;
@@ -267,6 +274,26 @@ function styledPdfLines(content: DocumentInline[], styleFor: (inline: Extract<Do
     }
   }
   return lines;
+}
+
+const wordSpaces = (value: string) => (value.match(/ /g) ?? []).length;
+
+function justifiedPdfLine(line: PdfLine, width: number, size: number, enabled: boolean) {
+  if (!enabled || !line.wrapped) return { runs: line.runs, wordSpacing: 0 };
+  const runs = line.runs.map(run => ({ ...run }));
+  // Trailing separator spaces must not become invisible stretch at the right edge.
+  while (runs.length) {
+    const last = runs[runs.length - 1];
+    const trimmed = last.text.replace(/ +$/, "");
+    last.width -= (last.text.length - trimmed.length) * last.font.widthOfTextAtSize(" ", size);
+    if (trimmed === last.text) break;
+    last.text = trimmed;
+    if (trimmed) break;
+    runs.pop();
+  }
+  const naturalWidth = runs.reduce((total, run) => total + run.width, 0);
+  const spaces = runs.reduce((total, run) => total + wordSpaces(run.text), 0);
+  return { runs, wordSpacing: spaces ? Math.max(0, width - naturalWidth) / spaces : 0 };
 }
 
 export async function createBrandedPdf(input: DocumentInput): Promise<Buffer> {
@@ -300,25 +327,34 @@ export async function createBrandedPdf(input: DocumentInput): Promise<Buffer> {
     return page;
   };
   let page = addPage();
-  async function drawFallback(value: string, x: number, width: number, size: number, font: PDFFont, fill: string) {
+  async function drawFallback(value: string, x: number, width: number, size: number, font: PDFFont, fill: string, spacing = 0) {
     // The PDF standard fonts cover WinAnsi. For other scripts the runtime
     // selects an available glyph while keeping the intended size and style.
     const family = font.name.startsWith("Times") ? "serif" : "sans-serif";
     const weight = font.name.includes("Bold") ? "bold" : "normal";
     const style = /Italic|Oblique/.test(font.name) ? "italic" : "normal";
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${size + 8}"><text xml:space="preserve" x="0" y="${size}" font-family="${family}" font-weight="${weight}" font-style="${style}" font-size="${size}" fill="${fill}">${escapeXml(value)}</text></svg>`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${size + 8}"><text xml:space="preserve" x="0" y="${size}" font-family="${family}" font-weight="${weight}" font-style="${style}" font-size="${size}" word-spacing="${spacing}" fill="${fill}">${escapeXml(value)}</text></svg>`;
     const png = await sharp(Buffer.from(svg), { density: 144 }).png().toBuffer();
     page.drawImage(await pdf.embedPng(png), { x, y: y - 8, width, height: size + 8 });
   }
   const renderLine = async (value: string, font: PDFFont, size: number, isTitle = false) => {
     const { lines, supported } = wrap(value, font, size, lineWidth);
-    for (const line of lines) {
+    for (let index = 0; index < lines.length; index++) {
+      const line = lines[index];
       if (y < bottom) page = addPage();
       if (line.trim()) {
-        if (Array.from(line).every((char) => supported.has(char.codePointAt(0)!))) {
-          page.drawText(line, { x: margin, y, size, font, color: isTitle ? navy : ink });
+        const metrics = Array.from(line, char => supported.has(char.codePointAt(0)!) ? font.widthOfTextAtSize(char, size) : size);
+        const { runs, wordSpacing } = justifiedPdfLine({
+          runs: [{ text: line, width: metrics.reduce((total, value) => total + value, 0), font, underline: false, supported: true }],
+          wrapped: index < lines.length - 1,
+        }, lineWidth, size, !isTitle);
+        const text = runs.map(run => run.text).join("");
+        if (Array.from(text).every((char) => supported.has(char.codePointAt(0)!))) {
+          page.pushOperators(setWordSpacing(wordSpacing));
+          page.drawText(text, { x: margin, y, size, font, color: isTitle ? navy : ink });
+          page.pushOperators(setWordSpacing(0));
         } else {
-          await drawFallback(line, margin, lineWidth, size, font, isTitle ? "#0B2850" : "#23232B");
+          await drawFallback(text, margin, lineWidth, size, font, isTitle ? "#0B2850" : "#23232B", wordSpacing);
         }
       }
       y -= size + 6;
@@ -366,23 +402,27 @@ export async function createBrandedPdf(input: DocumentInput): Promise<Buffer> {
         page.drawText(marker, { x: margin + markerIndent, y, size, font: regular, color: ink });
       }
       let x = margin + textIndent;
-      for (const run of lines[index]) {
+      const { runs, wordSpacing } = justifiedPdfLine(lines[index], lineWidth - textIndent, size, !headingLevel);
+      for (const run of runs) {
         const color = run.href ? blue : headingLevel ? navy : ink;
+        const width = run.width + wordSpacing * wordSpaces(run.text);
         if (run.supported) {
+          page.pushOperators(setWordSpacing(wordSpacing));
           page.drawText(run.text, { x, y, size, font: run.font, color });
+          page.pushOperators(setWordSpacing(0));
         } else {
           const fill = run.href ? "#174D78" : headingLevel ? "#0B2850" : "#23232B";
-          await drawFallback(run.text, x, run.width, size, run.font, fill);
+          await drawFallback(run.text, x, width, size, run.font, fill, wordSpacing);
         }
-        if (run.underline) page.drawLine({ start: { x, y: y - 2 }, end: { x: x + run.width, y: y - 2 }, color, thickness: 0.7 });
+        if (run.underline) page.drawLine({ start: { x, y: y - 2 }, end: { x: x + width, y: y - 2 }, color, thickness: 0.7 });
         if (run.href) {
           const annotation = pdf.context.obj({
-            Type: "Annot", Subtype: "Link", Rect: [x, y - 2, x + run.width, y + size],
+            Type: "Annot", Subtype: "Link", Rect: [x, y - 2, x + width, y + size],
             Border: [0, 0, 0], A: { S: "URI", URI: PDFHexString.of(Buffer.from(new URL(run.href).href, "utf8").toString("hex")) },
           });
           page.node.addAnnot(pdf.context.register(annotation));
         }
-        x += run.width;
+        x += width;
       }
       y -= lineHeight;
     }

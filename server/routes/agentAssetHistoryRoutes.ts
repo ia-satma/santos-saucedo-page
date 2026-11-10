@@ -31,6 +31,7 @@ import { storage } from "../storage";
 import { auditLog } from "./routeUtils";
 import { presentationMediaPathSchema, receivePresentationDocument } from "./uploadMiddleware";
 import { SUPPORTED_LANGUAGES } from "@shared/constants";
+import { MAX_EDITORIAL_NOTES_CHARACTERS, MAX_EDITORIAL_SOURCE_CHARACTERS } from "@shared/editorialSources";
 
 const languageCodes = SUPPORTED_LANGUAGES.map(({ code }) => code) as [string, ...string[]];
 
@@ -235,6 +236,7 @@ export function registerAgentAssetHistoryRoutes(app: Express): void {
     try {
       const parsed = z.object({
         topic: z.string().trim().max(10_000).default(""),
+        sourceNotes: z.string().trim().max(MAX_EDITORIAL_NOTES_CHARACTERS).default(""),
         docs: z.array(z.object({
           url: z.string().regex(/^private:presentations\/[a-f0-9]{32}\.[a-z0-9]{1,5}$/),
           name: z.string().trim().min(1).max(180),
@@ -265,6 +267,7 @@ export function registerAgentAssetHistoryRoutes(app: Express): void {
       }
       const {
         topic,
+        sourceNotes,
         docs,
         slideCount,
         lang,
@@ -290,16 +293,29 @@ export function registerAgentAssetHistoryRoutes(app: Express): void {
         // endpoint recibe documentos. Mantenerlos fuera del cold start evita
         // cargar pdf-parse, mammoth y jszip durante el registro de rutas.
         const { extractManyTexts } = await import("../services/documentText");
-        const files = await Promise.all(docs.map(async document => ({
-          path:await hydratePresentationInput(document.url), originalName:document.name,
-        })));
-        const extracted = await extractManyTexts(files);
+        const files: { path: string; originalName: string }[] = [];
+        let bytes = 0;
+        for (const document of docs) {
+          try {
+            const file = await hydratePresentationInput(document.url);
+            bytes += (await fs.promises.stat(file)).size;
+            if (bytes > 200 * 1024 * 1024) return res.status(422).json({ error: "Los documentos adjuntos exceden 200 MB en total." });
+            files.push({ path: file, originalName: document.name });
+          } catch {
+            return res.status(422).json({ error: "No se pudo recuperar un documento adjunto. Vuelve a subirlo." });
+          }
+        }
+        const extracted = await extractManyTexts(files, MAX_EDITORIAL_SOURCE_CHARACTERS);
+        if (extracted.incomplete) return res.status(422).json({
+          error: extracted.notes[0] || "No se pudo leer todo el material adjunto.",
+          docNotes: extracted.notes,
+        });
         documentsText = extracted.combinedText;
         usedDocs = extracted.usedDocs;
         docNotes = extracted.notes;
       }
 
-      if (!String(topic || "").trim() && !documentsText.trim()) {
+      if (!topic && !sourceNotes && !documentsText.trim()) {
         return res.status(400).json({ error: "Escribe un tema o sube al menos un documento con contenido de texto.", docNotes });
       }
 
@@ -316,6 +332,7 @@ export function registerAgentAssetHistoryRoutes(app: Express): void {
       const { presentationGeneratorAgent } = await import("../agents/specialized/PresentationGeneratorAgent");
       const result = await presentationGeneratorAgent.execute(context, {
         topic,
+        sourceNotes,
         documentsText,
         slideCount,
         lang,
@@ -335,10 +352,14 @@ export function registerAgentAssetHistoryRoutes(app: Express): void {
       });
 
       if (!result.success) {
-        return res.status(400).json({
+        const { code, visualNotes } = (result.data as { code?: string; visualNotes?: string[] } | undefined) ?? {};
+        const status = code === "AI_DATA_GOVERNANCE_BLOCKED" || code === "PRESENTATION_SOURCE_ERROR" ? 422
+          : code === "PRESENTATION_AI_UNAVAILABLE" ? 503 : code === "PRESENTATION_OUTLINE_INVALID" ? 502 : 400;
+        return res.status(status).json({
           error: result.error || "No se pudo generar la presentación.",
+          code,
           docNotes,
-          visualNotes: (result.data as { visualNotes?: string[] } | undefined)?.visualNotes ?? [],
+          visualNotes: visualNotes ?? [],
         });
       }
 

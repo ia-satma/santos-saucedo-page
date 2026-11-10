@@ -24,7 +24,7 @@ import { hasDedicatedImageClient } from '../../openai';
 import type { AiDataClassification } from '@shared/aiGovernance';
 import { MAX_EDITORIAL_SOURCE_CHARACTERS } from '@shared/editorialSources';
 import { AiGovernanceBlockedError } from '../../ai/dataGovernance';
-import { EditorialSourceError, summarizeEditorialSources } from '../../services/editorialSourceDigest';
+import { editorialResearchQuery, EditorialSourceError, summarizeEditorialSources } from '../../services/editorialSourceDigest';
 import { webSearchSummary } from '../../services/webSearch';
 import { privatePresentationImagePath } from '../../media/presentationGeneratedImages';
 
@@ -174,8 +174,10 @@ export class PresentationGeneratorAgent extends BaseAgent {
     let webInfo = '';
     try {
       digest = await summarizeEditorialSources({ topic, sourceNotes, documentsText, purpose: 'presentation', classification });
-      if (p.webSearch === true && digest.topic) {
-        webInfo = await webSearchSummary(digest.topic.slice(0, 500), classification);
+      if (p.webSearch === true) {
+        const query = await editorialResearchQuery(digest, classification);
+        if (query) webInfo = await webSearchSummary(query, classification);
+        if (!webInfo) digest.notes.push('No se recuperaron fuentes web. Se utilizó el material compartido.');
       }
       const userPrompt = buildUserPrompt(digest.topic, digest.context, slideCount, lang, visuals, webInfo);
       let draft = '';
@@ -188,7 +190,7 @@ export class PresentationGeneratorAgent extends BaseAgent {
         ].join('\n');
         draft = await this.callLLM(
           [{ role: 'user', content: [userPrompt, correction].filter(Boolean).join('\n\n') }],
-          { jsonMode: true, temperature: 0.3, classification, maxTokens: 16384 },
+          { jsonMode: true, temperature: 0.3, classification, maxTokens: 16384, timeoutMs: 90_000 },
         );
         model = normalizeModel(safeParseJson<SlideModel>(draft), lang);
         if (model?.slides.length === slideCount) break;

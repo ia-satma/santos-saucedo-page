@@ -93,6 +93,7 @@ export abstract class BaseAgent {
       maxTokens?: number;
       jsonMode?: boolean;
       classification?: AiDataClassification;
+      timeoutMs?: number;
     }
   ): Promise<string> {
     const model = getTextModel();
@@ -121,7 +122,7 @@ export abstract class BaseAgent {
       provider: 'openai',
       operation: 'chat',
       invoke: () => getOpenAIClient().chat.completions.create(request, {
-        timeout: 60_000,
+        timeout: options?.timeoutMs ?? 60_000,
         maxRetries: 0,
       }),
     });

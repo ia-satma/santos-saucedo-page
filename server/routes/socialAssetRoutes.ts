@@ -72,9 +72,6 @@ const generationSchema = z.object({
   if (!input.title && !input.topic && !input.sourceNotes && !input.documents.length) {
     context.addIssue({ code: "custom", path: ["topic"], message: "Escribe un tema, pega material de apoyo o sube un documento." });
   }
-  if (input.webSearch && !input.topic && !input.title) {
-    context.addIssue({ code: "custom", path: ["webSearch"], message: "Agrega un tema público para orientar la búsqueda web." });
-  }
 });
 const editSchema = z.object({
   version: z.number().int().min(1),

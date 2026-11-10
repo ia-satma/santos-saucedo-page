@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { SUPPORTED_LANGUAGES } from "./constants";
+import { MAX_EDITORIAL_NOTES_CHARACTERS } from "./editorialSources";
 
 export const socialFormats = {
   portrait: { label: "Vertical 4:5", width: 1080, height: 1350 },
@@ -89,7 +90,7 @@ export const socialContentSchema = z.object({
 });
 export type SocialContent = z.infer<typeof socialContentSchema>;
 export const socialPayloadSchema = socialContentSchema.innerType().extend({
-  sourceNotes: z.string().max(20_000).default(""),
+  sourceNotes: z.string().max(MAX_EDITORIAL_NOTES_CHARACTERS).default(""),
   design: socialDesignSchema.optional(),
   supportImages: z.array(socialSupportImageSchema).max(10).optional(),
   documents: z.array(socialReferenceDocumentSchema).max(20).optional(),

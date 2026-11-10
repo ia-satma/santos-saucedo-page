@@ -24,13 +24,10 @@ const MAX_CHARS_PER_DOC = 40000;
 
 const LEGACY_BINARY = new Set(['.doc', '.ppt']);
 
-function clamp(text: string): string {
-  const clean = (text || '').replace(/\r\n/g, '\n').replace(/[ \t]+\n/g, '\n').trim();
-  return clean.length > MAX_CHARS_PER_DOC ? clean.slice(0, MAX_CHARS_PER_DOC) : clean;
-}
+const cleanText = (text: string) => (text || '').replace(/\r\n/g, '\n').replace(/[ \t]+\n/g, '\n').trim();
 
 async function extractPdf(filePath: string): Promise<string> {
-  const parser = new PDFParse({ url: 'file://' + path.resolve(filePath) });
+  const parser = new PDFParse({ data: new Uint8Array(await fs.promises.readFile(filePath)) });
   try {
     const result = await parser.getText();
     return result?.text || '';
@@ -89,7 +86,7 @@ function stripLatex(raw: string): string {
     .trim();
 }
 
-export async function extractText(filePath: string, originalName?: string, options?: { rejectOverLimit: boolean }): Promise<ExtractedDoc> {
+export async function extractText(filePath: string, originalName?: string, options?: { rejectOverLimit?: boolean; maxChars?: number }): Promise<ExtractedDoc> {
   const name = originalName || path.basename(filePath);
   const ext = path.extname(name || filePath).toLowerCase();
 
@@ -125,10 +122,12 @@ export async function extractText(filePath: string, originalName?: string, optio
         return { ...base, note: `Tipo de archivo no soportado: ${ext || '(sin extensión)'}.` };
     }
 
-    if (options?.rejectOverLimit && text.length > MAX_CHARS_PER_DOC) {
-      return { ...base, note: 'El texto supera el límite de 40 000 caracteres por archivo.' };
+    const clean = cleanText(text);
+    const maxChars = options?.maxChars ?? MAX_CHARS_PER_DOC;
+    if (options?.rejectOverLimit && clean.length > maxChars) {
+      return { ...base, note: `El texto supera el límite de ${maxChars.toLocaleString("es-MX")} caracteres por archivo.` };
     }
-    const clamped = clamp(text);
+    const clamped = clean.slice(0, maxChars);
     if (!clamped) {
       return { ...base, note: 'No se pudo extraer texto del documento (¿está vacío o es solo imágenes?).' };
     }
@@ -147,29 +146,31 @@ export async function extractText(filePath: string, originalName?: string, optio
  */
 export async function extractManyTexts(
   files: { path: string; originalName?: string }[],
-  maxTotalChars = 60000,
-): Promise<{ combinedText: string; usedDocs: string[]; notes: string[] }> {
+  maxTotalChars: number,
+): Promise<{ combinedText: string; usedDocs: string[]; notes: string[]; incomplete: boolean }> {
   const usedDocs: string[] = [];
   const notes: string[] = [];
   const chunks: string[] = [];
   let total = 0;
+  let incomplete = false;
 
   for (const f of files) {
-    const doc = await extractText(f.path, f.originalName);
+    const doc = await extractText(f.path, f.originalName, { maxChars: maxTotalChars, rejectOverLimit: true });
     if (doc.ok && doc.text) {
-      const remaining = maxTotalChars - total;
-      if (remaining <= 0) {
-        notes.push(`"${doc.name}" se omitió: se alcanzó el límite de texto combinado.`);
-        continue;
+      const section = `### Documento: ${doc.name}\n${doc.text}`;
+      if (total + section.length + 2 > maxTotalChars) {
+        notes.push("El material combinado excede el límite. Separa los documentos en dos solicitudes.");
+        incomplete = true;
+        break;
       }
-      const slice = doc.text.slice(0, remaining);
-      chunks.push(`### Documento: ${doc.name}\n${slice}`);
-      total += slice.length;
+      chunks.push(section);
+      total += section.length + 2;
       usedDocs.push(doc.name);
     } else if (doc.note) {
       notes.push(`"${doc.name}": ${doc.note}`);
+      incomplete = true;
     }
   }
 
-  return { combinedText: chunks.join('\n\n'), usedDocs, notes };
+  return { combinedText: chunks.join('\n\n'), usedDocs, notes, incomplete };
 }
