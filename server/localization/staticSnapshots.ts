@@ -1,5 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import cmsStaticSnapshot from "@shared/cms-static-snapshot.json";
+import translationSnapshot from "@shared/translation-snapshot.json";
 
 type Snapshot = Record<string, unknown>;
 
@@ -22,6 +24,12 @@ const staticApi = path.join(root, "dist", "public", "static-api");
 const shared = path.join(root, "shared");
 
 export async function readStaticCmsSection(section: string, language: string): Promise<unknown> {
+  const embeddedContent = (cmsStaticSnapshot as { content?: Snapshot }).content;
+  const embeddedSection = embeddedContent?.[section];
+  if (embeddedSection && typeof embeddedSection === "object" && !Array.isArray(embeddedSection)) {
+    const embeddedValue = (embeddedSection as Snapshot)[language];
+    if (embeddedValue !== undefined) return embeddedValue;
+  }
   const snapshot = await readJson([
     path.join(staticApi, "site-config.json"),
     path.join(shared, "cms-static-snapshot.json"),
@@ -40,6 +48,13 @@ export async function readStaticEntityTranslation(
   entityId: string,
   language: string,
 ): Promise<Record<string, string> | undefined> {
+  const embeddedEntries = (translationSnapshot as { entries?: Snapshot }).entries;
+  const embeddedValue = embeddedEntries?.[`${contentType}|${entityId}|${language}`];
+  if (embeddedValue && typeof embeddedValue === "object" && !Array.isArray(embeddedValue)) {
+    return Object.fromEntries(
+      Object.entries(embeddedValue).filter(([, item]) => typeof item === "string" && item.trim()),
+    ) as Record<string, string>;
+  }
   const snapshot = await readJson([
     path.join(staticApi, "translations.json"),
     path.join(shared, "translation-snapshot.json"),
