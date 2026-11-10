@@ -79,8 +79,11 @@ export default function AdminSignatures() {
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const [photoUploadProgress, setPhotoUploadProgress] = useState<number | null>(null);
   const [codeOpen, setCodeOpen] = useState<string | null>(null);
   const photoInput = useRef<HTMLInputElement>(null);
+  const photoProgressTimer = useRef<number | null>(null);
   const query = useQuery<SavedSignature[]>({ queryKey: ["/api/admin/signatures"], queryFn: async () => readAdminJson(await adminApiRequest("GET", "/api/admin/signatures"), "No se pudieron cargar las firmas.") });
   const generator = useMemo(() => createSignatureGenerator({ assetsUrl: `${window.location.origin}/signatures/assets/`, data: form.data, photo: form.photoUrl }), [form.data, form.photoUrl]);
   const html = generator.build(form.templateId);
@@ -90,7 +93,7 @@ export default function AdminSignatures() {
   const edit = (item: SavedSignature) => { setEditingId(item.id); setForm({ label: item.label, templateId: item.templateId, data: { ...signatureDefaults, ...item.data }, photoUrl: item.photoUrl }); setNotice(""); setError(""); window.scrollTo({ top: 0, behavior: "smooth" }); };
   const save = async () => {
     setBusy(true); setError(""); setNotice("");
-    try { const method = editingId ? "PUT" : "POST"; const url = editingId ? `/api/admin/signatures/${editingId}` : "/api/admin/signatures"; const saved = await readAdminJson<SavedSignature>(await adminApiRequest(method, url, form), "No se pudo guardar la firma."); setEditingId(saved.id); setNotice("Firma guardada en App Storage."); await queryClient.invalidateQueries({ queryKey: ["/api/admin/signatures"] }); }
+    try { const method = editingId ? "PUT" : "POST"; const url = editingId ? `/api/admin/signatures/${editingId}` : "/api/admin/signatures"; const saved = await readAdminJson<SavedSignature>(await adminApiRequest(method, url, form), "No se pudo guardar la firma."); setEditingId(saved.id); setNotice(`Firma guardada para las 12 plantillas. Descarga actual: Firma ${saved.templateId}.`); await queryClient.invalidateQueries({ queryKey: ["/api/admin/signatures"] }); }
     catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   };
   const remove = async (id: string) => {
@@ -100,9 +103,20 @@ export default function AdminSignatures() {
     catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   };
   const uploadPhoto = async (file: File) => {
-    setBusy(true); setError("");
-    try { const media = await uploadAdminMedia(file); setForm((old) => ({ ...old, photoUrl: media.path })); setNotice("Fotografía guardada en la biblioteca de medios."); }
-    catch (e) { setError((e as Error).message); } finally { setBusy(false); if (photoInput.current) photoInput.current.value = ""; }
+    if (photoProgressTimer.current !== null) window.clearTimeout(photoProgressTimer.current);
+    setBusy(true); setPhotoUploading(true); setPhotoUploadProgress(0); setError(""); setNotice("");
+    try {
+      const media = await uploadAdminMedia(file, { onProgress: (progress) => setPhotoUploadProgress(progress) });
+      setForm((old) => ({ ...old, photoUrl: media.path }));
+      setNotice("Fotografía guardada en la biblioteca de medios.");
+      setPhotoUploadProgress(100);
+      photoProgressTimer.current = window.setTimeout(() => { setPhotoUploadProgress(null); photoProgressTimer.current = null; }, 1200);
+    } catch (e) {
+      setPhotoUploadProgress(null);
+      setError((e as Error).message);
+    } finally {
+      setBusy(false); setPhotoUploading(false); if (photoInput.current) photoInput.current.value = "";
+    }
   };
   const actionFor = (id: string, action: "html" | "rich" | "download" | "image") => {
     const sourceDocument = generator.build(id);
@@ -134,7 +148,12 @@ export default function AdminSignatures() {
           <div className="signature-photo-control">
             <p>Fotografía</p>
             <input ref={photoInput} hidden type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(event) => { const file = event.target.files?.[0]; if (file) void uploadPhoto(file); }} />
-            <button type="button" disabled={busy} onClick={() => photoInput.current?.click()}><UploadIcon /> {form.photoUrl ? "Cambiar fotografía" : "Subir fotografía"}</button>
+            <button type="button" disabled={busy} onClick={() => photoInput.current?.click()}><UploadIcon /> {photoUploading ? "Subiendo fotografía…" : form.photoUrl ? "Cambiar fotografía" : "Subir fotografía"}</button>
+            {photoUploadProgress !== null && <div className="signature-upload-progress" role="status" aria-live="polite">
+              <div className="signature-upload-progress-heading"><span>{photoUploadProgress < 100 ? "Subiendo fotografía…" : "Fotografía lista"}</span><strong>{photoUploadProgress}%</strong></div>
+              <div className="signature-upload-progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={photoUploadProgress} aria-label="Progreso de carga de fotografía"><span className="signature-upload-progress-fill" style={{ width: `${photoUploadProgress}%` }} /></div>
+              <p>Guardando en la biblioteca de medios</p>
+            </div>}
             {form.photoUrl && <button type="button" className="signature-remove-photo" onClick={() => setForm({ ...form, photoUrl: null })}>Quitar fotografía</button>}
           </div>
         </div>
@@ -143,19 +162,19 @@ export default function AdminSignatures() {
 
       <section className="signature-editor-catalog">
         <header className="signature-catalog-header">
-          <div><p className="signature-catalog-eyebrow">Editor de firmas</p><h2>{form.data.name || "Nueva firma"}</h2><p>12 plantillas · 600 × 250 px <span>(firma 12: 640 × 370)</span> · imágenes a 2x</p></div>
+          <div><p className="signature-catalog-eyebrow">Editor de firmas</p><h2>{form.data.name || "Nueva firma"}</h2><p>12 plantillas · 600 × 250 px <span>(firma 12: 640 × 370)</span> · imágenes a 2x</p><p className="signature-catalog-save-help">Los datos guardados alimentan las 12 plantillas. Elige una variante para editarla, copiarla o descargarla.</p></div>
           <div className="signature-catalog-actions"><button type="button" className="signature-outline-action" onClick={reset}><PlusIcon /> Nueva</button><button type="button" className="signature-save-action" disabled={busy} onClick={() => void save()}>{busy ? "Guardando…" : editingId ? "Actualizar firma" : "Guardar firma"}</button></div>
         </header>
         {notice && <div role="status" className="signature-notice">{notice}</div>}
         {error && <div role="alert" className="signature-error">{error}</div>}
-        {(query.data || []).length > 0 && <section className="signature-saved-strip" aria-label="Firmas guardadas"><div className="signature-section-heading"><div><p className="signature-catalog-eyebrow">Versiones guardadas</p><h3>Firmas listas para usar</h3></div><span>{query.data?.length} guardadas</span></div><div className="signature-version-list">{(query.data || []).map((item) => <div className={`signature-version-row ${editingId === item.id ? "is-active" : ""}`} key={item.id}><button type="button" onClick={() => edit(item)}><strong>{item.label}</strong><span>Plantilla {item.templateId} · {item.updatedAt ? new Date(item.updatedAt).toLocaleDateString("es-MX") : ""}</span></button><button type="button" aria-label={`Descargar ${item.label}`} onClick={async () => { const response = await adminApiRequest("GET", item.downloadUrl); if (!response.ok) return setError("No se pudo descargar la firma."); downloadBlob(await response.text(), `${item.label.replace(/[^a-z0-9]+/gi, "-")}.html`); }}><DownloadIcon /></button><button type="button" aria-label={`Eliminar ${item.label}`} onClick={() => void remove(item.id)}><TrashIcon /></button></div>)}</div></section>}
+        {(query.data || []).length > 0 && <section className="signature-saved-strip" aria-label="Firmas guardadas"><div className="signature-section-heading"><div><p className="signature-catalog-eyebrow">Versiones guardadas</p><h3>Firmas listas para usar</h3></div><span>{query.data?.length} guardadas</span></div><div className="signature-version-list">{(query.data || []).map((item) => <div className={`signature-version-row ${editingId === item.id ? "is-active" : ""}`} key={item.id}><button type="button" aria-label={`Editar ${item.label}`} title={`Editar ${item.label}`} onClick={() => edit(item)}><strong>{item.label}</strong><span>Editar datos comunes · descarga Firma {item.templateId} · {item.updatedAt ? new Date(item.updatedAt).toLocaleDateString("es-MX") : ""}</span></button><button type="button" aria-label={`Descargar ${item.label}`} onClick={async () => { const response = await adminApiRequest("GET", item.downloadUrl); if (!response.ok) return setError("No se pudo descargar la firma."); downloadBlob(await response.text(), `${item.label.replace(/[^a-z0-9]+/gi, "-")}.html`); }}><DownloadIcon /></button><button type="button" aria-label={`Eliminar ${item.label}`} onClick={() => void remove(item.id)}><TrashIcon /></button></div>)}</div></section>}
         <section className="signature-template-list" aria-label="Plantillas de firma">
           {signatureIds.map((id, index) => {
             const templateHtml = generator.build(id);
             const isSelected = form.templateId === id;
             const isCodeOpen = codeOpen === id;
             return <article className={`signature-template-card ${isSelected ? "is-selected" : ""}`} key={id}>
-              <header className="signature-template-card-header"><button type="button" className="signature-template-title" onClick={() => setForm((old) => ({ ...old, templateId: id }))}><span>Firma {id}</span><small>{signatureDescriptions[index]}</small></button><button type="button" className="signature-open-template" onClick={() => setForm((old) => ({ ...old, templateId: id }))}>Abrir <ArrowTopRightIcon /></button></header>
+              <header className="signature-template-card-header"><button type="button" className="signature-template-title" aria-pressed={isSelected} onClick={() => setForm((old) => ({ ...old, templateId: id }))}><span>Firma {id}</span><small>{signatureDescriptions[index]}</small>{isSelected && <em>Seleccionada para guardar y descargar</em>}</button><button type="button" className="signature-open-template" onClick={() => setForm((old) => ({ ...old, templateId: id }))}>Abrir <ArrowTopRightIcon /></button></header>
               <div className="signature-template-preview"><iframe title={`Vista previa de Firma ${id}`} sandbox="allow-same-origin" srcDoc={templateHtml} className={id === "12" ? "signature-iframe signature-iframe-tall" : "signature-iframe"} /></div>
               <footer className="signature-template-card-footer"><button type="button" className="signature-copy-html" onClick={() => actionFor(id, "html")}><CodeIcon /> Copiar código HTML</button><button type="button" className="signature-copy-rich" onClick={() => actionFor(id, "rich")}><CopyIcon /> Copiar firma</button><button type="button" className="signature-download" onClick={() => actionFor(id, "download")}><DownloadIcon /> Descargar .html</button><button type="button" className="signature-download signature-image-download" onClick={() => actionFor(id, "image")}><ImageIcon /> Descargar PNG</button><button type="button" className="signature-view-code" onClick={() => setCodeOpen(isCodeOpen ? null : id)}>{isCodeOpen ? "Ocultar código" : "Ver código"}</button></footer>
               {isCodeOpen && <pre className="signature-code-block"><code>{templateHtml}</code></pre>}

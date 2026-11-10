@@ -64,7 +64,13 @@ export function createSignatureGenerator(options: { assetsUrl?: string; data?: P
     let html = templates[id] || "";
     if (!html) return "";
     const d = data;
-    if (photo) html = html.replace(/<img src="assets\/[^"]+\.jpg" alt="Mario Saucedo Montemayor"([^>]*?)style="([^"]*)">/g, (_m: string, a: string, st: string) => `<img src="${esc(photo || "")}" alt="${esc(d.name)}"${a}style="${st}object-fit:cover;">`);
+    if (photo) {
+      let photoSource = String(photo);
+      if (!/^(?:https?:|data:)/i.test(photoSource)) {
+        try { photoSource = new URL(photoSource, assets).toString(); } catch { /* keep the validated path */ }
+      }
+      html = html.replace(/<img src="assets\/[^"]+\.(?:jpg|jpeg|png|webp|gif)" alt="Mario Saucedo Montemayor"([^>]*?)style="([^"]*)">/gi, (_m: string, a: string, st: string) => `<img src="${esc(photoSource)}" alt="${esc(d.name)}"${a}style="${st}object-fit:cover;object-position:center;">`);
+    }
     if (id === "12") {
       html = swap(html, bare(signatureDefaults.linkedin), bare(d.linkedin)).replace(`href="${signatureDefaults.linkedin}"`, `href="${esc(full(d.linkedin))}"`);
       html = swap(html, signatureDefaults.web, d.web || "").replace('href="https://www.santossaucedo.com"', `href="${esc(full(d.web))}"`);

@@ -1477,6 +1477,14 @@
 .signature-photo-control button { display: inline-flex; align-items: center; gap: 7px; min-height: 33px; padding: 7px 10px; border: 1px solid #5a7ca2; border-radius: 5px; background: transparent; color: #fff; font-size: 12px; }
 .signature-photo-control button:hover { border-color: #bbf741; color: #bbf741; }
 .signature-photo-control svg { width: 14px; }
+.signature-upload-progress { margin-top: 11px; padding: 10px; border: 1px solid rgba(187,247,65,.45); border-radius: 6px; background: rgba(4,27,57,.45); }
+.signature-upload-progress-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #f4f8fc; font-size: 11px; font-weight: 600; }
+.signature-upload-progress-heading strong { color: #bbf741; font-variant-numeric: tabular-nums; }
+.signature-upload-progress-track { position: relative; height: 6px; overflow: hidden; margin-top: 8px; border-radius: 999px; background: #274c77; }
+.signature-upload-progress-fill { display: block; height: 100%; min-width: 3px; border-radius: inherit; background: #bbf741; transition: width .25s ease; }
+.signature-upload-progress-fill::after { content: ""; display: block; width: 35%; height: 100%; margin-left: -35%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.75), transparent); animation: signature-upload-shimmer 1.1s ease-in-out infinite; }
+.signature-upload-progress p { margin: 7px 0 0; color: #b7c8dc; font-size: 10px; line-height: 1.35; }
+@keyframes signature-upload-shimmer { from { transform: translateX(0); } to { transform: translateX(390%); } }
 .signature-photo-control .signature-remove-photo { margin-left: 7px; border: 0; color: #b9c8d8; text-decoration: underline; }
 .signature-sidebar-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; border-top: 1px solid rgba(255,255,255,.16); background: var(--signature-navy-deep); color: #9fb1c8; font-size: 11px; }
 .signature-sidebar-footer button { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border: 1px solid #5a7ca2; border-radius: 5px; background: transparent; color: #fff; font-size: 11px; }
@@ -1486,6 +1494,7 @@
 .signature-catalog-header h2 { margin: 4px 0 5px; color: var(--signature-ink); font-family: var(--font-heading, var(--font-sans)); font-size: 31px; font-weight: 600; letter-spacing: -.035em; }
 .signature-catalog-header p:last-child { margin: 0; color: #77869b; font-size: 12px; }
 .signature-catalog-header p:last-child span { color: #9aa6b5; }
+.signature-catalog-save-help { margin: 7px 0 0 !important; color: #536a84 !important; font-size: 12px !important; line-height: 1.45; }
 .signature-catalog-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .signature-outline-action, .signature-save-action { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 8px 12px; border-radius: 5px; font-size: 12px; font-weight: 600; }
 .signature-outline-action { border: 1px solid #c6d0dc; background: #fff; color: #27415f; }
@@ -1513,9 +1522,10 @@
 .signature-template-card { overflow: hidden; border: 1px solid var(--signature-line); border-radius: 8px; background: #fff; box-shadow: 0 8px 22px rgba(31,48,69,.035); }
 .signature-template-card.is-selected { border-color: #7d9ab9; box-shadow: 0 8px 24px rgba(16,47,89,.09); }
 .signature-template-card-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 15px; border-bottom: 1px solid #e8ecf0; }
-.signature-template-title { display: flex; align-items: baseline; min-width: 0; gap: 10px; text-align: left; }
+.signature-template-title { display: flex; align-items: baseline; flex-wrap: wrap; min-width: 0; gap: 6px 10px; text-align: left; }
 .signature-template-title span { color: #284463; font-family: var(--font-heading, var(--font-sans)); font-size: 17px; font-weight: 600; }
 .signature-template-title small { overflow: hidden; color: #7a899c; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.signature-template-title em { flex-shrink: 0; padding: 3px 6px; border: 1px solid #cde69c; border-radius: 999px; background: #f3fbe9; color: #55751f; font-size: 9px; font-style: normal; font-weight: 700; letter-spacing: .02em; }
 .signature-open-template { display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; color: #536d8b; font-size: 11px; font-weight: 600; }
 .signature-open-template:hover { color: var(--signature-navy); }
 .signature-open-template svg { width: 12px; }
