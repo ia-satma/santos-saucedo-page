@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { readdir, rm } from "node:fs/promises";
+import { randomBytes } from "node:crypto";
+import { mkdir, readdir, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
 import { after, test } from "node:test";
@@ -7,7 +8,7 @@ import express from "express";
 import JSZip from "jszip";
 import sharp from "sharp";
 import type { SocialAsset } from "@shared/schema";
-import { socialFormats, type SocialFormat } from "@shared/socialStudio";
+import { SOCIAL_NETWORKS, socialFormats, socialInputImageUrlSchema, type SocialFormat } from "@shared/socialStudio";
 
 process.env.DATABASE_URL = "postgresql://isolated:isolated@127.0.0.1:1/isolated";
 process.env.NODE_ENV = "test";
@@ -24,6 +25,9 @@ const slides = [
   { title: "Preparar el expediente", body: "Verifica que los documentos del ingreso estén completos y actualizados." },
 ];
 const caption = "Tres pasos para organizar la documentación de personal.";
+const copies = Object.fromEntries(SOCIAL_NETWORKS.map(network => [network, `${caption} · ${network}`]));
+const supportFiles: string[] = [];
+const referenceFiles: string[] = [];
 const requests: Array<{ model: string; service_tier: string; messages: Array<{ content: string }> }> = [];
 const provider = createServer(async (req, res) => {
   let raw = "";
@@ -33,7 +37,7 @@ const provider = createServer(async (req, res) => {
   assert.equal(req.headers.authorization, "Bearer isolated-social-token");
   assert.equal(req.url, "/v1/chat/completions");
   const review = body.messages[0].content.startsWith("Revisa el texto");
-  const content = review ? { summary: "La secuencia es clara.", suggestions: ["Añade la referencia en el texto de la publicación."] } : { caption, slides: body.messages[0].content.includes("exactamente 1 piezas") ? slides.slice(0, 1) : slides };
+  const content = review ? { summary: "La secuencia es clara.", suggestions: ["Añade la referencia en el texto de la publicación."] } : { caption, copies, slides: /exactamente 1 (?:pieza|lámina)/i.test(body.messages[0].content) ? slides.slice(0, 1) : slides };
   res.setHeader("Content-Type", "application/json");
   res.end(JSON.stringify({ choices: [{ message: { content: JSON.stringify(content) } }], usage: {} }));
 });
@@ -44,10 +48,12 @@ process.env.AI_INTEGRATIONS_OPENAI_BASE_URL = `http://127.0.0.1:${(provider.addr
 const { db } = await import("../db");
 const { storage } = await import("../storage");
 const { registerSocialAssetRoutes } = await import("../routes/socialAssetRoutes");
+const { registerSocialInputRoutes } = await import("../routes/socialInputRoutes");
 const { renderSocialSlide } = await import("../services/socialStudio");
 const rows = new Map<string, SocialAsset>();
 const app = express();
 app.use(express.json());
+registerSocialInputRoutes(app);
 registerSocialAssetRoutes(app);
 const listener = app.listen(0, "127.0.0.1");
 await new Promise<void>(resolve => listener.once("listening", resolve));
@@ -65,7 +71,10 @@ after(async () => {
   await Promise.all([listener, provider].map(server => new Promise<void>(resolve => server.close(() => resolve()))));
   const directory = "private/studio";
   const files = await readdir(directory).catch(() => []);
-  await Promise.all(files.filter(file => [...rows.keys()].some(id => file.startsWith(`social-${id}-`))).map(file => rm(`${directory}/${file}`, { force: true })));
+  await Promise.all([
+    ...files.filter(file => supportFiles.includes(file) || [...rows.keys()].some(id => file.startsWith(`social-${id}-`))).map(file => rm(`${directory}/${file}`, { force: true })),
+    ...referenceFiles.map(file => rm(file, { force: true })),
+  ]);
 });
 
 test("social studio HTTP renders all carousel images, downloads immutable revisions and restores trash", async t => {
@@ -99,6 +108,8 @@ test("social studio HTTP renders all carousel images, downloads immutable revisi
   assert.equal(first.version, 1);
   assert.deepEqual(first.content.slides, slides);
   assert.equal(first.slideUrls.length, 3);
+  assert.deepEqual(first.content.copies, copies);
+  assert.equal(first.htmlUrls.length, 3);
   assert(requests.every(request => request.model === "gpt-6.1-sol" && request.service_tier === "fast"));
   assert.match(rows.get(first.id)?.packageUrl ?? "", /^private\/studio\//);
   assert(!JSON.stringify(first).includes("private/studio/"));
@@ -119,6 +130,16 @@ test("social studio HTTP renders all carousel images, downloads immutable revisi
   assert.equal(await packageZip.file("publicacion.txt")?.async("string"), `${caption}\n`);
   for (let index = 0; index < original.length; index++) {
     assert.deepEqual(await packageZip.file(`pieza-0${index + 1}.png`)?.async("nodebuffer"), original[index]);
+  }
+  const htmlResponse = await call("GET", first.htmlUrls[0].replace("/api/admin/social-assets", ""));
+  assert.equal(htmlResponse.status, 200);
+  assert.match(htmlResponse.headers.get("content-disposition") || "", /attachment/);
+  const firstHtml = await htmlResponse.text();
+  assert.match(firstHtml, /contenteditable/i);
+  assert.match(firstHtml, /Una revisión antes de contratar/);
+  assert.equal(await packageZip.file("pieza-01.html")?.async("string"), firstHtml);
+  for (const network of SOCIAL_NETWORKS) {
+    assert.equal((await packageZip.file(`copys/${network}.txt`)?.async("string"))?.trim(), copies[network]);
   }
   assert.equal((await call("GET", `/${first.id}/file/4`)).status, 404);
   assert.equal((await call("GET", `/${first.id}/file/package`, undefined, "")).status, 401);
@@ -164,9 +185,39 @@ test("social studio HTTP renders all carousel images, downloads immutable revisi
   assert.equal((await call("POST", `/${first.id}/archive`, { archived: false })).status, 200);
   assert.equal((await (await call("GET")).json()).items.length, 2);
   assert.equal((await call("GET", `/${first.id}/file/1`)).status, 200);
-  const post = await call("POST", "/generate", { kind: "post", title: "Un post", topic: "Publicación de prueba" });
-  assert.equal(post.status, 201);
-  assert.equal((await post.json()).slideUrls.length, 1);
+  const form = (data: Uint8Array, mime: string, name: string) => {
+    const fields = new FormData();
+    fields.append("file", new Blob([Uint8Array.from(data)], { type: mime }), name);
+    return fields;
+  };
+  const photo = await sharp({ create: { width: 640, height: 360, channels: 3, background: "#e25032" } }).png().toBuffer();
+  const upload = (data: Uint8Array, mime: string, name: string, token?: string) => fetch(endpoint + "/upload-image", {
+    method: "POST", body: form(data, mime, name), headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  assert.equal((await upload(photo, "image/png", "apoyo.png")).status, 401);
+  assert.equal((await upload(Buffer.from("<svg></svg>"), "image/png", "falsa.png", "studio-editor")).status, 415);
+  const uploaded = await upload(photo, "image/png", "apoyo.png", "studio-editor");
+  assert.equal(uploaded.status, 201, await uploaded.clone().text());
+  const image = await uploaded.json();
+  assert(socialInputImageUrlSchema.safeParse(image.url).success);
+  supportFiles.push(image.url.split("/").at(-1));
+
+  const referenceName = `${randomBytes(16).toString("hex")}.txt`;
+  const referenceDir = "private_uploads/presentation-inputs";
+  await mkdir(referenceDir, { recursive: true });
+  referenceFiles.push(`${referenceDir}/${referenceName}`);
+  await writeFile(referenceFiles.at(-1)!, "Material sintético del documento de referencia.");
+  const post = await call("POST", "/generate", {
+    kind: "post", format: "square", palette: "auto", designDirection: "photographic", background: "tonal",
+    documents: [{ url: `private:presentations/${referenceName}`, name: "referencia.txt" }], supportImages: [image],
+  });
+  assert.equal(post.status, 201, await post.clone().text());
+  const postResult = await post.json();
+  assert.equal(postResult.slideUrls.length, 1);
+  assert.match(JSON.stringify(requests.at(-1)?.messages), /Material sintético del documento de referencia/);
+  assert.match(JSON.stringify(postResult.content), /photographic/);
+  assert.equal((await call("POST", "/generate", { kind: "post" })).status, 422);
+  assert.equal((await call("POST", "/generate", { kind: "post", topic: "Prueba", supportImages: [{ url: "https://example.com/photo.png", name: "No" }] })).status, 422);
 });
 
 test("every configured format produces a correctly sized PNG", async () => {

@@ -11,6 +11,7 @@ import { registerAgentUsageRoutes } from "./routes/agentUsageRoutes";
 import { registerAgentAssetHistoryRoutes } from "./routes/agentAssetHistoryRoutes";
 import { registerAdminDocumentRoutes } from "./routes/adminDocumentRoutes";
 import { registerSocialAssetRoutes } from "./routes/socialAssetRoutes";
+import { registerSocialInputRoutes } from "./routes/socialInputRoutes";
 import { registerAgentPipelineRoutes } from "./routes/agentPipelineRoutes";
 import { registerAdminKnowledgeRoutes } from "./routes/adminKnowledgeRoutes";
 import { saveTeamMember, teamPracticeIds, validatePracticeRoster } from "./cms/teamEditor";
@@ -221,6 +222,7 @@ export async function registerRoutes(
   registerAgentReportRoutes(app);
   registerAgentAssetHistoryRoutes(app);
   registerAdminDocumentRoutes(app);
+  registerSocialInputRoutes(app);
   registerSocialAssetRoutes(app);
   registerCmsRoutes(app);
   registerCatalogOrder(app);

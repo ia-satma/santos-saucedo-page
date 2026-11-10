@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { unlink } from 'node:fs/promises';
 import path from 'node:path';
 import { BaseAgent } from '../core/BaseAgent';
 import { AgentConfig, AgentResult, ExecutionContext } from '../core/types';
@@ -23,6 +24,7 @@ import { hasDedicatedImageClient } from '../../openai';
 import type { AiDataClassification } from '@shared/aiGovernance';
 import { AiGovernanceBlockedError, inspectAiData } from '../../ai/dataGovernance';
 import { webSearchSummary } from '../../services/webSearch';
+import { privatePresentationImagePath } from '../../media/presentationGeneratedImages';
 
 // 14° agente: Generador de Presentaciones. A diferencia de los agentes estructurales
 // (voice/auditors), SÍ llama a un LLM de texto: estructura el tema escrito + el texto extraído
@@ -121,6 +123,7 @@ export interface PresentationPayload {
   dataClassification?: AiDataClassification;
   aiUseConfirmed?: boolean;
   includeIntroSlide?: boolean;
+  bookendTone?: 'blue' | 'white';
 }
 
 interface VisualResolutionResult {
@@ -236,6 +239,10 @@ export class PresentationGeneratorAgent extends BaseAgent {
       sourceDocs: Array.isArray(p.sourceDocs) ? p.sourceDocs : [],
       engine,
       includeIntroSlide: p.includeIntroSlide !== false,
+      bookendTone: p.bookendTone,
+    }).finally(async () => {
+      const files = model!.slides.map((slide) => privatePresentationImagePath(slide.image?.url));
+      await Promise.allSettled(files.filter((file): file is string => !!file).map((file) => unlink(file)));
     });
 
     if (!result.success) {
@@ -286,7 +293,8 @@ export class PresentationGeneratorAgent extends BaseAgent {
     // LLM. Si el modelo devolvió solo bullets, promovemos de forma distribuida algunas slides
     // de contenido para garantizar candidatos visuales. Las imágenes subidas también reciben
     // un lugar aunque el modelo no haya elegido layout=image.
-    if (opts.visuals && (opts.illustrate || pool.length > 0)) {
+    const allowImages = opts.illustrate || pool.length > 0;
+    if (allowImages) {
       const eligible = model.slides
         .map((slide, index) => ({ slide, index }))
         .filter(({ slide }) =>
@@ -320,7 +328,7 @@ export class PresentationGeneratorAgent extends BaseAgent {
 
     for (let index = 0; index < model.slides.length; index++) {
       const s = model.slides[index];
-      if (!opts.visuals && VISUAL_LAYOUTS.has(s.layout)) {
+      if (!opts.visuals && VISUAL_LAYOUTS.has(s.layout) && (s.layout !== 'image' || !allowImages)) {
         // Degradar a viñetas usando lo que haya.
         const fallbackBullets = s.bullets && s.bullets.length ? s.bullets
           : s.diagram?.nodes?.length ? s.diagram.nodes
@@ -361,6 +369,7 @@ export class PresentationGeneratorAgent extends BaseAgent {
             `presentation-${Date.now()}-${candidate.index}`,
             '16:9',
             opts.classification,
+            'presentation',
           );
           // engine 'placeholder' no es un recurso real y dejaría un marco vacío.
           if (res.success && res.imageUrl && res.engine !== 'placeholder') {

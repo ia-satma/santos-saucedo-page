@@ -11,6 +11,8 @@ import { storage } from '../storage';
 import { getConfigMap } from '../mirror/siteConfig';
 import { recordImageUsage } from './usageTracker';
 import { AsyncLocalStorage } from 'node:async_hooks';
+import { randomUUID } from 'node:crypto';
+import { PRESENTATION_IMAGE_DIR } from '../media/presentationGeneratedImages';
 import {
   deletePersistentMediaObjects,
   persistPublicMediaFiles,
@@ -478,10 +480,11 @@ export class SmartImageGenerator {
     articleId: string,
     aspectOverride?: string,
     classification: AiDataClassification = 'internal',
+    destination: 'editorial' | 'presentation' = 'editorial',
   ): Promise<ImageGenerationResult> {
     return this.logStorage.run(
       [],
-      () => this.generateImageInternal(originalPrompt, articleId, aspectOverride, classification),
+      () => this.generateImageInternal(originalPrompt, articleId, aspectOverride, classification, destination),
     );
   }
 
@@ -490,6 +493,7 @@ export class SmartImageGenerator {
     articleId: string,
     aspectOverride: string | undefined,
     classification: AiDataClassification,
+    destination: 'editorial' | 'presentation',
   ): Promise<ImageGenerationResult> {
     this.log(`Starting smart image generation for article ${articleId}`);
     
@@ -556,25 +560,30 @@ export class SmartImageGenerator {
       if (attempt.buffer) {
         let outputPath = "";
         try {
-          const filename = `article-${articleId}-${attempt.name}-${Date.now()}.png`;
-          outputPath = path.join(OUTPUT_DIR, filename);
+          const privateImage = destination === 'presentation';
+          const filename = privateImage ? `${randomUUID()}.png` : `article-${articleId}-${attempt.name}-${Date.now()}.png`;
+          const directory = privateImage ? PRESENTATION_IMAGE_DIR : OUTPUT_DIR;
+          fs.mkdirSync(directory, { recursive: true, mode: privateImage ? 0o700 : 0o755 });
+          outputPath = path.join(directory, filename);
           // Por defecto NO se estampa el logo (el usuario pidió imágenes de fotoperiodismo sin
           // branding). Reactivable poniendo site_config.image_overlay_logo = 'true'.
-          const stampLogo = (config.image_overlay_logo?.value || '').trim().toLowerCase() === 'true';
+          const stampLogo = !privateImage && (config.image_overlay_logo?.value || '').trim().toLowerCase() === 'true';
           if (stampLogo) {
             await this.overlayLogo(attempt.buffer, outputPath);
           } else {
             await sharp(attempt.buffer).png().toFile(outputPath);
           }
-          const persistence = await persistPublicMediaFiles([{
-            absolutePath: outputPath,
-            publicPath: `/generated-images/${filename}`,
-          }]);
+          if (!privateImage) {
+            const persistence = await persistPublicMediaFiles([{
+              absolutePath: outputPath,
+              publicPath: `/generated-images/${filename}`,
+            }]);
+            persistedObjectNames = persistence.objectNames;
+          }
           savedOutputPath = outputPath;
-          persistedObjectNames = persistence.objectNames;
           result.success = true;
           result.engine = attempt.name!;
-          result.imageUrl = `/generated-images/${filename}`;
+          result.imageUrl = privateImage ? `/private-presentation-images/${filename}` : `/generated-images/${filename}`;
           this.log(`SUCCESS: imagen de ${attempt.name} guardada${stampLogo ? ' con logo' : ' (sin logo, foto realista)'}: ${result.imageUrl}`);
           break;
         } catch (saveErr: any) {
@@ -624,7 +633,7 @@ export class SmartImageGenerator {
 
     // Registra la imagen en el historial reutilizable (galería del panel) — solo assets reales,
     // no el placeholder de fallback, que no sirve para reutilizarse en otro artículo.
-    if (result.success && result.engine !== 'placeholder' && result.imageUrl) {
+    if (destination === 'editorial' && result.success && result.engine !== 'placeholder' && result.imageUrl) {
       // articleId es FK a news.id (UUID). Los llamadores de presentaciones ("presentation-…")
       // y del editor manual ("manual-…") pasan ids SINTÉTICOS que NO existen en news → el INSERT
       // violaba la FK (23503) y se tragaba en el catch → la imagen NUNCA entraba a la galería.

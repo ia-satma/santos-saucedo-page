@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import sharp from 'sharp';
+import { privatePresentationImagePath } from '../../media/presentationGeneratedImages';
 import type { RenderOptions } from './contracts';
 import { H, W, OUTPUT_HEIGHT, OUTPUT_WIDTH, renderPresentationSvg } from './designSystem';
 import { PRESENTATION_LOGO } from './bookendArtwork';
@@ -13,6 +14,8 @@ interface RasterSlideBuild {
 
 export function resolveLocalAsset(url?: string | null): string | null {
   if (!url) return null;
+  const privateImage = privatePresentationImagePath(url);
+  if (privateImage) return fs.existsSync(privateImage) ? privateImage : null;
   const clean = url.split(/[?#]/,1)[0];
   if (!/^\/(?:uploads|generated-images|media\/public\/media)\/[A-Za-z0-9][A-Za-z0-9._-]*$/.test(clean) || clean.includes('..')) return null;
   const map: Record<string, string> = {

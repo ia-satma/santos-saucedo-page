@@ -1,4 +1,4 @@
-import { AssetDownloadButton, PrivateAssetPreview } from "@/components/admin/AssetFiles";
+import { AssetDownloadButton, PrivateAssetPreview, PrivateAssetThumbnail } from "@/components/admin/AssetFiles";
 import { useEffect, useState } from "react";
 import { AdminPageHelp } from "@/components/admin/AdminPageHelp";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -68,6 +68,7 @@ export default function AdminPresentations() {
   const [illustrate, setIllustrate] = useState(false);
   const [webSearch, setWebSearch] = useState(false);
   const [includeIntroSlide, setIncludeIntroSlide] = useState(true);
+  const [bookendTone, setBookendTone] = useState<"blue" | "white">("blue");
   const [supportImages, setSupportImages] = useState<string[]>([]);
   const [uploadingImg, setUploadingImg] = useState(false);
   const [supportUploadStatus, setSupportUploadStatus] = useState("");
@@ -124,13 +125,18 @@ export default function AdminPresentations() {
         lang,
         formats: selectedFormats,
         visuals,
-        illustrate: visuals && illustrate,
-        supportImages: visuals ? supportImages : [],
+        illustrate,
+        supportImages,
         webSearch,
         includeIntroSlide,
+        bookendTone,
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error((data as any)?.error || "No se pudo generar la presentación.");
+      if (!res.ok) {
+        setUsedFallback(false);
+        setNotes([...(Array.isArray(data?.docNotes) ? data.docNotes : []), ...(Array.isArray(data?.visualNotes) ? data.visualNotes : [])]);
+        throw new Error((data as any)?.error || "No se pudo generar la presentación.");
+      }
       return data;
     },
     onSuccess: (data: any) => {
@@ -151,6 +157,7 @@ export default function AdminPresentations() {
 
   const canGenerate =
     !generateMutation.isPending &&
+    !uploadingImg &&
     (topic.trim().length > 0 || docs.length > 0) &&
     (formats.pptx || formats.pdf || formats.png);
 
@@ -171,6 +178,10 @@ export default function AdminPresentations() {
           description="Genera presentaciones con el branding de Santos & Saucedo a partir de un tema escrito y/o documentos subidos. Descárgalas en PowerPoint (PPTX), PDF e imágenes (PNG por diapositiva)."
           icon={Presentation}
         />
+        <p className="mb-5 flex items-center gap-2 text-sm text-muted-foreground">
+          <span aria-hidden="true" className="size-2 rounded-full bg-[#8CC63F]" />
+          Santos &amp; Saucedo · SOL (gpt-6.1-sol) · Fast
+        </p>
 
         <AdminPageHelp pageId="presentations">
           Escribe un tema (o súbele documentos .pdf/.docx/.pptx/.tex), elige los formatos, y presiona
@@ -269,9 +280,20 @@ export default function AdminPresentations() {
                 </div>
                 <Switch id="pres-intro" checked={includeIntroSlide} onCheckedChange={setIncludeIntroSlide} data-testid="switch-intro-slide" />
               </div>
+              <div className="space-y-2 max-w-sm">
+                <Label htmlFor="pres-bookend-tone">Diseño institucional de entrada y cierre</Label>
+                <Select value={bookendTone} onValueChange={(tone: "blue" | "white") => setBookendTone(tone)}>
+                  <SelectTrigger id="pres-bookend-tone"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="blue">Original azul</SelectItem>
+                    <SelectItem value="white">Original blanco</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">Las láminas originales se usan completas, sin superponer texto.</p>
+              </div>
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-sm">Incluir gráficas, diagramas e imágenes</p>
+                  <p className="text-sm">Incluir gráficas y diagramas</p>
                   <p className="text-xs text-muted-foreground">La IA los propone cuando el contenido lo amerita (las gráficas y diagramas no gastan créditos).</p>
                 </div>
                 <Switch checked={visuals} onCheckedChange={setVisuals} data-testid="switch-visuals" />
@@ -282,7 +304,7 @@ export default function AdminPresentations() {
                   <p className="text-sm">Ilustrar con imágenes generadas por IA</p>
                   <p className="text-xs text-muted-foreground">Genera hasta 4 imágenes por presentación con GPT Image 2 (o el motor alterno configurado). <span className="text-amber-600">Usa créditos de OpenAI.</span></p>
                 </div>
-                <Switch checked={illustrate} onCheckedChange={setIllustrate} disabled={!visuals} data-testid="switch-illustrate" />
+                <Switch checked={illustrate} onCheckedChange={setIllustrate} aria-label="Ilustrar con imágenes generadas por IA" data-testid="switch-illustrate" />
               </div>
 
               <div className="flex items-center justify-between gap-4">
@@ -293,7 +315,7 @@ export default function AdminPresentations() {
                 <Switch checked={webSearch} onCheckedChange={setWebSearch} data-testid="switch-websearch" />
               </div>
 
-              {visuals && (
+              {(
                 <div className="space-y-2">
                   <Label className="text-xs">Imágenes de apoyo (opcional) — se usan en las diapositivas de imagen antes que la IA</Label>
                   <div className="flex items-center gap-3 flex-wrap">
@@ -372,12 +394,16 @@ export default function AdminPresentations() {
         </Card>
 
         {/* --- Historial --- */}
-        <h2 className="text-sm uppercase tracking-[0.12em] text-muted-foreground mb-4">
-          Presentaciones generadas ({presentations.length})
-        </h2>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0B2850]">Historial del CMS</p>
+            <h2 className="mt-1 text-xl font-semibold">Presentaciones guardadas ({presentations.length})</h2>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => void refetch()}>Actualizar</Button>
+        </div>
 
         {isLoading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="space-y-3">
             {[1, 2, 3].map((i) => <Skeleton key={i} className="h-44" />)}
           </div>
         )}
@@ -401,10 +427,12 @@ export default function AdminPresentations() {
         )}
 
         {!isLoading && !isError && presentations.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="space-y-3">
             {presentations.map((p) => {
               const pngUrls = Array.isArray(p.pngUrls) ? p.pngUrls : [];
               const pngAvailable = pngUrls.map((_, index) => p.availability?.png[index] ?? true);
+              const thumbnailSlides = pngUrls.map((url, index) => ({ url, index }))
+                .filter(({ url, index }) => url && pngAvailable[index]).slice(0, 3);
               const hasPreview = pngAvailable.some(Boolean) || Boolean(p.pdfUrl);
               const hasPptx = Boolean(p.pptxUrl && (p.availability?.pptx ?? true));
               const hasPdf = Boolean(p.pdfUrl && (p.availability?.pdf ?? true));
@@ -417,7 +445,22 @@ export default function AdminPresentations() {
               );
               return (
               <Card key={p.id} data-testid={`presentation-card-${p.id}`}>
-                <CardContent className="p-4 space-y-3">
+                <CardContent className="grid gap-4 p-4 lg:grid-cols-[240px_minmax(0,1fr)]">
+                  {thumbnailSlides.length > 0 && (
+                    <button type="button" onClick={() => setPreviewId(p.id)}
+                      aria-label={`Ver diapositivas de ${p.title}`}
+                      className="grid w-full grid-cols-3 gap-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                      {thumbnailSlides.map(({ url, index }) => (
+                        <PrivateAssetThumbnail key={url} url={`${url}?thumb=1`} label={`Diapositiva ${index + 1}`} />
+                      ))}
+                    </button>
+                  )}
+                  {thumbnailSlides.length === 0 && (
+                    <span className="grid min-h-14 place-items-center rounded border bg-muted/30 text-muted-foreground">
+                      <Presentation aria-hidden="true" className="size-6" />
+                    </span>
+                  )}
+                  <div className="min-w-0 space-y-3">
                   <div className="flex items-center justify-between gap-2">
                     <Badge variant="secondary">{TEMPLATE_LABELS[p.template] || p.template}</Badge>
                     <Badge variant="outline">{(p.lang || "es").toUpperCase()}</Badge>
@@ -448,6 +491,7 @@ export default function AdminPresentations() {
                         : "El historial permanece en la base, pero sus archivos ya no están disponibles. Vuelve a generar la presentación para restaurar sus descargas."}
                     </p>
                   )}
+                  </div>
 
                 </CardContent>
               </Card>

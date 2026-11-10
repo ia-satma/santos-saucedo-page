@@ -14,6 +14,7 @@ import { executeAiProviderCall } from '../ai/gateway';
 export async function webSearchSummary(
   query: string,
   classification: AiDataClassification = 'public',
+  scope: 'presentation' | 'social' = 'presentation',
 ): Promise<string> {
   const q = (query || '').trim();
   if (!q) return '';
@@ -35,14 +36,14 @@ export async function webSearchSummary(
     const res: any = await executeAiProviderCall({
       context: {
         classification,
-        purpose: 'presentation_web_research',
-        source: 'presentation',
-        agentId: 'presentation_generator',
+        purpose: scope === 'social' ? 'social_studio_web_research' : 'presentation_web_research',
+        source: scope === 'social' ? 'admin_tool' : 'presentation',
+        ...(scope === 'presentation' ? { agentId: 'presentation_generator' } : {}),
       },
       payload: request.input,
       provider: 'openai',
       operation: 'web_search',
-      invoke: () => client.responses.create(request),
+      invoke: () => client.responses.create(request, { timeout: 45_000, maxRetries: 0 }),
     });
     // output_text es el atajo del SDK; si no viene, se arma desde output[].content[].text.
     const text: string =

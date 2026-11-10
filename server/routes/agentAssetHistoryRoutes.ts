@@ -253,6 +253,7 @@ export function registerAgentAssetHistoryRoutes(app: Express): void {
         dataClassification: z.enum(["public", "internal", "personal", "confidential", "privileged"]).optional().default("internal"),
         aiUseConfirmed: z.boolean().optional().default(false),
         includeIntroSlide: z.boolean().optional().default(true),
+        bookendTone: z.enum(["blue", "white"]).optional().default("blue"),
       }).strict().safeParse(req.body);
       if (!parsed.success) {
         const issue = parsed.error.issues[0];
@@ -278,6 +279,7 @@ export function registerAgentAssetHistoryRoutes(app: Express): void {
         webSearch,
         dataClassification,
         includeIntroSlide,
+        bookendTone,
       } = parsed.data;
 
       let documentsText = "";
@@ -329,10 +331,15 @@ export function registerAgentAssetHistoryRoutes(app: Express): void {
         webSearch,
         dataClassification,
         includeIntroSlide,
+        bookendTone,
       });
 
       if (!result.success) {
-        return res.status(400).json({ error: result.error || "No se pudo generar la presentación.", docNotes });
+        return res.status(400).json({
+          error: result.error || "No se pudo generar la presentación.",
+          docNotes,
+          visualNotes: (result.data as { visualNotes?: string[] } | undefined)?.visualNotes ?? [],
+        });
       }
 
       const payload: Record<string, unknown> = { ...(result.data as Record<string, unknown>), docNotes };
@@ -388,6 +395,27 @@ export function registerAgentAssetHistoryRoutes(app: Express): void {
       if (!privatePresentationPathBelongsTo(storagePath, presentation.id)) return res.status(404).end();
       const stream = await openPrivatePresentationStream(storagePath!);
       if (!stream) return res.status(404).end();
+      if (req.query.thumb === "1" && req.query.download === undefined) {
+        const parts: Buffer[] = [];
+        let size = 0;
+        for await (const chunk of stream) {
+          const bytes = Buffer.from(chunk);
+          size += bytes.length;
+          if (size > 20 * 1024 * 1024) {
+            stream.destroy();
+            return res.status(413).end();
+          }
+          parts.push(bytes);
+        }
+        const { default: sharp } = await import("sharp");
+        const image = await sharp(Buffer.concat(parts), { limitInputPixels: 20_000_000 })
+          .resize({ width: 384, withoutEnlargement: true }).webp({ quality: 80 }).toBuffer();
+        return res.set({
+          "Cache-Control": "private, no-store",
+          "Cross-Origin-Resource-Policy": "same-origin",
+          "X-Content-Type-Options": "nosniff",
+        }).type("image/webp").send(image);
+      }
       streamPrivatePresentation(res, storagePath!, stream, `presentacion-${presentation.id}-diapositiva-${index.data + 1}.png`, req.query.download !== undefined ? "attachment" : "inline");
     } catch {
       res.status(404).end();

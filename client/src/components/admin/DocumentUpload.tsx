@@ -22,12 +22,15 @@ export function DocumentUpload({
   docs,
   onChange,
   onUploadingChange,
+  maxTotalMb,
 }: {
   docs: UploadedDoc[];
   onChange: (docs: UploadedDoc[]) => void;
   onUploadingChange?: (uploading: boolean) => void;
+  maxTotalMb?: number;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const uploadedSizes = useRef(new Map<string, number>());
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [uploadStatus, setUploadStatus] = useState("");
@@ -37,18 +40,23 @@ export function DocumentUpload({
     setUploading(true);
     onUploadingChange?.(true);
     const next: UploadedDoc[] = [...docs];
+    let totalBytes = docs.reduce((total, document) => total + (uploadedSizes.current.get(document.url) ?? 0), 0);
     try {
       // Una pestaña restaurada puede conservar la cookie pero no el token CSRF en memoria.
       // Se renueva una sola vez antes del lote para que la carga múltiple no falle en silencio.
       await loadAdminSession(true);
       const candidates = Array.from(files).slice(0, Math.max(0, MAX_DOCUMENTS - docs.length));
       if (candidates.length < files.length) {
-        setError(`Se admiten hasta ${MAX_DOCUMENTS} documentos por presentación.`);
+        setError(`Se admiten hasta ${MAX_DOCUMENTS} documentos.`);
       }
       for (let index = 0; index < candidates.length; index++) {
         const file = candidates[index];
         if (file.size > MAX_DOCUMENT_MB * 1024 * 1024) {
           setError(`"${file.name}" supera el máximo seguro de ${MAX_DOCUMENT_MB} MB por archivo.`);
+          continue;
+        }
+        if (maxTotalMb && totalBytes + file.size > maxTotalMb * 1024 * 1024) {
+          setError(`"${file.name}" supera el máximo de ${maxTotalMb} MB para el conjunto.`);
           continue;
         }
         setUploadStatus(`Subiendo ${index + 1} de ${candidates.length}: ${file.name}`);
@@ -70,7 +78,11 @@ export function DocumentUpload({
           continue;
         }
         const data = await res.json();
-        if (data?.url) next.push({ url: data.url, name: data.name || file.name });
+        if (data?.url) {
+          next.push({ url: data.url, name: data.name || file.name });
+          uploadedSizes.current.set(data.url, file.size);
+          totalBytes += file.size;
+        }
       }
       onChange(next);
     } catch {
@@ -83,7 +95,10 @@ export function DocumentUpload({
     }
   };
 
-  const remove = (url: string) => onChange(docs.filter((d) => d.url !== url));
+  const remove = (url: string) => {
+    uploadedSizes.current.delete(url);
+    onChange(docs.filter((d) => d.url !== url));
+  };
 
   return (
     <div className="space-y-2">
@@ -109,7 +124,7 @@ export function DocumentUpload({
 
       {error && <p className="text-xs text-red-600">{error}</p>}
       {uploadStatus && <p className="text-xs text-muted-foreground" aria-live="polite">{uploadStatus}</p>}
-      <p className="text-xs text-muted-foreground">Hasta {MAX_DOCUMENTS} archivos, máximo {MAX_DOCUMENT_MB} MB por archivo.</p>
+      <p className="text-xs text-muted-foreground">Hasta {MAX_DOCUMENTS} archivos, {MAX_DOCUMENT_MB} MB por archivo{maxTotalMb ? ` y ${maxTotalMb} MB en total` : ""}.</p>
 
       {docs.length > 0 && (
         <ul className="space-y-1">

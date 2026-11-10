@@ -445,6 +445,7 @@ try {
       supportImages: [],
       webSearch: false,
       includeIntroSlide: false,
+      bookendTone: "white",
     }),
     200,
     "presentation generate",
@@ -483,6 +484,11 @@ try {
   assert.equal(slide.status, 200);
   count++;
   assert.match(slide.headers.get("content-disposition") || "", /inline/);
+  const thumb = await fetch(base + presentation.pngUrls[0] + "?thumb=1", { headers: { Authorization: `Bearer ${token}` } });
+  assert.equal(thumb.status, 200);
+  assert.match(thumb.headers.get("content-type") || "", /image\/webp/);
+  assert.equal((await fetch(base + presentation.pngUrls[0] + "?thumb=1")).status, 401);
+  count += 2;
   const pngDownload = await fetch(base + presentation.pngUrls[0] + "?download=1", { headers: { Authorization: `Bearer ${token}` } });
   assert.equal(pngDownload.status, 200);
   assert.match(pngDownload.headers.get("content-disposition") || "", /attachment/); count++;
