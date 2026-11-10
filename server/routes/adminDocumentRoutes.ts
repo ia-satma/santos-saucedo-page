@@ -1,148 +1,218 @@
-import type { Express, Request, Response } from "express";
-import { and, desc, eq } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
+import type { Express, RequestHandler, Response } from "express";
+import { desc, eq, or, sql } from "drizzle-orm";
 import { z } from "zod";
-import { db } from "../db";
-import { generatedDocuments } from "@shared/schema";
+import { generatedDocuments, type GeneratedDocument } from "@shared/schema";
 import { authMiddleware, requirePermission } from "../auth";
-import { deleteAppStorageObject, downloadAppStorageObject, uploadAppStorageObject } from "../replitStorage";
-import { createBrandedDocx, createBrandedPdf, type DocumentMode } from "../services/documentGenerator";
+import { db, editorialDb } from "../db";
+import { AiGovernanceBlockedError } from "../ai/dataGovernance";
+import { hydratePresentationInput } from "../media/presentationInputs";
+import { hasOpenAITextClient } from "../openai";
+import { deletePrivateStudioObject, downloadPrivateStudioObject, uploadPrivateStudioObject } from "../replitStorage";
+import { createBrandedDocx, createBrandedPdf } from "../services/documentGenerator";
+import { organizeDocument } from "../services/documentEditorial";
 
+const invalidCharacters = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFE\uFFFF]/;
+const sourceTextSchema = z.string().max(200_000).refine((value) => !invalidCharacters.test(value));
 const documentInput = z.object({
-  title: z.string().trim().min(1).max(180),
-  sourceText: z.string().trim().min(1).max(200_000),
-  instructions: z.string().trim().max(4_000).optional().nullable(),
+  title: z.string().trim().min(1).max(180).refine((value) => !invalidCharacters.test(value) && !/[\r\n]/.test(value)),
+  sourceText: sourceTextSchema.default(""),
+  instructions: z.string().trim().max(4_000).default(""),
   mode: z.enum(["preserve", "organize"]).default("organize"),
-  language: z.string().trim().min(2).max(12).default("es"),
+  documents: z.array(z.object({
+    url: z.string().regex(/^private:presentations\/[a-f0-9]{32}\.[a-z0-9]{1,5}$/),
+    name: z.string().min(1).max(240),
+  })).max(20).default([]),
 }).strict();
+const uuid = z.string().uuid();
+const fileFormat = z.enum(["docx", "pdf"]);
+type Format = z.infer<typeof fileFormat>;
+const route = "/api/admin/documents";
+const permission = requirePermission("agents");
 
-function storageKey(id: string, extension: "docx" | "pdf") { return `public/media/document-${id}.${extension}`; }
-function downloadName(title: string, extension: "docx" | "pdf") {
-  const safe = title.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase() || "documento";
-  return `${safe}.${extension}`;
+class DocumentError extends Error {
+  constructor(readonly status: number, message: string) { super(message); }
 }
 
-async function serialize(row: typeof generatedDocuments.$inferSelect) {
+function secured(handler: RequestHandler): RequestHandler[] {
+  return [authMiddleware, permission, async (req, res, next) => {
+    res.setHeader("Cache-Control", "private, no-store");
+    try {
+      await handler(req, res, next);
+    } catch (error) {
+      if (error instanceof DocumentError) return res.status(error.status).json({ error: error.message });
+      if (error instanceof AiGovernanceBlockedError) {
+        return res.status(422).json({ error: "Las reglas de uso de IA impiden organizar este contenido. Puedes usar el modo Preservar texto para procesarlo localmente." });
+      }
+      console.error("[documents] Falló una operación del editor");
+      res.status(503).json({ error: "No fue posible completar la operación. Intenta de nuevo." });
+    }
+  }];
+}
+
+function storageKey(id: string, format: Format) {
+  return `private/studio/document-${id}.${format}`;
+}
+
+function storedDocumentKey(row: GeneratedDocument, format: Format) {
+  const stored = format === "docx" ? row.docxUrl : row.pdfUrl;
+  if (stored === storageKey(row.id, format) || stored === `public/media/document-${row.id}.${format}`) return stored;
+  return null;
+}
+
+function summary(row: GeneratedDocument) {
+  const { id, title, parentId, version, status, createdAt } = row;
   return {
-    ...row,
-    docxUrl: row.docxUrl ? `/api/admin/documents/${row.id}/file/docx` : null,
-    pdfUrl: row.pdfUrl ? `/api/admin/documents/${row.id}/file/pdf` : null,
+    id, title, parentId, version, status, createdAt,
+    docxUrl: storedDocumentKey(row, "docx") ? `${route}/${id}/file/docx` : null,
+    pdfUrl: storedDocumentKey(row, "pdf") ? `${route}/${id}/file/pdf` : null,
   };
 }
 
-async function renderAndStore(id: string, input: z.infer<typeof documentInput>) {
+async function saveDocument(raw: unknown, actorId: string | null, current?: GeneratedDocument) {
+  const parsed = documentInput.safeParse(raw);
+  if (!parsed.success) throw new DocumentError(400, "Los datos del documento no son válidos.");
+  const { title, instructions, mode, documents } = parsed.data;
+  let { sourceText } = parsed.data;
+  if (documents.length) {
+    const { extractText } = await import("../services/documentText");
+    const parts = [sourceText];
+    for (const document of documents) {
+      const extracted = await extractText(await hydratePresentationInput(document.url), document.name, { rejectOverLimit: true });
+      if (!extracted.ok) {
+        throw new DocumentError(422, extracted.note || "No se pudo extraer el texto del archivo.");
+      }
+      parts.push(extracted.text);
+    }
+    sourceText = parts.filter(Boolean).join("\n\n");
+  }
+  if (!sourceTextSchema.safeParse(sourceText).success) {
+    throw new DocumentError(400, "El texto combinado excede el límite o contiene caracteres no admitidos.");
+  }
+  if (!sourceText.trim() && (mode === "preserve" || !instructions)) {
+    throw new DocumentError(400, "Agrega texto, documentos o indicaciones para generar el contenido.");
+  }
+  if (mode === "organize" && !hasOpenAITextClient()) {
+    throw new DocumentError(503, "La integración de IA no está configurada. Puedes usar el modo Preservar texto.");
+  }
+  const finalText = mode === "organize"
+    ? await organizeDocument({ title, sourceText, instructions, actorId })
+    : sourceText;
+  if (!sourceTextSchema.safeParse(finalText).success) throw new DocumentError(422, "El texto generado contiene caracteres no admitidos.");
+  const id = randomUUID();
+  const docxUrl = storageKey(id, "docx");
+  const pdfUrl = storageKey(id, "pdf");
   const [docx, pdf] = await Promise.all([
-    createBrandedDocx({ ...input, mode: input.mode as DocumentMode }),
-    createBrandedPdf({ ...input, mode: input.mode as DocumentMode }),
+    createBrandedDocx({ title, sourceText: finalText, mode: "preserve" }),
+    createBrandedPdf({ title, sourceText: finalText, mode: "preserve" }),
   ]);
-  const docxPath = storageKey(id, "docx");
-  const pdfPath = storageKey(id, "pdf");
-  await Promise.all([uploadAppStorageObject(docxPath, docx), uploadAppStorageObject(pdfPath, pdf)]);
-  return { docxPath, pdfPath };
+  try {
+    await uploadPrivateStudioObject(docxUrl, docx);
+    await uploadPrivateStudioObject(pdfUrl, pdf);
+    return await editorialDb.transaction(async (tx) => {
+      const parentId = current ? current.parentId || current.id : null;
+      let version = 1;
+      if (current && parentId) {
+        await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${parentId}, 0))`);
+        const [latest] = await tx.select().from(generatedDocuments)
+          .where(or(eq(generatedDocuments.id, parentId), eq(generatedDocuments.parentId, parentId)))
+          .orderBy(desc(generatedDocuments.version)).limit(1);
+        if (latest?.id !== current.id || latest.status !== "active") {
+          throw new DocumentError(409, "El documento cambió. Abre la versión más reciente antes de guardar.");
+        }
+        version = latest.version + 1;
+      }
+      const [saved] = await tx.insert(generatedDocuments).values({
+        id, title, sourceText: finalText, instructions: instructions || null, mode, version,
+        parentId, docxUrl, pdfUrl, createdBy: actorId,
+      }).returning();
+      return saved;
+    });
+  } catch (error) {
+    await Promise.allSettled([deletePrivateStudioObject(docxUrl), deletePrivateStudioObject(pdfUrl)]);
+    throw error;
+  }
 }
 
-function streamBuffer(res: Response, body: Buffer, type: string, filename: string) {
-  res.setHeader("Content-Type", type);
+async function readDocument(id: string): Promise<GeneratedDocument> {
+  if (!uuid.safeParse(id).success) throw new DocumentError(400, "Identificador inválido.");
+  const [row] = await db.select().from(generatedDocuments).where(eq(generatedDocuments.id, id)).limit(1);
+  if (!row) throw new DocumentError(404, "Documento no encontrado.");
+  return row;
+}
+
+function streamBuffer(res: Response, body: Buffer, format: Format, row: GeneratedDocument) {
+  res.setHeader("Content-Type", format === "pdf" ? "application/pdf" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
   res.setHeader("Content-Length", body.byteLength);
-  res.setHeader("Cache-Control", "private, no-store");
   res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+  res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
+  res.setHeader("Content-Security-Policy", "sandbox");
+  res.setHeader("Content-Disposition", `attachment; filename="documento-v${row.version}.${format}"`);
   res.end(body);
 }
 
 export function registerAdminDocumentRoutes(app: Express) {
-  app.get("/api/admin/documents", authMiddleware, requirePermission("agents"), async (_req, res) => {
-    const rows = await db.select().from(generatedDocuments).where(eq(generatedDocuments.status, "active")).orderBy(desc(generatedDocuments.createdAt));
-    res.setHeader("Cache-Control", "private, no-store");
-    res.json(await Promise.all(rows.map(serialize)));
-  });
-
-  app.get("/api/admin/documents/brand/:asset", authMiddleware, requirePermission("agents"), async (req, res) => {
-    if (req.params.asset !== "logo") return res.status(404).json({ error: "Asset de marca no encontrado." });
-    res.redirect("/attached_assets/logo-ss-color.png");
-  });
-
-  app.post("/api/admin/documents/generate", authMiddleware, requirePermission("agents"), async (req: Request, res: Response) => {
-    const parsed = documentInput.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: "Los datos del documento no son válidos.", details: parsed.error.flatten() });
-    try {
-      const input = parsed.data;
-      const [created] = await db.insert(generatedDocuments).values({
-        title: input.title,
-        sourceText: input.sourceText,
-        instructions: input.instructions || null,
-        mode: input.mode,
-        language: input.language,
-        createdBy: req.adminUser?.id || null,
-      }).returning();
-      const files = await renderAndStore(created.id, input);
-      const [saved] = await db.update(generatedDocuments).set({ docxUrl: files.docxPath, pdfUrl: files.pdfPath, updatedAt: new Date() }).where(eq(generatedDocuments.id, created.id)).returning();
-      res.status(201).json(await serialize(saved));
-    } catch (error) {
-      console.error("[documents/generate]", error);
-      res.status(503).json({ error: "No fue posible generar el documento con membrete." });
+  app.get(route, ...secured(async (req, res) => {
+    const rows = await db.select({
+      id: generatedDocuments.id, title: generatedDocuments.title, status: generatedDocuments.status,
+      version: generatedDocuments.version, parentId: generatedDocuments.parentId, createdAt: generatedDocuments.createdAt,
+    }).from(generatedDocuments).orderBy(desc(generatedDocuments.createdAt), desc(generatedDocuments.version));
+    const latest = new Map<string, (typeof rows)[number]>();
+    for (const row of rows) {
+      const rootId = row.parentId || row.id;
+      if ((latest.get(rootId)?.version ?? 0) < row.version) latest.set(rootId, row);
     }
-  });
+    const status = req.query.trash === "true" ? "archived" : "active";
+    res.json(Array.from(latest.values()).filter((row) => row.status === status));
+  }));
 
-  app.patch("/api/admin/documents/:id", authMiddleware, requirePermission("agents"), async (req: Request, res: Response) => {
-    if (!z.string().uuid().safeParse(req.params.id).success) return res.status(400).json({ error: "Identificador inválido." });
-    const parsed = documentInput.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: "Los datos del documento no son válidos.", details: parsed.error.flatten() });
-    const [current] = await db.select().from(generatedDocuments).where(and(eq(generatedDocuments.id, req.params.id), eq(generatedDocuments.status, "active"))).limit(1);
-    if (!current) return res.status(404).json({ error: "Documento no encontrado." });
-    try {
-      const input = parsed.data;
-      const [version] = await db.insert(generatedDocuments).values({
-        title: input.title,
-        sourceText: input.sourceText,
-        instructions: input.instructions || null,
-        mode: input.mode,
-        language: input.language,
-        version: current.version + 1,
-        parentId: current.id,
-        createdBy: req.adminUser?.id || null,
-      }).returning();
-      const files = await renderAndStore(version.id, input);
-      const [saved] = await db.update(generatedDocuments).set({ docxUrl: files.docxPath, pdfUrl: files.pdfPath, updatedAt: new Date() }).where(eq(generatedDocuments.id, version.id)).returning();
-      res.status(201).json(await serialize(saved));
-    } catch (error) {
-      console.error("[documents/update]", error);
-      res.status(503).json({ error: "No fue posible guardar la nueva versión." });
-    }
-  });
+  app.post(`${route}/generate`, ...secured(async (req, res) => {
+    const row = await saveDocument(req.body, req.adminUser?.id || null);
+    res.status(201).json(summary(row));
+  }));
 
-  app.post("/api/admin/documents/:id/archive", authMiddleware, requirePermission("agents"), async (req, res) => {
-    if (!z.string().uuid().safeParse(req.params.id).success) return res.status(400).json({ error: "Identificador inválido." });
-    const [updated] = await db.update(generatedDocuments).set({ status: "archived", archivedAt: new Date(), updatedAt: new Date() }).where(and(eq(generatedDocuments.id, req.params.id), eq(generatedDocuments.status, "active"))).returning();
-    if (!updated) return res.status(404).json({ error: "Documento no encontrado." });
-    res.json({ ok: true, id: updated.id });
-  });
+  app.patch(`${route}/:id`, ...secured(async (req, res) => {
+    const current = await readDocument(req.params.id);
+    if (current.status !== "active") throw new DocumentError(409, "Restaura el documento antes de editarlo.");
+    const saved = await saveDocument(req.body, req.adminUser?.id || null, current);
+    res.status(201).json(summary(saved));
+  }));
 
-  app.get("/api/admin/documents/:id/file/:format", authMiddleware, requirePermission("agents"), async (req, res) => {
-    if (!z.string().uuid().safeParse(req.params.id).success || !["docx", "pdf"].includes(req.params.format)) return res.status(400).json({ error: "Archivo inválido." });
-    const [row] = await db.select().from(generatedDocuments).where(eq(generatedDocuments.id, req.params.id)).limit(1);
-    if (!row || row.status !== "active") return res.status(404).json({ error: "Documento no encontrado." });
-    const format = req.params.format as "docx" | "pdf";
-    const storagePath = format === "docx" ? row.docxUrl : row.pdfUrl;
-    if (!storagePath) return res.status(404).json({ error: "Archivo no disponible." });
-    const bytes = await downloadAppStorageObject(storagePath.replace(/^\//, ""));
-    if (!bytes) return res.status(404).json({ error: "Archivo no encontrado en App Storage." });
-    streamBuffer(res, bytes, format === "docx" ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document" : "application/pdf", downloadName(row.title, format));
-  });
-
-  app.get("/api/admin/documents/:id", authMiddleware, requirePermission("agents"), async (req, res) => {
-    if (!z.string().uuid().safeParse(req.params.id).success) return res.status(400).json({ error: "Identificador inválido." });
-    const [row] = await db.select().from(generatedDocuments).where(eq(generatedDocuments.id, req.params.id)).limit(1);
-    if (!row) return res.status(404).json({ error: "Documento no encontrado." });
-    const versions = await db.select().from(generatedDocuments).where(eq(generatedDocuments.parentId, row.parentId || row.id)).orderBy(desc(generatedDocuments.version));
-    res.json({ document: await serialize(row), versions: await Promise.all(versions.map(serialize)) });
-  });
-
-  app.delete("/api/admin/documents/:id", authMiddleware, requirePermission("agents"), async (req, res) => {
-    if (!z.string().uuid().safeParse(req.params.id).success) return res.status(400).json({ error: "Identificador inválido." });
-    const [row] = await db.select().from(generatedDocuments).where(eq(generatedDocuments.id, req.params.id)).limit(1);
-    if (!row) return res.status(404).json({ error: "Documento no encontrado." });
-    await db.update(generatedDocuments).set({ status: "archived", archivedAt: new Date(), updatedAt: new Date() }).where(eq(generatedDocuments.id, row.id));
-    await Promise.all([row.docxUrl && deleteAppStorageObject(row.docxUrl), row.pdfUrl && deleteAppStorageObject(row.pdfUrl)]);
+  app.post(`${route}/:id/archive`, ...secured(async (req, res) => {
+    const row = await readDocument(req.params.id);
+    const { archived } = req.body ?? {};
+    if (typeof archived !== "boolean") throw new DocumentError(400, "Indica el estado de la papelera.");
+    const rootId = row.parentId || row.id;
+    await editorialDb.transaction(async (tx) => {
+      await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${rootId}, 0))`);
+      const [latest] = await tx.select({ id: generatedDocuments.id }).from(generatedDocuments)
+        .where(or(eq(generatedDocuments.id, rootId), eq(generatedDocuments.parentId, rootId)))
+        .orderBy(desc(generatedDocuments.version)).limit(1);
+      if (latest?.id !== row.id) throw new DocumentError(409, "Abre la versión más reciente para cambiar su estado.");
+      await tx.update(generatedDocuments).set({
+        status: archived ? "archived" : "active", archivedAt: archived ? new Date() : null, updatedAt: new Date(),
+      }).where(or(eq(generatedDocuments.id, rootId), eq(generatedDocuments.parentId, rootId)));
+    });
     res.json({ ok: true });
-  });
+  }));
+
+  app.get(`${route}/:id/file/:format`, ...secured(async (req, res) => {
+    const format = fileFormat.safeParse(req.params.format);
+    if (!format.success) throw new DocumentError(400, "Formato inválido.");
+    const row = await readDocument(req.params.id);
+    const key = storedDocumentKey(row, format.data);
+    if (!key) throw new DocumentError(404, "Archivo no disponible.");
+    const bytes = await downloadPrivateStudioObject(key);
+    if (!bytes) throw new DocumentError(404, "Archivo no encontrado en App Storage.");
+    streamBuffer(res, bytes, format.data, row);
+  }));
+
+  app.get(`${route}/:id`, ...secured(async (req, res) => {
+    const row = await readDocument(req.params.id);
+    const rootId = row.parentId || row.id;
+    const versions = await db.select().from(generatedDocuments)
+      .where(or(eq(generatedDocuments.id, rootId), eq(generatedDocuments.parentId, rootId)))
+      .orderBy(desc(generatedDocuments.version));
+    res.json({ document: { ...summary(row), sourceText: row.sourceText, mode: row.mode }, versions: versions.map(summary) });
+  }));
 }

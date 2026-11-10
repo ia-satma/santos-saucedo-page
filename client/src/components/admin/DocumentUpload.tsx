@@ -21,9 +21,11 @@ const MAX_DOCUMENT_MB = 100;
 export function DocumentUpload({
   docs,
   onChange,
+  onUploadingChange,
 }: {
   docs: UploadedDoc[];
   onChange: (docs: UploadedDoc[]) => void;
+  onUploadingChange?: (uploading: boolean) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -33,6 +35,7 @@ export function DocumentUpload({
   const uploadFiles = async (files: FileList) => {
     setError("");
     setUploading(true);
+    onUploadingChange?.(true);
     const next: UploadedDoc[] = [...docs];
     try {
       // Una pestaña restaurada puede conservar la cookie pero no el token CSRF en memoria.
@@ -74,6 +77,7 @@ export function DocumentUpload({
       setError("Error al subir los documentos.");
     } finally {
       setUploading(false);
+      onUploadingChange?.(false);
       setUploadStatus("");
       if (inputRef.current) inputRef.current.value = "";
     }

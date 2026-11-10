@@ -31,8 +31,12 @@ function clamp(text: string): string {
 
 async function extractPdf(filePath: string): Promise<string> {
   const parser = new PDFParse({ url: 'file://' + path.resolve(filePath) });
-  const result = await parser.getText();
-  return result?.text || '';
+  try {
+    const result = await parser.getText();
+    return result?.text || '';
+  } finally {
+    await parser.destroy();
+  }
 }
 
 async function extractDocx(filePath: string): Promise<string> {
@@ -85,7 +89,7 @@ function stripLatex(raw: string): string {
     .trim();
 }
 
-export async function extractText(filePath: string, originalName?: string): Promise<ExtractedDoc> {
+export async function extractText(filePath: string, originalName?: string, options?: { rejectOverLimit: boolean }): Promise<ExtractedDoc> {
   const name = originalName || path.basename(filePath);
   const ext = path.extname(name || filePath).toLowerCase();
 
@@ -121,6 +125,9 @@ export async function extractText(filePath: string, originalName?: string): Prom
         return { ...base, note: `Tipo de archivo no soportado: ${ext || '(sin extensión)'}.` };
     }
 
+    if (options?.rejectOverLimit && text.length > MAX_CHARS_PER_DOC) {
+      return { ...base, note: 'El texto supera el límite de 40 000 caracteres por archivo.' };
+    }
     const clamped = clamp(text);
     if (!clamped) {
       return { ...base, note: 'No se pudo extraer texto del documento (¿está vacío o es solo imágenes?).' };
