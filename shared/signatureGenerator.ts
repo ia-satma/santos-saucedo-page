@@ -69,7 +69,7 @@ export function createSignatureGenerator(options: { assetsUrl?: string; data?: P
       if (!/^(?:https?:|data:)/i.test(photoSource)) {
         try { photoSource = new URL(photoSource, assets).toString(); } catch { /* keep the validated path */ }
       }
-      html = html.replace(/<img src="assets\/[^"]+\.(?:jpg|jpeg|png|webp|gif)" alt="Mario Saucedo Montemayor"([^>]*?)style="([^"]*)">/gi, (_m: string, a: string, st: string) => `<img src="${esc(photoSource)}" alt="${esc(d.name)}"${a}style="${st}object-fit:cover;object-position:center;">`);
+      html = html.replace(/<img src="assets\/[^"]+\.(?:jpg|jpeg|png|webp|gif)" alt="Mario Saucedo Montemayor"([^>]*?)style="([^"]*)">/gi, (_m: string, a: string, st: string) => `<img src="${esc(photoSource)}" data-signature-photo="true" alt="${esc(d.name)}"${a}style="${st}object-fit:cover;object-position:center;">`);
     }
     if (id === "12") {
       html = swap(html, bare(signatureDefaults.linkedin), bare(d.linkedin)).replace(`href="${signatureDefaults.linkedin}"`, `href="${esc(full(d.linkedin))}"`);

@@ -47,6 +47,43 @@ async function inlineSignatureImages(bodyHtml: string) {
   }));
   return parsed.querySelector("#signature-export-root")?.innerHTML || bodyHtml;
 }
+async function cropSignaturePhotos(root: HTMLElement) {
+  const photos = Array.from(root.querySelectorAll<HTMLImageElement>('img[data-signature-photo="true"]'));
+  await Promise.all(photos.map(async (image) => {
+    try {
+      if (!image.complete) await image.decode();
+      const sourceWidth = image.naturalWidth;
+      const sourceHeight = image.naturalHeight;
+      const targetWidth = image.getBoundingClientRect().width;
+      const targetHeight = image.getBoundingClientRect().height;
+      if (!sourceWidth || !sourceHeight || !targetWidth || !targetHeight) return;
+      const targetRatio = targetWidth / targetHeight;
+      const sourceRatio = sourceWidth / sourceHeight;
+      let cropWidth = sourceWidth;
+      let cropHeight = sourceHeight;
+      let sourceX = 0;
+      let sourceY = 0;
+      if (sourceRatio > targetRatio) {
+        cropWidth = sourceHeight * targetRatio;
+        sourceX = (sourceWidth - cropWidth) / 2;
+      } else if (sourceRatio < targetRatio) {
+        cropHeight = sourceWidth / targetRatio;
+        sourceY = (sourceHeight - cropHeight) / 2;
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(cropWidth));
+      canvas.height = Math.max(1, Math.round(cropHeight));
+      const context = canvas.getContext("2d");
+      if (!context) return;
+      context.drawImage(image, sourceX, sourceY, cropWidth, cropHeight, 0, 0, canvas.width, canvas.height);
+      image.src = canvas.toDataURL("image/png");
+      image.style.objectFit = "fill";
+      image.style.objectPosition = "center";
+    } catch {
+      // Keep the inlined source if the browser cannot decode an optional photo.
+    }
+  }));
+}
 async function downloadSignaturePng(html: string, name: string, width: number, height: number) {
   const body = html.match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1] || html;
   const bodyWithImages = await inlineSignatureImages(body);
@@ -57,6 +94,7 @@ async function downloadSignaturePng(html: string, name: string, width: number, h
   try {
     const target = host.firstElementChild as HTMLElement | null;
     if (!target) throw new Error("No se pudo preparar la firma para exportación.");
+    await cropSignaturePhotos(target);
     await document.fonts?.ready;
     const canvas = await html2canvas(target, { backgroundColor: "#fff", width, height, scale: 2, useCORS: true, allowTaint: false, imageTimeout: 15000, logging: false });
     const png = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));

@@ -31,7 +31,9 @@ for (const id of signatureIds) {
   }
 }
 const photoGenerator = createSignatureGenerator({ assetsUrl: "https://cms.example.test/signatures/assets/", photo: "/media/qa-photo.png" });
-for (const id of ["05", "06", "07", "08", "10", "12"]) {
-  assert.match(photoGenerator.build(id), /src="https:\/\/cms\.example\.test\/media\/qa-photo\.png"/);
+for (const id of ["02", "05", "06", "07", "08", "10", "12"]) {
+  const photoHtml = photoGenerator.build(id);
+  assert.match(photoHtml, /src="https:\/\/cms\.example\.test\/media\/qa-photo\.png"/);
+  assert.match(photoHtml, /data-signature-photo="true"/);
 }
 console.log(`signature generator ok: ${signatureIds.length} templates`);
