@@ -7,6 +7,7 @@ import {
   ExitIcon,
   HamburgerMenuIcon,
   ChevronRightIcon,
+  ChevronLeftIcon,
 } from "@radix-ui/react-icons";
 import { useAdminAuth, adminApiRequest } from "@/lib/adminAuth";
 import { useCmsMedia } from "@/lib/cmsMedia";
@@ -59,6 +60,18 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const groups = careersOnly ? careersAdminNavigation : adminNavigation;
   const home = careersOnly ? careersOnlyLanding : "/admin/dashboard";
   const [mobile, setMobile] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem("ss-admin-sidebar-collapsed") === "true";
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem("ss-admin-sidebar-collapsed", String(sidebarCollapsed));
+    } catch {}
+  }, [sidebarCollapsed]);
   const [expanded, setExpanded] = useState<Set<string>>(() => {
     const everyGroup = [...adminNavigation, ...careersAdminNavigation].map(
       (g) => g.id,
@@ -137,6 +150,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       <button
         type="button"
         className="admin-sidebar-search"
+        title="Buscar sección"
         onClick={() => setSearchOpen(true)}
       >
         <MagnifyingGlassIcon />
@@ -164,6 +178,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                       className={`admin-nav-link ${selected ? "is-active" : ""}`}
                       data-tone={adminLinkTone(item.href, group.tone)}
                       aria-current={selected ? "page" : undefined}
+                      title={item.label}
                     >
                       <Icon aria-hidden="true" />
                       <span>{item.label}</span>
@@ -243,7 +258,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         ),
   );
   return (
-    <div className="admin-shell" data-tone={pageTone}>
+    <div className={`admin-shell ${sidebarCollapsed ? "is-sidebar-collapsed" : ""}`} data-tone={pageTone}>
       <a className="admin-skip" href="#admin-main">
         Saltar al contenido
       </a>
@@ -266,6 +281,16 @@ export function AdminShell({ children }: { children: ReactNode }) {
               onClick={() => setMobile(true)}
             >
               <HamburgerMenuIcon />
+            </button>
+            <button
+              type="button"
+              className="admin-sidebar-toggle"
+              aria-expanded={!sidebarCollapsed}
+              aria-label={sidebarCollapsed ? "Expandir menú lateral" : "Minimizar menú lateral"}
+              title={sidebarCollapsed ? "Expandir menú lateral" : "Minimizar menú lateral"}
+              onClick={() => setSidebarCollapsed((value) => !value)}
+            >
+              {sidebarCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
             </button>
             <span>Panel</span>
             <ChevronRightIcon />

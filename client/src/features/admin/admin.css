@@ -1358,6 +1358,62 @@
 .admin-asset-dialog h2 { font-family: var(--font-sans); }
 .admin-asset-dialog button { min-height: 40px; font-size: 15px; }
 
+/* The desktop navigation can collapse to an icon rail so editing surfaces keep their working width. */
+.admin-shell {
+  --admin-sidebar-width: 280px;
+}
+.admin-sidebar { width: var(--admin-sidebar-width); }
+.admin-main-column { margin-left: var(--admin-sidebar-width); }
+.admin-sidebar-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border: 1px solid var(--admin-line);
+  border-radius: 5px;
+  color: var(--admin-muted);
+  background: #fff;
+}
+.admin-sidebar-toggle:hover { color: var(--admin-accent); background: #f3f6f6; }
+.admin-sidebar-toggle svg { width: 15px; height: 15px; }
+.admin-shell.is-sidebar-collapsed { --admin-sidebar-width: 72px; }
+.admin-shell.is-sidebar-collapsed .admin-brand { padding: 22px 12px; text-align: center; }
+.admin-shell.is-sidebar-collapsed .admin-brand img { width: 46px; height: 38px; object-position: center; }
+.admin-shell.is-sidebar-collapsed .admin-brand > span,
+.admin-shell.is-sidebar-collapsed .admin-sidebar-search span,
+.admin-shell.is-sidebar-collapsed .admin-sidebar-search kbd,
+.admin-shell.is-sidebar-collapsed .admin-nav-group-description,
+.admin-shell.is-sidebar-collapsed .admin-nav-group-heading .admin-group-name,
+.admin-shell.is-sidebar-collapsed .admin-nav-group-heading > svg,
+.admin-shell.is-sidebar-collapsed .admin-nav-link > span,
+.admin-shell.is-sidebar-collapsed .admin-sidebar-foot > div { display: none; }
+.admin-shell.is-sidebar-collapsed .admin-sidebar-search { justify-content: center; padding: 10px; }
+.admin-shell.is-sidebar-collapsed .admin-navigation { padding: 18px 9px; }
+.admin-shell.is-sidebar-collapsed .admin-navigation section + section { margin-top: 14px; }
+.admin-shell.is-sidebar-collapsed .admin-nav-group-heading { justify-content: center; padding: 8px; }
+.admin-shell.is-sidebar-collapsed .admin-nav-group-heading::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+  background: var(--tone);
+}
+.admin-shell.is-sidebar-collapsed .admin-nav-group > ul { display: grid; }
+.admin-shell.is-sidebar-collapsed .admin-nav-link { justify-content: center; padding: 10px; }
+.admin-shell.is-sidebar-collapsed .admin-nav-link > svg { width: 18px; height: 18px; }
+.admin-shell.is-sidebar-collapsed .admin-sidebar-foot { justify-content: center; padding: 14px 8px; }
+.admin-shell.is-sidebar-collapsed .admin-account-mark { width: 34px; height: 34px; }
+.admin-shell.is-sidebar-collapsed .admin-sidebar-foot > button { margin-left: 0; padding: 5px; }
+@media (max-width: 1100px) {
+  .admin-shell { --admin-sidebar-width: 248px; }
+}
+@media (max-width: 900px) {
+  .admin-shell,
+  .admin-shell.is-sidebar-collapsed { --admin-sidebar-width: 0px; }
+  .admin-sidebar-toggle { display: none; }
+}
+
 /* Signature editor workspace. The dense split layout keeps the editable data visible while the catalogue remains scannable. */
 .signature-editor-page {
   --signature-navy: #102f59;
