@@ -1,7 +1,7 @@
 import { useEffect, useId, useState } from "react";
 import { EditorContent, useEditor, useEditorState, type JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { Bold, Italic, Link2, List, ListOrdered, Redo2, Underline, Undo2 } from "lucide-react";
+import { Bold, Italic, Link2, List, ListOrdered, Quote, Redo2, Underline, Undo2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +9,6 @@ import { documentRichTextSchema, isSafeDocumentLink, type DocumentRichText } fro
 
 const extensions = [StarterKit.configure({
   heading: { levels: [2, 3] },
-  blockquote: false,
   code: false,
   codeBlock: false,
   horizontalRule: false,
@@ -68,7 +67,7 @@ export function DocumentRichTextEditor({
         "aria-label": label,
         "aria-describedby": helpId,
         "aria-multiline": "true",
-        class: "min-h-60 max-w-full break-words px-4 py-3 text-sm leading-relaxed outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#145385] [&_p+p]:mt-2 [&_h2]:mb-1 [&_h2]:mt-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h3]:mb-1 [&_h3]:mt-3 [&_h3]:text-base [&_h3]:font-semibold [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-6 [&_ol]:pl-6 [&_a]:text-[#145385] [&_a]:underline",
+        class: "min-h-60 max-w-full break-words px-4 py-3 text-sm leading-relaxed outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#145385] [&_p+p]:mt-2 [&_h2]:mb-1 [&_h2]:mt-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h3]:mb-1 [&_h3]:mt-3 [&_h3]:text-base [&_h3]:font-semibold [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-6 [&_ol]:pl-6 [&_blockquote]:my-3 [&_blockquote]:border-s-2 [&_blockquote]:border-[#8CC63F] [&_blockquote]:ps-3 [&_blockquote]:text-muted-foreground [&_a]:text-[#145385] [&_a]:underline",
       },
     },
     onUpdate: ({ editor }) => {
@@ -89,6 +88,7 @@ export function DocumentRichTextEditor({
       heading3: editor.isActive("heading", { level: 3 }),
       bullets: editor.isActive("bulletList"),
       ordered: editor.isActive("orderedList"),
+      quote: editor.isActive("blockquote"),
       link: editor.isActive("link"),
       canLink: !editor.state.selection.empty || editor.isActive("link"),
       canUndo: editor.can().undo(),
@@ -123,6 +123,7 @@ export function DocumentRichTextEditor({
     { label: "Subrayado", icon: Underline, active: state?.underline ?? false, run: () => editor.chain().focus().toggleUnderline().run() },
     { label: "Lista con viñetas", icon: List, active: state?.bullets ?? false, run: () => editor.chain().focus().toggleBulletList().run() },
     { label: "Lista numerada", icon: ListOrdered, active: state?.ordered ?? false, run: () => editor.chain().focus().toggleOrderedList().run() },
+    { label: "Cita", icon: Quote, active: state?.quote ?? false, run: () => editor.chain().focus().toggleBlockquote().run() },
     { label: "Añadir o editar enlace", icon: Link2, active: Boolean(state?.link || editingLink), unavailable: !state?.canLink && !editingLink, run: showLink },
     { label: "Deshacer", icon: Undo2, unavailable: !state?.canUndo, run: () => editor.chain().focus().undo().run() },
     { label: "Rehacer", icon: Redo2, unavailable: !state?.canRedo, run: () => editor.chain().focus().redo().run() },
