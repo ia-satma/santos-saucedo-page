@@ -31,9 +31,18 @@ for (const id of signatureIds) {
   }
 }
 const photoGenerator = createSignatureGenerator({ assetsUrl: "https://cms.example.test/signatures/assets/", photo: "/media/public/media/qa-photo.png" });
-for (const id of ["02", "05", "06", "07", "08", "10", "12"]) {
+const photoBoxes: Record<string, [number, number]> = { "02": [99, 135], "05": [113, 135], "06": [113, 142], "07": [113, 192], "08": [113, 145], "10": [99, 141], "12": [170, 170] };
+for (const id of Object.keys(photoBoxes)) {
   const photoHtml = photoGenerator.build(id);
-  assert.match(photoHtml, /src="https:\/\/cms\.example\.test\/api\/signature-photo\?source=%2Fmedia%2Fpublic%2Fmedia%2Fqa-photo\.png&amp;width=\d+&amp;height=\d+"/);
+  const photoMatch = photoHtml.match(/<img src="([^"]+)" data-signature-photo="true"[^>]*width="([\d.]+)" height="([\d.]+)"/);
+  assert(photoMatch, `Falta la foto editable de la firma ${id}`);
+  const photoUrl = new URL(photoMatch[1].replace(/&amp;/g, "&"));
+  assert.equal(photoUrl.pathname, "/api/signature-photo");
+  assert.equal(photoUrl.searchParams.get("source"), "/media/public/media/qa-photo.png");
+  assert.equal(Number(photoUrl.searchParams.get("width")), photoBoxes[id][0]);
+  assert.equal(Number(photoUrl.searchParams.get("height")), photoBoxes[id][1]);
+  assert.equal(Number(photoMatch[2]), photoBoxes[id][0]);
+  assert.equal(Number(photoMatch[3]), photoBoxes[id][1]);
   assert.match(photoHtml, /data-signature-photo="true"/);
 }
 console.log(`signature generator ok: ${signatureIds.length} templates`);
