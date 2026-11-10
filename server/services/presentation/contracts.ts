@@ -62,6 +62,8 @@ export interface RenderOptions {
   topic?: string;
   sourceDocs?: string[];
   engine?: string;
+  /** Incluye la portada institucional. Se conserva activada para generaciones anteriores. */
+  includeIntroSlide?: boolean;
 }
 export interface RenderResult {
   success: boolean;

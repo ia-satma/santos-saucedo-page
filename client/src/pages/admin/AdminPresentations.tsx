@@ -5,7 +5,6 @@ import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AgentButton } from "@/components/admin/AgentButton";
 import { AgentProgress } from "@/components/admin/AgentTools";
 import { DocumentUpload, type UploadedDoc } from "@/components/admin/DocumentUpload";
-import { ImageUpload } from "@/components/admin/ImageUpload";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAdminAuth, adminApiRequest } from "@/lib/adminAuth";
 import { uploadAdminMedia } from "@/lib/adminMediaUpload";
@@ -23,7 +22,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Presentation, Loader2, FileDown, FileText, Image as ImageIcon, Wand2, Eye } from "lucide-react";
-import type { AiDataClassification } from "@shared/aiGovernance";
 
 interface PresentationRow {
   id: string;
@@ -64,16 +62,13 @@ export default function AdminPresentations() {
   const [docs, setDocs] = useState<UploadedDoc[]>([]);
   const [slideCount, setSlideCount] = useState(8);
   const [lang, setLang] = useState<"es" | "en">("es");
-  const [template, setTemplate] = useState<"santossaucedo" | "minimal" | "dark">("santossaucedo");
-  const [branding, setBranding] = useState<"santossaucedo" | "custom">("santossaucedo");
-  const [customLogoUrl, setCustomLogoUrl] = useState("");
-  const [customColor, setCustomColor] = useState("#AA1A2E");
+  const [template] = useState<"santossaucedo">("santossaucedo");
+  const [branding] = useState<"santossaucedo">("santossaucedo");
   const [formats, setFormats] = useState<Record<Format, boolean>>({ pptx: true, pdf: true, png: true });
   const [visuals, setVisuals] = useState(true);
   const [illustrate, setIllustrate] = useState(false);
   const [webSearch, setWebSearch] = useState(false);
-  const [dataClassification, setDataClassification] = useState<Extract<AiDataClassification, "public" | "internal">>("internal");
-  const [aiUseConfirmed, setAiUseConfirmed] = useState(false);
+  const [includeIntroSlide, setIncludeIntroSlide] = useState(true);
   const [supportImages, setSupportImages] = useState<string[]>([]);
   const [uploadingImg, setUploadingImg] = useState(false);
   const [supportUploadStatus, setSupportUploadStatus] = useState("");
@@ -130,15 +125,14 @@ export default function AdminPresentations() {
         lang,
         template,
         branding,
-        customLogoUrl: branding === "custom" ? customLogoUrl || null : null,
-        customPrimaryColor: branding === "custom" ? customColor || null : null,
+        customLogoUrl: null,
+        customPrimaryColor: null,
         formats: selectedFormats,
         visuals,
         illustrate: visuals && illustrate,
         supportImages: visuals ? supportImages : [],
         webSearch,
-        dataClassification,
-        aiUseConfirmed: true,
+        includeIntroSlide,
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error((data as any)?.error || "No se pudo generar la presentación.");
@@ -163,9 +157,8 @@ export default function AdminPresentations() {
   const canGenerate =
     !generateMutation.isPending &&
     (topic.trim().length > 0 || docs.length > 0) &&
-    aiUseConfirmed &&
     (formats.pptx || formats.pdf || formats.png) &&
-    (branding !== "custom" || /^#[0-9a-f]{6}$/i.test(customColor));
+    branding === "santossaucedo";
 
   if (authLoading) {
     return (
@@ -203,7 +196,6 @@ export default function AdminPresentations() {
                   value={topic}
                   onChange={(e) => {
                     setTopic(e.target.value);
-                    setAiUseConfirmed(false);
                   }}
                   placeholder="Ej. Panorama de la reforma en competencia económica en México 2026, para clientes corporativos…"
                   rows={5}
@@ -218,46 +210,9 @@ export default function AdminPresentations() {
                   docs={docs}
                   onChange={(nextDocs) => {
                     setDocs(nextDocs);
-                    setAiUseConfirmed(false);
                   }}
                 />
               </div>
-            </div>
-
-            <div className="space-y-4 border-l-4 border-amber-500 bg-amber-50 px-5 py-4 dark:bg-amber-950/20">
-              <div className="grid gap-4 md:grid-cols-2 md:items-start">
-                <div className="space-y-2">
-                  <Label>Clasificación obligatoria del material</Label>
-                  <Select
-                    value={dataClassification}
-                    onValueChange={(value) => {
-                      setDataClassification(value as "public" | "internal");
-                      setAiUseConfirmed(false);
-                    }}
-                  >
-                    <SelectTrigger data-testid="select-presentation-data-classification"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="public">Pública y aprobada para difusión</SelectItem>
-                      <SelectItem value="internal">Interna, sin datos personales ni secretos</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <label className="flex items-start gap-3 text-sm leading-relaxed">
-                  <Checkbox
-                    checked={aiUseConfirmed}
-                    onCheckedChange={(checked) => setAiUseConfirmed(checked === true)}
-                    data-testid="checkbox-presentation-ai-confirmation"
-                  />
-                  <span>
-                    Confirmo que revisé el tema y los documentos. No contienen datos personales,
-                    información confidencial, secretos de clientes ni comunicaciones privilegiadas.
-                  </span>
-                </label>
-              </div>
-              <p className="text-xs text-amber-800 dark:text-amber-200">
-                Si el material es personal, confidencial o privilegiado, no lo subas ni lo envíes a los proveedores de IA.
-                El servidor realizará una segunda revisión automática y bloqueará indicadores sensibles.
-              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -287,52 +242,14 @@ export default function AdminPresentations() {
 
               <div className="space-y-2">
                 <Label>Plantilla</Label>
-                <Select value={template} onValueChange={(v) => setTemplate(v as any)}>
-                  <SelectTrigger data-testid="select-template"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="santossaucedo">Santos & Saucedo</SelectItem>
-                    <SelectItem value="minimal">Minimal</SelectItem>
-                    <SelectItem value="dark">Oscura</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="rounded-md border bg-muted/30 px-3 py-2 text-sm">Santos & Saucedo</div>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label>Branding</Label>
-                <Select value={branding} onValueChange={(v) => setBranding(v as any)}>
-                  <SelectTrigger data-testid="select-branding"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="santossaucedo">Santos & Saucedo (logo y colores de la firma)</SelectItem>
-                    <SelectItem value="custom">Marca propia (subir logo + color)</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {branding === "custom" && (
-                  <div className="mt-3 space-y-3 border rounded-md p-3 bg-muted/30">
-                    <div className="space-y-1">
-                      <Label className="text-xs">Logo de la marca</Label>
-                      <ImageUpload value={customLogoUrl} onChange={setCustomLogoUrl} kind="image" />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs">Color principal</Label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="color"
-                          value={customColor}
-                          onChange={(e) => setCustomColor(e.target.value)}
-                          className="h-9 w-12 border rounded cursor-pointer bg-transparent"
-                          data-testid="input-custom-color"
-                        />
-                        <Input value={customColor} onChange={(e) => setCustomColor(e.target.value)} className="max-w-[140px]" />
-                      </div>
-                      {!/^#[0-9a-f]{6}$/i.test(customColor) && (
-                        <p className="text-xs text-destructive">Usa un color hexadecimal completo, por ejemplo #AA1A2E.</p>
-                      )}
-                    </div>
-                  </div>
-                )}
+                <div className="rounded-md border bg-muted/30 px-3 py-2 text-sm">Santos & Saucedo · logo y colores oficiales</div>
               </div>
 
               <div className="space-y-2">
@@ -355,6 +272,13 @@ export default function AdminPresentations() {
             {/* Elementos visuales */}
             <div className="border-t pt-5 space-y-4">
               <Label className="text-sm">Elementos visuales</Label>
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm">Incluir diapositiva de entrada</p>
+                  <p className="text-xs text-muted-foreground">Usa la portada institucional de Santos & Saucedo antes del contenido.</p>
+                </div>
+                <Switch checked={includeIntroSlide} onCheckedChange={setIncludeIntroSlide} data-testid="switch-intro-slide" />
+              </div>
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm">Incluir gráficas, diagramas e imágenes</p>

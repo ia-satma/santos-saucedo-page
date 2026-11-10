@@ -50,9 +50,9 @@ export interface Palette {
   divider: string; hairlineSoft: string; paper: string; ghostLight: string; ghostDark: string; darkHairline: string; white: string;
 }
 export const BASE_PALETTE: Palette = {
-  burgundy: '#202058', burgundyDeep: '#191a3e', burgundyTint: '#62627c', burgundyWash: '#f2f1ea',
-  nearBlack: '#1D1D1B', bodyGray: '#54565B', midGray: '#878A8E', softGray: '#BBBBBB',
-  divider: '#D9D8D7', hairlineSoft: '#E3E2E1', paper: '#F2F1F0', ghostLight: '#ECEBEA', ghostDark: '#262523', darkHairline: '#3A3A38', white: '#FFFFFF',
+  burgundy: '#BBF741', burgundyDeep: '#0B2850', burgundyTint: '#5E8F17', burgundyWash: '#EAF7C9',
+  nearBlack: '#0B2850', bodyGray: '#55566A', midGray: '#7C8192', softGray: '#C9CDD6',
+  divider: '#D9DEE8', hairlineSoft: '#E7EAF0', paper: '#F5F7FA', ghostLight: '#E9EDF3', ghostDark: '#123A63', darkHairline: '#28547D', white: '#FFFFFF',
 };
 
 export interface Theme extends Palette {

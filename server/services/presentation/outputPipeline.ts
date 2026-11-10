@@ -49,7 +49,8 @@ export class PresentationOutputPipeline {
       const formats = options.formats && options.formats.length
         ? options.formats
         : ['pptx', 'pdf', 'png'] as const;
-      const total = model.slides.length + 1;
+      const includeIntroSlide = options.includeIntroSlide !== false;
+      const total = model.slides.length + (includeIntroSlide ? 1 : 0);
       const slides = deps.buildSlides(
         model,
         theme,
@@ -57,6 +58,7 @@ export class PresentationOutputPipeline {
         documentKicker,
         closingFooter,
         contact,
+        includeIntroSlide,
       );
 
       let pptxUrl: string | null = null;
@@ -107,6 +109,7 @@ export class PresentationOutputPipeline {
           contact,
           closingFooter,
           total,
+          includeIntroSlide,
         );
         const storagePath = privatePresentationStoragePath(presentationId, 'pptx');
         if (!storagePath) throw new Error('Invalid private presentation identifier');
@@ -128,6 +131,7 @@ export class PresentationOutputPipeline {
         branding: options.branding,
         lang: options.lang,
         slideCount: total,
+        includeIntroSlide,
         pptxUrl,
         pdfUrl,
         pngUrls,

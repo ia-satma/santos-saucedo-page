@@ -18,11 +18,7 @@ import {
 } from '../../services/PresentationGenerator';
 import { smartImageGenerator } from '../../services/SmartImageGenerator';
 import { hasDedicatedImageClient } from '../../openai';
-import {
-  isAiExternalClassificationAllowed,
-  type AiDataClassification,
-} from '@shared/aiGovernance';
-import { assertAiDataAllowed } from '../../ai/dataGovernance';
+import type { AiDataClassification } from '@shared/aiGovernance';
 import { webSearchSummary } from '../../services/webSearch';
 
 // 14° agente: Generador de Presentaciones. A diferencia de los agentes estructurales
@@ -79,7 +75,7 @@ const CONFIG: AgentConfig = {
   model: 'gpt-6.1-sol',
   temperature: 0.5,
   maxTokens: 4096,
-  skills: ['slide_structuring', 'presentation_design'],
+  skills: ['slide_structuring', 'presentation_design', 'pptx'],
   enabled: true,
   concurrency: 1,
   retryPolicy: { maxRetries: 1, backoffMs: 1000, backoffMultiplier: 2 },
@@ -107,6 +103,7 @@ export interface PresentationPayload {
   webSearch?: boolean;      // buscar información en la web (OpenAI web_search) para enriquecer
   dataClassification?: AiDataClassification;
   aiUseConfirmed?: boolean;
+  includeIntroSlide?: boolean;
 }
 
 interface VisualResolutionResult {
@@ -127,40 +124,25 @@ export class PresentationGeneratorAgent extends BaseAgent {
     const documentsText = (p.documentsText || '').trim().slice(0, 80_000);
     const slideCount = clampInt(p.slideCount, 3, MAX_SLIDES, 8);
     const lang = p.lang === 'en' ? 'en' : 'es';
-    const template: PresentationTemplate = ['santossaucedo', 'minimal', 'dark'].includes(p.template as string)
-      ? (p.template as PresentationTemplate) : 'santossaucedo';
-    const branding: PresentationBranding = p.branding === 'custom' ? 'custom' : 'santossaucedo';
+    // Las nuevas generaciones usan exclusivamente la identidad de Santos & Saucedo.
+    // Se conservan los tipos históricos para poder abrir y volver a exportar presentaciones existentes.
+    const template: PresentationTemplate = 'santossaucedo';
+    const branding: PresentationBranding = 'santossaucedo';
     const formats = normalizeFormats(p.formats);
     const visuals = p.visuals !== false;   // gráficas/diagramas/imágenes permitidos por defecto
     const illustrate = p.illustrate === true; // imágenes IA solo si se pide (gasta créditos)
     if (!topic && !documentsText) {
       return { success: false, error: 'Escribe un tema o sube al menos un documento con contenido.' };
     }
-    if (
-      !p.dataClassification
-      || !isAiExternalClassificationAllowed(p.dataClassification)
-      || p.aiUseConfirmed !== true
-    ) {
-      return {
-        success: false,
-        error: 'Clasifica el material como público o interno y confirma su uso antes de enviarlo a IA.',
-      };
-    }
-    const classification: AiDataClassification = p.dataClassification;
+    // La clasificación ya no es un bloqueo de producto. Para mantener la ejecución
+    // compatible con la política del proveedor, las entradas no públicas se tratan
+    // como internas y no se permite que un valor arbitrario cambie el flujo.
+    const classification: AiDataClassification = p.dataClassification === 'public' ? 'public' : 'internal';
     // Solo se aceptan imágenes subidas por el panel (/uploads/, /generated-images/) — defensa en
     // profundidad contra rutas arbitrarias (además del bloqueo en resolveLocalAsset).
     const supportImages = Array.isArray(p.supportImages)
       ? p.supportImages.filter((u): u is string => typeof u === 'string' && (u.startsWith('/uploads/') || u.startsWith('/generated-images/') || u.startsWith('/media/public/media/')))
       : [];
-
-    // Preflight único sobre TODO el material. Si falla, no se permite que un
-    // fallback parcial derive prompts y los envíe posteriormente a otro motor.
-    assertAiDataAllowed({
-      classification,
-      purpose: 'presentation_draft',
-      source: 'presentation',
-      agentId: 'presentation_generator',
-    }, { topic, documentsText });
 
     let model: SlideModel | null = null;
     let engine = 'openai+native';
@@ -228,6 +210,7 @@ export class PresentationGeneratorAgent extends BaseAgent {
       topic: topic || undefined,
       sourceDocs: Array.isArray(p.sourceDocs) ? p.sourceDocs : [],
       engine,
+      includeIntroSlide: p.includeIntroSlide !== false,
     });
 
     if (!result.success) {

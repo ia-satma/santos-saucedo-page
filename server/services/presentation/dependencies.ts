@@ -40,6 +40,7 @@ export interface PresentationGeneratorDependencies {
     documentKicker: string,
     closingFooter: string,
     contact: { label: string; value: string }[],
+    includeIntroSlide?: boolean,
   ): RenderedSlide[];
   rasterize(build: SlideBuild): Promise<Buffer>;
   createPdf(pngBuffers: Buffer[]): Promise<Uint8Array>;
@@ -51,6 +52,7 @@ export interface PresentationGeneratorDependencies {
     contact: { label: string; value: string }[],
     closingFooter: string,
     total: number,
+    includeIntroSlide?: boolean,
   ): Promise<PptxGenJS>;
   embedFonts(filePath: string): Promise<void>;
   persistFiles(files: PrivatePresentationFile[]): Promise<{ persisted: boolean; objectNames: string[] }>;

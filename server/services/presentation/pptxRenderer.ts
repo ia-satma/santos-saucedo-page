@@ -19,7 +19,7 @@ export class PresentationPptxRenderer {
     return sharp(Buffer.from(svg)).png().toBuffer();
   }
 
-  async buildPptx(model: SlideModel, t: Theme, footer: string, docKicker: string, contact: { label: string; value: string }[], closingFooter: string, total: number): Promise<PptxGenJS> {
+  async buildPptx(model: SlideModel, t: Theme, footer: string, docKicker: string, contact: { label: string; value: string }[], closingFooter: string, total: number, includeIntroSlide = true): Promise<PptxGenJS> {
     const pptx = new PptxGenCtor();
     pptx.defineLayout({ name: 'VW', width: 13.333, height: 7.5 });
     pptx.layout = 'VW';
@@ -30,27 +30,31 @@ export class PresentationPptxRenderer {
     const burg = this.hx(t.burgundy), nb = this.hx(t.nearBlack), body = this.hx(t.bodyGray), mid = this.hx(t.midGray), div = this.hx(t.divider);
     const palette = chartPalette(t).map((c) => this.hx(c));
 
-    const addLogo = (_sl: PptxGenJS.Slide) => { /* la marca la lleva el wordmark de texto; sin logo gráfico (evita choque con el nº de diapositiva) */ };
+    const addLogo = (sl: PptxGenJS.Slide, darkBackground = false) => {
+      if (!t.logo || darkBackground) return;
+      sl.addImage({ path: t.logo.path, x: IN(1010), y: IN(34), w: IN(190), h: IN(52), sizing: { type: 'contain', x: IN(1010), y: IN(34), w: IN(190), h: IN(52) } });
+    };
     const stroke = (sl: PptxGenJS.Slide, xPx: number, yPx: number, wPx = 48, color = burg) => sl.addShape(pptx.ShapeType.rect, { x: IN(xPx), y: IN(yPx), w: IN(wPx), h: IN(3), fill: { color } });
     const hline = (sl: PptxGenJS.Slide, yPx: number, color = div, x1 = 80, x2 = 1200) => sl.addShape(pptx.ShapeType.line, { x: IN(x1), y: IN(yPx), w: IN(x2 - x1), h: 0, line: { color, width: 0.75 } });
     const kicker = (sl: PptxGenJS.Slide, xPx: number, yPx: number, s: string, color = burg, align: 'left' | 'right' = 'left') => sl.addText((s || '').toUpperCase(), { x: IN(xPx - (align === 'right' ? 300 : 0)), y: IN(yPx - 14), w: IN(align === 'right' ? 300 + (1200 - xPx) : 400), h: IN(18), align, fontFace: S.label, fontSize: 9.75, bold: true, charSpacing: 2, color });
     const footChrome = (sl: PptxGenJS.Slide, idx: number, darkbg = false) => {
       hline(sl, 664, darkbg ? this.hx(t.darkHairline) : div);
-      sl.addText('VON WOBESER Y SIERRA', { x: IN(80), y: IN(672), w: IN(400), h: IN(18), fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: darkbg ? this.hx(t.softGray) : mid });
+      sl.addText('SANTOS & SAUCEDO', { x: IN(80), y: IN(672), w: IN(400), h: IN(18), fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: darkbg ? this.hx(t.softGray) : mid });
       sl.addText(`${String(idx).padStart(2, '0')} / ${String(total).padStart(2, '0')}`, { x: IN(900), y: IN(672), w: IN(300), h: IN(18), align: 'right', fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: darkbg ? white.color : nb });
     };
 
-    // Portada
-    const cover = pptx.addSlide(); cover.background = white;
-    kicker(cover, 80, 112, docKicker);
-    cover.addText('VON WOBESER Y SIERRA', { x: IN(800), y: IN(98), w: IN(400), h: IN(18), align: 'right', fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: nb });
-    hline(cover, 128);
-    stroke(cover, 80, 300);
-    cover.addText(model.title, { x: IN(80), y: IN(330), w: IN(860), h: IN(220), fontFace: S.serif, fontSize: 54, color: nb, align: 'left', valign: 'top', lineSpacingMultiple: 1.05 });
-    if (model.subtitle) cover.addText(model.subtitle, { x: IN(80), y: IN(560), w: IN(660), h: IN(60), fontFace: S.body, fontSize: 15.75, color: body });
-    hline(cover, 632);
-    cover.addText(footer.toUpperCase(), { x: IN(80), y: IN(652), w: IN(500), h: IN(18), fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: mid });
-    addLogo(cover);
+    if (includeIntroSlide) {
+      const cover = pptx.addSlide(); cover.background = white;
+      kicker(cover, 80, 112, docKicker);
+      cover.addText('SANTOS & SAUCEDO', { x: IN(800), y: IN(98), w: IN(400), h: IN(18), align: 'right', fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: nb });
+      hline(cover, 128);
+      stroke(cover, 80, 300);
+      cover.addText(model.title, { x: IN(80), y: IN(330), w: IN(860), h: IN(220), fontFace: S.serif, fontSize: 54, color: nb, align: 'left', valign: 'top', lineSpacingMultiple: 1.05 });
+      if (model.subtitle) cover.addText(model.subtitle, { x: IN(80), y: IN(560), w: IN(660), h: IN(60), fontFace: S.body, fontSize: 15.75, color: body });
+      hline(cover, 632);
+      cover.addText(footer.toUpperCase(), { x: IN(80), y: IN(652), w: IN(500), h: IN(18), fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: mid });
+      addLogo(cover);
+    }
 
     const contentTitle = (sl: PptxGenJS.Slide, kk: string | undefined, title: string, sizePt = 34.5) => {
       stroke(sl, 80, 84); if (kk) kicker(sl, 80, 116, kk);
@@ -60,7 +64,7 @@ export class PresentationPptxRenderer {
 
     let sectionIdx = 0;
     for (let i = 0; i < model.slides.length; i++) {
-      const s = model.slides[i]; const idx = i + 2;
+      const s = model.slides[i]; const idx = i + (includeIntroSlide ? 2 : 1);
       const sl = pptx.addSlide();
 
       if (s.layout === 'section') {
@@ -71,7 +75,7 @@ export class PresentationPptxRenderer {
         sl.addText(s.title, { x: IN(80), y: IN(360), w: IN(900), h: IN(150), fontFace: S.serif, fontSize: 45, color: white.color, valign: 'top' });
       } else if (s.layout === 'closing') {
         sl.background = dark;
-        sl.addText('VON WOBESER Y SIERRA', { x: IN(80), y: IN(98), w: IN(400), h: IN(18), fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: white.color });
+        sl.addText('SANTOS & SAUCEDO', { x: IN(80), y: IN(98), w: IN(400), h: IN(18), fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: white.color });
         stroke(sl, 80, 300, 64); sl.addText((s.kicker || 'Contacto').toUpperCase(), { x: IN(80), y: IN(318), w: IN(400), h: IN(18), fontFace: S.label, fontSize: 9.75, bold: true, charSpacing: 2, color: burg });
         sl.addText(s.title || 'Gracias', { x: IN(80), y: IN(360), w: IN(900), h: IN(80), fontFace: S.serif, fontSize: 45, color: white.color });
         hline(sl, 470, this.hx(t.darkHairline));
@@ -156,7 +160,7 @@ export class PresentationPptxRenderer {
         footChrome(sl, idx);
       }
       if (s.notes) sl.addNotes(s.notes);
-      addLogo(sl);
+      addLogo(sl, s.layout === 'section' || s.layout === 'closing');
     }
     return pptx;
   }

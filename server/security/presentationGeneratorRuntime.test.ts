@@ -221,6 +221,22 @@ test('los tres temas producen SVG válidos y conservan el ritmo de fondos', () =
   }
 });
 
+test('la portada institucional puede omitirse sin alterar el cierre', () => {
+  const theme = buildTheme(presentationOptions('santossaucedo'), null);
+  const deck = buildSvgDeck(
+    REPRESENTATIVE_PRESENTATION,
+    theme,
+    FIRM,
+    DOCUMENT_KICKER,
+    CLOSING_FOOTER,
+    CONTACT,
+    false,
+  );
+  assert.equal(deck.length, REPRESENTATIVE_PRESENTATION.slides.length);
+  assert.match(deck[0].build.svg, /Panorama|Contexto|svg/);
+  assert.match(deck.at(-1)?.build.svg || '', /Contacto|Gracias|SANTOS &amp; SAUCEDO/i);
+});
+
 test('PNG conserva 1280×720 y contenido visible para portada, gráfica e imagen', async () => {
   const theme = buildTheme(presentationOptions('santossaucedo'), null);
   const deck = buildSvgDeck(
@@ -295,7 +311,7 @@ test('assets y color personalizado rechazan rutas y valores no permitidos', () =
     { ...presentationOptions('santossaucedo'), branding: 'custom', customPrimaryColor: '#123' },
     null,
   );
-  assert.equal(invalidColor.burgundy, '#202058');
+  assert.equal(invalidColor.burgundy, '#BBF741');
   assert.equal(validColor.burgundy, '#112233');
 });
 

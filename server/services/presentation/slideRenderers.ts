@@ -28,7 +28,7 @@ function renderCover(model: SlideModel, t: Theme, footer: string, docKicker: str
   const p: string[] = [];
   p.push(svgOpen(t, 'white'));
   p.push(kickerText(t, SPINE, 112, docKicker, t.burgundy));
-  p.push(text({ x: RIGHT, y: 112, size: 11, color: t.nearBlack, font: FONT.label, weight: 600, tracking: 1.5, anchor: 'end', lines: ['VON WOBESER Y SIERRA'] }));
+  p.push(text({ x: RIGHT, y: 112, size: 11, color: t.nearBlack, font: FONT.label, weight: 600, tracking: 1.5, anchor: 'end', lines: ['SANTOS & SAUCEDO'] }));
   p.push(line(SPINE, 128, RIGHT, 128, t.divider, 1));
   p.push(signatureStroke(t, SPINE, 300));
   const lines = wrap(model.title, 24).slice(0, 3);
@@ -214,7 +214,7 @@ function renderTwoColumn(s: SlideModelSlide, t: Theme, ground: Ground, idx: numb
 function renderClosing(s: SlideModelSlide, t: Theme, footer: string, contact: { label: string; value: string }[]): SlideBuild {
   const p: string[] = [];
   p.push(svgOpen(t, 'dark'));
-  p.push(text({ x: SPINE, y: 112, size: 11, color: t.white, font: FONT.label, weight: 600, tracking: 1.5, lines: ['VON WOBESER Y SIERRA'] }));
+  p.push(text({ x: SPINE, y: 112, size: 11, color: t.white, font: FONT.label, weight: 600, tracking: 1.5, lines: ['SANTOS & SAUCEDO'] }));
   p.push(signatureStroke(t, SPINE, 300, 64));
   p.push(kickerText(t, SPINE, 332, s.kicker || 'Contacto', t.burgundy));
   p.push(text({ x: SPINE, y: 400, size: 60, color: t.white, font: FONT.serif, weight: 400, tracking: -0.5, lines: wrap(s.title || 'Gracias', 24).slice(0, 1) }));
@@ -252,18 +252,19 @@ export function buildSvgDeck(
   documentKicker: string,
   closingFooter: string,
   contact: { label: string; value: string }[],
+  includeIntroSlide = true,
 ): RenderedSlide[] {
-  const total = model.slides.length + 1;
-  const builds: RenderedSlide[] = [
-    { build: renderCover(model, theme, footer, documentKicker), ground: 'white' },
-  ];
+  const total = model.slides.length + (includeIntroSlide ? 1 : 0);
+  const builds: RenderedSlide[] = includeIntroSlide
+    ? [{ build: renderCover(model, theme, footer, documentKicker), ground: 'white' }]
+    : [];
   let previousWasPaper = false;
   let sectionIndex = 0;
 
   model.slides.forEach((slide, index) => {
     const ground = groundFor(slide, theme, previousWasPaper);
     previousWasPaper = ground === 'paper';
-    const displayIndex = index + 2;
+    const displayIndex = index + (includeIntroSlide ? 2 : 1);
     let build: SlideBuild;
     switch (slide.layout) {
       case 'section': build = renderSection(slide, theme, ++sectionIndex); break;
