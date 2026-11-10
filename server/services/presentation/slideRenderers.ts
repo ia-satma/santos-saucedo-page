@@ -1,10 +1,11 @@
 import type { SlideModel, SlideModelSlide } from './contracts';
 import { resolveLocalAsset } from './assets';
+import { bookendArtwork, BRAND_SLOGAN, BRAND_LOCATION } from './bookendArtwork';
 import { renderChartSvg, renderDiagramSvg, type Box } from './dataVisuals';
 import {
   FONT, H, RIGHT, SPINE, W, type Theme, footerChrome, fullStopSquare,
   ghostNumeral, headerA, kickerText, line, microLabel, rect, signatureStroke,
-  svgFontDefs, text, wrap,
+  text, wrap,
 } from './designSystem';
 
 export type Ground = 'white' | 'paper' | 'dark';
@@ -15,32 +16,22 @@ function groundFill(t: Theme, g: Ground): string {
   return g === 'dark' ? t.nearBlack : g === 'paper' ? t.paper : t.white;
 }
 function svgOpen(t: Theme, g: Ground): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${svgFontDefs()}<rect width="${W}" height="${H}" fill="${groundFill(t, g)}"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${groundFill(t, g)}"/>`;
 }
 // SVG con fondo TRANSPARENTE — para diapositivas con imagen compuesta por sharp: el SVG va
 // ENCIMA de la imagen y solo pinta el texto/fondo parcial, dejando ver la foto donde es transparente.
 function svgOpenT(): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${svgFontDefs()}`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`;
 }
 
 
-function renderCover(model: SlideModel, t: Theme, footer: string, docKicker: string): SlideBuild {
-  const p: string[] = [];
-  p.push(svgOpen(t, 'white'));
-  p.push(kickerText(t, SPINE, 112, docKicker, t.burgundy));
-  p.push(text({ x: RIGHT, y: 112, size: 11, color: t.nearBlack, font: FONT.label, weight: 600, tracking: 1.5, anchor: 'end', lines: ['SANTOS & SAUCEDO'] }));
-  p.push(line(SPINE, 128, RIGHT, 128, t.divider, 1));
-  p.push(signatureStroke(t, SPINE, 300));
-  const lines = wrap(model.title, 24).slice(0, 3);
-  lines.forEach((ln, i) => p.push(text({ x: SPINE, y: 372 + i * 82, size: 76, color: t.nearBlack, font: FONT.serif, weight: 400, tracking: -0.5, lines: [ln] })));
-  // Punto burgundy tras la última línea (aprox. según ancho del texto).
-  const lastBaseline = 372 + (lines.length - 1) * 82;
-  const lastW = (lines[lines.length - 1] || '').length * 40;
-  p.push(fullStopSquare(t, Math.min(SPINE + lastW + 8, RIGHT - 20), lastBaseline, 76));
-  if (model.subtitle) p.push(text({ x: SPINE, y: 588, size: 21, color: t.bodyGray, font: FONT.body, lines: wrap(model.subtitle, 56).slice(0, 2), lh: 31 }));
-  p.push(line(SPINE, 632, RIGHT, 632, t.divider, 1));
-  p.push(microLabel(t, SPINE, 664, footer, t.midGray));
-  p.push(microLabel(t, RIGHT, 664, 'Confidencial', t.midGray, 'end'));
+function renderCover(model: SlideModel, t: Theme, _footer: string, docKicker: string): SlideBuild {
+  const p = [svgOpen(t, 'dark'), bookendArtwork(false)];
+  p.push(kickerText(t, 100, 82, docKicker, t.burgundy));
+  p.push(text({ x: 640, y: 409, size: 43, color: t.white, font: FONT.serif, anchor: 'middle', lines: wrap(model.title, 54).slice(0, 3), lh: 46 }));
+  if (model.subtitle) p.push(text({ x: 640, y: 535, size: 20, color: t.softGray, font: FONT.body, anchor: 'middle', lines: wrap(model.subtitle, 86).slice(0, 2), lh: 27 }));
+  p.push(kickerText(t, 640, 604, BRAND_SLOGAN, t.white, 'middle'));
+  p.push(text({ x: 640, y: 648, size: 20, color: t.softGray, font: FONT.body, anchor: 'middle', lines: [BRAND_LOCATION] }));
   p.push('</svg>');
   return { svg: p.join(''), image: null };
 }
@@ -68,7 +59,7 @@ function renderBullets(s: SlideModelSlide, t: Theme, ground: Ground, idx: number
   const pitch = n <= 4 ? 94 : n === 5 ? 78 : 64;
   let y = 262;
   items.forEach((b, i) => {
-    p.push(text({ x: SPINE, y, size: 22, color: t.burgundy, font: FONT.serif, weight: 400, lines: [String(i + 1).padStart(2, '0')] }));
+    p.push(text({ x: SPINE, y, size: 22, color: t.burgundyTint, font: FONT.serif, weight: 400, lines: [String(i + 1).padStart(2, '0')] }));
     p.push(text({ x: 132, y, size: 18, color: t.nearBlack, font: FONT.body, weight: 700, lines: wrap(b, 58).slice(0, 3), lh: 26 }));
     y += pitch;
   });
@@ -83,9 +74,9 @@ function renderStat(s: SlideModelSlide, t: Theme, ground: Ground, idx: number, t
   const figs = (s.stat?.figures || []).slice(0, 3);
   if (figs.length <= 1) {
     const f = figs[0] || { value: '', label: s.title };
-    if (s.kicker) p.push(kickerText(t, SPINE, 116, s.kicker, t.burgundy));
-    p.push(text({ x: SPINE, y: 430, size: 176, color: t.burgundy, font: FONT.serif, weight: 400, tracking: -3, lines: [f.value || ''] }));
-    if (f.unit) p.push(text({ x: SPINE + (f.value || '').length * 96 + 10, y: 360, size: 44, color: t.burgundy, font: FONT.serif, lines: [f.unit] }));
+    if (s.kicker) p.push(kickerText(t, SPINE, 116, s.kicker, t.burgundyTint));
+    p.push(text({ x: SPINE, y: 430, size: 176, color: t.burgundyTint, font: FONT.serif, weight: 400, tracking: -3, lines: [f.value || ''] }));
+    if (f.unit) p.push(text({ x: SPINE + (f.value || '').length * 96 + 10, y: 360, size: 44, color: t.burgundyTint, font: FONT.serif, lines: [f.unit] }));
     p.push(signatureStroke(t, SPINE, 468, 64));
     p.push(microLabel(t, SPINE, 500, f.label || s.title, t.midGray));
     if (f.note) p.push(text({ x: SPINE, y: 534, size: 17, color: t.bodyGray, font: FONT.body, lines: wrap(f.note, 60).slice(0, 2), lh: 26 }));
@@ -110,7 +101,7 @@ function renderStat(s: SlideModelSlide, t: Theme, ground: Ground, idx: number, t
 function renderChart(s: SlideModelSlide, t: Theme, idx: number, total: number): SlideBuild {
   const p: string[] = [];
   p.push(svgOpen(t, 'white'));
-  if (s.kicker) p.push(kickerText(t, SPINE, 116, s.kicker, t.burgundy));
+  if (s.kicker) p.push(kickerText(t, SPINE, 116, s.kicker, t.burgundyTint));
   p.push(text({ x: SPINE, y: 140, size: 34, color: t.nearBlack, font: FONT.serif, weight: 400, tracking: -0.2, lines: wrap(s.title, 42).slice(0, 1) }));
   p.push(line(SPINE, 200, RIGHT, 200, t.divider, 1));
   const chart = s.chart!;
@@ -118,7 +109,7 @@ function renderChart(s: SlideModelSlide, t: Theme, idx: number, total: number): 
   if (hasRail) {
     p.push(renderChartSvg(chart, { x: SPINE, y: 240, w: 740, h: 360 }, t));
     p.push(signatureStroke(t, 880, 240, 40));
-    p.push(kickerText(t, 880, 272, 'Lectura clave', t.burgundy));
+    p.push(kickerText(t, 880, 272, 'Lectura clave', t.burgundyTint));
     p.push(text({ x: 880, y: 372, size: 17, color: t.bodyGray, font: FONT.body, lines: wrap(chart.insight!, 34).slice(0, 6), lh: 26 }));
   } else {
     p.push(renderChartSvg(chart, { x: SPINE, y: 232, w: 1120, h: 372 }, t));
@@ -151,10 +142,10 @@ function renderImage(s: SlideModelSlide, t: Theme, idx: number, total: number): 
     p.push(svgOpenT());
     p.push(rect(0, 0, 640, 720, t.white)); // fondo blanco del lado de texto (deja ver la foto a la derecha)
     p.push(signatureStroke(t, SPINE, 140));
-    if (s.kicker) p.push(kickerText(t, SPINE, 172, s.kicker, t.burgundy));
+    if (s.kicker) p.push(kickerText(t, SPINE, 172, s.kicker, t.burgundyTint));
     p.push(text({ x: SPINE, y: 240, size: 40, color: t.nearBlack, font: FONT.serif, weight: 400, tracking: -0.3, lines: wrap(s.title, 24).slice(0, 2), lh: 46 }));
     let y = 336;
-    bullets.forEach((b) => { p.push(rect(SPINE, y - 14, 8, 8, t.burgundy)); const l = wrap(b, 34); p.push(text({ x: 112, y, size: 17, color: t.bodyGray, font: FONT.body, lines: l, lh: 26 })); y += l.length * 26 + 20; });
+    bullets.forEach((b) => { p.push(rect(SPINE, y - 14, 8, 8, t.burgundyTint)); const l = wrap(b, 34); p.push(text({ x: 112, y, size: 17, color: t.bodyGray, font: FONT.body, lines: l, lh: 26 })); y += l.length * 26 + 20; });
     // Footer solo en el lado blanco (no cruza la foto).
     p.push(line(SPINE, 664, 600, 664, t.divider, 1));
     p.push(microLabel(t, SPINE, 684, 'Santos & Saucedo', t.midGray));
@@ -202,32 +193,28 @@ function renderTwoColumn(s: SlideModelSlide, t: Theme, ground: Ground, idx: numb
   cols.forEach((col, ci) => {
     const x = xs[ci];
     p.push(line(x, 224, x + 520, 224, t.divider, 1));
-    if (col.heading) p.push(kickerText(t, x, 252, col.heading, t.burgundy));
+    if (col.heading) p.push(kickerText(t, x, 252, col.heading, t.burgundyTint));
     let y = 296;
-    (col.points || []).slice(0, 6).forEach((pt) => { p.push(rect(x, y - 12, 8, 8, t.burgundy)); const l = wrap(pt, 40); p.push(text({ x: x + 28, y, size: 17, color: t.bodyGray, font: FONT.body, lines: l, lh: 26 })); y += l.length * 26 + 18; });
+    (col.points || []).slice(0, 6).forEach((pt) => { p.push(rect(x, y - 12, 8, 8, t.burgundyTint)); const l = wrap(pt, 40); p.push(text({ x: x + 28, y, size: 17, color: t.bodyGray, font: FONT.body, lines: l, lh: 26 })); y += l.length * 26 + 18; });
   });
   footerChrome(p, t, idx, total);
   p.push('</svg>');
   return { svg: p.join(''), image: null };
 }
 
-function renderClosing(s: SlideModelSlide, t: Theme, footer: string, contact: { label: string; value: string }[]): SlideBuild {
-  const p: string[] = [];
-  p.push(svgOpen(t, 'dark'));
-  p.push(text({ x: SPINE, y: 112, size: 11, color: t.white, font: FONT.label, weight: 600, tracking: 1.5, lines: ['SANTOS & SAUCEDO'] }));
-  p.push(signatureStroke(t, SPINE, 300, 64));
-  p.push(kickerText(t, SPINE, 332, s.kicker || 'Contacto', t.burgundy));
-  p.push(text({ x: SPINE, y: 400, size: 60, color: t.white, font: FONT.serif, weight: 400, tracking: -0.5, lines: wrap(s.title || 'Gracias', 24).slice(0, 1) }));
-  p.push(fullStopSquare(t, Math.min(SPINE + (s.title || 'Gracias').length * 34, RIGHT - 20), 400, 60));
-  if (s.bullets && s.bullets[0]) p.push(text({ x: SPINE, y: 452, size: 21, color: t.white, opacity: 0.75, font: FONT.body, lines: wrap(s.bullets[0], 56).slice(0, 1) }));
-  p.push(line(SPINE, 470, RIGHT, 470, t.darkHairline, 1));
-  contact.slice(0, 4).forEach((c, i) => {
-    const x = i % 2 === 0 ? SPINE : 680;
-    const yBase = i < 2 ? 506 : 562;
-    p.push(microLabel(t, x, yBase, c.label, t.burgundy));
-    p.push(text({ x, y: yBase + 26, size: 16, color: t.white, font: FONT.body, lines: [c.value] }));
+function renderClosing(s: SlideModelSlide, t: Theme, _footer: string, contact: { label: string; value: string }[]): SlideBuild {
+  const p = [svgOpen(t, 'dark'), bookendArtwork(true)];
+  p.push(kickerText(t, 100, 207, s.kicker || 'Contacto', t.burgundy));
+  const title = s.title || 'Gracias';
+  const titleSize = title.length > 12 ? 63 : 110;
+  p.push(text({ x: 100, y: 342, size: titleSize, color: t.white, font: FONT.serif, lines: [title] }));
+  contact.slice(0, 5).forEach((c, i) => {
+    const y = 122 + i * 77;
+    p.push(microLabel(t, 685, y, c.label, t.burgundy));
+    p.push(text({ x: 685, y: y + 24, size: 19, color: t.white, font: FONT.body, lines: wrap(c.value, 51).slice(0, 2), lh: 23 }));
   });
-  p.push(microLabel(t, SPINE, 684, footer, t.softGray));
+  p.push(kickerText(t, RIGHT, 629, BRAND_SLOGAN, t.white, 'end'));
+  p.push(text({ x: RIGHT, y: 659, size: 16, color: t.softGray, font: FONT.body, anchor: 'end', lines: [BRAND_LOCATION] }));
   p.push('</svg>');
   return { svg: p.join(''), image: null };
 }
@@ -256,7 +243,7 @@ export function buildSvgDeck(
 ): RenderedSlide[] {
   const total = model.slides.length + (includeIntroSlide ? 1 : 0);
   const builds: RenderedSlide[] = includeIntroSlide
-    ? [{ build: renderCover(model, theme, footer, documentKicker), ground: 'white' }]
+    ? [{ build: renderCover(model, theme, footer, documentKicker), ground: 'dark' }]
     : [];
   let previousWasPaper = false;
   let sectionIndex = 0;

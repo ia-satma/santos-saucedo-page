@@ -2,7 +2,13 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import JSZip from 'jszip';
-import { TYPOGRAPHY, TYPOGRAPHY_ASSETS } from '../../shared/typography';
+export const PRESENTATION_BRAND_DIR = path.join(process.cwd(), 'attached_assets', 'ss26', 'presentation');
+export const PRESENTATION_FONT = { serif: 'Lora', body: 'DM Sans', label: 'DM Sans' };
+export const PRESENTATION_FONT_FILES = {
+  serifRegular: path.join(PRESENTATION_BRAND_DIR, 'Lora.ttf'),
+  bodyRegular: path.join(PRESENTATION_BRAND_DIR, 'DMSans-400.ttf'),
+  bodyBold: path.join(PRESENTATION_BRAND_DIR, 'DMSans-700.ttf'),
+};
 
 type EmbeddedFontStyle = 'regular' | 'bold' | 'italic' | 'boldItalic';
 
@@ -12,26 +18,23 @@ const PRESENTATION_FONTS: Array<{
   styles: Record<EmbeddedFontStyle, string>;
 }> = [
   {
-    family: TYPOGRAPHY.title,
+    family: PRESENTATION_FONT.serif,
     pitchFamily: '18',
     styles: {
-      regular: TYPOGRAPHY_ASSETS.gelasioRegular,
-      bold: TYPOGRAPHY_ASSETS.gelasioBold,
-      italic: TYPOGRAPHY_ASSETS.gelasioItalic,
-      boldItalic: TYPOGRAPHY_ASSETS.gelasioBoldItalic,
+      regular: PRESENTATION_FONT_FILES.serifRegular,
+      bold: PRESENTATION_FONT_FILES.serifRegular,
+      italic: PRESENTATION_FONT_FILES.serifRegular,
+      boldItalic: PRESENTATION_FONT_FILES.serifRegular,
     },
   },
   {
-    family: TYPOGRAPHY.body,
+    family: PRESENTATION_FONT.body,
     pitchFamily: '34',
     styles: {
-      regular: TYPOGRAPHY_ASSETS.interRegular,
-      // PowerPoint conserva las cuatro referencias OOXML, pero el contenido
-      // nuevo reutiliza Regular/Italic en las variantes bold para cumplir el
-      // juego de fuentes Geomanist suministrado sin sustituciones externas.
-      bold: TYPOGRAPHY_ASSETS.interRegular,
-      italic: TYPOGRAPHY_ASSETS.interItalic,
-      boldItalic: TYPOGRAPHY_ASSETS.interItalic,
+      regular: PRESENTATION_FONT_FILES.bodyRegular,
+      bold: PRESENTATION_FONT_FILES.bodyBold,
+      italic: PRESENTATION_FONT_FILES.bodyRegular,
+      boldItalic: PRESENTATION_FONT_FILES.bodyBold,
     },
   },
 ];

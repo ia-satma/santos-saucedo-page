@@ -50,8 +50,8 @@ function sha256(value: string | Buffer): string {
 
 function normalizeSvg(value: string): string {
   return value.replace(
-    /data:font\/ttf;base64,[A-Za-z0-9+/=]+/g,
-    'data:font/ttf;base64,<font>',
+    /data:(?:font\/ttf|image\/png);base64,[A-Za-z0-9+/=]+/g,
+    '<embedded-asset>',
   );
 }
 
@@ -67,8 +67,8 @@ async function assertPortablePng(
   ]);
 
   assert.equal(metadata.format, 'png');
-  assert.equal(metadata.width, 1280);
-  assert.equal(metadata.height, 720);
+  assert.equal(metadata.width, 1920);
+  assert.equal(metadata.height, 1080);
   assert.equal(metadata.space, 'srgb');
   assert.equal(metadata.depth, 'uchar');
   assert.equal(metadata.channels, 4);
@@ -91,6 +91,7 @@ function generatedPresentation(overrides: Partial<GeneratedPresentation> = {}): 
     branding: 'santossaucedo',
     lang: 'es',
     slideCount: 2,
+    includeIntroSlide: true,
     pptxUrl: null,
     pdfUrl: null,
     pngUrls: [],
@@ -176,6 +177,7 @@ function createPipelineHarness() {
         pdfUrl: input.pdfUrl ?? null,
         pngUrls: input.pngUrls || [],
         slideCount: input.slideCount ?? 0,
+        includeIntroSlide: input.includeIntroSlide ?? true,
       });
     },
     isPersistentStorageUnavailable: () => false,
@@ -194,9 +196,9 @@ function createPipelineHarness() {
 
 test('los tres temas producen SVG válidos y conservan el ritmo de fondos', () => {
   const expectedGrounds = {
-    santossaucedo: ['white', 'dark', 'white', 'paper', 'white', 'white', 'white', 'paper', 'white', 'dark'],
-    minimal: ['white', 'dark', 'white', 'white', 'white', 'white', 'white', 'paper', 'white', 'dark'],
-    dark: ['white', 'dark', 'white', 'paper', 'white', 'white', 'white', 'paper', 'white', 'dark'],
+    santossaucedo: ['dark', 'dark', 'white', 'paper', 'white', 'white', 'white', 'paper', 'white', 'dark'],
+    minimal: ['dark', 'dark', 'white', 'white', 'white', 'white', 'white', 'paper', 'white', 'dark'],
+    dark: ['dark', 'dark', 'white', 'paper', 'white', 'white', 'white', 'paper', 'white', 'dark'],
   } as const;
 
   for (const template of ['santossaucedo', 'minimal', 'dark'] as const) {
@@ -233,11 +235,11 @@ test('la portada institucional puede omitirse sin alterar el cierre', () => {
     false,
   );
   assert.equal(deck.length, REPRESENTATIVE_PRESENTATION.slides.length);
-  assert.match(deck[0].build.svg, /Panorama|Contexto|svg/);
-  assert.match(deck.at(-1)?.build.svg || '', /Contacto|Gracias|SANTOS &amp; SAUCEDO/i);
+  assert.doesNotMatch(normalizeSvg(deck[0].build.svg), /institutional/);
+  assert.match(deck.at(-1)?.build.svg || '', /Gracias/);
 });
 
-test('PNG conserva 1280×720 y contenido visible para portada, gráfica e imagen', async () => {
+test('PNG conserva 1920×1080 y contenido visible para portada, gráfica e imagen', async () => {
   const theme = buildTheme(presentationOptions('santossaucedo'), null);
   const deck = buildSvgDeck(
     REPRESENTATIVE_PRESENTATION,
@@ -336,7 +338,7 @@ test('una imagen inexistente degrada de forma segura a viñetas', () => {
   assert.match(deck[6].build.svg, /Coordinación multidisciplinaria/);
 });
 
-test('PDF se construye desde PNG visibles con páginas 1280×720', async () => {
+test('PDF se construye desde PNG visibles con páginas 1920×1080', async () => {
   const theme = buildTheme(presentationOptions('santossaucedo'), null);
   const deck = buildSvgDeck(
     REPRESENTATIVE_PRESENTATION,
@@ -354,7 +356,7 @@ test('PDF se construye desde PNG visibles con páginas 1280×720', async () => {
   assert.equal(pdf.getPageCount(), 3);
   assert.deepEqual(
     pdf.getPages().map((page) => page.getSize()),
-    Array.from({ length: 3 }, () => ({ width: 1280, height: 720 })),
+    Array.from({ length: 3 }, () => ({ width: 1920, height: 1080 })),
   );
   await Promise.all([
     assertPortablePng(pngs[0], 20_000, 0.2),
@@ -398,11 +400,11 @@ test('PPTX conserva diapositivas, notas, chart nativo, imágenes y fuentes incru
     const slides = (await Promise.all(slideNames.map((name) => zip.file(name)!.async('string')))).join('\n');
     const notes = (await Promise.all(noteNames.map((name) => zip.file(name)!.async('string')))).join('\n');
     const presentation = await zip.file('ppt/presentation.xml')!.async('string');
-    assert.match(slides, /typeface="Publico Text"/);
-    assert.match(slides, /typeface="Geomanist"/);
+    assert.match(slides, /typeface="Lora"/);
+    assert.match(slides, /typeface="DM Sans"/);
     assert.match(notes, /Nota de sección para el expositor/);
-    assert.match(presentation, /typeface="Publico Text"/);
-    assert.match(presentation, /typeface="Geomanist"/);
+    assert.match(presentation, /typeface="Lora"/);
+    assert.match(presentation, /typeface="DM Sans"/);
 
     for (const expectedText of [
       'Panorama jurídico 2026',
@@ -557,4 +559,29 @@ test('un modelo vacío se rechaza antes de tocar archivos o dependencias', async
     error: 'El modelo de diapositivas está vacío o es inválido.',
   });
   assert.deepEqual(harness.operations, []);
+});
+
+test('PPTX, PDF y PNG conservan el mismo cierre sin portada', async () => {
+  const options = presentationOptions('santossaucedo');
+  const theme = buildTheme(options, null);
+  const model: SlideModel = {
+    title: 'Portada omitida',
+    slides: [
+      { layout: 'bullets', title: 'Contenido inicial', bullets: ['Una decisión'] },
+      { layout: 'closing', title: 'Gracias' },
+    ],
+  };
+  const deck = buildSvgDeck(model, theme, FIRM, DOCUMENT_KICKER, CLOSING_FOOTER, CONTACT, false);
+  const pngs = await Promise.all(deck.map(({ build }) => rasterizeSlide(build, () => {})));
+  assert.equal(pngs.length, 2);
+  await assertPortablePng(pngs[1], 20_000, 0.2);
+  const pdf = await PDFDocument.load(await createPdfFromPngs(pngs));
+  assert.equal(pdf.getPageCount(), 2);
+  const pptx = await new PresentationPptxRenderer().buildPptx(
+    model, theme, FIRM, DOCUMENT_KICKER, CONTACT, CLOSING_FOOTER, 2, false,
+  );
+  const zip = await JSZip.loadAsync(await pptx.write({ outputType: 'nodebuffer' }) as Buffer);
+  assert.match(await zip.file('ppt/slides/slide1.xml')!.async('string'), /Contenido inicial/);
+  assert.match(await zip.file('ppt/slides/slide2.xml')!.async('string'), /Gracias/);
+  assert.equal(zip.file('ppt/slides/slide3.xml'), null);
 });

@@ -670,3 +670,38 @@ test('presentation illustration request creates image slides even when the text 
     llmMock.mock.restore();
   }
 });
+
+test('presentation uses a private local fallback for protected inputs and preserves intro preference', async () => {
+  const llm = mock.method(
+    presentationGeneratorAgent as unknown as { callLLM: (...args: unknown[]) => Promise<string> },
+    'callLLM',
+    async () => { throw new Error('unexpected provider call'); },
+  );
+  const image = mock.method(smartImageGenerator, 'generateImage', async () => {
+    throw new Error('unexpected image provider call');
+  });
+  const render = mock.method(presentationGenerator, 'renderAndSave', async (model, options) => {
+    assert.equal(options.includeIntroSlide, false);
+    assert.equal(model.slides.at(-1)?.layout, 'closing');
+    return { success: true };
+  });
+
+  try {
+    const result = await presentationGeneratorAgent.execute(context('presentation_generator'), {
+      topic: 'Revisión de expedientes',
+      dataClassification: 'privileged',
+      includeIntroSlide: false,
+      illustrate: true,
+      webSearch: true,
+    });
+    assert.equal(result.success, true);
+    assert.equal(result.data?.usedFallback, true);
+    assert.equal(llm.mock.callCount(), 0);
+    assert.equal(image.mock.callCount(), 0);
+    assert.equal(render.mock.callCount(), 1);
+  } finally {
+    render.mock.restore();
+    image.mock.restore();
+    llm.mock.restore();
+  }
+});

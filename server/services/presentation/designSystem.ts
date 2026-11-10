@@ -1,6 +1,5 @@
-import * as fs from 'fs';
-import * as path from 'node:path';
-import { TYPOGRAPHY, TYPOGRAPHY_ASSETS } from '../../../shared/typography';
+import { Resvg } from '@resvg/resvg-js';
+import { PRESENTATION_FONT, PRESENTATION_FONT_FILES } from '../presentationFonts';
 import type { PresentationTemplate, RenderOptions } from './contracts';
 
 export const W = 1280;
@@ -10,38 +9,21 @@ export const RIGHT = 1200;        // borde derecho de contenido
 
 // Tokens de color, tipografía y fuentes
 // ============================================================
-export const FONT = {
-  serif: TYPOGRAPHY.title,
-  body: TYPOGRAPHY.body,
-  label: TYPOGRAPHY.body,
-};
+export const OUTPUT_WIDTH = 1920;
+export const OUTPUT_HEIGHT = 1080;
+export const FONT = PRESENTATION_FONT;
 
-let svgFontDefsCache: string | null = null;
-
-export function svgFontDefs(): string {
-  if (svgFontDefsCache) return svgFontDefsCache;
-  const data = (filePath: string) => {
-    const extension = path.extname(filePath).toLowerCase();
-    const woff2 = extension === '.woff2';
-    return {
-      encoded: fs.readFileSync(filePath).toString('base64'),
-      mime: woff2 ? 'font/woff2' : 'font/ttf',
-      format: woff2 ? 'woff2' : 'truetype',
-    };
-  };
-  const regular = data(TYPOGRAPHY_ASSETS.gelasioRegular);
-  const bold = data(TYPOGRAPHY_ASSETS.gelasioBold);
-  const body = data(TYPOGRAPHY_ASSETS.interRegular);
-  const bodyItalic = data(TYPOGRAPHY_ASSETS.interItalic);
-  svgFontDefsCache = `<defs><style><![CDATA[
-@font-face{font-family:'Publico Text';src:url(data:${regular.mime};base64,${regular.encoded}) format('${regular.format}');font-style:normal;font-weight:400}
-@font-face{font-family:'Publico Text';src:url(data:${bold.mime};base64,${bold.encoded}) format('${bold.format}');font-style:normal;font-weight:700}
-@font-face{font-family:'Geomanist';src:url(data:${body.mime};base64,${body.encoded}) format('${body.format}');font-style:normal;font-weight:400}
-@font-face{font-family:'Geomanist';src:url(data:${body.mime};base64,${body.encoded}) format('${body.format}');font-style:normal;font-weight:500}
-@font-face{font-family:'Geomanist';src:url(data:${bodyItalic.mime};base64,${bodyItalic.encoded}) format('${bodyItalic.format}');font-style:italic;font-weight:400}
-@font-face{font-family:'Geomanist';src:url(data:${bodyItalic.mime};base64,${bodyItalic.encoded}) format('${bodyItalic.format}');font-style:italic;font-weight:500}
-]]></style></defs>`;
-  return svgFontDefsCache;
+export function renderPresentationSvg(svg: string, outputWidth: number): Buffer {
+  return new Resvg(svg, {
+    fitTo: { mode: 'width', value: outputWidth },
+    font: {
+      loadSystemFonts: false,
+      fontFiles: Object.values(PRESENTATION_FONT_FILES),
+      defaultFontFamily: FONT.body,
+      serifFamily: FONT.serif,
+      sansSerifFamily: FONT.body,
+    },
+  }).render().asPng();
 }
 
 export interface Palette {
@@ -83,7 +65,7 @@ export function buildTheme(opts: RenderOptions, logo: { path: string; aspect: nu
     showGhost: opts.template !== 'minimal',
     paperBreathers: opts.template !== 'minimal',
     logo,
-    pptxFontSerif: TYPOGRAPHY.title, pptxFontBody: TYPOGRAPHY.body, pptxFontLabel: TYPOGRAPHY.body,
+    pptxFontSerif: FONT.serif, pptxFontBody: FONT.body, pptxFontLabel: FONT.label,
   };
 }
 
@@ -112,7 +94,7 @@ export function text(t: Txt): string {
   const op = t.opacity != null && t.opacity !== 1 ? ` fill-opacity="${t.opacity}"` : '';
   const tspans = t.lines.map((ln, i) => `<tspan x="${r1(t.x)}" dy="${i === 0 ? 0 : lh}">${esc(ln)}</tspan>`).join('');
   const requestedWeight = t.weight ?? 400;
-  const weight = t.font === TYPOGRAPHY.body ? Math.min(500, Math.max(400, requestedWeight)) : requestedWeight;
+  const weight = requestedWeight >= 600 ? 700 : 400;
   return `<text x="${r1(t.x)}" y="${r1(t.y)}" font-family="${t.font}" font-size="${t.size}" fill="${t.color}" font-weight="${weight}" text-anchor="${anchor}"${ls}${op}>${tspans}</text>`;
 }
 // Envuelve por conteo aproximado de caracteres (SVG <text> no auto-envuelve).
@@ -133,7 +115,7 @@ export function wrap(s: string, maxChars: number): string[] {
 export function signatureStroke(t: Theme, x: number, y: number, w = 48, color?: string): string {
   return rect(x, y, w, 3, color ?? t.burgundy); // horizontal (ancho>=alto), respeta la regla de marca
 }
-export function kickerText(t: Theme, x: number, baseline: number, s: string, color: string, anchor: 'start' | 'end' = 'start'): string {
+export function kickerText(t: Theme, x: number, baseline: number, s: string, color: string, anchor: 'start' | 'middle' | 'end' = 'start'): string {
   return text({ x, y: baseline, size: 13, color, font: FONT.label, weight: 700, tracking: 2.4, anchor, lines: [(s || '').toUpperCase()] });
 }
 export function microLabel(t: Theme, x: number, baseline: number, s: string, color: string, anchor: 'start' | 'end' = 'start'): string {
@@ -152,7 +134,7 @@ export function ghostNumeral(t: Theme, n: number, ground: 'white' | 'paper' | 'd
 // Header Pattern A: trazo + kicker + título + hairline. Devuelve la Y de inicio de contenido.
 export function headerA(parts: string[], t: Theme, kicker: string | undefined, title: string, ground: 'white' | 'paper', titleSize = 46, maxChars = 30): number {
   parts.push(signatureStroke(t, SPINE, 84));
-  if (kicker) parts.push(kickerText(t, SPINE, 116, kicker, t.burgundy));
+  if (kicker) parts.push(kickerText(t, SPINE, 116, kicker, t.burgundyTint));
   const lines = wrap(title, maxChars).slice(0, 2);
   const lh = Math.round(titleSize * 1.13);
   const firstBaseline = lines.length > 1 ? 160 : 168;

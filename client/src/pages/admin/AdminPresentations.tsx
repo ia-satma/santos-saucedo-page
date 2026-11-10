@@ -31,6 +31,7 @@ interface PresentationRow {
   branding: string;
   lang: string;
   slideCount: number | null;
+  includeIntroSlide?: boolean;
   pptxUrl: string | null;
   pdfUrl: string | null;
   pngUrls: string[] | null;
@@ -62,8 +63,6 @@ export default function AdminPresentations() {
   const [docs, setDocs] = useState<UploadedDoc[]>([]);
   const [slideCount, setSlideCount] = useState(8);
   const [lang, setLang] = useState<"es" | "en">("es");
-  const [template] = useState<"santossaucedo">("santossaucedo");
-  const [branding] = useState<"santossaucedo">("santossaucedo");
   const [formats, setFormats] = useState<Record<Format, boolean>>({ pptx: true, pdf: true, png: true });
   const [visuals, setVisuals] = useState(true);
   const [illustrate, setIllustrate] = useState(false);
@@ -123,10 +122,6 @@ export default function AdminPresentations() {
         docs,
         slideCount,
         lang,
-        template,
-        branding,
-        customLogoUrl: null,
-        customPrimaryColor: null,
         formats: selectedFormats,
         visuals,
         illustrate: visuals && illustrate,
@@ -157,8 +152,7 @@ export default function AdminPresentations() {
   const canGenerate =
     !generateMutation.isPending &&
     (topic.trim().length > 0 || docs.length > 0) &&
-    (formats.pptx || formats.pdf || formats.png) &&
-    branding === "santossaucedo";
+    (formats.pptx || formats.pdf || formats.png);
 
   if (authLoading) {
     return (
@@ -179,7 +173,7 @@ export default function AdminPresentations() {
         />
 
         <AdminPageHelp pageId="presentations">
-          Escribe un tema (o súbele documentos .pdf/.docx/.pptx/.tex), elige plantilla y formato, y presiona
+          Escribe un tema (o súbele documentos .pdf/.docx/.pptx/.tex), elige los formatos, y presiona
           "Generar presentación". La IA arma las diapositivas y el sistema las exporta con el logo y los colores de la
           firma. Si aún no hay créditos de IA disponibles, se genera un borrador con un esquema automático para que
           puedas probar la descarga. El historial es permanente y ningún usuario puede borrarlo. Los archivos .doc/.ppt antiguos deben convertirse a .docx/.pptx.
@@ -194,9 +188,7 @@ export default function AdminPresentations() {
                 <Textarea
                   id="pres-topic"
                   value={topic}
-                  onChange={(e) => {
-                    setTopic(e.target.value);
-                  }}
+                  onChange={(e) => setTopic(e.target.value)}
                   placeholder="Ej. Panorama de la reforma en competencia económica en México 2026, para clientes corporativos…"
                   rows={5}
                   data-testid="input-topic"
@@ -208,9 +200,7 @@ export default function AdminPresentations() {
                 <Label>Documentos de insumo (opcional)</Label>
                 <DocumentUpload
                   docs={docs}
-                  onChange={(nextDocs) => {
-                    setDocs(nextDocs);
-                  }}
+                  onChange={setDocs}
                 />
               </div>
             </div>
@@ -274,10 +264,10 @@ export default function AdminPresentations() {
               <Label className="text-sm">Elementos visuales</Label>
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-sm">Incluir diapositiva de entrada</p>
+                  <Label htmlFor="pres-intro">Incluir diapositiva de entrada</Label>
                   <p className="text-xs text-muted-foreground">Usa la portada institucional de Santos & Saucedo antes del contenido.</p>
                 </div>
-                <Switch checked={includeIntroSlide} onCheckedChange={setIncludeIntroSlide} data-testid="switch-intro-slide" />
+                <Switch id="pres-intro" checked={includeIntroSlide} onCheckedChange={setIncludeIntroSlide} data-testid="switch-intro-slide" />
               </div>
               <div className="flex items-center justify-between gap-4">
                 <div>
@@ -467,7 +457,7 @@ export default function AdminPresentations() {
         )}
       </main>
 
-      {/* Vista previa in-panel: muestra las PNG por diapositiva (índice 0 = portada). */}
+      {/* Vista previa privada de las diapositivas conservadas. */}
       <Dialog open={!!previewId} onOpenChange={(open) => !open && setPreviewId(null)}>
         <DialogContent className="admin-asset-dialog max-w-5xl max-h-[90dvh] overflow-y-auto">
           <DialogHeader>
@@ -492,15 +482,16 @@ export default function AdminPresentations() {
                 </p>
               );
             }
+            const slideLabel = (index: number) => index === 0 && pre?.includeIntroSlide !== false ? "Portada" : `Diapositiva ${index + 1}`;
             return (
               <div className="space-y-4 py-1">
                 {availablePngs.map(({ url, index }) => (
                   <div key={url} className="space-y-1">
                     <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                      {index === 0 ? "Portada" : `Diapositiva ${index}`}
+                      {slideLabel(index)}
                     </p>
-                    <PrivateAssetPreview url={url} label={index === 0 ? "Portada" : `Diapositiva ${index}`} />
-                    <AssetDownloadButton url={`${url}?download=1`} filename={`presentacion-${pre!.id}-diapositiva-${index + 1}.png`} testId={`download-slide-${index}`}>Descargar {index === 0 ? "portada" : `diapositiva ${index}`}</AssetDownloadButton>
+                    <PrivateAssetPreview url={url} label={slideLabel(index)} />
+                    <AssetDownloadButton url={`${url}?download=1`} filename={`presentacion-${pre!.id}-diapositiva-${index + 1}.png`} testId={`download-slide-${index}`}>Descargar {slideLabel(index).toLowerCase()}</AssetDownloadButton>
                   </div>
                 ))}
               </div>

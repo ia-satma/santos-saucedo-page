@@ -1,33 +1,33 @@
-import sharp from 'sharp';
 import PptxGenJS from 'pptxgenjs';
-import { TYPOGRAPHY } from '../../../shared/typography';
+import { BRAND_LOCATION, BRAND_SLOGAN, bookendArtworkPng } from './bookendArtwork';
 import type { SlideChart, SlideDiagram, SlideModel } from './contracts';
 import { resolveLocalAsset } from './assets';
 import { chartPalette, renderDiagramSvg } from './dataVisuals';
-import { svgFontDefs, type Theme } from './designSystem';
+import { FONT, renderPresentationSvg, type Theme } from './designSystem';
 
 // pptxgenjs es dual CJS/ESM; bajo esbuild/tsx el default puede venir como { default: class }.
 const PptxGenCtor = ((PptxGenJS as any)?.default ?? PptxGenJS) as typeof PptxGenJS;
-const FONT_PPTX = { serif: TYPOGRAPHY.title, body: TYPOGRAPHY.body, label: TYPOGRAPHY.body };
+
 
 export class PresentationPptxRenderer {
   private hx(c: string): string { return c.replace('#', ''); }
 
-  private async diagramPng(d: SlideDiagram, t: Theme): Promise<Buffer> {
+  private diagramPng(d: SlideDiagram, t: Theme): Buffer {
     const wPx = 1180, hPx = 470;
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${wPx}" height="${hPx}">${svgFontDefs()}<rect width="${wPx}" height="${hPx}" fill="${t.white}"/>${renderDiagramSvg(d, { x: 24, y: 24, w: wPx - 48, h: hPx - 48 }, t)}</svg>`;
-    return sharp(Buffer.from(svg)).png().toBuffer();
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${wPx}" height="${hPx}"><rect width="${wPx}" height="${hPx}" fill="${t.white}"/>${renderDiagramSvg(d, { x: 24, y: 24, w: wPx - 48, h: hPx - 48 }, t)}</svg>`;
+    return renderPresentationSvg(svg, wPx);
   }
 
   async buildPptx(model: SlideModel, t: Theme, footer: string, docKicker: string, contact: { label: string; value: string }[], closingFooter: string, total: number, includeIntroSlide = true): Promise<PptxGenJS> {
     const pptx = new PptxGenCtor();
-    pptx.defineLayout({ name: 'VW', width: 13.333, height: 7.5 });
-    pptx.layout = 'VW';
+    pptx.layout = 'LAYOUT_WIDE';
+    pptx.author = 'Santos & Saucedo';
+    pptx.title = model.title;
     const IN = (px: number) => px / 96;
-    const PT = (px: number) => px * 0.75;
-    const S = FONT_PPTX;
+    const S = FONT;
     const white = { color: this.hx(t.white) }, dark = { color: this.hx(t.nearBlack) }, paper = { color: this.hx(t.paper) };
     const burg = this.hx(t.burgundy), nb = this.hx(t.nearBlack), body = this.hx(t.bodyGray), mid = this.hx(t.midGray), div = this.hx(t.divider);
+    const darkAccent = this.hx(t.burgundyTint);
     const palette = chartPalette(t).map((c) => this.hx(c));
 
     const addLogo = (sl: PptxGenJS.Slide, darkBackground = false) => {
@@ -36,24 +36,30 @@ export class PresentationPptxRenderer {
     };
     const stroke = (sl: PptxGenJS.Slide, xPx: number, yPx: number, wPx = 48, color = burg) => sl.addShape(pptx.ShapeType.rect, { x: IN(xPx), y: IN(yPx), w: IN(wPx), h: IN(3), fill: { color } });
     const hline = (sl: PptxGenJS.Slide, yPx: number, color = div, x1 = 80, x2 = 1200) => sl.addShape(pptx.ShapeType.line, { x: IN(x1), y: IN(yPx), w: IN(x2 - x1), h: 0, line: { color, width: 0.75 } });
-    const kicker = (sl: PptxGenJS.Slide, xPx: number, yPx: number, s: string, color = burg, align: 'left' | 'right' = 'left') => sl.addText((s || '').toUpperCase(), { x: IN(xPx - (align === 'right' ? 300 : 0)), y: IN(yPx - 14), w: IN(align === 'right' ? 300 + (1200 - xPx) : 400), h: IN(18), align, fontFace: S.label, fontSize: 9.75, bold: true, charSpacing: 2, color });
+    const kicker = (sl: PptxGenJS.Slide, xPx: number, yPx: number, s: string, color = darkAccent, align: 'left' | 'right' = 'left') => sl.addText((s || '').toUpperCase(), { x: IN(xPx - (align === 'right' ? 300 : 0)), y: IN(yPx - 14), w: IN(align === 'right' ? 300 + (1200 - xPx) : 400), h: IN(18), align, fontFace: S.label, fontSize: 9.75, bold: true, charSpacing: 2, color });
     const footChrome = (sl: PptxGenJS.Slide, idx: number, darkbg = false) => {
       hline(sl, 664, darkbg ? this.hx(t.darkHairline) : div);
       sl.addText('SANTOS & SAUCEDO', { x: IN(80), y: IN(672), w: IN(400), h: IN(18), fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: darkbg ? this.hx(t.softGray) : mid });
       sl.addText(`${String(idx).padStart(2, '0')} / ${String(total).padStart(2, '0')}`, { x: IN(900), y: IN(672), w: IN(300), h: IN(18), align: 'right', fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: darkbg ? white.color : nb });
     };
 
+    const setBookendArtwork = (slide: PptxGenJS.Slide, closing: boolean) => {
+      const png = bookendArtworkPng(closing);
+      slide.background = { data: `image/png;base64,${png.toString('base64')}` };
+    };
+    const bookendText = (
+      slide: PptxGenJS.Slide, value: string, x: number, y: number, w: number, h: number,
+      fontSize: number, fontFace: string, color = white.color, align: 'left' | 'center' | 'right' = 'left',
+    ) => slide.addText(value, { x: IN(x), y: IN(y), w: IN(w), h: IN(h), margin: 0, fontSize, fontFace, color, align, valign: 'middle', fit: 'shrink' });
+
     if (includeIntroSlide) {
-      const cover = pptx.addSlide(); cover.background = white;
-      kicker(cover, 80, 112, docKicker);
-      cover.addText('SANTOS & SAUCEDO', { x: IN(800), y: IN(98), w: IN(400), h: IN(18), align: 'right', fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: nb });
-      hline(cover, 128);
-      stroke(cover, 80, 300);
-      cover.addText(model.title, { x: IN(80), y: IN(330), w: IN(860), h: IN(220), fontFace: S.serif, fontSize: 54, color: nb, align: 'left', valign: 'top', lineSpacingMultiple: 1.05 });
-      if (model.subtitle) cover.addText(model.subtitle, { x: IN(80), y: IN(560), w: IN(660), h: IN(60), fontFace: S.body, fontSize: 15.75, color: body });
-      hline(cover, 632);
-      cover.addText(footer.toUpperCase(), { x: IN(80), y: IN(652), w: IN(500), h: IN(18), fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: mid });
-      addLogo(cover);
+      const cover = pptx.addSlide();
+      setBookendArtwork(cover, false);
+      bookendText(cover, docKicker.toUpperCase(), 100, 58, 420, 28, 10, S.label, burg);
+      bookendText(cover, model.title, 100, 372, 1080, 112, 36, S.serif, white.color, 'center');
+      if (model.subtitle) bookendText(cover, model.subtitle, 100, 502, 1080, 60, 15, S.body, this.hx(t.softGray), 'center');
+      bookendText(cover, BRAND_SLOGAN.toUpperCase(), 100, 583, 1080, 34, 11, S.label, white.color, 'center');
+      bookendText(cover, BRAND_LOCATION, 100, 623, 1080, 34, 15, S.body, this.hx(t.softGray), 'center');
     }
 
     const contentTitle = (sl: PptxGenJS.Slide, kk: string | undefined, title: string, sizePt = 34.5) => {
@@ -74,16 +80,17 @@ export class PresentationPptxRenderer {
         if (s.kicker) sl.addText(s.kicker.toUpperCase(), { x: IN(80), y: IN(318), w: IN(500), h: IN(18), fontFace: S.label, fontSize: 9.75, bold: true, charSpacing: 2, color: burg });
         sl.addText(s.title, { x: IN(80), y: IN(360), w: IN(900), h: IN(150), fontFace: S.serif, fontSize: 45, color: white.color, valign: 'top' });
       } else if (s.layout === 'closing') {
-        sl.background = dark;
-        sl.addText('SANTOS & SAUCEDO', { x: IN(80), y: IN(98), w: IN(400), h: IN(18), fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: white.color });
-        stroke(sl, 80, 300, 64); sl.addText((s.kicker || 'Contacto').toUpperCase(), { x: IN(80), y: IN(318), w: IN(400), h: IN(18), fontFace: S.label, fontSize: 9.75, bold: true, charSpacing: 2, color: burg });
-        sl.addText(s.title || 'Gracias', { x: IN(80), y: IN(360), w: IN(900), h: IN(80), fontFace: S.serif, fontSize: 45, color: white.color });
-        hline(sl, 470, this.hx(t.darkHairline));
-        contact.slice(0, 4).forEach((c, ci) => {
-          const x = ci % 2 === 0 ? 80 : 680; const y = ci < 2 ? 500 : 556;
-          sl.addText(c.label.toUpperCase(), { x: IN(x), y: IN(y - 14), w: IN(400), h: IN(16), fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: burg });
-          sl.addText(c.value, { x: IN(x), y: IN(y + 8), w: IN(460), h: IN(24), fontFace: S.body, fontSize: 12, color: white.color });
+        setBookendArtwork(sl, true);
+        bookendText(sl, (s.kicker || 'Contacto').toUpperCase(), 100, 185, 460, 28, 12, S.label, burg);
+        const title = s.title || 'Gracias';
+        bookendText(sl, title, 100, 240, 500, 130, title.length > 12 ? 47 : 82, S.serif);
+        contact.slice(0, 5).forEach((c, i) => {
+          const y = 106 + i * 77;
+          bookendText(sl, c.label.toUpperCase(), 685, y, 500, 18, 8.25, S.label, burg);
+          bookendText(sl, c.value, 685, y + 21, 495, 46, 14.25, S.body);
         });
+        bookendText(sl, BRAND_SLOGAN.toUpperCase(), 535, 610, 665, 28, 11, S.label, white.color, 'right');
+        bookendText(sl, BRAND_LOCATION, 535, 641, 665, 28, 12, S.body, this.hx(t.softGray), 'right');
       } else if (s.layout === 'quote') {
         sl.background = paper;
         sl.addText('“', { x: IN(60), y: IN(120), w: IN(200), h: IN(160), fontFace: S.serif, fontSize: 150, bold: true, color: this.hx(t.burgundyWash) });
@@ -95,8 +102,8 @@ export class PresentationPptxRenderer {
         const figs = (s.stat?.figures || []).slice(0, 3);
         if (figs.length <= 1) {
           const f = figs[0] || { value: '', label: s.title };
-          if (s.kicker) sl.addText(s.kicker.toUpperCase(), { x: IN(80), y: IN(102), w: IN(500), h: IN(18), fontFace: S.label, fontSize: 9.75, bold: true, charSpacing: 2, color: burg });
-          sl.addText(f.value || '', { x: IN(80), y: IN(250), w: IN(900), h: IN(220), fontFace: S.serif, fontSize: 132, color: burg });
+          if (s.kicker) sl.addText(s.kicker.toUpperCase(), { x: IN(80), y: IN(102), w: IN(500), h: IN(18), fontFace: S.label, fontSize: 9.75, bold: true, charSpacing: 2, color: darkAccent });
+          sl.addText(f.value || '', { x: IN(80), y: IN(250), w: IN(900), h: IN(220), fontFace: S.serif, fontSize: 132, color: darkAccent });
           stroke(sl, 80, 468, 64);
           sl.addText((f.label || s.title || '').toUpperCase(), { x: IN(80), y: IN(486), w: IN(700), h: IN(18), fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: mid });
           if (f.note) sl.addText(f.note, { x: IN(80), y: IN(516), w: IN(560), h: IN(50), fontFace: S.body, fontSize: 12.75, color: body });
@@ -116,11 +123,11 @@ export class PresentationPptxRenderer {
         sl.addText(s.title, { x: IN(80), y: IN(108), w: IN(1120), h: IN(50), fontFace: S.serif, fontSize: 25.5, color: nb });
         hline(sl, 200);
         this.addPptxChart(pptx, sl, s.chart, palette, nb, mid, IN, s.chart.insight ? { x: 80, y: 240, w: 740, h: 360 } : { x: 80, y: 232, w: 1120, h: 372 });
-        if (s.chart.insight) { stroke(sl, 880, 240, 40); sl.addText('LECTURA CLAVE', { x: IN(880), y: IN(258), w: IN(320), h: IN(16), fontFace: S.label, fontSize: 9.75, bold: true, charSpacing: 2, color: burg }); sl.addText(s.chart.insight, { x: IN(880), y: IN(300), w: IN(320), h: IN(300), fontFace: S.body, fontSize: 12.75, color: body }); }
+        if (s.chart.insight) { stroke(sl, 880, 240, 40); sl.addText('LECTURA CLAVE', { x: IN(880), y: IN(258), w: IN(320), h: IN(16), fontFace: S.label, fontSize: 9.75, bold: true, charSpacing: 2, color: darkAccent }); sl.addText(s.chart.insight, { x: IN(880), y: IN(300), w: IN(320), h: IN(300), fontFace: S.body, fontSize: 12.75, color: body }); }
         footChrome(sl, idx);
       } else if (s.layout === 'diagram' && s.diagram) {
         sl.background = white; contentTitle(sl, s.kicker, s.title, 30);
-        const png = await this.diagramPng(s.diagram, t);
+        const png = this.diagramPng(s.diagram, t);
         sl.addImage({ data: `data:image/png;base64,${png.toString('base64')}`, x: IN(80), y: IN(252), w: IN(1120), h: IN(360), sizing: { type: 'contain', w: IN(1120), h: IN(360) } });
         footChrome(sl, idx);
       } else if (s.layout === 'image') {
@@ -147,7 +154,7 @@ export class PresentationPptxRenderer {
         const cols = (s.columns && s.columns.length ? s.columns : [{ heading: '', points: (s.bullets || []).slice(0, Math.ceil((s.bullets || []).length / 2)) }, { heading: '', points: (s.bullets || []).slice(Math.ceil((s.bullets || []).length / 2)) }]).slice(0, 2);
         [80, 680].forEach((x, ci) => {
           const col = cols[ci]; if (!col) return;
-          if (col.heading) sl.addText(col.heading.toUpperCase(), { x: IN(x), y: IN(238), w: IN(520), h: IN(18), fontFace: S.label, fontSize: 9.75, bold: true, charSpacing: 2, color: burg });
+          if (col.heading) sl.addText(col.heading.toUpperCase(), { x: IN(x), y: IN(238), w: IN(520), h: IN(18), fontFace: S.label, fontSize: 9.75, bold: true, charSpacing: 2, color: darkAccent });
           const items = (col.points || []).slice(0, 6).map((p) => ({ text: p, options: { bullet: { code: '25AA' }, color: body, fontFace: S.body, fontSize: 12.75, paraSpaceAfter: 8 } }));
           if (items.length) sl.addText(items as any, { x: IN(x), y: IN(284), w: IN(500), h: IN(320), valign: 'top' });
         });

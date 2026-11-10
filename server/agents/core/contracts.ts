@@ -112,8 +112,9 @@ export const agentPayloadSchemas = {
     illustrate: z.boolean().optional(),
     supportImages: z.array(localMediaPathSchema).max(30).optional(),
     webSearch: z.boolean().optional(),
-    dataClassification: aiDataClassificationSchema,
-    aiUseConfirmed: z.literal(true),
+    dataClassification: aiDataClassificationSchema.optional(),
+    aiUseConfirmed: z.boolean().optional(),
+    includeIntroSlide: z.boolean().optional(),
   }).strict().refine((value) => Boolean(value.topic || value.documentsText), {
     message: 'topic or documentsText is required',
   }),

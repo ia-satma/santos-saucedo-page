@@ -5,12 +5,6 @@ import {
 import type { RenderOptions, RenderResult, SlideModel } from './contracts';
 import type { PresentationGeneratorDependencies } from './dependencies';
 
-function truncate(value: string, maximum: number): string {
-  return value && value.length > maximum
-    ? `${value.slice(0, maximum - 1).trimEnd()}…`
-    : value;
-}
-
 export class PresentationOutputPipeline {
   constructor(private readonly dependencies: PresentationGeneratorDependencies) {}
 
@@ -33,17 +27,19 @@ export class PresentationOutputPipeline {
       const lang: 'en' | 'es' = options.lang === 'en' ? 'en' : 'es';
       const configuration = await deps.loadConfiguration();
       const firm = deps.configurationValue(configuration, 'footer_firm', lang) || 'Santos & Saucedo, S.C.';
-      const site = deps.configurationValue(configuration, 'site_url', lang) || 'https://santos-saucedo.replit.app';
-      const phone = deps.configurationValue(configuration, 'footer_phone', lang) || '';
+      const site = deps.configurationValue(configuration, 'site_url', lang) || 'https://www.santossaucedo.com';
+      const phone = deps.configurationValue(configuration, 'footer_phone', lang) || '+52 81 8335 2086';
+      const email = deps.configurationValue(configuration, 'footer_email', lang) || 'info@santossaucedo.com';
       const address = deps.configurationValue(configuration, 'footer_address', lang) || 'San Pedro Garza García, Nuevo León';
       const siteWithoutProtocol = site.replace(/^https?:\/\//, '');
       const footer = firm;
       const documentKicker = lang === 'en' ? 'Presentation · 2026' : 'Presentación · 2026';
       const closingFooter = `${firm} · ${siteWithoutProtocol}`;
       const contact = [
-        { label: lang === 'en' ? 'Offices' : 'Oficinas', value: truncate(address, 44) },
+        { label: lang === 'en' ? 'Phone' : 'Teléfono', value: phone },
+        { label: lang === 'en' ? 'Email' : 'Correo', value: email },
         { label: 'Web', value: siteWithoutProtocol },
-        ...(phone ? [{ label: lang === 'en' ? 'Phone' : 'Teléfono', value: phone }] : []),
+        { label: lang === 'en' ? 'Offices' : 'Oficinas', value: address },
       ];
 
       const formats = options.formats && options.formats.length

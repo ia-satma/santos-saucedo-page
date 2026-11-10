@@ -2,9 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import sharp from 'sharp';
 import type { RenderOptions } from './contracts';
-import { H, W } from './designSystem';
-
-const SS_LOGO_PATH = path.join(process.cwd(), 'attached_assets', 'logo-ss-color.png');
+import { H, W, OUTPUT_HEIGHT, OUTPUT_WIDTH, renderPresentationSvg } from './designSystem';
+import { PRESENTATION_LOGO } from './bookendArtwork';
 
 interface RasterSlideBuild {
   svg: string;
@@ -34,7 +33,7 @@ export async function resolveLogoInfo(
 ): Promise<{ path: string; aspect: number } | null> {
   let logoPath: string | null = null;
   if (options.branding === 'custom') logoPath = resolveLocalAsset(options.customLogoUrl);
-  if (!logoPath && fs.existsSync(SS_LOGO_PATH)) logoPath = SS_LOGO_PATH;
+  if (!logoPath && fs.existsSync(PRESENTATION_LOGO)) logoPath = PRESENTATION_LOGO;
   if (!logoPath) return null;
   try {
     const metadata = await sharp(logoPath).metadata();
@@ -48,10 +47,14 @@ export async function rasterizeSlide(
   build: RasterSlideBuild,
   log: (message: string) => void,
 ): Promise<Buffer> {
-  let base = await sharp(Buffer.from(build.svg)).png().toBuffer();
+  const overlay = renderPresentationSvg(build.svg, OUTPUT_WIDTH);
+  let base = overlay;
+  const scaleX = OUTPUT_WIDTH / W;
+  const scaleY = OUTPUT_HEIGHT / H;
   if (build.image) {
     try {
-      const box = build.image.box;
+      const inputBox = build.image.box;
+      const box = { x: inputBox.x * scaleX, y: inputBox.y * scaleY, w: inputBox.w * scaleX, h: inputBox.h * scaleY };
       const fit = build.image.cover ? 'cover' : 'inside';
       let image = sharp(build.image.path).resize(Math.round(box.w), Math.round(box.h), { fit });
       let buffer = await image.png().toBuffer();
@@ -71,8 +74,8 @@ export async function rasterizeSlide(
       const top = Math.round(box.y + (box.h - (metadata.height || box.h)) / 2);
       const background = await sharp({
         create: {
-          width: W,
-          height: H,
+          width: OUTPUT_WIDTH,
+          height: OUTPUT_HEIGHT,
           channels: 4,
           background: { r: 255, g: 255, b: 255, alpha: 1 },
         },
@@ -80,7 +83,7 @@ export async function rasterizeSlide(
       base = await sharp(background)
         .composite([
           { input: buffer, top, left },
-          { input: Buffer.from(build.svg), top: 0, left: 0 },
+          { input: overlay, top: 0, left: 0 },
         ])
         .png()
         .toBuffer();

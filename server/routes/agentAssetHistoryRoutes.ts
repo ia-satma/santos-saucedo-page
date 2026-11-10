@@ -5,6 +5,7 @@ import path from "node:path";
 import { z } from "zod";
 import JSZip from "jszip";
 import type { ExecutionContext } from "../agents/core/types";
+import { AiGovernanceBlockedError } from "../ai/dataGovernance";
 import {
   TEXTUAL_AGENT_TYPES,
   copyPlainText,
@@ -340,6 +341,9 @@ export function registerAgentAssetHistoryRoutes(app: Express): void {
       res.setHeader("Cache-Control", "private, no-store");
       res.json(payload);
     } catch (error) {
+      if (error instanceof AiGovernanceBlockedError) {
+        return res.status(422).json({ code: error.code, error: error.message, reasons: error.reasonCodes });
+      }
       console.error("[presentations/generate]", error);
       res.status(500).json({ error: "Falló la generación de la presentación." });
     }
