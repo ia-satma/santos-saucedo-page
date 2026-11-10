@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import type { BlogPost, BlogCategory } from "@shared/schema";
+import { SUPPORTED_LANGUAGES } from "@shared/constants";
 
 const translations = {
   en: {
@@ -831,6 +832,7 @@ export default function AdminPostForm() {
       metaDescriptionEs: "",
     },
   });
+  const currentStatus = form.watch("status");
 
   const postQuery = useQuery<BlogPost>({
     queryKey: ["/api/admin/posts", id],
@@ -909,10 +911,14 @@ export default function AdminPostForm() {
 
   const translateAllMutation = useMutation({
     mutationFn: async () => {
+      if (!id) throw new Error("Guarde la publicación antes de traducirla.");
+      if (form.getValues("status") !== "draft") {
+        throw new Error("Convierta la publicación en borrador antes de aplicar traducciones.");
+      }
       const res = await adminApiRequest("POST", "/api/agents/run/polyglot_translator", {
-        contentType: "blog_post",
-        entityId: id,
-        fields: ["title", "content", "excerpt"],
+        articleId: id,
+        targetLanguages: SUPPORTED_LANGUAGES.map(({ code }) => code).filter((code) => code !== "es"),
+        applyChanges: true,
       });
       if (!res.ok) {
         const error = await res.text();
@@ -1091,7 +1097,7 @@ export default function AdminPostForm() {
                   <Button
                     variant="outline"
                     onClick={() => translateAllMutation.mutate()}
-                    disabled={isTranslatingAll || saveMutation.isPending}
+                    disabled={isTranslatingAll || saveMutation.isPending || currentStatus !== "draft"}
                     data-testid="button-translate-all"
                   >
                     {isTranslatingAll ? (

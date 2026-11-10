@@ -25,6 +25,7 @@ const SOURCE_LANGUAGE: LanguageCode = "es";
 const TARGET_LANGUAGES = SUPPORTED_LANGUAGES.map((item) => item.code).filter((code) => code !== SOURCE_LANGUAGE);
 const LOCALIZED_PREFIX = "localized.";
 const SKIP_KEYS = /(?:^|\.)(?:id|slug|url|href|path|imageUrl|video|poster|email|phone|linkedin|website|code|locale|date|year|order|published|enabled|visible)$/i;
+const LANGUAGE_CODES = new Set(SUPPORTED_LANGUAGES.map(({ code }) => code));
 
 type Path = (string | number)[];
 type Flat = { key: string; path: Path; text: string };
@@ -81,6 +82,35 @@ function sourceHash(value: unknown) {
   return createHash("sha256").update(JSON.stringify(value)).digest("hex");
 }
 
+function hasLanguageNode(value: unknown): boolean {
+  if (Array.isArray(value)) return value.some(hasLanguageNode);
+  if (!isRecord(value)) return false;
+  if (Object.keys(value).some((key) => LANGUAGE_CODES.has(key))) return true;
+  return Object.values(value).some(hasLanguageNode);
+}
+
+/** Returns the source/target projection from both flat and nested language maps. */
+function languageProjection(value: unknown, language: LanguageCode): any {
+  if (Array.isArray(value)) return value.map((item) => languageProjection(item, language));
+  if (!isRecord(value)) return value;
+  if (Object.keys(value).some((key) => LANGUAGE_CODES.has(key))) {
+    return value[language] ?? value.es ?? value.en;
+  }
+  return Object.fromEntries(
+    Object.entries(value).map(([key, item]) => [key, languageProjection(item, language)]),
+  );
+}
+
+function hasCompleteLanguageProjection(value: unknown, language: LanguageCode): boolean {
+  if (Array.isArray(value)) return value.every((item) => hasCompleteLanguageProjection(item, language));
+  if (!isRecord(value)) return true;
+  if (Object.keys(value).some((key) => LANGUAGE_CODES.has(key))) {
+    const selected = value[language];
+    return selected !== undefined && (typeof selected !== "string" || selected.trim().length > 0);
+  }
+  return Object.values(value).every((item) => hasCompleteLanguageProjection(item, language));
+}
+
 async function translateObject(source: unknown, targetLanguage: LanguageCode): Promise<any> {
   if (typeof source === "string") {
     const protectedText = protectSensitiveTokens(source);
@@ -135,7 +165,10 @@ async function saveLocalizedSection(section: string, source: unknown, targetLang
   } catch {
     // Regenerate malformed rows below.
   }
-  const translated = editorialTranslation !== undefined
+  // Existing editorial language copies are safe for a first export. Once a
+  // published localized row exists, a changed source hash must go through the
+  // translator again so future CMS edits cannot leave stale target copy.
+  const translated = editorialTranslation !== undefined && !previous
     ? editorialTranslation
     : await translateObject(source, targetLanguage);
   const previousRevision = previous?.status === "published" && previous.content
@@ -309,7 +342,7 @@ async function main() {
   }
 
   const cms = await getCmsContent();
-  const sectionEntries = Object.entries(cms).filter(([, content]) => isRecord(content) && (content.es || content.en));
+  const sectionEntries = Object.entries(cms).filter(([, content]) => hasLanguageNode(content));
   const [teams, practices, industries, articles] = await Promise.all([
     db.select().from(teamMembers),
     db.select().from(practiceGroups),
@@ -323,8 +356,10 @@ async function main() {
   for (const target of TARGET_LANGUAGES) {
     console.log(`[translate-all] iniciando idioma ${target}`);
     for (const [section, content] of sectionEntries) {
-      const source = (content as Record<string, any>).es || (content as Record<string, any>).en;
-      const existingEditorialTranslation = (content as Record<string, any>)[target];
+      const source = languageProjection(content, SOURCE_LANGUAGE);
+      const existingEditorialTranslation = hasCompleteLanguageProjection(content, target)
+        ? languageProjection(content, target)
+        : undefined;
       try {
         if (await saveLocalizedSection(section, source, target, existingEditorialTranslation)) sections++;
       } catch (error) {

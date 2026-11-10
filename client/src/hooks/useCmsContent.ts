@@ -4,11 +4,45 @@ import { mergeCms, type CmsSection } from '@shared/cms';
 import { queryClient } from '@/lib/queryClient';
 import { getStaticCmsSection } from '@/lib/staticLocalization';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { SUPPORTED_LANGUAGES } from '@shared/constants';
 
 export const CMS_QUERY = ['/api/site-config'] as const;
 
-function hasLanguageMap(value: unknown): value is Record<string, unknown> {
-  return !!value && typeof value === 'object' && !Array.isArray(value) && ('es' in value || 'en' in value);
+const LANGUAGE_CODES: ReadonlySet<string> = new Set(SUPPORTED_LANGUAGES.map(({ code }) => code));
+
+function hasLanguageMap(value: unknown): boolean {
+  if (Array.isArray(value)) return value.some(hasLanguageMap);
+  if (!value || typeof value !== 'object') return false;
+  const record = value as Record<string, unknown>;
+  return Object.keys(record).some((key) => LANGUAGE_CODES.has(key)) || Object.values(record).some(hasLanguageMap);
+}
+
+function hasLanguageValue(value: unknown, language: string): boolean {
+  if (Array.isArray(value)) return value.some((item) => hasLanguageValue(item, language));
+  if (!value || typeof value !== 'object') return false;
+  const record = value as Record<string, unknown>;
+  if (Object.keys(record).some((key) => LANGUAGE_CODES.has(key))) return language in record;
+  return Object.values(record).some((item) => hasLanguageValue(item, language));
+}
+
+function overlayLanguage(base: any, localized: any, language: string): any {
+  if (base === null || base === undefined) return localized;
+  if (Array.isArray(base)) {
+    return Array.isArray(localized)
+      ? base.map((value, index) => overlayLanguage(value, localized[index], language))
+      : base;
+  }
+  if (typeof base !== 'object') return localized === undefined ? base : localized;
+  const record = base as Record<string, unknown>;
+  if (Object.keys(record).some((key) => LANGUAGE_CODES.has(key))) {
+    return { ...record, [language]: localized };
+  }
+  if (!localized || typeof localized !== 'object' || Array.isArray(localized)) return base;
+  const output: Record<string, unknown> = { ...record };
+  for (const key of Object.keys(record)) {
+    output[key] = overlayLanguage(record[key], (localized as Record<string, unknown>)[key], language);
+  }
+  return output;
 }
 
 /** Reads editable CMS content and its published localized snapshot for non-source languages. */
@@ -27,7 +61,7 @@ export function useCmsContent<T>(section: CmsSection, fallback: T): T {
   // prevent a published CMS localization row from replacing the default, so
   // only skip the endpoint when the live editorial override itself contains
   // the requested language.
-  const overrideHasLanguage = hasLanguageMap(override) && language in override;
+  const overrideHasLanguage = hasLanguageValue(override, language);
   // Static builds expose the same published localized rows through
   // static-api/site-config.json. Reading that endpoint here keeps the public
   // frontend independent from the CMS server while preserving one code path
@@ -46,12 +80,14 @@ export function useCmsContent<T>(section: CmsSection, fallback: T): T {
       ? localized
       : staticLocalized && typeof staticLocalized === 'object'
         ? staticLocalized
-        : base[language];
+        : undefined;
     if (!selected || typeof selected !== 'object') return base;
+    const result = overlayLanguage(base, selected, language) as Record<string, unknown>;
     // Legacy V3 components use an ES/EN content type while the visitor may
     // select another language. Mirror the published language into EN so those
     // components render the localized copy without reintroducing English text.
-    return { ...base, [language]: selected, en: selected } as T;
+    if (Object.keys(result).some((key) => LANGUAGE_CODES.has(key))) result.en = selected;
+    return result as T;
   }, [base, localized, language, section]);
 }
 

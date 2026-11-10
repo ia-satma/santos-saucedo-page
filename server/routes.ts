@@ -2909,7 +2909,23 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       }
 
       if (Object.keys(translationsMap).length === 0) {
-        const staticTranslations = await readStaticEntityTranslation(contentType, entityId, targetLanguage);
+        const staticIds = [entityId];
+        const slug = typeof entity.slug === "string" ? entity.slug : undefined;
+        const stablePrefix = contentType === "team_member"
+          ? "team"
+          : contentType === "practice_group"
+            ? "practice"
+            : contentType === "industry_group"
+              ? "industry"
+              : contentType === "news"
+                ? "news"
+                : undefined;
+        if (slug && stablePrefix) staticIds.push(`${stablePrefix}-${slug}`);
+        let staticTranslations: Record<string, string> | undefined;
+        for (const staticId of staticIds) {
+          staticTranslations = await readStaticEntityTranslation(contentType, staticId, targetLanguage);
+          if (staticTranslations && Object.keys(staticTranslations).length > 0) break;
+        }
         for (const [field, value] of Object.entries(staticTranslations || {})) {
           if (publicFields.includes(field)) translationsMap[field] = value;
         }
