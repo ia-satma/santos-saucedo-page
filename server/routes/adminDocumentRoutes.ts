@@ -3,6 +3,7 @@ import type { Express, RequestHandler, Response } from "express";
 import { desc, eq, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { generatedDocuments, type GeneratedDocument } from "@shared/schema";
+import { DEFAULT_LETTERHEAD_TEMPLATE, LETTERHEAD_TEMPLATE_IDS } from "@shared/letterheadTemplates";
 import { authMiddleware, requirePermission } from "../auth";
 import { db, editorialDb } from "../db";
 import { AiGovernanceBlockedError } from "../ai/dataGovernance";
@@ -19,6 +20,7 @@ const documentInput = z.object({
   sourceText: sourceTextSchema.default(""),
   instructions: z.string().trim().max(4_000).default(""),
   mode: z.enum(["preserve", "organize"]).default("organize"),
+  template: z.enum(LETTERHEAD_TEMPLATE_IDS).nullable().optional(),
   documents: z.array(z.object({
     url: z.string().regex(/^private:presentations\/[a-f0-9]{32}\.[a-z0-9]{1,5}$/),
     name: z.string().min(1).max(240),
@@ -61,9 +63,9 @@ function storedDocumentKey(row: GeneratedDocument, format: Format) {
 }
 
 function summary(row: GeneratedDocument) {
-  const { id, title, parentId, version, status, createdAt } = row;
+  const { id, title, parentId, version, status, createdAt, template } = row;
   return {
-    id, title, parentId, version, status, createdAt,
+    id, title, parentId, version, status, createdAt, template,
     docxUrl: storedDocumentKey(row, "docx") ? `${route}/${id}/file/docx` : null,
     pdfUrl: storedDocumentKey(row, "pdf") ? `${route}/${id}/file/pdf` : null,
   };
@@ -73,6 +75,12 @@ async function saveDocument(raw: unknown, actorId: string | null, current?: Gene
   const parsed = documentInput.safeParse(raw);
   if (!parsed.success) throw new DocumentError(400, "Los datos del documento no son válidos.");
   const { title, instructions, mode, documents } = parsed.data;
+  if (parsed.data.template === null && current?.template !== null) {
+    throw new DocumentError(400, "Elige una plantilla de membrete válida.");
+  }
+  const template = parsed.data.template === undefined
+    ? (current ? current.template : DEFAULT_LETTERHEAD_TEMPLATE)
+    : parsed.data.template;
   let { sourceText } = parsed.data;
   if (documents.length) {
     const { extractText } = await import("../services/documentText");
@@ -102,10 +110,8 @@ async function saveDocument(raw: unknown, actorId: string | null, current?: Gene
   const id = randomUUID();
   const docxUrl = storageKey(id, "docx");
   const pdfUrl = storageKey(id, "pdf");
-  const [docx, pdf] = await Promise.all([
-    createBrandedDocx({ title, sourceText: finalText, mode: "preserve" }),
-    createBrandedPdf({ title, sourceText: finalText, mode: "preserve" }),
-  ]);
+  const output = { title, sourceText: finalText, mode: "preserve" as const, template };
+  const [docx, pdf] = await Promise.all([createBrandedDocx(output), createBrandedPdf(output)]);
   try {
     await uploadPrivateStudioObject(docxUrl, docx);
     await uploadPrivateStudioObject(pdfUrl, pdf);
@@ -123,7 +129,7 @@ async function saveDocument(raw: unknown, actorId: string | null, current?: Gene
         version = latest.version + 1;
       }
       const [saved] = await tx.insert(generatedDocuments).values({
-        id, title, sourceText: finalText, instructions: instructions || null, mode, version,
+        id, title, sourceText: finalText, instructions: instructions || null, mode, template, version,
         parentId, docxUrl, pdfUrl, createdBy: actorId,
       }).returning();
       return saved;
@@ -156,6 +162,7 @@ export function registerAdminDocumentRoutes(app: Express) {
     const rows = await db.select({
       id: generatedDocuments.id, title: generatedDocuments.title, status: generatedDocuments.status,
       version: generatedDocuments.version, parentId: generatedDocuments.parentId, createdAt: generatedDocuments.createdAt,
+      template: generatedDocuments.template,
     }).from(generatedDocuments).orderBy(desc(generatedDocuments.createdAt), desc(generatedDocuments.version));
     const latest = new Map<string, (typeof rows)[number]>();
     for (const row of rows) {

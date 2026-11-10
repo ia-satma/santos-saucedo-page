@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Archive, ArchiveRestore, FileText, Loader2 } from "lucide-react";
+import { Archive, ArchiveRestore, Check, FileText, Loader2 } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AssetDownloadButton, PrivateAssetPreview } from "@/components/admin/AssetFiles";
 import { DocumentUpload, type UploadedDoc } from "@/components/admin/DocumentUpload";
@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAdminAuth, adminApiRequest } from "@/lib/adminAuth";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { DEFAULT_LETTERHEAD_TEMPLATE, letterheadTemplates, type LetterheadTemplateId } from "@shared/letterheadTemplates";
 
 const endpoint = "/api/admin/documents";
 type Mode = "preserve" | "organize";
@@ -23,6 +24,7 @@ type DocumentVersion = {
   createdAt: string;
   docxUrl: string | null;
   pdfUrl: string | null;
+  template: LetterheadTemplateId | null;
 };
 type DocumentDetail = {
   document: DocumentVersion & { sourceText: string; mode: Mode };
@@ -40,6 +42,10 @@ function dateLabel(value: string) {
   return new Date(value).toLocaleString("es-MX", { dateStyle: "medium", timeStyle: "short" });
 }
 
+function letterheadLabel(template: LetterheadTemplateId | null) {
+  return letterheadTemplates.find((option) => option.id === template)?.label ?? "Membrete anterior";
+}
+
 export default function AdminDocuments() {
   const { isAuthenticated, requireAuth } = useAdminAuth();
   const { toast } = useToast();
@@ -47,6 +53,7 @@ export default function AdminDocuments() {
   const [sourceText, setSourceText] = useState("");
   const [instructions, setInstructions] = useState("");
   const [mode, setMode] = useState<Mode>("preserve");
+  const [template, setTemplate] = useState<LetterheadTemplateId | null>(DEFAULT_LETTERHEAD_TEMPLATE);
   const [documents, setDocuments] = useState<UploadedDoc[]>([]);
   const [uploading, setUploading] = useState(false);
   const [editing, setEditing] = useState<DocumentVersion | null>(null);
@@ -72,6 +79,7 @@ export default function AdminDocuments() {
     setSourceText("");
     setInstructions("");
     setMode("preserve");
+    setTemplate(DEFAULT_LETTERHEAD_TEMPLATE);
     setDocuments([]);
   };
 
@@ -79,7 +87,7 @@ export default function AdminDocuments() {
     mutationFn: () => request<DocumentVersion>(
       editing ? "PATCH" : "POST",
       editing ? `${endpoint}/${editing.id}` : `${endpoint}/generate`,
-      { title, sourceText, instructions, mode, documents },
+      { title, sourceText, instructions, mode, documents, template },
     ),
     onSuccess: (saved) => {
       reset();
@@ -110,6 +118,7 @@ export default function AdminDocuments() {
     setTitle(document.title);
     setSourceText(document.sourceText);
     setMode("preserve");
+    setTemplate(document.template ?? null);
     setDocuments([]);
     setInstructions("");
     window.requestAnimationFrame(() => window.document.getElementById("document-title")?.focus());
@@ -133,6 +142,49 @@ export default function AdminDocuments() {
               <Label htmlFor="document-title">Título</Label>
               <Input id="document-title" maxLength={180} value={title} onChange={(event) => setTitle(event.target.value)} required />
             </div>
+            <fieldset className="space-y-2" aria-describedby="document-letterhead-help">
+              <legend className="text-sm font-medium">Membrete</legend>
+              <p id="document-letterhead-help" className="text-sm text-muted-foreground">
+                El diseño elegido se aplica al DOCX y al PDF de esta versión.
+              </p>
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                {letterheadTemplates.map((option) => (
+                  <label key={option.id} className="block min-w-0 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="document-letterhead"
+                      value={option.id}
+                      checked={template === option.id}
+                      onChange={() => setTemplate(option.id)}
+                      aria-labelledby={`letterhead-${option.id}-label`}
+                      aria-describedby={`letterhead-${option.id}-description`}
+                      className="peer sr-only"
+                    />
+                    <span className="relative block h-full border p-2 transition-colors hover:border-[#145385] peer-checked:border-[#0B2850] peer-checked:bg-[#0B2850]/5 peer-focus-visible:ring-2 peer-focus-visible:ring-[#145385] peer-focus-visible:ring-offset-2 peer-disabled:cursor-not-allowed">
+                      <span className="flex h-28 items-center justify-center bg-muted/40 p-1 sm:h-32">
+                        <img src={option.previewUrl} alt="" className="h-full max-w-full object-contain" />
+                      </span>
+                      <span id={`letterhead-${option.id}-label`} className="mt-2 block break-words text-sm font-medium text-[#0B2850]">{option.label}</span>
+                      <span id={`letterhead-${option.id}-description`} className="mt-1 block text-xs text-muted-foreground">{option.description}</span>
+                      {template === option.id && <Check aria-hidden="true" className="absolute right-2 top-2 size-5 rounded-sm bg-[#0B2850] p-0.5 text-white" />}
+                    </span>
+                  </label>
+                ))}
+              </div>
+              {editing && editing.template == null && (
+                <label className="flex cursor-pointer items-center gap-2 border p-2 text-sm">
+                  <input
+                    type="radio"
+                    name="document-letterhead"
+                    value="legacy"
+                    checked={template === null}
+                    onChange={() => setTemplate(null)}
+                    className="accent-[#0B2850]"
+                  />
+                  Conservar el membrete anterior
+                </label>
+              )}
+            </fieldset>
             <div className="space-y-2">
               <Label htmlFor="document-source">Contenido</Label>
               <Textarea id="document-source" value={sourceText} onChange={(event) => setSourceText(event.target.value)}
@@ -179,7 +231,7 @@ export default function AdminDocuments() {
                   onClick={() => { setSelectedId(selectedId === document.id ? null : document.id); setPreview(null); }}>
                   {document.title}
                 </button>
-                <p className="text-sm text-muted-foreground">Versión {document.version} · {dateLabel(document.createdAt)}</p>
+                <p className="text-sm text-muted-foreground">Versión {document.version} · {letterheadLabel(document.template)} · {dateLabel(document.createdAt)}</p>
               </li>
             ))}</ul>}
           {selectedId && detail.isPending && <p role="status" className="text-sm text-muted-foreground">Cargando versiones…</p>}
@@ -197,7 +249,10 @@ export default function AdminDocuments() {
             <ul className="divide-y">
               {detail.data.versions.map((version) => (
                 <li key={version.id} className="flex flex-wrap items-center justify-between gap-2 py-3">
-                  <div><strong className="text-sm">Versión {version.version}</strong><p className="text-xs text-muted-foreground">{dateLabel(version.createdAt)}</p></div>
+                  <div>
+                    <strong className="text-sm">Versión {version.version}</strong>
+                    <p className="text-xs text-muted-foreground">{letterheadLabel(version.template)} · {dateLabel(version.createdAt)}</p>
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {version.docxUrl && <AssetDownloadButton url={version.docxUrl} filename={`documento-v${version.version}.docx`}>DOCX</AssetDownloadButton>}
                     {version.pdfUrl && <AssetDownloadButton url={version.pdfUrl} filename={`documento-v${version.version}.pdf`}>PDF</AssetDownloadButton>}
@@ -208,7 +263,7 @@ export default function AdminDocuments() {
                 </li>
               ))}
             </ul>
-            {preview?.pdfUrl && <PrivateAssetPreview url={preview.pdfUrl} label={`Versión ${preview.version} de ${preview.title}`} pdf />}
+            {preview?.pdfUrl && <PrivateAssetPreview url={preview.pdfUrl} label={`Versión ${preview.version} de ${preview.title} · ${letterheadLabel(preview.template)}`} pdf />}
           </div>}
         </section>
       </div>

@@ -62,11 +62,12 @@ export async function ensureCmsSchema() {
     await tx.execute(sql`SELECT pg_advisory_xact_lock(14703262)`);
     await tx.execute(sql`CREATE TABLE IF NOT EXISTS generated_documents (
       id varchar PRIMARY KEY DEFAULT gen_random_uuid(), title text NOT NULL, source_text text NOT NULL,
-      instructions text, mode text NOT NULL DEFAULT 'organize', language text NOT NULL DEFAULT 'es',
+      instructions text, mode text NOT NULL DEFAULT 'organize', template text, language text NOT NULL DEFAULT 'es',
       docx_url text, pdf_url text, version integer NOT NULL DEFAULT 1, parent_id varchar,
       status text NOT NULL DEFAULT 'active', archived_at timestamp, created_by varchar,
       created_at timestamp NOT NULL DEFAULT now(), updated_at timestamp NOT NULL DEFAULT now()
     )`);
+    await tx.execute(sql`ALTER TABLE generated_documents ADD COLUMN IF NOT EXISTS template text`);
     await tx.execute(sql`CREATE INDEX IF NOT EXISTS generated_documents_status_created_idx ON generated_documents (status, created_at DESC)`);
     await tx.execute(sql`CREATE INDEX IF NOT EXISTS generated_documents_parent_idx ON generated_documents (parent_id)`);
     await tx.execute(sql`ALTER TABLE generated_presentations ADD COLUMN IF NOT EXISTS include_intro_slide boolean NOT NULL DEFAULT true`);

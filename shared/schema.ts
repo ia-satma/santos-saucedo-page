@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import { pgTable, text, varchar, timestamp, integer, boolean, jsonb, index, uniqueIndex, doublePrecision } from "drizzle-orm/pg-core";
 import type { SocialRevision } from "./socialStudio";
+import type { LetterheadTemplateId } from "./letterheadTemplates";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 // Constantes sin base de datos: viven en ./constants para que el sitio público no cargue drizzle ni zod.
@@ -1414,6 +1415,7 @@ export const generatedDocuments = pgTable("generated_documents", {
   sourceText: text("source_text").notNull(),
   instructions: text("instructions"),
   mode: text("mode").notNull().default("organize"),
+  template: text("template").$type<LetterheadTemplateId>(),
   language: text("language").notNull().default("es"),
   docxUrl: text("docx_url"),
   pdfUrl: text("pdf_url"),
