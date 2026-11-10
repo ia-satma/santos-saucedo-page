@@ -1,14 +1,15 @@
 import "dotenv/config";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
-import { rm } from "node:fs/promises";
+import { readFile, rm } from "node:fs/promises";
 import { createServer, type Server } from "node:http";
 import path from "node:path";
 import { eq, inArray } from "drizzle-orm";
 import express from "express";
 import JSZip from "jszip";
 import mammoth from "mammoth";
-import { PDFDocument } from "pdf-lib";
+import { decodePDFRawStream, PDFArray, PDFDict, PDFDocument, PDFName, PDFNumber, PDFRawStream } from "pdf-lib";
+import sharp from "sharp";
 import { PDFParse } from "pdf-parse";
 import { adminSessions, adminUsers, generatedDocuments } from "../shared/schema";
 import { hashPassword } from "../server/auth";
@@ -58,6 +59,85 @@ function localUrl(server: Server) {
   return `http://127.0.0.1:${address.port}`;
 }
 
+type ExportedDocument = { id: string; template: string | null; docxUrl: string; pdfUrl: string };
+type FileRequest = (url: string) => Promise<Response>;
+
+async function readExport(call: FileRequest, url: string): Promise<Buffer> {
+  const response = await call(url);
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("cache-control") || "", /private, no-store/);
+  return Buffer.from(await response.arrayBuffer());
+}
+
+async function verifyExport(
+  call: FileRequest,
+  document: ExportedDocument,
+  expectedText: string[],
+  multiPage = false,
+) {
+  const [docx, pdf] = await Promise.all([readExport(call, document.docxUrl), readExport(call, document.pdfUrl)]);
+  const [zip, pdfDocument, editable] = await Promise.all([
+    JSZip.loadAsync(docx),
+    PDFDocument.load(pdf),
+    mammoth.extractRawText({ buffer: docx }),
+  ]);
+  for (const text of expectedText) assert(editable.value.includes(text), `Missing editable text: ${text}`);
+  const pages = pdfDocument.getPages();
+  assert(multiPage ? pages.length > 1 : pages.length === 1);
+  if (document.template === null) {
+    assert(zip.file("word/header1.xml"));
+    assert(zip.file("word/footer1.xml"));
+    assert(zip.file("word/media/logo.png"));
+  } else {
+    const artwork = await readFile(path.join("client/public/letterheads", `${document.template}.png`));
+    const embeddedDocx = await zip.file("word/media/letterhead.png")?.async("nodebuffer");
+    assert(embeddedDocx?.equals(artwork), `DOCX artwork differs for ${document.template}`);
+    const header = await zip.file("word/header1.xml")?.async("string") ?? "";
+    assert.match(header, /<wp:anchor\b[^>]*\bbehindDoc="1"/);
+    assert.match(header, /<wp:positionH relativeFrom="page"><wp:posOffset>0<\/wp:posOffset>/);
+    assert.match(header, /<wp:positionV relativeFrom="page"><wp:posOffset>0<\/wp:posOffset>/);
+    const relationships = await zip.file("word/_rels/header1.xml.rels")?.async("string") ?? "";
+    assert.match(relationships, /Target="media\/letterhead\.png"/);
+    assert.equal(zip.file("word/footer1.xml"), null, "The letterhead image already contains the footer");
+
+    const { data: rgb, info } = await sharp(artwork).removeAlpha().toColourspace("srgb").raw().toBuffer({ resolveWithObject: true });
+    const validated = new Set<PDFRawStream>();
+    for (const page of pages) {
+      assert.deepEqual(page.getSize(), { width: 612, height: 792 });
+      const images = page.node.Resources()?.lookup(PDFName.of("XObject"), PDFDict);
+      const imageKeys = images?.keys() ?? [];
+      assert.equal(imageKeys.length, 1, "Every page has exactly one letterhead image");
+      const image = images!.lookup(imageKeys[0]);
+      assert(image instanceof PDFRawStream);
+      assert.equal(image.dict.lookup(PDFName.of("Width"), PDFNumber).asNumber(), info.width);
+      assert.equal(image.dict.lookup(PDFName.of("Height"), PDFNumber).asNumber(), info.height);
+      if (!validated.has(image)) {
+        assert(Buffer.from(decodePDFRawStream(image).decode()).equals(rgb), `PDF artwork differs for ${document.template}`);
+        validated.add(image);
+      }
+      const contents = page.node.Contents();
+      const streams = contents instanceof PDFArray
+        ? Array.from({ length: contents.size() }, (_, index) => contents.lookup(index, PDFRawStream))
+        : [contents];
+      const operators = streams.map(stream => {
+        assert(stream instanceof PDFRawStream);
+        return Buffer.from(decodePDFRawStream(stream).decode()).toString("ascii");
+      }).join("\n");
+      const imageDraw = operators.indexOf(`${imageKeys[0].toString()} Do`);
+      assert(imageDraw >= 0 && imageDraw < operators.indexOf("BT"), "Letterhead is drawn below the editable content");
+    }
+  }
+
+  const parser = new PDFParse({ data: new Uint8Array(pdf) });
+  try {
+    const { text } = await parser.getText();
+    for (const line of expectedText) assert(text.includes(line), `Missing PDF text: ${line}`);
+  } finally {
+    await parser.destroy();
+  }
+  return { docx, pdf };
+}
+
 try {
   await registerRoutes(server, app);
   const editor = await login("super_admin");
@@ -92,39 +172,21 @@ try {
     documents: [upload],
     mode: "preserve",
   };
+  const invalidTemplate = { title: "No debe guardarse", sourceText: "Texto válido", mode: "preserve" };
+  assert.equal((await call(`${prefix}/generate`, "POST", { ...invalidTemplate, template: "desconocida" })).status, 400);
+  assert.equal((await call(`${prefix}/generate`, "POST", { ...invalidTemplate, template: null })).status, 400);
   const create = await call(`${prefix}/generate`, "POST", input);
   assert.equal(create.status, 201, await create.clone().text());
   const initial = await create.json();
   createdIds.push(initial.id);
   assert.equal(initial.version, 1);
+  assert.equal(initial.template, "clasica");
   assert.equal((await fetch(base + initial.pdfUrl)).status, 401);
   assert.equal((await call(initial.docxUrl, "GET", undefined, viewer)).status, 403);
   assert.equal((await fetch(`${base}/media/public/media/document-${initial.id}.pdf`)).status, 404);
-
-  const docxResponse = await call(initial.docxUrl);
-  assert.equal(docxResponse.status, 200);
-  assert.match(docxResponse.headers.get("cache-control") || "", /private, no-store/);
-  const docx = Buffer.from(await docxResponse.arrayBuffer());
-  const zip = await JSZip.loadAsync(docx);
-  assert(zip.file("word/header1.xml"));
-  assert(zip.file("word/footer1.xml"));
-  assert(zip.file("word/media/logo.png"));
-  const editable = await mammoth.extractRawText({ buffer: docx });
-  assert(editable.value.includes(lastLine));
-  assert(editable.value.includes("INSUMO de prueba"));
-
-  const pdfResponse = await call(initial.pdfUrl);
-  assert.equal(pdfResponse.status, 200);
-  const pdf = Buffer.from(await pdfResponse.arrayBuffer());
-  assert((await PDFDocument.load(pdf)).getPageCount() > 1);
-  const parser = new PDFParse({ data: new Uint8Array(pdf) });
-  try {
-    const result = await parser.getText();
-    assert(result.text.includes(lastLine));
-    assert(result.text.includes("INSUMO de prueba"));
-  } finally {
-    await parser.destroy();
-  }
+  assert.equal((await call(`${prefix}/${initial.id}`, "PATCH", { ...invalidTemplate, template: "desconocida" })).status, 400);
+  assert.equal((await call(`${prefix}/${initial.id}`, "PATCH", { ...invalidTemplate, template: null })).status, 400);
+  const firstFiles = await verifyExport(call, initial, [lastLine, "INSUMO de prueba"], true);
 
   const attempts = await Promise.all([
     call(`${prefix}/${initial.id}`, "PATCH", { title: "Revisión A", sourceText: "Nueva versión A", mode: "preserve" }),
@@ -136,6 +198,8 @@ try {
   const detail = await (await call(`${prefix}/${revision.id}`)).json();
   assert.deepEqual(detail.versions.map((version: { version: number }) => version.version), [2, 1]);
   assert.equal(detail.document.id, revision.id);
+  assert.equal(detail.document.template, "clasica");
+  assert.deepEqual(detail.versions.map((version: { template: string }) => version.template), ["clasica", "clasica"]);
 
   assert.equal((await call(`${prefix}/${revision.id}/archive`, "POST", { archived: true })).status, 200);
   assert(!(await (await call(prefix)).json()).some((row: { id: string }) => row.id === revision.id));
@@ -143,6 +207,52 @@ try {
   assert.equal((await call(initial.pdfUrl)).status, 200);
   assert.equal((await call(`${prefix}/${revision.id}/archive`, "POST", { archived: false })).status, 200);
   assert((await (await call(prefix)).json()).some((row: { id: string }) => row.id === revision.id));
+
+  const revisedText = "Documento con la plantilla reemplazada.";
+  const changed = await call(`${prefix}/${revision.id}`, "PATCH", {
+    title: "Nueva plantilla", sourceText: revisedText, mode: "preserve", template: "banda-azul",
+  });
+  assert.equal(changed.status, 201, await changed.clone().text());
+  const changedRow = await changed.json();
+  createdIds.push(changedRow.id);
+  assert.equal(changedRow.template, "banda-azul");
+  assert.equal(changedRow.version, 3);
+  const changedDetail = await (await call(`${prefix}/${changedRow.id}`)).json();
+  assert.deepEqual(changedDetail.versions.map((version: { template: string }) => version.template), ["banda-azul", "clasica", "clasica"]);
+  assert((await (await call(prefix)).json()).some((row: ExportedDocument) => row.id === changedRow.id && row.template === "banda-azul"));
+  await verifyExport(call, changedRow, [revisedText]);
+  assert((await readExport(call, initial.docxUrl)).equals(firstFiles.docx));
+  assert((await readExport(call, initial.pdfUrl)).equals(firstFiles.pdf));
+
+  for (const template of ["banda-azul", "trama", "pie-azul"]) {
+    const text = "Texto editable para validar la plantilla oficial.";
+    const response = await call(`${prefix}/generate`, "POST", { title: `Prueba ${template}`, sourceText: text, mode: "preserve", template });
+    assert.equal(response.status, 201, await response.clone().text());
+    const row = await response.json();
+    createdIds.push(row.id);
+    assert.equal(row.template, template);
+    await verifyExport(call, row, [text]);
+  }
+
+  const [legacy] = await db.insert(generatedDocuments).values({
+    title: "Documento anterior a las plantillas", sourceText: "Contenido anterior.", mode: "preserve",
+  }).returning();
+  createdIds.push(legacy.id);
+  const legacyEdit = await call(`${prefix}/${legacy.id}`, "PATCH", {
+    title: "Documento anterior actualizado", sourceText: "Contenido anterior actualizado.", mode: "preserve",
+  });
+  assert.equal(legacyEdit.status, 201, await legacyEdit.clone().text());
+  const legacyRow = await legacyEdit.json();
+  createdIds.push(legacyRow.id);
+  assert.equal(legacyRow.template, null);
+  await verifyExport(call, legacyRow, ["Contenido anterior actualizado."]);
+  const explicitLegacy = await call(`${prefix}/${legacyRow.id}`, "PATCH", {
+    title: "Documento anterior actualizado de nuevo", sourceText: "Contenido anterior vigente.", mode: "preserve", template: null,
+  });
+  assert.equal(explicitLegacy.status, 201, await explicitLegacy.clone().text());
+  const explicitLegacyRow = await explicitLegacy.json();
+  createdIds.push(explicitLegacyRow.id);
+  assert.equal(explicitLegacyRow.template, null);
 
   const organized = await call(`${prefix}/generate`, "POST", {
     title: "Ejemplo editorial", instructions: "Redacta un breve ejemplo.", mode: "organize",
@@ -155,7 +265,7 @@ try {
   const captured = completionRequest as { model?: string; service_tier?: string } | null;
   assert.equal(captured?.model, "gpt-6.1-sol");
   assert.equal(captured?.service_tier, "fast");
-  console.log("Documents API ok: permission checks, input upload, private DOCX/PDF, pagination, version conflict, archive/restore and Sol fast transport.");
+  console.log("Documents API ok: permission checks, input upload, private DOCX/PDF, all four templates, editable text, immutable downloads, legacy inheritance, version conflict, archive/restore and Sol fast transport.");
 } finally {
   for (const id of createdIds) {
     await deletePrivateStudioObject(`private/studio/document-${id}.docx`);
