@@ -71,3 +71,11 @@ Después se cierra el Shell, se pulsa **Republish** y se verifica el dominio pú
 - Las firmas se guardan en `email_signatures`. El documento HTML generado por el servidor se almacena en App Storage como `public/media/signature-<id>.html`. La descarga usa `GET /api/admin/signatures/:id/download`, autenticación y `Content-Disposition: attachment`.
 - Las fotografías pasan por la biblioteca de medios existente, con validación y escaneo, y se guardan en App Storage antes de asociarse a una firma. El servidor no acepta HTML arbitrario del navegador y regenera el documento desde la plantilla y los campos validados.
 - La prueba específica es `npm run test:signatures`, además de `npm run check` y `npm run build`. La publicación sigue siendo manual desde Shell de Replit y Republish, sin agentes de Replit.
+
+## Actualización del editor de firmas — 10 de noviembre de 2026
+
+- El editor publicado usa un panel de datos navy a la izquierda y un catálogo de las 12 plantillas a la derecha. El layout respeta el ancho real de `.admin-main-column`, por lo que la navegación global no cubre el formulario ni las vistas previas.
+- Cada plantilla ofrece copia HTML, copia enriquecida, descarga `.html`, descarga PNG a 2x y vista del código. El PNG se renderiza desde el DOM con `html2canvas`; las imágenes de App Storage se inlinéan antes de capturar para evitar errores de CORS.
+- Los campos de LinkedIn y Facebook se convierten en hipervínculos en todas las plantillas que muestran esos iconos. La plantilla 12 mantiene también sus enlaces de sitio web y LinkedIn.
+- La navegación lateral del CMS puede minimizarse a un rail de 72 px desde la barra superior. La preferencia se conserva en `localStorage` con la clave `ss-admin-sidebar-collapsed`; en móvil permanece el panel lateral existente.
+- Verificación real publicada en `https://santos-saucedo.replit.app/admin/signatures`: PNG `1200 × 500` descargado, HTML descargado, enlaces sociales actualizados y rail colapsado/expandido. La carga de fotografía queda cubierta por las pruebas de multipart y chunked upload del CMS. La selección de archivos desde el navegador de pruebas requiere permitir acceso a archivos locales en la extensión de Brave.
