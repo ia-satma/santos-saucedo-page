@@ -2,6 +2,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useEffect, useRef, useMemo } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { apiRequest, isStaticSite, queryClient } from "@/lib/queryClient";
+import { getStaticEntityTranslation } from "@/lib/staticLocalization";
 import { isNativeLanguage, type ContentType, type TranslatedFieldsMap } from "@/lib/translationUtils";
 import type { LanguageCode } from "@shared/schema";
 
@@ -131,11 +132,17 @@ export function useTranslatedContent({
     [fields, fieldsToTranslate],
   );
 
+  const staticTranslations = useMemo(
+    () => getStaticEntityTranslation(contentType, entityId, language),
+    [contentType, entityId, language],
+  );
+
   const hasCachedTranslations = !!cachedTranslations?.translations && 
     Object.keys(cachedTranslations.translations).length > 0;
+  const hasStaticTranslations = !!staticTranslations && Object.keys(staticTranslations).length > 0;
   
   const needsTranslation = canGenerateTranslations && !isLoading &&
-    !hasCachedTranslations && Object.keys(fieldsToTranslate).length > 0;
+    !hasCachedTranslations && !hasStaticTranslations && Object.keys(fieldsToTranslate).length > 0;
 
   const translationKey = `${contentType}-${entityId}-${language}`;
 
@@ -154,7 +161,9 @@ export function useTranslatedContent({
 
   // Traducciones solo para idiomas que no son de origen
   const translations = canUseTranslations
-    ? cachedTranslations?.translations || translateMutation.data?.translations
+    ? hasCachedTranslations
+      ? cachedTranslations?.translations
+      : staticTranslations || translateMutation.data?.translations
     : undefined;
 
   // Hubo traducción si algún campo llegó con texto propio distinto del de origen

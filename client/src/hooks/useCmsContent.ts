@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { mergeCms, type CmsSection } from '@shared/cms';
 import { queryClient } from '@/lib/queryClient';
+import { getStaticCmsSection } from '@/lib/staticLocalization';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export const CMS_QUERY = ['/api/site-config'] as const;
@@ -40,13 +41,18 @@ export function useCmsContent<T>(section: CmsSection, fallback: T): T {
   });
   return useMemo(() => {
     if (!hasLanguageMap(base) || language === 'es' || language === 'en') return base;
-    const selected = localized && Object.keys(localized).length > 0 ? localized : base[language];
+    const staticLocalized = getStaticCmsSection(section, language);
+    const selected = localized && Object.keys(localized).length > 0
+      ? localized
+      : staticLocalized && typeof staticLocalized === 'object'
+        ? staticLocalized
+        : base[language];
     if (!selected || typeof selected !== 'object') return base;
     // Legacy V3 components use an ES/EN content type while the visitor may
     // select another language. Mirror the published language into EN so those
     // components render the localized copy without reintroducing English text.
     return { ...base, [language]: selected, en: selected } as T;
-  }, [base, localized, language]);
+  }, [base, localized, language, section]);
 }
 
 let channel: BroadcastChannel | undefined;
