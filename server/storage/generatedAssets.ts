@@ -1,4 +1,4 @@
-import { eq, desc } from "drizzle-orm";
+import { and, eq, desc, isNull } from "drizzle-orm";
 import { db } from "../db";
 import {
   generatedImages,
@@ -133,10 +133,10 @@ export class GeneratedAssetsRepository {
     return result.length > 0;
   }
 
-  async getSocialAssets(kind?: string): Promise<SocialAsset[]> {
-    const query = db.select().from(socialAssets).orderBy(desc(socialAssets.createdAt));
-    if (!kind) return query;
-    return db.select().from(socialAssets).where(eq(socialAssets.kind, kind)).orderBy(desc(socialAssets.createdAt));
+  async getSocialAssets(archived: boolean, offset: number, limit: number): Promise<SocialAsset[]> {
+    return db.select().from(socialAssets)
+      .where(archived ? eq(socialAssets.status, "archived") : isNull(socialAssets.archivedAt))
+      .orderBy(desc(socialAssets.updatedAt), desc(socialAssets.id)).offset(offset).limit(limit);
   }
 
   async getSocialAssetById(id: string): Promise<SocialAsset | undefined> {
@@ -144,18 +144,18 @@ export class GeneratedAssetsRepository {
     return asset;
   }
 
-  async createSocialAsset(asset: any): Promise<SocialAsset> {
+  async createSocialAsset(asset: InsertSocialAsset): Promise<SocialAsset> {
     const [created] = await db.insert(socialAssets).values(asset).returning();
     return created;
   }
 
-  async updateSocialAsset(id: string, data: any): Promise<SocialAsset | undefined> {
-    const [updated] = await db.update(socialAssets).set({ ...data, updatedAt: new Date() }).where(eq(socialAssets.id, id)).returning();
+  async updateSocialAsset(current: SocialAsset, data: Partial<InsertSocialAsset>): Promise<SocialAsset | undefined> {
+    const [updated] = await db.update(socialAssets).set({ ...data, updatedAt: new Date() })
+      .where(and(
+        eq(socialAssets.id, current.id),
+        eq(socialAssets.status, current.status),
+        current.packageUrl === null ? isNull(socialAssets.packageUrl) : eq(socialAssets.packageUrl, current.packageUrl),
+      )).returning();
     return updated;
-  }
-
-  async archiveSocialAsset(id: string): Promise<boolean> {
-    const result = await db.update(socialAssets).set({ status: "archived", archivedAt: new Date(), updatedAt: new Date() }).where(eq(socialAssets.id, id)).returning({ id: socialAssets.id });
-    return result.length > 0;
   }
 }

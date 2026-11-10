@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { pgTable, text, varchar, timestamp, integer, boolean, jsonb, index, uniqueIndex, doublePrecision } from "drizzle-orm/pg-core";
+import type { SocialRevision } from "./socialStudio";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 // Constantes sin base de datos: viven en ./constants para que el sitio público no cargue drizzle ni zod.
@@ -1453,7 +1454,7 @@ export const socialAssets = pgTable("social_assets", {
   status: text("status").notNull().default("draft"), // draft | ready | archived
   renderStatus: text("render_status").notNull().default("ready"),
   payload: jsonb("payload").notNull(),
-  versions: jsonb("versions").$type<Array<{ version: number; payload: unknown; createdAt: string; createdBy?: string }>>().default([]),
+  versions: jsonb("versions").$type<SocialRevision[]>().default([]),
   previewUrl: text("preview_url"),
   packageUrl: text("package_url"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -1464,12 +1465,7 @@ export const socialAssets = pgTable("social_assets", {
   kindIdx: index("social_assets_kind_idx").on(table.kind),
 }));
 
-export const insertSocialAssetSchema = createInsertSchema(socialAssets, {
-  payload: z.record(z.unknown()),
-  versions: z.array(z.object({ version: z.number(), payload: z.unknown(), createdAt: z.string(), createdBy: z.string().optional() })).optional(),
-}).omit({ id: true, createdAt: true, updatedAt: true, archivedAt: true });
-
-export type InsertSocialAsset = z.infer<typeof insertSocialAssetSchema>;
+export type InsertSocialAsset = typeof socialAssets.$inferInsert;
 export type SocialAsset = typeof socialAssets.$inferSelect;
 
 export const mediaDeletionRequests = pgTable("media_deletion_requests", {

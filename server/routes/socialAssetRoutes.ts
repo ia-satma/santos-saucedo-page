@@ -1,206 +1,268 @@
+import { randomUUID } from "node:crypto";
 import type { Express, Request, Response } from "express";
 import { z } from "zod";
-import sharp from "sharp";
+import type { SocialAsset, InsertSocialAsset } from "@shared/schema";
+import { socialContentSchema, socialFormatSchema, socialLanguageSchema, socialPaletteSchema, socialPayloadSchema, type SocialPayload, type SocialRevision } from "@shared/socialStudio";
+import { AiGovernanceBlockedError } from "../ai/dataGovernance";
 import { authMiddleware, requirePermission } from "../auth";
 import { storage } from "../storage";
-import { downloadAppStorageObject, uploadAppStorageObject } from "../replitStorage";
+import { downloadPrivateStudioObject } from "../replitStorage";
+import { discardSocialFiles, generateSocialContent, persistSocialRevision, reviewSocialContent, socialSlideKey, studioDesign } from "../services/socialStudio";
 import { auditLog } from "./routeUtils";
-import { socialMediaAgent } from "../agents/specialized/SocialMediaAgent";
 
-const idSchema = z.string().uuid();
+const base = "/api/admin/social-assets";
+const uuid = z.string().uuid();
 const generationSchema = z.object({
-  kind: z.enum(["post", "carousel"]).default("post"),
+  kind: z.enum(["post", "carousel"]),
   title: z.string().trim().min(1).max(180),
   topic: z.string().trim().min(1).max(10_000),
-  language: z.string().trim().min(2).max(12).default("es"),
-  format: z.enum(["square", "portrait", "story", "landscape"]).default("square"),
-  slideCount: z.coerce.number().int().min(1).max(12).default(1),
-  palette: z.enum(["navy-lime", "navy-white"]).default("navy-lime"),
-  includeImages: z.boolean().default(false),
-  sourceNotes: z.string().trim().max(20_000).optional().default(""),
+  language: socialLanguageSchema.default("es"),
+  format: socialFormatSchema.default("square"),
+  slideCount: z.number().int().min(1).max(12).default(1),
+  palette: socialPaletteSchema.default("navy-lime"),
+  sourceNotes: z.string().trim().max(20_000).default(""),
+}).strict().refine(({ kind, slideCount }) => kind === "post" ? slideCount === 1 : slideCount >= 2);
+const editSchema = z.object({
+  version: z.number().int().min(1),
+  title: z.string().trim().min(1).max(180),
+  content: socialContentSchema,
+}).strict();
+const redesignSchema = z.object({
+  version: z.number().int().min(1),
+  format: socialFormatSchema,
+  palette: socialPaletteSchema,
 }).strict();
 
-const updateSchema = z.object({
-  title: z.string().trim().min(1).max(180).optional(),
-  topic: z.string().trim().min(1).max(10_000).optional(),
-  payload: z.record(z.unknown()).optional(),
-  status: z.enum(["draft", "ready"]).optional(),
-}).strict();
-
-function escapeXml(value: string): string {
-  return value.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" })[char]!);
+function currentPayload(asset: Pick<SocialAsset, "payload" | "topic">): SocialPayload {
+  const parsed = socialPayloadSchema.safeParse(asset.payload);
+  if (parsed.success) return parsed.data;
+  const legacy = z.object({
+    sourceNotes: z.string().default(""),
+    slides: z.array(z.object({ title: z.string(), body: z.string() })).max(12),
+  }).safeParse(asset.payload);
+  return { caption: asset.topic, sourceNotes: legacy.success ? legacy.data.sourceNotes : "", slides: legacy.success ? legacy.data.slides : [] };
 }
 
-function canvasFor(format: string): { width: number; height: number } {
-  if (format === "portrait" || format === "story") return { width: 1080, height: 1350 };
-  if (format === "landscape") return { width: 1200, height: 675 };
-  return { width: 1080, height: 1080 };
+function fileUrl(id: string, file: string, version?: number) {
+  return `${base}/${id}/file/${file}${version ? `?version=${version}` : ""}`;
 }
 
-function buildSvg(asset: { title: string; topic: string; format: string; palette: string; slideCount: number }): string {
-  const { width, height } = canvasFor(asset.format);
-  const navy = "#0B2850";
-  const lime = "#BBF741";
-  const background = asset.palette === "navy-white" ? "#FFFFFF" : navy;
-  const foreground = asset.palette === "navy-white" ? navy : "#FFFFFF";
-  const accent = asset.palette === "navy-white" ? "#8CC63F" : lime;
-  const title = escapeXml(asset.title.slice(0, 90));
-  const topic = escapeXml(asset.topic.replace(/\s+/g, " ").slice(0, 220));
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-    <rect width="${width}" height="${height}" fill="${background}"/>
-    <text x="${Math.round(width * .08)}" y="${Math.round(height * .12)}" fill="${accent}" font-family="Arial,sans-serif" font-size="${Math.max(22, Math.round(width*.022))}" letter-spacing="4">SANTOS &amp; SAUCEDO</text>
-    <text x="${Math.round(width * .08)}" y="${Math.round(height * .32)}" fill="${foreground}" font-family="Georgia,serif" font-size="${Math.max(40, Math.round(width*.065))}" font-weight="700">${title}</text>
-    <foreignObject x="${Math.round(width*.08)}" y="${Math.round(height*.4)}" width="${Math.round(width*.82)}" height="${Math.round(height*.3)}"><div xmlns="http://www.w3.org/1999/xhtml" style="font: ${Math.max(24, Math.round(width*.028))}px Arial,sans-serif; color:${foreground}; line-height:1.35">${topic}</div></foreignObject>
-    <text x="${Math.round(width * .08)}" y="${Math.round(height * .92)}" fill="${foreground}" opacity=".78" font-family="Arial,sans-serif" font-size="${Math.max(18, Math.round(width*.018))}" letter-spacing="2">DERECHO LABORAL PARA EMPRESAS</text>
-    <text x="${Math.round(width * .92)}" y="${Math.round(height * .92)}" text-anchor="end" fill="${accent}" font-family="Arial,sans-serif" font-size="${Math.max(18, Math.round(width*.018))}">§</text>
-  </svg>`;
-}
-
-function publicView(asset: Awaited<ReturnType<typeof storage.getSocialAssetById>>) {
-  if (!asset) return null;
+function fileLinks(id: string, snapshot: Pick<SocialAsset, "previewUrl" | "packageUrl">, count: number, version?: number) {
+  const slideUrls = socialSlideKey(id, snapshot.packageUrl, 0)
+    ? Array.from({ length: count }, (_, index) => fileUrl(id, String(index + 1), version))
+    : snapshot.previewUrl ? [fileUrl(id, "preview", version)] : [];
   return {
-    ...asset,
-    previewUrl: `/api/admin/social-assets/${asset.id}/file/preview`,
-    packageUrl: `/api/admin/social-assets/${asset.id}/file/package`,
+    slideUrls,
+    previewUrl: slideUrls[0] ?? null,
+    packageUrl: snapshot.packageUrl ? fileUrl(id, "package", version) : null,
+    packageExtension: snapshot.packageUrl?.endsWith(".json") ? "json" : "zip",
   };
 }
 
-async function renderAsset(asset: { id: string; title: string; topic: string; format: string; palette: string; slideCount: number }) {
-  const svg = buildSvg(asset);
-  const png = await sharp(Buffer.from(svg)).png().toBuffer();
-  const previewKey = `public/media/social-${asset.id}-preview.png`;
-  const packageKey = `public/media/social-${asset.id}.json`;
-  const packageBody = Buffer.from(JSON.stringify({
-    schema: "santos-social-asset/v1",
-    id: asset.id,
-    title: asset.title,
-    topic: asset.topic,
-    format: asset.format,
-    slideCount: asset.slideCount,
-    html: `<div data-santos-social-asset="${asset.id}"><h1>${escapeXml(asset.title)}</h1><p>${escapeXml(asset.topic)}</p></div>`,
-  }, null, 2));
-  await Promise.all([uploadAppStorageObject(previewKey, png), uploadAppStorageObject(packageKey, packageBody)]);
-  return { previewKey, packageKey };
+function view(asset: SocialAsset, detailed = false) {
+  const revisions = asset.versions ?? [];
+  const { id, kind, title, topic, language, format, slideCount, status, palette, createdAt } = asset;
+  return {
+    id, kind, title, topic, language, format, slideCount, status, palette, createdAt, version: revisions.length + 1,
+    ...fileLinks(id, asset, slideCount, revisions.length + 1),
+    ...(detailed ? {
+      content: currentPayload(asset),
+      versions: revisions.map(revision => {
+        const content = currentPayload({ payload: revision.payload, topic });
+        return {
+          version: revision.version, title: revision.title, format: revision.format, palette: revision.palette,
+          createdAt: revision.createdAt, content,
+          ...fileLinks(id, revision, content.slides.length, revision.version),
+        };
+      }).reverse(),
+    } : {}),
+  };
+}
+
+function isOwnLegacyObject(id: string, key: string | null) {
+  return key === `public/media/social-${id}.json` || key === `public/media/social-${id}-preview.png`;
+}
+
+class SocialConflictError extends Error {
+  constructor() {
+    super("La pieza cambió mientras la editabas. Vuelve a abrirla para ver la versión más reciente.");
+  }
+}
+
+async function saveNew(asset: Omit<InsertSocialAsset, "payload"> & { id: string; format: string; palette: string }, payload: SocialPayload) {
+  const { format, palette } = studioDesign(asset.format, asset.palette);
+  const files = await persistSocialRevision(asset.id, format, palette, payload);
+  return storage.createSocialAsset({ ...asset, ...files, payload });
+}
+
+async function saveRevision(current: SocialAsset, updates: { title: string; format: string; palette: string; payload: SocialPayload }, actorId: string) {
+  const { format, palette } = studioDesign(updates.format, updates.palette);
+  const files = await persistSocialRevision(current.id, format, palette, updates.payload);
+  const revisions = current.versions ?? [];
+  const revision: SocialRevision = {
+    version: revisions.length + 1,
+    title: current.title, format: current.format, palette: current.palette, payload: current.payload,
+    previewUrl: current.previewUrl, packageUrl: current.packageUrl,
+    createdAt: (current.updatedAt ?? current.createdAt ?? new Date()).toISOString(),
+    createdBy: actorId,
+  };
+  const saved = await storage.updateSocialAsset(current, { ...updates, ...files, versions: [...revisions, revision] });
+  if (!saved) {
+    await discardSocialFiles(current.id, files, updates.payload.slides.length);
+    throw new SocialConflictError();
+  }
+  return saved;
+}
+
+async function audit(action: string, asset: SocialAsset, req: Request) {
+  try {
+    await auditLog(action, "social_asset", asset.id, req.adminUser!.id, { kind: asset.kind, version: (asset.versions?.length ?? 0) + 1 }, req);
+  } catch {
+    console.error("[social-studio] Could not record audit event", { action, id: asset.id });
+  }
+}
+
+function respond(handler: (req: Request, res: Response) => Promise<unknown>) {
+  return async (req: Request, res: Response) => {
+    res.set("Cache-Control", "private, no-store");
+    try {
+      return await handler(req, res);
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(422).json({ error: "Revisa los campos y el contenido de las piezas.", details: error.flatten() });
+      if (error instanceof SocialConflictError) return res.status(409).json({ error: error.message });
+      if (error instanceof AiGovernanceBlockedError) return res.status(422).json({ error: "Revisa el material enviado para uso de IA." });
+      console.error("[social-studio]", { name: (error as Error).name, route: req.route?.path });
+      return res.status(500).json({ error: "La operación no pudo completarse. Revisa el servicio de IA o acorta el texto e inténtalo de nuevo." });
+    }
+  };
+}
+
+async function loadAsset(req: Request, res: Response, includeArchived = false) {
+  const id = uuid.safeParse(req.params.id);
+  const asset = id.success ? await storage.getSocialAssetById(id.data) : undefined;
+  if (!asset || (!includeArchived && asset.status === "archived")) {
+    res.status(404).json({ error: "Pieza no encontrada." });
+    return undefined;
+  }
+  return asset;
+}
+
+function requireVersion(asset: SocialAsset, expected: number) {
+  if (expected !== (asset.versions?.length ?? 0) + 1) throw new SocialConflictError();
 }
 
 export function registerSocialAssetRoutes(app: Express): void {
-  const list = async (req: Request, res: Response) => {
-    try {
-      const kind = typeof req.query.kind === "string" ? req.query.kind : undefined;
-      const assets = await storage.getSocialAssets(kind);
-      res.json(assets.filter((asset) => asset.status !== "archived").map(publicView));
-    } catch (error) {
-      console.error("[social-assets/list]", error);
-      res.status(500).json({ error: "No fue posible cargar los contenidos sociales." });
+  const access = [authMiddleware, requirePermission("agents")];
+  app.get(base, ...access, respond(async (req, res) => {
+    const page = z.coerce.number().int().min(1).max(100_000).default(1).parse(req.query.page);
+    const pageSize = 20;
+    const assets = await storage.getSocialAssets(req.query.archived === "true", (page - 1) * pageSize, pageSize + 1);
+    res.json({ items: assets.slice(0, pageSize).map(asset => view(asset)), hasMore: assets.length > pageSize });
+  }));
+
+  app.post(`${base}/generate`, ...access, respond(async (req, res) => {
+    const { sourceNotes, ...brief } = generationSchema.parse(req.body);
+    const generated = await generateSocialContent({ ...brief, sourceNotes }, req.adminUser!.id);
+    const asset = await saveNew({ id: randomUUID(), ...brief, status: "ready" }, { ...generated, sourceNotes });
+    await audit("create", asset, req);
+    res.status(201).json(view(asset, true));
+  }));
+
+  app.get(`${base}/:id`, ...access, respond(async (req, res) => {
+    const asset = await loadAsset(req, res, true);
+    if (asset) res.json(view(asset, true));
+  }));
+
+  app.patch(`${base}/:id`, ...access, respond(async (req, res) => {
+    const current = await loadAsset(req, res);
+    if (!current) return;
+    const { version, title, content } = editSchema.parse(req.body);
+    requireVersion(current, version);
+    if (content.slides.length !== current.slideCount) return res.status(422).json({ error: "Conserva el número de piezas del diseño original." });
+    const updated = await saveRevision(current, { title, format: current.format, palette: current.palette, payload: { ...content, sourceNotes: currentPayload(current).sourceNotes } }, req.adminUser!.id);
+    await audit("edit", updated, req);
+    res.json(view(updated, true));
+  }));
+
+  app.post(`${base}/:id/redesign`, ...access, respond(async (req, res) => {
+    const current = await loadAsset(req, res);
+    if (!current) return;
+    const { version, format, palette } = redesignSchema.parse(req.body);
+    requireVersion(current, version);
+    const updated = await saveRevision(current, { title: current.title, format, palette, payload: currentPayload(current) }, req.adminUser!.id);
+    await audit("redesign", updated, req);
+    res.json(view(updated, true));
+  }));
+
+  app.post(`${base}/:id/regenerate`, ...access, respond(async (req, res) => {
+    const current = await loadAsset(req, res);
+    if (!current) return;
+    const { version } = z.object({ version: z.number().int().min(1) }).strict().parse(req.body);
+    requireVersion(current, version);
+    const { title, topic, language, format, palette, slideCount } = current;
+    const { sourceNotes, slides: previousCopy } = currentPayload(current);
+    const content = await generateSocialContent({
+      title, topic, language, format: socialFormatSchema.parse(format), slideCount, sourceNotes, previousCopy,
+    }, req.adminUser!.id);
+    const updated = await saveRevision(current, { title, format, palette, payload: { ...content, sourceNotes } }, req.adminUser!.id);
+    await audit("regenerate", updated, req);
+    res.json(view(updated, true));
+  }));
+
+  app.post(`${base}/:id/copy`, ...access, respond(async (req, res) => {
+    const current = await loadAsset(req, res);
+    if (!current) return;
+    const { kind, title, topic, language, format, palette, slideCount } = current;
+    const copy = await saveNew({ id: randomUUID(), kind, title: `${title.slice(0, 172)} · copia`, topic, language, format, palette, slideCount, status: "draft" }, currentPayload(current));
+    await audit("copy", copy, req);
+    res.status(201).json(view(copy, true));
+  }));
+
+  app.post(`${base}/:id/review`, ...access, respond(async (req, res) => {
+    const asset = await loadAsset(req, res);
+    if (asset) res.json(await reviewSocialContent(currentPayload(asset), asset.language, req.adminUser!.id));
+  }));
+
+  app.post(`${base}/:id/archive`, ...access, respond(async (req, res) => {
+    const asset = await loadAsset(req, res, true);
+    if (!asset) return;
+    const { archived } = z.object({ archived: z.boolean() }).strict().parse(req.body);
+    const status = archived ? "archived" : asset.packageUrl ? "ready" : "draft";
+    const updated = await storage.updateSocialAsset(asset, { status, archivedAt: archived ? new Date() : null });
+    if (!updated) throw new SocialConflictError();
+    await audit(archived ? "archive" : "restore", updated, req);
+    res.json(view(updated));
+  }));
+
+  app.get(`${base}/:id/file/:kind`, ...access, respond(async (req, res) => {
+    const asset = await loadAsset(req, res, true);
+    if (!asset) return;
+    const version = req.query.version === undefined ? undefined : z.coerce.number().int().min(1).parse(req.query.version);
+    const snapshot = version === undefined || version === (asset.versions?.length ?? 0) + 1 ? asset : asset.versions?.find(revision => revision.version === version);
+    if (!snapshot) return res.status(404).end();
+    const kind = req.params.kind;
+    const slide = /^\d{1,2}$/.test(kind) ? Number(kind) : 0;
+    const count = snapshot === asset ? asset.slideCount : currentPayload({ payload: snapshot.payload, topic: asset.topic }).slides.length;
+    const packageDownload = kind === "package";
+    const firstSlide = socialSlideKey(asset.id, snapshot.packageUrl, 0);
+    let key: string | null = null;
+    if (packageDownload && firstSlide) key = snapshot.packageUrl;
+    else if (firstSlide && slide >= 1 && slide <= count) key = socialSlideKey(asset.id, snapshot.packageUrl, slide - 1);
+    else if (kind === "preview" && firstSlide) key = firstSlide;
+    else if (packageDownload || kind === "preview") {
+      const legacyKey = packageDownload ? snapshot.packageUrl : snapshot.previewUrl;
+      if (isOwnLegacyObject(asset.id, legacyKey)) key = legacyKey;
     }
-  };
-
-  const generate = async (req: Request, res: Response) => {
-    const parsed = generationSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: "Configuración social inválida", details: parsed.error.flatten() });
-    try {
-      const aiResult = await socialMediaAgent.execute({ agentType: "social_media", source: "cms_social_asset" } as any, {
-        title: parsed.data.title,
-        topic: parsed.data.topic,
-        sourceNotes: parsed.data.sourceNotes,
-        language: parsed.data.language === "en" ? "en" : "es",
-        platforms: ["linkedin", "instagram", "facebook"],
-        aspect: parsed.data.format,
-      });
-      const aiContent = aiResult.success && aiResult.data && typeof aiResult.data === "object"
-        ? aiResult.data as Record<string, unknown>
-        : null;
-      const generatedPosts = aiContent?.posts && typeof aiContent.posts === "object" ? aiContent.posts : {};
-      const draft = await storage.createSocialAsset({
-        ...parsed.data,
-        brand: "santos-saucedo",
-        status: "ready",
-        renderStatus: "rendering",
-        payload: {
-          topic: parsed.data.topic,
-          sourceNotes: parsed.data.sourceNotes,
-          includeImages: parsed.data.includeImages,
-          generatedBy: "gpt-6.1-sol",
-          serviceTier: "fast",
-          posts: generatedPosts,
-          slides: Array.from({ length: parsed.data.slideCount }, (_, index) => ({
-            index: index + 1,
-            title: index === 0 ? parsed.data.title : `${parsed.data.title} · ${index + 1}`,
-            body: typeof (generatedPosts as any)?.linkedin?.text === "string"
-              ? (generatedPosts as any).linkedin.text
-              : parsed.data.topic,
-          })),
-        },
-        versions: [],
-      });
-      const files = await renderAsset(draft);
-      const saved = await storage.updateSocialAsset(draft.id, { renderStatus: "ready", previewUrl: files.previewKey, packageUrl: files.packageKey });
-      await auditLog("create", "social_asset", draft.id, req.adminUser!.id, { kind: draft.kind }, req);
-      res.status(201).json(publicView(saved));
-    } catch (error) {
-      console.error("[social-assets/generate]", error);
-      res.status(500).json({ error: "No fue posible generar el contenido social." });
-    }
-  };
-
-  const detail = async (req: Request, res: Response) => {
-    if (!idSchema.safeParse(req.params.id).success) return res.status(400).json({ error: "ID inválido" });
-    const asset = await storage.getSocialAssetById(req.params.id);
-    if (!asset || asset.status === "archived") return res.status(404).json({ error: "Contenido social no encontrado" });
-    res.json(publicView(asset));
-  };
-
-  const update = async (req: Request, res: Response) => {
-    if (!idSchema.safeParse(req.params.id).success) return res.status(400).json({ error: "ID inválido" });
-    const parsed = updateSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: "Edición inválida", details: parsed.error.flatten() });
-    const current = await storage.getSocialAssetById(req.params.id);
-    if (!current || current.status === "archived") return res.status(404).json({ error: "Contenido social no encontrado" });
-    const versions = [...(current.versions || []), { version: (current.versions?.length || 0) + 1, payload: current.payload, createdAt: new Date().toISOString(), createdBy: req.adminUser!.id }];
-    const saved = await storage.updateSocialAsset(current.id, { ...parsed.data, versions, renderStatus: "ready" });
-    await auditLog("update", "social_asset", current.id, req.adminUser!.id, { version: versions.length }, req);
-    res.json(publicView(saved));
-  };
-
-  const copy = async (req: Request, res: Response) => {
-    if (!idSchema.safeParse(req.params.id).success) return res.status(400).json({ error: "ID inválido" });
-    const current = await storage.getSocialAssetById(req.params.id);
-    if (!current || current.status === "archived") return res.status(404).json({ error: "Contenido social no encontrado" });
-    const duplicate = await storage.createSocialAsset({ ...current, id: undefined, title: `${current.title} · copia`, status: "draft", versions: [], previewUrl: null, packageUrl: null, createdAt: undefined, updatedAt: undefined, archivedAt: undefined });
-    const files = await renderAsset(duplicate);
-    const saved = await storage.updateSocialAsset(duplicate.id, { previewUrl: files.previewKey, packageUrl: files.packageKey, renderStatus: "ready" });
-    res.status(201).json(publicView(saved));
-  };
-
-  const archive = async (req: Request, res: Response) => {
-    if (!idSchema.safeParse(req.params.id).success) return res.status(400).json({ error: "ID inválido" });
-    const ok = await storage.archiveSocialAsset(req.params.id);
-    if (!ok) return res.status(404).json({ error: "Contenido social no encontrado" });
-    res.json({ ok: true });
-  };
-
-  const file = async (req: Request, res: Response) => {
-    if (!idSchema.safeParse(req.params.id).success) return res.status(400).end();
-    const asset = await storage.getSocialAssetById(req.params.id);
-    if (!asset || asset.status === "archived") return res.status(404).end();
-    const key = req.params.kind === "package" ? asset.packageUrl : asset.previewUrl;
     if (!key) return res.status(404).end();
-    const body = await downloadAppStorageObject(key);
+    const body = await downloadPrivateStudioObject(key);
     if (!body) return res.status(404).end();
-    res.setHeader("Cache-Control", "private, no-store");
-    res.setHeader("Content-Disposition", `${req.params.kind === "package" ? "attachment; filename=contenido-social.json" : "inline; filename=preview.png"}`);
-    res.type(req.params.kind === "package" ? "application/json" : "image/png").send(body);
-  };
-
-  for (const base of ["/api/admin/social-assets", "/api/admin/posts-ai", "/api/admin/carruseles"]) {
-    app.get(base, authMiddleware, requirePermission("agents"), list);
-    app.post(`${base}/generate`, authMiddleware, requirePermission("agents"), generate);
-    app.get(`${base}/:id`, authMiddleware, requirePermission("agents"), detail);
-    app.patch(`${base}/:id`, authMiddleware, requirePermission("agents"), update);
-    app.post(`${base}/:id/copy`, authMiddleware, requirePermission("agents"), copy);
-    app.post(`${base}/:id/redesign`, authMiddleware, requirePermission("agents"), update);
-    app.post(`${base}/:id/review`, authMiddleware, requirePermission("agents"), update);
-    app.post(`${base}/:id/archive`, authMiddleware, requirePermission("agents"), archive);
-    app.get(`${base}/:id/file/:kind`, authMiddleware, requirePermission("agents"), file);
-  }
+    const extension = key.endsWith(".json") ? "json" : packageDownload ? "zip" : "png";
+    res.set({
+      "X-Content-Type-Options": "nosniff",
+      "Cross-Origin-Resource-Policy": "same-origin",
+      "Content-Security-Policy": "sandbox",
+      "Content-Disposition": `${packageDownload || req.query.download === "1" ? "attachment" : "inline"}; filename="santos-saucedo-${slide || "social"}.${extension}"`,
+    });
+    return res.type(extension).send(body);
+  }));
 }
