@@ -16,6 +16,8 @@ import { SUPPORTED_LANGUAGES } from "@shared/constants";
 import { SOCIAL_NETWORKS, socialCopyLimits, socialContentSchema, socialFormats, type SocialContent, type SocialFormat, type SocialPayload } from "@shared/socialStudio";
 
 const base = "/api/admin/social-assets";
+const MAX_TOPIC_LENGTH = 10_000;
+const MAX_SOURCE_LENGTH = 500_000;
 const selectClass = "flex h-10 w-full min-w-0 rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50";
 const primaryClass = "bg-[#0B2850] text-white hover:bg-[#145385]";
 const directions = {
@@ -438,6 +440,7 @@ export default function AdminSocial() {
   const { isAuthenticated, requireAuth } = useAdminAuth();
   const { toast } = useToast();
   const studioRef = useRef<HTMLDivElement>(null);
+  const sourceDetails = useRef<HTMLDetailsElement>(null);
   const [kind, setKind] = useState<Piece["kind"]>("post");
   const [title, setTitle] = useState("");
   const [topic, setTopic] = useState("");
@@ -484,10 +487,17 @@ export default function AdminSocial() {
     toast({ title: "Versión guardada" });
   };
   const generate = useMutation({
-    mutationFn: () => request<PieceDetail>("POST", "/generate", {
-      kind, title, topic, language, format, slideCount: kind === "post" ? 1 : Number(slideCount),
-      palette, designDirection: direction, background, sourceNotes, documents, supportImages: images, illustrate, webSearch,
-    }),
+    mutationFn: async () => {
+      const requestedPieces = kind === "post" ? 1 : Number(slideCount);
+      const result = await request<PieceDetail>("POST", "/generate", {
+        kind, title, topic, language, format, slideCount: requestedPieces,
+        palette, designDirection: direction, background, sourceNotes, documents, supportImages: images, illustrate, webSearch,
+      });
+      if (!result?.id || result.content?.slides.length !== requestedPieces || result.slideCount !== requestedPieces) {
+        throw new Error(`No se recibió el conjunto completo de ${requestedPieces} piezas. El material sigue cargado para reintentar.`);
+      }
+      return result;
+    },
     onSuccess: (piece) => {
       queryClient.setQueryData([base, piece.id], piece);
       refresh();
@@ -516,9 +526,11 @@ export default function AdminSocial() {
     onError,
   });
 
+  const topicTooLong = topic.trim().length > MAX_TOPIC_LENGTH;
+  const sourceTooLong = sourceNotes.trim().length > MAX_SOURCE_LENGTH;
   const hasSource = Boolean(topic.trim() || sourceNotes.trim() || documents.length);
   const webHasQuery = !webSearch || Boolean(topic.trim() || title.trim());
-  const canGenerate = hasSource && webHasQuery && !uploadingDocuments && !uploadingImages && !generate.isPending;
+  const canGenerate = hasSource && webHasQuery && !topicTooLong && !sourceTooLong && !uploadingDocuments && !uploadingImages && !generate.isPending;
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -539,9 +551,17 @@ export default function AdminSocial() {
         <div className="grid gap-5 md:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="social-topic">Tema / instrucciones</Label>
-            <Textarea id="social-topic" maxLength={10_000} value={topic} onChange={event => setTopic(event.target.value)} className="min-h-28"
+            <Textarea id="social-topic" aria-invalid={topicTooLong} aria-describedby="social-topic-help" value={topic} onChange={event => setTopic(event.target.value)} className="min-h-28"
               placeholder="Ej. Un carrusel para responsables de recursos humanos sobre cómo preparar una auditoría laboral." />
-            <p className="text-xs text-muted-foreground">Indica el objetivo y el público. Puedes dejarlo vacío si adjuntas documentos o pegas información de apoyo.</p>
+            <p id="social-topic-help" className="text-xs text-muted-foreground">Indica el objetivo y el público. {topic.length.toLocaleString("es-MX")} / {MAX_TOPIC_LENGTH.toLocaleString("es-MX")} caracteres de instrucciones.</p>
+            {topicTooLong && <div className="space-y-2 text-sm">
+              <p className="text-destructive">El tema supera el límite de instrucciones. Coloca el texto extenso en Material de apoyo.</p>
+              {topic.length + (sourceNotes ? sourceNotes.length + 2 : 0) <= MAX_SOURCE_LENGTH && <Button type="button" variant="outline" size="sm" onClick={() => {
+                setSourceNotes(previous => [previous, topic].filter(Boolean).join("\n\n"));
+                setTopic("");
+                if (sourceDetails.current) sourceDetails.current.open = true;
+              }}>Usar como material de apoyo</Button>}
+            </div>}
           </div>
           <div className="space-y-2">
             <p className="text-sm font-medium">Información de referencia <span className="font-normal text-muted-foreground">(opcional)</span></p>
@@ -549,15 +569,19 @@ export default function AdminSocial() {
           </div>
         </div>
 
-        <details className="group border-b pb-4">
+        <details ref={sourceDetails} className="group border-b pb-4">
           <summary className="flex cursor-pointer items-center gap-2 text-sm font-medium text-[#0B2850]">
             <ChevronDown className="size-4 -rotate-90 transition-transform group-open:rotate-0" aria-hidden="true" /> Pegar información adicional
           </summary>
           <div className="mt-3 space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="social-notes">Material de apoyo</Label>
-              <Textarea id="social-notes" maxLength={20_000} rows={4} value={sourceNotes} onChange={event => setSourceNotes(event.target.value)}
+              <Textarea id="social-notes" aria-invalid={sourceTooLong} aria-describedby="social-notes-help" rows={4} value={sourceNotes} onChange={event => setSourceNotes(event.target.value)}
                 placeholder="Pega contexto, datos, citas o indicaciones que el agente deba conservar." />
+              <p id="social-notes-help" className="text-xs text-muted-foreground">
+                {sourceNotes.length.toLocaleString("es-MX")} / {MAX_SOURCE_LENGTH.toLocaleString("es-MX")} caracteres.
+              </p>
+              {sourceTooLong && <p role="alert" className="text-sm text-destructive">El material supera el límite. Reduce el texto o adjúntalo como documento.</p>}
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="social-title">Título interno (opcional)</Label>
@@ -626,8 +650,13 @@ export default function AdminSocial() {
           <p className="text-sm font-medium">Imágenes de apoyo <span className="font-normal text-muted-foreground">(opcional)</span></p>
           <SupportImages images={images} onChange={setImages} onUploadingChange={setUploadingImages} />
         </div>
+        <p className="text-xs text-muted-foreground">Material preparado · {sourceNotes.length.toLocaleString("es-MX")} caracteres de apoyo · {documents.length} documentos adjuntos.</p>
         {!webHasQuery && <p className="text-sm text-destructive">Escribe un tema o un título para la búsqueda web.</p>}
-        {generate.isError && <p role="alert" className="text-sm text-destructive">{generate.error.message}</p>}
+        {generate.isError && <div role="alert" className="space-y-2 border border-destructive/30 bg-destructive/5 p-3 text-sm">
+          <p>{generate.error.message}</p>
+          <p className="text-muted-foreground">El material y las opciones siguen cargados.</p>
+          <Button type="button" size="sm" variant="outline" disabled={!canGenerate} onClick={() => generate.mutate()}>Reintentar generación</Button>
+        </div>}
         <div className="flex flex-wrap items-center gap-3">
           <Button className={primaryClass} disabled={!canGenerate}>
             {generate.isPending ? <Loader2 className="animate-spin" aria-hidden="true" /> : <Sparkles aria-hidden="true" />}
@@ -635,7 +664,7 @@ export default function AdminSocial() {
           </Button>
           <span className="text-xs text-muted-foreground">Recibirás PNG, HTML editable y copy para seis redes.</span>
         </div>
-        {generate.isPending && <p role="status" className="border-l-2 border-[#8CC63F] pl-3 text-sm text-muted-foreground">Preparando el texto, el diseño y los archivos.</p>}
+        {generate.isPending && <p role="status" className="border-l-2 border-[#8CC63F] pl-3 text-sm text-muted-foreground">La solicitud sigue en curso. El estudio se abrirá cuando el conjunto completo esté guardado.</p>}
       </fieldset>
     </form>
 

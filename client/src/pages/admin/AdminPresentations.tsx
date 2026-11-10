@@ -1,9 +1,8 @@
 import { AssetDownloadButton, PrivateAssetPreview, PrivateAssetThumbnail } from "@/components/admin/AssetFiles";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AdminPageHelp } from "@/components/admin/AdminPageHelp";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AgentButton } from "@/components/admin/AgentButton";
-import { AgentProgress } from "@/components/admin/AgentTools";
 import { DocumentUpload, type UploadedDoc } from "@/components/admin/DocumentUpload";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAdminAuth, adminApiRequest } from "@/lib/adminAuth";
@@ -46,6 +45,8 @@ interface PresentationRow {
 }
 
 type Format = "pptx" | "pdf" | "png";
+const MAX_TOPIC_LENGTH = 10_000;
+const MAX_SOURCE_LENGTH = 500_000;
 
 const TEMPLATE_LABELS: Record<string, string> = {
   santossaucedo: "Santos & Saucedo",
@@ -60,6 +61,8 @@ export default function AdminPresentations() {
 
   // --- Estado del generador ---
   const [topic, setTopic] = useState("");
+  const [sourceNotes, setSourceNotes] = useState("");
+  const sourceDetails = useRef<HTMLDetailsElement>(null);
   const [docs, setDocs] = useState<UploadedDoc[]>([]);
   const [slideCount, setSlideCount] = useState(8);
   const [lang, setLang] = useState<"es" | "en">("es");
@@ -73,7 +76,6 @@ export default function AdminPresentations() {
   const [uploadingImg, setUploadingImg] = useState(false);
   const [supportUploadStatus, setSupportUploadStatus] = useState("");
   const [notes, setNotes] = useState<string[]>([]);
-  const [usedFallback, setUsedFallback] = useState(false);
 
   const [previewId, setPreviewId] = useState<string | null>(null);
 
@@ -116,10 +118,12 @@ export default function AdminPresentations() {
   };
 
   const generateMutation = useMutation({
+    onMutate: () => setNotes([]),
     mutationFn: async () => {
       const selectedFormats = (Object.keys(formats) as Format[]).filter((f) => formats[f]);
       const res = await adminApiRequest("POST", "/api/admin/presentations/generate", {
         topic,
+        sourceNotes,
         docs,
         slideCount,
         lang,
@@ -133,21 +137,25 @@ export default function AdminPresentations() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setUsedFallback(false);
         setNotes([...(Array.isArray(data?.docNotes) ? data.docNotes : []), ...(Array.isArray(data?.visualNotes) ? data.visualNotes : [])]);
         throw new Error((data as any)?.error || "No se pudo generar la presentación.");
+      }
+      if (data?.usedFallback === true || /^fallback/i.test(String(data?.presentation?.engine || ""))) {
+        throw new Error("La respuesta no contiene una presentación generada con IA. Puedes reintentar con el material que sigue cargado.");
+      }
+      if (!data?.presentation?.id) throw new Error("No se recibió una presentación guardada. Reintenta la generación.");
+      const expectedTotal = slideCount + 1 + Number(includeIntroSlide);
+      if (data.presentation.slideCount !== expectedTotal) {
+        throw new Error(`La respuesta no contiene las ${slideCount} diapositivas de contenido y sus láminas institucionales. Reintenta la generación.`);
       }
       return data;
     },
     onSuccess: (data: any) => {
       setNotes([...(Array.isArray(data?.docNotes) ? data.docNotes : []), ...(Array.isArray(data?.visualNotes) ? data.visualNotes : [])]);
-      setUsedFallback(!!data?.usedFallback);
       queryClient.invalidateQueries({ queryKey: ["/api/admin/generated-presentations"] });
       toast({
         title: "Presentación generada",
-        description: data?.usedFallback
-          ? "Se usó un esquema automático (sin IA). Revísala y edítala."
-          : "Descárgala desde el historial de abajo.",
+        description: "Descárgala desde el historial de abajo.",
       });
     },
     onError: (err: any) => {
@@ -155,10 +163,13 @@ export default function AdminPresentations() {
     },
   });
 
+  const topicTooLong = topic.trim().length > MAX_TOPIC_LENGTH;
+  const sourceTooLong = sourceNotes.trim().length > MAX_SOURCE_LENGTH;
   const canGenerate =
     !generateMutation.isPending &&
     !uploadingImg &&
-    (topic.trim().length > 0 || docs.length > 0) &&
+    !topicTooLong && !sourceTooLong &&
+    (topic.trim().length > 0 || sourceNotes.trim().length > 0 || docs.length > 0) &&
     (formats.pptx || formats.pdf || formats.png);
 
   if (authLoading) {
@@ -186,8 +197,8 @@ export default function AdminPresentations() {
         <AdminPageHelp pageId="presentations">
           Escribe un tema (o súbele documentos .pdf/.docx/.pptx/.tex), elige los formatos, y presiona
           "Generar presentación". La IA arma las diapositivas y el sistema las exporta con el logo y los colores de la
-          firma. Si aún no hay créditos de IA disponibles, se genera un borrador con un esquema automático para que
-          puedas probar la descarga. El historial es permanente y ningún usuario puede borrarlo. Los archivos .doc/.ppt antiguos deben convertirse a .docx/.pptx.
+          firma. El número solicitado corresponde al contenido y se añaden las láminas institucionales seleccionadas.
+          Los archivos .doc/.ppt antiguos deben convertirse a .docx/.pptx.
         </AdminPageHelp>
 
         {/* --- Generador --- */}
@@ -202,9 +213,19 @@ export default function AdminPresentations() {
                   onChange={(e) => setTopic(e.target.value)}
                   placeholder="Ej. Panorama de la reforma en competencia económica en México 2026, para clientes corporativos…"
                   rows={5}
+                  aria-describedby="pres-topic-help"
+                  aria-invalid={topicTooLong}
                   data-testid="input-topic"
                 />
-                <p className="text-xs text-muted-foreground">Puedes dejarlo vacío si subes documentos.</p>
+                <p id="pres-topic-help" className="text-xs text-muted-foreground">Instrucciones breves · {topic.length.toLocaleString("es-MX")} / {MAX_TOPIC_LENGTH.toLocaleString("es-MX")} caracteres. Puedes usar solo el material de apoyo o documentos.</p>
+                {topicTooLong && <div className="space-y-2 text-sm">
+                  <p className="text-destructive">El tema supera el límite de instrucciones. Coloca el texto extenso en Material de apoyo.</p>
+                  {topic.length + (sourceNotes ? sourceNotes.length + 2 : 0) <= MAX_SOURCE_LENGTH && <Button type="button" variant="outline" size="sm" onClick={() => {
+                    setSourceNotes(previous => [previous, topic].filter(Boolean).join("\n\n"));
+                    setTopic("");
+                    if (sourceDetails.current) sourceDetails.current.open = true;
+                  }}>Usar como material de apoyo</Button>}
+                </div>}
               </div>
 
               <div className="space-y-2">
@@ -216,9 +237,23 @@ export default function AdminPresentations() {
               </div>
             </div>
 
+            <details ref={sourceDetails} className="space-y-3 border-b pb-4">
+              <summary className="cursor-pointer text-sm font-medium text-[#0B2850]">Pegar material de apoyo</summary>
+              <div className="space-y-2 pt-2">
+                <Label htmlFor="pres-source-notes">Material de apoyo</Label>
+                <Textarea id="pres-source-notes" rows={6} value={sourceNotes}
+                  onChange={event => setSourceNotes(event.target.value)} aria-invalid={sourceTooLong}
+                  aria-describedby="pres-source-help" placeholder="Pega aquí documentos extensos, antecedentes, cifras y contenido de referencia." />
+                <p id="pres-source-help" className="text-xs text-muted-foreground">
+                  {sourceNotes.length.toLocaleString("es-MX")} / {MAX_SOURCE_LENGTH.toLocaleString("es-MX")} caracteres.
+                </p>
+                {sourceTooLong && <p role="alert" className="text-sm text-destructive">El material supera el límite. Reduce el texto o adjúntalo como documento.</p>}
+              </div>
+            </details>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="pres-slides"># de diapositivas</Label>
+                <Label htmlFor="pres-slides">Diapositivas de contenido</Label>
                 <Input
                   id="pres-slides"
                   type="number"
@@ -228,6 +263,7 @@ export default function AdminPresentations() {
                   onChange={(e) => setSlideCount(Math.max(3, Math.min(20, parseInt(e.target.value || "8", 10) || 8)))}
                   data-testid="input-slide-count"
                 />
+                <p className="text-xs text-muted-foreground">{slideCount + 1 + Number(includeIntroSlide)} láminas en total, con {includeIntroSlide ? "entrada y cierre institucionales" : "cierre institucional"}.</p>
               </div>
 
               <div className="space-y-2">
@@ -352,6 +388,9 @@ export default function AdminPresentations() {
               )}
             </div>
 
+            <p className="text-xs text-muted-foreground">
+              Material preparado · {sourceNotes.length.toLocaleString("es-MX")} caracteres de apoyo · {docs.length} documentos adjuntos.
+            </p>
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <AgentButton
                 onClick={() => generateMutation.mutate()}
@@ -362,29 +401,16 @@ export default function AdminPresentations() {
                 {generateMutation.isPending ? "Generando…" : "Generar presentación"}
               </AgentButton>
               <span className="text-xs text-muted-foreground">
-                El texto suele tardar menos de un minuto; las imágenes pueden requerir más tiempo.
+                La duración depende de la extensión del material y de las imágenes solicitadas.
               </span>
             </div>
 
-            {generateMutation.isPending && (
-              <AgentProgress
-                title="El sistema sigue trabajando y guardará los archivos en el historial permanente"
-                stages={[
-                  { afterSeconds: 0, label: "Enviando y validando el material" },
-                  { afterSeconds: 5, label: "Analizando los documentos" },
-                  { afterSeconds: 14, label: "Creando la estructura de diapositivas" },
-                  { afterSeconds: 30, label: illustrate ? "Preparando imágenes de apoyo" : "Aplicando el diseño editorial" },
-                  { afterSeconds: 55, label: "Renderizando PowerPoint, PDF e imágenes" },
-                  { afterSeconds: 90, label: "Ya casi está lista; guardando el historial" },
-                ]}
-              />
-            )}
-
-            {usedFallback && (
-              <p className="text-xs text-amber-600" data-testid="text-fallback-note">
-                Nota: se generó con un esquema automático (sin IA, probablemente por falta de créditos). Revisa y edita el contenido.
-              </p>
-            )}
+            {generateMutation.isPending && <p role="status" className="border-l-2 border-[#8CC63F] pl-3 text-sm text-muted-foreground">La solicitud sigue en curso. El resultado aparecerá cuando sus archivos estén guardados.</p>}
+            {generateMutation.isError && <div role="alert" className="space-y-2 border border-destructive/30 bg-destructive/5 p-3 text-sm">
+              <p>{generateMutation.error.message}</p>
+              <p className="text-muted-foreground">El tema, los documentos y las opciones siguen cargados.</p>
+              <Button type="button" size="sm" variant="outline" disabled={!canGenerate} onClick={() => generateMutation.mutate()}>Reintentar generación</Button>
+            </div>}
             {notes.length > 0 && (
               <ul className="text-xs text-amber-600 list-disc pl-5 space-y-0.5" data-testid="list-doc-notes">
                 {notes.map((n, i) => <li key={i}>{n}</li>)}
