@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import type { Client } from '@replit/object-storage';
 
 const localStorageRoot = path.join(process.cwd(), 'uploads');
+const privateStorageRoot = path.join(process.cwd(), 'private');
 const isReplitRuntime = Boolean(process.env.REPL_ID || process.env.REPLIT_DEPLOYMENT || process.env.REPLIT_DEV_DOMAIN);
 let clientPromise: Promise<Client | null> | undefined;
 export const storageBucketId = () => process.env.REPLIT_APP_STORAGE_BUCKET_ID || process.env.APP_STORAGE_BUCKET_ID;
@@ -12,6 +13,17 @@ export function isPublicMediaKey(name: string) {
 }
 function assertKey(name: string) { if (!isPublicMediaKey(name)) throw new Error('Invalid App Storage object name'); }
 function objectPath(name: string) { assertKey(name); return path.join(localStorageRoot, name); }
+function privateStudioPath(name: string) {
+  if (!/^private\/studio\/[a-zA-Z0-9][a-zA-Z0-9._-]{0,199}$/.test(name) || name.includes('..')) {
+    throw new Error('Invalid private studio object name');
+  }
+  return path.join(privateStorageRoot, 'studio', path.basename(name));
+}
+
+// Objects written by the first studio build still resolve through authenticated routes only.
+export function isLegacyStudioObject(name: string) {
+  return /^public\/media\/(?:document-[0-9a-f-]{36}\.(?:docx|pdf)|social-[0-9a-f-]{36}(?:-preview\.png|\.json))$/i.test(name);
+}
 async function getClient(): Promise<Client | null> {
   if (!clientPromise) clientPromise = (async () => {
     const bucketId = storageBucketId();
@@ -23,13 +35,19 @@ async function getClient(): Promise<Client | null> {
   return clientPromise;
 }
 export async function uploadAppStorageObject(name: string, contents: Buffer) {
-  assertKey(name);
+  await uploadObject(name, objectPath(name), contents);
+}
+
+async function uploadObject(name: string, file: string, contents: Buffer) {
   const client = await getClient();
   if (client) { const r = await client.uploadFromBytes(name, contents); if (!r.ok) throw new Error(`App Storage upload failed: ${JSON.stringify(r.error)}`); return; }
-  const file = objectPath(name); await fs.mkdir(path.dirname(file), { recursive: true }); await fs.writeFile(file, contents);
+  await fs.mkdir(path.dirname(file), { recursive: true }); await fs.writeFile(file, contents);
 }
 export async function downloadAppStorageObject(name: string): Promise<Buffer | null> {
-  assertKey(name);
+  return downloadObject(name, objectPath(name));
+}
+
+async function downloadObject(name: string, file: string): Promise<Buffer | null> {
   const client = await getClient();
   if (client) {
     const r = await client.downloadAsBytes(name);
@@ -39,13 +57,29 @@ export async function downloadAppStorageObject(name: string): Promise<Buffer | n
     if (Array.isArray(value) && typeof value[0] !== 'number') return Buffer.from(value[0] as Uint8Array);
     return Buffer.from(value as Uint8Array);
   }
-  try { return await fs.readFile(objectPath(name)); } catch (e: any) { if(e.code==='ENOENT') return null; throw e; }
+  try { return await fs.readFile(file); } catch (e: any) { if(e.code==='ENOENT') return null; throw e; }
 }
 export async function deleteAppStorageObject(name: string) {
-  assertKey(name);
+  await deleteObject(name, objectPath(name));
+}
+
+async function deleteObject(name: string, file: string) {
   const client = await getClient();
   if (client) { const r=await client.delete(name,{ignoreNotFound:true});if(!r.ok)throw new Error(`App Storage delete failed: ${JSON.stringify(r.error)}`);return; }
-  try { await fs.unlink(objectPath(name)); } catch(e:any) { if(e.code!=='ENOENT')throw e; }
+  try { await fs.unlink(file); } catch(e:any) { if(e.code!=='ENOENT')throw e; }
+}
+
+export function uploadPrivateStudioObject(name: string, contents: Buffer) {
+  return uploadObject(name, privateStudioPath(name), contents);
+}
+
+export function downloadPrivateStudioObject(name: string) {
+  if (isLegacyStudioObject(name)) return downloadAppStorageObject(name);
+  return downloadObject(name, privateStudioPath(name));
+}
+
+export function deletePrivateStudioObject(name: string) {
+  return deleteObject(name, privateStudioPath(name));
 }
 export function appStorageObjectKeyFromPath(mediaPath: string) {
   const name=mediaPath.startsWith('/media/')?mediaPath.slice(7):'';

@@ -43,6 +43,7 @@ import crypto from "crypto";
 import {
   appStorageObjectKeyFromPath,
   isPublicMediaKey,
+  isLegacyStudioObject,
   deleteAppStorageObject,
   downloadAppStorageObject,
   uploadAppStorageObject,
@@ -1136,7 +1137,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   app.get('/media/*', async (req: Request, res: Response) => {
     try {
       const objectName = req.params[0];
-      if (!objectName || !isPublicMediaKey(objectName)) {
+      if (!objectName || !isPublicMediaKey(objectName) || isLegacyStudioObject(objectName)) {
         return res.status(404).end();
       }
 
@@ -1179,7 +1180,15 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
     }
   });
 
-  app.use('/uploads', express.static(uploadsDir, {
+  app.use('/uploads', (req, res, next) => {
+    try {
+      const key = path.posix.normalize(decodeURIComponent(req.path)).replace(/^\/+/, '');
+      if (isLegacyStudioObject(key)) return res.status(404).end();
+    } catch {
+      return res.status(404).end();
+    }
+    next();
+  }, express.static(uploadsDir, {
     maxAge: '1d',
     immutable: true,
   }));

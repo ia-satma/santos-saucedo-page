@@ -58,7 +58,7 @@ export async function ensureCmsSchema() {
     created_at timestamp DEFAULT now(), updated_at timestamp DEFAULT now()
   )`);
   await db.execute(sql`CREATE INDEX IF NOT EXISTS email_signatures_updated_idx ON email_signatures (updated_at DESC)`);
-  await db.transaction(async (tx) => {
+  await editorialDb.transaction(async (tx) => {
     await tx.execute(sql`SELECT pg_advisory_xact_lock(14703262)`);
     await tx.execute(sql`CREATE TABLE IF NOT EXISTS generated_documents (
       id varchar PRIMARY KEY DEFAULT gen_random_uuid(), title text NOT NULL, source_text text NOT NULL,
