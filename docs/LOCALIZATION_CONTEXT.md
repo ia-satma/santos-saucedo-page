@@ -63,3 +63,11 @@ npm run build:deploy
 ```
 
 Después se cierra el Shell, se pulsa **Republish** y se verifica el dominio público y el historial de publicación. El snapshot de traducciones debe conservarse antes del `reset` y comprobarse después del build.
+
+## Editor de firmas de correo
+
+- El panel está en `/admin/signatures` y se limita a cuentas con permiso de medios. Incluye las 12 plantillas del ZIP de referencia, vista previa, edición de datos, carga de fotografía, copia de HTML, copia enriquecida y descarga.
+- Las plantillas viven en `shared/signatureTemplates.ts`; `shared/signatureGenerator.ts` es el generador compartido entre frontend y servidor. Los recursos visuales publicados están en `client/public/signatures/assets/`.
+- Las firmas se guardan en `email_signatures`. El documento HTML generado por el servidor se almacena en App Storage como `public/media/signature-<id>.html`. La descarga usa `GET /api/admin/signatures/:id/download`, autenticación y `Content-Disposition: attachment`.
+- Las fotografías pasan por la biblioteca de medios existente, con validación y escaneo, y se guardan en App Storage antes de asociarse a una firma. El servidor no acepta HTML arbitrario del navegador y regenera el documento desde la plantilla y los campos validados.
+- La prueba específica es `npm run test:signatures`, además de `npm run check` y `npm run build`. La publicación sigue siendo manual desde Shell de Replit y Republish, sin agentes de Replit.

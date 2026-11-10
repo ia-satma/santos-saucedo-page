@@ -147,6 +147,12 @@ export const adminNavigation = [
         icon: ImageIcon,
       },
       {
+        href: "/admin/signatures",
+        label: "Firmas de correo",
+        hint: "Editar, guardar y descargar firmas HTML",
+        icon: EnvelopeClosedIcon,
+      },
+      {
         href: "/admin/gallery",
         label: "Galería de La oficina",
         hint: "Fotografías y orden",

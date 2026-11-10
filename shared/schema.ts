@@ -496,6 +496,22 @@ export const insertMediaItemSchema = createInsertSchema(mediaItems).omit({ id: t
 export type InsertMediaItem = z.infer<typeof insertMediaItemSchema>;
 export type MediaItem = typeof mediaItems.$inferSelect;
 
+export const emailSignatures = pgTable("email_signatures", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  label: text("label").notNull(),
+  templateId: varchar("template_id", { length: 2 }).notNull(),
+  data: jsonb("data").notNull(),
+  photoUrl: text("photo_url"),
+  htmlObjectKey: text("html_object_key").notNull(),
+  createdBy: varchar("created_by"),
+  updatedBy: varchar("updated_by"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+export const insertEmailSignatureSchema = createInsertSchema(emailSignatures).omit({ id: true, createdAt: true, updatedAt: true });
+export type EmailSignature = typeof emailSignatures.$inferSelect;
+export type InsertEmailSignature = z.infer<typeof insertEmailSignatureSchema>;
+
 // Admin sessions for token-based auth
 export const adminSessions = pgTable("admin_sessions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),

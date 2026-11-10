@@ -1,0 +1,32 @@
+import "dotenv/config";
+import assert from "node:assert/strict";
+import { createServer } from "node:http";
+import express from "express";
+import { randomUUID } from "node:crypto";
+import { db } from "../server/db";
+import * as schema from "../shared/schema";
+import { registerRoutes } from "../server/routes";
+import { hashPassword } from "../server/auth";
+
+assert(["localhost", "127.0.0.1", "[::1]"].includes(new URL(process.env.DATABASE_URL!).hostname));
+assert(!process.env.REPLIT_APP_STORAGE_BUCKET_ID && !process.env.APP_STORAGE_BUCKET_ID);
+const app = express(); app.use(express.json({ limit: "1mb" }));
+const server = createServer(app); await registerRoutes(server, app);
+const suffix = randomUUID();
+const [user] = await db.insert(schema.adminUsers).values({ username: `qa-signature-${suffix}`, email: `qa-signature-${suffix}@localhost.test`, passwordHash: await hashPassword(randomUUID()), role: "super_admin", isActive: true }).returning();
+const token = randomUUID(); await db.insert(schema.adminSessions).values({ userId: user.id, token, expiresAt: new Date(Date.now() + 3600000) });
+await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+const base = `http://127.0.0.1:${(server.address() as any).port}`;
+const data = { name: "QA Firma", role: "Directora", phone: "+52 81 5555 0000", email: "qa@example.test", addr1: "Calle QA 1", addr2: "Monterrey, NL", tagline: "DERECHO LABORAL", since: "Desde 2026", linkedin: "https://linkedin.com/qa", facebook: "", web: "qa.example.test", instagram: "@qa" };
+async function call(path: string, init: RequestInit = {}) { return fetch(base + path, { ...init, headers: { Authorization: `Bearer ${token}`, ...(init.body ? { "Content-Type": "application/json" } : {}), ...(init.headers || {}) } }); }
+const unauthorized = await fetch(`${base}/api/admin/signatures`); assert.equal(unauthorized.status, 401);
+const createdResponse = await call("/api/admin/signatures", { method: "POST", body: JSON.stringify({ label: "QA signature", templateId: "12", data }) });
+const createdText = await createdResponse.text(); assert.equal(createdResponse.status, 201); const created = JSON.parse(createdText); assert.match(created.id, /^[0-9a-f-]{36}$/);
+const detailResponse = await call(`/api/admin/signatures/${created.id}`); assert.equal(detailResponse.status, 200); const detail = await detailResponse.json(); assert.match(detail.document, /http:\/\/127\.0\.0\.1.*\/signatures\/assets\//); assert.match(detail.document, /QA Firma/);
+const downloadResponse = await call(created.downloadUrl); assert.equal(downloadResponse.status, 200); assert.match(downloadResponse.headers.get("content-disposition") || "", /attachment/); assert.match(await downloadResponse.text(), /QA Firma/);
+const updatedResponse = await call(`/api/admin/signatures/${created.id}`, { method: "PUT", body: JSON.stringify({ label: "QA updated", templateId: "01", data: { ...data, name: "QA Updated" } }) }); assert.equal(updatedResponse.status, 200);
+const deletedResponse = await call(`/api/admin/signatures/${created.id}`, { method: "DELETE" }); assert.equal(deletedResponse.status, 204);
+const missingResponse = await call(`/api/admin/signatures/${created.id}`); assert.equal(missingResponse.status, 404);
+await db.delete(schema.adminSessions).where((await import("drizzle-orm")).eq(schema.adminSessions.token, token)); await db.delete(schema.adminUsers).where((await import("drizzle-orm")).eq(schema.adminUsers.id, user.id));
+await new Promise<void>((resolve) => server.close(() => resolve()));
+console.log("signature API ok: auth, CRUD, App Storage fallback, regeneration and attachment download");

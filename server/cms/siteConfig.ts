@@ -52,6 +52,12 @@ export async function ensureCmsSchema() {
   await db.execute(sql`ALTER TABLE practice_groups ADD COLUMN IF NOT EXISTS team_member_ids jsonb`);
   await db.execute(sql`ALTER TABLE practice_groups ADD COLUMN IF NOT EXISTS published boolean DEFAULT true`);
   await db.execute(sql`ALTER TABLE media_items ADD COLUMN IF NOT EXISTS archived_at timestamp`);
+  await db.execute(sql`CREATE TABLE IF NOT EXISTS email_signatures (
+    id varchar PRIMARY KEY DEFAULT gen_random_uuid(), label text NOT NULL, template_id varchar(2) NOT NULL,
+    data jsonb NOT NULL, photo_url text, html_object_key text NOT NULL, created_by varchar, updated_by varchar,
+    created_at timestamp DEFAULT now(), updated_at timestamp DEFAULT now()
+  )`);
+  await db.execute(sql`CREATE INDEX IF NOT EXISTS email_signatures_updated_idx ON email_signatures (updated_at DESC)`);
   await db.execute(sql`ALTER TABLE news ADD COLUMN IF NOT EXISTS document_url text, ADD COLUMN IF NOT EXISTS document_url_es text, ADD COLUMN IF NOT EXISTS source_url text, ADD COLUMN IF NOT EXISTS tags jsonb, ADD COLUMN IF NOT EXISTS featured_home boolean DEFAULT false`);
   await ensureTestimonialSchema();
 }

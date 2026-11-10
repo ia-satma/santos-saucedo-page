@@ -168,7 +168,7 @@ export function adminPermissionForPath(
   if (/^(users|access-events)(\/|$)/.test(route)) return "users";
   if (/^preview\//.test(route))
     return route.startsWith("preview/news/") ? "editorial" : "content";
-  if (/^(media|media-archive|storage|office-images|gallery)(\/|$)/.test(route))
+  if (/^(media|media-archive|storage|office-images|gallery|signatures)(\/|$)/.test(route))
     return "media";
   if (/^(content|site-config|navigation|integrations|cookie-consent)(\/|$)/.test(route)) return "config";
   if (

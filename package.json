@@ -34,7 +34,9 @@
     "build:deploy": "npm run build && node --import tsx script/generate-static-api.ts && npm run replit:prepare-uploads",
     "cms:export-static": "node --import tsx scripts/export-static-localization.ts",
     "translate:all": "node --import tsx scripts/translate-all-content.ts",
-    "test:localization": "node --import tsx scripts/check-localization.ts"
+    "test:localization": "node --import tsx scripts/check-localization.ts",
+    "test:signatures": "node --import tsx scripts/check-signatures.ts",
+    "test:signatures-api": "node --import tsx scripts/check-signatures-api.ts"
   },
   "dependencies": {
     "@google/genai": "^1.32.0",

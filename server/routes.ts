@@ -3,6 +3,7 @@ import { registerCareerApplications } from "./routes/careerApplications";
 import { registerTestimonials } from "./routes/testimonials";
 import { addTestimonialsToNavigation } from "./cms/testimonialSchema";
 import { registerMediaUploads } from "./routes/mediaUploads";
+import { registerSignatureRoutes } from "./routes/signatures";
 import { registerSubmissionManagement } from "./routes/submissionManagement";
 import { registerAgentReportRoutes } from "./routes/agentReportRoutes";
 import { servePersistentManagedMedia } from "./routes/managedMedia";
@@ -219,6 +220,7 @@ export async function registerRoutes(
   registerCmsRoutes(app);
   registerCatalogOrder(app);
   registerMediaLibrary(app);
+  registerSignatureRoutes(app);
   registerNewsEditor(app);
   registerContentPreview(app);
   app.get('/api/admin/overview',authMiddleware,async(_req,res)=>{
