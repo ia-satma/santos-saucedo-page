@@ -2,11 +2,13 @@ import "dotenv/config";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import express from "express";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
+import sharp from "sharp";
 import { db } from "../server/db";
 import * as schema from "../shared/schema";
 import { registerRoutes } from "../server/routes";
 import { hashPassword } from "../server/auth";
+import { deleteAppStorageObject, uploadAppStorageObject } from "../server/replitStorage";
 
 assert(["localhost", "127.0.0.1", "[::1]"].includes(new URL(process.env.DATABASE_URL!).hostname));
 assert(!process.env.REPLIT_APP_STORAGE_BUCKET_ID && !process.env.APP_STORAGE_BUCKET_ID);
@@ -17,6 +19,19 @@ const [user] = await db.insert(schema.adminUsers).values({ username: `qa-signatu
 const token = randomUUID(); await db.insert(schema.adminSessions).values({ userId: user.id, token, expiresAt: new Date(Date.now() + 3600000) });
 await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
 const base = `http://127.0.0.1:${(server.address() as any).port}`;
+const sourceKey = "public/media/qa-signature-source.png";
+const sourceBytes = await sharp({ create: { width: 100, height: 300, channels: 3, background: { r: 32, g: 90, b: 160 } } }).png().toBuffer();
+await uploadAppStorageObject(sourceKey, sourceBytes);
+const cropSource = `/media/${sourceKey}`;
+const cropKey = `public/media/signature-photo-${createHash("sha256").update(`${cropSource}|113x192`).digest("hex").slice(0, 24)}.png`;
+const cropResponse = await fetch(`${base}/api/signature-photo?source=${encodeURIComponent(cropSource)}&width=113&height=192`);
+assert.equal(cropResponse.status, 200);
+assert.match(cropResponse.headers.get("content-type") || "", /^image\/png/);
+const cropMetadata = await sharp(Buffer.from(await cropResponse.arrayBuffer())).metadata();
+assert.equal(cropMetadata.width, 226);
+assert.equal(cropMetadata.height, 384);
+await deleteAppStorageObject(cropKey);
+await deleteAppStorageObject(sourceKey);
 const data = { name: "QA Firma", role: "Directora", phone: "+52 81 5555 0000", email: "qa@example.test", addr1: "Calle QA 1", addr2: "Monterrey, NL", tagline: "DERECHO LABORAL", since: "Desde 2026", linkedin: "https://linkedin.com/qa", facebook: "", web: "qa.example.test", instagram: "@qa" };
 async function call(path: string, init: RequestInit = {}) { return fetch(base + path, { ...init, headers: { Authorization: `Bearer ${token}`, ...(init.body ? { "Content-Type": "application/json" } : {}), ...(init.headers || {}) } }); }
 const unauthorized = await fetch(`${base}/api/admin/signatures`); assert.equal(unauthorized.status, 401);

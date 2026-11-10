@@ -39,6 +39,16 @@ const bare = (s: string) => String(s || "").trim().replace(/^https?:\/\//, "").r
 const full = (s: string) => { const v = String(s || "").trim(); return !v ? "" : /^https?:\/\//i.test(v) ? v : `https://${v}`; };
 const reEsc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+function signaturePhotoSource(photo: string, assets: string, width: string, height: string) {
+  const source = new URL(photo, assets);
+  if (!/^\/media\/public\/media\//.test(source.pathname)) return source.toString();
+  const endpoint = new URL("/api/signature-photo", source.origin);
+  endpoint.searchParams.set("source", `${source.pathname}${source.search}`);
+  endpoint.searchParams.set("width", width);
+  endpoint.searchParams.set("height", height);
+  return endpoint.toString();
+}
+
 export function normalizeSignatureData(input: Partial<Record<keyof SignatureData, unknown>>): SignatureData {
   const result = { ...signatureDefaults } as Record<keyof SignatureData, string>;
   for (const key of Object.keys(signatureDefaults) as Array<keyof SignatureData>) {
@@ -69,7 +79,13 @@ export function createSignatureGenerator(options: { assetsUrl?: string; data?: P
       if (!/^(?:https?:|data:)/i.test(photoSource)) {
         try { photoSource = new URL(photoSource, assets).toString(); } catch { /* keep the validated path */ }
       }
-      html = html.replace(/<img src="assets\/[^"]+\.(?:jpg|jpeg|png|webp|gif)" alt="Mario Saucedo Montemayor"([^>]*?)style="([^"]*)">/gi, (_m: string, a: string, st: string) => `<img src="${esc(photoSource)}" data-signature-photo="true" alt="${esc(d.name)}"${a}style="${st}object-fit:cover;object-position:center;">`);
+      html = html.replace(/<img src="assets\/[^"]+\.(?:jpg|jpeg|png|webp|gif)" alt="Mario Saucedo Montemayor"([^>]*?)style="([^"]*)">/gi, (_m: string, a: string, st: string) => {
+        const width = a.match(/\bwidth="([\d.]+)"/i)?.[1] || st.match(/\bwidth:([\d.]+)px/i)?.[1] || "1";
+        const height = a.match(/\bheight="([\d.]+)"/i)?.[1] || st.match(/\bheight:([\d.]+)px/i)?.[1] || "1";
+        let source = photoSource;
+        try { source = signaturePhotoSource(photoSource, assets, width, height); } catch { /* Keep validated source if it cannot be normalized. */ }
+        return `<img src="${esc(source)}" data-signature-photo="true" alt="${esc(d.name)}"${a}style="${st}object-fit:cover;object-position:center;">`;
+      });
     }
     if (id === "12") {
       html = swap(html, bare(signatureDefaults.linkedin), bare(d.linkedin)).replace(`href="${signatureDefaults.linkedin}"`, `href="${esc(full(d.linkedin))}"`);

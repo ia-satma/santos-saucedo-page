@@ -1,10 +1,11 @@
 import type { Express, Request, Response } from "express";
 import { z } from "zod";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
+import sharp from "sharp";
 import { desc, eq } from "drizzle-orm";
 import { authMiddleware, requireRole } from "../auth";
 import { db } from "../db";
-import { deleteAppStorageObject, downloadAppStorageObject, uploadAppStorageObject } from "../replitStorage";
+import { appStorageObjectKeyFromPath, deleteAppStorageObject, downloadAppStorageObject, uploadAppStorageObject } from "../replitStorage";
 import { emailSignatures } from "@shared/schema";
 import { createSignatureGenerator, normalizeSignatureData, type SignatureData } from "@shared/signatureGenerator";
 
@@ -51,8 +52,44 @@ function dto(row: typeof emailSignatures.$inferSelect) {
 }
 function sendError(res: Response, status: number, error: string) { return res.status(status).json({ error }); }
 
+function cropKey(source: string, width: number, height: number) {
+  const digest = createHash("sha256").update(`${source}|${width}x${height}`).digest("hex").slice(0, 24);
+  return `public/media/signature-photo-${digest}.png`;
+}
+
 export function registerSignatureRoutes(app: Express) {
   const guard = [authMiddleware, requireRole("editor", "admin")] as const;
+  app.get("/api/signature-photo", async (req, res) => {
+    const source = typeof req.query.source === "string" ? req.query.source : "";
+    const width = Number(req.query.width);
+    const height = Number(req.query.height);
+    if (!/^\/media\/public\/media\/[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(source)
+      || !Number.isInteger(width) || !Number.isInteger(height)
+      || width < 20 || width > 2000 || height < 20 || height > 2000) {
+      return sendError(res, 400, "Parámetros de fotografía no válidos.");
+    }
+    const sourceKey = appStorageObjectKeyFromPath(source);
+    if (!sourceKey) return sendError(res, 400, "La fotografía debe provenir de App Storage.");
+    const key = cropKey(source, width, height);
+    try {
+      const cached = await downloadAppStorageObject(key);
+      if (cached) {
+        return res.set({ "Content-Type": "image/png", "Cache-Control": "public, max-age=31536000, immutable", "X-Content-Type-Options": "nosniff" }).send(cached);
+      }
+      const original = await downloadAppStorageObject(sourceKey);
+      if (!original) return sendError(res, 404, "La fotografía no está disponible.");
+      const cropped = await sharp(original, { limitInputPixels: 40_000_000 })
+        .rotate()
+        .resize(width * 2, height * 2, { fit: "cover", position: "attention" })
+        .png()
+        .toBuffer();
+      await uploadAppStorageObject(key, cropped);
+      return res.set({ "Content-Type": "image/png", "Cache-Control": "public, max-age=31536000, immutable", "X-Content-Type-Options": "nosniff" }).send(cropped);
+    } catch (error) {
+      console.error("[Signatures] photo crop failed", error);
+      return sendError(res, 503, "No se pudo preparar la fotografía.");
+    }
+  });
   app.get("/api/admin/signatures", ...guard, async (_req, res) => {
     const rows = await db.select().from(emailSignatures).orderBy(desc(emailSignatures.updatedAt));
     res.set("Cache-Control", "private, no-store").json(rows.map(dto));
