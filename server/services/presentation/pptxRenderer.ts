@@ -1,5 +1,5 @@
 import PptxGenJS from 'pptxgenjs';
-import { BRAND_LOCATION, BRAND_SLOGAN, bookendArtworkPng } from './bookendArtwork';
+import { bookendArtworkPath } from './bookendArtwork';
 import type { SlideChart, SlideDiagram, SlideModel } from './contracts';
 import { resolveLocalAsset } from './assets';
 import { chartPalette, renderDiagramSvg } from './dataVisuals';
@@ -18,7 +18,7 @@ export class PresentationPptxRenderer {
     return renderPresentationSvg(svg, wPx);
   }
 
-  async buildPptx(model: SlideModel, t: Theme, footer: string, docKicker: string, contact: { label: string; value: string }[], closingFooter: string, total: number, includeIntroSlide = true): Promise<PptxGenJS> {
+  async buildPptx(model: SlideModel, t: Theme, footer: string, _docKicker: string, _contact: { label: string; value: string }[], _closingFooter: string, total: number, includeIntroSlide = true): Promise<PptxGenJS> {
     const pptx = new PptxGenCtor();
     pptx.layout = 'LAYOUT_WIDE';
     pptx.author = 'Santos & Saucedo';
@@ -43,23 +43,8 @@ export class PresentationPptxRenderer {
       sl.addText(`${String(idx).padStart(2, '0')} / ${String(total).padStart(2, '0')}`, { x: IN(900), y: IN(672), w: IN(300), h: IN(18), align: 'right', fontFace: S.label, fontSize: 8.25, bold: true, charSpacing: 1.5, color: darkbg ? white.color : nb });
     };
 
-    const setBookendArtwork = (slide: PptxGenJS.Slide, closing: boolean) => {
-      const png = bookendArtworkPng(closing);
-      slide.background = { data: `image/png;base64,${png.toString('base64')}` };
-    };
-    const bookendText = (
-      slide: PptxGenJS.Slide, value: string, x: number, y: number, w: number, h: number,
-      fontSize: number, fontFace: string, color = white.color, align: 'left' | 'center' | 'right' = 'left',
-    ) => slide.addText(value, { x: IN(x), y: IN(y), w: IN(w), h: IN(h), margin: 0, fontSize, fontFace, color, align, valign: 'middle', fit: 'shrink' });
-
     if (includeIntroSlide) {
-      const cover = pptx.addSlide();
-      setBookendArtwork(cover, false);
-      bookendText(cover, docKicker.toUpperCase(), 100, 58, 420, 28, 10, S.label, burg);
-      bookendText(cover, model.title, 100, 372, 1080, 112, 36, S.serif, white.color, 'center');
-      if (model.subtitle) bookendText(cover, model.subtitle, 100, 502, 1080, 60, 15, S.body, this.hx(t.softGray), 'center');
-      bookendText(cover, BRAND_SLOGAN.toUpperCase(), 100, 583, 1080, 34, 11, S.label, white.color, 'center');
-      bookendText(cover, BRAND_LOCATION, 100, 623, 1080, 34, 15, S.body, this.hx(t.softGray), 'center');
+      pptx.addSlide().background = { path: bookendArtworkPath('intro', t.bookendTone) };
     }
 
     const contentTitle = (sl: PptxGenJS.Slide, kk: string | undefined, title: string, sizePt = 34.5) => {
@@ -73,24 +58,17 @@ export class PresentationPptxRenderer {
       const s = model.slides[i]; const idx = i + (includeIntroSlide ? 2 : 1);
       const sl = pptx.addSlide();
 
+      if (s.layout === 'closing') {
+        sl.background = { path: bookendArtworkPath('closing', t.bookendTone) };
+        continue;
+      }
+
       if (s.layout === 'section') {
         sl.background = dark; sectionIdx++;
         if (t.showGhost) sl.addText(String(sectionIdx).padStart(2, '0'), { x: IN(700), y: IN(220), w: IN(560), h: IN(360), align: 'right', fontFace: S.serif, fontSize: 200, color: this.hx(t.ghostDark) });
         stroke(sl, 80, 300);
         if (s.kicker) sl.addText(s.kicker.toUpperCase(), { x: IN(80), y: IN(318), w: IN(500), h: IN(18), fontFace: S.label, fontSize: 9.75, bold: true, charSpacing: 2, color: burg });
         sl.addText(s.title, { x: IN(80), y: IN(360), w: IN(900), h: IN(150), fontFace: S.serif, fontSize: 45, color: white.color, valign: 'top' });
-      } else if (s.layout === 'closing') {
-        setBookendArtwork(sl, true);
-        bookendText(sl, (s.kicker || 'Contacto').toUpperCase(), 100, 185, 460, 28, 12, S.label, burg);
-        const title = s.title || 'Gracias';
-        bookendText(sl, title, 100, 240, 500, 130, title.length > 12 ? 47 : 82, S.serif);
-        contact.slice(0, 5).forEach((c, i) => {
-          const y = 106 + i * 77;
-          bookendText(sl, c.label.toUpperCase(), 685, y, 500, 18, 8.25, S.label, burg);
-          bookendText(sl, c.value, 685, y + 21, 495, 46, 14.25, S.body);
-        });
-        bookendText(sl, BRAND_SLOGAN.toUpperCase(), 535, 610, 665, 28, 11, S.label, white.color, 'right');
-        bookendText(sl, BRAND_LOCATION, 535, 641, 665, 28, 12, S.body, this.hx(t.softGray), 'right');
       } else if (s.layout === 'quote') {
         sl.background = paper;
         sl.addText('“', { x: IN(60), y: IN(120), w: IN(200), h: IN(160), fontFace: S.serif, fontSize: 150, bold: true, color: this.hx(t.burgundyWash) });
@@ -167,7 +145,7 @@ export class PresentationPptxRenderer {
         footChrome(sl, idx);
       }
       if (s.notes) sl.addNotes(s.notes);
-      addLogo(sl, s.layout === 'section' || s.layout === 'closing');
+      addLogo(sl, s.layout === 'section');
     }
     return pptx;
   }

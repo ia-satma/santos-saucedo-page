@@ -1,6 +1,6 @@
 import type { SlideModel, SlideModelSlide } from './contracts';
 import { resolveLocalAsset } from './assets';
-import { bookendArtwork, BRAND_SLOGAN, BRAND_LOCATION } from './bookendArtwork';
+import { bookendArtworkPath } from './bookendArtwork';
 import { renderChartSvg, renderDiagramSvg, type Box } from './dataVisuals';
 import {
   FONT, H, RIGHT, SPINE, W, type Theme, footerChrome, fullStopSquare,
@@ -10,7 +10,7 @@ import {
 
 export type Ground = 'white' | 'paper' | 'dark';
 export interface ImageComposite { path: string; box: Box; cover?: boolean; scrim?: number }
-export interface SlideBuild { svg: string; image: ImageComposite | null }
+export interface SlideBuild { svg: string; image: ImageComposite | null; fullBleedPngPath?: string }
 
 function groundFill(t: Theme, g: Ground): string {
   return g === 'dark' ? t.nearBlack : g === 'paper' ? t.paper : t.white;
@@ -25,15 +25,8 @@ function svgOpenT(): string {
 }
 
 
-function renderCover(model: SlideModel, t: Theme, _footer: string, docKicker: string): SlideBuild {
-  const p = [svgOpen(t, 'dark'), bookendArtwork(false)];
-  p.push(kickerText(t, 100, 82, docKicker, t.burgundy));
-  p.push(text({ x: 640, y: 409, size: 43, color: t.white, font: FONT.serif, anchor: 'middle', lines: wrap(model.title, 54).slice(0, 3), lh: 46 }));
-  if (model.subtitle) p.push(text({ x: 640, y: 535, size: 20, color: t.softGray, font: FONT.body, anchor: 'middle', lines: wrap(model.subtitle, 86).slice(0, 2), lh: 27 }));
-  p.push(kickerText(t, 640, 604, BRAND_SLOGAN, t.white, 'middle'));
-  p.push(text({ x: 640, y: 648, size: 20, color: t.softGray, font: FONT.body, anchor: 'middle', lines: [BRAND_LOCATION] }));
-  p.push('</svg>');
-  return { svg: p.join(''), image: null };
+function renderBookend(kind: 'intro' | 'closing', theme: Theme): SlideBuild {
+  return { svg: '', image: null, fullBleedPngPath: bookendArtworkPath(kind, theme.bookendTone) };
 }
 
 function renderSection(s: SlideModelSlide, t: Theme, idx: number): SlideBuild {
@@ -202,26 +195,10 @@ function renderTwoColumn(s: SlideModelSlide, t: Theme, ground: Ground, idx: numb
   return { svg: p.join(''), image: null };
 }
 
-function renderClosing(s: SlideModelSlide, t: Theme, _footer: string, contact: { label: string; value: string }[]): SlideBuild {
-  const p = [svgOpen(t, 'dark'), bookendArtwork(true)];
-  p.push(kickerText(t, 100, 207, s.kicker || 'Contacto', t.burgundy));
-  const title = s.title || 'Gracias';
-  const titleSize = title.length > 12 ? 63 : 110;
-  p.push(text({ x: 100, y: 342, size: titleSize, color: t.white, font: FONT.serif, lines: [title] }));
-  contact.slice(0, 5).forEach((c, i) => {
-    const y = 122 + i * 77;
-    p.push(microLabel(t, 685, y, c.label, t.burgundy));
-    p.push(text({ x: 685, y: y + 24, size: 19, color: t.white, font: FONT.body, lines: wrap(c.value, 51).slice(0, 2), lh: 23 }));
-  });
-  p.push(kickerText(t, RIGHT, 629, BRAND_SLOGAN, t.white, 'end'));
-  p.push(text({ x: RIGHT, y: 659, size: 16, color: t.softGray, font: FONT.body, anchor: 'end', lines: [BRAND_LOCATION] }));
-  p.push('</svg>');
-  return { svg: p.join(''), image: null };
-}
-
 // Fondo por diapositiva según el RITMO del sistema (blanco / papel / negro).
 export function groundFor(s: SlideModelSlide, t: Theme, prevPaper: boolean): Ground {
-  if (s.layout === 'section' || s.layout === 'closing') return 'dark';
+  if (s.layout === 'closing') return t.bookendTone === 'white' ? 'white' : 'dark';
+  if (s.layout === 'section') return 'dark';
   if (s.layout === 'quote') return 'paper';
   if (s.layout === 'stat' && t.paperBreathers && !prevPaper) return 'paper';
   return 'white';
@@ -235,15 +212,15 @@ export interface RenderedSlide {
 export function buildSvgDeck(
   model: SlideModel,
   theme: Theme,
-  footer: string,
-  documentKicker: string,
-  closingFooter: string,
-  contact: { label: string; value: string }[],
+  _footer: string,
+  _documentKicker: string,
+  _closingFooter: string,
+  _contact: { label: string; value: string }[],
   includeIntroSlide = true,
 ): RenderedSlide[] {
   const total = model.slides.length + (includeIntroSlide ? 1 : 0);
   const builds: RenderedSlide[] = includeIntroSlide
-    ? [{ build: renderCover(model, theme, footer, documentKicker), ground: 'dark' }]
+    ? [{ build: renderBookend('intro', theme), ground: theme.bookendTone === 'white' ? 'white' : 'dark' }]
     : [];
   let previousWasPaper = false;
   let sectionIndex = 0;
@@ -265,7 +242,7 @@ export function buildSvgDeck(
       case 'image': build = renderImage(slide, theme, displayIndex, total); break;
       case 'quote': build = renderQuote(slide, theme, displayIndex, total); break;
       case 'twocolumn': build = renderTwoColumn(slide, theme, ground, displayIndex, total); break;
-      case 'closing': build = renderClosing(slide, theme, closingFooter, contact); break;
+      case 'closing': build = renderBookend('closing', theme); break;
       default: build = renderBullets(slide, theme, ground, displayIndex, total);
     }
     builds.push({ build, ground });

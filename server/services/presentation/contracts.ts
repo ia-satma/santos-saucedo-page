@@ -3,6 +3,7 @@ import type { GeneratedPresentation } from '../../../shared/schema';
 
 // --- Tipos del modelo (exportados; los consume el agente) ---
 export type PresentationTemplate = 'santossaucedo' | 'minimal' | 'dark';
+export type PresentationBookendTone = 'blue' | 'white';
 export type PresentationBranding = 'santossaucedo' | 'custom';
 export type PresentationFormat = 'pptx' | 'pdf' | 'png';
 export type SlideLayout = 'section' | 'bullets' | 'closing' | 'image' | 'chart' | 'diagram' | 'stat' | 'quote' | 'twocolumn';
@@ -54,6 +55,7 @@ export interface SlideModel {
 
 export interface RenderOptions {
   template: PresentationTemplate;
+  bookendTone?: PresentationBookendTone;
   branding: PresentationBranding;
   lang: string;
   formats: PresentationFormat[];

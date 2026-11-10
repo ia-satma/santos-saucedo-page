@@ -7,6 +7,7 @@ import { PRESENTATION_LOGO } from './bookendArtwork';
 
 interface RasterSlideBuild {
   svg: string;
+  fullBleedPngPath?: string;
   image: { path: string; box: { x: number; y: number; w: number; h: number }; cover?: boolean; scrim?: number } | null;
 }
 
@@ -47,6 +48,7 @@ export async function rasterizeSlide(
   build: RasterSlideBuild,
   log: (message: string) => void,
 ): Promise<Buffer> {
+  if (build.fullBleedPngPath) return fs.promises.readFile(build.fullBleedPngPath);
   const overlay = renderPresentationSvg(build.svg, OUTPUT_WIDTH);
   let base = overlay;
   const scaleX = OUTPUT_WIDTH / W;

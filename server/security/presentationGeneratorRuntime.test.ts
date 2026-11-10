@@ -10,7 +10,7 @@ import path from 'node:path';
 import test, { before, after } from 'node:test';
 import fs from 'node:fs/promises';
 import JSZip from 'jszip';
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, PDFName, PDFNumber, PDFRawStream } from 'pdf-lib';
 import sharp from 'sharp';
 import type { GeneratedPresentation } from '../../shared/schema';
 import { embedPresentationFonts } from '../services/presentationFonts';
@@ -18,6 +18,7 @@ import {
   rasterizeSlide,
   resolveLocalAsset,
 } from '../services/presentation/assets';
+import { bookendArtworkPath } from '../services/presentation/bookendArtwork';
 import type { SlideModel } from '../services/presentation/contracts';
 import type { PresentationGeneratorDependencies } from '../services/presentation/dependencies';
 import { buildTheme } from '../services/presentation/designSystem';
@@ -197,7 +198,7 @@ function createPipelineHarness() {
 test('los tres temas producen SVG válidos y conservan el ritmo de fondos', () => {
   const expectedGrounds = {
     santossaucedo: ['dark', 'dark', 'white', 'paper', 'white', 'white', 'white', 'paper', 'white', 'dark'],
-    minimal: ['dark', 'dark', 'white', 'white', 'white', 'white', 'white', 'paper', 'white', 'dark'],
+    minimal: ['white', 'dark', 'white', 'white', 'white', 'white', 'white', 'paper', 'white', 'white'],
     dark: ['dark', 'dark', 'white', 'paper', 'white', 'white', 'white', 'paper', 'white', 'dark'],
   } as const;
 
@@ -217,6 +218,7 @@ test('los tres temas producen SVG válidos y conservan el ritmo de fondos', () =
       expectedGrounds[template],
     );
     for (const slide of deck) {
+      if (slide.build.fullBleedPngPath) continue;
       assert.match(slide.build.svg, /<svg/);
       assert.doesNotMatch(normalizeSvg(slide.build.svg), /NaN|undefined|vonwobeser/i);
     }
@@ -235,11 +237,11 @@ test('la portada institucional puede omitirse sin alterar el cierre', () => {
     false,
   );
   assert.equal(deck.length, REPRESENTATIVE_PRESENTATION.slides.length);
-  assert.doesNotMatch(normalizeSvg(deck[0].build.svg), /institutional/);
-  assert.match(deck.at(-1)?.build.svg || '', /Gracias/);
+  assert.equal(deck[0].build.fullBleedPngPath, undefined);
+  assert.equal(deck.at(-1)?.build.fullBleedPngPath, bookendArtworkPath('closing', 'blue'));
 });
 
-test('PNG conserva 1920×1080 y contenido visible para portada, gráfica e imagen', async () => {
+test('PNG conserva los 1920×1080 de las gráficas e imágenes de contenido', async () => {
   const theme = buildTheme(presentationOptions('santossaucedo'), null);
   const deck = buildSvgDeck(
     REPRESENTATIVE_PRESENTATION,
@@ -250,7 +252,6 @@ test('PNG conserva 1920×1080 y contenido visible para portada, gráfica e image
     CONTACT,
   );
   const expected = new Map<number, { minimumBytes: number; minimumEntropy: number }>([
-    [0, { minimumBytes: 20_000, minimumEntropy: 0.2 }],
     [4, { minimumBytes: 25_000, minimumEntropy: 0.3 }],
     [6, { minimumBytes: 100_000, minimumEntropy: 1.5 }],
   ]);
@@ -358,8 +359,8 @@ test('PDF se construye desde PNG visibles con páginas 1920×1080', async () => 
     pdf.getPages().map((page) => page.getSize()),
     Array.from({ length: 3 }, () => ({ width: 1920, height: 1080 })),
   );
+  assert.deepEqual(pngs[0], readFileSync(bookendArtworkPath('intro', 'blue')));
   await Promise.all([
-    assertPortablePng(pngs[0], 20_000, 0.2),
     assertPortablePng(pngs[1], 25_000, 0.3),
     assertPortablePng(pngs[2], 100_000, 1.5),
   ]);
@@ -407,13 +408,11 @@ test('PPTX conserva diapositivas, notas, chart nativo, imágenes y fuentes incru
     assert.match(presentation, /typeface="DM Sans"/);
 
     for (const expectedText of [
-      'Panorama jurídico 2026',
       'Un entorno que exige decisiones claras',
       '45%',
       'Proceso recomendado',
       'La anticipación convierte la complejidad en una ventaja.',
       'Acciones coordinadas',
-      'Gracias',
     ]) {
       assert.match(slides, new RegExp(expectedText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
     }
@@ -574,7 +573,7 @@ test('PPTX, PDF y PNG conservan el mismo cierre sin portada', async () => {
   const deck = buildSvgDeck(model, theme, FIRM, DOCUMENT_KICKER, CLOSING_FOOTER, CONTACT, false);
   const pngs = await Promise.all(deck.map(({ build }) => rasterizeSlide(build, () => {})));
   assert.equal(pngs.length, 2);
-  await assertPortablePng(pngs[1], 20_000, 0.2);
+  assert.deepEqual(pngs[1], readFileSync(bookendArtworkPath('closing', 'blue')));
   const pdf = await PDFDocument.load(await createPdfFromPngs(pngs));
   assert.equal(pdf.getPageCount(), 2);
   const pptx = await new PresentationPptxRenderer().buildPptx(
@@ -582,6 +581,47 @@ test('PPTX, PDF y PNG conservan el mismo cierre sin portada', async () => {
   );
   const zip = await JSZip.loadAsync(await pptx.write({ outputType: 'nodebuffer' }) as Buffer);
   assert.match(await zip.file('ppt/slides/slide1.xml')!.async('string'), /Contenido inicial/);
-  assert.match(await zip.file('ppt/slides/slide2.xml')!.async('string'), /Gracias/);
+  assert.doesNotMatch(await zip.file('ppt/slides/slide2.xml')!.async('string'), /<a:t>|<p:sp>/);
   assert.equal(zip.file('ppt/slides/slide3.xml'), null);
+});
+
+test('ambas versiones de la apertura y el cierre preservan los PNG oficiales sin superposiciones', async () => {
+  for (const tone of ['blue', 'white'] as const) {
+    const theme = buildTheme({ ...presentationOptions('santossaucedo'), bookendTone: tone }, null);
+    const model: SlideModel = {
+      title: 'Sin título añadido a la apertura',
+      slides: [
+        { layout: 'bullets', title: 'Contenido editable', bullets: ['Una decisión'] },
+        { layout: 'closing', title: 'Sin título añadido al cierre' },
+      ],
+    };
+    const deck = buildSvgDeck(model, theme, FIRM, DOCUMENT_KICKER, CLOSING_FOOTER, CONTACT);
+    const pptx = await new PresentationPptxRenderer().buildPptx(
+      model, theme, FIRM, DOCUMENT_KICKER, CONTACT, CLOSING_FOOTER, deck.length,
+    );
+    const zip = await JSZip.loadAsync(await pptx.write({ outputType: 'nodebuffer' }) as Buffer);
+    const pngs = await Promise.all(deck.map(({ build }) => rasterizeSlide(build, () => {})));
+    for (const [index, kind] of [[1, 'intro'], [3, 'closing']] as const) {
+      const source = readFileSync(bookendArtworkPath(kind, tone));
+      assert.deepEqual(pngs[index - 1], source);
+      const slide = await zip.file(`ppt/slides/slide${index}.xml`)!.async('string');
+      assert.match(slide, /<p:bg>/);
+      assert.doesNotMatch(slide, /<a:t>|<p:sp>|<p:pic>/);
+      const rels = await zip.file(`ppt/slides/_rels/slide${index}.xml.rels`)!.async('string');
+      const target = rels.match(/Target="\.\.\/(media\/[^"]+)"/)?.[1];
+      assert(target, 'la diapositiva debe apuntar al arte original');
+      assert.deepEqual(await zip.file(`ppt/${target}`)!.async('nodebuffer'), source);
+    }
+    const pdf = await PDFDocument.load(await createPdfFromPngs(pngs));
+    assert.equal(pdf.getPageCount(), 3);
+    const artworkObjects = pdf.context.enumerateIndirectObjects().filter(([, object]) => {
+      if (!(object instanceof PDFRawStream) || object.dict.get(PDFName.of('Subtype')) !== PDFName.of('Image')) return false;
+      const width = object.dict.get(PDFName.of('Width'));
+      const height = object.dict.get(PDFName.of('Height'));
+      return width instanceof PDFNumber && width.asNumber() === 3840 &&
+        height instanceof PDFNumber && height.asNumber() === 2160 &&
+        object.dict.get(PDFName.of('ColorSpace')) === PDFName.of('DeviceRGB');
+    });
+    assert.equal(artworkObjects.length, 2);
+  }
 });

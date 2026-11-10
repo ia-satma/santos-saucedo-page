@@ -1,6 +1,6 @@
 import { Resvg } from '@resvg/resvg-js';
 import { PRESENTATION_FONT, PRESENTATION_FONT_FILES } from '../presentationFonts';
-import type { PresentationTemplate, RenderOptions } from './contracts';
+import type { PresentationBookendTone, PresentationTemplate, RenderOptions } from './contracts';
 
 export const W = 1280;
 export const H = 720;
@@ -39,6 +39,7 @@ export const BASE_PALETTE: Palette = {
 
 export interface Theme extends Palette {
   template: PresentationTemplate;
+  bookendTone: PresentationBookendTone;
   showGhost: boolean;       // numerales fantasma (off en minimal)
   paperBreathers: boolean;  // fondos papel en stat/quote (off en minimal)
   logo: { path: string; aspect: number } | null;
@@ -62,6 +63,7 @@ export function buildTheme(opts: RenderOptions, logo: { path: string; aspect: nu
   return {
     ...p,
     template: opts.template,
+    bookendTone: opts.bookendTone ?? (opts.template === 'minimal' ? 'white' : 'blue'),
     showGhost: opts.template !== 'minimal',
     paperBreathers: opts.template !== 'minimal',
     logo,
