@@ -89,10 +89,32 @@ class SocialConflictError extends Error {
   }
 }
 
+async function discardUncommittedFiles(
+  id: string,
+  files: Awaited<ReturnType<typeof persistSocialRevision>>,
+  slideCount: number,
+) {
+  // A database timeout can arrive after COMMIT. Preserve the files if the
+  // database still references them or if its state cannot be verified.
+  try {
+    const stored = await storage.getSocialAssetById(id);
+    const referenced = stored?.packageUrl === files.packageUrl ||
+      stored?.versions?.some(revision => revision.packageUrl === files.packageUrl);
+    if (!referenced) await discardSocialFiles(id, files, slideCount);
+  } catch {
+    console.error("[social-studio] Could not verify uncommitted files", { id });
+  }
+}
+
 async function saveNew(asset: Omit<InsertSocialAsset, "payload"> & { id: string; format: string; palette: string }, payload: SocialPayload) {
   const { format, palette } = studioDesign(asset.format, asset.palette);
   const files = await persistSocialRevision(asset.id, format, palette, payload);
-  return storage.createSocialAsset({ ...asset, ...files, payload });
+  try {
+    return await storage.createSocialAsset({ ...asset, ...files, payload });
+  } catch (error) {
+    await discardUncommittedFiles(asset.id, files, payload.slides.length);
+    throw error;
+  }
 }
 
 async function saveRevision(current: SocialAsset, updates: { title: string; format: string; palette: string; payload: SocialPayload }, actorId: string) {
@@ -106,7 +128,13 @@ async function saveRevision(current: SocialAsset, updates: { title: string; form
     createdAt: (current.updatedAt ?? current.createdAt ?? new Date()).toISOString(),
     createdBy: actorId,
   };
-  const saved = await storage.updateSocialAsset(current, { ...updates, ...files, versions: [...revisions, revision] });
+  let saved: SocialAsset | undefined;
+  try {
+    saved = await storage.updateSocialAsset(current, { ...updates, ...files, versions: [...revisions, revision] });
+  } catch (error) {
+    await discardUncommittedFiles(current.id, files, updates.payload.slides.length);
+    throw error;
+  }
   if (!saved) {
     await discardSocialFiles(current.id, files, updates.payload.slides.length);
     throw new SocialConflictError();
