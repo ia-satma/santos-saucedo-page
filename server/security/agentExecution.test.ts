@@ -516,7 +516,8 @@ test('presentation agent validates render, preview and download metadata without
       subtitle: 'Prueba aislada',
       slides: [
         { layout: 'bullets', title: 'Puntos clave', bullets: ['Uno', 'Dos'] },
-        { layout: 'closing', title: 'Gracias', bullets: ['Santos & Saucedo'] },
+        { layout: 'bullets', title: 'Desarrollo', bullets: ['Tres'] },
+        { layout: 'bullets', title: 'Recomendaciones', bullets: ['Cuatro'] },
       ],
     }),
   );
@@ -544,6 +545,7 @@ test('presentation agent validates render, preview and download metadata without
       context('presentation_generator'),
       {
         topic: 'Panorama regulatorio',
+        slideCount: 3,
         formats: ['pptx', 'pdf', 'png'],
         visuals: false,
         dataClassification: 'internal',
@@ -587,9 +589,9 @@ test('presentation agent validates render, preview and download metadata without
       },
     );
     assert.equal(failed.success, false);
-    assert.match(failed.error || '', /simulated persistence failure/);
+    assert.match(failed.error || '', /servicio de IA no completó/i);
     assert.equal(fallbackLlmMock.mock.callCount(), 1);
-    assert.equal(failedRenderMock.mock.callCount(), 1);
+    assert.equal(failedRenderMock.mock.callCount(), 0);
   } finally {
     failedRenderMock.mock.restore();
     fallbackLlmMock.mock.restore();
@@ -647,6 +649,7 @@ test('presentation illustration request creates image slides even when the text 
       context('presentation_generator'),
       {
         topic: 'Regulación energética',
+        slideCount: 3,
         formats: ['png'],
         visuals: true,
         illustrate: true,
@@ -671,7 +674,7 @@ test('presentation illustration request creates image slides even when the text 
   }
 });
 
-test('presentation uses a private local fallback for protected inputs and preserves intro preference', async () => {
+test('presentation rejects protected inputs before generating or rendering', async () => {
   const llm = mock.method(
     presentationGeneratorAgent as unknown as { callLLM: (...args: unknown[]) => Promise<string> },
     'callLLM',
@@ -694,11 +697,11 @@ test('presentation uses a private local fallback for protected inputs and preser
       illustrate: true,
       webSearch: true,
     });
-    assert.equal(result.success, true);
-    assert.equal(result.data?.usedFallback, true);
+    assert.equal(result.success, false);
+    assert.match(result.error || '', /tratamiento de datos/i);
     assert.equal(llm.mock.callCount(), 0);
     assert.equal(image.mock.callCount(), 0);
-    assert.equal(render.mock.callCount(), 1);
+    assert.equal(render.mock.callCount(), 0);
   } finally {
     render.mock.restore();
     image.mock.restore();
