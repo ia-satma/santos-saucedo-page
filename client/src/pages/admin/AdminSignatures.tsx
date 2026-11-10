@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowTopRightIcon, CodeIcon, CopyIcon, DownloadIcon, ImageIcon, PlusIcon, ResetIcon, TrashIcon, UploadIcon } from "@radix-ui/react-icons";
+import html2canvas from "html2canvas";
 import { adminApiRequest, readAdminJson, useAdminAuth } from "@/lib/adminAuth";
 import { uploadAdminMedia } from "@/lib/adminMediaUpload";
 import { queryClient } from "@/lib/queryClient";
@@ -49,21 +50,15 @@ async function inlineSignatureImages(bodyHtml: string) {
 async function downloadSignaturePng(html: string, name: string, width: number, height: number) {
   const body = html.match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1] || html;
   const bodyWithImages = await inlineSignatureImages(body);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xhtml="http://www.w3.org/1999/xhtml" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" style="width:${width}px;height:${height}px;overflow:hidden;background:#fff">${bodyWithImages}</div></foreignObject></svg>`;
-  const svgUrl = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
+  const host = document.createElement("div");
+  host.style.cssText = `position:fixed;left:-100000px;top:0;width:${width}px;height:${height}px;overflow:hidden;background:#fff;pointer-events:none;`;
+  host.innerHTML = bodyWithImages;
+  document.body.appendChild(host);
   try {
-    const image = new Image();
-    image.decoding = "async";
-    await new Promise<void>((resolve, reject) => { image.onload = () => resolve(); image.onerror = () => reject(new Error("No se pudo renderizar la firma como imagen.")); image.src = svgUrl; });
-    const scale = 2;
-    const canvas = document.createElement("canvas");
-    canvas.width = width * scale;
-    canvas.height = height * scale;
-    const context = canvas.getContext("2d");
-    if (!context) throw new Error("No se pudo crear el lienzo de descarga.");
-    context.fillStyle = "#fff";
-    context.fillRect(0, 0, canvas.width, canvas.height);
-    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    const target = host.firstElementChild as HTMLElement | null;
+    if (!target) throw new Error("No se pudo preparar la firma para exportación.");
+    await document.fonts?.ready;
+    const canvas = await html2canvas(target, { backgroundColor: "#fff", width, height, scale: 2, useCORS: true, allowTaint: false, imageTimeout: 15000, logging: false });
     const png = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
     if (!png) throw new Error("No se pudo generar el PNG.");
     const downloadUrl = URL.createObjectURL(png);
@@ -73,7 +68,7 @@ async function downloadSignaturePng(html: string, name: string, width: number, h
     anchor.click();
     setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
   } finally {
-    URL.revokeObjectURL(svgUrl);
+    host.remove();
   }
 }
 
