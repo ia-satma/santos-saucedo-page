@@ -19,6 +19,7 @@ import { registerNewsEditor } from "./cms/newsEditor";
 import { getBundledMediaMap } from "./cms/bundledMediaMap";
 import { teamPhotoOwner } from "@shared/marioPortrait";
 import { ensureCmsSchema, registerCmsRoutes, getCmsContact, getCmsFormControls } from "./cms/siteConfig";
+import { readStaticEntityTranslation } from "./localization/staticSnapshots";
 import { registerAdminUsers } from "./cms/adminUsers";
 import { recordAccessEvent } from "./cms/accessAudit";
 import { hasAdminPermission } from "@shared/adminAccess";
@@ -2904,6 +2905,13 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
           isPublicSourceText(entity, t.field, t.sourceText)
         ) {
           translationsMap[t.field] = t.translatedText;
+        }
+      }
+
+      if (Object.keys(translationsMap).length === 0) {
+        const staticTranslations = await readStaticEntityTranslation(contentType, entityId, targetLanguage);
+        for (const [field, value] of Object.entries(staticTranslations || {})) {
+          if (publicFields.includes(field)) translationsMap[field] = value;
         }
       }
 

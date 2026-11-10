@@ -71,11 +71,12 @@ export function useTranslatedContent({
   const language = languageOverride ?? interfaceLanguage;
 
   const isSource = isSourceLanguage(language);
-  const canTranslate = enabled && !isStaticSite && !isSource && !!entityId;
+  const canUseTranslations = enabled && !isSource && !!entityId;
+  const canGenerateTranslations = canUseTranslations && !isStaticSite;
 
   const { data: cachedTranslations, isLoading } = useQuery<TranslationResponse>({
     queryKey: ['/api/translations', contentType, entityId, language],
-    enabled: canTranslate,
+    enabled: canUseTranslations,
   });
 
   const translateMutation = useMutation({
@@ -133,7 +134,7 @@ export function useTranslatedContent({
   const hasCachedTranslations = !!cachedTranslations?.translations && 
     Object.keys(cachedTranslations.translations).length > 0;
   
-  const needsTranslation = canTranslate && !isLoading &&
+  const needsTranslation = canGenerateTranslations && !isLoading &&
     !hasCachedTranslations && Object.keys(fieldsToTranslate).length > 0;
 
   const translationKey = `${contentType}-${entityId}-${language}`;
@@ -152,7 +153,7 @@ export function useTranslatedContent({
   }, [needsTranslation, translateMutation.isPending, contentType, entityId, fieldsToTranslate, sourceLanguage, language, translationKey]);
 
   // Traducciones solo para idiomas que no son de origen
-  const translations = canTranslate
+  const translations = canUseTranslations
     ? cachedTranslations?.translations || translateMutation.data?.translations
     : undefined;
 
@@ -187,12 +188,12 @@ export function useTranslatedContent({
     return result;
   };
 
-  const isTranslationPending = canTranslate && (isLoading || translateMutation.isPending || needsTranslation);
+  const isTranslationPending = canGenerateTranslations && (isLoading || translateMutation.isPending || needsTranslation);
 
   return {
     translatedFields: getTranslatedFields(),
-    isLoading: canTranslate && isLoading,
-    isTranslating: canTranslate && translateMutation.isPending,
+    isLoading: canUseTranslations && isLoading,
+    isTranslating: canGenerateTranslations && translateMutation.isPending,
     isTranslationPending,
     hasTranslation,
     error: translateMutation.error as Error | null,

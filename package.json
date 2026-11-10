@@ -31,7 +31,7 @@
     "test:visual:monitor:update": "UPDATE_VISUAL_SNAPSHOTS=1 node scripts/test-monitor-editorial.mjs --visual-only",
     "test:visual:monitor:verify-detector": "node scripts/test-monitor-editorial.mjs --visual-only --verify-detector",
     "replit:prepare-uploads": "node scripts/prepare-upload-runtime.mjs",
-    "build:deploy": "npm run build && npm run replit:prepare-uploads",
+    "build:deploy": "npm run build && node --import tsx script/generate-static-api.ts && npm run replit:prepare-uploads",
     "cms:export-static": "node --import tsx scripts/export-static-localization.ts",
     "translate:all": "node --import tsx scripts/translate-all-content.ts",
     "test:localization": "node --import tsx scripts/check-localization.ts"

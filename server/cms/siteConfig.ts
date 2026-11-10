@@ -11,6 +11,7 @@ import { authMiddleware, requireRole } from '../auth';
 import { importBundledMedia, savedMediaImportStatus } from './mediaImport';
 import { storageBucketId, verifyAppStorage } from '../replitStorage';
 import { SUPPORTED_LANGUAGES } from '@shared/constants';
+import { readStaticCmsSection } from '../localization/staticSnapshots';
 
 const prefix = 'editorial.';
 type Stored = { content: CmsValue; previous?: CmsValue };
@@ -125,7 +126,10 @@ export function registerCmsRoutes(app: Express) {
       const [row] = await db.select().from(siteConfig).where(eq(siteConfig.key, `localized.${section}.${language}`));
       const stored = row?.value ? JSON.parse(row.value) : null;
       res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
-      return res.json(stored?.status === 'published' ? stored.content : {});
+      if (stored?.status === 'published' && stored.content !== undefined) {
+        return res.json(stored.content);
+      }
+      return res.json(await readStaticCmsSection(section, language) ?? {});
     } catch (error) {
       console.error('[CMS] Localized content read failed', error);
       return res.status(503).json({ error: 'No se pudo cargar el contenido localizado.' });

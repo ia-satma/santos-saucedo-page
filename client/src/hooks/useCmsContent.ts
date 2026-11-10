@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { mergeCms, type CmsSection } from '@shared/cms';
-import { queryClient, isStaticSite } from '@/lib/queryClient';
+import { queryClient } from '@/lib/queryClient';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export const CMS_QUERY = ['/api/site-config'] as const;
@@ -27,7 +27,11 @@ export function useCmsContent<T>(section: CmsSection, fallback: T): T {
   // only skip the endpoint when the live editorial override itself contains
   // the requested language.
   const overrideHasLanguage = hasLanguageMap(override) && language in override;
-  const needsLocalizedSnapshot = !isStaticSite && language !== 'es' && language !== 'en' && hasLanguageMap(base) && !overrideHasLanguage;
+  // Static builds expose the same published localized rows through
+  // static-api/site-config.json. Reading that endpoint here keeps the public
+  // frontend independent from the CMS server while preserving one code path
+  // for live and static deployments.
+  const needsLocalizedSnapshot = language !== 'es' && language !== 'en' && hasLanguageMap(base) && !overrideHasLanguage;
   const { data: localized } = useQuery<Record<string, unknown>>({
     queryKey: [`/api/localized-content/${section}/${language}`],
     enabled: needsLocalizedSnapshot,

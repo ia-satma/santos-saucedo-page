@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { motion, useReducedMotion } from "framer-motion";
 import { fallbackToOriginalSrc, getTeamPhotoSrcSet } from "@/lib/teamPhotoSources";
 import { Lineas } from "./primitives";
+import type { Lang26 } from "./content";
 
 export type Partner = { name: string; slug: string; image: string; role: string; practice: string };
 
@@ -11,7 +12,7 @@ export type Partner = { name: string; slug: string; image: string; role: string;
    velo oscuro. La lista de nombres manda sobre los lienzos: pasar por un nombre o un lienzo, o
    enfocarlo con el teclado, abre ese socio; el último abierto se queda abierto. En pantallas
    táctiles, el primer toque abre el lienzo y el segundo lleva a la ficha. */
-export function Lienzo({ people, lang }: { people: Partner[]; lang: "es" | "en" }) {
+export function Lienzo({ people, lang }: { people: Partner[]; lang: Lang26 }) {
   const [active, setActive] = useState(0);
   const timer = useRef<number>();
   const reduceMotion = useReducedMotion();

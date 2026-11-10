@@ -30,9 +30,13 @@ const COPY = {
   },
 };
 
+function copyFor(language: Lang26) {
+  return COPY[language === "es" ? "es" : "en"];
+}
+
 function categoryFor(item: News, language: Lang26) {
   if (!item.category) return null;
-  return COPY[language].category[item.category] ||
+  return copyFor(language).category[item.category] ||
     (language === "es" && item.categoryEs) ||
     item.category.charAt(0).toUpperCase() + item.category.slice(1);
 }
@@ -85,7 +89,7 @@ function ArticleImage({ item, featured, label }: { item: News; featured: boolean
 function ArticleCard({ item, language, featured }: { item: News; language: Lang26; featured: boolean }) {
   const title = language === "es" ? item.titleEs || item.title : item.title;
   const excerpt = language === "es" ? item.excerptEs || item.excerpt : item.excerpt;
-  const fallback = COPY[language].imageUnavailable;
+  const fallback = copyFor(language).imageUnavailable;
 
   return (
     <article
@@ -125,7 +129,7 @@ function ArticleCard({ item, language, featured }: { item: News; language: Lang2
 
 export function MonitorEditorial({ items, language, limit = 3, isLoading = false, isError = false }: Props) {
   const selected = selectHomeMonitorItems(items, limit);
-  const copy = COPY[language];
+  const copy = copyFor(language);
 
   if (isLoading && !isError) {
     return (

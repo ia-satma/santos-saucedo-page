@@ -178,10 +178,11 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
   const liveHome = useCmsContent("home", home26);
   const t = liveHome[lang].practicas;
   const { data: groups = [], isError: practicesError } = useQuery<PracticeGroup[]>({ queryKey: ["/api/practice-groups"] });
-  const items = practicesError ? [] : groups.map(group => ({
+  const localizedItems = t.items || [];
+  const items = practicesError ? [] : groups.map((group, index) => ({
     slug: group.slug,
-    title: lang === "es" ? group.nameEs : group.name,
-    body: lang === "es" ? group.descriptionEs : group.description,
+    title: lang === "es" ? group.nameEs : localizedItems[index]?.title || group.name,
+    body: lang === "es" ? group.descriptionEs : localizedItems[index]?.body || group.description,
     // La portada conserva la serie aprobada para cada práctica, aunque el CMS tenga
     // una ruta anterior. Las fotos personalizadas siguen disponibles en el CMS.
     imageUrl: getPracticeImage(group.slug),
@@ -454,7 +455,14 @@ export function Socios26({ lang }: { lang: Lang26 }) {
   const liveHome = useCmsContent("home", home26);
   const t = liveHome[lang].socios;
   const { data: members = [], isError: teamError } = useQuery<TeamMember[]>({ queryKey: ["/api/team"] });
-  const people = teamError ? [] : members.filter(m => isNamedOnTeamPage(m) && (m.showOnHome ?? (m.isPartner && !/in memoriam/i.test(m.title)))).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)).map(m => ({ name: m.name, slug: m.slug, image: m.imageUrl || "", role: (lang === "es" ? m.titleEs : m.title) || "", practice: (lang === "es" ? m.roleEs : m.role) || "" }));
+  const localizedPeople = t.people || [];
+  const people = teamError ? [] : members.filter(m => isNamedOnTeamPage(m) && (m.showOnHome ?? (m.isPartner && !/in memoriam/i.test(m.title)))).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)).map((m, index) => ({
+    name: localizedPeople[index]?.name || m.name,
+    slug: m.slug,
+    image: m.imageUrl || "",
+    role: lang === "es" ? m.titleEs || "" : localizedPeople[index]?.role || m.title || "",
+    practice: lang === "es" ? m.roleEs || "" : m.role || "",
+  }));
   return (
     <section
       id="socios"

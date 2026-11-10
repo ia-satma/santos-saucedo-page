@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { SUPPORTED_LANGUAGES, type LanguageCode, type SupportedLanguage } from "@shared/constants";
 import { isStaticSite } from "@/lib/queryClient";
 
-type DisplayLanguage = "en" | "es";
+type DisplayLanguage = LanguageCode;
 
 interface LanguageContextType {
   language: LanguageCode;
@@ -44,8 +44,7 @@ interface LanguageProviderProps {
 }
 
 function getDisplayLanguage(lang: LanguageCode): DisplayLanguage {
-  if (lang === "es") return "es";
-  return "en";
+  return lang;
 }
 
 const HTML_LANG_CODES: Record<LanguageCode, string> = Object.fromEntries(

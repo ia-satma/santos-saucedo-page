@@ -6,7 +6,7 @@
  * origen: repetirlo solo regenera lo que cambió.
  */
 import { createHash } from "node:crypto";
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { db } from "../server/db";
 import { translateLegalText, translateMultipleTexts, type LanguageCode } from "../server/openai";
 import { cmsDefaults, mergeCms, type CmsValue } from "../shared/cms";
@@ -251,13 +251,29 @@ async function translateCatalogEntity(contentType: string, entity: any, fields: 
   }
 }
 
-async function translateNewsArticle(article: any, targetLanguage: LanguageCode) {
+async function translateNewsArticle(article: any, targetLanguage: LanguageCode): Promise<boolean> {
   const source = {
     title: article.titleEs || "",
     excerpt: article.excerptEs || "",
     content: article.contentEs || "",
   };
-  if (!source.title.trim() || !source.content.trim()) return;
+  if (!source.title.trim() || !source.content.trim()) return false;
+  const sourceText = `sha256:${sourceHash(source)}`;
+  const [cached] = await db.select({ id: translationCache.id, sourceText: translationCache.sourceText, translations: translationCache.translations, isApproved: translationCache.isApproved })
+    .from(translationCache)
+    .where(and(
+      eq(translationCache.contentType, "news"),
+      eq(translationCache.entityId, String(article.id)),
+      eq(translationCache.targetLanguage, targetLanguage),
+      isNull(translationCache.field),
+    ))
+    .limit(1);
+  const cachedFields = cached?.translations && typeof cached.translations === "object" && !Array.isArray(cached.translations)
+    ? cached.translations as Record<string, unknown>
+    : null;
+  if (cached?.isApproved && cached.sourceText === sourceText && typeof cachedFields?.title === "string" && typeof cachedFields?.content === "string") {
+    return false;
+  }
   const translated = await translateObject(source, targetLanguage) as typeof source;
   await db.delete(newsTranslations).where(and(eq(newsTranslations.newsId, article.id), eq(newsTranslations.language, targetLanguage)));
   await db.insert(newsTranslations).values({
@@ -268,6 +284,22 @@ async function translateNewsArticle(article: any, targetLanguage: LanguageCode) 
     content: translated.content,
     translatedBy: "ai",
   });
+  const cacheValues = {
+    contentType: "news",
+    entityId: String(article.id),
+    sourceLanguage: SOURCE_LANGUAGE,
+    targetLanguage,
+    sourceText,
+    translations: translated,
+    isApproved: true,
+    updatedAt: new Date(),
+  };
+  if (cached) {
+    await db.update(translationCache).set(cacheValues).where(eq(translationCache.id, cached.id));
+  } else {
+    await db.insert(translationCache).values(cacheValues);
+  }
+  return true;
 }
 
 async function main() {
@@ -321,6 +353,7 @@ async function main() {
   }
 
   console.log(`[translate-all] ${sections} secciones localizadas publicadas; ${errors} errores registrados; ${TARGET_LANGUAGES.length} idiomas destino.`);
+  if (errors > 0) process.exitCode = 1;
 }
 
 main().catch((error) => {

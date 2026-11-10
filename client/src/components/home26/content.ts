@@ -1,21 +1,22 @@
-// Texto del Inicio 2026 (versión aprobada v3, 12 oct 2026).
-// El inglés es provisional hasta la revisión de la firma.
+import { SUPPORTED_LANGUAGES, type LanguageCode } from "@shared/constants";
 
-export type Lang26 = "es" | "en";
+// Texto del Inicio 2026 (versión aprobada v3, 12 oct 2026).
+// El CMS sustituye estos valores base con la versión publicada del idioma activo.
+
+export type Lang26 = LanguageCode;
 
 // El Inicio solo existe en ES/EN: su contenido declara su propio idioma y dirección,
 // aunque <html> lleve otro (de, ar…) desde LanguageContext.
-export const langAttrs = {
-  es: { lang: "es-MX", dir: "ltr" },
-  en: { lang: "en", dir: "ltr" },
-} as const;
+export const langAttrs = Object.fromEntries(
+  SUPPORTED_LANGUAGES.map(({ code, locale }) => [code, { lang: locale, dir: code === "ar" ? "rtl" : "ltr" }]),
+) as Record<Lang26, { lang: string; dir: "ltr" | "rtl" }>;
 
 // En los titulares, "\u00a0" (espacio duro) evita que una palabra corta quede al final de línea.
 // Los TextLink de cada sección no tienen texto propio: llevan la etiqueta del menú de su destino
 // (chrome26[lang].nav, fuente única de los nombres de sección), un solo texto por destino.
 // Los nombres de las prácticas son los de la base (practice_groups.name_es / name).
 
-export const home26 = {
+const home26Source = {
   es: {
     skip: "Ir al contenido",
     menu: "Menú",
@@ -196,3 +197,12 @@ export const home26 = {
     },
   },
 } as const;
+
+type Home26Content = typeof home26Source.es;
+
+// The source bundle contains the approved Spanish and English copy. For the other
+// languages use English only as an initial shape. `useCmsContent` replaces the
+// active key with the published CMS translation as soon as it is available.
+export const home26 = Object.fromEntries(
+  SUPPORTED_LANGUAGES.map(({ code }) => [code, code === "es" ? home26Source.es : home26Source.en]),
+) as Record<Lang26, Home26Content>;
