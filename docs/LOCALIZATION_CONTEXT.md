@@ -66,6 +66,8 @@ npm run build:deploy
 
 Después se verifica el arranque con `npm run start:deploy` y `/readyz`. Se pulsa **Republish** y se confirma la etapa **Promote**, la versión activa y el dominio público. El merge conserva los commits de publicación de Replit; resuelve cualquier conflicto de snapshots antes de construir.
 
+Si Replit propone una migración, se revisa todo el SQL antes de aprobar. Si la base de desarrollo está atrasada y Replit propone eliminar una columna de producción, se cancela el intento, se aplica la migración aditiva versionada en desarrollo y se vuelve a comprobar el SQL. La plantilla guardada y el contenido enriquecido son columnas separadas y deben conservarse en cada versión.
+
 ## Editor de firmas de correo
 
 - El panel está en `/admin/signatures` y se limita a cuentas con permiso de medios. Incluye las 12 plantillas del ZIP de referencia, vista previa, edición de datos, carga de fotografía, copia de HTML, copia enriquecida y descarga.
