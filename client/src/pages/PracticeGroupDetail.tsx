@@ -364,9 +364,11 @@ export default function PracticeGroupDetail() {
   const editableContent = useCmsContent("practice-detail", translations);
   const t = editableContent[language] || editableContent.en;
   // «Qué hacemos»: la lista de servicios de cada práctica, editable en el panel (petición del
-  // cliente, 24-10-2026). Fuera de ES/EN se muestra la lista en inglés, marcada como tal.
+  // cliente, 24-10-2026). El snapshot del CMS contiene las diez versiones.
   const serviceLists = useCmsContent("practice-services", cmsDefaults["practice-services"]);
-  const servicesCopy = language === "es" ? serviceLists.es : serviceLists.en;
+  const servicesCopy = (serviceLists as Record<string, { title: string; items: Record<string, string[]> }>)[language]
+    ?? serviceLists.en
+    ?? serviceLists.es;
   const serviceItems: string[] = (slug && (servicesCopy.items as Record<string, string[]>)[slug]) || [];
   // Vuelta a la sección con la etiqueta del menú en cada idioma (chrome26 nav[1]: "Prácticas")
   const backToAll = (cmsChrome[language as keyof typeof chrome26] ?? cmsChrome.en).nav[1].label;

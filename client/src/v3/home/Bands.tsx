@@ -5,10 +5,11 @@ import { useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { Link } from "wouter";
 import defaults from "@shared/cms-defaults.json";
 import { useCmsContent } from "@/hooks/useCmsContent";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { home26 } from "@/components/home26/content";
 import { useV3Lang, useV3Module, v3SrcSet, type V3Lang } from "@/v3/shared";
 import { keepFirmName } from "@/lib/firmName";
-import { homeCopy } from "./copy";
+import { homeCopyFor } from "./copy";
 import { INDUSTRIAS_TEXTS } from "@/v3/industrias/texts";
 import { useFotosDiferidas } from "@/v3/fotosDiferidas";
 import { PREVIA_INDUSTRIA } from "@/v3/home/industriasPrevia";
@@ -38,7 +39,8 @@ const sinViuda = (s: string) => s.replace(/\s+(\S+)\s*$/, "\u00a0$1");
     Título (oculto) y frase del panel (home.firma); años y ciudades, de las cifras de «La firma»
     (about.stats); el botón y las etiquetas, de copy.ts. */
 export function IntroBand({ lang, areas }: { lang: V3Lang; areas: number }) {
-  const t = homeCopy[lang].intro;
+  const { language } = useLanguage();
+  const t = homeCopyFor(language).intro;
   const f = useCmsContent("home", home26)[lang].firma;
   const stats = useCmsContent("about", defaults.about)[lang]?.stats;
   const anos = stats?.[0]?.value?.trim() || "40+";
@@ -65,7 +67,8 @@ export function IntroBand({ lang, areas }: { lang: V3Lang; areas: number }) {
     muestra la foto y su línea, y lleva a su apartado en «Industrias». Siempre hay una abierta: el
     bloque nunca queda plano. Nombres, líneas y fotos son los de la página «Industrias». */
 export function IndustriasBand({ lang }: { lang: V3Lang }) {
-  const t = homeCopy[lang].industrias;
+  const { language } = useLanguage();
+  const t = homeCopyFor(language).industrias;
   const items = INDUSTRIAS_TEXTS[lang].industrias;
   const [abierta, setAbierta] = useState(0);
   const fotos = useFotosDiferidas();

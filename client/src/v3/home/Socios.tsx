@@ -8,10 +8,11 @@ import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import type { TeamMember } from "@shared/schema";
 import { useCmsContent } from "@/hooks/useCmsContent";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { home26 } from "@/components/home26/content";
 import { CONFIRMED_PARTNER_SLUGS, fallbackToOriginalSrc, getTeamPhotoSrcSet } from "@/lib/teamPhotoSources";
 import { useV3Module, type V3Lang } from "@/v3/shared";
-import { homeCopy, PARTNERS_FALLBACK } from "./copy";
+import { homeCopyFor, PARTNERS_FALLBACK } from "./copy";
 import { initSocini } from "./scripts";
 
 type Partner = { slug: string; name: string; role: string; imageUrl: string };
@@ -32,7 +33,8 @@ function usePartners(lang: V3Lang): Partner[] {
 
 export function SociosBand({ lang }: { lang: V3Lang }) {
   const ref = useRef<HTMLElement>(null);
-  const t = homeCopy[lang].socios;
+  const { language } = useLanguage();
+  const t = homeCopyFor(language).socios;
   // El titular, del panel (home.socios.title); el botón, de copy.ts
   const titulo = useCmsContent("home", home26)[lang].socios.title;
   const people = usePartners(lang);

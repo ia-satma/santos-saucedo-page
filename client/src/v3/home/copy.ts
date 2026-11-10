@@ -6,7 +6,6 @@
    Cifras: las que el sitio ya afirma (about.stats del panel: más de 40 años de experiencia de los socios,
    más de 72 ciudades en la red de despachos aliados) más las 32 entidades de esa red y las cuatro áreas.
    Sin año de fundación: el sitio dice 2009 en «La firma» y «Desde 2010» en la portada. */
-import type { V3Lang } from "@/v3/shared";
 import { v3Asset } from "../asset";
 
 export const homeCopy = {
@@ -56,7 +55,59 @@ export const homeCopy = {
       boton: "Meet the partners and the team",
     },
   },
-} satisfies Record<V3Lang, unknown>;
+  de: {
+    intro: { boton: "Die Kanzlei kennenlernen", cifras: { anos: "Jahre Erfahrung", ciudades: "Städte in unserem Netzwerk", entidades: "Bundesländer und Mexiko-Stadt", areas: "Praxisbereiche" } },
+    practicas: { entrada: "Arbeitsrecht ist der Kern der Kanzlei; die weiteren Bereiche ergänzen ihn.", ver: "Praxis ansehen" },
+    industrias: { titulo: "Branchen, die wir beraten", boton: "Branchen ansehen", ver: "Branche ansehen" },
+    socios: { boton: "Partner und Team kennenlernen" },
+  },
+  zh: {
+    intro: { boton: "了解本所", cifras: { anos: "经验年限", ciudades: "联盟网络覆盖城市", entidades: "州及墨西哥城", areas: "业务领域" } },
+    practicas: { entrada: "劳动法是本所的核心业务，其他领域与之协同配合。", ver: "查看业务领域" },
+    industrias: { titulo: "我们提供咨询的行业", boton: "查看行业", ver: "查看行业" },
+    socios: { boton: "了解合伙人与团队" },
+  },
+  ko: {
+    intro: { boton: "로펌 알아보기", cifras: { anos: "경력 연수", ciudades: "제휴 네트워크 도시", entidades: "주 및 멕시코시티", areas: "업무 분야" } },
+    practicas: { entrada: "노동법은 로펌의 핵심 업무이며 다른 분야가 이를 뒷받침합니다.", ver: "업무 분야 보기" },
+    industrias: { titulo: "자문 산업 분야", boton: "산업 분야 보기", ver: "산업 분야 보기" },
+    socios: { boton: "파트너와 팀 알아보기" },
+  },
+  ja: {
+    intro: { boton: "事務所について", cifras: { anos: "経験年数", ciudades: "提携ネットワークの都市", entidades: "州およびメキシコシティ", areas: "取扱分野" } },
+    practicas: { entrada: "労働法務を中核に、その他の分野がこれを支えます。", ver: "取扱分野を見る" },
+    industrias: { titulo: "ご相談いただく業界", boton: "業界を見る", ver: "業界を見る" },
+    socios: { boton: "パートナーとチームを見る" },
+  },
+  ar: {
+    intro: { boton: "تعرّفوا على مكتبنا", cifras: { anos: "سنوات الخبرة", ciudades: "مدن شبكة التحالف", entidades: "الولايات ومكسيكو سيتي", areas: "مجالات الممارسة" } },
+    practicas: { entrada: "قانون العمل هو جوهر المكتب، وتدعمه مجالات الممارسة الأخرى.", ver: "عرض مجال الممارسة" },
+    industrias: { titulo: "الصناعات التي نقدم لها المشورة", boton: "عرض الصناعات", ver: "عرض الصناعة" },
+    socios: { boton: "تعرّفوا على الشركاء والفريق" },
+  },
+  ru: {
+    intro: { boton: "Ознакомьтесь с фирмой", cifras: { anos: "Лет опыта", ciudades: "Городов в нашей сети", entidades: "Штаты и Мехико", areas: "Практики" } },
+    practicas: { entrada: "Трудовое право — основа фирмы; остальные практики дополняют её.", ver: "Посмотреть практику" },
+    industrias: { titulo: "Отрасли, которым мы помогаем", boton: "Посмотреть отрасли", ver: "Посмотреть отрасль" },
+    socios: { boton: "Познакомьтесь с партнёрами и командой" },
+  },
+  fr: {
+    intro: { boton: "Découvrez le cabinet", cifras: { anos: "Années d’expérience", ciudades: "Villes de notre réseau", entidades: "États et Mexico", areas: "Domaines de pratique" } },
+    practicas: { entrada: "Le droit du travail est au cœur du cabinet ; les autres domaines l’accompagnent.", ver: "Voir le domaine" },
+    industrias: { titulo: "Secteurs que nous conseillons", boton: "Voir les secteurs", ver: "Voir le secteur" },
+    socios: { boton: "Découvrir les associés et l’équipe" },
+  },
+  it: {
+    intro: { boton: "Scopri lo studio", cifras: { anos: "Anni di esperienza", ciudades: "Città della nostra rete", entidades: "Stati e Città del Messico", areas: "Aree di pratica" } },
+    practicas: { entrada: "Il diritto del lavoro è il centro dello studio; le altre aree lo affiancano.", ver: "Vedi l’area" },
+    industrias: { titulo: "Settori che assistiamo", boton: "Vedi i settori", ver: "Vedi il settore" },
+    socios: { boton: "Conosci gli associati e il team" },
+  },
+} satisfies Record<string, unknown>;
+
+export function homeCopyFor(language: string) {
+  return homeCopy[language as keyof typeof homeCopy] ?? homeCopy.en;
+}
 
 /* Foto de cada práctica en el bloque de Baker, por el slug de la base. Litigio toma la foto que la
    demo aprobada tenía en ese mismo cuadro (los rollos de acero de «seguridad social», práctica que el

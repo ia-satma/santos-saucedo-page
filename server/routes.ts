@@ -1056,7 +1056,14 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
       let urlEntries = '';
 
-      for (const page of staticPages) {
+      // Every public URL is emitted for every supported language. This keeps
+      // the server sitemap aligned with the static Pages sitemap and with the
+      // locale-prefixed canonical URLs emitted by SEOHead.
+      const localizedEntries = SUPPORTED_LANGUAGES.flatMap(({ code }) =>
+        staticPages.map((page) => ({ ...page, loc: `/${code}${page.loc}` })),
+      );
+
+      for (const page of localizedEntries) {
         urlEntries += `
   <url>
     <loc>${baseUrl}${page.loc}</loc>
@@ -1068,23 +1075,27 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
       // Fichas: solo quien aparece con nombre en /team (shared/teamVisibility.ts)
       for (const member of teamMembers.filter(m => isNamedOnTeamPage(m))) {
-        urlEntries += `
+        for (const { code } of SUPPORTED_LANGUAGES) {
+          urlEntries += `
   <url>
-    <loc>${baseUrl}/team/${member.slug}</loc>
+    <loc>${baseUrl}/${code}/team/${member.slug}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>`;
+        }
       }
 
       for (const group of practiceGroups) {
-        urlEntries += `
+        for (const { code } of SUPPORTED_LANGUAGES) {
+          urlEntries += `
   <url>
-    <loc>${baseUrl}/practice-groups/${group.slug}</loc>
+    <loc>${baseUrl}/${code}/practice-groups/${group.slug}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>`;
+        }
       }
 
       // Solo notas públicas (isPublicNews, el criterio de /api/news)
@@ -1092,13 +1103,15 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       const publishedNews = newsItems.filter(n => isPublicNews(n, now));
       for (const newsItem of publishedNews) {
         const lastmod = newsItem.date ? new Date(newsItem.date).toISOString().split('T')[0] : today;
-        urlEntries += `
+        for (const { code } of SUPPORTED_LANGUAGES) {
+          urlEntries += `
   <url>
-    <loc>${baseUrl}/news/${newsItem.slug}</loc>
+    <loc>${baseUrl}/${code}/news/${newsItem.slug}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>`;
+        }
       }
 
       const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

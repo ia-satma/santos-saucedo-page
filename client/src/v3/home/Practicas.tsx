@@ -11,9 +11,11 @@ import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import type { PracticeGroup } from "@shared/schema";
 import { useCmsContent } from "@/hooks/useCmsContent";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { home26 } from "@/components/home26/content";
 import { useV3Module, v3SrcSet, type V3Lang } from "@/v3/shared";
-import { homeCopy, PRACTICE_PHOTOS } from "./copy";
+import { homeCopyFor, PRACTICE_PHOTOS } from "./copy";
+import { usePracticeNames } from "@/lib/practiceNames";
 import { initPracticas } from "./scripts";
 // La foto de cada cuadro en el teléfono (hm-bk-foto): también la usa la página de Prácticas
 import "./home.css";
@@ -35,26 +37,32 @@ export type PaginaPracticas = { titulo: ReactNode; entrada: ReactNode; id: strin
 
 /** Las prácticas del sitio (orden del panel), con su foto del bloque. */
 export function usePracticeItems(lang: V3Lang): PracticeItem[] {
+  const { language } = useLanguage();
   const liveHome = useCmsContent("home", home26);
+  const { name: cmsPracticeName } = usePracticeNames();
   const { data, isError } = useQuery<PracticeGroup[]>({ queryKey: ["/api/practice-groups"] });
   return useMemo(() => {
     const base = !isError && data && data.length
-      ? [...data].filter((g) => g.published !== false).sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((g) => ({
-          slug: g.slug,
-          name: (lang === "es" ? g.nameEs || g.name : g.name) || "",
-          summary: (lang === "es" ? g.descriptionEs || g.description : g.description) || "",
-        }))
+      ? [...data].filter((g) => g.published !== false).sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((g) => {
+          const cmsItem = liveHome[lang].practicas.items.find((item) => item.slug === g.slug);
+          return {
+            slug: g.slug,
+            name: (cmsPracticeName(g.slug, language) || (lang === "es" ? g.nameEs || g.name : g.name)) || "",
+            summary: (language !== "es" && language !== "en" ? cmsItem?.body : undefined) || (lang === "es" ? g.descriptionEs || g.description : g.description) || "",
+          };
+        })
       : liveHome[lang].practicas.items.map((it) => ({ slug: it.slug, name: it.title, summary: it.body }));
     return base.map((p, i) => {
       const ph = PRACTICE_PHOTOS[p.slug];
       return { ...p, clave: ph?.clave ?? `p${i}`, img: ph?.img, w: ph?.w ?? 2000, h: ph?.h ?? 1333 };
     });
-  }, [data, isError, lang, liveHome]);
+  }, [data, isError, lang, language, liveHome, cmsPracticeName]);
 }
 
 export function PracticasBaker({ lang, items, pagina }: { lang: V3Lang; items: PracticeItem[]; pagina?: PaginaPracticas }) {
   const ref = useRef<HTMLElement>(null);
-  const t = homeCopy[lang].practicas;
+  const { language } = useLanguage();
+  const t = homeCopyFor(language).practicas;
   // El titular, del panel (home.practicas.title); la entrada y «Ver la práctica», de copy.ts
   const titulo = useCmsContent("home", home26)[lang].practicas.title;
   const key = items.map((p) => p.slug + p.name.length + p.summary.length).join("|");

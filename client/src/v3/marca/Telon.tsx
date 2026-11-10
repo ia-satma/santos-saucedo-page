@@ -13,6 +13,7 @@ import { useCmsContent } from "@/hooks/useCmsContent";
 import { home26 } from "@/components/home26/content";
 import { chrome26 } from "@/components/home26/chrome26";
 import { useV3Lang, type V3Lang } from "@/v3/shared";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { initTelon, type TelonApi } from "./escenaTelon";
 
 /* Textos nuevos de la demo (español literal de la demo; inglés en el mismo registro) */
@@ -31,6 +32,14 @@ const TXT = {
     words: ["companies", "industry", "multinationals"],
     and: "and",
   },
+  de: { firma: "An der Seite von Unternehmen bei jeder Entscheidung, die ihre Mitarbeiter betrifft.", words: ["Unternehmen", "Industrie", "multinationale Unternehmen"], and: "und" },
+  zh: { firma: "在每一项涉及员工的决策中与企业并肩前行。", words: ["企业", "行业", "跨国公司"], and: "和" },
+  ko: { firma: "직원과 관련된 모든 의사결정에서 기업과 함께합니다.", words: ["기업", "산업", "다국적 기업"], and: "및" },
+  ja: { firma: "従業員に関わるあらゆる意思決定で、企業に寄り添います。", words: ["企業", "産業", "多国籍企業"], and: "と" },
+  ar: { firma: "إلى جانب الشركات في كل قرار يتعلق بموظفيها.", words: ["الشركات", "القطاع", "الشركات متعددة الجنسيات"], and: "و" },
+  ru: { firma: "Мы рядом с компаниями в каждом решении, которое касается их сотрудников.", words: ["компании", "отрасль", "транснациональные компании"], and: "и" },
+  fr: { firma: "Aux côtés des entreprises pour chaque décision concernant leur personnel.", words: ["entreprises", "secteur", "multinationales"], and: "et" },
+  it: { firma: "Accanto alle imprese in ogni decisione che riguarda il loro personale.", words: ["imprese", "settore", "multinazionali"], and: "e" },
 } as const;
 
 // 1280 hasta 1024 px de ancho (teléfono y tableta); 1920 en el resto (como Hero26)
@@ -68,12 +77,13 @@ function splitFinal(tagline: string, first: string) {
 
 export default function Telon({ lang }: { lang: V3Lang }) {
   const { attrs } = useV3Lang();
+  const { language } = useLanguage();
   const media = useCmsMedia();
   const liveHome = useCmsContent("home", home26);
   const liveChrome = useCmsContent("chrome", chrome26);
   const hero = liveHome[lang].hero;
   const labels = liveChrome[lang].heroVideo;
-  const txt = TXT[lang];
+  const txt = TXT[language] ?? TXT.en;
 
   const tagline = hero.tagline || "";
   const parts = useMemo(() => splitFinal(tagline, txt.words[0]), [tagline, txt]);
