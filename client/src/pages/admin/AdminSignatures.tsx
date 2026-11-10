@@ -77,6 +77,7 @@ async function cropSignaturePhotos(root: HTMLElement) {
       if (!context) return;
       context.drawImage(image, sourceX, sourceY, cropWidth, cropHeight, 0, 0, canvas.width, canvas.height);
       image.src = canvas.toDataURL("image/png");
+      if (!image.complete) await image.decode();
       image.style.objectFit = "fill";
       image.style.objectPosition = "center";
     } catch {
