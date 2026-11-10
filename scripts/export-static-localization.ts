@@ -41,6 +41,19 @@ function stableEntityId(contentType: string, slug: unknown): string | undefined 
   return prefix ? `${prefix}-${slug}` : undefined;
 }
 
+function mergeLocalized(base: any, localized: any): any {
+  if (localized === undefined) return base;
+  if (Array.isArray(base) || Array.isArray(localized)) return localized;
+  if (base && typeof base === "object" && localized && typeof localized === "object") {
+    const output: Record<string, unknown> = { ...base };
+    for (const [key, value] of Object.entries(localized)) {
+      output[key] = mergeLocalized(output[key], value);
+    }
+    return output;
+  }
+  return localized;
+}
+
 /** Applies a language projection to a nested CMS object (SEO, links, forms, etc.). */
 function overlayLanguage(base: any, localized: any, language: string): any {
   if (base === null || base === undefined) return localized;
@@ -52,7 +65,9 @@ function overlayLanguage(base: any, localized: any, language: string): any {
   if (typeof base !== "object") return localized === undefined ? base : localized;
   const record = base as Record<string, unknown>;
   if (Object.keys(record).some((key) => LANGUAGE_CODES.has(key))) {
-    return { ...record, [language]: localized };
+    const fallback = record.en ?? record.es;
+    const current = record[language] ?? fallback;
+    return { ...record, [language]: mergeLocalized(mergeLocalized(fallback, current), localized) };
   }
   if (!localized || typeof localized !== "object" || Array.isArray(localized)) return base;
   const output: Record<string, unknown> = { ...record };

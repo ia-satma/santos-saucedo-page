@@ -25,6 +25,19 @@ function hasLanguageValue(value: unknown, language: string): boolean {
   return Object.values(record).some((item) => hasLanguageValue(item, language));
 }
 
+function mergeLocalized(base: any, localized: any): any {
+  if (localized === undefined) return base;
+  if (Array.isArray(base) || Array.isArray(localized)) return localized;
+  if (base && typeof base === 'object' && localized && typeof localized === 'object') {
+    const output: Record<string, unknown> = { ...base };
+    for (const [key, value] of Object.entries(localized)) {
+      output[key] = mergeLocalized(output[key], value);
+    }
+    return output;
+  }
+  return localized;
+}
+
 function overlayLanguage(base: any, localized: any, language: string): any {
   if (base === null || base === undefined) return localized;
   if (Array.isArray(base)) {
@@ -35,7 +48,9 @@ function overlayLanguage(base: any, localized: any, language: string): any {
   if (typeof base !== 'object') return localized === undefined ? base : localized;
   const record = base as Record<string, unknown>;
   if (Object.keys(record).some((key) => LANGUAGE_CODES.has(key))) {
-    return { ...record, [language]: localized };
+    const fallback = record.en ?? record.es;
+    const current = record[language] ?? fallback;
+    return { ...record, [language]: mergeLocalized(mergeLocalized(fallback, current), localized) };
   }
   if (!localized || typeof localized !== 'object' || Array.isArray(localized)) return base;
   const output: Record<string, unknown> = { ...record };
@@ -86,7 +101,7 @@ export function useCmsContent<T>(section: CmsSection, fallback: T): T {
     // Legacy V3 components use an ES/EN content type while the visitor may
     // select another language. Mirror the published language into EN so those
     // components render the localized copy without reintroducing English text.
-    if (Object.keys(result).some((key) => LANGUAGE_CODES.has(key))) result.en = selected;
+    if (Object.keys(result).some((key) => LANGUAGE_CODES.has(key))) result.en = result[language];
     return result as T;
   }, [base, localized, language, section]);
 }

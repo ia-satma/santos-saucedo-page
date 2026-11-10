@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-10T05:18:24.351668Z",
+  "generatedAt": "2026-11-10T06:05:01.101140Z",
   "content": {
     "home": {
       "es": {
@@ -5731,7 +5731,13 @@
           "rankings": "Rankings",
           "events": "Eventos",
           "alerts": "Alertas"
-        }
+        },
+        "imageUnavailable": "Imagen no disponible",
+        "pagination": "Paginación de publicaciones",
+        "previous": "Anterior",
+        "next": "Siguiente",
+        "page": "Página",
+        "pageOf": "Página {page} de {count}"
       },
       "en": {
         "all": "All",
@@ -5747,7 +5753,13 @@
           "rankings": "Rankings",
           "events": "Events",
           "alerts": "Alerts"
-        }
+        },
+        "imageUnavailable": "Image unavailable",
+        "pagination": "Publication pagination",
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page",
+        "pageOf": "Page {page} of {count}"
       },
       "de": {
         "all": "Alle",
@@ -5763,7 +5775,13 @@
           "rankings": "Rankings",
           "events": "Veranstaltungen",
           "alerts": "Hinweise"
-        }
+        },
+        "imageUnavailable": "Bild nicht verfügbar",
+        "pagination": "Seitennavigation für Veröffentlichungen",
+        "previous": "Zurück",
+        "next": "Weiter",
+        "page": "Seite",
+        "pageOf": "Seite {page} von {count}"
       },
       "zh": {
         "all": "全部",
@@ -5779,7 +5797,13 @@
           "rankings": "排名",
           "events": "活动",
           "alerts": "公告"
-        }
+        },
+        "imageUnavailable": "图片不可用",
+        "pagination": "文章分页",
+        "previous": "上一页",
+        "next": "下一页",
+        "page": "页",
+        "pageOf": "第 {page} 页，共 {count} 页"
       },
       "ko": {
         "all": "전체",
@@ -5795,7 +5819,13 @@
           "rankings": "순위",
           "events": "이벤트",
           "alerts": "공지"
-        }
+        },
+        "imageUnavailable": "이미지를 사용할 수 없습니다",
+        "pagination": "게시물 페이지 이동",
+        "previous": "이전",
+        "next": "다음",
+        "page": "페이지",
+        "pageOf": "{count}페이지 중 {page}페이지"
       },
       "ja": {
         "all": "すべて",
@@ -5811,7 +5841,13 @@
           "rankings": "ランキング",
           "events": "イベント",
           "alerts": "お知らせ"
-        }
+        },
+        "imageUnavailable": "画像を表示できません",
+        "pagination": "記事のページ移動",
+        "previous": "前へ",
+        "next": "次へ",
+        "page": "ページ",
+        "pageOf": "{count}ページ中{page}ページ"
       },
       "ar": {
         "all": "الكل",
@@ -5827,7 +5863,13 @@
           "rankings": "تصنيفات",
           "events": "فعاليات",
           "alerts": "تنبيهات"
-        }
+        },
+        "imageUnavailable": "الصورة غير متاحة",
+        "pagination": "التنقل بين صفحات المنشورات",
+        "previous": "السابق",
+        "next": "التالي",
+        "page": "الصفحة",
+        "pageOf": "الصفحة {page} من {count}"
       },
       "ru": {
         "all": "Все",
@@ -5843,7 +5885,13 @@
           "rankings": "Рейтинги",
           "events": "Мероприятия",
           "alerts": "Уведомления"
-        }
+        },
+        "imageUnavailable": "Изображение недоступно",
+        "pagination": "Пагинация публикаций",
+        "previous": "Назад",
+        "next": "Далее",
+        "page": "Страница",
+        "pageOf": "Страница {page} из {count}"
       },
       "fr": {
         "all": "Tout",
@@ -5859,7 +5907,13 @@
           "rankings": "Classements",
           "events": "Événements",
           "alerts": "Alertes"
-        }
+        },
+        "imageUnavailable": "Image indisponible",
+        "pagination": "Pagination des publications",
+        "previous": "Précédent",
+        "next": "Suivant",
+        "page": "Page",
+        "pageOf": "Page {page} sur {count}"
       },
       "it": {
         "all": "Tutte",
@@ -5875,7 +5929,13 @@
           "rankings": "Classifiche",
           "events": "Eventi",
           "alerts": "Avvisi"
-        }
+        },
+        "imageUnavailable": "Immagine non disponibile",
+        "pagination": "Paginazione delle pubblicazioni",
+        "previous": "Precedente",
+        "next": "Successiva",
+        "page": "Pagina",
+        "pageOf": "Pagina {page} di {count}"
       }
     },
     "monitor-subscribe": {

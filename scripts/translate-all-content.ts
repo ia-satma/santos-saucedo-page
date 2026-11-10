@@ -101,12 +101,25 @@ function languageProjection(value: unknown, language: LanguageCode): any {
   );
 }
 
+function projectionMatches(source: unknown, candidate: unknown): boolean {
+  if (typeof source === "string") return !source.trim() || (typeof candidate === "string" && !!candidate.trim());
+  if (Array.isArray(source)) {
+    return Array.isArray(candidate) && candidate.length >= source.length && source.every((item, index) => projectionMatches(item, candidate[index]));
+  }
+  if (isRecord(source)) {
+    if (!isRecord(candidate)) return false;
+    return Object.entries(source).every(([key, value]) => projectionMatches(value, candidate[key]));
+  }
+  return candidate !== undefined;
+}
+
 function hasCompleteLanguageProjection(value: unknown, language: LanguageCode): boolean {
   if (Array.isArray(value)) return value.every((item) => hasCompleteLanguageProjection(item, language));
   if (!isRecord(value)) return true;
   if (Object.keys(value).some((key) => LANGUAGE_CODES.has(key))) {
     const selected = value[language];
-    return selected !== undefined && (typeof selected !== "string" || selected.trim().length > 0);
+    const source = value.es ?? value.en;
+    return selected !== undefined && projectionMatches(source, selected);
   }
   return Object.values(value).every((item) => hasCompleteLanguageProjection(item, language));
 }
@@ -161,7 +174,7 @@ async function saveLocalizedSection(section: string, source: unknown, targetLang
   try {
     const stored = existing?.value ? JSON.parse(existing.value) : null;
     previous = stored;
-    if (stored?.status === "published" && stored.sourceHash === hash && stored.content) return false;
+    if (stored?.status === "published" && stored.sourceHash === hash && stored.content && projectionMatches(source, stored.content)) return false;
   } catch {
     // Regenerate malformed rows below.
   }
