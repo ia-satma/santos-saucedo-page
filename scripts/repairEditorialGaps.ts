@@ -8,7 +8,7 @@ import type { LanguageCode } from "../shared/constants";
 const LANGUAGES: LanguageCode[] = ["en", "es", "de", "zh", "ko", "ja", "ar", "ru", "fr", "it"];
 const actorId = process.env.REPAIR_ACTOR_ID || null;
 
-async function repairTranslations(articleId: string, missing: Language[]) {
+async function repairTranslations(articleId: string, missing: LanguageCode[]) {
   if (missing.length === 0) return { success: true, translated: 0 };
   const result = await orchestrator.executeImmediately("polyglot_translator", {
     articleId,
