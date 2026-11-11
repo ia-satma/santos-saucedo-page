@@ -166,6 +166,13 @@ try {
     );
   const status = ok(await call("GET", "/api/agents/status"));
   assert.equal(status.orchestrator.registeredAgents.length, 14);
+  const activeLanguages = ok(await call("GET", "/api/active-languages"), 200, "active languages");
+  assert.equal(activeLanguages.activeLanguages.length, 10);
+  const disabledForCheck = activeLanguages.activeLanguages.filter((code: string) => code !== "it");
+  ok(await call("PUT", "/api/admin/active-languages", { activeLanguages: disabledForCheck }), 200, "disable language");
+  const disabledState = ok(await call("GET", "/api/active-languages"), 200, "disabled language state");
+  assert(!disabledState.activeLanguages.includes("it"));
+  ok(await call("PUT", "/api/admin/active-languages", { activeLanguages: activeLanguages.activeLanguages }), 200, "restore languages");
   for (const agent of ALL_AGENT_IDS) {
     ok(await call("GET", `/api/agents/stats/${agent}`), 200, agent);
     ok(
