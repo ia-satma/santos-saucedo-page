@@ -3,6 +3,7 @@ import { eq, isNull } from "drizzle-orm";
 import { db } from "../server/db";
 import { mediaItems, news, newsTranslations } from "../shared/schema";
 import { initializeAgents, orchestrator } from "../server/agents";
+import { loadMediaReferenceCorpus, mediaIsReferenced } from "../server/mediaReferences";
 import type { LanguageCode } from "../shared/constants";
 
 const LANGUAGES: LanguageCode[] = ["en", "es", "de", "zh", "ko", "ja", "ar", "ru", "fr", "it"];
@@ -54,12 +55,10 @@ async function main() {
     console.log(JSON.stringify(entry));
   }
 
-  const referenced = new Set(
-    articles.map((article) => article.imageUrl).filter((value): value is string => Boolean(value?.trim())),
-  );
+  const referenceCorpus = await loadMediaReferenceCorpus();
   const orphans = await db.select().from(mediaItems).where(isNull(mediaItems.archivedAt));
   const orphanReport = orphans
-    .filter((media) => !referenced.has(media.path) && !referenced.has(`/uploads/${media.filename}`) && !referenced.has(media.filename))
+    .filter((media) => !mediaIsReferenced(media, referenceCorpus))
     .map((media) => ({ id: media.id, originalName: media.originalName, path: media.path }));
   if (process.env.ARCHIVE_ORPHANS === "true") {
     for (const orphan of orphanReport) {

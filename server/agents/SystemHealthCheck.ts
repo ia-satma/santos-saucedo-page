@@ -8,6 +8,7 @@ import {
   translationCache
 } from '@shared/schema';
 import { eq, lt, and, isNull, or, sql } from 'drizzle-orm';
+import { loadMediaReferenceCorpus, mediaIsReferenced } from '../mediaReferences';
 
 export interface HealthIssue {
   id: string;
@@ -57,7 +58,13 @@ const GERMAN_INDICATORS = [
 function detectLanguage(text: string): 'es' | 'de' | 'en' | 'unknown' {
   if (!text || text.trim().length < 20) return 'unknown';
 
-  const lowerText = text.toLowerCase();
+  // The firm's name is intentionally bilingual/Spanish and appears in every
+  // profile and many cached translations. It must not be used as a language
+  // signal when auditing the actual sentence around it.
+  const lowerText = text
+    .replace(/santos\s*&\s*saucedo(?:\s+abogados)?/gi, ' ')
+    .replace(/derecho\s+laboral\s+para\s+empresas/gi, ' ')
+    .toLowerCase();
 
   let spanishScore = 0;
   let germanScore = 0;
@@ -78,6 +85,10 @@ function detectLanguage(text: string): 'es' | 'de' | 'en' | 'unknown' {
 
   if (spanishDensity > 2 && spanishDensity > germanDensity * 1.5) return 'es';
   if (germanDensity > 1 && germanDensity > spanishDensity * 1.5) return 'de';
+
+  // Do not classify short or ambiguous text as English by default. The old
+  // fallback turned Spanish bios containing proper names into false positives.
+  if (spanishScore > 0 || germanScore > 0) return 'unknown';
 
   return 'en';
 }
@@ -309,20 +320,10 @@ export class SystemHealthCheck {
 
     try {
       const allMedia = await db.select().from(mediaItems);
-      const allArticles = await db.select({
-        imageUrl: news.imageUrl,
-      }).from(news);
-
-      const usedUrls = new Set(
-        allArticles
-          .map((a: { imageUrl: string | null }) => a.imageUrl)
-          .filter(Boolean)
-      );
+      const referenceCorpus = await loadMediaReferenceCorpus();
 
       for (const media of allMedia) {
-        const isUsed = usedUrls.has(media.path) ||
-                       usedUrls.has(`/uploads/${media.filename}`) ||
-                       usedUrls.has(media.filename);
+        const isUsed = mediaIsReferenced(media, referenceCorpus);
 
         if (!isUsed) {
           const ageHours = media.createdAt
