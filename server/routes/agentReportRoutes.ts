@@ -11,8 +11,9 @@ import {
 } from "@shared/schema";
 import { authMiddleware, requirePermission } from "../auth";
 import { SUPPORTED_LANGUAGES } from "../openai";
+import type { LanguageCode } from "@shared/constants";
 export function registerAgentReportRoutes(app: Express) {
-  const allLanguageCodes = SUPPORTED_LANGUAGES.map(({ code }) => code);
+  const allLanguageCodes: LanguageCode[] = SUPPORTED_LANGUAGES.map(({ code }) => code as LanguageCode);
   const readActiveLanguages = async () => {
     const [row] = await db
       .select({ value: siteConfig.value })
@@ -22,7 +23,7 @@ export function registerAgentReportRoutes(app: Express) {
     const saved = (row?.value || "")
       .split(",")
       .map((code) => code.trim())
-      .filter((code) => allLanguageCodes.includes(code));
+      .filter((code): code is LanguageCode => allLanguageCodes.includes(code as LanguageCode));
     return saved.length ? Array.from(new Set(saved)) : allLanguageCodes;
   };
 
@@ -50,7 +51,8 @@ export function registerAgentReportRoutes(app: Express) {
       const requested = Array.isArray(req.body?.activeLanguages)
         ? req.body.activeLanguages.filter((code: unknown): code is string => typeof code === "string")
         : [];
-      const activeLanguages = Array.from(new Set(requested)).filter((code) => allLanguageCodes.includes(code));
+      const activeLanguages: LanguageCode[] = Array.from(new Set(requested))
+        .filter((code): code is LanguageCode => allLanguageCodes.includes(code as LanguageCode));
       if (!activeLanguages.includes("es")) {
         return res.status(400).json({ error: "Español debe permanecer activo porque es el idioma base del CMS." });
       }
