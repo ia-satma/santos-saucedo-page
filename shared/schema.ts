@@ -13,7 +13,6 @@ import { newsCategories, eventTypes, SUPPORTED_LANGUAGES, jobTypes, TESTIMONIAL_
 // DO NOT duplicate or modify these categories elsewhere
 export const TEAM_MEMBER_CATEGORIES = [
   { value: "partner", en: "Partner", es: "Socio" },
-  { value: "of-counsel", en: "Of Counsel", es: "Of Counsel" },
   { value: "associate", en: "Associate", es: "Asociado" },
 ] as const;
 

@@ -105,14 +105,12 @@ const translations = {
     },
     roles: {
       partner: "Partner",
-      ofCounsel: "Of Counsel",
       counsel: "Counsel",
       seniorAssociate: "Senior Associate",
       associate: "Associate"
     },
     rolesEs: {
       partner: "Socio",
-      ofCounsel: "Of Counsel",
       counsel: "Counsel",
       seniorAssociate: "Asociado Senior",
       associate: "Asociado"
@@ -175,14 +173,12 @@ const translations = {
     },
     roles: {
       partner: "Partner",
-      ofCounsel: "Of Counsel",
       counsel: "Counsel",
       seniorAssociate: "Senior Associate",
       associate: "Associate"
     },
     rolesEs: {
       partner: "Socio",
-      ofCounsel: "Of Counsel",
       counsel: "Counsel",
       seniorAssociate: "Asociado Senior",
       associate: "Asociado"

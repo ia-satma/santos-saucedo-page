@@ -36,8 +36,6 @@ const translations = {
     filterRole: "Filter by role",
     all: "All",
     partner: "Partner",
-    ofCounsel: "Of Counsel",
-
     associate: "Associate",
     name: "Name",
     role: "Role",
@@ -66,8 +64,6 @@ const translations = {
     filterRole: "Filtrar por rol",
     all: "Todos",
     partner: "Socio",
-    ofCounsel: "Of Counsel",
-
     associate: "Asociado",
     name: "Nombre",
     role: "Rol",
@@ -96,8 +92,6 @@ const translations = {
     filterRole: "Nach Rolle filtern",
     all: "Alle",
     partner: "Partner",
-    ofCounsel: "Of Counsel",
-
     associate: "Associate",
     name: "Name",
     role: "Rolle",
@@ -126,7 +120,6 @@ const translations = {
     filterRole: "按角色筛选",
     all: "全部",
     partner: "合伙人",
-    ofCounsel: "顾问律师",
     associate: "助理律师",
     name: "姓名",
     role: "职位",
@@ -155,8 +148,6 @@ const translations = {
     filterRole: "역할별 필터",
     all: "전체",
     partner: "파트너",
-    ofCounsel: "Of Counsel",
-
     associate: "어소시에이트",
     name: "이름",
     role: "직위",
@@ -185,7 +176,6 @@ const translations = {
     filterRole: "役職でフィルター",
     all: "すべて",
     partner: "パートナー",
-    ofCounsel: "オブカウンセル",
     associate: "アソシエイト",
     name: "名前",
     role: "役職",
@@ -214,7 +204,6 @@ const translations = {
     filterRole: "تصفية حسب الدور",
     all: "الكل",
     partner: "شريك",
-    ofCounsel: "مستشار",
     associate: "محامٍ مساعد",
     name: "الاسم",
     role: "الدور",
@@ -243,8 +232,6 @@ const translations = {
     filterRole: "Фильтр по роли",
     all: "Все",
     partner: "Партнёр",
-    ofCounsel: "Of Counsel",
-
     associate: "Ассоциат",
     name: "Имя",
     role: "Должность",
@@ -273,8 +260,6 @@ const translations = {
     filterRole: "Filtrer par rôle",
     all: "Tous",
     partner: "Associé",
-    ofCounsel: "Of Counsel",
-
     associate: "Collaborateur",
     name: "Nom",
     role: "Rôle",
@@ -303,8 +288,6 @@ const translations = {
     filterRole: "Filtra per ruolo",
     all: "Tutti",
     partner: "Partner",
-    ofCounsel: "Of Counsel",
-
     associate: "Associato",
     name: "Nome",
     role: "Ruolo",
@@ -338,7 +321,6 @@ interface TeamResponse {
 interface TeamStats {
   total: number;
   partners: number;
-  ofCounsel: number;
   associates: number;
 }
 
