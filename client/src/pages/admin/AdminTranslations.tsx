@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import {
@@ -18,12 +18,24 @@ type Article = {
   translatedLanguages: string[];
   missingLanguages: string[];
 };
+type LanguageRow = {
+  code: string;
+  nameNative: string;
+  name: string;
+  enabled: boolean;
+};
 export default function AdminTranslations() {
   const { toast } = useToast(),
     { has } = useMyPermissions();
   const [search, setSearch] = useState(""),
     [busy, setBusy] = useState<string | null>(null);
-  const query = useQuery<{ languages: string[]; articles: Article[] }>({
+  const query = useQuery<{
+    languages: string[];
+    activeLanguages: string[];
+    allLanguages: LanguageRow[];
+    coverage: { translatedCells: number; totalCells: number; percentage: number };
+    articles: Article[];
+  }>({
     queryKey: ["/api/admin/translation-overview"],
     queryFn: async () =>
       readAdminJson(
@@ -31,6 +43,28 @@ export default function AdminTranslations() {
         "No se pudo cargar la cobertura.",
       ),
   });
+  const [activeLanguages, setActiveLanguages] = useState<string[]>([]);
+  const saveLanguages = async () => {
+    try {
+      const result = await readAdminJson<{ activeLanguages: string[] }>(
+        await adminApiRequest("PUT", "/api/admin/active-languages", { activeLanguages }),
+        "No se pudieron guardar los idiomas activos.",
+      );
+      setActiveLanguages(result.activeLanguages);
+      toast({ title: "Idiomas activos actualizados" });
+      void queryClient.invalidateQueries({ queryKey: ["/api/admin/translation-overview"] });
+    } catch (error) {
+      toast({ title: "No se guardaron los idiomas", description: (error as Error).message, variant: "destructive" });
+    }
+  };
+  const toggleLanguage = (code: string) => {
+    setActiveLanguages((current) => current.includes(code)
+      ? current.filter((item) => item !== code)
+      : [...current, code]);
+  };
+  useEffect(() => {
+    if (query.data) setActiveLanguages(query.data.activeLanguages);
+  }, [query.data]);
   const translate = async (article: Article) => {
     setBusy(article.id);
     try {
@@ -88,7 +122,32 @@ export default function AdminTranslations() {
       ) : query.isError ? (
         <p role="alert">{query.error.message}</p>
       ) : (
-        <div className="overflow-x-auto">
+        <>
+          <section className="border rounded-lg p-4 mb-6 space-y-4" aria-labelledby="language-settings-title">
+            <div className="flex flex-wrap justify-between gap-3 items-start">
+              <div>
+                <h2 id="language-settings-title" className="text-lg font-semibold">Idiomas del sitio</h2>
+                <p className="text-sm text-muted-foreground">Activa solo los idiomas que estén listos. Español debe permanecer activo.</p>
+              </div>
+              <Button onClick={() => void saveLanguages()} disabled={!has("advanced") || !activeLanguages.length}>Guardar idiomas</Button>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+              {query.data.allLanguages.map((language) => (
+                <label key={language.code} className="flex items-center gap-2 border rounded-md p-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={activeLanguages.includes(language.code)}
+                    disabled={language.code === "es" || !has("advanced")}
+                    onChange={() => toggleLanguage(language.code)}
+                  />
+                  <span>{language.nameNative}</span>
+                  <span className="text-xs text-muted-foreground uppercase">{language.code}</span>
+                </label>
+              ))}
+            </div>
+            <p className="text-sm">Cobertura actual: <strong>{query.data.coverage.percentage}%</strong> ({query.data.coverage.translatedCells}/{query.data.coverage.totalCells} campos de idioma en publicaciones)</p>
+          </section>
+          <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr>
@@ -144,7 +203,8 @@ export default function AdminTranslations() {
           {!query.data.articles.length && (
             <p className="p-4">Todavía no hay publicaciones.</p>
           )}
-        </div>
+          </div>
+        </>
       )}
     </main>
   );

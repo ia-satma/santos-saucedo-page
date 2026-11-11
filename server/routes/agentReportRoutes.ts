@@ -7,10 +7,69 @@ import {
   newsTranslations,
   translationCache,
   contentAnalysis,
+  siteConfig,
 } from "@shared/schema";
 import { authMiddleware, requirePermission } from "../auth";
 import { SUPPORTED_LANGUAGES } from "../openai";
 export function registerAgentReportRoutes(app: Express) {
+  const allLanguageCodes = SUPPORTED_LANGUAGES.map(({ code }) => code);
+  const readActiveLanguages = async () => {
+    const [row] = await db
+      .select({ value: siteConfig.value })
+      .from(siteConfig)
+      .where(eq(siteConfig.key, "active_languages"))
+      .limit(1);
+    const saved = (row?.value || "")
+      .split(",")
+      .map((code) => code.trim())
+      .filter((code) => allLanguageCodes.includes(code));
+    return saved.length ? Array.from(new Set(saved)) : allLanguageCodes;
+  };
+
+  app.get("/api/active-languages", async (_req, res) => {
+    try {
+      res.setHeader("Cache-Control", "no-store");
+      const activeLanguages = await readActiveLanguages();
+      res.json({
+        activeLanguages,
+        languages: SUPPORTED_LANGUAGES.map((language) => ({
+          ...language,
+          enabled: activeLanguages.includes(language.code),
+        })),
+      });
+    } catch {
+      res.status(503).json({ error: "No se pudo consultar los idiomas activos." });
+    }
+  });
+
+  app.put(
+    "/api/admin/active-languages",
+    authMiddleware,
+    requirePermission("advanced"),
+    async (req, res) => {
+      const requested = Array.isArray(req.body?.activeLanguages)
+        ? req.body.activeLanguages.filter((code: unknown): code is string => typeof code === "string")
+        : [];
+      const activeLanguages = Array.from(new Set(requested)).filter((code) => allLanguageCodes.includes(code));
+      if (!activeLanguages.includes("es")) {
+        return res.status(400).json({ error: "Español debe permanecer activo porque es el idioma base del CMS." });
+      }
+      try {
+        const value = activeLanguages.join(",");
+        await db
+          .insert(siteConfig)
+          .values({ key: "active_languages", value, type: "text", category: "localization", updatedAt: new Date() })
+          .onConflictDoUpdate({ target: siteConfig.key, set: { value, type: "text", category: "localization", updatedAt: new Date() } });
+        res.json({
+          activeLanguages,
+          languages: SUPPORTED_LANGUAGES.map((language) => ({ ...language, enabled: activeLanguages.includes(language.code) })),
+        });
+      } catch {
+        res.status(503).json({ error: "No se pudieron guardar los idiomas activos." });
+      }
+    },
+  );
+
   app.get(
     "/api/admin/agent-metrics",
     authMiddleware,
@@ -53,7 +112,7 @@ export function registerAgentReportRoutes(app: Express) {
     requirePermission("advanced"),
     async (_req, res) => {
       try {
-        const [articles, translations] = await Promise.all([
+        const [articles, translations, activeLanguages] = await Promise.all([
           db
             .select({
               id: news.id,
@@ -68,28 +127,46 @@ export function registerAgentReportRoutes(app: Express) {
               language: newsTranslations.language,
             })
             .from(newsTranslations),
+          readActiveLanguages(),
         ]);
-        const languages = SUPPORTED_LANGUAGES.map((l) => l.code);
+        const languages = activeLanguages;
+        const allLanguages = SUPPORTED_LANGUAGES.map((language) => ({
+          ...language,
+          enabled: activeLanguages.includes(language.code),
+        }));
+        const articleRows = articles.map((a) => {
+          const translatedLanguages = Array.from(
+            new Set([
+              "es",
+              "en",
+              ...translations
+                .filter((t) => t.newsId === a.id)
+                .map((t) => t.language),
+            ]),
+          );
+          return {
+            ...a,
+            translatedLanguages,
+            missingLanguages: languages.filter(
+              (l) => !translatedLanguages.includes(l),
+            ),
+          };
+        });
+        const totalCells = articleRows.length * languages.length;
+        const translatedCells = articleRows.reduce(
+          (sum, article) => sum + languages.filter((language) => article.translatedLanguages.includes(language)).length,
+          0,
+        );
         res.json({
           languages,
-          articles: articles.map((a) => {
-            const translatedLanguages = Array.from(
-              new Set([
-                "es",
-                "en",
-                ...translations
-                  .filter((t) => t.newsId === a.id)
-                  .map((t) => t.language),
-              ]),
-            );
-            return {
-              ...a,
-              translatedLanguages,
-              missingLanguages: languages.filter(
-                (l) => !translatedLanguages.includes(l),
-              ),
-            };
-          }),
+          allLanguages,
+          activeLanguages,
+          coverage: {
+            translatedCells,
+            totalCells,
+            percentage: totalCells ? Math.round((translatedCells / totalCells) * 100) : 100,
+          },
+          articles: articleRows,
         });
       } catch {
         res
