@@ -24,13 +24,15 @@ function GlobeIcon() {
 
 /** Escritorio: ES / EN a la vista y un botón con los otros 8 idiomas en una lista emergente. */
 export function LangSwitch26({ lang, className = "" }: { lang: LanguageCode; className?: string }) {
-  const { language, setLanguage } = useLanguage();
+  const { language, activeLanguages, setLanguage } = useLanguage();
   const liveChrome = useCmsContent("chrome", chrome26);
   const t = liveChrome[lang].langs;
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const activeOther = OTHERS.find((l) => l.code === language);
+  const activeMain = MAIN.filter((code) => activeLanguages.includes(code));
+  const activeOthers = OTHERS.filter((item) => activeLanguages.includes(item.code));
 
   // Clic fuera: cierra la lista
   useEffect(() => {
@@ -51,7 +53,7 @@ export function LangSwitch26({ lang, className = "" }: { lang: LanguageCode; cla
   return (
     <div className={`flex items-center gap-3 ${className}`} role="group" aria-label={t.group}>
       <div className="ss-label flex items-center gap-2">
-        {MAIN.map((code, i) => (
+        {activeMain.map((code, i) => (
           <span key={code} className="flex items-center gap-2">
             {i > 0 && <span aria-hidden="true" className="text-white/50">/</span>}
             <button
@@ -113,7 +115,7 @@ export function LangSwitch26({ lang, className = "" }: { lang: LanguageCode; cla
               {t.others}
             </p>
             <ul aria-labelledby="ss26-lang-others-title">
-              {OTHERS.map((l) => (
+              {activeOthers.map((l) => (
                 <li key={l.code}>
                   <button
                     type="button"
@@ -140,14 +142,16 @@ export function LangSwitch26({ lang, className = "" }: { lang: LanguageCode; cla
 /** Menú móvil: ES / EN primero, como en escritorio; los otros 8 en una lista discreta de dos columnas. */
 export function LangList26({ lang }: { lang: LanguageCode }) {
   const liveChrome = useCmsContent("chrome", chrome26);
-  const { language, setLanguage } = useLanguage();
+  const { language, activeLanguages, setLanguage } = useLanguage();
+  const activeMain = MAIN.filter((code) => activeLanguages.includes(code));
+  const activeOthers = OTHERS.filter((item) => activeLanguages.includes(item.code));
   return (
     <div role="group" aria-labelledby="ss26-menu-lang">
       <p id="ss26-menu-lang" className="ss-label text-white/75">
         {liveChrome[lang].langs.label}
       </p>
       <ul className="ss-label mt-1 flex items-center gap-2">
-        {MAIN.map((code, i) => {
+        {activeMain.map((code, i) => {
           const l = SUPPORTED_LANGUAGES.find((x) => x.code === code)!;
           return (
             <li key={code} className="flex items-center gap-2">
@@ -171,7 +175,7 @@ export function LangList26({ lang }: { lang: LanguageCode }) {
         })}
       </ul>
       <ul className="grid grid-cols-2 gap-x-6">
-        {OTHERS.map((l) => (
+        {activeOthers.map((l) => (
           <li key={l.code}>
             <button
               type="button"

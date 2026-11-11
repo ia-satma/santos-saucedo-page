@@ -9,6 +9,7 @@ type DisplayLanguage = LanguageCode;
 
 interface LanguageContextType {
   language: LanguageCode;
+  activeLanguages: LanguageCode[];
   displayLanguage: DisplayLanguage;
   setLanguage: (lang: LanguageCode) => void;
   getLanguageInfo: () => SupportedLanguage;
@@ -65,10 +66,12 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   });
   
   const [isDetecting, setIsDetecting] = useState(false);
+  const [activeLanguages, setActiveLanguages] = useState<LanguageCode[]>(() => [...SUPPORTED_LANGUAGES.map(({ code }) => code)]);
 
   const displayLanguage = getDisplayLanguage(language);
 
   const setLanguage = useCallback((lang: LanguageCode) => {
+    if (!activeLanguages.includes(lang)) return;
     const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
     const isAdmin = /^\/(?:[^/]+\/)?admin(?:\/|$)/.test(pathname);
     const currentRouteLanguage = typeof window !== "undefined" ? getLanguageFromPath(pathname) : null;
@@ -89,12 +92,37 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
       const route = stripLanguagePrefix(pathname);
       browserNavigate(localizedPath(lang, route) + window.location.search + window.location.hash);
     }
-  }, [language, i18nInstance]);
+  }, [activeLanguages, language, i18nInstance]);
 
   const getLanguageInfo = useCallback((): SupportedLanguage => {
     const langInfo = SUPPORTED_LANGUAGES.find(l => l.code === language);
     return langInfo || SUPPORTED_LANGUAGES[0];
   }, [language]);
+
+  useEffect(() => {
+    if (isStaticSite) return;
+    let cancelled = false;
+    fetch("/api/active-languages", { headers: { Accept: "application/json" } })
+      .then((response) => response.ok ? response.json() : null)
+      .then((payload) => {
+        if (cancelled || !Array.isArray(payload?.activeLanguages)) return;
+        const enabled = payload.activeLanguages.filter((code: unknown): code is LanguageCode => isValidLanguageCode(String(code)));
+        if (enabled.length) setActiveLanguages(Array.from(new Set(["es", ...enabled])));
+      })
+      .catch(() => {})
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    if (activeLanguages.includes(language)) return;
+    const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
+    setLanguageState(DEFAULT_LANGUAGE);
+    if (i18nInstance.language !== DEFAULT_LANGUAGE) i18nInstance.changeLanguage(DEFAULT_LANGUAGE);
+    try { localStorage.setItem(STORAGE_KEY, DEFAULT_LANGUAGE); } catch {}
+    if (typeof window !== "undefined" && !/^\/(?:[^/]+\/)?admin(?:\/|$)/.test(pathname)) {
+      browserNavigate(localizedPath(DEFAULT_LANGUAGE, stripLanguagePrefix(pathname)) + window.location.search + window.location.hash);
+    }
+  }, [activeLanguages, i18nInstance, language]);
 
   // Detección en la primera visita: el servidor solo mira la cabecera Accept-Language
   // del navegador (sin geolocalización ni terceros)
@@ -255,7 +283,7 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   }, [i18nInstance, language]);
 
   return (
-    <LanguageContext.Provider value={{ language, displayLanguage, setLanguage, getLanguageInfo, isDetecting }}>
+    <LanguageContext.Provider value={{ language, activeLanguages, displayLanguage, setLanguage, getLanguageInfo, isDetecting }}>
       {children}
     </LanguageContext.Provider>
   );

@@ -36,7 +36,7 @@ export default function LanguageSelector({
   compact = false,
   className 
 }: LanguageSelectorProps) {
-  const { language, setLanguage, getLanguageInfo } = useLanguage();
+  const { language, activeLanguages, setLanguage, getLanguageInfo } = useLanguage();
   const currentLangInfo = getLanguageInfo();
 
   const handleLanguageChange = (value: string) => {
@@ -78,7 +78,7 @@ export default function LanguageSelector({
         data-testid="select-language-content"
         className="max-h-[300px] z-[100] rounded-none"
       >
-        {SUPPORTED_LANGUAGES.map((lang) => (
+        {SUPPORTED_LANGUAGES.filter((lang) => activeLanguages.includes(lang.code)).map((lang) => (
           <SelectItem 
             key={lang.code} 
             value={lang.code}
