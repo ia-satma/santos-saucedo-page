@@ -34,10 +34,10 @@ export function registerAgentPipelineRoutes(
       if (!article) {
         return res.status(404).json({ error: "Article not found" });
       }
-      if (article.published !== false) {
+      if (article.published !== false && article.imageUrl?.trim()) {
         return res.status(409).json({
           code: "PUBLISHED_ARTICLE_REQUIRES_DRAFT",
-          error: "Published articles must be converted to a draft before applying agent changes",
+          error: "Published articles must be converted to a draft before replacing an existing image",
         });
       }
 

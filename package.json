@@ -38,6 +38,7 @@
     "test:signatures": "node --import tsx scripts/check-signatures.ts",
     "test:signatures-api": "node --import tsx scripts/check-signatures-api.ts",
     "test:documents-api": "node --import tsx scripts/check-documents-api.ts && node --import tsx --test server/security/documentJustification.test.ts",
+    "repair:editorial-gaps": "node --import tsx scripts/repairEditorialGaps.ts",
     "test:social-studio": "node --import tsx --test server/security/socialStudio.test.ts"
   },
   "dependencies": {

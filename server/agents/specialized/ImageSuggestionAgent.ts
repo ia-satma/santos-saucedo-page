@@ -94,9 +94,12 @@ export class ImageSuggestionAgent extends BaseAgent {
       );
 
       if (imageResult.success && imageResult.imageUrl) {
+        // Completing a missing image is safe for a published article because it
+        // only fills an empty presentation field. Existing images on published
+        // articles remain protected from agent replacement.
         const canApply =
           applyChanges === true &&
-          article.published === false &&
+          (!article.imageUrl?.trim() || article.published === false) &&
           imageResult.engine !== 'placeholder';
         if (canApply) {
           await db.update(news)
