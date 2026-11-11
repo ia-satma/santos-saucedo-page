@@ -453,7 +453,7 @@ export default function AdminTeam() {
         </div>
 
         {stats && (
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
             <Card>
               <CardContent className="p-4 text-center">
                 <div className="text-3xl font-bold text-primary">{stats.total}</div>
@@ -464,12 +464,6 @@ export default function AdminTeam() {
               <CardContent className="p-4 text-center">
                 <div className="text-3xl font-bold text-primary">{stats.partners}</div>
                 <div className="text-sm text-muted-foreground">{t.partners}</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-primary">{stats.ofCounsel}</div>
-                <div className="text-sm text-muted-foreground">{t.ofCounsel}</div>
               </CardContent>
             </Card>
             <Card>
@@ -511,7 +505,6 @@ export default function AdminTeam() {
                 <SelectContent>
                   <SelectItem value="all">{t.all}</SelectItem>
                   <SelectItem value="partner">{t.partner}</SelectItem>
-                  <SelectItem value="of counsel">{t.ofCounsel}</SelectItem>
                   <SelectItem value="associate">{t.associate}</SelectItem>
                 </SelectContent>
               </Select>

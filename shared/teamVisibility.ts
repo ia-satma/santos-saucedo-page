@@ -20,14 +20,15 @@ export function isOfCounselMember(member: Pick<VisibilityFields, "title">): bool
 }
 
 /**
- * Socios confirmados y Of Counsel (los asociados van en el mosaico sin nombres).
+ * Socios confirmados. Santos & Saucedo no utiliza la categoría Of Counsel.
+ * Los demás integrantes pueden aparecer en el mosaico sin nombre.
  */
 export function isNamedOnTeamPage(member: VisibilityFields): boolean {
   // Los cuatro socios salen siempre (regla del cliente), aunque el panel los marque como no públicos
   if (CONFIRMED_PARTNER_SLUGS.has(member.slug)) return true;
   if (typeof member.isPublic === "boolean") return member.isPublic;
   if (member.isPartner) return CONFIRMED_PARTNER_SLUGS.has(member.slug);
-  return isOfCounselMember(member);
+  return false;
 }
 
 // DTO públicos de una persona (J1). Listas de campos permitidos: lo que leen las páginas, no
