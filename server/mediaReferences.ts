@@ -1,4 +1,6 @@
 import { db } from "./db";
+import fs from "node:fs";
+import path from "node:path";
 import {
   alliances,
   banners,
@@ -66,7 +68,31 @@ export async function loadMediaReferenceCorpus(): Promise<string[]> {
     const rows = await db.select().from(table);
     rows.forEach((row) => collectStrings(row, corpus));
   }
+  // Some official brand assets are bundled into the public frontend rather
+  // than stored in a CMS row. Include source/build text so those files are
+  // not reported as orphaned when they are still reachable by the site.
+  for (const root of ["client", "server", "shared", "dist/public"]) {
+    collectSourceStrings(path.resolve(process.cwd(), root), corpus);
+  }
   return corpus;
+}
+
+function collectSourceStrings(root: string, output: string[]): void {
+  if (!fs.existsSync(root)) return;
+  for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
+    const entryPath = path.join(root, entry.name);
+    if (entry.isDirectory()) {
+      if (entry.name !== "node_modules" && entry.name !== ".git") collectSourceStrings(entryPath, output);
+      continue;
+    }
+    if (!/\.(?:css|html|js|json|jsx|map|svg|ts|tsx)$/i.test(entry.name)) continue;
+    try {
+      const stat = fs.statSync(entryPath);
+      if (stat.size <= 3_000_000) output.push(fs.readFileSync(entryPath, "utf8"));
+    } catch {
+      // A file can disappear during a rebuild. The database corpus remains authoritative.
+    }
+  }
 }
 
 export function mediaIsReferenced(media: Pick<typeof mediaItems.$inferSelect, "path" | "filename" | "originalName">, corpus: string[]): boolean {

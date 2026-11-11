@@ -42,55 +42,13 @@ export interface AuditReport {
   healthScore: number;
 }
 
-const SPANISH_INDICATORS = [
-  /\b(el|la|los|las|de|del|en|con|por|para|que|una?|este?|esta)\b/gi,
-  /\b(también|además|según|así|más|año|años)\b/gi,
-  /\b(derecho|abogado|licenciado|socio|firma|empresa)\b/gi,
-  /[áéíóúñü]/gi,
-];
+const ENGLISH_BIO_MARKERS = /\b(is an? (associate|attorney|partner|lawyer)|has advised|speciali[sz]es|graduated|works with)\b/i;
+const SPANISH_BIO_MARKERS = /\b(es un? (asociad[oa]|abogad[oa]|soci[oa])|es asociado|es asociada|ha asesorado|se especializa|egres[oó]|trabaja con)\b/i;
 
-const GERMAN_INDICATORS = [
-  /\b(der|die|das|und|ist|von|mit|für|auf|bei|nach)\b/gi,
-  /\b(Recht|Rechtsanwalt|Partner|Gesellschaft|Unternehmen)\b/gi,
-  /[äöüß]/gi,
-];
-
-function detectLanguage(text: string): 'es' | 'de' | 'en' | 'unknown' {
-  if (!text || text.trim().length < 20) return 'unknown';
-
-  // The firm's name is intentionally bilingual/Spanish and appears in every
-  // profile and many cached translations. It must not be used as a language
-  // signal when auditing the actual sentence around it.
-  const lowerText = text
-    .replace(/santos\s*&\s*saucedo(?:\s+abogados)?/gi, ' ')
-    .replace(/derecho\s+laboral\s+para\s+empresas/gi, ' ')
-    .toLowerCase();
-
-  let spanishScore = 0;
-  let germanScore = 0;
-
-  for (const pattern of SPANISH_INDICATORS) {
-    const matches = lowerText.match(pattern);
-    if (matches) spanishScore += matches.length;
-  }
-
-  for (const pattern of GERMAN_INDICATORS) {
-    const matches = lowerText.match(pattern);
-    if (matches) germanScore += matches.length;
-  }
-
-  const textLength = text.length;
-  const spanishDensity = spanishScore / (textLength / 100);
-  const germanDensity = germanScore / (textLength / 100);
-
-  if (spanishDensity > 2 && spanishDensity > germanDensity * 1.5) return 'es';
-  if (germanDensity > 1 && germanDensity > spanishDensity * 1.5) return 'de';
-
-  // Do not classify short or ambiguous text as English by default. The old
-  // fallback turned Spanish bios containing proper names into false positives.
-  if (spanishScore > 0 || germanScore > 0) return 'unknown';
-
-  return 'en';
+function stripFirmBrand(text: string): string {
+  return text
+    .replace(/santos\s*&\s*saucedo(?:\s+abogados)?/gi, " ")
+    .replace(/derecho\s+laboral\s+para\s+empresas/gi, " ");
 }
 
 export class SystemHealthCheck {
@@ -238,10 +196,7 @@ export class SystemHealthCheck {
       const members = await db.select().from(teamMembers);
 
       for (const member of members) {
-        if (member.bio) {
-          const detectedLang = detectLanguage(member.bio);
-
-          if (detectedLang === 'es') {
+        if (member.bio && SPANISH_BIO_MARKERS.test(stripFirmBrand(member.bio))) {
             this.issues.push({
               id: `leakage-bio-${member.id}`,
               type: 'localization_leakage',
@@ -253,13 +208,9 @@ export class SystemHealthCheck {
               suggestedAction: 'Swap bio and bioEs fields or translate bio to English',
               detectedAt: new Date(),
             });
-          }
         }
 
-        if (member.bioEs) {
-          const detectedLang = detectLanguage(member.bioEs);
-
-          if (detectedLang === 'en') {
+        if (member.bioEs && ENGLISH_BIO_MARKERS.test(stripFirmBrand(member.bioEs))) {
             this.issues.push({
               id: `leakage-bioEs-${member.id}`,
               type: 'localization_leakage',
@@ -271,7 +222,6 @@ export class SystemHealthCheck {
               suggestedAction: 'Swap bioEs and bio fields or translate bioEs to Spanish',
               detectedAt: new Date(),
             });
-          }
         }
 
         if (!member.bio && !member.bioEs) {
@@ -292,10 +242,7 @@ export class SystemHealthCheck {
       const cachedTranslations = await db.select().from(translationCache);
 
       for (const cache of cachedTranslations) {
-        if (cache.targetLanguage === 'de' && cache.translatedText) {
-          const detectedLang = detectLanguage(cache.translatedText);
-
-          if (detectedLang === 'es') {
+        if (cache.targetLanguage === 'de' && cache.translatedText && SPANISH_BIO_MARKERS.test(stripFirmBrand(cache.translatedText))) {
             this.issues.push({
               id: `cache-leakage-${cache.id}`,
               type: 'localization_leakage',
@@ -307,7 +254,6 @@ export class SystemHealthCheck {
               suggestedAction: 'Delete cached translation and re-run PolyglotTranslatorAgent',
               detectedAt: new Date(),
             });
-          }
         }
       }
     } catch (error) {
