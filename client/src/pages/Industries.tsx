@@ -1,7 +1,8 @@
 // Página «Industrias» (demo v3, aprobada el 5-11-2026): cabecera con Monterrey al atardecer, las cuatro
 // industrias (foto fija en escritorio) y, al final, «Nuestros socios». El mapa de la red vive en Socios
 // (/team#presencia) desde el 6-11-2026: el cliente lo vio repetido aquí.
-// Textos en español e inglés (los demás idiomas ven el inglés con lang="en"): client/src/v3/industrias/texts.ts.
+// Todos los textos de la página se mantienen en el idioma seleccionado sin
+// cambiar la estructura ni las dimensiones del módulo v3.
 import Header26 from "@/components/home26/Header26";
 import Footer26 from "@/components/home26/Footer26";
 import SEOHead from "@/components/SEOHead";
@@ -16,7 +17,9 @@ const H1 = "cab-industrias-h";
 export default function Industries() {
   const { language } = useLanguage();
   const { lang, attrs } = useV3Lang();
-  const t = INDUSTRIAS_TEXTS[lang];
+  const selectedLang = language in INDUSTRIAS_TEXTS ? language : lang;
+  const t = INDUSTRIAS_TEXTS[selectedLang];
+  const localizedAttrs = { ...attrs, lang: selectedLang };
 
   return (
     <div className="ss26 min-h-screen" data-testid="page-industries">
@@ -24,12 +27,12 @@ export default function Industries() {
       <Header26 localized />
       <V3Main vista="industrias">
         {/* Un solo bloque dentro de <main>: declara lang="en" a quien lee la página en otro idioma */}
-        <div {...attrs}>
+        <div {...localizedAttrs}>
           <V3PageHeader
             id={H1}
             img={v3Asset("/v3/c-atardecer.webp")}
             alt={t.cab.alt}
-            imgAttrs={attrs}
+            imgAttrs={localizedAttrs}
             width={1800}
             height={1350}
             position="50% 64%"
