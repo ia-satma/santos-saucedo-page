@@ -7,6 +7,72 @@ import type { ContentAnalysisResult, SEORecommendation, SpellingGrammarIssue, La
 import { eq } from 'drizzle-orm';
 import { contentAnalysisOutputSchema } from '../core/contracts';
 
+function asText(value: unknown, fallback = ''): string {
+  return typeof value === 'string' ? value.trim() : fallback;
+}
+
+function asTextArray(value: unknown, limit: number): string[] {
+  const values = Array.isArray(value) ? value : typeof value === 'string' ? [value] : [];
+  return values.map((item) => asText(item)).filter(Boolean).slice(0, limit);
+}
+
+/**
+ * Sol sometimes returns a valid analysis with a singular field represented as
+ * an array (or the inverse). Normalize those harmless shape differences before
+ * the strict contract validation; required fields still fail closed.
+ */
+function normalizeContentAnalysisPayload(value: unknown): unknown {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return value;
+  const raw = value as Record<string, any>;
+  const seo = raw.seoRecommendations && typeof raw.seoRecommendations === 'object'
+    ? raw.seoRecommendations : {};
+  const categories = raw.categories && typeof raw.categories === 'object' ? raw.categories : {};
+  const branches = raw.legalBranches && typeof raw.legalBranches === 'object' ? raw.legalBranches : {};
+  const industries = raw.industries && typeof raw.industries === 'object' ? raw.industries : {};
+  const spelling = Array.isArray(raw.spellingGrammar) ? raw.spellingGrammar : [];
+  const lawyers = Array.isArray(raw.lawyersMentioned) ? raw.lawyersMentioned : [];
+  const quality = Number(raw.qualityScore);
+
+  return {
+    seoRecommendations: {
+      keywords: asTextArray(seo.keywords, 10),
+      titleSuggestion: asText(seo.titleSuggestion),
+      metaDescription: asText(seo.metaDescription),
+      headingImprovements: asTextArray(seo.headingImprovements, 20),
+      contentGaps: asTextArray(seo.contentGaps, 20),
+      internalLinkOpportunities: asTextArray(seo.internalLinkOpportunities, 20),
+    },
+    categories: {
+      primary: Array.isArray(categories.primary)
+        ? asText(categories.primary[0], 'Legal News')
+        : asText(categories.primary, 'Legal News'),
+      secondary: asTextArray(categories.secondary, 20),
+    },
+    spellingGrammar: spelling.map((issue: any) => ({
+      original: asText(issue?.original),
+      correction: asText(issue?.correction),
+      type: ['spelling', 'grammar', 'terminology', 'style'].includes(issue?.type) ? issue.type : 'grammar',
+      explanation: asText(issue?.explanation),
+    })).slice(0, 100),
+    lawyersMentioned: lawyers.map((lawyer: any) => ({
+      name: asText(lawyer?.name),
+      role: asText(lawyer?.role),
+      context: asText(lawyer?.context),
+    })).slice(0, 50),
+    legalBranches: {
+      primary: asTextArray(branches.primary, 20),
+      secondary: asTextArray(branches.secondary, 20),
+    },
+    industries: {
+      primary: Array.isArray(industries.primary)
+        ? asText(industries.primary[0], 'General')
+        : asText(industries.primary, 'General'),
+      secondary: asTextArray(industries.secondary, 20),
+    },
+    qualityScore: Number.isFinite(quality) ? Math.max(0, Math.min(100, quality)) : 0,
+  };
+}
+
 const ANALYZER_CONFIG: AgentConfig = {
   agentType: 'content_analyzer',
   name: 'Content Analyzer Agent',
@@ -246,12 +312,26 @@ Quality score (0-100) based on:
 - Grammar/spelling (25 points)
 - Proper categorization (25 points)`;
 
-    const response = await this.callLLM(
+    let response = await this.callLLM(
       [{ role: 'user', content: prompt }],
-      { temperature: 0.3, jsonMode: true }
+      { temperature: 0.3, jsonMode: true, maxTokens: 8_000, timeoutMs: 90_000 }
     );
-
-    const parsed = contentAnalysisOutputSchema.parse(JSON.parse(response));
+    let parsed: Omit<ContentAnalysisResult, 'analysisTimestamp'>;
+    try {
+      parsed = contentAnalysisOutputSchema.parse(normalizeContentAnalysisPayload(JSON.parse(response)));
+    } catch (firstError) {
+      // Ask Sol once to repair only the shape. This avoids publishing a partial
+      // analysis while recovering from harmless JSON field-shape drift.
+      response = await this.callLLM(
+        [{ role: 'user', content: `${prompt}\n\nThe previous JSON did not match the response contract. Return the complete object again, using arrays for all list fields, strings for categories.primary and industries.primary, and a numeric qualityScore from 0 to 100. Do not omit any required top-level field.` }],
+        { temperature: 0.1, jsonMode: true, maxTokens: 8_000, timeoutMs: 90_000 }
+      );
+      try {
+        parsed = contentAnalysisOutputSchema.parse(normalizeContentAnalysisPayload(JSON.parse(response)));
+      } catch {
+        throw firstError;
+      }
+    }
 
     return {
       ...parsed,
