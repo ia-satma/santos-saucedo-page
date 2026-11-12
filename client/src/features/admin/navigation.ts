@@ -126,10 +126,30 @@ export const adminNavigation = [
         hint: "Textos y horarios",
         icon: LayersIcon,
       },
+    ],
+  },
+  {
+    id: "complementario",
+    tone: "slate",
+    label: "Contenido complementario",
+    description: "Contenido institucional, legal y testimonios que completa el sitio.",
+    items: [
       {
-        href: "/admin/content",
-        label: "Todas las páginas y textos",
-        hint: "Directorio de secciones editables",
+        href: "/admin/testimonials",
+        label: "Testimonios",
+        hint: "Revisar, aprobar y publicar testimonios",
+        icon: ChatBubbleIcon,
+      },
+      {
+        href: "/admin/site-config/privacy",
+        label: "Aviso de privacidad",
+        hint: "Documento legal editable por idioma",
+        icon: LockClosedIcon,
+      },
+      {
+        href: "/admin/site-config/terms",
+        label: "Términos de uso",
+        hint: "Documento legal editable por idioma",
         icon: FileTextIcon,
       },
     ],
@@ -184,12 +204,6 @@ export const adminNavigation = [
         label: "Contacto y suscripciones",
         hint: "Mensajes y suscriptores del Monitor Laboral",
         icon: EnvelopeClosedIcon,
-      },
-      {
-        href: "/admin/testimonials",
-        label: "Testimonios",
-        hint: "Invitaciones de un solo uso y aprobación",
-        icon: ChatBubbleIcon,
       },
       {
         href: "/admin/applications",
@@ -258,18 +272,6 @@ export const adminNavigation = [
         label: "Privacidad y cookies",
         hint: "Categorías, preferencias y consentimiento",
         icon: CookieIcon,
-      },
-      {
-        href: "/admin/site-config/privacy",
-        label: "Aviso de privacidad",
-        hint: "Documento legal editable",
-        icon: LockClosedIcon,
-      },
-      {
-        href: "/admin/site-config/terms",
-        label: "Términos de uso",
-        hint: "Documento legal editable",
-        icon: FileTextIcon,
       },
       {
         href: "/admin/translations",
@@ -399,7 +401,15 @@ export const adminNavigation = [
     ],
   },
 ];
-export const allAdminLinks = adminNavigation.flatMap((g) => g.items);
+export const allAdminLinks = [
+  ...adminNavigation.flatMap((g) => g.items),
+  {
+    href: "/admin/content",
+    label: "Directorio de páginas y textos",
+    hint: "Buscar cualquier sección editable",
+    icon: FileTextIcon,
+  },
+];
 // Cuentas de solo Carreras (rol "reclutamiento"): las mismas entradas, agrupadas para Recursos
 // Humanos. "Carreras" y "Pasantías S&S" de Contenido del sitio editan textos de esas páginas y
 // quedan fuera; las candidaturas de ambas llegan a "Candidaturas y CV privados".
