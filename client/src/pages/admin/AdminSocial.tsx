@@ -545,6 +545,14 @@ export default function AdminSocial() {
       <span className="size-2 rounded-full bg-[#8CC63F]" aria-hidden="true" />
       Sol (gpt-6.1-sol) · Fast · Identidad Santos & Saucedo
     </p>
+    <section className="flex flex-wrap items-center justify-between gap-4 border border-[#0B2850]/15 bg-[#0B2850]/[0.03] p-5" aria-labelledby="social-reference-kit-title">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0B2850]">Skill de diseño activa</p>
+        <h2 id="social-reference-kit-title" className="mt-1 text-lg font-semibold">Kit de posts y carruseles</h2>
+        <p className="mt-1 max-w-3xl text-sm text-muted-foreground">El agente usa sus retículas, tipografías, colores y familias visuales como referencia. Puede crear conceptos nuevos sin quedar limitado al catálogo.</p>
+      </div>
+      <Button variant="outline" asChild><a href="/api/admin/social-assets/reference-kit" download>Ver catálogo de referencia</a></Button>
+    </section>
     <form className="space-y-5 border bg-background p-5 sm:p-7" onSubmit={submit}>
       <fieldset disabled={generate.isPending} className="space-y-5">
         <div className="grid gap-5 md:grid-cols-2">

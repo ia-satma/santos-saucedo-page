@@ -15,6 +15,7 @@ import { chrome26 } from "@/components/home26/chrome26";
 import { useV3Lang, type V3Lang } from "@/v3/shared";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { initTelon, type TelonApi } from "./escenaTelon";
+import { getVideoEmbedUrl } from "@/lib/videoSource";
 
 /* Textos nuevos de la demo (español literal de la demo; inglés en el mismo registro) */
 const TXT = {
@@ -103,7 +104,8 @@ export default function Telon({ lang }: { lang: V3Lang }) {
     : tagline;
 
   // Video: el póster ocupa el primer render; la fuente llega cuando el navegador terminó la entrada
-  const [startPaused] = useState(() => typeof window !== "undefined" && (readPausedPref() || savesData()));
+  const [smallScreen] = useState(() => typeof window !== "undefined" && window.matchMedia(SMALL_SCREEN).matches);
+  const [startPaused] = useState(() => typeof window !== "undefined" && (readPausedPref() || savesData() || smallScreen));
   const [paused, setPaused] = useState(startPaused);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -131,6 +133,7 @@ export default function Telon({ lang }: { lang: V3Lang }) {
     const small = window.matchMedia(SMALL_SCREEN).matches;
     return (small ? media.hero.videoMobile || media.hero.videoDesktop : media.hero.videoDesktop || media.hero.videoMobile) || undefined;
   }, [ready, failed, videoEnabled, media.hero.videoDesktop, media.hero.videoMobile]);
+  const externalVideoSrc = videoSrc ? getVideoEmbedUrl(videoSrc, !paused) : null;
   const poster = media.hero.poster;
   // El póster predeterminado, en WebP (203 KB en lugar de 257 KB, idéntico a la vista); uno del panel va tal cual
   const posterSrc = poster && /\/video\/portada-color-poster\.jpg$/.test(poster) ? poster.replace(/\.jpg$/, "-1600.webp") : poster;
@@ -185,7 +188,7 @@ export default function Telon({ lang }: { lang: V3Lang }) {
             <div className="mk-telon__marco" aria-hidden="true">
               <div className="mk-telon__medio">
                 <img className="mk-telon__quieta" src={posterSrc} alt="" width={1600} height={726} {...{ fetchpriority: "high" }} />
-                {videoEnabled && (
+                {videoEnabled && (externalVideoSrc ? <iframe className="mk-telon__video" src={externalVideoSrc} title="Video de portada" allow="autoplay; fullscreen; picture-in-picture" /> : (
                   <video
                     className="mk-telon__video"
                     src={videoSrc}
@@ -198,7 +201,7 @@ export default function Telon({ lang }: { lang: V3Lang }) {
                     tabIndex={-1}
                     onError={() => { if (videoSrc) setFailed(true); }}
                   />
-                )}
+                ))}
               </div>
             </div>
             <div className="mk-telon__fija" aria-hidden="true">

@@ -37,14 +37,15 @@ html.rm .v3 .pe-lz-chy.is-entra .sc-perfil{ animation: pe-funde var(--dur-quick)
   display: inline-flex; align-items: center; gap: 10px;
   margin-top: 12px; padding-block: 6px; min-height: 0;
   font: 500 var(--t-ui)/1.2 var(--sans); letter-spacing: .01em;
-  color: var(--hueso);
+  /* El Lienzo usa fondo Hueso, así que el enlace debe conservar contraste azul. */
+  color: var(--azul);
   text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .32em;
   text-decoration-color: rgba(243,241,234,.42);
   transition: text-decoration-color var(--dur-quick) var(--ease-out);
 }
 .v3 .sc-perfil span{ font-size: inherit }
 .v3 .sc-perfil .pe-ico{ transition: transform var(--dur-quick) var(--ease-out) }
-.v3 .sc-perfil:hover{ text-decoration-color: var(--hueso) }
+.v3 .sc-perfil:hover{ text-decoration-color: var(--azul) }
 .v3 .sc-perfil:hover .pe-ico{ transform: translateX(3px) }
 .v3 .sc-perfil:focus-visible{ outline: 2px solid var(--lima); outline-offset: 4px }
 .v3 .pe-lz-chy.is-sale .sc-perfil{ opacity: 0; transition: opacity 120ms var(--ease-out) }

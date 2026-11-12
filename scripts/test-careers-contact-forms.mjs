@@ -147,7 +147,7 @@ try {
     const stored = config.contact ?? defaults.contact;
     config.contact = { ...stored, [lang]: { ...defaults.contact[lang], ...stored[lang], companyLabel: label } };
     await page.route("**/api/site-config", route => route.fulfill({ json: config }));
-    await visit(page, "/contact");
+    await visit(page, lang === "es" ? "/es/contacto" : `/${lang}/contact`);
     const input = page.getByTestId("form-contact").getByTestId("input-company");
     assert.equal(normalize(await page.locator(`label[for="${await input.getAttribute("id")}"]`).textContent()), expected);
     await page.close();
@@ -248,7 +248,7 @@ try {
       assert.equal(await page.getByTestId("section-positions").locator('a[href="mailto:vacantes@example.invalid"]').count(), 1);
       assert.equal(await page.getByTestId("text-positions-empty").count(), 0);
     }
-    assert.equal(await page.locator('a[href="/careers/interns"]').count() > 0, true);
+    assert.equal(await page.locator('a[href="/es/pasantias"], a[href="/pasantias"]').count() > 0, true);
     await page.close();
     cases++;
   }

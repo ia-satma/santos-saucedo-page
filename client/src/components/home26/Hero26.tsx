@@ -7,6 +7,7 @@ import { SectionMark } from "./primitives";
 import { home26, langAttrs, type Lang26 } from "./content";
 import { chrome26 } from "./chrome26";
 import { SiteLink } from "./SiteLink";
+import { getVideoEmbedUrl } from "@/lib/videoSource";
 
 // Video de la portada en color natural. Ruta con la base de Pages
 // (/santos-saucedo-page/ en el build estático).
@@ -75,6 +76,7 @@ function HeroVideo({
     if (!pausedRef.current) onBlockedRef.current();
   };
   const src = window.matchMedia(SMALL_SCREEN).matches ? media.videoMobile||media.videoDesktop : media.videoDesktop||media.videoMobile;
+  const embedUrl = getVideoEmbedUrl(src, !paused);
 
   useEffect(() => {
     const video = ref.current;
@@ -102,6 +104,7 @@ function HeroVideo({
     else playOrReport(video, reportBlocked);
   }, [paused]);
 
+  if (embedUrl) return <iframe src={embedUrl} title="Video de portada" className="absolute inset-0 h-full w-full border-0" allow="autoplay; fullscreen; picture-in-picture" />;
   return (
     <video
       ref={ref}
@@ -134,7 +137,10 @@ export default function Hero26({ lang }: { lang: Lang26 }) {
   // todos los equipos (junta del 16-10-2026). Es una toma aérea lenta, sin destellos, y el botón de
   // pausa queda siempre visible (WCAG 2.2.2). El póster ocupa el primer render para diferir la
   // descarga y decodificación; si el visitante lo pausó o ahorra datos, queda como frame fijo.
-  const [startPaused] = useState(() => typeof window !== "undefined" && (readPausedPref() || savesData()));
+  const [smallScreen] = useState(() => typeof window !== "undefined" && window.matchMedia(SMALL_SCREEN).matches);
+  // En teléfonos y tabletas el póster es la primera vista. El video sigue disponible al pulsar
+  // reproducir, pero no compite con el LCP ni descarga 11 MB durante la carga inicial.
+  const [startPaused] = useState(() => typeof window !== "undefined" && (readPausedPref() || savesData() || smallScreen));
   const [paused, setPaused] = useState(startPaused);
   // El póster ocupa el primer render; el video se crea cuando el navegador ya terminó la entrada.
   const [mounted, setMounted] = useState(false);

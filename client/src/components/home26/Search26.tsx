@@ -5,7 +5,6 @@ import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import type { TeamMember, PracticeGroup, IndustryGroup, News, LanguageCode } from "@shared/schema";
 import { isNamedOnTeamPage } from "@shared/teamVisibility";
-import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import { chrome26 } from "./chrome26";
 import { useDialog26 } from "./useDialog26";
 
@@ -144,6 +143,7 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
     initialFocus: () => inputRef.current,
     onEscape: onClose,
     onClosed,
+    modal: false,
   });
 
   useEffect(() => {
@@ -224,14 +224,13 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
       ref={dialogRef}
       id="search-dialog"
       role="dialog"
-      aria-modal="true"
+      aria-modal="false"
       aria-label={t.dialog}
       {...attrs}
       data-testid="modal-search"
-      className="ss26 fixed inset-0 z-[70] flex flex-col overflow-y-auto overscroll-contain bg-ss-navy text-white"
+      className="ss26 fixed right-4 top-[calc(68px+1rem)] z-[70] flex max-h-[min(78vh,720px)] w-[min(92vw,560px)] flex-col overflow-y-auto overscroll-contain rounded-2xl bg-ss-navy p-5 text-white shadow-2xl ring-1 ring-white/20 sm:right-6 sm:top-24 sm:p-7"
     >
-      <div className="ss-container flex h-[68px] shrink-0 items-center justify-between lg:h-20">
-        <img src={logoBlancoLima} alt="Santos & Saucedo" className="h-[26px] w-auto lg:h-[30px]" width={183} height={30} />
+      <div className="flex shrink-0 items-center justify-end">
         <button
           type="button"
           className="ss-label flex min-h-[44px] items-center gap-3 text-white"
@@ -247,7 +246,7 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
 
       <form
         role="search"
-        className="ss-container mt-[clamp(28px,7vh,88px)] pb-20"
+        className="w-full pb-2"
         data-testid="container-search"
         onSubmit={(e) => {
           // Enter: al primer resultado (no hay página de resultados). Si los que se ven son
@@ -284,7 +283,7 @@ export default function Search26({ lang, onClose, onClosed }: Search26Props) {
           // Sin radio, filete blanco al 45 % (4.36:1 sobre Azul Profundo, WCAG 1.4.11); el foco de
           // teclado sobre Azul Profundo es lima.
           // La romana display 350, como los titulares (en CJK y árabe, la sans: ss26.css)
-          className="ss-display mt-4 w-full appearance-none rounded-none border-0 border-b border-white/45 bg-transparent pb-3 text-[clamp(28px,2.4vw+16px,40px)] leading-tight text-white caret-white placeholder:text-white/50 focus:border-transparent focus-visible:!shadow-[inset_0_-2px_0_0_var(--ss-lime)] focus-visible:!outline-none"
+          className="ss-display mt-4 w-full appearance-none rounded-none border-0 border-b border-white/45 bg-transparent pb-3 text-[clamp(24px,2vw+12px,34px)] leading-tight text-white caret-white placeholder:text-white/50 focus:border-transparent focus-visible:!shadow-[inset_0_-2px_0_0_var(--ss-lime)] focus-visible:!outline-none"
         />
         {/* Con la consulta ya escrita la pista sobra a la vista; sigue para aria-describedby */}
         <p

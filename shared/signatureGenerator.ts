@@ -14,6 +14,13 @@ export const signatureDescriptions = [
   "Navy · § · barra verde completa",
   "Premium · foto a color · iconos",
 ] as const;
+// Catálogo editorial vigente. Las plantillas históricas siguen disponibles para abrir archivos
+// guardados, pero el editor solo ofrece las dos variantes aprobadas por el despacho.
+export const activeSignatureIds = ["03", "11"] as const;
+export const activeSignatureDescriptions = {
+  "03": "Blanca · columna navy · iconos",
+  "11": "Navy · § · barra verde completa",
+} as const;
 
 export const signatureDefaults = {
   name: "Mario Saucedo Montemayor",

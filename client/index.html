@@ -119,7 +119,7 @@
     }
     </script>
     <!-- Solo en el inicio: el póster de la portada (la primera imagen grande) se pide de inmediato -->
-    <script>(function(){var b="%BASE_URL%",p=location.pathname;if(p!==b&&p+"/"!==b)return;var l=document.createElement("link");l.rel="preload";l.as="image";l.href=b+"video/portada-color-poster-1600.webp";l.setAttribute("fetchpriority","high");document.head.appendChild(l);})();</script>
+    <script>(function(){var b="%BASE_URL%",p=location.pathname;if(p!==b&&p+"/"!==b&&!/^\/(?:es|en|de|zh|ko|ja|ar|ru|fr|it)\/?$/.test(p))return;var l=document.createElement("link");l.rel="preload";l.as="image";l.href=b+"video/portada-color-poster-1600.webp";l.setAttribute("fetchpriority","high");document.head.appendChild(l);})();</script>
   </head>
   <body>
     <div id="root"></div>

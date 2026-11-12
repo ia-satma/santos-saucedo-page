@@ -201,6 +201,27 @@ export default function AdminPresentations() {
           Los archivos .doc/.ppt antiguos deben convertirse a .docx/.pptx.
         </AdminPageHelp>
 
+        <Card className="mb-6 border-[#0B2850]/15 bg-[#0B2850]/[0.03]">
+          <CardContent className="flex flex-wrap items-center justify-between gap-4 p-5">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0B2850]">Plantilla aprobada</p>
+              <h2 className="mt-1 text-lg font-semibold">Presentación institucional Santos &amp; Saucedo</h2>
+              <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+                El agente usa esta referencia para ordenar agenda, cifras, servicios, metodología, actualidad y contacto.
+                La plantilla queda disponible para revisión y descarga desde el CMS.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" asChild>
+                <a href="/api/admin/presentations/reference-template/pptx" download>Descargar PPTX editable</a>
+              </Button>
+              <Button variant="outline" asChild>
+                <a href="/api/admin/presentations/reference-template/html" download>Descargar HTML de referencia</a>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* --- Generador --- */}
         <Card className="mb-10">
           <CardContent className="p-6 space-y-6">

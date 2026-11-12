@@ -184,6 +184,15 @@ export default function Footer26({ localized = false }: Footer26Props) {
             <p className="ss-num" data-testid="text-copyright">
               © {year} {t.rights}
             </p>
+            <a
+              href="https://satma.mx/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] text-white/35 transition-colors hover:text-white/65"
+              data-testid="link-satma"
+            >
+              Página creada por Satma
+            </a>
             {/* Acceso discreto al panel del despacho, como en el pie anterior: solo icono, tenue */}
             {navigation.footer.adminEnabled&&<Link
               href="/admin/login"

@@ -5,11 +5,11 @@ import html2canvas from "html2canvas";
 import { adminApiRequest, readAdminJson, useAdminAuth } from "@/lib/adminAuth";
 import { uploadAdminMedia } from "@/lib/adminMediaUpload";
 import { queryClient } from "@/lib/queryClient";
-import { createSignatureGenerator, signatureDefaults, signatureDescriptions, signatureIds, type SignatureData } from "@shared/signatureGenerator";
+import { activeSignatureDescriptions, activeSignatureIds, createSignatureGenerator, signatureDefaults, type SignatureData } from "@shared/signatureGenerator";
 
 type SavedSignature = { id: string; label: string; templateId: string; data: SignatureData; photoUrl: string | null; updatedAt: string | null; downloadUrl: string };
 type FormState = { label: string; templateId: string; data: SignatureData; photoUrl: string | null };
-const initialForm = (): FormState => ({ label: "Firma nueva", templateId: "01", data: { ...signatureDefaults }, photoUrl: null });
+const initialForm = (): FormState => ({ label: "Firma nueva", templateId: "03", data: { ...signatureDefaults }, photoUrl: null });
 const fields: Array<[keyof SignatureData, string, string]> = [
   ["name", "Nombre", "Nombre completo"], ["role", "Cargo", "Cargo o puesto"], ["phone", "Teléfono", "+52 81 8335 2086"], ["email", "Correo", "correo@dominio.com"],
   ["addr1", "Dirección · línea 1", "Dirección"], ["addr2", "Dirección · línea 2", "Ciudad y código postal"], ["tagline", "Lema", "DERECHO LABORAL PARA EMPRESAS"], ["since", "Ubicación · año", "San Pedro Garza García · Desde 2010"],
@@ -132,7 +132,7 @@ export default function AdminSignatures() {
   const edit = (item: SavedSignature) => { setEditingId(item.id); setForm({ label: item.label, templateId: item.templateId, data: { ...signatureDefaults, ...item.data }, photoUrl: item.photoUrl }); setNotice(""); setError(""); window.scrollTo({ top: 0, behavior: "smooth" }); };
   const save = async () => {
     setBusy(true); setError(""); setNotice("");
-    try { const method = editingId ? "PUT" : "POST"; const url = editingId ? `/api/admin/signatures/${editingId}` : "/api/admin/signatures"; const saved = await readAdminJson<SavedSignature>(await adminApiRequest(method, url, form), "No se pudo guardar la firma."); setEditingId(saved.id); setNotice(`Firma guardada para las 12 plantillas. Descarga actual: Firma ${saved.templateId}.`); await queryClient.invalidateQueries({ queryKey: ["/api/admin/signatures"] }); }
+    try { const method = editingId ? "PUT" : "POST"; const url = editingId ? `/api/admin/signatures/${editingId}` : "/api/admin/signatures"; const saved = await readAdminJson<SavedSignature>(await adminApiRequest(method, url, form), "No se pudo guardar la firma."); setEditingId(saved.id); setNotice(`Firma guardada. El catálogo activo usa las variantes 03 y 11. Descarga actual: Firma ${saved.templateId}.`); await queryClient.invalidateQueries({ queryKey: ["/api/admin/signatures"] }); }
     catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   };
   const remove = async (id: string) => {
@@ -172,7 +172,7 @@ export default function AdminSignatures() {
         <div className="signature-sidebar-heading">
           <p className="signature-kicker">Santos Saucedo · Firmas</p>
           <h1>Datos de la firma</h1>
-          <p>Los cambios se aplican a las 12 plantillas.</p>
+          <p>El catálogo activo conserva las firmas 03 y 11.</p>
         </div>
         <div className="signature-sidebar-scroll">
           {groups.map((group) => (
@@ -201,20 +201,20 @@ export default function AdminSignatures() {
 
       <section className="signature-editor-catalog">
         <header className="signature-catalog-header">
-          <div><p className="signature-catalog-eyebrow">Editor de firmas</p><h2>{form.data.name || "Nueva firma"}</h2><p>12 plantillas · 600 × 250 px <span>(firma 12: 640 × 370)</span> · imágenes a 2x</p><p className="signature-catalog-save-help">Los datos guardados alimentan las 12 plantillas. Elige una variante para editarla, copiarla o descargarla.</p></div>
+          <div><p className="signature-catalog-eyebrow">Editor de firmas</p><h2>{form.data.name || "Nueva firma"}</h2><p>2 plantillas activas · 600 × 250 px · imágenes a 2x</p><p className="signature-catalog-save-help">Elige Firma 03 o Firma 11 para editarla, copiarla o descargarla.</p></div>
           <div className="signature-catalog-actions"><button type="button" className="signature-outline-action" onClick={reset}><PlusIcon /> Nueva</button><button type="button" className="signature-save-action" disabled={busy} onClick={() => void save()}>{busy ? "Guardando…" : editingId ? "Actualizar firma" : "Guardar firma"}</button></div>
         </header>
         {notice && <div role="status" className="signature-notice">{notice}</div>}
         {error && <div role="alert" className="signature-error">{error}</div>}
         {(query.data || []).length > 0 && <section className="signature-saved-strip" aria-label="Firmas guardadas"><div className="signature-section-heading"><div><p className="signature-catalog-eyebrow">Versiones guardadas</p><h3>Firmas listas para usar</h3></div><span>{query.data?.length} guardadas</span></div><div className="signature-version-list">{(query.data || []).map((item) => <div className={`signature-version-row ${editingId === item.id ? "is-active" : ""}`} key={item.id}><button type="button" aria-label={`Editar ${item.label}`} title={`Editar ${item.label}`} onClick={() => edit(item)}><strong>{item.label}</strong><span>Editar datos comunes · descarga Firma {item.templateId} · {item.updatedAt ? new Date(item.updatedAt).toLocaleDateString("es-MX") : ""}</span></button><button type="button" aria-label={`Descargar ${item.label}`} onClick={async () => { const response = await adminApiRequest("GET", item.downloadUrl); if (!response.ok) return setError("No se pudo descargar la firma."); downloadBlob(await response.text(), `${item.label.replace(/[^a-z0-9]+/gi, "-")}.html`); }}><DownloadIcon /></button><button type="button" aria-label={`Eliminar ${item.label}`} onClick={() => void remove(item.id)}><TrashIcon /></button></div>)}</div></section>}
         <section className="signature-template-list" aria-label="Plantillas de firma">
-          {signatureIds.map((id, index) => {
+          {activeSignatureIds.map((id) => {
             const templateHtml = generator.build(id);
             const isSelected = form.templateId === id;
             const isCodeOpen = codeOpen === id;
             return <article className={`signature-template-card ${isSelected ? "is-selected" : ""}`} key={id}>
-              <header className="signature-template-card-header"><button type="button" className="signature-template-title" aria-pressed={isSelected} onClick={() => setForm((old) => ({ ...old, templateId: id }))}><span>Firma {id}</span><small>{signatureDescriptions[index]}</small>{isSelected && <em>Seleccionada para guardar y descargar</em>}</button><button type="button" className="signature-open-template" onClick={() => setForm((old) => ({ ...old, templateId: id }))}>Abrir <ArrowTopRightIcon /></button></header>
-              <div className="signature-template-preview"><iframe title={`Vista previa de Firma ${id}`} sandbox="allow-same-origin" srcDoc={templateHtml} className={id === "12" ? "signature-iframe signature-iframe-tall" : "signature-iframe"} /></div>
+              <header className="signature-template-card-header"><button type="button" className="signature-template-title" aria-pressed={isSelected} onClick={() => setForm((old) => ({ ...old, templateId: id }))}><span>Firma {id}</span><small>{activeSignatureDescriptions[id]}</small>{isSelected && <em>Seleccionada para guardar y descargar</em>}</button><button type="button" className="signature-open-template" onClick={() => setForm((old) => ({ ...old, templateId: id }))}>Abrir <ArrowTopRightIcon /></button></header>
+              <div className="signature-template-preview"><iframe title={`Vista previa de Firma ${id}`} sandbox="allow-same-origin" srcDoc={templateHtml} className={Number(id) === 12 ? "signature-iframe signature-iframe-tall" : "signature-iframe"} /></div>
               <footer className="signature-template-card-footer"><button type="button" className="signature-copy-html" onClick={() => actionFor(id, "html")}><CodeIcon /> Copiar código HTML</button><button type="button" className="signature-copy-rich" onClick={() => actionFor(id, "rich")}><CopyIcon /> Copiar firma</button><button type="button" className="signature-download" onClick={() => actionFor(id, "download")}><DownloadIcon /> Descargar .html</button><button type="button" className="signature-download signature-image-download" onClick={() => actionFor(id, "image")}><ImageIcon /> Descargar PNG</button><button type="button" className="signature-view-code" onClick={() => setCodeOpen(isCodeOpen ? null : id)}>{isCodeOpen ? "Ocultar código" : "Ver código"}</button></footer>
               {isCodeOpen && <pre className="signature-code-block"><code>{templateHtml}</code></pre>}
             </article>;

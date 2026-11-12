@@ -11,9 +11,8 @@ import { V3Main, V3NextPage, V3PageHeader } from "@/v3/shared";
 import { Flecha, nextLabel, useChrome, useFotoOficina } from "@/v3/paginas-extra/piezas";
 
 // Testimonios (junta 16-10-2026): muro sobrio de comentarios de clientes que el despacho
-// aprobó. Cada uno es una cita en la romana, con nombre, puesto y, si el cliente lo autorizó,
-// empresa. Sin estrellas, fotos, contadores ni llamadas a contratar: la firma no persigue al
-// cliente; los elogios son de terceros. Textos editables en el panel (sección "testimonials").
+// aprobó. Cada uno es una tarjeta sobria con estrellas, cita, nombre, puesto y, si el cliente lo
+// autorizó, empresa. Textos editables en el panel (sección "testimonials").
 // Con el lenguaje de la demo v3 (que no tenía esta página): cabecera con foto del vestíbulo y las citas
 // sobre la banda azul de la demo («Lo que opinan nuestros clientes», pe-op): la primera grande y las
 // demás en dos columnas.
@@ -76,8 +75,6 @@ export default function Testimonials() {
       </figure>
     );
   };
-  const [primero, ...resto] = items;
-
   return (
     <div className="ss26 min-h-[100dvh]" data-testid="page-testimonials">
       <SEOHead page="testimonials" language={language} />
@@ -131,15 +128,10 @@ export default function Testimonials() {
             </div>
           </section>
         ) : (
-          // Las citas sobre la banda azul de la demo; cada una entera (no se parte entre columnas)
-          <section className="px-test sobre-azul" aria-labelledby="px-testimonios-h">
-            <div className="sh-wrap" data-testid="list-testimonials">
-              {primero ? cita(primero, true) : null}
-              {resto.length ? (
-                <ul className="px-test__lista px-test__resto">
-                  {resto.map((item) => <li key={item.id}>{cita(item)}</li>)}
-                </ul>
-              ) : null}
+          // Tarjetas independientes para facilitar la lectura y conservar una jerarquía uniforme.
+            <section className="px-test px-test--cards" aria-labelledby="px-testimonios-h">
+            <div className="sh-wrap px-test__grid" data-testid="list-testimonials">
+              {items.map((item) => <div key={item.id}>{cita(item)}</div>)}
             </div>
           </section>
         )}

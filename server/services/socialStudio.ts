@@ -18,6 +18,7 @@ import { recordChatUsage, recordImageUsage } from "./usageTracker";
 import { PRESENTATION_FONT_FILES } from "./presentationFonts";
 import { editorialResearchQuery, summarizeEditorialSources } from "./editorialSourceDigest";
 import { webSearchSummary } from "./webSearch";
+import { SOCIAL_REFERENCE_GUIDANCE } from "./socialReferenceKit";
 
 const photoKey = (ref: string) => socialImageRefSchema.safeParse(ref).success
   ? ref.replace("private:studio/", "private/studio/")
@@ -188,7 +189,8 @@ Distribuye las ideas, hechos y ejemplos de las distintas secciones del material 
 La firma asesora a empresas en derecho laboral mexicano. Usa tono formal. Conserva hechos, fechas y citas del material.
 Si faltan fuentes, no inventes normas, cifras o resultados. Presenta solo afirmaciones sustentadas por la información recibida.
 Si hay una versión anterior, propón otra redacción y secuencia sin cambiar los hechos de base.
-Máximos de caracteres: título ${format.width > format.height ? 52 : 75}, cuerpo ${format.width > format.height ? 120 : 180}, publicación 2000. Usa texto plano.`,
+Máximos de caracteres: título ${format.width > format.height ? 52 : 75}, cuerpo ${format.width > format.height ? 120 : 180}, publicación 2000. Usa texto plano.
+${SOCIAL_REFERENCE_GUIDANCE}`,
     { topic: material.topic, sourceContext: material.context, research, previousCopy: brief.previousCopy },
     actorId,
     generatedEnvelope(brief.slideCount),

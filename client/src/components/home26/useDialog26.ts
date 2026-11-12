@@ -13,6 +13,8 @@ interface Dialog26Options {
   onClosed: () => void;
   /** Consulta de medios en la que el diálogo deja de verse: se cierra */
   closeWhen?: { query: string; onMatch: () => void };
+  /** Los paneles pequeños dejan visible e interactiva la página que está detrás. */
+  modal?: boolean;
 }
 
 /**
@@ -27,14 +29,15 @@ export function useDialog26(open: boolean, dialogRef: RefObject<HTMLElement>, op
 
   useEffect(() => {
     if (!open) return;
+    const modal = opts.current.modal !== false;
     const root = document.getElementById("root");
     // Se bloquea <html>, no <body>: ss26.css le da a html overflow-x: clip, y con un
     // overflow distinto de visible el viewport toma el de html y no propaga el de body.
     const html = document.documentElement;
     const prev = html.style.overflow;
-    html.style.overflow = "hidden";
+    if (modal) html.style.overflow = "hidden";
     // El diálogo vive en body (portal); el resto de la página queda inerte
-    root?.setAttribute("inert", "");
+    if (modal) root?.setAttribute("inert", "");
     opts.current.initialFocus()?.focus();
 
     const onKey = (e: KeyboardEvent) => {
@@ -43,6 +46,7 @@ export function useDialog26(open: boolean, dialogRef: RefObject<HTMLElement>, op
         opts.current.onEscape();
         return;
       }
+      if (!modal) return;
       if (e.key !== "Tab") return;
       // Trampa de foco: Tab y Shift+Tab ciclan dentro del diálogo
       const dialog = dialogRef.current;
@@ -79,8 +83,8 @@ export function useDialog26(open: boolean, dialogRef: RefObject<HTMLElement>, op
     return () => {
       document.removeEventListener("keydown", onKey);
       mq?.removeEventListener("change", onMq);
-      html.style.overflow = prev;
-      root?.removeAttribute("inert");
+      if (modal) html.style.overflow = prev;
+      if (modal) root?.removeAttribute("inert");
       opts.current.onClosed();
     };
     // Solo depende de `open`: las funciones se leen de la referencia

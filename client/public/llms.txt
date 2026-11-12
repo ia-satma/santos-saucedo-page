@@ -1,0 +1,22 @@
+# Santos & Saucedo
+
+Santos & Saucedo es una firma mexicana especializada en derecho laboral para empresas. El sitio publica información institucional, prácticas, industrias, socios, Monitor Laboral, contacto y oportunidades profesionales.
+
+## Sitio público
+
+- [Inicio](https://santos-saucedo.replit.app/es/)
+- [Nuestra firma](https://santos-saucedo.replit.app/es/nuestra-firma)
+- [Prácticas](https://santos-saucedo.replit.app/es/practicas)
+- [Industrias](https://santos-saucedo.replit.app/es/industrias)
+- [Socios](https://santos-saucedo.replit.app/es/socios)
+- [Monitor Laboral](https://santos-saucedo.replit.app/es/monitor-laboral)
+- [Contacto](https://santos-saucedo.replit.app/es/contacto)
+- [Testimonios](https://santos-saucedo.replit.app/es/testimonios)
+
+## Idiomas
+
+El sitio ofrece español, inglés, alemán, chino, coreano, japonés, árabe, ruso, francés e italiano. Las rutas en español usan slugs españoles y redirecciones permanentes desde aliases antiguos.
+
+## Uso responsable
+
+El contenido público puede citarse con su URL canónica. Las áreas `/admin` y las APIs privadas requieren autenticación y no forman parte del contenido público.

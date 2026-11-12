@@ -47,6 +47,7 @@ export default function AdminTestimonials() {
   const [created, setCreated] = useState<{ url: string; name: string; email: string; expiresAt: string } | null>(null);
   const [editing, setEditing] = useState<{ id: string; draft: Draft } | null>(null);
   const [manual, setManual] = useState<{ draft: Draft; consent: boolean } | null>(null);
+  const [googleJsonResult, setGoogleJsonResult] = useState<{ imported: number; alreadyPresent: number; ratingsOnly: number; nextCursor: string | null } | null>(null);
 
   const me = useQuery<{ role: string; username?: string }>({
     queryKey: ["/api/admin/me"],
@@ -91,6 +92,15 @@ export default function AdminTestimonials() {
       setCreated({ url, name: invite.clientName.trim(), email: invite.clientEmail.trim(), expiresAt: String(row.expiresAt) });
       setInvite({ clientName: "", clientEmail: "" });
     });
+
+  const importGoogleJson = (file: File) =>
+    run("google-json", async () => {
+      if (file.size > 900_000) throw new Error("El archivo JSON supera 900 KB. Descarga una página más pequeña desde el laboratorio de Google.");
+      let payload: unknown;
+      try { payload = JSON.parse(await file.text()); } catch { throw new Error("El archivo no contiene un JSON válido."); }
+      const result = await call("POST", "/api/admin/testimonials/import-google-json", { payload }) as { imported: number; alreadyPresent: number; ratingsOnly: number; nextCursor: string | null };
+      setGoogleJsonResult(result);
+    }, "JSON importado como capturado para revisión humana.");
 
   const copy = async (text: string) => {
     try {
@@ -151,6 +161,10 @@ export default function AdminTestimonials() {
       </label>
     </div>
   );
+  const manualCanSave = !!manual
+    && manual.consent
+    && manual.draft.authorName.trim().length >= 3
+    && manual.draft.quote.trim().length >= 20;
 
   return (
     <main className="mx-auto max-w-6xl space-y-10 p-6" data-testid="admin-testimonials">
@@ -250,6 +264,18 @@ export default function AdminTestimonials() {
             </Button>
           </div>
         </div>
+        <details className="border p-4" data-testid="google-testimonials-lab">
+          <summary className="cursor-pointer font-medium">Laboratorio de importación desde Google</summary>
+          <div className="mt-3 space-y-3 text-sm text-muted-foreground">
+            <p>Descarga un JSON de reseñas de la ficha de Google Maps con el extractor aprobado y súbelo aquí. El CMS valida que cada enlace pertenezca a Saucedo Santos, elimina duplicados y deja todo como capturado.</p>
+            <label className="inline-flex cursor-pointer items-center rounded-md border px-3 py-2 text-foreground">
+              Cargar JSON de Google
+              <input type="file" accept="application/json,.json" className="sr-only" onChange={(event) => { const file = event.target.files?.[0]; if (file) void importGoogleJson(file); event.target.value = ""; }} data-testid="input-google-testimonials-json" />
+            </label>
+            {busy === "google-json" && <span role="status"> Validando e importando…</span>}
+            {googleJsonResult && <p role="status">Última carga: {googleJsonResult.imported} importadas, {googleJsonResult.alreadyPresent} ya existentes y {googleJsonResult.ratingsOnly} solo con estrellas.{googleJsonResult.nextCursor ? " Hay más resultados disponibles con el siguiente cursor." : ""}</p>}
+          </div>
+        </details>
         {manual && (
           <form
             className="space-y-4 border p-5"
@@ -275,7 +301,8 @@ export default function AdminTestimonials() {
               Confirmo que el cliente autorizó por escrito publicar su comentario con su nombre y puesto (y su empresa, si se
               marca arriba).
             </label>
-            <Button type="submit" disabled={busy === "manual" || !manual.consent}>
+            <p className="text-xs text-muted-foreground">Para guardar, usa un nombre de al menos 3 caracteres, un comentario de al menos 20 y confirma la autorización por escrito.</p>
+            <Button type="submit" disabled={busy === "manual" || !manualCanSave}>
               Guardar como capturado
             </Button>
           </form>

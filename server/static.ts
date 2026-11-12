@@ -87,7 +87,8 @@ export function serveStatic(app: Express) {
         return res.redirect(308, "/es" + (requestPath === "/" ? "/" : requestPath) + suffix);
       }
       let html=await fs.promises.readFile(path.resolve(distPath,"index.html"),"utf8");
-      if (_req.originalUrl === "/" || _req.originalUrl.startsWith("/?")) {
+      const homePath = /^\/(?:es|en|de|zh|ko|ja|ar|ru|fr|it)\/?$/;
+      if (_req.originalUrl === "/" || _req.originalUrl.startsWith("/?") || homePath.test(requestPath)) {
         const p = await portadaInicial();
         if (p && html.includes('<div id="root"></div>')) {
           html = html.replace("</title>", `</title>\n    ${p.head}`).replace('<div id="root"></div>', p.root);

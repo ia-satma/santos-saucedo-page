@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Nueva pieza · Santos Saucedo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>body{margin:0;padding:80px;background:#e6e9ee;font-family:'DM Sans',Arial,sans-serif;display:flex;flex-direction:column;gap:80px}</style>
+<script src="componentes.js"></script>
+</head>
+<body>
+<div id="out" style="display:flex;flex-direction:column;gap:80px"></div>
+<script>
+SS.A.base = 'assets/';
+document.getElementById('out').innerHTML = [
+  SS.postCifra({modo:'dark', seccion:'TRAYECTORIA', cifra:'+72', titulo:'ciudades de México con nuestra alianza'}),
+  SS.postTexto({modo:'light', seccion:'MONITOR LABORAL', titulo:'Título del post', texto:'Bajada de una o dos líneas.'}),
+  SS.postFoto({foto:'assets/foto-socio.jpg', seccion:'EL DESPACHO', titulo:'Atención directa de los socios.'}),
+  SS.carrusel('X', [
+    {tipo:'portada', modo:'light', seccion:'GUÍA PRÁCTICA', titulo:'Título del carrusel', texto:'Subtítulo breve.'},
+    {tipo:'lista', seccion:'GUÍA PRÁCTICA', items:[{n:'01',t:'Punto uno',d:'Explicación.'},{n:'02',t:'Punto dos',d:'Explicación.'}]},
+    {tipo:'lista', seccion:'GUÍA PRÁCTICA', items:[{n:'03',t:'Punto tres',d:'Explicación.'},{n:'04',t:'Punto cuatro',d:'Explicación.'}]},
+    {tipo:'cierre', modo:'dark', titulo:'¿Su empresa está al día?', texto:'Agende una asesoría.'}
+  ])
+].join('');
+</script>
+</body>
+</html>

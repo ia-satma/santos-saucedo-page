@@ -26,6 +26,7 @@ import { hydratePresentationInput } from "../media/presentationInputs";
 import { storage } from "../storage";
 import { downloadPrivateStudioObject } from "../replitStorage";
 import { EditorialSourceError } from "../services/editorialSourceDigest";
+import { SOCIAL_REFERENCE_KIT } from "../services/socialReferenceKit";
 import {
   discardGeneratedSocialImages,
   discardSocialFiles,
@@ -316,6 +317,14 @@ function requireVersion(asset: SocialAsset, expected: number) {
 
 export function registerSocialAssetRoutes(app: Express): void {
   const access = [authMiddleware, requirePermission("agents")];
+  app.get(`${base}/reference-kit`, ...access, async (_req, res) => {
+    try {
+      await stat(SOCIAL_REFERENCE_KIT.catalog);
+      res.download(SOCIAL_REFERENCE_KIT.catalog, "Catalogo-Redes-Sociales-Santos-Saucedo.html");
+    } catch {
+      res.status(404).end();
+    }
+  });
   app.get(base, ...access, respond(async (req, res) => {
     const page = z.coerce.number().int().min(1).max(100_000).default(1).parse(req.query.page);
     const pageSize = 20;

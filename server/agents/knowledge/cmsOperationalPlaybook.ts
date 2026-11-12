@@ -54,9 +54,14 @@ export const CMS_OPERATIONAL_SKILLS: ReadonlyArray<{
     description: "Adapta posts y carruseles al tono de marca y límites de cada red.",
   },
   {
+    agentType: "social_media",
+    name: "post_carousel_art_direction",
+    description: "Aplica la retícula, tipografía, color, fotografía y secuencia del kit de posts y carruseles sin cerrar la exploración creativa.",
+  },
+  {
     agentType: "presentation_generator",
     name: "brand_template_compliance",
-    description: "Usa plantillas institucionales, conteo de contenido y exportación verificable.",
+    description: "Usa la plantilla institucional aprobada, su orden editorial, conteo de contenido y exportación verificable.",
   },
   {
     agentType: "website_auditor",
@@ -126,5 +131,28 @@ export const CMS_OPERATIONAL_KNOWLEDGE_SEEDS: ReadonlyArray<{
       "Los agentes generan borradores y archivos versionados. La publicación, el envío externo y el uso de testimonios " +
       "requieren revisión humana.",
     agents: ["social_media", "presentation_generator", "image_suggestion", "voice_agent"],
+  },
+  {
+    key: "presentation-reference-template",
+    title: "Plantilla de presentación institucional aprobada",
+    content:
+      "La plantilla Presentacion Santos Saucedo define una secuencia editorial de portada, agenda, quiénes somos, " +
+      "cifras, servicios, metodología, cita, actualidad, alianza nacional y contacto. El generador debe alternar " +
+      "divisores oscuros, cifras, listas numeradas, procesos y citas con mucho espacio en blanco, títulos serif, " +
+      "texto sans serif, azul profundo #0B2850 y lima #BBF741. Los ejemplos de 40 años, 72 ciudades y 2010 son " +
+      "referencias de diseño y solo se reutilizan cuando el material fuente los confirma. La publicación y el uso " +
+      "de cifras requieren revisión humana.",
+    agents: ["presentation_generator"],
+  },
+  {
+    key: "social-reference-kit",
+    title: "Kit de posts y carruseles aprobado",
+    content:
+      "El kit de redes sociales contiene familias para datos, noticias, citas, preguntas frecuentes, servicios, guías, " +
+      "mitos, comparativos, calendarios, equipo y pasos a paso. Usa 1080 × 1080, Lora y DM Sans, azul #0B2850, " +
+      "lima #BBF741, verde de texto #5E8F17, fotos sin filtros, márgenes de 90 px y cierres con contacto. " +
+      "Las plantillas orientan la calidad, pero el agente puede proponer ideas y composiciones nuevas. Los datos legales, " +
+      "cifras y citas requieren fuente o revisión humana.",
+    agents: ["social_media"],
   },
 ];

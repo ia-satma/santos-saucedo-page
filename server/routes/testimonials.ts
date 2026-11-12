@@ -15,7 +15,7 @@ import { authMiddleware } from "../auth";
 import { isReadOnlyAdmin } from "@shared/adminAccess";
 import { recordAccessEvent } from "../cms/accessAudit";
 import { getCmsIntegrations } from "../cms/siteConfig";
-import { fetchGooglePlaceReviews, googleReviewSourceId } from "../services/googleTestimonials";
+import { fetchGooglePlaceReviews, googleReviewSourceId, normalizeOmkarReviewBatch } from "../services/googleTestimonials";
 
 // Testimonios de clientes (junta 16-10-2026, Mario y Gabriel): el cliente escribe su comentario
 // desde un enlace de un solo uso que genera el despacho; nada se publica sin aprobación.
@@ -297,6 +297,42 @@ export function registerTestimonials(
     }
   });
 
+  app.post("/api/admin/testimonials/import-google-json", ...panel, async (req, res) => {
+    try {
+      const batch = normalizeOmkarReviewBatch((req.body as { payload?: unknown } | null)?.payload ?? req.body);
+      const existing = await db.select({ source: testimonials.source }).from(testimonials);
+      const known = new Set(existing.map((row) => row.source).filter(Boolean));
+      const pending = batch.drafts.filter((review) => !known.has(review.id));
+      if (pending.length) {
+        await db.insert(testimonials).values(pending.map((review) => ({
+          quote: review.quote,
+          authorName: review.authorName || "Cliente de Google",
+          authorTitle: "Google Maps",
+          source: review.id,
+          sourceEs: review.sourceUrl,
+          rating: review.rating,
+          origin: "google",
+          status: "captured",
+          published: false,
+          showCompany: false,
+          consentAt: null,
+          updatedAt: new Date(),
+        })));
+      }
+      res.json({
+        business: batch.business,
+        loaded: batch.loaded,
+        ratingsOnly: batch.ratingsOnly,
+        imported: pending.length,
+        alreadyPresent: batch.drafts.length - pending.length,
+        nextCursor: batch.nextCursor,
+        captured: pending.length,
+      });
+    } catch (error) {
+      res.status(400).json({ error: error instanceof Error ? error.message : "El JSON de Google no es válido." });
+    }
+  });
+
   app.get("/api/admin/testimonials/invites", ...panel, async (_req, res) => {
     try {
       const rows = await db
@@ -356,7 +392,10 @@ export function registerTestimonials(
   app.post("/api/admin/testimonials", ...panel, async (req, res) => {
     const parsed = panelCreateSchema.safeParse(req.body ?? {});
     if (!parsed.success)
-      return res.status(400).json({ error: "Revise nombre, comentario (20 a 1200 caracteres) y la confirmación de la autorización." });
+      return res.status(400).json({
+        error: "Revise nombre, comentario (20 a 1200 caracteres) y la confirmación de la autorización.",
+        fields: Array.from(new Set(parsed.error.issues.map((issue) => String(issue.path[0] || "form")))),
+      });
     const { consentConfirmed: _c, ...data } = parsed.data;
     try {
       const [row] = await db

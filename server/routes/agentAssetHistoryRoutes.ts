@@ -32,6 +32,7 @@ import { auditLog } from "./routeUtils";
 import { presentationMediaPathSchema, receivePresentationDocument } from "./uploadMiddleware";
 import { SUPPORTED_LANGUAGES } from "@shared/constants";
 import { MAX_EDITORIAL_NOTES_CHARACTERS, MAX_EDITORIAL_SOURCE_CHARACTERS } from "@shared/editorialSources";
+import { PRESENTATION_REFERENCE_TEMPLATE } from "../services/presentation/referenceTemplate";
 
 const languageCodes = SUPPORTED_LANGUAGES.map(({ code }) => code) as [string, ...string[]];
 
@@ -88,6 +89,13 @@ function streamPrivatePresentation(
 }
 
 export function registerAgentAssetHistoryRoutes(app: Express): void {
+  app.get("/api/admin/presentations/reference-template/:format", authMiddleware, requirePermission("agents"), (req: Request, res: Response) => {
+    const format = z.enum(["pptx", "html"]).safeParse(req.params.format);
+    if (!format.success) return res.status(404).end();
+    const file = format.data === "pptx" ? PRESENTATION_REFERENCE_TEMPLATE.pptx : PRESENTATION_REFERENCE_TEMPLATE.html;
+    if (!fs.existsSync(file)) return res.status(404).end();
+    res.download(file, format.data === "pptx" ? "Presentacion-Santos-Saucedo.pptx" : "Presentacion-Santos-Saucedo.html");
+  });
   const generatedAssetAvailable = async (
     publicPath: string,
     localRoot: string,

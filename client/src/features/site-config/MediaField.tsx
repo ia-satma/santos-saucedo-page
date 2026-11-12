@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { siteLink } from "@shared/siteControls";
 import type { MediaItem } from "@shared/schema";
+import { getVideoEmbedUrl } from "@/lib/videoSource";
 
 export function MediaField({
   value,
@@ -55,7 +56,7 @@ export function MediaField({
           document
             ? "Elija un PDF."
             : video
-              ? "Elija un video MP4 o WebM."
+              ? "Elija un video MP4, WebM, MOV u OGG. También puede pegar un enlace de YouTube o Vimeo."
               : "Elija una imagen PNG, JPG, WebP o GIF.",
         );
       controller.current=new AbortController();
@@ -70,6 +71,7 @@ export function MediaField({
     }
   };
   const validReference=Boolean(value)&&siteLink.safeParse(value).success;
+  const embedUrl = video ? getVideoEmbedUrl(value) : null;
   return (
     <div className="space-y-3">
       <Input
@@ -86,14 +88,7 @@ export function MediaField({
           loading="lazy"
         />
       )}
-      {validReference && video && (
-        <video
-          src={value}
-          controls
-          preload="none"
-          className="max-h-40 max-w-full"
-        />
-      )}
+      {validReference && video && (embedUrl ? <iframe src={embedUrl} title="Vista previa del video externo" allow="autoplay; fullscreen; picture-in-picture" className="aspect-video w-full max-w-xl" /> : <video src={value} controls preload="none" className="max-h-40 max-w-full" />)}
       {validReference && (
         <a
           href={value}
@@ -150,7 +145,7 @@ export function MediaField({
           }}
         />
       </div>
-      <p className="text-sm text-muted-foreground">Hasta 200 MB. La referencia actual cambia solo cuando termina la carga.</p>
+      <p className="text-sm text-muted-foreground">Hasta 200 MB para archivos. YouTube y Vimeo se reproducen mediante un enlace seguro. La referencia actual cambia solo cuando termina la carga.</p>
       {error && (
         <p role="alert" className="text-sm text-red-700">
           {error}

@@ -85,7 +85,9 @@ async function runIteration(browser, iteration) {
       if (authToken) localStorage.setItem("ss_admin_token", authToken);
     }, token);
     const capture = iteration === 1;
-    await checkLogin(page, viewport.name, capture);
+    const loginPage = token ? await context.newPage() : page;
+    await checkLogin(loginPage, viewport.name, capture);
+    if (token) await loginPage.close();
     if (token) {
       for (const route of authenticatedRoutes) {
         await checkAuthenticatedRoute(page, route, viewport.name, capture);
