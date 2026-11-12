@@ -94,6 +94,7 @@ import {
 } from "@shared/schema";
 import { isNamedOnTeamPage, toPublicTeamMember, toPublicTeamProfile } from "@shared/teamVisibility";
 import { isPublicNews, toPublicNews } from "@shared/publicNews";
+import { publicRoute, publicRouteAliases } from "@shared/publicRoutes";
 import { desc, eq } from "drizzle-orm";
 import { z, ZodError } from "zod/v3";
 import {
@@ -319,8 +320,21 @@ export async function registerRoutes(
     const language = req.params[0];
     const queryStart = req.originalUrl.indexOf("?");
     const query = queryStart >= 0 ? req.originalUrl.slice(queryStart) : "";
-    res.redirect(301, `/${language}/industries${query}`);
+    res.redirect(301, language === "es" ? `/es/industrias${query}` : `/${language}/industries${query}`);
   });
+
+  // Spanish public slugs are canonical. Legacy English-looking paths under /es keep working
+  // through permanent redirects while CMS values continue storing stable internal routes.
+  for (const { internal, spanish } of publicRouteAliases()) {
+    if (internal === spanish) continue;
+    app.get([`/es${internal}`, `/es${internal}/*`], (req, res) => {
+      const sourcePrefix = `/es${internal}`;
+      const suffix = req.path.startsWith(sourcePrefix) ? req.path.slice(sourcePrefix.length) : "";
+      const queryStart = req.originalUrl.indexOf("?");
+      const query = queryStart >= 0 ? req.originalUrl.slice(queryStart) : "";
+      res.redirect(301, `/es${spanish}${suffix}${query}`);
+    });
+  }
 
   // Orígenes admitidos: los de la lista de CORS (CORS_ORIGIN, la misma que server/index.ts) o el
   // propio sitio (mismo host, también detrás del proxy). Los usan los formularios públicos y el
@@ -1093,7 +1107,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       // the server sitemap aligned with the static Pages sitemap and with the
       // locale-prefixed canonical URLs emitted by SEOHead.
       const localizedEntries = SUPPORTED_LANGUAGES.flatMap(({ code }) =>
-        staticPages.map((page) => ({ ...page, loc: `/${code}${page.loc}` })),
+        staticPages.map((page) => ({ ...page, loc: `/${code}${publicRoute(code, page.loc)}` })),
       );
 
       for (const page of localizedEntries) {
@@ -1111,7 +1125,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         for (const { code } of SUPPORTED_LANGUAGES) {
           urlEntries += `
   <url>
-    <loc>${baseUrl}/${code}/team/${member.slug}</loc>
+            <loc>${baseUrl}/${code}${publicRoute(code, `/team/${member.slug}`)}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1123,7 +1137,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         for (const { code } of SUPPORTED_LANGUAGES) {
           urlEntries += `
   <url>
-    <loc>${baseUrl}/${code}/practice-groups/${group.slug}</loc>
+            <loc>${baseUrl}/${code}${publicRoute(code, `/practice-groups/${group.slug}`)}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -1139,7 +1153,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         for (const { code } of SUPPORTED_LANGUAGES) {
           urlEntries += `
   <url>
-    <loc>${baseUrl}/${code}/news/${newsItem.slug}</loc>
+            <loc>${baseUrl}/${code}${publicRoute(code, `/news/${newsItem.slug}`)}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

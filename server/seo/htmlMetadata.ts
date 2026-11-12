@@ -1,9 +1,10 @@
 import { getCmsIntegrations } from "../cms/siteConfig";
 import { storage } from "../storage";
 import { isPublicNews } from "@shared/publicNews";
-import { SUPPORTED_LANGUAGES } from "@shared/constants";
+import { SUPPORTED_LANGUAGES, type LanguageCode } from "@shared/constants";
 import { readStaticCmsSection } from "../localization/staticSnapshots";
 import cmsStaticSnapshot from "@shared/cms-static-snapshot.json";
+import { fromSpanishRoute, publicRoute } from "@shared/publicRoutes";
 
 // Dominio de las etiquetas del index.html; injectSiteMetadata lo cambia por el siteUrl del CMS.
 const SITE = "https://www.santossaucedo.com";
@@ -54,10 +55,13 @@ function absoluteUrl(value: string) {
  * fecha); borradores y programadas conservan las etiquetas generales del sitio.
  */
 async function routeMetadata(pathname: string): Promise<RouteMetadata | undefined> {
-  const match = /^\/(?:(es|en|de|zh|ko|ja|ar|ru|fr|it)\/)?news\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/.exec(pathname);
+  const localeMatch = /^\/(es|en|de|zh|ko|ja|ar|ru|fr|it)(\/.*)?\/?$/.exec(pathname);
+  const language = (localeMatch?.[1] || "es") as LanguageCode;
+  const routeWithoutLocale = localeMatch?.[2] || pathname;
+  const internalPath = language === "es" ? fromSpanishRoute(routeWithoutLocale) : routeWithoutLocale;
+  const match = /^\/?news\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/.exec(internalPath.replace(/^\/+/, ""));
   if (match) {
-    const language = match[1] || "es";
-    const item = await storage.getNewsBySlug(match[2]);
+    const item = await storage.getNewsBySlug(match[1]);
     if (!item || !isPublicNews(item)) return;
     const translation = language === "es" ? undefined : await storage.getNewsTranslation(item.id, language);
     const title = plainText(translation?.title || item.titleEs || item.title);
@@ -70,7 +74,7 @@ async function routeMetadata(pathname: string): Promise<RouteMetadata | undefine
       title,
       documentTitle: title + " | " + (language === "es" ? "Monitor Laboral" : "Labor Monitor"),
       description: description || "Monitor Laboral de Santos & Saucedo.",
-      url: SITE + "/" + language + "/news/" + item.slug,
+      url: SITE + "/" + language + publicRoute(language, "/news/" + item.slug),
       image: absoluteUrl(ownImage || NEWS_SHARE_IMAGE),
       imageAlt: ownImage ? title : "Santos & Saucedo · Monitor Laboral",
       brandImage: !ownImage,
@@ -79,11 +83,10 @@ async function routeMetadata(pathname: string): Promise<RouteMetadata | undefine
     };
   }
 
-  const detailMatch = /^\/(es|en|de|zh|ko|ja|ar|ru|fr|it)\/(practice-groups|team)\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/.exec(pathname);
+  const detailMatch = /^\/?(practice-groups|team)\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/.exec(internalPath.replace(/^\/+/, ""));
   if (detailMatch) {
-    const language = detailMatch[1];
-    const type = detailMatch[2];
-    const slug = detailMatch[3];
+    const type = detailMatch[1];
+    const slug = detailMatch[2];
     const item = type === "practice-groups"
       ? await storage.getPracticeGroupBySlug(slug)
       : await storage.getTeamMemberBySlug(slug);
@@ -102,7 +105,7 @@ async function routeMetadata(pathname: string): Promise<RouteMetadata | undefine
       title,
       documentTitle: title + " | Santos & Saucedo",
       description,
-      url: SITE + "/" + language + route,
+      url: SITE + "/" + language + publicRoute(language, route),
       image: absoluteUrl(ownImage || NEWS_SHARE_IMAGE),
       imageAlt: title || "Santos & Saucedo",
       brandImage: !ownImage,
@@ -115,10 +118,8 @@ async function routeMetadata(pathname: string): Promise<RouteMetadata | undefine
   // unfurlers need the locale-specific canonical and hreflang tags in the
   // first HTML response as well. The CMS SEO snapshot already contains the
   // translated title and description for every public route.
-  const publicMatch = /^\/(es|en|de|zh|ko|ja|ar|ru|fr|it)(\/.*)?\/?$/.exec(pathname);
-  if (!publicMatch) return;
-  const language = publicMatch[1];
-  const route = publicMatch[2] || "/";
+  if (!localeMatch) return;
+  const route = internalPath || "/";
   const normalizedRoute = route === "/" ? "/" : route.replace(/\/$/, "");
   const seoKey = {
     "/": "home",
@@ -158,7 +159,7 @@ async function routeMetadata(pathname: string): Promise<RouteMetadata | undefine
     title,
     documentTitle: title,
     description,
-    url: SITE + "/" + language + (normalizedRoute === "/" ? "/" : normalizedRoute),
+    url: SITE + "/" + language + publicRoute(language, normalizedRoute),
     image: absoluteUrl(NEWS_SHARE_IMAGE),
     imageAlt: "Santos & Saucedo",
     brandImage: true,
@@ -169,8 +170,8 @@ async function routeMetadata(pathname: string): Promise<RouteMetadata | undefine
 
 function localizedAlternates(route: string): Array<{ hreflang: string; url: string }> {
   const alternates: Array<{ hreflang: string; url: string }> = SUPPORTED_LANGUAGES
-    .map(({ code, locale }) => ({ hreflang: locale, url: SITE + "/" + code + (route === "/" ? "/" : route) }))
-  return [...alternates, { hreflang: "x-default", url: SITE + "/es" + (route === "/" ? "/" : route) }];
+    .map(({ code, locale }) => ({ hreflang: locale, url: SITE + "/" + code + publicRoute(code, route) }))
+  return [...alternates, { hreflang: "x-default", url: SITE + "/es" + publicRoute("es", route) }];
 }
 
 function setMeta(html: string, attr: "name" | "property", key: string, value: string) {

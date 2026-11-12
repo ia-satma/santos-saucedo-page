@@ -1,4 +1,5 @@
 import { SUPPORTED_LANGUAGES, type LanguageCode } from "@shared/constants";
+import { publicRoute } from "@shared/publicRoutes";
 
 const LANGUAGE_CODES = new Set<string>(SUPPORTED_LANGUAGES.map(({ code }) => code));
 
@@ -45,7 +46,8 @@ function splitSuffix(pathname: string): { path: string; suffix: string } {
 export function localizedPath(language: LanguageCode, pathname: string): string {
   const { path, suffix } = splitSuffix(pathname || "/");
   const route = stripLanguagePrefix(path);
-  const normalizedRoute = route === "/" ? "" : route.replace(/^\/+/, "");
+  const localizedRoute = publicRoute(language, route);
+  const normalizedRoute = localizedRoute === "/" ? "" : localizedRoute.replace(/^\/+/, "");
   const output = PUBLIC_BASE_PATH + "/" + language + (normalizedRoute ? "/" + normalizedRoute : "/");
   return output.replace(/\/{2,}/g, "/") + suffix;
 }

@@ -200,7 +200,7 @@ function PublicCookiePreferences(){const {language}=useLanguage();return <Cookie
 // Barra «Llamar · Escribir» del teléfono: solo en Contacto, como en la demo aprobada; se carga aparte
 function ContactPhoneBar() {
   const [location] = useLocation();
-  if (location.replace(/\/+$/, "") !== "/contact") return null;
+  if (!["/contact", "/contacto"].includes(location.replace(/\/+$/, ""))) return null;
   return <Suspense fallback={null}><BarraTelefono /></Suspense>;
 }
 
@@ -251,24 +251,38 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/about" component={About} />
+        <Route path="/nuestra-firma" component={About} />
         <Route path="/industries" component={Industries} />
+        <Route path="/industrias" component={Industries} />
         <Route path="/industry-groups/:slug"><RedirectKeepingQuery to="/industries" /></Route>
         <Route path="/industry-groups"><RedirectKeepingQuery to="/industries" /></Route>
         <Route path="/practice-groups" component={PracticeGroups} />
         <Route path="/practice-groups/:slug" component={PracticeGroupDetail} />
+        <Route path="/practicas" component={PracticeGroups} />
+        <Route path="/practicas/:slug" component={PracticeGroupDetail} />
         <Route path="/team" component={Team} />
         <Route path="/team/:slug" component={TeamMemberDetail} />
+        <Route path="/socios" component={Team} />
+        <Route path="/socios/:slug" component={TeamMemberDetail} />
         <Route path="/news" component={News} />
         <Route path="/news/:slug" component={NewsDetail} />
+        <Route path="/monitor-laboral" component={News} />
+        <Route path="/monitor-laboral/:slug" component={NewsDetail} />
         <Route path="/contact" component={Contact} />
+        <Route path="/contacto" component={Contact} />
         <Route path="/careers" component={Careers} />
         <Route path="/careers/interns" component={Interns} />
+        <Route path="/carreras" component={Careers} />
+        <Route path="/pasantias" component={Interns} />
         <Route path="/experience/*?">
           <RedirectKeepingQuery to="/practice-groups" />
         </Route>
         <Route path="/privacy-policy" component={PrivacyPolicy} />
         <Route path="/terms" component={Terms} />
+        <Route path="/aviso-de-privacidad" component={PrivacyPolicy} />
+        <Route path="/terminos" component={Terms} />
         <Route path="/offices" component={Offices} />
+        <Route path="/oficinas" component={Offices} />
         {/* Testimonios: una sola ruta para todos los idiomas, como las demás páginas;
             /testimonials (inglés) lleva a la misma */}
         <Route path="/testimonios" component={Testimonials} />
@@ -280,7 +294,9 @@ function Router() {
           <RedirectKeepingQuery to="/news" />
         </Route>
         <Route path="/newsletter/unsubscribe" component={NewsletterUnsubscribe} />
+        <Route path="/boletin/unsubscribe" component={NewsletterUnsubscribe} />
         <Route path="/newsletter" component={Newsletter} />
+        <Route path="/boletin" component={Newsletter} />
         <Route path="/events/*?">
           <RedirectKeepingQuery to="/news" />
         </Route>
