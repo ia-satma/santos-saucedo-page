@@ -38,6 +38,46 @@ type GooglePlaceResponse = {
   }>;
 };
 
+type GooglePlaceSearchResponse = {
+  places?: Array<{
+    id?: string;
+    displayName?: { text?: string };
+    formattedAddress?: string;
+    googleMapsUri?: string;
+    reviews?: GooglePlaceResponse["reviews"];
+  }>;
+};
+
+const GOOGLE_MAPS_HOSTS = new Set(["www.google.com", "google.com", "maps.google.com"]);
+
+export function extractGoogleMapsCid(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  let url: URL;
+  try { url = new URL(value); } catch { return null; }
+  if (!/^https?:$/.test(url.protocol) || !GOOGLE_MAPS_HOSTS.has(url.hostname.toLowerCase())) return null;
+  const queryCid = url.searchParams.get("cid")?.match(/^[0-9]+$/)?.[0];
+  if (queryCid) {
+    try { return BigInt(queryCid).toString(16); } catch { return null; }
+  }
+  const decoded = decodeURIComponent(url.href);
+  const match = decoded.match(/!1s0x[0-9a-f]+:0x([0-9a-f]+)/i);
+  return match?.[1]?.toLowerCase() ?? null;
+}
+
+export function normalizeGoogleMapsUrl(value: unknown): { href: string; cid: string | null; query: string } {
+  let url: URL;
+  try { url = new URL(typeof value === "string" ? value.trim() : ""); } catch {
+    throw new Error("Introduce un enlace válido de Google Maps.");
+  }
+  if (!/^https?:$/.test(url.protocol) || !GOOGLE_MAPS_HOSTS.has(url.hostname.toLowerCase()) || !url.pathname.startsWith("/maps")) {
+    throw new Error("El enlace debe pertenecer a Google Maps.");
+  }
+  const placePath = url.pathname.split("/place/")[1]?.split("/")[0] || "";
+  const query = url.searchParams.get("query")?.trim() || decodeURIComponent(placePath).replace(/[+]+/g, " ").trim();
+  if (!query) throw new Error("El enlace de Google Maps no incluye una ficha o búsqueda.");
+  return { href: url.href, cid: extractGoogleMapsCid(url.href), query };
+}
+
 export function normalizeGooglePlaceReviews(payload: GooglePlaceResponse): GoogleReview[] {
   return (payload.reviews ?? []).flatMap((review) => {
     const quote = String(review.originalText?.text || review.text?.text || "").trim();
@@ -62,16 +102,11 @@ export function googleReviewSourceId(reviewId: string): string {
 
 function verifyGoogleReviewUrl(value: unknown): string {
   let url: URL;
-  try {
-    url = new URL(typeof value === "string" ? value : "");
-  } catch {
+  try { url = new URL(typeof value === "string" ? value : ""); } catch {
     throw new Error("La respuesta incluye una reseña sin enlace verificable de Google Maps.");
   }
-  if (!/^https?:$/.test(url.protocol) || !["www.google.com", "maps.google.com"].includes(url.hostname) || !url.pathname.startsWith("/maps/")) {
-    throw new Error("La respuesta incluye una reseña sin enlace verificable de Google Maps.");
-  }
-  const cid = decodeURIComponent(url.pathname).match(/!1s0x[0-9a-f]+:0x([0-9a-f]+)(?=!|$)/i)?.[1]?.toLowerCase();
-  if (cid !== (process.env.GOOGLE_MAPS_CID_HEX || SAUCEDO_SANTOS_CID).toLowerCase()) {
+  const cid = extractGoogleMapsCid(url.href);
+  if (!/^https?:$/.test(url.protocol) || !GOOGLE_MAPS_HOSTS.has(url.hostname.toLowerCase()) || !url.pathname.startsWith("/maps") || cid !== (process.env.GOOGLE_MAPS_CID_HEX || SAUCEDO_SANTOS_CID).toLowerCase()) {
     throw new Error("La respuesta incluye una reseña que no corresponde a Saucedo Santos S.C.");
   }
   return url.href;
@@ -112,6 +147,41 @@ export function normalizeOmkarReviewBatch(payload: unknown): OmkarReviewBatch {
     nextCursor: typeof body.next_cursor === "string" && body.next_cursor.trim() ? body.next_cursor.trim() : null,
     drafts,
   };
+}
+
+export async function fetchGooglePlaceReviewsFromMapsUrl(options: {
+  mapsUrl: string;
+  apiKey?: string;
+  expectedCid?: string;
+  fetchImpl?: typeof fetch;
+}): Promise<{ reviews: GoogleReview[]; placeId: string; cid: string; sourceUrl: string }> {
+  const source = normalizeGoogleMapsUrl(options.mapsUrl);
+  const expectedCid = (options.expectedCid || process.env.GOOGLE_MAPS_CID_HEX || SAUCEDO_SANTOS_CID).toLowerCase();
+  if (source.cid && source.cid !== expectedCid) throw new Error("El enlace no corresponde a Saucedo Santos S.C.");
+  const apiKey = (options.apiKey || process.env.GOOGLE_PLACES_API_KEY || "").trim();
+  if (!apiKey) throw new Error("Configura GOOGLE_PLACES_API_KEY para extraer reseñas de Google.");
+  const fetchImpl = options.fetchImpl || fetch;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15_000);
+  try {
+    const search = await fetchImpl("https://places.googleapis.com/v1/places:searchText", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Goog-Api-Key": apiKey, "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.googleMapsUri,places.reviews" },
+      body: JSON.stringify({ textQuery: source.query, languageCode: "es", maxResultCount: 5 }),
+      signal: controller.signal,
+    });
+    if (!search.ok) throw new Error(`Google Places respondió ${search.status}.`);
+    const places = (await search.json() as GooglePlaceSearchResponse).places ?? [];
+    const place = places.find((candidate) => {
+      const cid = extractGoogleMapsCid(candidate.googleMapsUri);
+      return cid === expectedCid || (!source.cid && /santos/i.test(candidate.displayName?.text || "") && /saucedo/i.test(candidate.displayName?.text || ""));
+    });
+    if (!place?.id) throw new Error("No se encontró la ficha verificada de Saucedo Santos en Google Maps.");
+    const reviews = normalizeGooglePlaceReviews({ reviews: place.reviews });
+    return { reviews, placeId: place.id, cid: extractGoogleMapsCid(place.googleMapsUri) || expectedCid, sourceUrl: source.href };
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 export async function fetchGooglePlaceReviews(options: {

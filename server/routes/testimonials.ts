@@ -15,7 +15,7 @@ import { authMiddleware } from "../auth";
 import { isReadOnlyAdmin } from "@shared/adminAccess";
 import { recordAccessEvent } from "../cms/accessAudit";
 import { getCmsIntegrations } from "../cms/siteConfig";
-import { fetchGooglePlaceReviews, googleReviewSourceId, normalizeOmkarReviewBatch } from "../services/googleTestimonials";
+import { fetchGooglePlaceReviews, fetchGooglePlaceReviewsFromMapsUrl, googleReviewSourceId, normalizeOmkarReviewBatch } from "../services/googleTestimonials";
 
 // Testimonios de clientes (junta 16-10-2026, Mario y Gabriel): el cliente escribe su comentario
 // desde un enlace de un solo uso que genera el despacho; nada se publica sin aprobación.
@@ -294,6 +294,37 @@ export function registerTestimonials(
       res.json({ imported: pending.length, reviewed: reviews.length, captured: pending.length });
     } catch (error) {
       res.status(503).json({ error: error instanceof Error ? error.message : "No se pudieron importar las reseñas de Google." });
+    }
+  });
+
+  app.post("/api/admin/testimonials/import-google-url", ...panel, async (req, res) => {
+    const mapsUrl = typeof req.body?.mapsUrl === "string" ? req.body.mapsUrl.trim() : "";
+    if (!mapsUrl || mapsUrl.length > 2000) return res.status(400).json({ error: "Introduce un enlace de Google Maps válido." });
+    try {
+      const result = await fetchGooglePlaceReviewsFromMapsUrl({ mapsUrl });
+      const existing = await db.select({ source: testimonials.source }).from(testimonials);
+      const known = new Set(existing.map((row) => row.source).filter(Boolean));
+      const pending = result.reviews.filter((review) => !known.has(googleReviewSourceId(review.id)));
+      if (pending.length) {
+        await db.insert(testimonials).values(pending.map((review) => ({
+          quote: review.quote,
+          authorName: review.authorName,
+          authorTitle: "Google Maps",
+          source: googleReviewSourceId(review.id),
+          sourceEs: review.mapsUrl || result.sourceUrl,
+          rating: review.rating,
+          language: review.language || null,
+          origin: "google",
+          status: "captured",
+          published: false,
+          showCompany: false,
+          consentAt: null,
+          updatedAt: new Date(),
+        })));
+      }
+      res.json({ sourceUrl: result.sourceUrl, placeId: result.placeId, imported: pending.length, alreadyPresent: result.reviews.length - pending.length, reviewed: result.reviews.length, captured: pending.length, requiresApproval: true });
+    } catch (error) {
+      res.status(400).json({ error: error instanceof Error ? error.message : "No se pudieron extraer las reseñas de Google." });
     }
   });
 

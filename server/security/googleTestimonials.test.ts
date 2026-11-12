@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { normalizeGooglePlaceReviews, fetchGooglePlaceReviews, googleReviewSourceId, normalizeOmkarReviewBatch } from "../services/googleTestimonials";
+import { normalizeGooglePlaceReviews, fetchGooglePlaceReviews, fetchGooglePlaceReviewsFromMapsUrl, extractGoogleMapsCid, normalizeGoogleMapsUrl, googleReviewSourceId, normalizeOmkarReviewBatch } from "../services/googleTestimonials";
 
 test("normaliza reseñas de Google sin alterar el comentario y conserva la calificación", () => {
   const rows = normalizeGooglePlaceReviews({ reviews: [{
@@ -72,4 +72,30 @@ test("rechaza un JSON de Google que pertenece a otra ficha", () => {
       review_link: "https://www.google.com/maps/reviews/data=!1m5!1s0x1111111111111111:0x2222222222222222!2m1!1e2!3m1!2e1",
     }],
   }), /no corresponde/);
+});
+
+test("deriva y valida el CID desde una URL de Maps y extrae reseñas con Places Search", async () => {
+  const mapsUrl = "https://www.google.com/maps/place/Saucedo+Santos+S.C./@25.6576042,-100.3678703,17z/data=!3m1!4b1!4m6!3m5!1s0x8662be314136c21b:0x2fc821e36c6f09dd!8m2!3d25.6576042!4d-100.3652954!16s%2Fg%2F1pzq4rwn2?entry=ttu";
+  assert.equal(extractGoogleMapsCid(mapsUrl), "2fc821e36c6f09dd");
+  assert.equal(normalizeGoogleMapsUrl(mapsUrl).query, "Saucedo Santos S.C.");
+  const result = await fetchGooglePlaceReviewsFromMapsUrl({
+    mapsUrl,
+    apiKey: "secret",
+    fetchImpl: async (url, init) => {
+      assert.equal(url, "https://places.googleapis.com/v1/places:searchText");
+      assert.equal((init?.headers as Record<string, string>)["X-Goog-Api-Key"], "secret");
+      return new Response(JSON.stringify({ places: [{
+        id: "places/saucedo",
+        displayName: { text: "Santos & Saucedo" },
+        googleMapsUri: mapsUrl,
+        reviews: [{ name: "places/reviews/1", rating: 5, text: { text: "Excelente servicio", languageCode: "es" }, authorAttribution: { displayName: "Cliente" } }],
+      }] }), { status: 200 });
+    },
+  });
+  assert.equal(result.placeId, "places/saucedo");
+  assert.equal(result.reviews[0].authorName, "Cliente");
+});
+
+test("rechaza URL de Maps de otro dominio", () => {
+  assert.throws(() => normalizeGoogleMapsUrl("https://example.com/maps/place/Santos"), /Google Maps/);
 });

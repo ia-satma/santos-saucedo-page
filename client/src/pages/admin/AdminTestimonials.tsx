@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { adminApiRequest, readAdminJson } from "@/lib/adminAuth";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TESTIMONIAL_QUOTE_MAX } from "@shared/constants";
 import type { Testimonial, TestimonialInvite } from "@shared/schema";
+import { useSiteDetails } from "@/components/home26/useSiteContact";
 
 // Testimonios en el panel: invitaciones de un solo uso, moderación y orden. Nada se publica sin
 // la aprobación del administrador principal (super_admin); los editores generan invitaciones,
@@ -48,6 +49,12 @@ export default function AdminTestimonials() {
   const [editing, setEditing] = useState<{ id: string; draft: Draft } | null>(null);
   const [manual, setManual] = useState<{ draft: Draft; consent: boolean } | null>(null);
   const [googleJsonResult, setGoogleJsonResult] = useState<{ imported: number; alreadyPresent: number; ratingsOnly: number; nextCursor: string | null } | null>(null);
+  const [googleMapsUrl, setGoogleMapsUrl] = useState("");
+  const [googleUrlResult, setGoogleUrlResult] = useState<{ imported: number; alreadyPresent: number; reviewed: number } | null>(null);
+  const { googleReviewsUrl } = useSiteDetails();
+  useEffect(() => {
+    if (!googleMapsUrl && googleReviewsUrl) setGoogleMapsUrl(googleReviewsUrl);
+  }, [googleMapsUrl, googleReviewsUrl]);
 
   const me = useQuery<{ role: string; username?: string }>({
     queryKey: ["/api/admin/me"],
@@ -92,6 +99,14 @@ export default function AdminTestimonials() {
       setCreated({ url, name: invite.clientName.trim(), email: invite.clientEmail.trim(), expiresAt: String(row.expiresAt) });
       setInvite({ clientName: "", clientEmail: "" });
     });
+
+  const importGoogleUrl = () =>
+    run("google-url", async () => {
+      const mapsUrl = googleMapsUrl.trim();
+      if (!mapsUrl) throw new Error("Introduce el enlace de la ficha de Google Maps.");
+      const result = await call("POST", "/api/admin/testimonials/import-google-url", { mapsUrl }) as { imported: number; alreadyPresent: number; reviewed: number };
+      setGoogleUrlResult(result);
+    }, "Reseñas extraídas como capturadas. Revisa y aprueba manualmente las que deban publicarse.");
 
   const importGoogleJson = (file: File) =>
     run("google-json", async () => {
@@ -266,14 +281,29 @@ export default function AdminTestimonials() {
         </div>
         <details className="border p-4" data-testid="google-testimonials-lab">
           <summary className="cursor-pointer font-medium">Laboratorio de importación desde Google</summary>
-          <div className="mt-3 space-y-3 text-sm text-muted-foreground">
-            <p>Descarga un JSON de reseñas de la ficha de Google Maps con el extractor aprobado y súbelo aquí. El CMS valida que cada enlace pertenezca a Saucedo Santos, elimina duplicados y deja todo como capturado.</p>
-            <label className="inline-flex cursor-pointer items-center rounded-md border px-3 py-2 text-foreground">
-              Cargar JSON de Google
-              <input type="file" accept="application/json,.json" className="sr-only" onChange={(event) => { const file = event.target.files?.[0]; if (file) void importGoogleJson(file); event.target.value = ""; }} data-testid="input-google-testimonials-json" />
-            </label>
-            {busy === "google-json" && <span role="status"> Validando e importando…</span>}
-            {googleJsonResult && <p role="status">Última carga: {googleJsonResult.imported} importadas, {googleJsonResult.alreadyPresent} ya existentes y {googleJsonResult.ratingsOnly} solo con estrellas.{googleJsonResult.nextCursor ? " Hay más resultados disponibles con el siguiente cursor." : ""}</p>}
+          <div className="mt-3 space-y-4 text-sm text-muted-foreground">
+            <div className="space-y-2">
+              <p>Conecta la ficha de Google Maps de Santos & Saucedo. El agente verifica el enlace, busca la ficha con Google Places y deja las reseñas como capturadas para revisión humana. La conexión usa la clave de Google Places configurada en los secretos del servidor.</p>
+              <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
+                <label className="space-y-1">
+                  <span className="block text-foreground">Enlace de Google Maps</span>
+                  <Input value={googleMapsUrl} onChange={(event) => setGoogleMapsUrl(event.target.value)} placeholder="https://www.google.com/maps/place/..." data-testid="input-google-maps-url" />
+                </label>
+                <Button variant="outline" disabled={busy === "google-url" || !googleMapsUrl.trim()} onClick={() => void importGoogleUrl()} data-testid="button-extract-google-testimonials">
+                  {busy === "google-url" ? "Extrayendo…" : "Extraer reseñas con agente"}
+                </Button>
+              </div>
+              {googleUrlResult && <p role="status">Última extracción: {googleUrlResult.imported} nuevas, {googleUrlResult.alreadyPresent} ya existentes de {googleUrlResult.reviewed} reseñas. Todas quedan capturadas hasta su aprobación.</p>}
+            </div>
+            <div className="space-y-2 border-t pt-3">
+              <p>También puedes cargar el JSON del laboratorio externo. El CMS valida el enlace, elimina duplicados y conserva la revisión humana.</p>
+              <label className="inline-flex cursor-pointer items-center rounded-md border px-3 py-2 text-foreground">
+                Cargar JSON de Google
+                <input type="file" accept="application/json,.json" className="sr-only" onChange={(event) => { const file = event.target.files?.[0]; if (file) void importGoogleJson(file); event.target.value = ""; }} data-testid="input-google-testimonials-json" />
+              </label>
+              {busy === "google-json" && <span role="status"> Validando e importando…</span>}
+              {googleJsonResult && <p role="status">Última carga: {googleJsonResult.imported} importadas, {googleJsonResult.alreadyPresent} ya existentes y {googleJsonResult.ratingsOnly} solo con estrellas.{googleJsonResult.nextCursor ? " Hay más resultados disponibles con el siguiente cursor." : ""}</p>}
+            </div>
           </div>
         </details>
         {manual && (
