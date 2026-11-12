@@ -7,6 +7,8 @@ import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { Link, useParams, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAdminAuth, adminApiRequest } from "@/lib/adminAuth";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { localizeHref } from "@/lib/localeRouting";
 import { queryClient } from "@/lib/queryClient";
 import { cmsSections, type CmsSection, type CmsValue } from "@shared/cms";
 import { SUPPORTED_LANGUAGES } from "@shared/constants";
@@ -28,6 +30,8 @@ export default function AdminSiteConfig({ fixedSection }: { fixedSection?: CmsSe
   const page = getCmsEditorPage(section.key);
   const activeTab = getCmsTab(section.key);
   const { isAuthenticated, isLoading, requireAuth } = useAdminAuth();
+  const { language } = useLanguage();
+  const publicPath = localizeHref(section.path, language);
   const { toast } = useToast();
   const [draft, setDraft] = useState<CmsValue | undefined>();
   const [snapshot, setSnapshot] = useState("");
@@ -76,7 +80,7 @@ export default function AdminSiteConfig({ fixedSection }: { fixedSection?: CmsSe
     <header className="cms-editor-header"><div className="cms-editor-header-inner">
       <div className="cms-editor-breadcrumb" aria-label="Ruta del editor"><Link href="/admin/dashboard">Inicio</Link><span aria-hidden="true">›</span><span>{page.group}</span><span aria-hidden="true">›</span><strong>{page.label}</strong></div>
       <div className="cms-editor-heading-row"><div><h1>{page.label}</h1><p>{page.description}</p><span className="cms-editor-impact">{page.impact}</span></div><span className="cms-editor-status" role="status">{dirty ? "Cambios sin guardar" : "Cambios guardados"}</span></div>
-      <div className="flex flex-wrap gap-3 mt-5"><a href={section.path} target="_blank" rel="noopener noreferrer" className="admin-subtle-link">Ver página pública ↗</a><Button variant="outline" onClick={() => setShowPreview((current) => !current)}>{showPreview ? "Cerrar vista previa" : "Ver vista previa"}</Button><Button disabled={!dirty || save.isPending} onClick={() => save.mutate()} data-testid="button-save-site-config">{save.isPending ? "Guardando…" : "Guardar cambios"}</Button></div>
+      <div className="flex flex-wrap gap-3 mt-5"><a href={publicPath} target="_blank" rel="noopener noreferrer" className="admin-subtle-link">Ver página pública ↗</a><Button variant="outline" onClick={() => setShowPreview((current) => !current)}>{showPreview ? "Cerrar vista previa" : "Ver vista previa"}</Button><Button disabled={!dirty || save.isPending} onClick={() => save.mutate()} data-testid="button-save-site-config">{save.isPending ? "Guardando…" : "Guardar cambios"}</Button></div>
     </div></header>
     <main className="cms-editor-main" id="admin-main">
       <AdminPageHelp pageId={`site-config-${page.id}`} manualSectionId={page.manualId}>Edita esta página por bloques. Guarda los cambios para reflejarlos en el sitio. Los campos de idioma mantienen separadas las versiones en español e inglés.</AdminPageHelp>
@@ -88,7 +92,7 @@ export default function AdminSiteConfig({ fixedSection }: { fixedSection?: CmsSe
       {query.isLoading && <p role="status">Cargando contenido…</p>}{query.isError && <p role="alert">{query.error.message} <Button variant="outline" onClick={() => query.refetch()}>Reintentar</Button></p>}
       {value !== undefined && <section className="cms-editor-card" aria-labelledby="cms-editor-content-title"><h3 id="cms-editor-content-title" className="sr-only">Campos editables de {activeTab.label}</h3>{section.key === "integrations" ? <IntegrationFields value={value as unknown as SiteIntegrations} onChange={(next) => setDraft(next as unknown as CmsValue)} /> : section.key === "navigation" ? <NavigationFields value={value as unknown as SiteNavigation} onChange={(next) => setDraft(next as unknown as CmsValue)} /> : <ConfigFields value={value} media={section.key === "media" || section.key === "v3" || section.key === "home"} path={selectedLang ? [selectedLang] : []} onChange={(next) => setDraft(selectedLang && obj ? { ...obj, [selectedLang]: next } : next)} />}</section>}
       {query.data?.previous && <div className="mt-5"><Button variant="outline" onClick={() => { if (window.confirm("¿Cargar la versión anterior como borrador? Tendrás que guardar para aplicarla.")) setDraft(query.data!.previous!); }}>Restaurar versión anterior como borrador</Button></div>}
-      {showPreview && <div className="cms-editor-card mt-5 p-0 overflow-hidden"><p className="p-4 text-sm text-muted-foreground">Vista del sitio guardado. El borrador se muestra después de guardar.</p><iframe key={query.data?.revision} title={`Vista previa de ${page.label}`} src={`${section.path}?cms-preview=1`} className="w-full h-[700px] border-t" /></div>}
+      {showPreview && <div className="cms-editor-card mt-5 p-0 overflow-hidden"><p className="p-4 text-sm text-muted-foreground">Vista del sitio guardado. El borrador se muestra después de guardar.</p><iframe key={query.data?.revision} title={`Vista previa de ${page.label}`} src={`${publicPath}?cms-preview=1`} className="w-full h-[700px] border-t" /></div>}
       <select id="cms-section" value={section.key} onChange={(event) => changeSection(event.target.value)} className="sr-only" aria-label="Sección técnica actual">{cmsSections.map((item) => <option key={item.key} value={item.key}>{item.label}</option>)}</select>
     </main>
   </div>;
