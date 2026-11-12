@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { LogIn, AlertCircle } from "lucide-react";
+import "./admin-login.css";
 
 type LoginFormData = {
   username: string;
@@ -241,28 +242,44 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted dark:bg-gray-900 px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center" data-testid="text-login-title">
-            {t.title}
-          </CardTitle>
-          <CardDescription className="text-center" data-testid="text-login-description">
-            {t.description}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <div className="admin-login-page">
+      <aside className="admin-login-aside" aria-label="Santos & Saucedo">
+        <a href="/" className="admin-login-brand" aria-label="Santos & Saucedo">
+          <img src="/logo-color.png" alt="Santos & Saucedo" />
+        </a>
+        <div className="admin-login-aside-copy">
+          <span className="admin-login-eyebrow">Santos &amp; Saucedo</span>
+          <p>Gestión de contenido para el sitio.</p>
+        </div>
+        <div className="admin-login-aside-note">
+          <span aria-hidden="true">01</span>
+          <p>Edite páginas, medios, traducciones y publicaciones desde un solo lugar.</p>
+        </div>
+      </aside>
+      <main className="admin-login-main">
+        <Card className="admin-login-card">
+          <CardHeader className="admin-login-card-header">
+            <span className="admin-login-eyebrow">Acceso privado</span>
+            <CardTitle className="admin-login-title" data-testid="text-login-title">
+              {t.title}
+            </CardTitle>
+            <CardDescription className="admin-login-description" data-testid="text-login-description">
+              {t.description}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="admin-login-card-content">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="admin-login-form">
               <FormField
                 control={form.control}
                 name="username"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="admin-login-field">
                     <FormLabel>{t.username}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
+                        className="admin-login-input"
                         placeholder={t.usernamePlaceholder}
                         autoComplete="username"
                         data-testid="input-username"
@@ -277,11 +294,12 @@ export default function AdminLogin() {
                 control={form.control}
                 name="password"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="admin-login-field">
                     <FormLabel>{t.password}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
+                        className="admin-login-input"
                         type="password"
                         placeholder={t.passwordPlaceholder}
                         autoComplete="current-password"
@@ -295,7 +313,9 @@ export default function AdminLogin() {
 
               {loginMutation.isError && (
                 <div 
-                  className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-none text-sm"
+                  className="admin-login-error"
+                  role="alert"
+                  aria-live="polite"
                   data-testid="error-login-message"
                 >
                   <AlertCircle className="h-4 w-4" />
@@ -305,8 +325,9 @@ export default function AdminLogin() {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="admin-login-submit"
                 disabled={loginMutation.isPending}
+                aria-busy={loginMutation.isPending}
                 data-testid="button-login"
               >
                 {loginMutation.isPending ? (
@@ -318,10 +339,12 @@ export default function AdminLogin() {
                   </>
                 )}
               </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+        <p className="admin-login-footer">Acceso seguro para el equipo de Santos &amp; Saucedo.</p>
+      </main>
     </div>
   );
 }
