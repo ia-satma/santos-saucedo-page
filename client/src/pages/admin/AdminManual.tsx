@@ -1,4 +1,7 @@
 import { Link } from "wouter";
+import { ArrowRight, CheckCircle2, CircleHelp, Search } from "lucide-react";
+import "@/features/admin/manual.css";
+
 const lessons = [
   {
     title: "Editar una página",
@@ -49,39 +52,97 @@ const lessons = [
     label: "Volver al resumen",
   },
 ];
+
+const quickStart = [
+  "Empiece en Resumen para ver el estado del sitio y los pendientes.",
+  "Abra la sección que quiere cambiar y use la ayuda contextual de la pantalla.",
+  "Guarde los cambios y compruebe la vista pública antes de continuar.",
+];
+
 export default function AdminManual() {
   return (
-    <main className="admin-overview">
-      <p className="admin-page-kicker">Ayuda para el equipo</p>
-      <h1>Guía de uso</h1>
-      <p className="admin-page-description">
-        Los recorridos principales para mantener el sitio. Guarde y revise antes
-        de activar la visibilidad de un contenido.
-      </p>
-      <div className="mt-9 space-y-8 max-w-3xl">
+    <main className="admin-overview admin-manual-page" data-testid="admin-manual-page">
+      <header className="admin-overview-heading admin-manual-hero">
+        <div>
+          <p className="admin-page-kicker">Centro de ayuda</p>
+          <h1>Guía de uso del CMS</h1>
+          <p className="admin-page-description">
+            Recorridos sencillos para editar el sitio, revisar cambios y publicar
+            contenido sin tocar código.
+          </p>
+        </div>
+        <Link href="/admin/content" className="admin-primary-link">
+          <Search aria-hidden="true" />
+          Buscar una sección
+        </Link>
+      </header>
+
+      <section className="admin-manual-start" aria-labelledby="manual-start-title">
+        <div>
+          <p className="admin-page-kicker">Primeros pasos</p>
+          <h2 id="manual-start-title">La forma más fácil de empezar</h2>
+          <p>
+            El CMS organiza el contenido por lo que las personas ven en el sitio.
+            Cada pantalla explica qué puede cambiar y dónde se reflejará.
+          </p>
+        </div>
+        <ol>
+          {quickStart.map((step, index) => (
+            <li key={step}>
+              <span aria-hidden="true">{index + 1}</span>
+              <p>{step}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <div className="admin-manual-heading">
+        <div>
+          <p className="admin-page-kicker">Recorridos frecuentes</p>
+          <h2>Qué quiere hacer hoy</h2>
+        </div>
+        <Link href="/admin/guide" className="admin-subtle-link">
+          Ver guía técnica <ArrowRight aria-hidden="true" />
+        </Link>
+      </div>
+
+      <div className="admin-manual-grid">
         {lessons.map((lesson, i) => (
           <section
             key={lesson.title}
-            className="border-t pt-6 grid grid-cols-[30px_minmax(0,1fr)] gap-5"
+            className="admin-manual-card"
           >
-            <span className="text-xs text-muted-foreground tabular-nums pt-1">
-              {String(i + 1).padStart(2, "0")}
-            </span>
+            <div className="admin-manual-card-top">
+              <span className="admin-manual-index" aria-hidden="true">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <CheckCircle2 aria-hidden="true" />
+            </div>
             <div>
-              <h2 className="text-base font-medium">{lesson.title}</h2>
-              <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
-                {lesson.text}
-              </p>
+              <h3>{lesson.title}</h3>
+              <p>{lesson.text}</p>
               <Link
                 href={lesson.href}
-                className="text-xs underline inline-block mt-4"
+                className="admin-manual-card-link"
               >
-                {lesson.label}
+                {lesson.label} <ArrowRight aria-hidden="true" />
               </Link>
             </div>
           </section>
         ))}
       </div>
+
+      <section className="admin-manual-note" aria-labelledby="manual-help-title">
+        <CircleHelp aria-hidden="true" />
+        <div>
+          <h2 id="manual-help-title">¿No sabe dónde está una opción?</h2>
+          <p>
+            Use la búsqueda del panel con palabras sencillas como “portada”,
+            “abogados”, “video” o “contacto”. También puede abrir la ayuda de
+            cada pantalla sin perder lo que ya estaba editando.
+          </p>
+        </div>
+      </section>
     </main>
   );
 }

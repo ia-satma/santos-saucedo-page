@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { adminApiRequest } from "@/lib/adminAuth";
+import { Link } from "wouter";
 import { NerveCenter } from "@/components/admin/NerveCenter";
 import { EvolutionTimeline } from "@/components/admin/EvolutionTimeline";
 import { Brain, Cpu, Shield, Activity, Zap, TrendingUp } from "lucide-react";
@@ -480,6 +481,12 @@ export default function AdminGuide() {
           <span className="text-muted-foreground">—</span>
           <span className="text-sm text-primary font-medium">{t.livingEcosystem}</span>
         </div>
+        <Link
+          href="/admin/manual"
+          className="inline-flex items-center text-sm text-primary underline underline-offset-4"
+        >
+          Volver a la guía de uso del CMS
+        </Link>
       </header>
 
       <section className="grid gap-4 md:grid-cols-3" data-testid="system-stats">

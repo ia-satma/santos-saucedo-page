@@ -19,6 +19,8 @@ import {
 } from "@radix-ui/react-icons";
 import { adminApiRequest } from "@/lib/adminAuth";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AdminPageHelp } from "@/components/admin/AdminPageHelp";
+import "@/features/admin/overview.css";
 interface Overview {
   team: { total: number; visible: number };
   practices: { total: number; visible: number };
@@ -115,6 +117,11 @@ export default function AdminOverview() {
           Nueva publicación
         </Link>
       </div>
+      <AdminPageHelp pageId="dashboard" manualSectionId="primeros-pasos">
+        Desde aquí puede revisar el estado del contenido y entrar directamente a
+        la sección que quiere editar. Guardar un cambio actualiza el sitio sin
+        necesidad de modificar código.
+      </AdminPageHelp>
       {query.isError && (
         <div className="admin-error mt-6" role="alert">
           {query.error.message}{" "}
@@ -140,6 +147,17 @@ export default function AdminOverview() {
             </span>
           </div>
         ))}
+      </section>
+      <section className="admin-overview-guide" aria-labelledby="overview-guide-title">
+        <div>
+          <p className="admin-page-kicker">Ruta rápida</p>
+          <h2 id="overview-guide-title">Mantenga el sitio en tres pasos</h2>
+        </div>
+        <ol>
+          <li><span>1</span><div><strong>Elija una sección</strong><p>Portada, firma, equipo, prácticas, industrias o publicaciones.</p></div></li>
+          <li><span>2</span><div><strong>Edite y guarde</strong><p>La ayuda de cada pantalla explica qué cambia y en qué idioma.</p></div></li>
+          <li><span>3</span><div><strong>Revise la vista pública</strong><p>Abra el sitio para comprobar el resultado antes de continuar.</p></div></li>
+        </ol>
       </section>
       <section className="my-8 grid gap-6 lg:grid-cols-[minmax(250px,.7fr)_minmax(0,1.3fr)]"><div>{hasAdminPermission(access.data,"advanced")?<AiUsageCard/>:<p className="border bg-white p-5">Use los accesos disponibles para su función.</p>}</div><div className="border bg-white p-6"><h2 className="text-xl font-semibold mb-5">Creación con IA y accesos</h2><div className="grid sm:grid-cols-2 gap-3">{allAdminLinks.filter(item=>['/admin/agents','/admin/presentations','/admin/social','/admin/documents','/admin/generated-images','/admin/generated-audio','/admin/users','/admin/integrations','/admin/cookie-consent'].includes(item.href)&&canVisitAdminPath(access.data,item.href)).map(item=><Link key={item.href} href={item.href} className="admin-shortcut border p-4" data-tone={adminLinkTone(item.href, item.href.includes("users") || item.href.includes("integrations") || item.href.includes("cookie-consent") ? "amber" : "teal")}><span className="admin-shortcut-icon"><item.icon /></span><strong>{item.label}</strong><span className="block text-sm text-muted-foreground mt-1">{item.hint}</span></Link>)}</div></div></section>
       <div className="admin-overview-grid">
