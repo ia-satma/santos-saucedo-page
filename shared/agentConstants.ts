@@ -50,6 +50,33 @@ export interface AgentDefinition {
   capabilities: readonly string[];
 }
 
+/**
+ * AI-powered CMS modules with their own routes and persistence. They are
+ * intentionally separate from the 14 AgentOrchestrator runtime agents.
+ */
+export const AI_MODULE_DEFINITIONS = [
+  {
+    id: 'social_studio',
+    name: 'Posts y carruseles IA',
+    description: 'Genera, revisa, edita y versiona posts y carruseles para redes sociales.',
+    href: '/admin/social',
+    provider: 'OpenAI y generación visual administrada',
+    persistence: 'Biblioteca privada social_assets con PNG, HTML, ZIP y versiones',
+    capabilities: ['Posts', 'Carruseles', 'Copys por red', 'Imágenes', 'Versiones', 'Revisión'],
+  },
+  {
+    id: 'letterhead_documents',
+    name: 'Documentos con membrete',
+    description: 'Organiza texto con IA y genera documentos DOCX y PDF con la identidad oficial.',
+    href: '/admin/documents',
+    provider: 'OpenAI para organización editorial',
+    persistence: 'Biblioteca privada generated_documents con versiones y restauración',
+    capabilities: ['Organización editorial', 'DOCX', 'PDF', 'Cuatro membretes', 'Versiones', 'Edición'],
+  },
+] as const;
+
+export type AiModuleId = (typeof AI_MODULE_DEFINITIONS)[number]['id'];
+
 export const AGENT_DEFINITIONS: readonly AgentDefinition[] = [
   {
     id: AGENT_IDS.CONTENT_ANALYZER,

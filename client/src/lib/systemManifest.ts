@@ -3,4 +3,5 @@ export {
   AGENT_DEFINITIONS,
   ALL_AGENT_IDS,
   EXPECTED_AGENT_COUNTS,
+  AI_MODULE_DEFINITIONS,
 } from "@shared/agentConstants";

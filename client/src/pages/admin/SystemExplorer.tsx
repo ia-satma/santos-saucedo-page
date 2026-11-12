@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "wouter";
-import { AGENT_DEFINITIONS } from "@shared/agentConstants";
+import { AGENT_DEFINITIONS, AI_MODULE_DEFINITIONS } from "@shared/agentConstants";
 import { adminNavigation } from "@/features/admin/navigation";
 import { canVisitAdminPath } from "@shared/adminAccess";
 import { useQuery } from "@tanstack/react-query";
@@ -40,6 +40,11 @@ export default function SystemExplorer() {
       .toLocaleLowerCase("es")
       .includes(normalized),
   );
+  const modules = AI_MODULE_DEFINITIONS.filter((module) =>
+    `${module.name} ${module.description} ${module.persistence}`
+      .toLocaleLowerCase("es")
+      .includes(normalized),
+  );
   const download = () => {
     const report = [
       "# CMS Santos & Saucedo",
@@ -53,6 +58,9 @@ export default function SystemExplorer() {
       "",
       "## Agentes",
       ...agents.map((a) => `- ${a.name} (${a.id}): ${a.description}`),
+      "",
+      "## Módulos de creación IA",
+      ...modules.map((module) => `- ${module.name} (${module.id}): ${module.href} — ${module.description}`),
       "",
       "## Archivos",
       "Los medios públicos y presentaciones privadas se conservan en Replit App Storage. Los documentos privados se descargan con una sesión autorizada.",
@@ -123,6 +131,23 @@ export default function SystemExplorer() {
               <p className="text-sm text-muted-foreground mt-3">
                 {agent.capabilities.join(" · ")}
               </p>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="mt-12">
+        <h2 className="text-xl font-semibold">
+          Módulos de creación IA · {AI_MODULE_DEFINITIONS.length}
+        </h2>
+        <p className="my-3 text-muted-foreground">
+          Estos módulos usan IA y mantienen bibliotecas privadas editables fuera de la cola de agentes editoriales.
+        </p>
+        <div className="grid gap-4 md:grid-cols-2 mt-5">
+          {modules.map((module) => (
+            <article className="border p-5 rounded-md" key={module.id}>
+              <h3 className="font-semibold"><Link className="underline" href={module.href}>{module.name}</Link></h3>
+              <p className="text-sm mt-2">{module.description}</p>
+              <p className="text-sm text-muted-foreground mt-3">{module.persistence}</p>
             </article>
           ))}
         </div>

@@ -50,6 +50,7 @@ import { Link, useLocation } from "wouter";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AgentUseCenter } from "@/components/admin/AgentUseCenter";
 import { AiUsageCard } from "@/components/admin/AiUsageCard";
+import { AI_MODULE_DEFINITIONS } from "@shared/agentConstants";
 
 import { agentTone } from "@/features/admin/appearance";
 
@@ -411,7 +412,7 @@ export default function AdminAgents() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <AdminPageHeader
           title="Sistema de Agentes IA"
-          description="Usa, prueba y supervisa los 14 agentes desde un solo lugar"
+          description="Usa y supervisa los 14 agentes editoriales y los módulos de creación IA"
           icon={Bot}
           actions={
             <>
@@ -470,6 +471,39 @@ export default function AdminAgents() {
             </CardContent>
           </Card>
         )}
+
+        <section className="mb-8 space-y-4" aria-labelledby="ai-module-inventory">
+          <div>
+            <h2 id="ai-module-inventory" className="text-lg font-semibold text-foreground">
+              Módulos de creación IA conectados al CMS
+            </h2>
+            <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+              Estos módulos usan IA y tienen sus propias bibliotecas editables. Se muestran separados del orquestador de los 14 agentes editoriales.
+            </p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {AI_MODULE_DEFINITIONS.map((module) => (
+              <Card key={module.id} data-testid={`card-ai-module-${module.id}`}>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">{module.name}</CardTitle>
+                  <CardDescription>{module.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3 text-sm">
+                  <p><span className="font-medium">Proveedor</span> {module.provider}</p>
+                  <p><span className="font-medium">Persistencia</span> {module.persistence}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {module.capabilities.map((capability) => (
+                      <Badge key={capability} variant="outline">{capability}</Badge>
+                    ))}
+                  </div>
+                  <Button asChild variant="outline" size="sm">
+                    <Link href={module.href}>Abrir módulo</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
 
         <div className="grid gap-4 md:grid-cols-4 mb-8">
           <Card>

@@ -11,7 +11,7 @@ import { db } from "../server/db";
 import * as schema from "../shared/schema";
 import { registerRoutes } from "../server/routes";
 import { hashPassword } from "../server/auth";
-import { ALL_AGENT_IDS } from "../shared/agentConstants";
+import { ALL_AGENT_IDS, AI_MODULE_DEFINITIONS } from "../shared/agentConstants";
 import { initializeAgents, orchestrator } from "../server/agents";
 assert(
   ["localhost", "127.0.0.1", "[::1]"].includes(
@@ -166,6 +166,12 @@ try {
     );
   const status = ok(await call("GET", "/api/agents/status"));
   assert.equal(status.orchestrator.registeredAgents.length, 14);
+  assert.deepEqual(AI_MODULE_DEFINITIONS.map((module) => module.id), ["social_studio", "letterhead_documents"]);
+  for (const module of AI_MODULE_DEFINITIONS) {
+    assert.match(module.href, /^\/admin\//);
+    assert(module.capabilities.length > 0);
+    assert(module.persistence.length > 0);
+  }
   const activeLanguages = ok(await call("GET", "/api/active-languages"), 200, "active languages");
   assert.equal(activeLanguages.activeLanguages.length, 10);
   const disabledForCheck = activeLanguages.activeLanguages.filter((code: string) => code !== "it");
@@ -544,7 +550,7 @@ try {
     "history immutable",
   );
   console.log(
-    `PANEL ACCEPTANCE PASSED: ${count} HTTP checks, ${reads.length} private read endpoints, ${(await import("../shared/cms")).cmsSections.length} config sections, 14 agent contracts, 12 catalog CRUD flows, knowledge approval, copy archive/restore, private document upload and PPTX/PDF/PNG generation/download. No external AI call.`,
+    `PANEL ACCEPTANCE PASSED: ${count} HTTP checks, ${reads.length} private read endpoints, ${(await import("../shared/cms")).cmsSections.length} config sections, 14 agent contracts, ${AI_MODULE_DEFINITIONS.length} AI CMS modules, 12 catalog CRUD flows, knowledge approval, copy archive/restore, private document upload and PPTX/PDF/PNG generation/download. No external AI call.`,
   );
 } catch (error) {
   console.error(error);
