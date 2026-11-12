@@ -1,0 +1,12 @@
+{
+  "specVersion": "1.0",
+  "host": "https://santos-saucedo.replit.app",
+  "entries": [
+    {
+      "identifier": "urn:air:santossaucedo:website",
+      "type": "text/html",
+      "url": "https://santos-saucedo.replit.app/es/",
+      "name": "Santos & Saucedo"
+    }
+  ]
+}
