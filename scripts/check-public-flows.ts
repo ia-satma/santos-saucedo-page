@@ -247,7 +247,7 @@ try {
     ),
   );
   assert(html.includes("https://santos.example.test/"));
-  assert(html.includes('rel="canonical" href="https://santos.example.test/es/contact"'));
+  assert(html.includes('rel="canonical" href="https://santos.example.test/es/contacto"'));
   count += 3;
   const invalidGa = structuredClone(integrations.content);
   invalidGa.ga4.enabled = true;

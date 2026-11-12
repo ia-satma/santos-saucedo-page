@@ -25,8 +25,10 @@ export type OrchestratorPersistence = Pick<DatabasePersistence, PersistenceMetho
 
 export type OrchestratorKnowledge = Pick<
   AgentKnowledgeStore,
-  'addCmsOperationalPlaybook' | 'addDocument' | 'addEditorialVoiceGuide' | 'addLegalGlossary' | 'addSocialCopyGuide' | 'initialize'
->;
+  'addDocument' | 'addEditorialVoiceGuide' | 'addLegalGlossary' | 'addSocialCopyGuide' | 'initialize'
+> & {
+  addCmsOperationalPlaybook?: AgentKnowledgeStore['addCmsOperationalPlaybook'];
+};
 
 export type OrchestratorEvolution = Pick<
   AgentEvolutionTracker,
