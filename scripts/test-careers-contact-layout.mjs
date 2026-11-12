@@ -57,7 +57,7 @@ try {
         return {
           failures, overflow: document.documentElement.scrollWidth > innerWidth + 1,
           bottomGap: mainBox.bottom - finalContentBottom,
-          heroMedia: main.querySelectorAll(".editorial-page-hero img,.editorial-page-hero video").length,
+          heroMedia: main.querySelectorAll(".editorial-page-hero img,.editorial-page-hero video,.ss-hero img,.ss-hero video,#portada img,#portada video,.mk-telon img,.mk-telon video").length,
         };
       });
       assert.deepEqual(layout.failures, [], label);

@@ -18,7 +18,8 @@ import { recordChatUsage, recordImageUsage } from "./usageTracker";
 import { PRESENTATION_FONT_FILES } from "./presentationFonts";
 import { editorialResearchQuery, summarizeEditorialSources } from "./editorialSourceDigest";
 import { webSearchSummary } from "./webSearch";
-import { SOCIAL_REFERENCE_GUIDANCE } from "./socialReferenceKit";
+import { getSocialReferenceTemplate, SOCIAL_REFERENCE_GUIDANCE } from "./socialReferenceKit";
+import { SOCIAL_MEDIA_SKILLS_GUIDANCE } from "../agents/knowledge/socialMediaSkillsPlaybook";
 
 const photoKey = (ref: string) => socialImageRefSchema.safeParse(ref).success
   ? ref.replace("private:studio/", "private/studio/")
@@ -42,6 +43,7 @@ type CopyBrief = {
   illustrate?: boolean;
   includeImages?: boolean;
   webSearch?: boolean;
+  templateId?: string;
 };
 type StudioFiles = { previewUrl: string; packageUrl: string };
 
@@ -164,6 +166,7 @@ export async function generateSocialContent(brief: CopyBrief, actorId: string) {
   const background = brief.background ?? "auto";
   const illustrate = brief.illustrate ?? brief.includeImages ?? false;
   const webSearch = brief.webSearch ?? false;
+  const referenceTemplate = await getSocialReferenceTemplate(brief.templateId);
   const material = await summarizeEditorialSources({
     topic: [brief.title, brief.topic].filter(Boolean).join("\n\n"),
     sourceNotes: brief.sourceNotes,
@@ -190,8 +193,9 @@ La firma asesora a empresas en derecho laboral mexicano. Usa tono formal. Conser
 Si faltan fuentes, no inventes normas, cifras o resultados. Presenta solo afirmaciones sustentadas por la información recibida.
 Si hay una versión anterior, propón otra redacción y secuencia sin cambiar los hechos de base.
 Máximos de caracteres: título ${format.width > format.height ? 52 : 75}, cuerpo ${format.width > format.height ? 120 : 180}, publicación 2000. Usa texto plano.
-${SOCIAL_REFERENCE_GUIDANCE}`,
-    { topic: material.topic, sourceContext: material.context, research, previousCopy: brief.previousCopy },
+${SOCIAL_REFERENCE_GUIDANCE}
+${SOCIAL_MEDIA_SKILLS_GUIDANCE}`,
+    { topic: material.topic, sourceContext: material.context, research, previousCopy: brief.previousCopy, referenceTemplate: referenceTemplate ? { id: referenceTemplate.id, kind: referenceTemplate.kind, label: referenceTemplate.label, summary: referenceTemplate.summary } : null },
     actorId,
     generatedEnvelope(brief.slideCount),
   );
@@ -224,7 +228,10 @@ ${SOCIAL_REFERENCE_GUIDANCE}`,
     });
   }
   return {
-    ...result, slides, palette, imageRefs, sources: sourcesFromResearch(research), supportImages: brief.supportImages,
+    // Preserve official URLs supplied by Monitor Laboral/Radar as provenance,
+    // even when web search is disabled. Credentials and malformed URLs are
+    // filtered by sourcesFromResearch before they reach the saved asset.
+    ...result, slides, palette, imageRefs, sources: sourcesFromResearch([research, brief.sourceNotes].filter(Boolean).join("\n")), supportImages: brief.supportImages,
     design: { direction, background, requestedPalette, illustrate, webSearch },
     sourceProcessing: { sourceCharacters: material.sourceCharacters, summarized: material.summarized, notes: material.notes },
   };

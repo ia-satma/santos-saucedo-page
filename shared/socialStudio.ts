@@ -24,6 +24,7 @@ export const socialPaletteSchema = z.enum(socialPalettes);
 export const socialPaletteRequestSchema = z.enum(socialPaletteRequests);
 export const socialDesignDirectionSchema = z.enum(socialDesignDirections);
 export const socialBackgroundSchema = z.enum(socialBackgrounds);
+export const socialReferenceTemplateIdSchema = z.string().trim().regex(/^(?:post|carousel):[^/]{1,180}$/).optional();
 export type SocialPalette = z.infer<typeof socialPaletteSchema>;
 export type SocialPaletteRequest = z.infer<typeof socialPaletteRequestSchema>;
 export type SocialDesignDirection = z.infer<typeof socialDesignDirectionSchema>;
@@ -96,6 +97,7 @@ export const socialPayloadSchema = socialContentSchema.innerType().extend({
   documents: z.array(socialReferenceDocumentSchema).max(20).optional(),
   imageRefs: z.array(socialImageRefSchema.nullable()).max(12).optional(),
   sources: z.array(z.string().url().max(2048).regex(/^https?:\/\//i)).max(12).optional(),
+  templateId: socialReferenceTemplateIdSchema,
 });
 export type SocialPayload = z.infer<typeof socialPayloadSchema>;
 export type SocialRevision = {

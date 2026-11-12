@@ -11,6 +11,7 @@ import { registerAgentUsageRoutes } from "./routes/agentUsageRoutes";
 import { registerAgentAssetHistoryRoutes } from "./routes/agentAssetHistoryRoutes";
 import { registerAdminDocumentRoutes } from "./routes/adminDocumentRoutes";
 import { registerSocialAssetRoutes } from "./routes/socialAssetRoutes";
+import { registerRadarRoutes } from "./routes/radarRoutes";
 import { registerSocialInputRoutes } from "./routes/socialInputRoutes";
 import { registerAgentPipelineRoutes } from "./routes/agentPipelineRoutes";
 import { registerAdminKnowledgeRoutes } from "./routes/adminKnowledgeRoutes";
@@ -242,6 +243,7 @@ export async function registerRoutes(
   registerAdminDocumentRoutes(app);
   registerSocialInputRoutes(app);
   registerSocialAssetRoutes(app);
+  registerRadarRoutes(app);
   registerCmsRoutes(app);
   registerCatalogOrder(app);
   registerMediaLibrary(app);

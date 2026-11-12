@@ -1776,6 +1776,13 @@
 .admin-workspace input:focus,
 .admin-workspace textarea:focus,
 .admin-workspace select:focus { border-color: var(--admin-accent); box-shadow: 0 0 0 3px rgba(23,63,97,.12); }
+.admin-workspace .signature-field-label input {
+  background: #fff;
+  color: #172b49;
+  border-color: #c8d3df;
+}
+.admin-workspace .signature-field-label input::placeholder { color: #8493a4; opacity: 1; }
+.admin-workspace .signature-field-label input:focus { border-color: #7caa20; box-shadow: 0 0 0 2px rgba(187,247,65,.28); }
 .admin-workspace button:not([role="switch"]) { min-height: 42px; border-radius: 8px; }
 .admin-search-dialog {
   border: 1px solid var(--admin-line);

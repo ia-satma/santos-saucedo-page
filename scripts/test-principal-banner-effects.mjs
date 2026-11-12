@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { mkdir, readFile } from "node:fs/promises";
 import { chromium } from "playwright";
+import { playwrightExecutablePath } from "./lib/playwright-runtime.mjs";
 
 const baseURL = process.env.VISUAL_TEST_BASE_URL ?? `https://${process.env.REPLIT_DEV_DOMAIN}`;
 const output = "/tmp/ss-main-banner-effects";
@@ -13,7 +14,7 @@ let baseline;
 try { baseline = JSON.parse(await readFile("/tmp/ss-main-banners-before.json", "utf8")); }
 catch (error) { if (error.code !== "ENOENT") throw error; }
 const browser = await chromium.launch({
-  executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ?? "/repl/tools/bin/chromium",
+  executablePath: playwrightExecutablePath,
   args: ["--no-sandbox"],
 });
 const errors = [];

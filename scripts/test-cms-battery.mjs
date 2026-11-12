@@ -14,6 +14,7 @@ const commands = [
   ["Localization", "npm", ["run", "test:localization"]],
   ["Public flows", "npm", ["run", "test:public-flows"]],
   ["Testimonials", "npm", ["run", "test:testimonials"]],
+  ["Radar and Monitor bridge", "npm", ["run", "test:radar"]],
   ["Video source links", "npm", ["run", "test:video-source"]],
   ["Presentation reference template", "npm", ["run", "test:presentation:reference"]],
   ["Social reference kit", "npm", ["run", "test:social:reference"]],

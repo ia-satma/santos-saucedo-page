@@ -1,14 +1,12 @@
 import assert from "node:assert/strict";
 import { mkdir } from "node:fs/promises";
-import { existsSync } from "node:fs";
 import { chromium } from "playwright";
+import { playwrightExecutablePath } from "./lib/playwright-runtime.mjs";
 
 const baseURL = process.env.VISUAL_TEST_BASE_URL ?? "http://127.0.0.1:5000";
 const screenshotDir = process.env.ADMIN_VISUAL_SCREENSHOTS_DIR ?? "/tmp/ss-admin-visual";
 const token = process.env.ADMIN_VISUAL_TOKEN ?? "";
 const repeats = Math.max(1, Number(process.env.ADMIN_VISUAL_REPEATS ?? "1"));
-const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
-  ?? (existsSync("/repl/tools/bin/chromium") ? "/repl/tools/bin/chromium" : undefined);
 
 const viewports = [
   { name: "desktop", width: 1440, height: 1000 },
@@ -99,7 +97,7 @@ async function runIteration(browser, iteration) {
 }
 
 const browser = await chromium.launch({
-  ...(executablePath ? { executablePath } : {}),
+  ...(playwrightExecutablePath ? { executablePath: playwrightExecutablePath } : {}),
   args: ["--no-sandbox"],
 });
 

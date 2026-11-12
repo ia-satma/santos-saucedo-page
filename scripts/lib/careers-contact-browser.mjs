@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
 import { chromium } from "playwright";
+import { playwrightExecutablePath } from "./playwright-runtime.mjs";
 
 export const baseURL = process.env.VISUAL_TEST_BASE_URL ?? `https://${process.env.REPLIT_DEV_DOMAIN}`;
 export const output = "/tmp/ss-careers-contact";
 export const browser = await chromium.launch({
-  executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ?? "/repl/tools/bin/chromium",
+  executablePath: playwrightExecutablePath,
   args: ["--no-sandbox"],
 });
 export const errors = [], unexpectedWrites = [];
@@ -53,8 +54,8 @@ export async function copy(page) {
         href: e.getAttribute("href"), text: normalize(e.textContent),
         target: e.getAttribute("target"), rel: e.getAttribute("rel"),
       })),
-      hero: main.querySelector(".editorial-page-hero").outerHTML,
-      heroHeight: main.querySelector(".editorial-page-hero").getBoundingClientRect().height,
+      hero: (main.querySelector(".editorial-page-hero, .ss-hero, #portada, .mk-telon") || {}).outerHTML || "",
+      heroHeight: main.querySelector(".editorial-page-hero, .ss-hero, #portada, .mk-telon")?.getBoundingClientRect().height || 0,
       formFields: [...main.querySelectorAll("input,textarea,select,[role=combobox]")].map(e => ({
         tag: e.tagName, name: e.name || null, type: e.getAttribute("type"),
         required: e.required ?? null, accept: e.getAttribute("accept"),

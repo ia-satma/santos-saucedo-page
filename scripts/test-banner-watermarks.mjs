@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { mkdir, readFile } from "node:fs/promises";
 import { chromium } from "playwright";
+import { playwrightExecutablePath } from "./lib/playwright-runtime.mjs";
 
 const baseURL = process.env.VISUAL_TEST_BASE_URL
   ?? `https://${process.env.REPLIT_DEV_DOMAIN}`;
@@ -22,8 +23,7 @@ const routes = [
   `/team/${team[0].slug}`, `/news/${news[0].slug}`,
 ];
 const browser = await chromium.launch({
-  executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
-    ?? "/repl/tools/bin/chromium",
+  executablePath: playwrightExecutablePath,
   args: ["--no-sandbox"],
 });
 const errors = [];

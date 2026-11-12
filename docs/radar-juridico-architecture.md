@@ -2,7 +2,7 @@
 
 ## Principio
 
-El Radar será un módulo de backend orientado a trazabilidad. Lee fuentes permitidas, normaliza metadatos, detecta novedades y entrega hallazgos a los agentes OpenAI existentes. Todo resultado editorial entra al CMS como borrador y requiere revisión humana.
+El Radar será un módulo de backend orientado a trazabilidad para todo México. Lee fuentes permitidas, normaliza metadatos, detecta novedades y entrega hallazgos a los agentes OpenAI existentes. El panel priorizará por defecto Nuevo León y permitirá filtrar por entidad, fuente, materia, fecha y nivel de impacto. Todo resultado editorial entra al CMS como borrador y requiere revisión humana.
 
 ```mermaid
 flowchart TD

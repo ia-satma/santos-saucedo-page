@@ -1,12 +1,11 @@
 import assert from "node:assert/strict";
-import { existsSync } from "node:fs";
 import { chromium } from "playwright";
+import { playwrightExecutablePath } from "./lib/playwright-runtime.mjs";
+import { localizedPublicPath } from "./lib/canonical-routes.mjs";
 
 // Run against the workspace server; fixtures stay in the browser, never the database.
-const baseURL = process.env.MONITOR_TEST_BASE_URL
+const baseURL = process.env.MONITOR_TEST_BASE_URL ?? process.env.VISUAL_TEST_BASE_URL
   ?? (process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : "http://127.0.0.1:5000");
-const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
-  ?? (existsSync("/repl/tools/bin/chromium") ? "/repl/tools/bin/chromium" : undefined);
 const fixtures = Array.from({ length: 27 }, (_, index) => ({
   id: `archive-${index}`,
   slug: index === 0 ? "conflictos-individuales-juntas-conciliacion" : `archive-${index}`,
@@ -23,11 +22,13 @@ const fixtures = Array.from({ length: 27 }, (_, index) => ({
 }));
 fixtures.push({ ...fixtures[0], id: "unpublished", slug: "unpublished", published: false });
 
-const browser = await chromium.launch({ headless: true, executablePath, args: ["--no-sandbox"] });
+const browser = await chromium.launch({ headless: true, executablePath: playwrightExecutablePath, args: ["--no-sandbox"] });
 try {
   for (const language of ["es", "en"]) {
     for (const width of [375, 1440]) {
-      for (const route of ["/news", "/articles"]) {
+      const canonical = localizedPublicPath(language, "/news");
+      const legacy = language === "es" ? "/es/news" : canonical;
+      for (const route of [canonical, legacy]) {
         const context = await browser.newContext({ viewport: { width, height: 1000 }, reducedMotion: "reduce" });
         const page = await context.newPage();
         const errors = [];
@@ -49,10 +50,10 @@ try {
         };
         await page.goto(baseURL + route, { waitUntil: "domcontentloaded" });
         await expectCount(12);
-        assert.equal(new URL(page.url()).pathname, "/news");
+        assert.equal(new URL(page.url()).pathname, canonical);
         assert.equal(await rows.first().locator("h2").innerText(), language === "es" ? "Publicación 0" : "Publication 0");
-        assert.equal(await rows.first().locator("a").getAttribute("href"), "/news/conflictos-individuales-juntas-conciliacion");
-        assert.equal(await rows.first().locator("img").getAttribute("src"), "/editorial/monitor-conciliacion.webp");
+        assert.equal(await rows.first().locator("a").getAttribute("href"), `${canonical}/conflictos-individuales-juntas-conciliacion`);
+        assert.equal(await rows.first().locator("img").getAttribute("src"), "/editorial/obra-mazo-1536.webp");
         assert.equal(await rows.nth(1).locator("img").getAttribute("src"), "/editorial/monitor-prevencion.webp");
         assert.equal(await rows.first().locator("img").getAttribute("alt"), "");
         await rows.nth(2).scrollIntoViewIfNeeded();

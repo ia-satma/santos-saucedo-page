@@ -130,9 +130,15 @@ test("social studio HTTP renders all carousel images, downloads immutable revisi
 
   assert.equal((await call("GET", "", undefined, "")).status, 401);
   assert.equal((await call("GET", "", undefined, "studio-viewer")).status, 403);
+  const manifestResponse = await call("GET", "/reference-kit/manifest", undefined, "studio-editor");
+  assert.equal(manifestResponse.status, 200);
+  const manifest = await manifestResponse.json();
+  assert.equal(manifest.templates.length, 26);
+  assert.equal(Object.hasOwn(manifest.templates[0], "file"), false);
   const response = await call("POST", "/generate", {
     kind: "carousel", title: "Ingreso de personal", topic: "Documentación de personal",
-    language: "es", format: "portrait", slideCount: 3, palette: "navy-lime",
+    sourceNotes: "Fuente oficial: https://www.dof.gob.mx/nota_detalle.php?codigo=bridge",
+    language: "es", format: "portrait", slideCount: 3, palette: "navy-lime", templateId: "carousel:2a - Gu-a pr-ctica-lista numerada",
   });
   assert.equal(response.status, 201, await response.clone().text());
   const first = await response.json();
@@ -140,6 +146,8 @@ test("social studio HTTP renders all carousel images, downloads immutable revisi
   assert.deepEqual(first.content.slides, slides);
   assert.equal(first.slideUrls.length, 3);
   assert.deepEqual(first.content.copies, copies);
+  assert.deepEqual(first.content.sources, ["https://www.dof.gob.mx/nota_detalle.php?codigo=bridge"]);
+  assert.equal(first.content.templateId, "carousel:2a - Gu-a pr-ctica-lista numerada");
   assert.equal(first.htmlUrls.length, 3);
   assert(requests.every(request => request.model === "gpt-6.1-sol" && request.service_tier === "fast"));
   assert.match(rows.get(first.id)?.packageUrl ?? "", /^private\/studio\//);

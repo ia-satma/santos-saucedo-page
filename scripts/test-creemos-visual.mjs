@@ -1,17 +1,14 @@
 import assert from "node:assert/strict";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import sharp from "sharp";
+import { playwrightExecutablePath } from "./lib/playwright-runtime.mjs";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const snapshotDir = path.join(projectRoot, "tests", "visual", "creemos");
 const baseURL = process.env.VISUAL_TEST_BASE_URL ?? "http://127.0.0.1:5000";
-const systemChromium = "/repl/tools/bin/chromium";
-const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
-  ?? (existsSync(systemChromium) ? systemChromium : undefined);
 const updateSnapshots = process.env.UPDATE_VISUAL_SNAPSHOTS === "1";
 
 const cases = [
@@ -70,7 +67,7 @@ async function main() {
 
   const browser = await chromium.launch({
     headless: true,
-    ...(executablePath ? { executablePath } : {}),
+    ...(playwrightExecutablePath ? { executablePath: playwrightExecutablePath } : {}),
     args: ["--no-sandbox"],
   });
 

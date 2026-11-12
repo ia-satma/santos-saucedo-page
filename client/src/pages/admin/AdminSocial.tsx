@@ -67,6 +67,7 @@ type Revision = Pick<Piece, "title" | "version" | "format" | "slideUrls" | "html
 type PieceDetail = Piece & { content: SocialPayload; versions: Revision[] };
 type Review = { summary: string; suggestions: string[] };
 type HistoryPage = { items: Piece[]; hasMore: boolean };
+type ReferenceTemplate = { id: string; kind: "post" | "carousel"; label: string };
 type Action = { id: string; type: "copy" | "archive" | "restore" };
 
 async function request<T>(method: string, endpoint = "", data?: unknown): Promise<T> {
@@ -451,6 +452,7 @@ export default function AdminSocial() {
   const [background, setBackground] = useState<Background>("auto");
   const [slideCount, setSlideCount] = useState("5");
   const [sourceNotes, setSourceNotes] = useState("");
+  const [templateId, setTemplateId] = useState("");
   const [illustrate, setIllustrate] = useState(false);
   const [webSearch, setWebSearch] = useState(false);
   const [documents, setDocuments] = useState<UploadedDoc[]>([]);
@@ -460,7 +462,38 @@ export default function AdminSocial() {
   const [archived, setArchived] = useState(false);
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<string | null>(null);
+  const [newsId] = useState(() => typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("newsId"));
+  const [newsPrefill, setNewsPrefill] = useState<"idle" | "loading" | "loaded" | "error">("idle");
+  const prefilledNews = useRef(false);
   useEffect(() => { requireAuth(); }, [requireAuth]);
+  useEffect(() => {
+    if (!isAuthenticated || !newsId || prefilledNews.current) return;
+    prefilledNews.current = true;
+    setNewsPrefill("loading");
+    void (async () => {
+      try {
+        const response = await adminApiRequest("GET", `/api/admin/news/${encodeURIComponent(newsId)}`);
+        const item = await response.json().catch(() => null);
+        if (!response.ok || !item) throw new Error("No se pudo cargar la publicación del Monitor Laboral.");
+        const titleEs = item.titleEs || item.title || "";
+        const excerptEs = item.excerptEs || item.excerpt || "";
+        const contentEs = item.contentEs || item.content || "";
+        const provenance = [
+          item.sourceName ? `Fuente oficial: ${item.sourceName}` : "",
+          item.sourceUrl ? `URL de la fuente: ${item.sourceUrl}` : "",
+          excerptEs ? `Resumen del Monitor Laboral:\n${excerptEs}` : "",
+          contentEs ? `Contenido del Monitor Laboral:\n${contentEs}` : "",
+        ].filter(Boolean).join("\n\n");
+        setTitle(titleEs.slice(0, 180));
+        setTopic(`Crea una pieza para redes a partir de esta publicación del Monitor Laboral: ${titleEs}`.slice(0, MAX_TOPIC_LENGTH));
+        setSourceNotes(provenance.slice(0, MAX_SOURCE_LENGTH));
+        if (sourceDetails.current) sourceDetails.current.open = true;
+        setNewsPrefill("loaded");
+      } catch {
+        setNewsPrefill("error");
+      }
+    })();
+  }, [isAuthenticated, newsId]);
   useEffect(() => {
     if (selected) {
       const studio = studioRef.current;
@@ -473,6 +506,11 @@ export default function AdminSocial() {
     queryKey: [base, archived, page],
     enabled: isAuthenticated,
     queryFn: () => request<HistoryPage>("GET", `?archived=${archived}&page=${page}`),
+  });
+  const referenceTemplates = useQuery<{ kit: string; templates: ReferenceTemplate[] }>({
+    queryKey: [`${base}/reference-kit/manifest`],
+    enabled: isAuthenticated,
+    queryFn: () => request("GET", "/reference-kit/manifest"),
   });
   const detail = useQuery({
     queryKey: [base, selected],
@@ -492,6 +530,7 @@ export default function AdminSocial() {
       const result = await request<PieceDetail>("POST", "/generate", {
         kind, title, topic, language, format, slideCount: requestedPieces,
         palette, designDirection: direction, background, sourceNotes, documents, supportImages: images, illustrate, webSearch,
+        templateId: templateId || undefined,
       });
       if (!result?.id || result.content?.slides.length !== requestedPieces || result.slideCount !== requestedPieces) {
         throw new Error(`No se recibió el conjunto completo de ${requestedPieces} piezas. El material sigue cargado para reintentar.`);
@@ -507,6 +546,7 @@ export default function AdminSocial() {
       setTitle("");
       setTopic("");
       setSourceNotes("");
+      setTemplateId("");
       setDocuments([]);
       setImages([]);
       toast({ title: piece.kind === "carousel" ? "Carrusel generado" : "Post generado" });
@@ -541,6 +581,9 @@ export default function AdminSocial() {
 
   return <div className="mx-auto max-w-6xl space-y-6" data-testid="page-admin-social">
     <AdminPageHeader title="Post y Carruseles IA" description="Prepara piezas para redes sociales y textos por canal con la identidad de Santos & Saucedo." />
+    {newsId && <p className="border-l-2 border-[#8CC63F] bg-[#0B2850]/[0.03] px-3 py-2 text-sm text-muted-foreground" role={newsPrefill === "error" ? "alert" : "status"} data-testid="social-news-prefill-status">
+      {newsPrefill === "loading" ? "Cargando la publicación del Monitor Laboral…" : newsPrefill === "loaded" ? "Publicación del Monitor Laboral cargada como material de apoyo. Revisa el contenido y genera un borrador para redes." : newsPrefill === "error" ? "No se pudo cargar la publicación del Monitor Laboral. Puedes continuar con material manual." : ""}
+    </p>}
     <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
       <span className="size-2 rounded-full bg-[#8CC63F]" aria-hidden="true" />
       Sol (gpt-6.1-sol) · Fast · Identidad Santos & Saucedo
@@ -614,6 +657,15 @@ export default function AdminSocial() {
           </div>
         </div>
         <p className="text-xs text-muted-foreground" role="status">{formatSpec.label} · {formatSpec.width} × {formatSpec.height} px</p>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="social-template">Plantilla visual de referencia (opcional)</Label>
+          <select className={selectClass} id="social-template" value={templateId} onChange={event => setTemplateId(event.target.value)}>
+            <option value="">Dejar que el agente elija o proponga una composición nueva</option>
+            {(referenceTemplates.data?.templates ?? []).filter(template => template.kind === kind).map(template => <option key={template.id} value={template.id}>{template.label}</option>)}
+          </select>
+          <p className="text-xs text-muted-foreground">La plantilla guía la retícula, jerarquía y ritmo. El agente puede adaptarla y generar una propuesta nueva cuando el contenido lo pida.</p>
+        </div>
 
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-1.5"><Label htmlFor="social-direction">Dirección de diseño</Label>

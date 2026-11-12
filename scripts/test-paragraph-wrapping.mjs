@@ -1,12 +1,10 @@
 import assert from "node:assert/strict";
-import { existsSync } from "node:fs";
 import { chromium } from "playwright";
+import { playwrightExecutablePath } from "./lib/playwright-runtime.mjs";
 
 const baseURL = process.env.PARAGRAPH_TEST_BASE_URL
   ?? (process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : "http://127.0.0.1:5000");
-const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
-  ?? (existsSync("/repl/tools/bin/chromium") ? "/repl/tools/bin/chromium" : undefined);
-const browser = await chromium.launch({ executablePath, args: ["--no-sandbox"] });
+const browser = await chromium.launch({ executablePath: playwrightExecutablePath, args: ["--no-sandbox"] });
 try {
   for (const language of ["es", "en"]) {
     for (const width of [375, 1440]) {

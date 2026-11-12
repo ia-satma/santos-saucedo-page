@@ -33,6 +33,8 @@ import { presentationMediaPathSchema, receivePresentationDocument } from "./uplo
 import { SUPPORTED_LANGUAGES } from "@shared/constants";
 import { MAX_EDITORIAL_NOTES_CHARACTERS, MAX_EDITORIAL_SOURCE_CHARACTERS } from "@shared/editorialSources";
 import { PRESENTATION_REFERENCE_TEMPLATE } from "../services/presentation/referenceTemplate";
+import { smartImageGenerator } from "../services/SmartImageGenerator";
+import { randomUUID } from "node:crypto";
 
 const languageCodes = SUPPORTED_LANGUAGES.map(({ code }) => code) as [string, ...string[]];
 
@@ -118,6 +120,40 @@ export function registerAgentAssetHistoryRoutes(app: Express): void {
       }))));
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch generated images" });
+    }
+  });
+
+  app.post("/api/admin/generated-images/generate", authMiddleware, requirePermission("agents"), async (req: Request, res: Response) => {
+    const parsed = z.object({
+      prompt: z.string().trim().min(8).max(4_000),
+      style: z.enum(["santos-editorial", "libre"]).default("santos-editorial"),
+      aspect: z.enum(["1:1", "16:9", "9:16", "4:5"]).default("1:1"),
+    }).strict().safeParse(req.body ?? {});
+    if (!parsed.success) return res.status(422).json({ error: "Escribe una descripción de al menos 8 caracteres y revisa las opciones." });
+    try {
+      const styleInstruction = parsed.data.style === "santos-editorial"
+        ? "Identidad editorial de Santos & Saucedo: fotografía documental sobria, luz natural, composición limpia, azul profundo y lima solo cuando sean parte natural de la escena, sin logos ni texto."
+        : "Estilo libre solicitado por el editor, manteniendo una imagen profesional, legible y sin texto, logos ni marcas de agua.";
+      const result = await smartImageGenerator.generateImage(
+        `${parsed.data.prompt}. ${styleInstruction}`,
+        `manual-${randomUUID()}`,
+        parsed.data.aspect,
+        "internal",
+        "editorial",
+      );
+      if (!result.success || !result.imageUrl || result.engine === "placeholder") {
+        return res.status(502).json({ error: result.errorMessage || "El proveedor no pudo generar la imagen." });
+      }
+      const persistentPaths = await listPersistentPublicMediaPaths();
+      return res.status(201).json({
+        imageUrl: result.imageUrl,
+        engine: result.engine,
+        prompt: result.originalPrompt,
+        available: await generatedAssetAvailable(result.imageUrl, generatedImagesDir, persistentPaths),
+      });
+    } catch (error) {
+      console.error("Manual generated image error:", error);
+      return res.status(502).json({ error: "No se pudo generar la imagen. Revisa el proveedor y vuelve a intentarlo." });
     }
   });
 

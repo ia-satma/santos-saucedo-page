@@ -16,6 +16,7 @@ import {
   socialPayloadSchema,
   socialReferenceDocumentSchema,
   socialSupportImageSchema,
+  socialReferenceTemplateIdSchema,
   type SocialDesign,
   type SocialPayload,
   type SocialRevision,
@@ -26,7 +27,7 @@ import { hydratePresentationInput } from "../media/presentationInputs";
 import { storage } from "../storage";
 import { downloadPrivateStudioObject } from "../replitStorage";
 import { EditorialSourceError } from "../services/editorialSourceDigest";
-import { SOCIAL_REFERENCE_KIT } from "../services/socialReferenceKit";
+import { listSocialReferenceTemplates, SOCIAL_REFERENCE_KIT } from "../services/socialReferenceKit";
 import {
   discardGeneratedSocialImages,
   discardSocialFiles,
@@ -66,6 +67,7 @@ const generationSchema = z.object({
   sourceNotes: z.string().trim().max(MAX_EDITORIAL_NOTES_CHARACTERS).default(""),
   documents: z.array(socialReferenceDocumentSchema).max(20).default([]),
   supportImages: z.array(socialSupportImageSchema).max(10).default([]),
+  templateId: socialReferenceTemplateIdSchema,
 }).strict().superRefine((input, context) => {
   if (input.kind === "post" ? input.slideCount !== 1 : input.slideCount < 2) {
     context.addIssue({ code: "custom", path: ["slideCount"], message: "El número de piezas no coincide con el tipo elegido." });
@@ -325,6 +327,10 @@ export function registerSocialAssetRoutes(app: Express): void {
       res.status(404).end();
     }
   });
+  app.get(`${base}/reference-kit/manifest`, ...access, respond(async (_req, res) => {
+    const templates = await listSocialReferenceTemplates();
+    res.json({ kit: SOCIAL_REFERENCE_KIT.id, templates: templates.map(({ file: _file, ...template }) => template) });
+  }));
   app.get(base, ...access, respond(async (req, res) => {
     const page = z.coerce.number().int().min(1).max(100_000).default(1).parse(req.query.page);
     const pageSize = 20;
@@ -335,14 +341,14 @@ export function registerSocialAssetRoutes(app: Express): void {
   app.post(`${base}/generate`, ...access, respond(async (req, res) => {
     const {
       kind, title, topic, language, format, slideCount, sourceNotes, documents, supportImages,
-      palette: requestedPalette, designDirection, background, illustrate, webSearch,
+      palette: requestedPalette, designDirection, background, illustrate, webSearch, templateId,
     } = generationSchema.parse(req.body);
     const { palette, caption, copies, slides, imageRefs, sources, sourceProcessing } = await generateSocialContent({
       title, topic, language, format, slideCount, sourceNotes, supportImages,
-      documentsText: await readReferenceText(documents), palette: requestedPalette, designDirection, background, illustrate, webSearch,
+      documentsText: await readReferenceText(documents), palette: requestedPalette, designDirection, background, illustrate, webSearch, templateId,
     }, req.adminUser!.id);
     const design = { direction: designDirection, background, requestedPalette, illustrate, webSearch };
-    const payload = { caption, copies, slides, design, supportImages, imageRefs, sources, sourceNotes, documents };
+    const payload = { caption, copies, slides, design, supportImages, imageRefs, sources, sourceNotes, documents, templateId };
     const asset = await saveNew({
       id: randomUUID(), kind, title: title || slides[0].title, topic, language, format, slideCount, palette, status: "ready",
     }, payload, freshImageRefs(payload));
@@ -412,7 +418,7 @@ export function registerSocialAssetRoutes(app: Express): void {
     requireVersion(current, version);
     const { title, topic, language, format, slideCount } = current;
     const previous = currentPayload(current);
-    const { sourceNotes, documents = [], slides: previousCopy, imageRefs, supportImages } = previous;
+    const { sourceNotes, documents = [], slides: previousCopy, imageRefs, supportImages, templateId } = previous;
     const design = previous.design ?? { ...defaultDesign, requestedPalette: socialPaletteSchema.parse(current.palette) };
     if (copiesOnly) {
       const copies = await generateSocialCopies(previous, language, req.adminUser!.id);
@@ -429,6 +435,7 @@ export function registerSocialAssetRoutes(app: Express): void {
       palette: design.requestedPalette,
       illustrate: design.illustrate,
       webSearch: design.webSearch,
+      templateId,
     }, req.adminUser!.id);
     const payload = { ...previous, caption, copies, slides, design, imageRefs: updatedImageRefs, sources };
     const updated = await saveRevision(current, { title, format, palette, payload }, req.adminUser!.id, freshImageRefs(payload, previous));

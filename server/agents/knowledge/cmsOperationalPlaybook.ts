@@ -59,9 +59,44 @@ export const CMS_OPERATIONAL_SKILLS: ReadonlyArray<{
     description: "Aplica la retícula, tipografía, color, fotografía y secuencia del kit de posts y carruseles sin cerrar la exploración creativa.",
   },
   {
+    agentType: "social_media",
+    name: "taste_design_direction",
+    description: "Elige una dirección visual coherente, revisa jerarquía, contraste, desbordes y comportamiento responsive antes de entregar una pieza.",
+  },
+  {
+    agentType: "social_media",
+    name: "hook_generation",
+    description: "Propone aperturas basadas en hechos sin clickbait y con revisión editorial.",
+  },
+  {
+    agentType: "social_media",
+    name: "post_formatting",
+    description: "Organiza el copy con estructuras editoriales reconocibles y lo adapta a cada canal.",
+  },
+  {
+    agentType: "social_media",
+    name: "content_matrix",
+    description: "Combina pilares de Monitor Laboral con formatos de posts y carruseles para ideación controlada.",
+  },
+  {
+    agentType: "social_media",
+    name: "carousel_storyboarding",
+    description: "Ordena portada, desarrollo, ritmo y cierre de un carrusel sin perder la fuente legal.",
+  },
+  {
+    agentType: "social_media",
+    name: "social_visual_review",
+    description: "Revisa jerarquía, contraste, desbordes y legibilidad de cada pieza antes de entregarla.",
+  },
+  {
     agentType: "presentation_generator",
     name: "brand_template_compliance",
     description: "Usa la plantilla institucional aprobada, su orden editorial, conteo de contenido y exportación verificable.",
+  },
+  {
+    agentType: "presentation_generator",
+    name: "taste_design_direction",
+    description: "Mantiene ritmo visual, contraste, márgenes, tipografía y legibilidad comprobados en los tamaños de salida.",
   },
   {
     agentType: "website_auditor",
@@ -95,6 +130,15 @@ export const CMS_OPERATIONAL_KNOWLEDGE_SEEDS: ReadonlyArray<{
       "Las rutas antiguas redirigen con 301. Canonical, hreflang, sitemap, enlaces internos y metadatos " +
       "deben apuntar a la ruta canónica del idioma activo. Las rutas internas guardadas en el CMS permanecen estables.",
     agents: ["website_auditor", "seo_optimizer", "polyglot_translator"],
+  },
+  {
+    key: "labor-radar-scope",
+    title: "Radar jurídico laboral nacional con prioridad Nuevo León",
+    content:
+      "El Radar jurídico laboral cubre fuentes oficiales de todo México, incluyendo DOF, Semanario Judicial, STPS, IMSS, Infonavit " +
+      "y autoridades estatales. El CMS muestra primero Nuevo León mediante filtros, pero conserva el resto del país para consulta. " +
+      "Cada hallazgo debe guardar fuente, URL, identificador, fecha, entidad, materia, hash, confianza y estado de aprobación antes de alimentar Monitor Laboral o redes.",
+    agents: ["legal_alerts", "content_analyzer", "category_agent", "social_media", "website_auditor"],
   },
   {
     key: "media-and-storage",
@@ -153,6 +197,27 @@ export const CMS_OPERATIONAL_KNOWLEDGE_SEEDS: ReadonlyArray<{
       "lima #BBF741, verde de texto #5E8F17, fotos sin filtros, márgenes de 90 px y cierres con contacto. " +
       "Las plantillas orientan la calidad, pero el agente puede proponer ideas y composiciones nuevas. Los datos legales, " +
       "cifras y citas requieren fuente o revisión humana.",
+    agents: ["social_media"],
+  },
+  {
+    key: "taste-design-direction",
+    title: "Dirección visual Taste para generadores",
+    content:
+      "La skill Taste exige decidir una dirección visual antes de producir, trabajar con una retícula estable, " +
+      "márgenes equivalentes, una idea dominante por pantalla o diapositiva, fotografías reales relacionadas con el tema, " +
+      "contraste AA y texto dentro de sus cajas. Los agentes comprueban 1440, 1024, 768 y 390/375 px, corrigen desbordes, " +
+      "saltos de línea, imágenes vacías y jerarquía, y mantienen alternativas estáticas para movimiento o pantallas pequeñas. " +
+      "Los efectos son discretos y nunca desplazan el contenido jurídico.",
+    agents: ["social_media", "presentation_generator"],
+  },
+  {
+    key: "social-media-skills",
+    title: "Skills de contenido social aprobadas",
+    content:
+      "La adaptación de social-media-skills aporta hooks, estructuras PAS/AIDA/BAB/STAR/SLAY, matriz de pilares y formatos, " +
+      "storyboard de carrusel, composición editable y scoring editorial. Investigación de fuentes, analytics, Apify y Gemini " +
+      "solo se marcan activos cuando existe una conexión autorizada. Sin ella el agente trabaja con material del Monitor y deja " +
+      "el resultado como borrador pendiente de aprobación humana.",
     agents: ["social_media"],
   },
 ];

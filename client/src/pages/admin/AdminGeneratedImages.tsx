@@ -8,10 +8,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useAdminAuth, adminApiRequest } from "@/lib/adminAuth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { Sparkles, Copy, ExternalLink, ImageOff, Download, Eye } from "lucide-react";
+import { Sparkles, Copy, ExternalLink, ImageOff, Download, Eye, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 
 
@@ -42,6 +43,10 @@ export default function AdminGeneratedImages() {
   }, [requireAuth]);
   const { toast } = useToast();
   const [preview, setPreview] = useState<GeneratedImageRow | null>(null);
+  const [prompt, setPrompt] = useState("");
+  const [style, setStyle] = useState<"santos-editorial" | "libre">("santos-editorial");
+  const [aspect, setAspect] = useState("1:1");
+  const [generating, setGenerating] = useState(false);
 
   const { data: images = [], isLoading, isError, error, refetch } = useQuery<GeneratedImageRow[]>({
     queryKey: ["/api/admin/generated-images"],
@@ -59,6 +64,23 @@ export default function AdminGeneratedImages() {
       toast({ title: "URL copiada", description: "Pégala en \"…o pega una URL / ruta\" al elegir imagen en cualquier formulario." });
     } catch {
       toast({ title: "No se pudo copiar la URL", variant: "destructive" });
+    }
+  };
+
+  const generateManual = async () => {
+    if (prompt.trim().length < 8 || generating) return;
+    setGenerating(true);
+    try {
+      const response = await adminApiRequest("POST", "/api/admin/generated-images/generate", { prompt, style, aspect });
+      const body = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(body?.error || "No se pudo generar la imagen.");
+      setPrompt("");
+      await refetch();
+      toast({ title: "Imagen generada", description: "La imagen se guardó en el historial reutilizable." });
+    } catch (error) {
+      toast({ title: "No se pudo generar", description: error instanceof Error ? error.message : "Revisa el proveedor de imágenes.", variant: "destructive" });
+    } finally {
+      setGenerating(false);
     }
   };
 
@@ -85,6 +107,21 @@ export default function AdminGeneratedImages() {
           Cada vez que el agente de imágenes genera una imagen para una noticia (no cuenta el placeholder de respaldo), queda guardada aquí.
           Este historial es permanente y ningún usuario puede borrarlo. Copia la URL para reutilizar una imagen sin gastar créditos de nuevo.
         </AdminPageHelp>
+        <Card className="mb-8 border-[#0B2850]/15 bg-[#0B2850]/[0.03]">
+          <CardContent className="space-y-4 p-5">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0B2850]">Generar una imagen nueva</p>
+              <h2 className="mt-1 text-lg font-semibold">Describe la escena y elige el tratamiento</h2>
+              <p className="mt-1 text-sm text-muted-foreground">El resultado queda en este historial y también puede reutilizarse en noticias, posts, carruseles y presentaciones.</p>
+            </div>
+            <Textarea value={prompt} onChange={event => setPrompt(event.target.value)} rows={3} maxLength={4000} placeholder="Ej. Una mesa de negociación laboral en una planta industrial mexicana, con documentos y personas revisando un calendario de cumplimiento." aria-label="Descripción de la imagen" />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="space-y-1 text-sm"><span className="font-medium">Estilo</span><select className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={style} onChange={event => setStyle(event.target.value as typeof style)}><option value="santos-editorial">Santos &amp; Saucedo editorial</option><option value="libre">Libre, definido por el editor</option></select></label>
+              <label className="space-y-1 text-sm"><span className="font-medium">Proporción</span><select className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={aspect} onChange={event => setAspect(event.target.value)}><option value="1:1">Cuadrada 1:1</option><option value="4:5">Vertical 4:5</option><option value="16:9">Horizontal 16:9</option><option value="9:16">Vertical 9:16</option></select></label>
+            </div>
+            <Button type="button" className="bg-[#0B2850] text-white hover:bg-[#145385]" disabled={generating || prompt.trim().length < 8} onClick={() => void generateManual()}>{generating ? <Loader2 className="animate-spin" aria-hidden="true" /> : <Sparkles aria-hidden="true" />} {generating ? "Generando…" : "Generar y guardar en historial"}</Button>
+          </CardContent>
+        </Card>
         <AgentCreator agent="image_suggestion"/>
 
         <div>

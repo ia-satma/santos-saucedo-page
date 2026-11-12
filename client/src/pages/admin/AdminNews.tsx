@@ -541,6 +541,11 @@ export default function AdminNews() {
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Link href={`/admin/news/${newsItem.id}/edit`}><Button variant="outline" size="sm">Editar</Button></Link>
+                            <Link href={`/admin/social?newsId=${encodeURIComponent(newsItem.id)}&kind=post`}>
+                              <Button variant="ghost" size="sm" data-testid={`button-social-draft-${newsItem.id}`}>
+                                {language === "es" ? "Crear pieza IA" : "Create AI piece"}
+                              </Button>
+                            </Link>
                             {newsItem.published && (
                               <Link href={`/news/${newsItem.slug}`}>
                                 <Button 

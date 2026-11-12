@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
+import { playwrightExecutablePath } from "./lib/playwright-runtime.mjs";
 
 const base = process.env.VISUAL_TEST_BASE_URL
   ?? (process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : "http://127.0.0.1:5000");
@@ -8,7 +9,7 @@ const output = process.env.HERO_SCREENSHOTS_DIR ?? "/tmp/ss-home-reference";
 await fs.mkdir(output, { recursive: true });
 const baseline = await fs.readFile(`${output}/baseline.json`, "utf8").then(JSON.parse).catch(() => null);
 const browser = await chromium.launch({
-  executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ?? "/repl/tools/bin/chromium",
+  executablePath: playwrightExecutablePath,
   args: ["--no-sandbox"],
 });
 const errors = [];

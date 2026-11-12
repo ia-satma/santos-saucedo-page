@@ -492,8 +492,28 @@ export const newsData = [
 ];
 
 
-// Office photography pending (Fase 4 — institutional photo shoot)
-export const officeImagesData: { imageUrl: string; alt: string; altEs: string; order: number }[] = [];
+// La galería editable parte del mismo catálogo que usa la página pública. Así el panel
+// nunca aparece vacío cuando el sitio ya tiene fotografía institucional publicada.
+export const officeImagesData: { imageUrl: string; alt: string; altEs: string; order: number }[] = [
+  ["oficina-recepcion-general", "Overview of the firm’s interior", "Vista general del interior de la firma"],
+  ["oficina-sala-panoramica", "Meeting table and garden", "Mesa de reuniones y jardín"],
+  ["escultura", "Sculpture in the office garden", "Escultura en el jardín de la oficina"],
+  ["oficina-biblioteca", "The firm’s legal library", "Biblioteca jurídica de la firma"],
+  ["vestibulo", "Inside the Santos & Saucedo offices", "Interior de las oficinas de Santos & Saucedo"],
+  ["oficina-espacios-abiertos", "Overview of the workspaces", "Vista general de los espacios de trabajo"],
+  ["oficina-arte-detalle", "Contemporary artwork at the firm", "Obra de arte contemporáneo en la firma"],
+  ["oficina-arte-color", "Contemporary art in the offices", "Arte contemporáneo en las oficinas"],
+  ["vestibulo-2", "View of the firm’s interiors", "Vista de los interiores de la firma"],
+  ["area-trabajo-2", "Another view of the workspaces", "Otra perspectiva de los espacios de trabajo"],
+  ["oficina-oficina-privada", "Interior of a Santos & Saucedo office", "Interior de una oficina de Santos & Saucedo"],
+  ["oficina-arte-mapa", "Artwork at the firm’s offices", "Obra de arte en las oficinas de la firma"],
+  ["oficina-mesa-trabajo", "Shared workspace at the firm", "Espacio compartido de trabajo en la firma"],
+  ["recepcion", "View inside the office", "Vista interior de la oficina"],
+  ["oficina-escalera", "Office library and staircase", "Biblioteca y escalera de la oficina"],
+  ["obra-mazo", "Legal-themed artwork", "Obra de arte de temática jurídica"],
+  ["sala-juntas-2", "Meeting room with shelving at the Santos & Saucedo office", "Sala de juntas con estantería, en la oficina de Santos & Saucedo"],
+  ["privado", "Office at the firm", "Oficina de la firma"],
+].map(([name, alt, altEs], order) => ({ imageUrl: `/editorial/${name}-1536.webp`, alt, altEs, order }));
 
 export const representativeMattersData = [
   {

@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { z } from "zod/v3";
+import type { InsertNews } from "@shared/schema";
 
 /**
  * Normalized source record used by the Labor Radar inbox.
@@ -232,6 +233,35 @@ export function toNewsDraft(item: RadarItem): RadarDraft {
     discoveryVisibility: "listed",
     tags: Array.from(new Set(["radar-juridico", "derecho-laboral", ...item.topics])).slice(0, 20),
     categoryEs: "Monitor Laboral",
+  };
+}
+
+/** Convert an approved-normalized finding into the existing Monitor schema.
+ * The English fields intentionally start as a reviewable Spanish fallback and
+ * the record is always unpublished until a human approves it.
+ */
+export function radarItemToNewsInsert(item: RadarItem): InsertNews {
+  const draft = toNewsDraft(item);
+  const title = draft.titleEs;
+  const excerpt = draft.excerptEs || title;
+  return {
+    title,
+    titleEs: title,
+    excerpt,
+    excerptEs: excerpt,
+    content: draft.contentEs || excerpt,
+    contentEs: draft.contentEs,
+    slug: draft.slug,
+    sourceUrl: draft.sourceUrl,
+    sourceName: draft.sourceName,
+    tags: draft.tags,
+    category: "alerts",
+    categoryEs: draft.categoryEs,
+    published: false,
+    processingStatus: draft.processingStatus,
+    discoveryVisibility: draft.discoveryVisibility,
+    featuredHome: false,
+    date: item.publishedAt ? new Date(item.publishedAt) : new Date(item.detectedAt),
   };
 }
 
