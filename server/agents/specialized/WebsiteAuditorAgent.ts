@@ -3,12 +3,26 @@ import { BaseAgent } from '../core/BaseAgent';
 import { AgentResult, ExecutionContext, AgentType } from '../core/types';
 import { orchestrator } from '../core/AgentOrchestrator';
 import { storage } from '../../storage';
+import { db } from '../../db';
 import { getConfigMap } from '../../mirror/siteConfig';
 import { fetchStatusWithPolicy } from '../../security/network';
-import type { InsertWebsiteAuditFinding, WebsiteAuditFinding, TeamMember, PracticeGroup, IndustryGroup, News } from '@shared/schema';
+import { getCmsOverrides } from '../../cms/siteConfig';
+import { siteConfig, testimonials } from '@shared/schema';
+import { cmsDefaults, cmsSections } from '@shared/cms';
+import { appStorageObjectKeyFromPath, downloadAppStorageObject } from '../../replitStorage';
+import type { InsertWebsiteAuditFinding, WebsiteAuditFinding, TeamMember, PracticeGroup, IndustryGroup, News, MediaItem, Testimonial } from '@shared/schema';
 import { capabilityPath } from '@shared/localizedPublicUrls';
 import { publicImageAssetExists } from './websiteAuditMedia';
 import { SUPPORTED_LANGUAGES as SITE_LANGUAGES } from '@shared/constants';
+import {
+  auditCanonicalRoutes,
+  auditCmsSnapshot,
+  auditMediaReferences,
+  auditTestimonials,
+  collectCmsMediaReferences,
+  collectCmsRouteReferences,
+  type MediaReference,
+} from './websiteAuditCms';
 import {
   industryGroupContentIssues,
   isPublishedEntity,
@@ -40,7 +54,7 @@ const FALLBACK_IMAGE = '/placeholder-article.svg';
 const AUTO_ENQUEUE_ENTITY_TYPE = 'news';
 
 interface AuditConfig {
-  runType: 'full' | 'delta' | 'links_only' | 'translations_only' | 'seo_only' | 'content_only';
+  runType: 'full' | 'delta' | 'links_only' | 'translations_only' | 'seo_only' | 'content_only' | 'cms_only' | 'media_only' | 'routes_only';
   skipModules?: string[];
   applyChanges?: boolean;
 }
@@ -52,6 +66,9 @@ interface AuditMetrics {
   linksChecked: number;
   translationsChecked: number;
   contentItemsChecked: number;
+  cmsSectionsChecked: number;
+  mediaChecked: number;
+  routesChecked: number;
   executionTimeMs?: number;
 }
 
@@ -71,7 +88,58 @@ interface FindingData {
   resolvedBy?: string;
 }
 
+interface WebsiteAuditorDependencies {
+  loadCmsSnapshot: () => Promise<{ sections: Record<string, unknown>; overrides: Record<string, unknown>; localizedKeys: string[] }>;
+  loadMediaItems: () => Promise<MediaItem[]>;
+  loadTestimonials: () => Promise<Testimonial[]>;
+  isMediaAvailable: (url: string) => Promise<boolean>;
+}
+
+const defaultDependencies: WebsiteAuditorDependencies = {
+  loadCmsSnapshot: async () => {
+    const [overrides, rows] = await Promise.all([
+      getCmsOverrides(),
+      db.select({ key: siteConfig.key, value: siteConfig.value }).from(siteConfig),
+    ]);
+    const rawOverrides: Record<string, unknown> = {};
+    for (const row of rows) {
+      if (!row.key.startsWith('editorial.')) continue;
+      const section = row.key.slice('editorial.'.length);
+      try {
+        const stored = row.value ? JSON.parse(row.value) as { content?: unknown } : null;
+        if (stored && Object.prototype.hasOwnProperty.call(stored, 'content')) rawOverrides[section] = stored.content;
+      } catch {
+        rawOverrides[section] = null;
+      }
+    }
+    const sections = Object.fromEntries(
+      cmsSections.map(({ key }) => [key, (overrides as Record<string, unknown>)[key] ?? cmsDefaults[key]]),
+    );
+    return {
+      sections,
+      overrides: rawOverrides,
+      localizedKeys: rows.map((row) => row.key).filter((key) => key.startsWith('localized.')),
+    };
+  },
+  loadMediaItems: () => storage.getMediaItems(),
+  loadTestimonials: () => db.select().from(testimonials),
+  isMediaAvailable: async (url) => {
+    if (url.startsWith('/media/')) {
+      const objectKey = appStorageObjectKeyFromPath(url);
+      return objectKey ? Boolean(await downloadAppStorageObject(objectKey)) : false;
+    }
+    if (url.startsWith('/')) return publicImageAssetExists(url);
+    try {
+      const status = await fetchStatusWithPolicy({ url, isAllowedHostname: () => true, timeoutMs: 5_000, maxRedirects: 2 });
+      return status >= 200 && status < 400;
+    } catch {
+      return false;
+    }
+  },
+};
+
 export class WebsiteAuditorAgent extends BaseAgent {
+  private readonly dependencies: WebsiteAuditorDependencies;
   private auditId: string = '';
   private metrics: AuditMetrics = {
     startTime: 0,
@@ -79,15 +147,18 @@ export class WebsiteAuditorAgent extends BaseAgent {
     linksChecked: 0,
     translationsChecked: 0,
     contentItemsChecked: 0,
+    cmsSectionsChecked: 0,
+    mediaChecked: 0,
+    routesChecked: 0,
   };
   private findings: FindingData[] = [];
   private allowChanges = false;
 
-  constructor() {
+  constructor(dependencies: Partial<WebsiteAuditorDependencies> = {}) {
     super({
       agentType: 'website_auditor',
       name: 'Website Auditor Agent',
-      description: 'Comprehensive website quality auditor - checks links, translations, content completeness, SEO, and performance',
+      description: 'Audita el CMS, medios, rutas canónicas, enlaces, traducciones, contenido y SEO del sitio.',
       systemPrompt: `You are a website quality auditor for a corporate law firm website.
 Your role is to identify issues that affect user experience, SEO, and content quality.
 Focus on: broken links, missing translations, incomplete lawyer profiles, SEO gaps, and content issues.
@@ -95,7 +166,7 @@ Be thorough but prioritize critical issues that directly impact users.`,
       model: 'gpt-6.1-sol',
       temperature: 0.3,
       maxTokens: 4096,
-      skills: ['link_checking', 'translation_validation', 'content_analysis', 'seo_audit', 'performance_monitoring'],
+      skills: ['link_checking', 'translation_validation', 'content_analysis', 'seo_audit', 'cms_mapping', 'media_storage', 'canonical_routes'],
       enabled: true,
       concurrency: 1,
       retryPolicy: {
@@ -104,6 +175,7 @@ Be thorough but prioritize critical issues that directly impact users.`,
         backoffMultiplier: 2,
       },
     });
+    this.dependencies = { ...defaultDependencies, ...dependencies };
   }
 
   async execute(context: ExecutionContext, payload: Record<string, unknown>): Promise<AgentResult> {
@@ -121,6 +193,9 @@ Be thorough but prioritize critical issues that directly impact users.`,
       linksChecked: 0,
       translationsChecked: 0,
       contentItemsChecked: 0,
+      cmsSectionsChecked: 0,
+      mediaChecked: 0,
+      routesChecked: 0,
     };
     this.findings = [];
 
@@ -215,7 +290,7 @@ Be thorough but prioritize critical issues that directly impact users.`,
   }
 
   private getModulesToRun(config: AuditConfig): string[] {
-    const allModules = ['translations', 'content', 'seo', 'links'];
+    const allModules = ['cms', 'media', 'routes', 'translations', 'content', 'seo', 'links'];
     const skipModules = config.skipModules || [];
 
     switch (config.runType) {
@@ -227,6 +302,12 @@ Be thorough but prioritize critical issues that directly impact users.`,
         return ['seo'];
       case 'content_only':
         return ['content'];
+      case 'cms_only':
+        return ['cms'];
+      case 'media_only':
+        return ['media'];
+      case 'routes_only':
+        return ['routes'];
       case 'delta':
       case 'full':
       default:
@@ -250,9 +331,69 @@ Be thorough but prioritize critical issues that directly impact users.`,
       case 'links':
         await this.auditLinks();
         break;
+      case 'cms':
+        await this.auditCms();
+        break;
+      case 'media':
+        await this.auditCmsMedia();
+        break;
+      case 'routes':
+        await this.auditCmsRoutes();
+        break;
       default:
         console.warn(`[WebsiteAuditor] Unknown module: ${module}`);
     }
+  }
+
+  private pushCmsFindings(findings: Array<{ category: string; issueType: string; severity: FindingData['severity']; details: Record<string, unknown>; recommendation: string; url?: string }>): void {
+    this.findings.push(...findings);
+  }
+
+  private async auditCms(): Promise<void> {
+    const snapshot = await this.dependencies.loadCmsSnapshot();
+    const [cmsFindings, testimonials] = await Promise.all([
+      Promise.resolve(auditCmsSnapshot(snapshot)),
+      this.dependencies.loadTestimonials(),
+    ]);
+    this.pushCmsFindings(cmsFindings);
+    this.pushCmsFindings(auditTestimonials(testimonials));
+    this.metrics.cmsSectionsChecked += Object.keys(snapshot.sections).length;
+  }
+
+  private async auditCmsMedia(): Promise<void> {
+    const [snapshot, mediaItems, members, practices, industries, newsItems] = await Promise.all([
+      this.dependencies.loadCmsSnapshot(),
+      this.dependencies.loadMediaItems(),
+      storage.getTeamMembers(),
+      storage.getPracticeGroups(),
+      storage.getIndustryGroups(),
+      storage.getNews(),
+    ]);
+    const references: MediaReference[] = [
+      ...collectCmsMediaReferences(snapshot.sections, 'cms'),
+      ...mediaItems.map((item) => ({ url: item.path, source: `media_items.${item.id}`, kind: item.mimeType })),
+      ...members.flatMap((item) => item.imageUrl ? [{ url: item.imageUrl, source: `team_member.${item.id}`, kind: 'image' }] : []),
+      ...practices.flatMap((item) => item.imageUrl ? [{ url: item.imageUrl, source: `practice_group.${item.id}`, kind: 'image' }] : []),
+      ...industries.flatMap((item) => item.imageUrl ? [{ url: item.imageUrl, source: `industry_group.${item.id}`, kind: 'image' }] : []),
+      ...newsItems.flatMap((item) => item.imageUrl ? [{ url: item.imageUrl, source: `news.${item.id}`, kind: 'image' }] : []),
+    ];
+    const findings = await auditMediaReferences(references, this.dependencies.isMediaAvailable);
+    this.pushCmsFindings(findings);
+    this.metrics.mediaChecked += new Set(references.map((reference) => reference.url)).size;
+  }
+
+  private async auditCmsRoutes(): Promise<void> {
+    const snapshot = await this.dependencies.loadCmsSnapshot();
+    const references = [
+      ...collectCmsRouteReferences(snapshot.sections.navigation, 'navigation'),
+      ...collectCmsRouteReferences(snapshot.sections.links, 'links'),
+      ...collectCmsRouteReferences(snapshot.sections.chrome, 'chrome'),
+      ...collectCmsRouteReferences(snapshot.sections.home, 'home'),
+      ...collectCmsRouteReferences(snapshot.sections.about, 'about'),
+      ...collectCmsRouteReferences(snapshot.sections.v3, 'v3'),
+    ];
+    this.pushCmsFindings(auditCanonicalRoutes(references));
+    this.metrics.routesChecked += new Set(references.map((reference) => `${reference.source}:${reference.href}`)).size;
   }
 
   private async auditTranslations(): Promise<void> {

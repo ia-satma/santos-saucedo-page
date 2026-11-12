@@ -211,7 +211,7 @@ test('website auditor completes an isolated no-module dry run without persistenc
       context('website_auditor'),
       {
         runType: 'full',
-        skipModules: ['translations', 'content', 'seo', 'links'],
+        skipModules: ['cms', 'media', 'routes', 'translations', 'content', 'seo', 'links'],
         applyChanges: false,
         triggeredBy: 'isolated-test',
       },
@@ -290,7 +290,7 @@ test('website auditor never enqueues remediation work in diagnostic mode', async
       context('website_auditor'),
       {
         runType: 'full',
-        skipModules: ['translations', 'content', 'seo', 'links'],
+        skipModules: ['cms', 'media', 'routes', 'translations', 'content', 'seo', 'links'],
         applyChanges: false,
         triggeredBy: 'diagnostic-test',
       },
@@ -358,7 +358,7 @@ test('website auditor preserves explicitly authorized remediation enqueueing', a
       context('website_auditor'),
       {
         runType: 'full',
-        skipModules: ['translations', 'content', 'seo', 'links'],
+        skipModules: ['cms', 'media', 'routes', 'translations', 'content', 'seo', 'links'],
         applyChanges: true,
         triggeredBy: 'authorized-test',
       },

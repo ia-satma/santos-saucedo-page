@@ -65,8 +65,8 @@ export const agentPayloadSchemas = {
     applyChanges: z.boolean().default(false),
   }).strict(),
   website_auditor: z.object({
-    runType: z.enum(['full', 'delta', 'links_only', 'translations_only', 'seo_only', 'content_only']).default('full'),
-    skipModules: z.array(z.enum(['links', 'navigation', 'translations', 'performance', 'seo', 'content'])).max(6).optional(),
+    runType: z.enum(['full', 'delta', 'links_only', 'translations_only', 'seo_only', 'content_only', 'cms_only', 'media_only', 'routes_only']).default('full'),
+    skipModules: z.array(z.enum(['cms', 'media', 'routes', 'links', 'translations', 'seo', 'content'])).max(7).optional(),
     applyChanges: z.boolean().default(false),
     triggeredBy: z.enum(['manual', 'scheduled']).optional(),
   }).strict(),
@@ -213,7 +213,7 @@ export const imageAnalysisSchema = z.object({
 }).strict();
 
 export const socialOutputSchema = z.object({
-  posts: z.record(z.object({
+  posts: z.record(z.string(), z.object({
     text: z.string().trim().min(1).max(5_000),
     hashtags: z.array(z.string().max(100)).max(30).default([]),
   }).strict()),
