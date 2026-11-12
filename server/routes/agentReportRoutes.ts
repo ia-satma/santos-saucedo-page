@@ -24,7 +24,7 @@ export function registerAgentReportRoutes(app: Express) {
       .split(",")
       .map((code) => code.trim())
       .filter((code): code is LanguageCode => allLanguageCodes.includes(code as LanguageCode));
-    return saved.length ? Array.from(new Set(saved)) : allLanguageCodes;
+    return saved.length ? Array.from(new Set(saved)) : ["es", "en"];
   };
 
   app.get("/api/active-languages", async (_req, res) => {
@@ -120,6 +120,10 @@ export function registerAgentReportRoutes(app: Express) {
               id: news.id,
               title: news.title,
               titleEs: news.titleEs,
+              excerpt: news.excerpt,
+              excerptEs: news.excerptEs,
+              content: news.content,
+              contentEs: news.contentEs,
               published: news.published,
             })
             .from(news),
@@ -136,16 +140,13 @@ export function registerAgentReportRoutes(app: Express) {
           ...language,
           enabled: activeLanguages.includes(language.code),
         }));
+        const hasText = (value: unknown) => typeof value === "string" && value.trim().length > 0;
         const articleRows = articles.map((a) => {
-          const translatedLanguages = Array.from(
-            new Set([
-              "es",
-              "en",
-              ...translations
-                .filter((t) => t.newsId === a.id)
-                .map((t) => t.language),
-            ]),
-          );
+          const translatedLanguages = [
+            hasText(a.titleEs) && hasText(a.excerptEs) ? "es" : null,
+            hasText(a.title) && hasText(a.excerpt) ? "en" : null,
+            ...translations.filter((t) => t.newsId === a.id).map((t) => t.language),
+          ].filter((language): language is string => Boolean(language));
           return {
             ...a,
             translatedLanguages,
@@ -159,6 +160,15 @@ export function registerAgentReportRoutes(app: Express) {
           (sum, article) => sum + languages.filter((language) => article.translatedLanguages.includes(language)).length,
           0,
         );
+        const languageCoverage = languages.map((language) => {
+          const translated = articleRows.filter((article) => article.translatedLanguages.includes(language)).length;
+          return {
+            ...SUPPORTED_LANGUAGES.find((item) => item.code === language)!,
+            translated,
+            total: articleRows.length,
+            percentage: articleRows.length ? Math.round((translated / articleRows.length) * 100) : 100,
+          };
+        });
         res.json({
           languages,
           allLanguages,
@@ -168,6 +178,7 @@ export function registerAgentReportRoutes(app: Express) {
             totalCells,
             percentage: totalCells ? Math.round((translatedCells / totalCells) * 100) : 100,
           },
+          languageCoverage,
           articles: articleRows,
         });
       } catch {

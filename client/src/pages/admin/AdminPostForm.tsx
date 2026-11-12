@@ -22,7 +22,6 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import type { BlogPost, BlogCategory } from "@shared/schema";
-import { SUPPORTED_LANGUAGES } from "@shared/constants";
 
 const translations = {
   en: {
@@ -788,6 +787,14 @@ function generateSlug(title: string): string {
 type TranslationField = "title" | "excerpt" | "content";
 
 export default function AdminPostForm() {
+  const activeLanguagesQuery = useQuery<{ activeLanguages: string[] }>({
+    queryKey: ["/api/active-languages"],
+    queryFn: async () => {
+      const response = await fetch("/api/active-languages", { credentials: "include" });
+      if (!response.ok) throw new Error("No se pudieron cargar los idiomas activos.");
+      return response.json();
+    },
+  });
   const { id } = useParams<{ id: string }>();
   const isEditing = !!id;
   const { language } = useLanguage();
@@ -917,7 +924,7 @@ export default function AdminPostForm() {
       }
       const res = await adminApiRequest("POST", "/api/agents/run/polyglot_translator", {
         articleId: id,
-        targetLanguages: SUPPORTED_LANGUAGES.map(({ code }) => code).filter((code) => code !== "es"),
+        targetLanguages: (activeLanguagesQuery.data?.activeLanguages ?? ["es", "en"]).filter((code) => code !== "es"),
         applyChanges: true,
       });
       if (!res.ok) {

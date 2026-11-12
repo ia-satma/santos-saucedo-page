@@ -93,7 +93,7 @@ export const cmsSections: {
     key: "about",
     label: "Nuestra firma",
     path: "/about",
-    help: "Introducción, historia, cifras y principios de trabajo.",
+    help: "Todo lo que aparece en Nuestra firma: hero, introducción, historia, cifras, principios, prioridad, láminas, oficina, fotografías y enlaces siguientes. Los textos y medios se editan aquí por idioma.",
   },
   {
     key: "officeLabels",
@@ -121,9 +121,9 @@ export const cmsSections: {
   },
   {
     key: "practices",
-    label: "Prácticas — introducción",
+    label: "Prácticas",
     path: "/practice-groups",
-    help: "Entradilla del listado. Cada nombre, descripción, servicio y orden se edita en el catálogo de prácticas.",
+    help: "Todo lo que aparece en Prácticas: título, entradilla, tarjetas, nombres, descripciones, servicios, imágenes, orden y ficha de cada área.",
   },
   {
     key: "theme",
@@ -235,9 +235,9 @@ export const cmsSections: {
   },
   {
     key: "v3",
-    label: "Páginas internas — textos, títulos e imágenes",
+    label: "Páginas internas — contenido avanzado",
     path: "/",
-    help: "Contenido editable de Socios, Perfil, Firma, Prácticas, Contacto y páginas extra. Cada idioma y medio se edita aquí sin tocar el código.",
+    help: "Contenido avanzado de las páginas ya publicadas. Dentro de cada idioma, Socios, Perfil, Nuestra firma, Prácticas, Anatomía, Contacto y páginas extra conservan sus propios bloques, textos, etiquetas, imágenes y accesibilidad.",
   },
   {
     key: "industry-detail",

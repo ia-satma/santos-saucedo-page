@@ -22,6 +22,7 @@ import type { FirmaTextos } from "@/v3/firma/textos";
 import { HOME_FIRMA } from "@/v3/firma/textos";
 import { v3Asset } from "@/v3/asset";
 import { useV3Content } from "@/v3/useV3Content";
+import cmsDefaults from "@shared/cms-defaults.json";
 
 // Cifras de /about: "40+" (sin tocar) y "72+" ciudades con presencia, la forma en cifras de
 // "más de 72" (redacción aprobada de la portada: "Ciudades en nuestra red de alianzas"). Fuera el conteo de
@@ -424,12 +425,29 @@ export default function About() {
 
 
   const editableContent = useCmsContent("about", content);
+  const editablePageContent = useCmsContent("about", cmsDefaults.about);
   const baseT = editableContent[language] || editableContent.en;
+  const pageT = editablePageContent[language] || editablePageContent.en;
   const cmsChrome = useCmsContent("chrome", chrome26);
   const nav = cmsChrome[language].nav;
   const t = { ...baseT, title: nav[0].label };
   const { lang, attrs } = useV3Lang();
-  const T = v3.firma as unknown as FirmaTextos;
+  const sourceT = v3.firma as unknown as FirmaTextos;
+  const T = {
+    ...sourceT,
+    cabAlt: String((pageT as any).heroImageAlt || sourceT.cabAlt),
+    lead: String((pageT as any).heroLead || sourceT.lead),
+    cabP: String((pageT as any).heroParagraph || sourceT.cabP),
+    cuadroAlt: String((pageT as any).boardImageAlt || sourceT.cuadroAlt),
+    cuadroCap: String((pageT as any).boardCaption || sourceT.cuadroCap),
+    cuadroTexto: String((pageT as any).boardText || sourceT.cuadroTexto),
+    lema: ((pageT as any).priority || sourceT.lema) as FirmaTextos["lema"],
+    notas: ((pageT as any).priorityNotes || sourceT.notas) as FirmaTextos["notas"],
+    carnero: ((pageT as any).bighorn || sourceT.carnero) as FirmaTextos["carnero"],
+    reaccion: ((pageT as any).response || sourceT.reaccion) as FirmaTextos["reaccion"],
+    siguiente: String((pageT as any).nextLabel || sourceT.siguiente),
+    siguienteLabel: String((pageT as any).nextLabelAria || sourceT.siguienteLabel),
+  } as FirmaTextos;
   // La fachada: pie y texto alternativo de la antigua «La firma» de la portada (CMS home.firma)
   const fachada = useCmsContent("home", HOME_FIRMA)[lang].firma;
 

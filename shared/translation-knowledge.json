@@ -9,6 +9,28 @@
     "Para chino usa mandarín simplificado; para árabe conserva la lectura RTL sin invertir teléfonos ni enlaces.",
     "No agregues explicaciones, notas del traductor, promesas ni información que no esté en la fuente."
   ],
+  "knowledge": [
+    {
+      "category": "translation_pattern",
+      "title": "Marco jurídico mexicano para traducción laboral",
+      "content": "Conserva LFT como Ley Federal del Trabajo, LSS como Ley del Seguro Social, IMSS como Instituto Mexicano del Seguro Social, INFONAVIT como Instituto del Fondo Nacional de la Vivienda para los Trabajadores, REPSE como Registro de Prestadoras de Servicios Especializados u Obras Especializadas, STPS como Secretaría del Trabajo y Previsión Social, CFCRL como Centro Federal de Conciliación y Registro Laboral, y NOM-037 como la norma mexicana de teletrabajo. Mantén la sigla y añade una explicación solo en la primera aparición cuando el idioma lo necesite. No traduzcas nombres oficiales de autoridades, registros, programas, la firma ni ciudades."
+    },
+    {
+      "category": "translation_pattern",
+      "title": "Control de cifras, fechas, enlaces y formato",
+      "content": "Conserva cifras, porcentajes, fechas, unidades, URLs, correos, nombres propios, etiquetas HTML y marcadores {{...}}. No inventes datos ni cambies el sentido de plazos. Mantén la jerarquía de títulos y párrafos, y no agregues notas del traductor."
+    },
+    {
+      "category": "editorial_voice",
+      "title": "Estilo por idioma del despacho",
+      "content": "Alemán: registro jurídico corporativo sobrio y terminología natural. Chino: mandarín simplificado, tono institucional, nombres mexicanos y siglas intactos. Coreano y japonés: registro profesional para empresas, sin calcos. Árabe: redacción jurídica clara en RTL sin invertir números, teléfonos ni enlaces. Ruso: terminología jurídica corporativa precisa. Francés e italiano: estilo de cabinet/studio jurídico, natural y formal."
+    },
+    {
+      "category": "translation_pattern",
+      "title": "Control de calidad antes de guardar",
+      "content": "Verifica que título, extracto y cuerpo existan, que no falten párrafos, que se conserven cifras, nombres, siglas, enlaces y marcadores, y que no queden frases en español o inglés sin intención. Revisa concordancia, género, plural, puntuación y dirección RTL. Si hay ambigüedad jurídica, conserva el término original y marca la traducción para revisión humana."
+    }
+  ],
   "glossary": [
     { "source": "socio", "translations": { "en": "partner", "de": "Partner", "zh": "合伙人", "ko": "파트너", "ja": "パートナー", "ar": "شريك", "ru": "партнёр", "fr": "associé", "it": "socio" } },
     { "source": "asociado", "translations": { "en": "associate", "de": "Associate", "zh": "律师", "ko": "변호사", "ja": "アソシエイト", "ar": "محامٍ معاون", "ru": "юрист", "fr": "collaborateur", "it": "associato" } },

@@ -197,6 +197,21 @@ export class AgentKnowledgeStore {
       added++;
     }
 
+    for (const guide of translationKnowledge.knowledge ?? []) {
+      if (existingDocs.some((doc) => doc.category === guide.category && doc.title === guide.title)) continue;
+      await this.addDocument({
+        agentType: 'polyglot_translator',
+        category: guide.category,
+        title: guide.title,
+        content: guide.content,
+        metadata: { type: 'translation_knowledge', knowledgeVersion: translationKnowledge.version },
+        dataClassification: 'internal',
+        approvedForAiAt: new Date(),
+        approvedForAiBy: 'system_seed',
+      });
+      added++;
+    }
+
     const hasGuide = existingDocs.some((doc) => doc.category === 'translation_style_guide');
     if (!hasGuide) {
       await this.addDocument({

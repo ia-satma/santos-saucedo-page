@@ -2435,7 +2435,117 @@
           "value": "72+",
           "label": "Cities in our alliance network"
         }
-      ]
+      ],
+      "heroLead": "Santos & Saucedo was founded in San Pedro Garza García with a practice devoted to employers. Since then it has advised Mexican industrial groups, multinational companies and Asian-owned businesses on the decisions that involve their workforce.",
+      "heroParagraph": "Hiring, the organization of work, the relationship with the union, the termination of employment, and the defense before the authorities and the courts. A client with plants in several states receives the same judgment in all of them, through an alliance of specialized firms.",
+      "heroImageAlt": "The full moon rises between two mountain ridges at dusk",
+      "boardImageAlt": "The Santos & Saucedo boardroom with the firm’s triptych: three abstract canvases in color with the lines of the Cerro de la Silla",
+      "boardCaption": "The principal painting",
+      "boardText": "The boardroom triptych, with the lines of the Cerro de la Silla.",
+      "priority": [
+        {
+          "antes": "Our priority: ",
+          "em": "prevention",
+          "fin": "."
+        },
+        {
+          "antes": "In the event of a dispute: ",
+          "em": "resolution",
+          "fin": "."
+        }
+      ],
+      "priorityNotes": [
+        "We prepare each company to comply with labor law before a dispute arises: well-drafted contracts, files in order, negotiations prepared well in advance. Sound labor compliance is the best defense.",
+        "When a dispute arrives, we work as trial lawyers: the same team that knows the client’s operations prepares each matter as if it were going to court. That preparation is what allows us to negotiate better and, often, to resolve matters sooner."
+      ],
+      "bighorn": {
+        "h": "Always forward",
+        "p": [
+          "The bighorn sheep climbs the mountain ranges of northern Mexico where there seems to be no path. It does not turn back or stop until it gets there. That is how we carry every matter: with a steady step and with persistence, until the result is achieved.",
+          "That persistence rests on preparation. Every matter is prepared as if it were going to trial; that is why we negotiate from a firm position and most matters are resolved sooner."
+        ],
+        "listaLabel": "Steps of the climb and what they mean for the firm",
+        "piezas": [
+          {
+            "nom": "Determination",
+            "parte": "The summit in sight",
+            "tag": "The summit",
+            "desc": "Every matter has a clear objective from the first day, and the firm does not let go of it until it is achieved."
+          },
+          {
+            "nom": "A steady step",
+            "parte": "Footing on the rock",
+            "tag": "Footing",
+            "desc": "Every step rests on something solid: a file in order, with documents that are complete, signed and easy to locate."
+          },
+          {
+            "nom": "Prevention",
+            "parte": "The path ahead",
+            "tag": "The path",
+            "desc": "Prevention builds the path before it is needed: contracts, internal work rules, the collective bargaining agreement and IMSS filings up to date. When the time comes to take the step, the rock is already there."
+          },
+          {
+            "nom": "No turning back",
+            "parte": "The leap",
+            "tag": "The leap",
+            "desc": "In the face of an obstacle, the firm does not turn back: it finds the way and keeps going. A negotiation backed by a well-prepared case moves forward better."
+          },
+          {
+            "nom": "Persistence",
+            "parte": "The summit",
+            "tag": "The summit",
+            "desc": "Step by step, without stopping, until the result is achieved. If a dispute comes, the company is already on its feet, and the firm stays with it to the end."
+          }
+        ],
+        "svgLabel": "Plate 1/7, Always forward: a bighorn sheep climbs a mountain wall on rock ledges that slide out just before each step, leaps a crack without turning back and reaches the cairn on the summit.",
+        "cajetin": "Always forward",
+        "instr": "Choose a step in the list or on the cliff, and the sheep moves forward.",
+        "nota": "Bighorn sheep (Ovis canadensis), from the mountain ranges of northern Mexico."
+      },
+      "response": {
+        "h": "Capacity to respond",
+        "p": [
+          "A prepared company does not improvise when a dispute arrives. The order we build to prevent conflict — contracts, the collective bargaining agreement, payroll and IMSS filings — is the same order that sustains the defense when a strike notice, an inspection or a lawsuit arrives.",
+          "That is why prevention and response are not two separate services: they are the same piece, assembled before it is needed."
+        ],
+        "listaLabel": "Stages of the engine and what we do at each one when a dispute arrives",
+        "piezas": [
+          {
+            "nom": "Strike notice, inspection or lawsuit",
+            "parte": "Fan",
+            "tag": "Fan",
+            "desc": "The dispute arrives: a strike notice, an inspection visit by the STPS (the federal labor ministry) or an individual or collective lawsuit. It is read in full to identify what is being sought and before whom."
+          },
+          {
+            "nom": "The file, already assembled",
+            "parte": "Compressor",
+            "tag": "Compressor",
+            "desc": "Individual contracts, the collective bargaining agreement, payroll and IMSS filings: what prevention left in order is gathered for the case."
+          },
+          {
+            "nom": "The strategy",
+            "parte": "Combustor",
+            "tag": "Combustor",
+            "desc": "With the facts and the evidence in view, the course is set: negotiate, conciliate or defend."
+          },
+          {
+            "nom": "Conciliation",
+            "parte": "Turbine",
+            "tag": "Turbine",
+            "desc": "The conciliation hearing before the Federal Center for Labor Conciliation and Registration or the competent local center, with the company prepared to negotiate."
+          },
+          {
+            "nom": "The defense at trial",
+            "parte": "Nozzle",
+            "tag": "Nozzle",
+            "desc": "If there is no agreement, the defense before the Labor Court with the same file: the answer to the claim, the evidence and the hearings."
+          }
+        ],
+        "svgLabel": "Isometric drawing of a fighter-jet turbofan with a cutaway casing. It separates into five stages along its axis, from the fan to the nozzle, and then reassembles inside the fuselage of a twin-tail fighter jet that is drawn around the engine.",
+        "cajetin": "Capacity to respond"
+      },
+      "nextLabel": "Next",
+      "nextLabelAria": "Next page"
     },
     "es": {
       "title": "Nuestra firma",
@@ -2470,7 +2580,117 @@
           "value": "72+",
           "label": "Ciudades en nuestra red de alianzas"
         }
-      ]
+      ],
+      "heroLead": "Santos & Saucedo nació en San Pedro Garza García con una práctica dedicada a las empresas. Desde entonces asesora a grupos industriales mexicanos, a multinacionales y a empresas de capital asiático en las decisiones que involucran a su personal.",
+      "heroParagraph": "La contratación, la organización del trabajo, la relación con el sindicato, la terminación de una relación laboral y la defensa ante las autoridades y los tribunales. Un cliente con plantas en varios estados recibe el mismo criterio en todas ellas, a través de una alianza de despachos especializados.",
+      "heroImageAlt": "La luna llena sale entre dos crestas de la sierra, al anochecer",
+      "boardImageAlt": "Sala de juntas de Santos & Saucedo con el tríptico de la firma: tres lienzos abstractos de color con las líneas del Cerro de la Silla",
+      "boardCaption": "El cuadro principal",
+      "boardText": "Tríptico de la sala de juntas, con las líneas del Cerro de la Silla.",
+      "priority": [
+        {
+          "antes": "Nuestra prioridad: la ",
+          "em": "prevención",
+          "fin": "."
+        },
+        {
+          "antes": "En caso de conflicto: la ",
+          "em": "solución",
+          "fin": "."
+        }
+      ],
+      "priorityNotes": [
+        "Preparamos a cada empresa para cumplir con la ley laboral antes de que surja un conflicto: contratos bien redactados, expedientes en orden, negociaciones preparadas con tiempo. El mejor cumplimiento laboral es la mejor defensa.",
+        "Cuando el conflicto llega, trabajamos como abogados de juicio: el mismo equipo que conoce la operación del cliente prepara cada asunto como si fuera a llegar al tribunal. Esa preparación es la que nos permite negociar mejor y, muchas veces, resolver antes."
+      ],
+      "bighorn": {
+        "h": "Siempre hacia adelante",
+        "p": [
+          "El borrego cimarrón sube por las sierras del norte de México donde no parece haber camino. No retrocede ni se detiene hasta llegar. Así llevamos cada asunto: con paso firme y con persistencia, hasta conseguir el resultado.",
+          "Esa persistencia descansa en la preparación. Cada asunto se prepara como si fuera a llegar a juicio; por eso se negocia desde una posición firme y casi siempre se resuelve antes."
+        ],
+        "listaLabel": "Pasos de la subida y lo que significan para la firma",
+        "piezas": [
+          {
+            "nom": "Determinación",
+            "parte": "La cima a la vista",
+            "tag": "La cima",
+            "desc": "Cada asunto tiene un objetivo claro desde el primer día, y la firma no lo suelta hasta conseguirlo."
+          },
+          {
+            "nom": "Paso firme",
+            "parte": "Apoyo en la roca",
+            "tag": "Apoyo",
+            "desc": "Cada paso se apoya en algo sólido: un expediente en orden, con documentos completos, firmados y localizables."
+          },
+          {
+            "nom": "La prevención",
+            "parte": "El camino por delante",
+            "tag": "El camino",
+            "desc": "La prevención construye el camino antes de necesitarlo: contratos, reglamento interior, contrato colectivo e IMSS al día. Cuando llega el momento de dar el paso, la roca ya está ahí."
+          },
+          {
+            "nom": "Sin retroceder",
+            "parte": "El salto",
+            "tag": "El salto",
+            "desc": "Ante un obstáculo, la firma no retrocede: busca el camino y sigue. Una negociación respaldada por un caso bien preparado avanza mejor."
+          },
+          {
+            "nom": "Persistencia",
+            "parte": "La cima",
+            "tag": "La cima",
+            "desc": "Paso a paso, sin detenerse, hasta conseguir el resultado. Si el conflicto llega, la empresa ya está de pie, y la firma sigue con ella hasta el final."
+          }
+        ],
+        "svgLabel": "Lámina 1/7, Siempre hacia adelante: un borrego cimarrón sube un risco de la sierra por salientes de roca que salen justo antes de cada paso, salta una grieta sin retroceder y llega a la apacheta de la cima.",
+        "cajetin": "Siempre hacia adelante",
+        "instr": "Elija un paso en la lista o sobre el risco, y el borrego avanza.",
+        "nota": "Borrego cimarrón (Ovis canadensis), de las sierras del norte de México."
+      },
+      "response": {
+        "h": "Capacidad de reacción",
+        "p": [
+          "Una empresa preparada no improvisa cuando llega el conflicto. El orden que construimos para prevenir —contratos, contrato colectivo, nóminas y registros ante el IMSS— es el mismo que sostiene la defensa cuando llega un emplazamiento a huelga, una inspección o una demanda.",
+          "Por eso la prevención y la reacción no son dos servicios distintos: son la misma pieza, armada antes de necesitarla."
+        ],
+        "listaLabel": "Etapas del motor y lo que hacemos en cada una cuando llega un conflicto",
+        "piezas": [
+          {
+            "nom": "Emplazamiento, inspección o demanda",
+            "parte": "Fan",
+            "tag": "Fan",
+            "desc": "Llega el conflicto: un emplazamiento a huelga, una visita de inspección de la STPS o una demanda individual o colectiva. Se lee completo y se identifica qué se pide y ante quién."
+          },
+          {
+            "nom": "El expediente ya armado",
+            "parte": "Compresor",
+            "tag": "Compresor",
+            "desc": "Contratos individuales, contrato colectivo, nóminas y registros ante el IMSS: lo que la prevención dejó en orden se reúne para el caso."
+          },
+          {
+            "nom": "La estrategia",
+            "parte": "Combustión",
+            "tag": "Combustión",
+            "desc": "Con los hechos y las pruebas a la vista se decide la ruta: negociar, conciliar o defender."
+          },
+          {
+            "nom": "La conciliación",
+            "parte": "Turbina",
+            "tag": "Turbina",
+            "desc": "La audiencia de conciliación ante el Centro Federal de Conciliación y Registro Laboral o el centro local que corresponda, con la empresa preparada para negociar."
+          },
+          {
+            "nom": "La defensa en juicio",
+            "parte": "Tobera",
+            "tag": "Tobera",
+            "desc": "Si no hay acuerdo, la defensa ante el Tribunal Laboral con el mismo expediente: contestación, pruebas y audiencias."
+          }
+        ],
+        "svgLabel": "Plano isométrico de un turbofán de avión de combate con el cárter recortado. Se separa en cinco etapas a lo largo de su eje, del fan a la tobera, y después vuelve a armarse dentro del fuselaje de un avión de combate de dos derivas, que se dibuja alrededor del motor.",
+        "cajetin": "Capacidad de reacción"
+      },
+      "nextLabel": "Siguiente",
+      "nextLabelAria": "Siguiente página"
     },
     "de": {
       "title": "Über die Kanzlei",
@@ -2505,7 +2725,117 @@
           "value": "72+",
           "label": "Städte mit Präsenz"
         }
-      ]
+      ],
+      "heroLead": "Santos & Saucedo wurde San Pedro Garza García mit einer Praxis für Arbeitgeber gegründet. Seitdem berät es mexikanische Industriekonzerne, multinationale Unternehmen und Unternehmen in asiatischem Besitz bei Entscheidungen, die ihre Belegschaft betreffen.",
+      "heroParagraph": "Einstellung, Arbeitsorganisation, Beziehungen zur Gewerkschaft, Beendigung des Arbeitsverhältnisses und Verteidigung vor Behörden und Gerichten. Ein Kunde mit Werken in mehreren Staaten erhält durch eine Allianz spezialisierter Firmen in allen das gleiche Urteil.",
+      "heroImageAlt": "Der Vollmond geht in der Abenddämmerung zwischen zwei Bergkämmen auf",
+      "boardImageAlt": "Der Santos & Saucedo Sitzungssaal mit dem Triptychon der Firma: drei abstrakte Leinwände in Farbe mit den Linien des Cerro de la Silla",
+      "boardCaption": "Der Auftraggeber Gemälde",
+      "boardText": "Das Triptychon im Sitzungssaal mit den Zeilen des Cerro de la Silla.",
+      "priority": [
+        {
+          "antes": "Unsere Priorität:",
+          "em": "Prävention",
+          "fin": "."
+        },
+        {
+          "antes": "Im Streitfall:",
+          "em": "Lösung",
+          "fin": "."
+        }
+      ],
+      "priorityNotes": [
+        "Wir bereiten jedes Unternehmen auf die Einhaltung des Arbeitsrechts vor, bevor es zu einem Streit kommt: gut ausgearbeitete Verträge, geordnete Akten, lange im Voraus vorbereitete Verhandlungen. Eine solide Einhaltung arbeitsrechtlicher Vorschriften ist die beste Verteidigung.",
+        "Wenn es zu einem Streit kommt, arbeiten wir als Prozessanwälte: Das gleiche Team, das die Abläufe des Mandanten kennt, bereitet jede Angelegenheit so vor, als würde sie vor Gericht gehen. Diese Vorbereitung ermöglicht es uns, besser zu verhandeln und Probleme oft früher zu lösen."
+      ],
+      "bighorn": {
+        "h": "Immer vorwärts",
+        "p": [
+          "Die Dickhornschafe erklimmt die Bergketten im Norden Mexikos, wo es scheinbar keinen Weg gibt. Es kehrt nicht um und bleibt nicht stehen, bis es dort ankommt. So tragen wir jede Angelegenheit voran: mit stetigem Schritt und mit Beharrlichkeit, bis das Ergebnis erreicht ist.",
+          "Diese Beharrlichkeit beruht auf Vorbereitung. Jede Angelegenheit wird so vorbereitet, als würde sie vor Gericht stehen; Deshalb verhandeln wir aus einer festen Position und die meisten Angelegenheiten werden früher gelöst."
+        ],
+        "listaLabel": "Schritte des Aufstiegs und was sie für das Unternehmen bedeuten",
+        "piezas": [
+          {
+            "nom": "Entschlossenheit",
+            "parte": "Der Gipfel in Sicht",
+            "tag": "Die Summit",
+            "desc": "Jede Angelegenheit hat vom ersten Tag an ein klares Ziel, und das Unternehmen lässt es nicht los, bis es erreicht ist."
+          },
+          {
+            "nom": "Ein stetiger Schritt",
+            "parte": "Der Stand auf dem Felsen",
+            "tag": "Der Stand",
+            "desc": "Jeder Schritt ruht auf etwas Solidem: einer geordneten Datei mit Dokumenten, die vollständig, unterschrieben und leicht zu handhaben sind lokalisieren."
+          },
+          {
+            "nom": "Prävention",
+            "parte": "Der Weg, der vor Ihnen liegt",
+            "tag": "Der Weg",
+            "desc": "Prävention baut den Weg, bevor er benötigt wird: Verträge, interne Arbeitsregeln, der Tarifvertrag und IMSS Einreichungen auf dem neuesten Stand. Wenn die Zeit gekommen ist, den Schritt zu wagen, ist der Fels bereits da."
+          },
+          {
+            "nom": "Kein Zurück",
+            "parte": "Der Sprung",
+            "tag": "Der Sprung",
+            "desc": "Angesichts eines Hindernisses dreht sich das Unternehmen nicht um zurück: es findet den Weg und geht weiter. Eine Verhandlung, die auf einem gut vorbereiteten Fall basiert, kommt besser voran."
+          },
+          {
+            "nom": "Beharrlichkeit",
+            "parte": "Der Gipfel",
+            "tag": "Der Gipfel",
+            "desc": "Schritt für Schritt, ohne anzuhalten, bis das Ergebnis erreicht ist. Kommt es zum Streit, steht das Unternehmen schon wieder auf den Beinen und die Firma bleibt bis zum Schluss dabei."
+          }
+        ],
+        "svgLabel": "Tafel 1/7, Immer vorwärts: Ein Dickhornschaf erklimmt auf Felsvorsprüngen, die kurz vor jeder Stufe herausrutschen, eine Bergwand, springt einen Spalt weit, ohne umzukehren, und erreicht den Steinhaufen auf dem Gipfel.",
+        "cajetin": "Immer vorwärts",
+        "instr": "Wählen Sie einen Schritt in der Liste oder auf der Klippe, und das Schaf bewegt sich vorwärts.",
+        "nota": "Dickhornschaf (Ovis canadensis) aus den Gebirgsketten Nordmexikos."
+      },
+      "response": {
+        "h": "Kapazität zu antworten",
+        "p": [
+          "Ein vorbereitetes Unternehmen improvisiert nicht, wenn es zu Streitigkeiten kommt. Die Ordnung, die wir schaffen, um Konflikte zu verhindern – Verträge, der Tarifvertrag, Gehaltsabrechnungen und IMSS Unterlagen – ist dieselbe Ordnung, die die Verteidigung aufrechterhält, wenn eine Streikmitteilung, eine Inspektion oder eine Klage eintrifft.",
+          "Deshalb sind Prävention und Reaktion keine zwei getrennten Dienste: Sie sind ein und dasselbe Teil, das bereits zusammengefügt wird erforderlich."
+        ],
+        "listaLabel": "Phasen der Engine und was wir in jeder einzelnen Phase tun, wenn ein Streitfall auftritt",
+        "piezas": [
+          {
+            "nom": "Streikanzeige, Inspektion oder Klage",
+            "parte": "Fan",
+            "tag": "Fan",
+            "desc": "Der Streit kommt: eine Streikanzeige, ein Inspektionsbesuch des STPS (des Bundesarbeitsministeriums) oder eine Einzel- oder Sammelklage. Es wird vollständig gelesen, um zu ermitteln, was gesucht wird und vor wem."
+          },
+          {
+            "nom": "Die Datei, bereits zusammengestellt",
+            "parte": "Kompressor",
+            "tag": "Kompressor",
+            "desc": "Einzelverträge, die Tarifverhandlungen Vereinbarung, Gehaltsabrechnung und IMSS Einreichungen: Für den Fall wird die noch in Ordnung befindliche Prävention erfasst."
+          },
+          {
+            "nom": "Die Strategie",
+            "parte": "Verbrennungsmotor",
+            "tag": "Verbrennungsmotor",
+            "desc": "Mit Angesichts der Tatsachen und Beweise ist der Kurs festgelegt: verhandeln, versöhnen oder verteidigen."
+          },
+          {
+            "nom": "Schlichtung",
+            "parte": "Turbine",
+            "tag": "Turbine",
+            "desc": "Die Schlichtungsverhandlung vor dem Bundeszentrale für Arbeitsvermittlung und -registrierung oder das zuständige örtliche Zentrum, wobei das Unternehmen zu Verhandlungen bereit ist."
+          },
+          {
+            "nom": "Die Verteidigung vor Gericht",
+            "parte": "Nozzle",
+            "tag": "Nozzle",
+            "desc": "Wenn keine Einigung zustande kommt, übernimmt die Verteidigung vor dem Arbeitsgericht mit derselben Akte: die Antwort auf die Klage, die Beweise und die Anhörungen."
+          }
+        ],
+        "svgLabel": "Isometrische Zeichnung eines Kampfflugzeug-Turbofans mit aufgeschnittenem Gehäuse. Es teilt sich entlang seiner Achse in fünf Stufen auf, vom Fan bis zur Düse, und setzt sich dann im Rumpf eines zweiheckigen Kampfflugzeugs wieder zusammen, das um das Triebwerk herumgezogen wird.",
+        "cajetin": "Reaktionsfähigkeit"
+      },
+      "nextLabel": "Weiter",
+      "nextLabelAria": "Nächste Seite"
     },
     "zh": {
       "title": "关于律所",
@@ -2540,7 +2870,117 @@
           "value": "72+",
           "label": "覆盖城市"
         }
-      ]
+      ],
+      "heroLead": "Santos & Saucedo 成立于 San Pedro Garza García，致力于为雇主提供服务。从那时起，它就涉及其劳动力的决策向墨西哥工业集团、跨国公司和亚洲企业提供咨询。",
+      "heroParagraph": "招聘、工作安排、与工会的关系、终止雇佣关系以及在当局和法院面前的辩护。通过专业公司联盟，在多个州拥有工厂的客户在所有这些州都得到了相同的判断。",
+      "heroImageAlt": "黄昏时分，满月在两座山脊之间升起",
+      "boardImageAlt": "Santos & Saucedo 董事会会议室上有公司的三联画：三幅彩色抽象画布，上面有 Cerro de la Silla",
+      "boardCaption": "校长绘画",
+      "boardText": "董事会三联画，带有Cerro de la Silla的线条。",
+      "priority": [
+        {
+          "antes": "我们的优先事项：",
+          "em": "预防",
+          "fin": "。"
+        },
+        {
+          "antes": "如果发生争议：",
+          "em": "解决方案",
+          "fin": "。"
+        }
+      ],
+      "priorityNotes": [
+        "我们在争议发生之前让每家公司遵守劳动法：精心起草的合同、有序的文件、提前准备好的谈判。良好的劳工合规性是最好的防御。",
+        "当出现争议时，我们充当出庭律师：了解客户运营情况的同一个团队会像准备上法庭一样准备每件案件。这种准备使我们能够更好地进行谈判，并且通常能够更快地解决问题。"
+      ],
+      "bighorn": {
+        "h": "始终前进",
+        "p": [
+          "大角羊攀登墨西哥北部的山脉，那里似乎没有路。它不会返回或停止，直到到达那里。对待每一件事，我们都是这样的：一步一个脚印，坚持不懈，直到结果。",
+          "坚持在于准备。每件事情都准备得像要审判一样；这就是为什么我们立场坚定，大多数问题都能更快解决。"
+        ],
+        "listaLabel": "攀登的步骤及其对公司的意义",
+        "piezas": [
+          {
+            "nom": "决心",
+            "parte": "登顶视线",
+            "tag": "峰会",
+            "desc": "每件事情从第一天起就有明确的目标，不达目的不罢休。"
+          },
+          {
+            "nom": "稳步前进",
+            "parte": "脚踏实地",
+            "tag": "立足",
+            "desc": "每一步都建立在坚实的基础上：一个有序的文件，其中包含完整、签名且易于使用的文件定位。"
+          },
+          {
+            "nom": "预防",
+            "parte": "前方的道路",
+            "tag": "路径",
+            "desc": "预防在需要之前构建路径：合同、内部工作规则、集体谈判协议和IMSS 文件已更新。当该迈出这一步时，岩石已经在那里。"
+          },
+          {
+            "nom": "义无反顾",
+            "parte": "飞跃",
+            "tag": "飞跃",
+            "desc": "面对障碍，公司不会回头：它找到了路并继续前进。有充分准备的案例支撑的谈判才能更好地前进。"
+          },
+          {
+            "nom": "坚持",
+            "parte": "峰会",
+            "tag": "峰会",
+            "desc": "一步一步，不停顿，直到结果达到了。如果发生纠纷，公司已经站稳脚跟，公司会坚持到底。"
+          }
+        ],
+        "svgLabel": "图版 1/7，永远向前：一只大角羊爬上山壁上的岩石壁架，每走一步都会滑出，跳过裂缝，头也不回，到达山上的石冢。",
+        "cajetin": "永远向前",
+        "instr": "在列表中或悬崖上选择一个步骤，羊就会向前移动。",
+        "nota": "大角羊 (Ovis canadensis)，来自北部山脉墨西哥。"
+      },
+      "response": {
+        "h": "响应能力",
+        "p": [
+          "有准备的公司不会在争议发生时即兴发挥。我们为防止冲突而建立的命令——合同、集体谈判协议、工资单和 IMSS 文件——与在罢工通知、检查或诉讼到达时维持辩护的命令相同。",
+          "这就是为什么预防和响应不是两个独立的服务：它们是同一个部分，在发生之前就组装好了。需要。"
+        ],
+        "listaLabel": "引擎的各个阶段以及发生争议时我们在每个阶段执行的操作",
+        "piezas": [
+          {
+            "nom": "罢工通知、检查或诉讼",
+            "parte": "风扇",
+            "tag": "风扇",
+            "desc": "争议到达：罢工通知、STPS（联邦劳动部）的检查或个人或集体诉讼。完整读取该文件以确定正在寻找的内容以及在谁之前。"
+          },
+          {
+            "nom": "文件，已组装",
+            "parte": "压缩机",
+            "tag": "压缩机",
+            "desc": "个人合同，集体合同谈判协议、工资单和 IMSS 文件：为案件收集了剩下的预防措施。"
+          },
+          {
+            "nom": "策略",
+            "parte": "Combustor",
+            "tag": "Combustor",
+            "desc": "根据事实和证据，制定方针：谈判、调解或"
+          },
+          {
+            "nom": "调解",
+            "parte": "Turbine",
+            "tag": "Turbine",
+            "desc": "联邦劳动调解和登记中心或当地主管机构举行的调解听证会"
+          },
+          {
+            "nom": "庭审时的辩护",
+            "parte": "喷嘴",
+            "tag": "喷嘴",
+            "desc": "如果没有达成一致，则与劳动法庭之前的辩护相同文件：对索赔的答复、证据和听证会。"
+          }
+        ],
+        "svgLabel": "带有剖面外壳的战斗机涡轮风扇发动机的等轴测图。它沿其轴线分为五个阶段，从风扇到喷嘴，然后在围绕发动机绘制的双尾战斗机机身内重新组装。",
+        "cajetin": "响应能力"
+      },
+      "nextLabel": "下一页",
+      "nextLabelAria": "下一页"
     },
     "ko": {
       "title": "회사 소개",
@@ -2575,7 +3015,117 @@
           "value": "72+",
           "label": "진출 도시"
         }
-      ]
+      ],
+      "heroLead": "Santos & Saucedo은 고용주를 위한 관행으로 San Pedro Garza García에서 설립되었습니다. 그 이후로 멕시코 산업 그룹, 다국적 기업 및 아시아계 소유 기업에 인력과 관련된 결정에 대해 조언해 왔습니다.",
+      "heroParagraph": "고용, 작업 조직, 노동조합과의 관계, 고용 종료, 당국과 법원에서의 변호. 여러 주에 공장을 보유한 고객은 전문 회사의 연합을 통해 모든 공장에서 동일한 판단을 받습니다.",
+      "heroImageAlt": "해질녘에 두 산 능선 사이에 보름달이 뜬다.",
+      "boardImageAlt": "회사의 삼부작이 있는 Santos & Saucedo 회의실: Cerro de la Silla 선이 있는 색상의 추상 캔버스 3개",
+      "boardCaption": "원장 그림",
+      "boardText": "Cerro de la Silla 라인이 포함된 회의실 삼부작.",
+      "priority": [
+        {
+          "antes": "우리의 우선순위:",
+          "em": "예방",
+          "fin": "."
+        },
+        {
+          "antes": "분쟁 발생 시:",
+          "em": "해결",
+          "fin": "."
+        }
+      ],
+      "priorityNotes": [
+        "우리는 분쟁이 발생하기 전에 각 회사가 노동법을 준수할 수 있도록 준비합니다. 잘 작성된 계약서, 순서대로 파일, 사전에 준비된 협상 등이 있습니다. 건전한 노동법 준수가 최선의 방어책입니다.",
+        "분쟁이 발생하면 저희는 재판 변호사로 일합니다. 고객의 운영을 알고 있는 동일한 팀이 각 문제를 마치 법정에 가는 것처럼 준비합니다. 이러한 준비를 통해 우리는 더 나은 협상을 할 수 있고 종종 문제를 더 빨리 해결할 수 있습니다."
+      ],
+      "bighorn": {
+        "h": "항상 앞으로",
+        "p": [
+          "큰뿔양은 길이 없어 보이는 멕시코 북부 산맥을 올라갑니다. 거기에 도달할 때까지 되돌아가거나 멈추지 않습니다. 이것이 바로 우리가 모든 문제를 수행하는 방식입니다. 결과가 달성될 때까지 꾸준한 조치와 끈기를 가지고 수행합니다.",
+          "그 끈기는 준비에 달려 있습니다. 모든 문제는 재판에 회부될 것처럼 준비되어 있습니다. 그렇기 때문에 우리는 확고한 입장에서 협상하고 대부분의 문제는 더 빨리 해결됩니다."
+        ],
+        "listaLabel": "등반 단계와 그것이 회사에 의미하는 것",
+        "piezas": [
+          {
+            "nom": "결정",
+            "parte": "정상회담 광경",
+            "tag": "정상",
+            "desc": "모든 문제에는 첫날부터 명확한 목표가 있으며 회사는 그것이 달성될 때까지 그것을 놓지 않습니다."
+          },
+          {
+            "nom": "꾸준한 발걸음",
+            "parte": "바위 위의 발판",
+            "tag": "발판",
+            "desc": "모든 단계는 견고한 것, 즉 완전하고 서명되었으며 쉽게 사용할 수 있는 문서가 포함된 순서대로 작성된 파일에 달려 있습니다. 찾아보세요."
+          },
+          {
+            "nom": "예방",
+            "parte": "앞으로의 경로",
+            "tag": "경로",
+            "desc": "예방은 필요하기 전에 경로를 구축합니다: 계약, 내부 작업 규칙, 단체 교섭 계약 및 IMSS 서류가 최신 상태입니다. 발걸음을 내딛을 시간이 오면 바위는 이미 거기에 있습니다."
+          },
+          {
+            "nom": "뒤로 돌아갈 수 없습니다",
+            "parte": "도약",
+            "tag": "도약",
+            "desc": "장애물 앞에서 회사는 포기하지 않습니다. 돌아오다: 길을 찾고 계속 나아갑니다. 잘 준비된 사례가 뒷받침되는 협상은 더 잘 진행됩니다."
+          },
+          {
+            "nom": "끈기",
+            "parte": "정상회담",
+            "tag": "정상회담",
+            "desc": "멈추지 않고 한걸음씩, 결과가 달성됩니다. 분쟁이 발생하면 회사는 이미 일어서고 회사는 끝까지 함께합니다."
+          }
+        ],
+        "svgLabel": "그림 1/7, 항상 앞으로: 큰뿔양은 각 단계 직전에 미끄러지는 바위 선반의 산벽을 오르고, 뒤돌아보지 않고 균열을 뛰어넘어 정상의 돌무더기에 도달합니다.",
+        "cajetin": "항상 앞으로",
+        "instr": "목록이나 절벽에서 단계를 선택하면 양이 앞으로 이동합니다.",
+        "nota": "멕시코 북부 산맥의 큰뿔양(Ovis canadensis)."
+      },
+      "response": {
+        "h": "용량 응답",
+        "p": [
+          "준비된 회사는 분쟁이 발생했을 때 즉흥적으로 대처하지 않습니다. 갈등을 방지하기 위해 구축한 계약, 단체 교섭 협약, 급여 및 IMSS 제출 등의 명령은 파업 통지, 조사 또는 소송이 도착할 때 방어를 유지하는 것과 동일한 명령입니다.",
+          "이것이 바로 예방과 대응이 두 개의 별도 서비스가 아닌 이유입니다. 두 서비스는 동일한 조각으로, 조립되기 전에 구성됩니다. 필요합니다."
+        ],
+        "listaLabel": "엔진의 단계와 분쟁 발생 시 각 단계에서 수행하는 작업",
+        "piezas": [
+          {
+            "nom": "파업 통지, 검사 또는 소송",
+            "parte": "Fan",
+            "tag": "Fan",
+            "desc": "파업 통지, STPS(연방 노동부)의 검사 방문 또는 개별 또는 집단 소송 등 분쟁이 발생합니다. 무엇을 찾고 있는지, 누구보다 먼저 식별하기 위해 전체를 읽습니다."
+          },
+          {
+            "nom": "이미 조립된 파일",
+            "parte": "Compressor",
+            "tag": "Compressor",
+            "desc": "개별 계약, 단체 교섭 계약, 급여 및 IMSS 서류: 해당 사건에 대해 남은 예방 조치가 수집됩니다."
+          },
+          {
+            "nom": "전략",
+            "parte": "Combustor",
+            "tag": "Combustor",
+            "desc": "사실과 증거를 고려하여 과정이 설정됩니다: 협상, 화해 또는 방어합니다."
+          },
+          {
+            "nom": "화해",
+            "parte": "Turbine",
+            "tag": "Turbine",
+            "desc": "연방 노동 화해 및 등록 센터 또는 관할 지역 센터에서의 화해 청문회, 회사와 협상 준비를 합니다."
+          },
+          {
+            "nom": "재판에서의 변호",
+            "parte": "Nozzle",
+            "tag": "Nozzle",
+            "desc": "합의가 없는 경우 동일한 파일을 사용하여 노동 법원에서 변호합니다. 주장에 대한 답변, 증거 및 청문회."
+          }
+        ],
+        "svgLabel": "컷어웨이 케이스가 있는 전투기 터보팬의 등각 그림. 팬에서 노즐까지 축을 따라 5단계로 분리된 다음 엔진 주위에 그려진 트윈 테일 전투기의 동체 내부에 재조립됩니다.",
+        "cajetin": "대응 능력"
+      },
+      "nextLabel": "다음",
+      "nextLabelAria": "다음 페이지"
     },
     "ja": {
       "title": "事務所について",
@@ -2610,7 +3160,117 @@
           "value": "72+",
           "label": "展開都市"
         }
-      ]
+      ],
+      "heroLead": "Santos & Saucedo は San Pedro Garza García に設立され、雇用主向けの事業を行っています。それ以来、メキシコの産業団体、多国籍企業、アジア系企業に対し、従業員に関わる決定についてアドバイスを行ってきました。",
+      "heroParagraph": "雇用、仕事の組織化、労働組合との関係、解雇、当局や裁判所での弁護など。複数の州に工場を持つクライアントは、専門会社の提携を通じて、すべての州で同じ判決を受けます。",
+      "heroImageAlt": "夕暮れ時に 2 つの山の尾根の間に満月が昇ります",
+      "boardImageAlt": "会社の三連祭壇画のある Santos & Saucedo 役員室: Cerro de la Silla の線が入った色の 3 つの抽象的なキャンバス",
+      "boardCaption": "校長絵画",
+      "boardText": "Cerro de la Silla の線が描かれた役員室の三連祭壇画。",
+      "priority": [
+        {
+          "antes": "私たちの優先事項:",
+          "em": "予防",
+          "fin": "。"
+        },
+        {
+          "antes": "紛争が発生した場合:",
+          "em": "解決策",
+          "fin": "."
+        }
+      ],
+      "priorityNotes": [
+        "当社は、紛争が発生する前に、各企業が労働法を遵守できるように準備します。つまり、綿密に作成された契約書、順番にファイルされ、事前に交渉が準備されています。健全な労働コンプライアンスが最善の防御です。",
+        "紛争が発生した場合、私たちは裁判弁護士として働きます。クライアントの業務を熟知している同じチームが、あたかも法廷に行くかのように各問題を準備します。この準備により、交渉をより適切に行うことができ、多くの場合、問題をより早く解決することができます。"
+      ],
+      "bighorn": {
+        "h": "常に前進",
+        "p": [
+          "オオツノヒツジは、道がなさそうなメキシコ北部の山脈を登ります。そこに到達するまで後戻りも停止もしません。これが、私たちがすべての事柄を実行する方法です。着実なステップと粘り強さで、結果が達成されるまで続けます。",
+          "その粘り強さは準備にかかっています。あらゆる問題は、あたかも裁判にかけられるかのように準備されています。だからこそ、私たちは毅然とした立場で交渉し、ほとんどの問題は早期に解決されます。"
+        ],
+        "listaLabel": "登山の手順とそれが会社にとって何を意味するか",
+        "piezas": [
+          {
+            "nom": "決意",
+            "parte": "サミット光景",
+            "tag": "サミット",
+            "desc": "すべての事柄には初日から明確な目的があり、会社はそれが達成されるまでそれを手放しません。"
+          },
+          {
+            "nom": "着実な一歩",
+            "parte": "足場は順調です",
+            "tag": "足場",
+            "desc": "すべてのステップは、整然としたファイル、完成し、署名され、簡単に実行できる文書に基づいて行われます。"
+          },
+          {
+            "nom": "防止",
+            "parte": "今後の道",
+            "tag": "道",
+            "desc": "防止は、契約、社内作業規則、団体交渉協定など、必要になる前に道を構築します。 IMSS ファイリングは最新です。一歩を踏み出す時が来たら、岩はすでにそこにあります。"
+          },
+          {
+            "nom": "後戻りはできません",
+            "parte": "飛躍",
+            "tag": "飛躍",
+            "desc": "障害に直面しても、企業は前進しません引き返す：道を見つけて進み続ける。十分に準備された訴訟に裏付けられた交渉は、より良く前進します。"
+          },
+          {
+            "nom": "粘り強さ",
+            "parte": "サミット",
+            "tag": "サミット",
+            "desc": "最後まで立ち止まることなく、一歩一歩。結果は達成されます。紛争が起こっても、会社はすでに立ち上がっており、会社は最後まで会社を守ります。"
+          }
+        ],
+        "svgLabel": "プレート 1/7、常に前進: オオツノヒツジは、各ステップの直前に滑り出す岩棚の上の山壁を登り、引き返さずに亀裂を飛び越え、丘の上のケルンに到達します。",
+        "cajetin": "常に前進",
+        "instr": "リストまたは崖上のステップを選択すると、羊が前進します。",
+        "nota": "北部の山脈に生息するオオツノヒツジ (Ovis canadensis)メキシコ。"
+      },
+      "response": {
+        "h": "対応能力",
+        "p": [
+          "準備の整った企業は、紛争が起こっても即席で対応することはありません。紛争を防ぐために私たちが構築する順序 (契約、労働協約、給与計算、IMSS 申告書) は、ストライキ通知、検査、訴訟が届いたときに防御を維持する順序と同じです。",
+          "だからこそ、予防と対応は 2 つの別個のサービスではなく、それらは同じ部分であり、事前に組み立てられています。必要です。"
+        ],
+        "listaLabel": "エンジンの段階と、紛争が発生したときに各段階で行うこと",
+        "piezas": [
+          {
+            "nom": "ストライキ通知、検査、または訴訟",
+            "parte": "ファン",
+            "tag": "ファン",
+            "desc": "紛争が到着します: ストライキ通知、STPS (連邦労働省) による視察、または個人訴訟または集団訴訟。何が誰に求められているかを特定するために、完全に読み取られます。"
+          },
+          {
+            "nom": "既に組み立てられたファイル",
+            "parte": "Compressor",
+            "tag": "Compressor",
+            "desc": "個別の契約、労働協約、給与計算、および IMSS 提出書類: 訴訟のために残された予防措置が収集されます。"
+          },
+          {
+            "nom": "戦略",
+            "parte": "Combustor",
+            "tag": "Combustor",
+            "desc": "事実と証拠を考慮すると、交渉、調停、または"
+          },
+          {
+            "nom": "調停",
+            "parte": "タービン",
+            "tag": "タービン",
+            "desc": "連邦労働調停登録センターまたは管轄官庁での調停公聴会"
+          },
+          {
+            "nom": "裁判での弁護",
+            "parte": "ノズル",
+            "tag": "ノズル",
+            "desc": "合意がない場合は、労働裁判所での弁護が行われます。同じファイル: 申し立てに対する回答、証拠、審問。"
+          }
+        ],
+        "svgLabel": "切断されたケーシングを備えた戦闘機のターボファンの等角図。ファンからノズルまで、軸に沿って 5 つの段階に分離され、エンジンの周りに描かれたツインテール戦闘機の胴体内で再組み立てされます。",
+        "cajetin": "対応能力"
+      },
+      "nextLabel": "次へ",
+      "nextLabelAria": "次のページ"
     },
     "ar": {
       "title": "عن الشركة",
@@ -2645,7 +3305,117 @@
           "value": "72+",
           "label": "مدينة نتواجد فيها"
         }
-      ]
+      ],
+      "heroLead": "Santos & Saucedo تأسست في San Pedro Garza García من خلال ممارسة مخصصة لأصحاب العمل. ومنذ ذلك الحين، تقدم المشورة للمجموعات الصناعية المكسيكية والشركات المتعددة الجنسيات والشركات المملوكة لآسيويين بشأن القرارات التي تتعلق بالقوى العاملة لديها.",
+      "heroParagraph": "التوظيف، وتنظيم العمل، والعلاقة مع النقابة، وإنهاء التوظيف، والدفاع أمام السلطات والمحاكم. يحصل العميل الذي يمتلك مصانع في عدة ولايات على نفس الحكم في جميع هذه الولايات، من خلال تحالف من الشركات المتخصصة.",
+      "heroImageAlt": "يرتفع البدر بين اثنين من التلال الجبلية عند الغسق",
+      "boardImageAlt": "قاعة مجلس الإدارة Santos & Saucedo مع اللوحة الثلاثية للشركة: ثلاث لوحات تجريدية ملونة بخطوط Cerro de la Silla",
+      "boardCaption": "المدير اللوحة",
+      "boardText": "اللوحة الثلاثية لغرفة مجلس الإدارة، مع خطوط Cerro de la Silla.",
+      "priority": [
+        {
+          "antes": "أولويتنا:",
+          "em": "المنع",
+          "fin": "."
+        },
+        {
+          "antes": "في حالة وجود نزاع:",
+          "em": "الحل",
+          "fin": "."
+        }
+      ],
+      "priorityNotes": [
+        "نحن نجهز كل شركة للامتثال لقانون العمل قبل نشوء نزاع: عقود جيدة الصياغة، وملفات مرتبة، ومفاوضات معدة مسبقًا. إن الامتثال السليم للعمل هو أفضل دفاع.",
+        "عند وصول نزاع، نعمل كمحامين قضائيين: نفس الفريق الذي يعرف عمليات العميل يقوم بإعداد كل مسألة كما لو كانت ستذهب إلى المحكمة. هذا الإعداد هو ما يسمح لنا بالتفاوض بشكل أفضل، وفي كثير من الأحيان، بحل الأمور في وقت أقرب."
+      ],
+      "bighorn": {
+        "h": "دائمًا إلى الأمام",
+        "p": [
+          "تتسلق الخروف الكبير سلاسل الجبال في شمال المكسيك حيث يبدو أنه لا يوجد طريق. ولا يتراجع ولا يتوقف حتى يصل إلى هناك. وهكذا نحمل كل أمر: بخطوة ثابتة ومثابرة حتى الوصول إلى النتيجة.",
+          "وهذا الإصرار يعتمد على الاستعداد. كل أمر مُهيأ كأنه في محاكمة؛ ولهذا السبب نتفاوض من موقف حازم ويتم حل معظم الأمور عاجلاً."
+        ],
+        "listaLabel": "خطوات التسلق وما تعنيه بالنسبة للشركة",
+        "piezas": [
+          {
+            "nom": "العزم",
+            "parte": "القمة في البصر",
+            "tag": "القمة",
+            "desc": "كل أمر له هدف واضح من اليوم الأول، والشركة لا تتركه حتى يتحقق."
+          },
+          {
+            "nom": "خطوة ثابتة",
+            "parte": "القدم على الصخر",
+            "tag": "القدم",
+            "desc": "ترتكز كل خطوة على شيء متين: ملف مرتب، يحتوي على مستندات كاملة وموقعة وسهلة الفهم حدد موقع."
+          },
+          {
+            "nom": "المنع",
+            "parte": "المسار للأمام",
+            "tag": "المسار",
+            "desc": "تبني الوقاية المسار قبل الحاجة إليها: العقود، وقواعد العمل الداخلية، واتفاقية المفاوضة الجماعية و IMSS الملفات محدثة. عندما يحين وقت اتخاذ الخطوة، تكون الصخرة موجودة بالفعل."
+          },
+          {
+            "nom": "لا عودة إلى الوراء",
+            "parte": "القفزة",
+            "tag": "القفزة",
+            "desc": "في مواجهة العوائق، لا تقوم الشركة بذلك يرجع إلى الوراء: يجد الطريق ويستمر. المفاوضات المدعومة بحالة معدة جيدًا تتقدم للأمام بشكل أفضل."
+          },
+          {
+            "nom": "المثابرة",
+            "parte": "القمة",
+            "tag": "القمة",
+            "desc": "خطوة بخطوة، دون توقف، حتى يتم تحقيق النتيجة. إذا حدث نزاع، فإن الشركة تقف على قدميها بالفعل، وتظل الشركة معها حتى النهاية."
+          }
+        ],
+        "svgLabel": "اللوحة 1/7، إلى الأمام دائمًا: يتسلق خروف كبير الجبل جدارًا جبليًا على حواف صخرية تنزلق قبل كل خطوة مباشرة، ويقفز في صدع دون الرجوع إلى الخلف ويصل إلى ركام من الحجارة في القمة.",
+        "cajetin": "دائمًا للأمام",
+        "instr": "اختر خطوة من القائمة أو على المنحدر، وستتحرك الخروف للأمام.",
+        "nota": "الأغنام الكبيرة (Ovis canadensis)، من سلاسل الجبال في شمال المكسيك."
+      },
+      "response": {
+        "h": "القدرة على Response",
+        "p": [
+          "الشركة المجهزة لا ترتجل عند وصول النزاع. الأمر الذي نبنيه لمنع التعارض - العقود، واتفاقية المفاوضة الجماعية، وكشوف المرتبات وIMSS - هو نفس الأمر الذي يدعم الدفاع عند وصول إشعار بالإضراب، أو التفتيش، أو الدعوى القضائية.",
+          "ولهذا السبب فإن الوقاية والاستجابة ليسا خدمتين منفصلتين: إنهما نفس القطعة، ويتم تجميعهما قبل أن يتم ذلك مطلوب."
+        ],
+        "listaLabel": "مراحل المحرك وما نفعله في كل مرحلة عند وصول النزاع",
+        "piezas": [
+          {
+            "nom": "إشعار الإضراب أو التفتيش أو الدعوى القضائية",
+            "parte": "Fan",
+            "tag": "Fan",
+            "desc": "وصول النزاع: إشعار إضراب، أو زيارة تفتيش بواسطة STPS (وزارة العمل الفيدرالية) أو دعوى قضائية فردية أو جماعية. تتم قراءته بالكامل لتحديد ما يتم البحث عنه وأمام من."
+          },
+          {
+            "nom": "الملف تم تجميعه بالفعل",
+            "parte": "الضاغط",
+            "tag": "الضاغط",
+            "desc": "العقود الفردية، اتفاقية المفاوضة الجماعية، وكشوف المرتبات، وملفات IMSS: يتم جمع إجراءات الوقاية المتبقية في هذه القضية."
+          },
+          {
+            "nom": "الإستراتيجية",
+            "parte": "Combustor",
+            "tag": "Combustor",
+            "desc": "مع عرض الحقائق والأدلة، يتم تحديد المسار: التفاوض أو التوفيق أو الدفاع."
+          },
+          {
+            "nom": "التوفيق",
+            "parte": "التوربين",
+            "tag": "التوربين",
+            "desc": "جلسة الصلح أمام المركز الاتحادي للتوفيق والتسجيل العمالي أو المحلي المختص المركز، مع استعداد الشركة للتفاوض."
+          },
+          {
+            "nom": "الدفاع في المحاكمة",
+            "parte": "فوهة",
+            "tag": "فوهة",
+            "desc": "إذا لم يكن هناك اتفاق، فإن الدفاع أمام محكمة العمل بنفس الشيء الملف: الرد على الادعاء والأدلة وجلسات الاستماع."
+          }
+        ],
+        "svgLabel": "رسم متساوي القياس لطائرة مقاتلة توربينية مع غلاف مقطوع. وهي تنفصل إلى خمس مراحل على طول محورها، من المروحة إلى الفوهة، ثم يتم إعادة تجميعها داخل جسم الطائرة المقاتلة ذات الذيل المزدوج والتي يتم رسمها حول المحرك.",
+        "cajetin": "القدرة على الاستجابة"
+      },
+      "nextLabel": "التالي",
+      "nextLabelAria": "الصفحة التالية"
     },
     "ru": {
       "title": "О фирме",
@@ -2680,7 +3450,117 @@
           "value": "72+",
           "label": "Городов присутствия"
         }
-      ]
+      ],
+      "heroLead": "Santos & Saucedo была основана в San Pedro Garza García с практикой, посвященной работодателям. С тех пор он консультировал мексиканские промышленные группы, транснациональные компании и предприятия, принадлежащие азиатам, по вопросам решений, касающихся их рабочей силы.",
+      "heroParagraph": "При приеме на работу, организации труда, отношениях с профсоюзом, увольнении и защите в органах власти и судах. Клиент, имеющий заводы в нескольких штатах, получает во всех них одно и то же решение через альянс специализированных фирм.",
+      "heroImageAlt": "Полная луна восходит между двумя горными хребтами в сумерках.",
+      "boardImageAlt": "Зал заседаний Santos & Saucedo с триптихом фирмы: три абстрактных цветных полотна с линиями Cerro de la Silla",
+      "boardCaption": "Основной живопись",
+      "boardText": "Триптих зала заседаний со строками Cerro de la Silla.",
+      "priority": [
+        {
+          "antes": "Наш приоритет:",
+          "em": "prevention",
+          "fin": "."
+        },
+        {
+          "antes": "В случае возникновения спора:",
+          "em": "solve",
+          "fin": "."
+        }
+      ],
+      "priorityNotes": [
+        "Мы готовим каждую компанию к соблюдению трудового законодательства до возникновения спора: хорошо составленные контракты, файлы в порядке, переговоры подготовлены заранее. Надлежащее соблюдение трудовых норм — лучшая защита.",
+        "Когда возникает спор, мы работаем в качестве судебных юристов: та же команда, которая знает деятельность клиента, готовит каждое дело так, как будто оно передается в суд. Именно эта подготовка позволяет нам лучше вести переговоры и зачастую быстрее решать вопросы."
+      ],
+      "bighorn": {
+        "h": "Всегда вперед",
+        "p": [
+          "Снежный баран карабкается по горным хребтам северной Мексики, где, кажется, нет тропы. Он не поворачивает назад и не останавливается, пока не доберется до цели. Именно так мы выполняем каждое дело: уверенным шагом и настойчивостью, пока не будет достигнут результат.",
+          "Эта настойчивость зависит от подготовки. Каждое дело готовится так, как если бы оно предстояло судебному разбирательству; именно поэтому мы ведем переговоры с твердой позиции, и большинство вопросов решаются быстрее."
+        ],
+        "listaLabel": "Этапы восхождения и их значение для фирмы",
+        "piezas": [
+          {
+            "nom": "Определение",
+            "parte": "Вершина в взгляд",
+            "tag": "Вершина",
+            "desc": "Каждое дело имеет четкую цель с первого дня, и фирма не отпускает ее, пока она не будет достигнута."
+          },
+          {
+            "nom": "Уверенный шаг",
+            "parte": "Стоя на камне",
+            "tag": "Опираясь",
+            "desc": "Каждый шаг опирается на что-то прочное: файл в порядке, с полными, подписанными и легко читаемыми документами найдите."
+          },
+          {
+            "nom": "Профилактика",
+            "parte": "Путь вперед",
+            "tag": "Путь",
+            "desc": "Профилактика прокладывает путь до того, как он понадобится: контракты, внутренние правила работы, коллективный договор и IMSS документы актуальны. Когда приходит время сделать шаг, камень уже здесь."
+          },
+          {
+            "nom": "Нет пути назад",
+            "parte": "Прыжок",
+            "tag": "Прыжок",
+            "desc": "Перед лицом препятствия фирма не делает повернуть назад: оно находит дорогу и продолжает идти. Переговоры, подкрепленные хорошо подготовленным делом, продвигаются вперед лучше."
+          },
+          {
+            "nom": "Настойчивость",
+            "parte": "Саммит",
+            "tag": "Саммит",
+            "desc": "Шаг за шагом, без останавливаемся, пока не будет достигнут результат. Если возникает спор, компания уже встает на ноги, и фирма остается с ней до конца."
+          }
+        ],
+        "svgLabel": "Таблица 1/7, Всегда вперед: снежный баран взбирается на горную стену по скальным уступам, которые выскальзывают прямо перед каждым шагом, перепрыгивает трещину, не оборачиваясь, и достигает пирамиды из камней на вершина.",
+        "cajetin": "Всегда вперед",
+        "instr": "Выберите шаг в списке или на скале, и овца двинется вперед.",
+        "nota": "Большой баран (Ovis canadensis), с горных хребтов северной Мексика."
+      },
+      "response": {
+        "h": "Возможность реагирования",
+        "p": [
+          "Подготовленная компания не импровизирует при возникновении спора. Порядок, который мы создаем для предотвращения конфликтов — контракты, коллективный договор, расчет заработной платы и IMSS — это тот же порядок, который поддерживает защиту при поступлении уведомления о забастовке, проверки или судебного иска.",
+          "Вот почему предотвращение и реагирование не являются двумя отдельными службами: это одна и та же часть, собранная до того, как она будет необходимо."
+        ],
+        "listaLabel": "Этапы работы движка и что мы делаем на каждом из них при поступлении спора",
+        "piezas": [
+          {
+            "nom": "Уведомление о забастовке, проверка или судебный иск",
+            "parte": "Fan",
+            "tag": "Fan",
+            "desc": "Спор возникает: уведомление о забастовке, инспекционный визит STPS (федеральное министерство труда) или индивидуальный или коллективный иск. Он читается полностью, чтобы определить, что и перед кем разыскивается."
+          },
+          {
+            "nom": "Файл, уже собранный",
+            "parte": "Compressor",
+            "tag": "Compressor",
+            "desc": "Отдельные контракты, коллективный договор, расчет заработной платы и отчетность IMSS: по делу собрано то, что осталось в порядке предотвращения."
+          },
+          {
+            "nom": "Стратегия",
+            "parte": "Combustor",
+            "tag": "Combustor",
+            "desc": "С учетом фактов и доказательств курс установлен: переговоры, примирение или защищать."
+          },
+          {
+            "nom": "Примирение",
+            "parte": "Турбина",
+            "tag": "Турбина",
+            "desc": "Примирительное слушание в Федеральном центре по трудовому примирению и регистрации или компетентный местный центр, с компанией, готовой к переговорам."
+          },
+          {
+            "nom": "Защита в суде",
+            "parte": "Сопло",
+            "tag": "Сопло",
+            "desc": "Если нет соглашения, защита в Суде по трудовым спорам с тот же файл: ответ на иск, доказательства и слушания."
+          }
+        ],
+        "svgLabel": "Изометрический рисунок ТРДД истребителя с разрезом корпуса. Он разделяется на пять ступеней вдоль своей оси, от вентилятора до сопла, а затем снова собирается внутри фюзеляжа двухкилевого истребителя, который расположен вокруг двигателя.",
+        "cajetin": "Возможность реагирования"
+      },
+      "nextLabel": "Далее",
+      "nextLabelAria": "Следующая страница"
     },
     "fr": {
       "title": "Le cabinet",
@@ -2715,7 +3595,117 @@
           "value": "72+",
           "label": "Villes de présence"
         }
-      ]
+      ],
+      "heroLead": "Santos & Saucedo a été fondée en San Pedro Garza García avec un cabinet dédié aux employeurs. Depuis, il conseille des groupes industriels mexicains, des entreprises multinationales et des entreprises asiatiques sur les décisions qui impliquent leur personnel.",
+      "heroParagraph": "L'embauche, l'organisation du travail, la relation avec le syndicat, la rupture du contrat de travail et la défense devant les autorités et les tribunaux. Un client possédant des usines dans plusieurs États reçoit le même jugement dans tous, grâce à une alliance de cabinets spécialisés.",
+      "heroImageAlt": "La pleine lune se lève entre deux crêtes de montagne au crépuscule",
+      "boardImageAlt": "La salle de réunion Santos & Saucedo avec le triptyque de l'entreprise : trois toiles abstraites en couleurs avec les lignes du Cerro de la Silla",
+      "boardCaption": "Le principal peinture",
+      "boardText": "Le triptyque de la salle de réunion, avec les lignes du Cerro de la Silla.",
+      "priority": [
+        {
+          "antes": "Notre priorité :",
+          "em": "prévention",
+          "fin": "."
+        },
+        {
+          "antes": "En cas de litige :",
+          "em": "résolution",
+          "fin": "."
+        }
+      ],
+      "priorityNotes": [
+        "Nous préparons chaque entreprise à se conformer au droit du travail avant qu'un conflit survienne : contrats bien rédigés, dossiers en ordre, négociations préparées longtemps à l'avance. Un bon respect des règles de travail est la meilleure défense.",
+        "Lorsqu'un litige survient, nous travaillons comme avocats plaidants : la même équipe qui connaît les opérations du client prépare chaque affaire comme si elle allait au tribunal. Cette préparation est ce qui nous permet de mieux négocier et, souvent, de résoudre les problèmes plus tôt."
+      ],
+      "bighorn": {
+        "h": "Toujours en avant",
+        "p": [
+          "Le mouflon d'Amérique gravit la montagne. chaînes du nord du Mexique où il semble n'y avoir aucun chemin. Il ne fait pas demi-tour et ne s'arrête pas jusqu'à ce qu'il y arrive. C'est ainsi que nous abordons chaque affaire : d'un pas régulier et avec persévérance, jusqu'à ce que le résultat soit atteint.",
+          "Cette persévérance repose sur la préparation. Chaque affaire est préparée comme si elle allait être jugée ; c'est pourquoi nous négocions à partir d'une position ferme et la plupart des problèmes sont résolus plus tôt."
+        ],
+        "listaLabel": "Les étapes de l'ascension et ce qu'elles signifient pour l'entreprise",
+        "piezas": [
+          {
+            "nom": "Détermination",
+            "parte": "Le sommet en vue",
+            "tag": "Le sommet",
+            "desc": "Chaque affaire a un objectif clair dès le premier jour, et l'entreprise ne le lâche pas jusqu'à ce qu'il soit atteint."
+          },
+          {
+            "nom": "Une démarche régulière",
+            "parte": "Un pied sur le rocher",
+            "tag": "Un pied",
+            "desc": "Chaque étape repose sur quelque chose de solide : un dossier en ordre, avec des documents complets, signés et faciles à localiser."
+          },
+          {
+            "nom": "Prévention",
+            "parte": "Le chemin à parcourir",
+            "tag": "Le chemin",
+            "desc": "La prévention construit le chemin avant qu'elle ne soit nécessaire : les contrats, les règles de travail internes, la convention collective et IMSS dossiers à jour. Quand vient le temps de franchir le pas, le rocher est déjà là."
+          },
+          {
+            "nom": "Pas de retour en arrière",
+            "parte": "Le saut",
+            "tag": "Le saut",
+            "desc": "Face à un obstacle, l'entreprise ne revient pas en arrière : elle trouve le chemin et continue. Une négociation appuyée sur un dossier bien préparé avance mieux."
+          },
+          {
+            "nom": "Persistance",
+            "parte": "Le sommet",
+            "tag": "Le sommet",
+            "desc": "Pas à pas, sans s'arrêter, jusqu'à ce que le résultat soit atteint. Si un différend survient, l'entreprise est déjà debout, et l'entreprise reste avec elle jusqu'au bout."
+          }
+        ],
+        "svgLabel": "Planche 1/7, Toujours en avant : un mouflon d'Amérique escalade une paroi de montagne sur des corniches rocheuses qui glissent juste avant chaque pas, saute une fissure sans se retourner et atteint le cairn au sommet.",
+        "cajetin": "Toujours avancer",
+        "instr": "Choisissez une étape dans la liste ou sur la falaise, et le mouton avance.",
+        "nota": "Mouflon d'Amérique (Ovis canadensis), originaire des chaînes de montagnes du nord du Mexique."
+      },
+      "response": {
+        "h": "Capacité de répondre",
+        "p": [
+          "Une entreprise préparée n'improvise pas lorsqu'un litige survient. L'ordre que nous construisons pour prévenir les conflits - les contrats, la convention collective, la paie et les IMSS dépôts - est le même ordre qui soutient la défense lorsqu'un préavis de grève, une inspection ou un procès arrive.",
+          "C'est pourquoi la prévention et la réponse ne sont pas deux services distincts : ils sont la même pièce, assemblée avant qu'elle ne soit créée. nécessaire."
+        ],
+        "listaLabel": "Étapes du moteur et ce que nous faisons à chacune d'elles lorsqu'un litige arrive",
+        "piezas": [
+          {
+            "nom": "Avis de grève, inspection ou procès",
+            "parte": "Fan",
+            "tag": "Fan",
+            "desc": "Le conflit arrive : un préavis de grève, une visite d'inspection du STPS (le ministère fédéral du Travail) ou un procès individuel ou collectif. Il est lu intégralement pour identifier ce qui est recherché et devant qui."
+          },
+          {
+            "nom": "Le dossier, déjà monté",
+            "parte": "Compresseur",
+            "tag": "Compresseur",
+            "desc": "Les contrats individuels, la convention collective, la paie et IMSS dépôts : les mesures de prévention restantes sont rassemblées pour l'affaire."
+          },
+          {
+            "nom": "La stratégie",
+            "parte": "Combustor",
+            "tag": "Combustor",
+            "desc": "Avec les faits et les preuves en vue, le Le cap est fixé : négocier, concilier ou défendre."
+          },
+          {
+            "nom": "Conciliation",
+            "parte": "Turbine",
+            "tag": "Turbine",
+            "desc": "L'audience de conciliation devant le Centre fédéral de conciliation et d'enregistrement du travail ou la section locale compétente centre, avec l'entreprise prête à négocier."
+          },
+          {
+            "nom": "La défense au procès",
+            "parte": "Nozzle",
+            "tag": "Nozzle",
+            "desc": "S'il n'y a pas d'accord, la défense devant le Tribunal du Travail avec le même dossier : la réponse à la réclamation, les preuves et les audiences."
+          }
+        ],
+        "svgLabel": "Dessin isométrique d'un turboréacteur à double flux de combat avec un boîtier en coupe. Il se sépare en cinq étages le long de son axe, du ventilateur à la tuyère, puis se réassemble à l'intérieur du fuselage d'un avion de combat à double queue qui est tiré autour du moteur.",
+        "cajetin": "Capacité de réponse"
+      },
+      "nextLabel": "Suivant",
+      "nextLabelAria": "Page suivante"
     },
     "it": {
       "title": "Chi siamo",
@@ -2750,7 +3740,117 @@
           "value": "72+",
           "label": "Città con presenza"
         }
-      ]
+      ],
+      "heroLead": "Santos & Saucedo è stata fondata nel San Pedro Garza García con uno studio dedicato ai datori di lavoro. Da allora consiglia gruppi industriali messicani, multinazionali e imprese di proprietà asiatica nelle decisioni che coinvolgono la loro forza lavoro.",
+      "heroParagraph": "Assunzioni, organizzazione del lavoro, rapporto con il sindacato, cessazione del rapporto di lavoro e difesa davanti alle autorità e ai tribunali. Un cliente con stabilimenti in più stati riceve in tutti lo stesso giudizio, attraverso un'alleanza di aziende specializzate.",
+      "heroImageAlt": "La luna piena sorge tra due crinali montuosi al crepuscolo",
+      "boardImageAlt": "La sala riunioni Santos & Saucedo con il trittico dell'azienda: tre tele astratte a colori con le linee del Cerro de la Silla",
+      "boardCaption": "Il committente dipinto",
+      "boardText": "Il trittico della sala riunioni, con le linee del Cerro de la Silla.",
+      "priority": [
+        {
+          "antes": "La nostra priorità:",
+          "em": "prevenzione",
+          "fin": "."
+        },
+        {
+          "antes": "In caso di controversia:",
+          "em": "risoluzioni",
+          "fin": "."
+        }
+      ],
+      "priorityNotes": [
+        "Prepariamo ogni azienda a rispettare il diritto del lavoro prima che sorgano controversie: contratti ben redatti, pratiche in ordine, trattative preparate con largo anticipo. Una solida conformità del lavoro è la migliore difesa.",
+        "Quando arriva una controversia, lavoriamo come avvocati di prova: lo stesso team che conosce le operazioni del cliente prepara ogni questione come se dovesse andare in tribunale. Questa preparazione è ciò che ci consente di negoziare meglio e, spesso, di risolvere le questioni prima."
+      ],
+      "bighorn": {
+        "h": "Sempre avanti",
+        "p": [
+          "La pecora bighorn scala le catene montuose del Messico settentrionale dove sembra non esserci sentiero. Non torna indietro né si ferma finché non arriva lì. È così che affrontiamo ogni questione: con passo fermo e con tenacia, fino al raggiungimento del risultato.",
+          "Questa tenacia si basa sulla preparazione. Ogni questione viene preparata come se dovesse andare in giudizio; ecco perché negoziamo da una posizione ferma e la maggior parte delle questioni vengono risolte prima."
+        ],
+        "listaLabel": "Le fasi della salita e cosa significano per l'azienda",
+        "piezas": [
+          {
+            "nom": "Determinazione",
+            "parte": "Il vertice in vista",
+            "tag": "Il vertice",
+            "desc": "Ogni questione ha un obiettivo chiaro fin dal primo giorno e l'azienda non lo lascia andare finché non viene raggiunto."
+          },
+          {
+            "nom": "Un passo fermo",
+            "parte": "Il piede sulla roccia",
+            "tag": "Il piede",
+            "desc": "Ogni passo poggia su qualcosa di solido: una pratica in ordine, con documenti completi, firmati e facilmente consultabili individuare."
+          },
+          {
+            "nom": "Prevenzione",
+            "parte": "Il percorso da percorrere",
+            "tag": "Il percorso",
+            "desc": "La prevenzione costruisce il percorso prima che sia necessario: i contratti, le regole interne del lavoro, la contrattazione collettiva contratto e documenti IMSS aggiornati. Quando arriva il momento di fare il passo, la roccia è già lì."
+          },
+          {
+            "nom": "Non si torna indietro",
+            "parte": "Il salto",
+            "tag": "Il salto",
+            "desc": "Di fronte a un ostacolo, l’impresa non torna indietro: trova la strada e va avanti. Una negoziazione sostenuta da un caso ben preparato va avanti meglio."
+          },
+          {
+            "nom": "Persistenza",
+            "parte": "Il vertice",
+            "tag": "Il vertice",
+            "desc": "Passo dopo passo, senza fermarsi, fino al raggiungimento del risultato. Se arriva una disputa, l'azienda è già in piedi, e l'azienda resta con lei fino alla fine."
+          }
+        ],
+        "svgLabel": "Tavola 1/7, Sempre avanti: una pecora bighorn scala una parete di montagna su cenge rocciose che scivolano fuori poco prima di ogni passo, salta una fessura senza voltarsi indietro e raggiunge l'ometto sul vetta.",
+        "cajetin": "Avanti sempre",
+        "instr": "Scegli un passo nell'elenco o sulla scogliera e la pecora avanza.",
+        "nota": "Pecora bighorn (Ovis canadensis), dalle catene montuose del nord Messico."
+      },
+      "response": {
+        "h": "Capacità di risposta",
+        "p": [
+          "Un'azienda preparata non improvvisa quando arriva una controversia. L'ordine che costruiamo per prevenire i conflitti - contratti, contratto collettivo di lavoro, buste paga e dichiarazioni IMSS - è lo stesso ordine che sostiene la difesa quando arriva un avviso di sciopero, un'ispezione o una causa.",
+          "Ecco perché prevenzione e risposta non sono due servizi separati: sono lo stesso pezzo, assemblato prima che sia necessario."
+        ],
+        "listaLabel": "Fasi del motore e cosa facciamo in ciascuna di esse quando arriva una controversia",
+        "piezas": [
+          {
+            "nom": "Avviso di sciopero, ispezione o causa",
+            "parte": "Fan",
+            "tag": "Fan",
+            "desc": "La controversia arriva: un avviso di sciopero, una visita ispettiva del STPS (il ministero federale del lavoro) o una causa individuale o collettiva. Viene letto integralmente per identificare cosa si chiede e davanti a chi."
+          },
+          {
+            "nom": "Il fascicolo, già assemblato",
+            "parte": "Compressore",
+            "tag": "Compressore",
+            "desc": "Contratti individuali, contratto collettivo di lavoro, buste paga e pratiche IMSS: quanto prevenzionale rimasto in ordine viene raccolto per il caso."
+          },
+          {
+            "nom": "La strategia",
+            "parte": "Combustor",
+            "tag": "Combustor",
+            "desc": "Con i fatti e le prove in vista, la rotta è fissata: negoziare, conciliare o difendere."
+          },
+          {
+            "nom": "Conciliazione",
+            "parte": "Turbine",
+            "tag": "Turbine",
+            "desc": "L'udienza di conciliazione davanti al Centro federale per la conciliazione e la registrazione del lavoro o all'ufficio locale competente centro, con l'azienda disposta a trattare."
+          },
+          {
+            "nom": "La difesa al processo",
+            "parte": "Nozzle",
+            "tag": "Nozzle",
+            "desc": "Se non c'è accordo, la difesa davanti al Tribunale del lavoro con lo stesso fascicolo: la risposta alla domanda, le prove e le udienze."
+          }
+        ],
+        "svgLabel": "Disegno isometrico di un turbofan di un aereo da caccia con involucro in sezione. Si separa in cinque fasi lungo il suo asse, dalla ventola all'ugello, per poi riassemblarsi all'interno della fusoliera di un aereo da caccia a doppia coda che si trascina attorno al motore.",
+        "cajetin": "Capacità di rispondi"
+      },
+      "nextLabel": "Avanti",
+      "nextLabelAria": "Pagina successiva"
     }
   },
   "careers": {
@@ -3576,43 +4676,63 @@
   "practices": {
     "en": {
       "subtitle": "Around its labor practice, the firm has developed three complementary practices: corporate and contractual, immigration, and litigation and workplace criminal matters.",
-      "errorMessage": "Failed to load practice areas"
+      "errorMessage": "Failed to load practice areas",
+      "title": "Practices",
+      "heroImageAlt": "Industries we advise"
     },
     "es": {
       "subtitle": "Alrededor de su práctica laboral, la firma desarrolló tres prácticas complementarias: corporativa y contractual, migratoria, y de litigio y penal laboral.",
-      "errorMessage": "Error al cargar las áreas de práctica"
+      "errorMessage": "Error al cargar las áreas de práctica",
+      "title": "Prácticas",
+      "heroImageAlt": "Industrias que asesoramos"
     },
     "de": {
       "subtitle": "Rund um ihre arbeitsrechtliche Praxis hat die Kanzlei drei ergänzende Praxisbereiche aufgebaut: Gesellschafts- und Vertragsrecht, Migrationsrecht sowie Prozessführung und Arbeitsstrafrecht.",
-      "errorMessage": "Fehler beim Laden der Praxisbereiche"
+      "errorMessage": "Fehler beim Laden der Praxisbereiche",
+      "title": "Praxisbereiche",
+      "heroImageAlt": "Branchen, die wir beraten"
     },
     "zh": {
       "subtitle": "围绕劳动法这一核心业务，本所发展了三个互补的业务领域：公司与合同、移民以及诉讼与劳动刑事。",
-      "errorMessage": "加载业务领域失败"
+      "errorMessage": "加载业务领域失败",
+      "title": "业务领域",
+      "heroImageAlt": "我们建议的行业"
     },
     "ko": {
       "subtitle": "법인은 노동법 업무를 중심으로 기업·계약, 이민, 소송 및 노동 형사의 세 가지 보완 업무 분야를 갖추고 있습니다.",
-      "errorMessage": "업무 분야 로드 실패"
+      "errorMessage": "업무 분야 로드 실패",
+      "title": "업무 분야",
+      "heroImageAlt": "우리가 조언하는 산업"
     },
     "ja": {
       "subtitle": "当事務所は労働法を中核に、企業法務・契約、移民、訴訟・労働刑事の三つの補完的な分野を展開しています。",
-      "errorMessage": "取扱分野の読み込みに失敗しました"
+      "errorMessage": "取扱分野の読み込みに失敗しました",
+      "title": "取扱分野",
+      "heroImageAlt": "私たちがアドバイスする業界"
     },
     "ar": {
       "subtitle": "حول ممارسته في قانون العمل، طوّر المكتب ثلاث ممارسات مكمّلة: الشركات والعقود، والهجرة، والتقاضي والقضايا الجنائية العمالية.",
-      "errorMessage": "فشل تحميل مجالات الممارسة"
+      "errorMessage": "فشل تحميل مجالات الممارسة",
+      "title": "مجالات الممارسة",
+      "heroImageAlt": "المجالات التي ننصح بها"
     },
     "ru": {
       "subtitle": "Вокруг практики трудового права фирма развила три дополняющие её практики: корпоративную и договорную, миграционную и судебную, включая уголовные дела в сфере труда.",
-      "errorMessage": "Не удалось загрузить практики"
+      "errorMessage": "Не удалось загрузить практики",
+      "title": "Практики",
+      "heroImageAlt": "Отрасли, которые мы консультируем"
     },
     "fr": {
       "subtitle": "Autour de sa pratique en droit du travail, le cabinet a développé trois pratiques complémentaires : droit des sociétés et des contrats, immigration, contentieux et pénal du travail.",
-      "errorMessage": "Échec du chargement des domaines de pratique"
+      "errorMessage": "Échec du chargement des domaines de pratique",
+      "title": "Domaines de pratique",
+      "heroImageAlt": "Industries que nous conseillons"
     },
     "it": {
       "subtitle": "Attorno alla sua pratica giuslavoristica, lo studio ha sviluppato tre aree complementari: societario e contrattuale, immigrazione, contenzioso e penale del lavoro.",
-      "errorMessage": "Impossibile caricare le aree di pratica"
+      "errorMessage": "Impossibile caricare le aree di pratica",
+      "title": "Aree di pratica",
+      "heroImageAlt": "Industrie a cui forniamo consulenza"
     }
   },
   "team": {

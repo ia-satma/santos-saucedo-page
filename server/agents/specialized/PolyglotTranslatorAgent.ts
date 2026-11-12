@@ -11,14 +11,14 @@ import { SUPPORTED_LANGUAGES, type LanguageCode } from '../../../shared/constant
 const LANGUAGES = SUPPORTED_LANGUAGES.map((language) => language.code) as readonly LanguageCode[];
 type Language = LanguageCode;
 
-// Idiomas realmente en uso (site_config.active_languages, default todos los soportados) — cuando no viene
+// Idiomas realmente en uso (site_config.active_languages, por defecto español e inglés) — cuando no viene
 // `targetLanguages` explícito en el payload (caso del auto-encolado del auditor del sitio), solo
 // se traduce a estos, no a los 10 soportados. Ver [[santossaucedo-cobertura-idioma]].
 async function getActiveLanguages(): Promise<Language[]> {
   const config = await getConfigMap();
-  const raw = config.active_languages?.value || LANGUAGES.join(',');
+  const raw = config.active_languages?.value || 'es,en';
   const active = raw.split(',').map((s) => s.trim()).filter((c): c is Language => (LANGUAGES as readonly string[]).includes(c));
-  return active.length > 0 ? active : [...LANGUAGES];
+  return active.length > 0 ? active : ['es', 'en'];
 }
 
 const LANGUAGE_NAMES: Record<Language, string> = {
@@ -121,10 +121,18 @@ export class PolyglotTranslatorAgent extends BaseAgent {
     }
 
     // Sin `targetLanguages` explícito (auto-encolado), solo se traduce a los idiomas activos
-    // del sitio (site_config.active_languages), por defecto los 10 soportados.
+    // del sitio (site_config.active_languages), por defecto español e inglés.
     const languages = targetLanguages || (await getActiveLanguages()).filter(l => l !== sourceLanguage);
 
-    const glossaryDocs = await knowledgeStore.searchDocuments('polyglot_translator', 'glossary', { limit: 50 });
+    const glossaryDocs = await knowledgeStore.searchDocuments(
+      'polyglot_translator',
+      '',
+      { category: 'legal_glossary', limit: 200 },
+    );
+    const guideDocs = [
+      ...(await knowledgeStore.searchDocuments('polyglot_translator', '', { category: 'translation_pattern', limit: 20 })),
+      ...(await knowledgeStore.searchDocuments('polyglot_translator', '', { category: 'editorial_voice', limit: 20 })),
+    ];
     const glossary: Record<string, Record<string, string>> = {};
 
     for (const doc of glossaryDocs) {
@@ -158,7 +166,8 @@ export class PolyglotTranslatorAgent extends BaseAgent {
           sourceContent,
           sourceLanguage,
           lang,
-          glossary
+          glossary,
+          guideDocs.map((doc) => `${doc.title}: ${doc.content}`).join('\n'),
         );
 
         results[lang] = translation;
@@ -197,7 +206,8 @@ export class PolyglotTranslatorAgent extends BaseAgent {
     source: { title: string; excerpt: string; content: string },
     sourceLang: Language,
     targetLang: Language,
-    glossary: Record<string, Record<string, string>>
+    glossary: Record<string, Record<string, string>>,
+    guideText: string,
   ): Promise<{ title: string; excerpt: string; content: string }> {
     const glossaryTerms = Object.entries(glossary)
       .filter(([_, translations]) => translations[targetLang])
@@ -214,6 +224,9 @@ export class PolyglotTranslatorAgent extends BaseAgent {
 
 GLOSSARY (use these translations for legal terms):
 ${glossaryTerms || 'No specific glossary terms'}
+
+REFERENCE KNOWLEDGE (follow these rules):
+${guideText || 'Use the permanent legal translation guide from the system instructions.'}
 
 Return the translation using EXACTLY these three markers, each on its own line, and nothing else (no JSON, no quotes around the values, no extra commentary):
 [[TITLE]]

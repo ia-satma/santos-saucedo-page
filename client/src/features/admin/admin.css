@@ -1343,6 +1343,28 @@
 .admin-agent-runner { border-color: var(--tone); border-radius: 8px; }
 .admin-agent-runner > div:first-child { border-bottom-color: var(--tone-line); }
 .admin-agent-card { border-color: var(--tone-line); border-top: 4px solid var(--tone); }
+
+/* Resumen uses one editorial palette so the dashboard reads as a CMS index. */
+.admin-overview .admin-metric[data-tone],
+.admin-overview .admin-shortcut[data-tone] {
+  --tone: #183c48;
+  --tone-soft: #fff;
+  --tone-line: var(--admin-line);
+  --primary: 191 67% 28%;
+}
+.admin-overview .admin-metric[data-tone] {
+  border-top-width: 1px;
+  border-radius: 6px;
+  min-height: 132px;
+}
+.admin-overview .admin-shortcut[data-tone] {
+  border-left-color: var(--admin-line-dark);
+  border-radius: 5px;
+}
+.admin-overview .admin-shortcut-icon {
+  color: #183c48;
+  border-color: var(--admin-line);
+}
 .admin-agent-card > div:first-child { background: var(--tone-soft); border-radius: 5px 5px 0 0; padding-bottom: 18px; }
 .admin-agent-card h3, .admin-agent-card .text-primary, .admin-agent-mini { color: var(--tone); }
 .admin-workspace [role="tablist"] { background: var(--tone-soft); border: 1px solid var(--tone-line); padding: 5px; gap: 4px; border-radius: 8px; }

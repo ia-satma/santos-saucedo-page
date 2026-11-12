@@ -38,14 +38,13 @@ export async function ensureCmsSchema() {
     value text, value_es text, type text NOT NULL DEFAULT 'text',
     category text DEFAULT 'general', description text, updated_at timestamp DEFAULT now()
   )`);
-  // Existing installations from the two-language CMS are upgraded once to the
-  // complete ten-language catalog. A deliberately customized list remains
-  // untouched so editors can still reduce coverage later from the CMS.
-  const allLanguages = SUPPORTED_LANGUAGES.map(({ code }) => code).join(',');
+  // New installations start with the two editorial languages. Additional
+  // languages remain opt-in from the translation settings panel.
+  const defaultLanguages = 'es,en';
   const [languageRow] = await db.select({ value: siteConfig.value }).from(siteConfig).where(eq(siteConfig.key, 'active_languages')).limit(1);
   const currentLanguages = (languageRow?.value || '').split(',').map((code) => code.trim()).filter(Boolean);
-  if (!languageRow || currentLanguages.length === 0 || (currentLanguages.length === 2 && new Set(currentLanguages).size === 2 && currentLanguages.includes('es') && currentLanguages.includes('en'))) {
-    await db.insert(siteConfig).values({ key: 'active_languages', value: allLanguages, type: 'text', category: 'localization', updatedAt: new Date() }).onConflictDoUpdate({ target: siteConfig.key, set: { value: allLanguages, type: 'text', category: 'localization', updatedAt: new Date() } });
+  if (!languageRow || currentLanguages.length === 0) {
+    await db.insert(siteConfig).values({ key: 'active_languages', value: defaultLanguages, type: 'text', category: 'localization', updatedAt: new Date() }).onConflictDoUpdate({ target: siteConfig.key, set: { value: defaultLanguages, type: 'text', category: 'localization', updatedAt: new Date() } });
   }
   await db.execute(sql`ALTER TABLE team_members ADD COLUMN IF NOT EXISTS is_public boolean`);
   await db.execute(sql`ALTER TABLE team_members ADD COLUMN IF NOT EXISTS show_on_home boolean`);
