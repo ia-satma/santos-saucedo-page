@@ -1,12 +1,18 @@
 {
   "specVersion": "1.0",
-  "host": "https://santos-saucedo.replit.app",
+  "host": {
+    "displayName": "Santos & Saucedo",
+    "documentationUrl": "https://santos-saucedo.replit.app/llms.txt",
+    "logoUrl": "https://santos-saucedo.replit.app/logo-color.png"
+  },
   "entries": [
     {
       "identifier": "urn:air:santossaucedo:website",
+      "displayName": "Santos & Saucedo — sitio público",
       "type": "text/html",
       "url": "https://santos-saucedo.replit.app/es/",
-      "name": "Santos & Saucedo"
+      "description": "Contenido público institucional, jurídico y de contacto de Santos & Saucedo.",
+      "tags": ["derecho laboral", "México", "firma legal"]
     }
   ]
 }
