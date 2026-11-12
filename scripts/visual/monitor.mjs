@@ -76,26 +76,17 @@ export async function runMonitorVisualChecks(browser, baseURL) {
         localStorage.setItem("ss_language", lang);
         localStorage.setItem("ss_language_detected", "true");
       }, language);
-      await page.route("**/api/news", route => route.fulfill({ json: monitorArticles }));
+      const fulfillMonitorNews = route => route.fulfill({ json: monitorArticles });
+      await page.route("**/api/news", fulfillMonitorNews);
+      await page.route("**/static-api/news.json", fulfillMonitorNews);
       // Ignore edits to CMS copy while still exercising the real section and CSS.
       await page.route("**/api/site-config", route => route.fulfill({ json: {} }));
-      await page.route("**/__monitor_visual__/*", async route => {
-        const filename = new URL(route.request().url()).pathname.split("/").pop();
-        assert.ok(monitorArticles.some(item => item.imageUrl.endsWith(`/${filename}`)));
-        await route.fulfill({
-          contentType: "image/webp",
-          body: await readFile(path.join(root, "client/public/editorial", filename)),
-        });
-      });
-      await page.goto(baseURL, { waitUntil: "domcontentloaded" });
+      await page.goto(`${baseURL}/${language}/`, { waitUntil: "domcontentloaded" });
       const reject = page.getByRole("button", { name: /^(Rechazar opcionales|Reject optional)$/ });
       if (await reject.isVisible()) await reject.click();
       const section = page.locator("#news");
-      await section.locator("article").nth(2).waitFor();
-      // Trigger every lazy image, even cards below the mobile viewport.
-      for (const image of await section.locator("img").all()) await image.scrollIntoViewIfNeeded();
+      await section.locator("li").nth(2).waitFor();
       await section.evaluate(async el => {
-        await Promise.all([...el.querySelectorAll("img")].map(image => image.decode()));
         for (const family of ["SS Serif", "SS Sans"]) {
           const loaded = await document.fonts.load(`400 24px "${family}"`, "Prevención Laboral");
           if (!loaded.length || loaded.some(font => font.status !== "loaded")) {
@@ -104,7 +95,6 @@ export async function runMonitorVisualChecks(browser, baseURL) {
         }
         await document.fonts.ready;
       });
-      assert.equal(await section.locator("img").count(), 3, `${name}: all fixture images loaded`);
       await section.scrollIntoViewIfNeeded();
       await page.mouse.move(0, 0);
       // Do not capture a partially visible heading if reveal animations return.
@@ -146,10 +136,9 @@ export async function runMonitorVisualChecks(browser, baseURL) {
       if (verifyDetector) {
         const expected = await readFile(path.join(baselines, `${name}.webp`));
         for (const [regression, css] of [
-          ["hierarchy", "#news article:first-child h3 { font-size: 18px !important; }"],
-          ["spacing", '#news [data-testid="home-monitor-stories"] { gap: 0 !important; margin-top: 0 !important; }'],
-          ["image-crop", "#news article img { object-position: 50% 100% !important; }"],
-          ["clipped-title", "#news article h3 { max-height: 16px !important; overflow: hidden !important; }"],
+          ["hierarchy", "#news li:first-child h3 { font-size: 18px !important; }"],
+          ["spacing", "#news .hm-mon__lista { margin-top: 0 !important; }"],
+          ["clipped-title", "#news li h3 { max-height: 16px !important; overflow: hidden !important; }"],
         ]) {
           const style = await page.addStyleTag({ content: css });
           try {

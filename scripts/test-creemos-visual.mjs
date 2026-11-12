@@ -23,14 +23,14 @@ const cases = [
 
 const expectedContent = {
   es: {
-    label: "Lo que creemos",
-    title: "La prevención es la primera defensa.",
-    paragraphs: ["conflictos laborales", "la mayor parte de nuestro trabajo"],
+    label: "Nuestra filosofía",
+    title: "Preparamos cada asunto como si fuera a llegar a juicio.",
+    paragraphs: ["Prevención primero", "capacidad de reacción"],
   },
   en: {
-    label: "What we believe",
-    title: "Prevention is the first defense.",
-    paragraphs: ["labor disputes", "most of our work is preventive"],
+    label: "Our philosophy",
+    title: "We prepare every matter as if it were going to trial.",
+    paragraphs: ["Prevention first", "capacity to respond"],
   },
 };
 
@@ -85,47 +85,47 @@ async function main() {
         locale: language === "es" ? "es-MX" : "en",
       });
       const page = await context.newPage();
-      await page.addInitScript((lang) => localStorage.setItem("ss_language", lang), language);
-      await page.goto(baseURL, { waitUntil: "domcontentloaded" });
+      await page.addInitScript((lang) => {
+        localStorage.setItem("ss_language", lang);
+        localStorage.setItem("ss_language_detected", "true");
+      }, language);
+      await page.goto(`${baseURL}/${language}/`, { waitUntil: "domcontentloaded" });
 
-      const section = page.locator('section[aria-labelledby="ss26-creemos"]');
+      const section = page.locator('section[aria-labelledby="ini-filo-h"]');
       await section.waitFor({ state: "visible" });
       await section.scrollIntoViewIfNeeded();
+      await page.waitForFunction(() => {
+        const image = document.querySelector('section[aria-labelledby="ini-filo-h"] img');
+        return Boolean(image?.getAttribute("src") && image.complete);
+      });
+      await section.locator("img").evaluate((image) => image.decode?.().catch(() => {}));
       await page.evaluate(() => document.fonts.ready);
 
       const sectionData = await section.evaluate((element) => {
-        const paragraphs = [...element.querySelectorAll(".ss-creemos-body > * > p")];
+        const textOf = (node) => node?.textContent?.replace(/\s+/g, " ").trim() ?? "";
+        const paragraphs = [...element.querySelectorAll("p.sh-filo__p")];
         const paragraphAlignments = [...element.querySelectorAll("p")].map((paragraph) => ({
-          isExplanation: paragraph.matches(".ss-creemos-body > * > p"),
+          isExplanation: paragraph.matches("p.sh-filo__p"),
           alignment: getComputedStyle(paragraph).textAlign,
         }));
         const justified = [...element.querySelectorAll("*")]
           .filter((child) => getComputedStyle(child).textAlign === "justify")
           .map((child) => ({
             text: child.textContent?.trim() ?? "",
-            isExplanation: child.matches(".ss-creemos-body > * > p"),
+            isExplanation: child.matches("p.sh-filo__p"),
           }));
         const heading = element.querySelector("h2");
-        const label = element.querySelector(".ss-label > span:not([aria-hidden])");
-        const mainSections = [...document.querySelectorAll("main > section")];
-        const sectionIndex = mainSections.indexOf(element);
-        const adjacentHeadingAlignment = [mainSections[sectionIndex - 1], mainSections[sectionIndex + 1]]
-          .filter(Boolean)
-          .map((adjacent) => {
-            const adjacentHeading = adjacent.querySelector("h2");
-            return adjacentHeading ? getComputedStyle(adjacentHeading).textAlign : null;
-          });
+        const label = element.querySelector("a.sh-boton");
 
         return {
-          language: element.getAttribute("lang"),
-          paragraphs: paragraphs.map((paragraph) => paragraph.textContent?.trim() ?? ""),
+          language: document.documentElement.lang,
+          paragraphs: paragraphs.map(textOf),
           paragraphAlignments,
           justified,
-          heading: heading?.textContent?.trim() ?? "",
+          heading: textOf(heading),
           headingAlignment: heading ? getComputedStyle(heading).textAlign : null,
-          label: label?.textContent?.trim() ?? "",
+          label: textOf(label),
           labelAlignment: label ? getComputedStyle(label).textAlign : null,
-          adjacentHeadingAlignment,
         };
       });
 
@@ -133,26 +133,18 @@ async function main() {
         `${language}/${viewport}: section should declare the displayed language`);
       assert.equal(sectionData.label, expected.label, `${language}/${viewport}: section label`);
       assert.equal(sectionData.heading, expected.title, `${language}/${viewport}: section title`);
-      assert.equal(sectionData.paragraphs.length, 2,
-        `${language}/${viewport}: exactly two explanatory paragraphs should be present`);
+      assert.equal(sectionData.paragraphs.length, 1,
+        `${language}/${viewport}: exactly one explanatory paragraph should be present`);
       for (const phrase of expected.paragraphs) {
         assert.ok(sectionData.paragraphs.some((paragraph) => paragraph.includes(phrase)),
           `${language}/${viewport}: expected ${language} copy containing "${phrase}"`);
       }
-      assert.equal(sectionData.justified.length, 2,
-        `${language}/${viewport}: only two elements should have justified alignment`);
-      assert.ok(sectionData.justified.every((element) => element.isExplanation),
-        `${language}/${viewport}: justified elements must be the two explanatory paragraphs`);
-      assert.ok(sectionData.paragraphAlignments
-        .filter((paragraph) => paragraph.alignment === "justify")
-        .every((paragraph) => paragraph.isExplanation),
-      `${language}/${viewport}: no other paragraph should have justified alignment`);
+      assert.equal(sectionData.justified.length, 0,
+        `${language}/${viewport}: the philosophy band must not justify its text`);
       assert.notEqual(sectionData.headingAlignment, "justify",
         `${language}/${viewport}: the section title must not be justified`);
       assert.notEqual(sectionData.labelAlignment, "justify",
         `${language}/${viewport}: the section label must not be justified`);
-      assert.ok(sectionData.adjacentHeadingAlignment.every((alignment) => alignment !== "justify"),
-        `${language}/${viewport}: adjacent section headings must not be justified`);
 
       const screenshot = await section.screenshot({ animations: "disabled" });
       const snapshotName = `${language}-${viewport}.png`;

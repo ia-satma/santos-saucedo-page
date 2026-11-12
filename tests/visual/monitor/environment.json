@@ -1,33 +1,33 @@
 {
-  "browser": "152.0.7977.64",
-  "platform": "linux",
+  "browser": "156.0.8078.4",
+  "platform": "darwin",
   "cases": {
     "es-desktop": [
       {
         "key": "es-desktop",
-        "width": 1440,
-        "height": 1264
+        "width": 1425,
+        "height": 962
       }
     ],
     "es-mobile": [
       {
         "key": "es-mobile",
-        "width": 375,
-        "height": 1520
+        "width": 360,
+        "height": 1135
       }
     ],
     "en-desktop": [
       {
         "key": "en-desktop",
-        "width": 1440,
-        "height": 1233
+        "width": 1425,
+        "height": 930
       }
     ],
     "en-mobile": [
       {
         "key": "en-mobile",
-        "width": 375,
-        "height": 1488
+        "width": 360,
+        "height": 1109
       }
     ]
   }

@@ -1,8 +1,8 @@
 # Monitor Laboral: referencias visuales
 
-Estas cuatro referencias representan el diseño actual de `Monitor26` y
-`MonitorEditorial`: escritorio (1440 × 1000) y móvil (375 × 812), en español e
-inglés. Se revisaron completas, incluidos los títulos largos y las tres imágenes.
+Estas cuatro referencias representan el diseño actual de `Monitor26` y el archivo
+del Monitor: escritorio (1440 × 1000) y móvil (375 × 812), en español e inglés.
+Se revisaron completas, incluidos los títulos largos y las columnas del boletín.
 No cambian el diseño de producción.
 
 ## Ejecutar
@@ -16,12 +16,12 @@ npm run test:visual:monitor:verify-detector
 ```
 
 - El primer comando compara las cuatro referencias sin consultar noticias reales.
-- El segundo conserva además todas las comprobaciones funcionales anteriores
-  (publicaciones reales, enlaces, archivo, imágenes, desbordamiento, estados,
-  borradores y almacenamiento vacío). Requiere al menos tres noticias reales.
+- El segundo conserva además las comprobaciones funcionales (publicaciones reales,
+  enlaces, archivo, desbordamiento, estados y borradores). Requiere al menos tres
+  noticias reales.
 - El tercero comprueba el propio detector: introduce, únicamente en el navegador
-  de prueba, cambios de jerarquía, espaciado, recorte de imagen y títulos cortados.
-  Debe rechazar los 16 cambios y terminar correctamente. Nunca actualiza referencias.
+  de prueba, cambios de jerarquía, espaciado y títulos cortados. Debe rechazar los
+  12 cambios y terminar correctamente. Nunca actualiza referencias.
 
 `VISUAL_TEST_BASE_URL` permite seleccionar otra instancia; por defecto se utiliza
 el dominio de desarrollo de Replit o el servidor local en el puerto 5000.
@@ -35,15 +35,14 @@ requiere revisar las referencias, no aumentar la tolerancia automáticamente.
 
 Las noticias se interceptan en el navegador con
 `scripts/visual/monitor-fixture.mjs`: títulos bilingües, categorías, fechas,
-prioridad y URLs fijas. Las imágenes provienen de los tres archivos editoriales
-incluidos en el repositorio; no necesitan servicios externos ni App Storage.
+prioridad y URLs fijas. No necesita servicios externos ni App Storage.
 La configuración del CMS se intercepta para usar el texto predeterminado del
 sitio. No se escribe en la base de datos ni se añade una ruta de prueba al sitio.
 Las publicaciones o ediciones del CMS no requieren renovar estas referencias;
-los cambios en el texto predeterminado, CSS, fuentes o imágenes incluidas sí.
+los cambios en el texto predeterminado, CSS, fuentes o contenido incluido sí.
 
-Se fija escala 1, zona UTC, idioma, tema claro y movimiento reducido. Se cargan y
-decodifican todas las imágenes diferidas y se esperan las fuentes autoalojadas.
+Se fija escala 1, zona UTC, idioma, tema claro y movimiento reducido, y se esperan
+las fuentes autoalojadas.
 La cabecera sticky se oculta **solo durante la captura**, sin quitar su espacio:
 no pertenece al Monitor y puede cubrir distintas tarjetas según el scroll.
 El resto de la sección se captura completo, sin máscaras sobre su contenido.
