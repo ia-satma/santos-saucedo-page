@@ -25,6 +25,7 @@
     "test:public-flows": "node --import tsx scripts/check-public-flows.ts",
     "test:privacy": "node --import tsx --test server/security/siteConsent.test.ts",
     "test:visual:creemos": "node scripts/test-creemos-visual.mjs",
+    "test:visual:admin": "node scripts/test-admin-visual.mjs",
     "test:visual:creemos:update": "UPDATE_VISUAL_SNAPSHOTS=1 node scripts/test-creemos-visual.mjs",
     "test:monitor:editorial": "node scripts/test-monitor-editorial.mjs",
     "test:visual:monitor": "node scripts/test-monitor-editorial.mjs --visual-only",
