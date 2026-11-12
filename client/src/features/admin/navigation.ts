@@ -24,8 +24,8 @@ export const adminNavigation = [
   {
     id: "panel",
     tone: "teal",
-    label: "Panel",
-    description: "",
+    label: "Inicio",
+    description: "Revisa el estado del sitio y aprende a usar el CMS.",
     items: [
       {
         href: "/admin/dashboard",
@@ -137,8 +137,8 @@ export const adminNavigation = [
   {
     id: "medios",
     tone: "orange",
-    label: "Archivos y orden",
-    description: "Carga y reutiliza imágenes, video y documentos.",
+    label: "Biblioteca y medios",
+    description: "Carga, organiza y reutiliza imágenes, video y documentos.",
     items: [
       {
         href: "/admin/media",
@@ -175,7 +175,7 @@ export const adminNavigation = [
   {
     id: "registros",
     tone: "green",
-    label: "Registros recibidos",
+    label: "Registros",
     description:
       "Consulta los envíos que llegan desde los formularios públicos.",
     items: [
@@ -294,7 +294,7 @@ export const adminNavigation = [
   {
     id: "ia",
     tone: "teal",
-    label: "Agentes y creación con IA",
+    label: "Herramientas de IA",
     description:
       "Genera textos, imágenes, voz y presentaciones; supervisa los agentes.",
     items: [

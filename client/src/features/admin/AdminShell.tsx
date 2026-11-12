@@ -145,16 +145,16 @@ export function AdminShell({ children }: { children: ReactNode }) {
         }
       >
         <img src={media.brand.logoDark} alt="Santos & Saucedo" />
-        <span>Administración del sitio</span>
+        <span>CMS de Santos &amp; Saucedo</span>
       </Link>
       <button
         type="button"
         className="admin-sidebar-search"
-        title="Buscar sección"
+        title="Buscar en el CMS"
         onClick={() => setSearchOpen(true)}
       >
         <MagnifyingGlassIcon />
-        <span>¿Qué quiere hacer?</span>
+        <span>Buscar en el CMS</span>
         <kbd>⌘ K</kbd>
       </button>
       <nav
@@ -194,9 +194,11 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 type="button"
                 className="admin-nav-group-heading"
                 aria-expanded={expanded.has(group.id)}
+                aria-label={`${group.label}, ${visibleItems.length} secciones`}
                 onClick={() => toggleGroup(group.id)}
               >
                 <span className="admin-group-name"><span className="admin-group-dot" aria-hidden="true" />{group.label}</span>
+                <span className="admin-group-count" aria-hidden="true">{visibleItems.length}</span>
                 <ChevronRightIcon
                   className={expanded.has(group.id) ? "rotate-90" : ""}
                 />
@@ -292,7 +294,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
             >
               {sidebarCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
             </button>
-            <span>Panel</span>
+            <span>{activeGroup?.label || "Inicio"}</span>
             <ChevronRightIcon />
             <strong>{active?.label || "Contenido del sitio"}</strong>
           </div>
