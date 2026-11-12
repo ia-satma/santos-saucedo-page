@@ -15,8 +15,8 @@ const MAX_CV = 10 * 1024 * 1024;
 
 export function Candidatura({ source = "careers", idPrefix }: { source?: string; idPrefix: string }) {
   const { language } = useLanguage();
-  const { lang, attrs } = useV3Lang();
-  const T = PX[lang];
+  const { locale, attrs } = useV3Lang();
+  const T = PX[locale];
   const settings = useCmsContent("forms", defaults.forms).careers;
   // Rótulos del panel en español e inglés; en los demás idiomas, el inglés (y el bloque lo declara)
   const t = settings.labels[language as "es" | "en"] || settings.labels.en;

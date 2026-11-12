@@ -87,8 +87,8 @@ export function LegalBody({
   phoneHref: string;
   phoneTestId: string;
 }) {
-  const { lang, attrs } = useV3Lang();
-  const T = PX[lang];
+  const { locale, attrs } = useV3Lang();
+  const T = PX[locale];
   const docsRef = useRef<HTMLDivElement>(null);
   const indiceRef = useRef<HTMLDetailsElement>(null);
   const [actual, setActual] = useState("");

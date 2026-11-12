@@ -1166,8 +1166,8 @@ export default function TeamMemberDetail() {
   };
 
   // Textos nuevos de la v3 (es/en; los demás idiomas ven el inglés, marcado lang="en") y enlaces
-  const { lang, attrs } = useV3Lang();
-  const P = PERFIL_TEXTS[lang];
+  const { lang, locale, attrs } = useV3Lang();
+  const P = PERFIL_TEXTS[locale];
   const cmsLinks = useCmsContent("links", defaults.links);
 
   // «Siguiente»: la próxima persona de su grupo en el orden del panel (los cuatro socios, en el

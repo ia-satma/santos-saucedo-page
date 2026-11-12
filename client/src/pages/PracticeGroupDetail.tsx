@@ -35,6 +35,7 @@ import { LAMINAS_TOTAL, LAMINA_N, LEGACY_SLUGS, PRACTICE_V3, type Plate, type Pr
 import { PAGINA, type SheetId } from "@/v3/practicas/textos";
 import "@/v3/practicas/practicas.css";
 import type { PracticeGroup, TeamMember, RepresentativeMatterDb } from "@shared/schema";
+import type { LanguageCode } from "@shared/constants";
 
 // Texto de origen en inglés mostrado en otro idioma (sin traducción, o en el sitio estático):
 // lleva su propio idioma y dirección, para que :lang() y el algoritmo bidi lo traten como inglés.
@@ -70,7 +71,10 @@ const FALLBACK_V3: PracticeV3 = {
   vista: "practica",
   photo: {
     src: "v3/c-cerro-luna.webp", w: 2400, h: 1600, pos: "50% 62%",
-    alt: { es: "La luna llena sale entre dos crestas de la sierra, al anochecer", en: "The full moon rises between two ridges of the sierra at dusk" },
+    alt: {
+      es: "La luna llena sale entre dos crestas de la sierra, al anochecer", en: "The full moon rises between two ridges of the sierra at dusk",
+      de: "Der Vollmond geht in der Dämmerung zwischen zwei Bergkämmen auf", zh: "暮色中，满月从两道山脊之间升起", ko: "해질 무렵 보름달이 두 산등성이 사이로 떠오릅니다", ja: "夕暮れ、満月が二つの山稜の間から昇ります", ar: "يطلع البدر بين سلسلتي جبال عند الغسق", ru: "В сумерках полная луна поднимается между двумя горными хребтами", fr: "La pleine lune se lève entre deux crêtes au crépuscule", it: "La luna piena sorge tra due creste al crepuscolo",
+    },
   },
   plates: [],
 };
@@ -178,7 +182,7 @@ function TranslatedMatterCard({ matter, language, t }: TranslatedMatterCardProps
 
 /** Una lámina de la página, con su número de la demo (n/7: anatomía 3 y 4, figuras 5, 6 y 7). La clave
     lleva la práctica, la lámina y el idioma: al pasar de una práctica a otra la lámina arranca de nuevo. */
-function Lamina({ plate, slug, lang, attrs }: { plate: Plate; slug: string; lang: "es" | "en"; attrs: { lang?: string; dir?: "ltr" } }) {
+function Lamina({ plate, slug, lang, attrs }: { plate: Plate; slug: string; lang: LanguageCode; attrs: { lang?: string; dir?: "ltr" | "rtl" } }) {
   if (plate.kind === "anatomia") {
     const nums: Partial<Record<SheetId, string>> = {};
     plate.sheets.forEach((id) => { nums[id] = `${LAMINA_N[id]}/${LAMINAS_TOTAL}`; });
@@ -203,7 +207,7 @@ export default function PracticeGroupDetail() {
   const { name: practiceName } = usePracticeNames();
   const cmsChrome = useCmsContent("chrome", chrome26);
   const { language } = useLanguage();
-  const { lang, attrs } = useV3Lang();
+  const { lang, locale, attrs } = useV3Lang();
   const params = useParams<{ slug: string }>();
   // Direcciones de la demo con otro nombre de práctica: a la del sitio, sin pedir la que no existe
   const legacy = params.slug ? LEGACY_SLUGS[params.slug] : undefined;
@@ -502,7 +506,7 @@ export default function PracticeGroupDetail() {
   // última, Industrias)
   const here = ordered.findIndex((g) => g.slug === practiceGroup.slug);
   const nextGroup = here >= 0 && here < ordered.length - 1 ? ordered[here + 1] : null;
-  const P = PAGINA[lang];
+  const P = PAGINA[locale];
   const practicesRow = ordered.map((g) => ({ href: `/practice-groups/${g.slug}`, label: nameOf(g) }));
 
   const sortedMatters = representativeMatters
@@ -538,7 +542,7 @@ export default function PracticeGroupDetail() {
         <V3PageHeader
           id={H1}
           img={`${BASE}${cfg.photo.src}`}
-          alt={cfg.photo.alt[lang]}
+          alt={cfg.photo.alt[locale]}
           imgAttrs={attrs}
           width={cfg.photo.w}
           height={cfg.photo.h}
@@ -634,7 +638,7 @@ export default function PracticeGroupDetail() {
         ) : null}
 
         {/* La primera lámina, justo después del texto (como en la demo, tras la cabecera) */}
-        {firstPlate ? <Lamina plate={firstPlate} slug={practiceGroup.slug} lang={lang} attrs={attrs} /> : null}
+        {firstPlate ? <Lamina plate={firstPlate} slug={practiceGroup.slug} lang={locale} attrs={attrs} /> : null}
 
         {/* Los servicios del texto («## »). Con lámina: en dos columnas sobre el fondo claro, entre la
             primera lámina y las demás. Sin lámina (litigio): en la banda azul con la foto de la oficina. */}
@@ -683,7 +687,7 @@ export default function PracticeGroupDetail() {
         ) : null}
 
         {/* Las demás láminas (laboral: el calendario del IMSS y el INFONAVIT) */}
-        {restPlates.map((plate, i) => <Lamina key={`${practiceGroup.slug}-${i}`} plate={plate} slug={practiceGroup.slug} lang={lang} attrs={attrs} />)}
+        {restPlates.map((plate, i) => <Lamina key={`${practiceGroup.slug}-${i}`} plate={plate} slug={practiceGroup.slug} lang={locale} attrs={attrs} />)}
 
         {/* Las cuatro prácticas y la página siguiente; «Siguiente» en inglés fuera de ES/EN, marcado */}
         <SiguientePractica

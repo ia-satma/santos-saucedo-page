@@ -8,7 +8,7 @@
    Número: el de la demo (n/7), que da la página. */
 import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
-import type { V3Lang } from "@/v3/shared";
+import type { LanguageCode } from "@shared/constants";
 import { cargarDibujo, type FgArea, type FgDibujo } from "./figurasSvg";
 import { FIGURAS } from "./textos";
 import { cerca } from "./cerca";
@@ -35,7 +35,7 @@ function cssVars(s: string): CSSProperties {
 }
 
 export function Figura({ area, n, total, lang, attrs }: {
-  area: FgArea; n: number; total: number; lang: V3Lang; attrs: { lang?: string; dir?: "ltr" };
+  area: FgArea; n: number; total: number; lang: LanguageCode; attrs: { lang?: string; dir?: "ltr" | "rtl" };
 }) {
   const ref = useRef<HTMLElement>(null);
   // dibujo y script, cuando la lámina se acerca

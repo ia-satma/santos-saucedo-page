@@ -17,7 +17,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContact } from "@/components/home26/useSiteContact";
 import { usePracticeNames } from "@/lib/practiceNames";
 import { isRM, useV3Lang } from "@/v3/shared";
-import { CONSENT, CONTACT_CONTENT, CT, FEEDBACK, OTHER_LABEL, OTHER_VALUE, VALIDATION } from "./textos";
+import { CONSENT, CONTACT_CONTENT, CT, FEEDBACK, OTHER_VALUE, VALIDATION } from "./textos";
 import "./contacto.css";
 
 const schemaFor = (language: LanguageCode) => {
@@ -55,8 +55,8 @@ export interface FormularioProps {
 
 export default function FormularioContacto({ idPrefix, dePagina = false }: FormularioProps) {
   const { language } = useLanguage();
-  const { lang, attrs } = useV3Lang();
-  const ct = CT[lang];
+  const { lang, locale, attrs } = useV3Lang();
+  const ct = CT[locale];
   const { toast } = useToast();
   const firm = useSiteContact(lang);
   const t = useCmsContent("contact", CONTACT_CONTENT)[language] ?? CONTACT_CONTENT.en;
@@ -70,7 +70,7 @@ export default function FormularioContacto({ idPrefix, dePagina = false }: Formu
   const { shortName } = usePracticeNames();
   const { data: practices = [] } = useQuery<PracticeGroup[]>({ queryKey: ["/api/practice-groups"] });
   const practiceLabel = (value: string, lng: LanguageCode): string => {
-    if (value === OTHER_VALUE) return lng === "es" ? CT.es.otroAsunto : lng === "en" ? CT.en.otroAsunto : OTHER_LABEL[lng] ?? OTHER_LABEL.en;
+    if (value === OTHER_VALUE) return lng === "es" ? CT.es.otroAsunto : lng === "en" ? CT.en.otroAsunto : CT[lng].otroAsunto;
     const p = practices.find((x) => x.slug === value);
     return (lng === "es" ? p?.nameEs : lng === "en" ? p?.name : shortName(value, lng)) ?? p?.name ?? value;
   };
@@ -186,7 +186,7 @@ export default function FormularioContacto({ idPrefix, dePagina = false }: Formu
   const nombre = err("fullName", "fullname"), correo = err("email", "email"), empresa = err("company", "company");
   const tel = err("phone", "phone"), mensaje = err("message", "message"), acepta = err("consent", "consent");
   // Título: el de la demo en español e inglés; en los demás idiomas, el del panel en su idioma
-  const titulo = language === "es" || language === "en" ? ct.formH : t.formTitle;
+  const titulo = ct.formH;
   const req = <span className="sh-req" aria-hidden="true"> *</span>;
 
   if (!formSettings.enabled) {

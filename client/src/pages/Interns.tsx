@@ -124,9 +124,9 @@ export default function Interns() {
   const baseT = editableContent[language as keyof typeof content] || editableContent.en;
   const t = { ...baseT, applyEmail: siteDetails.recruitmentEmail };
 
-  const { lang } = useV3Lang();
+  const { locale } = useV3Lang();
   const foto = useFotoOficina();
-  const mezanine = foto("mezanine", language as LanguageCode, PX[lang].mezanineAlt);
+  const mezanine = foto("mezanine", language as LanguageCode, PX[locale].mezanineAlt);
   const applyHref = `mailto:${t.applyEmail}?subject=${encodeURIComponent(t.heroTitle)}`;
   // Correo de reclutamiento en dos piezas: se parte tras la arroba si la columna es estrecha
   const [emailUser, emailDomain] = t.applyEmail.split("@");

@@ -54,13 +54,12 @@ export default function Team() {
   const cmsChrome = useCmsContent("chrome", chrome26);
   const cmsLinks = useCmsContent("links", defaults.links);
   const { language } = useLanguage();
-  const { lang, attrs } = useV3Lang();
+  const { lang, locale, attrs } = useV3Lang();
   // Dirección de la sede para el mapa (la misma del pie y de /contact)
-  const { address: sede } = useSiteContact(lang);
-  const mapaTextos = useMemo(() => ({ ...INDUSTRIAS_TEXTS[lang].mapa, ...PRESENCIA[lang] }), [lang]);
-  const tv = SOCIOS_TEXTS[lang];
-  // Español o inglés: los textos de la demo; los demás idiomas: lo que el sitio ya tiene traducido
-  const ownLang = language === "es" || language === "en";
+  const { address: sede } = useSiteContact(locale);
+  const mapaTextos = useMemo(() => ({ ...INDUSTRIAS_TEXTS[locale].mapa, ...PRESENCIA[lang] }), [locale, lang]);
+  const tv = SOCIOS_TEXTS[locale];
+  const ownLang = true;
 
   const { data: allTeamMembers, isLoading: isLoadingAll, error: errorAll } = useQuery<TeamMember[]>({
     queryKey: ["/api/team"],

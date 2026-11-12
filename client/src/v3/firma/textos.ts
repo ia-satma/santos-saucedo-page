@@ -1,6 +1,8 @@
-/* «Nuestra firma» (/about): los textos nuevos de la demo v3, en español (tal cual la demo) y en inglés.
-   Los demás idiomas ven el inglés con lang="en" en su bloque (useV3Lang). Los textos que el sitio ya
+/* «Nuestra firma» (/about): los textos nuevos de la demo v3, con copia para los diez idiomas.
+   Los textos que el sitio ya
    tenía en diez idiomas (historia, «Cómo trabajamos», cifras) siguen en pages/About.tsx y el CMS. */
+import type { LanguageCode } from "@shared/constants";
+import { localizedRecord } from "@/v3/locales";
 import type { V3Lang } from "@/v3/shared";
 
 export type Pieza = { nom: string; parte: string; desc: string; tag: string };
@@ -33,7 +35,7 @@ export type FirmaTextos = {
   siguienteLabel: string;
 };
 
-export const TEXTOS: Record<V3Lang, FirmaTextos> = {
+const TEXTOS_BASE: Record<V3Lang, FirmaTextos> = {
   es: {
     cabAlt: "La luna llena sale entre dos crestas de la sierra, al anochecer",
     lead: "Santos & Saucedo nació en San Pedro Garza García con una práctica dedicada a las empresas. Desde entonces asesora a grupos industriales mexicanos, a multinacionales y a empresas de capital asiático en las decisiones que involucran a su personal.",
@@ -152,6 +154,7 @@ export const TEXTOS: Record<V3Lang, FirmaTextos> = {
     siguienteLabel: "Next page",
   },
 };
+export const TEXTOS: Record<LanguageCode, FirmaTextos> = localizedRecord("firma", TEXTOS_BASE);
 
 /* La fachada de la oficina: su pie y su texto alternativo son los que la portada usaba en «La firma»
    (CMS home.firma, en español y en inglés). Se leen del CMS con estos valores de respaldo. */

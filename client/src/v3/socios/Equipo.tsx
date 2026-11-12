@@ -12,7 +12,7 @@ import { SiteLink } from "@/components/home26/SiteLink";
 import { teamPortraitFraming } from "@/lib/teamPortraitFraming";
 import "./socios.css";
 
-type Attrs = { lang?: string; dir?: "ltr" };
+type Attrs = { lang?: string; dir?: "ltr" | "rtl" };
 
 const pct = (v: unknown, fallback: number) => {
   const n = typeof v === "string" ? parseFloat(v) : typeof v === "number" ? v : NaN;

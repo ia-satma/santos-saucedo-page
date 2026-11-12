@@ -425,8 +425,8 @@ export default function About() {
   const cmsChrome = useCmsContent("chrome", chrome26);
   const nav = cmsChrome[language].nav;
   const t = { ...baseT, title: nav[0].label };
-  const { lang, attrs } = useV3Lang();
-  const T = TEXTOS[lang];
+  const { lang, locale, attrs } = useV3Lang();
+  const T = TEXTOS[locale];
   // La fachada: pie y texto alternativo de la antigua «La firma» de la portada (CMS home.firma)
   const fachada = useCmsContent("home", HOME_FIRMA)[lang].firma;
 

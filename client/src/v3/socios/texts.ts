@@ -1,7 +1,9 @@
-/* Textos nuevos de la página «Socios» (demo v3): español tal cual de la demo y su inglés.
-   Los demás idiomas ven el inglés (el bloque declara lang="en"), salvo lo que el sitio ya tiene
+/* Textos nuevos de la página «Socios» (demo v3), con copia para los diez idiomas del sitio.
+   Salvo los cargos y datos que vienen del CMS,
    traducido en 10 idiomas: el h1 (etiqueta del menú), «Integrantes del equipo», «Of Counsel»,
    los cargos y la nota de los retratos, que siguen leyéndose del CMS (Team.tsx). */
+import type { LanguageCode } from "@shared/constants";
+import { localizedRecord } from "../locales";
 import type { V3Lang } from "../shared";
 
 export type SociosTexts = {
@@ -24,7 +26,7 @@ export type SociosTexts = {
   nextTitle: string;
 };
 
-export const SOCIOS_TEXTS: Record<V3Lang, SociosTexts> = {
+const SOCIOS_BASE: Record<V3Lang, SociosTexts> = {
   es: {
     title: "Nuestros socios",
     list: "Socios",
@@ -54,6 +56,7 @@ export const SOCIOS_TEXTS: Record<V3Lang, SociosTexts> = {
     nextTitle: "Contact",
   },
 };
+export const SOCIOS_TEXTS: Record<LanguageCode, SociosTexts> = localizedRecord("socios", SOCIOS_BASE);
 
 /* Ficha de cada persona (/team/<slug>): solo lo nuevo de la v3, el final «Siguiente». Lo demás
    (rótulos, cargos, biografía) ya está en 10 idiomas (TeamMemberDetail.tsx, CMS "profile"). */
@@ -67,7 +70,8 @@ export type PerfilTexts = {
   nextTitle: string;
 };
 
-export const PERFIL_TEXTS: Record<V3Lang, PerfilTexts> = {
+const PERFIL_BASE: Record<V3Lang, PerfilTexts> = {
   es: { nextPartner: "Siguiente socio", next: "Siguiente", nextAria: "Siguiente página", nextTitle: "Contacto" },
   en: { nextPartner: "Next partner", next: "Next", nextAria: "Next page", nextTitle: "Contact" },
 };
+export const PERFIL_TEXTS: Record<LanguageCode, PerfilTexts> = localizedRecord("perfil", PERFIL_BASE);

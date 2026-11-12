@@ -22,7 +22,7 @@ export type LienzoPartner = {
   imageUrl?: string | null;
 };
 
-type Attrs = { lang?: string; dir?: "ltr" };
+type Attrs = { lang?: string; dir?: "ltr" | "rtl" };
 
 // Lado del retrato: --pe-w de demo.css (400 px máx. en escritorio, 100 % en teléfono)
 const STAGE_SIZES = "(max-width: 719px) calc(100vw - 32px), (max-width: 1023px) clamp(260px, 36vw, 340px), clamp(320px, 28vw, 400px)";

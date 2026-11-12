@@ -25,7 +25,7 @@
    Orden de la página: cabecera; el texto de la práctica y «Qué hacemos»; la primera lámina; los
    servicios del texto; las demás láminas; las cuatro prácticas y la siguiente. Así ninguna lámina azul
    queda pegada a otra (en laboral, los servicios separan la anatomía del calendario). */
-import type { V3Lang } from "@/v3/shared";
+import type { LanguageCode } from "@shared/constants";
 import type { FgArea } from "./figurasSvg";
 import type { SheetId } from "./textos";
 
@@ -42,7 +42,7 @@ export interface Feature { photo: "obraMazo" | "biblioteca"; pos: string }
 export interface PracticeV3 {
   /** nombre de la página en la demo (data-vista) */
   vista: string;
-  photo: { src: string; w: number; h: number; pos: string; alt: Record<V3Lang, string> };
+  photo: { src: string; w: number; h: number; pos: string; alt: Record<LanguageCode, string> };
   plates: Plate[];
   feature?: Feature;
 }
@@ -53,8 +53,8 @@ export const PRACTICE_V3: Record<string, PracticeV3> = {
     photo: {
       src: "v3/c-prevencion.webp", w: 2400, h: 1600, pos: "50% 58%",
       alt: {
-        es: "Un camino de montaña sube en curvas por la ladera, visto desde lo alto",
-        en: "A mountain road winds up the hillside, seen from above",
+        es: "Un camino de montaña sube en curvas por la ladera, visto desde lo alto", en: "A mountain road winds up the hillside, seen from above",
+        de: "Eine Bergstraße windet sich von oben gesehen in Kurven den Hang hinauf", zh: "从高处看，一条山路沿山坡蜿蜒上升", ko: "산길이 위에서 보았을 때 비탈을 굽이굽이 올라갑니다", ja: "山道が上空から見て斜面を曲がりながら上っています", ar: "طريق جبلي يصعد منحدرًا في منعطفات، من الأعلى", ru: "Горная дорога извивается по склону, вид сверху", fr: "Une route de montagne monte en lacets sur le versant, vue d’en haut", it: "Una strada di montagna sale a tornanti sul pendio, vista dall’alto",
       },
     },
     plates: [
@@ -67,8 +67,8 @@ export const PRACTICE_V3: Record<string, PracticeV3> = {
     photo: {
       src: "v3/c-estructura.webp", w: 2400, h: 1602, pos: "50% 50%",
       alt: {
-        es: "Vigas de acero iluminadas de noche, cruzadas en diagonal",
-        en: "Steel beams lit at night, crossing on the diagonal",
+        es: "Vigas de acero iluminadas de noche, cruzadas en diagonal", en: "Steel beams lit at night, crossing on the diagonal",
+        de: "Nachts beleuchtete Stahlträger, diagonal gekreuzt", zh: "夜间照亮的钢梁交叉成对角线", ko: "밤에 조명을 받은 강철 빔이 대각선으로 교차합니다", ja: "夜に照らされた鉄骨が斜めに交差しています", ar: "عوارض فولاذية مضاءة ليلًا تتقاطع قطريًا", ru: "Стальные балки, освещённые ночью и пересекающиеся по диагонали", fr: "Des poutres d’acier éclairées la nuit se croisent en diagonale", it: "Travi d’acciaio illuminate di notte, incrociate in diagonale",
       },
     },
     plates: [{ kind: "figura", area: "corporativo" }],
@@ -78,8 +78,8 @@ export const PRACTICE_V3: Record<string, PracticeV3> = {
     photo: {
       src: "v3/c-san-pedro.webp", w: 1920, h: 872, pos: "50% 50%",
       alt: {
-        es: "Torres de San Pedro Garza García con el Cerro de la Silla al fondo, vistas desde un dron",
-        en: "Towers of San Pedro Garza García with the Cerro de la Silla behind them, seen from a drone",
+        es: "Torres de San Pedro Garza García con el Cerro de la Silla al fondo, vistas desde un dron", en: "Towers of San Pedro Garza García with the Cerro de la Silla behind them, seen from a drone",
+        de: "Türme von San Pedro Garza García mit dem Cerro de la Silla im Hintergrund, aus einer Drohne gesehen", zh: "从无人机俯瞰圣佩德罗加尔萨加西亚的高楼，背景是塞拉德拉西利亚山", ko: "드론으로 본 산페드로 가르사 가르시아의 타워와 뒤편의 세로 데 라 시야", ja: "ドローンから見たサン・ペドロ・ガルサ・ガルシアの高層ビルと背後のセロ・デ・ラ・シヤ", ar: "أبراج سان بيدرو غارسا غارسيا وجبل سيرو دي لا سيّا في الخلفية، من طائرة مسيّرة", ru: "Башни Сан-Педро-Гарса-Гарсия с Серро-де-ла-Силья на заднем плане, вид с дрона", fr: "Les tours de San Pedro Garza García avec le Cerro de la Silla en arrière-plan, vues depuis un drone", it: "Le torri di San Pedro Garza García con il Cerro de la Silla sullo sfondo, viste da un drone",
       },
     },
     plates: [{ kind: "figura", area: "migratorio" }],
@@ -89,8 +89,8 @@ export const PRACTICE_V3: Record<string, PracticeV3> = {
     photo: {
       src: "v3/c-acumulado.webp", w: 2400, h: 1600, pos: "50% 55%",
       alt: {
-        es: "Rollos de lámina de acero alineados en una nave industrial en penumbra",
-        en: "Coils of sheet steel lined up in a dim industrial warehouse",
+        es: "Rollos de lámina de acero alineados en una nave industrial en penumbra", en: "Coils of sheet steel lined up in a dim industrial warehouse",
+        de: "Blechstahlrollen in einer dämmrigen Industriehalle", zh: "昏暗工业厂房中排列的钢板卷材", ko: "어두운 산업 창고에 줄지어 있는 판재 강철 코일", ja: "薄鋼板のコイルが薄暗い工場に並んでいます", ar: "لفائف من صفائح الفولاذ مصطفّة في مستودع صناعي خافت الإضاءة", ru: "Рулоны листовой стали, выстроенные в полутёмном промышленном цехе", fr: "Des bobines de tôle d’acier alignées dans un entrepôt industriel sombre", it: "Bobine di lamiera d’acciaio allineate in un capannone industriale in penombra",
       },
     },
     plates: [],

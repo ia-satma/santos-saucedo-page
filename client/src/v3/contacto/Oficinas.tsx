@@ -8,7 +8,6 @@ import type { LanguageCode } from "@shared/schema";
 import { useCmsMedia, type mediaDefaults } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useOfficeLabel } from "@/lib/officeLabel";
 import { useV3Lang, useV3Module } from "@/v3/shared";
 import { CT, type FotoClave } from "./textos";
 
@@ -60,29 +59,25 @@ export function Oficinas({
   const ref = useRef<HTMLElement>(null);
   useV3Module(ref, initOficinas);
   const { language } = useLanguage();
-  const { lang, attrs } = useV3Lang();
-  const ct = CT[lang];
-  const nativo = language === "es" || language === "en";
+  const { locale, attrs } = useV3Lang();
+  const ct = CT[locale];
   const media = useCmsMedia();
   const offices = useCmsContent("offices", cmsDefaults.offices as OfficesCms);
   const officeAlt = (offices[language] ?? offices.en)?.alt ?? {};
-  const officeNameFor = useOfficeLabel();
 
-  // Entrada: «calle, en ciudad» con los datos del sitio (en otros idiomas, la introducción de /offices)
+  // Entrada: «calle, en ciudad» con los datos del sitio
   const calle = direccion[0] ?? "";
   // La ciudad: el primer tramo de la tercera línea del membrete («San Pedro Garza García, N.L.»)
   const ciudad = (direccion[2] ?? "").split(",")[0].trim();
-  const lead = nativo
-    ? (calle && ciudad ? ct.oficinasLead(calle, ciudad) : ct.oficinasLeadSinDir)
-    : (offices[language]?.intro || CT.en.oficinasLeadSinDir);
-  const titulo = nativo ? ct.oficinasH : officeNameFor(language);
+  const lead = calle && ciudad ? ct.oficinasLead(calle, ciudad) : ct.oficinasLeadSinDir;
+  const titulo = ct.oficinasH;
 
   const altDe = (f: (typeof FOTOS)[number]): { alt: string; en?: boolean } => {
     if (f.alt && officeAlt[f.alt]) return { alt: officeAlt[f.alt] };
     const g = media.officeGallery.find((x) => x.photo === f.foto);
     if (g && (language === "es" ? g.altEs : g.alt)) return { alt: language === "es" ? g.altEs : g.alt, en: language !== "es" && language !== "en" };
     const txt = f.k === "mezanine" ? ct.altMezanine : f.k === "sala" ? ct.altSala : ct.altBiblioteca;
-    return { alt: txt, en: !nativo };
+    return { alt: txt, en: false };
   };
 
   return (

@@ -111,8 +111,8 @@ export default function PracticeGroups() {
   const t = editableContent[language] || editableContent.en;
   const title = (cmsChrome[language as keyof typeof chrome26] ?? cmsChrome.en).nav[1].label;
   const emptyMessage = emptyMessages[language] || emptyMessages.en;
-  const { lang: v3Lang, attrs: v3Attrs } = useV3Lang();
-  const P = PAGINA[v3Lang];
+  const { lang: v3Lang, locale: v3Locale, attrs: v3Attrs } = useV3Lang();
+  const P = PAGINA[v3Locale];
   // Industrias: el título de la demo en ES/EN; en los otros idiomas, el rótulo del sitio en ese idioma
   const chromeL = cmsChrome[language as keyof typeof chrome26] ?? cmsChrome.en;
   const industriesTitle = language === "es" || language === "en" ? P.industries : chromeL.search.groups.industryGroups;
@@ -172,7 +172,7 @@ export default function PracticeGroups() {
         )}
 
         {/* La ventaja de la firma: prevenir y reaccionar son la misma pieza (lámina 2/7) */}
-        <LaminaReaccion t={FIRMA_TEXTOS[v3Lang]} attrs={v3Attrs} logo={media.brand.logoLight} />
+        <LaminaReaccion t={FIRMA_TEXTOS[v3Locale]} attrs={v3Attrs} logo={media.brand.logoLight} />
 
         {/* Al final, como en cada página de la demo: la siguiente parte, Industrias. «Siguiente» va en
             inglés fuera de ES/EN, marcado como inglés (lang/dir) */}

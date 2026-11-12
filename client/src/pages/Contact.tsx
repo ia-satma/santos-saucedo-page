@@ -18,8 +18,8 @@ import "@/v3/contacto/contacto.css";
 
 export default function Contact() {
   const { language } = useLanguage();
-  const { lang } = useV3Lang();
-  const ct = CT[lang];
+  const { lang, locale } = useV3Lang();
+  const ct = CT[locale];
   const nativo = language === "es" || language === "en";
   // Textos del panel (sección «contact», 10 idiomas)
   const t = useCmsContent("contact", CONTACT_CONTENT)[language] ?? CONTACT_CONTENT.en;

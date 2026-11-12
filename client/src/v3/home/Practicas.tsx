@@ -33,7 +33,7 @@ export type PracticeItem = {
 
 /** La página de Prácticas usa el mismo bloque como cabecera: su h1 y su entrada en lugar del titular del
     Inicio, el nombre de cada práctica como h2 y la descripción también a la vista en teléfono y con toque. */
-export type PaginaPracticas = { titulo: ReactNode; entrada: ReactNode; id: string; verAttrs?: { lang?: string; dir?: "ltr" } };
+export type PaginaPracticas = { titulo: ReactNode; entrada: ReactNode; id: string; verAttrs?: { lang?: string; dir?: "ltr" | "rtl" } };
 
 /** Las prácticas del sitio (orden del panel), con su foto del bloque. */
 export function usePracticeItems(lang: V3Lang): PracticeItem[] {

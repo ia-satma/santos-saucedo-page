@@ -1,0 +1,3098 @@
+{
+  "socios": {
+    "de": {
+      "title": "Unsere Partner",
+      "list": "Partner",
+      "pause": "Pausieren",
+      "resume": "Fortsetzen",
+      "pauseAria": "Automatischen Partnerwechsel pausieren",
+      "resumeAria": "Automatischen Partnerwechsel fortsetzen",
+      "profile": "Profil anzeigen",
+      "teamTitle": "Das Team",
+      "teamLead": "Anwälte und Mitarbeiter, die in allen Angelegenheiten mit den Partnern zusammenarbeiten, vom Büro in San Pedro Garza García.",
+      "next": "Weiter",
+      "nextAria": "Nächste Seite",
+      "nextTitle": "Kontakt"
+    },
+    "zh": {
+      "title": "我们的合作伙伴",
+      "list": "合作伙伴",
+      "pause": "暂停",
+      "resume": "恢复",
+      "pauseAria": "暂停自动更改合作伙伴",
+      "resumeAria": "恢复合作伙伴的自动变更",
+      "profile": "查看个人资料",
+      "teamTitle": "团队",
+      "teamLead": "在以下办公室与合作伙伴一起处理所有事务的律师和工作人员San Pedro Garza García.",
+      "next": "下一页",
+      "nextAria": "下一页",
+      "nextTitle": "联系人"
+    },
+    "ko": {
+      "title": "파트너",
+      "list": "파트너",
+      "pause": "일시 중지",
+      "resume": "재개",
+      "pauseAria": "자동 변경 일시 중지 파트너",
+      "resumeAria": "파트너 자동 변경 재개",
+      "profile": "프로필 보기",
+      "teamTitle": "팀",
+      "teamLead": "사무실에서 모든 문제에 대해 파트너와 협력하는 변호사 및 직원 San Pedro Garza García.",
+      "next": "다음",
+      "nextAria": "다음 페이지",
+      "nextTitle": "연락처"
+    },
+    "ja": {
+      "title": "パートナー",
+      "list": "パートナー",
+      "pause": "一時停止",
+      "resume": "再開",
+      "pauseAria": "自動変更を一時停止しますパートナー",
+      "resumeAria": "パートナーの自動変更を再開",
+      "profile": "プロフィールを表示",
+      "teamTitle": "チーム",
+      "teamLead": "弁護士とスタッフが、あらゆる問題についてパートナーと協力します。 San Pedro Garza García。",
+      "next": "次へ",
+      "nextAria": "次のページ",
+      "nextTitle": "連絡先"
+    },
+    "ar": {
+      "title": "شركاؤنا",
+      "list": "الشركاء",
+      "pause": "إيقاف مؤقت",
+      "resume": "استئناف",
+      "pauseAria": "إيقاف التغيير التلقائي لـ الشركاء",
+      "resumeAria": "استئناف التغيير التلقائي للشركاء",
+      "profile": "عرض الملف الشخصي",
+      "teamTitle": "الفريق",
+      "teamLead": "المحامون والموظفين الذين يعملون مع الشركاء في كل مسألة، من المكتب في San Pedro Garza García.",
+      "next": "التالي",
+      "nextAria": "الصفحة التالية",
+      "nextTitle": "جهة الاتصال"
+    },
+    "ru": {
+      "title": "Наши партнеры",
+      "list": "Партнеры",
+      "pause": "Пауза",
+      "resume": "Возобновить",
+      "pauseAria": "Приостановить автоматическое изменение партнеры",
+      "resumeAria": "Возобновить автоматическую смену партнеров",
+      "profile": "Просмотреть профиль",
+      "teamTitle": "Команда",
+      "teamLead": "Юристы и сотрудники, которые работают с партнерами по всем вопросам, из офиса в San Pedro Garza García.",
+      "next": "Далее",
+      "nextAria": "Следующая страница",
+      "nextTitle": "Контакт"
+    },
+    "fr": {
+      "title": "Nos partenaires",
+      "list": "Partenaires",
+      "pause": "Pause",
+      "resume": "Reprendre",
+      "pauseAria": "Mettre en pause le changement automatique des associés",
+      "resumeAria": "Reprendre le changement automatique de partenaire changement d'associés",
+      "profile": "Voir le profil",
+      "teamTitle": "L'équipe",
+      "teamLead": "Les avocats et le personnel qui travaillent avec les associés sur tous les sujets, depuis le bureau de San Pedro Garza García.",
+      "next": "Suivant",
+      "nextAria": "Page suivante",
+      "nextTitle": "Contact"
+    },
+    "it": {
+      "title": "I nostri partner",
+      "list": "Partner",
+      "pause": "Pausa",
+      "resume": "Riprendi",
+      "pauseAria": "Pausa la modifica automatica di partner",
+      "resumeAria": "Riprendere il cambio automatico dei partner",
+      "profile": "Visualizza profilo",
+      "teamTitle": "Il team",
+      "teamLead": "Avvocati e personale che collabora con i partner su ogni questione, dall'ufficio in San Pedro Garza García.",
+      "next": "Avanti",
+      "nextAria": "Pagina successiva",
+      "nextTitle": "Contatti"
+    }
+  },
+  "perfil": {
+    "de": {
+      "nextPartner": "Nächster Partner",
+      "next": "Weiter",
+      "nextAria": "Nächste Seite",
+      "nextTitle": "Kontakt"
+    },
+    "zh": {
+      "nextPartner": "下一个合作伙伴",
+      "next": "下一个",
+      "nextAria": "下一页",
+      "nextTitle": "联系方式"
+    },
+    "ko": {
+      "nextPartner": "다음 파트너",
+      "next": "다음",
+      "nextAria": "다음 페이지",
+      "nextTitle": "문의"
+    },
+    "ja": {
+      "nextPartner": "次のパートナー",
+      "next": "次へ",
+      "nextAria": "次のページ",
+      "nextTitle": "連絡先"
+    },
+    "ar": {
+      "nextPartner": "الشريك التالي",
+      "next": "التالي",
+      "nextAria": "الصفحة التالية",
+      "nextTitle": "جهة الاتصال"
+    },
+    "ru": {
+      "nextPartner": "Следующий партнер",
+      "next": "Далее",
+      "nextAria": "Следующая страница",
+      "nextTitle": "Контакт"
+    },
+    "fr": {
+      "nextPartner": "Partenaire suivant",
+      "next": "Suivant",
+      "nextAria": "Page suivante",
+      "nextTitle": "Contact"
+    },
+    "it": {
+      "nextPartner": "Partner successivo",
+      "next": "Avanti",
+      "nextAria": "Pagina successiva",
+      "nextTitle": "Contatto"
+    }
+  },
+  "firma": {
+    "de": {
+      "cabAlt": "Der Vollmond geht in der Abenddämmerung zwischen zwei Bergkämmen auf",
+      "lead": "Santos & Saucedo wurde San Pedro Garza García mit einer Praxis für Arbeitgeber gegründet. Seitdem berät es mexikanische Industriekonzerne, multinationale Unternehmen und Unternehmen in asiatischem Besitz bei Entscheidungen, die ihre Belegschaft betreffen.",
+      "cabP": "Einstellung, Arbeitsorganisation, Beziehungen zur Gewerkschaft, Beendigung des Arbeitsverhältnisses und Verteidigung vor Behörden und Gerichten. Ein Kunde mit Werken in mehreren Staaten erhält durch eine Allianz spezialisierter Firmen in allen das gleiche Urteil.",
+      "cuadroAlt": "Der Santos & Saucedo Sitzungssaal mit dem Triptychon der Firma: drei abstrakte Leinwände in Farbe mit den Linien des Cerro de la Silla",
+      "cuadroCap": "Der Auftraggeber Gemälde",
+      "cuadroTexto": "Das Triptychon im Sitzungssaal mit den Zeilen des Cerro de la Silla.",
+      "lema": [
+        {
+          "antes": "Unsere Priorität:",
+          "em": "Prävention",
+          "fin": "."
+        },
+        {
+          "antes": "Im Streitfall:",
+          "em": "Lösung",
+          "fin": "."
+        }
+      ],
+      "notas": [
+        "Wir bereiten jedes Unternehmen auf die Einhaltung des Arbeitsrechts vor, bevor es zu einem Streit kommt: gut ausgearbeitete Verträge, geordnete Akten, lange im Voraus vorbereitete Verhandlungen. Eine solide Einhaltung arbeitsrechtlicher Vorschriften ist die beste Verteidigung.",
+        "Wenn es zu einem Streit kommt, arbeiten wir als Prozessanwälte: Das gleiche Team, das die Abläufe des Mandanten kennt, bereitet jede Angelegenheit so vor, als würde sie vor Gericht gehen. Diese Vorbereitung ermöglicht es uns, besser zu verhandeln und Probleme oft früher zu lösen."
+      ],
+      "lamina": "Plate",
+      "lugar": "San Pedro Garza García",
+      "carnero": {
+        "h": "Immer vorwärts",
+        "p": [
+          "Die Dickhornschafe erklimmt die Bergketten im Norden Mexikos, wo es scheinbar keinen Weg gibt. Es kehrt nicht um und bleibt nicht stehen, bis es dort ankommt. So tragen wir jede Angelegenheit voran: mit stetigem Schritt und mit Beharrlichkeit, bis das Ergebnis erreicht ist.",
+          "Diese Beharrlichkeit beruht auf Vorbereitung. Jede Angelegenheit wird so vorbereitet, als würde sie vor Gericht stehen; Deshalb verhandeln wir aus einer festen Position und die meisten Angelegenheiten werden früher gelöst."
+        ],
+        "listaLabel": "Schritte des Aufstiegs und was sie für das Unternehmen bedeuten",
+        "piezas": [
+          {
+            "nom": "Entschlossenheit",
+            "parte": "Der Gipfel in Sicht",
+            "tag": "Die Summit",
+            "desc": "Jede Angelegenheit hat vom ersten Tag an ein klares Ziel, und das Unternehmen lässt es nicht los, bis es erreicht ist."
+          },
+          {
+            "nom": "Ein stetiger Schritt",
+            "parte": "Der Stand auf dem Felsen",
+            "tag": "Der Stand",
+            "desc": "Jeder Schritt ruht auf etwas Solidem: einer geordneten Datei mit Dokumenten, die vollständig, unterschrieben und leicht zu handhaben sind lokalisieren."
+          },
+          {
+            "nom": "Prävention",
+            "parte": "Der Weg, der vor Ihnen liegt",
+            "tag": "Der Weg",
+            "desc": "Prävention baut den Weg, bevor er benötigt wird: Verträge, interne Arbeitsregeln, der Tarifvertrag und IMSS Einreichungen auf dem neuesten Stand. Wenn die Zeit gekommen ist, den Schritt zu wagen, ist der Fels bereits da."
+          },
+          {
+            "nom": "Kein Zurück",
+            "parte": "Der Sprung",
+            "tag": "Der Sprung",
+            "desc": "Angesichts eines Hindernisses dreht sich das Unternehmen nicht um zurück: es findet den Weg und geht weiter. Eine Verhandlung, die auf einem gut vorbereiteten Fall basiert, kommt besser voran."
+          },
+          {
+            "nom": "Beharrlichkeit",
+            "parte": "Der Gipfel",
+            "tag": "Der Gipfel",
+            "desc": "Schritt für Schritt, ohne anzuhalten, bis das Ergebnis erreicht ist. Kommt es zum Streit, steht das Unternehmen schon wieder auf den Beinen und die Firma bleibt bis zum Schluss dabei."
+          }
+        ],
+        "svgLabel": "Tafel 1/7, Immer vorwärts: Ein Dickhornschaf erklimmt auf Felsvorsprüngen, die kurz vor jeder Stufe herausrutschen, eine Bergwand, springt einen Spalt weit, ohne umzukehren, und erreicht den Steinhaufen auf dem Gipfel.",
+        "cajetin": "Immer vorwärts",
+        "instr": "Wählen Sie einen Schritt in der Liste oder auf der Klippe, und das Schaf bewegt sich vorwärts.",
+        "nota": "Dickhornschaf (Ovis canadensis) aus den Gebirgsketten Nordmexikos."
+      },
+      "reaccion": {
+        "h": "Kapazität zu antworten",
+        "p": [
+          "Ein vorbereitetes Unternehmen improvisiert nicht, wenn es zu Streitigkeiten kommt. Die Ordnung, die wir schaffen, um Konflikte zu verhindern – Verträge, der Tarifvertrag, Gehaltsabrechnungen und IMSS Unterlagen – ist dieselbe Ordnung, die die Verteidigung aufrechterhält, wenn eine Streikmitteilung, eine Inspektion oder eine Klage eintrifft.",
+          "Deshalb sind Prävention und Reaktion keine zwei getrennten Dienste: Sie sind ein und dasselbe Teil, das bereits zusammengefügt wird erforderlich."
+        ],
+        "listaLabel": "Phasen der Engine und was wir in jeder einzelnen Phase tun, wenn ein Streitfall auftritt",
+        "piezas": [
+          {
+            "nom": "Streikanzeige, Inspektion oder Klage",
+            "parte": "Fan",
+            "tag": "Fan",
+            "desc": "Der Streit kommt: eine Streikanzeige, ein Inspektionsbesuch des STPS (des Bundesarbeitsministeriums) oder eine Einzel- oder Sammelklage. Es wird vollständig gelesen, um zu ermitteln, was gesucht wird und vor wem."
+          },
+          {
+            "nom": "Die Datei, bereits zusammengestellt",
+            "parte": "Kompressor",
+            "tag": "Kompressor",
+            "desc": "Einzelverträge, die Tarifverhandlungen Vereinbarung, Gehaltsabrechnung und IMSS Einreichungen: Für den Fall wird die noch in Ordnung befindliche Prävention erfasst."
+          },
+          {
+            "nom": "Die Strategie",
+            "parte": "Verbrennungsmotor",
+            "tag": "Verbrennungsmotor",
+            "desc": "Mit Angesichts der Tatsachen und Beweise ist der Kurs festgelegt: verhandeln, versöhnen oder verteidigen."
+          },
+          {
+            "nom": "Schlichtung",
+            "parte": "Turbine",
+            "tag": "Turbine",
+            "desc": "Die Schlichtungsverhandlung vor dem Bundeszentrale für Arbeitsvermittlung und -registrierung oder das zuständige örtliche Zentrum, wobei das Unternehmen zu Verhandlungen bereit ist."
+          },
+          {
+            "nom": "Die Verteidigung vor Gericht",
+            "parte": "Nozzle",
+            "tag": "Nozzle",
+            "desc": "Wenn keine Einigung zustande kommt, übernimmt die Verteidigung vor dem Arbeitsgericht mit derselben Akte: die Antwort auf die Klage, die Beweise und die Anhörungen."
+          }
+        ],
+        "svgLabel": "Isometrische Zeichnung eines Kampfflugzeug-Turbofans mit aufgeschnittenem Gehäuse. Es teilt sich entlang seiner Achse in fünf Stufen auf, vom Fan bis zur Düse, und setzt sich dann im Rumpf eines zweiheckigen Kampfflugzeugs wieder zusammen, das um das Triebwerk herumgezogen wird.",
+        "cajetin": "Reaktionsfähigkeit"
+      },
+      "siguiente": "Weiter",
+      "siguienteLabel": "Nächste Seite"
+    },
+    "zh": {
+      "cabAlt": "黄昏时分，满月在两座山脊之间升起",
+      "lead": "Santos & Saucedo 成立于 San Pedro Garza García，致力于为雇主提供服务。从那时起，它就涉及其劳动力的决策向墨西哥工业集团、跨国公司和亚洲企业提供咨询。",
+      "cabP": "招聘、工作安排、与工会的关系、终止雇佣关系以及在当局和法院面前的辩护。通过专业公司联盟，在多个州拥有工厂的客户在所有这些州都得到了相同的判断。",
+      "cuadroAlt": "Santos & Saucedo 董事会会议室上有公司的三联画：三幅彩色抽象画布，上面有 Cerro de la Silla",
+      "cuadroCap": "校长绘画",
+      "cuadroTexto": "董事会三联画，带有Cerro de la Silla的线条。",
+      "lema": [
+        {
+          "antes": "我们的优先事项：",
+          "em": "预防",
+          "fin": "。"
+        },
+        {
+          "antes": "如果发生争议：",
+          "em": "解决方案",
+          "fin": "。"
+        }
+      ],
+      "notas": [
+        "我们在争议发生之前让每家公司遵守劳动法：精心起草的合同、有序的文件、提前准备好的谈判。良好的劳工合规性是最好的防御。",
+        "当出现争议时，我们充当出庭律师：了解客户运营情况的同一个团队会像准备上法庭一样准备每件案件。这种准备使我们能够更好地进行谈判，并且通常能够更快地解决问题。"
+      ],
+      "lamina": "Plate",
+      "lugar": "San Pedro Garza García",
+      "carnero": {
+        "h": "始终前进",
+        "p": [
+          "大角羊攀登墨西哥北部的山脉，那里似乎没有路。它不会返回或停止，直到到达那里。对待每一件事，我们都是这样的：一步一个脚印，坚持不懈，直到结果。",
+          "坚持在于准备。每件事情都准备得像要审判一样；这就是为什么我们立场坚定，大多数问题都能更快解决。"
+        ],
+        "listaLabel": "攀登的步骤及其对公司的意义",
+        "piezas": [
+          {
+            "nom": "决心",
+            "parte": "登顶视线",
+            "tag": "峰会",
+            "desc": "每件事情从第一天起就有明确的目标，不达目的不罢休。"
+          },
+          {
+            "nom": "稳步前进",
+            "parte": "脚踏实地",
+            "tag": "立足",
+            "desc": "每一步都建立在坚实的基础上：一个有序的文件，其中包含完整、签名且易于使用的文件定位。"
+          },
+          {
+            "nom": "预防",
+            "parte": "前方的道路",
+            "tag": "路径",
+            "desc": "预防在需要之前构建路径：合同、内部工作规则、集体谈判协议和IMSS 文件已更新。当该迈出这一步时，岩石已经在那里。"
+          },
+          {
+            "nom": "义无反顾",
+            "parte": "飞跃",
+            "tag": "飞跃",
+            "desc": "面对障碍，公司不会回头：它找到了路并继续前进。有充分准备的案例支撑的谈判才能更好地前进。"
+          },
+          {
+            "nom": "坚持",
+            "parte": "峰会",
+            "tag": "峰会",
+            "desc": "一步一步，不停顿，直到结果达到了。如果发生纠纷，公司已经站稳脚跟，公司会坚持到底。"
+          }
+        ],
+        "svgLabel": "图版 1/7，永远向前：一只大角羊爬上山壁上的岩石壁架，每走一步都会滑出，跳过裂缝，头也不回，到达山上的石冢。",
+        "cajetin": "永远向前",
+        "instr": "在列表中或悬崖上选择一个步骤，羊就会向前移动。",
+        "nota": "大角羊 (Ovis canadensis)，来自北部山脉墨西哥。"
+      },
+      "reaccion": {
+        "h": "响应能力",
+        "p": [
+          "有准备的公司不会在争议发生时即兴发挥。我们为防止冲突而建立的命令——合同、集体谈判协议、工资单和 IMSS 文件——与在罢工通知、检查或诉讼到达时维持辩护的命令相同。",
+          "这就是为什么预防和响应不是两个独立的服务：它们是同一个部分，在发生之前就组装好了。需要。"
+        ],
+        "listaLabel": "引擎的各个阶段以及发生争议时我们在每个阶段执行的操作",
+        "piezas": [
+          {
+            "nom": "罢工通知、检查或诉讼",
+            "parte": "风扇",
+            "tag": "风扇",
+            "desc": "争议到达：罢工通知、STPS（联邦劳动部）的检查或个人或集体诉讼。完整读取该文件以确定正在寻找的内容以及在谁之前。"
+          },
+          {
+            "nom": "文件，已组装",
+            "parte": "压缩机",
+            "tag": "压缩机",
+            "desc": "个人合同，集体合同谈判协议、工资单和 IMSS 文件：为案件收集了剩下的预防措施。"
+          },
+          {
+            "nom": "策略",
+            "parte": "Combustor",
+            "tag": "Combustor",
+            "desc": "根据事实和证据，制定方针：谈判、调解或"
+          },
+          {
+            "nom": "调解",
+            "parte": "Turbine",
+            "tag": "Turbine",
+            "desc": "联邦劳动调解和登记中心或当地主管机构举行的调解听证会"
+          },
+          {
+            "nom": "庭审时的辩护",
+            "parte": "喷嘴",
+            "tag": "喷嘴",
+            "desc": "如果没有达成一致，则与劳动法庭之前的辩护相同文件：对索赔的答复、证据和听证会。"
+          }
+        ],
+        "svgLabel": "带有剖面外壳的战斗机涡轮风扇发动机的等轴测图。它沿其轴线分为五个阶段，从风扇到喷嘴，然后在围绕发动机绘制的双尾战斗机机身内重新组装。",
+        "cajetin": "响应能力"
+      },
+      "siguiente": "下一页",
+      "siguienteLabel": "下一页"
+    },
+    "ko": {
+      "cabAlt": "해질녘에 두 산 능선 사이에 보름달이 뜬다.",
+      "lead": "Santos & Saucedo은 고용주를 위한 관행으로 San Pedro Garza García에서 설립되었습니다. 그 이후로 멕시코 산업 그룹, 다국적 기업 및 아시아계 소유 기업에 인력과 관련된 결정에 대해 조언해 왔습니다.",
+      "cabP": "고용, 작업 조직, 노동조합과의 관계, 고용 종료, 당국과 법원에서의 변호. 여러 주에 공장을 보유한 고객은 전문 회사의 연합을 통해 모든 공장에서 동일한 판단을 받습니다.",
+      "cuadroAlt": "회사의 삼부작이 있는 Santos & Saucedo 회의실: Cerro de la Silla 선이 있는 색상의 추상 캔버스 3개",
+      "cuadroCap": "원장 그림",
+      "cuadroTexto": "Cerro de la Silla 라인이 포함된 회의실 삼부작.",
+      "lema": [
+        {
+          "antes": "우리의 우선순위:",
+          "em": "예방",
+          "fin": "."
+        },
+        {
+          "antes": "분쟁 발생 시:",
+          "em": "해결",
+          "fin": "."
+        }
+      ],
+      "notas": [
+        "우리는 분쟁이 발생하기 전에 각 회사가 노동법을 준수할 수 있도록 준비합니다. 잘 작성된 계약서, 순서대로 파일, 사전에 준비된 협상 등이 있습니다. 건전한 노동법 준수가 최선의 방어책입니다.",
+        "분쟁이 발생하면 저희는 재판 변호사로 일합니다. 고객의 운영을 알고 있는 동일한 팀이 각 문제를 마치 법정에 가는 것처럼 준비합니다. 이러한 준비를 통해 우리는 더 나은 협상을 할 수 있고 종종 문제를 더 빨리 해결할 수 있습니다."
+      ],
+      "lamina": "플레이트",
+      "lugar": "San Pedro Garza García",
+      "carnero": {
+        "h": "항상 앞으로",
+        "p": [
+          "큰뿔양은 길이 없어 보이는 멕시코 북부 산맥을 올라갑니다. 거기에 도달할 때까지 되돌아가거나 멈추지 않습니다. 이것이 바로 우리가 모든 문제를 수행하는 방식입니다. 결과가 달성될 때까지 꾸준한 조치와 끈기를 가지고 수행합니다.",
+          "그 끈기는 준비에 달려 있습니다. 모든 문제는 재판에 회부될 것처럼 준비되어 있습니다. 그렇기 때문에 우리는 확고한 입장에서 협상하고 대부분의 문제는 더 빨리 해결됩니다."
+        ],
+        "listaLabel": "등반 단계와 그것이 회사에 의미하는 것",
+        "piezas": [
+          {
+            "nom": "결정",
+            "parte": "정상회담 광경",
+            "tag": "정상",
+            "desc": "모든 문제에는 첫날부터 명확한 목표가 있으며 회사는 그것이 달성될 때까지 그것을 놓지 않습니다."
+          },
+          {
+            "nom": "꾸준한 발걸음",
+            "parte": "바위 위의 발판",
+            "tag": "발판",
+            "desc": "모든 단계는 견고한 것, 즉 완전하고 서명되었으며 쉽게 사용할 수 있는 문서가 포함된 순서대로 작성된 파일에 달려 있습니다. 찾아보세요."
+          },
+          {
+            "nom": "예방",
+            "parte": "앞으로의 경로",
+            "tag": "경로",
+            "desc": "예방은 필요하기 전에 경로를 구축합니다: 계약, 내부 작업 규칙, 단체 교섭 계약 및 IMSS 서류가 최신 상태입니다. 발걸음을 내딛을 시간이 오면 바위는 이미 거기에 있습니다."
+          },
+          {
+            "nom": "뒤로 돌아갈 수 없습니다",
+            "parte": "도약",
+            "tag": "도약",
+            "desc": "장애물 앞에서 회사는 포기하지 않습니다. 돌아오다: 길을 찾고 계속 나아갑니다. 잘 준비된 사례가 뒷받침되는 협상은 더 잘 진행됩니다."
+          },
+          {
+            "nom": "끈기",
+            "parte": "정상회담",
+            "tag": "정상회담",
+            "desc": "멈추지 않고 한걸음씩, 결과가 달성됩니다. 분쟁이 발생하면 회사는 이미 일어서고 회사는 끝까지 함께합니다."
+          }
+        ],
+        "svgLabel": "그림 1/7, 항상 앞으로: 큰뿔양은 각 단계 직전에 미끄러지는 바위 선반의 산벽을 오르고, 뒤돌아보지 않고 균열을 뛰어넘어 정상의 돌무더기에 도달합니다.",
+        "cajetin": "항상 앞으로",
+        "instr": "목록이나 절벽에서 단계를 선택하면 양이 앞으로 이동합니다.",
+        "nota": "멕시코 북부 산맥의 큰뿔양(Ovis canadensis)."
+      },
+      "reaccion": {
+        "h": "용량 응답",
+        "p": [
+          "준비된 회사는 분쟁이 발생했을 때 즉흥적으로 대처하지 않습니다. 갈등을 방지하기 위해 구축한 계약, 단체 교섭 협약, 급여 및 IMSS 제출 등의 명령은 파업 통지, 조사 또는 소송이 도착할 때 방어를 유지하는 것과 동일한 명령입니다.",
+          "이것이 바로 예방과 대응이 두 개의 별도 서비스가 아닌 이유입니다. 두 서비스는 동일한 조각으로, 조립되기 전에 구성됩니다. 필요합니다."
+        ],
+        "listaLabel": "엔진의 단계와 분쟁 발생 시 각 단계에서 수행하는 작업",
+        "piezas": [
+          {
+            "nom": "파업 통지, 검사 또는 소송",
+            "parte": "Fan",
+            "tag": "Fan",
+            "desc": "파업 통지, STPS(연방 노동부)의 검사 방문 또는 개별 또는 집단 소송 등 분쟁이 발생합니다. 무엇을 찾고 있는지, 누구보다 먼저 식별하기 위해 전체를 읽습니다."
+          },
+          {
+            "nom": "이미 조립된 파일",
+            "parte": "Compressor",
+            "tag": "Compressor",
+            "desc": "개별 계약, 단체 교섭 계약, 급여 및 IMSS 서류: 해당 사건에 대해 남은 예방 조치가 수집됩니다."
+          },
+          {
+            "nom": "전략",
+            "parte": "Combustor",
+            "tag": "Combustor",
+            "desc": "사실과 증거를 고려하여 과정이 설정됩니다: 협상, 화해 또는 방어합니다."
+          },
+          {
+            "nom": "화해",
+            "parte": "Turbine",
+            "tag": "Turbine",
+            "desc": "연방 노동 화해 및 등록 센터 또는 관할 지역 센터에서의 화해 청문회, 회사와 협상 준비를 합니다."
+          },
+          {
+            "nom": "재판에서의 변호",
+            "parte": "Nozzle",
+            "tag": "Nozzle",
+            "desc": "합의가 없는 경우 동일한 파일을 사용하여 노동 법원에서 변호합니다. 주장에 대한 답변, 증거 및 청문회."
+          }
+        ],
+        "svgLabel": "컷어웨이 케이스가 있는 전투기 터보팬의 등각 그림. 팬에서 노즐까지 축을 따라 5단계로 분리된 다음 엔진 주위에 그려진 트윈 테일 전투기의 동체 내부에 재조립됩니다.",
+        "cajetin": "대응 능력"
+      },
+      "siguiente": "다음",
+      "siguienteLabel": "다음 페이지"
+    },
+    "ja": {
+      "cabAlt": "夕暮れ時に 2 つの山の尾根の間に満月が昇ります",
+      "lead": "Santos & Saucedo は San Pedro Garza García に設立され、雇用主向けの事業を行っています。それ以来、メキシコの産業団体、多国籍企業、アジア系企業に対し、従業員に関わる決定についてアドバイスを行ってきました。",
+      "cabP": "雇用、仕事の組織化、労働組合との関係、解雇、当局や裁判所での弁護など。複数の州に工場を持つクライアントは、専門会社の提携を通じて、すべての州で同じ判決を受けます。",
+      "cuadroAlt": "会社の三連祭壇画のある Santos & Saucedo 役員室: Cerro de la Silla の線が入った色の 3 つの抽象的なキャンバス",
+      "cuadroCap": "校長絵画",
+      "cuadroTexto": "Cerro de la Silla の線が描かれた役員室の三連祭壇画。",
+      "lema": [
+        {
+          "antes": "私たちの優先事項:",
+          "em": "予防",
+          "fin": "。"
+        },
+        {
+          "antes": "紛争が発生した場合:",
+          "em": "解決策",
+          "fin": "."
+        }
+      ],
+      "notas": [
+        "当社は、紛争が発生する前に、各企業が労働法を遵守できるように準備します。つまり、綿密に作成された契約書、順番にファイルされ、事前に交渉が準備されています。健全な労働コンプライアンスが最善の防御です。",
+        "紛争が発生した場合、私たちは裁判弁護士として働きます。クライアントの業務を熟知している同じチームが、あたかも法廷に行くかのように各問題を準備します。この準備により、交渉をより適切に行うことができ、多くの場合、問題をより早く解決することができます。"
+      ],
+      "lamina": "プレート",
+      "lugar": "San Pedro Garza García",
+      "carnero": {
+        "h": "常に前進",
+        "p": [
+          "オオツノヒツジは、道がなさそうなメキシコ北部の山脈を登ります。そこに到達するまで後戻りも停止もしません。これが、私たちがすべての事柄を実行する方法です。着実なステップと粘り強さで、結果が達成されるまで続けます。",
+          "その粘り強さは準備にかかっています。あらゆる問題は、あたかも裁判にかけられるかのように準備されています。だからこそ、私たちは毅然とした立場で交渉し、ほとんどの問題は早期に解決されます。"
+        ],
+        "listaLabel": "登山の手順とそれが会社にとって何を意味するか",
+        "piezas": [
+          {
+            "nom": "決意",
+            "parte": "サミット光景",
+            "tag": "サミット",
+            "desc": "すべての事柄には初日から明確な目的があり、会社はそれが達成されるまでそれを手放しません。"
+          },
+          {
+            "nom": "着実な一歩",
+            "parte": "足場は順調です",
+            "tag": "足場",
+            "desc": "すべてのステップは、整然としたファイル、完成し、署名され、簡単に実行できる文書に基づいて行われます。"
+          },
+          {
+            "nom": "防止",
+            "parte": "今後の道",
+            "tag": "道",
+            "desc": "防止は、契約、社内作業規則、団体交渉協定など、必要になる前に道を構築します。 IMSS ファイリングは最新です。一歩を踏み出す時が来たら、岩はすでにそこにあります。"
+          },
+          {
+            "nom": "後戻りはできません",
+            "parte": "飛躍",
+            "tag": "飛躍",
+            "desc": "障害に直面しても、企業は前進しません引き返す：道を見つけて進み続ける。十分に準備された訴訟に裏付けられた交渉は、より良く前進します。"
+          },
+          {
+            "nom": "粘り強さ",
+            "parte": "サミット",
+            "tag": "サミット",
+            "desc": "最後まで立ち止まることなく、一歩一歩。結果は達成されます。紛争が起こっても、会社はすでに立ち上がっており、会社は最後まで会社を守ります。"
+          }
+        ],
+        "svgLabel": "プレート 1/7、常に前進: オオツノヒツジは、各ステップの直前に滑り出す岩棚の上の山壁を登り、引き返さずに亀裂を飛び越え、丘の上のケルンに到達します。",
+        "cajetin": "常に前進",
+        "instr": "リストまたは崖上のステップを選択すると、羊が前進します。",
+        "nota": "北部の山脈に生息するオオツノヒツジ (Ovis canadensis)メキシコ。"
+      },
+      "reaccion": {
+        "h": "対応能力",
+        "p": [
+          "準備の整った企業は、紛争が起こっても即席で対応することはありません。紛争を防ぐために私たちが構築する順序 (契約、労働協約、給与計算、IMSS 申告書) は、ストライキ通知、検査、訴訟が届いたときに防御を維持する順序と同じです。",
+          "だからこそ、予防と対応は 2 つの別個のサービスではなく、それらは同じ部分であり、事前に組み立てられています。必要です。"
+        ],
+        "listaLabel": "エンジンの段階と、紛争が発生したときに各段階で行うこと",
+        "piezas": [
+          {
+            "nom": "ストライキ通知、検査、または訴訟",
+            "parte": "ファン",
+            "tag": "ファン",
+            "desc": "紛争が到着します: ストライキ通知、STPS (連邦労働省) による視察、または個人訴訟または集団訴訟。何が誰に求められているかを特定するために、完全に読み取られます。"
+          },
+          {
+            "nom": "既に組み立てられたファイル",
+            "parte": "Compressor",
+            "tag": "Compressor",
+            "desc": "個別の契約、労働協約、給与計算、および IMSS 提出書類: 訴訟のために残された予防措置が収集されます。"
+          },
+          {
+            "nom": "戦略",
+            "parte": "Combustor",
+            "tag": "Combustor",
+            "desc": "事実と証拠を考慮すると、交渉、調停、または"
+          },
+          {
+            "nom": "調停",
+            "parte": "タービン",
+            "tag": "タービン",
+            "desc": "連邦労働調停登録センターまたは管轄官庁での調停公聴会"
+          },
+          {
+            "nom": "裁判での弁護",
+            "parte": "ノズル",
+            "tag": "ノズル",
+            "desc": "合意がない場合は、労働裁判所での弁護が行われます。同じファイル: 申し立てに対する回答、証拠、審問。"
+          }
+        ],
+        "svgLabel": "切断されたケーシングを備えた戦闘機のターボファンの等角図。ファンからノズルまで、軸に沿って 5 つの段階に分離され、エンジンの周りに描かれたツインテール戦闘機の胴体内で再組み立てされます。",
+        "cajetin": "対応能力"
+      },
+      "siguiente": "次へ",
+      "siguienteLabel": "次のページ"
+    },
+    "ar": {
+      "cabAlt": "يرتفع البدر بين اثنين من التلال الجبلية عند الغسق",
+      "lead": "Santos & Saucedo تأسست في San Pedro Garza García من خلال ممارسة مخصصة لأصحاب العمل. ومنذ ذلك الحين، تقدم المشورة للمجموعات الصناعية المكسيكية والشركات المتعددة الجنسيات والشركات المملوكة لآسيويين بشأن القرارات التي تتعلق بالقوى العاملة لديها.",
+      "cabP": "التوظيف، وتنظيم العمل، والعلاقة مع النقابة، وإنهاء التوظيف، والدفاع أمام السلطات والمحاكم. يحصل العميل الذي يمتلك مصانع في عدة ولايات على نفس الحكم في جميع هذه الولايات، من خلال تحالف من الشركات المتخصصة.",
+      "cuadroAlt": "قاعة مجلس الإدارة Santos & Saucedo مع اللوحة الثلاثية للشركة: ثلاث لوحات تجريدية ملونة بخطوط Cerro de la Silla",
+      "cuadroCap": "المدير اللوحة",
+      "cuadroTexto": "اللوحة الثلاثية لغرفة مجلس الإدارة، مع خطوط Cerro de la Silla.",
+      "lema": [
+        {
+          "antes": "أولويتنا:",
+          "em": "المنع",
+          "fin": "."
+        },
+        {
+          "antes": "في حالة وجود نزاع:",
+          "em": "الحل",
+          "fin": "."
+        }
+      ],
+      "notas": [
+        "نحن نجهز كل شركة للامتثال لقانون العمل قبل نشوء نزاع: عقود جيدة الصياغة، وملفات مرتبة، ومفاوضات معدة مسبقًا. إن الامتثال السليم للعمل هو أفضل دفاع.",
+        "عند وصول نزاع، نعمل كمحامين قضائيين: نفس الفريق الذي يعرف عمليات العميل يقوم بإعداد كل مسألة كما لو كانت ستذهب إلى المحكمة. هذا الإعداد هو ما يسمح لنا بالتفاوض بشكل أفضل، وفي كثير من الأحيان، بحل الأمور في وقت أقرب."
+      ],
+      "lamina": "لوحة",
+      "lugar": "San Pedro Garza García",
+      "carnero": {
+        "h": "دائمًا إلى الأمام",
+        "p": [
+          "تتسلق الخروف الكبير سلاسل الجبال في شمال المكسيك حيث يبدو أنه لا يوجد طريق. ولا يتراجع ولا يتوقف حتى يصل إلى هناك. وهكذا نحمل كل أمر: بخطوة ثابتة ومثابرة حتى الوصول إلى النتيجة.",
+          "وهذا الإصرار يعتمد على الاستعداد. كل أمر مُهيأ كأنه في محاكمة؛ ولهذا السبب نتفاوض من موقف حازم ويتم حل معظم الأمور عاجلاً."
+        ],
+        "listaLabel": "خطوات التسلق وما تعنيه بالنسبة للشركة",
+        "piezas": [
+          {
+            "nom": "العزم",
+            "parte": "القمة في البصر",
+            "tag": "القمة",
+            "desc": "كل أمر له هدف واضح من اليوم الأول، والشركة لا تتركه حتى يتحقق."
+          },
+          {
+            "nom": "خطوة ثابتة",
+            "parte": "القدم على الصخر",
+            "tag": "القدم",
+            "desc": "ترتكز كل خطوة على شيء متين: ملف مرتب، يحتوي على مستندات كاملة وموقعة وسهلة الفهم حدد موقع."
+          },
+          {
+            "nom": "المنع",
+            "parte": "المسار للأمام",
+            "tag": "المسار",
+            "desc": "تبني الوقاية المسار قبل الحاجة إليها: العقود، وقواعد العمل الداخلية، واتفاقية المفاوضة الجماعية و IMSS الملفات محدثة. عندما يحين وقت اتخاذ الخطوة، تكون الصخرة موجودة بالفعل."
+          },
+          {
+            "nom": "لا عودة إلى الوراء",
+            "parte": "القفزة",
+            "tag": "القفزة",
+            "desc": "في مواجهة العوائق، لا تقوم الشركة بذلك يرجع إلى الوراء: يجد الطريق ويستمر. المفاوضات المدعومة بحالة معدة جيدًا تتقدم للأمام بشكل أفضل."
+          },
+          {
+            "nom": "المثابرة",
+            "parte": "القمة",
+            "tag": "القمة",
+            "desc": "خطوة بخطوة، دون توقف، حتى يتم تحقيق النتيجة. إذا حدث نزاع، فإن الشركة تقف على قدميها بالفعل، وتظل الشركة معها حتى النهاية."
+          }
+        ],
+        "svgLabel": "اللوحة 1/7، إلى الأمام دائمًا: يتسلق خروف كبير الجبل جدارًا جبليًا على حواف صخرية تنزلق قبل كل خطوة مباشرة، ويقفز في صدع دون الرجوع إلى الخلف ويصل إلى ركام من الحجارة في القمة.",
+        "cajetin": "دائمًا للأمام",
+        "instr": "اختر خطوة من القائمة أو على المنحدر، وستتحرك الخروف للأمام.",
+        "nota": "الأغنام الكبيرة (Ovis canadensis)، من سلاسل الجبال في شمال المكسيك."
+      },
+      "reaccion": {
+        "h": "القدرة على Response",
+        "p": [
+          "الشركة المجهزة لا ترتجل عند وصول النزاع. الأمر الذي نبنيه لمنع التعارض - العقود، واتفاقية المفاوضة الجماعية، وكشوف المرتبات وIMSS - هو نفس الأمر الذي يدعم الدفاع عند وصول إشعار بالإضراب، أو التفتيش، أو الدعوى القضائية.",
+          "ولهذا السبب فإن الوقاية والاستجابة ليسا خدمتين منفصلتين: إنهما نفس القطعة، ويتم تجميعهما قبل أن يتم ذلك مطلوب."
+        ],
+        "listaLabel": "مراحل المحرك وما نفعله في كل مرحلة عند وصول النزاع",
+        "piezas": [
+          {
+            "nom": "إشعار الإضراب أو التفتيش أو الدعوى القضائية",
+            "parte": "Fan",
+            "tag": "Fan",
+            "desc": "وصول النزاع: إشعار إضراب، أو زيارة تفتيش بواسطة STPS (وزارة العمل الفيدرالية) أو دعوى قضائية فردية أو جماعية. تتم قراءته بالكامل لتحديد ما يتم البحث عنه وأمام من."
+          },
+          {
+            "nom": "الملف تم تجميعه بالفعل",
+            "parte": "الضاغط",
+            "tag": "الضاغط",
+            "desc": "العقود الفردية، اتفاقية المفاوضة الجماعية، وكشوف المرتبات، وملفات IMSS: يتم جمع إجراءات الوقاية المتبقية في هذه القضية."
+          },
+          {
+            "nom": "الإستراتيجية",
+            "parte": "Combustor",
+            "tag": "Combustor",
+            "desc": "مع عرض الحقائق والأدلة، يتم تحديد المسار: التفاوض أو التوفيق أو الدفاع."
+          },
+          {
+            "nom": "التوفيق",
+            "parte": "التوربين",
+            "tag": "التوربين",
+            "desc": "جلسة الصلح أمام المركز الاتحادي للتوفيق والتسجيل العمالي أو المحلي المختص المركز، مع استعداد الشركة للتفاوض."
+          },
+          {
+            "nom": "الدفاع في المحاكمة",
+            "parte": "فوهة",
+            "tag": "فوهة",
+            "desc": "إذا لم يكن هناك اتفاق، فإن الدفاع أمام محكمة العمل بنفس الشيء الملف: الرد على الادعاء والأدلة وجلسات الاستماع."
+          }
+        ],
+        "svgLabel": "رسم متساوي القياس لطائرة مقاتلة توربينية مع غلاف مقطوع. وهي تنفصل إلى خمس مراحل على طول محورها، من المروحة إلى الفوهة، ثم يتم إعادة تجميعها داخل جسم الطائرة المقاتلة ذات الذيل المزدوج والتي يتم رسمها حول المحرك.",
+        "cajetin": "القدرة على الاستجابة"
+      },
+      "siguiente": "التالي",
+      "siguienteLabel": "الصفحة التالية"
+    },
+    "ru": {
+      "cabAlt": "Полная луна восходит между двумя горными хребтами в сумерках.",
+      "lead": "Santos & Saucedo была основана в San Pedro Garza García с практикой, посвященной работодателям. С тех пор он консультировал мексиканские промышленные группы, транснациональные компании и предприятия, принадлежащие азиатам, по вопросам решений, касающихся их рабочей силы.",
+      "cabP": "При приеме на работу, организации труда, отношениях с профсоюзом, увольнении и защите в органах власти и судах. Клиент, имеющий заводы в нескольких штатах, получает во всех них одно и то же решение через альянс специализированных фирм.",
+      "cuadroAlt": "Зал заседаний Santos & Saucedo с триптихом фирмы: три абстрактных цветных полотна с линиями Cerro de la Silla",
+      "cuadroCap": "Основной живопись",
+      "cuadroTexto": "Триптих зала заседаний со строками Cerro de la Silla.",
+      "lema": [
+        {
+          "antes": "Наш приоритет:",
+          "em": "prevention",
+          "fin": "."
+        },
+        {
+          "antes": "В случае возникновения спора:",
+          "em": "solve",
+          "fin": "."
+        }
+      ],
+      "notas": [
+        "Мы готовим каждую компанию к соблюдению трудового законодательства до возникновения спора: хорошо составленные контракты, файлы в порядке, переговоры подготовлены заранее. Надлежащее соблюдение трудовых норм — лучшая защита.",
+        "Когда возникает спор, мы работаем в качестве судебных юристов: та же команда, которая знает деятельность клиента, готовит каждое дело так, как будто оно передается в суд. Именно эта подготовка позволяет нам лучше вести переговоры и зачастую быстрее решать вопросы."
+      ],
+      "lamina": "Plate",
+      "lugar": "San Pedro Garza García",
+      "carnero": {
+        "h": "Всегда вперед",
+        "p": [
+          "Снежный баран карабкается по горным хребтам северной Мексики, где, кажется, нет тропы. Он не поворачивает назад и не останавливается, пока не доберется до цели. Именно так мы выполняем каждое дело: уверенным шагом и настойчивостью, пока не будет достигнут результат.",
+          "Эта настойчивость зависит от подготовки. Каждое дело готовится так, как если бы оно предстояло судебному разбирательству; именно поэтому мы ведем переговоры с твердой позиции, и большинство вопросов решаются быстрее."
+        ],
+        "listaLabel": "Этапы восхождения и их значение для фирмы",
+        "piezas": [
+          {
+            "nom": "Определение",
+            "parte": "Вершина в взгляд",
+            "tag": "Вершина",
+            "desc": "Каждое дело имеет четкую цель с первого дня, и фирма не отпускает ее, пока она не будет достигнута."
+          },
+          {
+            "nom": "Уверенный шаг",
+            "parte": "Стоя на камне",
+            "tag": "Опираясь",
+            "desc": "Каждый шаг опирается на что-то прочное: файл в порядке, с полными, подписанными и легко читаемыми документами найдите."
+          },
+          {
+            "nom": "Профилактика",
+            "parte": "Путь вперед",
+            "tag": "Путь",
+            "desc": "Профилактика прокладывает путь до того, как он понадобится: контракты, внутренние правила работы, коллективный договор и IMSS документы актуальны. Когда приходит время сделать шаг, камень уже здесь."
+          },
+          {
+            "nom": "Нет пути назад",
+            "parte": "Прыжок",
+            "tag": "Прыжок",
+            "desc": "Перед лицом препятствия фирма не делает повернуть назад: оно находит дорогу и продолжает идти. Переговоры, подкрепленные хорошо подготовленным делом, продвигаются вперед лучше."
+          },
+          {
+            "nom": "Настойчивость",
+            "parte": "Саммит",
+            "tag": "Саммит",
+            "desc": "Шаг за шагом, без останавливаемся, пока не будет достигнут результат. Если возникает спор, компания уже встает на ноги, и фирма остается с ней до конца."
+          }
+        ],
+        "svgLabel": "Таблица 1/7, Всегда вперед: снежный баран взбирается на горную стену по скальным уступам, которые выскальзывают прямо перед каждым шагом, перепрыгивает трещину, не оборачиваясь, и достигает пирамиды из камней на вершина.",
+        "cajetin": "Всегда вперед",
+        "instr": "Выберите шаг в списке или на скале, и овца двинется вперед.",
+        "nota": "Большой баран (Ovis canadensis), с горных хребтов северной Мексика."
+      },
+      "reaccion": {
+        "h": "Возможность реагирования",
+        "p": [
+          "Подготовленная компания не импровизирует при возникновении спора. Порядок, который мы создаем для предотвращения конфликтов — контракты, коллективный договор, расчет заработной платы и IMSS — это тот же порядок, который поддерживает защиту при поступлении уведомления о забастовке, проверки или судебного иска.",
+          "Вот почему предотвращение и реагирование не являются двумя отдельными службами: это одна и та же часть, собранная до того, как она будет необходимо."
+        ],
+        "listaLabel": "Этапы работы движка и что мы делаем на каждом из них при поступлении спора",
+        "piezas": [
+          {
+            "nom": "Уведомление о забастовке, проверка или судебный иск",
+            "parte": "Fan",
+            "tag": "Fan",
+            "desc": "Спор возникает: уведомление о забастовке, инспекционный визит STPS (федеральное министерство труда) или индивидуальный или коллективный иск. Он читается полностью, чтобы определить, что и перед кем разыскивается."
+          },
+          {
+            "nom": "Файл, уже собранный",
+            "parte": "Compressor",
+            "tag": "Compressor",
+            "desc": "Отдельные контракты, коллективный договор, расчет заработной платы и отчетность IMSS: по делу собрано то, что осталось в порядке предотвращения."
+          },
+          {
+            "nom": "Стратегия",
+            "parte": "Combustor",
+            "tag": "Combustor",
+            "desc": "С учетом фактов и доказательств курс установлен: переговоры, примирение или защищать."
+          },
+          {
+            "nom": "Примирение",
+            "parte": "Турбина",
+            "tag": "Турбина",
+            "desc": "Примирительное слушание в Федеральном центре по трудовому примирению и регистрации или компетентный местный центр, с компанией, готовой к переговорам."
+          },
+          {
+            "nom": "Защита в суде",
+            "parte": "Сопло",
+            "tag": "Сопло",
+            "desc": "Если нет соглашения, защита в Суде по трудовым спорам с тот же файл: ответ на иск, доказательства и слушания."
+          }
+        ],
+        "svgLabel": "Изометрический рисунок ТРДД истребителя с разрезом корпуса. Он разделяется на пять ступеней вдоль своей оси, от вентилятора до сопла, а затем снова собирается внутри фюзеляжа двухкилевого истребителя, который расположен вокруг двигателя.",
+        "cajetin": "Возможность реагирования"
+      },
+      "siguiente": "Далее",
+      "siguienteLabel": "Следующая страница"
+    },
+    "fr": {
+      "cabAlt": "La pleine lune se lève entre deux crêtes de montagne au crépuscule",
+      "lead": "Santos & Saucedo a été fondée en San Pedro Garza García avec un cabinet dédié aux employeurs. Depuis, il conseille des groupes industriels mexicains, des entreprises multinationales et des entreprises asiatiques sur les décisions qui impliquent leur personnel.",
+      "cabP": "L'embauche, l'organisation du travail, la relation avec le syndicat, la rupture du contrat de travail et la défense devant les autorités et les tribunaux. Un client possédant des usines dans plusieurs États reçoit le même jugement dans tous, grâce à une alliance de cabinets spécialisés.",
+      "cuadroAlt": "La salle de réunion Santos & Saucedo avec le triptyque de l'entreprise : trois toiles abstraites en couleurs avec les lignes du Cerro de la Silla",
+      "cuadroCap": "Le principal peinture",
+      "cuadroTexto": "Le triptyque de la salle de réunion, avec les lignes du Cerro de la Silla.",
+      "lema": [
+        {
+          "antes": "Notre priorité :",
+          "em": "prévention",
+          "fin": "."
+        },
+        {
+          "antes": "En cas de litige :",
+          "em": "résolution",
+          "fin": "."
+        }
+      ],
+      "notas": [
+        "Nous préparons chaque entreprise à se conformer au droit du travail avant qu'un conflit survienne : contrats bien rédigés, dossiers en ordre, négociations préparées longtemps à l'avance. Un bon respect des règles de travail est la meilleure défense.",
+        "Lorsqu'un litige survient, nous travaillons comme avocats plaidants : la même équipe qui connaît les opérations du client prépare chaque affaire comme si elle allait au tribunal. Cette préparation est ce qui nous permet de mieux négocier et, souvent, de résoudre les problèmes plus tôt."
+      ],
+      "lamina": "Plate",
+      "lugar": "San Pedro Garza García",
+      "carnero": {
+        "h": "Toujours en avant",
+        "p": [
+          "Le mouflon d'Amérique gravit la montagne. chaînes du nord du Mexique où il semble n'y avoir aucun chemin. Il ne fait pas demi-tour et ne s'arrête pas jusqu'à ce qu'il y arrive. C'est ainsi que nous abordons chaque affaire : d'un pas régulier et avec persévérance, jusqu'à ce que le résultat soit atteint.",
+          "Cette persévérance repose sur la préparation. Chaque affaire est préparée comme si elle allait être jugée ; c'est pourquoi nous négocions à partir d'une position ferme et la plupart des problèmes sont résolus plus tôt."
+        ],
+        "listaLabel": "Les étapes de l'ascension et ce qu'elles signifient pour l'entreprise",
+        "piezas": [
+          {
+            "nom": "Détermination",
+            "parte": "Le sommet en vue",
+            "tag": "Le sommet",
+            "desc": "Chaque affaire a un objectif clair dès le premier jour, et l'entreprise ne le lâche pas jusqu'à ce qu'il soit atteint."
+          },
+          {
+            "nom": "Une démarche régulière",
+            "parte": "Un pied sur le rocher",
+            "tag": "Un pied",
+            "desc": "Chaque étape repose sur quelque chose de solide : un dossier en ordre, avec des documents complets, signés et faciles à localiser."
+          },
+          {
+            "nom": "Prévention",
+            "parte": "Le chemin à parcourir",
+            "tag": "Le chemin",
+            "desc": "La prévention construit le chemin avant qu'elle ne soit nécessaire : les contrats, les règles de travail internes, la convention collective et IMSS dossiers à jour. Quand vient le temps de franchir le pas, le rocher est déjà là."
+          },
+          {
+            "nom": "Pas de retour en arrière",
+            "parte": "Le saut",
+            "tag": "Le saut",
+            "desc": "Face à un obstacle, l'entreprise ne revient pas en arrière : elle trouve le chemin et continue. Une négociation appuyée sur un dossier bien préparé avance mieux."
+          },
+          {
+            "nom": "Persistance",
+            "parte": "Le sommet",
+            "tag": "Le sommet",
+            "desc": "Pas à pas, sans s'arrêter, jusqu'à ce que le résultat soit atteint. Si un différend survient, l'entreprise est déjà debout, et l'entreprise reste avec elle jusqu'au bout."
+          }
+        ],
+        "svgLabel": "Planche 1/7, Toujours en avant : un mouflon d'Amérique escalade une paroi de montagne sur des corniches rocheuses qui glissent juste avant chaque pas, saute une fissure sans se retourner et atteint le cairn au sommet.",
+        "cajetin": "Toujours avancer",
+        "instr": "Choisissez une étape dans la liste ou sur la falaise, et le mouton avance.",
+        "nota": "Mouflon d'Amérique (Ovis canadensis), originaire des chaînes de montagnes du nord du Mexique."
+      },
+      "reaccion": {
+        "h": "Capacité de répondre",
+        "p": [
+          "Une entreprise préparée n'improvise pas lorsqu'un litige survient. L'ordre que nous construisons pour prévenir les conflits - les contrats, la convention collective, la paie et les IMSS dépôts - est le même ordre qui soutient la défense lorsqu'un préavis de grève, une inspection ou un procès arrive.",
+          "C'est pourquoi la prévention et la réponse ne sont pas deux services distincts : ils sont la même pièce, assemblée avant qu'elle ne soit créée. nécessaire."
+        ],
+        "listaLabel": "Étapes du moteur et ce que nous faisons à chacune d'elles lorsqu'un litige arrive",
+        "piezas": [
+          {
+            "nom": "Avis de grève, inspection ou procès",
+            "parte": "Fan",
+            "tag": "Fan",
+            "desc": "Le conflit arrive : un préavis de grève, une visite d'inspection du STPS (le ministère fédéral du Travail) ou un procès individuel ou collectif. Il est lu intégralement pour identifier ce qui est recherché et devant qui."
+          },
+          {
+            "nom": "Le dossier, déjà monté",
+            "parte": "Compresseur",
+            "tag": "Compresseur",
+            "desc": "Les contrats individuels, la convention collective, la paie et IMSS dépôts : les mesures de prévention restantes sont rassemblées pour l'affaire."
+          },
+          {
+            "nom": "La stratégie",
+            "parte": "Combustor",
+            "tag": "Combustor",
+            "desc": "Avec les faits et les preuves en vue, le Le cap est fixé : négocier, concilier ou défendre."
+          },
+          {
+            "nom": "Conciliation",
+            "parte": "Turbine",
+            "tag": "Turbine",
+            "desc": "L'audience de conciliation devant le Centre fédéral de conciliation et d'enregistrement du travail ou la section locale compétente centre, avec l'entreprise prête à négocier."
+          },
+          {
+            "nom": "La défense au procès",
+            "parte": "Nozzle",
+            "tag": "Nozzle",
+            "desc": "S'il n'y a pas d'accord, la défense devant le Tribunal du Travail avec le même dossier : la réponse à la réclamation, les preuves et les audiences."
+          }
+        ],
+        "svgLabel": "Dessin isométrique d'un turboréacteur à double flux de combat avec un boîtier en coupe. Il se sépare en cinq étages le long de son axe, du ventilateur à la tuyère, puis se réassemble à l'intérieur du fuselage d'un avion de combat à double queue qui est tiré autour du moteur.",
+        "cajetin": "Capacité de réponse"
+      },
+      "siguiente": "Suivant",
+      "siguienteLabel": "Page suivante"
+    },
+    "it": {
+      "cabAlt": "La luna piena sorge tra due crinali montuosi al crepuscolo",
+      "lead": "Santos & Saucedo è stata fondata nel San Pedro Garza García con uno studio dedicato ai datori di lavoro. Da allora consiglia gruppi industriali messicani, multinazionali e imprese di proprietà asiatica nelle decisioni che coinvolgono la loro forza lavoro.",
+      "cabP": "Assunzioni, organizzazione del lavoro, rapporto con il sindacato, cessazione del rapporto di lavoro e difesa davanti alle autorità e ai tribunali. Un cliente con stabilimenti in più stati riceve in tutti lo stesso giudizio, attraverso un'alleanza di aziende specializzate.",
+      "cuadroAlt": "La sala riunioni Santos & Saucedo con il trittico dell'azienda: tre tele astratte a colori con le linee del Cerro de la Silla",
+      "cuadroCap": "Il committente dipinto",
+      "cuadroTexto": "Il trittico della sala riunioni, con le linee del Cerro de la Silla.",
+      "lema": [
+        {
+          "antes": "La nostra priorità:",
+          "em": "prevenzione",
+          "fin": "."
+        },
+        {
+          "antes": "In caso di controversia:",
+          "em": "risoluzioni",
+          "fin": "."
+        }
+      ],
+      "notas": [
+        "Prepariamo ogni azienda a rispettare il diritto del lavoro prima che sorgano controversie: contratti ben redatti, pratiche in ordine, trattative preparate con largo anticipo. Una solida conformità del lavoro è la migliore difesa.",
+        "Quando arriva una controversia, lavoriamo come avvocati di prova: lo stesso team che conosce le operazioni del cliente prepara ogni questione come se dovesse andare in tribunale. Questa preparazione è ciò che ci consente di negoziare meglio e, spesso, di risolvere le questioni prima."
+      ],
+      "lamina": "Plate",
+      "lugar": "San Pedro Garza García",
+      "carnero": {
+        "h": "Sempre avanti",
+        "p": [
+          "La pecora bighorn scala le catene montuose del Messico settentrionale dove sembra non esserci sentiero. Non torna indietro né si ferma finché non arriva lì. È così che affrontiamo ogni questione: con passo fermo e con tenacia, fino al raggiungimento del risultato.",
+          "Questa tenacia si basa sulla preparazione. Ogni questione viene preparata come se dovesse andare in giudizio; ecco perché negoziamo da una posizione ferma e la maggior parte delle questioni vengono risolte prima."
+        ],
+        "listaLabel": "Le fasi della salita e cosa significano per l'azienda",
+        "piezas": [
+          {
+            "nom": "Determinazione",
+            "parte": "Il vertice in vista",
+            "tag": "Il vertice",
+            "desc": "Ogni questione ha un obiettivo chiaro fin dal primo giorno e l'azienda non lo lascia andare finché non viene raggiunto."
+          },
+          {
+            "nom": "Un passo fermo",
+            "parte": "Il piede sulla roccia",
+            "tag": "Il piede",
+            "desc": "Ogni passo poggia su qualcosa di solido: una pratica in ordine, con documenti completi, firmati e facilmente consultabili individuare."
+          },
+          {
+            "nom": "Prevenzione",
+            "parte": "Il percorso da percorrere",
+            "tag": "Il percorso",
+            "desc": "La prevenzione costruisce il percorso prima che sia necessario: i contratti, le regole interne del lavoro, la contrattazione collettiva contratto e documenti IMSS aggiornati. Quando arriva il momento di fare il passo, la roccia è già lì."
+          },
+          {
+            "nom": "Non si torna indietro",
+            "parte": "Il salto",
+            "tag": "Il salto",
+            "desc": "Di fronte a un ostacolo, l’impresa non torna indietro: trova la strada e va avanti. Una negoziazione sostenuta da un caso ben preparato va avanti meglio."
+          },
+          {
+            "nom": "Persistenza",
+            "parte": "Il vertice",
+            "tag": "Il vertice",
+            "desc": "Passo dopo passo, senza fermarsi, fino al raggiungimento del risultato. Se arriva una disputa, l'azienda è già in piedi, e l'azienda resta con lei fino alla fine."
+          }
+        ],
+        "svgLabel": "Tavola 1/7, Sempre avanti: una pecora bighorn scala una parete di montagna su cenge rocciose che scivolano fuori poco prima di ogni passo, salta una fessura senza voltarsi indietro e raggiunge l'ometto sul vetta.",
+        "cajetin": "Avanti sempre",
+        "instr": "Scegli un passo nell'elenco o sulla scogliera e la pecora avanza.",
+        "nota": "Pecora bighorn (Ovis canadensis), dalle catene montuose del nord Messico."
+      },
+      "reaccion": {
+        "h": "Capacità di risposta",
+        "p": [
+          "Un'azienda preparata non improvvisa quando arriva una controversia. L'ordine che costruiamo per prevenire i conflitti - contratti, contratto collettivo di lavoro, buste paga e dichiarazioni IMSS - è lo stesso ordine che sostiene la difesa quando arriva un avviso di sciopero, un'ispezione o una causa.",
+          "Ecco perché prevenzione e risposta non sono due servizi separati: sono lo stesso pezzo, assemblato prima che sia necessario."
+        ],
+        "listaLabel": "Fasi del motore e cosa facciamo in ciascuna di esse quando arriva una controversia",
+        "piezas": [
+          {
+            "nom": "Avviso di sciopero, ispezione o causa",
+            "parte": "Fan",
+            "tag": "Fan",
+            "desc": "La controversia arriva: un avviso di sciopero, una visita ispettiva del STPS (il ministero federale del lavoro) o una causa individuale o collettiva. Viene letto integralmente per identificare cosa si chiede e davanti a chi."
+          },
+          {
+            "nom": "Il fascicolo, già assemblato",
+            "parte": "Compressore",
+            "tag": "Compressore",
+            "desc": "Contratti individuali, contratto collettivo di lavoro, buste paga e pratiche IMSS: quanto prevenzionale rimasto in ordine viene raccolto per il caso."
+          },
+          {
+            "nom": "La strategia",
+            "parte": "Combustor",
+            "tag": "Combustor",
+            "desc": "Con i fatti e le prove in vista, la rotta è fissata: negoziare, conciliare o difendere."
+          },
+          {
+            "nom": "Conciliazione",
+            "parte": "Turbine",
+            "tag": "Turbine",
+            "desc": "L'udienza di conciliazione davanti al Centro federale per la conciliazione e la registrazione del lavoro o all'ufficio locale competente centro, con l'azienda disposta a trattare."
+          },
+          {
+            "nom": "La difesa al processo",
+            "parte": "Nozzle",
+            "tag": "Nozzle",
+            "desc": "Se non c'è accordo, la difesa davanti al Tribunale del lavoro con lo stesso fascicolo: la risposta alla domanda, le prove e le udienze."
+          }
+        ],
+        "svgLabel": "Disegno isometrico di un turbofan di un aereo da caccia con involucro in sezione. Si separa in cinque fasi lungo il suo asse, dalla ventola all'ugello, per poi riassemblarsi all'interno della fusoliera di un aereo da caccia a doppia coda che si trascina attorno al motore.",
+        "cajetin": "Capacità di rispondi"
+      },
+      "siguiente": "Avanti",
+      "siguienteLabel": "Pagina successiva"
+    }
+  },
+  "anatomia": {
+    "de": {
+      "aria": {
+        "both": "Anatomie unserer Arbeitspraxis: Prävention und Lösung",
+        "orden": "Anatomie unserer Arbeitspraxis: Prävention",
+        "solucion": "Anatomie unserer Arbeitspraxis: Lösung"
+      },
+      "tabsLabel": "Blatt",
+      "tabShort": "Blatt",
+      "hint": "Zum Drehen ziehen",
+      "modesLabel": "Zeichnung Ansicht",
+      "assembled": "Zusammengebaut",
+      "exploded": "Explodiert",
+      "sheetWord": "Blatt",
+      "sheets": {
+        "orden": {
+          "h": "Eine geordnete Arbeitsakte",
+          "p": "Viele Arbeitskonflikte können gelöst werden, bevor sie vor Gericht landen: in einem gut ausgearbeiteten Vertrag und in einer geordneten Akte. Dies sind die Ebenen, die wir mit jedem Kunden überprüfen.",
+          "listLabel": "Ebenen einer Arbeitsakte, die in Ordnung gehalten werden",
+          "tab": "Prävention",
+          "rows": [
+            {
+              "t": "Individueller Arbeitsvertrag"
+            },
+            {
+              "t": "Interne Arbeit Vorschriften"
+            },
+            {
+              "t": "Legitimer Tarifvertrag"
+            },
+            {
+              "t": "Anwesenheitsnachweis"
+            },
+            {
+              "t": "REPSE · Fachdienste"
+            },
+            {
+              "t": "NOM-035 · psychosozial Risiko"
+            },
+            {
+              "t": "Die Personalakte jedes Mitarbeiters"
+            }
+          ],
+          "key": "Die Art und Weise, wie eine Akte überprüft wird, wird von oben nach unten gelesen: vom Vertrag jeder Person bis zur vollständigen Akte."
+        },
+        "solucion": {
+          "h": "Der Prozess, Schritt für Schritt Bühne",
+          "p": "Wenn ein Streit entsteht, wird dieser von demselben Team geführt, das die Abläufe des Mandanten kennt: von der vorgerichtlichen Schlichtung bis zum Urteil und gegebenenfalls Amparo.",
+          "listLabel": "Phasen eines Arbeitsverfahrens, von der Schlichtung bis zum Amparo",
+          "tab": "Resolution",
+          "rows": [
+            {
+              "t": "Vorgerichtliche Schlichtung",
+              "d": "Vor dem Schlichtungszentrum: Vergleich oder Bescheinigung Nichteinigung"
+            },
+            {
+              "t": "Beschwerde",
+              "d": "Vor dem Arbeitsgericht"
+            },
+            {
+              "t": "Zustellung des Prozesses",
+              "d": "Formelle Mitteilung der Beschwerde an die Unternehmen"
+            },
+            {
+              "t": "Antwort und Beweise",
+              "d": "Ausnahmen, Einreden und Beweisangebot"
+            },
+            {
+              "t": "Vorverhandlung",
+              "d": "Das Verfahren wird eingeengt und die Beweise vorliegen zugelassen"
+            },
+            {
+              "t": "Verhandlung",
+              "d": "Vorbringung von Beweisen und Schlussplädoyers"
+            },
+            {
+              "t": "Urteil und direkter Amparo",
+              "d": "Direkter Amparo vor dem Collegiate Circuit Gericht"
+            }
+          ],
+          "key": "Ein Ordner pro Stufe, in der Reihenfolge des seit der Reform von 2019 geltenden Arbeitsverfahrens."
+        }
+      }
+    },
+    "zh": {
+      "aria": {
+        "both": "我们的劳动实践剖析：预防和解决",
+        "orden": "我们的劳动实践剖析：预防",
+        "solucion": "我们的劳动实践剖析：解决"
+      },
+      "tabsLabel": "表",
+      "tabShort": "表",
+      "hint": "拖动以旋转",
+      "modesLabel": "绘图查看",
+      "assembled": "组装",
+      "exploded": "分解",
+      "sheetWord": "工作表",
+      "sheets": {
+        "orden": {
+          "h": "井然有序的劳动档案",
+          "p": "许多劳资纠纷可以在提交法院之前得到解决：通过精心起草的合同和保存有序的文件。这些是我们与每个客户审查的层。",
+          "listLabel": "劳动档案的各个层保持有序",
+          "tab": "预防",
+          "rows": [
+            {
+              "t": "个人雇佣合同"
+            },
+            {
+              "t": "内部工作法规"
+            },
+            {
+              "t": "合法的集体协议"
+            },
+            {
+              "t": "考勤记录"
+            },
+            {
+              "t": "REPSE·专业服务"
+            },
+            {
+              "t": "NOM-035·心理社会风险"
+            },
+            {
+              "t": "每个员工的人事档案"
+            }
+          ],
+          "key": "它从上到下读取，就像审查文件的方式一样：从每个人的合同到完整的文件。"
+        },
+        "solucion": {
+          "h": "审判，分阶段进行阶段",
+          "p": "当出现争议时，由了解客户操作的同一个团队进行：从司法前调解到判决，以及适用的情况下的宪法权利保护。",
+          "listLabel": "劳动审判的各个阶段，从调解到宪法权利保护",
+          "tab": "解决方案",
+          "rows": [
+            {
+              "t": "司法前调解",
+              "d": "在调解中心之前：和解或证明非调解"
+            },
+            {
+              "t": "投诉",
+              "d": "劳动法庭"
+            },
+            {
+              "t": "送达程序",
+              "d": "向公司"
+            },
+            {
+              "t": "答复和证据",
+              "d": "例外情况、抗辩和提供证据"
+            },
+            {
+              "t": "初步听证会",
+              "d": "诉讼范围缩小，证据承认"
+            },
+            {
+              "t": "庭审",
+              "d": "出示证据和结案陈词"
+            },
+            {
+              "t": "判决和直接宪法权利保护",
+              "d": "在大学巡回法院之前直接宪法权利保护法院"
+            }
+          ],
+          "key": "每个阶段一个文件夹，按照 2019 年改革以来生效的劳动程序顺序排列。"
+        }
+      }
+    },
+    "ko": {
+      "aria": {
+        "both": "노동 관행의 해부: 예방 및 해결",
+        "orden": "노동 관행의 해부: 예방",
+        "solucion": "노동 관행의 해부: 해결"
+      },
+      "tabsLabel": "시트",
+      "tabShort": "시트",
+      "hint": "회전하려면 드래그하세요.",
+      "modesLabel": "그림 보기",
+      "assembled": "조립됨",
+      "exploded": "분해됨",
+      "sheetWord": "시트",
+      "sheets": {
+        "orden": {
+          "h": "정리된 노동 서류",
+          "p": "많은 노동 분쟁은 법원에 도달하기 전에 잘 작성된 계약서와 순서대로 보관된 파일을 통해 해결할 수 있습니다. 각 고객과 함께 검토하는 레이어입니다.",
+          "listLabel": "순서대로 유지되는 노동 파일 레이어",
+          "tab": "예방",
+          "rows": [
+            {
+              "t": "개인 고용 계약"
+            },
+            {
+              "t": "내부 작업 규정"
+            },
+            {
+              "t": "적법한 단체 협약"
+            },
+            {
+              "t": "출석 기록"
+            },
+            {
+              "t": "REPSE · 전문 서비스"
+            },
+            {
+              "t": "NOM-035 · 심리사회적 위험"
+            },
+            {
+              "t": "각 직원의 인사 파일"
+            }
+          ],
+          "key": "파일을 검토하는 방식으로 위에서 아래로 읽습니다. 각 개인의 계약서부터 전체 파일까지."
+        },
+        "solucion": {
+          "h": "시험은 단계별로 진행됩니다. stage",
+          "p": "분쟁이 발생하면 소송 전 화해부터 판결까지, 그리고 해당되는 경우 암파로까지 고객의 운영을 잘 아는 동일한 팀이 분쟁을 진행합니다.",
+          "listLabel": "화해부터 암파로까지 노동 재판 단계",
+          "tab": "해결",
+          "rows": [
+            {
+              "t": "사법 전 화해",
+              "d": "조정 센터 전: 합의 또는 증명서 비조정"
+            },
+            {
+              "t": "불만",
+              "d": "노동 법원에"
+            },
+            {
+              "t": "절차 서비스",
+              "d": "항소에 대한 공식 통지 회사"
+            },
+            {
+              "t": "답변 및 증거",
+              "d": "예외, 방어 및 증거 제공"
+            },
+            {
+              "t": "예비 심리",
+              "d": "절차가 좁혀지고 증거는 다음과 같습니다. 인정"
+            },
+            {
+              "t": "재판 심리",
+              "d": "증거 제시 및 최종 변론"
+            },
+            {
+              "t": "판결 및 직접 암파로",
+              "d": "대학 순회 전 암파로 직접 법원"
+            }
+          ],
+          "key": "2019년 개혁 이후 시행된 노동 절차 순서에 따라 단계당 하나의 폴더입니다."
+        }
+      }
+    },
+    "ja": {
+      "aria": {
+        "both": "当社の労働慣行の構造: 予防と解決",
+        "orden": "当社の労働慣行の構造: 予防",
+        "solucion": "当社の労働慣行の構造: 解決"
+      },
+      "tabsLabel": "シート",
+      "tabShort": "シート",
+      "hint": "ドラッグして回転",
+      "modesLabel": "図面表示",
+      "assembled": "組み立て済み",
+      "exploded": "分解",
+      "sheetWord": "シート",
+      "sheets": {
+        "orden": {
+          "h": "整った労務ファイル",
+          "p": "多くの労働紛争は、裁判所に持ち込まれる前に、よく作成された契約書と整理整頓されたファイルによって解決できます。これらは、各クライアントと確認するレイヤーです。",
+          "listLabel": "整然とした労働ファイルのレイヤー",
+          "tab": "予防",
+          "rows": [
+            {
+              "t": "個人雇用契約"
+            },
+            {
+              "t": "社内業務規制"
+            },
+            {
+              "t": "正当な労働協約"
+            },
+            {
+              "t": "出席記録"
+            },
+            {
+              "t": "REPSE · 専門サービス"
+            },
+            {
+              "t": "NOM-035 · 心理社会的リスク"
+            },
+            {
+              "t": "各従業員の人事ファイル"
+            }
+          ],
+          "key": "ファイルは、各人の契約から完全なファイルまで、上から下にレビューされます。"
+        },
+        "solucion": {
+          "h": "トライアルは段階的に行われます。段階",
+          "p": "紛争が発生した場合、裁判前の調停から判決まで、また該当する場合はアンパロまで、クライアントの業務を熟知している同じチームによって処理されます。",
+          "listLabel": "労働裁判の調停からアンパロまでの段階",
+          "tab": "解決",
+          "rows": [
+            {
+              "t": "裁判前の調停",
+              "d": "調停センター前: 和解または証明書非調停"
+            },
+            {
+              "t": "苦情",
+              "d": "労働裁判所への提出"
+            },
+            {
+              "t": "手続きの送達",
+              "d": "裁判所への苦情の正式通知会社"
+            },
+            {
+              "t": "答弁と証拠",
+              "d": "例外、弁護および証拠の提出"
+            },
+            {
+              "t": "予備審問",
+              "d": "訴訟手続きは絞り込まれ、証拠は認めました"
+            },
+            {
+              "t": "公判審理",
+              "d": "証拠の提出と最終弁論"
+            },
+            {
+              "t": "判決と直接アンパロ",
+              "d": "大学巡回裁判所での直接アンパロ裁判所"
+            }
+          ],
+          "key": "2019 年の改革以降施行されている労働手続きの順序で、ステージごとに 1 つのフォルダー。"
+        }
+      }
+    },
+    "ar": {
+      "aria": {
+        "both": "تشريح ممارسة العمل لدينا: الوقاية والحل",
+        "orden": "تشريح ممارسة العمل لدينا: الوقاية",
+        "solucion": "تشريح ممارسة العمل لدينا: القرار"
+      },
+      "tabsLabel": "ورقة",
+      "tabShort": "ورقة",
+      "hint": "اسحب للتدوير",
+      "modesLabel": "رسم عرض",
+      "assembled": "مجمعة",
+      "exploded": "مجزأة",
+      "sheetWord": "ورقة",
+      "sheets": {
+        "orden": {
+          "h": "ملف في الأمر",
+          "p": "يمكن حل العديد من النزاعات العمالية قبل وصولها إلى المحكمة: من خلال عقد جيد الصياغة وفي ملف مرتب. هذه هي الطبقات التي نراجعها مع كل عميل.",
+          "listLabel": "طبقات ملف العمل محفوظة بالترتيب",
+          "tab": "الوقاية",
+          "rows": [
+            {
+              "t": "عقد العمل الفردي"
+            },
+            {
+              "t": "العمل الداخلي اللوائح"
+            },
+            {
+              "t": "اتفاقية جماعية مشروعة"
+            },
+            {
+              "t": "سجل الحضور"
+            },
+            {
+              "t": "REPSE · الخدمات المتخصصة"
+            },
+            {
+              "t": "NOM-035 · المخاطر النفسية الاجتماعية"
+            },
+            {
+              "t": "الملف الشخصي لكل موظف"
+            }
+          ],
+          "key": "يقرأ من الأعلى إلى الأسفل، طريقة مراجعة الملف: من عقد كل شخص إلى ملفه الكامل."
+        },
+        "solucion": {
+          "h": "المحاكمة، مرحلة تلو الأخرى Stage",
+          "p": "عند نشوء نزاع، يتم إجراؤه بواسطة نفس الفريق الذي يعرف عملية العميل: بدءًا من التوفيق السابق للقضاء وحتى الحكم، وحيثما ينطبق الأمر، الحماية القضائية.",
+          "listLabel": "مراحل المحاكمة العمالية، من التوفيق إلى الحماية القضائية",
+          "tab": "القرار",
+          "rows": [
+            {
+              "t": "التوفيق قبل القضائي",
+              "d": "قبل مركز التوفيق: تسوية أو شهادة عدم التوفيق"
+            },
+            {
+              "t": "شكوى",
+              "d": "أمام المحكمة العمالية"
+            },
+            {
+              "t": "إبلاغ الإجراءات",
+              "d": "إشعار رسمي بالشكوى إلى الشركة"
+            },
+            {
+              "t": "الإجابة والأدلة",
+              "d": "الاستثناءات والدفاعات وعرض الأدلة"
+            },
+            {
+              "t": "جلسة الاستماع الأولية",
+              "d": "تضييق نطاق الإجراءات والأدلة تم قبوله"
+            },
+            {
+              "t": "جلسة الاستماع للمحاكمة",
+              "d": "عرض الأدلة والمرافعات الختامية"
+            },
+            {
+              "t": "الحكم وأمبارو المباشر",
+              "d": "أمر قضائي مباشر أمام الكلية محكمة الدائرة"
+            }
+          ],
+          "key": "مجلد واحد لكل مرحلة، بترتيب إجراءات العمل المعمول بها منذ إصلاح 2019."
+        }
+      }
+    },
+    "ru": {
+      "aria": {
+        "both": "Анатомия нашей трудовой практики: профилактика и решение",
+        "orden": "Анатомия нашей трудовой практики: профилактика",
+        "solucion": "Анатомия нашей трудовой практики: резолюция"
+      },
+      "tabsLabel": "Лист",
+      "tabShort": "Лист",
+      "hint": "Перетащите, чтобы повернуть",
+      "modesLabel": "Рисование просмотреть",
+      "assembled": "В сборе",
+      "exploded": "В разобранном виде",
+      "sheetWord": "Лист",
+      "sheets": {
+        "orden": {
+          "h": "Упорядоченное трудовое дело",
+          "p": "Многие трудовые споры можно разрешить до суда: в грамотно составленном договоре и в файле, хранящемся в порядке. Это уровни, которые мы проверяем с каждым клиентом.",
+          "listLabel": "Уровни трудового дела, поддерживаемые в порядке",
+          "tab": "Профилактика",
+          "rows": [
+            {
+              "t": "Индивидуальный трудовой договор"
+            },
+            {
+              "t": "Внутренняя работа нормативные акты"
+            },
+            {
+              "t": "Законный коллективный договор"
+            },
+            {
+              "t": "Отчет о посещаемости"
+            },
+            {
+              "t": "REPSE · специализированные услуги"
+            },
+            {
+              "t": "NOM-035 · психосоциальный риск"
+            },
+            {
+              "t": "Личное дело каждого сотрудника"
+            }
+          ],
+          "key": "Он читается сверху вниз, так же, как проверяется файл: от контракта каждого человека до его полного файла."
+        },
+        "solucion": {
+          "h": "Судебное разбирательство, этап stage",
+          "p": "При возникновении спора его ведет та же команда, которая знает деятельность клиента: от досудебного примирения до судебного решения и, где применимо, ампаро.",
+          "listLabel": "Этапы трудового разбирательства, от примирения до ампаро",
+          "tab": "Решение",
+          "rows": [
+            {
+              "t": "Досудебное примирение",
+              "d": "Перед примирительным центром: урегулирование или справка о отказ от примирения"
+            },
+            {
+              "t": "Жалоба",
+              "d": "В Суде по трудовым спорам"
+            },
+            {
+              "t": "Процессуальное вручение",
+              "d": "Официальное уведомление о жалобе компания"
+            },
+            {
+              "t": "Ответ и доказательства",
+              "d": "Исключения, защита и предоставление доказательств"
+            },
+            {
+              "t": "Предварительное слушание",
+              "d": "Процедура сужается, а доказательства допущен"
+            },
+            {
+              "t": "Судебное слушание",
+              "d": "Представление доказательств и заключительные аргументы"
+            },
+            {
+              "t": "Вынесение решения и прямая ампаро",
+              "d": "Прямая ампаро в коллегиальном округе Суд"
+            }
+          ],
+          "key": "По одной папке на каждую ступень, в порядке трудового порядка, действующего после реформы 2019 года."
+        }
+      }
+    },
+    "fr": {
+      "aria": {
+        "both": "Anatomie de notre pratique de travail : prévention et résolution",
+        "orden": "Anatomie de notre pratique de travail : prévention",
+        "solucion": "Anatomie de notre pratique de travail : résolution"
+      },
+      "tabsLabel": "Fiche",
+      "tabShort": "Feuille",
+      "hint": "Faites glisser pour faire pivoter",
+      "modesLabel": "Dessin view",
+      "assembled": "Assemblé",
+      "exploded": "Éclaté",
+      "sheetWord": "Feuille",
+      "sheets": {
+        "orden": {
+          "h": "Un fichier en ordre",
+          "p": "De nombreux conflits de travail peuvent être résolus avant d'atteindre un tribunal : dans un contrat bien rédigé et dans un dossier tenu en ordre. Ce sont les couches que nous examinons avec chaque client.",
+          "listLabel": "Couches d'un dossier de travail tenu en ordre",
+          "tab": "Prévention",
+          "rows": [
+            {
+              "t": "Contrat de travail individuel"
+            },
+            {
+              "t": "Travail interne réglementation"
+            },
+            {
+              "t": "Convention collective légitimée"
+            },
+            {
+              "t": "Fréquentation"
+            },
+            {
+              "t": "REPSE · services spécialisés"
+            },
+            {
+              "t": "NOM-035 · services psychosociaux risque"
+            },
+            {
+              "t": "Le dossier personnel de chaque collaborateur"
+            }
+          ],
+          "key": "Il se lit de haut en bas, la manière dont un dossier est étudié : du contrat de chacun jusqu'à son dossier complet."
+        },
+        "solucion": {
+          "h": "Le procès, étape par étape",
+          "p": "Quand un Un litige survient, il est mené par la même équipe qui connaît le fonctionnement du client : de la conciliation préjudiciaire au jugement et, le cas échéant, à l’amparo.",
+          "listLabel": "Les étapes d'un procès du travail, de la conciliation à l'amparo",
+          "tab": "Résolution",
+          "rows": [
+            {
+              "t": "Conciliation préjudiciaire",
+              "d": "Devant le Centre de Conciliation : règlement ou attestation de non-conciliation"
+            },
+            {
+              "t": "Réclamation",
+              "d": "Devant le Tribunal du Travail"
+            },
+            {
+              "t": "Notification de procédure",
+              "d": "Mise en demeure de la plainte au entreprise"
+            },
+            {
+              "t": "Réponse et preuves",
+              "d": "Exceptions, défenses et offre de preuves"
+            },
+            {
+              "t": "Audience préliminaire",
+              "d": "La procédure est restreinte et les preuves sont admis"
+            },
+            {
+              "t": "Audience de première instance",
+              "d": "Présentation des preuves et plaidoiries finales"
+            },
+            {
+              "t": "Jugement et amparo direct",
+              "d": "Amparo direct devant le circuit collégial Tribunal"
+            }
+          ],
+          "key": "Un dossier par étape, dans l'ordre de la procédure de travail en vigueur depuis la réforme de 2019."
+        }
+      }
+    },
+    "it": {
+      "aria": {
+        "both": "Anatomia della nostra pratica lavorativa: prevenzione e risoluzione",
+        "orden": "Anatomia della nostra pratica lavorativa: prevenzione",
+        "solucion": "Anatomia della nostra pratica lavorativa: risoluzione"
+      },
+      "tabsLabel": "Foglio",
+      "tabShort": "Foglio",
+      "hint": "Trascina per ruotare",
+      "modesLabel": "Vista del disegno",
+      "assembled": "Assemblato",
+      "exploded": "Esploso",
+      "sheetWord": "Foglio",
+      "sheets": {
+        "orden": {
+          "h": "Un fascicolo in ordine",
+          "p": "Molte controversie di lavoro possono essere risolte prima che arrivino in tribunale: in un contratto ben redatto e in un fascicolo tenuto in ordine. Questi sono i livelli che esaminiamo con ciascun cliente.",
+          "listLabel": "Strati di una cartella di lavoro mantenuti in ordine",
+          "tab": "Prevenzione",
+          "rows": [
+            {
+              "t": "Contratto individuale di lavoro"
+            },
+            {
+              "t": "Regolamento interno del lavoro"
+            },
+            {
+              "t": "Contratto collettivo legittimato"
+            },
+            {
+              "t": "Registro delle presenze"
+            },
+            {
+              "t": "REPSE · servizi specializzati"
+            },
+            {
+              "t": "NOM-035 · rischio psicosociale"
+            },
+            {
+              "t": "Il fascicolo personale di ciascun dipendente"
+            }
+          ],
+          "key": "Si legge dall'alto al basso, come viene esaminato un dossier: dal contratto di ogni persona al dossier completo."
+        },
+        "solucion": {
+          "h": "Il processo, tappa dopo tappa",
+          "p": "Quando sorge una controversia, questa viene condotta dalla stessa squadra che conosce il funzionamento del cliente: dalla conciliazione pregiudiziale al giudizio e, ove applicabile, all’amparo.",
+          "listLabel": "Fasi di un processo di lavoro, dalla conciliazione all'amparo",
+          "tab": "Risoluzione",
+          "rows": [
+            {
+              "t": "Conciliazione pregiudiziale",
+              "d": "Davanti al Centro di Conciliazione: transazione o certificato di mancata conciliazione"
+            },
+            {
+              "t": "Reclamo",
+              "d": "Davanti al tribunale del lavoro"
+            },
+            {
+              "t": "Notifica del processo",
+              "d": "Notifica formale del reclamo al azienda"
+            },
+            {
+              "t": "Risposte e prove",
+              "d": "Eccezioni, difese e offerta di prove"
+            },
+            {
+              "t": "Udienza preliminare",
+              "d": "Il procedimento è ristretto e le prove sono ammesso"
+            },
+            {
+              "t": "Udienza dibattimentale",
+              "d": "Presentazione delle prove e conclusioni"
+            },
+            {
+              "t": "Sentenza e amparo diretto",
+              "d": "Amparo diretto davanti al Circuito Collegiale Tribunale"
+            }
+          ],
+          "key": "Una cartella per fase, secondo l'ordine della procedura del lavoro in vigore dalla riforma del 2019."
+        }
+      }
+    }
+  },
+  "figuras": {
+    "de": {
+      "listLabel": "Komponenten des Blattes {{n}}",
+      "sheetWord": "Blatt",
+      "lugar": "San Pedro Garza García",
+      "meses": {
+        "ENE": "JAN",
+        "ABR": "APR",
+        "AGO": "AUG",
+        "DIC": "DEZ"
+      },
+      "laminas": {
+        "corporativo": {
+          "titulo": "Unternehmensordnung, Schublade für Schublade",
+          "entrada": "Jede Schublade enthält einen Teil der Bestellung eines Unternehmens, das Mitarbeiter beschäftigt. Wir überprüfen alles, wobei wir jedes Dokument aus arbeitsrechtlicher Sicht betrachten, denn ein Handelsvertrag hat auch Auswirkungen auf die Belegschaft.",
+          "aria": "Isometrische Zeichnung eines Aktenschranks aus Metall mit fünf Schubladen und geöffneten Schubladen in einer Treppe. Jede Schublade entspricht einer Komponente der Unternehmensbestellung, von {a} bis {b}.",
+          "items": [
+            {
+              "nom": "Satzung und Vollmachten",
+              "desc": "Die Gründungsurkunde, ihre Änderungen und die aktuellen Vollmachten derjenigen, die im Namen des Unternehmens unterzeichnen."
+            },
+            {
+              "nom": "Verträge mit Lieferanten und Kunden",
+              "desc": "Handelsverträge werden unter Berücksichtigung ihrer arbeitsrechtlichen Auswirkungen entworfen und überprüft."
+            },
+            {
+              "nom": "Spezialisierte Dienstleistungsverträge (REPSE)",
+              "desc": "Spezialisierte Dienste und Arbeiten mit Anbietern, die ihre Registrierung vor der Unterzeichnung überprüft haben."
+            },
+            {
+              "nom": "Corporate Governance und Aktionärsversammlungen",
+              "desc": "Aktionärsversammlungen, Vorstandssitzungen und Unternehmensbücher werden auf dem neuesten Stand gehalten."
+            },
+            {
+              "nom": "Compliance und interne Richtlinien",
+              "desc": "Richtlinien, Verhaltenskodizes und interne Kontrollen, die der Betrieb kennt und anwendet."
+            }
+          ]
+        },
+        "seguridad": {
+          "titulo": "Eine Aufzeichnung, die bei jeder Lohn- und Gehaltsabrechnung mitläuft",
+          "entrada": "Was das Unternehmen vor dem IMSS und INFONAVIT einreicht und zahlt, hat ein Datum: jeden Monat, alle zwei Monate, alle vier Monate und einmal im Jahr, zusätzlich zu den Mitteilungen, die bei jeder Einstellung oder Kündigung erfolgen. Wir halten diesen Kalender auf dem neuesten Stand und verteidigen das Unternehmen, wenn die Behörde ihn überprüft.",
+          "fuente": "Rechtsgrundlage: Der Artikel für jede Frist erscheint in der Beschreibung seines Etiketts. LSS: Sozialversicherungsrecht (Ley del Seguro Social). RACERF: Regelungen des LSS zur Zugehörigkeit, Klassifizierung von Unternehmen, Inkasso und Prüfung. Geltende Texte, konsultiert im November 2026.",
+          "aria": "Isometrische Zeichnung des Pflichtenkalenders eines Arbeitgebers: Zwölf Monatsblätter, Januar bis Dezember, jeweils mit dem Raster ihrer Tage, erhöht über einer Tafel, und links ein Sieben-Tage-Streifen mit den nummerierten fünf Werktagen. Tag 17 ist auf allen zwölf Blättern eingekreist und trägt in den ungeraden Monaten zusätzlich einen Punkt; Januar, Mai und September tragen ein Quadrat und Februar ein Dreieck. Jede Bezeichnung, von {a} bis {b}, entspricht einer dieser Markierungen.",
+          "items": [
+            {
+              "nom": "Beitrittsmitteilungen",
+              "dato": "Einstellungen, Kündigungen und Löhne über IDSE · 5 Werktage",
+              "desc": "Anmeldung, Kündigung und Lohnänderungen jedes Mitarbeiters vor dem IMSS, über IDSE, innerhalb der folgenden fünf Werktage. LSS, Kunst. 15, Sek. I."
+            },
+            {
+              "nom": "Spezialisierte Dienstleistungen (REPSE)",
+              "dato": "ICSOE und SISUB · Januar, Mai und September",
+              "desc": "Für Unternehmen, die bei REPSE registriert sind: viermonatlich informative Rückmeldungen zu Spezialdienstleistungsverträgen, ICSOE vor dem IMSS und SISUB vor INFONAVIT, spätestens am 17. Januar, Mai und September. LSS, Kunst. 15-A; INFONAVIT Gesetz, Kunst. 29 Bis."
+            },
+            {
+              "nom": "Berufsrisikoprämie",
+              "dato": "Einmal im Jahr · im Februar",
+              "desc": "Jährliche Überprüfung der Unfallrate des Unternehmens zur Ermittlung seiner Prämie in der Berufsrisikoversicherung; es wird im Februar eingereicht. LSS, Art.-Nr. 74; RACERF, Kunst. 32, Sek. V."
+            },
+            {
+              "nom": "Ruhestand (RCV) und INFONAVIT",
+              "dato": "Alle zwei Monate · der 17. der ungeraden Monate",
+              "desc": "Beiträge für Ruhestand, Arbeitslosigkeit im fortgeschrittenen Alter und Alter (RCV) und bis INFONAVIT, alle zwei Monate: spätestens am 17. Januar, März, Mai, Juli, September und November. LSS, siebenundzwanzigster Übergangsartikel; INFONAVIT Gesetz, sechster Übergangsartikel."
+            },
+            {
+              "nom": "Arbeitgeber-Arbeitnehmer-Beiträge",
+              "dato": "Jeden Monat · bis zum 17. des Folgemonats",
+              "desc": "Berechnung und Zahlung jedes Monats IMSS Beiträge, spätestens am 17. des Folgemonats. LSS, Kunst. 39."
+            }
+          ]
+        },
+        "migratorio": {
+          "titulo": "Die ordnungsgemäße Ankunft ausländischer Talente",
+          "entrada": "Damit eine ausländische Führungskraft, ein Techniker oder ein Spezialist im Werk arbeiten kann, müssen drei Dateien übereinstimmen: ihre eigenen, die des Unternehmens, das sie anstellt, und die ihrer Familie. Wir kümmern uns personell um sie, vom Visum bis zum Aufenthalt.",
+          "aria": "Isometrische Zeichnung eines Turms aus fünf Dokumentenfächern, die entlang ihrer Pfosten getrennt sind, mit einem Handstempel auf dem oberen Fach. Jedes Fach enthält die Dokumente eines Einwanderungsantrags, von {a} bis {b}.",
+          "items": [
+            {
+              "nom": "Arbeitsvisum",
+              "desc": "Visum basierend auf einem Stellenangebot für Führungskräfte, Techniker und Spezialisten, von der Bewerbung bis zur Einreise Stempel."
+            },
+            {
+              "nom": "Genehmigung und Aufenthalt",
+              "desc": "Aufenthaltskarte und Arbeitserlaubnis, deren Gültigkeit unter Kontrolle gehalten wird."
+            },
+            {
+              "nom": "Arbeitgeberregistrierung beim INM",
+              "desc": "Die Registrierungsbescheinigung des Arbeitgebers, die Grundlage jeder Einreichung, die das Unternehmen erstellt."
+            },
+            {
+              "nom": "Statusänderungen",
+              "desc": "Änderungen des Einwanderungsstatus und Mitteilungen an das INM, wenn sich die Situation des Mitarbeiters ändert."
+            },
+            {
+              "nom": "Familien und Angehörige",
+              "desc": "Anmeldungen für den Ehegatten und die Kinder, die den Mitarbeiter begleiten."
+            }
+          ]
+        }
+      }
+    },
+    "zh": {
+      "listLabel": "工作表 {{n}} 的组成部分",
+      "sheetWord": "床单",
+      "lugar": "San Pedro Garza García",
+      "meses": {
+        "ENE": "一月",
+        "ABR": "年利率",
+        "AGO": "八月",
+        "DIC": "十二月"
+      },
+      "laminas": {
+        "corporativo": {
+          "titulo": "公司订单，逐个抽屉",
+          "entrada": "每个抽屉里都存放着雇佣员工的公司订单的一部分。我们从劳工角度审查所有内容，因为商业合同也会对劳动力产生影响。",
+          "aria": "五抽屉金属文件柜的等轴测图，其抽屉在楼梯上打开。每个抽屉对应公司订单的一个组成部分，从 {a} 到 {b}。",
+          "items": [
+            {
+              "nom": "公司章程和授权书",
+              "desc": "公司成立契据、其修正案以及代表公司签署者的现行授权书。"
+            },
+            {
+              "nom": "与供应商和客户的合同",
+              "desc": "起草和审查商业合同时考虑到了其对劳动力的影响。"
+            },
+            {
+              "nom": "专业服务合约 (REPSE)",
+              "desc": "与持有注册的提供商合作的专业服务和工作，在签署前进行审查。"
+            },
+            {
+              "nom": "公司治理和股东大会",
+              "desc": "股东会议、董事会会议和公司账簿保持最新状态。"
+            },
+            {
+              "nom": "合规性和内部政策",
+              "desc": "运营部门了解并适用的政策、行为准则和内部控制。"
+            }
+          ]
+        },
+        "seguridad": {
+          "titulo": "与每份工资单一起运行的记录",
+          "entrada": "公司在 IMSS 和 INFONAVIT 之前提交和支付的文件有日期：每月、每两个月、每四个月和每年一次，以及每次雇用或终止时发出的通知。我们会及时更新该日历，并在当局对其进行审查时为公司辩护。",
+          "fuente": "法律依据：每个截止日期的文章都出现在其标签的说明中。 LSS：社会保障法（Ley del Seguro Social）。 RACERF：LSS关于隶属关系、公司分类、收集和审计的规定。生效文本，于 2026 年 11 月咨询。",
+          "aria": "雇主义务日历的等轴测图：十二个月的表格，从一月到十二月，每个表格都有其日期的网格，位于木板上方，左侧是一个为期 7 天的条带，其中五个工作日已编号。第 17 天在所有 12 张纸上均被圈出，并且在奇数月份中带有一个点；一月、五月和九月是正方形，二月是三角形。从 {a} 到 {b} 的每个标签都对应于这些标记之一。",
+          "items": [
+            {
+              "nom": "隶属关系通知",
+              "dato": "通过 IDSE 进行招聘、解雇和工资支付 · 5 个工作日",
+              "desc": "每位员工在 IMSS 之前通过 IDSE 在接下来的 5 个工作日内进行注册、解雇和工资变更。 LSS，艺术。 15秒I."
+            },
+            {
+              "nom": "专业服务 (REPSE)",
+              "dato": "ICSOE 和 SISUB · 一月、五月和九月",
+              "desc": "适用于注册于REPSE：专业服务合同的四个月信息回报，IMSS 之前的 ICSOE 和 INFONAVIT 之前的 SISUB，不迟于 1 月、5 月和 9 月 17 日。 LSS，艺术。 15-A； INFONAVIT 法律，艺术。 29之二."
+            },
+            {
+              "nom": "职业风险保费",
+              "dato": "每年一次·二月",
+              "desc": "每年审查公司的事故率，以确定其职业风险保险保费；它是在二月份提交的。 LSS，艺术。 74; RACERF，艺术。 32秒。 V."
+            },
+            {
+              "nom": "退休金（RCV）和INFONAVIT",
+              "dato": "每两个月·奇数月的17号",
+              "desc": "退休金、高龄失业金和老年金(RCV)，并每两个月发送至 INFONAVIT：不迟于 1 月、3 月、5 月、7 月、9 月和 11 月 17 日。 LSS，第二十七条暂行文； INFONAVIT 法律，第六条暂行条款。"
+            },
+            {
+              "nom": "雇主-雇员缴款",
+              "dato": "每个月 · 下个月 17 日之前",
+              "desc": "每月缴款的计算和支付IMSS 贡献，不迟于次月 17 日。 LSS，艺术。 39."
+            }
+          ]
+        },
+        "migratorio": {
+          "titulo": "外国人才有序到来",
+          "entrada": "对于在工厂工作的外籍管理人员、技术人员或专家来说，三份文件必须相符：他们自己的文件、雇用他们的公司的文件以及他们的家人的文件。我们用人力资源来处理它们，从签证到居住。",
+          "aria": "塔的等轴测图，有五个文件托盘，沿其柱子分开，顶部托盘上有手印。每个托盘装有一份移民备案文件，从 {a} 到 {b}。",
+          "items": [
+            {
+              "nom": "工作签证",
+              "desc": "基于高管、技术人员和专家工作机会的签证，从申请到入境"
+            },
+            {
+              "nom": "许可证和居住",
+              "desc": "居住卡和工作许可证，其有效性受到控制。"
+            },
+            {
+              "nom": "在 INM 进行雇主登记",
+              "desc": "雇主的注册证书是公司每项备案的基础。"
+            },
+            {
+              "nom": "身份变更",
+              "desc": "当员工情况发生变化时，移民身份发生变更并通知 INM。"
+            },
+            {
+              "nom": "家庭和家属",
+              "desc": "随行员工的配偶和子女的家庭单位申报。"
+            }
+          ]
+        }
+      }
+    },
+    "ko": {
+      "listLabel": "시트 구성요소 {{n}}",
+      "sheetWord": "시트",
+      "lugar": "San Pedro Garza García",
+      "meses": {
+        "ENE": "1월",
+        "ABR": "4월",
+        "AGO": "8월",
+        "DIC": "12월"
+      },
+      "laminas": {
+        "corporativo": {
+          "titulo": "기업 주문, 서랍별 서랍",
+          "entrada": "각 서랍에는 사람을 고용하는 회사의 질서가 한 부분씩 담겨 있습니다. 우리는 모든 문서를 노동적 관점에서 검토합니다. 상업 계약도 노동력에 영향을 미치기 때문입니다.",
+          "aria": "계단에 서랍이 열려 있는 5개의 서랍이 있는 금속 파일 캐비닛의 등각 투영 그림입니다. 각 서랍은 {a}에서 {b}까지 기업 주문의 하나의 구성 요소에 해당합니다.",
+          "items": [
+            {
+              "nom": "정관 및 위임장",
+              "desc": "법인 설립 증서, 개정안, 회사를 대신하여 서명하는 사람들의 현재 위임장."
+            },
+            {
+              "nom": "공급업체 및 고객과의 계약",
+              "desc": "노동 효과를 고려하여 상업 계약 초안을 작성하고 검토했습니다."
+            },
+            {
+              "nom": "전문 서비스 계약(REPSE)",
+              "desc": "등록을 보유하고 있는 제공업체와 관련된 전문 서비스 및 작업을 서명하기 전에 검토합니다."
+            },
+            {
+              "nom": "기업지배구조 및 주주총회",
+              "desc": "주주총회, 이사회, 기업 장부를 최신 상태로 유지합니다."
+            },
+            {
+              "nom": "규정 준수 및 내부 정책",
+              "desc": "운영팀이 알고 적용하는 정책, 행동 강령 및 내부 통제입니다."
+            }
+          ]
+        },
+        "seguridad": {
+          "titulo": "모든 급여와 함께 실행되는 기록",
+          "entrada": "IMSS 및 INFONAVIT 날짜가 있기 전에 회사가 제출하고 지불하는 금액: 매월, 2개월마다, 4개월마다, 1년에 한 번, 각 채용 또는 해고 시 실행되는 통지. 우리는 달력을 최신 상태로 유지하고 당국이 이를 검토할 때 회사를 변호합니다.",
+          "fuente": "법적 근거: 각 마감일에 대한 기사는 해당 라벨 설명에 표시됩니다. LSS: 사회보장법(Ley del Seguro Social). RACERF: 제휴, 회사 분류, 수집 및 감사에 관한 LSS 규정. 시행 중인 텍스트는 2026년 11월에 참조되었습니다.",
+          "aria": "고용주의 의무 달력에 대한 아이소메트릭 그림: 1월부터 12월까지의 12개월 시트로, 각 날짜의 그리드가 보드 위에 올려져 있고, 왼쪽에는 5영업일 번호가 매겨진 7일 스트립이 있습니다. 17일은 12장 모두에 원으로 표시되어 있으며 홀수 달에도 점이 표시되어 있습니다. 1월, 5월, 9월은 정사각형이고 2월은 삼각형입니다. {a}부터 {b}까지의 각 레이블은 해당 표시 중 하나에 해당합니다.",
+          "items": [
+            {
+              "nom": "제휴 공지",
+              "dato": "IDSE을 통해 고용, 해고 및 임금 · 영업일 기준 5일",
+              "desc": "다음 영업일 기준 5일 이내에 IMSS을 통해 IDSE을 통해 각 직원의 등록, 해고 및 임금 변경. LSS, 예술. 15초 I."
+            },
+            {
+              "nom": "전문 서비스(REPSE)",
+              "dato": "ICSOE 및 SISUB · 1월, 5월, 9월",
+              "desc": "등록된 회사의 경우 REPSE: 전문 서비스 계약에 대한 4개월 정보 반환, IMSS 이전의 ICSOE 및 INFONAVIT 이전의 SISUB, 늦어도 1월, 5월, 9월 17일까지. LSS, 예술. 15-A; INFONAVIT 법률, 예술. 29 Bis."
+            },
+            {
+              "nom": "직업 위험 보험료",
+              "dato": "1년에 한 번 · 2월",
+              "desc": "직업 위험 보험 보험료를 결정하기 위해 회사의 사고율을 매년 검토합니다. 2월에 접수됩니다. LSS, 예술. 74; RACERF, 예술. 32초 V."
+            },
+            {
+              "nom": "은퇴(RCV) 및 INFONAVIT",
+              "dato": "2개월마다 · 홀수 달 17일",
+              "desc": "퇴직, 노령실업 및 노령실업(RCV)에 대한 분담금, 2개월에 한 번씩 INFONAVIT에 전송: 늦어도 1월, 3월, 5월, 7월, 9월, 11월 17일까지. LSS, 스물일곱 번째 임시 조항; INFONAVIT 법률, 여섯 번째 임시 조항."
+            },
+            {
+              "nom": "고용주-직원 기여금",
+              "dato": "매월 · 다음 달 17일까지",
+              "desc": "매월 계산 및 지불 IMSS 기여, 늦어도 다음 달 17일까지. LSS, 예술. 39."
+            }
+          ]
+        },
+        "migratorio": {
+          "titulo": "외국인 인재의 질서있는 도착",
+          "entrada": "외국인 임원, 기술자 또는 전문가가 공장에서 일하려면 세 가지 파일이 일치해야 합니다: 자신의 파일, 그들을 고용한 회사의 파일, 가족의 파일. 비자부터 거주까지 인적 자원을 통해 처리합니다.",
+          "aria": "기둥을 따라 분리된 5개의 문서 트레이 타워의 등각 투영 그림과 상단 트레이에 손 도장이 찍혀 있습니다. 각 트레이에는 {a}에서 {b}까지 하나의 이민 서류가 들어 있습니다.",
+          "items": [
+            {
+              "nom": "취업 비자",
+              "desc": "지원서부터 입국까지 임원, 기술자 및 전문가를 위한 채용 제안 기반 비자 스탬프"
+            },
+            {
+              "nom": "허가증 및 거주지",
+              "desc": "유효 기간이 관리되는 체류 카드 및 취업 허가증."
+            },
+            {
+              "nom": "INM에 고용주 등록",
+              "desc": "고용주의 등록 증명서는 회사가 작성하는 모든 서류의 기초입니다."
+            },
+            {
+              "nom": "상태 변경",
+              "desc": "이민 상태 변경 및 직원의 상황이 변경되면 INM에 통지합니다."
+            },
+            {
+              "nom": "가족 및 부양가족",
+              "desc": "직원과 동행하는 배우자 및 자녀에 대한 가족 단위 신고."
+            }
+          ]
+        }
+      }
+    },
+    "ja": {
+      "listLabel": "シート {{n}} のコンポーネント",
+      "sheetWord": "シート",
+      "lugar": "San Pedro Garza García",
+      "meses": {
+        "ENE": "1月",
+        "ABR": "4月",
+        "AGO": "8月",
+        "DIC": "12月"
+      },
+      "laminas": {
+        "corporativo": {
+          "titulo": "法人注文、引き出しごと",
+          "entrada": "各引き出しには、従業員を雇用する企業の注文の一部が入っています。商業契約は労働力にも影響を与えるため、すべての文書を労働の観点からレビューします。",
+          "aria": "引き出しが 5 つある金属製ファイリング キャビネットを階段で開いた状態の等角図。各ドロワーは、{a} から {b} までの企業注文の 1 つのコンポーネントに対応します。",
+          "items": [
+            {
+              "nom": "定款と委任状",
+              "desc": "設立証書、その修正書、および会社を代表して署名する人の現在の委任状。"
+            },
+            {
+              "nom": "サプライヤーおよび顧客との契約",
+              "desc": "労働への影響を考慮して商業契約が起草され、レビューされます。"
+            },
+            {
+              "nom": "専門サービス契約 (REPSE)",
+              "desc": "登録を保持するプロバイダーと連携する特殊なサービスと作品は、署名前に審査されます。"
+            },
+            {
+              "nom": "コーポレート・ガバナンスと株主総会",
+              "desc": "株主総会、取締役会セッション、企業簿記が常に最新の状態に保たれています。"
+            },
+            {
+              "nom": "コンプライアンスと内部ポリシー",
+              "desc": "運営が把握し適用しているポリシー、行動規範、内部統制。"
+            }
+          ]
+        },
+        "seguridad": {
+          "titulo": "すべての給与計算で実行されるレコード",
+          "entrada": "IMSS および INFONAVIT の前に会社が提出して支払うものには、毎月、2 か月ごと、4 か月ごと、年に 1 回、雇用または解雇のたびに発行される通知に加えて、日付が設定されています。私たちはそのカレンダーを最新の状態に保ち、当局がそれを審査する際には会社を擁護します。",
+          "fuente": "法的根拠: 各期限の記事はラベルの説明に記載されています。 LSS: 社会保障法 (レイ デル セグロ ソーシャル)。 RACERF: 所属、会社の分類、収集および監査に関する LSS の規制。文書は有効であり、2026 年 11 月に協議されました。",
+          "aria": "雇用主の義務カレンダーの等角投影図: 1 月から 12 月までの 12 か月のシート。それぞれの日のグリッドがボードの上に掲げられ、左側には 5 営業日の番号が付けられた 7 日間のストリップが表示されます。 17 日目は 12 枚のシートすべてで丸で囲まれており、奇数月にはドットも付いています。 1 月、5 月、9 月は正方形、2 月は三角形です。 {a} から {b} までの各ラベルは、これらのマークの 1 つに対応します。",
+          "items": [
+            {
+              "nom": "所属に関する通知",
+              "dato": "IDSE を介した雇用、解雇および賃金 · 5 営業日",
+              "desc": "IMSS の前、IDSE を介した各従業員の登録、解雇、賃金変更は次の 5 営業日以内に行われます。 LSS、アート。 15秒I."
+            },
+            {
+              "nom": "専門サービス (REPSE)",
+              "dato": "ICSOE および SISUB · 1 月、5 月、9 月",
+              "desc": "REPSE に登録されている企業の場合:専門サービス契約に関する 4 か月ごとの有益なリターン (IMSS の前の ICSOE、および INFONAVIT の前の SISUB) は、1 月、5 月、9 月の 17 日までに提供されます。 LSS、アート。 15-A; INFONAVIT 法律、芸術。 29 ビス。"
+            },
+            {
+              "nom": "労働災害保険料",
+              "dato": "年に 1 回 · 2 月",
+              "desc": "労働災害保険の保険料を決定するための会社の事故率の年次見直し。 2月に提出されます。 LSS、アート。 74; RACERF、アート。 32秒V."
+            },
+            {
+              "nom": "退職金 (RCV) と INFONAVIT",
+              "dato": "2 か月ごと · 奇数月の 17 日",
+              "desc": "退職金、高齢失業保険 (RCV)、およびINFONAVIT、2 か月ごと: 1 月、3 月、5 月、7 月、9 月、11 月の 17 日まで。 LSS、第 27 回の一時的な記事。 INFONAVIT 法律、6 番目の暫定条項。"
+            },
+            {
+              "nom": "雇用主と従業員の拠出金",
+              "dato": "毎月 · 翌月 17 日まで",
+              "desc": "毎月の拠出金の計算と支払いIMSS 件の寄付、遅くとも翌月 17 日までに。 LSS、アート。 39."
+            }
+          ]
+        },
+        "migratorio": {
+          "titulo": "外国人材の秩序ある到着",
+          "entrada": "外国人の幹部、技術者、専門家が工場で働くには、本人のファイル、雇用会社のファイル、家族のファイルの 3 つのファイルが一致する必要があります。ビザから居住地まで、当社が人的リソースで対応します。",
+          "aria": "支柱に沿って分離された 5 つのドキュメント トレイのタワーの等角図。上部トレイにはハンド スタンプが付いています。各トレイには、{a} から {b} までの 1 つの移民申請書類が入っています。",
+          "items": [
+            {
+              "nom": "就労ビザ",
+              "desc": "申請から入国まで、幹部、技術者、専門家向けの求人に基づくビザスタンプ。"
+            },
+            {
+              "nom": "許可証と居住地",
+              "desc": "有効性が管理されている在留カードと労働許可証。"
+            },
+            {
+              "nom": "INM への雇用主登録",
+              "desc": "雇用主の登録証明書は、会社が行うすべての申請の基礎となります。"
+            },
+            {
+              "nom": "ステータスの変更",
+              "desc": "入国ステータスの変更と従業員の状況が変化した場合のINMへの通知。"
+            },
+            {
+              "nom": "家族および扶養家族",
+              "desc": "従業員に同行する配偶者と子供の家族単位の申告。"
+            }
+          ]
+        }
+      }
+    },
+    "ar": {
+      "listLabel": "مكونات الورقة {{n}}",
+      "sheetWord": "ملزمة",
+      "lugar": "San Pedro Garza García",
+      "meses": {
+        "ENE": "يناير",
+        "ABR": "أبريل",
+        "AGO": "أغسطس",
+        "DIC": "ديسمبر"
+      },
+      "laminas": {
+        "corporativo": {
+          "titulo": "أمر الشركات، درجا بعد درج",
+          "entrada": "يحمل كل درج جزءًا واحدًا من طلب شركة توظف أشخاصًا. نحن نقوم بمراجعة كل ذلك، مع مراعاة منظور العمل في كل وثيقة، لأن العقد التجاري له أيضًا آثار على القوى العاملة.",
+          "aria": "رسم متساوي القياس لخزانة ملفات معدنية ذات خمسة أدراج وأدراجها مفتوحة على سلم. يتوافق كل درج مع مكون واحد من طلب الشركة، من {a} إلى {b}.",
+          "items": [
+            {
+              "nom": "عقد التأسيس والتوكيلات",
+              "desc": "عقد التأسيس وتعديلاته والتفويضات الحالية لمن يوقع نيابة عن الشركة."
+            },
+            {
+              "nom": "العقود مع الموردين والعملاء",
+              "desc": "صياغة العقود التجارية ومراجعتها مع مراعاة آثارها العمالية."
+            },
+            {
+              "nom": "عقود الخدمات المتخصصة (REPSE)",
+              "desc": "تتم مراجعة الخدمات والأعمال المتخصصة التي يتم التعامل معها مع مقدمي الخدمة الذين يخضعون لتسجيلهم قبل التوقيع."
+            },
+            {
+              "nom": "حوكمة الشركات واجتماعات المساهمين",
+              "desc": "يتم تحديث اجتماعات المساهمين وجلسات مجلس الإدارة ودفاتر الشركات."
+            },
+            {
+              "nom": "الامتثال والسياسات الداخلية",
+              "desc": "السياسات وقواعد السلوك والضوابط الداخلية التي تعرفها العملية وتطبقها."
+            }
+          ]
+        },
+        "seguridad": {
+          "titulo": "سجل يتم تشغيله مع كل كشوف مرتبات",
+          "entrada": "إن ما تقدمه الشركة وتدفعه قبل IMSS وINFONAVIT له تاريخ: كل شهر، وكل شهرين، وكل أربعة أشهر، ومرة ​​واحدة سنويًا، بالإضافة إلى الإشعارات التي يتم تشغيلها من كل تعيين أو إنهاء عمل. نحن نحافظ على تحديث هذا التقويم وندافع عن الشركة عندما تقوم الهيئة بمراجعته.",
+          "fuente": "الأساس القانوني: تظهر المادة الخاصة بكل موعد نهائي في وصف الملصق الخاص بها. LSS: قانون الضمان الاجتماعي (Ley del Seguro Social). RACERF: لوائح LSS بشأن الانتساب وتصنيف الشركات والتحصيل والتدقيق. النصوص المعمول بها، تمت الرجوع إليها في نوفمبر 2026.",
+          "aria": "رسم متساوي القياس لتقويم التزامات صاحب العمل: صحائف اثني عشر شهرًا، من يناير إلى ديسمبر، تحتوي كل منها على شبكة أيامها، مرفوعة فوق لوحة، وعلى اليسار شريط مكون من سبعة أيام مع أرقام أيام العمل الخمسة. اليوم 17 محاط بدائرة على جميع الأوراق الاثنتي عشرة ويحمل أيضًا نقطة في الأشهر الفردية؛ يناير ومايو وسبتمبر يحملان مربعًا وفبراير مثلثًا. كل تصنيف، من {a} إلى {b}، يتوافق مع إحدى هذه العلامات.",
+          "items": [
+            {
+              "nom": "إشعارات الانتساب",
+              "dato": "التعيينات وإنهاء الخدمة والأجور عبر IDSE · 5 أيام عمل",
+              "desc": "التسجيل وإنهاء الخدمة وتغيير الأجور لكل موظف قبل IMSS، عبر IDSE، خلال ما يلي خمسة أيام عمل. LSS، المادة. 15 ثانية. I."
+            },
+            {
+              "nom": "الخدمات المتخصصة (REPSE)",
+              "dato": "ICSOE وSISUB · يناير ومايو وسبتمبر",
+              "desc": "بالنسبة للشركات المسجلة لدى REPSE: تقارير إعلامية كل أربعة أشهر عن عقود الخدمات المتخصصة، ICSOE قبل IMSS وSISUB قبل INFONAVIT، في موعد أقصاه 17 يناير ومايو وسبتمبر. LSS، المادة. 15-أ؛ INFONAVIT القانون، المادة. 29 مكرر."
+            },
+            {
+              "nom": "قسط المخاطر المهنية",
+              "dato": "مرة واحدة سنويًا · في فبراير",
+              "desc": "المراجعة السنوية لمعدل حوادث الشركة لتحديد أقساطها في التأمين ضد المخاطر المهنية؛ يتم تقديمه في فبراير. LSS، المادة. 74؛ RACERF، المادة. 32 ثانية. V."
+            },
+            {
+              "nom": "التقاعد (RCV) وINFONAVIT",
+              "dato": "كل شهرين · اليوم السابع عشر من الأشهر الفردية",
+              "desc": "مساهمات التقاعد والبطالة في سن متقدمة والشيخوخة (RCV)، وإلى INFONAVIT، كل شهرين: في موعد أقصاه 17 يناير ومارس ومايو ويوليو وسبتمبر ونوفمبر. LSS، المادة الانتقالية السابعة والعشرون؛ INFONAVIT القانون، المادة الانتقالية السادسة."
+            },
+            {
+              "nom": "مساهمات صاحب العمل-الموظف",
+              "dato": "كل شهر · بحلول اليوم السابع عشر من الشهر التالي",
+              "desc": "حساب ودفع كل شهر IMSS المساهمات، في موعد أقصاه اليوم السابع عشر من الشهر التالي. LSS، المادة. 39."
+            }
+          ]
+        },
+        "migratorio": {
+          "titulo": "الوصول المنظم للمواهب الأجنبية",
+          "entrada": "لكي يعمل مدير تنفيذي أو فني أو متخصص أجنبي في المصنع، يجب أن تتطابق ثلاثة ملفات: ملفهم الخاص، وملف الشركة التي توظفهم، وملف عائلتهم. نحن نتعامل معهم من خلال الموارد البشرية، بدءًا من التأشيرة وحتى الإقامة.",
+          "aria": "رسم متساوي القياس لبرج مكون من خمس أدراج مستندات منفصلة على طول قوائمها، مع وجود ختم يدوي على الدرج العلوي. يحتوي كل درج على مستندات ملف هجرة واحد، من {a} إلى {b}.",
+          "items": [
+            {
+              "nom": "تأشيرة عمل",
+              "desc": "تعتمد التأشيرة على عرض عمل للمديرين التنفيذيين والفنيين والمتخصصين، بدءًا من تقديم الطلب وحتى الدخول الختم."
+            },
+            {
+              "nom": "التصريح والإقامة",
+              "desc": "بطاقة الإقامة وتصريح العمل، مع الاحتفاظ بصلاحيتهما تحت السيطرة."
+            },
+            {
+              "nom": "تسجيل صاحب العمل لدى INM",
+              "desc": "شهادة تسجيل صاحب العمل، وهي أساس كل ملف تقدمه الشركة."
+            },
+            {
+              "nom": "تغييرات الحالة",
+              "desc": "تغييرات حالة الهجرة وإشعارات إلى INM عندما يتغير وضع الموظف."
+            },
+            {
+              "nom": "العائلات والمعالين",
+              "desc": "تسجيلات وحدة العائلة للزوج والأطفال الذين يرافقون الموظف."
+            }
+          ]
+        }
+      }
+    },
+    "ru": {
+      "listLabel": "Компоненты листа {{n}}",
+      "sheetWord": "Лист",
+      "lugar": "San Pedro Garza García",
+      "meses": {
+        "ENE": "ЯН",
+        "ABR": "АПРЕЛЬ",
+        "AGO": "АВГ",
+        "DIC": "Декабрь"
+      },
+      "laminas": {
+        "corporativo": {
+          "titulo": "Корпоративный заказ, ящик за ящиком",
+          "entrada": "В каждом ящике хранится одна часть заказа компании, в которой работают люди. Мы рассматриваем все это с точки зрения трудовых отношений в каждом документе, поскольку коммерческий контракт также оказывает влияние на рабочую силу.",
+          "aria": "Изометрический рисунок металлического шкафа для документов с пятью ящиками и открытыми ящиками на лестнице. Каждый ящик соответствует одному компоненту корпоративного заказа от {a} до {b}.",
+          "items": [
+            {
+              "nom": "Учредительные документы и доверенности",
+              "desc": "Учредительный акт, поправки к нему и действующие доверенности тех, кто подписывает от имени компании."
+            },
+            {
+              "nom": "Контракты с поставщиками и заказчиками",
+              "desc": "Коммерческие контракты разрабатываются и проверяются с учетом их трудовых последствий."
+            },
+            {
+              "nom": "Контракты на специализированные услуги (REPSE)",
+              "desc": "Специализированные услуги и работы, выполняемые поставщиками, имеющими регистрацию, рассматриваются перед подписанием."
+            },
+            {
+              "nom": "Корпоративное управление и собрания акционеров",
+              "desc": "Собрания акционеров, заседания совета директоров и корпоративные книги постоянно обновляются."
+            },
+            {
+              "nom": "Комплаенс и внутренняя политика",
+              "desc": "Политики, кодексы поведения и внутренний контроль, которые известны и применяются на предприятии."
+            }
+          ]
+        },
+        "seguridad": {
+          "titulo": "Запись, которая запускается при каждом расчете заработной платы",
+          "entrada": "То, что компания подает и платит до того, как IMSS и INFONAVIT имеют дату: каждый месяц, каждые два месяца, каждые четыре месяца и один раз в год, в дополнение к уведомлениям, которые отправляются при каждом приеме на работу или увольнении. Мы поддерживаем этот календарь в актуальном состоянии и защищаем компанию, когда его рассматривают органы власти.",
+          "fuente": "Правовая основа: статья для каждого срока указана в описании его этикетки. LSS: Закон о социальном обеспечении (Ley del Seguro Social). RACERF: Положение LSS об аффилированности, классификации компаний, сборе данных и аудите. Тексты в силе, ознакомлены в ноябре 2026 г.",
+          "aria": "Изометрический рисунок календаря обязательств работодателя: двенадцатимесячные листы с января по декабрь, каждый с сеткой дней, поднятый над доской, а слева семидневная полоса с пронумерованными пятью рабочими днями. День 17 обведен кружком на всех двенадцати листах, а также отмечен точкой в ​​нечетных месяцах; Январь, май и сентябрь имеют квадрат, а февраль — треугольник. Каждая метка от {a} до {b} соответствует одной из этих меток.",
+          "items": [
+            {
+              "nom": "Уведомления о присоединении",
+              "dato": "Найм, увольнение и заработная плата через IDSE · 5 рабочих дней",
+              "desc": "Регистрация, увольнение и изменение заработной платы каждого сотрудника до IMSS через IDSE в течение следующих пяти рабочих дней дни. LSS, арт. 15, сек. I."
+            },
+            {
+              "nom": "Специализированные услуги (REPSE)",
+              "dato": "ICSOE и SISUB · Январь, май и сентябрь",
+              "desc": "Для компаний, зарегистрированных в REPSE: информационная отчетность каждые четыре месяца по контрактам на специализированные услуги, ICSOE до IMSS и SISUB до INFONAVIT, не позднее 17 января, мая и сентября. LSS, арт. 15-А; INFONAVIT Закон, ст. 29 Bis."
+            },
+            {
+              "nom": "Премии за профессиональный риск",
+              "dato": "Раз в год · в феврале",
+              "desc": "Ежегодный анализ уровня несчастных случаев в компании для определения премии по страхованию профессиональных рисков; он подан в феврале. LSS, арт. 74; RACERF, арт. 32, сек. V."
+            },
+            {
+              "nom": "Выход на пенсию (RCV) и INFONAVIT",
+              "dato": "Каждые два месяца · 17-й нечетный месяц",
+              "desc": "Взносы на пенсию, безработицу в пожилом возрасте и по старости (RCV), и INFONAVIT каждые два месяца: не позднее 17 января, марта, мая, июля, сентября и ноября. LSS, двадцать седьмая переходная статья; INFONAVIT Закон, шестая переходная статья."
+            },
+            {
+              "nom": "Отчисления работодателя и работника",
+              "dato": "Каждый месяц · до 17 числа следующего месяца",
+              "desc": "Расчет и оплата каждого месяца IMSS взносов не позднее 17 числа следующего месяца. LSS, арт. 39."
+            }
+          ]
+        },
+        "migratorio": {
+          "titulo": "Упорядоченное прибытие иностранных талантов",
+          "entrada": "Чтобы иностранный руководитель, техник или специалист мог работать на заводе, должны совпадать три файла: его собственный, файл компании, которая его нанимает, и файл его семьи. Мы занимаемся ими с помощью человеческих ресурсов, от визы до проживания.",
+          "aria": "Изометрический рисунок башни из пяти лотков для документов, разделенных вдоль стоек, с отпечатком руки на верхнем лотке. В каждом лотке хранятся документы одной иммиграционной заявки от {a} до {b}.",
+          "items": [
+            {
+              "nom": "Рабочая виза",
+              "desc": "Виза на основании предложения о работе для руководителей, технических специалистов и специалистов, от заявления до въезда штамп."
+            },
+            {
+              "nom": "Разрешение и место жительства",
+              "desc": "Карта проживания и разрешение на работу, срок их действия находится под контролем."
+            },
+            {
+              "nom": "Регистрация работодателя в INM",
+              "desc": "Свидетельство о регистрации работодателя, основа каждого заявления компании."
+            },
+            {
+              "nom": "Изменения статуса",
+              "desc": "Изменения иммиграционного статуса и уведомления INM при изменении ситуации сотрудника."
+            },
+            {
+              "nom": "Семьи и иждивенцы",
+              "desc": "Заявление о семейной принадлежности для супруга и детей, которые сопровождают сотрудника."
+            }
+          ]
+        }
+      }
+    },
+    "fr": {
+      "listLabel": "Composants de la feuille {{n}}",
+      "sheetWord": "Feuille",
+      "lugar": "San Pedro Garza García",
+      "meses": {
+        "ENE": "JAN",
+        "ABR": "AVR",
+        "AGO": "AOÛT",
+        "DIC": "DÉC"
+      },
+      "laminas": {
+        "corporativo": {
+          "titulo": "Commande corporative, tiroir par tiroir",
+          "entrada": "Chaque tiroir contient une partie de la commande d'une entreprise qui emploie des personnes. Nous examinons tout cela, avec une perspective sociale sur chaque document, car un contrat commercial a également des effets sur la main-d'œuvre.",
+          "aria": "Dessin isométrique d'un classeur métallique à cinq tiroirs avec ses tiroirs ouverts dans un escalier. Chaque tiroir correspond à un composant de la commande corporative, du {a} au {b}.",
+          "items": [
+            {
+              "nom": "Statuts et procurations",
+              "desc": "L'acte constitutif, ses modifications et les procurations en vigueur de ceux qui signent au nom de la société."
+            },
+            {
+              "nom": "Contrats avec les fournisseurs et les clients",
+              "desc": "Contrats commerciaux rédigés et révisés en tenant compte de leurs effets sur le travail."
+            },
+            {
+              "nom": "Contrats de services spécialisés (REPSE)",
+              "desc": "Services et travaux spécialisés engagés avec des prestataires qui détiennent leur inscription, examinés avant de signer."
+            },
+            {
+              "nom": "Gouvernance d’entreprise et assemblées d’actionnaires",
+              "desc": "Assemblées générales, séances du conseil d’administration et livres sociaux tenus à jour."
+            },
+            {
+              "nom": "Conformité et politiques internes",
+              "desc": "Politiques, codes de conduite et contrôles internes que l’opération connaît et applique."
+            }
+          ]
+        },
+        "seguridad": {
+          "titulo": "Un enregistrement qui s'exécute avec chaque paie",
+          "entrada": "Ce que l'entreprise dépose et paie avant le IMSS et le INFONAVIT a une date : tous les mois, tous les deux mois, tous les quatre mois et une fois par an, en plus des préavis qui courent à chaque embauche ou licenciement. Nous tenons ce calendrier à jour et défendons l'entreprise lorsque l'autorité l'examine.",
+          "fuente": "Base légale : l'article de chaque échéance apparaît dans le descriptif de son étiquette. LSS : Loi sur la sécurité sociale (Ley del Seguro Social). RACERF : Règlement du LSS sur l'affiliation, la classification des entreprises, la collecte et l'audit. Textes en vigueur, consultés en novembre 2026.",
+          "aria": "Dessin isométrique du calendrier des obligations d'un employeur : feuilles de douze mois, de janvier à décembre, chacune avec la grille de ses jours, dressée au-dessus d'un tableau, et à gauche une bande de sept jours avec les cinq jours ouvrables numérotés. Le jour 17 est encerclé sur les douze feuilles et porte également un point dans les mois impairs ; Janvier, mai et septembre portent un carré et février un triangle. Chaque label, de {a} à {b}, correspond à l'une de ces marques.",
+          "items": [
+            {
+              "nom": "Avis d'affiliation",
+              "dato": "Engagements, licenciements et salaires via IDSE · 5 jours ouvrables",
+              "desc": "Inscription, licenciement et modifications salariales de chaque salarié avant le IMSS, via IDSE, dans les cinq jours ouvrables suivants. LSS, art. 15, sec. I."
+            },
+            {
+              "nom": "Services spécialisés (REPSE)",
+              "dato": "ICSOE et SISUB · Janvier, mai et septembre",
+              "desc": "Pour les entreprises inscrites à REPSE : déclarations informatives quadrimensuelles sur les contrats de services spécialisés, ICSOE avant le IMSS et SISUB avant le INFONAVIT, au plus tard le 17 janvier, mai et septembre. LSS, art. 15-A ; INFONAVIT Loi, art. 29 Bis."
+            },
+            {
+              "nom": "Prime de risque professionnel",
+              "dato": "Une fois par an · en février",
+              "desc": "Révision annuelle du taux d'accidents de l'entreprise pour déterminer sa prime en assurance des risques professionnels ; il est déposé en février. LSS, art. 74 ; RACERF, art. 32, sec. V."
+            },
+            {
+              "nom": "Retraite (RCV) et INFONAVIT",
+              "dato": "Tous les deux mois · le 17 des mois impairs",
+              "desc": "Cotisations à la retraite, au chômage à l'âge avancé et à la vieillesse (RCV), et aux INFONAVIT, tous les deux mois : au plus tard les 17 janvier, mars, mai, juillet, septembre et novembre. LSS, vingt-septième article transitoire ; INFONAVIT Loi, sixième article transitoire."
+            },
+            {
+              "nom": "Cotisations patronales-salariées",
+              "dato": "Chaque mois · avant le 17 du mois suivant",
+              "desc": "Calcul et paiement des cotisations IMSS de chaque mois, au plus tard le 17 du mois suivant. LSS, art. 39."
+            }
+          ]
+        },
+        "migratorio": {
+          "titulo": "L'arrivée ordonnée des talents étrangers",
+          "entrada": "Pour qu'un cadre, un technicien ou un spécialiste étranger puisse travailler dans l'usine, trois dossiers doivent correspondre : le sien, celui de l'entreprise qui l'embauche et celui de sa famille. Nous les prenons en charge avec des ressources humaines, du visa jusqu'au séjour.",
+          "aria": "Dessin isométrique d'une tour de cinq plateaux à documents séparés le long de leurs poteaux, avec un tampon manuel sur le plateau supérieur. Chaque bac contient les documents d'un dossier d'immigration, du {a} au {b}.",
+          "items": [
+            {
+              "nom": "Visa de travail",
+              "desc": "Visa basé sur une offre d'emploi pour cadres, techniciens et spécialistes, de la candidature à l'entrée. cachet."
+            },
+            {
+              "nom": "Permis et séjour",
+              "desc": "Carte de séjour et permis de travail, dont la validité est contrôlée."
+            },
+            {
+              "nom": "Inscription de l'employeur à l'INM",
+              "desc": "L'attestation d'inscription de l'employeur, base de tout dépôt l'entreprise fabrique."
+            },
+            {
+              "nom": "Changements de statut",
+              "desc": "Changements de statut d'immigration et avis à l'INM lorsque la situation de l'employé change."
+            },
+            {
+              "nom": "Familles et personnes à charge",
+              "desc": "Déclarations d'unité familiale pour le conjoint et les enfants qui accompagnent l'employé."
+            }
+          ]
+        }
+      }
+    },
+    "it": {
+      "listLabel": "Componenti del foglio {{n}}",
+      "sheetWord": "Foglio",
+      "lugar": "San Pedro Garza García",
+      "meses": {
+        "ENE": "GEN",
+        "ABR": "APR",
+        "AGO": "AGOSTO",
+        "DIC": "DIC"
+      },
+      "laminas": {
+        "corporativo": {
+          "titulo": "Ordine aziendale, cassetto per cassetto",
+          "entrada": "Ogni cassetto contiene una parte dell'ordine di un'azienda che impiega persone. Lo esaminiamo tutto, con una prospettiva lavorativa su ogni documento, perché un contratto commerciale ha effetti anche sulla forza lavoro.",
+          "aria": "Disegno isometrico di uno schedario in metallo a cinque cassetti con i cassetti aperti su una scala. Ogni cassetto corrisponde ad un componente dell'ordine aziendale, da {a} a {b}.",
+          "items": [
+            {
+              "nom": "Statuto e procure",
+              "desc": "L'atto costitutivo, le sue modifiche e le attuali procure di chi firma per conto della società."
+            },
+            {
+              "nom": "Contratti con fornitori e clienti",
+              "desc": "Contratti commerciali redatti e rivisti tenendo conto dei loro effetti sul lavoro."
+            },
+            {
+              "nom": "Contratti di servizi specializzati (REPSE)",
+              "desc": "Servizi e lavori specializzati impegnati con fornitori che detengono la registrazione, esaminati prima della firma."
+            },
+            {
+              "nom": "Corporate governance e assemblee dei soci",
+              "desc": "Assemblee degli azionisti, sedute del Consiglio e libri sociali tenuti aggiornati."
+            },
+            {
+              "nom": "Conformità e politiche interne",
+              "desc": "Politiche, codici di condotta e controlli interni che l'operazione conosce e applica."
+            }
+          ]
+        },
+        "seguridad": {
+          "titulo": "Un record che corre con ogni busta paga",
+          "entrada": "Ciò che l'azienda deposita e paga prima del IMSS e del INFONAVIT ha una data: ogni mese, ogni bimestre, ogni quattro mesi e una volta all'anno, oltre agli avvisi che decorrono da ogni assunzione o cessazione. Manteniamo aggiornato il calendario e difendiamo l'azienda quando l'autorità lo esamina.",
+          "fuente": "Base giuridica: l'articolo per ciascuna scadenza appare nella descrizione della sua etichetta. LSS: Legge sulla previdenza sociale (Ley del Seguro Social). RACERF: Regolamento del LSS su affiliazione, classificazione delle società, riscossione e revisione. Testi in vigore, consultati a novembre 2026.",
+          "aria": "Disegno isometrico del calendario degli obblighi di un datore di lavoro: fogli di dodici mesi, da gennaio a dicembre, ciascuno con la griglia dei suoi giorni, sollevata sopra un tabellone, e a sinistra una striscia di sette giorni con i cinque giorni lavorativi numerati. Il giorno 17 è cerchiato su tutti e dodici i fogli e porta un punto anche nei mesi dispari; Gennaio, maggio e settembre portano un quadrato e febbraio un triangolo. Ogni etichetta, da {a} a {b}, corrisponde a uno di questi segni.",
+          "items": [
+            {
+              "nom": "Avvisi di affiliazione",
+              "dato": "Assunzioni, cessazioni e salari tramite IDSE · 5 giorni lavorativi",
+              "desc": "Registrazione, licenziamento e modifiche salariali di ciascun dipendente prima del IMSS, tramite IDSE, entro i successivi cinque giorni lavorativi. LSS, art. 15, sez. I."
+            },
+            {
+              "nom": "Servizi specializzati (REPSE)",
+              "dato": "ICSOE e SISUB · Gennaio, maggio e settembre",
+              "desc": "Per le aziende iscritti presso REPSE: informative quadrimestrali sui contratti di servizi specializzati, ICSOE entro il IMSS e SISUB entro il INFONAVIT, entro il 17 gennaio, maggio e settembre. LSS, art. 15-A; INFONAVIT Legge, art. 29 Bis."
+            },
+            {
+              "nom": "Premio per il rischio professionale",
+              "dato": "Una volta all'anno · a febbraio",
+              "desc": "Revisione annuale del tasso di infortuni dell'azienda per determinare il suo premio nell'assicurazione contro i rischi professionali; viene depositato a febbraio. LSS, art. 74; RACERF, art. 32, sez. V."
+            },
+            {
+              "nom": "Pensione (RCV) e INFONAVIT",
+              "dato": "Bimestrale · il 17 dei mesi dispari",
+              "desc": "Contributi per pensione, disoccupazione in età avanzata e vecchiaia (RCV), e a INFONAVIT, ogni due mesi: entro e non oltre il 17 gennaio, marzo, maggio, luglio, settembre e novembre. LSS, ventisettesimo articolo transitorio; INFONAVIT Legge, sesto articolo transitorio."
+            },
+            {
+              "nom": "Contributi datore di lavoro-dipendente",
+              "dato": "Ogni mese · entro il 17 del mese successivo",
+              "desc": "Calcolo e pagamento delle mensilità IMSS contributi, entro e non oltre il 17 del mese successivo. LSS, art. 39."
+            }
+          ]
+        },
+        "migratorio": {
+          "titulo": "L'arrivo ordinato dei talenti stranieri",
+          "entrada": "Affinché un dirigente, tecnico o specialista straniero possa lavorare nello stabilimento, devono corrispondere tre pratiche: la propria, quella dell'azienda che lo assume e quella della sua famiglia. Li gestiamo con le risorse umane, dal visto alla residenza.",
+          "aria": "Disegno isometrico di una torre di cinque vassoi portadocumenti separati lungo i montanti, con timbro a mano sul vassoio superiore. Ogni vassoio contiene i documenti di una pratica di immigrazione, da {a} a {b}.",
+          "items": [
+            {
+              "nom": "Visto di lavoro",
+              "desc": "Visto basato su un'offerta di lavoro per dirigenti, tecnici e specialisti, dalla domanda all'ingresso timbro."
+            },
+            {
+              "nom": "Permesso e soggiorno",
+              "desc": "Carta di soggiorno e permesso di lavoro, con la loro validità tenuta sotto controllo."
+            },
+            {
+              "nom": "Registrazione del datore di lavoro presso INM",
+              "desc": "Il certificato di registrazione del datore di lavoro, base di ogni archiviazione effettuata dall'azienda."
+            },
+            {
+              "nom": "Cambiamenti di status",
+              "desc": "Cambiamenti di status di immigrazione e avvisi all'INM quando cambia la situazione del dipendente."
+            },
+            {
+              "nom": "Famiglie e persone a carico",
+              "desc": "Documentazione del nucleo familiare per il coniuge e i figli che accompagnano il dipendente."
+            }
+          ]
+        }
+      }
+    }
+  },
+  "pagina": {
+    "de": {
+      "next": "Weiter",
+      "nextAria": "Nächste Seite",
+      "practicesAria": "Praktiken",
+      "industries": "Branchen, die wir beraten"
+    },
+    "zh": {
+      "next": "下一页",
+      "nextAria": "下一页",
+      "practicesAria": "实践",
+      "industries": "我们建议的行业"
+    },
+    "ko": {
+      "next": "다음",
+      "nextAria": "다음 페이지",
+      "practicesAria": "관행",
+      "industries": "우리가 조언하는 산업"
+    },
+    "ja": {
+      "next": "次",
+      "nextAria": "次のページ",
+      "practicesAria": "実践",
+      "industries": "私たちがアドバイスする業界"
+    },
+    "ar": {
+      "next": "التالي",
+      "nextAria": "الصفحة التالية",
+      "practicesAria": "الممارسات",
+      "industries": "المجالات التي ننصح بها"
+    },
+    "ru": {
+      "next": "Далее",
+      "nextAria": "Следующая страница",
+      "practicesAria": "Практики",
+      "industries": "Отрасли, которые мы консультируем"
+    },
+    "fr": {
+      "next": "Suivant",
+      "nextAria": "Page suivante",
+      "practicesAria": "Pratiques",
+      "industries": "Industries que nous conseillons"
+    },
+    "it": {
+      "next": "Successivo",
+      "nextAria": "Pagina successiva",
+      "practicesAria": "Pratiche",
+      "industries": "Industrie a cui forniamo consulenza"
+    }
+  },
+  "contacto": {
+    "de": {
+      "formH": "Schreiben Sie uns",
+      "pasos": [
+        "Ihre Daten",
+        "Ihr Anliegen"
+      ],
+      "continuar": "Weiter",
+      "regresar": "Zurück",
+      "resp": "Unsere Verwaltungsabteilung wird es tun Antworten.",
+      "otroMensaje": "Eine weitere Nachricht schreiben",
+      "otroAsunto": "Sonstiges",
+      "datosTel": "Telefon",
+      "datosCorreo": "E-Mail",
+      "oficinasH": "Unsere Büros",
+      "oficinasLead": "{{calle}}, in {{ciudad}}. Die Räume, in denen wir jeden Kunden empfangen und seine Angelegenheiten vorbereiten.",
+      "oficinasLeadSinDir": "Die Räume, in denen wir jeden Kunden empfangen und seine Angelegenheiten vorbereiten.",
+      "oficinasMas": "Weitere Fotos des Büros",
+      "mapaCap": "Standort",
+      "fotos": {
+        "fachada": {
+          "cap": "Die Fassade",
+          "txt": "Der Cerro de la Silla, reflektiert im Glas."
+        },
+        "vestibulo": {
+          "cap": "Die Lobby",
+          "txt": "Vom Zwischengeschoss aus gesehen."
+        },
+        "sala": {
+          "cap": "Die Sitzungssaal",
+          "txt": "Wo jeder Kunde empfangen wird."
+        },
+        "escultura": {
+          "cap": "Der Innengarten",
+          "txt": "Die blaue Skulptur."
+        },
+        "biblioteca": {
+          "cap": "Die Bibliothek",
+          "txt": "Neben der Treppe."
+        },
+        "mezanine": {
+          "cap": "Das Zwischengeschoss",
+          "txt": "Wo das Team arbeitet."
+        }
+      },
+      "altMezanine": "Zwischengeschoss mit Arbeitsplätzen und einem Glasgeländer",
+      "altSala": "Sitzungsraum mit Granittisch, Chefsessel und farbenfrohe abstrakte Kunstwerke an der Wand",
+      "altBiblioteca": "Hölzernes Bücherregal mit Bänden zur Rechtsprechung neben der Treppe",
+      "acciones": "Schnell Aktionen",
+      "llamar": "Anrufen",
+      "escribir": "Schreiben",
+      "llamenos": "Rufen Sie uns an",
+      "copiar": "Kopieren Sie die Nummer",
+      "copiado": "Nummer kopiert",
+      "cerrar": "Schließen"
+    },
+    "zh": {
+      "formH": "写信给我们",
+      "pasos": [
+        "您的详细信息",
+        "您的问题"
+      ],
+      "continuar": "继续",
+      "regresar": "返回",
+      "resp": "我们的行政部门将回复。",
+      "otroMensaje": "再写一条消息",
+      "otroAsunto": "其他问题",
+      "datosTel": "电话",
+      "datosCorreo": "电子邮件",
+      "oficinasH": "我们的办公室",
+      "oficinasLead": "{{calle}}，位于{{ciudad}}。我们接待每位客户并准备其事务的房间。",
+      "oficinasLeadSinDir": "我们接待每位客户并准备其事务的房间。",
+      "oficinasMas": "办公室的更多照片",
+      "mapaCap": "位置",
+      "fotos": {
+        "fachada": {
+          "cap": "正面",
+          "txt": "Cerro de la Silla，反映在玻璃中。"
+        },
+        "vestibulo": {
+          "cap": "大堂",
+          "txt": "从夹层看到。"
+        },
+        "sala": {
+          "cap": "会议室",
+          "txt": "接待每位客户的地方。"
+        },
+        "escultura": {
+          "cap": "室内花园",
+          "txt": "蓝色雕塑。"
+        },
+        "biblioteca": {
+          "cap": "图书馆",
+          "txt": "楼梯旁边。"
+        },
+        "mezanine": {
+          "cap": "夹层",
+          "txt": "团队工作的地方。"
+        }
+      },
+      "altMezanine": "带工作站和玻璃栏杆的夹层",
+      "altSala": "铺有花岗岩的会议室桌子、大班椅和墙上色彩缤纷的抽象艺术品",
+      "altBiblioteca": "楼梯旁的木制书架上有大量判例法",
+      "acciones": "Quick操作",
+      "llamar": "致电",
+      "escribir": "写入",
+      "llamenos": "致电我们",
+      "copiar": "复制号码",
+      "copiado": "号码已复制",
+      "cerrar": "关闭"
+    },
+    "ko": {
+      "formH": "우리에게 편지 쓰기",
+      "pasos": [
+        "귀하의 세부 정보",
+        "귀하의 문제"
+      ],
+      "continuar": "계속",
+      "regresar": "뒤로",
+      "resp": "저희 관리 부서에서 답변해 드릴 것입니다.",
+      "otroMensaje": "다른 메시지를 작성하세요.",
+      "otroAsunto": "기타 문제",
+      "datosTel": "전화",
+      "datosCorreo": "이메일",
+      "oficinasH": "저희 사무실",
+      "oficinasLead": "{{calle}}, {{ciudad}}. 각 고객을 맞이하고 문제를 준비하는 공간입니다.",
+      "oficinasLeadSinDir": "각 고객을 수용하고 문제를 준비하는 공간입니다.",
+      "oficinasMas": "사무실 사진 더보기",
+      "mapaCap": "위치",
+      "fotos": {
+        "fachada": {
+          "cap": "외관",
+          "txt": "유리에 반사된 Cerro de la Silla."
+        },
+        "vestibulo": {
+          "cap": "로비",
+          "txt": "메자닌에서 본 로비."
+        },
+        "sala": {
+          "cap": "회의실",
+          "txt": "각 고객을 받는 곳."
+        },
+        "escultura": {
+          "cap": "실내 정원",
+          "txt": "파란색 조각품"
+        },
+        "biblioteca": {
+          "cap": "도서관",
+          "txt": "계단 옆."
+        },
+        "mezanine": {
+          "cap": "메자닌",
+          "txt": "팀이 일하는 곳."
+        }
+      },
+      "altMezanine": "워크스테이션과 유리 난간이 있는 메자닌",
+      "altSala": "벽에 걸린 화강암 테이블, 고급 의자 및 다채로운 추상 미술품",
+      "altBiblioteca": "계단 옆에 판례법 관련 서적이 있는 나무 책장",
+      "acciones": "빠른 작업",
+      "llamar": "전화",
+      "escribir": "쓰기",
+      "llamenos": "전화 걸기",
+      "copiar": "복사 번호",
+      "copiado": "복사된 번호",
+      "cerrar": "닫기"
+    },
+    "ja": {
+      "formH": "お問い合わせください",
+      "pasos": [
+        "詳細",
+        "件について"
+      ],
+      "continuar": "続行",
+      "regresar": "戻る",
+      "resp": "当社の管理部門返信します。",
+      "otroMensaje": "別のメッセージを書き込んでください",
+      "otroAsunto": "その他問題",
+      "datosTel": "電話",
+      "datosCorreo": "電子メール",
+      "oficinasH": "当社のオフィス",
+      "oficinasLead": "{{calle}} ({{ciudad}})。各クライアントを受け入れ、対応を準備する部屋。",
+      "oficinasLeadSinDir": "各クライアントを迎え、対応を準備する部屋。",
+      "oficinasMas": "オフィスの写真をもっと見る",
+      "mapaCap": "場所",
+      "fotos": {
+        "fachada": {
+          "cap": "ファサード",
+          "txt": "ガラスに映るCerro de la Silla。"
+        },
+        "vestibulo": {
+          "cap": "ロビー",
+          "txt": "中二階から見たところ。"
+        },
+        "sala": {
+          "cap": "役員室",
+          "txt": "各クライアントを受け入れる場所。"
+        },
+        "escultura": {
+          "cap": "中庭",
+          "txt": "青い彫刻。"
+        },
+        "biblioteca": {
+          "cap": "図書館",
+          "txt": "階段の横。"
+        },
+        "mezanine": {
+          "cap": "中 2 階",
+          "txt": "チームが働く場所。"
+        }
+      },
+      "altMezanine": "ワークステーションとガラスのある中 2 階手すり",
+      "altSala": "花崗岩のテーブル、エグゼクティブチェア、壁にはカラフルな抽象的なアートワークを備えた会議室",
+      "altBiblioteca": "階段の横には大量の判例法が入った木製の本棚",
+      "acciones": "Quickアクション",
+      "llamar": "電話する",
+      "escribir": "書く",
+      "llamenos": "電話する",
+      "copiar": "番号をコピーする",
+      "copiado": "番号コピーしました",
+      "cerrar": "閉じる"
+    },
+    "ar": {
+      "formH": "اكتب إلينا",
+      "pasos": [
+        "التفاصيل الخاصة بك",
+        "الخاص بك مسألة"
+      ],
+      "continuar": "متابعة",
+      "regresar": "رجوع",
+      "resp": "سيقوم قسم الإدارة لدينا بالرد.",
+      "otroMensaje": "اكتب آخر الرسالة",
+      "otroAsunto": "مسألة أخرى",
+      "datosTel": "الهاتف",
+      "datosCorreo": "البريد الإلكتروني",
+      "oficinasH": "المكاتب",
+      "oficinasLead": "{{calle}}، في {{ciudad}}. الغرف التي نستقبل فيها كل عميل ونجهز أموره.",
+      "oficinasLeadSinDir": "الغرف التي نستقبل فيها كل عميل ونجهز أموره.",
+      "oficinasMas": "مزيد من صور المكتب",
+      "mapaCap": "الموقع",
+      "fotos": {
+        "fachada": {
+          "cap": "ال الواجهة",
+          "txt": "Cerro de la Silla، منعكسة في الزجاج."
+        },
+        "vestibulo": {
+          "cap": "ردهة",
+          "txt": "يمكن رؤيتها من الطابق النصفي."
+        },
+        "sala": {
+          "cap": "الواجهة قاعة الاجتماعات",
+          "txt": "حيث يتم استقبال كل عميل."
+        },
+        "escultura": {
+          "cap": "الحديقة الداخلية",
+          "txt": "التمثال الأزرق."
+        },
+        "biblioteca": {
+          "cap": "المكتبة",
+          "txt": "بجانب الدرج."
+        },
+        "mezanine": {
+          "cap": "الطابق النصفي",
+          "txt": "حيث يعمل الفريق."
+        }
+      },
+      "altMezanine": "طابق الميزانين مع محطات عمل وزجاج درابزين",
+      "altSala": "غرفة اجتماعات بها طاولة من الجرانيت وكراسي تنفيذية وأعمال فنية مجردة ملونة على الحائط",
+      "altBiblioteca": "خزانة كتب خشبية تحتوي على مجلدات من السوابق القضائية بجوار الدرج",
+      "acciones": "سريع الإجراءات",
+      "llamar": "اتصال",
+      "escribir": "اكتب",
+      "llamenos": "اتصل بنا",
+      "copiar": "انسخ الرقم",
+      "copiado": "تم نسخ الرقم",
+      "cerrar": "إغلاق"
+    },
+    "ru": {
+      "formH": "Напишите нам",
+      "pasos": [
+        "Ваши данные",
+        "Ваши важно"
+      ],
+      "continuar": "Продолжить",
+      "regresar": "Назад",
+      "resp": "Наш административный отдел ответит.",
+      "otroMensaje": "Напишите еще сообщение",
+      "otroAsunto": "Другие вопросы",
+      "datosTel": "Телефон",
+      "datosCorreo": "Электронная почта",
+      "oficinasH": "Наш офисы",
+      "oficinasLead": "{{calle}}, в {{ciudad}}. Комнаты, где мы принимаем каждого клиента и готовим его дела.",
+      "oficinasLeadSinDir": "Комнаты, где мы принимаем каждого клиента и готовим его дела.",
+      "oficinasMas": "Больше фотографий офис",
+      "mapaCap": "Местоположение",
+      "fotos": {
+        "fachada": {
+          "cap": "Фасад",
+          "txt": "Cerro de la Silla, отражение в стекле."
+        },
+        "vestibulo": {
+          "cap": "Вестибюль",
+          "txt": "Вид из мезонина."
+        },
+        "sala": {
+          "cap": "Зал заседаний",
+          "txt": "Где принимается каждый клиент."
+        },
+        "escultura": {
+          "cap": "Интерьер сад",
+          "txt": "Синяя скульптура."
+        },
+        "biblioteca": {
+          "cap": "Библиотека",
+          "txt": "Рядом с лестницей."
+        },
+        "mezanine": {
+          "cap": "Мезонин",
+          "txt": "Где работает команда."
+        }
+      },
+      "altMezanine": "Мезонин с рабочими местами и стеклянными перилами",
+      "altSala": "Зал заседаний с гранитным столом, креслами для руководителей и яркими абстрактными произведениями искусства на стене",
+      "altBiblioteca": "Деревянный книжный шкаф с томами судебной практики рядом с лестницей",
+      "acciones": "Quick действия",
+      "llamar": "Позвоните",
+      "escribir": "Напишите",
+      "llamenos": "Позвоните нам",
+      "copiar": "Скопируйте номер",
+      "copiado": "Номер скопирован",
+      "cerrar": "Закрыть"
+    },
+    "fr": {
+      "formH": "Écrivez-nous",
+      "pasos": [
+        "Vos coordonnées",
+        "Votre affaire"
+      ],
+      "continuar": "Continuer",
+      "regresar": "Retour",
+      "resp": "Notre service administratif répondre.",
+      "otroMensaje": "Écrire un autre message",
+      "otroAsunto": "Autre sujet",
+      "datosTel": "Téléphone",
+      "datosCorreo": "E-mail",
+      "oficinasH": "Notre bureaux",
+      "oficinasLead": "{{calle}}, à {{ciudad}}. Les salles où nous recevons chaque client et préparons ses dossiers.",
+      "oficinasLeadSinDir": "Les salles où nous recevons chaque client et préparons ses dossiers.",
+      "oficinasMas": "Plus de photos du bureau",
+      "mapaCap": "Localisation",
+      "fotos": {
+        "fachada": {
+          "cap": "Les façade",
+          "txt": "Le Cerro de la Silla, reflété dans la vitre."
+        },
+        "vestibulo": {
+          "cap": "Le hall",
+          "txt": "Vu de la mezzanine."
+        },
+        "sala": {
+          "cap": "Le salle de réunion",
+          "txt": "L'endroit où chaque client est reçu."
+        },
+        "escultura": {
+          "cap": "Le jardin intérieur",
+          "txt": "La sculpture bleue."
+        },
+        "biblioteca": {
+          "cap": "La bibliothèque",
+          "txt": "À côté de l'escalier."
+        },
+        "mezanine": {
+          "cap": "La mezzanine",
+          "txt": "L'endroit où l'équipe travaille."
+        }
+      },
+      "altMezanine": "Mezzanine avec postes de travail et balustrade en verre",
+      "altSala": "Salle de réunion avec table en granit, chaises de direction et œuvres d'art abstraites colorées au mur",
+      "altBiblioteca": "Bibliothèque en bois avec des volumes de jurisprudence à côté de l'escalier",
+      "acciones": "Rapide actions",
+      "llamar": "Appelez",
+      "escribir": "Écrivez",
+      "llamenos": "Appelez-nous",
+      "copiar": "Copiez le numéro",
+      "copiado": "Numéro copié",
+      "cerrar": "Fermer"
+    },
+    "it": {
+      "formH": "Scrivici",
+      "pasos": [
+        "I tuoi dati",
+        "I tuoi questione"
+      ],
+      "continuar": "Continua",
+      "regresar": "Indietro",
+      "resp": "Il nostro dipartimento amministrativo ti risponderà.",
+      "otroMensaje": "Scrivi un altro messaggio",
+      "otroAsunto": "Altre questioni",
+      "datosTel": "Telefono",
+      "datosCorreo": "E-mail",
+      "oficinasH": "Il nostro uffici",
+      "oficinasLead": "{{calle}}, a {{ciudad}}. Le stanze in cui riceviamo ogni cliente e prepariamo le sue questioni.",
+      "oficinasLeadSinDir": "Le stanze in cui riceviamo ogni cliente e prepariamo le sue cose.",
+      "oficinasMas": "Altre fotografie del ufficio",
+      "mapaCap": "Posizione",
+      "fotos": {
+        "fachada": {
+          "cap": "La facciata",
+          "txt": "Il Cerro de la Silla, riflesso nel vetro."
+        },
+        "vestibulo": {
+          "cap": "L' Atrio",
+          "txt": "Visto dal soppalco."
+        },
+        "sala": {
+          "cap": "La sala riunioni",
+          "txt": "Dove viene ricevuto ogni cliente."
+        },
+        "escultura": {
+          "cap": "L'interno giardino",
+          "txt": "La scultura blu."
+        },
+        "biblioteca": {
+          "cap": "La biblioteca",
+          "txt": "Accanto alla scala."
+        },
+        "mezanine": {
+          "cap": "Il soppalco",
+          "txt": "Dove lavora il team."
+        }
+      },
+      "altMezanine": "Mezzanino con postazioni di lavoro e ringhiera in vetro",
+      "altSala": "Sala riunioni con un tavolo in granito, sedie direzionali e colorate opere d'arte astratte alle pareti",
+      "altBiblioteca": "Libreria in legno con volumi di giurisprudenza accanto alla scala",
+      "acciones": "Quick azioni",
+      "llamar": "Chiama",
+      "escribir": "Scrivi",
+      "llamenos": "Chiamaci",
+      "copiar": "Copia il numero",
+      "copiado": "Numero copiato",
+      "cerrar": "Chiudi"
+    }
+  },
+  "px": {
+    "de": {
+      "indice": "Inhalt",
+      "indiceLabel": "Dokumentinhalt",
+      "mezanineAlt": "Mezzanine mit Arbeitsplätzen und einem Glasgeländer",
+      "elegirArchivo": "Datei auswählen",
+      "sinArchivo": "Keine Datei ausgewählt"
+    },
+    "zh": {
+      "indice": "内容",
+      "indiceLabel": "文档内容",
+      "mezanineAlt": "带有工作站和玻璃栏杆的夹层",
+      "elegirArchivo": "选择文件",
+      "sinArchivo": "未选择文件"
+    },
+    "ko": {
+      "indice": "목차",
+      "indiceLabel": "문서 내용",
+      "mezanineAlt": "워크스테이션과 유리 난간이 있는 메자닌",
+      "elegirArchivo": "파일 선택",
+      "sinArchivo": "선택한 파일 없음"
+    },
+    "ja": {
+      "indice": "コンテンツ",
+      "indiceLabel": "ドキュメントのコンテンツ",
+      "mezanineAlt": "ワークステーションとガラス手すりのあるメザニン",
+      "elegirArchivo": "ファイルを選択",
+      "sinArchivo": "ファイルが選択されていません"
+    },
+    "ar": {
+      "indice": "المحتويات",
+      "indiceLabel": "محتويات المستند",
+      "mezanineAlt": "طابق نصفي به محطات عمل وحاجز زجاجي",
+      "elegirArchivo": "اختر ملف",
+      "sinArchivo": "لم يتم اختيار ملف"
+    },
+    "ru": {
+      "indice": "Содержание",
+      "indiceLabel": "Содержимое документа",
+      "mezanineAlt": "Мезонин с рабочими местами и стеклянными перилами",
+      "elegirArchivo": "Выберите файл",
+      "sinArchivo": "Файл не выбран"
+    },
+    "fr": {
+      "indice": "Contenu",
+      "indiceLabel": "Contenu du document",
+      "mezanineAlt": "Mezzanine avec postes de travail et garde-corps en verre",
+      "elegirArchivo": "Choisir un fichier",
+      "sinArchivo": "Aucun fichier choisi"
+    },
+    "it": {
+      "indice": "Contenuti",
+      "indiceLabel": "Contenuto del documento",
+      "mezanineAlt": "Soppalco con postazioni di lavoro e ringhiera in vetro",
+      "elegirArchivo": "Scegli file",
+      "sinArchivo": "Nessun file scelto"
+    }
+  }
+}

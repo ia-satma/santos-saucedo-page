@@ -9,7 +9,7 @@
    Números: los de la demo (3/7 y 4/7), que da la página. */
 import { Fragment, useLayoutEffect, useRef } from "react";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
-import type { V3Lang } from "@/v3/shared";
+import type { LanguageCode } from "@shared/constants";
 import { ANATOMIA, type SheetId } from "./textos";
 import { cerca } from "./cerca";
 
@@ -17,8 +17,8 @@ export function Anatomia({ sheets, nums, lang, attrs }: {
   sheets: SheetId[];
   /** número de cada lámina en la página, «n/total» */
   nums: Partial<Record<SheetId, string>>;
-  lang: V3Lang;
-  attrs: { lang?: string; dir?: "ltr" };
+  lang: LanguageCode;
+  attrs: { lang?: string; dir?: "ltr" | "rtl" };
 }) {
   const ref = useRef<HTMLElement>(null);
   const t = ANATOMIA[lang];

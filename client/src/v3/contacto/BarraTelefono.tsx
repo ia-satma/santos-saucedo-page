@@ -33,8 +33,8 @@ export default function BarraTelefono() {
 }
 
 function Barra({ location }: { location: string }) {
-  const { lang, attrs } = useV3Lang();
-  const ct = CT[lang];
+  const { lang, locale, attrs } = useV3Lang();
+  const ct = CT[locale];
   const firm = useSiteContact(lang);
   const [on, setOn] = useState(false);
   const [tipo, setTipo] = useState<Tipo | null>(null);

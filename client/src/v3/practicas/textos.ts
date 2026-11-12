@@ -1,7 +1,9 @@
 /* Textos de las láminas de las páginas de práctica (demo v3, aprobada el 5-11-2026).
    Español: tal cual en la demo (modules/anatomia/section.html y modules/figuras/section.html).
-   Inglés: misma voz institucional y callada. Los demás idiomas ven el inglés, con lang="en".
+   Inglés: misma voz institucional y callada. Los demás idiomas usan su copia localizada.
    El texto de cada práctica (descripción, servicios, equipo) NO vive aquí: viene de la base y del panel. */
+import type { LanguageCode } from "@shared/constants";
+import { localizedRecord } from "@/v3/locales";
 import type { V3Lang } from "@/v3/shared";
 import type { FgArea } from "./figurasSvg";
 
@@ -39,7 +41,7 @@ export interface FigurasTexts {
   laminas: Record<FgArea, FiguraText>;
 }
 
-export const ANATOMIA: Record<V3Lang, AnatomiaTexts> = {
+const ANATOMIA_BASE: Record<V3Lang, AnatomiaTexts> = {
   es: {
     aria: {
       both: "Anatomía de nuestra práctica laboral: prevención y solución",
@@ -138,7 +140,7 @@ export const ANATOMIA: Record<V3Lang, AnatomiaTexts> = {
   },
 };
 
-export const FIGURAS: Record<V3Lang, FigurasTexts> = {
+const FIGURAS_BASE: Record<V3Lang, FigurasTexts> = {
   es: {
     listLabel: (n) => `Componentes de la lámina ${n}`,
     sheetWord: "Lámina",
@@ -231,8 +233,15 @@ export const FIGURAS: Record<V3Lang, FigurasTexts> = {
   },
 };
 
+export const ANATOMIA: Record<LanguageCode, AnatomiaTexts> = localizedRecord("anatomia", ANATOMIA_BASE);
+export const FIGURAS: Record<LanguageCode, FigurasTexts> = localizedRecord("figuras", FIGURAS_BASE, (value) => {
+  const translated = value as Omit<FigurasTexts, "listLabel"> & { listLabel: string };
+  return { ...translated, listLabel: (n: number) => translated.listLabel.replace("{{n}}", String(n)) };
+});
+
 /** Textos de la página que no vienen de la base: fotos de cabecera, «Siguiente», etc. */
-export const PAGINA: Record<V3Lang, { next: string; nextAria: string; practicesAria: string; industries: string }> = {
+const PAGINA_BASE: Record<V3Lang, { next: string; nextAria: string; practicesAria: string; industries: string }> = {
   es: { next: "Siguiente", nextAria: "Siguiente página", practicesAria: "Prácticas", industries: "Industrias que asesoramos" },
   en: { next: "Next", nextAria: "Next page", practicesAria: "Practices", industries: "Industries we advise" },
 };
+export const PAGINA: Record<LanguageCode, { next: string; nextAria: string; practicesAria: string; industries: string }> = localizedRecord("pagina", PAGINA_BASE);

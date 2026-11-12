@@ -8,7 +8,7 @@
 import { useId } from "react";
 import { Link } from "wouter";
 
-type LangAttrs = { lang?: string; dir?: "ltr" };
+type LangAttrs = { lang?: string; dir?: "ltr" | "rtl" };
 
 export function SiguientePractica({
   href, label, labelAttrs, title, titleAttrs, practices, current, practicesLabel, allHref,

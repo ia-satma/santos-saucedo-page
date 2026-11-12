@@ -8,16 +8,19 @@ import "./sitio.css";
 import { useEffect, type ReactNode } from "react";
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { LanguageCode } from "@shared/constants";
 
 export type V3Lang = "es" | "en";
+export type V3Locale = LanguageCode;
 
-/** Idioma de los textos nuevos de la demo: español o inglés (los demás idiomas ven el inglés). */
-export function useV3Lang(): { lang: V3Lang; attrs: { lang?: string; dir?: "ltr" } } {
+/** Idioma base de la demo y el idioma real elegido por el visitante. */
+export function useV3Lang(): { lang: V3Lang; locale: V3Locale; attrs: { lang?: string; dir?: "ltr" | "rtl" } } {
   const { displayLanguage, language } = useLanguage();
   const lang: V3Lang = displayLanguage === "es" ? "es" : "en";
-  // Si el visitante eligió otro idioma (de, ar, ja…), el bloque declara que está en inglés
-  const attrs: { lang?: string; dir?: "ltr" } = lang === "en" && language !== "en" ? { lang: "en", dir: "ltr" } : {};
-  return { lang, attrs };
+  const attrs = language === "es" || language === "en"
+    ? {}
+    : { lang: language, dir: language === "ar" ? "rtl" as const : "ltr" as const };
+  return { lang, locale: language, attrs };
 }
 
 export { isRM } from "./rm";

@@ -11,7 +11,7 @@ import { initFilosofia, type ReaccionDatos } from "./filosofia";
 import { initPrioridad } from "./prioridad";
 import type { FirmaTextos, Lamina } from "./textos";
 
-type LangAttrs = { lang?: string; dir?: "ltr" };
+type LangAttrs = { lang?: string; dir?: "ltr" | "rtl" };
 
 /** El contenido del <svg> generado por la demo (build/*.mjs), sin la etiqueta raíz: React pone la raíz. */
 const interior = (svg: string) => ({ __html: svg.slice(svg.indexOf(">") + 1, svg.lastIndexOf("</svg>")) });

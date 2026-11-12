@@ -1,8 +1,9 @@
 /* Textos de /contact y del formulario de contacto (página y hoja «Escribir» del teléfono).
    Los de siempre (10 idiomas, editables en el panel: secciones «contact», «contact-consent» y
    «contact-feedback») vienen tal cual de la página anterior. Los nuevos de la demo v3 (aprobada el
-   5-11-2026) van en español, tal cual, y en inglés; los demás idiomas ven el inglés. */
+   5-11-2026) tienen copia para los diez idiomas. */
 import type { LanguageCode } from "@shared/schema";
+import { localizedRecord } from "@/v3/locales";
 import type { V3Lang } from "@/v3/shared";
 
 // Valor «otro asunto» del selector: los demás son los slugs de /api/practice-groups. No cambia: es lo que guarda /api/contact.
@@ -599,7 +600,7 @@ export interface TextosV3 {
   cerrar: string;
 }
 
-export const CT: Record<V3Lang, TextosV3> = {
+const CT_BASE: Record<V3Lang, TextosV3> = {
   es: {
     formH: "Escríbanos",
     pasos: ["Sus datos", "Su asunto"],
@@ -669,3 +670,10 @@ export const CT: Record<V3Lang, TextosV3> = {
     cerrar: "Close",
   },
 };
+export const CT: Record<LanguageCode, TextosV3> = localizedRecord("contacto", CT_BASE, (value) => {
+  const translated = value as Omit<TextosV3, "oficinasLead"> & { oficinasLead: string };
+  return {
+    ...translated,
+    oficinasLead: (calle: string, ciudad: string) => translated.oficinasLead.replace("{{calle}}", calle).replace("{{ciudad}}", ciudad),
+  };
+});
