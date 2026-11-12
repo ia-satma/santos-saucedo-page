@@ -10,8 +10,9 @@
 import { Fragment, useLayoutEffect, useRef } from "react";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import type { LanguageCode } from "@shared/constants";
-import { ANATOMIA, type SheetId } from "./textos";
+import { type SheetId, type AnatomiaTexts } from "./textos";
 import { cerca } from "./cerca";
+import { useV3Content } from "@/v3/useV3Content";
 
 export function Anatomia({ sheets, nums, lang, attrs }: {
   sheets: SheetId[];
@@ -21,7 +22,8 @@ export function Anatomia({ sheets, nums, lang, attrs }: {
   attrs: { lang?: string; dir?: "ltr" | "rtl" };
 }) {
   const ref = useRef<HTMLElement>(null);
-  const t = ANATOMIA[lang];
+  const { locale: v3 } = useV3Content();
+  const t = v3.anatomia as unknown as AnatomiaTexts;
   const first = sheets[0];
   const solo = sheets.length === 1 ? first : undefined;
   const lam = (id: SheetId) => nums[id] || "1/1";

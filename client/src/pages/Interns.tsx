@@ -9,10 +9,11 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { LanguageCode } from "@shared/schema";
-import { V3Main, V3NextPage, V3PageHeader, useV3Lang } from "@/v3/shared";
+import { V3Main, V3NextPage, V3PageHeader } from "@/v3/shared";
 import { nextLabel, useFotoOficina } from "@/v3/paginas-extra/piezas";
 import { Candidatura } from "@/v3/paginas-extra/Candidatura";
-import { PX } from "@/v3/paginas-extra/textos";
+import { useV3Content } from "@/v3/useV3Content";
+import type { PaginasExtraTexts } from "@/v3/paginas-extra/textos";
 
 // "Pasantías S&S" con espacio duro al pintarlo: el nombre del programa no se parte entre líneas
 const keepProgramName = (text: string) => text.replace(/Pasantías S&S/g, "Pasantías\u00a0S&S").replace(/S&S Internships/g, "S&S\u00a0Internships");
@@ -124,9 +125,9 @@ export default function Interns() {
   const baseT = editableContent[language as keyof typeof content] || editableContent.en;
   const t = { ...baseT, applyEmail: siteDetails.recruitmentEmail };
 
-  const { locale } = useV3Lang();
+  const { locale: v3 } = useV3Content();
   const foto = useFotoOficina();
-  const mezanine = foto("mezanine", language as LanguageCode, PX[locale].mezanineAlt);
+  const mezanine = foto("mezanine", language as LanguageCode, (v3.px as unknown as PaginasExtraTexts).mezanineAlt);
   const applyHref = `mailto:${t.applyEmail}?subject=${encodeURIComponent(t.heroTitle)}`;
   // Correo de reclutamiento en dos piezas: se parte tras la arroba si la columna es estrecha
   const [emailUser, emailDomain] = t.applyEmail.split("@");

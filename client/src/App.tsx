@@ -252,6 +252,8 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/about" component={About} />
         <Route path="/industries" component={Industries} />
+        <Route path="/industry-groups/:slug"><RedirectKeepingQuery to="/industries" /></Route>
+        <Route path="/industry-groups"><RedirectKeepingQuery to="/industries" /></Route>
         <Route path="/practice-groups" component={PracticeGroups} />
         <Route path="/practice-groups/:slug" component={PracticeGroupDetail} />
         <Route path="/team" component={Team} />

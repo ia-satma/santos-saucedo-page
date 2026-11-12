@@ -80,8 +80,8 @@ export const adminNavigation = [
       },
       {
         href: "/admin/industry-groups",
-        label: "Grupos por industria",
-        hint: "Catálogo de industrias",
+        label: "Industrias",
+        hint: "Catálogo de industrias que existe en el sitio",
         icon: LayersIcon,
       },
       {

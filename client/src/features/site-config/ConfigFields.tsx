@@ -50,7 +50,7 @@ export function ConfigFields({ value, onChange, path = [], media = false }: { va
     </select>
     {str in mediaDefaults.photos && <img src={mediaDefaults.photos[str as keyof typeof mediaDefaults.photos].smallUrl} alt="Vista de referencia del catálogo" className="h-32 w-48 rounded-lg object-cover" loading="lazy" />}
   </div>;
-  const isMedia = media && (/(url|logoLight|logoDark|favicon|poster|videoDesktop|videoMobile)$/i.test(key) || path.includes('teamMosaic'));
+  const isMedia = media && (/(url|logoLight|logoDark|favicon|poster|videoDesktop|videoMobile)$/i.test(key) || path.includes('teamMosaic') || path.includes('media'));
   return <div className="space-y-2"><label htmlFor={id} className="text-sm font-medium">{label}</label>
     {isMedia ? <MediaField id={id} value={str} onChange={onChange} video={/videoDesktop|videoMobile/.test(key)}/> : str.length>100 || /body|text|content|intro|description|instructions|note/i.test(key) ? <Textarea id={id} rows={Math.min(16,Math.max(3,Math.ceil(str.length/100)))} value={str} onChange={e=>onChange(e.target.value)} /> : <Input id={id} value={str} onChange={e=>onChange(e.target.value)} />}
   </div>;

@@ -83,7 +83,12 @@ export default function Telon({ lang }: { lang: V3Lang }) {
   const liveChrome = useCmsContent("chrome", chrome26);
   const hero = liveHome[lang].hero;
   const labels = liveChrome[lang].heroVideo;
-  const txt = TXT[language] ?? TXT.en;
+  const sourceTxt = TXT[language] ?? TXT.en;
+  const txt = {
+    firma: (hero as typeof hero & { firma?: string }).firma || sourceTxt.firma,
+    words: (hero as typeof hero & { words?: readonly string[] }).words || sourceTxt.words,
+    and: (hero as typeof hero & { and?: string }).and || sourceTxt.and,
+  };
 
   const tagline = hero.tagline || "";
   const parts = useMemo(() => splitFinal(tagline, txt.words[0]), [tagline, txt]);

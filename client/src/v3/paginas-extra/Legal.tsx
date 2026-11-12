@@ -5,7 +5,8 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { keepFirmName } from "@/lib/firmName";
 import { useV3Lang } from "@/v3/shared";
-import { PX } from "./textos";
+import { useV3Content } from "@/v3/useV3Content";
+import type { PaginasExtraTexts } from "./textos";
 
 // Teléfonos aislados de izquierda a derecha (<bdi dir="ltr">): en árabe, dentro del texto
 // corrido, los grupos de cifras salían invertidos ("2086 8335 81 52+"). "Santos & Saucedo"
@@ -87,8 +88,9 @@ export function LegalBody({
   phoneHref: string;
   phoneTestId: string;
 }) {
-  const { locale, attrs } = useV3Lang();
-  const T = PX[locale];
+  const { attrs } = useV3Lang();
+  const { locale: v3 } = useV3Content();
+  const T = v3.px as unknown as PaginasExtraTexts;
   const docsRef = useRef<HTMLDivElement>(null);
   const indiceRef = useRef<HTMLDetailsElement>(null);
   const [actual, setActual] = useState("");

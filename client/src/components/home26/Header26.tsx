@@ -199,7 +199,7 @@ export default function Header26({ localized = false, overlay = false }: Header2
         {...t.attrs}
         className={`ss26 ss-header group/hdr sticky top-0 z-50 text-white ${overlay ? "ss-header--home-hero" : ""} ${
           solid ? "bg-ss-navy" : "bg-transparent"
-        } ${scrolled ? "shadow-[0_1px_0_rgba(255,255,255,0.08)]" : ""} ${tucked && !panel ? "is-tucked" : ""}`}
+        } ${scrolled && !overlay ? "shadow-[0_1px_0_rgba(255,255,255,0.08)]" : ""} ${tucked && !panel ? "is-tucked" : ""}`}
         onFocus={() => setTucked(false)}
         data-testid="header"
       >

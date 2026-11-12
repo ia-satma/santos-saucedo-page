@@ -32,7 +32,8 @@ import { Figura } from "@/v3/practicas/Figura";
 import { Destacado } from "@/v3/practicas/Destacado";
 import { SiguientePractica } from "@/v3/practicas/Siguiente";
 import { LAMINAS_TOTAL, LAMINA_N, LEGACY_SLUGS, PRACTICE_V3, type Plate, type PracticeV3 } from "@/v3/practicas/config";
-import { PAGINA, type SheetId } from "@/v3/practicas/textos";
+import { type SheetId } from "@/v3/practicas/textos";
+import { useV3Content } from "@/v3/useV3Content";
 import "@/v3/practicas/practicas.css";
 import type { PracticeGroup, TeamMember, RepresentativeMatterDb } from "@shared/schema";
 import type { LanguageCode } from "@shared/constants";
@@ -208,6 +209,7 @@ export default function PracticeGroupDetail() {
   const cmsChrome = useCmsContent("chrome", chrome26);
   const { language } = useLanguage();
   const { lang, locale, attrs } = useV3Lang();
+  const { locale: v3 } = useV3Content();
   const params = useParams<{ slug: string }>();
   // Direcciones de la demo con otro nombre de práctica: a la del sitio, sin pedir la que no existe
   const legacy = params.slug ? LEGACY_SLUGS[params.slug] : undefined;
@@ -401,6 +403,7 @@ export default function PracticeGroupDetail() {
   if (legacy) return <Redirect to={`/practice-groups/${legacy}`} replace />;
 
   const cfg = (slug && PRACTICE_V3[slug]) || FALLBACK_V3;
+  const photoSrc = practiceGroup?.imageUrl || (v3.media.practices as Record<string, string>)[slug || ""] || `${BASE}${cfg.photo.src}`;
 
   // Práctica inexistente (enlace viejo o mal escrito): la misma vista 404 que la ficha de socio
   // (not-found.tsx): SEOHead page="notFound" (título propio y noindex), encabezado azul con
@@ -435,7 +438,7 @@ export default function PracticeGroupDetail() {
         <V3Main vista={cfg.vista} className="pd">
           <header className="sh-pp sh-cab" aria-busy="true" aria-labelledby={H1}>
             <figure className="sh-pp__foto">
-              <img src={`${BASE}${cfg.photo.src}`} srcSet={v3SrcSet(`${BASE}${cfg.photo.src}`, cfg.photo.w)} sizes={v3HeaderSizes(cfg.photo.w, cfg.photo.h)} {...{ fetchpriority: "high" }} alt="" width={cfg.photo.w} height={cfg.photo.h} style={{ objectPosition: cfg.photo.pos }} />
+              <img src={photoSrc} srcSet={v3SrcSet(photoSrc, cfg.photo.w)} sizes={v3HeaderSizes(cfg.photo.w, cfg.photo.h)} {...{ fetchpriority: "high" }} alt="" width={cfg.photo.w} height={cfg.photo.h} style={{ objectPosition: cfg.photo.pos }} />
             </figure>
             <div className="sh-wrap sh-pp__cuerpo">
               <div className="sh-pp__texto pd-cargando">
@@ -506,7 +509,7 @@ export default function PracticeGroupDetail() {
   // última, Industrias)
   const here = ordered.findIndex((g) => g.slug === practiceGroup.slug);
   const nextGroup = here >= 0 && here < ordered.length - 1 ? ordered[here + 1] : null;
-  const P = PAGINA[locale];
+  const P = v3.pagina as { next: string; nextAria: string; practicesAria: string; industries: string };
   const practicesRow = ordered.map((g) => ({ href: `/practice-groups/${g.slug}`, label: nameOf(g) }));
 
   const sortedMatters = representativeMatters
@@ -541,7 +544,7 @@ export default function PracticeGroupDetail() {
         {/* Foto a todo lo ancho; debajo, el nombre, el resumen y, a su lado, quienes llevan la práctica */}
         <V3PageHeader
           id={H1}
-          img={`${BASE}${cfg.photo.src}`}
+          img={photoSrc}
           alt={cfg.photo.alt[locale]}
           imgAttrs={attrs}
           width={cfg.photo.w}

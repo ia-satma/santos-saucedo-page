@@ -34,9 +34,10 @@ function usePartners(lang: V3Lang): Partner[] {
 export function SociosBand({ lang }: { lang: V3Lang }) {
   const ref = useRef<HTMLElement>(null);
   const { language } = useLanguage();
-  const t = homeCopyFor(language).socios;
-  // El titular, del panel (home.socios.title); el botón, de copy.ts
-  const titulo = useCmsContent("home", home26)[lang].socios.title;
+  const liveHome = useCmsContent("home", home26) as any;
+  const current = liveHome[language] ?? liveHome[lang] ?? liveHome.en;
+  const t = current.socios ?? homeCopyFor(language).socios;
+  const titulo = current.socios.title;
   const people = usePartners(lang);
   useV3Module(ref, initSocini, [people.map((p) => p.slug + p.imageUrl).join("|")]);
 

@@ -244,7 +244,7 @@ export default function IndustryGroupsSection() {
           return (
             <Link
               key={group.id}
-              href={`/industry-groups/${group.slug}`}
+              href={`/industries#in-${group.slug}`}
               data-testid={`link-industry-group-${group.id}`}
               aria-label={name}
               className="relative overflow-hidden cursor-pointer block"
@@ -335,7 +335,7 @@ export default function IndustryGroupsSection() {
           return (
             <Link
               key={group.id}
-              href={`/industry-groups/${group.slug}`}
+              href={`/industries#in-${group.slug}`}
               className="relative h-44 md:h-52 overflow-hidden group block"
               data-testid={`link-industry-group-mobile-${group.id}`}
               aria-label={name}
@@ -383,7 +383,7 @@ export default function IndustryGroupsSection() {
           </div>
         </div>
         <Link
-          href="/industry-groups"
+          href="/industries"
           className="ss-label inline-flex items-center gap-2 text-primary/75 hover:text-primary transition-colors duration-200 group"
           data-testid="link-industry-groups-see-more"
           aria-label={t.seeMoreAriaLabel}

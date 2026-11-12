@@ -9,7 +9,8 @@ import { useCmsMedia, type mediaDefaults } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useV3Lang, useV3Module } from "@/v3/shared";
-import { CT, type FotoClave } from "./textos";
+import { type FotoClave, type TextosV3 } from "./textos";
+import { useV3Content, v3Template } from "@/v3/useV3Content";
 
 type MediaFoto = keyof typeof mediaDefaults.photos;
 type OfficesCms = Record<string, { intro?: string; alt?: Record<string, string> }>;
@@ -59,8 +60,9 @@ export function Oficinas({
   const ref = useRef<HTMLElement>(null);
   useV3Module(ref, initOficinas);
   const { language } = useLanguage();
-  const { locale, attrs } = useV3Lang();
-  const ct = CT[locale];
+  const { attrs } = useV3Lang();
+  const { locale: v3 } = useV3Content();
+  const ct = v3.contacto as unknown as TextosV3;
   const media = useCmsMedia();
   const offices = useCmsContent("offices", cmsDefaults.offices as OfficesCms);
   const officeAlt = (offices[language] ?? offices.en)?.alt ?? {};
@@ -69,7 +71,9 @@ export function Oficinas({
   const calle = direccion[0] ?? "";
   // La ciudad: el primer tramo de la tercera línea del membrete («San Pedro Garza García, N.L.»)
   const ciudad = (direccion[2] ?? "").split(",")[0].trim();
-  const lead = calle && ciudad ? ct.oficinasLead(calle, ciudad) : ct.oficinasLeadSinDir;
+  const lead = calle && ciudad
+    ? typeof ct.oficinasLead === "function" ? ct.oficinasLead(calle, ciudad) : v3Template(ct.oficinasLead, { calle, ciudad })
+    : ct.oficinasLeadSinDir;
   const titulo = ct.oficinasH;
 
   const altDe = (f: (typeof FOTOS)[number]): { alt: string; en?: boolean } => {

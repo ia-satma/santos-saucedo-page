@@ -7,6 +7,7 @@ const groups = [
     label: "Páginas principales",
     keys: [
       "home",
+      "v3",
       "about",
       "offices",
       "officeLabels",

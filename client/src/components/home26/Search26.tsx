@@ -91,7 +91,7 @@ function toGroups(data: SearchResults, lang: LanguageCode): { id: GroupId; rows:
       rows: SHOW_INDUSTRIES
         ? (data.industryGroups ?? []).map((g) => {
             const name = pick(es, g.nameEs, g.name);
-            return { key: g.slug, href: `/industry-groups/${g.slug}`, title: name.text, titleLang: name.lang };
+            return { key: g.slug, href: `/industries#in-${g.slug}`, title: name.text, titleLang: name.lang };
           })
         : [],
     },

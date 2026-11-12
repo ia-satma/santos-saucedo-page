@@ -79,6 +79,38 @@ async function routeMetadata(pathname: string): Promise<RouteMetadata | undefine
     };
   }
 
+  const detailMatch = /^\/(es|en|de|zh|ko|ja|ar|ru|fr|it)\/(practice-groups|team)\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/.exec(pathname);
+  if (detailMatch) {
+    const language = detailMatch[1];
+    const type = detailMatch[2];
+    const slug = detailMatch[3];
+    const item = type === "practice-groups"
+      ? await storage.getPracticeGroupBySlug(slug)
+      : await storage.getTeamMemberBySlug(slug);
+    if (!item) return;
+    const contentType = type === "practice-groups" ? "practice_group" : "team_member";
+    const id = String(item.id);
+    const readTranslation = async (field: string) => (language === "es" ? undefined : await storage.getTranslation(contentType, id, field, language));
+    const translatedName = await readTranslation(type === "practice-groups" ? "name" : "name");
+    const translatedDescription = await readTranslation(type === "practice-groups" ? "description" : "bio");
+    const source = item as any;
+    const title = plainText(translatedName?.translatedText || (language === "es" ? source.nameEs || source.name : source.name));
+    const description = clip(plainText(translatedDescription?.translatedText || (language === "es" ? source.descriptionEs || source.bioEs || source.description || source.bio : source.description || source.bio)), 200);
+    const route = `/${type}/${slug}`;
+    const ownImage = source.imageUrl && !/placeholder/i.test(source.imageUrl) ? source.imageUrl : "";
+    return {
+      title,
+      documentTitle: title + " | Santos & Saucedo",
+      description,
+      url: SITE + "/" + language + route,
+      image: absoluteUrl(ownImage || NEWS_SHARE_IMAGE),
+      imageAlt: title || "Santos & Saucedo",
+      brandImage: !ownImage,
+      type: "website",
+      alternates: localizedAlternates(route),
+    };
+  }
+
   // The client updates these tags after hydration, but crawlers and link
   // unfurlers need the locale-specific canonical and hreflang tags in the
   // first HTML response as well. The CMS SEO snapshot already contains the

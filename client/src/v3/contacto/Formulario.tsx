@@ -17,7 +17,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContact } from "@/components/home26/useSiteContact";
 import { usePracticeNames } from "@/lib/practiceNames";
 import { isRM, useV3Lang } from "@/v3/shared";
-import { CONSENT, CONTACT_CONTENT, CT, FEEDBACK, OTHER_VALUE, VALIDATION } from "./textos";
+import { CONSENT, CONTACT_CONTENT, FEEDBACK, OTHER_VALUE, VALIDATION, type TextosV3 } from "./textos";
+import { useV3Content } from "@/v3/useV3Content";
 import "./contacto.css";
 
 const schemaFor = (language: LanguageCode) => {
@@ -55,8 +56,9 @@ export interface FormularioProps {
 
 export default function FormularioContacto({ idPrefix, dePagina = false }: FormularioProps) {
   const { language } = useLanguage();
-  const { lang, locale, attrs } = useV3Lang();
-  const ct = CT[locale];
+  const { lang, attrs } = useV3Lang();
+  const { locale: v3 } = useV3Content();
+  const ct = v3.contacto as unknown as TextosV3;
   const { toast } = useToast();
   const firm = useSiteContact(lang);
   const t = useCmsContent("contact", CONTACT_CONTENT)[language] ?? CONTACT_CONTENT.en;
@@ -70,7 +72,7 @@ export default function FormularioContacto({ idPrefix, dePagina = false }: Formu
   const { shortName } = usePracticeNames();
   const { data: practices = [] } = useQuery<PracticeGroup[]>({ queryKey: ["/api/practice-groups"] });
   const practiceLabel = (value: string, lng: LanguageCode): string => {
-    if (value === OTHER_VALUE) return lng === "es" ? CT.es.otroAsunto : lng === "en" ? CT.en.otroAsunto : CT[lng].otroAsunto;
+    if (value === OTHER_VALUE) return ct.otroAsunto;
     const p = practices.find((x) => x.slug === value);
     return (lng === "es" ? p?.nameEs : lng === "en" ? p?.name : shortName(value, lng)) ?? p?.name ?? value;
   };

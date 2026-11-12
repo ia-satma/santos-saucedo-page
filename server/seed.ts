@@ -76,7 +76,20 @@ export const practiceGroupsData = [
   },
 ];
 
-export const industryGroupsData = [];
+// Catálogo público de Industrias. La página /industries y el panel de contenido
+// comparten estas filas, para que el catálogo no quede vacío mientras el contenido
+// visual se mantiene editable desde el CMS.
+export const industryGroupsData = [
+  { name: "Soft drinks and beverages", nameEs: "Refresqueras y bebidas", slug: "bebidas", description: "Collective bargaining agreements, distribution centers and delivery personnel in continuous operation.", descriptionEs: "Contratos colectivos, centros de distribución y personal de reparto en operación continua.", fullDescription: "Collective bargaining agreements, distribution centers and delivery personnel in continuous operation.", fullDescriptionEs: "Contratos colectivos, centros de distribución y personal de reparto en operación continua.", iconName: "factory", imageUrl: "/v3/c-ind-bebidas.webp", order: 1, published: true },
+  { name: "Automotive and manufacturing", nameEs: "Automotriz y manufactura", slug: "automotriz", description: "Collective labor relations, inspections and compliance at plants that run several shifts.", descriptionEs: "Relaciones colectivas, inspecciones y cumplimiento en plantas con varios turnos.", fullDescription: "Collective labor relations, inspections and compliance at plants that run several shifts.", fullDescriptionEs: "Relaciones colectivas, inspecciones y cumplimiento en plantas con varios turnos.", iconName: "car-front", imageUrl: "/v3/c-ind-automotriz.webp", order: 2, published: true },
+  { name: "Steel", nameEs: "Acero", slug: "acero", description: "Health and safety, occupational risks and union relations in processes that never stop.", descriptionEs: "Seguridad e higiene, riesgos de trabajo y relaciones sindicales en procesos que no se detienen.", fullDescription: "Health and safety, occupational risks and union relations in processes that never stop.", fullDescriptionEs: "Seguridad e higiene, riesgos de trabajo y relaciones sindicales en procesos que no se detienen.", iconName: "factory", imageUrl: "/v3/c-ind-acero.webp", order: 3, published: true },
+  { name: "Energy and natural resources", nameEs: "Energía y recursos naturales", slug: "energia", description: "Specialized services, contractors and compliance in generation, transmission and mining projects.", descriptionEs: "Servicios especializados, contratistas y cumplimiento en proyectos de generación, transmisión y minería.", fullDescription: "Specialized services, contractors and compliance in generation, transmission and mining projects.", fullDescriptionEs: "Servicios especializados, contratistas y cumplimiento en proyectos de generación, transmisión y minería.", iconName: "zap", imageUrl: "/v3/c-ind-energia.webp", order: 4, published: true },
+  { name: "Consumer goods", nameEs: "Bienes de consumo", slug: "consumo", description: "Plants, distribution centers and sales forces with large workforces and peak seasons.", descriptionEs: "Plantas, centros de distribución y fuerza de ventas con plantillas grandes y temporadas altas.", fullDescription: "Plants, distribution centers and sales forces with large workforces and peak seasons.", fullDescriptionEs: "Plantas, centros de distribución y fuerza de ventas con plantillas grandes y temporadas altas.", iconName: "shopping-bag", imageUrl: "/v3/c-ind-consumo.webp", order: 5, published: true },
+  { name: "Pharmaceuticals and health", nameEs: "Farmacéutica y salud", slug: "farmaceutica", description: "Technical and laboratory staff, controlled production areas and medical representatives.", descriptionEs: "Personal técnico y de laboratorio, áreas de producción controladas y representantes médicos.", fullDescription: "Technical and laboratory staff, controlled production areas and medical representatives.", fullDescriptionEs: "Personal técnico y de laboratorio, áreas de producción controladas y representantes médicos.", iconName: "heart-pulse", imageUrl: "/v3/c-ind-farmaceutica.webp", order: 6, published: true },
+  { name: "Technology", nameEs: "Tecnología", slug: "tecnologia", description: "Specialized talent, remote work and electronics manufacturing at plants arriving in northern Mexico.", descriptionEs: "Talento especializado, teletrabajo y manufactura electrónica en plantas que llegan al norte del país.", fullDescription: "Specialized talent, remote work and electronics manufacturing at plants arriving in northern Mexico.", fullDescriptionEs: "Talento especializado, teletrabajo y manufactura electrónica en plantas que llegan al norte del país.", iconName: "cpu", imageUrl: "/v3/c-ind-tecnologia.webp", order: 7, published: true },
+  { name: "Real estate and construction", nameEs: "Inmobiliario y construcción", slug: "construccion", description: "Sites with contractors and subcontractors, temporary personnel and work at height.", descriptionEs: "Obras con contratistas y subcontratistas, personal eventual y trabajos en altura.", fullDescription: "Sites with contractors and subcontractors, temporary personnel and work at height.", fullDescriptionEs: "Obras con contratistas y subcontratistas, personal eventual y trabajos en altura.", iconName: "construction", imageUrl: "/v3/c-ind-construccion.webp", order: 8, published: true },
+  { name: "Financial services", nameEs: "Servicios financieros", slug: "financieros", description: "Branches, service centers and trusted employees, under the sector’s compliance demands.", descriptionEs: "Sucursales, centros de atención y personal de confianza, con las exigencias de cumplimiento del sector.", fullDescription: "Branches, service centers and trusted employees, under the sector’s compliance demands.", fullDescriptionEs: "Sucursales, centros de atención y personal de confianza, con las exigencias de cumplimiento del sector.", iconName: "landmark", imageUrl: "/v3/c-ind-financieros.webp", order: 9, published: true },
+];
 
 export const teamMembersData = [
   {
@@ -757,9 +770,51 @@ export async function seed() {
   }
 
   const existingIndustryGroups = await db.select().from(industryGroups);
-  if (existingIndustryGroups.length === 0 && industryGroupsData.length > 0) {
-    console.log("Seeding industry groups...");
-    await db.insert(industryGroups).values(industryGroupsData);
+  const industryAliases: Record<string, string> = {
+    "automotive-mobility-manufacturing": "automotriz",
+    "consumer-goods": "consumo",
+    "energy-natural-resources-industry": "energia",
+    "pharmaceutical-life-sciences": "farmaceutica",
+    "financial-services": "financieros",
+    "real-estate-industry": "construccion",
+    "technology-industry": "tecnologia",
+  };
+  for (const current of existingIndustryGroups) {
+    const nextSlug = industryAliases[current.slug];
+    if (!nextSlug) continue;
+    const seedRow = industryGroupsData.find((row) => row.slug === nextSlug);
+    if (!seedRow) continue;
+    const legacyName = [
+      "Automotriz, Movilidad y Manufactura",
+      "Bienes de Consumo",
+      "Energía y Recursos Naturales",
+      "Farmacéutica y Ciencias de la Salud",
+      "Servicios Financieros",
+      "Inmobiliario",
+      "Tecnología",
+    ].includes(current.nameEs);
+    await db.update(industryGroups).set({
+      slug: nextSlug,
+      slugEs: nextSlug,
+      ...(legacyName ? {
+        name: seedRow.name,
+        nameEs: seedRow.nameEs,
+        description: seedRow.description,
+        descriptionEs: seedRow.descriptionEs,
+        fullDescription: seedRow.fullDescription,
+        fullDescriptionEs: seedRow.fullDescriptionEs,
+        iconName: seedRow.iconName,
+      } : {}),
+      imageUrl: current.imageUrl || seedRow.imageUrl,
+      order: current.order || seedRow.order,
+    }).where(eq(industryGroups.id, current.id));
+  }
+  const afterAliases = await db.select({ slug: industryGroups.slug }).from(industryGroups);
+  const existingSlugs = new Set(afterAliases.map((row) => row.slug));
+  const missingIndustryGroups = industryGroupsData.filter((row) => !existingSlugs.has(row.slug));
+  if (missingIndustryGroups.length > 0) {
+    console.log(`Seeding ${missingIndustryGroups.length} missing industry groups...`);
+    await db.insert(industryGroups).values(missingIndustryGroups);
   }
 
   const existingTeamMembers = await db.select().from(teamMembers);

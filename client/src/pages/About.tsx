@@ -18,8 +18,10 @@ import { practiceName, usePracticeNames } from "@/lib/practiceNames";
 import type { LanguageCode, PracticeGroup } from "@shared/schema";
 import { V3Main, V3NextPage, V3PageHeader, useV3Lang } from "@/v3/shared";
 import { FirmaRaiz, FirmaTexto, LaminaCarnero, Oficina, Prioridad, Principios } from "@/v3/firma/Firma";
-import { HOME_FIRMA, TEXTOS } from "@/v3/firma/textos";
+import type { FirmaTextos } from "@/v3/firma/textos";
+import { HOME_FIRMA } from "@/v3/firma/textos";
 import { v3Asset } from "@/v3/asset";
+import { useV3Content } from "@/v3/useV3Content";
 
 // Cifras de /about: "40+" (sin tocar) y "72+" ciudades con presencia, la forma en cifras de
 // "más de 72" (redacción aprobada de la portada: "Ciudades en nuestra red de alianzas"). Fuera el conteo de
@@ -56,6 +58,7 @@ export default function About() {
   const { photos } = media;
   const officeNameFor = useOfficeLabel();
   const { language } = useLanguage();
+  const { locale: v3 } = useV3Content();
 
   const content: Record<LanguageCode, {
     title: string;
@@ -425,8 +428,8 @@ export default function About() {
   const cmsChrome = useCmsContent("chrome", chrome26);
   const nav = cmsChrome[language].nav;
   const t = { ...baseT, title: nav[0].label };
-  const { lang, locale, attrs } = useV3Lang();
-  const T = TEXTOS[locale];
+  const { lang, attrs } = useV3Lang();
+  const T = v3.firma as unknown as FirmaTextos;
   // La fachada: pie y texto alternativo de la antigua «La firma» de la portada (CMS home.firma)
   const fachada = useCmsContent("home", HOME_FIRMA)[lang].firma;
 

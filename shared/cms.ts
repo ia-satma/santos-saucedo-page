@@ -55,9 +55,9 @@ export const cmsSections: {
   },
   {
     key: "home",
-    label: "Portada",
+    label: "Inicio — todo el contenido",
     path: "/",
-    help: "Titulares, párrafos y textos de las secciones de Inicio. Prácticas y socios se editan en sus catálogos.",
+    help: "Una sola sección para editar el Inicio completo. Incluye héroe, firma, filosofía, prácticas, industrias, socios, botones, cifras y medios por idioma.",
   },
   {
     key: "layout",
@@ -232,6 +232,12 @@ export const cmsSections: {
     label: "Industrias — introducción",
     path: "/industry-groups",
     help: "Textos del listado de industrias.",
+  },
+  {
+    key: "v3",
+    label: "Páginas internas — textos, títulos e imágenes",
+    path: "/",
+    help: "Contenido editable de Socios, Perfil, Firma, Prácticas, Contacto y páginas extra. Cada idioma y medio se edita aquí sin tocar el código.",
   },
   {
     key: "industry-detail",

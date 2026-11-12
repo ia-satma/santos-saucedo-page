@@ -22,7 +22,7 @@ import type { TeamMember } from "@shared/schema";
 import { V3Main, V3NextPage, useV3Lang } from "@/v3/shared";
 import { SociosLienzo, OfCounsel, type LienzoPartner } from "@/v3/socios/Lienzo";
 import { EquipoMuro } from "@/v3/socios/Equipo";
-import { SOCIOS_TEXTS } from "@/v3/socios/texts";
+import { useV3Content } from "@/v3/useV3Content";
 import { firmPartners } from "@/v3/socios/partners";
 import { Mapa } from "@/v3/industrias/Mapa";
 import { INDUSTRIAS_TEXTS } from "@/v3/industrias/texts";
@@ -53,12 +53,17 @@ export default function Team() {
   const { teamMosaic: equipoPhotos } = useCmsMedia();
   const cmsChrome = useCmsContent("chrome", chrome26);
   const cmsLinks = useCmsContent("links", defaults.links);
+  const cmsIndustries = useCmsContent("industries", defaults.industries);
+  const cmsTeam = useCmsContent("team", defaults.team);
   const { language } = useLanguage();
   const { lang, locale, attrs } = useV3Lang();
+  const { locale: v3 } = useV3Content();
   // Dirección de la sede para el mapa (la misma del pie y de /contact)
   const { address: sede } = useSiteContact(locale);
-  const mapaTextos = useMemo(() => ({ ...INDUSTRIAS_TEXTS[locale].mapa, ...PRESENCIA[lang] }), [locale, lang]);
-  const tv = SOCIOS_TEXTS[locale];
+  const cmsMapa = (cmsIndustries[locale] as any)?.v3?.mapa;
+  const presencia = (cmsTeam[language] as any)?.presence ?? PRESENCIA[lang];
+  const mapaTextos = useMemo(() => ({ ...(cmsMapa ?? INDUSTRIAS_TEXTS[locale].mapa), ...presencia }), [cmsMapa, locale, presencia]);
+  const tv = v3.socios;
   const ownLang = true;
 
   const { data: allTeamMembers, isLoading: isLoadingAll, error: errorAll } = useQuery<TeamMember[]>({

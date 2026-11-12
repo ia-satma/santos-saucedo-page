@@ -7,9 +7,14 @@ import Header26 from "@/components/home26/Header26";
 import Footer26 from "@/components/home26/Footer26";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
+import defaults from "@shared/cms-defaults.json";
+import { useCmsContent } from "@/hooks/useCmsContent";
+import { useQuery } from "@tanstack/react-query";
+import type { IndustryGroup } from "@shared/schema";
 import { V3Main, V3NextPage, V3PageHeader, useV3Lang } from "@/v3/shared";
 import { Sectores } from "@/v3/industrias/Sectores";
 import { INDUSTRIAS_TEXTS } from "@/v3/industrias/texts";
+import type { IndustriasTexts } from "@/v3/industrias/texts";
 import { v3Asset } from "@/v3/asset";
 
 const H1 = "cab-industrias-h";
@@ -18,7 +23,29 @@ export default function Industries() {
   const { language } = useLanguage();
   const { lang, attrs } = useV3Lang();
   const selectedLang = language in INDUSTRIAS_TEXTS ? language : lang;
-  const t = INDUSTRIAS_TEXTS[selectedLang];
+  const base = INDUSTRIAS_TEXTS[selectedLang];
+  const industriesCms = useCmsContent("industries", defaults.industries as typeof defaults.industries);
+  const { data: catalog = [] } = useQuery<IndustryGroup[]>({ queryKey: ["/api/industry-groups"] });
+  const cmsText = industriesCms[language] ?? industriesCms.en;
+  const editorial = (cmsText.v3 ?? base) as typeof base;
+  const catalogBySlug = new Map(catalog.filter((group) => group.published !== false).map((group) => [group.slug, group]));
+  const known = editorial.industrias
+    .filter((item) => !catalog.length || catalogBySlug.has(item.id))
+    .map((item) => {
+      const group = catalogBySlug.get(item.id);
+      return group ? { ...item, nombre: selectedLang === "es" ? group.nameEs : selectedLang === "en" ? group.name : item.nombre, linea: selectedLang === "es" ? group.descriptionEs : selectedLang === "en" ? group.description : item.linea, img: group.imageUrl || item.img } : item;
+    });
+  const extra = catalog.filter((group) => !editorial.industrias.some((item) => item.id === group.slug)).map((group) => ({
+    id: group.slug,
+    img: group.imageUrl || editorial.industrias[0]?.img || "",
+    w: 2000,
+    h: 1333,
+    pos: "50% 50%",
+    nombre: selectedLang === "es" ? group.nameEs : group.name,
+    linea: selectedLang === "es" ? group.descriptionEs : group.description,
+    lista: [selectedLang === "es" ? group.fullDescriptionEs || group.descriptionEs : group.fullDescription || group.description],
+  }));
+  const t = { ...editorial, cab: cmsText.hero ?? editorial.cab, sigue: cmsText.next ?? editorial.sigue, industrias: [...known, ...extra] } as unknown as IndustriasTexts;
   const localizedAttrs = { ...attrs, lang: selectedLang };
 
   return (

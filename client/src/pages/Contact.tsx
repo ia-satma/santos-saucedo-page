@@ -13,13 +13,16 @@ import { anyPartnerHasDirectContact } from "@/lib/partnerContact";
 import { V3Main, useV3Lang } from "@/v3/shared";
 import FormularioContacto from "@/v3/contacto/Formulario";
 import { Oficinas } from "@/v3/contacto/Oficinas";
-import { CONTACT_CONTENT, CT } from "@/v3/contacto/textos";
+import { CONTACT_CONTENT } from "@/v3/contacto/textos";
+import { useV3Content } from "@/v3/useV3Content";
+import type { TextosV3 } from "@/v3/contacto/textos";
 import "@/v3/contacto/contacto.css";
 
 export default function Contact() {
   const { language } = useLanguage();
-  const { lang, locale } = useV3Lang();
-  const ct = CT[locale];
+  const { lang } = useV3Lang();
+  const { locale: v3 } = useV3Content();
+  const ct = v3.contacto as unknown as TextosV3;
   const nativo = language === "es" || language === "en";
   // Textos del panel (sección «contact», 10 idiomas)
   const t = useCmsContent("contact", CONTACT_CONTENT)[language] ?? CONTACT_CONTENT.en;

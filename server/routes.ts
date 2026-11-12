@@ -289,6 +289,7 @@ export async function registerRoutes(
     "/experience": "/practice-groups",
     "/articles": "/news",
     "/events": "/news",
+    "/industry-groups": "/industries",
   };
   for (const [from, to] of Object.entries(RETIRED_ROUTES)) {
     app.get([from, `${from}/*`], (req, res) => {
@@ -297,6 +298,12 @@ export async function registerRoutes(
       res.redirect(301, `${to}${query}`);
     });
   }
+  app.get(/^\/(es|en|de|zh|ko|ja|ar|ru|fr|it)\/industry-groups(?:\/.*)?$/, (req, res) => {
+    const language = req.params[0];
+    const queryStart = req.originalUrl.indexOf("?");
+    const query = queryStart >= 0 ? req.originalUrl.slice(queryStart) : "";
+    res.redirect(301, `/${language}/industries${query}`);
+  });
 
   // Orígenes admitidos: los de la lista de CORS (CORS_ORIGIN, la misma que server/index.ts) o el
   // propio sitio (mismo host, también detrás del proxy). Los usan los formularios públicos y el

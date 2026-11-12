@@ -9,14 +9,16 @@ import defaults from "@shared/cms-defaults.json";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useV3Lang } from "@/v3/shared";
-import { PX } from "./textos";
+import { useV3Content } from "@/v3/useV3Content";
+import type { PaginasExtraTexts } from "./textos";
 
 const MAX_CV = 10 * 1024 * 1024;
 
 export function Candidatura({ source = "careers", idPrefix }: { source?: string; idPrefix: string }) {
   const { language } = useLanguage();
-  const { locale, attrs } = useV3Lang();
-  const T = PX[locale];
+  const { attrs } = useV3Lang();
+  const { locale: v3 } = useV3Content();
+  const T = v3.px as unknown as PaginasExtraTexts;
   const settings = useCmsContent("forms", defaults.forms).careers;
   // Rótulos del panel en español e inglés; en los demás idiomas, el inglés (y el bloque lo declara)
   const t = settings.labels[language as "es" | "en"] || settings.labels.en;

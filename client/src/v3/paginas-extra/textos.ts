@@ -6,7 +6,7 @@ import type { LanguageCode } from "@shared/constants";
 import { localizedRecord } from "@/v3/locales";
 import type { V3Lang } from "@/v3/shared";
 
-type PaginasExtraTexts = {
+export type PaginasExtraTexts = {
   /** Índice de los avisos legales */
   indice: string;
   /** Nombre del índice para lectores de pantalla */

@@ -15,7 +15,8 @@ import { createPortal } from "react-dom";
 import { useLocation } from "wouter";
 import { useSiteContact } from "@/components/home26/useSiteContact";
 import { isRM, useV3Lang } from "@/v3/shared";
-import { CT } from "./textos";
+import { type TextosV3 } from "./textos";
+import { useV3Content } from "@/v3/useV3Content";
 import "./contacto.css";
 
 const cargarFormulario = () => import("./Formulario");
@@ -33,8 +34,9 @@ export default function BarraTelefono() {
 }
 
 function Barra({ location }: { location: string }) {
-  const { lang, locale, attrs } = useV3Lang();
-  const ct = CT[locale];
+  const { lang, attrs } = useV3Lang();
+  const { locale: v3 } = useV3Content();
+  const ct = v3.contacto as unknown as TextosV3;
   const firm = useSiteContact(lang);
   const [on, setOn] = useState(false);
   const [tipo, setTipo] = useState<Tipo | null>(null);

@@ -10,8 +10,9 @@ import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type Re
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import type { LanguageCode } from "@shared/constants";
 import { cargarDibujo, type FgArea, type FgDibujo } from "./figurasSvg";
-import { FIGURAS } from "./textos";
+import type { FigurasTexts } from "./textos";
 import { cerca } from "./cerca";
+import { useV3Content, v3Template } from "@/v3/useV3Content";
 
 // Marcas del calendario (la marca es también la leyenda de cada letrero)
 const MARCAS: ReactNode[] = [
@@ -41,7 +42,8 @@ export function Figura({ area, n, total, lang, attrs }: {
   // dibujo y script, cuando la lámina se acerca
   const [carga, setCarga] = useState<{ d: FgDibujo; init: (root: HTMLElement) => () => void } | null>(null);
   const d = carga?.d;
-  const T = FIGURAS[lang];
+  const { locale: v3 } = useV3Content();
+  const T = v3.figuras as unknown as FigurasTexts;
   const t = T.laminas[area];
   const ids = t.items.map((_, k) => `${n}.${k + 1}`);
   const tituloId = `fg-${area}-t`;
@@ -89,7 +91,7 @@ export function Figura({ area, n, total, lang, attrs }: {
         {d ? (
           <div className="fg-plano" style={cssVars(d.plano)} data-fg={datos}>
             <div className="fg-escena" dangerouslySetInnerHTML={{ __html: escena }} />
-            <ol className="fg-piezas" aria-label={T.listLabel(n)}>
+            <ol className="fg-piezas" aria-label={typeof T.listLabel === "function" ? T.listLabel(n) : v3Template(T.listLabel, { n })}>
               {t.items.map((it, k) => (
                 <li key={k} className="fg-pieza" data-p={ids[k]} style={{ "--x": d.piezas[k].x, "--y": d.piezas[k].y } as CSSProperties}>
                   <button type="button" className="fg-et" data-p={ids[k]} aria-pressed="false">

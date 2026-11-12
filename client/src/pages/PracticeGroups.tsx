@@ -11,11 +11,11 @@ import { useCmsMedia } from "@/lib/cmsMedia";
 import { chrome26 } from "@/components/home26/chrome26";
 import { practiceName, usePracticeNames } from "@/lib/practiceNames";
 import { V3Main, useV3Lang } from "@/v3/shared";
-import { PAGINA } from "@/v3/practicas/textos";
 import { SiguientePractica } from "@/v3/practicas/Siguiente";
 import { PracticasBaker, usePracticeItems, type PracticeItem } from "@/v3/home/Practicas";
 import { LaminaReaccion } from "@/v3/firma/Firma";
-import { TEXTOS as FIRMA_TEXTOS } from "@/v3/firma/textos";
+import { useV3Content } from "@/v3/useV3Content";
+import type { FirmaTextos } from "@/v3/firma/textos";
 import type { PracticeGroup } from "@shared/schema";
 import "./PracticeGroups.css";
 
@@ -112,7 +112,8 @@ export default function PracticeGroups() {
   const title = (cmsChrome[language as keyof typeof chrome26] ?? cmsChrome.en).nav[1].label;
   const emptyMessage = emptyMessages[language] || emptyMessages.en;
   const { lang: v3Lang, locale: v3Locale, attrs: v3Attrs } = useV3Lang();
-  const P = PAGINA[v3Locale];
+  const { locale: v3 } = useV3Content();
+  const P = v3.pagina;
   // Industrias: el título de la demo en ES/EN; en los otros idiomas, el rótulo del sitio en ese idioma
   const chromeL = cmsChrome[language as keyof typeof chrome26] ?? cmsChrome.en;
   const industriesTitle = language === "es" || language === "en" ? P.industries : chromeL.search.groups.industryGroups;
@@ -172,7 +173,7 @@ export default function PracticeGroups() {
         )}
 
         {/* La ventaja de la firma: prevenir y reaccionar son la misma pieza (lámina 2/7) */}
-        <LaminaReaccion t={FIRMA_TEXTOS[v3Locale]} attrs={v3Attrs} logo={media.brand.logoLight} />
+        <LaminaReaccion t={v3.firma as unknown as FirmaTextos} attrs={v3Attrs} logo={media.brand.logoLight} />
 
         {/* Al final, como en cada página de la demo: la siguiente parte, Industrias. «Siguiente» va en
             inglés fuera de ES/EN, marcado como inglés (lang/dir) */}

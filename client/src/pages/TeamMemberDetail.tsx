@@ -28,7 +28,7 @@ import { keepFirmName } from "@/lib/firmName";
 import defaults from "@shared/cms-defaults.json";
 import type { TeamMember, PracticeGroup, IndustryGroup, Education, Affiliation, Ranking, Publication, RepresentativeMatter, BarAdmission, News, LanguageCode } from "@shared/schema";
 import { V3Main, V3NextPage, useV3Lang } from "@/v3/shared";
-import { PERFIL_TEXTS } from "@/v3/socios/texts";
+import { useV3Content } from "@/v3/useV3Content";
 import { firmPartnerFallback, firmPartners } from "@/v3/socios/partners";
 import "@/v3/socios/perfil.css";
 
@@ -512,6 +512,7 @@ function Bloque({ title, testId, titleTestId, children }: { title: ReactNode; te
 export default function TeamMemberDetail() {
   const cmsChrome = useCmsContent("chrome", chrome26);
   const { language } = useLanguage();
+  const { locale: v3 } = useV3Content();
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
 
@@ -1167,7 +1168,7 @@ export default function TeamMemberDetail() {
 
   // Textos nuevos de la v3 (es/en; los demás idiomas ven el inglés, marcado lang="en") y enlaces
   const { lang, locale, attrs } = useV3Lang();
-  const P = PERFIL_TEXTS[locale];
+  const P = v3.perfil;
   const cmsLinks = useCmsContent("links", defaults.links);
 
   // «Siguiente»: la próxima persona de su grupo en el orden del panel (los cuatro socios, en el

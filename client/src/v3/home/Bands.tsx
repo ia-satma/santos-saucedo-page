@@ -40,8 +40,10 @@ const sinViuda = (s: string) => s.replace(/\s+(\S+)\s*$/, "\u00a0$1");
     (about.stats); el botón y las etiquetas, de copy.ts. */
 export function IntroBand({ lang, areas }: { lang: V3Lang; areas: number }) {
   const { language } = useLanguage();
-  const t = homeCopyFor(language).intro;
-  const f = useCmsContent("home", home26)[lang].firma;
+  const liveHome = useCmsContent("home", home26) as any;
+  const current = liveHome[language] ?? liveHome[lang] ?? liveHome.en;
+  const t = current.intro ?? homeCopyFor(language).intro;
+  const f = current.firma;
   const stats = useCmsContent("about", defaults.about)[lang]?.stats;
   const anos = stats?.[0]?.value?.trim() || "40+";
   const ciudades = stats?.[1]?.value?.trim() || "72+";
@@ -68,8 +70,11 @@ export function IntroBand({ lang, areas }: { lang: V3Lang; areas: number }) {
     bloque nunca queda plano. Nombres, líneas y fotos son los de la página «Industrias». */
 export function IndustriasBand({ lang }: { lang: V3Lang }) {
   const { language } = useLanguage();
-  const t = homeCopyFor(language).industrias;
-  const items = INDUSTRIAS_TEXTS[lang].industrias;
+  const liveHome = useCmsContent("home", home26) as any;
+  const industriesCms = useCmsContent("industries", defaults.industries) as any;
+  const current = liveHome[language] ?? liveHome[lang] ?? liveHome.en;
+  const t = current.industrias ?? homeCopyFor(language).industrias;
+  const items = industriesCms[language]?.v3?.industrias ?? industriesCms[lang]?.v3?.industrias ?? INDUSTRIAS_TEXTS[lang].industrias;
   const [abierta, setAbierta] = useState(0);
   const fotos = useFotosDiferidas();
   return (
@@ -80,7 +85,7 @@ export function IndustriasBand({ lang }: { lang: V3Lang }) {
           <Link className="sh-boton" href="/industries">{t.boton}</Link>
         </div>
         <ul className="hm-acord" role="list">
-          {items.map((it, i) => {
+          {items.map((it: any, i: number) => {
             const on = i === abierta;
             const panel = `hm-acord-${it.id}`;
             return (
@@ -104,7 +109,7 @@ export function IndustriasBand({ lang }: { lang: V3Lang }) {
                 <div className="hm-acord__panel" id={panel} hidden={!on}>
                   <p className="hm-acord__linea">{it.linea}</p>
                   <ul className="hm-acord__asuntos" role="list">
-                    {it.lista.slice(0, 3).map((x) => <li key={x}>{x}</li>)}
+                    {it.lista.slice(0, 3).map((x: string) => <li key={x}>{x}</li>)}
                   </ul>
                   <Link className="hm-acord__ir" href={`/industries#in-${it.id}`} tabIndex={on ? 0 : -1}>{t.ver}</Link>
                 </div>
@@ -121,13 +126,17 @@ export function IndustriasBand({ lang }: { lang: V3Lang }) {
     Textos del panel (home.creemos): quote = titular, body[0] = párrafo, label = botón. */
 export function FilosofiaBand({ lang }: { lang: V3Lang }) {
   const ref = useRef<HTMLElement>(null);
-  const c = useCmsContent("home", home26)[lang].creemos;
+  const { language } = useLanguage();
+  const liveHome = useCmsContent("home", home26) as any;
+  const current = liveHome[language] ?? liveHome[lang] ?? liveHome.en;
+  const c = current.creemos;
+  const media = current.media ?? {};
   useV3Module(ref, initFilo);
   const fotos = useFotosDiferidas();
   return (
     <section ref={ref} className="sh-filo sobre-azul" aria-labelledby="ini-filo-h">
       <figure className="sh-filo__foto" aria-hidden="true">
-        <img data-no-parallax="" src={fotos ? v3Asset("/v3/c-reaccion.webp") : undefined} alt="" width={2400} height={1600} loading="lazy" decoding="async" />
+        <img data-no-parallax="" src={fotos ? media.filosofia ?? v3Asset("/v3/c-reaccion.webp") : undefined} alt="" width={2400} height={1600} loading="lazy" decoding="async" />
       </figure>
       <div className="sh-wrap sh-filo__in">
         <h2 id="ini-filo-h" className="sh-filo__frase">{sinViuda(c.quote)}</h2>
