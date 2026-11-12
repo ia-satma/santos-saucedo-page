@@ -238,7 +238,8 @@ try {
     v.ga4.measurementId = "";
   });
   const html = await injectSiteMetadata(
-    "<head></head><body>https://www.santossaucedo.com/</body>",
+    "<head><link rel=\"canonical\" href=\"https://www.santossaucedo.com\" /></head><body>https://www.santossaucedo.com/</body>",
+    "https://santos.example.test/es/contact",
   );
   assert(
     html.includes(
@@ -246,7 +247,8 @@ try {
     ),
   );
   assert(html.includes("https://santos.example.test/"));
-  count += 2;
+  assert(html.includes('rel="canonical" href="https://santos.example.test/es/contact"'));
+  count += 3;
   const invalidGa = structuredClone(integrations.content);
   invalidGa.ga4.enabled = true;
   expect(

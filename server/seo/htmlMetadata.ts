@@ -149,9 +149,11 @@ async function routeMetadata(pathname: string): Promise<RouteMetadata | undefine
         : typeof map.es === "string" ? map.es as string : "";
   };
   const fallbackSeo = await readStaticCmsSection("seo", language) as Record<string, any> | undefined;
-  const title = plainText(pick(embeddedRoute?.title) || pick(fallbackSeo?.[key]?.title));
-  const description = clip(plainText(pick(embeddedRoute?.description) || pick(fallbackSeo?.[key]?.description)), 200);
-  if (!title) return;
+  const title = plainText(pick(embeddedRoute?.title) || pick(fallbackSeo?.[key]?.title)) || "Santos & Saucedo";
+  const description = clip(
+    plainText(pick(embeddedRoute?.description) || pick(fallbackSeo?.[key]?.description)) || "Santos & Saucedo",
+    200,
+  );
   return {
     title,
     documentTitle: title,
