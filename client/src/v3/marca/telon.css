@@ -5,6 +5,10 @@
    su alto para quedar debajo de él, como el héroe anterior: la escena ocupa toda la pantalla. */
 .ss26:has(> .ss-header) .v3.mk-raiz{margin-top:calc(-1 * var(--ss-header-h))}
 
+/* La portada comparte borde y sombra con el encabezado general. Al ocultarse durante el telón,
+   esa línea queda flotando sobre el video y parece un corte del medio. */
+.ss26.ss-header--home-hero{box-shadow:none !important;border-bottom:0 !important}
+
 /* Fondo del encabezado mientras la § está cerrada sobre el claro: Header26 va en blanco (logo blanco
    y lima); arriba del todo es transparente y, al bajar, Azul noche sólido. Esta franja le da ese
    mismo fondo desde el primer cuadro; se retira cuando la escena cubre la pantalla (el mismo momento
