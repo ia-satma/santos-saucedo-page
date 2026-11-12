@@ -1,5 +1,5 @@
 import type { Express, Request, Response } from "express";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { ALL_AGENT_IDS, type AgentId } from "@shared/agentConstants";
 import { authMiddleware, requirePermission } from "../auth";
 import { inspectAiData } from "../ai/dataGovernance";

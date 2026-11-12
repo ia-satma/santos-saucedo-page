@@ -1,7 +1,7 @@
 import type { Express, Request, Response } from "express";
 import { createHash, randomBytes } from "node:crypto";
 import { and, desc, eq, or, sql } from "drizzle-orm";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { editorialDb } from "../db";
 import {
   adminUsers,

@@ -73,7 +73,6 @@ export function broadcastPipelineProgress(articleId: string, data: {
 import { 
   contactFormSchema, 
   adminLoginSchema, 
-  insertBlogPostSchema,
   insertBlogCategorySchema,
   insertBlogTagSchema,
   insertNewsSchema,
@@ -96,7 +95,7 @@ import {
 import { isNamedOnTeamPage, toPublicTeamMember, toPublicTeamProfile } from "@shared/teamVisibility";
 import { isPublicNews, toPublicNews } from "@shared/publicNews";
 import { desc, eq } from "drizzle-orm";
-import { z, ZodError } from "zod";
+import { z, ZodError } from "zod/v3";
 import {
   SUPPORTED_LANGUAGES,
   translateLegalText,
@@ -104,6 +103,24 @@ import {
   suggestTranslation,
   type LanguageCode,
 } from "./openai";
+
+const blogPostAdminSchema = z.object({
+  title: z.string().trim().min(1).max(240),
+  titleEs: z.string().trim().min(1).max(240),
+  slug: z.string().trim().min(1).max(180),
+  content: z.string().nullable().optional(),
+  contentEs: z.string().nullable().optional(),
+  excerpt: z.string().nullable().optional(),
+  excerptEs: z.string().nullable().optional(),
+  featuredImage: z.string().nullable().optional(),
+  categoryId: z.string().nullable().optional(),
+  publishedAt: z.coerce.date().nullable().optional(),
+  status: z.enum(["draft", "published", "trash"]).default("draft"),
+  metaTitle: z.string().nullable().optional(),
+  metaTitleEs: z.string().nullable().optional(),
+  metaDescription: z.string().nullable().optional(),
+  metaDescriptionEs: z.string().nullable().optional(),
+}).strict();
 import {
   hashPassword,
   comparePassword,
@@ -1447,15 +1464,12 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // Create blog post
   app.post("/api/admin/posts", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
-      const validation = insertBlogPostSchema.omit({authorId:true,deletedAt:true}).extend({publishedAt:z.coerce.date().nullable().optional(),status:z.enum(["draft","published","trash"]).default("draft")}).safeParse({
-        ...req.body,
-        authorId: req.adminUser!.id,
-      });
+      const validation = blogPostAdminSchema.safeParse(req.body);
       
       if (!validation.success) {
         return res.status(400).json({ 
           error: "Validation failed", 
-          details: validation.error.errors 
+          details: validation.error.issues
         });
       }
 
@@ -1465,7 +1479,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         return res.status(400).json({ error: "Slug already exists" });
       }
 
-      const post = await storage.createBlogPost({...validation.data,authorId:req.adminUser!.id});
+      const post = await storage.createBlogPost({...validation.data, authorId: req.adminUser!.id});
       res.status(201).json(post);
     } catch (error) {
       console.error("Create post error:", error);
@@ -1489,7 +1503,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         }
       }
 
-      const parsed=insertBlogPostSchema.omit({authorId:true,deletedAt:true}).extend({publishedAt:z.coerce.date().nullable().optional(),status:z.enum(["draft","published","trash"])}).partial().safeParse(req.body);
+      const parsed = blogPostAdminSchema.partial().safeParse(req.body);
       if(!parsed.success)return res.status(400).json({error:"Validation failed",details:parsed.error.errors});
       const post = await storage.updateBlogPost(req.params.id, parsed.data);
       res.json(post);

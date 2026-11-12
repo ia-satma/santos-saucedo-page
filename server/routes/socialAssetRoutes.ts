@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { stat } from "node:fs/promises";
 import type { Express, Request, Response } from "express";
-import { z } from "zod";
+import { z } from "zod/v3";
 import type { SocialAsset, InsertSocialAsset } from "@shared/schema";
 import { MAX_EDITORIAL_NOTES_CHARACTERS, MAX_EDITORIAL_SOURCE_CHARACTERS } from "@shared/editorialSources";
 import {

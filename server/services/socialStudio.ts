@@ -4,7 +4,7 @@ import path from "node:path";
 import JSZip from "jszip";
 import type { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions";
 import sharp from "sharp";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { SUPPORTED_LANGUAGES } from "@shared/constants";
 import {
   socialContentSchema, socialCopiesSchema, socialFormats, socialFormatSchema, socialImageRefSchema,

@@ -2,7 +2,7 @@ import type { Express, RequestHandler } from "express";
 import multer from "multer";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { PDFDocument } from "pdf-lib";
 import { desc, eq } from "drizzle-orm";
 import { db } from "../db";

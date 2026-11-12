@@ -3,8 +3,8 @@ import { pgTable, text, varchar, timestamp, integer, boolean, jsonb, index, uniq
 import type { SocialRevision } from "./socialStudio";
 import type { LetterheadTemplateId } from "./letterheadTemplates";
 import { documentRichTextSchema } from "./documentRichText";
-import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod";
+import { createInsertSchema } from "./drizzleZodCompat";
+import { z } from "zod/v3";
 // Constantes sin base de datos: viven en ./constants para que el sitio público no cargue drizzle ni zod.
 export { newsCategories, eventTypes, SUPPORTED_LANGUAGES, jobTypes, TESTIMONIAL_QUOTE_MAX, type LanguageCode, type SupportedLanguage } from "./constants";
 import { newsCategories, eventTypes, SUPPORTED_LANGUAGES, jobTypes, TESTIMONIAL_QUOTE_MAX, type LanguageCode } from "./constants";
@@ -955,10 +955,11 @@ export const clientPracticeGroups = pgTable("client_practice_groups", {
 // Testimonios de clientes con aprobación humana (junta 16-10-2026). Llegan por un enlace de
 // invitación de un solo uso o los captura el despacho en el panel; todos entran "pending".
 // En /testimonios solo sale status = "approved" y published = true (ocultar = published false).
-// quote es el comentario tal como lo escribió el cliente; quote_es y los campos *_es, source,
+// quote es el comentario tal como lo escribió el cliente; la captura entra como captured,
+// pasa a pending y nunca se publica sin aprobación humana. quote_es y los campos *_es, source,
 // year, foto y práctica son de la plantilla anterior y no se usan.
 // Las columnas nuevas también las crea ensureTestimonialSchema al arrancar (producción).
-export const TESTIMONIAL_STATUSES = ["pending", "approved", "rejected"] as const;
+export const TESTIMONIAL_STATUSES = ["captured", "pending", "approved", "rejected"] as const;
 export type TestimonialStatus = (typeof TESTIMONIAL_STATUSES)[number];
 
 export const testimonials = pgTable("testimonials", {
@@ -981,6 +982,7 @@ export const testimonials = pgTable("testimonials", {
   status: text("status").notNull().default("pending"),
   // El cliente decide si su empresa se muestra junto a su nombre y puesto
   showCompany: boolean("show_company").notNull().default(false),
+  rating: integer("rating").notNull().default(5),
   language: text("language"),
   // "invite" (enlace de un solo uso) o "panel" (capturado por el despacho)
   origin: text("origin").notNull().default("panel"),

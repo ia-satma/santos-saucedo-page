@@ -1,6 +1,6 @@
 import type { Express, Request, RequestHandler, Response, NextFunction } from "express";
 import crypto from "node:crypto";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { and, asc, desc, eq, gt, isNull, sql } from "drizzle-orm";
 import { db, editorialDb } from "../db";
 import {
@@ -15,6 +15,7 @@ import { authMiddleware } from "../auth";
 import { isReadOnlyAdmin } from "@shared/adminAccess";
 import { recordAccessEvent } from "../cms/accessAudit";
 import { getCmsIntegrations } from "../cms/siteConfig";
+import { fetchGooglePlaceReviews, googleReviewSourceId } from "../services/googleTestimonials";
 
 // Testimonios de clientes (junta 16-10-2026, Mario y Gabriel): el cliente escribe su comentario
 // desde un enlace de un solo uso que genera el despacho; nada se publica sin aprobación.
@@ -67,14 +68,16 @@ const panelFields = {
   authorCompany: oneLine(160),
   quote: paragraph,
   showCompany: z.boolean(),
+  rating: z.number().int().min(1).max(5),
 };
 // Captura en el panel (comentario recibido por correo o en persona): el despacho confirma que
-// tiene la autorización por escrito; entra como pendiente, igual que los del enlace
+// tiene la autorización por escrito; entra como capturado y pasa a revisión humana antes de aprobarse
 const panelCreateSchema = z.object({
   ...panelFields,
   authorTitle: panelFields.authorTitle.optional(),
   authorCompany: panelFields.authorCompany.optional(),
   showCompany: panelFields.showCompany.default(false),
+  rating: panelFields.rating.default(5),
   consentConfirmed: z.literal(true),
 });
 const panelEditSchema = z
@@ -104,6 +107,7 @@ export function toPublicTestimonial(t: Testimonial) {
     authorName: t.authorName,
     authorTitle: t.authorTitle || "",
     company: t.showCompany && t.authorCompany ? t.authorCompany : "",
+    rating: Math.min(5, Math.max(1, t.rating || 5)),
   };
 }
 
@@ -211,7 +215,7 @@ export function registerTestimonials(
             language: data.language ?? null,
             origin: "invite",
             inviteId: invite.id,
-            status: "pending",
+            status: "captured",
             published: false,
             consentAt: new Date(),
           })
@@ -223,7 +227,7 @@ export function registerTestimonials(
         return row;
       });
       if (!created) return res.status(410).json({ error: "INVITE_INVALID" });
-      console.log(`[Testimonials] New submission ${created.id} (pending)`);
+      console.log(`[Testimonials] New submission ${created.id} (captured)`);
       res.status(201).json({ success: true });
     } catch (error) {
       console.error("[Testimonials] Submit failed", (error as Error).message);
@@ -259,6 +263,37 @@ export function registerTestimonials(
       res.json(rows);
     } catch {
       res.status(503).json({ error: "No se pudieron cargar los testimonios." });
+    }
+  });
+
+  app.post("/api/admin/testimonials/import-google", ...panel, async (_req, res) => {
+    try {
+      const reviews = await fetchGooglePlaceReviews();
+      const existing = await db
+        .select({ source: testimonials.source })
+        .from(testimonials);
+      const known = new Set(existing.map((row) => row.source).filter(Boolean));
+      const pending = reviews.filter((review) => !known.has(googleReviewSourceId(review.id)));
+      if (pending.length) {
+        await db.insert(testimonials).values(pending.map((review) => ({
+          quote: review.quote,
+          authorName: review.authorName,
+          authorTitle: "Google Maps",
+          source: googleReviewSourceId(review.id),
+          sourceEs: review.mapsUrl || "https://www.google.com/maps",
+          rating: review.rating,
+          language: review.language || null,
+          origin: "google",
+          status: "captured",
+          published: false,
+          showCompany: false,
+          consentAt: null,
+          updatedAt: new Date(),
+        })));
+      }
+      res.json({ imported: pending.length, reviewed: reviews.length, captured: pending.length });
+    } catch (error) {
+      res.status(503).json({ error: error instanceof Error ? error.message : "No se pudieron importar las reseñas de Google." });
     }
   });
 
@@ -331,7 +366,7 @@ export function registerTestimonials(
           authorTitle: data.authorTitle || null,
           authorCompany: data.authorCompany || null,
           origin: "panel",
-          status: "pending",
+          status: "captured",
           published: false,
           consentAt: new Date(),
           updatedAt: new Date(),
@@ -382,7 +417,7 @@ export function registerTestimonials(
     }
   });
 
-  // Aprobar, rechazar o regresar a pendiente: solo el administrador principal. Se registra quién
+  // Pasar a revisión, aprobar o rechazar: solo el administrador principal. Se registra quién
   // aprobó y cuándo
   app.post("/api/admin/testimonials/:id/status", ...panel, adminOnly, async (req, res) => {
     const parsed = z.object({ status: z.enum(["pending", "approved", "rejected"]) }).safeParse(req.body ?? {});
@@ -390,6 +425,11 @@ export function registerTestimonials(
     const status = parsed.data.status;
     const now = new Date();
     try {
+      const [current] = await db.select({ status: testimonials.status }).from(testimonials).where(eq(testimonials.id, req.params.id));
+      if (!current) return res.status(404).json({ error: "Testimonio no encontrado." });
+      if (status === "approved" && current.status !== "pending") {
+        return res.status(409).json({ error: "El testimonio debe pasar primero a pendientes para solicitar aprobación." });
+      }
       const [row] = await db
         .update(testimonials)
         .set({

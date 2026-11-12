@@ -9,7 +9,7 @@ import { useCmsContent } from "@/hooks/useCmsContent";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, isStaticSite } from "@/lib/queryClient";
@@ -288,7 +288,7 @@ export default function Newsletter() {
 
   const formSettings = useCmsContent("forms",cmsDefaults.forms).newsletter;
   const form = useForm<NewsletterFormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema as any),
     defaultValues: {
       email: "",
       consent: false,

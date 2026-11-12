@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createHash } from "node:crypto";
 import { sql } from "drizzle-orm";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { editorialDb } from "../db";
 import { authMiddleware, requireRole } from "../auth";
 import { isNamedOnTeamPage } from "@shared/teamVisibility";

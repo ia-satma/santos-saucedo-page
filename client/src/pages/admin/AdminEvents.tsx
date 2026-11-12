@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAdminAuth, adminApiRequest } from "@/lib/adminAuth";
 import { queryClient } from "@/lib/queryClient";
@@ -693,7 +693,7 @@ export default function AdminEvents() {
   }, [requireAuth]);
 
   const form = useForm<EventFormData>({
-    resolver: zodResolver(eventSchema),
+    resolver: zodResolver(eventSchema as any),
     defaultValues: {
       title: "",
       titleEs: "",

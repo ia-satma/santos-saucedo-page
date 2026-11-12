@@ -43,6 +43,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
 import { agentTone } from "@/features/admin/appearance";
+import { SUPPORTED_LANGUAGES, type LanguageCode } from "@shared/constants";
 
 type AgentFilter = "all" | "article" | "create" | "audit";
 
@@ -271,7 +272,7 @@ export function AgentUseCenter({
     initialAgent || AGENT_DEFINITIONS[0].id,
   );
   const [articleId, setArticleId] = useState("");
-  const [language, setLanguage] = useState<"es" | "en">("es");
+  const [language, setLanguage] = useState<LanguageCode>("es");
   const [limit, setLimit] = useState(8);
   const [sourceText, setSourceText] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
@@ -327,6 +328,21 @@ export function AgentUseCenter({
         return response.json();
       },
     });
+
+  const { data: activeLanguageData } = useQuery<{ activeLanguages?: string[] }>({
+    queryKey: ["/api/active-languages", "agent-use-center"],
+    queryFn: async () => {
+      const response = await adminApiRequest("GET", "/api/active-languages");
+      if (!response.ok) throw new Error("No se pudieron cargar los idiomas activos.");
+      return response.json();
+    },
+  });
+
+  const activeLanguages = useMemo(() => {
+    const configured = activeLanguageData?.activeLanguages;
+    const codes = configured?.length ? configured : SUPPORTED_LANGUAGES.map(({ code }) => code);
+    return SUPPORTED_LANGUAGES.filter(({ code }) => codes.includes(code));
+  }, [activeLanguageData]);
 
   const buildPayload = (): Record<string, unknown> | null => {
     if (launcher.mode === "article") {
@@ -457,7 +473,7 @@ export function AgentUseCenter({
             <h2 id="agent-use-center-title" className="text-xl font-semibold">
               {compact
                 ? `Crear con ${selected.name}`
-                : "Centro de uso de los 14 agentes"}
+                : "Centro de uso de los 14 agentes editoriales"}
             </h2>
             <p className="mt-1 max-w-3xl text-sm leading-relaxed text-muted-foreground">
               {compact
@@ -656,17 +672,14 @@ export function AgentUseCenter({
                   <div className="max-w-xs pt-3">
                     <Label>Idioma de destino</Label>
                     <Select
-                      value={language}
-                      onValueChange={(value) =>
-                        setLanguage(value as "es" | "en")
-                      }
+                        value={language}
+                      onValueChange={(value) => setLanguage(value as LanguageCode)}
                     >
                       <SelectTrigger className="mt-2">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="en">Inglés</SelectItem>
-                        <SelectItem value="es">Español</SelectItem>
+                        {activeLanguages.map((item) => <SelectItem key={item.code} value={item.code}>{item.nameNative}</SelectItem>)}
                       </SelectContent>
                     </Select>
                   </div>
@@ -700,14 +713,13 @@ export function AgentUseCenter({
                   <Label>Idioma</Label>
                   <Select
                     value={language}
-                    onValueChange={(value) => setLanguage(value as "es" | "en")}
+                    onValueChange={(value) => setLanguage(value as LanguageCode)}
                   >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="es">Español</SelectItem>
-                      <SelectItem value="en">Inglés</SelectItem>
+                      {activeLanguages.map((item) => <SelectItem key={item.code} value={item.code}>{item.nameNative}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
@@ -784,17 +796,14 @@ export function AgentUseCenter({
                   <div className="w-44 space-y-2">
                     <Label>Idioma</Label>
                     <Select
-                      value={language}
-                      onValueChange={(value) =>
-                        setLanguage(value as "es" | "en")
-                      }
+                        value={language}
+                        onValueChange={(value) => setLanguage(value as LanguageCode)}
                     >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="es">Español</SelectItem>
-                        <SelectItem value="en">Inglés</SelectItem>
+                        {activeLanguages.map((item) => <SelectItem key={item.code} value={item.code}>{item.nameNative}</SelectItem>)}
                       </SelectContent>
                     </Select>
                   </div>

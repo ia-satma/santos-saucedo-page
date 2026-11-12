@@ -1,5 +1,5 @@
 import type { Express, Request, Response } from "express";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { createHash, randomUUID } from "node:crypto";
 import sharp from "sharp";
 import { desc, eq } from "drizzle-orm";

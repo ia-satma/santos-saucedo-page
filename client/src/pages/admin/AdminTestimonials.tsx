@@ -10,11 +10,11 @@ import type { Testimonial, TestimonialInvite } from "@shared/schema";
 
 // Testimonios en el panel: invitaciones de un solo uso, moderación y orden. Nada se publica sin
 // la aprobación del administrador principal (super_admin); los editores generan invitaciones,
-// corrigen erratas de lo pendiente, ordenan y ocultan.
+// corrigen erratas, pasan capturados a revisión, ordenan y ocultan.
 
 type Invite = Omit<TestimonialInvite, "tokenHash"> & { state: "active" | "used" | "expired" | "revoked" };
-type Tab = "pending" | "approved" | "rejected";
-type Draft = { authorName: string; authorTitle: string; authorCompany: string; quote: string; showCompany: boolean };
+type Tab = "captured" | "pending" | "approved" | "rejected";
+type Draft = { authorName: string; authorTitle: string; authorCompany: string; quote: string; showCompany: boolean; rating: number };
 
 const date = (value: string | Date | null | undefined) =>
   value ? new Date(value).toLocaleString("es-MX", { dateStyle: "medium", timeStyle: "short" }) : "";
@@ -25,11 +25,12 @@ const inviteStates: Record<Invite["state"], string> = {
   revoked: "Anulada",
 };
 const tabs: { key: Tab; label: string }[] = [
+  { key: "captured", label: "Capturados" },
   { key: "pending", label: "Pendientes" },
   { key: "approved", label: "Aprobados" },
   { key: "rejected", label: "Rechazados" },
 ];
-const emptyDraft: Draft = { authorName: "", authorTitle: "", authorCompany: "", quote: "", showCompany: false };
+const emptyDraft: Draft = { authorName: "", authorTitle: "", authorCompany: "", quote: "", showCompany: false, rating: 5 };
 
 // Mensaje para WhatsApp o correo: cortés, sin urgencia; el despacho lo revisa antes de enviarlo
 const inviteMessage = (name: string, url: string) =>
@@ -38,7 +39,7 @@ const inviteMessage = (name: string, url: string) =>
   `Solo se publica con su autorización y después de nuestra revisión. Muchas gracias.`;
 
 export default function AdminTestimonials() {
-  const [tab, setTab] = useState<Tab>("pending");
+  const [tab, setTab] = useState<Tab>("captured");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState("");
@@ -117,6 +118,7 @@ export default function AdminTestimonials() {
     authorCompany: t.authorCompany ?? "",
     quote: t.quote,
     showCompany: !!t.showCompany,
+    rating: t.rating || 5,
   });
 
   const draftFields = (draft: Draft, set: (d: Draft) => void, prefix: string) => (
@@ -133,6 +135,12 @@ export default function AdminTestimonials() {
           <Input id={`${prefix}-${key}`} value={draft[key]} maxLength={160} onChange={(e) => set({ ...draft, [key]: e.target.value })} />
         </label>
       ))}
+      <label className="space-y-1 text-sm">
+        <span className="block">Calificación</span>
+        <select className="h-10 w-full border bg-background px-3" value={draft.rating} onChange={(e) => set({ ...draft, rating: Number(e.target.value) })}>
+          {[5, 4, 3, 2, 1].map((value) => <option key={value} value={value}>{"★".repeat(value)} ({value}/5)</option>)}
+        </select>
+      </label>
       <label className="space-y-1 text-sm sm:col-span-3">
         <span className="block">Comentario ({draft.quote.length} de {TESTIMONIAL_QUOTE_MAX})</span>
         <Textarea value={draft.quote} maxLength={TESTIMONIAL_QUOTE_MAX} className="min-h-[140px]" onChange={(e) => set({ ...draft, quote: e.target.value })} />
@@ -149,7 +157,7 @@ export default function AdminTestimonials() {
       <header>
         <h1 className="text-3xl font-semibold">Testimonios</h1>
         <p className="mt-3 max-w-3xl text-muted-foreground">
-          Los clientes escriben su comentario desde un enlace personal de un solo uso. Todo llega como pendiente y solo
+          Los clientes escriben su comentario desde un enlace personal de un solo uso. Todo llega como capturado, pasa a revisión y solo
           se publica en /testimonios cuando el administrador principal lo aprueba.
           {!canApprove && me.data && " Su cuenta puede generar invitaciones, corregir erratas, ordenar y ocultar; la aprobación es del administrador principal."}
         </p>
@@ -233,13 +241,14 @@ export default function AdminTestimonials() {
           <h2 id="moderation-title" className="text-xl font-semibold">
             Comentarios recibidos
           </h2>
-          <Button
-            variant="outline"
-            onClick={() => setManual(manual ? null : { draft: { ...emptyDraft }, consent: false })}
-            data-testid="button-manual-testimonial"
-          >
-            {manual ? "Cerrar captura" : "Capturar uno recibido por otro medio"}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" onClick={() => void run("google", () => call("POST", "/api/admin/testimonials/import-google"), "Reseñas nuevas importadas como capturadas para revisión.")} data-testid="button-import-google-testimonials">
+              Actualizar desde Google
+            </Button>
+            <Button variant="outline" onClick={() => setManual(manual ? null : { draft: { ...emptyDraft }, consent: false })} data-testid="button-manual-testimonial">
+              {manual ? "Cerrar captura" : "Añadir manualmente"}
+            </Button>
+          </div>
         </div>
         {manual && (
           <form
@@ -251,14 +260,14 @@ export default function AdminTestimonials() {
                 async () => {
                   await call("POST", "/api/admin/testimonials", { ...manual.draft, consentConfirmed: manual.consent });
                   setManual(null);
-                  setTab("pending");
+                  setTab("captured");
                 },
-                "Testimonio guardado como pendiente.",
+                "Testimonio guardado como capturado.",
               );
             }}
           >
             <p className="text-sm text-muted-foreground">
-              Para comentarios recibidos por correo o en persona. Entra como pendiente, igual que los del enlace.
+              Para comentarios recibidos por correo o en persona. Entra como capturado y pasa a pendientes antes de solicitar aprobación.
             </p>
             {draftFields(manual.draft, (draft) => setManual({ ...manual, draft }), "manual")}
             <label className="flex items-start gap-3 text-sm">
@@ -267,7 +276,7 @@ export default function AdminTestimonials() {
               marca arriba).
             </label>
             <Button type="submit" disabled={busy === "manual" || !manual.consent}>
-              Guardar como pendiente
+              Guardar como capturado
             </Button>
           </form>
         )}
@@ -304,7 +313,7 @@ export default function AdminTestimonials() {
                     {t.authorCompany && (t.showCompany ? " (empresa visible)" : " (empresa oculta)")}
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {t.origin === "invite" ? "Por enlace de invitación" : "Capturado en el panel"} · recibido {date(t.createdAt)}
+                    {t.origin === "invite" ? "Por enlace de invitación" : t.origin === "google" ? "Importado de Google" : "Capturado en el panel"} · recibido {date(t.createdAt)}
                     {t.approvedAt && ` · aprobado por ${t.approvedByName} el ${date(t.approvedAt)}`}
                     {t.status === "rejected" && t.reviewedAt && ` · rechazado por ${t.reviewedByName} el ${date(t.reviewedAt)}`}
                     {t.status === "approved" && !t.published && " · oculto en el sitio"}
@@ -348,12 +357,24 @@ export default function AdminTestimonials() {
                   </div>
                 </form>
               ) : (
-                <blockquote className="whitespace-pre-line break-words border-s-2 ps-4 text-[17px] leading-relaxed">{t.quote}</blockquote>
+                <>
+                  <div className="flex items-center gap-1 text-amber-500" aria-label={`${t.rating || 5} de 5 estrellas`} title={`${t.rating || 5} de 5 estrellas`}>{"★".repeat(t.rating || 5)}<span className="sr-only">{t.rating || 5} de 5 estrellas</span></div>
+                  <blockquote className="whitespace-pre-line break-words border-s-2 ps-4 text-[17px] leading-relaxed">{t.quote}</blockquote>
+                </>
               )}
 
               {!isEditing && (
                 <div className="flex flex-wrap gap-3">
-                  {canApprove && t.status !== "approved" && (
+                  {canApprove && t.status === "captured" && (
+                    <Button
+                      disabled={busy === t.id}
+                      onClick={() => void run(t.id, () => call("POST", `/api/admin/testimonials/${t.id}/status`, { status: "pending" }), "Testimonio enviado a pendientes de revisión.")}
+                      data-testid={`button-review-${t.id}`}
+                    >
+                      Pasar a pendientes
+                    </Button>
+                  )}
+                  {canApprove && t.status === "pending" && (
                     <Button
                       disabled={busy === t.id}
                       onClick={() => void run(t.id, () => call("POST", `/api/admin/testimonials/${t.id}/status`, { status: "approved" }), "Aprobado y publicado en /testimonios.")}
@@ -410,8 +431,8 @@ export default function AdminTestimonials() {
                       Borrar
                     </Button>
                   )}
-                  {!canApprove && t.status === "pending" && (
-                    <p className="self-center text-sm text-muted-foreground">Pendiente de aprobación del administrador principal.</p>
+                  {!canApprove && (t.status === "captured" || t.status === "pending") && (
+                    <p className="self-center text-sm text-muted-foreground">Pendiente de revisión del administrador principal.</p>
                   )}
                 </div>
               )}

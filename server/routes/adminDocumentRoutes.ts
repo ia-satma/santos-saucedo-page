@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { Express, RequestHandler, Response } from "express";
 import { desc, eq, or, sql } from "drizzle-orm";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { generatedDocuments, type GeneratedDocument } from "@shared/schema";
 import { documentRichTextSchema, plainTextToRichText, richTextToPlainText } from "@shared/documentRichText";
 import { DEFAULT_LETTERHEAD_TEMPLATE, LETTERHEAD_TEMPLATE_IDS } from "@shared/letterheadTemplates";

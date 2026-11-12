@@ -36,7 +36,7 @@ export function useKnowledgeAdmin() {
   const [activeTab, setActiveTab] = useState("all");
 
   const form = useForm<KnowledgeFormData>({
-    resolver: zodResolver(knowledgeFormSchema),
+    resolver: zodResolver(knowledgeFormSchema as any),
     defaultValues: {
       category: "",
       title: "",
@@ -50,7 +50,7 @@ export function useKnowledgeAdmin() {
   });
 
   const bulkForm = useForm<BulkUploadData>({
-    resolver: zodResolver(bulkUploadSchema),
+    resolver: zodResolver(bulkUploadSchema as any),
     defaultValues: {
       category: "legal_glossary",
       agentType: "polyglot_translator",

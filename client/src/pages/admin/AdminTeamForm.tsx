@@ -9,7 +9,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link, useParams, useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAdminAuth, adminApiRequest } from "@/lib/adminAuth";
@@ -227,7 +227,7 @@ export default function AdminTeamForm() {
   const t = translations[language as keyof typeof translations] || translations.en;
 
   const form = useForm<TeamMemberFormData>({
-    resolver: zodResolver(teamMemberFormSchema),
+    resolver: zodResolver(teamMemberFormSchema as any),
     defaultValues: {
       name: "",
       slug: "",

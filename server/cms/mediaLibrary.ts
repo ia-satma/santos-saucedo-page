@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { eq, desc } from "drizzle-orm";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { db } from "../db";
 import { mediaItems } from "@shared/schema";
 import { authMiddleware, requireRole } from "../auth";

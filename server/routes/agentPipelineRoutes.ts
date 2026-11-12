@@ -1,5 +1,5 @@
 import type { Express, Request, Response } from "express";
-import { z } from "zod";
+import { z } from "zod/v3";
 import type { AgentType } from "../agents/core/types";
 import { authMiddleware, requirePermission } from "../auth";
 import { storage } from "../storage";

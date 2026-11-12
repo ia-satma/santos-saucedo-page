@@ -1,7 +1,7 @@
 import { siteLink } from "@shared/siteControls";
 import type { Express } from "express";
 import { createHash } from "node:crypto";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { eq, inArray, sql } from "drizzle-orm";
 import { editorialDb } from "../db";
 import { news, newsTeamMembers, teamMembers } from "@shared/schema";

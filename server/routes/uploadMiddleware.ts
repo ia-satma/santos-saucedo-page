@@ -2,7 +2,7 @@ import express, { type NextFunction, type Request, type Response } from "express
 import fs from "node:fs";
 import path from "node:path";
 import multer from "multer";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { normalizePublicMediaMime } from "../media/publicMediaMime";
 import {
   cvQuarantineDir,

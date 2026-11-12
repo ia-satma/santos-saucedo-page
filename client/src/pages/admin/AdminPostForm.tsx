@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link, useParams, useLocation } from "wouter";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAdminAuth, adminApiRequest } from "@/lib/adminAuth";
 import { queryClient } from "@/lib/queryClient";
@@ -821,7 +821,7 @@ export default function AdminPostForm() {
   }, [authLoading, requireAuth]);
 
   const form = useForm<PostFormData>({
-    resolver: zodResolver(postFormSchema),
+    resolver: zodResolver(postFormSchema as any),
     defaultValues: {
       title: "",
       titleEs: "",

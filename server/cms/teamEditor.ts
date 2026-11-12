@@ -1,5 +1,5 @@
 import { siteLink } from "@shared/siteControls";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { eq, inArray, sql } from "drizzle-orm";
 import { editorialDb } from "../db";
 import {
@@ -186,7 +186,7 @@ export async function saveTeamMember(body: unknown, id?: string) {
     if (
       practiceGroupIds &&
       (new Set(practiceGroupIds).size !== practiceGroupIds.length ||
-        practiceGroupIds.some((x) => !groups.some((g) => g.id === x)))
+        practiceGroupIds.some((x: string) => !groups.some((g) => g.id === x)))
     )
       throw new z.ZodError([
         {
@@ -228,7 +228,7 @@ export async function saveTeamMember(body: unknown, id?: string) {
         await tx
           .insert(teamMemberPracticeGroups)
           .values(
-            practiceGroupIds.map((practiceGroupId) => ({
+            practiceGroupIds.map((practiceGroupId: string) => ({
               teamMemberId: member.id,
               practiceGroupId,
             })),

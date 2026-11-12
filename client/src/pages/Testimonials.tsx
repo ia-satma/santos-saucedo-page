@@ -24,6 +24,7 @@ export interface PublicTestimonial {
   authorName: string;
   authorTitle: string;
   company: string;
+  rating: number;
 }
 
 type Copy = (typeof defaults.testimonials)["es"];
@@ -61,6 +62,10 @@ export default function Testimonials() {
     const role = [item.authorTitle, item.company].filter(Boolean).join(", ");
     return (
       <figure className={`px-test__uno${destacado ? " px-test__uno--destacado" : ""}`} data-testid={`testimonial-${item.id}`}>
+        <div className="text-sm tracking-[0.18em] text-amber-500" aria-label={`${item.rating || 5} de 5 estrellas`} data-testid={`testimonial-rating-${item.id}`}>
+          {"★".repeat(Math.min(5, Math.max(1, item.rating || 5)))}
+          <span className="sr-only">{item.rating || 5} de 5 estrellas</span>
+        </div>
         <blockquote className="px-test__q">
           <p>{`${open}${item.quote}${close}`}</p>
         </blockquote>

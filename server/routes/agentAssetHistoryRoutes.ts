@@ -2,7 +2,7 @@ import { persistPresentationInput, hydratePresentationInput } from "../media/pre
 import type { Express, Request, Response } from "express";
 import fs from "node:fs";
 import path from "node:path";
-import { z } from "zod";
+import { z } from "zod/v3";
 import JSZip from "jszip";
 import type { ExecutionContext } from "../agents/core/types";
 import { AiGovernanceBlockedError } from "../ai/dataGovernance";

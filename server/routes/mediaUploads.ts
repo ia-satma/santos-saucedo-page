@@ -5,7 +5,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import sharp from "sharp";
 import { PDFDocument } from "pdf-lib";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { authMiddleware, requireRole } from "../auth";
 import { storage } from "../storage";
 import {

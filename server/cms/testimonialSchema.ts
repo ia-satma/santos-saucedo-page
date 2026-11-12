@@ -24,6 +24,7 @@ export async function ensureTestimonialSchema() {
       ALTER COLUMN published SET DEFAULT false,
       ADD COLUMN IF NOT EXISTS status text NOT NULL DEFAULT 'pending',
       ADD COLUMN IF NOT EXISTS show_company boolean NOT NULL DEFAULT false,
+      ADD COLUMN IF NOT EXISTS rating integer NOT NULL DEFAULT 5,
       ADD COLUMN IF NOT EXISTS language text,
       ADD COLUMN IF NOT EXISTS origin text NOT NULL DEFAULT 'panel',
       ADD COLUMN IF NOT EXISTS invite_id varchar,

@@ -1,5 +1,5 @@
 import type { Express } from "express";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { eq } from "drizzle-orm";
 import { authMiddleware, requireRole } from "../auth";
 import { db } from "../db";

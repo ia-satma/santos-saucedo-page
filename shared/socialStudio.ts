@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v3";
 import { SUPPORTED_LANGUAGES } from "./constants";
 import { MAX_EDITORIAL_NOTES_CHARACTERS } from "./editorialSources";
 

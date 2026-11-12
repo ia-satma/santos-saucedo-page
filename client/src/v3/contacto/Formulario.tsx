@@ -5,7 +5,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useForm, type FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { z } from "zod/v3";
 import { Link } from "wouter";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import cmsDefaults from "@shared/cms-defaults.json";
@@ -78,7 +78,7 @@ export default function FormularioContacto({ idPrefix, dePagina = false }: Formu
   };
   const options = [...practices.map((p) => p.slug), OTHER_VALUE];
 
-  const form = useForm<Valores>({ resolver: zodResolver(schemaFor(language)), defaultValues: VACIO });
+  const form = useForm<Valores>({ resolver: zodResolver(schemaFor(language) as any), defaultValues: VACIO });
   const { register, formState: { errors, submitCount } } = form;
 
   const [paso, setPaso] = useState<Paso>(1);

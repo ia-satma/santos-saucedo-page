@@ -30,7 +30,7 @@ const pipelineAgentTypeSchema = z.enum([
 ]);
 const stagesSchema = z.array(pipelineAgentTypeSchema).max(7).optional();
 const jobStatusSchema = z.enum(['pending', 'in_progress', 'completed', 'failed', 'cancelled']);
-const boundedPayloadSchema = z.record(z.unknown())
+const boundedPayloadSchema = z.record(z.string(), z.unknown())
   .refine((payload) => Object.keys(payload).length <= 50, 'Too many payload fields')
   .refine((payload) => Buffer.byteLength(JSON.stringify(payload)) <= 100_000, 'Payload is too large');
 
@@ -291,7 +291,7 @@ router.post('/evolution/proposals/:id/status', async (req: Request, res: Respons
     const parsed = z.object({
       id: z.string().uuid(),
       status: z.enum(['pending', 'approved', 'rejected', 'implemented']),
-      afterMetrics: z.record(z.number().finite()).optional(),
+      afterMetrics: z.record(z.string(), z.number().finite()).optional(),
     }).strict().safeParse({ id: req.params.id, ...req.body });
     if (!parsed.success) return res.status(400).json({ error: 'Invalid proposal update' });
     const { id, status, afterMetrics } = parsed.data;
