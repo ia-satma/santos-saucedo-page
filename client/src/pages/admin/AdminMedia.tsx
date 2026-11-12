@@ -21,6 +21,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import type { MediaItem } from "@shared/schema";
+type MediaOrphan = MediaItem & {
+  review: { checkedAt: string; reason: string; action: string };
+};
 const kinds = [
   ["all", "Todos"],
   ["image", "Imágenes"],
@@ -51,12 +54,22 @@ export default function AdminMedia() {
       return d;
     },
   });
+  const orphanQuery = useQuery<MediaOrphan[]>({
+    queryKey: ["/api/admin/media-orphans"],
+    queryFn: async () => {
+      const r = await adminApiRequest("GET", "/api/admin/media-orphans");
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || "No se pudo revisar los medios huérfanos.");
+      return d;
+    },
+  });
   const refresh = () => {
     void queryClient.invalidateQueries({ queryKey: ["/api/admin/media"] });
     void queryClient.invalidateQueries({
       queryKey: ["/api/admin/media-archive"],
     });
     void queryClient.invalidateQueries({ queryKey: ["/api/admin/overview"] });
+    void queryClient.invalidateQueries({ queryKey: ["/api/admin/media-orphans"] });
   };
   const upload = async (files: FileList) => {
     setBusy(true);
@@ -180,6 +193,42 @@ export default function AdminMedia() {
           {error}
         </p>
       )}
+      <section className="admin-media-review" aria-labelledby="media-orphans-title">
+        <div>
+          <p className="admin-page-kicker">Revisión de biblioteca</p>
+          <h2 id="media-orphans-title">Medios sin referencia detectada</h2>
+          <p>
+            Estos archivos no aparecen enlazados desde el CMS ni desde el frontend. Revise cada uno antes de archivarlo.
+            Archivar conserva el original y permite restaurarlo.
+          </p>
+        </div>
+        {orphanQuery.isLoading ? <p role="status">Revisando referencias…</p> : orphanQuery.isError ? (
+          <p role="alert" className="admin-error">{orphanQuery.error.message}</p>
+        ) : orphanQuery.data?.length ? (
+          <ul className="admin-media-review-list">
+            {orphanQuery.data.map((item) => (
+              <li key={item.id}>
+                <div>
+                  <strong>{item.originalName}</strong>
+                  <span>{item.path} · {item.mimeType}</span>
+                  <small>{item.review.reason}</small>
+                </div>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => {
+                    if (window.confirm(`¿Archivar ${item.originalName}? Podrá restaurarlo desde Archivados.`)) {
+                      void action("DELETE", `/api/admin/media/${item.id}`);
+                    }
+                  }}
+                >
+                  Archivar
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : <p role="status">No hay medios huérfanos detectados.</p>}
+      </section>
       {query.isError && (
         <p role="alert" className="admin-error mb-5">
           {query.error.message}{" "}

@@ -39,6 +39,12 @@ export function KnowledgeOverview({ model }: { model: KnowledgeAdminModel }) {
     setFilterCategory,
     filterAgent,
     setFilterAgent,
+    filterLanguage,
+    setFilterLanguage,
+    filterApproval,
+    setFilterApproval,
+    filterUpdated,
+    setFilterUpdated,
     totalDocuments,
     filteredDocuments,
     isLoading,
@@ -149,6 +155,36 @@ export function KnowledgeOverview({ model }: { model: KnowledgeAdminModel }) {
                     {AGENT_TYPES.map(agent => (
                       <SelectItem key={agent.value} value={agent.value}>{(t as any)[agent.labelKey] || (agent as any).label || agent.value}</SelectItem>
                     ))}
+                  </SelectContent>
+                </Select>
+                <Select value={filterLanguage} onValueChange={setFilterLanguage}>
+                  <SelectTrigger className="w-[150px]" data-testid="select-filter-language">
+                    <SelectValue placeholder="Idioma" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos los idiomas</SelectItem>
+                    {LANGUAGE_OPTIONS.map((language) => (
+                      <SelectItem key={language.value} value={language.value}>{(t as any)[language.labelKey] || language.value}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={filterApproval} onValueChange={setFilterApproval}>
+                  <SelectTrigger className="w-[150px]" data-testid="select-filter-approval">
+                    <SelectValue placeholder="Estado" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos los estados</SelectItem>
+                    <SelectItem value="approved">Aprobados para IA</SelectItem>
+                    <SelectItem value="pending">Pendientes de aprobación</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={filterUpdated} onValueChange={setFilterUpdated}>
+                  <SelectTrigger className="w-[150px]" data-testid="select-filter-updated">
+                    <SelectValue placeholder="Actualización" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Cualquier fecha</SelectItem>
+                    <SelectItem value="recent">Últimos 30 días</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

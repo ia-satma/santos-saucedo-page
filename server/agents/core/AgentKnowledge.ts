@@ -6,6 +6,12 @@ import {
   EDITORIAL_KNOWLEDGE_VERSION,
 } from '../knowledge/editorialVoicePlaybook';
 import translationKnowledge from '../../../shared/translation-knowledge.json';
+import {
+  CMS_OPERATIONAL_KNOWLEDGE_CATEGORY,
+  CMS_OPERATIONAL_KNOWLEDGE_SEEDS,
+  CMS_OPERATIONAL_KNOWLEDGE_VERSION,
+  CMS_OPERATIONAL_SKILLS,
+} from '../knowledge/cmsOperationalPlaybook';
 
 export class AgentKnowledgeStore {
   private initialized: boolean = false;
@@ -331,6 +337,40 @@ export class AgentKnowledgeStore {
     );
 
     console.log(`[AgentKnowledge] Editorial voice guide ready; added ${added} missing entries`);
+  }
+
+  /**
+   * Seeds the CMS rules that agents need to audit real public pages. The stable seed key
+   * keeps deploys idempotent and never overwrites documents edited by the CMS team.
+   */
+  async addCmsOperationalPlaybook(): Promise<void> {
+    for (const skill of CMS_OPERATIONAL_SKILLS) {
+      await dbPersistence.getOrCreateSkill(skill.agentType, skill.name, skill.description);
+    }
+
+    const documents = CMS_OPERATIONAL_KNOWLEDGE_SEEDS.flatMap((seed) => (
+      seed.agents.map((agentType) => ({
+        agentType,
+        category: CMS_OPERATIONAL_KNOWLEDGE_CATEGORY,
+        title: seed.title,
+        content: seed.content,
+        metadata: {
+          type: "cms_operational_playbook",
+          seedKey: `${CMS_OPERATIONAL_KNOWLEDGE_CATEGORY}:${agentType}:${seed.key}`,
+          version: CMS_OPERATIONAL_KNOWLEDGE_VERSION,
+          source: "santos_saucedo_cms_contract",
+        },
+        dataClassification: "internal" as const,
+        approvedForAiAt: new Date(),
+        approvedForAiBy: "system_cms_playbook",
+      }))
+    ));
+
+    const added = await dbPersistence.seedKnowledgeDocuments(
+      `agent_knowledge:${CMS_OPERATIONAL_KNOWLEDGE_VERSION}`,
+      documents,
+    );
+    console.log(`[AgentKnowledge] CMS operational playbook ready; added ${added} missing entries`);
   }
 
   async toJSON(): Promise<{ documents: KnowledgeDocument[] }> {

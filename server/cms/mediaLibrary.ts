@@ -9,6 +9,7 @@ import path from "node:path";
 import bundled from "@shared/cms-media-manifest.json";
 import type { MediaItem } from "@shared/schema";
 import { getBundledMediaMap } from "./bundledMediaMap";
+import { loadMediaReferenceCorpus, mediaIsReferenced } from "../mediaReferences";
 
 // Include the approved bundled material in a fresh local database as well as
 // uploaded objects. No duplicate upload or invented file is needed to reuse it.
@@ -84,6 +85,34 @@ export async function persistentMediaItem(
 }
 
 export function registerMediaLibrary(app: Express) {
+  app.get(
+    "/api/admin/media-orphans",
+    authMiddleware,
+    requireRole("editor", "admin"),
+    async (_req, res) => {
+      try {
+        const [items, corpus] = await Promise.all([
+          mediaInventory(),
+          loadMediaReferenceCorpus(),
+        ]);
+        const checkedAt = new Date().toISOString();
+        const candidates = items
+          .filter((item) => !item.archivedAt && !mediaIsReferenced(item, corpus))
+          .map((item) => ({
+            ...item,
+            review: {
+              checkedAt,
+              reason: "No se encontró la ruta, nombre ni clave del archivo en los registros CMS ni en el frontend.",
+              action: "Revisar antes de archivar",
+            },
+          }));
+        res.set("Cache-Control", "private, no-store");
+        res.json(candidates);
+      } catch {
+        res.status(503).json({ error: "No se pudo revisar los medios huérfanos." });
+      }
+    },
+  );
   app.patch(
     "/api/admin/media/:id",
     authMiddleware,

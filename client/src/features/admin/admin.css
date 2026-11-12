@@ -735,6 +735,36 @@
 .admin-media-actions a:hover {
   text-decoration: underline;
 }
+.admin-media-review {
+  display: grid;
+  gap: 16px;
+  margin: 24px 0;
+  padding: 22px;
+  border: 1px solid #ead8b4;
+  border-radius: 14px;
+  background: #fffaf0;
+}
+.admin-media-review h2 { margin: 0 0 6px; color: var(--admin-ink); font-size: 1.05rem; }
+.admin-media-review p { margin: 0; color: var(--admin-muted); font-size: .88rem; line-height: 1.55; }
+.admin-media-review-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.admin-media-review-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 14px;
+  border: 1px solid #efdfc1;
+  border-radius: 10px;
+  background: #fff;
+}
+.admin-media-review-list li > div { min-width: 0; display: grid; gap: 3px; }
+.admin-media-review-list strong,
+.admin-media-review-list span,
+.admin-media-review-list small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admin-media-review-list span,
+.admin-media-review-list small { color: var(--admin-muted); font-size: .78rem; }
+.admin-media-review-list button { min-height: 38px; padding: 7px 12px; border: 1px solid #d5bd8d; border-radius: 8px; color: #755313; background: #fffaf0; white-space: nowrap; }
+.admin-media-review-list button:hover { background: #f8edda; }
 .admin-workspace [data-testid="button-back"],
 .admin-workspace a[href="/admin"] {
   display: none;

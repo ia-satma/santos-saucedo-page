@@ -4,6 +4,9 @@ export type KnowledgeFilters = {
   searchQuery: string;
   category: string;
   agent: string;
+  language: string;
+  approval: string;
+  updated: string;
   activeTab: string;
 };
 
@@ -19,8 +22,13 @@ export function filterKnowledgeDocuments(
       || document.content.toLowerCase().includes(query);
     const matchesCategory = filters.category === "all" || document.category === filters.category;
     const matchesAgent = filters.agent === "all" || document.agentType === filters.agent;
+    const matchesLanguage = filters.language === "all" || document.metadata?.language === filters.language;
+    const matchesApproval = filters.approval === "all"
+      || (filters.approval === "approved" ? Boolean(document.approvedForAiAt) : !document.approvedForAiAt);
+    const matchesUpdated = filters.updated === "all"
+      || (filters.updated === "recent" && Date.now() - new Date(document.updatedAt).getTime() < 30 * 24 * 60 * 60 * 1000);
     const matchesTab = filters.activeTab === "all" || document.category === filters.activeTab;
-    return matchesSearch && matchesCategory && matchesAgent && matchesTab;
+    return matchesSearch && matchesCategory && matchesAgent && matchesLanguage && matchesApproval && matchesUpdated && matchesTab;
   });
 }
 

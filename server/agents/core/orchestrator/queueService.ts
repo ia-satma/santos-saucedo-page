@@ -46,6 +46,7 @@ export class OrchestratorQueueService {
     await this.dependencies.knowledge.addLegalGlossary();
     await this.dependencies.knowledge.addSocialCopyGuide();
     await this.dependencies.knowledge.addEditorialVoiceGuide();
+    await this.dependencies.knowledge.addCmsOperationalPlaybook();
     await this.dependencies.evolution.initialize();
 
     await this.loadPendingJobsFromDatabase();

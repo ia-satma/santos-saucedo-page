@@ -137,6 +137,7 @@ try {
     "knowledge",
     "media",
     "media-archive",
+    "media-orphans",
     "contact-submissions",
     "newsletter-subscribers",
     "generated-images",

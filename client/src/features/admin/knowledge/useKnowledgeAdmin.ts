@@ -33,6 +33,9 @@ export function useKnowledgeAdmin() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterAgent, setFilterAgent] = useState("all");
+  const [filterLanguage, setFilterLanguage] = useState("all");
+  const [filterApproval, setFilterApproval] = useState("all");
+  const [filterUpdated, setFilterUpdated] = useState("all");
   const [activeTab, setActiveTab] = useState("all");
 
   const form = useForm<KnowledgeFormData>({
@@ -179,6 +182,9 @@ export function useKnowledgeAdmin() {
     searchQuery,
     category: filterCategory,
     agent: filterAgent,
+    language: filterLanguage,
+    approval: filterApproval,
+    updated: filterUpdated,
     activeTab,
   });
   const documentsByCategory = KNOWLEDGE_CATEGORIES.map((category) => ({
@@ -213,6 +219,12 @@ export function useKnowledgeAdmin() {
     setFilterCategory,
     filterAgent,
     setFilterAgent,
+    filterLanguage,
+    setFilterLanguage,
+    filterApproval,
+    setFilterApproval,
+    filterUpdated,
+    setFilterUpdated,
     activeTab,
     setActiveTab,
     filteredDocuments,
