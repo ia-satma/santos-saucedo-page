@@ -5,7 +5,7 @@ Formato único: **1080 × 1080 px (1:1)**: Instagram, Facebook y LinkedIn. Carru
 ## 1. Marca
 - Logo azul (`assets/logo-azul.png`) sobre fondos claros, y logo blanco (`assets/logo-blanco.png`) sobre azul o sobre foto.
 - El logo tiene aire a la izquierda, así que se compensa con `margin-left: -7.2%` de su ancho para alinearlo ópticamente al margen.
-- Símbolo "SS" (`assets/ss-simbolo.png`) como marca de agua: esquina inferior derecha, `right:-200px; bottom:-110px; height:960px`, con máscara de degradado vertical. Opacidad 0.09 en blanco sobre azul y 0.065 sobre blanco.
+- Isotipo oficial `SantosSaucedo_Isotipo-Principal-07.png`, optimizado como `assets/ss-simbolo.png`, como marca de agua: esquina inferior derecha, `right:-200px; bottom:-110px; height:960px`, con máscara de degradado vertical. En fondos oscuros se usa la variante blanca con el filtro existente. Opacidad 0.09 en blanco sobre azul y 0.065 sobre blanco.
 - Nombre en copy de redes: **Santos & Saucedo**. En piezas de marca/print: **Santos Saucedo**.
 - Descriptor: DERECHO LABORAL PARA EMPRESAS.
 

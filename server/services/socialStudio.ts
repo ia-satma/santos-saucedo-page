@@ -267,6 +267,9 @@ const brand = {
   graphite: { background: "#17202C", ink: "#FFFFFF", accent: "#BBF741", logo: "logo-blanco-lima.svg" },
 } satisfies Record<Palette, { background: string; ink: string; accent: string; logo: string }>;
 
+const SOCIAL_WATERMARK_PATH = path.resolve("server/assets/social-templates/kit-redes-sociales/assets/ss-simbolo.png");
+const SOCIAL_WATERMARK_DARK_PATH = path.resolve("server/assets/social-templates/kit-redes-sociales/assets/ss-simbolo-blanco.png");
+
 async function logoImage(file: string, width: number) {
   for (const dir of ["dist/public/editorial", "client/public/editorial"]) {
     try {
@@ -342,11 +345,15 @@ async function composeSocialSlide(
   const gradient = fill === "linear"
     ? `<linearGradient id="tone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${colors.background}"/><stop offset="1" stop-color="${wash}"/></linearGradient>`
     : `<radialGradient id="tone" cx="75%" cy="36%" r="64%"><stop stop-color="${wash}"/><stop offset="1" stop-color="${colors.background}"/></radialGradient>`;
-  const symbolX = Math.round(width * (direction === "typographic" ? .3 : .68));
+  const watermark = await readFile(dark ? SOCIAL_WATERMARK_DARK_PATH : SOCIAL_WATERMARK_PATH);
+  const watermarkWidth = Math.round(unit * .62);
+  const watermarkHeight = Math.round(unit * .94);
+  const watermarkX = Math.round(width - unit * .42);
+  const watermarkY = Math.round(height * .17);
   const decor = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
     <defs>${gradient}</defs>
     <rect width="100%" height="100%" fill="${background === "tonal" || background === "glow" ? "url(#tone)" : colors.background}"/>
-    <text x="${symbolX}" y="${Math.round(height * .85)}" font-family="Georgia,serif" font-size="${Math.round(unit * .78)}" fill="${colors.ink}" opacity=".06">§</text>
+    <image href="data:image/png;base64,${watermark.toString("base64")}" x="${watermarkX}" y="${watermarkY}" width="${watermarkWidth}" height="${watermarkHeight}" preserveAspectRatio="xMidYMid meet" opacity=".08"/>
     ${divider}
     <path d="M ${x} ${ruleY} H ${width - x}" stroke="${colors.accent}" stroke-width="${Math.max(2, Math.round(unit / 360))}"/>
   </svg>`);

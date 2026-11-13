@@ -13,7 +13,7 @@ description: Genera posts (1080×1080) y carruseles de 4 diapositivas para redes
 ## Reglas obligatorias
 - Lienzo de 1080 × 1080, `overflow:hidden`, con márgenes de 90 / 90 / 80 px.
 - Solo los colores del sistema y solo las fuentes Lora + DM Sans.
-- Cada pieza lleva el logo correcto: azul sobre claro, blanco sobre azul o foto.
+- Cada pieza lleva el logo correcto: azul sobre claro, blanco sobre azul o foto. La marca de agua usa el isotipo oficial optimizado en `assets/ss-simbolo.png`, cuyo origen es `SantosSaucedo_Isotipo-Principal-07.png`.
 - **Fotos: nunca filtros ni capas de color completas.** Solo se permite `SS.degradado()` en la parte inferior.
 - Texto mínimo de 24 px. Contraste AA: sobre blanco, usa `#5e8f17` (no `#8cc63f`) para el texto verde.
 - Carrusel = portada → contenido (1–2 ideas por diapositiva) → cierre con contacto. Va paginado "02 / 04".

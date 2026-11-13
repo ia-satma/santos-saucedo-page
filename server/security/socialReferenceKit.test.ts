@@ -6,6 +6,9 @@ import { getSocialReferenceTemplate, listSocialReferenceTemplates, SOCIAL_REFERE
 test("el kit social aprobado está disponible y deja libertad creativa al agente", () => {
   assert.equal(fs.existsSync(SOCIAL_REFERENCE_KIT.catalog), true);
   assert.equal(fs.existsSync(SOCIAL_REFERENCE_KIT.skill), true);
+  const watermark = `${SOCIAL_REFERENCE_KIT.root}/assets/ss-simbolo.png`;
+  assert.equal(fs.existsSync(watermark), true);
+  assert.ok(fs.statSync(watermark).size > 1000);
   assert.match(SOCIAL_REFERENCE_GUIDANCE, /1080/);
   assert.match(SOCIAL_REFERENCE_GUIDANCE, /sin limitar las ideas/);
   assert.match(SOCIAL_REFERENCE_GUIDANCE, /fotos conservan su color natural/);
