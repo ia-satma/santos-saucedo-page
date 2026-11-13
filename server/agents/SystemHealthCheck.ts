@@ -8,7 +8,7 @@ import {
   translationCache
 } from '@shared/schema';
 import { eq, lt, and, isNull, or, sql } from 'drizzle-orm';
-import { loadMediaReferenceCorpus, mediaIsReferenced } from '../mediaReferences';
+import { loadMediaReferenceCorpus, mediaIsActiveOrphan } from '../mediaReferences';
 
 export interface HealthIssue {
   id: string;
@@ -269,7 +269,7 @@ export class SystemHealthCheck {
       const referenceCorpus = await loadMediaReferenceCorpus();
 
       for (const media of allMedia) {
-        const isUsed = mediaIsReferenced(media, referenceCorpus);
+        const isUsed = !mediaIsActiveOrphan(media, referenceCorpus);
 
         if (!isUsed) {
           const ageHours = media.createdAt

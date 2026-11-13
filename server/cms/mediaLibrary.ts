@@ -9,7 +9,7 @@ import path from "node:path";
 import bundled from "@shared/cms-media-manifest.json";
 import type { MediaItem } from "@shared/schema";
 import { getBundledMediaMap } from "./bundledMediaMap";
-import { loadMediaReferenceCorpus, mediaIsReferenced } from "../mediaReferences";
+import { loadMediaReferenceCorpus, mediaIsActiveOrphan } from "../mediaReferences";
 
 // Include the approved bundled material in a fresh local database as well as
 // uploaded objects. No duplicate upload or invented file is needed to reuse it.
@@ -97,7 +97,7 @@ export function registerMediaLibrary(app: Express) {
         ]);
         const checkedAt = new Date().toISOString();
         const candidates = items
-          .filter((item) => !item.archivedAt && !mediaIsReferenced(item, corpus))
+          .filter((item) => mediaIsActiveOrphan(item, corpus))
           .map((item) => ({
             ...item,
             review: {

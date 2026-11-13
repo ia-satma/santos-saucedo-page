@@ -101,3 +101,10 @@ export function mediaIsReferenced(media: Pick<typeof mediaItems.$inferSelect, "p
     .filter((token): token is string => Boolean(token));
   return tokens.some((token) => corpus.some((value) => value.includes(token)));
 }
+
+export function mediaIsActiveOrphan(
+  media: Pick<typeof mediaItems.$inferSelect, "path" | "filename" | "originalName" | "archivedAt">,
+  corpus: string[],
+): boolean {
+  return !media.archivedAt && !mediaIsReferenced(media, corpus);
+}
