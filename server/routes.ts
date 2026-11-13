@@ -11,7 +11,7 @@ import { registerAgentUsageRoutes } from "./routes/agentUsageRoutes";
 import { registerAgentAssetHistoryRoutes } from "./routes/agentAssetHistoryRoutes";
 import { registerAdminDocumentRoutes } from "./routes/adminDocumentRoutes";
 import { registerSocialAssetRoutes } from "./routes/socialAssetRoutes";
-import { registerRadarRoutes } from "./routes/radarRoutes";
+import { registerRadarRoutes, enrichRadarDraftWithClassification } from "./routes/radarRoutes";
 import { registerSocialInputRoutes } from "./routes/socialInputRoutes";
 import { registerAgentPipelineRoutes } from "./routes/agentPipelineRoutes";
 import { registerAdminKnowledgeRoutes } from "./routes/adminKnowledgeRoutes";
@@ -1852,6 +1852,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
       const newsItem = await storage.createNews(validation.data);
       auditLog("create", "news", newsItem.id, (req as any).adminUser?.id || "unknown");
+      if (!newsItem.published) void enrichRadarDraftWithClassification(newsItem.id, (req as any).adminUser?.id);
       res.status(201).json(newsItem);
     } catch (error) {
       console.error("Create news error:", error);
@@ -1869,6 +1870,10 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         return apiError(res, 404, "News not found");
       }
       auditLog("update", "news", req.params.id, (req as any).adminUser?.id || "unknown");
+      const contentChanged = ["title", "titleEs", "excerpt", "excerptEs", "content", "contentEs", "category", "categoryEs"].some((field) => field in parsed.data);
+      if (contentChanged && !newsItem.published) {
+        void enrichRadarDraftWithClassification(newsItem.id, (req as any).adminUser?.id);
+      }
       res.json(newsItem);
     } catch (error) {
       console.error("Update news error:", error);

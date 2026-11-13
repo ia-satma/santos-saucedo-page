@@ -44,7 +44,7 @@ const defaultRadarSettings: RadarSettings = radarSettingsSchema.parse({});
 let schedulerHandle: ReturnType<typeof setInterval> | undefined;
 let schedulerBusy = false;
 
-async function enrichRadarDraftWithClassification(newsId: string, actorId?: string | null): Promise<void> {
+export async function enrichRadarDraftWithClassification(newsId: string, actorId?: string | null): Promise<void> {
   if (process.env.NODE_ENV === "test") return;
   try {
     const context: ExecutionContext = {
@@ -57,7 +57,7 @@ async function enrichRadarDraftWithClassification(newsId: string, actorId?: stri
     if (!result.success || !result.data) return;
     const data = result.data as { practiceAreas?: string[]; practiceLabels?: string[]; industrySectors?: string[]; industryLabels?: string[]; confidence?: number; reasoning?: string };
     const current = (await storage.getNews()).find((item) => item.id === newsId);
-    if (!current) return;
+    if (!current || current.published) return;
     const existingTags = Array.isArray(current.tags) ? current.tags : [];
     const suggestions = [
       ...(data.practiceLabels?.length ? data.practiceLabels : data.practiceAreas ?? []).map((label) => `radar-practica:${label}`),
