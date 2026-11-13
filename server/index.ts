@@ -11,7 +11,22 @@ import { storage } from "./storage";
 const app = express();
 const httpServer = createServer(app);
 
+app.disable("x-powered-by");
 app.use(compression());
+
+// Baseline response headers for every route. Keep CSP out of this global layer because the
+// public site intentionally serves CMS-managed media, fonts and video from several origins.
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()");
+  res.setHeader("X-DNS-Prefetch-Control", "off");
+  if (process.env.NODE_ENV === "production") {
+    res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  }
+  next();
+});
 
 const corsOrigins = (process.env.CORS_ORIGIN || "")
   .split(",")
@@ -123,8 +138,11 @@ app.use((req, res, next) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
-    res.status(status).json({ error: message });
-    console.error("[request]", err);
+    // 5xx errors can contain SQL/provider details or echoed credentials. Keep that data in
+    // server diagnostics while returning a stable public message.
+    res.status(status).json({ error: status >= 500 ? "Internal Server Error" : message });
+    const code = typeof err?.code === "string" ? err.code : undefined;
+    console.error("[request]", { name: err?.name || "Error", ...(code ? { code } : {}), status });
   });
 
   // importantly only setup vite in development and after

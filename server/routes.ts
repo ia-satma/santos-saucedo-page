@@ -3459,7 +3459,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       });
     } catch (error: any) {
       console.error("Health check failed:", error);
-      res.status(500).json({ error: error.message || "Failed to run health check" });
+      res.status(500).json({ error: "Failed to run health check" });
     }
   });
 
@@ -3474,7 +3474,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       });
     } catch (error: any) {
       console.error("Failed to reset zombies:", error);
-      res.status(500).json({ error: error.message || "Failed to reset zombie jobs" });
+      res.status(500).json({ error: "Failed to reset zombie jobs" });
     }
   });
 

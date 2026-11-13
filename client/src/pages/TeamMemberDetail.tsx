@@ -1252,6 +1252,7 @@ export default function TeamMemberDetail() {
   // ni bloque de contacto: no son líneas directas y ya están en el pie (E7; G6 cambia D8)
   const ownContact = directContact(member, firmContact);
   const showContactList = !!(ownContact.email || ownContact.phone);
+  const officeLocation = firmContact.address[2] || firmContact.address[0] || "";
 
   // Botones de la cabecera: correo y teléfono solo si son directos; "Descargar vCard" se queda
   // (salvo in memoriam y en el build estático, donde no hace nada)
@@ -1575,7 +1576,7 @@ export default function TeamMemberDetail() {
                         <div>
                           <dt>{t.officeLabel}</dt>
                           {/* <bdi>: en árabe el punto de "N.L." saltaba al principio de la línea */}
-                          <dd><bdi>San Pedro Garza García, N.L.</bdi></dd>
+                          <dd><bdi>{officeLocation}</bdi></dd>
                         </div>
                         {ownContact.phone && (
                           <div>
