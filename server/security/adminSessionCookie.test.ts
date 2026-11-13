@@ -10,5 +10,6 @@ test("admin session cookie is parsed without exposing bearer credentials to the 
   );
   assert.equal(readCookie({ headers: {} }, ADMIN_SESSION_COOKIE), null);
   assert.equal(readCookie({ headers: { cookie: "ss_admin_session=" } }, ADMIN_SESSION_COOKIE), "");
+  assert.equal(readCookie({ headers: { cookie: "ss_admin_session=%ZZ" } }, ADMIN_SESSION_COOKIE), null);
 });
 

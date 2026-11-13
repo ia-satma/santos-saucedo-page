@@ -6,7 +6,7 @@ export function browserMediaMime(file:File){const mime=file.type.toLowerCase();r
 type Options={onProgress?:(percentage:number)=>void;signal?:AbortSignal};
 class UploadError extends Error{constructor(message:string,readonly status:number){super(message);}}
 async function request(url:string,body:BodyInit,headers:Record<string,string>,signal?:AbortSignal){
- const r=await fetch(url,{method:'POST',headers:{...getAuthHeaders(),...headers},body,signal});const data=await r.json().catch(()=>null);if(!r.ok)throw new UploadError(data?.error||'No se pudo cargar el archivo.',r.status);return data;
+ const r=await fetch(url,{method:'POST',headers:{...getAuthHeaders(),...headers},body,signal,credentials:'include'});const data=await r.json().catch(()=>null);if(!r.ok)throw new UploadError(data?.error||'No se pudo cargar el archivo.',r.status);return data;
 }
 async function retry<T>(action:()=>Promise<T>,signal?:AbortSignal):Promise<T>{for(let i=0;;i++){try{return await action();}catch(e){if(signal?.aborted||i>=2||e instanceof UploadError&&e.status<500)throw e;await new Promise<void>((resolve,reject)=>{const timer=setTimeout(resolve,500*(i+1));signal?.addEventListener('abort',()=>{clearTimeout(timer);reject(new DOMException('Carga cancelada','AbortError'));},{once:true});});}}}
 export async function uploadAdminMedia(file:File,options:Options={}):Promise<MediaItem>{
