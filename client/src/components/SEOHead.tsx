@@ -1,4 +1,4 @@
-import defaults from "@shared/cms-defaults.json";
+import { integrationsDefaults, testimonialsSeoDefaults, testimonialWriteSeoDefaults } from "@/lib/cmsLightDefaults";
 import { useCmsMedia } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useEffect, useMemo } from "react";
@@ -368,8 +368,8 @@ const seoConfig: Record<string, SEOConfig> = {
     path: "/careers/interns",
   },
   // Testimonios: el listado se indexa; el formulario del enlace de invitación, no
-  testimonials: defaults.seo.testimonials,
-  testimonialWrite: defaults.seo.testimonialWrite,
+  testimonials: testimonialsSeoDefaults as unknown as SEOConfig,
+  testimonialWrite: testimonialWriteSeoDefaults as unknown as SEOConfig,
   // 404: título y descripción propios en el idioma de la página; no se indexa
   notFound: {
     title: {
@@ -425,7 +425,7 @@ export default function SEOHead({
   const liveChrome = useCmsContent("chrome", chrome26);
   const officeName = useCmsContent("officeLabels", OFFICE_LABEL);
   const media = useCmsMedia();
-  const integrations=useCmsContent("integrations",defaults.integrations);
+  const integrations=useCmsContent("integrations", integrationsDefaults);
   const seoFallback = useMemo(() => {
     const navigation: Record<string,number> = {about:0,practiceGroups:1,team:2,news:3,careers:4,contact:5};
     return Object.fromEntries(Object.entries(seoConfig).map(([key,config]) => [key, { ...config, title: Object.fromEntries(LANGS.map(lang => {

@@ -137,6 +137,9 @@ export default function Telon({ lang }: { lang: V3Lang }) {
   const poster = media.hero.poster;
   // El póster predeterminado, en WebP (203 KB en lugar de 257 KB, idéntico a la vista); uno del panel va tal cual
   const posterSrc = poster && /\/video\/portada-color-poster\.jpg$/.test(poster) ? poster.replace(/\.jpg$/, "-1600.webp") : poster;
+  const posterSrcSet = posterSrc && /\/video\/portada-color-poster-1600\.webp$/.test(posterSrc)
+    ? `${posterSrc.replace("-1600.webp", "-768.webp")} 768w, ${posterSrc} 1600w`
+    : undefined;
 
   // Comportamiento (demo: modules/marca/script.js + shell.js)
   const rootRef = useRef<HTMLDivElement>(null);
@@ -187,7 +190,7 @@ export default function Telon({ lang }: { lang: V3Lang }) {
           <div className="mk-telon__escena">
             <div className="mk-telon__marco" aria-hidden="true">
               <div className="mk-telon__medio">
-                <img className="mk-telon__quieta" src={posterSrc} alt="" width={1600} height={726} {...{ fetchpriority: "high" }} />
+                <img className="mk-telon__quieta" src={posterSrc} srcSet={posterSrcSet} sizes="100vw" alt="" width={1600} height={726} {...{ fetchpriority: "high" }} />
                 {videoEnabled && (externalVideoSrc ? <iframe className="mk-telon__video" src={externalVideoSrc} title="Video de portada" allow="autoplay; fullscreen; picture-in-picture" /> : (
                   <video
                     className="mk-telon__video"
@@ -205,7 +208,7 @@ export default function Telon({ lang }: { lang: V3Lang }) {
               </div>
             </div>
             <div className="mk-telon__fija" aria-hidden="true">
-              <img src={posterSrc} alt="" width={1600} height={726} decoding="async" />
+              <img src={posterSrc} srcSet={posterSrcSet} sizes="100vw" alt="" width={1600} height={726} decoding="async" />
             </div>
             <div className="sh-portada__velo" aria-hidden="true" />
             {/* La § como marca de agua (módulo marca, pieza 1), del tamaño y en el lugar de la ventana */}

@@ -1,5 +1,5 @@
-import defaults from "@shared/cms-defaults.json";
 import { useCmsContent } from "@/hooks/useCmsContent";
+import { layoutDefaults } from "@/lib/cmsLightDefaults";
 import Header26 from "@/components/home26/Header26";
 import Telon from "@/v3/marca/Telon";
 import { Extranjeras26, Monitor26 } from "@/components/home26/Sections26";
@@ -13,7 +13,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Home() {
   const { language, displayLanguage } = useLanguage();
-  const layout = useCmsContent("layout",defaults.layout);
+  const layout = useCmsContent("layout", layoutDefaults);
   const lang = displayLanguage === "es" ? "es" : "en";
   const practices = usePracticeItems(lang);
 

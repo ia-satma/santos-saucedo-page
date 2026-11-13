@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { mergeCms, type CmsSection } from '@shared/cms';
+import type { CmsSection } from '@shared/cms';
+import { mergeCms } from '@shared/cmsMerge';
 import { queryClient } from '@/lib/queryClient';
-import { getStaticCmsSection } from '@/lib/staticLocalization';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SUPPORTED_LANGUAGES } from '@shared/constants';
 
@@ -90,12 +90,9 @@ export function useCmsContent<T>(section: CmsSection, fallback: T): T {
   });
   return useMemo(() => {
     if (!hasLanguageMap(base) || language === 'es' || language === 'en') return base;
-    const staticLocalized = getStaticCmsSection(section, language);
     const selected = localized && Object.keys(localized).length > 0
       ? localized
-      : staticLocalized && typeof staticLocalized === 'object'
-        ? staticLocalized
-        : undefined;
+      : undefined;
     if (!selected || typeof selected !== 'object') return base;
     const result = overlayLanguage(base, selected, language) as Record<string, unknown>;
     // Legacy V3 components use an ES/EN content type while the visitor may

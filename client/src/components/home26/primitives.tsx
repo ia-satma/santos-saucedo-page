@@ -1,7 +1,7 @@
 import { Fragment, type CSSProperties, type ReactNode } from "react";
 import { SiteLink as Link } from "./SiteLink";
 import { useCmsContent } from "@/hooks/useCmsContent";
-import defaults from "@shared/cms-defaults.json";
+import { linksDefaults } from "@/lib/cmsLightDefaults";
 import seccionUrl from "@assets/ss26/seccion.svg";
 
 /** Entrada al aparecer, una sola vez: el bloque sube 14 px y aparece (idea 5 aprobada por el
@@ -159,8 +159,8 @@ export function TextLink({
   /** Para conservar el data-testid del botón o enlace al que sustituye */
   "data-testid"?: string;
 }) {
-  const links=useCmsContent("links",defaults.links);
-  const key=Object.keys(defaults.links).find(key=>defaults.links[key as keyof typeof links]===href) as keyof typeof links|undefined;
+  const links=useCmsContent("links", linksDefaults);
+  const key=Object.keys(linksDefaults).find(key=>linksDefaults[key as keyof typeof linksDefaults]===href) as keyof typeof links|undefined;
   const destination=key?links[key]:href;
   const dark = tone === "dark";
   return (

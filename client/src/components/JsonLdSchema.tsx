@@ -1,5 +1,5 @@
 import { useCmsContent } from "@/hooks/useCmsContent";
-import defaults from "@shared/cms-defaults.json";
+import { integrationsDefaults } from "@/lib/cmsLightDefaults";
 import type { LanguageCode } from "@shared/schema";
 import { CONFIRMED_PARTNER_SLUGS } from "@shared/teamVisibility";
 
@@ -70,7 +70,7 @@ export function ArticleJsonLd({
   url: string;
   language?: LanguageCode;
 }) {
-  const siteUrl=useCmsContent("integrations",defaults.integrations).siteUrl;
+  const siteUrl=useCmsContent("integrations", integrationsDefaults).siteUrl;
   const schema = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -146,7 +146,7 @@ export function PersonJsonLd({
     "description": edu.degree
   })) || [];
 
-  const siteUrl=useCmsContent("integrations",defaults.integrations).siteUrl;
+  const siteUrl=useCmsContent("integrations", integrationsDefaults).siteUrl;
   // In memoriam: sin "worksFor" ni lugar de trabajo en presente; solo la afiliación a la firma
   const inMemoriam = /in memoriam/i.test(jobTitle);
   const schema = {
@@ -200,7 +200,7 @@ export function BreadcrumbJsonLd({
   items: Array<{ name: string; url: string }>;
   language?: LanguageCode;
 }) {
-  const siteUrl=useCmsContent("integrations",defaults.integrations).siteUrl;
+  const siteUrl=useCmsContent("integrations", integrationsDefaults).siteUrl;
   const schema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useCmsContent } from "@/hooks/useCmsContent";
-import defaults from "@shared/cms-defaults.json";
+import { consentDefaults, integrationsDefaults } from "@/lib/cmsLightDefaults";
 import type { LanguageCode } from "@shared/schema";
 import {
   Dialog,
@@ -18,8 +18,8 @@ import {
 } from "@/features/privacy/consentState";
 import { applyTracking } from "@/features/privacy/tracking";
 export default function CookieBanner({ language }: { language: LanguageCode }) {
-  const settings = useCmsContent("consent", defaults.consent),
-    integrations = useCmsContent("integrations", defaults.integrations);
+  const settings = useCmsContent("consent", consentDefaults),
+    integrations = useCmsContent("integrations", integrationsDefaults);
   const [path] = useLocation();
   const [choice, setChoice] = useState<Categories>(rejected),
     [hasChoice, setHasChoice] = useState(false),

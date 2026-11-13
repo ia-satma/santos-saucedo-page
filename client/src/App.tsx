@@ -5,7 +5,7 @@ import { useEffect, lazy, Suspense } from "react";
 import { RmSync } from "@/v3/rm";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { applyBrandColors } from "@/lib/brandColors";
-import cmsDefaults from "@shared/cms-defaults.json";
+import { themeDefaults } from "@/lib/themeDefaults";
 import { MotionConfig } from "framer-motion";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -54,9 +54,9 @@ function ScrollToTop() {
   return null;
 }
 
-import Home from "@/pages/Home";
 // El marco del panel solo se descarga en /admin: el visitante del sitio no lo baja.
 const AdminShell = lazy(() => import("@/features/admin/AdminShell").then((m) => ({ default: m.AdminShell })));
+const Home = lazy(() => import("@/pages/Home"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 const BarraTelefono = lazy(() => import("@/v3/contacto/BarraTelefono"));
 
@@ -385,7 +385,7 @@ function LocalizedRouterFrame() {
 // aparecer y el cambio de página los lleva lib/siteMotion, que tampoco se activa en ese caso.
 // Azules de marca del panel (sección "Colores de marca"), aplicados a todo el sitio
 function BrandColors() {
-  const theme = useCmsContent("theme", cmsDefaults.theme);
+  const theme = useCmsContent("theme", themeDefaults);
   useEffect(() => applyBrandColors(theme), [theme]);
   return null;
 }

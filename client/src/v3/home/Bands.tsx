@@ -3,7 +3,6 @@
    clases y estructura que la demo para que demo.css las pinte sin cambios. */
 import { useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { Link } from "wouter";
-import defaults from "@shared/cms-defaults.json";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { home26 } from "@/components/home26/content";
@@ -16,6 +15,23 @@ import { PREVIA_INDUSTRIA } from "@/v3/home/industriasPrevia";
 import { initFilo } from "./scripts";
 import "./home.css";
 import { v3Asset } from "../asset";
+
+const ABOUT_STATS_FALLBACK = {
+  es: { stats: [{ value: "40+" }, { value: "72+" }] },
+  en: { stats: [{ value: "40+" }, { value: "72+" }] },
+  de: { stats: [{ value: "40+" }, { value: "72+" }] },
+  zh: { stats: [{ value: "40+" }, { value: "72+" }] },
+  ko: { stats: [{ value: "40+" }, { value: "72+" }] },
+  ja: { stats: [{ value: "40+" }, { value: "72+" }] },
+  ar: { stats: [{ value: "40+" }, { value: "72+" }] },
+  ru: { stats: [{ value: "40+" }, { value: "72+" }] },
+  fr: { stats: [{ value: "40+" }, { value: "72+" }] },
+  it: { stats: [{ value: "40+" }, { value: "72+" }] },
+} as const;
+
+const INDUSTRIES_CMS_FALLBACK = Object.fromEntries(
+  Object.entries(INDUSTRIAS_TEXTS).map(([key, value]) => [key, { v3: { industrias: value.industrias } }]),
+);
 
 export type Tone = "light" | "dark";
 
@@ -44,7 +60,7 @@ export function IntroBand({ lang, areas }: { lang: V3Lang; areas: number }) {
   const current = liveHome[language] ?? liveHome[lang] ?? liveHome.en;
   const t = current.intro ?? homeCopyFor(language).intro;
   const f = current.firma;
-  const stats = useCmsContent("about", defaults.about)[lang]?.stats;
+  const stats = useCmsContent("about", ABOUT_STATS_FALLBACK)[lang]?.stats;
   const anos = stats?.[0]?.value?.trim() || "40+";
   const ciudades = stats?.[1]?.value?.trim() || "72+";
   return (
@@ -71,7 +87,7 @@ export function IntroBand({ lang, areas }: { lang: V3Lang; areas: number }) {
 export function IndustriasBand({ lang }: { lang: V3Lang }) {
   const { language } = useLanguage();
   const liveHome = useCmsContent("home", home26) as any;
-  const industriesCms = useCmsContent("industries", defaults.industries) as any;
+  const industriesCms = useCmsContent("industries", INDUSTRIES_CMS_FALLBACK) as any;
   const current = liveHome[language] ?? liveHome[lang] ?? liveHome.en;
   const t = current.industrias ?? homeCopyFor(language).industrias;
   const items = industriesCms[language]?.v3?.industrias ?? industriesCms[lang]?.v3?.industrias ?? INDUSTRIAS_TEXTS[lang].industrias;

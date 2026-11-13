@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { CMS_QUERY, useCmsContent } from "@/hooks/useCmsContent";
-import defaults from "@shared/cms-defaults.json";
+import { navigationDefaults } from "@/lib/cmsLightDefaults";
 import type { SiteNavigation, NavigationEntry } from "@shared/siteControls";
 import { siteLink } from "@shared/siteControls";
 import type { Chrome26Strings } from "./chrome26";
 export function useSiteNavigation(code: string, chrome: Chrome26Strings) {
   const value = useCmsContent(
     "navigation",
-    defaults.navigation,
-  ) as SiteNavigation;
+    navigationDefaults,
+  ) as unknown as SiteNavigation;
   const { data } = useQuery<Record<string, unknown>>({ queryKey: CMS_QUERY });
   const label = (item: NavigationEntry) =>
     item.labels[code] || item.labels.en || item.labels.es || "";

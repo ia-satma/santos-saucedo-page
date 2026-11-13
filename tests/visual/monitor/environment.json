@@ -5,29 +5,29 @@
     "es-desktop": [
       {
         "key": "es-desktop",
-        "width": 1425,
+        "width": 1440,
         "height": 962
       }
     ],
     "es-mobile": [
       {
         "key": "es-mobile",
-        "width": 360,
+        "width": 375,
         "height": 1135
       }
     ],
     "en-desktop": [
       {
         "key": "en-desktop",
-        "width": 1425,
+        "width": 1440,
         "height": 930
       }
     ],
     "en-mobile": [
       {
         "key": "en-mobile",
-        "width": 360,
-        "height": 1109
+        "width": 375,
+        "height": 1108
       }
     ]
   }
