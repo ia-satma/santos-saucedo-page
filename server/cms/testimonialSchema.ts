@@ -15,7 +15,8 @@ export async function ensureTestimonialSchema() {
     await tx.execute(sql`CREATE TABLE IF NOT EXISTS testimonials (
       id varchar PRIMARY KEY DEFAULT gen_random_uuid(), quote text NOT NULL, quote_es text,
       author_name text NOT NULL, author_title text, author_title_es text, author_company text,
-      author_photo_url text, source text, source_es text, year integer, practice_group_id varchar,
+      author_photo_url text, source text, source_es text, source_url text, source_published_at timestamp,
+      year integer, practice_group_id varchar,
       is_featured boolean DEFAULT false, published boolean DEFAULT false, "order" integer DEFAULT 0,
       created_at timestamp DEFAULT now()
     )`);
