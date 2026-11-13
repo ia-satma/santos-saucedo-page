@@ -58,7 +58,7 @@ export function initIndustrias(root: HTMLElement): () => void {
         }
       });
       poner(closest);
-    }, { rootMargin: "-50% 0px -50% 0px" });
+    }, { rootMargin: "-40% 0px -40% 0px" });
     arts.forEach((a) => centro.observe(a));
 
     const llega = new IntersectionObserver((es) => {
@@ -81,6 +81,8 @@ export function initIndustrias(root: HTMLElement): () => void {
       const t = document.getElementById((a.getAttribute("href") || "").slice(1));
       if (!t) return;
       e.preventDefault();
+      const index = Number(a.dataset.i);
+      if (Number.isInteger(index)) poner(index);
       ir(t);
     };
     a.addEventListener("click", alClic);
