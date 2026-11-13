@@ -79,9 +79,15 @@ async function runIteration(browser, iteration) {
       locale: "es-MX",
     });
     const page = await context.newPage();
-    await page.addInitScript((authToken) => {
-      if (authToken) localStorage.setItem("ss_admin_token", authToken);
-    }, token);
+    if (token) {
+      await context.addCookies([{
+        name: "ss_admin_session",
+        value: token,
+        url: baseURL,
+        httpOnly: true,
+        sameSite: "Lax",
+      }]);
+    }
     const capture = iteration === 1;
     const loginPage = token ? await context.newPage() : page;
     await checkLogin(loginPage, viewport.name, capture);

@@ -4,31 +4,32 @@ import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 
 const TOKEN_KEY = "ss_admin_token";
+const COOKIE_SESSION_MARKER = "cookie-session";
+let sessionAvailable = false;
 
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
-  try {
-    return localStorage.getItem(TOKEN_KEY);
-  } catch {
-    return null;
-  }
+  return sessionAvailable ? COOKIE_SESSION_MARKER : null;
 }
 
-export function setToken(token: string): void {
+export function setToken(_token?: string): void {
   if (typeof window === "undefined") return;
+  sessionAvailable = true;
   try {
-    localStorage.setItem(TOKEN_KEY, token);
+    // Remove tokens written by older builds. The active session is HttpOnly.
+    localStorage.removeItem(TOKEN_KEY);
   } catch {
-    console.error("Failed to save admin token");
+    // Storage may be disabled. Cookie authentication still works.
   }
 }
 
 export function clearToken(): void {
   if (typeof window === "undefined") return;
+  sessionAvailable = false;
   try {
     localStorage.removeItem(TOKEN_KEY);
   } catch {
-    console.error("Failed to clear admin token");
+    // Storage may be disabled. The server logout clears the cookie.
   }
 }
 
@@ -37,8 +38,7 @@ export function isAuthenticated(): boolean {
 }
 
 export function getAuthHeaders(): Record<string, string> {
-  const token = getToken();
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return {};
 }
 
 export async function adminApiRequest(
@@ -93,20 +93,32 @@ export function useAdminAuth() {
   });
 
   useEffect(() => {
-    const token = getToken();
-    setState({
-      isAuthenticated: !!token,
-      isLoading: false,
-      token,
-    });
+    let active = true;
+    fetch("/api/admin/me", { credentials: "include" })
+      .then(async response => {
+        if (!active) return;
+        if (!response.ok) {
+          clearToken();
+          setState({ isAuthenticated: false, isLoading: false, token: null });
+          return;
+        }
+        setToken();
+        setState({ isAuthenticated: true, isLoading: false, token: COOKIE_SESSION_MARKER });
+      })
+      .catch(() => {
+        if (active) setState({ isAuthenticated: false, isLoading: false, token: null });
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
-  const login = useCallback((token: string) => {
-    setToken(token);
+  const login = useCallback((_token?: string) => {
+    setToken();
     setState({
       isAuthenticated: true,
       isLoading: false,
-      token,
+      token: COOKIE_SESSION_MARKER,
     });
   }, []);
 

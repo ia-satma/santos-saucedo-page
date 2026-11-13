@@ -133,6 +133,8 @@ import {
   authMiddleware,
   requireRole,
   validateSessionToken,
+  ADMIN_SESSION_COOKIE,
+  readCookie,
 } from "./auth";
 
 function apiError(res: Response, status: number, message: string, details?: unknown): void {
@@ -377,7 +379,9 @@ export async function registerRoutes(
         .split(',')
         .map((value) => value.trim())
         .filter(Boolean);
-      const token = offered[0] === PIPELINE_WS_PROTOCOL && offered.length === 2 ? offered[1] : null;
+      const token = offered[0] === PIPELINE_WS_PROTOCOL && offered.length === 2
+        ? offered[1]
+        : readCookie(info.req, ADMIN_SESSION_COOKIE);
       validateSessionToken(token)
         .then((result) => {const allowed=result.ok&&hasAdminPermission(result.user,"agents");done(allowed,allowed?undefined:403,allowed?undefined:'Forbidden');})
         .catch((error) => {
@@ -1367,6 +1371,8 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       if(!session)return res.status(401).json({error:"La cuenta cambió. Inicie sesión de nuevo."});
       await recordAccessEvent("login.succeeded",user.id);
       res.setHeader("Cache-Control","no-store");
+      const maxAge = Math.max(0, Math.floor((session.expiresAt.getTime() - Date.now()) / 1000));
+      res.setHeader("Set-Cookie", `${ADMIN_SESSION_COOKIE}=${encodeURIComponent(session.token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${process.env.NODE_ENV === "production" ? "; Secure" : ""}`);
 
       res.json({
         token: session.token,
@@ -1392,6 +1398,11 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         const token = authHeader.substring(7);
         await storage.deleteAdminSession(token);
       }
+      const cookieToken = readCookie(req, ADMIN_SESSION_COOKIE);
+      if (cookieToken && (!authHeader || !authHeader.startsWith("Bearer ") || cookieToken !== authHeader.substring(7))) {
+        await storage.deleteAdminSession(cookieToken);
+      }
+      res.setHeader("Set-Cookie", `${ADMIN_SESSION_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${process.env.NODE_ENV === "production" ? "; Secure" : ""}`);
       res.json({ success: true });
     } catch (error) {
       console.error("Logout error:", error);

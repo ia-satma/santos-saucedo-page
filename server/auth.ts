@@ -14,6 +14,17 @@ import {
 const SALT_ROUNDS = 12;
 const TOKEN_BYTES = 32;
 const SESSION_DURATION_HOURS = 24;
+export const ADMIN_SESSION_COOKIE = "ss_admin_session";
+
+export function readCookie(request: Pick<Request, "headers">, name: string): string | null {
+  const header = request.headers.cookie;
+  if (!header) return null;
+  for (const part of header.split(";")) {
+    const [key, ...value] = part.trim().split("=");
+    if (key === name) return decodeURIComponent(value.join("="));
+  }
+  return null;
+}
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, SALT_ROUNDS);
@@ -171,15 +182,17 @@ export async function authMiddleware(
   next: NextFunction,
 ): Promise<void> {
   try {
-    // Get token from Authorization header
+    // Prefer the short-lived bearer header for legacy clients, then use the HttpOnly cookie.
     const authHeader = req.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    const token = authHeader?.startsWith("Bearer ")
+      ? authHeader.substring(7)
+      : readCookie(req, ADMIN_SESSION_COOKIE);
+    if (!token) {
       res.status(401).json({ error: "Authentication required" });
       return;
     }
 
-    const result = await validateSessionToken(authHeader.substring(7));
+    const result = await validateSessionToken(token);
     if (!result.ok) {
       res.status(401).json({ error: result.error });
       return;

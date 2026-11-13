@@ -70,18 +70,17 @@ class PipelineWebSocketManager {
     }
 
     // El servidor solo acepta la conexión con la sesión del panel (L7): sin token no se intenta
-    const token = getToken();
-    if (!token) {
+    if (!getToken()) {
       this.scheduleReconnect();
       return;
     }
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    // El token va como subprotocolo, no en la URL: así no queda en registros de proxies
+    // La cookie HttpOnly viaja automáticamente. El subprotocolo legado se conserva en el servidor.
     const wsUrl = `${protocol}//${window.location.host}/ws/pipeline`;
     
     try {
-      this.ws = new WebSocket(wsUrl, [PIPELINE_WS_PROTOCOL, token]);
+      this.ws = new WebSocket(wsUrl, PIPELINE_WS_PROTOCOL);
     } catch (error) {
       console.error('[Pipeline WS] Failed to create WebSocket:', error);
       this.scheduleReconnect();

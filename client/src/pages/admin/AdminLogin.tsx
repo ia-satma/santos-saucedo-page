@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { z } from "zod/v3";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { setToken, isAuthenticated } from "@/lib/adminAuth";
+import { setToken } from "@/lib/adminAuth";
 import { careersOnlyLanding, isCareersOnlyAdmin } from "@shared/adminAccess";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -190,9 +190,15 @@ export default function AdminLogin() {
   });
 
   useEffect(() => {
-    if (isAuthenticated()) {
-      setLocation("/admin/dashboard");
-    }
+    let active = true;
+    fetch("/api/admin/me", { credentials: "include" })
+      .then(async response => {
+        if (!active || !response.ok) return;
+        const user = await response.json().catch(() => null);
+        setLocation(isCareersOnlyAdmin(user) ? careersOnlyLanding : "/admin/dashboard");
+      })
+      .catch(() => undefined);
+    return () => { active = false; };
   }, [setLocation]);
 
   const form = useForm<LoginFormData>({

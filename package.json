@@ -45,7 +45,7 @@
     "test:radar": "node --import tsx --test server/security/laborRadar.test.ts server/security/radarSocialIntegration.test.ts server/security/radarRoutes.test.ts server/security/radarSources.test.ts server/security/scjnSqliteRadar.test.ts",
     "test:presentation:reference": "node --import tsx --test server/security/presentationReferenceTemplate.test.ts",
     "test:social:reference": "node --import tsx --test server/security/socialReferenceKit.test.ts",
-    "test:routes": "node --import tsx --test server/security/publicRoutes.test.ts",
+    "test:routes": "node --import tsx --test server/security/publicRoutes.test.ts server/security/adminSessionCookie.test.ts",
     "test:cms:battery": "node scripts/test-cms-battery.mjs",
     "test:video-source": "node --import tsx --test server/security/videoSource.test.ts"
   },
