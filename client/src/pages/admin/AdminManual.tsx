@@ -34,6 +34,12 @@ const lessons = [
     label: "Crear publicación",
   },
   {
+    title: "Revisar el Radar jurídico",
+    text: "Abra Radar jurídico para consultar DOF y SJF de todo México. Nuevo León aparece primero como prioridad. Puede programar los días y la hora de revisión. Cada hallazgo queda como borrador y requiere aprobación humana antes de publicarse.",
+    href: "/admin/radar",
+    label: "Abrir Radar jurídico",
+  },
+  {
     title: "Actualizar navegación y datos",
     text: "Navegación y pie reúne las etiquetas, la visibilidad y el orden de enlaces. Datos del despacho reúne teléfonos, direcciones y correos. Identidad y portada contiene logos, fotos y video. Revise ambas versiones de idioma antes de guardar.",
     href: "/admin/site-config/chrome",

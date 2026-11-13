@@ -100,6 +100,7 @@ const AdminPosts = lazy(() => import("@/pages/admin/AdminPosts"));
 const AdminPostForm = lazy(() => import("@/pages/admin/AdminPostForm"));
 const AdminCategories = lazy(() => import("@/pages/admin/AdminCategories"));
 const AdminNews = lazy(() => import("@/pages/admin/AdminNews"));
+const AdminRadar = lazy(() => import("@/pages/admin/AdminRadar"));
 const AdminAgents = lazy(() => import("@/pages/admin/AdminAgents"));
 const AdminArticleProcessing = lazy(() => import("@/pages/admin/AdminArticleProcessing"));
 const AdminAudits = lazy(() => import("@/pages/admin/AdminAudits"));
@@ -329,6 +330,7 @@ function Router() {
         <Route path="/admin/news/new" component={AdminNewsForm} />
         <Route path="/admin/news/:id/edit" component={AdminNewsForm} />
         <Route path="/admin/news" component={AdminNews} />
+        <Route path="/admin/radar" component={AdminRadar} />
         <Route path="/admin/news/:id" component={AdminArticleDetail} />
         <Route path="/admin/agents" component={AdminAgents} />
         <Route path="/admin/generated-images" component={AdminGeneratedImages} />

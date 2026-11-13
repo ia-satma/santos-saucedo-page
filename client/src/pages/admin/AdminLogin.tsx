@@ -245,7 +245,7 @@ export default function AdminLogin() {
     <div className="admin-login-page">
       <aside className="admin-login-aside" aria-label="Santos & Saucedo">
         <a href="/" className="admin-login-brand" aria-label="Santos & Saucedo">
-          <img src="/logo-color.png" alt="Santos & Saucedo" />
+          <img src="/editorial/logo-login-blanco.png" alt="Santos & Saucedo" />
         </a>
         <div className="admin-login-aside-copy">
           <span className="admin-login-eyebrow">Santos &amp; Saucedo</span>

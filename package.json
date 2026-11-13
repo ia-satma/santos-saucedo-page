@@ -42,7 +42,7 @@
     "repair:editorial-gaps": "node --import tsx scripts/repairEditorialGaps.ts",
     "test:social-studio": "node --import tsx --test server/security/socialStudio.test.ts",
     "test:testimonials": "node --import tsx --test server/security/googleTestimonials.test.ts",
-    "test:radar": "node --import tsx --test server/security/laborRadar.test.ts server/security/radarSocialIntegration.test.ts server/security/radarRoutes.test.ts",
+    "test:radar": "node --import tsx --test server/security/laborRadar.test.ts server/security/radarSocialIntegration.test.ts server/security/radarRoutes.test.ts server/security/radarSources.test.ts",
     "test:presentation:reference": "node --import tsx --test server/security/presentationReferenceTemplate.test.ts",
     "test:social:reference": "node --import tsx --test server/security/socialReferenceKit.test.ts",
     "test:routes": "node --import tsx --test server/security/publicRoutes.test.ts",

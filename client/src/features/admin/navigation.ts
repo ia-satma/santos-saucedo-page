@@ -91,6 +91,12 @@ export const adminNavigation = [
         icon: ReaderIcon,
       },
       {
+        href: "/admin/radar",
+        label: "Radar jurídico",
+        hint: "DOF, SJF y borradores pendientes de revisión",
+        icon: MagnifyingGlassIcon,
+      },
+      {
         href: "/admin/events",
         label: "Eventos",
         hint: "Catálogo de eventos",
