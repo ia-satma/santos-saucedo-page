@@ -11,6 +11,8 @@ import {
   radarSourceInputSchema,
   radarItemToNewsInsert,
   RadarInputError,
+  RADAR_SOURCE_TYPES,
+  type RadarSourceType,
 } from "../services/laborRadar";
 import { RADAR_ENTITIES, runRadarSources } from "../services/radarSources";
 
@@ -23,7 +25,13 @@ const radarSettingsSchema = z.object({
   days: z.array(z.number().int().min(0).max(6)).min(1).max(7).default([0, 1, 2, 3, 4, 5, 6]),
   scope: z.literal("all_mexico").default("all_mexico"),
   priorityEntity: z.literal("Nuevo León").default("Nuevo León"),
-  sources: z.object({ dof: z.boolean().default(true), sjf: z.boolean().default(true) }).default({ dof: true, sjf: true }),
+  sources: z.object({
+    dof: z.boolean().default(true),
+    sjf: z.boolean().default(true),
+    scjn_sqlite: z.boolean().default(false),
+    scjn_press: z.boolean().default(true),
+    tfca: z.boolean().default(true),
+  }).default({ dof: true, sjf: true, scjn_sqlite: false, scjn_press: true, tfca: true }),
   lastRunAt: z.string().datetime({ offset: true }).nullable().default(null),
   lastRunStatus: z.enum(["idle", "running", "success", "partial", "failed"]).default("idle"),
   lastRunMessage: z.string().max(1000).default(""),
@@ -49,7 +57,10 @@ async function saveRadarSettings(settings: RadarSettings): Promise<RadarSettings
 
 async function runConfiguredRadar(req: Request | null, date?: string) {
   const settings = await getRadarSettings();
-  const sources = (Object.entries(settings.sources).filter(([, enabled]) => enabled).map(([source]) => source) as Array<"dof" | "sjf">);
+  const sources = Object.entries(settings.sources)
+    .filter(([, enabled]) => enabled)
+    .map(([source]) => source)
+    .filter((source): source is RadarSourceType => (RADAR_SOURCE_TYPES as readonly string[]).includes(source));
   if (!sources.length) return { settings, created: 0, duplicates: 0, errors: ["Activa al menos una fuente oficial."], items: 0 };
   await saveRadarSettings({ ...settings, lastRunAt: new Date().toISOString(), lastRunStatus: "running", lastRunMessage: "Extracción en curso." });
   const run = await runRadarSources({ date, sources, limit: 25 });
@@ -116,7 +127,7 @@ export function registerRadarRoutes(app: Express): void {
   app.get("/api/admin/radar", authMiddleware, requirePermission("editorial_content"), async (_req, res) => {
     try {
       const [settings, news] = await Promise.all([getRadarSettings(), storage.getNews()]);
-      const items = news.filter((item) => item.tags?.includes("radar-juridico") || /Diario Oficial|Semanario Judicial/i.test(item.sourceName || ""));
+      const items = news.filter((item) => item.tags?.includes("radar-juridico") || /Diario Oficial|Semanario Judicial|SCJN|Suprema Corte|Tribunal Federal de Conciliación|TFCA/i.test(item.sourceName || ""));
       // Older radar drafts were created with only an excerpt. Backfill the editable Spanish body
       // when it is empty so opening an existing finding never shows a blank editor.
       await Promise.all(items.filter((item) => !item.contentEs?.trim()).map((item) => storage.updateNews(item.id, {
@@ -124,7 +135,13 @@ export function registerRadarRoutes(app: Express): void {
         contentEs: [item.excerptEs || item.titleEs || item.title, item.sourceName ? `Fuente oficial: ${item.sourceName}.` : "", item.sourceUrl ? `Consulta la publicación original: ${item.sourceUrl}` : ""].filter(Boolean).join("\n\n"),
       })));
       res.setHeader("Cache-Control", "no-store");
-      res.json({ settings, items, entities: RADAR_ENTITIES, sources: [{ code: "dof", name: "Diario Oficial de la Federación", url: "https://sidof.segob.gob.mx/datos_abiertos", automatic: true }, { code: "sjf", name: "Semanario Judicial de la Federación", url: process.env.SJF_RADAR_FEED_URL || "https://bicentenario.scjn.gob.mx/repositorio-scjn/api/v1/tesis/ids", automatic: Boolean(process.env.SJF_RADAR_FEED_URL) }] });
+      res.json({ settings, items, entities: RADAR_ENTITIES, sources: [
+        { code: "dof", name: "Diario Oficial de la Federación", url: "https://sidof.segob.gob.mx/datos_abiertos", automatic: true },
+        { code: "sjf", name: "Semanario Judicial de la Federación", url: process.env.SJF_RADAR_FEED_URL || "https://bicentenario.scjn.gob.mx/repositorio-scjn/api/v1/tesis/ids", automatic: Boolean(process.env.SJF_RADAR_FEED_URL) },
+        { code: "scjn_sqlite", name: "SCJN_SQLITE · tesis y jurisprudencia", url: process.env.SCJN_SQLITE_EXPORT_URL || "https://sjf2.scjn.gob.mx/", automatic: Boolean(process.env.SCJN_SQLITE_EXPORT_URL) },
+        { code: "scjn_press", name: "Comunicados oficiales de la Suprema Corte", url: "https://www.scjn.gob.mx/multimedia/comunicados", automatic: true },
+        { code: "tfca", name: "Boletín Laboral del TFCA", url: "https://portales.segob.gob.mx/es/TFCA/Boletin_Laboral", automatic: true },
+      ] });
     } catch (error) {
       console.error("[Radar] read error", error);
       res.status(500).json({ error: "No se pudo cargar el Radar jurídico." });

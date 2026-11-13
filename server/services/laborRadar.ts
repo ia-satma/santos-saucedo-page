@@ -11,6 +11,9 @@ import type { InsertNews } from "@shared/schema";
 export const RADAR_SOURCE_TYPES = [
   "dof",
   "sjf",
+  "scjn_sqlite",
+  "scjn_press",
+  "tfca",
   "stps",
   "imss",
   "infonavit",
@@ -31,6 +34,9 @@ export type RadarStatus = (typeof RADAR_STATUSES)[number];
 const RADAR_SOURCE_HOSTS: Record<Exclude<RadarSourceType, "manual">, readonly string[]> = {
   dof: ["dof.gob.mx", "www.dof.gob.mx", "sidof.segob.gob.mx"],
   sjf: ["sjf2.scjn.gob.mx", "sjf.scjn.gob.mx"],
+  scjn_sqlite: ["sjf2.scjn.gob.mx", "bicentenario.scjn.gob.mx", "www.scjn.gob.mx", "scjn.gob.mx", "www.internet2.scjn.gob.mx", "internet2.scjn.gob.mx"],
+  scjn_press: ["www.scjn.gob.mx", "scjn.gob.mx", "www.internet2.scjn.gob.mx", "internet2.scjn.gob.mx"],
+  tfca: ["portales.segob.gob.mx", "www.gob.mx", "gob.mx"],
   stps: ["stps.gob.mx", "www.stps.gob.mx"],
   imss: ["imss.gob.mx", "www.imss.gob.mx"],
   infonavit: ["infonavit.org.mx", "www.infonavit.org.mx"],
@@ -270,6 +276,9 @@ export function sourceNameFor(sourceType: RadarSourceType): string {
   switch (sourceType) {
     case "dof": return "Diario Oficial de la Federación";
     case "sjf": return "Semanario Judicial de la Federación";
+    case "scjn_sqlite": return "SCJN SQLite · Semanario Judicial";
+    case "scjn_press": return "Comunicados de la Suprema Corte de Justicia de la Nación";
+    case "tfca": return "Tribunal Federal de Conciliación y Arbitraje";
     case "stps": return "Secretaría del Trabajo y Previsión Social";
     case "imss": return "Instituto Mexicano del Seguro Social";
     case "infonavit": return "Instituto del Fondo Nacional de la Vivienda para los Trabajadores";
