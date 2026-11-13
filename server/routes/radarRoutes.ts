@@ -137,7 +137,7 @@ export function registerRadarRoutes(app: Express): void {
       res.setHeader("Cache-Control", "no-store");
       res.json({ settings, items, entities: RADAR_ENTITIES, sources: [
         { code: "dof", name: "Diario Oficial de la Federación", url: "https://sidof.segob.gob.mx/datos_abiertos", automatic: true },
-        { code: "sjf", name: "Semanario Judicial de la Federación", url: process.env.SJF_RADAR_FEED_URL || "https://bicentenario.scjn.gob.mx/repositorio-scjn/api/v1/tesis/ids", automatic: Boolean(process.env.SJF_RADAR_FEED_URL) },
+        { code: "sjf", name: "Semanario Judicial de la Federación · publicación semanal", url: process.env.SJF_RADAR_FEED_URL || "https://sjfsemanal.scjn.gob.mx/listado-resultado-tesis", automatic: true },
         { code: "scjn_sqlite", name: "SCJN_SQLITE · tesis y jurisprudencia", url: process.env.SCJN_SQLITE_EXPORT_URL || "https://sjf2.scjn.gob.mx/", automatic: Boolean(process.env.SCJN_SQLITE_EXPORT_URL) },
         { code: "scjn_press", name: "Comunicados oficiales de la Suprema Corte", url: "https://www.scjn.gob.mx/multimedia/comunicados", automatic: true },
         { code: "tfca", name: "Boletín Laboral del TFCA", url: "https://portales.segob.gob.mx/es/TFCA/Boletin_Laboral", automatic: true },

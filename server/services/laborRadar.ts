@@ -33,7 +33,7 @@ export type RadarStatus = (typeof RADAR_STATUSES)[number];
 
 const RADAR_SOURCE_HOSTS: Record<Exclude<RadarSourceType, "manual">, readonly string[]> = {
   dof: ["dof.gob.mx", "www.dof.gob.mx", "sidof.segob.gob.mx"],
-  sjf: ["sjf2.scjn.gob.mx", "sjf.scjn.gob.mx"],
+  sjf: ["sjfsemanal.scjn.gob.mx", "sjf2.scjn.gob.mx", "sjf.scjn.gob.mx"],
   scjn_sqlite: ["sjf2.scjn.gob.mx", "bicentenario.scjn.gob.mx", "www.scjn.gob.mx", "scjn.gob.mx", "www.internet2.scjn.gob.mx", "internet2.scjn.gob.mx"],
   scjn_press: ["www.scjn.gob.mx", "scjn.gob.mx", "www.internet2.scjn.gob.mx", "internet2.scjn.gob.mx"],
   tfca: ["portales.segob.gob.mx", "www.gob.mx", "gob.mx"],

@@ -44,6 +44,101 @@ test("SJF connector rejects lookalike hosts before fetching", async () => {
   }
 });
 
+test("SJF weekly connector fetches the latest publication, paginates and expands the full detail", async () => {
+  const originalFetch = globalThis.fetch;
+  const calls: string[] = [];
+  const weeklyRecord = {
+    ius: "2032552",
+    rubro: "PERSONAS TRABAJADORAS. LA JORNADA LABORAL DEBE RESPETAR LOS LÍMITES CONSTITUCIONALES.",
+    fechaPublicacion: "2026-11-13T10:24:00Z",
+    claveTesis: "2a./J. 1/2026 (11a.)",
+    epoca: "Undécima Época",
+    instancia: "Segunda Sala",
+    sala: "Segunda Sala",
+    tipoTesis: "Jurisprudencia",
+    materias: ["Laboral", "Migratorio"],
+    localizacion: "Semanario Judicial de la Federación",
+  };
+  const detail = {
+    ...weeklyRecord,
+    texto: "<p>La persona trabajadora tiene derecho a que se respeten los límites de la jornada.</p><p>El contrato mercantil contempla un litigio por responsabilidad penal.</p>",
+    precedentes: "<p>Amparo directo en revisión 123/2026.</p>",
+  };
+  const secondRecord = { ...weeklyRecord, ius: "2032553", rubro: "PERSONAS MIGRANTES. LA PROTECCIÓN LABORAL DEBE INTERPRETARSE DE FORMA AMPLIA." };
+  globalThis.fetch = async (input) => {
+    const url = String(input);
+    calls.push(url);
+    if (url.includes("/api/public/calendar/lastpublication")) {
+      return new Response(JSON.stringify({ semanaId: 202646, fechaPublicacion: "2026-11-13 00:00:00" }), { status: 200 });
+    }
+    if (url.includes("/services/sjftesismicroservice/api/public/tesis/") && /203255[23]/.test(url)) {
+      return new Response(JSON.stringify({ ...detail, ius: url.includes("2032553") ? "2032553" : "2032552" }), { status: 200 });
+    }
+    if (url.includes("/services/sjftesismicroservice/api/public/tesis?")) {
+      const page = new URL(url).searchParams.get("page");
+      assert.equal(new URL(url).searchParams.get("isSJFSemanal"), "true");
+      assert.equal(new URL(url).searchParams.get("sort"), "fechaPublicacion,desc");
+      if (page === "0") return new Response(JSON.stringify({ documents: [weeklyRecord] }), { status: 200 });
+      if (page === "1") return new Response(JSON.stringify({ documents: [secondRecord] }), { status: 200 });
+      return new Response(JSON.stringify({ documents: [] }), { status: 200 });
+    }
+    throw new Error(`Unexpected URL ${url}`);
+  };
+  try {
+    const result = await runRadarSources({ date: "2026-11-12", sources: ["sjf"], limit: 2 });
+    const item = result.items[0];
+    assert.equal(result.items.length, 2);
+    assert.equal(item?.sourceType, "sjf");
+    assert.equal(item?.publishedAt?.slice(0, 10), "2026-11-13");
+    assert.equal(item?.metadata.contentStatus, "full");
+    assert.equal(item?.metadata.claveTesis, "2a./J. 1/2026 (11a.)");
+    assert.match(item?.content || "", /La persona trabajadora tiene derecho/);
+    assert.match(item?.content || "", /Amparo directo en revisión/);
+    assert.doesNotMatch(item?.content || "", /<p>/);
+    assert.ok(item?.topics.includes("laboral"));
+    assert.ok(item?.topics.includes("migratorio"));
+    assert.ok(item?.topics.includes("corporativo"));
+    assert.ok(item?.topics.includes("litigio"));
+    assert.ok(item?.topics.includes("penal"));
+    assert.equal(item?.officialUrl, "https://sjfsemanal.scjn.gob.mx/detalle/tesis/2032552");
+    assert.ok(calls.some((url) => url.includes("page=0")));
+    assert.ok(calls.some((url) => url.includes("page=1")));
+  } finally { globalThis.fetch = originalFetch; }
+});
+
+test("SJF weekly connector keeps a reviewable partial draft when detail is not ready", async () => {
+  const originalFetch = globalThis.fetch;
+  const record = {
+    ius: "2032894",
+    rubro: "DERECHO DEL TRABAJO. CRITERIOS DE PROTECCIÓN A LA PERSONA TRABAJADORA.",
+    fechaPublicacion: "2026-11-13T12:00:00Z",
+    materias: "Laboral",
+    textoPublicacion: "Publicación semanal del Semanario Judicial de la Federación.",
+  };
+  globalThis.fetch = async (input) => {
+    const url = String(input);
+    if (url.includes("/api/public/calendar/lastpublication")) {
+      return new Response(JSON.stringify({ semanaId: 202646, fechaPublicacion: "2026-11-13 00:00:00" }), { status: 200 });
+    }
+    if (url.includes("/services/sjftesismicroservice/api/public/tesis/") && url.includes("2032894")) {
+      return new Response("Not found", { status: 404 });
+    }
+    if (url.includes("/services/sjftesismicroservice/api/public/tesis?")) {
+      return new Response(JSON.stringify({ documents: [record] }), { status: 200 });
+    }
+    throw new Error(`Unexpected URL ${url}`);
+  };
+  try {
+    const result = await runRadarSources({ date: "2026-11-12", sources: ["sjf"], limit: 1 });
+    const item = result.items[0];
+    assert.equal(result.items.length, 1);
+    assert.equal(item?.metadata.contentStatus, "summary_only");
+    assert.match(item?.content || "", /Publicación semanal/);
+    assert.equal(item?.officialUrl, "https://sjfsemanal.scjn.gob.mx/detalle/tesis/2032894");
+    assert.match(result.errors.join(" "), /SJF detalle 2032894/);
+  } finally { globalThis.fetch = originalFetch; }
+});
+
 test("SCJN communications connector keeps official links, dates and labor topics", async () => {
   const originalFetch = globalThis.fetch;
   const html = `<!doctype html><table><tbody>

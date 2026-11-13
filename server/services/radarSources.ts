@@ -18,15 +18,29 @@ export type RadarRunResult = {
 };
 
 const DOF_BASE = "https://sidof.segob.gob.mx";
-const SJF_DEFAULT = "https://bicentenario.scjn.gob.mx/repositorio-scjn/api/v1/tesis/ids";
+const SJF_DEFAULT = "https://sjfsemanal.scjn.gob.mx/services/sjftesismicroservice/api/public/tesis";
+const SJF_CALENDAR = "https://sjfsemanal.scjn.gob.mx/api/public/calendar/lastpublication";
 const SCJN_PRESS_INDEX = "https://www.scjn.gob.mx/multimedia/comunicados";
 const TFCA_BOLETIN_INDEX = "https://portales.segob.gob.mx/es/TFCA/Boletin_Laboral";
 const MAX_BODY = 4_000_000;
 
 const SCJN_PRESS_HOSTS = ["www.scjn.gob.mx", "scjn.gob.mx", "www.internet2.scjn.gob.mx", "internet2.scjn.gob.mx"];
 const TFCA_HOSTS = ["portales.segob.gob.mx", "www.gob.mx", "gob.mx"];
+const SJF_BROWSER_HEADERS = {
+  accept: "application/json, text/plain, */*",
+  "content-type": "application/json",
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/131 Safari/537.36",
+  origin: "https://sjfsemanal.scjn.gob.mx",
+  referer: "https://sjfsemanal.scjn.gob.mx/listado-resultado-tesis",
+};
 
-const LABOR_TOPIC_PATTERN = /laboral|trabaj|salari|emple|sindicat|patron|trabajador|despid|jornad|seguridad social|pension|conciliacion|servidor publico|burocrat|funcionari|nomina|prestacion|vacacion|subcontrat|riesgo de trabajo/i;
+const TOPIC_PATTERNS: Array<[string, RegExp]> = [
+  ["laboral", /laboral|trabaj|salari|emple|sindicat|patron|trabajador|despid|jornad|seguridad social|pension|conciliacion|servidor publico|burocrat|funcionari|nomina|prestacion|vacacion|subcontrat|riesgo de trabajo/i],
+  ["migratorio", /migrator|inmigr|refugiad|visa|extranjer|nacionalidad/i],
+  ["corporativo", /corporativ|societar|contractual|contrat|mercantil|comerci|empresa|sociedad|fusión|adquisición/i],
+  ["litigio", /litig|tribunal|juicio|demanda|procedimiento|controversia|amparo|recurso/i],
+  ["penal", /penal|delito|fiscal|responsabilidad criminal/i],
+];
 
 function folded(value: string): string {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("es-MX");
@@ -34,7 +48,8 @@ function folded(value: string): string {
 
 function topicsFor(value: string, base: string[]): string[] {
   const topics = [...base];
-  if (LABOR_TOPIC_PATTERN.test(folded(value))) topics.push("laboral");
+  const normalized = folded(value);
+  for (const [topic, pattern] of TOPIC_PATTERNS) if (pattern.test(normalized)) topics.push(topic);
   return Array.from(new Set(topics));
 }
 
@@ -84,7 +99,7 @@ function asRecord(value: unknown): Record<string, any> {
 function listFrom(value: unknown): any[] {
   if (Array.isArray(value)) return value;
   const record = asRecord(value);
-  for (const key of ["items", "data", "results", "tesis", "ids", "NotasMatutinas", "NotasVespertinas", "NotasExtraordinarias"]) {
+  for (const key of ["items", "data", "results", "documents", "tesis", "ids", "NotasMatutinas", "NotasVespertinas", "NotasExtraordinarias"]) {
     if (Array.isArray(record[key])) return record[key];
   }
   return [];
@@ -92,6 +107,27 @@ function listFrom(value: unknown): any[] {
 
 function textValue(value: unknown, fallback = ""): string {
   return typeof value === "string" ? value.replace(/\s+/g, " ").trim() : fallback;
+}
+
+function searchableValue(value: unknown): string {
+  if (Array.isArray(value)) return value.map(searchableValue).filter(Boolean).join(" ");
+  if (value && typeof value === "object") return Object.values(value).map(searchableValue).filter(Boolean).join(" ");
+  return textValue(value);
+}
+
+function htmlToText(value: unknown): string {
+  if (typeof value !== "string" || !value.trim()) return "";
+  const $ = loadHtml(`<div id="radar-fragment">${value}</div>`);
+  const root = $("#radar-fragment");
+  root.find("script,style,noscript").remove();
+  root.find("br").replaceWith("\n");
+  root.find("p,h1,h2,h3,h4,h5,h6,li,tr").each((_index, element) => { $(element).append("\n"); });
+  return root.text()
+    .replace(/\u00a0/g, " ")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
 }
 
 function safeOfficialUrl(url: string, allowedHosts: string[]): string {
@@ -132,23 +168,75 @@ async function fetchSjf(date: string, limit: number): Promise<RadarRunResult> {
   const retrievedAt = new Date().toISOString();
   const errors: string[] = [];
   const items: RadarItem[] = [];
-  const configured = process.env.SJF_RADAR_FEED_URL || SJF_DEFAULT;
+  const configured = (process.env.SJF_RADAR_FEED_URL || SJF_DEFAULT).trim();
   try {
-    const feedUrl = new URL(configured);
-    const sjfHost = feedUrl.hostname.toLowerCase();
+    const configuredUrl = new URL(configured);
+    const sjfHost = configuredUrl.hostname.toLowerCase();
     if (sjfHost !== "scjn.gob.mx" && !sjfHost.endsWith(".scjn.gob.mx")) throw new Error("SJF_RADAR_FEED_URL debe ser un dominio oficial de SCJN");
-    if (feedUrl.pathname.endsWith("/ids")) feedUrl.searchParams.set("limit", String(Math.min(Math.max(limit, 1), 50)));
-    const payload = await fetchJson(feedUrl.toString());
-    const records = listFrom(payload).slice(0, Math.min(limit, 50));
-    for (const record of records) {
-      const item = asRecord(record);
-      const id = String(item.idTesis ?? item.id ?? item.digitalRegistry ?? item.registro ?? "").trim();
-      const title = textValue(item.rubro ?? item.titulo ?? item.title, id ? `Tesis SJF ${id}` : "");
-      if (!id || !title) continue;
-      const officialUrl = safeOfficialUrl(`https://sjf2.scjn.gob.mx/detalle/tesis/${encodeURIComponent(id)}`, ["sjf2.scjn.gob.mx"]);
-      items.push(normalizeRadarItem({ sourceType: "sjf", sourceId: id, title, summary: textValue(item.materia ?? item.abstract), content: textValue(item.texto), officialUrl, publishedAt: item.fechaPublicacion ?? item.fecha ?? date, metadata: { epoca: item.epoca, instancia: item.instancia, materia: item.materia }, topics: ["México"], detectedAt: retrievedAt }, new Date(retrievedAt)));
+    // The previous `/ids` feed is still a valid SCJN host but is not the weekly API.
+    const feedUrl = configuredUrl.pathname.includes("/services/sjftesismicroservice/api/public/tesis")
+      ? configuredUrl
+      : new URL(SJF_DEFAULT);
+    const calendar = asRecord(await fetchJson(SJF_CALENDAR, { headers: SJF_BROWSER_HEADERS }));
+    const latestDate = textValue(calendar.fechaPublicacion, date).slice(0, 10) || date;
+    const pageSize = Math.min(Math.max(limit * 2, 50), 100);
+    const records: any[] = [];
+    for (let page = 0; page < 10 && records.length < Math.max(limit, 1); page += 1) {
+      const pageUrl = new URL(feedUrl.toString());
+      pageUrl.searchParams.set("isSJFSemanal", "true");
+      pageUrl.searchParams.set("page", String(page));
+      pageUrl.searchParams.set("size", String(pageSize));
+      pageUrl.searchParams.set("sort", "fechaPublicacion,desc");
+      const payload = await fetchJson(pageUrl.toString(), { method: "POST", headers: SJF_BROWSER_HEADERS, body: JSON.stringify({}) });
+      const pageRecords = listFrom(payload);
+      if (!pageRecords.length) break;
+      records.push(...pageRecords);
+      const oldest = textValue(pageRecords.at(-1)?.fechaPublicacion).slice(0, 10);
+      if (oldest && oldest < latestDate) break;
     }
-    if (!records.length) errors.push("SJF no devolvió registros en el endpoint configurado");
+    const latestRecords = records.filter((record) => textValue(record.fechaPublicacion).slice(0, 10) === latestDate).slice(0, Math.min(limit, 100));
+    for (const record of latestRecords) {
+      const item = asRecord(record);
+      const id = String(item.ius ?? item.idTesis ?? item.id ?? item.digitalRegistry ?? item.registro ?? "").trim();
+      const detailUrl = `https://sjfsemanal.scjn.gob.mx/detalle/tesis/${encodeURIComponent(id)}`;
+      let detail: Record<string, any> = {};
+      let contentStatus = "summary_only";
+      if (id) {
+        try {
+          detail = asRecord(await fetchJson(`${feedUrl.toString()}/${encodeURIComponent(id)}?isSJFSemanal=true&hostName=sjfsemanal.scjn.gob.mx`, { headers: SJF_BROWSER_HEADERS }));
+          if (detail.texto || detail.precedentes) contentStatus = "full";
+        } catch (error) {
+          errors.push(`SJF detalle ${id}: ${(error as Error).message}`);
+        }
+      }
+      const title = htmlToText(detail.rubro ?? item.rubro ?? item.titulo ?? item.title) || (id ? `Tesis SJF ${id}` : "");
+      if (!id || !title) continue;
+      const officialUrl = safeOfficialUrl(detailUrl, ["sjfsemanal.scjn.gob.mx"]);
+      const content = [htmlToText(detail.texto ?? item.texto), htmlToText(detail.precedentes ?? item.precedentes), textValue(detail.textoPublicacion ?? item.textoPublicacion)].filter(Boolean).join("\n\n");
+      const searchable = [title, content, item.localizacion, item.materias, item.instancia, item.sala, detail.localizacion, detail.materias, detail.instancia, detail.sala].map(searchableValue).filter(Boolean).join(" ");
+      items.push(normalizeRadarItem({
+        sourceType: "sjf", sourceId: id, title,
+        summary: htmlToText(detail.texto ?? item.texto).slice(0, 4_000) || textValue(item.localizacion ?? item.textoPublicacion),
+        content,
+        officialUrl,
+        publishedAt: detail.fechaPublicacion ?? item.fechaPublicacion ?? item.fecha ?? date,
+        metadata: {
+          semanaId: calendar.semanaId,
+          fechaPublicacion: detail.fechaPublicacion ?? item.fechaPublicacion,
+          registroDigital: id,
+          claveTesis: textValue(detail.claveTesis ?? item.claveTesis),
+          epoca: textValue(detail.epoca ?? item.epoca),
+          instancia: textValue(detail.instancia ?? item.instancia),
+          sala: textValue(detail.sala ?? item.sala),
+          tipoTesis: textValue(detail.tipoTesis ?? item.tipoTesis),
+          materias: searchableValue(detail.materias ?? item.materias),
+          localizacion: textValue(detail.localizacion ?? item.localizacion),
+          contentStatus,
+        },
+        topics: topicsFor(searchable, ["México", "SCJN", "SJF"]), detectedAt: retrievedAt,
+      }, new Date(retrievedAt)));
+    }
+    if (!latestRecords.length) errors.push(`SJF no devolvió tesis para la última publicación (${latestDate})`);
   } catch (error) { errors.push(`SJF: ${(error as Error).message}`); }
   return { source: "sjf", items, errors, retrievedAt };
 }
