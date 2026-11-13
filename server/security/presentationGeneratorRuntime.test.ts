@@ -538,7 +538,7 @@ test('la indisponibilidad de App Storage conserva el mensaje específico y limpi
   );
   assert.deepEqual(result, {
     success: false,
-    error: 'App Storage no está disponible. La presentación no se guardó para evitar que se pierda al publicar.',
+    error: 'App Storage no está disponible. Configura REPLIT_APP_STORAGE_BUCKET_ID en Replit y verifica la conexión antes de reintentar. La presentación no se guardó para evitar que se pierda al publicar.',
   });
   assert.equal(harness.operations.includes('history'), false);
   assert.deepEqual(

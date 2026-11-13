@@ -17,7 +17,7 @@ function normalizeTaxonomyValue(value: string): string {
 const CATEGORY_CONFIG: AgentConfig = {
   agentType: 'category_agent',
   name: 'Category Agent',
-  description: 'Automatically categorizes articles based on content analysis for SEO optimization',
+  description: 'Classifies legal content by practice and by the editable Santos & Saucedo industry catalog',
   systemPrompt: `You are an expert content categorizer for Santos & Saucedo, a prestigious Mexican law firm.
 Analyze legal articles and categorize them appropriately.
 
@@ -46,14 +46,8 @@ Legal Practice Areas at Santos & Saucedo:
 - Telecommunications (Telecomunicaciones)
 - White Collar Crime (Delitos Financieros)
 
-Industry Sectors:
-- Financial Services
-- Energy & Infrastructure
-- Technology & Media
-- Healthcare & Life Sciences
-- Manufacturing & Retail
-- Real Estate & Hospitality
-- Transportation & Logistics
+Industry sectors must come from the current database catalog supplied below. Never invent a sector or slug.
+Return the database name or slug exactly enough for the server to match it.
 
 Return JSON format:
 {
@@ -75,7 +69,7 @@ SECURITY RULES (mandatory):
   model: 'gpt-6.1-sol',
   temperature: 0.3,
   maxTokens: 1000,
-  skills: ['content_categorization', 'legal_analysis', 'seo_tagging'],
+  skills: ['content_categorization', 'legal_analysis', 'seo_tagging', 'radar_practice_classification', 'radar_industry_classification'],
   enabled: true,
   concurrency: 3,
   retryPolicy: { maxRetries: 2, backoffMs: 1000, backoffMultiplier: 2 },
@@ -139,6 +133,7 @@ Categorize this article and return JSON with primaryCategory, categorySlug, prac
       const categorization = categoryOutputSchema.parse(JSON.parse(response));
 
       const matchedPracticeGroups: string[] = [];
+      const matchedPracticeLabels: string[] = [];
       for (const practiceArea of categorization.practiceAreas || []) {
         const match = existingPracticeGroups.find(
           pg => pg.slug === practiceArea ||
@@ -146,10 +141,12 @@ Categorize this article and return JSON with primaryCategory, categorySlug, prac
         );
         if (match) {
           matchedPracticeGroups.push(match.id);
+          matchedPracticeLabels.push(match.nameEs || match.name);
         }
       }
 
       const matchedIndustryGroups: string[] = [];
+      const matchedIndustryLabels: string[] = [];
       for (const industry of categorization.industrySectors || []) {
         const match = existingIndustryGroups.find(
           ig => ig.slug === industry ||
@@ -157,6 +154,7 @@ Categorize this article and return JSON with primaryCategory, categorySlug, prac
         );
         if (match) {
           matchedIndustryGroups.push(match.id);
+          matchedIndustryLabels.push(match.nameEs || match.name);
         }
       }
 
@@ -180,7 +178,9 @@ Categorize this article and return JSON with primaryCategory, categorySlug, prac
           primaryCategory: categorization.primaryCategory,
           categorySlug: categorization.categorySlug,
           practiceAreas: matchedPracticeGroups,
+          practiceLabels: matchedPracticeLabels,
           industrySectors: matchedIndustryGroups,
+          industryLabels: matchedIndustryLabels,
           tags: categorization.tags,
           confidence: categorization.confidence,
           reasoning: categorization.reasoning,

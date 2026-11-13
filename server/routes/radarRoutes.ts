@@ -15,6 +15,8 @@ import {
   type RadarSourceType,
 } from "../services/laborRadar";
 import { RADAR_ENTITIES, runRadarSources } from "../services/radarSources";
+import { categoryAgent } from "../agents";
+import type { ExecutionContext } from "../agents/core/types";
 
 const radarDraftSchema = radarSourceInputSchema.strict();
 const radarSettingsSchema = z.object({
@@ -41,6 +43,33 @@ const RADAR_SETTINGS_KEY = "radar.settings";
 const defaultRadarSettings: RadarSettings = radarSettingsSchema.parse({});
 let schedulerHandle: ReturnType<typeof setInterval> | undefined;
 let schedulerBusy = false;
+
+async function enrichRadarDraftWithClassification(newsId: string, actorId?: string | null): Promise<void> {
+  if (process.env.NODE_ENV === "test") return;
+  try {
+    const context: ExecutionContext = {
+      jobId: `radar-classification-${newsId}-${Date.now()}`,
+      agentType: "category_agent",
+      startTime: new Date(),
+      metadata: { source: "radar", reviewRequired: true },
+    };
+    const result = await categoryAgent.execute(context, { articleId: newsId, applyChanges: false });
+    if (!result.success || !result.data) return;
+    const data = result.data as { practiceAreas?: string[]; practiceLabels?: string[]; industrySectors?: string[]; industryLabels?: string[]; confidence?: number; reasoning?: string };
+    const current = (await storage.getNews()).find((item) => item.id === newsId);
+    if (!current) return;
+    const existingTags = Array.isArray(current.tags) ? current.tags : [];
+    const suggestions = [
+      ...(data.practiceLabels?.length ? data.practiceLabels : data.practiceAreas ?? []).map((label) => `radar-practica:${label}`),
+      ...(data.industryLabels?.length ? data.industryLabels : data.industrySectors ?? []).map((label) => `radar-industria:${label}`),
+    ];
+    const tags = Array.from(new Set([...existingTags, ...suggestions])).slice(0, 40);
+    await storage.updateNews(newsId, { tags, processingStatus: "ready_for_approval" });
+    if (actorId) await auditLog("classify_from_radar", "news", newsId, actorId, { tags: suggestions, confidence: data.confidence ?? 0, reasoning: data.reasoning ?? "", published: false });
+  } catch (error) {
+    console.warn("[Radar] classification suggestion failed", error instanceof Error ? error.message : error);
+  }
+}
 
 async function getRadarSettings(): Promise<RadarSettings> {
   const [row] = await db.select({ value: siteConfig.value }).from(siteConfig).where(eq(siteConfig.key, RADAR_SETTINGS_KEY)).limit(1);
@@ -71,6 +100,7 @@ async function runConfiguredRadar(req: Request | null, date?: string) {
     const existing = (await storage.getNews()).find((news) => news.slug === insert.slug || (news.sourceUrl === insert.sourceUrl && news.titleEs === insert.titleEs));
     if (existing) { duplicates += 1; continue; }
     const news = await storage.createNews(insert);
+    void enrichRadarDraftWithClassification(news.id, req?.adminUser?.id);
     created += 1;
     if (req?.adminUser) await auditLog("create_from_radar", "news", news.id, req.adminUser.id, { sourceType: item.sourceType, sourceId: item.sourceId, sourceUrl: item.officialUrl, fingerprint: item.fingerprint, published: false }, req);
   }
@@ -176,6 +206,7 @@ export function registerRadarRoutes(app: Express): void {
         }
 
         const news = await storage.createNews(insert);
+        void enrichRadarDraftWithClassification(news.id, req.adminUser?.id);
         await auditLog("create_from_radar", "news", news.id, req.adminUser!.id, {
           sourceType: item.sourceType,
           sourceId: item.sourceId,

@@ -45,7 +45,19 @@ export function initIndustrias(root: HTMLElement): () => void {
 
   if ("IntersectionObserver" in window) {
     const centro = new IntersectionObserver((es) => {
-      es.forEach((e) => { if (e.isIntersecting) poner(+((e.target as HTMLElement).dataset.i || 0)); });
+      if (!es.some((e) => e.isIntersecting)) return;
+      const y = window.innerHeight / 2;
+      let closest = 0;
+      let distance = Number.POSITIVE_INFINITY;
+      arts.forEach((article, index) => {
+        const rect = article.getBoundingClientRect();
+        const nextDistance = Math.abs(rect.top + rect.height / 2 - y);
+        if (nextDistance < distance) {
+          distance = nextDistance;
+          closest = index;
+        }
+      });
+      poner(closest);
     }, { rootMargin: "-50% 0px -50% 0px" });
     arts.forEach((a) => centro.observe(a));
 

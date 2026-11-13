@@ -28,24 +28,41 @@ export default function Industries() {
   const { data: catalog = [] } = useQuery<IndustryGroup[]>({ queryKey: ["/api/industry-groups"] });
   const cmsText = industriesCms[language] ?? industriesCms.en;
   const editorial = (cmsText.v3 ?? base) as typeof base;
-  const catalogBySlug = new Map(catalog.filter((group) => group.published !== false).map((group) => [group.slug, group]));
+  const publishedCatalog = catalog
+    .filter((group) => group.published !== false)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || a.id.localeCompare(b.id));
+  const catalogBySlug = new Map(publishedCatalog.map((group) => [group.slug, group]));
   const known = editorial.industrias
     .filter((item) => !catalog.length || catalogBySlug.has(item.id))
-    .map((item) => {
+    .map((item, index) => {
       const group = catalogBySlug.get(item.id);
-      return group ? { ...item, nombre: selectedLang === "es" ? group.nameEs : selectedLang === "en" ? group.name : item.nombre, linea: selectedLang === "es" ? group.descriptionEs : selectedLang === "en" ? group.description : item.linea, img: group.imageUrl || item.img } : item;
+      return group
+        ? {
+            ...item,
+            _catalogOrder: group.order ?? index,
+            nombre: selectedLang === "es" ? group.nameEs : selectedLang === "en" ? group.name : item.nombre,
+            linea: selectedLang === "es" ? group.descriptionEs : selectedLang === "en" ? group.description : item.linea,
+            img: group.imageUrl || item.img,
+          }
+        : { ...item, _catalogOrder: index };
     });
-  const extra = catalog.filter((group) => !editorial.industrias.some((item) => item.id === group.slug)).map((group) => ({
-    id: group.slug,
-    img: group.imageUrl || editorial.industrias[0]?.img || "",
-    w: 2000,
-    h: 1333,
-    pos: "50% 50%",
-    nombre: selectedLang === "es" ? group.nameEs : group.name,
-    linea: selectedLang === "es" ? group.descriptionEs : group.description,
-    lista: [selectedLang === "es" ? group.fullDescriptionEs || group.descriptionEs : group.fullDescription || group.description],
-  }));
-  const t = { ...editorial, cab: cmsText.hero ?? editorial.cab, sigue: cmsText.next ?? editorial.sigue, industrias: [...known, ...extra] } as unknown as IndustriasTexts;
+  const extra = publishedCatalog
+    .filter((group) => !editorial.industrias.some((item) => item.id === group.slug))
+    .map((group) => ({
+      id: group.slug,
+      _catalogOrder: group.order ?? Number.MAX_SAFE_INTEGER,
+      img: group.imageUrl || editorial.industrias[0]?.img || "",
+      w: 2000,
+      h: 1333,
+      pos: "50% 50%",
+      nombre: selectedLang === "es" ? group.nameEs : group.name,
+      linea: selectedLang === "es" ? group.descriptionEs : group.description,
+      lista: [selectedLang === "es" ? group.fullDescriptionEs || group.descriptionEs : group.fullDescription || group.description],
+    }));
+  const industrias = [...known, ...extra]
+    .sort((a, b) => (a._catalogOrder ?? 0) - (b._catalogOrder ?? 0))
+    .map(({ _catalogOrder: _ignored, ...item }) => item);
+  const t = { ...editorial, cab: cmsText.hero ?? editorial.cab, sigue: cmsText.next ?? editorial.sigue, industrias } as unknown as IndustriasTexts;
   const localizedAttrs = { ...attrs, lang: selectedLang };
 
   return (

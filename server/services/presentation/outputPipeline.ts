@@ -159,7 +159,7 @@ export class PresentationOutputPipeline {
       if (deps.isPersistentStorageUnavailable(error)) {
         return {
           success: false,
-          error: 'App Storage no está disponible. La presentación no se guardó para evitar que se pierda al publicar.',
+          error: 'App Storage no está disponible. Configura REPLIT_APP_STORAGE_BUCKET_ID en Replit y verifica la conexión antes de reintentar. La presentación no se guardó para evitar que se pierda al publicar.',
         };
       }
       return { success: false, error: error?.message || 'Falló la generación de la presentación.' };
