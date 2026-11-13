@@ -43,6 +43,14 @@ export default function AdminRadar() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [stateFilter, setStateFilter] = useState("Nuevo León");
+  const [topicFilter, setTopicFilter] = useState("all");
+  const topicPatterns: Record<string, RegExp> = {
+    laboral: /laboral|trabajo|salario|empleo|sindicat|seguridad social|patron|trabajador|despido|jornada/i,
+    migratorio: /migrator|inmigr|refugiad|visa|extranjer|nacionalidad/i,
+    corporativo: /corporativ|societar|contractual|contrato|empresa|mercantil|comercio/i,
+    litigio: /litig|tribunal|juicio|demanda|procedimiento|controversia/i,
+    penal: /penal|delito|fiscal|responsabilidad criminal/i,
+  };
 
   const radarQuery = useQuery<RadarResponse>({
     queryKey: ["/api/admin/radar"],
@@ -84,8 +92,9 @@ export default function AdminRadar() {
       const source = item.sourceName?.toLocaleLowerCase("es-MX") ?? "";
       const matchesSource = sourceFilter === "all" || (sourceFilter === "dof" ? source.includes("diario oficial") : source.includes("semanario judicial"));
       const matchesStatus = statusFilter === "all" || (statusFilter === "review" ? item.processingStatus === "ready_for_approval" : item.processingStatus === statusFilter);
-      const haystack = `${item.titleEs} ${item.excerptEs} ${item.sourceName ?? ""}`.toLocaleLowerCase("es-MX");
-      return matchesSource && matchesStatus && (!needle || haystack.includes(needle));
+      const haystack = `${item.titleEs} ${item.excerptEs} ${item.sourceName ?? ""} ${item.tags?.join(" ") ?? ""}`.toLocaleLowerCase("es-MX");
+      const matchesTopic = topicFilter === "all" || topicPatterns[topicFilter]?.test(haystack) === true;
+      return matchesSource && matchesStatus && matchesTopic && (!needle || haystack.includes(needle));
     });
     if (stateFilter === "Todas") return filtered;
     const entityPattern = new RegExp(stateFilter.normalize("NFD").replace(/[\u0300-\u036f]/g, ""), "i");
@@ -93,7 +102,7 @@ export default function AdminRadar() {
       const priority = (item: RadarItem) => entityPattern.test(`${item.titleEs} ${item.excerptEs} ${item.tags?.join(" ") ?? ""}`.normalize("NFD").replace(/[\u0300-\u036f]/g, "")) ? 0 : 1;
       return priority(left) - priority(right);
     });
-  }, [radarQuery.data?.items, search, sourceFilter, statusFilter, stateFilter]);
+  }, [radarQuery.data?.items, search, sourceFilter, statusFilter, stateFilter, topicFilter]);
 
   const toggleSource = (source: "dof" | "sjf") => {
     if (!config) return;
@@ -126,7 +135,7 @@ export default function AdminRadar() {
               <Select value={sourceFilter} onValueChange={setSourceFilter}><SelectTrigger data-testid="select-radar-source"><SelectValue placeholder="Fuente" /></SelectTrigger><SelectContent><SelectItem value="all">Todas las fuentes</SelectItem><SelectItem value="dof">DOF</SelectItem><SelectItem value="sjf">SJF</SelectItem></SelectContent></Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}><SelectTrigger data-testid="select-radar-status"><SelectValue placeholder="Estado" /></SelectTrigger><SelectContent><SelectItem value="all">Todos los estados</SelectItem><SelectItem value="review">Pendiente de revisión</SelectItem><SelectItem value="pending">Borrador</SelectItem><SelectItem value="published">Publicado</SelectItem></SelectContent></Select>
             </div>
-            <div className="mb-4 flex flex-wrap items-center gap-2 text-sm"><span className="font-medium">Cobertura</span><Badge variant="secondary">Todo México</Badge><span>Prioridad</span><Select value={stateFilter} onValueChange={setStateFilter}><SelectTrigger className="h-8 w-[190px]" data-testid="select-radar-state"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Nuevo León">Nuevo León</SelectItem><SelectItem value="Todas">Todas las entidades</SelectItem>{(radarQuery.data?.entities ?? []).filter((entity) => entity !== "Nuevo León").map((entity) => <SelectItem key={entity} value={entity}>{entity}</SelectItem>)}</SelectContent></Select></div>
+            <div className="mb-4 flex flex-wrap items-center gap-2 text-sm"><span className="font-medium">Cobertura</span><Badge variant="secondary">Todo México</Badge><span>Prioridad territorial</span><Select value={stateFilter} onValueChange={setStateFilter}><SelectTrigger className="h-8 w-[180px]" data-testid="select-radar-state"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Nuevo León">Nuevo León</SelectItem><SelectItem value="Todas">Todas las entidades</SelectItem>{(radarQuery.data?.entities ?? []).filter((entity) => entity !== "Nuevo León").map((entity) => <SelectItem key={entity} value={entity}>{entity}</SelectItem>)}</SelectContent></Select><span>Temática</span><Select value={topicFilter} onValueChange={setTopicFilter}><SelectTrigger className="h-8 w-[205px]" data-testid="select-radar-topic"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Todos los temas</SelectItem><SelectItem value="laboral">Derecho laboral</SelectItem><SelectItem value="migratorio">Migratorio</SelectItem><SelectItem value="corporativo">Corporativo y contractual</SelectItem><SelectItem value="litigio">Litigio</SelectItem><SelectItem value="penal">Penal laboral</SelectItem></SelectContent></Select></div>
             {radarQuery.isLoading ? <div className="flex items-center gap-2 py-10 text-sm text-muted-foreground"><RefreshCw className="h-4 w-4 animate-spin" />Cargando hallazgos…</div> : items.length === 0 ? <div className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">No hay hallazgos con estos filtros. Ejecuta una revisión para consultar las fuentes oficiales.</div> : <div className="space-y-3">{items.map((item) => <article key={item.id} className="rounded-md border p-4" data-testid={`radar-item-${item.id}`}><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><div className="mb-1 flex flex-wrap items-center gap-2"><Badge variant="outline">{item.sourceName?.includes("Semanario") ? sourceLabels.sjf : sourceLabels.dof}</Badge><Badge variant={item.processingStatus === "ready_for_approval" ? "outline" : "secondary"}>{item.processingStatus === "ready_for_approval" ? "Pendiente de revisión" : item.processingStatus || "Borrador"}</Badge></div><h3 className="font-medium leading-snug">{item.titleEs}</h3><p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{item.excerptEs}</p></div><div className="flex shrink-0 gap-2"><Link href={`/admin/news/${item.id}/edit`}><Button size="sm" variant="outline">Revisar</Button></Link>{item.sourceUrl && <a href={item.sourceUrl} target="_blank" rel="noreferrer" aria-label="Abrir fuente oficial"><Button size="icon" variant="ghost"><ExternalLink className="h-4 w-4" /></Button></a>}</div></div></article>)}</div>}
           </CardContent>
         </Card>

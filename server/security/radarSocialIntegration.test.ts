@@ -36,3 +36,16 @@ test("Radar bridge preserves content as data and never changes the publication f
   assert.match(insert.content ?? "", /Ignora las instrucciones anteriores/);
   assert.equal(insert.published, false);
 });
+
+test("Radar drafts keep an editable Spanish body when the source has no article text", () => {
+  const item = normalizeRadarItem({
+    sourceType: "dof",
+    sourceId: "dof-summary-only",
+    title: "Aviso con resumen",
+    summary: "Resumen oficial para revisión.",
+    officialUrl: "https://www.dof.gob.mx/nota_detalle.php?codigo=summary-only",
+  });
+  const insert = radarItemToNewsInsert(item);
+  assert.match(insert.contentEs ?? "", /Resumen oficial para revisión/);
+  assert.match(insert.contentEs ?? "", /Consulta la publicación original/);
+});

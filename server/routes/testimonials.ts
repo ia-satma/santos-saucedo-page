@@ -6,6 +6,7 @@ import { db, editorialDb } from "../db";
 import {
   testimonials,
   testimonialInvites,
+  siteConfig,
   TESTIMONIAL_QUOTE_MAX,
   SUPPORTED_LANGUAGES,
   type Testimonial,
@@ -15,7 +16,7 @@ import { authMiddleware } from "../auth";
 import { isReadOnlyAdmin } from "@shared/adminAccess";
 import { recordAccessEvent } from "../cms/accessAudit";
 import { getCmsIntegrations } from "../cms/siteConfig";
-import { fetchGooglePlaceReviews, fetchGooglePlaceReviewsFromMapsUrl, googleReviewSourceId, normalizeOmkarReviewBatch } from "../services/googleTestimonials";
+import { fetchGooglePlaceReviews, fetchGooglePlaceReviewsFromMapsUrl, googleReviewSourceId, normalizeGoogleMapsUrl, normalizeOmkarReviewBatch } from "../services/googleTestimonials";
 
 // Testimonios de clientes (junta 16-10-2026, Mario y Gabriel): el cliente escribe su comentario
 // desde un enlace de un solo uso que genera el despacho; nada se publica sin aprobación.
@@ -23,6 +24,66 @@ import { fetchGooglePlaceReviews, fetchGooglePlaceReviewsFromMapsUrl, googleRevi
 
 const INVITE_DAYS = 30;
 export const TESTIMONIAL_WRITE_PATH = "/testimonios/escribir";
+
+const GOOGLE_AUTOMATION_KEY = "testimonials.google_automation";
+const DEFAULT_GOOGLE_MAPS_URL = "https://www.google.com/maps/place/Saucedo+Santos+S.C./@25.6576042,-100.3678703,17z/data=!3m1!4b1!4m6!3m5!1s0x8662be314136c21b:0x2fc821e36c6f09dd!8m2!3d25.6576042!4d-100.3652954!16s%2Fg%2F1pzq4rwn2";
+const googleAutomationSchema = z.object({
+  enabled: z.boolean().default(false),
+  mapsUrl: z.string().trim().max(2000).default(DEFAULT_GOOGLE_MAPS_URL),
+  timezone: z.string().trim().min(1).max(80).default("America/Monterrey"),
+  hour: z.number().int().min(0).max(23).default(7),
+  minute: z.number().int().min(0).max(59).default(0),
+  days: z.array(z.number().int().min(0).max(6)).min(1).max(7).default([0, 1, 2, 3, 4, 5, 6]),
+  lastRunAt: z.string().datetime({ offset: true }).nullable().default(null),
+  lastRunStatus: z.enum(["idle", "running", "success", "failed"]).default("idle"),
+  lastRunMessage: z.string().max(1000).default(""),
+  lastRunImported: z.number().int().min(0).default(0),
+  lastRunReviewed: z.number().int().min(0).default(0),
+});
+export type GoogleTestimonialsAutomationSettings = z.infer<typeof googleAutomationSchema>;
+const defaultGoogleAutomation = googleAutomationSchema.parse({});
+let googleAutomationBusy = false;
+let googleAutomationScheduler: ReturnType<typeof setInterval> | undefined;
+
+function normalizeGoogleAutomation(value: unknown): GoogleTestimonialsAutomationSettings {
+  const parsed = value && typeof value === "object" ? value as Record<string, unknown> : {};
+  const settings = googleAutomationSchema.parse({ ...defaultGoogleAutomation, ...parsed });
+  if (settings.mapsUrl) normalizeGoogleMapsUrl(settings.mapsUrl);
+  try { new Intl.DateTimeFormat("en-US", { timeZone: settings.timezone }).format(); }
+  catch { throw new Error("La zona horaria no es válida."); }
+  return settings;
+}
+
+async function getGoogleAutomationSettings(): Promise<GoogleTestimonialsAutomationSettings> {
+  const [row] = await db.select({ value: siteConfig.value }).from(siteConfig).where(eq(siteConfig.key, GOOGLE_AUTOMATION_KEY)).limit(1);
+  if (!row?.value) return defaultGoogleAutomation;
+  try { return normalizeGoogleAutomation(JSON.parse(row.value)); }
+  catch { return defaultGoogleAutomation; }
+}
+
+async function saveGoogleAutomationSettings(settings: GoogleTestimonialsAutomationSettings): Promise<GoogleTestimonialsAutomationSettings> {
+  const value = JSON.stringify(normalizeGoogleAutomation(settings));
+  await db.insert(siteConfig)
+    .values({ key: GOOGLE_AUTOMATION_KEY, value, type: "json", category: "testimonials", description: "Extracción automática de reseñas de Google con revisión humana" })
+    .onConflictDoUpdate({ target: siteConfig.key, set: { value, type: "json", category: "testimonials", updatedAt: new Date() } });
+  return JSON.parse(value) as GoogleTestimonialsAutomationSettings;
+}
+
+function localGoogleScheduleKey(settings: GoogleTestimonialsAutomationSettings, now = new Date()): string {
+  const parts = new Intl.DateTimeFormat("en-US", { timeZone: settings.timezone, weekday: "short", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(now);
+  const get = (type: string) => parts.find((part) => part.type === type)?.value || "";
+  const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(get("weekday"));
+  return `${get("year")}-${get("month")}-${get("day")} ${weekday} ${get("hour")}:${get("minute")}`;
+}
+
+export function shouldRunGoogleAutomation(settings: GoogleTestimonialsAutomationSettings, now = new Date()): boolean {
+  const schedule = localGoogleScheduleKey(settings, now);
+  const [, weekday, clock] = schedule.match(/^\d{4}-\d{2}-\d{2} (\d+) (\d{2}:\d{2})$/) || [];
+  const [hour, minute] = (clock || "").split(":").map(Number);
+  const today = schedule.slice(0, 10);
+  const lastDay = settings.lastRunAt ? new Intl.DateTimeFormat("en-CA", { timeZone: settings.timezone }).format(new Date(settings.lastRunAt)) : "";
+  return settings.enabled && Boolean(settings.mapsUrl) && settings.days.includes(Number(weekday)) && hour === settings.hour && minute === settings.minute && lastDay !== today;
+}
 
 const hashToken = (token: string) =>
   crypto.createHash("sha256").update(token, "utf8").digest("hex");
@@ -131,6 +192,100 @@ async function siteOrigin(req: Request) {
   } catch {
     return "https://santos-saucedo.replit.app";
   }
+}
+
+type GoogleImportResult = {
+  sourceUrl?: string;
+  placeId?: string;
+  imported: number;
+  alreadyPresent: number;
+  reviewed: number;
+  captured: number;
+  requiresApproval: true;
+};
+
+async function importGoogleReviews(options: { mapsUrl?: string; req?: Request } = {}): Promise<GoogleImportResult> {
+  const settings = await getGoogleAutomationSettings();
+  const mapsUrl = options.mapsUrl?.trim() || settings.mapsUrl.trim();
+  let reviews;
+  let sourceUrl: string | undefined;
+  let placeId: string | undefined;
+  if (mapsUrl) {
+    const result = await fetchGooglePlaceReviewsFromMapsUrl({ mapsUrl });
+    reviews = result.reviews;
+    sourceUrl = result.sourceUrl;
+    placeId = result.placeId;
+  } else {
+    reviews = await fetchGooglePlaceReviews();
+  }
+  const existing = await db.select({ source: testimonials.source }).from(testimonials);
+  const known = new Set(existing.map((row) => row.source).filter(Boolean));
+  const pending = reviews.filter((review) => !known.has(googleReviewSourceId(review.id)));
+  if (pending.length) {
+    await db.insert(testimonials).values(pending.map((review) => ({
+      quote: review.quote,
+      authorName: review.authorName,
+      authorTitle: "Google Maps",
+      source: googleReviewSourceId(review.id),
+      sourceEs: review.mapsUrl || sourceUrl || "https://www.google.com/maps",
+      sourceUrl: review.mapsUrl || sourceUrl || null,
+      sourcePublishedAt: sourcePublishedDate(review.publishedAt),
+      rating: review.rating,
+      language: review.language || null,
+      origin: "google",
+      status: "captured",
+      published: false,
+      showCompany: false,
+      consentAt: null,
+      updatedAt: new Date(),
+    })));
+  }
+  return { sourceUrl, placeId, imported: pending.length, alreadyPresent: reviews.length - pending.length, reviewed: reviews.length, captured: pending.length, requiresApproval: true };
+}
+
+function sourcePublishedDate(value: string | undefined): Date | null {
+  if (!value) return null;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+async function runGoogleAutomation(): Promise<GoogleImportResult & { settings: GoogleTestimonialsAutomationSettings }> {
+  const current = await getGoogleAutomationSettings();
+  await saveGoogleAutomationSettings({ ...current, lastRunAt: new Date().toISOString(), lastRunStatus: "running", lastRunMessage: "Extracción automática en curso." });
+  try {
+    const result = await importGoogleReviews();
+    const updated = await saveGoogleAutomationSettings({
+      ...current,
+      lastRunAt: new Date().toISOString(),
+      lastRunStatus: "success",
+      lastRunMessage: `${result.imported} nuevas y ${result.alreadyPresent} ya existentes. Todas quedan capturadas para revisión humana.`,
+      lastRunImported: result.imported,
+      lastRunReviewed: result.reviewed,
+    });
+    return { ...result, settings: updated };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "No se pudieron extraer las reseñas de Google.";
+    await saveGoogleAutomationSettings({ ...current, lastRunAt: new Date().toISOString(), lastRunStatus: "failed", lastRunMessage: message, lastRunImported: 0, lastRunReviewed: 0 });
+    throw error;
+  }
+}
+
+export function startGoogleTestimonialsScheduler(): void {
+  if (googleAutomationScheduler || process.env.NODE_ENV === "test") return;
+  googleAutomationScheduler = setInterval(async () => {
+    if (googleAutomationBusy) return;
+    try {
+      const settings = await getGoogleAutomationSettings();
+      if (!shouldRunGoogleAutomation(settings)) return;
+      googleAutomationBusy = true;
+      await runGoogleAutomation();
+    } catch (error) {
+      console.error("[Testimonials] Google scheduler error", error instanceof Error ? error.message : error);
+    } finally {
+      googleAutomationBusy = false;
+    }
+  }, 60_000);
+  googleAutomationScheduler.unref?.();
 }
 
 export function registerTestimonials(
@@ -266,65 +421,65 @@ export function registerTestimonials(
     }
   });
 
-  app.post("/api/admin/testimonials/import-google", ...panel, async (_req, res) => {
+  app.get("/api/admin/testimonials/google-automation", ...panel, async (_req, res) => {
     try {
-      const reviews = await fetchGooglePlaceReviews();
-      const existing = await db
-        .select({ source: testimonials.source })
-        .from(testimonials);
-      const known = new Set(existing.map((row) => row.source).filter(Boolean));
-      const pending = reviews.filter((review) => !known.has(googleReviewSourceId(review.id)));
-      if (pending.length) {
-        await db.insert(testimonials).values(pending.map((review) => ({
-          quote: review.quote,
-          authorName: review.authorName,
-          authorTitle: "Google Maps",
-          source: googleReviewSourceId(review.id),
-          sourceEs: review.mapsUrl || "https://www.google.com/maps",
-          rating: review.rating,
-          language: review.language || null,
-          origin: "google",
-          status: "captured",
-          published: false,
-          showCompany: false,
-          consentAt: null,
-          updatedAt: new Date(),
-        })));
-      }
-      res.json({ imported: pending.length, reviewed: reviews.length, captured: pending.length });
+      const settings = await getGoogleAutomationSettings();
+      res.setHeader("Cache-Control", "no-store");
+      res.json({ settings, provider: "google_places", credentialsConfigured: Boolean(process.env.GOOGLE_PLACES_API_KEY) });
+    } catch {
+      res.status(503).json({ error: "No se pudo cargar la automatización de Google." });
+    }
+  });
+
+  app.put("/api/admin/testimonials/google-automation", ...panel, async (req, res) => {
+    try {
+      const settings = normalizeGoogleAutomation({ ...defaultGoogleAutomation, ...(req.body ?? {}) });
+      const saved = await saveGoogleAutomationSettings(settings);
+      res.json({ settings: saved, provider: "google_places", credentialsConfigured: Boolean(process.env.GOOGLE_PLACES_API_KEY) });
+    } catch (error) {
+      res.status(400).json({ error: error instanceof Error ? error.message : "Revisa la configuración de extracción automática." });
+    }
+  });
+
+  app.post("/api/admin/testimonials/google-automation/run", ...panel, async (_req, res) => {
+    if (googleAutomationBusy) return res.status(409).json({ error: "Ya hay una extracción de Google en curso." });
+    googleAutomationBusy = true;
+    try {
+      const result = await runGoogleAutomation();
+      res.json(result);
+    } catch (error) {
+      res.status(503).json({ error: error instanceof Error ? error.message : "No se pudieron extraer las reseñas de Google." });
+    } finally {
+      googleAutomationBusy = false;
+    }
+  });
+
+  app.post("/api/admin/testimonials/import-google", ...panel, async (_req, res) => {
+    if (googleAutomationBusy) return res.status(409).json({ error: "Ya hay una extracción de Google en curso." });
+    googleAutomationBusy = true;
+    try {
+      res.json(await runGoogleAutomation());
     } catch (error) {
       res.status(503).json({ error: error instanceof Error ? error.message : "No se pudieron importar las reseñas de Google." });
+    } finally {
+      googleAutomationBusy = false;
     }
   });
 
   app.post("/api/admin/testimonials/import-google-url", ...panel, async (req, res) => {
     const mapsUrl = typeof req.body?.mapsUrl === "string" ? req.body.mapsUrl.trim() : "";
     if (!mapsUrl || mapsUrl.length > 2000) return res.status(400).json({ error: "Introduce un enlace de Google Maps válido." });
+    if (googleAutomationBusy) return res.status(409).json({ error: "Ya hay una extracción de Google en curso." });
+    googleAutomationBusy = true;
     try {
-      const result = await fetchGooglePlaceReviewsFromMapsUrl({ mapsUrl });
-      const existing = await db.select({ source: testimonials.source }).from(testimonials);
-      const known = new Set(existing.map((row) => row.source).filter(Boolean));
-      const pending = result.reviews.filter((review) => !known.has(googleReviewSourceId(review.id)));
-      if (pending.length) {
-        await db.insert(testimonials).values(pending.map((review) => ({
-          quote: review.quote,
-          authorName: review.authorName,
-          authorTitle: "Google Maps",
-          source: googleReviewSourceId(review.id),
-          sourceEs: review.mapsUrl || result.sourceUrl,
-          rating: review.rating,
-          language: review.language || null,
-          origin: "google",
-          status: "captured",
-          published: false,
-          showCompany: false,
-          consentAt: null,
-          updatedAt: new Date(),
-        })));
-      }
-      res.json({ sourceUrl: result.sourceUrl, placeId: result.placeId, imported: pending.length, alreadyPresent: result.reviews.length - pending.length, reviewed: result.reviews.length, captured: pending.length, requiresApproval: true });
+      const result = await importGoogleReviews({ mapsUrl });
+      const current = await getGoogleAutomationSettings();
+      await saveGoogleAutomationSettings({ ...current, mapsUrl });
+      res.json(result);
     } catch (error) {
       res.status(400).json({ error: error instanceof Error ? error.message : "No se pudieron extraer las reseñas de Google." });
+    } finally {
+      googleAutomationBusy = false;
     }
   });
 
@@ -341,6 +496,8 @@ export function registerTestimonials(
           authorTitle: "Google Maps",
           source: review.id,
           sourceEs: review.sourceUrl,
+          sourceUrl: review.sourceUrl,
+          sourcePublishedAt: sourcePublishedDate(review.publishedAt),
           rating: review.rating,
           origin: "google",
           status: "captured",
@@ -560,4 +717,6 @@ export function registerTestimonials(
       res.status(503).json({ error: "No se pudo borrar el testimonio." });
     }
   });
+
+  startGoogleTestimonialsScheduler();
 }

@@ -117,6 +117,12 @@ export function registerRadarRoutes(app: Express): void {
     try {
       const [settings, news] = await Promise.all([getRadarSettings(), storage.getNews()]);
       const items = news.filter((item) => item.tags?.includes("radar-juridico") || /Diario Oficial|Semanario Judicial/i.test(item.sourceName || ""));
+      // Older radar drafts were created with only an excerpt. Backfill the editable Spanish body
+      // when it is empty so opening an existing finding never shows a blank editor.
+      await Promise.all(items.filter((item) => !item.contentEs?.trim()).map((item) => storage.updateNews(item.id, {
+        content: item.excerptEs || item.titleEs || item.title,
+        contentEs: [item.excerptEs || item.titleEs || item.title, item.sourceName ? `Fuente oficial: ${item.sourceName}.` : "", item.sourceUrl ? `Consulta la publicación original: ${item.sourceUrl}` : ""].filter(Boolean).join("\n\n"),
+      })));
       res.setHeader("Cache-Control", "no-store");
       res.json({ settings, items, entities: RADAR_ENTITIES, sources: [{ code: "dof", name: "Diario Oficial de la Federación", url: "https://sidof.segob.gob.mx/datos_abiertos", automatic: true }, { code: "sjf", name: "Semanario Judicial de la Federación", url: process.env.SJF_RADAR_FEED_URL || "https://bicentenario.scjn.gob.mx/repositorio-scjn/api/v1/tesis/ids", automatic: Boolean(process.env.SJF_RADAR_FEED_URL) }] });
     } catch (error) {

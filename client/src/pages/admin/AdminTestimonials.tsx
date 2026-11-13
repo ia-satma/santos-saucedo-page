@@ -16,9 +16,32 @@ import { useSiteDetails } from "@/components/home26/useSiteContact";
 type Invite = Omit<TestimonialInvite, "tokenHash"> & { state: "active" | "used" | "expired" | "revoked" };
 type Tab = "captured" | "pending" | "approved" | "rejected";
 type Draft = { authorName: string; authorTitle: string; authorCompany: string; quote: string; showCompany: boolean; rating: number };
+type GoogleAutomation = {
+  enabled: boolean;
+  mapsUrl: string;
+  timezone: string;
+  hour: number;
+  minute: number;
+  days: number[];
+  lastRunAt: string | null;
+  lastRunStatus: "idle" | "running" | "success" | "failed";
+  lastRunMessage: string;
+  lastRunImported: number;
+  lastRunReviewed: number;
+};
 
 const date = (value: string | Date | null | undefined) =>
   value ? new Date(value).toLocaleString("es-MX", { dateStyle: "medium", timeStyle: "short" }) : "";
+const sourceLink = (value: string | null | undefined) => {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    if (!/^https?:$/.test(url.protocol) || !["www.google.com", "google.com", "maps.google.com"].includes(url.hostname.toLowerCase()) || !url.pathname.startsWith("/maps")) return null;
+    return url.href;
+  } catch {
+    return null;
+  }
+};
 const inviteStates: Record<Invite["state"], string> = {
   active: "Vigente",
   used: "Usada",
@@ -51,6 +74,7 @@ export default function AdminTestimonials() {
   const [googleJsonResult, setGoogleJsonResult] = useState<{ imported: number; alreadyPresent: number; ratingsOnly: number; nextCursor: string | null } | null>(null);
   const [googleMapsUrl, setGoogleMapsUrl] = useState("");
   const [googleUrlResult, setGoogleUrlResult] = useState<{ imported: number; alreadyPresent: number; reviewed: number } | null>(null);
+  const [automation, setAutomation] = useState<GoogleAutomation | null>(null);
   const { googleReviewsUrl } = useSiteDetails();
   useEffect(() => {
     if (!googleMapsUrl && googleReviewsUrl) setGoogleMapsUrl(googleReviewsUrl);
@@ -71,6 +95,13 @@ export default function AdminTestimonials() {
     queryFn: async () =>
       readAdminJson(await adminApiRequest("GET", "/api/admin/testimonials/invites"), "No se pudieron cargar las invitaciones."),
   });
+  const automationQuery = useQuery<{ settings: GoogleAutomation; credentialsConfigured: boolean }>({
+    queryKey: ["/api/admin/testimonials/google-automation"],
+    queryFn: async () => readAdminJson(await adminApiRequest("GET", "/api/admin/testimonials/google-automation"), "No se pudo cargar la programación de Google."),
+  });
+  useEffect(() => {
+    if (automationQuery.data && !automation) setAutomation(automationQuery.data.settings);
+  }, [automation, automationQuery.data]);
 
   const run = async (key: string, action: () => Promise<unknown>, done?: string) => {
     setBusy(key);
@@ -107,6 +138,24 @@ export default function AdminTestimonials() {
       const result = await call("POST", "/api/admin/testimonials/import-google-url", { mapsUrl }) as { imported: number; alreadyPresent: number; reviewed: number };
       setGoogleUrlResult(result);
     }, "Reseñas extraídas como capturadas. Revisa y aprueba manualmente las que deban publicarse.");
+
+  const saveAutomation = () => run("google-automation-save", async () => {
+    if (!automation) return;
+    const [hour, minute] = `${automation.hour.toString().padStart(2, "0")}:${automation.minute.toString().padStart(2, "0")}`.split(":").map(Number);
+    if (!automation.mapsUrl.trim()) throw new Error("Introduce el enlace de Google Maps de la firma.");
+    await call("PUT", "/api/admin/testimonials/google-automation", { ...automation, mapsUrl: automation.mapsUrl.trim(), hour, minute });
+    await automationQuery.refetch();
+  }, "Programación automática guardada.");
+
+  const runAutomation = () => run("google-automation-run", async () => {
+    if (!automation) return;
+    const [hour, minute] = `${automation.hour.toString().padStart(2, "0")}:${automation.minute.toString().padStart(2, "0")}`.split(":").map(Number);
+    if (!automation.mapsUrl.trim()) throw new Error("Introduce el enlace de Google Maps de la firma.");
+    await call("PUT", "/api/admin/testimonials/google-automation", { ...automation, mapsUrl: automation.mapsUrl.trim(), hour, minute });
+    const result = await call("POST", "/api/admin/testimonials/google-automation/run") as { settings: GoogleAutomation; imported: number };
+    setAutomation(result.settings);
+    await automationQuery.refetch();
+  }, "Extracción terminada. Las nuevas reseñas quedaron capturadas para revisión humana.");
 
   const importGoogleJson = (file: File) =>
     run("google-json", async () => {
@@ -295,12 +344,45 @@ export default function AdminTestimonials() {
               </div>
               {googleUrlResult && <p role="status">Última extracción: {googleUrlResult.imported} nuevas, {googleUrlResult.alreadyPresent} ya existentes de {googleUrlResult.reviewed} reseñas. Todas quedan capturadas hasta su aprobación.</p>}
             </div>
+            <div className="space-y-4 border-t pt-4" data-testid="google-testimonials-automation">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-medium text-foreground">Actualización automática desde Google</h3>
+                  <p>El servidor revisa la ficha en los días y horario elegidos. Cada reseña queda capturada y requiere aprobación humana.</p>
+                </div>
+                <label className="flex items-center gap-2 text-foreground">
+                  <Checkbox checked={automation?.enabled === true} disabled={!automation} onCheckedChange={(value) => automation && setAutomation({ ...automation, enabled: value === true })} />
+                  Activar revisión automática
+                </label>
+              </div>
+              {automation && (
+                <>
+                  <label className="block space-y-1">
+                    <span className="block text-foreground">Ficha de Google Maps</span>
+                    <Input value={automation.mapsUrl} onChange={(event) => setAutomation({ ...automation, mapsUrl: event.target.value })} data-testid="input-google-automation-url" />
+                  </label>
+                  <div className="grid gap-4 sm:grid-cols-[180px_1fr] sm:items-end">
+                    <label className="space-y-1"><span className="block text-foreground">Hora local</span><Input type="time" value={`${automation.hour.toString().padStart(2, "0")}:${automation.minute.toString().padStart(2, "0")}`} onChange={(event) => { const [hour, minute] = event.target.value.split(":").map(Number); setAutomation({ ...automation, hour, minute }); }} data-testid="input-google-automation-time" /></label>
+                    <div className="space-y-1"><span className="block text-foreground">Días de revisión</span><div className="flex flex-wrap gap-2">{[[1, "Lun"], [2, "Mar"], [3, "Mié"], [4, "Jue"], [5, "Vie"], [6, "Sáb"], [0, "Dom"]].map(([day, label]) => <label key={day} className="inline-flex items-center gap-1"><Checkbox checked={automation.days.includes(Number(day))} onCheckedChange={(value) => setAutomation({ ...automation, days: value === true ? Array.from(new Set([...automation.days, Number(day)])) : automation.days.filter((item) => item !== Number(day)) })} />{label}</label>)}</div></div>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Button variant="outline" disabled={busy === "google-automation-save"} onClick={() => void saveAutomation()} data-testid="button-save-google-automation">{busy === "google-automation-save" ? "Guardando…" : "Guardar programación"}</Button>
+                    <Button variant="outline" disabled={busy === "google-automation-run"} onClick={() => void runAutomation()} data-testid="button-run-google-automation">{busy === "google-automation-run" ? "Extrayendo…" : "Revisar ahora"}</Button>
+                    {!automationQuery.data?.credentialsConfigured && <span className="text-xs text-amber-700">Falta GOOGLE_PLACES_API_KEY en los Secrets del servidor.</span>}
+                  </div>
+                  {automation.lastRunAt && <p role="status" className="text-xs">Última revisión: {date(automation.lastRunAt)} · {automation.lastRunMessage}</p>}
+                </>
+              )}
+            </div>
             <div className="space-y-2 border-t pt-3">
-              <p>También puedes cargar el JSON del laboratorio externo. El CMS valida el enlace, elimina duplicados y conserva la revisión humana.</p>
-              <label className="inline-flex cursor-pointer items-center rounded-md border px-3 py-2 text-foreground">
-                Cargar JSON de Google
-                <input type="file" accept="application/json,.json" className="sr-only" onChange={(event) => { const file = event.target.files?.[0]; if (file) void importGoogleJson(file); event.target.value = ""; }} data-testid="input-google-testimonials-json" />
-              </label>
+              <p>Si no quieres configurar una API, abre el extractor sin clave, descarga su JSON y súbelo aquí. El CMS valida el enlace, elimina duplicados y conserva la revisión humana.</p>
+              <div className="flex flex-wrap items-center gap-3">
+                <a className="text-foreground underline underline-offset-2" href="https://www.omkar.cloud/tools/google-maps-scraper/business-reviews" target="_blank" rel="noopener noreferrer" data-testid="link-google-json-extractor">Abrir extractor sin API ↗</a>
+                <label className="inline-flex cursor-pointer items-center rounded-md border px-3 py-2 text-foreground">
+                  Cargar JSON de Google
+                  <input type="file" accept="application/json,.json" className="sr-only" onChange={(event) => { const file = event.target.files?.[0]; if (file) void importGoogleJson(file); event.target.value = ""; }} data-testid="input-google-testimonials-json" />
+                </label>
+              </div>
               {busy === "google-json" && <span role="status"> Validando e importando…</span>}
               {googleJsonResult && <p role="status">Última carga: {googleJsonResult.imported} importadas, {googleJsonResult.alreadyPresent} ya existentes y {googleJsonResult.ratingsOnly} solo con estrellas.{googleJsonResult.nextCursor ? " Hay más resultados disponibles con el siguiente cursor." : ""}</p>}
             </div>
@@ -371,10 +453,16 @@ export default function AdminTestimonials() {
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">
                     {t.origin === "invite" ? "Por enlace de invitación" : t.origin === "google" ? "Importado de Google" : "Capturado en el panel"} · recibido {date(t.createdAt)}
+                    {t.sourcePublishedAt && ` · publicado en Google ${date(t.sourcePublishedAt)}`}
                     {t.approvedAt && ` · aprobado por ${t.approvedByName} el ${date(t.approvedAt)}`}
                     {t.status === "rejected" && t.reviewedAt && ` · rechazado por ${t.reviewedByName} el ${date(t.reviewedAt)}`}
                     {t.status === "approved" && !t.published && " · oculto en el sitio"}
                   </p>
+                  {sourceLink(t.sourceEs) && (
+                    <a className="mt-1 inline-flex text-xs text-primary underline underline-offset-2" href={sourceLink(t.sourceEs)!} target="_blank" rel="noopener noreferrer" data-testid={`link-original-testimonial-${t.id}`}>
+                      Ver reseña original en Google Maps ↗
+                    </a>
+                  )}
                 </div>
                 {t.status === "approved" && (
                   <div className="flex gap-2">

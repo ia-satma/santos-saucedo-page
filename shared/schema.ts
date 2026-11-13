@@ -973,6 +973,8 @@ export const testimonials = pgTable("testimonials", {
   authorPhotoUrl: text("author_photo_url"),
   source: text("source"),
   sourceEs: text("source_es"),
+  sourceUrl: text("source_url"),
+  sourcePublishedAt: timestamp("source_published_at"),
   year: integer("year"),
   practiceGroupId: varchar("practice_group_id"),
   isFeatured: boolean("is_featured").default(false),

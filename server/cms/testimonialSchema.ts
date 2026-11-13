@@ -22,6 +22,8 @@ export async function ensureTestimonialSchema() {
     await tx.execute(sql`ALTER TABLE testimonials
       ALTER COLUMN quote_es DROP NOT NULL,
       ALTER COLUMN published SET DEFAULT false,
+      ADD COLUMN IF NOT EXISTS source_url text,
+      ADD COLUMN IF NOT EXISTS source_published_at timestamp,
       ADD COLUMN IF NOT EXISTS status text NOT NULL DEFAULT 'pending',
       ADD COLUMN IF NOT EXISTS show_company boolean NOT NULL DEFAULT false,
       ADD COLUMN IF NOT EXISTS rating integer NOT NULL DEFAULT 5,

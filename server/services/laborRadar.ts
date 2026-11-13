@@ -220,11 +220,12 @@ export function toNewsDraft(item: RadarItem): RadarDraft {
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 90);
   const slug = `${slugBase || "hallazgo-radar"}-${item.fingerprint.slice(0, 10)}`;
-  const excerptEs = item.summary || item.content.slice(0, 280);
+  const excerptEs = item.summary || item.content.slice(0, 280) || item.title;
+  const contentEs = item.content || [excerptEs, `Fuente oficial: ${sourceNameFor(item.sourceType)}.`, `Consulta la publicación original: ${item.officialUrl}`].join("\n\n");
   return {
     titleEs: item.title,
     excerptEs,
-    contentEs: item.content || null,
+    contentEs,
     slug,
     sourceUrl: item.officialUrl,
     sourceName: sourceNameFor(item.sourceType),
@@ -250,7 +251,7 @@ export function radarItemToNewsInsert(item: RadarItem): InsertNews {
     excerpt,
     excerptEs: excerpt,
     content: draft.contentEs || excerpt,
-    contentEs: draft.contentEs,
+    contentEs: draft.contentEs || excerpt,
     slug: draft.slug,
     sourceUrl: draft.sourceUrl,
     sourceName: draft.sourceName,
