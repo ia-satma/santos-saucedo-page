@@ -56,7 +56,7 @@ function Entries({
                 checked={item.visible}
                 onCheckedChange={(visible) => change(i, { ...item, visible })}
               />
-              Activo
+              Visible en menú
             </label>
             <Button
               type="button"
@@ -115,7 +115,7 @@ function Entries({
             </div>
           </details>
           {children && "children" in item && (
-            <details>
+            <details open>
               <summary className="cursor-pointer py-2">
                 Submenús (
                 {(item as SiteNavigation["items"][number]).children.length})
