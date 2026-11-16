@@ -80,7 +80,7 @@ export function SociosBand({ lang }: { lang: V3Lang }) {
               </li>
             ))}
           </ul>
-          <Link className="sh-boton" href="/team">{t.boton}</Link>
+          <Link className="sh-boton" href="/team" aria-label={t.boton || titulo}>{t.boton}</Link>
         </div>
       </div>
     </section>

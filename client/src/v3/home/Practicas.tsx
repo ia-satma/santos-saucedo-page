@@ -6,14 +6,14 @@
    toque abre la práctica. Las cuatro prácticas, sus nombres y resúmenes vienen de la base
    (/api/practice-groups, editable en el panel); mientras responde, los del contenido del Inicio. */
 import { useFotosDiferidas } from "@/v3/fotosDiferidas";
-import { useMemo, useRef, type ReactNode } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import type { PracticeGroup } from "@shared/schema";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { home26 } from "@/components/home26/content";
-import { useV3Module, v3SrcSet, type V3Lang } from "@/v3/shared";
+import { useV3Module, type V3Lang } from "@/v3/shared";
 import { homeCopyFor, PRACTICE_PHOTOS } from "./copy";
 import { usePracticeNames } from "@/lib/practiceNames";
 import { initPracticas } from "./scripts";
@@ -24,6 +24,12 @@ import "./home.css";
 // (que en teléfono aparece un instante al tocar) elige el mismo archivo que el cuadro
 const CUADRO_SIZES = "(max-width: 588px) 294px, 50vw";
 const FONDO_SIZES = "(max-width: 588px) 294px, (max-width: 767.98px) or (hover: none) or (pointer: coarse) 50vw, 100vw";
+const PRACTICE_IMAGE_RE = /^(.*\/editorial\/practice-(?:litigio|corporativo|laboral|migratorio))\.webp$/;
+
+function practiceSrcSet(src: string) {
+  const match = PRACTICE_IMAGE_RE.exec(src);
+  return match ? `${match[1]}-480.webp 480w, ${src} 960w` : undefined;
+}
 
 export type PracticeItem = {
   slug: string; clave: string; name: string; summary: string; img?: string; w: number; h: number;
@@ -75,16 +81,20 @@ export function PracticasBaker({ lang, items, pagina }: { lang: V3Lang; items: P
   const Nombre = pagina ? "h2" : "h3";
   // En el Inicio las fotos esperan a la portada; en «Prácticas» este bloque es la cabecera y van de inmediato
   const fotos = useFotosDiferidas(!pagina);
+  const [fotosCargadas, setFotosCargadas] = useState<string[]>([]);
+  const cargarFoto = (slug: string) => setFotosCargadas((prev) => prev.includes(slug) ? prev : [...prev, slug]);
 
   return (
     <section ref={ref} className={`pr-practicas sobre-azul hm-practicas${pagina ? " pg-bk" : ""}`} id="pr-practicas" aria-labelledby={tituloId} data-testid={pagina ? "section-practice-groups-hero" : undefined}>
       {/* Fondo común: el degradado de la firma (en reposo) y una capa por práctica. La nueva entra encima y la anterior se retira después. */}
       <div className="pr-bk-fondos" aria-hidden="true">
         <div className="pr-bk-fluido" />
-        {items.map((p) =>
+        {items.map((p, i) =>
           p.img ? (
             <div key={p.slug} className="pr-bk-fondo" data-clave={p.clave}>
-              <img data-no-parallax="" src={fotos ? p.img : undefined} srcSet={fotos ? v3SrcSet(p.img, p.w) : undefined} sizes={FONDO_SIZES} alt="" width={p.w} height={p.h} decoding="async" loading="lazy" />
+              <img data-no-parallax="" src={fotos && (pagina || i === 0 || fotosCargadas.includes(p.slug)) ? p.img : undefined}
+                srcSet={fotos && (pagina || i === 0 || fotosCargadas.includes(p.slug)) ? practiceSrcSet(p.img) : undefined}
+                sizes={FONDO_SIZES} alt="" width={p.w} height={p.h} decoding="async" loading="lazy" />
             </div>
           ) : null,
         )}
@@ -106,10 +116,11 @@ export function PracticasBaker({ lang, items, pagina }: { lang: V3Lang; items: P
         </div>
 
         <ul className="pr-bk-cuadros" role="list">
-          {items.map((p) => {
+          {items.map((p, i) => {
             const descId = pagina ? `practice-desc-${p.slug}` : `pr-desc-${p.clave}`;
             return (
-            <li key={p.slug} className="pr-bk-item" data-testid={pagina ? `card-practice-group-${p.slug}` : undefined}>
+            <li key={p.slug} className="pr-bk-item" data-testid={pagina ? `card-practice-group-${p.slug}` : undefined}
+              onPointerEnter={() => cargarFoto(p.slug)} onFocus={() => cargarFoto(p.slug)}>
               <Link
                 className="pr-bk-cuadro"
                 href={`/practice-groups/${p.slug}`}
@@ -122,7 +133,10 @@ export function PracticasBaker({ lang, items, pagina }: { lang: V3Lang; items: P
                     del fondo CSS de demo.css (que no se difiere); con cursor fino no se muestra ni se
                     descarga. Mismo encuadre y velo (home.css). */}
                 {p.img ? (
-                  <img className="hm-bk-foto" data-no-parallax="" src={fotos ? p.img : undefined} srcSet={fotos ? v3SrcSet(p.img, p.w) : undefined} sizes={CUADRO_SIZES} alt="" width={p.w} height={p.h} loading="lazy" decoding="async" />
+                  <img className="hm-bk-foto" data-no-parallax=""
+                    src={fotos && (pagina || i === 0 || fotosCargadas.includes(p.slug)) ? p.img : undefined}
+                    srcSet={fotos && (pagina || i === 0 || fotosCargadas.includes(p.slug)) ? practiceSrcSet(p.img) : undefined}
+                    sizes={CUADRO_SIZES} alt="" width={p.w} height={p.h} loading="lazy" decoding="async" />
                 ) : null}
                 <Nombre
                   className="pr-bk-nombre"

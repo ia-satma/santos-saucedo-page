@@ -188,7 +188,7 @@ export default function Footer26({ localized = false }: Footer26Props) {
               href="https://satma.mx/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[11px] text-white/35 transition-colors hover:text-white/65"
+              className="text-[11px] text-white/60 transition-colors hover:text-white"
               data-testid="link-satma"
             >
               Página creada por Satma
