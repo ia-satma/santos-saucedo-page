@@ -13,7 +13,7 @@ import type { PracticeGroup } from "@shared/schema";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { home26 } from "@/components/home26/content";
-import { useV3Module, type V3Lang } from "@/v3/shared";
+import { useV3Module, v3SrcSet, type V3Lang } from "@/v3/shared";
 import { homeCopyFor, PRACTICE_PHOTOS } from "./copy";
 import { usePracticeNames } from "@/lib/practiceNames";
 import { initPracticas } from "./scripts";
@@ -26,9 +26,9 @@ const CUADRO_SIZES = "(max-width: 588px) 294px, 50vw";
 const FONDO_SIZES = "(max-width: 588px) 294px, (max-width: 767.98px) or (hover: none) or (pointer: coarse) 50vw, 100vw";
 const PRACTICE_IMAGE_RE = /^(.*\/editorial\/practice-(?:litigio|corporativo|laboral|migratorio))\.webp$/;
 
-function practiceSrcSet(src: string) {
+function practiceSrcSet(src: string, width: number) {
   const match = PRACTICE_IMAGE_RE.exec(src);
-  return match ? `${match[1]}-480.webp 480w, ${src} 960w` : undefined;
+  return match ? `${match[1]}-480.webp 480w, ${src} 960w` : v3SrcSet(src, width);
 }
 
 export type PracticeItem = {
@@ -93,7 +93,7 @@ export function PracticasBaker({ lang, items, pagina }: { lang: V3Lang; items: P
           p.img ? (
             <div key={p.slug} className="pr-bk-fondo" data-clave={p.clave}>
               <img data-no-parallax="" src={fotos && (pagina || i === 0 || fotosCargadas.includes(p.slug)) ? p.img : undefined}
-                srcSet={fotos && (pagina || i === 0 || fotosCargadas.includes(p.slug)) ? practiceSrcSet(p.img) : undefined}
+                srcSet={fotos && (pagina || i === 0 || fotosCargadas.includes(p.slug)) ? practiceSrcSet(p.img, p.w) : undefined}
                 sizes={FONDO_SIZES} alt="" width={p.w} height={p.h} decoding="async" loading="lazy" />
             </div>
           ) : null,
@@ -135,7 +135,7 @@ export function PracticasBaker({ lang, items, pagina }: { lang: V3Lang; items: P
                 {p.img ? (
                   <img className="hm-bk-foto" data-no-parallax=""
                     src={fotos && (pagina || i === 0 || fotosCargadas.includes(p.slug)) ? p.img : undefined}
-                    srcSet={fotos && (pagina || i === 0 || fotosCargadas.includes(p.slug)) ? practiceSrcSet(p.img) : undefined}
+                    srcSet={fotos && (pagina || i === 0 || fotosCargadas.includes(p.slug)) ? practiceSrcSet(p.img, p.w) : undefined}
                     sizes={CUADRO_SIZES} alt="" width={p.w} height={p.h} loading="lazy" decoding="async" />
                 ) : null}
                 <Nombre
