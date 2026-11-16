@@ -225,6 +225,59 @@ export function registerCmsRoutes(app: Express) {
       res.status(503).json({ error: 'No se pudo abrir la sección.' });
     }
   });
+  app.put('/api/admin/site-config-bundle', authMiddleware, requireRole('editor', 'admin'), async (req, res) => {
+    const items = Array.isArray(req.body?.sections) ? req.body.sections : [];
+    if (!items.length || items.length > 20) return res.status(400).json({ error: 'El paquete de página no contiene secciones válidas.' });
+    const seen = new Set<string>();
+    const parsed: { section: CmsSection; content: CmsValue; revision: string }[] = [];
+    for (const raw of items as unknown[]) {
+      const item = raw && typeof raw === 'object' ? raw as Record<string, unknown> : {};
+      const section = String(item.section || '');
+      const content = item.content as CmsValue;
+      const revisionValue = String(item.revision || '');
+      if (!isCmsSection(section) || seen.has(section) || !revisionValue || !Object.prototype.hasOwnProperty.call(item, 'content')) {
+        return res.status(400).json({ error: 'El paquete de página contiene una sección inválida.' });
+      }
+      seen.add(section);
+      parsed.push({ section, content, revision: revisionValue });
+    }
+    for (const item of parsed) {
+      const errors = validateCmsValue(item.section, item.content);
+      if (errors.length) return res.status(400).json({ error: `Revise ${item.section}.`, details: errors });
+    }
+    try {
+      const result = await db.transaction(async (tx) => {
+        const current = new Map<string, { value: string | null }>();
+        for (const item of parsed) {
+          const [row] = await tx.select({ value: siteConfig.value }).from(siteConfig).where(eq(siteConfig.key, prefix + item.section));
+          if (item.revision !== revision(row?.value)) throw Object.assign(new Error('REVISION_CONFLICT'), { section: item.section });
+          current.set(item.section, { value: row?.value ?? null });
+        }
+        const saved: Record<string, { content: CmsValue; revision: string; previous: CmsValue | null }> = {};
+        for (const item of parsed) {
+          const old = current.get(item.section)!;
+          const previous = mergeCms(cmsDefaults[item.section], decode(old?.value)?.content);
+          const raw = JSON.stringify({ content: item.content, previous });
+          const metadata = { value: raw, category: 'editorial', type: 'json', updatedAt: new Date() };
+          if (old?.value === null) {
+            const inserted = await tx.insert(siteConfig).values({ key: prefix + item.section, ...metadata }).onConflictDoNothing().returning();
+            if (!inserted.length) throw Object.assign(new Error('REVISION_CONFLICT'), { section: item.section });
+          } else {
+            const updated = await tx.update(siteConfig).set(metadata).where(and(eq(siteConfig.key, prefix + item.section), eq(siteConfig.value, old.value))).returning();
+            if (!updated.length) throw Object.assign(new Error('REVISION_CONFLICT'), { section: item.section });
+          }
+          saved[item.section] = { content: item.content, revision: revision(raw), previous };
+        }
+        return saved;
+      });
+      console.log('[CMS]', JSON.stringify({ action: 'update-bundle', sections: parsed.map((item) => item.section), userId: req.adminUser!.id, at: new Date().toISOString() }));
+      res.json({ sections: result });
+    } catch (error: any) {
+      if (error?.message === 'REVISION_CONFLICT') return res.status(409).json({ error: `La sección ${error.section || 'editada'} cambió mientras se guardaba. Recargue antes de publicar.` });
+      console.error('[CMS] Bundle save failed', error);
+      res.status(500).json({ error: 'No se pudo guardar el paquete. Su borrador se conserva.' });
+    }
+  });
   app.put('/api/admin/site-config/:section', authMiddleware, requireRole('editor', 'admin'), async (req, res) => {
     const section = req.params.section;
     if (!isCmsSection(section)) return res.status(404).json({ error: 'Sección desconocida.' });
