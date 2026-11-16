@@ -248,7 +248,7 @@ function AboutFields({ value, onChange }: ExplicitPageFieldsProps) {
     {renderLamina('bighorn', 'Lámina Siempre hacia adelante')}
     {renderLamina('response', 'Lámina Capacidad de reacción')}
 
-    <Block title="Navegación y SEO" pageId="about" blockKey="seo" description="Textos de los enlaces de salida y accesibilidad.">
+    <Block title="Navegación y SEO" description="Textos de los enlaces de salida y accesibilidad.">
       <TextField label="Etiqueta de siguiente página" value={current.nextLabel} onChange={(next) => set('nextLabel', next)} />
       <TextField label="Texto accesible de siguiente página" value={current.nextLabelAria} onChange={(next) => set('nextLabelAria', next)} />
     </Block>

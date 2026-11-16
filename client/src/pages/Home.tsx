@@ -46,7 +46,7 @@ export default function Home() {
             case 'practicas':return (
               <Band key={key} name="practicas" start="dark" end="light">
                 <PracticasBaker lang={lang} items={practices}/>
-                <IndustriasBand lang={lang}/>
+                {blockVisible(layout, "home", "industrias") && <IndustriasBand lang={lang}/>}
               </Band>
             );
             case 'extranjeras':return <div key={key} className="hm-legacy" data-start="dark" data-end="dark"><Extranjeras26 lang={lang}/></div>;

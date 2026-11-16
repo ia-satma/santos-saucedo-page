@@ -500,9 +500,21 @@ html.mk-js .v3 .mk-telon__escena, .v3 .mk-js .mk-telon__escena{position:sticky; 
 html.mk-js .v3 .mk-telon__marco, .v3 .mk-js .mk-telon__marco{
   inset:auto; top:15%; left:calc(50% - 22.83vh);
   width:45.66vh; height:70%;
+}
+html.mk-js .v3.mk-hydrated .mk-telon__marco, .v3 .mk-js.mk-hydrated .mk-telon__marco{
   -webkit-mask:var(--mk-art) 0 0 / 100% 100% no-repeat;
           mask:var(--mk-art) 0 0 / 100% 100% no-repeat;
+  animation:none;
 }
+/* El HTML inicial se pinta antes de que React añada .mk-hydrated. La máscara entra en el primer
+   cuadro estable, con un retraso breve para conservar la ventana sin dejar una escena completa visible
+   durante una descarga lenta. */
+.v3 .mk-js .mk-telon__marco{animation:mk-shell-mask 1ms linear 180ms both}
+@keyframes mk-shell-mask{
+  from{-webkit-mask:none;mask:none}
+  to{-webkit-mask:var(--mk-art) 0 0 / 100% 100% no-repeat;mask:var(--mk-art) 0 0 / 100% 100% no-repeat}
+}
+@media (prefers-reduced-motion:reduce){.v3 .mk-js .mk-telon__marco{animation:none}}
 html.mk-js .v3 .mk-telon__medio, .v3 .mk-js .mk-telon__medio{inset:auto; top:-15vh; left:calc(22.83vh - 50vw); width:100vw; height:100vh}
 html.mk-js .v3 .mk-telon.is-abierta .mk-telon__marco, .v3 .mk-js .mk-telon.is-abierta .mk-telon__marco{-webkit-mask:none; mask:none}
 .v3 .mk-telon.is-mueve .mk-telon__marco,

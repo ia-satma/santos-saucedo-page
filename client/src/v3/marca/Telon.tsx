@@ -146,6 +146,11 @@ export default function Telon({ lang }: { lang: V3Lang }) {
   // Comportamiento (demo: modules/marca/script.js + shell.js)
   const rootRef = useRef<HTMLDivElement>(null);
   const api = useRef<TelonApi | null>(null);
+  useEffect(() => {
+    const wrapper = rootRef.current?.querySelector<HTMLElement>(".mk-js");
+    wrapper?.classList.add("mk-hydrated");
+    return () => wrapper?.classList.remove("mk-hydrated");
+  }, []);
   const pausedRef = useRef(paused);
   pausedRef.current = paused;
   // El navegador rechazó la reproducción: el botón pasa a "Reproducir" sin guardar preferencia
