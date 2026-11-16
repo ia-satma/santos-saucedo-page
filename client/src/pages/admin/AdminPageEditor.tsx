@@ -154,6 +154,9 @@ export default function AdminPageEditor() {
             <PageVisibilityPanel pageId={page.id} />
             {page.id === "practices" && <InlineCatalogFields kind="practice" />}
             {page.id === "industries" && <InlineCatalogFields kind="industry" />}
+            {page.id === "team" && <InlineCatalogFields kind="team" />}
+            {page.id === "news" && <InlineCatalogFields kind="news" />}
+            {page.id === "careers" && <InlineCatalogFields kind="job" />}
             {query.isLoading && <p role="status">Cargando bloques…</p>}
             {query.isError && <p role="alert">{query.error.message}</p>}
             {page.tabs.map((tab, index) => {
