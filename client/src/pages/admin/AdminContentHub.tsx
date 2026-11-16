@@ -4,8 +4,7 @@ import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
 import { cmsSections, type CmsSection } from "@shared/cms";
 import { adminApiRequest } from "@/lib/adminAuth";
-import { adminHrefForCmsSection, cmsEditorPages } from "@/features/site-config/editorMetadata";
-const sitePageOrder = ["home", "about", "practices", "industries", "team", "news", "contact", "careers", "offices", "testimonials", "media"];
+import { adminHrefForCmsSection, canonicalPageOrder, cmsEditorPages, getCmsEditorPage } from "@/features/site-config/editorMetadata";
 const groups = [
   {
     label: "Páginas principales",
@@ -102,11 +101,12 @@ export default function AdminContentHub() {
       <section className="admin-content-group">
         <h2>Páginas y bloques</h2>
         <div className="admin-content-items">
-          {sitePageOrder.map((id) => cmsEditorPages.find((page) => page.id === id)).filter(Boolean).map((page) => (
+        {canonicalPageOrder.map((id) => cmsEditorPages.find((page) => page.id === id)).filter(Boolean).map((page) => (
             <Link key={page!.id} href={adminHrefForCmsSection(page!.tabs[0].section)}>
               <div>
                 <strong>{page!.label}</strong>
                 <p>{page!.description}</p>
+              <small>{page!.blocks.length} bloques · {page!.path || "Página de sistema"}</small>
               </div>
               <ArrowRightIcon />
             </Link>
@@ -121,11 +121,11 @@ export default function AdminContentHub() {
           {contentSearch.data?.results.length ? (
             <div className="admin-content-items">
               {contentSearch.data.results.map((result, index) => (
-                <Link key={`${result.section}-${result.path}-${index}`} href={`${adminHrefForCmsSection(result.section as CmsSection)}?focus=${encodeURIComponent(result.path)}`}>
+                <Link key={`${result.section}-${result.path}-${index}`} href={`${adminHrefForCmsSection(getCmsEditorPage(result.section as CmsSection).tabs[0].section)}?focus=${encodeURIComponent(result.path)}`}>
                   <div>
                     <strong>{result.label}{result.language ? ` · ${result.language.toUpperCase()}` : ""}</strong>
                     <p>{result.value.length > 180 ? `${result.value.slice(0, 180)}…` : result.value}</p>
-                    <small>{result.path || result.field}</small>
+                    <small>{getCmsEditorPage(result.section as CmsSection).label} · {result.path || result.field}</small>
                   </div>
                   <ArrowRightIcon />
                 </Link>
