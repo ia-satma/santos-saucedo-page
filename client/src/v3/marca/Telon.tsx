@@ -210,7 +210,7 @@ export default function Telon({ lang }: { lang: V3Lang }) {
               </div>
             </div>
             <div className="mk-telon__fija" aria-hidden="true">
-              <img src={posterSrc} srcSet={posterSrcSet} sizes="100vw" alt="" width={1600} height={726} decoding="async" />
+              <img src={posterSrc} srcSet={posterSrcSet} sizes="100vw" alt="" width={1600} height={726} decoding="async" loading="lazy" />
             </div>
             <div className="sh-portada__velo" aria-hidden="true" />
             {/* La § como marca de agua (módulo marca, pieza 1), del tamaño y en el lugar de la ventana */}
