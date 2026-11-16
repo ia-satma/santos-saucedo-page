@@ -45,7 +45,7 @@ export const cmsEditorPages: CmsEditorPage[] = [
     manualId: "nuestra-firma",
     tabs: [
       tab("about", "Historia y valores", "Introducción, historia, cifras y principios"),
-      tab("v3", "Contenido avanzado", "Bloques editoriales, imágenes y accesibilidad"),
+      tab("v3", "Láminas visuales", "Láminas animadas, textos, medios y accesibilidad"),
       tab("seo", "SEO", "Título y descripción de buscadores"),
     ],
   },
@@ -129,7 +129,7 @@ export const cmsEditorPages: CmsEditorPage[] = [
   },
   {
     id: "careers",
-    label: "Carreras y pasantías",
+    label: "Carreras",
     group: "Contenido del sitio",
     description: "Edita la información de Carreras, Pasantías y sus formularios.",
     impact: "Afecta Carreras, Pasantías y postulaciones",
@@ -148,6 +148,17 @@ export const cmsEditorPages: CmsEditorPage[] = [
     impact: "Afecta la página pública de testimonios",
     manualId: "testimonios",
     tabs: [tab("testimonials", "Contenido", "Título, introducción y formulario")],
+  },
+  {
+    id: "media",
+    label: "Biblioteca de medios",
+    group: "Contenido del sitio",
+    description: "Carga y reutiliza imágenes, videos, documentos y otros medios del sitio.",
+    impact: "Afecta los recursos visuales de las páginas públicas",
+    manualId: "medios",
+    tabs: [
+      tab("media", "Biblioteca", "Imágenes, videos, documentos y almacenamiento"),
+    ],
   },
 ];
 

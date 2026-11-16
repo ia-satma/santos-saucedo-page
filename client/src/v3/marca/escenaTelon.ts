@@ -81,7 +81,9 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
   const marco = sec?.querySelector<HTMLElement>(".mk-telon__marco");
   const medio = sec?.querySelector<HTMLElement>(".mk-telon__medio");
   if (!sec || !escena || !marco || !medio) return { pausa() {}, palabras() {}, video() {}, destroy() {} };
-  const video = sec.querySelector<HTMLVideoElement>(".mk-telon__video");
+  const video = sec.querySelector<HTMLVideoElement>("video.mk-telon__video");
+  const frame = sec.querySelector<HTMLIFrameElement>("iframe.mk-telon__video");
+  let framePlaying = false;
   const agua = sec.querySelector<HTMLElement>(".mk-portada");
   const aguaSup = agua?.querySelector<HTMLElement>(".mk-mitad--sup") || null;
 
@@ -199,18 +201,29 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
   }
 
   function tieneFuente() {
-    return !!video && !!(video.currentSrc || video.getAttribute("src") || video.querySelector("source"));
+    return !!(video && (video.currentSrc || video.getAttribute("src") || video.querySelector("source"))) || !!frame?.src;
+  }
+  function frameCommand(action: "play" | "pause") {
+    if (!frame?.contentWindow) return;
+    const message = action === "play"
+      ? { event: "command", func: "playVideo", args: [] }
+      : { event: "command", func: "pauseVideo", args: [] };
+    frame.contentWindow.postMessage(JSON.stringify(message), "*");
+    frame.contentWindow.postMessage({ method: action }, "*");
+    framePlaying = action === "play";
   }
   function reproducir(si: boolean) {
-    if (!video) return;
+    if (!video && !frame) return;
     if (si && !rm && !d.hidden && !pausado && tieneFuente()) {
-      video.muted = true;
-      const pr = video.play();
+      if (frame) { frameCommand("play"); return; }
+      video!.muted = true;
+      const pr = video!.play();
       if (pr && pr.catch) pr.catch((err: unknown) => {
         const n = (err as { name?: string } | null)?.name;
         if (vivo && n !== "AbortError" && !pausado && !rm) opts.onBlocked?.();
       });
-    } else if (!video.paused) video.pause();
+    } else if (video && !video.paused) video.pause();
+    else if (frame) frameCommand("pause");
   }
   if (video) {
     on(video, "playing", () => { sec.classList.add("is-video"); despertar(); });
@@ -234,7 +247,7 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
     }
     /* Mientras el video corre y la portada se ve, el bucle sigue despierto (README de la demo:
        sin un cuadro del hilo principal, Chrome no actualiza los IntersectionObserver tras un salto). */
-    return actual !== meta || mueve || (!!video && !video.paused);
+    return actual !== meta || mueve || (!!video && !video.paused) || framePlaying;
   }
   function alVer(si: boolean) {
     if (!si) { recienVista = true; mueve = false; sec!.classList.remove("is-mueve"); }
@@ -447,13 +460,13 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
   function setPausa(si: boolean) {
     pausado = si;
     sec!.setAttribute("data-pausa", si ? "1" : "0");
-    if (si) { if (video && !video.paused) video.pause(); detener(); }
+    if (si) { if (video && !video.paused) video.pause(); if (frame) frameCommand("pause"); detener(); }
     else { reproducir(visible); vueltas = 0; arrancar(); }
   }
   /* En modo Mario el video queda quieto (oculto; se ve la foto fija): nada se mueve solo. */
   function videoSegunRM() {
-    if (!video) return;
-    if (rm) { if (!video.paused) video.pause(); } else reproducir(visible);
+    if (!video && !frame) return;
+    if (rm) { if (video && !video.paused) video.pause(); if (frame) frameCommand("pause"); } else reproducir(visible);
   }
 
   /* ---------- Eventos de la página ---------- */
@@ -520,6 +533,7 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
       limpiar.forEach((f) => { try { f(); } catch { /* nada */ } });
       limpiar.length = 0;
       if (video && !video.paused) video.pause();
+      if (frame) frameCommand("pause");
     },
   };
 }

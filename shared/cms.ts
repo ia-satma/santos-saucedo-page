@@ -235,9 +235,9 @@ export const cmsSections: {
   },
   {
     key: "v3",
-    label: "Páginas internas — contenido avanzado",
+    label: "Nuestra firma — láminas visuales",
     path: "/",
-    help: "Contenido avanzado de las páginas ya publicadas. Dentro de cada idioma, Socios, Perfil, Nuestra firma, Prácticas, Anatomía, Contacto y páginas extra conservan sus propios bloques, textos, etiquetas, imágenes y accesibilidad.",
+    help: "Láminas visuales de Nuestra firma y Prácticas. Capacidad de reacción, siempre hacia adelante, textos, dibujos, medios y accesibilidad.",
   },
   {
     key: "industry-detail",
@@ -466,6 +466,26 @@ export function validateCmsValue(
     const limit = (value as { monitorLimit?: unknown })?.monitorLimit;
     if (!Number.isInteger(limit) || Number(limit) < 1 || Number(limit) > 30)
       errors.push("El Monitor admite entre 1 y 30 publicaciones.");
+    const pages = (value as { pages?: unknown })?.pages;
+    if (!pages || typeof pages !== "object" || Array.isArray(pages)) {
+      errors.push("La visibilidad de páginas debe ser un objeto.");
+    } else {
+      for (const [page, state] of Object.entries(pages as Record<string, unknown>)) {
+        if (!state || typeof state !== "object" || Array.isArray(state)) {
+          errors.push(`pages.${page}: configuración inválida.`);
+          continue;
+        }
+        const record = state as Record<string, unknown>;
+        if (typeof record.enabled !== "boolean") errors.push(`pages.${page}.enabled: debe ser booleano.`);
+        if (!record.blocks || typeof record.blocks !== "object" || Array.isArray(record.blocks)) {
+          errors.push(`pages.${page}.blocks: debe ser un objeto.`);
+          continue;
+        }
+        for (const [block, enabled] of Object.entries(record.blocks as Record<string, unknown>)) {
+          if (typeof enabled !== "boolean") errors.push(`pages.${page}.blocks.${block}: debe ser booleano.`);
+        }
+      }
+    }
   }
   if (JSON.stringify(value).length > 900000)
     errors.push("La sección excede el tamaño admitido.");

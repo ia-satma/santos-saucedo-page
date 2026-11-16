@@ -2,6 +2,18 @@ export const layoutDefaults = {
   home: { firma: true, creemos: true, practicas: true, extranjeras: true, socios: true, monitor: true, hero: true },
   monitorLimit: 3,
   homeOrder: ["firma", "practicas", "creemos", "socios", "extranjeras", "monitor"],
+  pages: {
+    home: { enabled: true, blocks: { hero: true, firma: true, creemos: true, practicas: true, industrias: true, socios: true, extranjeras: true, monitor: true } },
+    about: { enabled: true, blocks: { hero: true, historia: true, cifras: true, valores: true, prioridad: true, laminas: true, oficina: true } },
+    practices: { enabled: true, blocks: { hero: true, lista: true, servicios: true, laminaReaccion: true, industries: true } },
+    industries: { enabled: true, blocks: { hero: true, lista: true, animacion: true } },
+    team: { enabled: true, blocks: { hero: true, carrusel: true, perfiles: true } },
+    news: { enabled: true, blocks: { hero: true, filtros: true, publicaciones: true, suscripcion: true } },
+    contact: { enabled: true, blocks: { hero: true, datos: true, formulario: true } },
+    careers: { enabled: true, blocks: { hero: true, informacion: true, vacantes: true, formulario: true } },
+    offices: { enabled: true, blocks: { hero: true, datos: true, galeria: true, horario: true } },
+    testimonials: { enabled: true, blocks: { hero: true, lista: true, estrellas: true } },
+  },
 } as const;
 
 export const integrationsDefaults = {

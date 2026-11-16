@@ -9,6 +9,8 @@ import type { JobOpening } from "@shared/schema";
 import { Link } from "wouter";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
 import { useCmsContent } from "@/hooks/useCmsContent";
+import { layoutDefaults } from "@/lib/cmsLightDefaults";
+import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -45,6 +47,9 @@ const workAreaAlt: Record<LanguageCode, string> = {
 
 
 export default function Careers() {
+  const layout = useCmsContent("layout", layoutDefaults);
+  const visibility = pageVisibility(layout, "careers");
+  const pageHidden = !visibility.enabled;
   const siteDetails = useSiteDetails();
   const { language } = useLanguage();
 
@@ -272,13 +277,15 @@ export default function Careers() {
   const mezanine = foto("mezanine", language as LanguageCode);
   const contacto = chrome.nav.find((n) => n.href === "/contact")?.label ?? chrome.nav[5].label;
 
+  if (pageHidden) return <div data-testid="page-hidden" aria-hidden="true" />;
+
   return (
     <div className="ss26 min-h-[100dvh]" data-testid="page-careers">
       <SEOHead page="careers" language={language} />
       <Header />
 
       <V3Main vista="carreras" className="px">
-        <div data-testid="section-careers-hero">
+        {blockVisible(layout, "careers", "hero") && <div data-testid="section-careers-hero">
           <V3PageHeader
             id="px-carreras-h"
             img={areaTrabajo.src}
@@ -291,10 +298,10 @@ export default function Careers() {
           >
             <p data-testid="text-careers-intro">{t.introText}</p>
           </V3PageHeader>
-        </div>
+        </div>}
 
         {/* A quién buscamos, junto a la mesa de trabajo; debajo, lo que se aprende y la firma sobre la línea de cota */}
-        <section className="px-sec px-perfil" aria-labelledby="px-aprende-1" data-testid="section-why-join">
+        {blockVisible(layout, "careers", "informacion") && <section className="px-sec px-perfil" aria-labelledby="px-aprende-1" data-testid="section-why-join">
           <div className="sh-wrap">
             <div className="px-perfil__grid px-filete">
               <p className="px-perfil__p">{t.whyJoinSubtitle}</p>
@@ -326,20 +333,20 @@ export default function Careers() {
               </article>
             </div>
           </div>
-        </section>
+        </section>}
 
         {/* Pasantías S&S: la banda azul con foto del inicio de la demo; el título lleva a su página */}
-        <BandaFoto img={mezanine} labelledBy="px-pasantias-h" testId="section-internship">
+        {blockVisible(layout, "careers", "informacion") && <BandaFoto img={mezanine} labelledBy="px-pasantias-h" testId="section-internship">
           <h2 id="px-pasantias-h" className="sh-h2 px-banda__h" data-testid="text-internship-title">
             <Link className="px-banda__a" href="/careers/interns" data-testid="card-internship-cta">
               <span className="px-banda__t">{keepProgramName(t.internshipTitle)}</span> <Flecha />
             </Link>
           </h2>
           <p className="sh-filo__p" data-testid="card-internship-overview">{keepProgramName(t.internshipSubtitle)}</p>
-        </BandaFoto>
+        </BandaFoto>}
 
         {/* Vacantes */}
-        <section className="px-sec px-vac" aria-labelledby="px-vacantes-h" data-testid="section-positions">
+        {blockVisible(layout, "careers", "vacantes") && <section className="px-sec px-vac" aria-labelledby="px-vacantes-h" data-testid="section-positions">
           <div className="sh-wrap">
             <div className="px-dos px-filete">
               <h2 id="px-vacantes-h" className="sh-h2" data-testid="text-positions-title">{t.positionsTitle}</h2>
@@ -373,10 +380,10 @@ export default function Careers() {
               </div>
             </div>
           </div>
-        </section>
+        </section>}
 
         {/* Cómo postularse: el correo y lo que conviene indicar, junto al formulario azul (Contacto de la demo) */}
-        <section className="sh-contacto px-post" aria-labelledby="px-postular-h" data-testid="section-apply">
+        {blockVisible(layout, "careers", "formulario") && <section className="sh-contacto px-post" aria-labelledby="px-postular-h" data-testid="section-apply">
           <div className="sh-wrap">
             <div className="sh-contacto__grid px-filete">
               <div className="px-post__datos" data-testid="card-apply-instructions">
@@ -396,7 +403,7 @@ export default function Careers() {
               <Candidatura source="careers" idPrefix="px-cand" />
             </div>
           </div>
-        </section>
+        </section>}
 
         <V3NextPage href="/contact" title={contacto} label={nextLabel(language as LanguageCode)} ariaLabel={t.heroTitle} />
       </V3Main>

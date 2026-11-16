@@ -10,12 +10,16 @@ import Footer26 from "@/components/home26/Footer26";
 import JsonLdSchema from "@/components/JsonLdSchema";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
 
 export default function Home() {
   const { language, displayLanguage } = useLanguage();
   const layout = useCmsContent("layout", layoutDefaults);
+  const visibility = pageVisibility(layout, "home");
   const lang = displayLanguage === "es" ? "es" : "en";
   const practices = usePracticeItems(lang);
+
+  if (!visibility.enabled) return <div data-testid="page-hidden" aria-hidden="true" />;
 
   return (
     <div className="ss26 hm-page min-h-screen" data-testid="page-home">
@@ -33,9 +37,9 @@ export default function Home() {
           cifras; creemos = la filosofía; practicas = el bloque de Baker y, tras él, las industrias;
           socios = los cuatro socios. data-start/data-end: tono de cada banda (uniones en home.css). */}
       <main id="main-content">
-        {layout.home.hero&&<Telon lang={lang} />}
+        {layout.home.hero&&blockVisible(layout, "home", "hero")&&<Telon lang={lang} />}
         {layout.homeOrder.map(key=>{
-          if(!layout.home[key as keyof typeof layout.home])return null;
+          if(!layout.home[key as keyof typeof layout.home] || !blockVisible(layout, "home", key))return null;
           switch(key){
             case 'firma':return <Band key={key} name="intro" start="light"><IntroBand lang={lang} areas={practices.length||4}/></Band>;
             case 'creemos':return <Band key={key} name="filosofia" start="dark"><FilosofiaBand lang={lang}/></Band>;

@@ -18,6 +18,8 @@ import { useV3Content } from "@/v3/useV3Content";
 import type { FirmaTextos } from "@/v3/firma/textos";
 import type { PracticeGroup } from "@shared/schema";
 import cmsDefaults from "@shared/cms-defaults.json";
+import { layoutDefaults } from "@/lib/cmsLightDefaults";
+import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
 import "./PracticeGroups.css";
 
 // Prácticas (/practice-groups): el bloque de prácticas del Inicio (el efecto «Trending Content» de Baker
@@ -102,6 +104,8 @@ const content: Record<string, { subtitle: string; errorMessage: string }> = {
 export default function PracticeGroups() {
   const cmsChrome = useCmsContent("chrome", chrome26);
   const { language } = useLanguage();
+  const layout = useCmsContent("layout", layoutDefaults);
+  const visibility = pageVisibility(layout, "practices");
   const media = useCmsMedia();
 
   const { data: practiceGroups = [], isLoading } = useQuery<PracticeGroup[]>({
@@ -120,6 +124,8 @@ export default function PracticeGroups() {
   // Industrias: el título de la demo en ES/EN; en los otros idiomas, el rótulo del sitio en ese idioma
   const chromeL = cmsChrome[language as keyof typeof chrome26] ?? cmsChrome.en;
   const industriesTitle = language === "es" || language === "en" ? P.industries : chromeL.search.groups.industryGroups;
+
+  const pageHidden = !visibility.enabled;
 
   // Las prácticas del bloque (orden del panel, foto de cada una). En español e inglés, tal cual; en los
   // otros idiomas, el nombre del sitio en ese idioma (panel) y la descripción traducida si está guardada;
@@ -149,6 +155,8 @@ export default function PracticeGroups() {
     });
   }, [base, otroIdioma, practiceGroups, traducciones, cmsPracticeName, language]);
 
+  if (pageHidden) return <div data-testid="page-hidden" aria-hidden="true" />;
+
   return (
     <div className="ss26 min-h-screen" data-testid="page-practice-groups">
       <SEOHead page="practiceGroups" language={language} />
@@ -157,7 +165,7 @@ export default function PracticeGroups() {
       <V3Main vista="practicas" className="pg">
         {otroIdioma && practiceGroups.map((g) => <TraduccionPractica key={g.id} group={g} onChange={alTraducir} />)}
 
-        {items.length ? (
+        {blockVisible(layout, "practices", "lista") && items.length ? (
           <PracticasBaker
             lang={v3Lang}
             items={items}
@@ -176,7 +184,7 @@ export default function PracticeGroups() {
         )}
 
         {/* La ventaja de la firma: prevenir y reaccionar son la misma pieza (lámina 2/7) */}
-        <LaminaReaccion t={v3.firma as unknown as FirmaTextos} attrs={v3Attrs} logo={media.brand.logoLight} />
+        {blockVisible(layout, "practices", "laminaReaccion") && <LaminaReaccion t={v3.firma as unknown as FirmaTextos} attrs={v3Attrs} logo={media.brand.logoLight} />}
 
         {/* Al final, como en cada página de la demo: la siguiente parte, Industrias. «Siguiente» va en
             inglés fuera de ES/EN, marcado como inglés (lang/dir) */}

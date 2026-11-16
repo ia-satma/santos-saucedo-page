@@ -16,6 +16,13 @@ import { readStaticCmsSection } from '../localization/staticSnapshots';
 const prefix = 'editorial.';
 type Stored = { content: CmsValue; previous?: CmsValue };
 const revision = (raw: string | null | undefined) => raw ? createHash('sha256').update(raw).digest('hex') : 'initial';
+const normalizeSearch = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+function flattenCms(value: CmsValue, path: string[] = [], out: { path: string[]; value: string }[] = []) {
+  if (typeof value === 'string' && value.trim()) out.push({ path, value });
+  else if (Array.isArray(value)) value.forEach((item, index) => flattenCms(item, [...path, String(index)], out));
+  else if (value && typeof value === 'object') Object.entries(value).forEach(([key, item]) => flattenCms(item, [...path, key], out));
+  return out;
+}
 function decode(raw: string | null | undefined): Stored | undefined {
   if (!raw) return;
   try { return JSON.parse(raw) as Stored; } catch { return; }
@@ -170,6 +177,40 @@ export function registerCmsRoutes(app: Express) {
   app.get('/api/admin/site-config', authMiddleware, requireRole('editor', 'admin'), (_req, res) => {
     res.setHeader('Cache-Control', 'no-store');
     res.json({ sections: cmsSections });
+  });
+  app.get('/api/admin/content/search', authMiddleware, requireRole('editor', 'admin'), async (req, res) => {
+    const query = typeof req.query.q === 'string' ? req.query.q.trim().slice(0, 160) : '';
+    if (query.length < 2) return res.json({ query, results: [] });
+    const needle = normalizeSearch(query);
+    try {
+      const rows = await db.select().from(siteConfig);
+      const saved = new Map(rows.filter((row) => row.key.startsWith(prefix)).map((row) => [row.key.slice(prefix.length), decode(row.value)?.content]));
+      const results: { section: CmsSection; label: string; path: string; publicPath: string; field: string; value: string; language?: string }[] = [];
+      for (const section of cmsSections) {
+        const content = mergeCms(cmsDefaults[section.key], saved.get(section.key));
+        for (const match of flattenCms(content)) {
+          const haystack = normalizeSearch(`${section.label} ${section.help} ${match.path.join(' ')} ${match.value}`);
+          if (!haystack.includes(needle)) continue;
+          const language = SUPPORTED_LANGUAGES.some((item) => item.code === match.path[0]) ? match.path[0] : undefined;
+          results.push({
+            section: section.key,
+            label: section.label,
+            path: match.path.join('.'),
+            publicPath: section.path,
+            field: match.path.at(-1) ?? section.label,
+            value: match.value,
+            language,
+          });
+          if (results.length >= 80) break;
+        }
+        if (results.length >= 80) break;
+      }
+      res.setHeader('Cache-Control', 'no-store');
+      res.json({ query, results });
+    } catch (error) {
+      console.error('[CMS] Search failed', error);
+      res.status(503).json({ error: 'No se pudo buscar el contenido.' });
+    }
   });
   app.get('/api/admin/site-config/:section', authMiddleware, requireRole('editor', 'admin'), async (req, res) => {
     const section = req.params.section;

@@ -13,6 +13,8 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCmsContent } from "@/hooks/useCmsContent";
+import { layoutDefaults } from "@/lib/cmsLightDefaults";
+import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
 import { useCmsMedia } from "@/lib/cmsMedia";
 import { isNamedOnTeamPage } from "@/lib/teamPhotoSources";
 import { chrome26 } from "@/components/home26/chrome26";
@@ -56,6 +58,9 @@ export default function Team() {
   const cmsIndustries = useCmsContent("industries", defaults.industries);
   const cmsTeam = useCmsContent("team", defaults.team);
   const { language } = useLanguage();
+  const layout = useCmsContent("layout", layoutDefaults);
+  const visibility = pageVisibility(layout, "team");
+  const pageHidden = !visibility.enabled;
   const { lang, locale, attrs } = useV3Lang();
   const { locale: v3 } = useV3Content();
   // Dirección de la sede para el mapa (la misma del pie y de /contact)
@@ -276,6 +281,8 @@ export default function Team() {
   // El Lienzo se vuelve a montar (y su turno empieza de nuevo) si cambian los socios o el idioma
   const lienzoKey = `${language}|${partners.map(p => `${p.slug}:${p.name}:${p.role}:${p.imageUrl ?? ""}`).join("|")}`;
 
+  if (pageHidden) return <div data-testid="page-hidden" aria-hidden="true" />;
+
   return (
     <div className="ss26 min-h-screen" data-testid="page-team">
       <SEOHead page="team" language={language} />
@@ -285,7 +292,7 @@ export default function Team() {
         {/* Los cuatro socios desde el primer momento (con los datos de respaldo mientras llega
             /api/team: los mismos nombres, cargos y retratos, así que el Lienzo no se vuelve a montar
             al llegar). Los Of Counsel, cuando responde la API. */}
-        <SociosLienzo
+        {blockVisible(layout, "team", "carrusel") && <SociosLienzo
           key={lienzoKey}
           partners={partners}
           t={tv}
@@ -297,10 +304,11 @@ export default function Team() {
           lead={t.subtitle ? keepFirmName(t.subtitle) : undefined}
         >
           {!isLoadingAll && <OfCounsel title={t.ofCounsel} people={ofCounsel} />}
-        </SociosLienzo>
+        </SociosLienzo>}
 
         {/* El equipo: muro de retratos sin nombres (mosaico del CMS), fuera de la carga: las fotos son
             estáticas y el bloque ocupa su sitio desde el principio */}
+        {blockVisible(layout, "team", "perfiles") && <>
         <EquipoMuro
           photos={equipoPhotos}
           title={teamTitle}
@@ -317,6 +325,7 @@ export default function Team() {
         <div {...attrs}>
           <Mapa t={mapaTextos} address={sede} />
         </div>
+        </>}
 
         <div {...attrs}>
           <V3NextPage

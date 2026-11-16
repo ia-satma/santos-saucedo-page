@@ -3,6 +3,8 @@
 // y páginas como antes, la banda azul de la suscripción con la estancia del mapamundi y la página siguiente.
 // Textos: los del sitio en 10 idiomas (menú, portada, panel «news-intro», «monitor-ui», «monitor-subscribe»).
 import { useCmsContent } from "@/hooks/useCmsContent";
+import { layoutDefaults } from "@/lib/cmsLightDefaults";
+import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
 import { useCallback, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -16,6 +18,9 @@ import { useMonitorIntro } from "@/v3/paginas-sitio/textos";
 
 export default function NewsPage() {
   const { language } = useLanguage();
+  const layout = useCmsContent("layout", layoutDefaults);
+  const visibility = pageVisibility(layout, "news");
+  const pageHidden = !visibility.enabled;
   // h1: el rótulo del menú en cada idioma (chrome26.ts), el mismo de la pestaña y del artículo
   // ("Monitor Laboral" en español, "Labor Monitor" en inglés). Subtítulo: la misma frase con que
   // la portada presenta el Monitor (home26.monitor.intro); en los demás idiomas, su traducción
@@ -51,6 +56,8 @@ export default function NewsPage() {
   const srcSet = (p: { url: string; smallUrl?: string }) => (p.smallUrl && p.smallUrl !== p.url ? `${p.smallUrl} 768w, ${p.url} 1536w` : undefined);
   const nextLabel = etiquetaSiguiente(language);
 
+  if (pageHidden) return <div data-testid="page-hidden" aria-hidden="true" />;
+
   return (
     <div className="ss26 min-h-screen" data-testid="page-news">
       <SEOHead page="news" language={language} />
@@ -58,7 +65,7 @@ export default function NewsPage() {
 
       <V3Main vista="monitor">
         <div className="ps">
-          <div data-testid="section-news-hero">
+          {blockVisible(layout, "news", "hero") && <div data-testid="section-news-hero">
             <V3PageHeader
               id="cab-monitor-h"
               img={biblioteca.url}
@@ -71,16 +78,16 @@ export default function NewsPage() {
             >
               {translationBanner ? <p data-testid="text-translation-banner">{translationBanner}</p> : null}
             </V3PageHeader>
-          </div>
+          </div>}
 
           {/* Lista del Monitor. Los filtros solo aparecen si al menos dos categorías tienen notas
               publicadas (no se ofrece una categoría vacía); la búsqueda, desde 12 notas */}
-          <section className="ps-monitor" aria-labelledby="cab-monitor-h">
+          {blockVisible(layout, "news", "publicaciones") && <section className="ps-monitor" aria-labelledby="cab-monitor-h">
             <div className="sh-wrap">
               <MonitorNotas
                 archive
-                filters
-                search
+                filters={blockVisible(layout, "news", "filtros")}
+                search={blockVisible(layout, "news", "filtros")}
                 onTranslated={handleTranslated}
                 testIds={{
                   row: (item) => `card-news-${item.slug}`,
@@ -99,15 +106,15 @@ export default function NewsPage() {
                 }}
               />
             </div>
-          </section>
+          </section>}
 
           {/* Al pie del Monitor: la suscripción por correo (/newsletter) */}
-          <MonitorSuscripcion
+          {blockVisible(layout, "news", "suscripcion") && <MonitorSuscripcion
             foto={{ src: estancia.url, srcSet: srcSet(estancia) }}
             testId="section-news-subscribe"
             linkTestId="link-news-subscribe"
             fotoTestId="band-news-office"
-          />
+          />}
 
           <V3NextPage href="/contact" label={nextLabel} title={nav[5].label} ariaLabel={nextLabel} />
         </div>

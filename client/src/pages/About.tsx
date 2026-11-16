@@ -23,6 +23,8 @@ import { HOME_FIRMA } from "@/v3/firma/textos";
 import { v3Asset } from "@/v3/asset";
 import { useV3Content } from "@/v3/useV3Content";
 import cmsDefaults from "@shared/cms-defaults.json";
+import { layoutDefaults } from "@/lib/cmsLightDefaults";
+import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
 
 // Cifras de /about: "40+" (sin tocar) y "72+" ciudades con presencia, la forma en cifras de
 // "más de 72" (redacción aprobada de la portada: "Ciudades en nuestra red de alianzas"). Fuera el conteo de
@@ -59,6 +61,8 @@ export default function About() {
   const { photos } = media;
   const officeNameFor = useOfficeLabel();
   const { language } = useLanguage();
+  const layout = useCmsContent("layout", layoutDefaults);
+  const visibility = pageVisibility(layout, "about");
   const { locale: v3 } = useV3Content();
 
   const content: Record<LanguageCode, {
@@ -463,6 +467,8 @@ export default function About() {
     : cmsPracticeName(firstSlug, language) ?? practiceName(firstSlug, language) ?? "";
   const nextLabel = language === "es" || language === "en" ? T.siguiente : i18n.getFixedT(language)("cta.next");
 
+  if (!visibility.enabled) return <div data-testid="page-hidden" aria-hidden="true" />;
+
   // Textos alternativos de la galería de la oficina (CMS); en otros idiomas, el inglés con su lang
   const altOficina = (photo: string, respaldo = "Santos & Saucedo") => {
     const item = media.officeGallery.find((g) => g.photo === photo);
@@ -478,7 +484,7 @@ export default function About() {
 
       <V3Main vista="firma">
         <FirmaRaiz>
-          <V3PageHeader
+          {blockVisible(layout, "about", "hero") && <V3PageHeader
             id="cab-firma-h"
             img={v3Asset("/v3/c-cerro-luna.webp")}
             alt={T.cabAlt}
@@ -490,26 +496,26 @@ export default function About() {
             lead={<span className="nf-in" {...attrs}>{keepFirmName(T.lead)}</span>}
           >
             <p {...attrs}>{T.cabP}</p>
-          </V3PageHeader>
+          </V3PageHeader>}
 
-          <FirmaTexto
+          {blockVisible(layout, "about", "historia") && <FirmaTexto
             titulo={t.subtitle}
             parrafos={[keepFirmName(t.historyText1), t.historyText2]}
             cifras={t.stats}
             cuadro={{ src: photos.arteColor.url, srcSet: srcSet(photos.arteColor), alt: altOficina("arteColor", T.cuadroAlt) }}
             attrs={attrs}
             t={T}
-          />
+          />}
 
-          <Principios titulo={t.valuesTitle} valores={t.values} />
+          {blockVisible(layout, "about", "valores") && <Principios titulo={t.valuesTitle} valores={t.values} />}
 
-          <Prioridad t={T} attrs={attrs} />
+          {blockVisible(layout, "about", "prioridad") && <Prioridad t={T} attrs={attrs} />}
 
           {/* El carnero, la filosofía de la firma. El avión (lámina 2/7, la capacidad de reacción) va en
               la página de Prácticas, que es la que sigue en el recorrido */}
-          <LaminaCarnero t={T} attrs={attrs} logo={media.brand.logoLight} lang={lang} />
+          {blockVisible(layout, "about", "laminas") && <LaminaCarnero t={T} attrs={attrs} logo={media.brand.logoLight} lang={lang} />}
 
-          <Oficina
+          {blockVisible(layout, "about", "oficina") && <Oficina
             titulo={officeNameFor(language)}
             href="/offices"
             lead={fachada.caption}
@@ -527,7 +533,7 @@ export default function About() {
                 h: 694,
               },
             }}
-          />
+          />}
 
           {/* El final de la demo (la siguiente parte de la historia) con los enlaces que la página ya tenía */}
           <div data-testid="nav-about-related">

@@ -47,7 +47,7 @@
     "test:social:reference": "node --import tsx --test server/security/socialReferenceKit.test.ts",
     "test:routes": "node --import tsx --test server/security/publicRoutes.test.ts server/security/adminSessionCookie.test.ts",
     "test:cms:battery": "node scripts/test-cms-battery.mjs",
-    "test:video-source": "node --import tsx --test server/security/videoSource.test.ts"
+    "test:video-source": "node --import tsx --test server/security/videoSource.test.ts server/security/pageVisibility.test.ts"
   },
   "dependencies": {
     "@google/genai": "^1.32.0",

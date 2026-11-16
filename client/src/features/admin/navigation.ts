@@ -62,13 +62,13 @@ export const adminNavigation = [
       },
       {
         href: "/admin/team",
-        label: "Abogados y equipo",
+        label: "Socios y equipo",
         hint: "Crear, editar y ordenar abogados",
         icon: PersonIcon,
       },
       {
         href: "/admin/site-config/team",
-        label: "Portada de abogados",
+        label: "Portada de socios y equipo",
         hint: "Textos del directorio y perfiles",
         icon: PersonIcon,
       },
@@ -128,7 +128,7 @@ export const adminNavigation = [
       },
       {
         href: "/admin/site-config/offices",
-        label: "La oficina",
+        label: "Oficinas",
         hint: "Textos y horarios",
         icon: LayersIcon,
       },

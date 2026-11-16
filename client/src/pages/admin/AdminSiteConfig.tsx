@@ -18,6 +18,7 @@ import { notifyCmsSaved } from "@/hooks/useCmsContent";
 import { useToast } from "@/hooks/use-toast";
 import { AdminPageHelp } from "@/components/admin/AdminPageHelp";
 import { adminHrefForCmsSection, getCmsEditorPage, getCmsTab } from "@/features/site-config/editorMetadata";
+import { PageVisibilityPanel } from "@/features/site-config/PageVisibilityPanel";
 import "@/features/site-config/cms-editor.css";
 
 type SectionResponse = { section: CmsSection; content: CmsValue; revision: string; previous: CmsValue | null };
@@ -74,6 +75,15 @@ export default function AdminSiteConfig({ fixedSection }: { fixedSection?: CmsSe
   const langs = SUPPORTED_LANGUAGES.filter((item) => obj && item.code in obj);
   const selectedLang = langs.some((item) => item.code === lang) ? lang : langs[0]?.code;
   const value = selectedLang && obj ? obj[selectedLang] : draft;
+  useEffect(() => {
+    const focus = new URLSearchParams(window.location.search).get("focus");
+    if (!focus || value === undefined) return;
+    const timer = window.setTimeout(() => {
+      document.querySelectorAll<HTMLDetailsElement>(".cms-editor-page details").forEach((details) => { details.open = true; });
+      document.getElementById(`cms-${focus.split(".").join("-")}`)?.scrollIntoView({ block: "center", behavior: "smooth" });
+    }, 80);
+    return () => window.clearTimeout(timer);
+  }, [value]);
   if (isLoading || !isAuthenticated) return <p className="p-8" role="status">Verificando sesión…</p>;
 
   return <div className="cms-editor-page">
@@ -86,6 +96,7 @@ export default function AdminSiteConfig({ fixedSection }: { fixedSection?: CmsSe
       <AdminPageHelp pageId={`site-config-${page.id}`} manualSectionId={page.manualId}>Edita esta página por bloques. Guarda los cambios para reflejarlos en el sitio. Los campos de idioma mantienen separadas las versiones en español e inglés.</AdminPageHelp>
       <nav className="cms-editor-tabs" aria-label={`Secciones de ${page.label}`}>{page.tabs.map((tab) => <Link key={tab.section} href={adminHrefForCmsSection(tab.section)} className={`cms-editor-tab ${tab.section === section.key ? "is-active" : ""}`} aria-current={tab.section === section.key ? "page" : undefined} title={tab.description}>{tab.label}</Link>)}</nav>
       <div className="flex items-center justify-between gap-4 mb-5"><div><h2 className="text-xl font-semibold text-[var(--admin-ink,#172b39)]">{activeTab.label}</h2><p className="text-sm text-[var(--admin-muted,#68777c)] mt-1">{activeTab.description}</p></div><Link href="/admin/content" className="admin-subtle-link">Ver directorio completo</Link></div>
+      {page.id !== "configuracion" && <PageVisibilityPanel pageId={page.id} />}
       {section.key === "media" && <div className="cms-editor-card mb-5 space-y-4"><div><h3 className="font-semibold">Biblioteca de medios y App Storage</h3><p className="text-sm text-muted-foreground">Carga y verifica imágenes, videos y documentos antes de enlazarlos al sitio.</p></div><div className="rounded-xl border border-[var(--admin-line,#dce3e5)] bg-[var(--admin-soft,#f7f8f8)] p-4"><h4 className="font-semibold">Carrusel del equipo</h4><p className="mt-1 text-sm text-muted-foreground">El bloque visible en Socios y equipo usa la lista «Carrusel del equipo — fotos». Ahí puedes reemplazar, añadir, quitar y ordenar cada retrato. Cada cambio se guarda con el botón de esta página.</p><a className="admin-subtle-link mt-2 inline-block" href="/admin/media">Abrir biblioteca de medios ↗</a></div><p className="text-sm">{storageStatus.data?.configured ? "Bucket configurado." : "Falta configurar REPLIT_APP_STORAGE_BUCKET_ID en Replit."}</p>{storageStatus.data && <p className="text-sm">Importación {storageStatus.data.migration.state} · {storageStatus.data.migration.uploaded}/{storageStatus.data.migration.total} archivos verificados</p>}{storageStatus.data?.migration.error && <p role="alert" className="text-red-700 text-sm">{storageStatus.data.migration.error}</p>}<div className="flex flex-wrap gap-3"><Button variant="outline" disabled={storageBusy || !storageStatus.data?.configured} onClick={() => void storageAction("verify")}>Verificar conexión</Button><Button variant="outline" disabled={storageBusy || dirty || !storageStatus.data?.configured || storageStatus.data.migration.state === "running"} onClick={() => void storageAction("import")}>Importar a App Storage</Button><Button variant="outline" disabled={dirty} onClick={() => query.refetch()}>Recargar medios</Button></div></div>}
       {langs.length > 0 && <div className="cms-editor-card mb-5 flex flex-wrap items-center gap-3"><label htmlFor="cms-language" className="text-sm font-semibold">Idioma que estás editando</label><select id="cms-language" className="border rounded-md p-2 bg-background" value={selectedLang ?? "es"} onChange={(event) => setLang(event.target.value)}>{langs.map((item) => <option key={item.code} value={item.code}>{item.nameNative}</option>)}</select></div>}
       {error && <div role="alert" className="border border-red-300 bg-red-50 text-red-800 whitespace-pre-line p-4 mb-5 rounded-xl">{error}<Button variant="outline" size="sm" className="mt-3" onClick={() => { if (!dirty || window.confirm("¿Descartar el borrador y cargar la última versión?")) { setDraft(undefined); void query.refetch(); } }}>Recargar versión guardada</Button></div>}

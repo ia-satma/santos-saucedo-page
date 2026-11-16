@@ -5,6 +5,8 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCmsContent } from "@/hooks/useCmsContent";
+import { layoutDefaults } from "@/lib/cmsLightDefaults";
+import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
 import { useSiteDetails } from "@/components/home26/useSiteContact";
 import type { LanguageCode } from "@shared/schema";
 import { V3Main, V3NextPage, V3PageHeader } from "@/v3/shared";
@@ -37,6 +39,9 @@ export function useTestimonialsCopy() {
 }
 
 export default function Testimonials() {
+  const layout = useCmsContent("layout", layoutDefaults);
+  const visibility = pageVisibility(layout, "testimonials");
+  const pageHidden = !visibility.enabled;
   const { language, t } = useTestimonialsCopy();
   const { googleReviewsUrl } = useSiteDetails();
   const { data, isLoading, isError } = useQuery<PublicTestimonial[]>({
@@ -75,12 +80,14 @@ export default function Testimonials() {
       </figure>
     );
   };
+  if (pageHidden) return <div data-testid="page-hidden" aria-hidden="true" />;
+
   return (
     <div className="ss26 min-h-[100dvh]" data-testid="page-testimonials">
       <SEOHead page="testimonials" language={language} />
       <Header />
       <V3Main vista="testimonios" className="px">
-        <div data-testid="section-testimonials-hero">
+        {blockVisible(layout, "testimonials", "hero") && <div data-testid="section-testimonials-hero">
           <V3PageHeader
             id="px-testimonios-h"
             img={vestibulo.src}
@@ -102,9 +109,9 @@ export default function Testimonials() {
               </p>
             ) : null}
           </V3PageHeader>
-        </div>
+        </div>}
 
-        {isError ? (
+        {blockVisible(layout, "testimonials", "lista") && (isError ? (
           <section className="px-test-vacio" aria-label={t.title}>
             <div className="sh-wrap">
               <div className="px-filete">
@@ -134,7 +141,7 @@ export default function Testimonials() {
               {items.map((item) => <div key={item.id}>{cita(item)}</div>)}
             </div>
           </section>
-        )}
+        ))}
 
         <V3NextPage href="/news" title={monitor} label={nextLabel(language as LanguageCode)} ariaLabel={t.title} />
       </V3Main>

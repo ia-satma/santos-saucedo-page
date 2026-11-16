@@ -8,6 +8,8 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCmsContent } from "@/hooks/useCmsContent";
+import { layoutDefaults } from "@/lib/cmsLightDefaults";
+import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
 import { useSiteContact, useSiteDetails } from "@/components/home26/useSiteContact";
 import { anyPartnerHasDirectContact } from "@/lib/partnerContact";
 import { V3Main, useV3Lang } from "@/v3/shared";
@@ -20,6 +22,9 @@ import "@/v3/contacto/contacto.css";
 
 export default function Contact() {
   const { language } = useLanguage();
+  const layout = useCmsContent("layout", layoutDefaults);
+  const visibility = pageVisibility(layout, "contact");
+  const pageHidden = !visibility.enabled;
   const { lang } = useV3Lang();
   const { locale: v3 } = useV3Content();
   const ct = v3.contacto as unknown as TextosV3;
@@ -43,6 +48,8 @@ export default function Contact() {
   const telLabel = nativo ? ct.datosTel : t.telLabel;
   const mailLabel = nativo ? ct.datosCorreo : t.emailLabel;
 
+  if (pageHidden) return <div data-testid="page-hidden" aria-hidden="true" />;
+
   return (
     <div data-testid="page-contact">
       <SEOHead page="contact" language={language} />
@@ -50,8 +57,8 @@ export default function Contact() {
       <V3Main vista="contacto">
         <section className="sh-contacto" id="contacto" aria-labelledby="contacto-h" data-testid="section-contact">
           <div className="sh-wrap sh-contacto__grid">
-            <div className="sh-contacto__datos" data-testid="section-contact-office">
-              <h1 id="contacto-h" className="sh-h2" data-testid="text-contact-title">{t.title}</h1>
+            {blockVisible(layout, "contact", "datos") && <div className="sh-contacto__datos" data-testid="section-contact-office">
+              {blockVisible(layout, "contact", "hero") && <h1 id="contacto-h" className="sh-h2" data-testid="text-contact-title">{t.title}</h1>}
               {/* bdi: en árabe (RTL) el punto final de «N.L.» no salta al principio de la línea */}
               <address className="sh-dir" data-testid="text-office-address">
                 {firm.address.map((line, i) => <span key={i}><bdi>{line}</bdi></span>)}
@@ -86,8 +93,8 @@ export default function Contact() {
                 </a>
               </p>
               {showPartnersNote ? <p className="ct-nota" data-testid="text-contact-subtitle">{t.partnersNote}</p> : null}
-            </div>
-            <FormularioContacto idPrefix="f" dePagina />
+            </div>}
+            {blockVisible(layout, "contact", "formulario") && <FormularioContacto idPrefix="f" dePagina />}
           </div>
         </section>
 

@@ -9,6 +9,8 @@ import type { OfficeImage } from "@shared/schema";
 import { useSiteContact, useSiteDetails } from "@/components/home26/useSiteContact";
 import { useCmsMedia, mediaDefaults } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
+import { layoutDefaults } from "@/lib/cmsLightDefaults";
+import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -342,6 +344,9 @@ export default function Offices() {
   const officeNameFor = useOfficeLabel();
   const cmsChrome = useCmsContent("chrome", chrome26);
   const { language } = useLanguage();
+  const layout = useCmsContent("layout", layoutDefaults);
+  const visibility = pageVisibility(layout, "offices");
+  const pageHidden = !visibility.enabled;
   const editableContent = useCmsContent("offices", content);
   const t = editableContent[language] ?? editableContent.en;
   const title = officeNameFor(language);
@@ -383,6 +388,8 @@ export default function Offices() {
       ]
     : [];
 
+  if (pageHidden) return <div data-testid="page-hidden" aria-hidden="true" />;
+
   return (
     <div className="ss26 min-h-screen" data-testid="page-offices">
       <SEOHead page="offices" language={language} />
@@ -392,7 +399,7 @@ export default function Offices() {
         <div className="ps">
           {/* Cabecera: la foto, el nombre de la página (el del menú y del pie) y la introducción del panel.
               En coreano, keep-all: a 320 px partía "누에보레온주" y "있으며" dentro de la palabra (D18). */}
-          <div data-testid="section-offices-hero">
+          {blockVisible(layout, "offices", "hero") && <div data-testid="section-offices-hero">
             <V3PageHeader
               id="cab-oficina-h"
               img={coverPhoto.url}
@@ -409,9 +416,9 @@ export default function Offices() {
                 ) : undefined
               }
             />
-          </div>
+          </div>}
 
-          {photographicTour.length ? (
+          {blockVisible(layout, "offices", "galeria") && photographicTour.length ? (
             <Recorrido
               fotos={photographicTour}
               historias={historias}
@@ -423,7 +430,7 @@ export default function Offices() {
           ) : null}
 
           {/* Dirección: la del sitio en la romana y, sobre la línea de cota, teléfono, correo y horario */}
-          <section className="ps-dir" aria-labelledby="offices-address" data-testid="section-main-office">
+          {blockVisible(layout, "offices", "datos") && <section className="ps-dir" aria-labelledby="offices-address" data-testid="section-main-office">
             <div className="sh-wrap">
               <div className="ps-dir__in" data-testid="card-office-info">
                 <h2 id="offices-address" className="sh-h2">{t.address}</h2>
@@ -444,10 +451,10 @@ export default function Offices() {
                   </p>
                 </div>
                 <dl className="sh-cifras ps-cifras">
-                  <div>
+                  {blockVisible(layout, "offices", "horario") && <div>
                     <dt>{t.phone}</dt>
                     <dd><a href={firm.phoneHref} dir="ltr" data-testid="link-phone">{firm.phone}</a></dd>
-                  </div>
+                  </div>}
                   <div>
                     <dt>{t.email}</dt>
                     <dd>
@@ -465,7 +472,7 @@ export default function Offices() {
                 </dl>
               </div>
             </div>
-          </section>
+          </section>}
 
           <div data-testid="button-contact">
             <V3NextPage href="/contact" label={nextLabel} title={nav[5].label} ariaLabel={nextLabel} />

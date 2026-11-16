@@ -1,4 +1,3 @@
-import { useCmsContent } from "@/hooks/useCmsContent";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
@@ -8,6 +7,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCmsContent } from "@/hooks/useCmsContent";
+import { layoutDefaults } from "@/lib/cmsLightDefaults";
+import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
 import { useTranslatedContent } from "@/hooks/useTranslatedContent";
 import { isNativeLanguage } from "@/lib/translationUtils";
 import { getIndustryImage } from "@/lib/practiceIndustryImages";
@@ -101,6 +103,8 @@ function IndustryGroupCard({ group, index, learnMoreText }: IndustryGroupCardPro
 
 export default function IndustryGroups() {
   const { language } = useLanguage();
+  const layout = useCmsContent("layout", layoutDefaults);
+  const visibility = pageVisibility(layout, "industries");
 
   const { data: industryGroups, isLoading, error } = useQuery<IndustryGroup[]>({
     queryKey: ["/api/industry-groups"],
@@ -201,6 +205,7 @@ export default function IndustryGroups() {
 
   const editableContent = useCmsContent("industries", content);
   const t = editableContent[language] || editableContent.en;
+  if (!visibility.enabled) return <div data-testid="page-hidden" aria-hidden="true" />;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -226,7 +231,7 @@ export default function IndustryGroups() {
       <SEOHead page="industryGroups" language={language} />
       <Header />
       
-      <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-industry-groups-hero">
+      {blockVisible(layout, "industries", "hero") && <section className="pt-36 pb-20 editorial-page-hero" data-testid="section-industry-groups-hero">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -249,9 +254,9 @@ export default function IndustryGroups() {
             </p>
           </motion.div>
         </div>
-      </section>
+      </section>}
 
-      <main id="main-content" className="py-16 lg:py-20">
+      {blockVisible(layout, "industries", "lista") && <main id="main-content" className="py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           {error ? (
             <div className="py-12" data-testid="container-industry-groups-error">
@@ -291,7 +296,7 @@ export default function IndustryGroups() {
             </motion.div>
           )}
         </div>
-      </main>
+      </main>}
 
       <Footer />
     </div>
