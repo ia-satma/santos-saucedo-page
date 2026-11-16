@@ -2,6 +2,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { MediaField } from '@/features/site-config/MediaField';
+import { BlockVisibilityToggle } from '@/features/site-config/BlockVisibilityToggle';
 import type { CmsValue } from '@shared/cms';
 
 type RecordValue = Record<string, any>;
@@ -20,13 +21,14 @@ function updateRecord(record: RecordValue, key: string, next: unknown): RecordVa
   return { ...record, [key]: next };
 }
 
-function Block({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
+function Block({ title, description, pageId, blockKey, children }: { title: string; description?: string; pageId?: string; blockKey?: string; children: React.ReactNode }) {
   return <section className="cms-explicit-block" aria-labelledby={`cms-block-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
     <div className="cms-explicit-block-heading">
       <div>
         <h3 id={`cms-block-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{title}</h3>
         {description && <p>{description}</p>}
       </div>
+      {pageId && blockKey && <BlockVisibilityToggle pageId={pageId} blockKey={blockKey} label={title} />}
     </div>
     <div className="cms-explicit-block-fields">{children}</div>
   </section>;
@@ -82,7 +84,7 @@ function HomeFields({ value, onChange }: ExplicitPageFieldsProps) {
   const figures = Array.isArray(extranjeras.figures) ? extranjeras.figures : [];
   const items = Array.isArray(practicas.items) ? practicas.items : [];
   return <div className="cms-explicit-page-fields">
-    <Block title="Hero" description="Todo lo que aparece en la primera pantalla de Inicio. El texto cambia por idioma y los medios se seleccionan desde la Biblioteca.">
+    <Block title="Hero" pageId="home" blockKey="hero" description="Todo lo que aparece en la primera pantalla de Inicio. El texto cambia por idioma y los medios se seleccionan desde la Biblioteca.">
       <TextField label="Frase principal" value={hero.tagline} onChange={(next) => setNested('hero', hero, 'tagline', next)} hint="La palabra final debe coincidir con la primera palabra animada para mostrar la rotación." />
       <StringList label="Palabras que cambian" values={hero.words} onChange={(next) => setNested('hero', hero, 'words', next)} addLabel="Añadir palabra" itemLabel="Palabra" />
       <TextField label="Conector de la frase" value={hero.and} onChange={(next) => setNested('hero', hero, 'and', next)} />
@@ -94,21 +96,21 @@ function HomeFields({ value, onChange }: ExplicitPageFieldsProps) {
       <p className="cms-explicit-shared">El video, el póster, el logo y las etiquetas de pausa se editan en los bloques de medios compartidos de esta página.</p>
     </Block>
 
-    <Block title="Nuestra firma" description="Frase, párrafos y pie que aparecen en el bloque de la firma dentro de Inicio.">
+    <Block title="Nuestra firma" pageId="home" blockKey="firma" description="Frase, párrafos y pie que aparecen en el bloque de la firma dentro de Inicio.">
       <TextField label="Título" value={firma.title} onChange={(next) => set('firma', updateRecord(firma, 'title', next))} />
       <StringList label="Párrafos" values={firma.body} onChange={(next) => set('firma', updateRecord(firma, 'body', next))} addLabel="Añadir párrafo" itemLabel="Párrafo" />
       <TextField label="Pie de foto" value={firma.caption} onChange={(next) => set('firma', updateRecord(firma, 'caption', next))} multiline />
       <TextField label="Texto alternativo" value={firma.alt} onChange={(next) => set('firma', updateRecord(firma, 'alt', next))} multiline />
     </Block>
 
-    <Block title="Filosofía" description="La cita y todos sus párrafos se muestran en la banda de filosofía. La cita conserva su bloque propio dentro de Portada.">
+    <Block title="Filosofía" pageId="home" blockKey="creemos" description="La cita y todos sus párrafos se muestran en la banda de filosofía. La cita conserva su bloque propio dentro de Portada.">
       <TextField label="Etiqueta" value={creemos.label} onChange={(next) => set('creemos', updateRecord(creemos, 'label', next))} />
       <TextField label="Cita destacada" value={creemos.quote} onChange={(next) => set('creemos', updateRecord(creemos, 'quote', next))} multiline />
       <StringList label="Párrafos" values={creemos.body} onChange={(next) => set('creemos', updateRecord(creemos, 'body', next))} addLabel="Añadir párrafo" itemLabel="Párrafo" />
       <TextField label="Imagen de la filosofía" value={media.filosofia} onChange={(next) => set('media', updateRecord(media, 'filosofia', next))} hint="Puede pegar una ruta del sitio o seleccionar el archivo desde Medios." />
     </Block>
 
-    <Block title="Prácticas" description="Textos que acompañan la lista de prácticas de la portada. Las fichas completas se administran en Prácticas.">
+    <Block title="Prácticas" pageId="home" blockKey="practicas" description="Textos que acompañan la lista de prácticas de la portada. Las fichas completas se administran en Prácticas.">
       <TextField label="Título" value={practicas.title} onChange={(next) => set('practicas', updateRecord(practicas, 'title', next))} />
       <TextField label="Introducción" value={practicas.entrada} onChange={(next) => set('practicas', updateRecord(practicas, 'entrada', next))} multiline />
       <TextField label="Texto del enlace" value={practicas.ver} onChange={(next) => set('practicas', updateRecord(practicas, 'ver', next))} />
@@ -121,7 +123,7 @@ function HomeFields({ value, onChange }: ExplicitPageFieldsProps) {
       </div>
     </Block>
 
-    <Block title="Empresas extranjeras" description="Bloque editorial y cifras que aparecen después de las prácticas.">
+    <Block title="Empresas extranjeras" pageId="home" blockKey="extranjeras" description="Bloque editorial y cifras que aparecen después de las prácticas.">
       <TextField label="Título" value={extranjeras.title} onChange={(next) => set('extranjeras', updateRecord(extranjeras, 'title', next))} />
       <TextField label="Texto" value={extranjeras.body} onChange={(next) => set('extranjeras', updateRecord(extranjeras, 'body', next))} multiline />
       <TextField label="Texto alternativo" value={extranjeras.alt} onChange={(next) => set('extranjeras', updateRecord(extranjeras, 'alt', next))} multiline />
@@ -137,23 +139,23 @@ function HomeFields({ value, onChange }: ExplicitPageFieldsProps) {
       </div>
     </Block>
 
-    <Block title="Industrias" description="Textos del bloque de industrias. Las industrias y sus imágenes se editan desde su catálogo.">
+    <Block title="Industrias" pageId="home" blockKey="industrias" description="Textos del bloque de industrias. Las industrias y sus imágenes se editan desde su catálogo.">
       <TextField label="Título" value={industrias.titulo} onChange={(next) => set('industrias', updateRecord(industrias, 'titulo', next))} />
       <TextField label="Texto del enlace" value={industrias.boton} onChange={(next) => set('industrias', updateRecord(industrias, 'boton', next))} />
       <TextField label="Texto de cada enlace" value={industrias.ver} onChange={(next) => set('industrias', updateRecord(industrias, 'ver', next))} />
     </Block>
 
-    <Block title="Socios y equipo" description="Título y enlace del bloque. Los nombres, fotos y cargos se administran en Socios y equipo.">
+    <Block title="Socios y equipo" pageId="home" blockKey="socios" description="Título y enlace del bloque. Los nombres, fotos y cargos se administran en Socios y equipo.">
       <TextField label="Título" value={socios.title} onChange={(next) => set('socios', updateRecord(socios, 'title', next))} />
       <TextField label="Texto del enlace" value={socios.boton} onChange={(next) => set('socios', updateRecord(socios, 'boton', next))} />
     </Block>
 
-    <Block title="Monitor Laboral" description="Título e introducción del bloque de publicaciones en Inicio.">
+    <Block title="Monitor Laboral" pageId="home" blockKey="monitor" description="Título e introducción del bloque de publicaciones en Inicio.">
       <TextField label="Título" value={monitor.title} onChange={(next) => set('monitor', updateRecord(monitor, 'title', next))} />
       <TextField label="Introducción" value={monitor.intro} onChange={(next) => set('monitor', updateRecord(monitor, 'intro', next))} multiline />
     </Block>
 
-    <Block title="Cifras de la portada" description="Etiquetas de las cifras que aparecen junto a la firma. Los valores se calculan desde las fuentes indicadas.">
+    <Block title="Cifras de la portada" pageId="home" blockKey="firma" description="Etiquetas de las cifras que aparecen junto a la firma. Los valores se calculan desde las fuentes indicadas.">
       <TextField label="Etiqueta de años" value={asRecord(intro.cifras as CmsValue).anos} onChange={(next) => set('intro', updateRecord(intro, 'cifras', updateRecord(asRecord(intro.cifras as CmsValue), 'anos', next)))} />
       <TextField label="Etiqueta de ciudades" value={asRecord(intro.cifras as CmsValue).ciudades} onChange={(next) => set('intro', updateRecord(intro, 'cifras', updateRecord(asRecord(intro.cifras as CmsValue), 'ciudades', next)))} />
       <TextField label="Etiqueta de entidades" value={asRecord(intro.cifras as CmsValue).entidades} onChange={(next) => set('intro', updateRecord(intro, 'cifras', updateRecord(asRecord(intro.cifras as CmsValue), 'entidades', next)))} />
@@ -174,7 +176,7 @@ function AboutFields({ value, onChange }: ExplicitPageFieldsProps) {
     const lamina = asRecord(current[key] as CmsValue);
     const paragraphs = Array.isArray(lamina.p) ? lamina.p : [];
     const pieces = Array.isArray(lamina.piezas) ? lamina.piezas : [];
-    return <Block title={title} description="Cada texto y etapa aparece en la lámina pública y conserva su orden.">
+    return <Block title={title} pageId="about" blockKey="laminas" description="Cada texto y etapa aparece en la lámina pública y conserva su orden.">
       <TextField label="Título" value={lamina.h} onChange={(next) => set(key, updateRecord(lamina, 'h', next))} />
       <StringList label="Párrafos" values={paragraphs} onChange={(next) => set(key, updateRecord(lamina, 'p', next))} addLabel="Añadir párrafo" itemLabel="Párrafo" />
       <TextField label="Etiqueta de la lista" value={lamina.listaLabel} onChange={(next) => set(key, updateRecord(lamina, 'listaLabel', next))} />
@@ -194,7 +196,7 @@ function AboutFields({ value, onChange }: ExplicitPageFieldsProps) {
     </Block>;
   };
   return <div className="cms-explicit-page-fields">
-    <Block title="Encabezado" description="Contenido que aparece al entrar a Nuestra firma.">
+    <Block title="Encabezado" pageId="about" blockKey="hero" description="Contenido que aparece al entrar a Nuestra firma.">
       <TextField label="Título" value={current.title} onChange={(next) => set('title', next)} />
       <TextField label="Subtítulo" value={current.subtitle} onChange={(next) => set('subtitle', next)} />
       <TextField label="Introducción" value={current.heroLead} onChange={(next) => set('heroLead', next)} multiline />
@@ -205,12 +207,12 @@ function AboutFields({ value, onChange }: ExplicitPageFieldsProps) {
       <TextField label="Descripción del tríptico" value={current.boardText} onChange={(next) => set('boardText', next)} multiline />
     </Block>
 
-    <Block title="Historia" description="Texto institucional de la firma.">
+    <Block title="Historia" pageId="about" blockKey="historia" description="Texto institucional de la firma.">
       <TextField label="Primer párrafo" value={current.historyText1} onChange={(next) => set('historyText1', next)} multiline />
       <TextField label="Segundo párrafo" value={current.historyText2} onChange={(next) => set('historyText2', next)} multiline />
     </Block>
 
-    <Block title="Cifras" description="Valores mostrados en la página de Nuestra firma.">
+    <Block title="Cifras" pageId="about" blockKey="cifras" description="Valores mostrados en la página de Nuestra firma.">
       <div className="cms-explicit-list">
         {stats.map((stat, index) => { const entry = asRecord(stat as CmsValue); return <div className="cms-explicit-entry" key={index}>
           <h4>Cifra {index + 1}</h4>
@@ -220,7 +222,7 @@ function AboutFields({ value, onChange }: ExplicitPageFieldsProps) {
       </div>
     </Block>
 
-    <Block title="Valores y principios" description="Título y principios que aparecen en la página.">
+    <Block title="Valores y principios" pageId="about" blockKey="valores" description="Título y principios que aparecen en la página.">
       <TextField label="Título" value={current.valuesTitle} onChange={(next) => set('valuesTitle', next)} />
       <div className="cms-explicit-list">
         {values.map((item, index) => { const entry = asRecord(item as CmsValue); return <div className="cms-explicit-entry" key={index}>
@@ -231,7 +233,7 @@ function AboutFields({ value, onChange }: ExplicitPageFieldsProps) {
       </div>
     </Block>
 
-    <Block title="Prioridad y frases" description="Frases y textos de la sección editorial de prioridad.">
+    <Block title="Prioridad y frases" pageId="about" blockKey="prioridad" description="Frases y textos de la sección editorial de prioridad.">
       <div className="cms-explicit-list">
         {priority.map((item, index) => { const entry = asRecord(item as CmsValue); return <div className="cms-explicit-entry" key={index}>
           <h4>Frase {index + 1}</h4>
@@ -246,7 +248,7 @@ function AboutFields({ value, onChange }: ExplicitPageFieldsProps) {
     {renderLamina('bighorn', 'Lámina Siempre hacia adelante')}
     {renderLamina('response', 'Lámina Capacidad de reacción')}
 
-    <Block title="Navegación y SEO" description="Textos de los enlaces de salida y accesibilidad.">
+    <Block title="Navegación y SEO" pageId="about" blockKey="seo" description="Textos de los enlaces de salida y accesibilidad.">
       <TextField label="Etiqueta de siguiente página" value={current.nextLabel} onChange={(next) => set('nextLabel', next)} />
       <TextField label="Texto accesible de siguiente página" value={current.nextLabelAria} onChange={(next) => set('nextLabelAria', next)} />
     </Block>

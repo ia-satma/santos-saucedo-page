@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { adminApiRequest } from "@/lib/adminAuth";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
@@ -65,6 +65,7 @@ function labelFor(value: string) {
 }
 
 export function PageVisibilityPanel({ pageId }: { pageId: string }) {
+  const queryClient = useQueryClient();
   const query = useQuery<LayoutResponse>({
     queryKey: ["/api/admin/site-config", "layout", "visibility"],
     queryFn: async () => {
@@ -101,6 +102,7 @@ export function PageVisibilityPanel({ pageId }: { pageId: string }) {
     onSuccess: (data) => {
       setDraft(data.content);
       setRevision(data.revision);
+      queryClient.setQueryData(["/api/admin/site-config", "layout", "visibility"], data);
       setSaved("Visibilidad guardada");
     },
   });

@@ -5,6 +5,7 @@ import { cmsEditorPages, getCmsPage } from "@/features/site-config/editorMetadat
 import { ConfigFields } from "@/features/site-config/ConfigFields";
 import { ExplicitAboutFields, ExplicitHomeFields } from "@/features/site-config/ExplicitPageFields";
 import { PageVisibilityPanel } from "@/features/site-config/PageVisibilityPanel";
+import { BlockVisibilityToggle } from "@/features/site-config/BlockVisibilityToggle";
 import { InlineCatalogFields } from "@/features/site-config/InlineCatalogFields";
 import { AdminPageHelp } from "@/components/admin/AdminPageHelp";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -29,6 +30,22 @@ const catalogLinks: Record<string, { label: string; href: string }[]> = {
   careers: [{ label: "Administrar vacantes", href: "/admin/jobs" }],
   testimonials: [{ label: "Revisar testimonios", href: "/admin/testimonials" }],
   media: [{ label: "Abrir Biblioteca de medios", href: "/admin/media" }],
+};
+
+const tabBlockKeys: Record<string, Record<string, string>> = {
+  about: { "Historia y valores": "historia", "Láminas visuales": "laminas" },
+  practices: { Portada: "hero", Servicios: "servicios", Fichas: "lista", Idiomas: "lista" },
+  industries: { Portada: "hero", Fichas: "lista" },
+  team: { Portada: "hero", Perfiles: "perfiles", Medios: "carrusel" },
+  news: { Introducción: "hero", "Filtros y estados": "filtros", Suscripción: "suscripcion", Notas: "publicaciones" },
+  contact: { Contenido: "hero", "Datos del despacho": "datos", "Consentimiento": "formulario", Respuestas: "formulario", "Controles del formulario": "formulario" },
+  offices: { "Nombre de la página": "hero", Contenido: "datos", Medios: "galeria", "Datos del despacho": "datos" },
+  careers: { Carreras: "hero", Pasantías: "informacion", Formularios: "formulario", Medios: "informacion" },
+  testimonials: { Contenido: "hero", Medios: "hero" },
+  interns: { Pasantías: "hero", Formularios: "formulario" },
+  newsletter: { Contenido: "hero", Formularios: "formulario", "Notas relacionadas": "relacionadas" },
+  privacy: { Contenido: "hero", Contacto: "contacto", Medios: "hero" },
+  terms: { Contenido: "hero", Contacto: "contacto", Medios: "hero" },
 };
 
 function isLanguageMap(value: CmsValue): value is Record<string, CmsValue> {
@@ -170,7 +187,8 @@ export default function AdminPageEditor() {
                 : tab.section === "about"
                   ? <ExplicitAboutFields value={current} onChange={update} />
                   : <ConfigFields value={current} onChange={update} path={localized ? [lang] : []} media={tab.section === "media" || tab.section === "v3"} />;
-              return <section id={`page-block-${index}`} key={tab.section} className="cms-editor-card mb-5 scroll-mt-6"><div className="cms-editor-section-intro"><div><h2>{tab.label}</h2><p>{tab.description}</p></div><span className="text-xs text-muted-foreground">Bloque {index + 1} de {page.tabs.length}</span></div>{fields}</section>;
+              const blockKey = tabBlockKeys[page.id]?.[tab.label];
+              return <section id={`page-block-${index}`} key={`${tab.section}-${index}`} className="cms-editor-card mb-5 scroll-mt-6"><div className="cms-editor-section-intro"><div><h2>{tab.label}</h2><p>{tab.description}</p></div><div className="flex items-center gap-4"><span className="text-xs text-muted-foreground">Bloque {index + 1} de {page.tabs.length}</span>{blockKey && <BlockVisibilityToggle pageId={page.id} blockKey={blockKey} label={tab.label} />}</div></div>{fields}</section>;
             })}
             {showPreview && previewSrc && <div className="cms-editor-card mt-5 p-0 overflow-hidden"><p className="p-4 text-sm text-muted-foreground">La vista previa usa el borrador actual de esta página. Los cambios no se publican hasta confirmar «Publicar cambios».</p><iframe title={`Vista previa de ${page.label}`} src={previewSrc} className="w-full h-[760px] border-t" /></div>}
           </div>
