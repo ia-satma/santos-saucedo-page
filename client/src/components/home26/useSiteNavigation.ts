@@ -47,15 +47,19 @@ export function useSiteNavigation(code: string, chrome: Chrome26Strings) {
 }
 
 function pageKeyForHref(href: string) {
-  if (href === "/" || href === "") return "home";
-  if (href.includes("practice")) return "practices";
-  if (href.includes("industry")) return "industries";
-  if (href === "/team" || href.includes("/team/")) return "team";
-  if (href === "/news" || href.includes("/news/")) return "news";
-  if (href.includes("career") || href.includes("intern")) return "careers";
-  if (href === "/contact") return "contact";
-  if (href.includes("testimon")) return "testimonials";
-  if (href.includes("office")) return "offices";
-  if (href === "/about") return "about";
+  const path = href.split(/[?#]/, 1)[0].replace(/\/+$/, "").toLowerCase();
+  if (!path) return "home";
+  if (path === "/about" || path === "/nuestra-firma") return "about";
+  if (path.includes("practice") || path.includes("practica")) return "practices";
+  if (path.includes("industry") || path.includes("industria")) return "industries";
+  if (path === "/team" || path.startsWith("/team/") || path === "/socios" || path.startsWith("/socios/")) return "team";
+  if (path === "/news" || path.startsWith("/news/") || path === "/monitor-laboral" || path.startsWith("/monitor-laboral/")) return "news";
+  if (path === "/careers/interns" || path === "/pasantias" || path === "/interns") return "interns";
+  if (path.includes("career") || path.includes("carrera")) return "careers";
+  if (path === "/contact" || path === "/contacto") return "contact";
+  if (path.includes("testimon")) return "testimonials";
+  if (path.includes("office") || path.includes("oficina")) return "offices";
+  if (path.includes("privacy") || path.includes("privacidad")) return "privacy";
+  if (path.includes("term") || path.includes("termin")) return "terms";
   return "";
 }

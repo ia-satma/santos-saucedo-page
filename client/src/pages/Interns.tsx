@@ -4,6 +4,8 @@
 // envío (CV en PDF, consentimiento, panel "forms") están en v3/paginas-extra/Candidatura.tsx.
 import { useSiteDetails } from "@/components/home26/useSiteContact";
 import { useCmsContent } from "@/hooks/useCmsContent";
+import { layoutDefaults } from "@/lib/cmsLightDefaults";
+import { pageVisibility } from "@/lib/pageVisibility";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -21,6 +23,8 @@ const keepProgramName = (text: string) => text.replace(/Pasantías S&S/g, "Pasan
 export default function Interns() {
   const siteDetails = useSiteDetails();
   const { language } = useLanguage();
+  const layout = useCmsContent("layout", layoutDefaults);
+  const pageVisible = pageVisibility(layout, "interns").enabled;
 
   // Textos de la redacción aprobada (sección "Carreras", Pasantías S&S; página en tú). Sin
   // modalidades, duraciones, requisitos, beca ni pasos de selección que la firma no haya
@@ -131,6 +135,8 @@ export default function Interns() {
   const applyHref = `mailto:${t.applyEmail}?subject=${encodeURIComponent(t.heroTitle)}`;
   // Correo de reclutamiento en dos piezas: se parte tras la arroba si la columna es estrecha
   const [emailUser, emailDomain] = t.applyEmail.split("@");
+
+  if (!pageVisible) return <div data-testid="page-hidden" aria-hidden="true" />;
 
   return (
     <div className="ss26 min-h-[100dvh]" data-testid="page-interns">

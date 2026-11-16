@@ -6,6 +6,8 @@
    (10 idiomas) y «forms» (activar o desactivar el formulario). */
 import { forms as formsDefaults } from "@shared/cms-defaults.json";
 import { useCmsContent } from "@/hooks/useCmsContent";
+import { layoutDefaults } from "@/lib/cmsLightDefaults";
+import { pageVisibility } from "@/lib/pageVisibility";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -265,6 +267,8 @@ const getNewsletterFormSchema = (t: NewsletterStrings) =>
   });
 
 export default function Newsletter() {
+  const layout = useCmsContent("layout", layoutDefaults);
+  const pageVisible = pageVisibility(layout, "newsletter").enabled;
   const { language } = useLanguage();
   const { toast } = useToast();
 
@@ -345,6 +349,8 @@ export default function Newsletter() {
 
   const emailError = errors.email?.message;
   const consentError = submitCount > 0 ? errors.consent?.message : undefined;
+
+  if (!pageVisible) return <div data-testid="page-hidden" aria-hidden="true" />;
 
   return (
     <div className="ss26 min-h-screen" data-testid="page-newsletter">

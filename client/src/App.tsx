@@ -1,7 +1,7 @@
 import CookieBanner from "@/components/CookieBanner";
 import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from "wouter";
 import { useViewTransitionLocation } from "@/lib/viewTransitionLocation";
-import { useEffect, lazy, Suspense } from "react";
+import { useEffect, lazy, Suspense, type ReactNode } from "react";
 import { RmSync } from "@/v3/rm";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { applyBrandColors } from "@/lib/brandColors";
@@ -16,6 +16,8 @@ import { isStaticSite } from "@/lib/queryClient";
 import { chrome26 } from "@/components/home26/chrome26";
 import { usePathname } from "wouter/use-browser-location";
 import { getLanguageFromPath } from "@/lib/localeRouting";
+import { layoutDefaults } from "@/lib/cmsLightDefaults";
+import { pageVisibility } from "@/lib/pageVisibility";
 
 // Usa la misma base que Vite: en local suele ser `/`, mientras que GitHub Pages
 // conserva `/santos-saucedo-page/`. Evita que el preview local quede en blanco
@@ -92,6 +94,7 @@ const ContentPreview = lazy(() => import("@/features/admin/ContentPreview"));
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
 const AdminSiteConfig = lazy(() => import("@/pages/admin/AdminSiteConfig"));
 const AdminPageEditor = lazy(() => import("@/pages/admin/AdminPageEditor"));
+const AdminPublicPages = lazy(() => import("@/pages/admin/AdminPublicPages"));
 const AdminJobs = lazy(() => import("@/pages/admin/AdminJobs"));
 const AdminApplications = lazy(() => import("@/pages/admin/AdminApplications"));
 const AdminInbox = lazy(() => import("@/pages/admin/AdminInbox"));
@@ -241,6 +244,12 @@ function RedirectKeepingQuery({ to }: { to: string }) {
   return <Redirect to={`${to}${window.location.search}${window.location.hash}`} replace />;
 }
 
+function PublicPageGate({ pageId, children }: { pageId: string; children: ReactNode }) {
+  const layout = useCmsContent("layout", layoutDefaults);
+  if (!pageVisibility(layout, pageId).enabled) return <div data-testid="page-hidden" aria-hidden="true" />;
+  return <>{children}</>;
+}
+
 function Router() {
   const [location] = useLocation();
 
@@ -259,17 +268,17 @@ function Router() {
         <Route path="/industry-groups/:slug"><RedirectKeepingQuery to="/industries" /></Route>
         <Route path="/industry-groups"><RedirectKeepingQuery to="/industries" /></Route>
         <Route path="/practice-groups" component={PracticeGroups} />
-        <Route path="/practice-groups/:slug" component={PracticeGroupDetail} />
+        <Route path="/practice-groups/:slug"><PublicPageGate pageId="practices"><PracticeGroupDetail /></PublicPageGate></Route>
         <Route path="/practicas" component={PracticeGroups} />
-        <Route path="/practicas/:slug" component={PracticeGroupDetail} />
+        <Route path="/practicas/:slug"><PublicPageGate pageId="practices"><PracticeGroupDetail /></PublicPageGate></Route>
         <Route path="/team" component={Team} />
-        <Route path="/team/:slug" component={TeamMemberDetail} />
+        <Route path="/team/:slug"><PublicPageGate pageId="team"><TeamMemberDetail /></PublicPageGate></Route>
         <Route path="/socios" component={Team} />
-        <Route path="/socios/:slug" component={TeamMemberDetail} />
+        <Route path="/socios/:slug"><PublicPageGate pageId="team"><TeamMemberDetail /></PublicPageGate></Route>
         <Route path="/news" component={News} />
-        <Route path="/news/:slug" component={NewsDetail} />
+        <Route path="/news/:slug"><PublicPageGate pageId="news"><NewsDetail /></PublicPageGate></Route>
         <Route path="/monitor-laboral" component={News} />
-        <Route path="/monitor-laboral/:slug" component={NewsDetail} />
+        <Route path="/monitor-laboral/:slug"><PublicPageGate pageId="news"><NewsDetail /></PublicPageGate></Route>
         <Route path="/contact" component={Contact} />
         <Route path="/contacto" component={Contact} />
         <Route path="/careers" component={Careers} />
@@ -303,6 +312,7 @@ function Router() {
           <RedirectKeepingQuery to="/news" />
         </Route>
         <Route path="/admin/navigation"><AdminSiteConfig fixedSection="navigation"/></Route>
+        <Route path="/admin/page-visibility" component={AdminPublicPages} />
         <Route path="/admin/integrations"><AdminSiteConfig fixedSection="integrations"/></Route>
         <Route path="/admin/cookie-consent"><AdminSiteConfig fixedSection="consent"/></Route>
         <Route path="/admin/site-config/:section"><AdminSiteConfig/></Route>

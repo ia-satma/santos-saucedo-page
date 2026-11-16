@@ -238,6 +238,12 @@ export const adminNavigation = [
         icon: GlobeIcon,
       },
       {
+        href: "/admin/page-visibility",
+        label: "Páginas públicas",
+        hint: "Activar u ocultar páginas completas",
+        icon: LayersIcon,
+      },
+      {
         href: "/admin/site-config/layout",
         label: "Secciones de Inicio",
         hint: "Activar, ocultar y ordenar secciones",

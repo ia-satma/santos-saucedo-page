@@ -3,6 +3,8 @@
 // y el teléfono, y la página siguiente (el otro aviso). El texto legal de cada idioma no cambia (panel: "privacy");
 // la maquetación está en v3/paginas-extra/Legal.tsx.
 import { useCmsContent } from "@/hooks/useCmsContent";
+import { layoutDefaults } from "@/lib/cmsLightDefaults";
+import { pageVisibility } from "@/lib/pageVisibility";
 // Los iconos solo quedan en los datos de cada sección; la página ya no los dibuja.
 import { Shield, FileText, Database, Eye, Lock, Cookie, AlertCircle, Phone, Globe, Users, Building2 } from "lucide-react";
 import Header from "@/components/Header";
@@ -18,6 +20,8 @@ import { nextLabel, useFotoOficina } from "@/v3/paginas-extra/piezas";
 type SupportedLanguage = 'en' | 'es' | 'de' | 'zh' | 'ko' | 'ja' | 'ar' | 'ru' | 'fr' | 'it';
 
 export default function PrivacyPolicy() {
+  const layout = useCmsContent("layout", layoutDefaults);
+  const pageVisible = pageVisibility(layout, "privacy").enabled;
   const contact = useSiteDetails();
   const cmsChrome = useCmsContent("chrome", chrome26);
   const { language, displayLanguage } = useLanguage();
@@ -2307,6 +2311,8 @@ Sito web: www.santossaucedo.com`
 
   const foto = useFotoOficina()("privado", language as SupportedLanguage);
   const nextTitle = (cmsChrome[language] ?? cmsChrome.en).footer.terms;
+
+  if (!pageVisible) return <div data-testid="page-hidden" aria-hidden="true" />;
 
   return (
     <div className="ss26 min-h-[100dvh]" data-testid="page-privacy-policy">
