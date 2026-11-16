@@ -3,7 +3,6 @@ import { storage } from "../storage";
 import { isPublicNews } from "@shared/publicNews";
 import { SUPPORTED_LANGUAGES, type LanguageCode } from "@shared/constants";
 import { readStaticCmsSection } from "../localization/staticSnapshots";
-import cmsStaticSnapshot from "@shared/cms-static-snapshot.json";
 import { fromSpanishRoute, publicRoute } from "@shared/publicRoutes";
 
 // Dominio de las etiquetas del index.html; injectSiteMetadata lo cambia por el siteUrl del CMS.
@@ -139,8 +138,6 @@ async function routeMetadata(pathname: string): Promise<RouteMetadata | undefine
   } as Record<string, string>;
   const key = seoKey[normalizedRoute];
   if (!key) return;
-  const embeddedSeo = ((cmsStaticSnapshot as { content?: Record<string, any> }).content?.seo ?? {}) as Record<string, any>;
-  const embeddedRoute = embeddedSeo[key] as Record<string, any> | undefined;
   const pick = (value: unknown) => {
     if (typeof value === "string") return value;
     if (!value || typeof value !== "object") return "";
@@ -150,9 +147,10 @@ async function routeMetadata(pathname: string): Promise<RouteMetadata | undefine
         : typeof map.es === "string" ? map.es as string : "";
   };
   const fallbackSeo = await readStaticCmsSection("seo", language) as Record<string, any> | undefined;
-  const title = plainText(pick(embeddedRoute?.title) || pick(fallbackSeo?.[key]?.title)) || "Santos & Saucedo";
+  const routeSeo = fallbackSeo?.[key] as Record<string, any> | undefined;
+  const title = plainText(pick(routeSeo?.title)) || "Santos & Saucedo";
   const description = clip(
-    plainText(pick(embeddedRoute?.description) || pick(fallbackSeo?.[key]?.description)) || "Santos & Saucedo",
+    plainText(pick(routeSeo?.description)) || "Santos & Saucedo",
     200,
   );
   return {

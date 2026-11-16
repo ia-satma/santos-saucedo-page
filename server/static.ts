@@ -1,6 +1,6 @@
 import { injectSiteMetadata } from "./seo/htmlMetadata";
 import { getCmsOverrides } from "./cms/siteConfig";
-import cmsDefaults from "@shared/cms-defaults.json";
+import { readStaticCmsSection } from "./localization/staticSnapshots";
 import express, { type Express } from "express";
 import fs from "fs";
 import path from "path";
@@ -59,8 +59,9 @@ export function serveStatic(app: Express) {
       const layout = (cms.layout || {}) as { home?: { hero?: boolean } };
       if (layout.home?.hero === false) return null;
       const media = (cms.media || {}) as { hero?: { poster?: string }; brand?: { logoLight?: string } };
-      const poster = media.hero?.poster ?? (cmsDefaults.media.hero.poster as string);
-      const logo = media.brand?.logoLight || (cmsDefaults.media.brand.logoLight as string);
+      const defaults = await readStaticCmsSection("media", "es") as { hero?: { poster?: string }; brand?: { logoLight?: string } } | undefined;
+      const poster = media.hero?.poster ?? defaults?.hero?.poster ?? "";
+      const logo = media.brand?.logoLight || defaults?.brand?.logoLight || "";
       if (!poster || !/^\/[\w./-]+$/.test(poster) || !/^\/[\w./-]+$/.test(logo)) return null;
       const canonicalPoster = /(?:^|[/-])portada-color-poster\.jpg$/.test(poster)
         ? "/video/portada-color-poster-1600.webp"

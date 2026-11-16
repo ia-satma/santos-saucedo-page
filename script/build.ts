@@ -2,35 +2,34 @@ import { build as esbuild } from "esbuild";
 import { build as viteBuild } from "vite";
 import { rm, readFile } from "fs/promises";
 
-// server deps to bundle to reduce openat(2) syscalls
-// which helps cold start times
-const allowlist = [
-  "@google/generative-ai",
-  "@neondatabase/serverless",
-  "axios",
-  "connect-pg-simple",
-  "cors",
-  "date-fns",
-  "drizzle-orm",
-  "drizzle-zod",
-  "express",
-  "express-rate-limit",
-  "express-session",
-  "jsonwebtoken",
-  "memorystore",
-  "multer",
-  "nanoid",
-  "nodemailer",
-  "openai",
-  "passport",
-  "passport-local",
-  "stripe",
-  "uuid",
-  "ws",
-  "xlsx",
-  "zod",
-  "zod-validation-error",
-];
+// Replit serves the generated static API beside the server. Load the CMS defaults from there
+// at runtime so the Node executable does not embed the same large JSON as the browser bundle.
+const runtimeCmsDefaultsPlugin = {
+  name: "runtime-cms-defaults",
+  setup(build: any) {
+    build.onLoad({ filter: /[\\/]shared[\\/]cms-defaults\.json$/ }, async () => ({
+      loader: "js",
+      contents: `
+        import { readFileSync } from "node:fs";
+        import path from "node:path";
+        const files = [
+          path.resolve(process.cwd(), "shared/cms-defaults.json"),
+          path.resolve(process.cwd(), "dist/public/static-api/site-config.json"),
+          path.join(__dirname, "public/static-api/site-config.json"),
+        ];
+        let value = {};
+        for (const file of files) {
+          try {
+            const parsed = JSON.parse(readFileSync(file, "utf8"));
+            value = parsed?.content && typeof parsed.content === "object" ? parsed.content : parsed;
+            if (value && typeof value === "object" && Object.keys(value).length) break;
+          } catch {}
+        }
+        export default value;
+      `,
+    }));
+  },
+};
 
 async function buildAll() {
   await rm("dist", { recursive: true, force: true });
@@ -44,7 +43,9 @@ async function buildAll() {
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.devDependencies || {}),
   ];
-  const externals = allDeps.filter((dep) => !allowlist.includes(dep));
+  // Replit installs package.json dependencies for the build and runtime. Keeping them external
+  // makes the server artifact small enough to avoid the deployment bundle warning.
+  const externals = allDeps;
 
   await esbuild({
     entryPoints: ["server/index.ts"],
@@ -57,6 +58,7 @@ async function buildAll() {
     },
     minify: true,
     external: externals,
+    plugins: [runtimeCmsDefaultsPlugin],
     logLevel: "info",
   });
 }

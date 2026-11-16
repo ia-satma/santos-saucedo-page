@@ -149,7 +149,7 @@ export function DocumentRichTextEditor({
         <Input id={linkId} type="text" inputMode="url" placeholder="https://ejemplo.mx" autoFocus disabled={disabled}
           value={linkValue} onChange={event => { setLinkValue(event.target.value); setLinkError(""); }}
           onKeyDown={event => {
-            if (event.key === "Enter") { event.preventDefault(); applyLink(); }
+            if (event.key === "Enter" && !event.nativeEvent.isComposing && event.keyCode !== 229) { event.preventDefault(); applyLink(); }
             if (event.key === "Escape") { setEditingLink(false); editor?.commands.focus(); }
           }} />
         {linkError && <p role="alert" className="text-xs text-destructive">{linkError}</p>}

@@ -20,11 +20,16 @@ export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
   const { language } = useLanguage();
 
+  const setColorScheme = (dark: boolean) => {
+    document.querySelector('meta[name="color-scheme"]')?.setAttribute("content", dark ? "dark" : "light");
+  };
+
   useEffect(() => {
     const stored = localStorage.getItem("theme");
     const shouldBeDark = stored === "dark";
     setIsDark(shouldBeDark);
     document.documentElement.classList.toggle("dark", shouldBeDark);
+    setColorScheme(shouldBeDark);
   }, []);
 
   const toggleTheme = () => {
@@ -32,9 +37,11 @@ export default function ThemeToggle() {
     setIsDark(newIsDark);
     if (newIsDark) {
       document.documentElement.classList.add("dark");
+      setColorScheme(true);
       localStorage.setItem("theme", "dark");
     } else {
       document.documentElement.classList.remove("dark");
+      setColorScheme(false);
       localStorage.setItem("theme", "light");
     }
   };

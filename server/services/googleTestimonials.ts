@@ -161,14 +161,11 @@ export async function fetchGooglePlaceReviewsFromMapsUrl(options: {
   const apiKey = (options.apiKey || process.env.GOOGLE_PLACES_API_KEY || "").trim();
   if (!apiKey) throw new Error("Configura GOOGLE_PLACES_API_KEY para extraer reseñas de Google.");
   const fetchImpl = options.fetchImpl || fetch;
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15_000);
-  try {
-    const search = await fetchImpl("https://places.googleapis.com/v1/places:searchText", {
+  const search = await fetchImpl("https://places.googleapis.com/v1/places:searchText", {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Goog-Api-Key": apiKey, "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.googleMapsUri,places.reviews" },
       body: JSON.stringify({ textQuery: source.query, languageCode: "es", maxResultCount: 5 }),
-      signal: controller.signal,
+      signal: AbortSignal.timeout(15_000),
     });
     if (!search.ok) throw new Error(`Google Places respondió ${search.status}.`);
     const places = (await search.json() as GooglePlaceSearchResponse).places ?? [];
@@ -177,11 +174,8 @@ export async function fetchGooglePlaceReviewsFromMapsUrl(options: {
       return cid === expectedCid || (!source.cid && /santos/i.test(candidate.displayName?.text || "") && /saucedo/i.test(candidate.displayName?.text || ""));
     });
     if (!place?.id) throw new Error("No se encontró la ficha verificada de Saucedo Santos en Google Maps.");
-    const reviews = normalizeGooglePlaceReviews({ reviews: place.reviews });
-    return { reviews, placeId: place.id, cid: extractGoogleMapsCid(place.googleMapsUri) || expectedCid, sourceUrl: source.href };
-  } finally {
-    clearTimeout(timeout);
-  }
+  const reviews = normalizeGooglePlaceReviews({ reviews: place.reviews });
+  return { reviews, placeId: place.id, cid: extractGoogleMapsCid(place.googleMapsUri) || expectedCid, sourceUrl: source.href };
 }
 
 export async function fetchGooglePlaceReviews(options: {
@@ -195,19 +189,13 @@ export async function fetchGooglePlaceReviews(options: {
     throw new Error("Configura GOOGLE_PLACE_ID y GOOGLE_PLACES_API_KEY para importar reseñas de Google.");
   }
   const fetchImpl = options.fetchImpl || fetch;
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15_000);
-  try {
-    const response = await fetchImpl(`https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}?fields=reviews`, {
+  const response = await fetchImpl(`https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}?fields=reviews`, {
       headers: {
         "X-Goog-Api-Key": apiKey,
         "X-Goog-FieldMask": "reviews",
       },
-      signal: controller.signal,
+      signal: AbortSignal.timeout(15_000),
     });
-    if (!response.ok) throw new Error(`Google Places respondió ${response.status}.`);
-    return normalizeGooglePlaceReviews(await response.json() as GooglePlaceResponse);
-  } finally {
-    clearTimeout(timeout);
-  }
+  if (!response.ok) throw new Error(`Google Places respondió ${response.status}.`);
+  return normalizeGooglePlaceReviews(await response.json() as GooglePlaceResponse);
 }

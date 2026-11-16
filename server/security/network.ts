@@ -103,12 +103,9 @@ export async function fetchTextWithPolicy(options: {
 
   for (let redirects = 0; redirects <= maxRedirects; redirects += 1) {
     const validated = await assertExternalUrl(current, options.isAllowedHostname);
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
-    try {
-      const response = await fetch(validated, {
+    const response = await fetch(validated, {
         redirect: "manual",
-        signal: controller.signal,
+        signal: AbortSignal.timeout(timeoutMs),
         headers: options.headers,
       });
       if (response.status >= 300 && response.status < 400) {
@@ -135,10 +132,7 @@ export async function fetchTextWithPolicy(options: {
         }
         chunks.push(Buffer.from(value));
       }
-      return Buffer.concat(chunks).toString("utf8");
-    } finally {
-      clearTimeout(timer);
-    }
+    return Buffer.concat(chunks).toString("utf8");
   }
   throw new Error("Redirect limit reached");
 }
@@ -155,13 +149,10 @@ export async function fetchStatusWithPolicy(options: {
 
   for (let redirects = 0; redirects <= maxRedirects; redirects += 1) {
     const validated = await assertExternalUrl(current, options.isAllowedHostname);
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
-    try {
-      const response = await fetch(validated, {
+    const response = await fetch(validated, {
         method: "HEAD",
         redirect: "manual",
-        signal: controller.signal,
+        signal: AbortSignal.timeout(timeoutMs),
       });
       if (response.status >= 300 && response.status < 400) {
         const location = response.headers.get("location");
@@ -169,10 +160,7 @@ export async function fetchStatusWithPolicy(options: {
         current = new URL(location, validated).toString();
         continue;
       }
-      return response.status;
-    } finally {
-      clearTimeout(timer);
-    }
+    return response.status;
   }
   throw new Error("Redirect limit reached");
 }
