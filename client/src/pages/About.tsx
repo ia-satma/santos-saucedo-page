@@ -498,13 +498,15 @@ export default function About() {
             <p {...attrs}>{T.cabP}</p>
           </V3PageHeader>}
 
-          {blockVisible(layout, "about", "historia") && <FirmaTexto
+          {(blockVisible(layout, "about", "historia") || blockVisible(layout, "about", "cifras")) && <FirmaTexto
             titulo={t.subtitle}
             parrafos={[keepFirmName(t.historyText1), t.historyText2]}
             cifras={t.stats}
             cuadro={{ src: photos.arteColor.url, srcSet: srcSet(photos.arteColor), alt: altOficina("arteColor", T.cuadroAlt) }}
             attrs={attrs}
             t={T}
+            showHistory={blockVisible(layout, "about", "historia")}
+            showStats={blockVisible(layout, "about", "cifras")}
           />}
 
           {blockVisible(layout, "about", "valores") && <Principios titulo={t.valuesTitle} valores={t.values} />}

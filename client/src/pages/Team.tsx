@@ -292,7 +292,7 @@ export default function Team() {
         {/* Los cuatro socios desde el primer momento (con los datos de respaldo mientras llega
             /api/team: los mismos nombres, cargos y retratos, así que el Lienzo no se vuelve a montar
             al llegar). Los Of Counsel, cuando responde la API. */}
-        {blockVisible(layout, "team", "carrusel") && <SociosLienzo
+        {blockVisible(layout, "team", "hero") && blockVisible(layout, "team", "carrusel") && <SociosLienzo
           key={lienzoKey}
           partners={partners}
           t={tv}

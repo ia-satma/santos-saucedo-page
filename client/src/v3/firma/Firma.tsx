@@ -45,7 +45,7 @@ export function FirmaRaiz({ children }: { children: ReactNode }) {
 
 /* ---------- La firma: el texto, las cifras y el tríptico, solo, como un cuadro colgado ---------- */
 export function FirmaTexto({
-  titulo, parrafos, cifras, cuadro, attrs, t,
+  titulo, parrafos, cifras, cuadro, attrs, t, showHistory = true, showStats = true,
 }: {
   titulo: string;
   parrafos: [ReactNode, ReactNode];
@@ -54,24 +54,26 @@ export function FirmaTexto({
   cuadro: { src: string; srcSet?: string; alt: string };
   attrs: LangAttrs;
   t: FirmaTextos;
+  showHistory?: boolean;
+  showStats?: boolean;
 }) {
   return (
     <section className="sh-firma sh-firma--pagina" id="firma-texto" aria-labelledby="nf-firma-h" data-testid="section-history">
       <div className="sh-wrap sh-firma__grid">
         <div className="nf-texto">
           <h2 id="nf-firma-h" className="nf-texto__h" data-testid="text-about-subtitle">{titulo}</h2>
-          <div className="nf-texto__cuerpo">
+          {showHistory && <div className="nf-texto__cuerpo">
             <p className="nf-texto__p1" data-testid="text-about-lead">{parrafos[0]}</p>
             <p>{parrafos[1]}</p>
-          </div>
-          <dl className="sh-cifras nf-cifras" data-testid="section-stats">
+          </div>}
+          {showStats && <dl className="sh-cifras nf-cifras" data-testid="section-stats">
             {cifras.map((c, i) => (
               <div key={i} data-testid={`stat-${i}`}>
                 <dt>{c.label}</dt>
                 <dd>{c.value}</dd>
               </div>
             ))}
-          </dl>
+          </dl>}
         </div>
         <figure className="sh-firma__cuadro" data-testid="figure-about-reception">
           <div className="sh-firma__marco">

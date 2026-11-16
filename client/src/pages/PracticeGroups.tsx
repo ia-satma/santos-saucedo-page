@@ -165,7 +165,7 @@ export default function PracticeGroups() {
       <V3Main vista="practicas" className="pg">
         {otroIdioma && practiceGroups.map((g) => <TraduccionPractica key={g.id} group={g} onChange={alTraducir} />)}
 
-        {blockVisible(layout, "practices", "lista") && items.length ? (
+        {blockVisible(layout, "practices", "lista") && blockVisible(layout, "practices", "servicios") && items.length ? (
           <PracticasBaker
             lang={v3Lang}
             items={items}

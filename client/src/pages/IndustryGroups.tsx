@@ -295,10 +295,10 @@ export default function IndustryGroups() {
             </div>
           ) : (
             <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-            viewport={{ once: true }}
+              variants={blockVisible(layout, "industries", "animacion") ? containerVariants : undefined}
+              initial={blockVisible(layout, "industries", "animacion") ? "hidden" : false}
+              whileInView={blockVisible(layout, "industries", "animacion") ? "visible" : undefined}
+              viewport={blockVisible(layout, "industries", "animacion") ? { once: true } : undefined}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12"
             >
               {industryGroups?.map((group, idx) => (
