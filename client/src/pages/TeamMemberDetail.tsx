@@ -25,7 +25,7 @@ import { chrome26 } from "@/components/home26/chrome26";
 import { useSiteContact } from "@/components/home26/useSiteContact";
 import { directContact, isInMemoriamMember } from "@/lib/partnerContact";
 import { keepFirmName } from "@/lib/firmName";
-import defaults from "@shared/cms-defaults.json";
+import { links as linksDefaults } from "@shared/cms-defaults.json";
 import type { TeamMember, PracticeGroup, IndustryGroup, Education, Affiliation, Ranking, Publication, RepresentativeMatter, BarAdmission, News, LanguageCode } from "@shared/schema";
 import { V3Main, V3NextPage, useV3Lang } from "@/v3/shared";
 import { useV3Content } from "@/v3/useV3Content";
@@ -1169,7 +1169,7 @@ export default function TeamMemberDetail() {
   // Textos nuevos de la v3 (es/en; los demás idiomas ven el inglés, marcado lang="en") y enlaces
   const { lang, locale, attrs } = useV3Lang();
   const P = v3.perfil;
-  const cmsLinks = useCmsContent("links", defaults.links);
+  const cmsLinks = useCmsContent("links", linksDefaults);
 
   // «Siguiente»: la próxima persona de su grupo en el orden del panel (los cuatro socios, en el
   // orden de /team); tras la última, Contacto, como al final de /team

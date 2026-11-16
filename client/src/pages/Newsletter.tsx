@@ -4,7 +4,7 @@
    la casilla del aviso de privacidad y el campo trampa, POST /api/newsletter (en el build estático, el
    programa de correo), con los avisos de éxito, error y límite de envíos. Textos: panel «newsletter»
    (10 idiomas) y «forms» (activar o desactivar el formulario). */
-import cmsDefaults from "@shared/cms-defaults.json";
+import { forms as formsDefaults } from "@shared/cms-defaults.json";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -286,7 +286,7 @@ export default function Newsletter() {
   const { data: allNews } = useQuery<News[]>({ queryKey: ["/api/news"] });
   const hasNews = !!allNews?.some((item) => item.published !== false);
 
-  const formSettings = useCmsContent("forms",cmsDefaults.forms).newsletter;
+  const formSettings = useCmsContent("forms",formsDefaults).newsletter;
   const form = useForm<NewsletterFormData>({
     resolver: zodResolver(formSchema as any),
     defaultValues: {

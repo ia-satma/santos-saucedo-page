@@ -7,7 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCmsContent } from "@/hooks/useCmsContent";
-import defaults from "@shared/cms-defaults.json";
+import { forms as formsDefaults } from "@shared/cms-defaults.json";
 import { chrome26 } from "@/components/home26/chrome26";
 import { V3Main, V3NextPage } from "@/v3/shared";
 import { etiquetaSiguiente } from "@/v3/paginas-sitio/textos";
@@ -15,7 +15,7 @@ import "@/v3/paginas-sitio/paginas.css";
 
 export default function NewsletterUnsubscribe() {
   const { language } = useLanguage();
-  const copy = useCmsContent("forms", defaults.forms).unsubscribe;
+  const copy = useCmsContent("forms", formsDefaults).unsubscribe;
   const t = copy[language as "es" | "en"] || copy.en;
   // Fuera del español y el inglés, el texto es el inglés del panel: va marcado como tal
   const textLang = language === "es" || language === "en" ? undefined : "en";

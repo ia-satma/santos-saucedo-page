@@ -3,7 +3,7 @@
    sitio (panel → Medios, las mismas de /offices); textos del panel donde existen en 10 idiomas. */
 import { useRef } from "react";
 import { Link } from "wouter";
-import cmsDefaults from "@shared/cms-defaults.json";
+import { offices as officesDefaults } from "@shared/cms-defaults.json";
 import type { LanguageCode } from "@shared/schema";
 import { useCmsMedia, type mediaDefaults } from "@/lib/cmsMedia";
 import { useCmsContent } from "@/hooks/useCmsContent";
@@ -64,7 +64,7 @@ export function Oficinas({
   const { locale: v3 } = useV3Content();
   const ct = v3.contacto as unknown as TextosV3;
   const media = useCmsMedia();
-  const offices = useCmsContent("offices", cmsDefaults.offices as OfficesCms);
+  const offices = useCmsContent("offices", officesDefaults as OfficesCms);
   const officeAlt = (offices[language] ?? offices.en)?.alt ?? {};
 
   // Entrada: «calle, en ciudad» con los datos del sitio

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import defaults from "@shared/cms-defaults.json";
+import { testimonials as testimonialsDefaults } from "@shared/cms-defaults.json";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -28,12 +28,12 @@ export interface PublicTestimonial {
   rating: number;
 }
 
-type Copy = (typeof defaults.testimonials)["es"];
-export type TestimonialsCopy = typeof defaults.testimonials;
+type Copy = (typeof testimonialsDefaults)["es"];
+export type TestimonialsCopy = typeof testimonialsDefaults;
 
 export function useTestimonialsCopy() {
   const { language } = useLanguage();
-  const copy = useCmsContent("testimonials", defaults.testimonials);
+  const copy = useCmsContent("testimonials", testimonialsDefaults);
   const t: Copy = (copy as unknown as Record<string, Copy>)[language] ?? copy.en;
   return { language, t, form: copy.form[language === "es" ? "es" : "en"] };
 }

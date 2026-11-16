@@ -5,7 +5,7 @@
    y el interruptor del panel (forms.careers: activo, mensaje si no lo está, rótulos es/en). */
 import { useState, type FormEvent } from "react";
 import { Link } from "wouter";
-import defaults from "@shared/cms-defaults.json";
+import { forms as formsDefaults } from "@shared/cms-defaults.json";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useV3Lang } from "@/v3/shared";
@@ -19,7 +19,7 @@ export function Candidatura({ source = "careers", idPrefix }: { source?: string;
   const { attrs } = useV3Lang();
   const { locale: v3 } = useV3Content();
   const T = v3.px as unknown as PaginasExtraTexts;
-  const settings = useCmsContent("forms", defaults.forms).careers;
+  const settings = useCmsContent("forms", formsDefaults).careers;
   // Rótulos del panel en español e inglés; en los demás idiomas, el inglés (y el bloque lo declara)
   const t = settings.labels[language as "es" | "en"] || settings.labels.en;
   const formAttrs = language === "es" || language === "en" ? {} : attrs;

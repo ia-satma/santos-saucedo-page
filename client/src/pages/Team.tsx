@@ -19,7 +19,7 @@ import { useCmsMedia } from "@/lib/cmsMedia";
 import { isNamedOnTeamPage } from "@/lib/teamPhotoSources";
 import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
-import defaults from "@shared/cms-defaults.json";
+import { chrome as chromeDefaultsData, industries as industriesDefaults, links as linksDefaults, team as teamDefaultsData } from "@shared/cms-defaults.json";
 import type { TeamMember } from "@shared/schema";
 import { V3Main, V3NextPage, useV3Lang } from "@/v3/shared";
 import { SociosLienzo, OfCounsel, type LienzoPartner } from "@/v3/socios/Lienzo";
@@ -54,9 +54,9 @@ const keepInMemoriam = (text: string) => text.replace(/\((in)\s+(memoriam)\)/gi,
 export default function Team() {
   const { teamMosaic: equipoPhotos } = useCmsMedia();
   const cmsChrome = useCmsContent("chrome", chrome26);
-  const cmsLinks = useCmsContent("links", defaults.links);
-  const cmsIndustries = useCmsContent("industries", defaults.industries);
-  const cmsTeam = useCmsContent("team", defaults.team);
+  const cmsLinks = useCmsContent("links", linksDefaults);
+  const cmsIndustries = useCmsContent("industries", industriesDefaults);
+  const cmsTeam = useCmsContent("team", teamDefaultsData);
   const { language } = useLanguage();
   const layout = useCmsContent("layout", layoutDefaults);
   const visibility = pageVisibility(layout, "team");
@@ -227,21 +227,21 @@ export default function Team() {
 
   // Nombres del menú en cada idioma (E5): "Socios" (nav[2]), "Carreras" (nav[4]) y "Contacto" (nav[5])
   const navLabels = (cmsChrome[language] ?? cmsChrome.es).nav;
-  const chromeDefaults = defaults.chrome as unknown as Record<string, { nav: { label: string }[] }>;
-  const teamDefaults = defaults.team as unknown as Record<string, { associatesTitle?: string; mosaicNote?: string }>;
+  const chromeDefaultsMap = chromeDefaultsData as unknown as Record<string, { nav: { label: string }[] }>;
+  const teamDefaultsMap = teamDefaultsData as unknown as Record<string, { associatesTitle?: string; mosaicNote?: string }>;
   // Títulos de la página leídos del panel (I5): el h1, de la etiqueta «Socios» del menú (nav[2]);
   // «El equipo», de «Integrantes del equipo» (team.associatesTitle). En español e inglés, mientras
   // el panel conserve su texto predeterminado, la redacción de la demo («Nuestros socios», «El
   // equipo»); si el cliente lo edita, manda el panel. Los demás idiomas leen el panel siempre.
-  const navTitleEdited = editedInPanel(navLabels[2].label, (chrome26[language] ?? chrome26.es).nav[2].label, chromeDefaults[language]?.nav[2]?.label);
-  const teamTitleEdited = editedInPanel(t.associatesTitle, content[language]?.associatesTitle, teamDefaults[language]?.associatesTitle);
+  const navTitleEdited = editedInPanel(navLabels[2].label, (chrome26[language] ?? chrome26.es).nav[2].label, chromeDefaultsMap[language]?.nav[2]?.label);
+  const teamTitleEdited = editedInPanel(t.associatesTitle, content[language]?.associatesTitle, teamDefaultsMap[language]?.associatesTitle);
   const pageTitle = ownLang && !navTitleEdited ? tv.title : navLabels[2].label;
   const listLabel = navLabels[2].label;
   const careersLabel = navLabels[4].label;
   const teamTitle = ownLang && !teamTitleEdited ? tv.teamTitle : t.associatesTitle;
   // Nota del muro (M28): la de la demo mientras el panel guarde la predeterminada anterior
   // («Retratos de integrantes del equipo.»); si el cliente la edita, manda el panel
-  const wallLabel = editedInPanel(t.mosaicNote, teamDefaults[language]?.mosaicNote) ? t.mosaicNote : (content[language] ?? content.en).mosaicNote;
+  const wallLabel = editedInPanel(t.mosaicNote, teamDefaultsMap[language]?.mosaicNote) ? t.mosaicNote : (content[language] ?? content.en).mosaicNote;
   const internal = (href: string | undefined, fallback: string) => (href && href.startsWith("/") ? href : fallback);
 
   // Cargo de cada persona: titleEs en español; en los demás idiomas, title. Fuera de es y en ese

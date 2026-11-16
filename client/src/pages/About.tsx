@@ -22,7 +22,7 @@ import type { FirmaTextos } from "@/v3/firma/textos";
 import { HOME_FIRMA } from "@/v3/firma/textos";
 import { v3Asset } from "@/v3/asset";
 import { useV3Content } from "@/v3/useV3Content";
-import cmsDefaults from "@shared/cms-defaults.json";
+import { about as aboutDefaults } from "@shared/cms-defaults.json";
 import { layoutDefaults } from "@/lib/cmsLightDefaults";
 import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
 
@@ -429,7 +429,7 @@ export default function About() {
 
 
   const editableContent = useCmsContent("about", content);
-  const editablePageContent = useCmsContent("about", cmsDefaults.about);
+  const editablePageContent = useCmsContent("about", aboutDefaults);
   const baseT = editableContent[language] || editableContent.en;
   const pageT = editablePageContent[language] || editablePageContent.en;
   const cmsChrome = useCmsContent("chrome", chrome26);

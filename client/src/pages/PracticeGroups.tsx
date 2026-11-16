@@ -17,7 +17,7 @@ import { LaminaReaccion } from "@/v3/firma/Firma";
 import { useV3Content } from "@/v3/useV3Content";
 import type { FirmaTextos } from "@/v3/firma/textos";
 import type { PracticeGroup } from "@shared/schema";
-import cmsDefaults from "@shared/cms-defaults.json";
+import { practices as practicesDefaults } from "@shared/cms-defaults.json";
 import { layoutDefaults } from "@/lib/cmsLightDefaults";
 import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
 import "./PracticeGroups.css";
@@ -113,7 +113,7 @@ export default function PracticeGroups() {
   });
 
   const editableContent = useCmsContent("practices", content);
-  const editablePageContent = useCmsContent("practices", cmsDefaults.practices);
+  const editablePageContent = useCmsContent("practices", practicesDefaults);
   const t = editableContent[language] || editableContent.en;
   const pageT = editablePageContent[language] || editablePageContent.en;
   const title = String((pageT as any).title || (cmsChrome[language as keyof typeof chrome26] ?? cmsChrome.en).nav[1].label);

@@ -1,0 +1,86 @@
+{
+  "es": {
+    "title": "Qué hacemos",
+    "items": {
+      "laboral-seguridad-social": [
+        "Auditorías laborales de contratos, expedientes, nómina y prestaciones",
+        "Contratos, reglamentos interiores, políticas y protocolos, incluidos los de la NOM-035",
+        "Preparación y acompañamiento en inspecciones de las autoridades del trabajo",
+        "Revisión de proveedores de servicios especializados ante el REPSE y el IMSS",
+        "Planeación laboral: plantillas, turnos, jornada de 40 horas, cajas y fondos de ahorro",
+        "Revisiones contractuales y salariales, y consultas para contratos colectivos",
+        "Aspectos laborales de adquisiciones, fusiones, escisiones y reestructuras",
+        "Terminaciones individuales y colectivas, y convenios ante la autoridad",
+        "Conciliación prejudicial y juicios ante los Tribunales Laborales",
+        "Investigaciones internas por acoso, hostigamiento o faltas graves",
+        "Cumplimiento ante el IMSS y el Infonavit"
+      ],
+      "corporativo-contractual": [
+        "Constitución de sociedades mercantiles y civiles",
+        "Vida corporativa: asambleas, actas, libros y poderes",
+        "Aumentos y disminuciones de capital, fusiones, escisiones, disoluciones y liquidaciones",
+        "Emisión, cancelación y compraventa de acciones y partes sociales",
+        "Estructuración y revisión de fideicomisos",
+        "Contratos de coinversión, suministro, servicios, comisión, compraventa, administración y franquicia",
+        "Licencias de uso y de derechos de propiedad industrial"
+      ],
+      "migratorio": [
+        "Visas y permisos de trabajo para directivos, técnicos y especialistas extranjeros",
+        "Residencias del personal extranjero y su mantenimiento en regla",
+        "Visas de inversión, negocios, estudios y prácticas profesionales",
+        "Avisos por cambio de estado civil, domicilio o actividades",
+        "Medios de defensa contra resoluciones de la autoridad migratoria",
+        "Apostilla, legalización y traducción de documentos extranjeros"
+      ],
+      "litigio-contencioso": [
+        "Juicios civiles y mercantiles",
+        "Denuncias por robo, fraude o abuso de confianza ante la Fiscalía General de Justicia de Nuevo León",
+        "Coadyuvancia con el Ministerio Público en la investigación y en el juicio oral",
+        "Reparación del daño",
+        "Coordinación con la práctica laboral cuando el responsable es un trabajador"
+      ]
+    }
+  },
+  "en": {
+    "title": "What we do",
+    "items": {
+      "laboral-seguridad-social": [
+        "Labor audits of contracts, personnel files, payroll and benefits",
+        "Contracts, internal work rules, policies and protocols, including NOM-035",
+        "Preparation for and support during labor authority inspections",
+        "Review of specialized service providers under REPSE and IMSS",
+        "Labor planning: headcount, shifts, the 40-hour week, savings funds",
+        "Collective bargaining reviews and worker consultations for collective agreements",
+        "Labor aspects of acquisitions, mergers, spin-offs and restructurings",
+        "Individual and collective terminations, and settlements before the authority",
+        "Pre-judicial conciliation and trials before the Labor Courts",
+        "Internal investigations of harassment or serious misconduct",
+        "Compliance with IMSS and Infonavit"
+      ],
+      "corporativo-contractual": [
+        "Incorporation of commercial and civil companies",
+        "Corporate housekeeping: shareholder meetings, minutes, books and powers of attorney",
+        "Capital increases and reductions, mergers, spin-offs, dissolutions and liquidations",
+        "Issuance, cancellation and sale of shares and equity interests",
+        "Structuring and review of trusts",
+        "Joint venture, supply, services, commission, sale, management and franchise agreements",
+        "Licenses of use and industrial property rights"
+      ],
+      "migratorio": [
+        "Visas and work permits for foreign executives, technicians and specialists",
+        "Residence status for foreign staff, kept in good standing",
+        "Investment, business, study and internship visas",
+        "Notices of changes in marital status, address or activities",
+        "Challenges to decisions of the immigration authority",
+        "Apostille, legalization and translation of foreign documents"
+      ],
+      "litigio-contencioso": [
+        "Civil and commercial litigation",
+        "Criminal complaints for theft, fraud or breach of trust before the Nuevo León State Prosecutor",
+        "Acting alongside the Public Prosecutor during investigation and oral trial",
+        "Recovery of damages",
+        "Coordination with the labor practice when the person responsible is an employee"
+      ]
+    }
+  }
+}

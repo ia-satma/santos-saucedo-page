@@ -1540,3 +1540,6 @@ html:has(.editorial-page-hero) header.ss26 {
     animation: none;
   }
 }
+
+
+.ss-ease-editorial { transition-timing-function: cubic-bezier(.77, 0, .18, 1); }

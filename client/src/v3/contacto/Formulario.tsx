@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v3";
 import { Link } from "wouter";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import cmsDefaults from "@shared/cms-defaults.json";
+import { forms as formsDefaults } from "@shared/cms-defaults.json";
 import type { ContactFormData, LanguageCode, PracticeGroup } from "@shared/schema";
 import { apiRequest, isStaticSite } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -66,7 +66,7 @@ export default function FormularioContacto({ idPrefix, dePagina = false }: Formu
   const fb = feedbackAll[language] || feedbackAll.en;
   const consentAll = useCmsContent("contact-consent", CONSENT);
   const consentT = consentAll[language] || consentAll.en;
-  const formSettings = useCmsContent("forms", cmsDefaults.forms).contact;
+  const formSettings = useCmsContent("forms", formsDefaults).contact;
 
   // Prácticas: las cuatro del sitio (/api/practice-groups) y «Otro asunto»
   const { shortName } = usePracticeNames();

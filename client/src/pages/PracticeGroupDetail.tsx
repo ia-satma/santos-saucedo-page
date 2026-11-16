@@ -8,7 +8,7 @@
 // Lo nuevo de la demo (láminas y rótulos) va en español o inglés: client/src/v3/practicas/.
 import { useContentEntity } from "@/features/admin/ContentPreview";
 import { useCmsContent } from "@/hooks/useCmsContent";
-import cmsDefaults from "@shared/cms-defaults.json";
+import practiceServicesDefaults from "@/lib/practiceServicesDefaults";
 import { Link, Redirect, useParams } from "wouter";
 import { lazy, Suspense, useMemo, useState, type ReactNode } from "react";
 import { Loader2 } from "lucide-react";
@@ -371,7 +371,7 @@ export default function PracticeGroupDetail() {
   const t = editableContent[language] || editableContent.en;
   // «Qué hacemos»: la lista de servicios de cada práctica, editable en el panel (petición del
   // cliente, 24-10-2026). El snapshot del CMS contiene las diez versiones.
-  const serviceLists = useCmsContent("practice-services", cmsDefaults["practice-services"]);
+  const serviceLists = useCmsContent("practice-services", practiceServicesDefaults);
   const servicesCopy = (serviceLists as Record<string, { title: string; items: Record<string, string[]> }>)[language]
     ?? serviceLists.en
     ?? serviceLists.es;

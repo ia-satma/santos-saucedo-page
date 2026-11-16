@@ -359,7 +359,7 @@ function MonitorRow({
           {/* Subrayado que se dibuja de izquierda a derecha al pasar el cursor o con el foco */}
           <Link
             href={`/news/${item.slug}`}
-            className="inline-link bg-[linear-gradient(currentColor,currentColor)] bg-[length:0_1px] bg-[position:0_100%] bg-no-repeat pb-0.5 transition-[background-size] duration-700 ease-[cubic-bezier(.77,0,.18,1)] hover:bg-[length:100%_1px] focus-visible:bg-[length:100%_1px] motion-reduce:transition-none"
+            className="inline-link bg-[linear-gradient(currentColor,currentColor)] bg-[length:0_1px] bg-[position:0_100%] bg-no-repeat pb-0.5 transition-[background-size] duration-700 ss-ease-editorial hover:bg-[length:100%_1px] focus-visible:bg-[length:100%_1px] motion-reduce:transition-none"
           >
             {titleIsSource ? <bdi lang="en" dir="ltr">{title}</bdi> : title}
           </Link>

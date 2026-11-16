@@ -7,7 +7,7 @@ import Header26 from "@/components/home26/Header26";
 import Footer26 from "@/components/home26/Footer26";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
-import defaults from "@shared/cms-defaults.json";
+import { industries as industriesDefaults } from "@shared/cms-defaults.json";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useQuery } from "@tanstack/react-query";
 import type { IndustryGroup } from "@shared/schema";
@@ -24,7 +24,7 @@ export default function Industries() {
   const { lang, attrs } = useV3Lang();
   const selectedLang = language in INDUSTRIAS_TEXTS ? language : lang;
   const base = INDUSTRIAS_TEXTS[selectedLang];
-  const industriesCms = useCmsContent("industries", defaults.industries as typeof defaults.industries);
+  const industriesCms = useCmsContent("industries", industriesDefaults as typeof industriesDefaults);
   const { data: catalog = [] } = useQuery<IndustryGroup[]>({ queryKey: ["/api/industry-groups"] });
   const cmsText = industriesCms[language] ?? industriesCms.en;
   const editorial = (cmsText.v3 ?? base) as typeof base;

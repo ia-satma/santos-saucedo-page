@@ -262,7 +262,7 @@ export function Practicas26({ lang }: { lang: Lang26 }) {
                         {item.title}
                       </span>
                       <span
-                        className={`mt-4 grid grid-rows-[1fr] transition-[grid-template-rows,opacity,margin] duration-700 ease-[cubic-bezier(.77,0,.18,1)] motion-reduce:transition-none ${
+                        className={`mt-4 grid grid-rows-[1fr] transition-[grid-template-rows,opacity,margin] duration-700 ss-ease-editorial motion-reduce:transition-none ${
                           on ? "lg:mt-5 lg:grid-rows-[1fr] lg:opacity-100" : "lg:mt-0 lg:grid-rows-[0fr] lg:opacity-0"
                         }`}
                       >

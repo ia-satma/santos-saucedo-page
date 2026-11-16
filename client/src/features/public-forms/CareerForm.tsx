@@ -2,13 +2,13 @@ import { useState, type FormEvent } from "react";
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCmsContent } from "@/hooks/useCmsContent";
-import defaults from "@shared/cms-defaults.json";
+import { forms as formsDefaults } from "@shared/cms-defaults.json";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 export function CareerForm({ source = "careers", className = "mt-10" }: { source?: string; className?: string }) {
   const { language } = useLanguage();
-  const settings = useCmsContent("forms", defaults.forms).careers;
+  const settings = useCmsContent("forms", formsDefaults).careers;
   const t = settings.labels[language as "es" | "en"] || settings.labels.en;
   const [busy, setBusy] = useState(false),
     [success, setSuccess] = useState(false),
