@@ -40,6 +40,7 @@ export const cmsEditorPages: CmsEditorPage[] = [
       tab("heroLabels", "Etiquetas", "Textos breves sobre los títulos"),
       tab("chrome", "Menú y pie", "Nombres visibles del sitio"),
       tab("contactData", "Datos del despacho", "Dirección, teléfonos y correos"),
+      tab("seo", "SEO", "Título y descripción para buscadores y compartir"),
     ],
   },
   {
@@ -73,6 +74,8 @@ export const cmsEditorPages: CmsEditorPage[] = [
       tab("practice-services", "Servicios", "Qué hacemos en cada área"),
       tab("practice-detail", "Fichas", "Etiquetas y textos de detalle"),
       tab("practice-names", "Idiomas", "Nombres por idioma"),
+      tab("layout", "Visibilidad", "Bloques visibles de Prácticas"),
+      tab("seo", "SEO", "Título y descripción para buscadores"),
     ],
   },
   {
@@ -88,6 +91,8 @@ export const cmsEditorPages: CmsEditorPage[] = [
     tabs: [
       tab("industries", "Portada", "Introducción y textos del listado"),
       tab("industry-detail", "Fichas", "Etiquetas de cada industria"),
+      tab("layout", "Visibilidad", "Bloques visibles de Industrias"),
+      tab("seo", "SEO", "Título y descripción para buscadores"),
     ],
   },
   {
@@ -103,6 +108,9 @@ export const cmsEditorPages: CmsEditorPage[] = [
     tabs: [
       tab("team", "Portada", "Introducción y títulos del directorio"),
       tab("profile", "Perfiles", "Biografía, formación y contacto"),
+      tab("layout", "Visibilidad", "Bloques visibles de Socios y equipo"),
+      tab("media", "Medios", "Mosaico y fotografías compartidas"),
+      tab("seo", "SEO", "Título y descripción para buscadores"),
     ],
   },
   {
@@ -120,6 +128,8 @@ export const cmsEditorPages: CmsEditorPage[] = [
       tab("monitor-ui", "Filtros y estados", "Búsqueda, categorías y estados"),
       tab("monitor-subscribe", "Suscripción", "Llamadas del formulario"),
       tab("news-detail", "Notas", "Etiquetas de cada publicación"),
+      tab("layout", "Visibilidad", "Bloques visibles del Monitor"),
+      tab("seo", "SEO", "Título y descripción para buscadores"),
     ],
   },
   {
@@ -137,6 +147,9 @@ export const cmsEditorPages: CmsEditorPage[] = [
       tab("contactData", "Datos del despacho", "Dirección, teléfonos y correos"),
       tab("contact-consent", "Consentimiento", "Aviso y casillas del formulario"),
       tab("contact-feedback", "Respuestas", "Mensajes después del envío"),
+      tab("forms", "Controles del formulario", "Activación y mensajes cuando se pausa"),
+      tab("layout", "Visibilidad", "Bloques visibles de Contacto"),
+      tab("seo", "SEO", "Título y descripción para buscadores"),
     ],
   },
   {
@@ -152,6 +165,10 @@ export const cmsEditorPages: CmsEditorPage[] = [
     tabs: [
       tab("officeLabels", "Nombre de la página", "Nombre visible por idioma"),
       tab("offices", "Contenido", "Introducción, horario y galería"),
+      tab("layout", "Visibilidad", "Bloques visibles de Oficinas"),
+      tab("media", "Medios", "Fotografías de la oficina"),
+      tab("contactData", "Datos del despacho", "Datos compartidos de contacto"),
+      tab("seo", "SEO", "Título y descripción para buscadores"),
     ],
   },
   {
@@ -168,6 +185,10 @@ export const cmsEditorPages: CmsEditorPage[] = [
       tab("careers", "Carreras", "Textos de reclutamiento"),
       tab("interns", "Pasantías", "Programa de prácticas profesionales"),
       tab("forms", "Formularios", "Activación y mensajes públicos"),
+      tab("layout", "Visibilidad", "Bloques visibles de Carreras"),
+      tab("media", "Medios", "Fotografías de Carreras"),
+      tab("contactData", "Datos del despacho", "Datos compartidos de contacto"),
+      tab("seo", "SEO", "Título y descripción para buscadores"),
     ],
   },
   {
@@ -180,7 +201,7 @@ export const cmsEditorPages: CmsEditorPage[] = [
     description: "Edita los textos del módulo y revisa los testimonios desde su bandeja de aprobación.",
     impact: "Afecta la página pública de testimonios",
     manualId: "testimonios",
-    tabs: [tab("testimonials", "Contenido", "Título, introducción y formulario")],
+    tabs: [tab("testimonials", "Contenido", "Título, introducción y formulario"), tab("layout", "Visibilidad", "Bloques visibles de Testimonios"), tab("media", "Medios", "Imagen del encabezado"), tab("contactData", "Datos del despacho", "Datos compartidos de contacto"), tab("seo", "SEO", "Título y descripción para buscadores")],
   },
   {
     id: "media",
@@ -206,7 +227,7 @@ export const cmsEditorPages: CmsEditorPage[] = [
     description: "Edita la página de Pasantías S&S y su llamada a postularse.",
     impact: "Afecta Pasantías S&S y sus postulaciones",
     manualId: "pasantias",
-    tabs: [tab("interns", "Pasantías", "Hero, postulación y mensajes del formulario")],
+    tabs: [tab("interns", "Pasantías", "Hero, postulación y mensajes del formulario"), tab("forms", "Formularios", "Controles y estados"), tab("contactData", "Datos del despacho", "Datos compartidos de contacto"), tab("seo", "SEO", "Título y descripción para buscadores")],
   },
   {
     id: "newsletter",
@@ -218,7 +239,7 @@ export const cmsEditorPages: CmsEditorPage[] = [
     description: "Edita la suscripción al Monitor Laboral y sus mensajes.",
     impact: "Afecta el Boletín y sus formularios",
     manualId: "boletin",
-    tabs: [tab("newsletter", "Contenido", "Título, formulario y estados")],
+    tabs: [tab("newsletter", "Contenido", "Título, formulario y estados"), tab("forms", "Formularios", "Activación y estados"), tab("news-detail", "Notas relacionadas", "Etiquetas de notas relacionadas"), tab("chrome", "Menú y pie", "Etiquetas compartidas"), tab("seo", "SEO", "Título y descripción para buscadores")],
   },
   {
     id: "privacy",
@@ -230,7 +251,7 @@ export const cmsEditorPages: CmsEditorPage[] = [
     description: "Edita el Aviso de privacidad por bloques y por idioma.",
     impact: "Afecta el Aviso de privacidad y sus enlaces",
     manualId: "privacidad",
-    tabs: [tab("privacy", "Contenido", "Hero, texto legal y contacto"), tab("privacy-contact", "Contacto", "Texto de contacto del aviso")],
+    tabs: [tab("privacy", "Contenido", "Hero, texto legal y contacto"), tab("privacy-contact", "Contacto", "Texto de contacto del aviso"), tab("media", "Medios", "Imagen del encabezado"), tab("contactData", "Datos del despacho", "Datos compartidos de contacto"), tab("chrome", "Menú y pie", "Etiquetas compartidas"), tab("seo", "SEO", "Título y descripción para buscadores")],
   },
   {
     id: "terms",
@@ -242,7 +263,7 @@ export const cmsEditorPages: CmsEditorPage[] = [
     description: "Edita los Términos de uso por bloques y por idioma.",
     impact: "Afecta los Términos de uso y sus enlaces",
     manualId: "terminos",
-    tabs: [tab("terms", "Contenido", "Hero, texto legal y contacto"), tab("terms-contact", "Contacto", "Texto de contacto de los términos")],
+    tabs: [tab("terms", "Contenido", "Hero, texto legal y contacto"), tab("terms-contact", "Contacto", "Texto de contacto de los términos"), tab("media", "Medios", "Imagen del encabezado"), tab("contactData", "Datos compartidos", "Datos de contacto"), tab("chrome", "Menú y pie", "Etiquetas compartidas"), tab("seo", "SEO", "Título y descripción para buscadores")],
   },
   {
     id: "not-found",
@@ -254,7 +275,7 @@ export const cmsEditorPages: CmsEditorPage[] = [
     description: "Edita la página que aparece cuando una ruta no existe.",
     impact: "Afecta la experiencia de rutas no encontradas",
     manualId: "pagina-no-encontrada",
-    tabs: [tab("not-found", "Contenido", "Título, texto y enlaces")],
+    tabs: [tab("not-found", "Contenido", "Título, texto y enlaces"), tab("chrome", "Menú y pie", "Etiquetas compartidas"), tab("seo", "SEO", "Título y descripción para buscadores")],
   },
 ];
 

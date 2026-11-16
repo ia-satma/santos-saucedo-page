@@ -132,7 +132,7 @@ export default function AdminPageEditor() {
       <main className="cms-editor-main">
         <AdminPageHelp pageId={`page-${page.id}`} manualSectionId={page.manualId}>Edita esta página de arriba abajo. Cada bloque conserva sus textos, medios, enlaces, visibilidad y orden. Los campos compartidos indican dónde más aparecen.</AdminPageHelp>
         <div className="cms-page-layout">
-          <aside className="cms-page-index" aria-label={`Índice de ${page.label}`}><p className="cms-page-index-title">En esta página</p>{page.blocks.map((block, index) => <a key={`${block}-${index}`} href={`#page-block-${index}`}>{block}</a>)}{links.map((link) => <Link key={link.href} href={link.href}>{link.label} ↗</Link>)}</aside>
+          <aside className="cms-page-index" aria-label={`Índice de ${page.label}`}><p className="cms-page-index-title">En esta página</p>{page.tabs.map((tab, index) => <a key={`${tab.section}-${index}`} href={`#page-block-${index}`}>{tab.label}</a>)}{links.map((link) => <Link key={link.href} href={link.href}>{link.label} ↗</Link>)}</aside>
           <div className="cms-page-content">
             <div className="cms-editor-card mb-5 flex flex-wrap items-center gap-3"><label htmlFor="cms-page-language" className="text-sm font-semibold">Idioma que estás editando</label><select id="cms-page-language" className="border rounded-md p-2 bg-background" value={lang} onChange={(event) => setLang(event.target.value)}>{SUPPORTED_LANGUAGES.map((item) => <option key={item.code} value={item.code}>{item.nameNative}</option>)}</select></div>
             <PageVisibilityPanel pageId={page.id} />
