@@ -136,7 +136,7 @@ export default function Telon({ lang }: { lang: V3Lang }) {
   const externalVideoSrc = videoSrc ? getVideoEmbedUrl(videoSrc, !paused) : null;
   const poster = media.hero.poster;
   // El póster oficial conserva su edición del CMS, pero se sirve en WebP para que el LCP no cargue el JPG histórico.
-  const posterSrc = poster && /(?:^|-)portada-color-poster\.jpg$/.test(poster)
+  const posterSrc = poster && /(?:^|[/-])portada-color-poster\.jpg$/.test(poster)
     ? `${import.meta.env.BASE_URL}video/portada-color-poster-1600.webp`
     : poster;
   const posterSrcSet = posterSrc && /\/video\/portada-color-poster-1600\.webp$/.test(posterSrc)

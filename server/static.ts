@@ -62,7 +62,7 @@ export function serveStatic(app: Express) {
       const poster = media.hero?.poster ?? (cmsDefaults.media.hero.poster as string);
       const logo = media.brand?.logoLight || (cmsDefaults.media.brand.logoLight as string);
       if (!poster || !/^\/[\w./-]+$/.test(poster) || !/^\/[\w./-]+$/.test(logo)) return null;
-      const canonicalPoster = /(?:^|-)portada-color-poster\.jpg$/.test(poster)
+      const canonicalPoster = /(?:^|[/-])portada-color-poster\.jpg$/.test(poster)
         ? "/video/portada-color-poster-1600.webp"
         : poster;
       const src = canonicalPoster;
