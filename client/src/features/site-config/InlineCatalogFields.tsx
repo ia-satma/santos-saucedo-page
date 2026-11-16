@@ -50,7 +50,8 @@ export function InlineCatalogFields({ kind }: { kind: CatalogKind }) {
   const query = useQuery<CatalogRecord[]>({
     queryKey: [entry.endpoint],
     queryFn: async () => {
-      const response = await adminApiRequest("GET", entry.endpoint);
+      const readEndpoint = kind === "team" || kind === "news" ? `${entry.endpoint}?limit=100` : entry.endpoint;
+      const response = await adminApiRequest("GET", readEndpoint);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "No se pudieron cargar las fichas.");
       if (kind === "team") return data.members ?? [];
