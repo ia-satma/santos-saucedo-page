@@ -45,7 +45,7 @@ const TXT = {
 
 // 1280 hasta 1024 px de ancho (teléfono y tableta); 1920 en el resto (como Hero26)
 const SMALL_SCREEN = "(max-width: 1024px)";
-const OPTIMIZED_HERO_VIDEO = `${import.meta.env.BASE_URL}video/portada-color-optimized.mp4`;
+const OPTIMIZED_HERO_VIDEO = `${import.meta.env.BASE_URL}video/portada-color-optimized-v2.mp4`;
 
 function heroVideoSource(value: string) {
   return /portada-color-(?:1280|1920)\.mp4(?:$|\?)/.test(value) ? OPTIMIZED_HERO_VIDEO : value;
