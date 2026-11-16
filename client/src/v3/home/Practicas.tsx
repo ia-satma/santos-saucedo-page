@@ -31,6 +31,12 @@ function practiceSrcSet(src: string, width: number) {
   return match ? `${match[1]}-480.webp 480w, ${src} 960w` : v3SrcSet(src, width);
 }
 
+function practiceFallbackSrc(src: string) {
+  const editorial = PRACTICE_IMAGE_RE.exec(src);
+  if (editorial) return `${editorial[1]}-480.webp`;
+  return src.replace(/\/v3\/([\w-]+)\.webp$/, "/v3/$1-640.webp");
+}
+
 export type PracticeItem = {
   slug: string; clave: string; name: string; summary: string; img?: string; w: number; h: number;
   /** Fuera de ES/EN, el nombre o el resumen que se quedan en inglés lo declaran (lang="en") */
@@ -92,7 +98,7 @@ export function PracticasBaker({ lang, items, pagina }: { lang: V3Lang; items: P
         {items.map((p, i) =>
           p.img ? (
             <div key={p.slug} className="pr-bk-fondo" data-clave={p.clave}>
-              <img data-no-parallax="" src={fotos && (pagina || i === 0 || fotosCargadas.includes(p.slug)) ? p.img : undefined}
+              <img data-no-parallax="" src={fotos && (pagina || i === 0 || fotosCargadas.includes(p.slug)) ? practiceFallbackSrc(p.img) : undefined}
                 srcSet={fotos && (pagina || i === 0 || fotosCargadas.includes(p.slug)) ? practiceSrcSet(p.img, p.w) : undefined}
                 sizes={FONDO_SIZES} alt="" width={p.w} height={p.h} decoding="async" loading="lazy" />
             </div>
@@ -134,7 +140,7 @@ export function PracticasBaker({ lang, items, pagina }: { lang: V3Lang; items: P
                     descarga. Mismo encuadre y velo (home.css). */}
                 {p.img ? (
                   <img className="hm-bk-foto" data-no-parallax=""
-                    src={fotos && (pagina || i === 0 || fotosCargadas.includes(p.slug)) ? p.img : undefined}
+                    src={fotos && (pagina || i === 0 || fotosCargadas.includes(p.slug)) ? practiceFallbackSrc(p.img) : undefined}
                     srcSet={fotos && (pagina || i === 0 || fotosCargadas.includes(p.slug)) ? practiceSrcSet(p.img, p.w) : undefined}
                     sizes={CUADRO_SIZES} alt="" width={p.w} height={p.h} loading="lazy" decoding="async" />
                 ) : null}

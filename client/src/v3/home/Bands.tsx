@@ -119,7 +119,7 @@ export function IndustriasBand({ lang }: { lang: V3Lang }) {
                 <span className="hm-acord__foto" aria-hidden="true"
                   style={{ "--previa": PREVIA_INDUSTRIA[it.id] ? `url("${PREVIA_INDUSTRIA[it.id]}")` : "none", "--previa-pos": it.pos } as CSSProperties}>
                   <img data-no-parallax="" src={cargarFoto ? it.img : undefined} srcSet={cargarFoto ? v3SrcSet(it.img, 2000) : undefined}
-                    sizes="(min-width: 1200px) 50vw, (min-width: 768px) 70vw, 100vw" alt="" width={it.w} height={it.h} loading="lazy"
+                    sizes="(min-width: 1200px) 50vw, (min-width: 768px) 70vw, 640px" alt="" width={it.w} height={it.h} loading="lazy"
                     {...{ fetchpriority: on ? "high" : "low" }} decoding="async" style={{ objectPosition: it.pos }}
                     onLoad={(e) => { e.currentTarget.dataset.lista = ""; }} />
                 </span>
