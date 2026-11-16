@@ -9,6 +9,8 @@ import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { industries as industriesDefaults } from "@shared/cms-defaults.json";
 import { useCmsContent } from "@/hooks/useCmsContent";
+import { layoutDefaults } from "@/lib/cmsLightDefaults";
+import { pageVisibility } from "@/lib/pageVisibility";
 import { useQuery } from "@tanstack/react-query";
 import type { IndustryGroup } from "@shared/schema";
 import { V3Main, V3NextPage, V3PageHeader, useV3Lang } from "@/v3/shared";
@@ -24,6 +26,8 @@ export default function Industries() {
   const { lang, attrs } = useV3Lang();
   const selectedLang = language in INDUSTRIAS_TEXTS ? language : lang;
   const base = INDUSTRIAS_TEXTS[selectedLang];
+  const layout = useCmsContent("layout", layoutDefaults);
+  const pageVisible = pageVisibility(layout, "industries").enabled;
   const industriesCms = useCmsContent("industries", industriesDefaults as typeof industriesDefaults);
   const { data: catalog = [] } = useQuery<IndustryGroup[]>({ queryKey: ["/api/industry-groups"] });
   const cmsText = industriesCms[language] ?? industriesCms.en;
@@ -64,6 +68,8 @@ export default function Industries() {
     .map(({ _catalogOrder: _ignored, ...item }) => item);
   const t = { ...editorial, cab: cmsText.hero ?? editorial.cab, sigue: cmsText.next ?? editorial.sigue, industrias } as unknown as IndustriasTexts;
   const localizedAttrs = { ...attrs, lang: selectedLang };
+
+  if (!pageVisible) return <div data-testid="page-hidden" aria-hidden="true" />;
 
   return (
     <div className="ss26 min-h-screen" data-testid="page-industries">
