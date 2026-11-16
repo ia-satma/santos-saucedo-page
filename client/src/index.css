@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* The SSR hero shell appears before the route stylesheet. Start the mask shortly after first paint
+   so slow hydration never leaves the complete poster exposed for the whole image decode. */
+@keyframes ss-shell-mask {
+  from { -webkit-mask: none; mask: none; }
+  to { -webkit-mask: var(--mk-art) 0 0 / 100% 100% no-repeat; mask: var(--mk-art) 0 0 / 100% 100% no-repeat; }
+}
+.v3 .mk-js .mk-telon__marco { animation: ss-shell-mask 1ms linear 180ms both; }
+@media (prefers-reduced-motion: reduce) { .v3 .mk-js .mk-telon__marco { animation: none; } }
+
 /* Letras: "SS Serif" (Newsreader + Source Serif 4 para cirílico) y "SS Sans"
    (Source Sans 3), autoalojadas en styles/ss26.css. Sin Google Fonts. */
 
