@@ -23,7 +23,7 @@ import "./home.css";
 // Tamaños de las fotos: el cuadro mide ~294 px hasta 588 px de ancho y medio ancho después; el fondo
 // (que en teléfono aparece un instante al tocar) elige el mismo archivo que el cuadro
 const CUADRO_SIZES = "(max-width: 588px) 294px, 50vw";
-const FONDO_SIZES = "(max-width: 588px) 294px, (max-width: 767.98px) or (hover: none) or (pointer: coarse) 50vw, 100vw";
+const FONDO_SIZES = "(max-width: 588px) 294px, (max-width: 767.98px) or (hover: none) or (pointer: coarse) 50vw, 1200px";
 const PRACTICE_IMAGE_RE = /^(.*\/editorial\/practice-(?:litigio|corporativo|laboral|migratorio))\.webp$/;
 
 function practiceSrcSet(src: string, width: number) {
