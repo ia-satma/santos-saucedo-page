@@ -135,8 +135,10 @@ export default function Telon({ lang }: { lang: V3Lang }) {
   }, [ready, failed, videoEnabled, media.hero.videoDesktop, media.hero.videoMobile]);
   const externalVideoSrc = videoSrc ? getVideoEmbedUrl(videoSrc, !paused) : null;
   const poster = media.hero.poster;
-  // El póster predeterminado, en WebP (203 KB en lugar de 257 KB, idéntico a la vista); uno del panel va tal cual
-  const posterSrc = poster && /\/video\/portada-color-poster\.jpg$/.test(poster) ? poster.replace(/\.jpg$/, "-1600.webp") : poster;
+  // El póster oficial conserva su edición del CMS, pero se sirve en WebP para que el LCP no cargue el JPG histórico.
+  const posterSrc = poster && /(?:^|-)portada-color-poster\.jpg$/.test(poster)
+    ? `${import.meta.env.BASE_URL}video/portada-color-poster-1600.webp`
+    : poster;
   const posterSrcSet = posterSrc && /\/video\/portada-color-poster-1600\.webp$/.test(posterSrc)
     ? `${posterSrc.replace("-1600.webp", "-768.webp")} 768w, ${posterSrc} 1600w`
     : undefined;
