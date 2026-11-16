@@ -69,9 +69,11 @@ export function serveStatic(app: Express) {
       const srcSet = /\/video\/portada-color-poster-1600\.webp$/.test(src)
         ? `${src.replace("-1600.webp", "-768.webp")} 768w, ${src} 1600w`
         : undefined;
-      const preloadSet = srcSet ? ` imagesrcset="${esc(srcSet)}" imagesizes="100vw"` : "";
+      const responsivePreloads = srcSet
+        ? `<link rel="preload" as="image" href="${esc(src.replace("-1600.webp", "-768.webp"))}" media="(max-width: 1023px)" fetchpriority="high">\n    <link rel="preload" as="image" href="${esc(src)}" media="(min-width: 1024px)" fetchpriority="high">`
+        : `<link rel="preload" as="image" href="${esc(src)}" fetchpriority="high">`;
       const posterAttrs = srcSet ? ` srcset="${esc(srcSet)}" sizes="100vw"` : "";
-      const head = `<link rel="preload" as="image" href="${esc(src)}"${preloadSet} fetchpriority="high">\n    <link rel="preload" as="image" href="/v3/seccion-blanca.png" fetchpriority="high">`;
+      const head = `${responsivePreloads}\n    <link rel="preload" as="image" href="/v3/seccion-blanca.png" fetchpriority="high">`;
       const root = `<div id="root"><div class="ss26 hm-page min-h-screen" aria-hidden="true">`
         + `<header class="ss26 ss-header group/hdr sticky top-0 z-50 text-white ss-header--home-hero bg-transparent"><div class="ss-container flex h-[68px] items-center justify-between gap-4 lg:h-20 lg:gap-6 xl:gap-5"><span class="shrink-0"><img src="${esc(logo)}" alt="" class="h-[22px] w-auto min-[360px]:h-[26px] xl:h-[30px]" width="183" height="30"></span></div></header>`
         + `<main><div class="v3 mk-raiz" data-vista="inicio" style="--mk-art:url(&quot;/v3/seccion-blanca.png&quot;)"><div class="mk-js"><section class="mk-telon sobre-azul"><div class="mk-telon__escena">`
