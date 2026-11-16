@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
+import { useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { layoutDefaults } from "@/lib/cmsLightDefaults";
@@ -51,6 +52,8 @@ function IndustryGroupCard({ group, index, learnMoreText }: IndustryGroupCardPro
     <Link href={`/industry-groups/${group.slug}`}>
       <article
         className="group relative h-full cursor-pointer flex flex-col border-t border-ss-rule pt-6"
+        id={`in-${group.slug}`}
+        style={{ scrollMarginTop: "6rem" }}
         data-testid={`card-industry-group-${group.slug}`}
       >
         <span
@@ -109,6 +112,16 @@ export default function IndustryGroups() {
   const { data: industryGroups, isLoading, error } = useQuery<IndustryGroup[]>({
     queryKey: ["/api/industry-groups"],
   });
+
+  useEffect(() => {
+    if (isLoading || !window.location.hash) return;
+    const timer = window.setTimeout(() => {
+      const target = document.getElementById(window.location.hash.slice(1));
+      if (!target) return;
+      target.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [industryGroups, isLoading]);
 
   const content: Record<string, { title: string; subtitle: string; errorMessage: string; learnMore: string; searchPlaceholder: string; viewAll: string; noResults: string }> = {
     en: {
