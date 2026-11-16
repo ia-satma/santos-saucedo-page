@@ -102,19 +102,18 @@ export function serveStatic(app: Express) {
         const p = await portadaInicial();
         if (p && html.includes('<div id="root"></div>')) {
           html = html.replace("</title>", `</title>\n    ${p.head}`).replace('<div id="root"></div>', p.root);
-          // El programa del sitio y las dos letras se piden cuando la foto de la portada ya llegó: en el
-          // teléfono no le quitan conexión (después de pintarla). Si tarda más de 2,5 s, van de todos modos.
+          // El programa arranca junto con la primera foto. El HTML ya contiene el telón pintado, así que
+          // React puede hidratarlo sin dejar un hueco mientras llegan los datos del CMS.
           const fuentes: string[] = [];
           let programa = "";
           html = html
             .replace(/<link rel="preload" as="font" type="font\/woff2" crossorigin href="([^"]+)">\s*/g, (_m, f: string) => { fuentes.push(f); return ""; })
             .replace(/<script type="module" crossorigin src="([^"]+)"><\/script>\s*/, (_m, f: string) => { programa = f; return ""; });
           if (programa) {
-            const carga = `(function(){var i=document.querySelector("#root img.mk-telon__quieta"),h=0;function go(){if(h)return;h=1;`
+            const carga = `(function(){var h=0;function go(){if(h)return;h=1;`
               + `${JSON.stringify(fuentes)}.forEach(function(f){var l=document.createElement("link");l.rel="preload";l.as="font";l.type="font/woff2";l.crossOrigin="anonymous";l.href=f;document.head.appendChild(l)});`
               + `var s=document.createElement("script");s.type="module";s.crossOrigin="anonymous";s.src=${JSON.stringify(programa)};document.head.appendChild(s)}`
-              + `function pintada(){requestAnimationFrame(function(){requestAnimationFrame(go)})}`
-              + `if(i&&i.decode)i.decode().then(pintada,go);else go();setTimeout(go,2500)})();`;
+              + `go()})();`;
             html = html.replace("</body>", `<script>${carga}</script>\n  </body>`);
           } else {
             for (const f of fuentes) html = html.replace("</head>", `<link rel="preload" as="font" type="font/woff2" crossorigin href="${f}">\n</head>`);
