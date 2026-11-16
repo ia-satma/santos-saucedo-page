@@ -6,6 +6,7 @@ import "./firma.css";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "wouter";
 import { useV3Module } from "@/v3/shared";
+import { v3Asset } from "@/v3/asset";
 import reaccionDatos from "./reaccion-datos.json";
 import { initFilosofia, type ReaccionDatos } from "./filosofia";
 import { initPrioridad } from "./prioridad";
@@ -16,16 +17,20 @@ type LangAttrs = { lang?: string; dir?: "ltr" | "rtl" };
 /** El contenido del <svg> generado por la demo (build/*.mjs), sin la etiqueta raíz: React pone la raíz. */
 const interior = (svg: string) => ({ __html: svg.slice(svg.indexOf(">") + 1, svg.lastIndexOf("</svg>")) });
 
-/* El dibujo de la turbina (reaccion.svg, unos 380 KB) no va en el paquete de la página: se pide aparte
-   cuando la lámina está a una pantalla de distancia, y queda guardado para la próxima visita. Mientras
+/* El dibujo de la turbina (reaccion.svg, unos 380 KB) se sirve como medio estático y se pide aparte
+   cuando la lámina está a una pantalla de distancia, fuera del paquete JavaScript de la página. Mientras
    llega, la caja ya tiene su tamaño (aspect-ratio y viewBox), así que nada salta. */
 type Html = { __html: string };
 let reaccionGuardada: Html | null = null;
 let reaccionPedida: Promise<Html> | null = null;
 function pedirReaccion(): Promise<Html> {
   if (!reaccionPedida) {
-    reaccionPedida = import("./reaccion.svg?raw")
-      .then((m) => (reaccionGuardada = interior(m.default)))
+    reaccionPedida = fetch(v3Asset("/v3/reaccion.svg"), { cache: "force-cache" })
+      .then((response) => {
+        if (!response.ok) throw new Error(`No se pudo cargar la lámina de reacción (${response.status})`);
+        return response.text();
+      })
+      .then((svg) => (reaccionGuardada = interior(svg)))
       .catch((e) => { reaccionPedida = null; throw e; });
   }
   return reaccionPedida;

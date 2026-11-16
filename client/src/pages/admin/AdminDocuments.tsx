@@ -1,9 +1,8 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useId, useRef, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Archive, ArchiveRestore, Check, ChevronDown, FileText, Loader2, RefreshCw } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AssetDownloadButton, PrivateAssetPreview } from "@/components/admin/AssetFiles";
-import { DocumentRichTextEditor } from "@/components/admin/DocumentRichTextEditor";
 import { DocumentUpload, type UploadedDoc } from "@/components/admin/DocumentUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +16,8 @@ import { DEFAULT_LETTERHEAD_TEMPLATE, letterheadTemplates, type LetterheadTempla
 import { plainTextToRichText, richTextToPlainText, type DocumentRichText } from "@shared/documentRichText";
 
 const endpoint = "/api/admin/documents";
+const DocumentRichTextEditor = lazy(() => import("@/components/admin/DocumentRichTextEditor").then((module) => ({ default: module.DocumentRichTextEditor })));
+const RichTextEditorFallback = () => <div className="min-h-24 rounded-md border bg-muted/20 p-4 text-sm text-muted-foreground">Cargando editor…</div>;
 const primaryClass = "bg-[#0B2850] text-white hover:bg-[#145385]";
 const emptyDocument = plainTextToRichText("");
 type Mode = "preserve" | "organize";
@@ -135,8 +136,10 @@ function DocumentWorkspace({ detail, onSaved, onClose }: {
             </summary>
             <div className="mt-3"><LetterheadPicker template={template} allowLegacy={document.template == null} onChange={setTemplate} /></div>
           </details>
-          <DocumentRichTextEditor label="Contenido de la versión" initialContent={initialContent} disabled={save.isPending || archived}
-            error={contentError} onChange={(value, error) => { setRichContent(value); setContentError(error); }} />
+          <Suspense fallback={<RichTextEditorFallback />}>
+            <DocumentRichTextEditor label="Contenido de la versión" initialContent={initialContent} disabled={save.isPending || archived}
+              error={contentError} onChange={(value, error) => { setRichContent(value); setContentError(error); }} />
+          </Suspense>
           {!archived && <div className="flex flex-wrap items-center gap-2">
             <Button className={primaryClass} type="submit" disabled={!changed || !sourceText.trim() || Boolean(contentError) || save.isPending}>
               {save.isPending ? <Loader2 className="animate-spin" aria-hidden="true" /> : <Check aria-hidden="true" />}
@@ -271,8 +274,10 @@ export default function AdminDocuments() {
             </p>
           </div>
         </div>
-        <DocumentRichTextEditor key={editorKey} initialContent={emptyDocument} disabled={generate.isPending}
-          error={contentError} onChange={(value, error) => { setRichContent(value); setContentError(error); }} />
+        <Suspense fallback={<RichTextEditorFallback />}>
+          <DocumentRichTextEditor key={editorKey} initialContent={emptyDocument} disabled={generate.isPending}
+            error={contentError} onChange={(value, error) => { setRichContent(value); setContentError(error); }} />
+        </Suspense>
         <div className="space-y-2">
           <p className="text-sm font-medium">Documentos de referencia <span className="font-normal text-muted-foreground">(opcional)</span></p>
           <DocumentUpload docs={documents} onChange={setDocuments} onUploadingChange={setUploading} />
