@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { CMS_QUERY, useCmsContent } from "@/hooks/useCmsContent";
 import { navigationDefaults } from "@/lib/cmsLightDefaults";
 import { layoutDefaults } from "@/lib/cmsLightDefaults";
-import { pageVisibility } from "@/lib/pageVisibility";
+import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
 import type { SiteNavigation, NavigationEntry } from "@shared/siteControls";
 import { siteLink } from "@shared/siteControls";
 import type { Chrome26Strings } from "./chrome26";
@@ -17,7 +17,12 @@ export function useSiteNavigation(code: string, chrome: Chrome26Strings) {
     item.labels[code] || item.labels.en || item.labels.es || "";
   const localize = <T extends NavigationEntry>(items: T[]) =>
     items
-      .filter((i) => i.visible && siteLink.safeParse(i.href).success && pageVisibility(layout, pageKeyForHref(i.href)).enabled)
+      .filter((i) => {
+        if (!i.visible || !siteLink.safeParse(i.href).success) return false;
+        const page = pageKeyForHref(i.href);
+        if (!pageVisibility(layout, page).enabled) return false;
+        return page !== "news" || blockVisible(layout, "home", "monitor");
+      })
       .slice()
       .sort((a, b) => a.order - b.order)
       .map((i) => ({ ...i, label: label(i) }));
