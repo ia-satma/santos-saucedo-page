@@ -133,25 +133,26 @@ export function useTranslatedContent({
   );
 
   const [staticTranslations, setStaticTranslations] = useState<Record<string, string> | undefined>();
-  const [staticTranslationLoading, setStaticTranslationLoading] = useState(false);
+  const [staticTranslationsReady, setStaticTranslationsReady] = useState(() => !canUseTranslations);
+  const staticTranslationLoading = canUseTranslations && !staticTranslationsReady;
   useEffect(() => {
     let active = true;
     if (!canUseTranslations) {
       setStaticTranslations(undefined);
-      setStaticTranslationLoading(false);
+      setStaticTranslationsReady(true);
       return () => { active = false; };
     }
-    setStaticTranslationLoading(true);
+    setStaticTranslationsReady(false);
     void getStaticEntityTranslation(contentType, entityId, language)
       .then((value) => {
         if (!active) return;
         setStaticTranslations(value);
-        setStaticTranslationLoading(false);
+        setStaticTranslationsReady(true);
       })
       .catch(() => {
         if (!active) return;
         setStaticTranslations(undefined);
-        setStaticTranslationLoading(false);
+        setStaticTranslationsReady(true);
       });
     return () => { active = false; };
   }, [canUseTranslations, contentType, entityId, language]);
