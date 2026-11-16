@@ -18,6 +18,14 @@ export default function Home() {
   const visibility = pageVisibility(layout, "home");
   const lang = displayLanguage === "es" ? "es" : "en";
   const practices = usePracticeItems(lang);
+  const homeLinkedPages: Record<string, string> = {
+    firma: "about",
+    creemos: "about",
+    practicas: "practices",
+    industrias: "industries",
+    socios: "team",
+    monitor: "news",
+  };
 
   if (!visibility.enabled) return <div data-testid="page-hidden" aria-hidden="true" />;
 
@@ -39,14 +47,15 @@ export default function Home() {
       <main id="main-content">
         {layout.home.hero&&blockVisible(layout, "home", "hero")&&<Telon lang={lang} />}
         {layout.homeOrder.map(key=>{
-          if(!layout.home[key as keyof typeof layout.home] || !blockVisible(layout, "home", key))return null;
+          const linkedPage = homeLinkedPages[key];
+          if(!layout.home[key as keyof typeof layout.home] || !blockVisible(layout, "home", key) || (linkedPage && !pageVisibility(layout, linkedPage).enabled))return null;
           switch(key){
             case 'firma':return <Band key={key} name="intro" start="light"><IntroBand lang={lang} areas={practices.length||4}/></Band>;
             case 'creemos':return <Band key={key} name="filosofia" start="dark"><FilosofiaBand lang={lang}/></Band>;
             case 'practicas':return (
               <Band key={key} name="practicas" start="dark" end="light">
                 <PracticasBaker lang={lang} items={practices}/>
-                {blockVisible(layout, "home", "industrias") && <IndustriasBand lang={lang}/>}
+                {blockVisible(layout, "home", "industrias") && pageVisibility(layout, "industries").enabled && <IndustriasBand lang={lang}/>}
               </Band>
             );
             case 'extranjeras':return <div key={key} className="hm-legacy" data-start="dark" data-end="dark"><Extranjeras26 lang={lang}/></div>;
