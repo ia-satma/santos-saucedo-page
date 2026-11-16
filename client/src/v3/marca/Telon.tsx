@@ -197,7 +197,6 @@ export default function Telon({ lang }: { lang: V3Lang }) {
                   <video
                     className="mk-telon__video"
                     src={videoSrc}
-                    poster={posterSrc}
                     muted
                     loop
                     playsInline
