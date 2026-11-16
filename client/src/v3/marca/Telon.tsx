@@ -45,6 +45,12 @@ const TXT = {
 
 // 1280 hasta 1024 px de ancho (teléfono y tableta); 1920 en el resto (como Hero26)
 const SMALL_SCREEN = "(max-width: 1024px)";
+const OPTIMIZED_HERO_VIDEO = `${import.meta.env.BASE_URL}video/portada-color-optimized.mp4`;
+
+function heroVideoSource(value: string) {
+  return /portada-color-(?:1280|1920)\.mp4(?:$|\?)/.test(value) ? OPTIMIZED_HERO_VIDEO : value;
+}
+
 // Preferencia del visitante: la misma clave que el héroe anterior ("paused" si pausó el video)
 const PREF_KEY = "ss-hero-video";
 
@@ -131,7 +137,8 @@ export default function Telon({ lang }: { lang: V3Lang }) {
   const videoSrc = useMemo(() => {
     if (!ready || failed || !videoEnabled || typeof window === "undefined") return undefined;
     const small = window.matchMedia(SMALL_SCREEN).matches;
-    return (small ? media.hero.videoMobile || media.hero.videoDesktop : media.hero.videoDesktop || media.hero.videoMobile) || undefined;
+    const configured = (small ? media.hero.videoMobile || media.hero.videoDesktop : media.hero.videoDesktop || media.hero.videoMobile) || "";
+    return configured ? heroVideoSource(configured) : undefined;
   }, [ready, failed, videoEnabled, media.hero.videoDesktop, media.hero.videoMobile]);
   const externalVideoSrc = videoSrc ? getVideoEmbedUrl(videoSrc, !paused) : null;
   const poster = media.hero.poster;
