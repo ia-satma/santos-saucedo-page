@@ -74,7 +74,7 @@ export function serveStatic(app: Express) {
         : `<link rel="preload" as="image" href="${esc(src)}" fetchpriority="high">`;
       const posterAttrs = srcSet ? ` srcset="${esc(srcSet)}" sizes="100vw"` : "";
       const head = `${responsivePreloads}\n    <link rel="preload" as="image" href="/v3/seccion-blanca.png" fetchpriority="high">`;
-      const root = `<div id="root"><div class="ss26 hm-page min-h-screen" aria-hidden="true">`
+      const root = `<div id="root"><div class="ss26 hm-page min-h-screen">`
         + `<header class="ss26 ss-header group/hdr sticky top-0 z-50 text-white ss-header--home-hero bg-transparent"><div class="ss-container flex h-[68px] items-center justify-between gap-4 lg:h-20 lg:gap-6 xl:gap-5"><span class="shrink-0"><img src="${esc(logo)}" alt="" class="h-[22px] w-auto min-[360px]:h-[26px] xl:h-[30px]" width="183" height="30"></span></div></header>`
         + `<main><div class="v3 mk-raiz" data-vista="inicio" style="--mk-art:url(&quot;/v3/seccion-blanca.png&quot;)"><div class="mk-js"><section class="mk-telon sobre-azul"><div class="mk-telon__escena">`
         + `<div class="mk-telon__marco"><div class="mk-telon__medio"><img class="mk-telon__quieta" src="${esc(src)}"${posterAttrs} alt="" width="1600" height="726" fetchpriority="high"></div></div>`
