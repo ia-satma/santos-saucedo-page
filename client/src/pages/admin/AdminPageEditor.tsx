@@ -5,6 +5,7 @@ import { cmsEditorPages, getCmsPage } from "@/features/site-config/editorMetadat
 import { ConfigFields } from "@/features/site-config/ConfigFields";
 import { ExplicitAboutFields, ExplicitHomeFields } from "@/features/site-config/ExplicitPageFields";
 import { PageVisibilityPanel } from "@/features/site-config/PageVisibilityPanel";
+import { InlineCatalogFields } from "@/features/site-config/InlineCatalogFields";
 import { AdminPageHelp } from "@/components/admin/AdminPageHelp";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAdminAuth, adminApiRequest } from "@/lib/adminAuth";
@@ -151,6 +152,8 @@ export default function AdminPageEditor() {
           <div className="cms-page-content">
             <div className="cms-editor-card mb-5 flex flex-wrap items-center gap-3"><label htmlFor="cms-page-language" className="text-sm font-semibold">Idioma que estás editando</label><select id="cms-page-language" className="border rounded-md p-2 bg-background" value={lang} onChange={(event) => setLang(event.target.value)}>{SUPPORTED_LANGUAGES.map((item) => <option key={item.code} value={item.code}>{item.nameNative}</option>)}</select></div>
             <PageVisibilityPanel pageId={page.id} />
+            {page.id === "practices" && <InlineCatalogFields kind="practice" />}
+            {page.id === "industries" && <InlineCatalogFields kind="industry" />}
             {query.isLoading && <p role="status">Cargando bloques…</p>}
             {query.isError && <p role="alert">{query.error.message}</p>}
             {page.tabs.map((tab, index) => {
