@@ -1,5 +1,3 @@
-import cmsSnapshot from "@shared/cms-static-snapshot.json";
-import translationSnapshot from "@shared/translation-snapshot.json";
 import { SUPPORTED_LANGUAGES } from "@shared/constants";
 
 type Snapshot = Record<string, unknown>;
@@ -17,20 +15,35 @@ function selectLanguage(value: unknown, language: string): unknown {
   );
 }
 
-export function getStaticCmsSection(section: string, language: string): unknown {
-  const content = cmsSnapshot.content as Snapshot;
+let cmsSnapshotPromise: Promise<Snapshot> | undefined;
+let translationSnapshotPromise: Promise<Snapshot> | undefined;
+
+function loadCmsSnapshot() {
+  cmsSnapshotPromise ??= import("@shared/cms-static-snapshot.json").then((module) => module.default as Snapshot);
+  return cmsSnapshotPromise;
+}
+
+function loadTranslationSnapshot() {
+  translationSnapshotPromise ??= import("@shared/translation-snapshot.json").then((module) => module.default as Snapshot);
+  return translationSnapshotPromise;
+}
+
+export async function getStaticCmsSection(section: string, language: string): Promise<unknown> {
+  const snapshot = await loadCmsSnapshot();
+  const content = snapshot.content as Snapshot;
   const sectionContent = content[section];
   if (!sectionContent || typeof sectionContent !== "object") return undefined;
   return selectLanguage(sectionContent, language);
 }
 
-export function getStaticEntityTranslation(
+export async function getStaticEntityTranslation(
   contentType: string,
   entityId: string,
   language: string,
-): Record<string, string> | undefined {
+): Promise<Record<string, string> | undefined> {
+  const snapshot = await loadTranslationSnapshot();
   const key = `${contentType}|${entityId}|${language}`;
-  const value = (translationSnapshot.entries as Snapshot)[key];
+  const value = (snapshot.entries as Snapshot)[key];
   if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
   return Object.fromEntries(
     Object.entries(value).filter(([, item]) => typeof item === "string" && item.trim()),

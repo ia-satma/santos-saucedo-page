@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { apiRequest, isStaticSite, queryClient } from "@/lib/queryClient";
 import { getStaticEntityTranslation } from "@/lib/staticLocalization";
@@ -132,16 +132,35 @@ export function useTranslatedContent({
     [fields, fieldsToTranslate],
   );
 
-  const staticTranslations = useMemo(
-    () => getStaticEntityTranslation(contentType, entityId, language),
-    [contentType, entityId, language],
-  );
+  const [staticTranslations, setStaticTranslations] = useState<Record<string, string> | undefined>();
+  const [staticTranslationLoading, setStaticTranslationLoading] = useState(false);
+  useEffect(() => {
+    let active = true;
+    if (!canUseTranslations) {
+      setStaticTranslations(undefined);
+      setStaticTranslationLoading(false);
+      return () => { active = false; };
+    }
+    setStaticTranslationLoading(true);
+    void getStaticEntityTranslation(contentType, entityId, language)
+      .then((value) => {
+        if (!active) return;
+        setStaticTranslations(value);
+        setStaticTranslationLoading(false);
+      })
+      .catch(() => {
+        if (!active) return;
+        setStaticTranslations(undefined);
+        setStaticTranslationLoading(false);
+      });
+    return () => { active = false; };
+  }, [canUseTranslations, contentType, entityId, language]);
 
   const hasCachedTranslations = !!cachedTranslations?.translations && 
     Object.keys(cachedTranslations.translations).length > 0;
   const hasStaticTranslations = !!staticTranslations && Object.keys(staticTranslations).length > 0;
   
-  const needsTranslation = canGenerateTranslations && !isLoading &&
+  const needsTranslation = canGenerateTranslations && !isLoading && !staticTranslationLoading &&
     !hasCachedTranslations && !hasStaticTranslations && Object.keys(fieldsToTranslate).length > 0;
 
   const translationKey = `${contentType}-${entityId}-${language}`;
@@ -197,7 +216,7 @@ export function useTranslatedContent({
     return result;
   };
 
-  const isTranslationPending = canGenerateTranslations && (isLoading || translateMutation.isPending || needsTranslation);
+  const isTranslationPending = canGenerateTranslations && (isLoading || staticTranslationLoading || translateMutation.isPending || needsTranslation);
 
   return {
     translatedFields: getTranslatedFields(),
