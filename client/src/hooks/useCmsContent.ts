@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { CmsSection } from '@shared/cms';
 import { mergeCms } from '@shared/cmsMerge';
-import { queryClient } from '@/lib/queryClient';
+import { isStaticSite, queryClient } from '@/lib/queryClient';
+import { withPreviewPageVisibility } from '@/lib/pageVisibility';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SUPPORTED_LANGUAGES } from '@shared/constants';
 
@@ -64,12 +65,22 @@ function overlayLanguage(base: any, localized: any, language: string): any {
 /** Reads editable CMS content and its published localized snapshot for non-source languages. */
 export function useCmsContent<T>(section: CmsSection, fallback: T): T {
   const { language } = useLanguage();
+  const cmsPreview = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('cms-preview');
   const { data } = useQuery<Record<string, unknown>>({
     queryKey: CMS_QUERY,
     staleTime: 15000,
     refetchOnWindowFocus: true,
     refetchOnMount: true,
     refetchInterval: 30000,
+  });
+  // A preview is only allowed when the same browser already has an active CMS session.
+  // The public URL remains governed by the saved visibility settings for everyone else.
+  const { data: previewAuthorized = false } = useQuery<boolean>({
+    queryKey: ['/api/admin/me', 'cms-preview'],
+    enabled: cmsPreview && !isStaticSite,
+    staleTime: 60000,
+    retry: false,
+    queryFn: async () => (await fetch('/api/admin/me', { credentials: 'include' })).ok,
   });
   const previewOverride = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('cms-preview')
     ? (() => {
@@ -82,7 +93,10 @@ export function useCmsContent<T>(section: CmsSection, fallback: T): T {
     })()
     : undefined;
   const override = previewOverride ?? data?.[section];
-  const base = useMemo(() => mergeCms(fallback, override), [fallback, override]);
+  const base = useMemo(() => {
+    const merged = mergeCms(fallback, override);
+    return (section === 'layout' ? withPreviewPageVisibility(merged, previewAuthorized) : merged) as T;
+  }, [fallback, override, previewAuthorized, section]);
   // The bundled defaults already contain all ten language keys. That must not
   // prevent a published CMS localization row from replacing the default, so
   // only skip the endpoint when the live editorial override itself contains

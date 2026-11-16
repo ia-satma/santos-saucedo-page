@@ -190,7 +190,7 @@ export default function AdminPageEditor() {
               const blockKey = tabBlockKeys[page.id]?.[tab.label];
               return <section id={`page-block-${index}`} key={`${tab.section}-${index}`} className="cms-editor-card mb-5 scroll-mt-6"><div className="cms-editor-section-intro"><div><h2>{tab.label}</h2><p>{tab.description}</p></div><div className="flex items-center gap-4"><span className="text-xs text-muted-foreground">Bloque {index + 1} de {page.tabs.length}</span>{blockKey && <BlockVisibilityToggle pageId={page.id} blockKey={blockKey} label={tab.label} />}</div></div>{fields}</section>;
             })}
-            {showPreview && previewSrc && <div className="cms-editor-card mt-5 p-0 overflow-hidden"><p className="p-4 text-sm text-muted-foreground">La vista previa usa el borrador actual de esta página. Los cambios no se publican hasta confirmar «Publicar cambios».</p><iframe title={`Vista previa de ${page.label}`} src={previewSrc} className="w-full h-[760px] border-t" /></div>}
+            {showPreview && previewSrc && <div className="cms-editor-card mt-5 p-0 overflow-hidden"><p className="p-4 text-sm text-muted-foreground">Vista previa privada del borrador actual. También funciona mientras esta página esté oculta al público. Los cambios no se publican hasta confirmar «Publicar cambios».</p><iframe title={`Vista previa de ${page.label}`} src={previewSrc} className="w-full h-[760px] border-t" /></div>}
           </div>
         </div>
       </main>

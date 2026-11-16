@@ -2,6 +2,19 @@ import type { CmsValue } from "@shared/cms";
 
 export type PageVisibility = { enabled: boolean; blocks: Record<string, boolean> };
 
+export function withPreviewPageVisibility(layout: unknown, authorized: boolean): unknown {
+  if (!authorized || !layout || typeof layout !== "object" || Array.isArray(layout)) return layout;
+  const record = layout as Record<string, unknown>;
+  if (!record.pages || typeof record.pages !== "object" || Array.isArray(record.pages)) return layout;
+  return {
+    ...record,
+    pages: Object.fromEntries(Object.entries(record.pages).map(([page, value]) => [
+      page,
+      value && typeof value === "object" && !Array.isArray(value) ? { ...(value as Record<string, unknown>), enabled: true } : value,
+    ])),
+  };
+}
+
 export function pageVisibility(layout: unknown, page: string): PageVisibility {
   const pages = layout && typeof layout === "object" && !Array.isArray(layout)
     ? (layout as Record<string, unknown>).pages

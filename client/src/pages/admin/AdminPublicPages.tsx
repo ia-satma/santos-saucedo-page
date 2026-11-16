@@ -93,10 +93,11 @@ export default function AdminPublicPages() {
             {pages.map((page) => {
               const state = draft.pages?.[page.id] ?? defaultPage(page.id);
               const publicPath = page.path ? localizeHref(page.path, "es") : "";
+              const previewPath = publicPath ? `${publicPath}${publicPath.includes("?") ? "&" : "?"}cms-preview=1` : "";
               return <article key={page.id} className="rounded-xl border border-[var(--admin-line,#dce3e5)] p-4">
                 <div className="flex flex-wrap items-start justify-between gap-4"><div><h3 className="font-semibold text-[var(--admin-ink,#172b39)]">{page.label}</h3><p className="mt-1 text-sm text-muted-foreground">{page.description}</p>{publicPath && <code className="mt-2 inline-block text-xs text-muted-foreground">{publicPath}</code>}</div><label className="flex shrink-0 items-center gap-2 text-sm font-medium"><Switch checked={state.enabled !== false} onCheckedChange={(enabled) => updatePage(page.id, enabled)} />{state.enabled !== false ? "Visible" : "Oculta"}</label></div>
                 <p className="mt-3 text-xs text-muted-foreground">{state.enabled !== false ? "Aparece en el menú, el pie y su ruta pública." : "Se oculta del menú, el pie y todo su contenido público."}</p>
-                <div className="mt-4 flex flex-wrap gap-3"><Link href={`/admin/page/${page.id}`} className="admin-subtle-link">Editar contenido ↗</Link>{publicPath && <a href={publicPath} target="_blank" rel="noopener noreferrer" className="admin-subtle-link">Ver página pública ↗</a>}</div>
+                <div className="mt-4 flex flex-wrap gap-3"><Link href={`/admin/page/${page.id}`} className="admin-subtle-link">Editar contenido ↗</Link>{publicPath && <a href={publicPath} target="_blank" rel="noopener noreferrer" className="admin-subtle-link">Ver página pública ↗</a>}{previewPath && <a href={previewPath} target="_blank" rel="noopener noreferrer" className="admin-subtle-link">Vista previa privada ↗</a>}</div>
               </article>;
             })}
           </div>
