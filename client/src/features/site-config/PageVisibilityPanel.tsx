@@ -19,6 +19,11 @@ const pageLabels: Record<string, string> = {
   careers: "Carreras",
   offices: "Oficinas",
   testimonials: "Testimonios",
+  interns: "Pasantías S&S",
+  newsletter: "Boletín",
+  privacy: "Aviso de privacidad",
+  terms: "Términos de uso",
+  "not-found": "Página no encontrada",
 };
 
 const blockLabels: Record<string, string> = {

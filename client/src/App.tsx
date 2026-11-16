@@ -91,6 +91,7 @@ const AdminManual = lazy(() => import("@/pages/admin/AdminManual"));
 const ContentPreview = lazy(() => import("@/features/admin/ContentPreview"));
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
 const AdminSiteConfig = lazy(() => import("@/pages/admin/AdminSiteConfig"));
+const AdminPageEditor = lazy(() => import("@/pages/admin/AdminPageEditor"));
 const AdminJobs = lazy(() => import("@/pages/admin/AdminJobs"));
 const AdminApplications = lazy(() => import("@/pages/admin/AdminApplications"));
 const AdminInbox = lazy(() => import("@/pages/admin/AdminInbox"));
@@ -306,6 +307,7 @@ function Router() {
         <Route path="/admin/cookie-consent"><AdminSiteConfig fixedSection="consent"/></Route>
         <Route path="/admin/site-config/:section"><AdminSiteConfig/></Route>
         <Route path="/admin/site-config"><AdminSiteConfig/></Route>
+        <Route path="/admin/page/:pageId" component={AdminPageEditor} />
         <Route path="/admin/jobs" component={AdminJobs} />
         <Route path="/admin/inbox" component={AdminInbox} />
         <Route path="/admin/testimonials" component={AdminTestimonials} />

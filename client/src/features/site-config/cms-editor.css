@@ -113,11 +113,20 @@
   margin-bottom: 22px;
 }
 
+.cms-page-layout { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 22px; align-items: start; }
+.cms-page-index { position: sticky; top: 20px; display: grid; gap: 5px; padding: 14px; border: 1px solid var(--admin-line, #e3e8e7); border-radius: 14px; background: #fff; }
+.cms-page-index-title { margin: 0 0 6px; color: var(--admin-ink, #172b39); font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.cms-page-index a { color: var(--admin-muted, #68777c); font-size: .82rem; line-height: 1.35; text-decoration: none; }
+.cms-page-index a:hover { color: var(--admin-accent, #174957); text-decoration: underline; }
+.cms-page-content { min-width: 0; }
+
 @media (max-width: 700px) {
   .cms-editor-header-inner, .cms-editor-main { width: min(100% - 28px, 1180px); }
   .cms-editor-heading-row, .cms-editor-section-intro { flex-direction: column; align-items: flex-start; }
   .cms-editor-status { order: -1; }
   .cms-editor-card { padding: 18px; border-radius: 14px; }
+  .cms-page-layout { grid-template-columns: 1fr; }
+  .cms-page-index { position: static; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -14,7 +14,7 @@ import { SUPPORTED_LANGUAGES } from '@shared/constants';
 import { readStaticCmsSection } from '../localization/staticSnapshots';
 
 const prefix = 'editorial.';
-type Stored = { content: CmsValue; previous?: CmsValue };
+type Stored = { content: CmsValue; draft?: CmsValue; previous?: CmsValue };
 const revision = (raw: string | null | undefined) => raw ? createHash('sha256').update(raw).digest('hex') : 'initial';
 const normalizeSearch = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 function flattenCms(value: CmsValue, path: string[] = [], out: { path: string[]; value: string }[] = []) {
@@ -219,7 +219,7 @@ export function registerCmsRoutes(app: Express) {
       const [row] = await db.select().from(siteConfig).where(eq(siteConfig.key, prefix + section));
       const saved = decode(row?.value);
       res.setHeader('Cache-Control', 'no-store');
-      res.json({ section, content: mergeCms(cmsDefaults[section], saved?.content), revision: revision(row?.value), previous: saved?.previous ?? null });
+      res.json({ section, content: mergeCms(cmsDefaults[section], saved?.draft ?? saved?.content), revision: revision(row?.value), previous: saved?.previous ?? null, published: mergeCms(cmsDefaults[section], saved?.content) });
     } catch (error) {
       console.error('[CMS] Section read failed', error);
       res.status(503).json({ error: 'No se pudo abrir la sección.' });
@@ -256,8 +256,10 @@ export function registerCmsRoutes(app: Express) {
         const saved: Record<string, { content: CmsValue; revision: string; previous: CmsValue | null }> = {};
         for (const item of parsed) {
           const old = current.get(item.section)!;
-          const previous = mergeCms(cmsDefaults[item.section], decode(old?.value)?.content);
-          const raw = JSON.stringify({ content: item.content, previous });
+          const stored = decode(old?.value);
+          const published = mergeCms(cmsDefaults[item.section], stored?.content);
+          const previous = stored?.previous ?? published;
+          const raw = JSON.stringify({ content: published, draft: item.content, previous });
           const metadata = { value: raw, category: 'editorial', type: 'json', updatedAt: new Date() };
           if (old?.value === null) {
             const inserted = await tx.insert(siteConfig).values({ key: prefix + item.section, ...metadata }).onConflictDoNothing().returning();
@@ -276,6 +278,51 @@ export function registerCmsRoutes(app: Express) {
       if (error?.message === 'REVISION_CONFLICT') return res.status(409).json({ error: `La sección ${error.section || 'editada'} cambió mientras se guardaba. Recargue antes de publicar.` });
       console.error('[CMS] Bundle save failed', error);
       res.status(500).json({ error: 'No se pudo guardar el paquete. Su borrador se conserva.' });
+    }
+  });
+  app.post('/api/admin/site-config-bundle/publish', authMiddleware, requireRole('editor', 'admin'), async (req, res) => {
+    const items = Array.isArray(req.body?.sections) ? req.body.sections : [];
+    if (!items.length || items.length > 20) return res.status(400).json({ error: 'El paquete de publicación no contiene secciones válidas.' });
+    const parsed: { section: CmsSection; revision: string }[] = [];
+    const seen = new Set<string>();
+    for (const raw of items as unknown[]) {
+      const item = raw && typeof raw === 'object' ? raw as Record<string, unknown> : {};
+      const section = String(item.section || '');
+      if (!isCmsSection(section) || seen.has(section) || !item.revision) return res.status(400).json({ error: 'El paquete de publicación contiene una sección inválida.' });
+      seen.add(section);
+      parsed.push({ section, revision: String(item.revision) });
+    }
+    try {
+      const result = await db.transaction(async (tx) => {
+        const current = new Map<string, { value: string | null }>();
+        for (const item of parsed) {
+          const [row] = await tx.select({ value: siteConfig.value }).from(siteConfig).where(eq(siteConfig.key, prefix + item.section));
+          if (item.revision !== revision(row?.value)) throw Object.assign(new Error('REVISION_CONFLICT'), { section: item.section });
+          current.set(item.section, { value: row?.value ?? null });
+        }
+        const published: Record<string, { content: CmsValue; revision: string; previous: CmsValue | null }> = {};
+        for (const item of parsed) {
+          const old = current.get(item.section)!;
+          const stored = decode(old.value);
+          const draft = stored?.draft;
+          if (draft === undefined) continue;
+          const previous = stored?.previous ?? mergeCms(cmsDefaults[item.section], stored?.content);
+          const raw = JSON.stringify({ content: draft, previous });
+          const metadata = { value: raw, category: 'editorial', type: 'json', updatedAt: new Date() };
+          const updated = old.value === null
+            ? await tx.insert(siteConfig).values({ key: prefix + item.section, ...metadata }).onConflictDoNothing().returning()
+            : await tx.update(siteConfig).set(metadata).where(and(eq(siteConfig.key, prefix + item.section), eq(siteConfig.value, old.value))).returning();
+          if (!updated.length) throw Object.assign(new Error('REVISION_CONFLICT'), { section: item.section });
+          published[item.section] = { content: draft, revision: revision(raw), previous };
+        }
+        return published;
+      });
+      console.log('[CMS]', JSON.stringify({ action: 'publish-bundle', sections: parsed.map((item) => item.section), userId: req.adminUser!.id, at: new Date().toISOString() }));
+      res.json({ sections: result });
+    } catch (error: any) {
+      if (error?.message === 'REVISION_CONFLICT') return res.status(409).json({ error: `La sección ${error.section || 'editada'} cambió mientras se publicaba. Recargue antes de continuar.` });
+      console.error('[CMS] Bundle publish failed', error);
+      res.status(500).json({ error: 'No se pudo publicar el paquete. El borrador se conserva.' });
     }
   });
   app.put('/api/admin/site-config/:section', authMiddleware, requireRole('editor', 'admin'), async (req, res) => {

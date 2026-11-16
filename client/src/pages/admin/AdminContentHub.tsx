@@ -102,7 +102,7 @@ export default function AdminContentHub() {
         <h2>Páginas y bloques</h2>
         <div className="admin-content-items">
         {canonicalPageOrder.map((id) => cmsEditorPages.find((page) => page.id === id)).filter(Boolean).map((page) => (
-            <Link key={page!.id} href={adminHrefForCmsSection(page!.tabs[0].section)}>
+            <Link key={page!.id} href={`/admin/page/${page!.id}`}>
               <div>
                 <strong>{page!.label}</strong>
                 <p>{page!.description}</p>
@@ -121,7 +121,7 @@ export default function AdminContentHub() {
           {contentSearch.data?.results.length ? (
             <div className="admin-content-items">
               {contentSearch.data.results.map((result, index) => (
-                <Link key={`${result.section}-${result.path}-${index}`} href={`${adminHrefForCmsSection(getCmsEditorPage(result.section as CmsSection).tabs[0].section)}?focus=${encodeURIComponent(result.path)}`}>
+                <Link key={`${result.section}-${result.path}-${index}`} href={`/admin/page/${getCmsEditorPage(result.section as CmsSection).id}?focus=${encodeURIComponent(result.path)}`}>
                   <div>
                     <strong>{result.label}{result.language ? ` · ${result.language.toUpperCase()}` : ""}</strong>
                     <p>{result.value.length > 180 ? `${result.value.slice(0, 180)}…` : result.value}</p>

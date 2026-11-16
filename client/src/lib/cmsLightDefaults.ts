@@ -13,6 +13,11 @@ export const layoutDefaults = {
     careers: { enabled: true, blocks: { hero: true, informacion: true, vacantes: true, formulario: true } },
     offices: { enabled: true, blocks: { hero: true, datos: true, galeria: true, horario: true } },
     testimonials: { enabled: true, blocks: { hero: true, lista: true, estrellas: true } },
+    interns: { enabled: true, blocks: { hero: true, formulario: true } },
+    newsletter: { enabled: true, blocks: { hero: true, formulario: true, relacionadas: true } },
+    privacy: { enabled: true, blocks: { hero: true, legal: true, contacto: true } },
+    terms: { enabled: true, blocks: { hero: true, legal: true, contacto: true } },
+    "not-found": { enabled: true, blocks: { contenido: true } },
   },
 } as const;
 

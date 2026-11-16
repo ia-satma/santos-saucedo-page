@@ -16,6 +16,17 @@ const names: Record<string, string> = {
 export const fieldLabel = (key: string) => names[key] || key.replace(/([a-z])([A-Z])/g,'$1 $2').replace(/[_-]/g,' ');
 const locked = new Set(['id','slug','path','href','noindex','attrs','locale']);
 function emptyLike(v: CmsValue): CmsValue { if (Array.isArray(v)) return []; if (v && typeof v==='object') return Object.fromEntries(Object.entries(v).map(([k,x])=>[k,emptyLike(x)])); return typeof v==='boolean'?false:typeof v==='number'?0:''; }
+function emptyArrayItem(key: string, value: CmsValue[]): CmsValue {
+  if (value.length) return emptyLike(value[0]);
+  if (['body','words','values','priority','priorityNotes','lista'].includes(key)) return '';
+  if (key === 'items') return { slug: '', title: '', body: '' };
+  if (key === 'figures') return { value: '', suffix: '', label: '' };
+  if (key === 'sections') return { title: '', content: '' };
+  if (key === 'piezas') return { title: '', text: '' };
+  if (key === 'rows') return { label: '', value: '' };
+  if (key === 'people') return { name: '', photo: '', role: '' };
+  return '';
+}
 export function ConfigFields({ value, onChange, path = [], media = false }: { value: CmsValue; onChange: (v: CmsValue) => void; path?: string[]; media?: boolean }) {
   const key = path.at(-1) || '';
   const label = fieldLabel(key);
@@ -33,13 +44,13 @@ export function ConfigFields({ value, onChange, path = [], media = false }: { va
         </div>}</div>
         {fixedSize?<p>{fieldLabel(String(v))}</p>:<ConfigFields value={v} onChange={x=>onChange(value.map((old,j)=>j===i?x:old))} path={[...path,String(i)]} media={media} />}
       </div>)}
-      {!fixed && !fixedSize && <Button type="button" variant="outline" size="sm" disabled={!value.length && key!=='teamMosaic'} onClick={()=>onChange([...value,value.length?emptyLike(value[0]):''])}>Añadir {label.toLowerCase()}</Button>}
+      {!fixed && !fixedSize && <Button type="button" variant="outline" size="sm" onClick={()=>onChange([...value,emptyArrayItem(key,value)])}>Añadir {label.toLowerCase()}</Button>}
     </fieldset>;
   }
   if (value !== null && typeof value==='object') return <div className="space-y-5">{Object.entries(value).filter(([k])=>!locked.has(k)).map(([k,v])=>{
     const nested = v!==null && typeof v==='object';
     const update = (next: CmsValue) => onChange({ ...value, [k]:next, ...(media && k==='url' && 'smallUrl' in value ? { smallUrl:next } : {}) });
-    return nested ? <details key={k} className="border p-4" open={path.length<1}><summary className="cursor-pointer font-medium">{fieldLabel(k)}</summary><div className="mt-5"><ConfigFields value={v} onChange={update} path={[...path,k]} media={media}/></div></details> : <ConfigFields key={k} value={v} onChange={update} path={[...path,k]} media={media}/>;
+    return nested ? <fieldset key={k} className="space-y-5 rounded-xl border border-[var(--admin-line,#e3e8e7)] p-5"><legend className="px-2 text-base font-semibold text-[var(--admin-ink,#172b39)]">{fieldLabel(k)}</legend><ConfigFields value={v} onChange={update} path={[...path,k]} media={media}/></fieldset> : <ConfigFields key={k} value={v} onChange={update} path={[...path,k]} media={media}/>;
   })}</div>;
   if (typeof value==='boolean') return <div className="flex items-center justify-between gap-6"><label htmlFor={id} className="text-sm font-medium">{label}</label><Switch id={id} checked={value} onCheckedChange={onChange}/></div>;
   if (typeof value==='number') return <div className="space-y-2"><label htmlFor={id} className="text-sm font-medium">{label}</label><Input id={id} type="number" min={0} value={value} onChange={e=>onChange(Number(e.target.value))}/></div>;
