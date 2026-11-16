@@ -7,6 +7,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { SUPPORTED_LANGUAGES } from '@shared/constants';
 
 export const CMS_QUERY = ['/api/site-config'] as const;
+const PREVIEW_STORAGE_KEY = 'santos-cms-preview-content';
 
 const LANGUAGE_CODES: ReadonlySet<string> = new Set(SUPPORTED_LANGUAGES.map(({ code }) => code));
 
@@ -70,7 +71,17 @@ export function useCmsContent<T>(section: CmsSection, fallback: T): T {
     refetchOnMount: true,
     refetchInterval: 30000,
   });
-  const override = data?.[section];
+  const previewOverride = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('cms-preview')
+    ? (() => {
+      try {
+        const stored = sessionStorage.getItem(PREVIEW_STORAGE_KEY);
+        return stored ? (JSON.parse(stored) as Record<string, unknown>)[section] : undefined;
+      } catch {
+        return undefined;
+      }
+    })()
+    : undefined;
+  const override = previewOverride ?? data?.[section];
   const base = useMemo(() => mergeCms(fallback, override), [fallback, override]);
   // The bundled defaults already contain all ten language keys. That must not
   // prevent a published CMS localization row from replacing the default, so

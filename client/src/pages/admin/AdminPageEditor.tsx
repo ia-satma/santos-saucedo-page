@@ -18,6 +18,7 @@ import "@/features/site-config/cms-editor.css";
 
 type SectionResponse = { section: CmsSection; content: CmsValue; revision: string; previous: CmsValue | null };
 type BundleResponse = { sections: Record<string, SectionResponse> };
+const PREVIEW_STORAGE_KEY = "santos-cms-preview-content";
 
 const catalogLinks: Record<string, { label: string; href: string }[]> = {
   practices: [{ label: "Administrar fichas de prácticas", href: "/admin/practice-groups" }],
@@ -38,6 +39,7 @@ export default function AdminPageEditor() {
   const [location] = useLocation();
   const page = getCmsPage(pageId) ?? cmsEditorPages[0];
   const { language } = useLanguage();
+  const publicPath = localizeHref(page.path || "/", language);
   const { isAuthenticated, isLoading, requireAuth } = useAdminAuth();
   const { toast } = useToast();
   const [drafts, setDrafts] = useState<Record<string, CmsValue>>({});
@@ -45,6 +47,7 @@ export default function AdminPageEditor() {
   const [revisions, setRevisions] = useState<Record<string, string>>({});
   const [lang, setLang] = useState(language === "es" ? "es" : language);
   const [showPreview, setShowPreview] = useState(false);
+  const [previewSrc, setPreviewSrc] = useState<string>();
 
   useEffect(() => { requireAuth(); }, [requireAuth]);
   const sections = useMemo(() => page.tabs.map((tab) => tab.section), [page]);
@@ -70,6 +73,19 @@ export default function AdminPageEditor() {
     setRevisions(Object.fromEntries(query.data.map((item) => [item.section, item.revision])));
     setSnapshot(JSON.stringify(nextDrafts));
   }, [query.data]);
+  useEffect(() => {
+    if (!showPreview) {
+      sessionStorage.removeItem(PREVIEW_STORAGE_KEY);
+      setPreviewSrc(undefined);
+      return;
+    }
+    try {
+      sessionStorage.setItem(PREVIEW_STORAGE_KEY, JSON.stringify(drafts));
+      setPreviewSrc(`${publicPath}?cms-preview=1&draft=${Date.now()}`);
+    } catch {
+      setPreviewSrc(`${publicPath}?cms-preview=1`);
+    }
+  }, [drafts, publicPath, showPreview]);
   useEffect(() => {
     const focus = new URLSearchParams(location.split("?")[1] || "").get("focus");
     if (!focus) return;
@@ -118,7 +134,6 @@ export default function AdminPageEditor() {
 
   if (isLoading || !isAuthenticated) return <p className="p-8" role="status">Verificando sesión…</p>;
 
-  const publicPath = localizeHref(page.path || "/", language);
   const updateSection = (section: string, next: CmsValue) => setDrafts((current) => ({ ...current, [section]: next }));
   const links = catalogLinks[page.id] ?? [];
 
@@ -151,7 +166,7 @@ export default function AdminPageEditor() {
                   : <ConfigFields value={current} onChange={update} path={localized ? [lang] : []} media={tab.section === "media" || tab.section === "v3"} />;
               return <section id={`page-block-${index}`} key={tab.section} className="cms-editor-card mb-5 scroll-mt-6"><div className="cms-editor-section-intro"><div><h2>{tab.label}</h2><p>{tab.description}</p></div><span className="text-xs text-muted-foreground">Bloque {index + 1} de {page.tabs.length}</span></div>{fields}</section>;
             })}
-            {showPreview && <div className="cms-editor-card mt-5 p-0 overflow-hidden"><p className="p-4 text-sm text-muted-foreground">La vista previa utiliza el contenido guardado más reciente.</p><iframe title={`Vista previa de ${page.label}`} src={`${publicPath}?cms-preview=1`} className="w-full h-[760px] border-t" /></div>}
+            {showPreview && previewSrc && <div className="cms-editor-card mt-5 p-0 overflow-hidden"><p className="p-4 text-sm text-muted-foreground">La vista previa usa el borrador actual de esta página. Los cambios no se publican hasta confirmar «Publicar cambios».</p><iframe title={`Vista previa de ${page.label}`} src={previewSrc} className="w-full h-[760px] border-t" /></div>}
           </div>
         </div>
       </main>
