@@ -155,7 +155,7 @@ async function career(bytes: Uint8Array, extra: Record<string, string> = {}) {
 }
 try {
   await registerRoutes(server, app);
-  await db.execute(sql`DELETE FROM rate_limit_buckets`);
+  await db.execute(sql`DELETE FROM site_config WHERE key LIKE '__rate_limit__:%'`);
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
   base = `http://127.0.0.1:${(server.address() as any).port}`;
   for (const role of ["super_admin", "viewer", "recursos_humanos", "editor"]) {

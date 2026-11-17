@@ -40,33 +40,25 @@ export async function ensureCmsSchema() {
     action text NOT NULL, details jsonb, created_at timestamp DEFAULT now()
   )`);
   await db.execute(sql`CREATE INDEX IF NOT EXISTS admin_access_events_created_idx ON admin_access_events (created_at DESC)`);
-  await db.execute(sql`CREATE TABLE IF NOT EXISTS rate_limit_buckets (
-    bucket_key text PRIMARY KEY,
-    hit_count integer NOT NULL DEFAULT 0,
-    window_reset_at timestamp NOT NULL,
-    blocked_until timestamp,
-    updated_at timestamp DEFAULT now()
-  )`);
-  await db.execute(sql`CREATE INDEX IF NOT EXISTS rate_limit_buckets_reset_idx ON rate_limit_buckets (window_reset_at)`);
-  await db.execute(sql`CREATE TABLE IF NOT EXISTS security_migrations (
-    id text PRIMARY KEY,
-    applied_at timestamp NOT NULL DEFAULT now()
-  )`);
-  await editorialDb.transaction(async (tx) => {
-    await tx.execute(sql`SELECT pg_advisory_xact_lock(14703263)`);
-    const marker = await tx.execute(sql`SELECT id FROM security_migrations WHERE id = 'admin_session_token_hash_v1' LIMIT 1`);
-    if (marker.rows.length) return;
-    const sessions = await tx.execute(sql`SELECT id, token FROM admin_sessions`);
-    for (const row of sessions.rows as { id: string; token: string }[]) {
-      await tx.execute(sql`UPDATE admin_sessions SET token = ${createHash('sha256').update(row.token, 'utf8').digest('hex')} WHERE id = ${row.id}`);
-    }
-    await tx.execute(sql`INSERT INTO security_migrations (id) VALUES ('admin_session_token_hash_v1')`);
-  });
   await db.execute(sql`CREATE TABLE IF NOT EXISTS site_config (
     id varchar PRIMARY KEY DEFAULT gen_random_uuid(), key text NOT NULL UNIQUE,
     value text, value_es text, type text NOT NULL DEFAULT 'text',
     category text DEFAULT 'general', description text, updated_at timestamp DEFAULT now()
   )`);
+  await editorialDb.transaction(async (tx) => {
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(14703263)`);
+    const marker = await tx.execute(sql`SELECT key FROM site_config WHERE key = 'security.migration.admin_session_token_hash_v1' LIMIT 1`);
+    if (marker.rows.length) return;
+    const sessions = await tx.execute(sql`SELECT id, token FROM admin_sessions`);
+    for (const row of sessions.rows as { id: string; token: string }[]) {
+      await tx.execute(sql`UPDATE admin_sessions SET token = ${createHash('sha256').update(row.token, 'utf8').digest('hex')} WHERE id = ${row.id}`);
+    }
+    await tx.execute(sql`
+      INSERT INTO site_config (key, value, type, category, updated_at)
+      VALUES ('security.migration.admin_session_token_hash_v1', 'applied', 'text', 'security', now())
+      ON CONFLICT (key) DO NOTHING
+    `);
+  });
   // New installations start with the two editorial languages. Additional
   // languages remain opt-in from the translation settings panel.
   const defaultLanguages = 'es,en';
