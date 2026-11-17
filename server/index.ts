@@ -38,6 +38,20 @@ const corsOrigins = (process.env.CORS_ORIGIN || "")
   .map((origin) => origin.trim())
   .filter(Boolean);
 
+// Keep the deployment probe independent from CORS and the public SPA fallback.
+app.use("/healthz", (_req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+  res.status(200).json({ ok: true, service: "santos-saucedo" });
+});
+app.use("/readyz", (_req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+  if (!applicationReady) {
+    res.status(503).json({ ok: false, ready: false });
+    return;
+  }
+  res.status(200).json({ ok: true, ready: true });
+});
+
 app.use(cors({
   origin: corsOrigins.length > 0 ? corsOrigins : false,
   credentials: true,
@@ -46,18 +60,6 @@ app.use(cors({
 }));
 
 let applicationReady = false;
-
-app.get("/healthz", (_req, res) => {
-  res.status(200).json({ ok: true, service: "santos-saucedo" });
-});
-
-app.get("/readyz", (_req, res) => {
-  if (!applicationReady) {
-    res.status(503).json({ ok: false, ready: false });
-    return;
-  }
-  res.status(200).json({ ok: true, ready: true });
-});
 
 declare module "http" {
   interface IncomingMessage {
