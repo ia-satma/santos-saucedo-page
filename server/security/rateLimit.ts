@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import { sql } from "drizzle-orm";
-import { db } from "../db";
+import { editorialDb } from "../db";
 
 type RateLimitResult = {
   allowed: boolean;
@@ -25,7 +25,7 @@ export async function consumeRateLimit(
   const windowReset = new Date(now.getTime() + windowMs);
   const blockedUntil = new Date(now.getTime() + blockMs);
 
-  return db.transaction(async (tx) => {
+  return editorialDb.transaction(async (tx) => {
     await tx.execute(sql`
       INSERT INTO rate_limit_buckets (bucket_key, hit_count, window_reset_at, blocked_until)
       VALUES (${bucketKey}, 0, ${windowReset}, NULL)
@@ -81,11 +81,11 @@ export async function consumeRateLimit(
 }
 
 export async function clearRateLimit(key: string): Promise<void> {
-  await db.execute(sql`DELETE FROM rate_limit_buckets WHERE bucket_key = ${digestKey(key)}`);
+  await editorialDb.execute(sql`DELETE FROM rate_limit_buckets WHERE bucket_key = ${digestKey(key)}`);
 }
 
 export async function cleanRateLimitBuckets(): Promise<number> {
-  const result = await db.execute(sql`
+  const result = await editorialDb.execute(sql`
     DELETE FROM rate_limit_buckets
     WHERE COALESCE(blocked_until, window_reset_at) < now()
   `);

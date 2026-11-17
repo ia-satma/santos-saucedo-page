@@ -52,7 +52,7 @@ export async function ensureCmsSchema() {
     id text PRIMARY KEY,
     applied_at timestamp NOT NULL DEFAULT now()
   )`);
-  await db.transaction(async (tx) => {
+  await editorialDb.transaction(async (tx) => {
     await tx.execute(sql`SELECT pg_advisory_xact_lock(14703263)`);
     const marker = await tx.execute(sql`SELECT id FROM security_migrations WHERE id = 'admin_session_token_hash_v1' LIMIT 1`);
     if (marker.rows.length) return;
