@@ -291,7 +291,7 @@ export function startGoogleTestimonialsScheduler(): void {
 export function registerTestimonials(
   app: Express,
   submitGuard: RequestHandler,
-  allowInviteCheck: (req: Request) => boolean,
+  allowInviteCheck: (req: Request) => boolean | Promise<boolean>,
 ) {
   // ---------- Público ----------
   app.get("/api/testimonials", async (_req, res) => {
@@ -312,8 +312,13 @@ export function registerTestimonials(
   // ¿El enlace sigue vigente? Solo responde sí o no; no revela a quién se envió
   app.get("/api/testimonials/invite", async (req, res) => {
     res.setHeader("Cache-Control", "no-store");
-    if (!allowInviteCheck(req))
-      return res.status(429).json({ error: "Too many requests. Please try again later." });
+    try {
+      if (!(await allowInviteCheck(req)))
+        return res.status(429).json({ error: "Too many requests. Please try again later." });
+    } catch (error) {
+      console.error("[Testimonials] Invite limiter failed", (error as Error).message);
+      return res.status(503).json({ error: "Temporarily unavailable" });
+    }
     const token = typeof req.query.t === "string" ? req.query.t : "";
     if (!/^[A-Za-z0-9_-]{40,64}$/.test(token)) return res.json({ valid: false });
     try {

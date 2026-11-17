@@ -97,8 +97,9 @@ import { isNamedOnTeamPage, toPublicTeamMember, toPublicTeamProfile } from "@sha
 import { isPublicNews, toPublicNews } from "@shared/publicNews";
 import { isPublicIndustryGroup, publicIndustryGroups } from "@shared/publicIndustry";
 import { publicRoute, publicRouteAliases } from "@shared/publicRoutes";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { z, ZodError } from "zod/v3";
+import { clearRateLimit, consumeRateLimit } from "./security/rateLimit";
 import {
   SUPPORTED_LANGUAGES,
   translateLegalText,
@@ -128,9 +129,8 @@ import {
   hashPassword,
   comparePassword,
   generateToken,
+  hashSessionToken,
   getSessionExpiry,
-  checkRateLimit,
-  recordLoginAttempt,
   authMiddleware,
   requireRole,
   validateSessionToken,
@@ -352,8 +352,7 @@ export async function registerRoutes(
     if (allowedOrigins.includes(origin)) return true;
     try {
       const { host } = new URL(origin);
-      const forwardedHost = String(req.headers["x-forwarded-host"] ?? "").split(",")[0].trim();
-      return host === req.headers.host || (!!forwardedHost && host === forwardedHost);
+      return host === req.headers.host;
     } catch {
       return false;
     }
@@ -670,7 +669,7 @@ export async function registerRoutes(
 
   app.get("/api/practice-groups", async (_req, res) => {
     try {
-      const groups = await storage.getPracticeGroups();
+      const groups = (await storage.getPracticeGroups()).filter((group) => group.published !== false);
       res.set("Cache-Control", "public, max-age=60");
       res.json(groups);
     } catch (error) {
@@ -808,11 +807,10 @@ export async function registerRoutes(
   });
 
   // Formularios públicos (J4): /api/contact y /api/newsletter.
-  // IP del visitante: la primera de X-Forwarded-For (la que guarda el contacto) o la del socket.
+  // Express normaliza req.ip con el número de proxies confiables configurado en server/index.
+  // Nunca aceptamos X-Forwarded-For directamente del cliente.
   const clientIp = (req: Request): string => {
-    const fwd = req.headers["x-forwarded-for"];
-    const raw = Array.isArray(fwd) ? fwd[0] : fwd;
-    return raw?.split(",")[0]?.trim() || req.ip || req.socket.remoteAddress || "unknown";
+    return req.ip || req.socket.remoteAddress || "unknown";
   };
 
   // Origen: si el navegador manda Origin, debe ser el propio sitio o uno de la lista de CORS
@@ -823,69 +821,47 @@ export async function registerRoutes(
     return !origin || isAllowedOrigin(origin, req);
   };
 
-  // Límite en memoria: 5 envíos por IP cada 10 minutos en cada formulario; respuesta 429 con
-  // mensaje genérico. Sin tope global (L5): con unos 50 envíos basura cualquiera bloqueaba los
-  // formularios para todos durante 10 minutos.
-  // Es un límite de mejor esfuerzo: la clave es la primera entrada de X-Forwarded-For (la
-  // escribe el cliente) o, sin ella, la dirección del socket. No se usa "trust proxy" con
-  // req.ip porque no se sabe cuántos proxies pone Replit delante, y con un número equivocado
-  // todos los visitantes compartirían la misma clave (el proxy) y se bloquearían entre sí.
+  // Límite compartido entre instancias. La clave se hashea dentro de rateLimit.ts.
   const FORM_WINDOW_MS = 10 * 60 * 1000;
   const FORM_MAX_PER_IP = 5;
-  // maxPerIp: 5 en los formularios; la traducción pública usa la misma clave con 30 (N1)
-  const createFormLimiter = (maxPerIp = FORM_MAX_PER_IP) => {
-    const perIp = new Map<string, { count: number; resetAt: number }>();
-    return (ip: string): boolean => {
-      const now = Date.now();
-      if (perIp.size > 5000) {
-        perIp.forEach((entry, key) => {
-          if (entry.resetAt <= now) perIp.delete(key);
-        });
-        // Claves inventadas en masa (X-Forwarded-For distinto en cada envío): se vacía el mapa
-        // antes que dejarlo crecer sin límite en memoria
-        if (perIp.size > 20000) perIp.clear();
-      }
-      let entry = perIp.get(ip);
-      if (!entry || entry.resetAt <= now) {
-        entry = { count: 0, resetAt: now + FORM_WINDOW_MS };
-        perIp.set(ip, entry);
-      }
-      if (entry.count >= maxPerIp) return false;
-      entry.count += 1;
-      return true;
-    };
-  };
+  const createFormLimiter = (maxPerIp = FORM_MAX_PER_IP) => async (ip: string, scope = "form") =>
+    (await consumeRateLimit(`${scope}:${ip}`, maxPerIp, FORM_WINDOW_MS)).allowed;
 
   // Origen, límite y campo trampa ("website", oculto en el formulario): una persona no lo ve ni
   // lo alcanza; si llega lleno, se responde como un envío correcto sin guardar nada.
-  const publicFormGuard = (successBody: Record<string, unknown>) => {
+  const publicFormGuard = (successBody: Record<string, unknown>, scope: string) => {
     const allow = createFormLimiter();
-    return (req: Request, res: Response, next: () => void) => {
-      if (!isAllowedFormOrigin(req)) {
-        return res.status(403).json({ error: "Forbidden" });
+    return async (req: Request, res: Response, next: () => void) => {
+      try {
+        if (!isAllowedFormOrigin(req)) {
+          return res.status(403).json({ error: "Forbidden" });
+        }
+        if (!(await allow(clientIp(req), scope))) {
+          return res.status(429).json({ error: "Too many requests. Please try again later." });
+        }
+        const trap = req.body?.website;
+        if (typeof trap === "string" ? trap.trim() !== "" : trap != null) {
+          return res.json(successBody);
+        }
+        next();
+      } catch (error) {
+        console.error("Public form guard error:", error);
+        return res.status(503).json({ error: "Form temporarily unavailable" });
       }
-      if (!allow(clientIp(req))) {
-        return res.status(429).json({ error: "Too many requests. Please try again later." });
-      }
-      const trap = req.body?.website;
-      if (typeof trap === "string" ? trap.trim() !== "" : trap != null) {
-        return res.json(successBody);
-      }
-      next();
     };
   };
 
-  registerCareerApplications(app,publicFormGuard({success:true}));
+  registerCareerApplications(app, publicFormGuard({success:true}, "careers"));
   // Testimonios: envío con el límite y la trampa de los formularios; la consulta del enlace,
   // con un límite más holgado (30 por IP cada 10 minutos)
   const allowInviteCheck = createFormLimiter(30);
-  registerTestimonials(app, publicFormGuard({ success: true }), (req) => allowInviteCheck(clientIp(req)));
+  registerTestimonials(app, publicFormGuard({ success: true }, "testimonials"), (req) => allowInviteCheck(clientIp(req), "testimonial-invite"));
 
   const contactSuccess = { success: true, message: "Contact form submitted successfully" };
   // La casilla del aviso de privacidad también se exige aquí, no solo en el formulario
   const contactRequestSchema = contactFormSchema.extend({ consent: z.literal(true) });
 
-  app.post("/api/contact", publicFormGuard(contactSuccess), async (req, res) => {
+  app.post("/api/contact", publicFormGuard(contactSuccess, "contact"), async (req, res) => {
     try {
       if (!(await getCmsFormControls()).contact.enabled) return res.status(503).json({error:"FORM_DISABLED"});
       const validationResult = contactRequestSchema.safeParse(req.body);
@@ -942,7 +918,7 @@ export async function registerRoutes(
   });
   const newsletterSuccess = { success: true };
 
-  app.post("/api/newsletter", publicFormGuard(newsletterSuccess), async (req, res) => {
+  app.post("/api/newsletter", publicFormGuard(newsletterSuccess, "newsletter"), async (req, res) => {
     try { if (!(await getCmsFormControls()).newsletter.enabled) return res.status(503).json({error:"FORM_DISABLED"}); } catch { return res.status(503).json({error:"Formulario temporalmente no disponible."}); }
     const parsed = newsletterSchema.safeParse(req.body ?? {});
     if (!parsed.success) {
@@ -1032,7 +1008,7 @@ export async function registerRoutes(
         (m.bioEs && fold(m.bioEs).includes(query))
       ).slice(0, 10);
       
-      const filteredPractice = practiceGroups.filter(g =>
+      const filteredPractice = practiceGroups.filter(g => g.published !== false).filter(g =>
         fold(g.name).includes(query) ||
         fold(g.nameEs).includes(query) ||
         fold(g.description).includes(query) ||
@@ -1140,7 +1116,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         }
       }
 
-      for (const group of practiceGroups) {
+      for (const group of practiceGroups.filter((item) => item.published !== false)) {
         for (const { code } of SUPPORTED_LANGUAGES) {
           urlEntries += `
   <url>
@@ -1269,20 +1245,20 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       const { password } = validation.data;
       const passwordHash = await hashPassword(password);
 
-      // Check if user with this email already exists
-      const existingUser = await storage.getAdminUserByEmail(username);
-      if (existingUser) {
-        return res.status(403).json({ error: "Admin user with this email already exists" });
-      }
-
-      // Create the first admin user
-      const user = await storage.createAdminUser({
-        username: username.split('@')[0],
-        email: username,
-        passwordHash,
-        role: "super_admin",
-        isActive: true,
+      const user = await editorialDb.transaction(async (tx) => {
+        await tx.execute(sql`SELECT pg_advisory_xact_lock(91024811)`);
+        const [existingAdmin] = await tx.select({ id: accessUsers.id }).from(accessUsers).limit(1);
+        if (existingAdmin) return null;
+        const [created] = await tx.insert(accessUsers).values({
+          username: username.split('@')[0],
+          email: username,
+          passwordHash,
+          role: "super_admin",
+          isActive: true,
+        }).returning();
+        return created;
       });
+      if (!user) return res.status(404).json({ error: "Admin initialization is no longer available" });
 
       res.json({
         success: true,
@@ -1310,18 +1286,18 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       const rateKey = `${ip}|${attemptedUser}`;
 
       // Check rate limit
-      const rateCheck = checkRateLimit(rateKey);
-      if (!rateCheck.allowed) {
+      const rateCheck = await consumeRateLimit(`login:${rateKey}`, 5, 15 * 60 * 1000, 30 * 60 * 1000);
+      const ipRateCheck = await consumeRateLimit(`login-ip:${ip}`, 20, 15 * 60 * 1000, 30 * 60 * 1000);
+      if (!rateCheck.allowed || !ipRateCheck.allowed) {
         return res.status(429).json({ 
           error: "Too many login attempts", 
-          retryAfter: rateCheck.retryAfter 
+          retryAfter: Math.max(rateCheck.retryAfter, ipRateCheck.retryAfter),
         });
       }
 
       // Validate input
       const validation = adminLoginSchema.safeParse(req.body);
       if (!validation.success) {
-        recordLoginAttempt(rateKey, false);
         return res.status(400).json({ 
           error: "Invalid input", 
           details: validation.error.errors 
@@ -1337,14 +1313,12 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       }
       if (!user) {
         await comparePassword(password, "$2b$12$InvalidHashToPreventTimingAttackXXXXXXXXXXXX");
-        recordLoginAttempt(rateKey, false);
         await recordAccessEvent("login.failed", null);
         return res.status(401).json({ error: "Invalid credentials" });
       }
 
       // Check if user is active
       if (!user.isActive) {
-        recordLoginAttempt(rateKey, false);
         await recordAccessEvent("login.failed", user.id);
         return res.status(401).json({ error: "Account is disabled" });
       }
@@ -1352,20 +1326,20 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       // Verify password
       const validPassword = await comparePassword(password, user.passwordHash);
       if (!validPassword) {
-        recordLoginAttempt(rateKey, false);
         await recordAccessEvent("login.failed", user.id);
         return res.status(401).json({ error: "Invalid credentials" });
       }
 
       // Record successful attempt
-      recordLoginAttempt(rateKey, true);
+      await clearRateLimit(`login:${rateKey}`);
+      await clearRateLimit(`login-ip:${ip}`);
 
       // Create session
       const token = generateToken();
       const session = await editorialDb.transaction(async tx => {
         const [current] = await tx.select().from(accessUsers).where(eq(accessUsers.id,user.id)).for("update");
         if(!current?.isActive||current.passwordHash!==user.passwordHash) return null;
-        const [session]=await tx.insert(accessSessions).values({userId:user.id,token,expiresAt:getSessionExpiry(),ipAddress:ip,userAgent:req.headers["user-agent"]||null}).returning();
+        const [session]=await tx.insert(accessSessions).values({userId:user.id,token:hashSessionToken(token),expiresAt:getSessionExpiry(),ipAddress:ip,userAgent:req.headers["user-agent"]||null}).returning();
         await tx.update(accessUsers).set({lastLogin:new Date()}).where(eq(accessUsers.id,user.id));
         return session;
       });
@@ -1373,10 +1347,10 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       await recordAccessEvent("login.succeeded",user.id);
       res.setHeader("Cache-Control","no-store");
       const maxAge = Math.max(0, Math.floor((session.expiresAt.getTime() - Date.now()) / 1000));
-      res.setHeader("Set-Cookie", `${ADMIN_SESSION_COOKIE}=${encodeURIComponent(session.token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${process.env.NODE_ENV === "production" ? "; Secure" : ""}`);
+      const secureCookie = req.secure || String(req.headers["x-forwarded-proto"] || "").split(",")[0].trim() === "https" || process.env.NODE_ENV === "production";
+      res.setHeader("Set-Cookie", `${ADMIN_SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secureCookie ? "; Secure" : ""}`);
 
       res.json({
-        token: session.token,
         user: {
           id: user.id,
           username: user.username,
@@ -3110,16 +3084,18 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
     try {
       const { contentType, entityId, field, sourceText, sourceLanguage, targetLanguage } = req.body;
 
-      if (!contentType || !entityId || !field || !sourceText || !sourceLanguage || !targetLanguage) {
+      if (!contentType || !entityId || !field || typeof sourceText !== "string" || !sourceText.trim() || !sourceLanguage || !targetLanguage) {
         return res.status(400).json({ 
           error: "Missing required fields: contentType, entityId, field, sourceText, sourceLanguage, targetLanguage" 
         });
       }
+      if (sourceText.length > 50_000) return res.status(413).json({ error: "El texto supera el límite permitido." });
 
       const validCodes = SUPPORTED_LANGUAGES.map(l => l.code);
       if (!validCodes.includes(sourceLanguage) || !validCodes.includes(targetLanguage)) {
         return res.status(400).json({ error: "Invalid language code" });
       }
+      if (sourceLanguage === targetLanguage) return res.status(400).json({ error: "El idioma de origen y destino deben ser distintos." });
 
       const validFields = Object.hasOwn(validFieldsByContentType, contentType)
         ? validFieldsByContentType[contentType]
@@ -3148,7 +3124,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       const key = translationKey(contentType, entityId, field, targetLanguage);
       let pending = translationInFlight(key, sourceText);
       if (!pending) {
-        if (!allowTranslationCall(clientIp(req))) return tooManyTranslations(res);
+        if (!(await allowTranslationCall(clientIp(req), "translation"))) return tooManyTranslations(res);
         pending = shareTranslation(key, sourceText, async () => {
           const translatedText = await translateLegalText(
             sourceText,
@@ -3188,7 +3164,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
     try {
       const { contentType, entityId, fields, sourceLanguage, targetLanguage } = req.body;
 
-      if (!contentType || !entityId || !fields || !sourceLanguage || !targetLanguage) {
+      if (!contentType || !entityId || !fields || typeof fields !== "object" || Array.isArray(fields) || !sourceLanguage || !targetLanguage) {
         return res.status(400).json({ 
           error: "Missing required fields: contentType, entityId, fields, sourceLanguage, targetLanguage" 
         });
@@ -3215,6 +3191,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       if (!validCodes.includes(sourceLanguage) || !validCodes.includes(targetLanguage)) {
         return res.status(400).json({ error: "Invalid language code" });
       }
+      if (sourceLanguage === targetLanguage) return res.status(400).json({ error: "El idioma de origen y destino deben ser distintos." });
 
       const entity = await getEntity(contentType, entityId);
       if (!entity) {
@@ -3225,7 +3202,12 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       // Campos que ya traduce otra petición en este momento (N1): se espera su resultado
       const sharedFields: { key: string; promise: Promise<string | undefined> }[] = [];
 
-      for (const [fieldName, text] of Object.entries(fields as Record<string, string>)) {
+      const fieldEntries = Object.entries(fields as Record<string, unknown>);
+      if (fieldEntries.length > validFields.length) return res.status(400).json({ error: "Demasiados campos para traducir." });
+      if (fieldEntries.some(([, text]) => typeof text === "string" && text.length > 50_000)) {
+        return res.status(413).json({ error: "Uno de los textos supera el límite permitido." });
+      }
+      for (const [fieldName, text] of fieldEntries) {
         if (!text || typeof text !== 'string' || !text.trim()) continue;
         if (!isPublicSourceText(entity, fieldName, text)) continue;
 
@@ -3249,7 +3231,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       // Los campos sin caché ni llamada en curso van en una sola llamada a la IA, que cuenta
       // una vez en el límite de la dirección; cada campo queda compartido mientras dura
       if (fieldsToTranslate.length > 0) {
-        if (!allowTranslationCall(clientIp(req))) return tooManyTranslations(res);
+        if (!(await allowTranslationCall(clientIp(req), "translation"))) return tooManyTranslations(res);
         const batch = (async () => {
           const result = await translateMultipleTexts(
             fieldsToTranslate,

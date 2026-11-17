@@ -13,7 +13,7 @@ import {
   mediaItems,
 } from "../shared/schema";
 import { cmsDefaults, validateCmsValue, mergeCms } from "../shared/cms";
-import { hashPassword } from "../server/auth";
+import { hashPassword, hashSessionToken } from "../server/auth";
 import { isNamedOnTeamPage } from "../shared/teamVisibility";
 import { isPublicMediaKey } from "../server/replitStorage";
 
@@ -113,7 +113,7 @@ try {
       .insert(adminSessions)
       .values({
         userId: u.id,
-        token: tokens[role],
+        token: hashSessionToken(tokens[role]),
         expiresAt: new Date(Date.now() + 600000),
       });
   }

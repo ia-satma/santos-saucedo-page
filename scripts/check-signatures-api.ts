@@ -7,7 +7,7 @@ import sharp from "sharp";
 import { db } from "../server/db";
 import * as schema from "../shared/schema";
 import { registerRoutes } from "../server/routes";
-import { hashPassword } from "../server/auth";
+import { hashPassword, hashSessionToken } from "../server/auth";
 import { deleteAppStorageObject, uploadAppStorageObject } from "../server/replitStorage";
 
 assert(["localhost", "127.0.0.1", "[::1]"].includes(new URL(process.env.DATABASE_URL!).hostname));
@@ -16,7 +16,7 @@ const app = express(); app.use(express.json({ limit: "1mb" }));
 const server = createServer(app); await registerRoutes(server, app);
 const suffix = randomUUID();
 const [user] = await db.insert(schema.adminUsers).values({ username: `qa-signature-${suffix}`, email: `qa-signature-${suffix}@localhost.test`, passwordHash: await hashPassword(randomUUID()), role: "super_admin", isActive: true }).returning();
-const token = randomUUID(); await db.insert(schema.adminSessions).values({ userId: user.id, token, expiresAt: new Date(Date.now() + 3600000) });
+const token = randomUUID(); await db.insert(schema.adminSessions).values({ userId: user.id, token: hashSessionToken(token), expiresAt: new Date(Date.now() + 3600000) });
 await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
 const base = `http://127.0.0.1:${(server.address() as any).port}`;
 const sourceKey = "public/media/qa-signature-source.png";
@@ -42,6 +42,6 @@ const downloadResponse = await call(created.downloadUrl); assert.equal(downloadR
 const updatedResponse = await call(`/api/admin/signatures/${created.id}`, { method: "PUT", body: JSON.stringify({ label: "QA updated", templateId: "01", data: { ...data, name: "QA Updated" } }) }); assert.equal(updatedResponse.status, 200);
 const deletedResponse = await call(`/api/admin/signatures/${created.id}`, { method: "DELETE" }); assert.equal(deletedResponse.status, 204);
 const missingResponse = await call(`/api/admin/signatures/${created.id}`); assert.equal(missingResponse.status, 404);
-await db.delete(schema.adminSessions).where((await import("drizzle-orm")).eq(schema.adminSessions.token, token)); await db.delete(schema.adminUsers).where((await import("drizzle-orm")).eq(schema.adminUsers.id, user.id));
+await db.delete(schema.adminSessions).where((await import("drizzle-orm")).eq(schema.adminSessions.token, hashSessionToken(token))); await db.delete(schema.adminUsers).where((await import("drizzle-orm")).eq(schema.adminUsers.id, user.id));
 await new Promise<void>((resolve) => server.close(() => resolve()));
 console.log("signature API ok: auth, CRUD, App Storage fallback, regeneration and attachment download");

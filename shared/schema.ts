@@ -531,7 +531,7 @@ export type AdminSession = typeof adminSessions.$inferSelect;
 
 // Admin login schema for validation (accepts email or username)
 export const adminLoginSchema = z.object({
-  username: z.string().min(1, "Email or username is required"),
+  username: z.string().min(1, "Email or username is required").max(254),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 

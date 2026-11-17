@@ -12,7 +12,7 @@ import { decodePDFRawStream, PDFArray, PDFDict, PDFDocument, PDFHexString, PDFNa
 import sharp from "sharp";
 import { PDFParse } from "pdf-parse";
 import { adminSessions, adminUsers, generatedDocuments } from "../shared/schema";
-import { hashPassword } from "../server/auth";
+import { hashPassword, hashSessionToken } from "../server/auth";
 import { db } from "../server/db";
 import { deletePrivateStudioObject } from "../server/replitStorage";
 import { registerRoutes } from "../server/routes";
@@ -49,7 +49,7 @@ async function login(role: "super_admin" | "viewer") {
   }).returning();
   userIds.push(user.id);
   const token = randomUUID();
-  await db.insert(adminSessions).values({ userId: user.id, token, expiresAt: new Date(Date.now() + 3_600_000) });
+  await db.insert(adminSessions).values({ userId: user.id, token: hashSessionToken(token), expiresAt: new Date(Date.now() + 3_600_000) });
   return token;
 }
 

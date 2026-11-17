@@ -7,9 +7,14 @@ import { serveStatic } from "./static";
 import { createServer } from "http";
 import { orchestrator } from "./agents/core/AgentOrchestrator";
 import { storage } from "./storage";
+import { cleanRateLimitBuckets } from "./security/rateLimit";
 
 const app = express();
 const httpServer = createServer(app);
+
+const isReplitRuntime = Boolean(process.env.REPL_ID || process.env.REPLIT_DEPLOYMENT || process.env.REPLIT_DEV_DOMAIN);
+const configuredProxyHops = Number(process.env.TRUST_PROXY_HOPS ?? (isReplitRuntime ? "1" : "0"));
+app.set("trust proxy", Number.isInteger(configuredProxyHops) && configuredProxyHops >= 0 ? configuredProxyHops : 0);
 
 app.disable("x-powered-by");
 app.use(compression());
@@ -194,6 +199,13 @@ app.use((req, res, next) => {
           log(`[Scheduler] Error during hourly tick: ${err}`, "scheduler");
         }
       }, 60 * 60 * 1000);
+      setInterval(async () => {
+        try {
+          await cleanRateLimitBuckets();
+        } catch (err) {
+          log(`[Scheduler] Rate-limit cleanup failed: ${err}`, "scheduler");
+        }
+      }, 60 * 60 * 1000).unref();
     },
   );
 })();

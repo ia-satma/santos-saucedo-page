@@ -14,7 +14,7 @@ import {
   careerApplications,
   jobOpenings,
 } from "../shared/schema";
-import { comparePassword, hashPassword } from "../server/auth";
+import { comparePassword, hashPassword, hashSessionToken } from "../server/auth";
 import { registerRoutes } from "../server/routes";
 import {
   ensurePrivateUploadDirectories,
@@ -40,7 +40,7 @@ const ids: string[] = [],
   jobIds: string[] = [],
   suffix = randomUUID(),
   cvFile = path.join(privateCvDir, `${randomBytes(16).toString("hex")}.pdf`),
-  tokens: Record<string, string> = {};
+  sessions: Record<string, string> = {};
 let base = "",
   exitCode = 0;
 async function call(
@@ -53,11 +53,17 @@ async function call(
     method,
     headers: {
       ...(data ? { "Content-Type": "application/json" } : {}),
-      ...(tokens[actor] ? { Authorization: `Bearer ${tokens[actor]}` } : {}),
+      ...(sessions[actor] ? { Cookie: sessions[actor] } : {}),
     },
     body: data ? JSON.stringify(data) : undefined,
   });
   return { status: r.status, body: await r.json(), headers: r.headers };
+}
+function rememberSession(actor: string, response: { headers: Headers }) {
+  const value = response.headers.get("set-cookie") || "";
+  const match = value.match(/(?:^|,\s*)ss_admin_session=([^;]+)/);
+  assert(match, `Missing session cookie for ${actor}`);
+  sessions[actor] = `ss_admin_session=${match[1]}`;
 }
 async function account(id: string) {
   const r = await call("GET", "/api/admin/users");
@@ -94,15 +100,16 @@ try {
       })
       .returning();
     ids.push(u.id);
+    const rawToken = randomUUID();
     const [s] = await db
       .insert(adminSessions)
       .values({
         userId: u.id,
-        token: randomUUID(),
+        token: hashSessionToken(rawToken),
         expiresAt: new Date(Date.now() + 3600000),
       })
       .returning();
-    tokens[actor] = s.token;
+    sessions[actor] = `ss_admin_session=${encodeURIComponent(rawToken)}`;
   }
   assert.equal(
     (await call("GET", "/api/admin/users", undefined, "anonymous")).status,
@@ -170,7 +177,9 @@ try {
     password: created.body.generatedPassword,
   });
   assert.equal(logged.status, 200);
-  tokens.created = logged.body.token;
+  assert.equal(Object.hasOwn(logged.body, "token"), false);
+  assert.match(logged.headers.get("set-cookie") || "", /HttpOnly/);
+  rememberSession("created", logged);
   assert.equal(
     (await call("GET", "/api/admin/jobs", undefined, "created")).status,
     200,
@@ -231,7 +240,7 @@ try {
     password: created.body.generatedPassword,
   });
   assert.equal(relog.status, 200);
-  tokens.created = relog.body.token;
+  rememberSession("created", relog);
   assert.equal(
     (await call("GET", "/api/admin/site-config", undefined, "created")).status,
     200,
@@ -265,7 +274,7 @@ try {
     password: reset.body.generatedPassword,
   });
   assert.equal(resetLogin.status, 200);
-  tokens.created = resetLogin.body.token;
+  rememberSession("created", resetLogin);
   assert.equal(
     (
       await call(
@@ -307,7 +316,7 @@ try {
     password: newPassword,
   });
   assert.equal(changed.status, 200);
-  tokens.created = changed.body.token;
+  rememberSession("created", changed);
   const active = await account(stored.id);
   assert.equal(
     (
@@ -404,7 +413,7 @@ try {
   });
   assert.equal(hrLogin.status, 200);
   assert.equal(hrLogin.body.user.role, "reclutamiento");
-  tokens.hr = hrLogin.body.token;
+  rememberSession("hr", hrLogin);
   assert.equal((await call("GET", "/api/admin/me", undefined, "hr")).status, 200);
   await ensurePrivateUploadDirectories();
   await fs.writeFile(cvFile, "%PDF-1.4\n%%EOF\n", { mode: 0o600 });
@@ -433,7 +442,7 @@ try {
   assert.equal(reviewed.body.status, "reviewed");
   const cv = await fetch(
     `${base}/api/admin/career-applications/${application.id}/cv`,
-    { headers: { Authorization: `Bearer ${tokens.hr}` } },
+    { headers: { Cookie: sessions.hr } },
   );
   assert.equal(cv.status, 200);
   assert.match(cv.headers.get("content-type") || "", /^application\/pdf/);

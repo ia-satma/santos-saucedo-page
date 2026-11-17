@@ -47,107 +47,51 @@ export function generateToken(): string {
   return crypto.randomBytes(TOKEN_BYTES).toString("hex");
 }
 
+export function hashSessionToken(token: string): string {
+  return crypto.createHash("sha256").update(token, "utf8").digest("hex");
+}
+
 export function getSessionExpiry(): Date {
   const expiry = new Date();
   expiry.setHours(expiry.getHours() + SESSION_DURATION_HOURS);
   return expiry;
 }
 
-// Rate limiting for login attempts
-// La clave (identifier) es "dirección|usuario en minúsculas" (N3, server/routes.ts): cinco
-// intentos fallidos bloquean esa pareja, no a todos los que entran por el mismo proxy.
-interface RateLimitEntry {
-  attempts: number;
-  lastAttempt: number;
-  blockedUntil: number;
-}
+const MUTATING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
-const loginAttempts = new Map<string, RateLimitEntry>();
-const MAX_ATTEMPTS = 5;
-const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
-const BLOCK_DURATION_MS = 30 * 60 * 1000; // 30 minutes
+/** Cookie-authenticated mutations must originate from this site or a configured frontend. */
+export function isAllowedMutationOrigin(
+  request: Pick<Request, "method" | "headers" | "protocol" | "get">,
+): boolean {
+  if (!MUTATING_METHODS.has(request.method.toUpperCase())) return true;
+  if (request.headers.authorization?.startsWith("Bearer ")) return true;
 
-export function checkRateLimit(identifier: string): {
-  allowed: boolean;
-  retryAfter?: number;
-} {
-  const now = Date.now();
-  const entry = loginAttempts.get(identifier);
-
-  if (!entry) {
-    return { allowed: true };
-  }
-
-  // Check if blocked
-  if (entry.blockedUntil > now) {
-    return {
-      allowed: false,
-      retryAfter: Math.ceil((entry.blockedUntil - now) / 1000),
-    };
-  }
-
-  // Reset if window has passed
-  if (now - entry.lastAttempt > WINDOW_MS) {
-    loginAttempts.delete(identifier);
-    return { allowed: true };
-  }
-
-  // Check attempts
-  if (entry.attempts >= MAX_ATTEMPTS) {
-    entry.blockedUntil = now + BLOCK_DURATION_MS;
-    return {
-      allowed: false,
-      retryAfter: Math.ceil(BLOCK_DURATION_MS / 1000),
-    };
-  }
-
-  return { allowed: true };
-}
-
-export function recordLoginAttempt(identifier: string, success: boolean): void {
-  const now = Date.now();
-
-  if (success) {
-    loginAttempts.delete(identifier);
-    return;
-  }
-
-  const entry = loginAttempts.get(identifier);
-
-  if (!entry) {
-    // Claves inventadas en masa (otra dirección o usuario en cada intento): se quitan las
-    // vencidas y, si aún sobran, las que no están bloqueadas; los bloqueos vigentes se conservan
-    if (loginAttempts.size > 20000) {
-      loginAttempts.forEach((old, key) => {
-        if (now - old.lastAttempt > WINDOW_MS && old.blockedUntil < now)
-          loginAttempts.delete(key);
-      });
-      if (loginAttempts.size > 20000) {
-        loginAttempts.forEach((old, key) => {
-          if (old.blockedUntil < now) loginAttempts.delete(key);
-        });
-      }
+  const originHeader = request.headers.origin;
+  const refererHeader = request.headers.referer;
+  let origin = typeof originHeader === "string" && originHeader.trim()
+    ? originHeader.trim()
+    : null;
+  if (!origin && typeof refererHeader === "string" && refererHeader.trim()) {
+    try {
+      origin = new URL(refererHeader).origin;
+    } catch {
+      return false;
     }
-    loginAttempts.set(identifier, {
-      attempts: 1,
-      lastAttempt: now,
-      blockedUntil: 0,
-    });
-    return;
   }
+  if (!origin) return true;
 
-  // Reset if window has passed
-  if (now - entry.lastAttempt > WINDOW_MS) {
-    loginAttempts.set(identifier, {
-      attempts: 1,
-      lastAttempt: now,
-      blockedUntil: 0,
-    });
-    return;
-  }
+  const normalizedOrigin = origin.replace(/\/$/, "");
+  const configuredOrigins = (process.env.CORS_ORIGIN || "")
+    .split(",")
+    .map((value) => value.trim().replace(/\/$/, ""))
+    .filter(Boolean);
+  if (configuredOrigins.includes(normalizedOrigin)) return true;
 
-  entry.attempts++;
-  entry.lastAttempt = now;
+  const protocol = String(request.headers["x-forwarded-proto"] || request.protocol)
+    .split(",")[0]
+    .trim();
+  const host = String(request.get("host") || "").split(",")[0].trim();
+  return Boolean(protocol && host && normalizedOrigin === `${protocol}://${host}`);
 }
 
 // Extend Express Request to include admin user
@@ -201,6 +145,11 @@ export async function authMiddleware(
     const result = await validateSessionToken(token);
     if (!result.ok) {
       res.status(401).json({ error: result.error });
+      return;
+    }
+
+    if (!isAllowedMutationOrigin(req)) {
+      res.status(403).json({ error: "Origen no permitido." });
       return;
     }
 
@@ -273,25 +222,6 @@ export function requireRole(...roles: string[]) {
     next();
   };
 }
-
-// Clean up expired entries periodically (every hour)
-setInterval(
-  () => {
-    const now = Date.now();
-    const keys = Array.from(loginAttempts.keys());
-    keys.forEach((key) => {
-      const entry = loginAttempts.get(key);
-      if (
-        entry &&
-        now - entry.lastAttempt > WINDOW_MS &&
-        entry.blockedUntil < now
-      ) {
-        loginAttempts.delete(key);
-      }
-    });
-  },
-  60 * 60 * 1000,
-).unref();
 
 // Compatibility with the reference CMS; the Santos module policy remains authoritative.
 export function requirePermission(permission: string) {

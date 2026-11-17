@@ -10,7 +10,7 @@ import { eq, or } from "drizzle-orm";
 import { db } from "../server/db";
 import * as schema from "../shared/schema";
 import { registerRoutes } from "../server/routes";
-import { hashPassword } from "../server/auth";
+import { hashPassword, hashSessionToken } from "../server/auth";
 import { ALL_AGENT_IDS, AI_MODULE_DEFINITIONS } from "../shared/agentConstants";
 import { initializeAgents, orchestrator } from "../server/agents";
 assert(
@@ -101,7 +101,7 @@ try {
     .insert(schema.adminSessions)
     .values({
       userId: ids[0],
-      token,
+      token: hashSessionToken(token),
       expiresAt: new Date(Date.now() + 3600000),
     });
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));

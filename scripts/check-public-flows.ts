@@ -7,13 +7,13 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 import express from "express";
 import { createServer } from "node:http";
-import { eq, or } from "drizzle-orm";
+import { eq, or, sql } from "drizzle-orm";
 import { PDFDocument } from "pdf-lib";
 import sharp from "sharp";
 import { db } from "../server/db";
 import * as s from "../shared/schema";
 import { registerRoutes } from "../server/routes";
-import { hashPassword } from "../server/auth";
+import { hashPassword, hashSessionToken } from "../server/auth";
 import {
   deleteAppStorageObject,
   appStorageObjectKeyFromPath,
@@ -155,6 +155,7 @@ async function career(bytes: Uint8Array, extra: Record<string, string> = {}) {
 }
 try {
   await registerRoutes(server, app);
+  await db.execute(sql`DELETE FROM rate_limit_buckets`);
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
   base = `http://127.0.0.1:${(server.address() as any).port}`;
   for (const role of ["super_admin", "viewer", "recursos_humanos", "editor"]) {
@@ -172,7 +173,7 @@ try {
     tokens[role] = randomUUID();
     await db.insert(s.adminSessions).values({
       userId: u.id,
-      token: tokens[role],
+      token: hashSessionToken(tokens[role]),
       expiresAt: new Date(Date.now() + 3600000),
     });
   }

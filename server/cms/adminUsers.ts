@@ -20,6 +20,7 @@ import {
   hashPassword,
   requireRole,
 } from "../auth";
+import { clearRateLimit, consumeRateLimit } from "../security/rateLimit";
 
 const uuid = z.string().uuid();
 const grants = z
@@ -99,6 +100,7 @@ class AccessError extends Error {
     super(message);
   }
 }
+
 function fail(res: Response, error: any) {
   if (error instanceof AccessError)
     return res.status(error.status).json({ error: error.message });
@@ -365,6 +367,17 @@ export function registerAdminUsers(app: Express) {
     },
   );
   app.post("/api/admin/password/change", authMiddleware, async (req, res) => {
+    const attemptKey = `${req.adminUser!.id}|${req.ip || req.socket.remoteAddress || "unknown"}`;
+    try {
+      const passwordLimit = await consumeRateLimit(`password-change:${attemptKey}`, 5, 15 * 60 * 1000);
+      if (!passwordLimit.allowed) {
+        res.setHeader("Retry-After", String(passwordLimit.retryAfter));
+        return res.status(429).json({ error: "Demasiados intentos. Intente más tarde." });
+      }
+    } catch (e) {
+      fail(res, e);
+      return;
+    }
     const parsed = z
       .object({
         currentPassword: z.string().min(1).max(128),
@@ -412,6 +425,7 @@ export function registerAdminUsers(app: Express) {
           .where(eq(adminSessions.userId, target.id));
         await audit(tx, target.id, target.id, "password.changed");
       });
+      await clearRateLimit(`password-change:${attemptKey}`);
       res.json({ ok: true, requiresLogin: true });
     } catch (e) {
       fail(res, e);

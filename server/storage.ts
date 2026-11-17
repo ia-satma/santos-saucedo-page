@@ -2,6 +2,10 @@ import { GeneratedAssetsRepository } from "./storage/generatedAssets";
 import { isPublicNews } from "@shared/publicNews";
 import { eq, desc, asc, and, isNull, gte, sql, ne, inArray } from "drizzle-orm";
 import { db } from "./db";
+import { createHash } from "node:crypto";
+
+const hashSessionToken = (token: string) =>
+  createHash("sha256").update(token, "utf8").digest("hex");
 import {
   type User,
   type InsertUser,
@@ -621,17 +625,20 @@ export class DatabaseStorage extends GeneratedAssetsRepository implements IStora
 
   // Admin Sessions
   async createAdminSession(session: InsertAdminSession): Promise<AdminSession> {
-    const [item] = await db.insert(adminSessions).values(session).returning();
+    const [item] = await db.insert(adminSessions).values({
+      ...session,
+      token: hashSessionToken(session.token),
+    }).returning();
     return item;
   }
 
   async getAdminSession(token: string): Promise<AdminSession | undefined> {
-    const [session] = await db.select().from(adminSessions).where(eq(adminSessions.token, token));
+    const [session] = await db.select().from(adminSessions).where(eq(adminSessions.token, hashSessionToken(token)));
     return session;
   }
 
   async deleteAdminSession(token: string): Promise<boolean> {
-    const result = await db.delete(adminSessions).where(eq(adminSessions.token, token)).returning();
+    const result = await db.delete(adminSessions).where(eq(adminSessions.token, hashSessionToken(token))).returning();
     return result.length > 0;
   }
 

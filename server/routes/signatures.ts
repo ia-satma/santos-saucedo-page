@@ -8,6 +8,7 @@ import { db } from "../db";
 import { appStorageObjectKeyFromPath, deleteAppStorageObject, downloadAppStorageObject, uploadAppStorageObject } from "../replitStorage";
 import { emailSignatures } from "@shared/schema";
 import { createSignatureGenerator, normalizeSignatureData, type SignatureData } from "@shared/signatureGenerator";
+import { consumeRateLimit } from "../security/rateLimit";
 
 const dataSchema = z.object({
   name: z.string().max(500), role: z.string().max(500), phone: z.string().max(100), email: z.string().email().max(320),
@@ -60,12 +61,23 @@ function cropKey(source: string, width: number, height: number) {
 export function registerSignatureRoutes(app: Express) {
   const guard = [authMiddleware, requireRole("editor", "admin")] as const;
   app.get("/api/signature-photo", async (req, res) => {
+    try {
+      const limit = await consumeRateLimit(`signature-photo:${req.ip || req.socket.remoteAddress || "unknown"}`, 30, 10 * 60 * 1000);
+      if (!limit.allowed) {
+        res.setHeader("Retry-After", String(limit.retryAfter));
+        return sendError(res, 429, "Demasiadas solicitudes. Inténtalo más tarde.");
+      }
+    } catch (error) {
+      console.error("Signature photo limiter error:", error);
+      return sendError(res, 503, "El recorte de fotografía no está disponible.");
+    }
     const source = typeof req.query.source === "string" ? req.query.source : "";
     const width = Number(req.query.width);
     const height = Number(req.query.height);
     if (!/^\/media\/public\/media\/[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(source)
       || !Number.isInteger(width) || !Number.isInteger(height)
-      || width < 20 || width > 2000 || height < 20 || height > 2000) {
+      || width < 20 || width > 2000 || height < 20 || height > 2000
+      || width * height > 4_000_000) {
       return sendError(res, 400, "Parámetros de fotografía no válidos.");
     }
     const sourceKey = appStorageObjectKeyFromPath(source);

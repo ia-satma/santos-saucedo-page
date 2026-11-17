@@ -63,8 +63,13 @@ export function registerCareerApplications(
   app: Express,
   guard: RequestHandler,
 ) {
-  app.post("/api/careers/apply", (req, res) =>
-    receive(req, res, async (error: any) => {
+  app.post("/api/careers/apply", async (req, res) => {
+    // Check origin and the public submission limiter before Multer writes a CV to quarantine.
+    let preflightAllowed = false;
+    await guard(req, res, () => { preflightAllowed = true; });
+    if (!preflightAllowed) return;
+
+    return receive(req, res, async (error: any) => {
       let accepted: { absolutePath: string; storagePath: string } | undefined;
       let saved = false;
       try {
@@ -72,11 +77,10 @@ export function registerCareerApplications(
           return res
             .status(error.code === "LIMIT_FILE_SIZE" ? 413 : 415)
             .json({ error: "Use un CV en PDF de hasta 10 MB." });
-        let allowed = false;
-        await guard(req, res, () => {
-          allowed = true;
-        });
-        if (!allowed) return;
+        const trap = req.body?.website;
+        if (typeof trap === "string" ? trap.trim() !== "" : trap != null) {
+          return res.json({ success: true });
+        }
         if (!(await getCmsFormControls()).careers.enabled)
           return res.status(503).json({ error: "FORM_DISABLED" });
         const parsed = formSchema.safeParse(req.body);
@@ -125,8 +129,8 @@ export function registerCareerApplications(
           await removeUploadQuietly(accepted.absolutePath);
         }
       }
-    }),
-  );
+    });
+  });
   app.get(
     "/api/admin/career-applications",
     authMiddleware,

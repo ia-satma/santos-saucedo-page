@@ -17,7 +17,7 @@ import {
   teamMemberPracticeGroups,
   mediaItems,
 } from "../shared/schema";
-import { hashPassword } from "../server/auth";
+import { hashPassword, hashSessionToken } from "../server/auth";
 import { appStorageObjectKeyFromPath } from "../server/replitStorage";
 assert(
   ["localhost", "127.0.0.1", "[::1]"].includes(
@@ -86,7 +86,7 @@ try {
     tokens[role] = randomUUID();
     await db.insert(adminSessions).values({
       userId: user.id,
-      token: tokens[role],
+      token: hashSessionToken(tokens[role]),
       expiresAt: new Date(Date.now() + 600000),
     });
   }
