@@ -95,6 +95,7 @@ import {
 } from "@shared/schema";
 import { isNamedOnTeamPage, toPublicTeamMember, toPublicTeamProfile } from "@shared/teamVisibility";
 import { isPublicNews, toPublicNews } from "@shared/publicNews";
+import { isPublicIndustryGroup, publicIndustryGroups } from "@shared/publicIndustry";
 import { publicRoute, publicRouteAliases } from "@shared/publicRoutes";
 import { desc, eq } from "drizzle-orm";
 import { z, ZodError } from "zod/v3";
@@ -697,7 +698,7 @@ export async function registerRoutes(
     try {
       const groups = await storage.getIndustryGroups();
       res.set("Cache-Control", "public, max-age=60");
-      res.json(groups);
+      res.json(publicIndustryGroups(groups));
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch industry groups" });
     }
@@ -710,7 +711,7 @@ export async function registerRoutes(
       if (!group) {
         group = await storage.getIndustryGroupById(param);
       }
-      if (!group) {
+      if (!group || !isPublicIndustryGroup(group)) {
         return res.status(404).json({ error: "Industry group not found" });
       }
       res.json(group);
@@ -1038,7 +1039,7 @@ export async function registerRoutes(
         fold(g.descriptionEs).includes(query)
       ).slice(0, 5);
       
-      const filteredIndustry = industryGroups.filter(g =>
+      const filteredIndustry = publicIndustryGroups(industryGroups).filter(g =>
         fold(g.name).includes(query) ||
         fold(g.nameEs).includes(query) ||
         fold(g.description).includes(query) ||
@@ -3038,7 +3039,10 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         const group = await storage.getPracticeGroupById(entityId);
         return group && group.published !== false ? group : undefined;
       }
-      case "industry_group": return await storage.getIndustryGroupById(entityId);
+      case "industry_group": {
+        const group = await storage.getIndustryGroupById(entityId);
+        return group && isPublicIndustryGroup(group) ? group : undefined;
+      }
       case "news": {
         const item = await storage.getNewsById(entityId);
         return item && isPublicNews(item) ? toPublicNews(item) : undefined;
