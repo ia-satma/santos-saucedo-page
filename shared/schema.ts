@@ -529,6 +529,20 @@ export const insertAdminSessionSchema = createInsertSchema(adminSessions).omit({
 export type InsertAdminSession = z.infer<typeof insertAdminSessionSchema>;
 export type AdminSession = typeof adminSessions.$inferSelect;
 
+// Runtime-managed security tables are declared here so Replit migrations preserve them.
+export const rateLimitBuckets = pgTable("rate_limit_buckets", {
+  bucketKey: text("bucket_key").primaryKey(),
+  hitCount: integer("hit_count").notNull().default(0),
+  windowResetAt: timestamp("window_reset_at").notNull(),
+  blockedUntil: timestamp("blocked_until"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const securityMigrations = pgTable("security_migrations", {
+  id: text("id").primaryKey(),
+  appliedAt: timestamp("applied_at").notNull().defaultNow(),
+});
+
 // Admin login schema for validation (accepts email or username)
 export const adminLoginSchema = z.object({
   username: z.string().min(1, "Email or username is required").max(254),
