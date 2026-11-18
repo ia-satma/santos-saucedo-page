@@ -39,10 +39,11 @@ const corsOrigins = (process.env.CORS_ORIGIN || "")
   .filter(Boolean);
 
 // Keep the deployment probe independent from CORS and the public SPA fallback.
-app.use("/healthz", (_req, res) => {
+const healthz = (_req: Request, res: Response) => {
   res.setHeader("Cache-Control", "no-store");
   res.status(200).json({ ok: true, service: "santos-saucedo" });
-});
+};
+app.get(["/healthz", "/healthz/"], healthz);
 app.use("/readyz", (_req, res) => {
   res.setHeader("Cache-Control", "no-store");
   if (!applicationReady) {
