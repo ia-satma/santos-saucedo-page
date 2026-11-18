@@ -1,6 +1,6 @@
 import type { Express, Request, Response } from "express";
 import { randomUUID } from "node:crypto";
-import { and, eq, gt, lt } from "drizzle-orm";
+import { and, eq, gt, lt, sql } from "drizzle-orm";
 import {
   generateAuthenticationOptions,
   generateRegistrationOptions,
@@ -164,6 +164,11 @@ export function registerPasskeyRoutes(app: Express): void {
   });
 
   app.post("/api/admin/passkeys/auth/options", async (req, res) => {
+    const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(adminPasskeys);
+    if (Number(count) === 0) {
+      res.status(409).json({ error: "No hay una Passkey registrada. Inicia sesión con correo y contraseña y registra una llave desde tu cuenta de administrador." });
+      return;
+    }
     const options = await generateAuthenticationOptions({ rpID: relyingPartyId(req), userVerification: "required" });
     await saveChallenge(req, res, "authentication", null, options.challenge);
     res.json(options);
