@@ -49,6 +49,7 @@ async function checkLogin(page, viewport, capture) {
   await page.getByTestId("input-password").waitFor();
   const password = page.getByTestId("input-password");
   const passwordToggle = page.getByTestId("button-toggle-password");
+  await passwordToggle.waitFor();
   await password.fill("12345678");
   assert.equal(await password.getAttribute("type"), "password");
   await passwordToggle.click();
