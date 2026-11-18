@@ -99,6 +99,12 @@ export function registerPasskeyRoutes(app: Express): void {
   });
 
   app.post("/api/admin/passkeys/register/options", authMiddleware, async (req, res) => {
+    const rate = await allowPasskeyRequest(req, "register-options");
+    if (!rate.allowed) {
+      res.setHeader("Retry-After", String(rate.retryAfter));
+      res.status(429).json({ error: "Demasiados intentos con Passkey. Inténtelo más tarde." });
+      return;
+    }
     const existing = await db.select({ credentialId: adminPasskeys.credentialId, transports: adminPasskeys.transports })
       .from(adminPasskeys).where(eq(adminPasskeys.userId, req.adminUser!.id));
     if (existing.length >= MAX_PASSKEYS) {
@@ -120,6 +126,12 @@ export function registerPasskeyRoutes(app: Express): void {
   });
 
   app.post("/api/admin/passkeys/register/verify", authMiddleware, async (req, res) => {
+    const rate = await allowPasskeyRequest(req, "register-verify");
+    if (!rate.allowed) {
+      res.setHeader("Retry-After", String(rate.retryAfter));
+      res.status(429).json({ error: "Demasiados intentos con Passkey. Inténtelo más tarde." });
+      return;
+    }
     const challengeId = readChallengeCookie(req);
     const [challenge] = challengeId ? await db.select().from(adminPasskeyChallenges).where(and(eq(adminPasskeyChallenges.id, challengeId), eq(adminPasskeyChallenges.kind, "registration"), gt(adminPasskeyChallenges.expiresAt, new Date()))) : [];
     if (!challenge || challenge.userId !== req.adminUser!.id) {
@@ -157,7 +169,7 @@ export function registerPasskeyRoutes(app: Express): void {
       clearChallengeCookie(res, req);
       res.status(201).json({ ok: true });
     } catch (error) {
-      console.error("Passkey registration error:", error);
+      console.error("Passkey registration verification failed");
       res.status(400).json({ error: "No se pudo registrar la llave." });
     }
   });
@@ -244,7 +256,7 @@ export function registerPasskeyRoutes(app: Express): void {
       clearChallengeCookie(res, req);
       res.json({ ok: true });
     } catch (error) {
-      console.error("Passkey authentication error:", error);
+      console.error("Passkey authentication verification failed");
       res.status(401).json({ error: "No se pudo iniciar sesión con esa llave." });
     }
   });

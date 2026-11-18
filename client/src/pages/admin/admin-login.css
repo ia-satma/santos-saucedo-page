@@ -272,6 +272,14 @@
   transform: scale(0.985);
 }
 
+.admin-login-passkey-help {
+  margin: 7px 0 0;
+  color: var(--login-muted);
+  font-size: 0.72rem;
+  line-height: 1.35;
+  text-align: center;
+}
+
 .admin-login-footer {
   width: min(100%, 470px);
   margin: 16px 0 0;

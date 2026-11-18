@@ -412,7 +412,7 @@ export default function AdminLogin() {
                   >
                     {passkeyBusy ? "Verificando llave…" : "Entrar con Passkey"}
                   </Button>
-                  <p className="admin-login-passkey-help">Primero registra tu llave en Mi cuenta después de entrar con contraseña.</p>
+                  <p className="admin-login-passkey-help">Registra primero tu llave en Mi cuenta.</p>
                 </>
               )}
               </form>
