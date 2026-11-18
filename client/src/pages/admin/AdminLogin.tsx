@@ -401,16 +401,19 @@ export default function AdminLogin() {
                 )}
               </Button>
               {passkeysSupported() && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="admin-login-passkey"
-                  disabled={loginMutation.isPending || passkeyBusy}
-                  onClick={loginWithPasskey}
-                  data-testid="button-passkey-login"
-                >
-                  {passkeyBusy ? "Verificando llave…" : "Entrar con Passkey"}
-                </Button>
+                <>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="admin-login-passkey"
+                    disabled={loginMutation.isPending || passkeyBusy}
+                    onClick={loginWithPasskey}
+                    data-testid="button-passkey-login"
+                  >
+                    {passkeyBusy ? "Verificando llave…" : "Entrar con Passkey"}
+                  </Button>
+                  <p className="admin-login-passkey-help">Primero registra tu llave en Mi cuenta después de entrar con contraseña.</p>
+                </>
               )}
               </form>
             </Form>
