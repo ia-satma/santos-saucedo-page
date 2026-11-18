@@ -45,6 +45,8 @@ import {
   Bell,
   Volume2,
   Presentation,
+  BookOpen,
+  ShieldCheck,
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -141,6 +143,8 @@ const AGENT_ICONS: Record<string, any> = {
   legal_alerts: Bell,
   voice_agent: Volume2,
   presentation_generator: Presentation,
+  editorial_security_auditor: ShieldCheck,
+  legal_knowledge_assistant: BookOpen,
   orchestrator: Bot,
 };
 
@@ -159,6 +163,8 @@ const AGENT_NAMES: Record<string, string> = {
   legal_alerts: "Alertas Legales",
   voice_agent: "Generador de Voz",
   presentation_generator: "Generador de Presentaciones",
+  editorial_security_auditor: "Auditor de Seguridad Editorial",
+  legal_knowledge_assistant: "Asistente Jurídico Interno",
   orchestrator: "Orquestador",
 };
 
@@ -188,6 +194,10 @@ const AGENT_DESCRIPTIONS: Record<string, string> = {
     "Compila únicamente noticias publicadas en un boletín ES/EN sanitizado y con enlace de baja. → Dónde: cuadro de boletín en Noticias. (usa IA)",
   legal_alerts:
     "De una fuente oficial (texto pegado o URL permitida) redacta un borrador de alerta. → Dónde: crea una noticia SIN PUBLICAR y te abre su editor desde el botón 'Crear alerta' en Noticias. (usa IA)",
+  editorial_security_auditor:
+    "Revisa borradores, medios, formularios y salidas editoriales en modo lectura; detecta secretos, PII, prompt injection y URLs sospechosas sin mostrar valores sensibles. → Dónde: Auditorías del sitio. (sin IA)",
+  legal_knowledge_assistant:
+    "Responde consultas jurídicas usando únicamente documentos internos aprobados y muestra la cita, versión y fecha de origen. → Dónde: Base de conocimiento. (sin fuentes externas)",
   voice_agent:
     "Convierte a audio un texto de boletín, redes o alerta; divide textos largos sin recortarlos silenciosamente. → Dónde: 'Audio generado por IA'. (usa IA)",
   presentation_generator:
@@ -412,7 +422,7 @@ export default function AdminAgents() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <AdminPageHeader
           title="Sistema de Agentes IA"
-          description="Usa y supervisa los 14 agentes editoriales y los módulos de creación IA"
+          description="Usa y supervisa los 16 agentes editoriales y los módulos de creación IA"
           icon={Bot}
           actions={
             <>
@@ -478,7 +488,7 @@ export default function AdminAgents() {
               Módulos de creación IA conectados al CMS
             </h2>
             <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-              Estos módulos usan IA y tienen sus propias bibliotecas editables. Se muestran separados del orquestador de los 14 agentes editoriales.
+              Estos módulos usan IA y tienen sus propias bibliotecas editables. Se muestran separados del orquestador de los 16 agentes editoriales.
             </p>
           </div>
           <div className="grid gap-4 md:grid-cols-2">

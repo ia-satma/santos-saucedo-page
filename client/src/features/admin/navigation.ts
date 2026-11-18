@@ -321,7 +321,7 @@ export const adminNavigation = [
       {
         href: "/admin/agents",
         label: "Agentes IA",
-        hint: "Centro de uso de 14 agentes y 2 módulos IA",
+        hint: "Centro de uso de 16 agentes y 2 módulos IA",
         icon: RocketIcon,
       },
       {
