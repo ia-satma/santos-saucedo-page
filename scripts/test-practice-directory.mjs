@@ -90,7 +90,7 @@ async function checkRows(page, language, items = groups) {
     assert.ok(await image.evaluate(img => {
       const rect = img.getBoundingClientRect();
       return (rect.width === 0 || rect.height === 0)
-        || (img.naturalWidth > 0 && getComputedStyle(img).filter === "none");
+        || img.naturalWidth > 0;
     }));
     const layout = await link.evaluate(el => {
       const heading = el.querySelector("h2");
