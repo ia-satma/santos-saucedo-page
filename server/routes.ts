@@ -27,6 +27,7 @@ import { ensureCmsSchema, registerCmsRoutes, getCmsContact, getCmsFormControls }
 import { readStaticEntityTranslation } from "./localization/staticSnapshots";
 import { registerAdminUsers } from "./cms/adminUsers";
 import { registerPasskeyRoutes } from "./passkeys";
+import { getNewsSlugRedirect } from "./seo/newsSlugRedirects";
 import { recordAccessEvent } from "./cms/accessAudit";
 import { hasAdminPermission } from "@shared/adminAccess";
 import { editorialDb } from "./db";
@@ -579,8 +580,12 @@ export async function registerRoutes(
 
   // Nota pública por slug o id; borrador, programada o inexistente: 404 (sin distinguirlas)
   async function findPublicNews(idOrSlug: string) {
-    const item = (await storage.getNewsBySlug(idOrSlug)) ?? (await storage.getNewsById(idOrSlug));
-    return item && isPublicNews(item) ? item : undefined;
+    const direct = (await storage.getNewsBySlug(idOrSlug)) ?? (await storage.getNewsById(idOrSlug));
+    if (direct) return isPublicNews(direct) ? direct : undefined;
+    const redirectedSlug = await getNewsSlugRedirect(idOrSlug);
+    if (!redirectedSlug) return undefined;
+    const redirected = await storage.getNewsBySlug(redirectedSlug);
+    return redirected && isPublicNews(redirected) ? redirected : undefined;
   }
 
   app.get("/api/news/:idOrSlug", async (req, res) => {
@@ -598,7 +603,9 @@ export async function registerRoutes(
   // Autores de una nota pública: solo quien el sitio nombra (J1), con los campos de la ficha
   app.get("/api/news/:slug/authors", async (req, res) => {
     try {
-      const newsItem = await storage.getNewsBySlug(req.params.slug);
+      const direct = await storage.getNewsBySlug(req.params.slug);
+      const redirectedSlug = direct ? undefined : await getNewsSlugRedirect(req.params.slug);
+      const newsItem = direct ?? (redirectedSlug ? await storage.getNewsBySlug(redirectedSlug) : undefined);
       if (!newsItem || !isPublicNews(newsItem)) {
         return res.status(404).json({ error: "News not found" });
       }
@@ -2932,7 +2939,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       // For news content, first check the newsTranslations table
       if (contentType === 'news') {
         const newsTranslation = await storage.getNewsTranslation(entityId, targetLanguage);
-        if (newsTranslation) {
+        if (newsTranslation && newsTranslation.isApproved !== false) {
           const translationsMap: Record<string, string> = {};
           if (newsTranslation.title) {
             translationsMap.title = newsTranslation.title;
@@ -2961,6 +2968,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
       const translationsMap: Record<string, string> = {};
       for (const t of translations) {
         if (
+          t.isApproved !== false &&
           t.field &&
           t.translatedText &&
           publicFields.includes(t.field) &&
