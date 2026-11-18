@@ -16,6 +16,8 @@ export default function AdminAccount() {
     [passkeyName, setPasskeyName] = useState(""),
     [passkeys, setPasskeys] = useState<Array<{ id: string; name: string; createdAt: string; lastUsedAt: string | null }>>([]),
     [passkeyBusy, setPasskeyBusy] = useState(false),
+    [passkeyError, setPasskeyError] = useState(""),
+    [passkeyNotice, setPasskeyNotice] = useState(""),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   const loadPasskeys = async () => {
@@ -53,23 +55,27 @@ export default function AdminAccount() {
     }
   };
   const addPasskey = async () => {
-    if (!passkeyName.trim()) return setError("Escriba un nombre para la llave.");
+    setPasskeyNotice("");
+    if (!passkeyName.trim()) return setPasskeyError("Escriba un nombre para la llave.");
     setPasskeyBusy(true);
-    setError("");
+    setPasskeyError("");
     try {
       await registerPasskey(passkeyName.trim());
       setPasskeyName("");
       await loadPasskeys();
+      setPasskeyNotice("Llave registrada. Ya puedes usarla para iniciar sesión en este dominio.");
     } catch (e) {
-      setError((e as Error).message);
+      setPasskeyError((e as Error).message);
     } finally {
       setPasskeyBusy(false);
     }
   };
   const removePasskey = async (id: string) => {
+    setPasskeyNotice("");
+    setPasskeyError("");
     const response = await fetch(`/api/admin/passkeys/${encodeURIComponent(id)}`, { method: "DELETE", credentials: "include" });
     if (response.ok) await loadPasskeys();
-    else setError((await response.json().catch(() => ({}))).error || "No se pudo eliminar la llave.");
+    else setPasskeyError((await response.json().catch(() => ({}))).error || "No se pudo eliminar la llave.");
   };
   return (
     <main className="admin-management-page admin-account-page">
@@ -154,6 +160,8 @@ export default function AdminAccount() {
               <Button type="button" onClick={addPasskey} disabled={passkeyBusy || passkeys.length >= 2}>{passkeyBusy ? "Registrando…" : "Registrar llave"}</Button>
             </div>
           </div>
+          {passkeyError && <p role="alert" className="text-destructive">{passkeyError}</p>}
+          {passkeyNotice && <p role="status">{passkeyNotice}</p>}
           <ul className="admin-account-passkey-list">
             {passkeys.map((passkey) => (
               <li key={passkey.id}>

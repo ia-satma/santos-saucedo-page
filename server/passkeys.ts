@@ -105,7 +105,7 @@ export function registerPasskeyRoutes(app: Express): void {
       userDisplayName: req.adminUser!.username,
       attestationType: "none",
       excludeCredentials: existing.map((item) => ({ id: item.credentialId, transports: item.transports as any })),
-      authenticatorSelection: { residentKey: "preferred", userVerification: "required" },
+      authenticatorSelection: { residentKey: "required", userVerification: "required" },
     });
     await saveChallenge(req, res, "registration", req.adminUser!.id, options.challenge);
     res.json(options);
@@ -164,8 +164,8 @@ export function registerPasskeyRoutes(app: Express): void {
   });
 
   app.post("/api/admin/passkeys/auth/options", async (req, res) => {
-    const [{ count }] = await db.select({ count: sql<number>`count(*)` }).from(adminPasskeys);
-    if (Number(count) === 0) {
+    const [registered] = await db.select({ exists: sql<number>`1` }).from(adminPasskeys).limit(1);
+    if (!registered) {
       res.status(409).json({ error: "No hay una Passkey registrada. Inicia sesión con correo y contraseña y registra una llave desde tu cuenta de administrador." });
       return;
     }
