@@ -4,6 +4,7 @@ import { isPublicNews } from "@shared/publicNews";
 import { SUPPORTED_LANGUAGES, type LanguageCode } from "@shared/constants";
 import { readStaticCmsSection } from "../localization/staticSnapshots";
 import { fromSpanishRoute, publicRoute } from "@shared/publicRoutes";
+import { getNewsSlugRedirect } from "./newsSlugRedirects";
 
 // Dominio de las etiquetas del index.html; injectSiteMetadata lo cambia por el siteUrl del CMS.
 const SITE = "https://www.santossaucedo.com";
@@ -60,7 +61,9 @@ async function routeMetadata(pathname: string): Promise<RouteMetadata | undefine
   const internalPath = language === "es" ? fromSpanishRoute(routeWithoutLocale) : routeWithoutLocale;
   const match = /^\/?news\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/.exec(internalPath.replace(/^\/+/, ""));
   if (match) {
-    const item = await storage.getNewsBySlug(match[1]);
+    const redirectedSlug = await getNewsSlugRedirect(match[1]);
+    const item = await storage.getNewsBySlug(match[1])
+      ?? (redirectedSlug ? await storage.getNewsBySlug(redirectedSlug) : undefined);
     if (!item || !isPublicNews(item)) return;
     const translation = language === "es" ? undefined : await storage.getNewsTranslation(item.id, language);
     const title = plainText(translation?.title || item.titleEs || item.title);

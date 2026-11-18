@@ -5,6 +5,7 @@ import { news } from '../../../shared/schema';
 import { eq } from 'drizzle-orm';
 import { sanitizeFields } from '../../mirror/sanitize';
 import { seoOptimizationSchema } from '../core/contracts';
+import { recordNewsSlugRedirect } from '../../seo/newsSlugRedirects';
 
 const SEO_CONFIG: AgentConfig = {
   agentType: 'seo_optimizer',
@@ -110,6 +111,7 @@ Analyze and provide optimized versions. Return JSON with optimizedTitle, optimiz
 
       if (canApply) {
         const updates: Record<string, unknown> = {};
+        let changedSlug: string | undefined;
 
         if (optimization.optimizedTitle && optimization.optimizedTitle !== article.title) {
           updates.title = optimization.optimizedTitle;
@@ -122,6 +124,7 @@ Analyze and provide optimized versions. Return JSON with optimizedTitle, optimiz
             .where(eq(news.slug, optimization.suggestedSlug));
           if (!existing || existing.id === articleId) {
             updates.slug = optimization.suggestedSlug;
+            changedSlug = optimization.suggestedSlug;
           }
         }
         if (optimization.metaDescription && optimization.metaDescription !== article.excerpt) {
@@ -134,6 +137,7 @@ Analyze and provide optimized versions. Return JSON with optimizedTitle, optimiz
         if (Object.keys(updates).length > 0) {
           sanitizeFields(updates, ["excerpt", "excerptEs"]);
           await db.update(news).set(updates).where(eq(news.id, articleId));
+          if (changedSlug) await recordNewsSlugRedirect(article.slug, changedSlug);
         }
       }
 

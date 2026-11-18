@@ -187,7 +187,7 @@ const AGENT_DESCRIPTIONS: Record<string, string> = {
   newsletter:
     "Compila únicamente noticias publicadas en un boletín ES/EN sanitizado y con enlace de baja. → Dónde: cuadro de boletín en Noticias. (usa IA)",
   legal_alerts:
-    "De una fuente oficial (texto pegado, URL .gob.mx, o automático cada 6h escaneando COFECE) redacta un borrador de alerta. → Dónde: crea una noticia SIN PUBLICAR y te abre su editor; desde el botón 'Crear alerta' en Noticias, o sola en la cola si el escaneo automático encontró algo relevante. (usa IA)",
+    "De una fuente oficial (texto pegado o URL permitida) redacta un borrador de alerta. → Dónde: crea una noticia SIN PUBLICAR y te abre su editor desde el botón 'Crear alerta' en Noticias. (usa IA)",
   voice_agent:
     "Convierte a audio un texto de boletín, redes o alerta; divide textos largos sin recortarlos silenciosamente. → Dónde: 'Audio generado por IA'. (usa IA)",
   presentation_generator:
