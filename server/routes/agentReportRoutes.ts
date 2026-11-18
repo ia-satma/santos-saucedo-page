@@ -12,6 +12,7 @@ import {
 import { authMiddleware, requirePermission } from "../auth";
 import { SUPPORTED_LANGUAGES } from "../openai";
 import type { LanguageCode } from "@shared/constants";
+import { z } from "zod/v3";
 export function registerAgentReportRoutes(app: Express) {
   const allLanguageCodes: LanguageCode[] = SUPPORTED_LANGUAGES.map(({ code }) => code as LanguageCode);
   const readActiveLanguages = async () => {
@@ -131,6 +132,7 @@ export function registerAgentReportRoutes(app: Express) {
             .select({
               newsId: newsTranslations.newsId,
               language: newsTranslations.language,
+              isApproved: newsTranslations.isApproved,
             })
             .from(newsTranslations),
           readActiveLanguages(),
@@ -150,6 +152,9 @@ export function registerAgentReportRoutes(app: Express) {
           return {
             ...a,
             translatedLanguages,
+            pendingLanguages: translations
+              .filter((t) => t.newsId === a.id && t.isApproved === false)
+              .map((t) => t.language),
             missingLanguages: languages.filter(
               (l) => !translatedLanguages.includes(l),
             ),
@@ -187,6 +192,34 @@ export function registerAgentReportRoutes(app: Express) {
           .json({
             error: "No se pudo consultar la cobertura de traducciones.",
           });
+      }
+    },
+  );
+
+  app.post(
+    "/api/admin/news/:newsId/translations/:language/approve",
+    authMiddleware,
+    requirePermission("advanced"),
+    async (req, res) => {
+      const newsId = z.string().uuid().safeParse(req.params.newsId);
+      const language = z.string().length(2).safeParse(req.params.language);
+      if (!newsId.success || !language.success || !allLanguageCodes.includes(language.data as LanguageCode)) {
+        return res.status(400).json({ error: "Traducción inválida." });
+      }
+      try {
+        const [updated] = await db
+          .update(newsTranslations)
+          .set({ isApproved: true })
+          .where(sql`${newsTranslations.newsId} = ${newsId.data} AND ${newsTranslations.language} = ${language.data}`)
+          .returning({ id: newsTranslations.id });
+        if (!updated) return res.status(404).json({ error: "No existe una traducción para aprobar." });
+        await db
+          .update(translationCache)
+          .set({ isApproved: true, updatedAt: new Date() })
+          .where(sql`${translationCache.entityId} = ${newsId.data} AND ${translationCache.contentType} = 'news' AND ${translationCache.targetLanguage} = ${language.data}`);
+        res.json({ approved: true, newsId: newsId.data, language: language.data });
+      } catch {
+        res.status(503).json({ error: "No se pudo aprobar la traducción." });
       }
     },
   );
