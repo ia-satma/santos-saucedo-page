@@ -8,6 +8,18 @@ export const languageSchema = z.enum(SUPPORTED_LANGUAGES.map(({ code }) => code)
 export const aiDataClassificationSchema = z.enum(['public', 'internal', 'personal', 'confidential', 'privileged']);
 
 const articleOnlySchema = z.object({ articleId: articleIdSchema }).strict();
+const polyglotPayloadSchema = z.object({
+  articleId: articleIdSchema.optional(),
+  cmsSection: z.string().regex(/^[a-z][a-z0-9-]{1,80}$/).optional(),
+  sourceHash: z.string().regex(/^[a-f0-9]{64}$/i).optional(),
+  targetLanguages: z.array(languageSchema).max(10).optional(),
+  forceRetranslate: z.boolean().default(false),
+  applyChanges: z.boolean().default(false),
+}).strict().refine((value) => Boolean(value.articleId || value.cmsSection) && !(value.articleId && value.cmsSection), {
+  message: 'articleId or cmsSection is required',
+}).refine((value) => !value.cmsSection || (Boolean(value.sourceHash) && value.applyChanges === true), {
+  message: 'CMS translations require sourceHash and applyChanges=true',
+});
 const localMediaPathSchema = z.string()
   .transform((value) => value.split(/[?#]/, 1)[0])
   .refine(
@@ -46,11 +58,7 @@ export const agentPayloadSchemas = {
   metadata_linker: articleOnlySchema.extend({
     applyChanges: z.boolean().default(false),
   }).strict(),
-  polyglot_translator: articleOnlySchema.extend({
-    targetLanguages: z.array(languageSchema).max(10).optional(),
-    forceRetranslate: z.boolean().default(false),
-    applyChanges: z.boolean().default(false),
-  }).strict(),
+  polyglot_translator: polyglotPayloadSchema,
   content_auditor: z.object({
     scanType: z.enum(['full', 'translations', 'metadata', 'formatting']).optional(),
   }).strict(),

@@ -5,17 +5,30 @@ import { getBundledMediaMap, mapBundledMedia } from './bundledMediaMap';
 import { createHash } from 'node:crypto';
 import { and, eq, sql } from 'drizzle-orm';
 import { db, editorialDb } from '../db';
-import { siteConfig } from '@shared/schema';
+import { siteConfig, translationCache } from '@shared/schema';
 import { cmsDefaults, cmsSections, isCmsSection, mergeCms, validateCmsValue, type CmsSection, type CmsValue } from '@shared/cms';
 import { authMiddleware, requireRole } from '../auth';
 import { importBundledMedia, savedMediaImportStatus } from './mediaImport';
 import { storageBucketId, verifyAppStorage } from '../replitStorage';
 import { SUPPORTED_LANGUAGES } from '@shared/constants';
 import { readStaticCmsSection } from '../localization/staticSnapshots';
+import { getCmsSectionSource } from './cmsTranslationAgent';
 
 const prefix = 'editorial.';
 type Stored = { content: CmsValue; draft?: CmsValue; previous?: CmsValue };
 const revision = (raw: string | null | undefined) => raw ? createHash('sha256').update(raw).digest('hex') : 'initial';
+function enqueueCmsTranslation(section: CmsSection) {
+  void Promise.all([import('../agents'), import('./cmsTranslationAgent')]).then(async ([{ orchestrator }, { getCmsSectionSource }]) => {
+    const source = await getCmsSectionSource(section);
+    if (!source) return;
+    await orchestrator.enqueueJob('polyglot_translator', {
+      cmsSection: section,
+      sourceHash: source.sourceHash,
+      targetLanguages: SUPPORTED_LANGUAGES.map(({ code }) => code).filter((code) => code !== 'es'),
+      applyChanges: true,
+    }, { priority: 'normal' });
+  }).catch((error) => console.warn('[CMS] Translation job enqueue failed', error instanceof Error ? error.message : 'unknown error'));
+}
 const normalizeSearch = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 function flattenCms(value: CmsValue, path: string[] = [], out: { path: string[]; value: string }[] = []) {
   if (typeof value === 'string' && value.trim()) out.push({ path, value });
@@ -248,6 +261,29 @@ export function registerCmsRoutes(app: Express) {
       res.status(503).json({ error: 'No se pudo buscar el contenido.' });
     }
   });
+  app.get('/api/admin/cms-translations/:section/:language', authMiddleware, requireRole('editor', 'admin'), async (req, res) => {
+    const { section, language } = req.params;
+    if (!isCmsSection(section) || !SUPPORTED_LANGUAGES.some((item) => item.code === language)) return res.status(400).json({ error: 'Sección o idioma inválido.' });
+    const [row] = await db.select().from(translationCache).where(and(eq(translationCache.contentType, 'site_content'), eq(translationCache.entityId, section), eq(translationCache.targetLanguage, language))).orderBy(sql`${translationCache.updatedAt} DESC`).limit(1);
+    const sourceHash = typeof row?.sourceText === 'string' && row.sourceText.startsWith('sha256:') ? row.sourceText.slice(7) : null;
+    res.setHeader('Cache-Control', 'no-store');
+    res.json({ section, language, status: row?.isApproved ? 'published' : row ? 'pending' : 'missing', sourceHash, content: row?.translations ?? null });
+  });
+  app.post('/api/admin/cms-translations/:section/:language/approve', authMiddleware, requireRole('editor', 'admin'), async (req, res) => {
+    const { section, language } = req.params;
+    if (!isCmsSection(section) || !SUPPORTED_LANGUAGES.some((item) => item.code === language) || language === 'es') return res.status(400).json({ error: 'Sección o idioma inválido.' });
+    const [row] = await db.select().from(translationCache).where(and(eq(translationCache.contentType, 'site_content'), eq(translationCache.entityId, section), eq(translationCache.targetLanguage, language))).orderBy(sql`${translationCache.updatedAt} DESC`).limit(1);
+    if (!row?.translations || typeof row.translations !== 'object' || Array.isArray(row.translations)) return res.status(404).json({ error: 'No existe una propuesta para aprobar.' });
+    const content = row.translations as CmsValue;
+    const sourceHash = typeof row.sourceText === 'string' && row.sourceText.startsWith('sha256:') ? row.sourceText.slice(7) : null;
+    const source = await getCmsSectionSource(section);
+    if (!source || source.sourceHash !== sourceHash) return res.status(409).json({ error: 'La propuesta quedó obsoleta. Genere una traducción nueva.' });
+    const key = `localized.${section}.${language}`;
+    const value = JSON.stringify({ status: 'published', translationStatus: 'published', version: 1, sourceLanguage: row.sourceLanguage || 'es', targetLanguage: language, sourceHash, content, approvedAt: new Date().toISOString(), approvedBy: req.adminUser!.id });
+    await db.update(translationCache).set({ isApproved: true, updatedAt: new Date() }).where(eq(translationCache.id, row.id));
+    await db.insert(siteConfig).values({ key, value, type: 'json', category: 'localization', updatedAt: new Date() }).onConflictDoUpdate({ target: siteConfig.key, set: { value, type: 'json', category: 'localization', updatedAt: new Date() } });
+    res.json({ approved: true, section, language, sourceHash });
+  });
   app.get('/api/admin/site-config/:section', authMiddleware, requireRole('editor', 'admin'), async (req, res) => {
     const section = req.params.section;
     if (!isCmsSection(section)) return res.status(404).json({ error: 'Sección desconocida.' });
@@ -309,6 +345,7 @@ export function registerCmsRoutes(app: Express) {
         return saved;
       });
       console.log('[CMS]', JSON.stringify({ action: 'update-bundle', sections: parsed.map((item) => item.section), userId: req.adminUser!.id, at: new Date().toISOString() }));
+      for (const section of Object.keys(result)) enqueueCmsTranslation(section as CmsSection);
       res.json({ sections: result });
     } catch (error: any) {
       if (error?.message === 'REVISION_CONFLICT') return res.status(409).json({ error: `La sección ${error.section || 'editada'} cambió mientras se guardaba. Recargue antes de publicar.` });
@@ -380,6 +417,7 @@ export function registerCmsRoutes(app: Express) {
         : await db.insert(siteConfig).values({ key, ...metadata }).onConflictDoNothing().returning();
       if (!changed.length) return res.status(409).json({ error: 'La sección cambió mientras se guardaba. Recargue y revise su borrador.' });
       console.log('[CMS]', JSON.stringify({ action: 'update', section, userId: req.adminUser!.id, at: new Date().toISOString() }));
+      enqueueCmsTranslation(section as CmsSection);
       res.json({ section, content: req.body.content, revision: revision(raw), previous });
     } catch (error) {
       console.error('[CMS] Save failed', error);

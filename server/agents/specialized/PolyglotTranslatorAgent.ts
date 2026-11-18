@@ -80,15 +80,21 @@ export class PolyglotTranslatorAgent extends BaseAgent {
   }
 
   async execute(context: ExecutionContext, payload: Record<string, unknown>): Promise<AgentResult> {
-    const { articleId, targetLanguages, forceRetranslate, applyChanges } = payload as {
-      articleId: string;
+    const { articleId, cmsSection, sourceHash: cmsSourceHash, targetLanguages, forceRetranslate, applyChanges } = payload as {
+      articleId?: string;
+      cmsSection?: string;
       targetLanguages?: Language[];
       forceRetranslate?: boolean;
       applyChanges?: boolean;
+      sourceHash?: string;
     };
 
+    if (cmsSection) {
+      if (!cmsSourceHash) return { success: false, error: 'sourceHash es obligatorio para traducciones CMS.' };
+      return this.executeCmsSection(cmsSection, targetLanguages, cmsSourceHash);
+    }
     if (!articleId) {
-      return { success: false, error: 'articleId is required' };
+      return { success: false, error: 'articleId is required unless cmsSection is provided' };
     }
 
     const [article] = await db.select().from(news).where(eq(news.id, articleId));
@@ -200,6 +206,14 @@ export class PolyglotTranslatorAgent extends BaseAgent {
         errorCount: errors.length,
       },
     };
+  }
+
+  private async executeCmsSection(section: string, targetLanguages?: Language[], sourceHash?: string): Promise<AgentResult> {
+    if (!sourceHash) return { success: false, error: 'sourceHash es obligatorio para traducciones CMS.' };
+    const { generateCmsTranslationProposal } = await import('../../cms/cmsTranslationAgent');
+    const result = await generateCmsTranslationProposal(section, sourceHash, targetLanguages);
+    if (!result.success) return { success: false, error: result.error || 'No se pudo generar la propuesta CMS.' };
+    return { success: true, data: result, metrics: { languagesProcessed: targetLanguages?.length || 9, proposalsCreated: result.proposals || 0 } };
   }
 
   private async translateToLanguage(

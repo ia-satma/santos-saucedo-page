@@ -172,7 +172,7 @@ export function registerAgentReportRoutes(app: Express) {
     requirePermission("advanced"),
     async (_req, res) => {
       try {
-        const [articles, translations, activeLanguages, cmsRows] = await Promise.all([
+        const [articles, translations, activeLanguages, cmsRows, cmsTranslationRows] = await Promise.all([
           db
             .select({
               id: news.id,
@@ -194,6 +194,7 @@ export function registerAgentReportRoutes(app: Express) {
             .from(newsTranslations),
           readActiveLanguages(),
           db.select({ key: siteConfig.key, value: siteConfig.value }).from(siteConfig),
+          db.select({ entityId: translationCache.entityId, targetLanguage: translationCache.targetLanguage, sourceText: translationCache.sourceText, isApproved: translationCache.isApproved }).from(translationCache).where(eq(translationCache.contentType, "site_content")),
         ]);
         const languages = activeLanguages;
         const allLanguages = SUPPORTED_LANGUAGES.map((language) => ({
@@ -262,7 +263,8 @@ export function registerAgentReportRoutes(app: Express) {
           });
           const translated = byLanguage.reduce((sum, row) => sum + row.translated, 0);
           const total = byLanguage.reduce((sum, row) => sum + row.total, 0);
-          return { section: section.key, label: section.label, path: section.path, translated, total, percentage: total ? Math.round((translated / total) * 100) : 100, byLanguage };
+          const pendingLanguages = cmsTranslationRows.filter((row) => row.entityId === section.key && row.isApproved === false).map((row) => row.targetLanguage);
+          return { section: section.key, label: section.label, path: section.path, translated, total, percentage: total ? Math.round((translated / total) * 100) : 100, byLanguage, pendingLanguages };
         });
         const siteTranslatedCells = pageCoverage.reduce((sum, page) => sum + page.translated, 0);
         const siteTotalCells = pageCoverage.reduce((sum, page) => sum + page.total, 0);
