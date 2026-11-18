@@ -381,19 +381,19 @@ export function registerAdminUsers(app: Express) {
     const parsed = z
       .object({
         currentPassword: z.string().min(1).max(128),
-        newPassword: z.string().min(8).max(16),
+        newPassword: z.string().min(8).max(25),
       })
       .strict()
       .safeParse(req.body);
     if (
       !parsed.success ||
-      Buffer.byteLength(parsed.data?.newPassword || "", "utf8") > 16
+      Buffer.byteLength(parsed.data?.newPassword || "", "utf8") > 25
     )
       return res
         .status(400)
         .json({
           error:
-            "La contraseña nueva debe tener entre 8 y 16 caracteres.",
+            "La contraseña nueva debe tener entre 8 y 25 caracteres.",
         });
     try {
       if (parsed.data.currentPassword === parsed.data.newPassword)

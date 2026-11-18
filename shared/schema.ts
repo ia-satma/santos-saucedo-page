@@ -557,7 +557,7 @@ export type AdminPasskeyChallenge = typeof adminPasskeyChallenges.$inferSelect;
 // Admin login schema for validation (accepts email or username)
 export const adminLoginSchema = z.object({
   username: z.string().min(1, "Email or username is required").max(254),
-  password: z.string().min(8, "Password must be at least 8 characters").max(16, "Password must be at most 16 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters").max(25, "Password must be at most 25 characters"),
 });
 
 export type AdminLoginData = z.infer<typeof adminLoginSchema>;

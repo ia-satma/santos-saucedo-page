@@ -23,7 +23,7 @@ type LoginFormData = {
 
 const createLoginSchema = (t: { emailRequired: string; passwordMin: string }) => z.object({
   username: z.string().min(1, t.emailRequired),
-  password: z.string().min(8, t.passwordMin).max(16, t.passwordMin),
+  password: z.string().min(8, t.passwordMin).max(25, t.passwordMin),
 });
 
 const translations = {
@@ -40,7 +40,7 @@ const translations = {
     loginError: "Login failed",
     invalidCredentials: "Invalid email or password",
     emailRequired: "Email is required",
-    passwordMin: "Password must be between 8 and 16 characters",
+    passwordMin: "Password must be between 8 and 25 characters",
     showPassword: "Show password",
     hidePassword: "Hide password",
   },
@@ -57,7 +57,7 @@ const translations = {
     loginError: "Error al iniciar sesión",
     invalidCredentials: "Correo electrónico o contraseña inválidos",
     emailRequired: "El correo electrónico es obligatorio",
-    passwordMin: "La contraseña debe tener entre 8 y 16 caracteres",
+    passwordMin: "La contraseña debe tener entre 8 y 25 caracteres",
     showPassword: "Mostrar contraseña",
     hidePassword: "Ocultar contraseña",
   },
@@ -74,7 +74,7 @@ const translations = {
     loginError: "Anmeldung fehlgeschlagen",
     invalidCredentials: "Ungültige E-Mail oder Passwort",
     emailRequired: "E-Mail ist erforderlich",
-    passwordMin: "Das Passwort muss zwischen 8 und 16 Zeichen haben",
+    passwordMin: "Das Passwort muss zwischen 8 und 25 Zeichen haben",
     showPassword: "Passwort anzeigen",
     hidePassword: "Passwort ausblenden",
   },
@@ -91,7 +91,7 @@ const translations = {
     loginError: "登录失败",
     invalidCredentials: "电子邮件或密码无效",
     emailRequired: "电子邮件是必填项",
-    passwordMin: "密码长度必须为8到16个字符",
+    passwordMin: "密码长度必须为8到25个字符",
     showPassword: "显示密码",
     hidePassword: "隐藏密码",
   },
@@ -108,7 +108,7 @@ const translations = {
     loginError: "로그인 실패",
     invalidCredentials: "잘못된 이메일 또는 비밀번호",
     emailRequired: "이메일은 필수입니다",
-    passwordMin: "비밀번호는 8~16자여야 합니다",
+    passwordMin: "비밀번호는 8~25자여야 합니다",
     showPassword: "비밀번호 표시",
     hidePassword: "비밀번호 숨기기",
   },
@@ -125,7 +125,7 @@ const translations = {
     loginError: "ログイン失敗",
     invalidCredentials: "メールアドレスまたはパスワードが無効です",
     emailRequired: "メールアドレスは必須です",
-    passwordMin: "パスワードは8～16文字で入力してください",
+    passwordMin: "パスワードは8～25文字で入力してください",
     showPassword: "パスワードを表示",
     hidePassword: "パスワードを非表示",
   },
@@ -142,7 +142,7 @@ const translations = {
     loginError: "فشل تسجيل الدخول",
     invalidCredentials: "البريد الإلكتروني أو كلمة المرور غير صالحة",
     emailRequired: "البريد الإلكتروني مطلوب",
-    passwordMin: "يجب أن تتكون كلمة المرور من 8 إلى 16 حرفًا",
+    passwordMin: "يجب أن تتكون كلمة المرور من 8 إلى 25 حرفًا",
     showPassword: "إظهار كلمة المرور",
     hidePassword: "إخفاء كلمة المرور",
   },
@@ -159,7 +159,7 @@ const translations = {
     loginError: "Ошибка входа",
     invalidCredentials: "Неверная электронная почта или пароль",
     emailRequired: "Электронная почта обязательна",
-    passwordMin: "Пароль должен содержать от 8 до 16 символов",
+    passwordMin: "Пароль должен содержать от 8 до 25 символов",
     showPassword: "Показать пароль",
     hidePassword: "Скрыть пароль",
   },
@@ -176,7 +176,7 @@ const translations = {
     loginError: "Échec de la connexion",
     invalidCredentials: "Email ou mot de passe invalide",
     emailRequired: "L'email est requis",
-    passwordMin: "Le mot de passe doit contenir entre 8 et 16 caractères",
+    passwordMin: "Le mot de passe doit contenir entre 8 et 25 caractères",
     showPassword: "Afficher le mot de passe",
     hidePassword: "Masquer le mot de passe",
   },
@@ -193,7 +193,7 @@ const translations = {
     loginError: "Accesso fallito",
     invalidCredentials: "Email o password non validi",
     emailRequired: "L'email è obbligatoria",
-    passwordMin: "La password deve contenere tra 8 e 16 caratteri",
+    passwordMin: "La password deve contenere tra 8 e 25 caratteri",
     showPassword: "Mostra password",
     hidePassword: "Nascondi password",
   },
@@ -352,7 +352,7 @@ export default function AdminLogin() {
                           placeholder={t.passwordPlaceholder}
                           autoComplete="current-password"
                           minLength={8}
-                          maxLength={16}
+                          maxLength={25}
                           data-testid="input-password"
                         />
                         <button

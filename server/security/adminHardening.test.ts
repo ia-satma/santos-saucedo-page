@@ -8,12 +8,12 @@ test("admin login usernames have a bounded length", () => {
   assert.equal(parsed.success, false);
 });
 
-test("admin login passwords accept exactly 8 to 16 characters", () => {
+test("admin login passwords accept exactly 8 to 25 characters", () => {
   const input = (password: string) => adminLoginSchema.safeParse({ username: "editor@example.test", password });
   assert.equal(input("1234567").success, false);
   assert.equal(input("12345678").success, true);
-  assert.equal(input("1234567890123456").success, true);
-  assert.equal(input("12345678901234567").success, false);
+  assert.equal(input("1234567890123456789012345").success, true);
+  assert.equal(input("12345678901234567890123456").success, false);
 });
 
 test("cookie mutations reject a foreign browser origin", () => {

@@ -30,8 +30,8 @@ export default function AdminAccount() {
       setError("La confirmación no coincide con la contraseña nueva.");
       return;
     }
-    if (password.length < 8 || password.length > 16) {
-      setError("La contraseña nueva debe tener entre 8 y 16 caracteres.");
+    if (password.length < 8 || password.length > 25) {
+      setError("La contraseña nueva debe tener entre 8 y 25 caracteres.");
       return;
     }
     setBusy(true);
@@ -76,7 +76,7 @@ export default function AdminAccount() {
       <p className="admin-page-kicker">Mi cuenta</p>
       <h1>Cambiar mi contraseña</h1>
       <p>
-        Use entre 8 y 16 caracteres. Al guardar se cerrarán todas sus sesiones y
+        Use entre 8 y 25 caracteres. Al guardar se cerrarán todas sus sesiones y
         tendrá que iniciar sesión con la contraseña nueva.
       </p>
       <form onSubmit={save} className="admin-users-form">
@@ -90,7 +90,7 @@ export default function AdminAccount() {
               value={current}
               onChange={(e) => setCurrent(e.target.value)}
               minLength={8}
-              maxLength={16}
+              maxLength={25}
               required
             />
             <button type="button" className="admin-login-password-toggle" aria-label={showCurrent ? "Ocultar contraseña actual" : "Mostrar contraseña actual"} onClick={() => setShowCurrent((visible) => !visible)}>
@@ -106,7 +106,7 @@ export default function AdminAccount() {
               type={showPassword ? "text" : "password"}
               autoComplete="new-password"
               minLength={8}
-              maxLength={16}
+              maxLength={25}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -124,7 +124,7 @@ export default function AdminAccount() {
               type={showConfirm ? "text" : "password"}
               autoComplete="new-password"
               minLength={8}
-              maxLength={16}
+              maxLength={25}
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               required

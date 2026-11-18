@@ -13,7 +13,7 @@ import { AlertCircle, CheckCircle2, UserPlus, Eye, EyeOff } from "lucide-react";
 // por correo ni por chat.
 
 const MIN_PASSWORD = 8;
-const MAX_PASSWORD = 16;
+const MAX_PASSWORD = 25;
 
 const translations = {
   es: {
