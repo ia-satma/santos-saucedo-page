@@ -76,6 +76,19 @@ function blockedKnowledge(res: Response, reasons: string[]): Response {
 export function registerAdminKnowledgeRoutes(app: Express): void {
   const guard = [authMiddleware, requirePermission("agent_knowledge_admin")] as const;
 
+  app.post("/api/admin/knowledge/ask", authMiddleware, requirePermission("agents"), async (req: Request, res: Response) => {
+    const parsed = z.object({ query: z.string().trim().min(3).max(4_000), language: z.string().trim().max(12).optional() }).strict().safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ error: "La consulta debe contener entre 3 y 4000 caracteres." });
+    try {
+      const { orchestrator } = await import("../agents");
+      const result = await orchestrator.executeImmediately("legal_knowledge_assistant", parsed.data, { actorId: req.adminUser?.id || null, origin: "manual" });
+      res.setHeader("Cache-Control", "private, no-store");
+      res.json(result);
+    } catch {
+      res.status(500).json({ error: "No se pudo consultar la base jurídica aprobada." });
+    }
+  });
+
   app.get("/api/admin/knowledge", ...guard, async (_req: Request, res: Response) => {
     try {
       const dbPersistence = await knowledgePersistence();

@@ -15,6 +15,68 @@ export type CmsAuditSnapshot = {
   localizedKeys?: string[];
 };
 
+const IMAGE_KEYS = /^(?:image|imageUrl|src|path|photo|logo|poster)$/i;
+const ALT_KEYS = /^(?:alt|altText|textAlternative|altTextEs|altTextEn)$/i;
+const VIDEO_KEYS = /^(?:video|videoUrl|videoSrc)$/i;
+
+/** Checks media metadata without fetching or modifying any asset. */
+export function auditCmsAccessibility(snapshot: CmsAuditSnapshot): CmsAuditFinding[] {
+  const findings: CmsAuditFinding[] = [];
+  const visit = (value: unknown, source: string): void => {
+    if (Array.isArray(value)) {
+      value.forEach((item, index) => visit(item, `${source}[${index}]`));
+      return;
+    }
+    if (!value || typeof value !== "object") return;
+    const record = value as Record<string, unknown>;
+    const hasImage = Object.entries(record).some(([key, item]) => IMAGE_KEYS.test(key) && typeof item === "string" && item.trim());
+    if (hasImage && !Object.entries(record).some(([key, item]) => ALT_KEYS.test(key) && typeof item === "string" && item.trim())) {
+      findings.push({
+        category: "media",
+        issueType: "media_missing_alt",
+        severity: "medium",
+        details: { source },
+        recommendation: "Añade texto alternativo junto al campo de imagen en el bloque del CMS.",
+        url: source,
+      });
+    }
+    const hasVideo = Object.entries(record).some(([key, item]) => VIDEO_KEYS.test(key) && typeof item === "string" && item.trim());
+    if (hasVideo && !Object.entries(record).some(([key, item]) => key === "poster" && typeof item === "string" && item.trim())) {
+      findings.push({
+        category: "media",
+        issueType: "video_missing_poster",
+        severity: "low",
+        details: { source },
+        recommendation: "Añade un poster para el video y el fallback de reproducción.",
+        url: source,
+      });
+    }
+    Object.entries(record).forEach(([key, item]) => visit(item, `${source}.${key}`));
+  };
+  visit(snapshot.sections, "cms");
+  return findings;
+}
+
+export type PerformanceAsset = { url: string; sizeBytes: number; kind?: string };
+
+/** Applies only deterministic bundle and media budgets supplied by the runner. */
+export function auditPerformanceAssets(assets: readonly PerformanceAsset[], budgets: { scriptBytes?: number; stylesheetBytes?: number; mediaBytes?: number } = {}): CmsAuditFinding[] {
+  const limits = { scriptBytes: 300_000, stylesheetBytes: 250_000, mediaBytes: 1_500_000, ...budgets };
+  return assets.flatMap((asset) => {
+    const kind = asset.kind || (/\.css(?:$|\?)/i.test(asset.url) ? "stylesheet" : /\.(?:js|mjs)(?:$|\?)/i.test(asset.url) ? "script" : "media");
+    const limit = kind === "script" ? limits.scriptBytes : kind === "stylesheet" ? limits.stylesheetBytes : limits.mediaBytes;
+    if (!Number.isFinite(asset.sizeBytes) || asset.sizeBytes <= limit) return [];
+    return [{
+      category: "cms" as const,
+      issueType: "performance_budget_exceeded",
+      severity: kind === "script" ? "high" as const : "medium" as const,
+      details: { url: asset.url, kind, sizeBytes: asset.sizeBytes, budgetBytes: limit },
+      recommendation: `Reduce o divide el recurso ${asset.url} para mantenerse debajo del presupuesto de ${limit} bytes.`,
+      url: asset.url,
+    }];
+  });
+}
+
 /** Every public page points to the CMS sections that render its visible content. */
 export const CMS_ROUTE_SECTIONS: Readonly<Record<string, readonly CmsSection[]>> = {
   "/": ["home", "layout", "media", "navigation", "chrome", "links", "theme", "heroLabels", "contactData", "forms"],

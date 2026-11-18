@@ -245,9 +245,9 @@ const LEGACY_AGENT_REGISTRY: AgentCapabilityCard[] = [
     businessName: "The Evolution Chronicler",
     role: "System Historian",
     category: "brain",
-    description: "Meta-agent that documents the entire agent ecosystem. Tracks 14 capability cards, groups by category, monitors evolution levels (1-5), and persists the system's evolutionary history to JSON.",
+    description: "Meta-agent that documents the entire agent ecosystem. Tracks 16 capability cards, groups by category, monitors evolution levels (1-5), and persists the system's evolutionary history to JSON.",
     capabilities: [
-      "14 agent capability registry",
+      "16 agent capability registry",
       "Evolution level tracking (1-5)",
       "Real-time status monitoring",
       "History persistence",

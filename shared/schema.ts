@@ -99,6 +99,10 @@ export interface NewsClassificationSuggestion {
   tags?: string[];
   confidence?: number;
   reasoning?: string;
+  jurisdiction?: string;
+  riskType?: string;
+  authority?: string;
+  relevance?: 'low' | 'medium' | 'high' | 'critical';
 }
 
 export const news = pgTable("news", {

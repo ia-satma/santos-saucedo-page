@@ -4,6 +4,7 @@ import { Link } from "wouter";
 import {
   Activity,
   AlertTriangle,
+  BookOpen,
   Bell,
   Bot,
   Brain,
@@ -17,6 +18,7 @@ import {
   Play,
   Presentation,
   Search,
+  ShieldCheck,
   Share2,
   Sparkles,
   TrendingUp,
@@ -65,7 +67,7 @@ interface AgentUseCenterProps {
 }
 
 interface AgentLauncherConfig {
-  mode: "article" | "newsletter" | "legal" | "voice" | "presentation" | "audit";
+  mode: "article" | "newsletter" | "legal" | "voice" | "presentation" | "audit" | "knowledge";
   filter: Exclude<AgentFilter, "all">;
   location: string;
   requirement: string;
@@ -89,6 +91,8 @@ const AGENT_ICONS: Record<AgentId, typeof Bot> = {
   presentation_generator: Presentation,
   content_auditor: Search,
   website_auditor: AlertTriangle,
+  legal_knowledge_assistant: BookOpen,
+  editorial_security_auditor: ShieldCheck,
 };
 
 const LAUNCHERS: Record<AgentId, AgentLauncherConfig> = {
@@ -222,10 +226,26 @@ const LAUNCHERS: Record<AgentId, AgentLauncherConfig> = {
     href: "/admin/audits",
     hrefLabel: "Abrir auditorías",
   },
+  legal_knowledge_assistant: {
+    mode: "knowledge",
+    filter: "audit",
+    location: "Herramientas de IA → Base de conocimiento",
+    requirement: "Escribe una consulta. Sólo buscará documentos aprobados.",
+    href: "/admin/knowledge",
+    hrefLabel: "Abrir base de conocimiento",
+  },
+  editorial_security_auditor: {
+    mode: "article",
+    filter: "audit",
+    location: "Auditorías del sitio → seguridad editorial",
+    requirement: "Selecciona una publicación para revisar sus campos sin modificarlos.",
+    href: "/admin/audits",
+    hrefLabel: "Abrir auditorías",
+  },
 };
 
 const FILTERS: Array<{ id: AgentFilter; label: string }> = [
-  { id: "all", label: "Todos (14)" },
+  { id: "all", label: "Todos (16)" },
   { id: "article", label: "Trabajar artículos" },
   { id: "create", label: "Crear contenido" },
   { id: "audit", label: "Auditar" },
@@ -278,6 +298,7 @@ export function AgentUseCenter({
   const [sourceUrl, setSourceUrl] = useState("");
   const [voiceText, setVoiceText] = useState("");
   const [topic, setTopic] = useState("");
+  const [knowledgeQuery, setKnowledgeQuery] = useState("");
   const [illustrate, setIllustrate] = useState(false);
   const [dataClassification, setDataClassification] =
     useState<Extract<AiDataClassification, "public" | "internal">>("internal");
@@ -414,6 +435,10 @@ export function AgentUseCenter({
         aiUseConfirmed: true,
       };
     }
+    if (launcher.mode === "knowledge") {
+      if (!knowledgeQuery.trim()) return null;
+      return { query: knowledgeQuery.trim(), language };
+    }
     if (selected.id === "content_auditor") return { scanType: "full" };
     return { runType: "full", applyChanges: false, triggeredBy: "manual" };
   };
@@ -473,7 +498,7 @@ export function AgentUseCenter({
             <h2 id="agent-use-center-title" className="text-xl font-semibold">
               {compact
                 ? `Crear con ${selected.name}`
-                : "Centro de uso de los 14 agentes editoriales"}
+                : "Centro de uso de los 16 agentes editoriales"}
             </h2>
             <p className="mt-1 max-w-3xl text-sm leading-relaxed text-muted-foreground">
               {compact
@@ -818,6 +843,19 @@ export function AgentUseCenter({
                     </Label>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {launcher.mode === "knowledge" && (
+              <div className="space-y-2">
+                <Label htmlFor="agent-knowledge-query">Consulta interna</Label>
+                <Textarea
+                  id="agent-knowledge-query"
+                  value={knowledgeQuery}
+                  onChange={(event) => setKnowledgeQuery(event.target.value)}
+                  rows={5}
+                  placeholder="Ej. ¿Qué documentos aprobados explican REPSE?"
+                />
               </div>
             )}
 

@@ -30,7 +30,7 @@ import { privatePresentationImagePath } from '../../media/presentationGeneratedI
 import { PRESENTATION_REFERENCE_GUIDANCE } from '../../services/presentation/referenceTemplate';
 import { TASTE_DESIGN_GUIDANCE } from '../knowledge/tasteDesignPlaybook';
 
-// 14° agente: Generador de Presentaciones. A diferencia de los agentes estructurales
+// Agente de presentaciones. A diferencia de los agentes estructurales
 // (voice/auditors), SÍ llama a un LLM de texto: estructura el tema escrito + el texto extraído
 // de los documentos subidos en un MODELO DE DIAPOSITIVAS (JSON), y luego delega el render de los
 // tres formatos (PPTX/PDF/PNG) en PresentationGenerator. La generación solo se publica

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { auditCanonicalRoutes, auditCmsSnapshot, auditMediaReferences, auditTestimonials } from "../agents/specialized/websiteAuditCms";
+import { auditCanonicalRoutes, auditCmsAccessibility, auditCmsSnapshot, auditMediaReferences, auditPerformanceAssets, auditTestimonials } from "../agents/specialized/websiteAuditCms";
 
 test("CMS audit detects unknown overrides and unmapped empty sections", () => {
   const findings = auditCmsSnapshot({
@@ -57,4 +57,21 @@ test("testimonial audit protects captured and approved provenance", () => {
   assert(findings.some((finding) => finding.issueType === "testimonial_published_without_approval"));
   assert(findings.some((finding) => finding.issueType === "testimonial_missing_consent"));
   assert(findings.some((finding) => finding.issueType === "testimonial_missing_approval_provenance"));
+});
+
+test("accessibility audit flags media without alt and video poster", () => {
+  const findings = auditCmsAccessibility({
+    sections: { home: { hero: { image: "/hero.jpg", video: "/hero.mp4" } } },
+  });
+  assert(findings.some((finding) => finding.issueType === "media_missing_alt"));
+  assert(findings.some((finding) => finding.issueType === "video_missing_poster"));
+});
+
+test("performance audit enforces deterministic asset budgets", () => {
+  const findings = auditPerformanceAssets([
+    { url: "/assets/app.js", sizeBytes: 310_000, kind: "script" },
+    { url: "/assets/site.css", sizeBytes: 100_000, kind: "stylesheet" },
+  ]);
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].issueType, "performance_budget_exceeded");
 });

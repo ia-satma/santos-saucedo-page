@@ -70,13 +70,27 @@ export const agentPayloadSchemas = {
     applyChanges: z.boolean().default(false),
   }).strict(),
   category_agent: articleOnlySchema.extend({
+    mode: z.enum(['article', 'monitor']).default('article'),
     applyChanges: z.boolean().default(false),
   }).strict(),
   website_auditor: z.object({
-    runType: z.enum(['full', 'delta', 'links_only', 'translations_only', 'seo_only', 'content_only', 'cms_only', 'media_only', 'routes_only']).default('full'),
-    skipModules: z.array(z.enum(['cms', 'media', 'routes', 'links', 'translations', 'seo', 'content'])).max(7).optional(),
+    runType: z.enum(['full', 'delta', 'links_only', 'translations_only', 'seo_only', 'content_only', 'cms_only', 'media_only', 'routes_only', 'quality_only']).default('full'),
+    skipModules: z.array(z.enum(['cms', 'media', 'routes', 'links', 'translations', 'seo', 'content', 'quality'])).max(8).optional(),
+    performanceAssets: z.array(z.object({ url: z.string().trim().min(1).max(2_000), sizeBytes: z.number().int().nonnegative().max(50_000_000), kind: z.string().trim().max(40).optional() }).strict()).max(500).optional(),
     applyChanges: z.boolean().default(false),
-    triggeredBy: z.enum(['manual', 'scheduled']).optional(),
+    triggeredBy: z.enum(['manual', 'scheduled', 'cms_save']).optional(),
+  }).strict(),
+  editorial_security_auditor: z.object({
+    articleId: articleIdSchema.optional(),
+    cmsSection: z.string().regex(/^[a-z][a-z0-9-]{1,80}$/).optional(),
+    content: z.unknown().optional(),
+    sourceType: z.string().trim().max(80).optional(),
+  }).strict().refine((value) => Boolean(value.articleId || value.cmsSection || value.content), {
+    message: 'articleId, cmsSection or content is required',
+  }),
+  legal_knowledge_assistant: z.object({
+    query: z.string().trim().min(3).max(4_000),
+    language: languageSchema.optional(),
   }).strict(),
   social_media: articleOnlySchema.extend({
     platforms: z.array(z.enum(['linkedin', 'twitter', 'instagram', 'facebook'])).max(4).optional(),
@@ -174,6 +188,10 @@ export const categoryOutputSchema = z.object({
   categorySlug: z.string().trim().max(160).optional(),
   practiceAreas: z.array(z.string().trim().max(160)).max(30).default([]),
   industrySectors: z.array(z.string().trim().max(160)).max(30).default([]),
+  jurisdiction: z.string().trim().max(160).optional(),
+  riskType: z.string().trim().max(160).optional(),
+  authority: z.string().trim().max(160).optional(),
+  relevance: z.enum(['low', 'medium', 'high', 'critical']).optional(),
   tags: z.array(z.string().trim().max(100)).max(30).default([]),
   confidence: z.coerce.number().min(0).max(1),
   reasoning: z.string().max(2_000).default(''),

@@ -15,6 +15,7 @@ import {
   type RadarSourceType,
 } from "../services/laborRadar";
 import { RADAR_ENTITIES, runRadarSources } from "../services/radarSources";
+import { verifyLegalSource } from "../services/legalSourceVerifier";
 import { categoryAgent } from "../agents";
 import type { ExecutionContext } from "../agents/core/types";
 
@@ -53,7 +54,7 @@ export async function enrichRadarDraftWithClassification(newsId: string, actorId
       startTime: new Date(),
       metadata: { source: "radar", reviewRequired: true },
     };
-    const result = await categoryAgent.execute(context, { articleId: newsId, applyChanges: false });
+    const result = await categoryAgent.execute(context, { articleId: newsId, applyChanges: false, mode: "monitor" });
     if (!result.success || !result.data) return;
     const data = result.data as { practiceAreas?: string[]; practiceLabels?: string[]; industrySectors?: string[]; industryLabels?: string[]; confidence?: number; reasoning?: string };
     const current = (await storage.getNews()).find((item) => item.id === newsId);
@@ -95,14 +96,18 @@ async function runConfiguredRadar(req: Request | null, date?: string) {
   const run = await runRadarSources({ date, sources, limit: 25 });
   let created = 0;
   let duplicates = 0;
+  const seenFingerprints = new Set<string>();
   for (const item of run.items) {
+    const verification = verifyLegalSource(item, seenFingerprints);
+    if (verification.status === "rejected") continue;
+    seenFingerprints.add(item.fingerprint);
     const insert = radarItemToNewsInsert(item);
     const existing = (await storage.getNews()).find((news) => news.slug === insert.slug || (news.sourceUrl === insert.sourceUrl && news.titleEs === insert.titleEs));
     if (existing) { duplicates += 1; continue; }
     const news = await storage.createNews(insert);
     void enrichRadarDraftWithClassification(news.id, req?.adminUser?.id);
     created += 1;
-    if (req?.adminUser) await auditLog("create_from_radar", "news", news.id, req.adminUser.id, { sourceType: item.sourceType, sourceId: item.sourceId, sourceUrl: item.officialUrl, fingerprint: item.fingerprint, published: false }, req);
+    if (req?.adminUser) await auditLog("create_from_radar", "news", news.id, req.adminUser.id, { sourceType: item.sourceType, sourceId: item.sourceId, sourceUrl: item.officialUrl, fingerprint: item.fingerprint, verificationStatus: verification.status, verifiedAt: verification.checkedAt, contentSha256: verification.contentSha256, published: false }, req);
   }
   const status = run.errors.length && !run.items.length ? "failed" : run.errors.length ? "partial" : "success";
   const updated = await saveRadarSettings({ ...settings, lastRunAt: new Date().toISOString(), lastRunStatus: status, lastRunMessage: `${created} borradores nuevos, ${duplicates} duplicados${run.errors.length ? `. ${run.errors.length} incidencias.` : "."}` });
@@ -197,6 +202,10 @@ export function registerRadarRoutes(app: Express): void {
       try {
         const parsed = radarDraftSchema.parse(req.body ?? {});
         const item = normalizeRadarItem(parsed);
+        const verification = verifyLegalSource(item);
+        if (verification.status === "rejected") {
+          return res.status(422).json({ error: "La fuente no pasó la verificación jurídica.", verification });
+        }
         const insert = radarItemToNewsInsert(item);
         const existing = (await storage.getNews()).find((news) =>
           news.slug === insert.slug || (news.sourceUrl === insert.sourceUrl && news.titleEs === insert.titleEs),
@@ -212,6 +221,9 @@ export function registerRadarRoutes(app: Express): void {
           sourceId: item.sourceId,
           sourceUrl: item.officialUrl,
           fingerprint: item.fingerprint,
+          verificationStatus: verification.status,
+          verifiedAt: verification.checkedAt,
+          contentSha256: verification.contentSha256,
           published: false,
         }, req);
         return res.status(201).json({ news, created: true, published: false });

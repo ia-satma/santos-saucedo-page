@@ -19,6 +19,8 @@ import {
   auditCmsSnapshot,
   auditMediaReferences,
   auditTestimonials,
+  auditCmsAccessibility,
+  auditPerformanceAssets,
   collectCmsMediaReferences,
   collectCmsRouteReferences,
   type MediaReference,
@@ -54,7 +56,7 @@ const FALLBACK_IMAGE = '/placeholder-article.svg';
 const AUTO_ENQUEUE_ENTITY_TYPE = 'news';
 
 interface AuditConfig {
-  runType: 'full' | 'delta' | 'links_only' | 'translations_only' | 'seo_only' | 'content_only' | 'cms_only' | 'media_only' | 'routes_only';
+  runType: 'full' | 'delta' | 'links_only' | 'translations_only' | 'seo_only' | 'content_only' | 'cms_only' | 'media_only' | 'routes_only' | 'quality_only';
   skipModules?: string[];
   applyChanges?: boolean;
 }
@@ -153,6 +155,7 @@ export class WebsiteAuditorAgent extends BaseAgent {
   };
   private findings: FindingData[] = [];
   private allowChanges = false;
+  private performanceAssets: import('./websiteAuditCms').PerformanceAsset[] = [];
 
   constructor(dependencies: Partial<WebsiteAuditorDependencies> = {}) {
     super({
@@ -184,6 +187,9 @@ Be thorough but prioritize critical issues that directly impact users.`,
       skipModules: payload.skipModules as string[] | undefined,
       applyChanges: payload.applyChanges === true,
     };
+    this.performanceAssets = Array.isArray(payload.performanceAssets)
+      ? payload.performanceAssets.filter((item): item is import('./websiteAuditCms').PerformanceAsset => Boolean(item && typeof item === 'object' && typeof (item as any).url === 'string' && Number.isFinite((item as any).sizeBytes))).map((item: any) => ({ url: item.url, sizeBytes: item.sizeBytes, kind: typeof item.kind === 'string' ? item.kind : undefined }))
+      : [];
     this.allowChanges = config.applyChanges === true;
 
     console.log(`[WebsiteAuditor] Starting ${config.runType} audit...`);
@@ -291,6 +297,7 @@ Be thorough but prioritize critical issues that directly impact users.`,
 
   private getModulesToRun(config: AuditConfig): string[] {
     const allModules = ['cms', 'media', 'routes', 'translations', 'content', 'seo', 'links'];
+    if (this.performanceAssets.length) allModules.push('quality');
     const skipModules = config.skipModules || [];
 
     switch (config.runType) {
@@ -308,6 +315,8 @@ Be thorough but prioritize critical issues that directly impact users.`,
         return ['media'];
       case 'routes_only':
         return ['routes'];
+      case 'quality_only':
+        return ['quality'];
       case 'delta':
       case 'full':
       default:
@@ -340,6 +349,9 @@ Be thorough but prioritize critical issues that directly impact users.`,
       case 'routes':
         await this.auditCmsRoutes();
         break;
+      case 'quality':
+        await this.auditQuality();
+        break;
       default:
         console.warn(`[WebsiteAuditor] Unknown module: ${module}`);
     }
@@ -356,8 +368,15 @@ Be thorough but prioritize critical issues that directly impact users.`,
       this.dependencies.loadTestimonials(),
     ]);
     this.pushCmsFindings(cmsFindings);
+    this.pushCmsFindings(auditCmsAccessibility(snapshot));
     this.pushCmsFindings(auditTestimonials(testimonials));
     this.metrics.cmsSectionsChecked += Object.keys(snapshot.sections).length;
+  }
+
+  private async auditQuality(): Promise<void> {
+    const snapshot = await this.dependencies.loadCmsSnapshot();
+    this.pushCmsFindings(auditCmsAccessibility(snapshot));
+    if (this.performanceAssets.length) this.pushCmsFindings(auditPerformanceAssets(this.performanceAssets));
   }
 
   private async auditCmsMedia(): Promise<void> {

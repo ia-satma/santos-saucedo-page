@@ -21,6 +21,7 @@ export const AGENT_IDS = {
   CATEGORY_AGENT: 'category_agent',
   METADATA_LINKER: 'metadata_linker',
   LEGAL_ALERTS: 'legal_alerts',
+  LEGAL_KNOWLEDGE_ASSISTANT: 'legal_knowledge_assistant',
 
   // Content execution
   FORMATTER: 'formatter',
@@ -35,6 +36,7 @@ export const AGENT_IDS = {
   // Read-only audit
   CONTENT_AUDITOR: 'content_auditor',
   WEBSITE_AUDITOR: 'website_auditor',
+  EDITORIAL_SECURITY_AUDITOR: 'editorial_security_auditor',
 } as const;
 
 export type AgentId = typeof AGENT_IDS[keyof typeof AGENT_IDS];
@@ -52,7 +54,7 @@ export interface AgentDefinition {
 
 /**
  * AI-powered CMS modules with their own routes and persistence. They are
- * intentionally separate from the 14 AgentOrchestrator runtime agents.
+ * intentionally separate from the AgentOrchestrator runtime agents.
  */
 export const AI_MODULE_DEFINITIONS = [
   {
@@ -117,6 +119,16 @@ export const AGENT_DEFINITIONS: readonly AgentDefinition[] = [
     description: 'Convierte material de fuentes oficiales permitidas en borradores bilingües sujetos a aprobación humana.',
     userBenefit: 'Acelera la preparación de alertas sin publicarlas automáticamente.',
     capabilities: ['Fuentes oficiales', 'Borrador bilingüe', 'Sanitización', 'Revisión humana'],
+  },
+  {
+    id: AGENT_IDS.LEGAL_KNOWLEDGE_ASSISTANT,
+    category: AGENT_CATEGORIES.BRAIN,
+    technicalName: 'LegalKnowledgeAssistantAgent',
+    name: 'Asistente jurídico interno',
+    role: 'Consulta documentada',
+    description: 'Busca únicamente en documentos jurídicos aprobados y devuelve fragmentos con trazabilidad.',
+    userBenefit: 'Acelera la consulta interna sin inventar respuestas ni exponer documentos no aprobados.',
+    capabilities: ['Búsqueda semántica básica', 'Citas', 'Versiones', 'RBAC'],
   },
   {
     id: AGENT_IDS.FORMATTER,
@@ -217,6 +229,16 @@ export const AGENT_DEFINITIONS: readonly AgentDefinition[] = [
     description: 'Revisa enlaces, imágenes, SEO, traducciones y contenido del sitio.',
     userBenefit: 'Detecta fallos visibles antes de que afecten la experiencia pública.',
     capabilities: ['Enlaces', 'Imágenes', 'SEO', 'Traducciones'],
+  },
+  {
+    id: AGENT_IDS.EDITORIAL_SECURITY_AUDITOR,
+    category: AGENT_CATEGORIES.SHIELD,
+    technicalName: 'EditorialSecurityAuditorAgent',
+    name: 'Auditor de seguridad editorial',
+    role: 'Protección de contenido',
+    description: 'Detecta secretos, datos personales, inyección de instrucciones y URLs sospechosas sin modificar registros.',
+    userBenefit: 'Identifica exposición de información antes de que un borrador o medio llegue a producción.',
+    capabilities: ['PII', 'Secretos', 'Prompt injection', 'URLs externas', 'Modo lectura'],
   },
 ] as const;
 

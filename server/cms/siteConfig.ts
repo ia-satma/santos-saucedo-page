@@ -13,6 +13,7 @@ import { storageBucketId, verifyAppStorage } from '../replitStorage';
 import { SUPPORTED_LANGUAGES } from '@shared/constants';
 import { readStaticCmsSection } from '../localization/staticSnapshots';
 import { getCmsSectionSource } from './cmsTranslationAgent';
+import { reviewTranslation } from '../services/translationQa';
 
 const prefix = 'editorial.';
 type Stored = { content: CmsValue; draft?: CmsValue; previous?: CmsValue };
@@ -28,6 +29,23 @@ function enqueueCmsTranslation(section: CmsSection) {
       applyChanges: true,
     }, { priority: 'normal' });
   }).catch((error) => console.warn('[CMS] Translation job enqueue failed', error instanceof Error ? error.message : 'unknown error'));
+}
+function enqueueCmsQualityAudit() {
+  void import('../agents').then(async ({ orchestrator }) => {
+    await orchestrator.enqueueJob('website_auditor', {
+      runType: 'quality_only',
+      applyChanges: false,
+      triggeredBy: 'cms_save',
+    }, { priority: 'low', maxRetries: 1 });
+  }).catch((error) => console.warn('[CMS] Quality audit enqueue failed', error instanceof Error ? error.message : 'unknown error'));
+}
+function enqueueCmsSecurityAudit(section: CmsSection) {
+  void import('../agents').then(async ({ orchestrator }) => {
+    await orchestrator.enqueueJob('editorial_security_auditor', {
+      cmsSection: section,
+      sourceType: 'cms_save',
+    }, { priority: 'low', maxRetries: 1 });
+  }).catch((error) => console.warn('[CMS] Security audit enqueue failed', error instanceof Error ? error.message : 'unknown error'));
 }
 const normalizeSearch = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 function flattenCms(value: CmsValue, path: string[] = [], out: { path: string[]; value: string }[] = []) {
@@ -278,6 +296,8 @@ export function registerCmsRoutes(app: Express) {
     const sourceHash = typeof row.sourceText === 'string' && row.sourceText.startsWith('sha256:') ? row.sourceText.slice(7) : null;
     const source = await getCmsSectionSource(section);
     if (!source || source.sourceHash !== sourceHash) return res.status(409).json({ error: 'La propuesta quedó obsoleta. Genere una traducción nueva.' });
+    const qa = reviewTranslation(source.source, content, language);
+    if (qa.status === 'blocked') return res.status(422).json({ error: 'La propuesta no pasó la revisión automática.', findings: qa.findings });
     const key = `localized.${section}.${language}`;
     const value = JSON.stringify({ status: 'published', translationStatus: 'published', version: 1, sourceLanguage: row.sourceLanguage || 'es', targetLanguage: language, sourceHash, content, approvedAt: new Date().toISOString(), approvedBy: req.adminUser!.id });
     await db.update(translationCache).set({ isApproved: true, updatedAt: new Date() }).where(eq(translationCache.id, row.id));
@@ -345,7 +365,11 @@ export function registerCmsRoutes(app: Express) {
         return saved;
       });
       console.log('[CMS]', JSON.stringify({ action: 'update-bundle', sections: parsed.map((item) => item.section), userId: req.adminUser!.id, at: new Date().toISOString() }));
-      for (const section of Object.keys(result)) enqueueCmsTranslation(section as CmsSection);
+      for (const section of Object.keys(result)) {
+        enqueueCmsTranslation(section as CmsSection);
+        enqueueCmsSecurityAudit(section as CmsSection);
+      }
+      enqueueCmsQualityAudit();
       res.json({ sections: result });
     } catch (error: any) {
       if (error?.message === 'REVISION_CONFLICT') return res.status(409).json({ error: `La sección ${error.section || 'editada'} cambió mientras se guardaba. Recargue antes de publicar.` });
@@ -418,6 +442,8 @@ export function registerCmsRoutes(app: Express) {
       if (!changed.length) return res.status(409).json({ error: 'La sección cambió mientras se guardaba. Recargue y revise su borrador.' });
       console.log('[CMS]', JSON.stringify({ action: 'update', section, userId: req.adminUser!.id, at: new Date().toISOString() }));
       enqueueCmsTranslation(section as CmsSection);
+      enqueueCmsQualityAudit();
+      enqueueCmsSecurityAudit(section as CmsSection);
       res.json({ section, content: req.body.content, revision: revision(raw), previous });
     } catch (error) {
       console.error('[CMS] Save failed', error);

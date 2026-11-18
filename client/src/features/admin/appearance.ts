@@ -17,6 +17,8 @@ export const agentTones: Record<AgentId, string> = {
   presentation_generator: "amber",
   content_auditor: "teal",
   website_auditor: "slate",
+  legal_knowledge_assistant: "indigo",
+  editorial_security_auditor: "red",
 };
 
 export function agentTone(id: string): string {

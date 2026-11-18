@@ -16,7 +16,7 @@ const EXTERNAL_ALLOWED = ["public", "internal"] as const;
 const NO_EXTERNAL_DATA: readonly AiDataClassification[] = [];
 
 /**
- * Política ejecutable para los 14 agentes canónicos. Los agentes deterministas
+ * Política ejecutable para los agentes canónicos. Los agentes deterministas
  * también aparecen para impedir que la documentación vuelva a quedar desfasada.
  */
 export const AI_AGENT_RUNTIME_POLICY: Record<AgentId, AiAgentRuntimePolicy> = {
@@ -43,6 +43,12 @@ export const AI_AGENT_RUNTIME_POLICY: Record<AgentId, AiAgentRuntimePolicy> = {
     allowedClassifications: EXTERNAL_ALLOWED,
     humanReviewRequired: true,
     purpose: "official_source_draft",
+  },
+  [AGENT_IDS.LEGAL_KNOWLEDGE_ASSISTANT]: {
+    usesExternalProvider: false,
+    allowedClassifications: NO_EXTERNAL_DATA,
+    humanReviewRequired: true,
+    purpose: "approved_knowledge_search",
   },
   [AGENT_IDS.FORMATTER]: {
     usesExternalProvider: true,
@@ -103,6 +109,12 @@ export const AI_AGENT_RUNTIME_POLICY: Record<AgentId, AiAgentRuntimePolicy> = {
     allowedClassifications: NO_EXTERNAL_DATA,
     humanReviewRequired: true,
     purpose: "deterministic_website_audit",
+  },
+  [AGENT_IDS.EDITORIAL_SECURITY_AUDITOR]: {
+    usesExternalProvider: false,
+    allowedClassifications: NO_EXTERNAL_DATA,
+    humanReviewRequired: true,
+    purpose: "deterministic_editorial_security_audit",
   },
 };
 

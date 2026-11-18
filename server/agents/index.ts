@@ -20,6 +20,8 @@ export { newsletterAgent } from './specialized/NewsletterAgent';
 export { legalAlertsAgent } from './specialized/LegalAlertsAgent';
 export { voiceAgent } from './specialized/VoiceAgent';
 export { presentationGeneratorAgent } from './specialized/PresentationGeneratorAgent';
+export { editorialSecurityAuditorAgent } from './specialized/EditorialSecurityAuditorAgent';
+export { legalKnowledgeAssistantAgent } from './specialized/LegalKnowledgeAssistantAgent';
 
 import { orchestrator } from './core/AgentOrchestrator';
 import { formatterAgent } from './specialized/FormatterAgent';
@@ -36,6 +38,8 @@ import { newsletterAgent } from './specialized/NewsletterAgent';
 import { legalAlertsAgent } from './specialized/LegalAlertsAgent';
 import { voiceAgent } from './specialized/VoiceAgent';
 import { presentationGeneratorAgent } from './specialized/PresentationGeneratorAgent';
+import { editorialSecurityAuditorAgent } from './specialized/EditorialSecurityAuditorAgent';
+import { legalKnowledgeAssistantAgent } from './specialized/LegalKnowledgeAssistantAgent';
 import { ALL_AGENT_IDS, type AgentId } from '@shared/agentConstants';
 
 const RUNTIME_AGENTS = [
@@ -53,6 +57,8 @@ const RUNTIME_AGENTS = [
   legalAlertsAgent,
   voiceAgent,
   presentationGeneratorAgent,
+  editorialSecurityAuditorAgent,
+  legalKnowledgeAssistantAgent,
 ] as const;
 
 let initializationPromise: Promise<void> | null = null;
