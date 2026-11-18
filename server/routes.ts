@@ -1053,7 +1053,8 @@ export async function registerRoutes(
   });
 
   app.get("/robots.txt", (_req, res) => {
-    const robotsTxt = `# robots.txt for https://www.santossaucedo.com
+    const publicSiteUrl = (process.env.PUBLIC_SITE_URL || "https://www.santossaucedo.com").replace(/\/+$/, "");
+    const robotsTxt = `# robots.txt for ${publicSiteUrl}
 User-agent: *
 Allow: /
 
@@ -1061,7 +1062,7 @@ Allow: /
 Disallow: /api/
 
 # Sitemap location
-Sitemap: https://www.santossaucedo.com/sitemap.xml
+Sitemap: ${publicSiteUrl}/sitemap.xml
 `;
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     res.send(robotsTxt);
@@ -1069,7 +1070,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
 
   app.get("/sitemap.xml", async (_req, res) => {
     try {
-      const baseUrl = 'https://www.santossaucedo.com';
+      const baseUrl = (process.env.PUBLIC_SITE_URL || 'https://www.santossaucedo.com').replace(/\/+$/, '');
       const today = new Date().toISOString().split('T')[0];
 
       const staticPages = [

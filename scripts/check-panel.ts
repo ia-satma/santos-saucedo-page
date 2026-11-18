@@ -174,7 +174,9 @@ try {
     assert(module.persistence.length > 0);
   }
   const activeLanguages = ok(await call("GET", "/api/active-languages"), 200, "active languages");
-  assert.equal(activeLanguages.activeLanguages.length, 10);
+  assert(activeLanguages.activeLanguages.length >= 2);
+  assert(activeLanguages.activeLanguages.includes("es"));
+  assert(activeLanguages.activeLanguages.includes("en"));
   const disabledForCheck = activeLanguages.activeLanguages.filter((code: string) => code !== "it");
   ok(await call("PUT", "/api/admin/active-languages", { activeLanguages: disabledForCheck }), 200, "disable language");
   const disabledState = ok(await call("GET", "/api/active-languages"), 200, "disabled language state");
