@@ -1,4 +1,5 @@
 import type { Express } from "express";
+import { createHash } from "node:crypto";
 import { count, eq, sql } from "drizzle-orm";
 import { db } from "../db";
 import {
@@ -12,7 +13,63 @@ import {
 import { authMiddleware, requirePermission } from "../auth";
 import { SUPPORTED_LANGUAGES } from "../openai";
 import type { LanguageCode } from "@shared/constants";
+import { cmsDefaults, cmsSections, mergeCms, type CmsValue } from "@shared/cms";
 import { z } from "zod/v3";
+
+const languageCodeSet: Set<string> = new Set(SUPPORTED_LANGUAGES.map(({ code }) => code));
+const sourceHash = (value: unknown) => createHash("sha256").update(JSON.stringify(value)).digest("hex");
+const nonTranslatablePath = /(?:^|\.)(?:id|slug|url|href|path|image|imageUrl|video|poster|email|phone|linkedin|website|code|locale|date|year|order|published|enabled|visible)$/i;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value && typeof value === "object" && !Array.isArray(value));
+}
+
+function languageProjection(value: unknown, language: string): unknown {
+  if (Array.isArray(value)) return value.map((item) => languageProjection(item, language));
+  if (!isRecord(value)) return value;
+  if (Object.keys(value).some((key) => languageCodeSet.has(key))) {
+    return languageProjection(value[language] ?? value.es ?? value.en, language);
+  }
+  return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, languageProjection(item, language)]));
+}
+
+function explicitLanguageProjection(value: unknown, language: string): unknown {
+  if (Array.isArray(value)) return value.map((item) => explicitLanguageProjection(item, language));
+  if (!isRecord(value)) return value;
+  if (Object.keys(value).some((key) => languageCodeSet.has(key))) {
+    return value[language] === undefined ? undefined : explicitLanguageProjection(value[language], language);
+  }
+  return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, explicitLanguageProjection(item, language)]));
+}
+
+function hasLanguageNode(value: unknown): boolean {
+  if (Array.isArray(value)) return value.some(hasLanguageNode);
+  if (!isRecord(value)) return false;
+  if (Object.keys(value).some((key) => languageCodeSet.has(key))) return true;
+  return Object.values(value).some(hasLanguageNode);
+}
+
+function textLeaves(value: unknown, path: string[] = [], result: Map<string, string> = new Map()) {
+  if (typeof value === "string") {
+    if (value.trim() && !nonTranslatablePath.test(path.join("."))) result.set(path.join("."), value);
+    return result;
+  }
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => textLeaves(item, [...path, String(index)], result));
+    return result;
+  }
+  if (isRecord(value)) Object.entries(value).forEach(([key, item]) => textLeaves(item, [...path, key], result));
+  return result;
+}
+
+function localizedCoverage(content: CmsValue, localized: unknown, language: string) {
+  const source = textLeaves(languageProjection(content, "es"));
+  const translated = localized !== undefined
+    ? textLeaves(localized)
+    : textLeaves(explicitLanguageProjection(content, language));
+  const translatedCount = Array.from(source.keys()).filter((key) => translated.get(key)?.trim()).length;
+  return { translated: translatedCount, total: source.size };
+}
 export function registerAgentReportRoutes(app: Express) {
   const allLanguageCodes: LanguageCode[] = SUPPORTED_LANGUAGES.map(({ code }) => code as LanguageCode);
   const readActiveLanguages = async () => {
@@ -115,7 +172,7 @@ export function registerAgentReportRoutes(app: Express) {
     requirePermission("advanced"),
     async (_req, res) => {
       try {
-        const [articles, translations, activeLanguages] = await Promise.all([
+        const [articles, translations, activeLanguages, cmsRows] = await Promise.all([
           db
             .select({
               id: news.id,
@@ -136,6 +193,7 @@ export function registerAgentReportRoutes(app: Express) {
             })
             .from(newsTranslations),
           readActiveLanguages(),
+          db.select({ key: siteConfig.key, value: siteConfig.value }).from(siteConfig),
         ]);
         const languages = activeLanguages;
         const allLanguages = SUPPORTED_LANGUAGES.map((language) => ({
@@ -174,6 +232,46 @@ export function registerAgentReportRoutes(app: Express) {
             percentage: articleRows.length ? Math.round((translated / articleRows.length) * 100) : 100,
           };
         });
+        const savedSections = new Map<string, unknown>();
+        const localizedSections = new Map<string, { content: unknown; sourceHash?: string }>();
+        for (const row of cmsRows) {
+          if (row.key.startsWith("editorial.")) {
+            try {
+              const parsed = row.value ? JSON.parse(row.value) : null;
+              if (parsed?.content !== undefined) savedSections.set(row.key.slice("editorial.".length), parsed.content);
+            } catch {
+              // Preserve the rest of the overview when an override is malformed.
+            }
+          }
+          const match = /^localized\.([^.]+)\.([a-z]{2})$/.exec(row.key);
+          if (!match || !languageCodeSet.has(match[2])) continue;
+          try {
+            const parsed = row.value ? JSON.parse(row.value) : null;
+            if (parsed?.status === "published" && parsed.content !== undefined) localizedSections.set(`${match[1]}:${match[2]}`, { content: parsed.content, sourceHash: parsed.sourceHash });
+          } catch {
+            // A malformed localized copy is counted as missing content.
+          }
+        }
+        const pageCoverage = cmsSections.filter((section) => hasLanguageNode(mergeCms(cmsDefaults[section.key], savedSections.get(section.key)))).map((section) => {
+          const content = mergeCms(cmsDefaults[section.key], savedSections.get(section.key)) as CmsValue;
+          const byLanguage = languages.map((language) => {
+            const localized = localizedSections.get(`${section.key}:${language}`);
+            const source = languageProjection(content, "es");
+            const result = localizedCoverage(content, localized && localized.sourceHash === sourceHash(source) ? localized.content : undefined, language);
+            return { language, ...result, percentage: result.total ? Math.round((result.translated / result.total) * 100) : 100 };
+          });
+          const translated = byLanguage.reduce((sum, row) => sum + row.translated, 0);
+          const total = byLanguage.reduce((sum, row) => sum + row.total, 0);
+          return { section: section.key, label: section.label, path: section.path, translated, total, percentage: total ? Math.round((translated / total) * 100) : 100, byLanguage };
+        });
+        const siteTranslatedCells = pageCoverage.reduce((sum, page) => sum + page.translated, 0);
+        const siteTotalCells = pageCoverage.reduce((sum, page) => sum + page.total, 0);
+        const siteLanguageCoverage = languages.map((language) => {
+          const rows = pageCoverage.flatMap((page) => page.byLanguage.filter((item) => item.language === language));
+          const translated = rows.reduce((sum, row) => sum + row.translated, 0);
+          const total = rows.reduce((sum, row) => sum + row.total, 0);
+          return { ...SUPPORTED_LANGUAGES.find((item) => item.code === language)!, translated, total, percentage: total ? Math.round((translated / total) * 100) : 100 };
+        });
         res.json({
           languages,
           allLanguages,
@@ -184,6 +282,13 @@ export function registerAgentReportRoutes(app: Express) {
             percentage: totalCells ? Math.round((translatedCells / totalCells) * 100) : 100,
           },
           languageCoverage,
+          siteCoverage: {
+            translatedCells: siteTranslatedCells,
+            totalCells: siteTotalCells,
+            percentage: siteTotalCells ? Math.round((siteTranslatedCells / siteTotalCells) * 100) : 100,
+            languageCoverage: siteLanguageCoverage,
+            pages: pageCoverage,
+          },
           articles: articleRows,
         });
       } catch {
