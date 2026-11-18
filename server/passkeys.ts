@@ -23,6 +23,7 @@ const CHALLENGE_TTL_MS = 5 * 60 * 1000;
 const MAX_PASSKEYS = 2;
 const PASSKEY_RATE_WINDOW_MS = 5 * 60 * 1000;
 const PASSKEY_RATE_MAX = 10;
+const PASSKEY_GLOBAL_RATE_MAX = 25;
 
 function requestOrigin(req: Request): string {
   const forwarded = String(req.headers["x-forwarded-proto"] || "").split(",")[0].trim();
@@ -87,7 +88,9 @@ async function saveChallenge(req: Request, res: Response, kind: string, userId: 
 
 async function allowPasskeyRequest(req: Request, scope: string): Promise<{ allowed: true } | { allowed: false; retryAfter: number }> {
   const ip = req.ip || req.socket.remoteAddress || "unknown";
-  return consumeRateLimit(`passkey:${scope}:${ip}`, PASSKEY_RATE_MAX, PASSKEY_RATE_WINDOW_MS);
+  const ipRate = await consumeRateLimit(`passkey:${scope}:${ip}`, PASSKEY_RATE_MAX, PASSKEY_RATE_WINDOW_MS);
+  if (!ipRate.allowed) return ipRate;
+  return consumeRateLimit(`passkey:${scope}:global`, PASSKEY_GLOBAL_RATE_MAX, PASSKEY_RATE_WINDOW_MS);
 }
 
 export function registerPasskeyRoutes(app: Express): void {
