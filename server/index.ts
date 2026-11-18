@@ -62,6 +62,14 @@ app.use(cors({
 
 let applicationReady = false;
 
+app.get("/", (_req, res) => {
+  if (!applicationReady) {
+    res.type("text/plain").status(200).send("ok");
+    return;
+  }
+  res.redirect(308, "/es/");
+});
+
 declare module "http" {
   interface IncomingMessage {
     rawBody: unknown;
