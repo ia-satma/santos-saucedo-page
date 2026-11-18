@@ -11,10 +11,6 @@ deploymentTarget = "autoscale"
 build = ["npm", "run", "build:deploy"]
 run = ["npm", "run", "start:deploy"]
 
-[[deployment.rewrites]]
-from = "/healthz"
-to = "/healthz/"
-
 [[ports]]
 localPort = 5000
 externalPort = 80
