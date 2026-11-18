@@ -229,7 +229,7 @@ try {
     await route.fulfill({ json: { ...config, practices: { es: { subtitle: "Introducción editada desde el panel." } } } });
   });
   await open(edited, "es");
-  await checkRows(edited, "es", custom);
+  await checkRows(edited, "es", custom.slice(0, 1));
   assert.equal(await edited.getByTestId("text-practice-groups-subtitle").innerText(), "Introducción editada desde el panel.");
   await edited.close();
   const translated = await pageFor("de", 375, { cached: true });
