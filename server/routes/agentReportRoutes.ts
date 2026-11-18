@@ -263,7 +263,8 @@ export function registerAgentReportRoutes(app: Express) {
           });
           const translated = byLanguage.reduce((sum, row) => sum + row.translated, 0);
           const total = byLanguage.reduce((sum, row) => sum + row.total, 0);
-          const pendingLanguages = cmsTranslationRows.filter((row) => row.entityId === section.key && row.isApproved === false).map((row) => row.targetLanguage);
+          const currentSourceHash = sourceHash(languageProjection(content, "es"));
+          const pendingLanguages = cmsTranslationRows.filter((row) => row.entityId === section.key && row.isApproved === false && row.sourceText === `sha256:${currentSourceHash}`).map((row) => row.targetLanguage);
           return { section: section.key, label: section.label, path: section.path, translated, total, percentage: total ? Math.round((translated / total) * 100) : 100, byLanguage, pendingLanguages };
         });
         const siteTranslatedCells = pageCoverage.reduce((sum, page) => sum + page.translated, 0);
