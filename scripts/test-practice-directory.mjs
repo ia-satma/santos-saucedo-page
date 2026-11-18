@@ -245,7 +245,7 @@ try {
       const page = await pageFor(language, 375);
       let release;
       const gate = new Promise(resolve => { release = resolve; });
-      await page.route("**/api/practice-groups*", async route => {
+      await page.route("**/api/practice-groups", async route => {
         if (state === "loading") await gate;
         await route.fulfill({ status: state === "error" ? 500 : 200, json: state === "error" ? { message: "Unavailable" } : [] });
       });
