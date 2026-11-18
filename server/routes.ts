@@ -1053,7 +1053,7 @@ export async function registerRoutes(
   });
 
   app.get("/robots.txt", async (_req, res) => {
-    const publicSiteUrl = (process.env.PUBLIC_SITE_URL || (await getCmsIntegrations()).siteUrl || "https://santos-saucedo.replit.app").replace(/\/+$/, "");
+    const publicSiteUrl = ((await getCmsIntegrations()).siteUrl || process.env.PUBLIC_SITE_URL || "https://santos-saucedo.replit.app").replace(/\/+$/, "");
     const robotsTxt = `# robots.txt for ${publicSiteUrl}
 User-agent: *
 Allow: /
@@ -1070,7 +1070,7 @@ Sitemap: ${publicSiteUrl}/sitemap.xml
 
   app.get("/sitemap.xml", async (_req, res) => {
     try {
-      const baseUrl = (process.env.PUBLIC_SITE_URL || (await getCmsIntegrations()).siteUrl || 'https://santos-saucedo.replit.app').replace(/\/+$/, '');
+      const baseUrl = ((await getCmsIntegrations()).siteUrl || process.env.PUBLIC_SITE_URL || 'https://santos-saucedo.replit.app').replace(/\/+$/, '');
       const today = new Date().toISOString().split('T')[0];
 
       const staticPages = [
