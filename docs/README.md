@@ -8,7 +8,8 @@
 | [CMS_CONTENT_MAP.md](CMS_CONTENT_MAP.md) | Páginas, bloques, fichas, aliases y fuentes |
 | [ENGINEERING_RULES.md](ENGINEERING_RULES.md) | Reglas para cambiar código, contenido y contratos |
 | [RELEASE_RUNBOOK.md](RELEASE_RUNBOOK.md) | Workspace, pruebas, publicación y rollback |
-| [CONTEXTO_ACTUAL_2026-10-23.md](CONTEXTO_ACTUAL_2026-10-23.md) | Estado operativo con fecha de corte |
+| [CONTEXTO_ACTUAL_2026-11-18.md](CONTEXTO_ACTUAL_2026-11-18.md) | Estado operativo vigente |
+| [CONTEXTO_ACTUAL_2026-10-23.md](CONTEXTO_ACTUAL_2026-10-23.md) | Estado histórico de octubre |
 
 ## Documentos históricos
 
