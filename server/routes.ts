@@ -23,7 +23,7 @@ import { mediaInventory, persistentMediaItem, registerMediaLibrary } from "./cms
 import { registerNewsEditor } from "./cms/newsEditor";
 import { getBundledMediaMap } from "./cms/bundledMediaMap";
 import { teamPhotoOwner } from "@shared/marioPortrait";
-import { ensureCmsSchema, registerCmsRoutes, getCmsContact, getCmsFormControls } from "./cms/siteConfig";
+import { ensureCmsSchema, registerCmsRoutes, getCmsContact, getCmsFormControls, getCmsIntegrations } from "./cms/siteConfig";
 import { readStaticEntityTranslation } from "./localization/staticSnapshots";
 import { registerAdminUsers } from "./cms/adminUsers";
 import { registerPasskeyRoutes } from "./passkeys";
@@ -1052,8 +1052,8 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/robots.txt", (_req, res) => {
-    const publicSiteUrl = (process.env.PUBLIC_SITE_URL || "https://www.santossaucedo.com").replace(/\/+$/, "");
+  app.get("/robots.txt", async (_req, res) => {
+    const publicSiteUrl = (process.env.PUBLIC_SITE_URL || (await getCmsIntegrations()).siteUrl || "https://santos-saucedo.replit.app").replace(/\/+$/, "");
     const robotsTxt = `# robots.txt for ${publicSiteUrl}
 User-agent: *
 Allow: /
@@ -1070,7 +1070,7 @@ Sitemap: ${publicSiteUrl}/sitemap.xml
 
   app.get("/sitemap.xml", async (_req, res) => {
     try {
-      const baseUrl = (process.env.PUBLIC_SITE_URL || 'https://www.santossaucedo.com').replace(/\/+$/, '');
+      const baseUrl = (process.env.PUBLIC_SITE_URL || (await getCmsIntegrations()).siteUrl || 'https://santos-saucedo.replit.app').replace(/\/+$/, '');
       const today = new Date().toISOString().split('T')[0];
 
       const staticPages = [
