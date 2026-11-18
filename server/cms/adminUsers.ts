@@ -189,7 +189,7 @@ export function registerAdminUsers(app: Express) {
             "Revise el correo, el nombre de usuario, el rol y los permisos.",
         });
     try {
-      const generatedPassword = randomBytes(18).toString("base64url");
+      const generatedPassword = randomBytes(12).toString("base64url");
       const passwordHash = await hashPassword(generatedPassword);
       const user = await editorialDb.transaction(async (tx) => {
         await lockUsers(tx);
@@ -320,7 +320,7 @@ export function registerAdminUsers(app: Express) {
           400,
           "Para su cuenta, use Cambiar mi contraseña.",
         );
-      const generatedPassword = randomBytes(18).toString("base64url"),
+      const generatedPassword = randomBytes(12).toString("base64url"),
         passwordHash = await hashPassword(generatedPassword);
       await editorialDb.transaction(async (tx) => {
         await lockUsers(tx);
@@ -381,19 +381,19 @@ export function registerAdminUsers(app: Express) {
     const parsed = z
       .object({
         currentPassword: z.string().min(1).max(128),
-        newPassword: z.string().min(15).max(72),
+        newPassword: z.string().min(8).max(16),
       })
       .strict()
       .safeParse(req.body);
     if (
       !parsed.success ||
-      Buffer.byteLength(parsed.data?.newPassword || "", "utf8") > 72
+      Buffer.byteLength(parsed.data?.newPassword || "", "utf8") > 16
     )
       return res
         .status(400)
         .json({
           error:
-            "La contraseña nueva debe tener entre 15 caracteres y 72 bytes.",
+            "La contraseña nueva debe tener entre 8 y 16 caracteres.",
         });
     try {
       if (parsed.data.currentPassword === parsed.data.newPassword)

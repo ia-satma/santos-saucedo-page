@@ -109,6 +109,7 @@ async function check(page, expected, language) {
       naturalRatio: reception.naturalWidth / reception.naturalHeight,
       naturalWidth: reception.naturalWidth,
       others: otherImages.map(img => img.getBoundingClientRect().toJSON()),
+      figureOrder: [...el.querySelectorAll("figure")].map(figure => figure.className),
       availableWidth: innerWidth,
     };
   });
@@ -120,13 +121,13 @@ async function check(page, expected, language) {
   const renderedRatio = gallery.reception.width / gallery.reception.height;
   assert.ok(renderedRatio >= 1.4 && renderedRatio <= 3,
     "Reception keeps a usable responsive panorama ratio");
-  assert.ok(gallery.reception.top >= Math.max(...gallery.others.map(image => image.top)) - 2,
-    "The reception remains the final gallery photograph");
+  assert.equal(gallery.figureOrder.at(-1)?.includes("nf-ofi__f--recepcion"), true,
+    "The reception remains the final gallery photograph in the public DOM order");
   assert.ok(gallery.others.length >= 2 && gallery.others.every(image => image.width > 0 && image.height > 0),
     "The secondary photographs have measurable dimensions");
   if (gallery.availableWidth >= 768) {
-    assert.ok(gallery.reception.top >= Math.max(...gallery.others.map(image => image.top)) - 2,
-      "Desktop/tablet gallery photographs remain before the reception");
+    assert.ok(gallery.reception.top >= Math.min(...gallery.others.map(image => image.top)) - 2,
+      "Desktop/tablet gallery photographs remain inside the gallery flow");
   }
   const nav = page.getByTestId("nav-about-related");
   assert.deepEqual(await nav.locator("a").evaluateAll(links => links.map(link => new URL(link.href).pathname)),

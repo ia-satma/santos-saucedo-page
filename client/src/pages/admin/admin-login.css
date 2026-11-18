@@ -200,6 +200,46 @@
   box-shadow: 0 0 0 3px rgba(16, 63, 99, 0.14);
 }
 
+.admin-login-password-control {
+  position: relative;
+}
+
+.admin-login-password-control .admin-login-input {
+  padding-right: 3rem;
+}
+
+.admin-login-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--login-muted);
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.admin-login-password-toggle:hover {
+  color: var(--login-blue);
+}
+
+.admin-login-password-toggle:focus-visible {
+  outline: 2px solid var(--login-blue);
+  outline-offset: 2px;
+}
+
+.admin-login-password-toggle svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
 .admin-login-error {
   display: flex;
   align-items: flex-start;

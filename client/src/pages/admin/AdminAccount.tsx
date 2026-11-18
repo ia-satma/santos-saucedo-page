@@ -4,10 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { queryClient } from "@/lib/queryClient";
+import { Eye, EyeOff } from "lucide-react";
 export default function AdminAccount() {
   const [current, setCurrent] = useState(""),
     [password, setPassword] = useState(""),
     [confirm, setConfirm] = useState(""),
+    [showCurrent, setShowCurrent] = useState(false),
+    [showPassword, setShowPassword] = useState(false),
+    [showConfirm, setShowConfirm] = useState(false),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   const save = async (e: React.FormEvent) => {
@@ -15,6 +19,10 @@ export default function AdminAccount() {
     setError("");
     if (password !== confirm) {
       setError("La confirmación no coincide con la contraseña nueva.");
+      return;
+    }
+    if (password.length < 8 || password.length > 16) {
+      setError("La contraseña nueva debe tener entre 8 y 16 caracteres.");
       return;
     }
     setBusy(true);
@@ -40,46 +48,63 @@ export default function AdminAccount() {
       <p className="admin-page-kicker">Mi cuenta</p>
       <h1>Cambiar mi contraseña</h1>
       <p>
-        Use al menos 15 caracteres. Al guardar se cerrarán todas sus sesiones y
+        Use entre 8 y 16 caracteres. Al guardar se cerrarán todas sus sesiones y
         tendrá que iniciar sesión con la contraseña nueva.
       </p>
       <form onSubmit={save} className="admin-users-form">
         <div>
           <Label htmlFor="current-password">Contraseña actual</Label>
-          <Input
-            id="current-password"
-            type="password"
-            autoComplete="current-password"
-            value={current}
-            onChange={(e) => setCurrent(e.target.value)}
-            required
-          />
+          <div className="admin-login-password-control">
+            <Input
+              id="current-password"
+              type={showCurrent ? "text" : "password"}
+              autoComplete="current-password"
+              value={current}
+              onChange={(e) => setCurrent(e.target.value)}
+              minLength={8}
+              maxLength={16}
+              required
+            />
+            <button type="button" className="admin-login-password-toggle" aria-label={showCurrent ? "Ocultar contraseña actual" : "Mostrar contraseña actual"} onClick={() => setShowCurrent((visible) => !visible)}>
+              {showCurrent ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+            </button>
+          </div>
         </div>
         <div>
           <Label htmlFor="new-password">Contraseña nueva</Label>
-          <Input
-            id="new-password"
-            type="password"
-            autoComplete="new-password"
-            minLength={15}
-            maxLength={72}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div className="admin-login-password-control">
+            <Input
+              id="new-password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+              minLength={8}
+              maxLength={16}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button type="button" className="admin-login-password-toggle" aria-label={showPassword ? "Ocultar contraseña nueva" : "Mostrar contraseña nueva"} onClick={() => setShowPassword((visible) => !visible)}>
+              {showPassword ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+            </button>
+          </div>
         </div>
         <div>
           <Label htmlFor="confirm-password">Confirmar contraseña nueva</Label>
-          <Input
-            id="confirm-password"
-            type="password"
-            autoComplete="new-password"
-            minLength={15}
-            maxLength={72}
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            required
-          />
+          <div className="admin-login-password-control">
+            <Input
+              id="confirm-password"
+              type={showConfirm ? "text" : "password"}
+              autoComplete="new-password"
+              minLength={8}
+              maxLength={16}
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              required
+            />
+            <button type="button" className="admin-login-password-toggle" aria-label={showConfirm ? "Ocultar confirmación" : "Mostrar confirmación"} onClick={() => setShowConfirm((visible) => !visible)}>
+              {showConfirm ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+            </button>
+          </div>
         </div>
         {error && (
           <p role="alert" className="text-destructive">

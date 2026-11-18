@@ -152,7 +152,7 @@ try {
   assert.equal(created.status, 201);
   ids.push(created.body.user.id);
   assert.equal(created.headers.get("cache-control"), "private, no-store");
-  assert.equal(created.body.generatedPassword.length, 24);
+  assert.equal(created.body.generatedPassword.length, 16);
   assert(!JSON.stringify(created.body.user).includes("passwordHash"));
   const [stored] = await db
     .select()
@@ -286,7 +286,7 @@ try {
     ).status,
     400,
   );
-  const newPassword = randomUUID();
+  const newPassword = `new-${randomUUID().replaceAll("-", "").slice(0, 12)}`;
   assert.equal(
     (
       await call(

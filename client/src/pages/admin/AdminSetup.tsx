@@ -5,14 +5,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, CheckCircle2, UserPlus } from "lucide-react";
+import { AlertCircle, CheckCircle2, UserPlus, Eye, EyeOff } from "lucide-react";
 
 // Alta de una cuenta del panel (super_admin) por /api/admin/init. El servidor solo la acepta
 // mientras el secreto ALLOW_ADMIN_INIT vale "true" en Replit; se enciende para dar de alta a
 // alguien y se apaga después. Así cada persona escribe su propia contraseña aquí, sin pasarla
 // por correo ni por chat.
 
-const MIN_PASSWORD = 12;
+const MIN_PASSWORD = 8;
+const MAX_PASSWORD = 16;
 
 const translations = {
   es: {
@@ -21,11 +22,11 @@ const translations = {
     email: "Correo electrónico",
     password: "Contraseña",
     confirm: "Repita la contraseña",
-    passwordHint: `Al menos ${MIN_PASSWORD} caracteres.`,
+    passwordHint: `Entre ${MIN_PASSWORD} y ${MAX_PASSWORD} caracteres.`,
     submit: "Crear cuenta",
     submitting: "Creando cuenta…",
     invalidEmail: "Escriba un correo electrónico válido.",
-    tooShort: `La contraseña debe tener al menos ${MIN_PASSWORD} caracteres.`,
+    tooShort: `La contraseña debe tener entre ${MIN_PASSWORD} y ${MAX_PASSWORD} caracteres.`,
     mismatch: "Las contraseñas no coinciden.",
     disabled: "El alta de cuentas está apagada. Pida que la enciendan y vuelva a intentarlo.",
     exists: "Ya existe una cuenta con ese correo. Entre con ella desde el inicio de sesión.",
@@ -39,11 +40,11 @@ const translations = {
     email: "Email",
     password: "Password",
     confirm: "Repeat the password",
-    passwordHint: `At least ${MIN_PASSWORD} characters.`,
+    passwordHint: `Between ${MIN_PASSWORD} and ${MAX_PASSWORD} characters.`,
     submit: "Create account",
     submitting: "Creating account…",
     invalidEmail: "Enter a valid email address.",
-    tooShort: `The password must have at least ${MIN_PASSWORD} characters.`,
+    tooShort: `The password must have between ${MIN_PASSWORD} and ${MAX_PASSWORD} characters.`,
     mismatch: "The passwords do not match.",
     disabled: "Account sign-up is turned off. Ask for it to be turned on and try again.",
     exists: "An account with that email already exists. Sign in with it instead.",
@@ -59,6 +60,8 @@ export default function AdminSetup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -68,7 +71,7 @@ export default function AdminSetup() {
     setError(null);
     const address = email.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)) return setError(t.invalidEmail);
-    if (password.length < MIN_PASSWORD) return setError(t.tooShort);
+    if (password.length < MIN_PASSWORD || password.length > MAX_PASSWORD) return setError(t.tooShort);
     if (password !== confirm) return setError(t.mismatch);
 
     setSubmitting(true);
@@ -132,29 +135,45 @@ export default function AdminSetup() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="setup-password">{t.password}</Label>
-                <Input
-                  id="setup-password"
-                  type="password"
-                  autoComplete="new-password"
-                  aria-describedby="setup-password-hint"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  data-testid="input-setup-password"
-                />
+                <div className="relative">
+                  <Input
+                    id="setup-password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    aria-describedby="setup-password-hint"
+                    minLength={MIN_PASSWORD}
+                    maxLength={MAX_PASSWORD}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pr-12"
+                    data-testid="input-setup-password"
+                  />
+                  <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-2 text-muted-foreground" aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"} onClick={() => setShowPassword((visible) => !visible)}>
+                    {showPassword ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+                  </button>
+                </div>
                 <p id="setup-password-hint" className="text-xs text-muted-foreground">
                   {t.passwordHint}
                 </p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="setup-confirm">{t.confirm}</Label>
-                <Input
-                  id="setup-confirm"
-                  type="password"
-                  autoComplete="new-password"
-                  value={confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
-                  data-testid="input-setup-confirm"
-                />
+                <div className="relative">
+                  <Input
+                    id="setup-confirm"
+                    type={showConfirm ? "text" : "password"}
+                    autoComplete="new-password"
+                    minLength={MIN_PASSWORD}
+                    maxLength={MAX_PASSWORD}
+                    value={confirm}
+                    onChange={(e) => setConfirm(e.target.value)}
+                    className="pr-12"
+                    data-testid="input-setup-confirm"
+                  />
+                  <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-2 text-muted-foreground" aria-label={showConfirm ? "Ocultar confirmación" : "Mostrar confirmación"} onClick={() => setShowConfirm((visible) => !visible)}>
+                    {showConfirm ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+                  </button>
+                </div>
               </div>
               {error && (
                 <p className="flex items-start gap-2 text-sm text-red-700" role="alert" data-testid="text-setup-error">

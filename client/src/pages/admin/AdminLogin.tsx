@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -12,7 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { LogIn, AlertCircle } from "lucide-react";
+import { LogIn, AlertCircle, Eye, EyeOff } from "lucide-react";
 import "./admin-login.css";
 
 type LoginFormData = {
@@ -22,7 +22,7 @@ type LoginFormData = {
 
 const createLoginSchema = (t: { emailRequired: string; passwordMin: string }) => z.object({
   username: z.string().min(1, t.emailRequired),
-  password: z.string().min(6, t.passwordMin),
+  password: z.string().min(8, t.passwordMin).max(16, t.passwordMin),
 });
 
 const translations = {
@@ -39,7 +39,9 @@ const translations = {
     loginError: "Login failed",
     invalidCredentials: "Invalid email or password",
     emailRequired: "Email is required",
-    passwordMin: "Password must be at least 6 characters",
+    passwordMin: "Password must be between 8 and 16 characters",
+    showPassword: "Show password",
+    hidePassword: "Hide password",
   },
   es: {
     title: "Inicio de Sesión Admin",
@@ -54,7 +56,9 @@ const translations = {
     loginError: "Error al iniciar sesión",
     invalidCredentials: "Correo electrónico o contraseña inválidos",
     emailRequired: "El correo electrónico es obligatorio",
-    passwordMin: "La contraseña debe tener al menos 6 caracteres",
+    passwordMin: "La contraseña debe tener entre 8 y 16 caracteres",
+    showPassword: "Mostrar contraseña",
+    hidePassword: "Ocultar contraseña",
   },
   de: {
     title: "Admin-Anmeldung",
@@ -69,7 +73,9 @@ const translations = {
     loginError: "Anmeldung fehlgeschlagen",
     invalidCredentials: "Ungültige E-Mail oder Passwort",
     emailRequired: "E-Mail ist erforderlich",
-    passwordMin: "Das Passwort muss mindestens 6 Zeichen haben",
+    passwordMin: "Das Passwort muss zwischen 8 und 16 Zeichen haben",
+    showPassword: "Passwort anzeigen",
+    hidePassword: "Passwort ausblenden",
   },
   zh: {
     title: "管理员登录",
@@ -84,7 +90,9 @@ const translations = {
     loginError: "登录失败",
     invalidCredentials: "电子邮件或密码无效",
     emailRequired: "电子邮件是必填项",
-    passwordMin: "密码必须至少6个字符",
+    passwordMin: "密码长度必须为8到16个字符",
+    showPassword: "显示密码",
+    hidePassword: "隐藏密码",
   },
   ko: {
     title: "관리자 로그인",
@@ -99,7 +107,9 @@ const translations = {
     loginError: "로그인 실패",
     invalidCredentials: "잘못된 이메일 또는 비밀번호",
     emailRequired: "이메일은 필수입니다",
-    passwordMin: "비밀번호는 최소 6자 이상이어야 합니다",
+    passwordMin: "비밀번호는 8~16자여야 합니다",
+    showPassword: "비밀번호 표시",
+    hidePassword: "비밀번호 숨기기",
   },
   ja: {
     title: "管理者ログイン",
@@ -114,7 +124,9 @@ const translations = {
     loginError: "ログイン失敗",
     invalidCredentials: "メールアドレスまたはパスワードが無効です",
     emailRequired: "メールアドレスは必須です",
-    passwordMin: "パスワードは6文字以上必要です",
+    passwordMin: "パスワードは8～16文字で入力してください",
+    showPassword: "パスワードを表示",
+    hidePassword: "パスワードを非表示",
   },
   ar: {
     title: "تسجيل دخول المسؤول",
@@ -129,7 +141,9 @@ const translations = {
     loginError: "فشل تسجيل الدخول",
     invalidCredentials: "البريد الإلكتروني أو كلمة المرور غير صالحة",
     emailRequired: "البريد الإلكتروني مطلوب",
-    passwordMin: "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+    passwordMin: "يجب أن تتكون كلمة المرور من 8 إلى 16 حرفًا",
+    showPassword: "إظهار كلمة المرور",
+    hidePassword: "إخفاء كلمة المرور",
   },
   ru: {
     title: "Вход администратора",
@@ -144,7 +158,9 @@ const translations = {
     loginError: "Ошибка входа",
     invalidCredentials: "Неверная электронная почта или пароль",
     emailRequired: "Электронная почта обязательна",
-    passwordMin: "Пароль должен содержать не менее 6 символов",
+    passwordMin: "Пароль должен содержать от 8 до 16 символов",
+    showPassword: "Показать пароль",
+    hidePassword: "Скрыть пароль",
   },
   fr: {
     title: "Connexion Admin",
@@ -159,7 +175,9 @@ const translations = {
     loginError: "Échec de la connexion",
     invalidCredentials: "Email ou mot de passe invalide",
     emailRequired: "L'email est requis",
-    passwordMin: "Le mot de passe doit contenir au moins 6 caractères",
+    passwordMin: "Le mot de passe doit contenir entre 8 et 16 caractères",
+    showPassword: "Afficher le mot de passe",
+    hidePassword: "Masquer le mot de passe",
   },
   it: {
     title: "Login Admin",
@@ -174,7 +192,9 @@ const translations = {
     loginError: "Accesso fallito",
     invalidCredentials: "Email o password non validi",
     emailRequired: "L'email è obbligatoria",
-    passwordMin: "La password deve contenere almeno 6 caratteri",
+    passwordMin: "La password deve contenere tra 8 e 16 caratteri",
+    showPassword: "Mostra password",
+    hidePassword: "Nascondi password",
   },
 };
 
@@ -182,6 +202,7 @@ export default function AdminLogin() {
   const { language } = useLanguage();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const [showPassword, setShowPassword] = useState(false);
   const t = translations[language as keyof typeof translations] || translations.en;
   
   const loginSchema = createLoginSchema({ 
@@ -303,14 +324,28 @@ export default function AdminLogin() {
                   <FormItem className="admin-login-field">
                     <FormLabel>{t.password}</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        className="admin-login-input"
-                        type="password"
-                        placeholder={t.passwordPlaceholder}
-                        autoComplete="current-password"
-                        data-testid="input-password"
-                      />
+                      <div className="admin-login-password-control">
+                        <Input
+                          {...field}
+                          className="admin-login-input"
+                          type={showPassword ? "text" : "password"}
+                          placeholder={t.passwordPlaceholder}
+                          autoComplete="current-password"
+                          minLength={8}
+                          maxLength={16}
+                          data-testid="input-password"
+                        />
+                        <button
+                          type="button"
+                          className="admin-login-password-toggle"
+                          aria-label={showPassword ? t.hidePassword : t.showPassword}
+                          aria-pressed={showPassword}
+                          onClick={() => setShowPassword((visible) => !visible)}
+                          data-testid="button-toggle-password"
+                        >
+                          {showPassword ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+                        </button>
+                      </div>
                     </FormControl>
                     <FormMessage data-testid="error-password" />
                   </FormItem>

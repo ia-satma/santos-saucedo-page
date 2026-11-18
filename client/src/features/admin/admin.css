@@ -1232,6 +1232,38 @@
 .admin-account-page form {
   margin-top: 30px;
 }
+.admin-account-page .admin-login-password-control {
+  position: relative;
+}
+.admin-account-page .admin-login-password-control input {
+  padding-right: 3rem;
+}
+.admin-account-page .admin-login-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #52616a;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+.admin-account-page .admin-login-password-toggle:focus-visible {
+  outline: 2px solid #0b2850;
+  outline-offset: 2px;
+}
+.admin-account-page .admin-login-password-toggle svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
 @media (max-width: 640px) {
   .admin-users-heading {
     display: block;

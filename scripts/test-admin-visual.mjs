@@ -47,6 +47,15 @@ async function checkLogin(page, viewport, capture) {
   await page.getByTestId("text-login-title").waitFor();
   await page.getByTestId("input-username").waitFor();
   await page.getByTestId("input-password").waitFor();
+  const password = page.getByTestId("input-password");
+  const passwordToggle = page.getByTestId("button-toggle-password");
+  await password.fill("12345678");
+  assert.equal(await password.getAttribute("type"), "password");
+  await passwordToggle.click();
+  assert.equal(await password.getAttribute("type"), "text");
+  await passwordToggle.click();
+  assert.equal(await password.getAttribute("type"), "password");
+  assert.equal(await password.getAttribute("maxlength"), "16");
   await page.getByTestId("button-login").waitFor();
   await assertNoHorizontalOverflow(page, `login/${viewport}`);
   await assertFocusRing(page, `login/${viewport}`);

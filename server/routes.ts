@@ -1223,7 +1223,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   // Admin Initialization (create first admin user)
   const adminInitSchema = z.object({
     username: z.string().trim().email(),
-    password: z.string().min(12).max(200),
+    password: z.string().min(8).max(16),
   });
   app.post("/api/admin/init", async (req: Request, res: Response) => {
     try {
@@ -1231,7 +1231,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         return res.status(404).json({ error: "Admin initialization is disabled" });
       }
 
-      // Alta (pantalla /admin/setup): un correo válido y una contraseña de al menos 12
+      // Alta (pantalla /admin/setup): un correo válido y una contraseña de 8 a 16
       // caracteres; solo mientras el secreto ALLOW_ADMIN_INIT está encendido
       const validation = adminInitSchema.safeParse(req.body);
       if (!validation.success) {
