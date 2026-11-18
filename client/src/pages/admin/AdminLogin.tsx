@@ -6,6 +6,7 @@ import { useLocation } from "wouter";
 import { z } from "zod/v3";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { setToken } from "@/lib/adminAuth";
+import { passkeysSupported, signInWithPasskey } from "@/lib/passkeys";
 import { careersOnlyLanding, isCareersOnlyAdmin } from "@shared/adminAccess";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -203,6 +204,7 @@ export default function AdminLogin() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
+  const [passkeyBusy, setPasskeyBusy] = useState(false);
   const t = translations[language as keyof typeof translations] || translations.en;
   
   const loginSchema = createLoginSchema({ 
@@ -266,6 +268,24 @@ export default function AdminLogin() {
 
   const onSubmit = (data: LoginFormData) => {
     loginMutation.mutate(data);
+  };
+
+  const loginWithPasskey = async () => {
+    setPasskeyBusy(true);
+    try {
+      await signInWithPasskey();
+      const user = await fetch("/api/admin/me", { credentials: "include" }).then((response) => response.json());
+      setToken();
+      setLocation(isCareersOnlyAdmin(user) ? careersOnlyLanding : "/admin/dashboard");
+    } catch (error) {
+      toast({
+        title: t.loginError,
+        description: error instanceof Error ? error.message : "No se pudo iniciar sesión con la llave de acceso.",
+        variant: "destructive",
+      });
+    } finally {
+      setPasskeyBusy(false);
+    }
   };
 
   return (
@@ -380,6 +400,18 @@ export default function AdminLogin() {
                   </>
                 )}
               </Button>
+              {passkeysSupported() && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="admin-login-passkey"
+                  disabled={loginMutation.isPending || passkeyBusy}
+                  onClick={loginWithPasskey}
+                  data-testid="button-passkey-login"
+                >
+                  {passkeyBusy ? "Verificando llave…" : "Entrar con Passkey"}
+                </Button>
+              )}
               </form>
             </Form>
           </CardContent>

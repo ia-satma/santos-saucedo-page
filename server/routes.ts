@@ -26,6 +26,7 @@ import { teamPhotoOwner } from "@shared/marioPortrait";
 import { ensureCmsSchema, registerCmsRoutes, getCmsContact, getCmsFormControls } from "./cms/siteConfig";
 import { readStaticEntityTranslation } from "./localization/staticSnapshots";
 import { registerAdminUsers } from "./cms/adminUsers";
+import { registerPasskeyRoutes } from "./passkeys";
 import { recordAccessEvent } from "./cms/accessAudit";
 import { hasAdminPermission } from "@shared/adminAccess";
 import { editorialDb } from "./db";
@@ -239,6 +240,7 @@ export async function registerRoutes(
 ): Promise<Server> {
   await ensureCmsSchema();
   registerAdminUsers(app);
+  registerPasskeyRoutes(app);
   registerSubmissionManagement(app);
   registerAgentUsageRoutes(app);
   registerAgentReportRoutes(app);

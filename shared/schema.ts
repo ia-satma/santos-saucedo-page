@@ -529,6 +529,31 @@ export const insertAdminSessionSchema = createInsertSchema(adminSessions).omit({
 export type InsertAdminSession = z.infer<typeof insertAdminSessionSchema>;
 export type AdminSession = typeof adminSessions.$inferSelect;
 
+/** WebAuthn credentials registered by CMS administrators. */
+export const adminPasskeys = pgTable("admin_passkeys", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => adminUsers.id, { onDelete: "cascade" }),
+  credentialId: text("credential_id").notNull().unique(),
+  publicKey: text("public_key").notNull(),
+  counter: integer("counter").notNull().default(0),
+  transports: jsonb("transports").$type<string[]>().notNull().default([]),
+  name: text("name").notNull().default("Llave de acceso"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  lastUsedAt: timestamp("last_used_at"),
+});
+export type AdminPasskey = typeof adminPasskeys.$inferSelect;
+
+/** Short-lived challenges used by the registration and authentication ceremonies. */
+export const adminPasskeyChallenges = pgTable("admin_passkey_challenges", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => adminUsers.id, { onDelete: "cascade" }),
+  kind: text("kind").notNull(),
+  challenge: text("challenge").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+export type AdminPasskeyChallenge = typeof adminPasskeyChallenges.$inferSelect;
+
 // Admin login schema for validation (accepts email or username)
 export const adminLoginSchema = z.object({
   username: z.string().min(1, "Email or username is required").max(254),

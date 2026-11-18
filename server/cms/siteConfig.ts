@@ -40,6 +40,27 @@ export async function ensureCmsSchema() {
     action text NOT NULL, details jsonb, created_at timestamp DEFAULT now()
   )`);
   await db.execute(sql`CREATE INDEX IF NOT EXISTS admin_access_events_created_idx ON admin_access_events (created_at DESC)`);
+  await db.execute(sql`CREATE TABLE IF NOT EXISTS admin_passkeys (
+    id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id varchar NOT NULL REFERENCES admin_users(id) ON DELETE CASCADE,
+    credential_id text NOT NULL UNIQUE,
+    public_key text NOT NULL,
+    counter integer NOT NULL DEFAULT 0,
+    transports jsonb NOT NULL DEFAULT '[]'::jsonb,
+    name text NOT NULL DEFAULT 'Llave de acceso',
+    created_at timestamp NOT NULL DEFAULT now(),
+    last_used_at timestamp
+  )`);
+  await db.execute(sql`CREATE INDEX IF NOT EXISTS admin_passkeys_user_idx ON admin_passkeys (user_id)`);
+  await db.execute(sql`CREATE TABLE IF NOT EXISTS admin_passkey_challenges (
+    id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id varchar REFERENCES admin_users(id) ON DELETE CASCADE,
+    kind text NOT NULL,
+    challenge text NOT NULL,
+    expires_at timestamp NOT NULL,
+    created_at timestamp NOT NULL DEFAULT now()
+  )`);
+  await db.execute(sql`CREATE INDEX IF NOT EXISTS admin_passkey_challenges_expiry_idx ON admin_passkey_challenges (expires_at)`);
   await db.execute(sql`CREATE TABLE IF NOT EXISTS site_config (
     id varchar PRIMARY KEY DEFAULT gen_random_uuid(), key text NOT NULL UNIQUE,
     value text, value_es text, type text NOT NULL DEFAULT 'text',

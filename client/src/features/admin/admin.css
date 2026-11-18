@@ -1232,6 +1232,18 @@
 .admin-account-page form {
   margin-top: 30px;
 }
+.admin-account-passkeys {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #d8e0e4;
+}
+.admin-account-passkeys h2 { margin: 0 0 .5rem; font-size: 1.25rem; }
+.admin-account-passkeys p { max-width: 42rem; }
+.admin-account-passkey-row { display: flex; gap: .75rem; align-items: end; margin-top: .5rem; }
+.admin-account-passkey-row input { flex: 1; }
+.admin-account-passkey-list { display: grid; gap: .5rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.admin-account-passkey-list li { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .65rem .75rem; border: 1px solid #d8e0e4; }
+@media (max-width: 640px) { .admin-account-passkey-row { align-items: stretch; flex-direction: column; } }
 .admin-account-page .admin-login-password-control {
   position: relative;
 }
