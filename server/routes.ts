@@ -134,6 +134,7 @@ import {
   getSessionExpiry,
   authMiddleware,
   requireRole,
+  requirePermission,
   validateSessionToken,
   ADMIN_SESSION_COOKIE,
   readCookie,
@@ -2746,11 +2747,12 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
         });
       }
 
-      // Check council verdict exists and is approved
-      const verdict = newsItem.councilVerdict as any;
-      if (!verdict || verdict.overallStatus === 'rejected') {
+      // Publishing requires an explicit approving verdict. Deadlocks,
+      // revisions and escalations remain reviewable but cannot go public.
+      const verdict = newsItem.councilVerdict as { overallStatus?: string } | null;
+      if (!verdict || verdict.overallStatus !== 'approved') {
         return res.status(400).json({ 
-          error: "Article was rejected by the Legal Council",
+          error: "Article requires an approved Legal Council verdict before publication",
           verdict 
         });
       }
@@ -3321,25 +3323,21 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   });
 
   // Record evolution event (admin only)
-  app.post("/api/system/chronicler/evolution", authMiddleware, async (req: Request, res: Response) => {
+  const chroniclerEvolutionSchema = z.object({
+    title: z.string().trim().min(1).max(200),
+    description: z.string().trim().min(1).max(4_000),
+    agentId: z.string().trim().max(120).optional(),
+    impact: z.enum(["major", "minor", "critical"]),
+    category: z.enum(["intelligence", "security", "performance", "capability"]),
+  }).strict();
+
+  app.post("/api/system/chronicler/evolution", authMiddleware, requirePermission("advanced"), async (req: Request, res: Response) => {
     try {
       const { systemChronicler } = await import('./agents/SystemChronicler');
-      const { title, description, agentId, impact, category } = req.body;
-      
-      if (!title || !description || !impact || !category) {
-        return res.status(400).json({ 
-          success: false, 
-          error: 'Missing required fields: title, description, impact, category' 
-        });
-      }
-      
-      systemChronicler.recordEvolution({
-        title,
-        description,
-        agentId,
-        impact,
-        category
-      });
+      const parsed = chroniclerEvolutionSchema.safeParse(req.body);
+      if (!parsed.success) return res.status(400).json({ success: false, error: "Invalid evolution event" });
+
+      systemChronicler.recordEvolution(parsed.data);
       
       res.json({ success: true, message: 'Evolution recorded' });
     } catch (error: any) {
@@ -3502,7 +3500,7 @@ Sitemap: https://www.santossaucedo.com/sitemap.xml
   if (agentsEnabled) {
     // Agent system routes
     const agentRoutes = await import('./agents/api/agentRoutes');
-    app.use('/api/agents', authMiddleware, requireRole("editor", "admin"), agentRoutes.default);
+    app.use('/api/agents', authMiddleware, requireRole("editor", "admin"), requirePermission("agents"), agentRoutes.default);
 
     // Initialize agents on server start
     const { initializeAgents } = await import('./agents');
