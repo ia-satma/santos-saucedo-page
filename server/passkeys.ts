@@ -15,11 +15,14 @@ import {
   adminSessions,
   adminUsers,
 } from "@shared/schema";
-import { authMiddleware, getSessionExpiry, generateToken, hashSessionToken, ADMIN_SESSION_COOKIE } from "./auth";
+import { authMiddleware, getSessionExpiry, generateToken, hashSessionToken, isAllowedMutationOrigin, ADMIN_SESSION_COOKIE } from "./auth";
+import { consumeRateLimit } from "./security/rateLimit";
 
 const CHALLENGE_COOKIE = "ss_passkey_challenge";
 const CHALLENGE_TTL_MS = 5 * 60 * 1000;
 const MAX_PASSKEYS = 2;
+const PASSKEY_RATE_WINDOW_MS = 5 * 60 * 1000;
+const PASSKEY_RATE_MAX = 10;
 
 function requestOrigin(req: Request): string {
   const forwarded = String(req.headers["x-forwarded-proto"] || "").split(",")[0].trim();
@@ -80,6 +83,11 @@ async function saveChallenge(req: Request, res: Response, kind: string, userId: 
     expiresAt: new Date(Date.now() + CHALLENGE_TTL_MS),
   });
   setChallengeCookie(res, id, req);
+}
+
+async function allowPasskeyRequest(req: Request, scope: string): Promise<{ allowed: true } | { allowed: false; retryAfter: number }> {
+  const ip = req.ip || req.socket.remoteAddress || "unknown";
+  return consumeRateLimit(`passkey:${scope}:${ip}`, PASSKEY_RATE_MAX, PASSKEY_RATE_WINDOW_MS);
 }
 
 export function registerPasskeyRoutes(app: Express): void {
@@ -164,6 +172,16 @@ export function registerPasskeyRoutes(app: Express): void {
   });
 
   app.post("/api/admin/passkeys/auth/options", async (req, res) => {
+    if (!isAllowedMutationOrigin(req)) {
+      res.status(403).json({ error: "Origen no permitido." });
+      return;
+    }
+    const rate = await allowPasskeyRequest(req, "auth-options");
+    if (!rate.allowed) {
+      res.setHeader("Retry-After", String(rate.retryAfter));
+      res.status(429).json({ error: "Demasiados intentos con Passkey. Inténtelo más tarde." });
+      return;
+    }
     const [registered] = await db.select({ exists: sql<number>`1` }).from(adminPasskeys).limit(1);
     if (!registered) {
       res.status(409).json({ error: "No hay una Passkey registrada. Inicia sesión con correo y contraseña y registra una llave desde tu cuenta de administrador." });
@@ -175,6 +193,16 @@ export function registerPasskeyRoutes(app: Express): void {
   });
 
   app.post("/api/admin/passkeys/auth/verify", async (req, res) => {
+    if (!isAllowedMutationOrigin(req)) {
+      res.status(403).json({ error: "Origen no permitido." });
+      return;
+    }
+    const rate = await allowPasskeyRequest(req, "auth-verify");
+    if (!rate.allowed) {
+      res.setHeader("Retry-After", String(rate.retryAfter));
+      res.status(429).json({ error: "Demasiados intentos con Passkey. Inténtelo más tarde." });
+      return;
+    }
     const challengeId = readChallengeCookie(req);
     const [challenge] = challengeId ? await db.select().from(adminPasskeyChallenges).where(and(eq(adminPasskeyChallenges.id, challengeId), eq(adminPasskeyChallenges.kind, "authentication"), gt(adminPasskeyChallenges.expiresAt, new Date()))) : [];
     if (!challenge) {
