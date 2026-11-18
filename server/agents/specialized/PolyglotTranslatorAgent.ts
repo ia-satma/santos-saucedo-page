@@ -351,7 +351,7 @@ CONTENT: ${chunks[index]}
           translations: translation,
           sourceLanguage,
           sourceText: `sha256:${sourceHash}`,
-          isApproved: true,
+          isApproved: false,
           updatedAt: new Date(),
         })
         .where(eq(translationCache.id, existing[0].id));
@@ -363,7 +363,7 @@ CONTENT: ${chunks[index]}
         targetLanguage: language,
         sourceText: `sha256:${sourceHash}`,
         translations: translation,
-        isApproved: true,
+        isApproved: false,
       });
     }
 
@@ -381,6 +381,7 @@ CONTENT: ${chunks[index]}
           title: translation.title,
           excerpt: translation.excerpt,
           content: translation.content,
+          isApproved: false,
           translatedAt: new Date(),
         })
         .where(eq(newsTranslations.id, existingNewsTranslation[0].id));
@@ -392,6 +393,7 @@ CONTENT: ${chunks[index]}
         excerpt: translation.excerpt,
         content: translation.content,
         translatedBy: 'ai',
+        isApproved: false,
       });
     }
   }

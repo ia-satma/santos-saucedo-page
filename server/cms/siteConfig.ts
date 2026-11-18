@@ -126,7 +126,8 @@ export async function ensureCmsSchema() {
     await tx.execute(sql`CREATE INDEX IF NOT EXISTS social_assets_status_created_idx ON social_assets (status, created_at DESC)`);
     await tx.execute(sql`CREATE INDEX IF NOT EXISTS social_assets_kind_idx ON social_assets (kind)`);
   });
-  await db.execute(sql`ALTER TABLE news ADD COLUMN IF NOT EXISTS document_url text, ADD COLUMN IF NOT EXISTS document_url_es text, ADD COLUMN IF NOT EXISTS source_url text, ADD COLUMN IF NOT EXISTS tags jsonb, ADD COLUMN IF NOT EXISTS featured_home boolean DEFAULT false`);
+  await db.execute(sql`ALTER TABLE news ADD COLUMN IF NOT EXISTS document_url text, ADD COLUMN IF NOT EXISTS document_url_es text, ADD COLUMN IF NOT EXISTS source_url text, ADD COLUMN IF NOT EXISTS tags jsonb, ADD COLUMN IF NOT EXISTS featured_home boolean DEFAULT false, ADD COLUMN IF NOT EXISTS ai_classification jsonb`);
+  await db.execute(sql`ALTER TABLE news_translations ADD COLUMN IF NOT EXISTS is_approved boolean NOT NULL DEFAULT true`);
   await ensureTestimonialSchema();
 }
 

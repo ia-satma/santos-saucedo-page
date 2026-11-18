@@ -1,7 +1,7 @@
 import { BaseAgent } from '../core/BaseAgent';
 import { AgentConfig, AgentResult, ExecutionContext } from '../core/types';
 import { db } from '../../db';
-import { news, practiceGroups, industryGroups } from '../../../shared/schema';
+import { news, practiceGroups, industryGroups, type NewsClassificationSuggestion } from '../../../shared/schema';
 import { eq } from 'drizzle-orm';
 import { categoryOutputSchema } from '../core/contracts';
 
@@ -162,11 +162,32 @@ Categorize this article and return JSON with primaryCategory, categorySlug, prac
         applyChanges === true &&
         article.published === false &&
         categorization.confidence >= 0.75;
-      if (canApply) {
+      const classificationSuggestion: NewsClassificationSuggestion = {
+        status: 'proposed',
+        source: 'category_agent',
+        generatedAt: new Date().toISOString(),
+        sourceLanguage,
+        primaryCategory: categorization.primaryCategory,
+        categorySlug: categorization.categorySlug,
+        practiceGroups: { ids: matchedPracticeGroups, labels: matchedPracticeLabels },
+        industryGroups: { ids: matchedIndustryGroups, labels: matchedIndustryLabels },
+        tags: categorization.tags,
+        confidence: categorization.confidence,
+        reasoning: categorization.reasoning,
+      };
+
+      // Keep the AI result as a reviewable proposal. Only the explicitly
+      // authorized category field may be applied to an unpublished draft.
+      if (article.published === false) {
         await db.update(news)
-          .set(sourceLanguage === 'es'
-            ? { categoryEs: categorization.primaryCategory }
-            : { category: categorization.primaryCategory })
+          .set({
+            aiClassification: classificationSuggestion,
+            ...(canApply
+              ? sourceLanguage === 'es'
+                ? { categoryEs: categorization.primaryCategory }
+                : { category: categorization.primaryCategory }
+              : {}),
+          })
           .where(eq(news.id, articleId));
       }
 
@@ -184,6 +205,7 @@ Categorize this article and return JSON with primaryCategory, categorySlug, prac
           tags: categorization.tags,
           confidence: categorization.confidence,
           reasoning: categorization.reasoning,
+          classificationSuggestion,
           changesApplied: canApply,
         },
         metrics: {

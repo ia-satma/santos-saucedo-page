@@ -2,7 +2,7 @@ import { isNamedOnTeamPage } from "@shared/teamVisibility";
 import { BaseAgent } from '../core/BaseAgent';
 import { AgentConfig, AgentResult, ExecutionContext } from '../core/types';
 import { db } from '../../db';
-import { news, teamMembers, practiceGroups, industryGroups } from '../../../shared/schema';
+import { news, teamMembers, practiceGroups, industryGroups, type NewsClassificationSuggestion } from '../../../shared/schema';
 import { eq } from 'drizzle-orm';
 import { metadataAnalysisSchema } from '../core/contracts';
 
@@ -129,6 +129,8 @@ Return JSON with practiceAreas (array of slugs), industries (array of slugs), an
 
       const linkedPracticeGroups: string[] = [];
       const linkedIndustries: string[] = [];
+      const linkedPracticeGroupIds: string[] = [];
+      const linkedIndustryGroupIds: string[] = [];
       const authorCandidates: { id: string; name: string }[] = [];
 
       for (const pattern of analysis.authorPatterns) {
@@ -146,11 +148,39 @@ Return JSON with practiceAreas (array of slugs), industries (array of slugs), an
       // records a verified_manual relationship.
       for (const slug of analysis.practiceAreas) {
         const practice = practices.find((item) => item.slug === slug);
-        if (practice) linkedPracticeGroups.push(practice.nameEs || practice.name);
+        if (practice) {
+          linkedPracticeGroupIds.push(practice.id);
+          linkedPracticeGroups.push(practice.nameEs || practice.name);
+        }
       }
       for (const slug of analysis.industries) {
         const industry = industries.find((item) => item.slug === slug);
-        if (industry) linkedIndustries.push(industry.nameEs || industry.name);
+        if (industry) {
+          linkedIndustryGroupIds.push(industry.id);
+          linkedIndustries.push(industry.nameEs || industry.name);
+        }
+      }
+
+      const classificationSuggestion: NewsClassificationSuggestion = {
+        ...(article.aiClassification || {}),
+        status: 'proposed',
+        source: 'metadata_linker',
+        generatedAt: new Date().toISOString(),
+        practiceGroups: {
+          ids: linkedPracticeGroupIds,
+          labels: linkedPracticeGroups,
+        },
+        industryGroups: {
+          ids: linkedIndustryGroupIds,
+          labels: linkedIndustries,
+        },
+        authorCandidates,
+      };
+
+      if (article.published === false) {
+        await db.update(news)
+          .set({ aiClassification: classificationSuggestion })
+          .where(eq(news.id, articleId));
       }
 
       return {
@@ -160,6 +190,7 @@ Return JSON with practiceAreas (array of slugs), industries (array of slugs), an
           authorCandidates,
           linkedPracticeGroups,
           linkedIndustries,
+          classificationSuggestion,
           changesApplied: false,
         },
         metrics: {

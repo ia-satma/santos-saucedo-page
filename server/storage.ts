@@ -1035,6 +1035,7 @@ export class DatabaseStorage extends GeneratedAssetsRepository implements IStora
           seoTitle: data.seoTitle,
           seoDescription: data.seoDescription,
           seoKeywords: data.seoKeywords,
+          isApproved: data.isApproved ?? true,
           translatedBy: data.translatedBy,
           translatedAt: new Date(),
         })

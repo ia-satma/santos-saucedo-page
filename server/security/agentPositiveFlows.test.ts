@@ -47,6 +47,7 @@ function adapters(overrides: { article?: any; cache?: any[]; analysis?: any[] } 
     [tables.news, [overrides.article || article]], [tables.practiceGroups, practices],
     [tables.industryGroups, industries], [tables.teamMembers, members],
     [tables.translationCache, overrides.cache || []], [tables.contentAnalysis, overrides.analysis || []],
+    [tables.newsTranslations, []],
   ]);
   const read = mock.method(db, 'select', (() => ({ from: (table: unknown) => {
     assert.ok(rows.has(table), 'Unexpected database read must be explicitly adapted');
@@ -94,12 +95,14 @@ test('metadata linker returns exact known authors and taxonomy, never creates pu
     assert.deepEqual((result.data as any).authorCandidates, [{ id: members[0].id, name: members[0].name }]);
     assert.deepEqual((result.data as any).linkedPracticeGroups, ['Laboral']);
     assert.deepEqual((result.data as any).linkedIndustries, ['Manufactura']);
-    assert.equal(data.writes.length, 0);
+    assert.equal(data.writes.length, 1);
+    assert.deepEqual((data.writes[0].value as any).aiClassification.practiceGroups.ids, [practices[0].id]);
+    assert.deepEqual((data.writes[0].value as any).aiClassification.industryGroups.ids, [industries[0].id]);
   } finally { llm.mock.restore(); data.restore(); }
 });
 
 test('category matches real taxonomy and applies only a high-confidence draft category in its source language', async () => {
-  for (const [confidence, published, apply, expectedWrites] of [[.92,false,false,0],[.92,false,true,1],[.92,true,true,0],[.4,false,true,0]] as const) {
+  for (const [confidence, published, apply, expectedWrites] of [[.92,false,false,1],[.92,false,true,1],[.92,true,true,0],[.4,false,true,1]] as const) {
     const data = adapters({ article: { ...article, published } });
     const llm = model(categoryAgent, { primaryCategory: 'Laboral', categorySlug: 'laboral', practiceAreas: ['laboral', 'Inventada'], industrySectors: ['manufacturing'], tags: ['empleo'], confidence, reasoning: 'Clasificación de prueba' });
     try {
@@ -107,7 +110,11 @@ test('category matches real taxonomy and applies only a high-confidence draft ca
       assert.equal(result.success, true); assert.deepEqual((result.data as any).practiceAreas, ['practice-labor']);
       assert.deepEqual((result.data as any).industrySectors, ['industry-manufacturing']);
       assert.equal(data.writes.length, expectedWrites);
-      if (expectedWrites) assert.deepEqual(data.writes[0].value, { categoryEs: 'Laboral' });
+      if (expectedWrites) {
+        assert.deepEqual((data.writes[0].value as any).aiClassification.practiceGroups.ids, [practices[0].id]);
+        assert.deepEqual((data.writes[0].value as any).aiClassification.industryGroups.ids, [industries[0].id]);
+        if (apply && confidence >= 0.75) assert.equal((data.writes[0].value as any).categoryEs, 'Laboral');
+      }
     } finally { llm.mock.restore(); data.restore(); }
   }
 });
@@ -158,6 +165,20 @@ test('translator handles multi-segment text, valid cache, stale cache and previe
       assert.equal(data.writes.length, 0); assert.equal((result.data as any).changesApplied, false);
     } finally { llm.mock.restore(); glossary.mock.restore(); data.restore(); }
   }
+});
+
+test('translator keeps generated translations pending human review', async () => {
+  const data = adapters();
+  const glossary = mock.method(knowledgeStore, 'searchDocuments', async () => []);
+  const llm = model(polyglotTranslatorAgent, '[[TITLE]]\nEmployment obligations\n[[EXCERPT]]\nCompliance overview.\n[[CONTENT]]\nTranslated legal content.');
+  try {
+    const result = await polyglotTranslatorAgent.execute(context('polyglot_translator'), { articleId: article.id, targetLanguages: ['en'], applyChanges: true });
+    assert.equal(result.success, true);
+    const cacheWrite = data.writes.find((write) => write.table === tables.translationCache);
+    const newsTranslationWrite = data.writes.find((write) => write.table === tables.newsTranslations);
+    assert.equal((cacheWrite?.value as any).isApproved, false);
+    assert.equal((newsTranslationWrite?.value as any).isApproved, false);
+  } finally { llm.mock.restore(); glossary.mock.restore(); data.restore(); }
 });
 
 test('social agent returns all four chosen channels, enforces text bounds and reuses the article image', async () => {

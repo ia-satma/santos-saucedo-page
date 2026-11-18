@@ -86,6 +86,21 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
+export interface NewsClassificationSuggestion {
+  status: 'proposed' | 'approved';
+  source: 'category_agent' | 'metadata_linker' | 'radar';
+  generatedAt: string;
+  sourceLanguage?: 'es' | 'en';
+  primaryCategory?: string;
+  categorySlug?: string;
+  practiceGroups?: { ids: string[]; labels: string[] };
+  industryGroups?: { ids: string[]; labels: string[] };
+  authorCandidates?: { id: string; name: string }[];
+  tags?: string[];
+  confidence?: number;
+  reasoning?: string;
+}
+
 export const news = pgTable("news", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   title: text("title").notNull(),
@@ -108,6 +123,7 @@ export const news = pgTable("news", {
   published: boolean("published").default(false),
   category: text("category").default("press"),
   categoryEs: text("category_es").default("Prensa"),
+  aiClassification: jsonb("ai_classification").$type<NewsClassificationSuggestion | null>(),
   authorId: varchar("author_id"),
   // Processing status tracking
   processingStatus: text("processing_status").default("pending"), // pending, processing, ready, ready_for_approval, failed, partial_success
@@ -140,6 +156,8 @@ export const newsTranslations = pgTable("news_translations", {
   seoTitle: text("seo_title"),
   seoDescription: text("seo_description"),
   seoKeywords: text("seo_keywords").array(),
+  // Existing translations remain public. New AI translations explicitly set false.
+  isApproved: boolean("is_approved").notNull().default(true),
   translatedAt: timestamp("translated_at").defaultNow(),
   translatedBy: varchar("translated_by").default("ai"), // "ai" or "manual"
 });
