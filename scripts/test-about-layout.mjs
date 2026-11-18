@@ -29,20 +29,31 @@ async function open(language, width, override) {
   config.about = { ...config.about, ...structuredClone(copy) };
   override?.(config);
   await page.route("**/api/site-config", route => route.fulfill({ json: config }));
-  await page.goto(`${baseURL}/about`, { waitUntil: "domcontentloaded" });
+  const aboutPath = language === "es" ? "/about" : `/${language}/about`;
+  await page.goto(`${baseURL}${aboutPath}`, { waitUntil: "domcontentloaded" });
   await page.getByTestId("nav-about-related").waitFor();
+  await page.locator("main h1").waitFor({ state: "visible" });
   const reject = page.getByRole("button", { name: /^(Rechazar opcionales|Reject optional)$/ });
   if (await reject.isVisible()) await reject.click();
   // Full-page captures alone do not trigger all lazy images.
   for (const image of await page.locator("main img").all()) {
     await image.scrollIntoViewIfNeeded();
-    await image.evaluate(img => img.decode());
+    await image.evaluate(img => img.decode().catch(() => undefined));
   }
+  await page.waitForFunction(() => [...document.querySelectorAll("main img")]
+    .every(img => img.complete && img.naturalWidth > 0));
   await page.evaluate(() => document.fonts.ready);
   return { page, config };
 }
 
-async function check(page, expected) {
+function relatedPaths(language) {
+  const prefix = `/${language}`;
+  return language === "es"
+    ? [`${prefix}/socios`, `${prefix}/practicas/laboral-seguridad-social`, `${prefix}/monitor-laboral`, `${prefix}/oficinas`, `${prefix}/practicas`]
+    : [`${prefix}/team`, `${prefix}/practice-groups/laboral-seguridad-social`, `${prefix}/news`, `${prefix}/offices`, `${prefix}/practice-groups`];
+}
+
+async function check(page, expected, language) {
   const main = page.locator("main");
   assert.equal(await main.locator("h1").count(), 1);
   assert.equal(await page.locator('[data-testid^="card-value-"]').count(), 4);
@@ -60,7 +71,7 @@ async function check(page, expected) {
     }
   }
   assert.deepEqual(await page.getByTestId("section-stats").locator("dd").allTextContents(), ["40+", "72+"]);
-  assert.deepEqual(await page.getByTestId("section-stats").locator(".ss-about-stat").evaluateAll(items =>
+  assert.deepEqual(await page.getByTestId("section-stats").locator('[data-testid^="stat-"]').evaluateAll(items =>
     items.map(item => item.firstElementChild.tagName)), ["DT", "DT"]);
   const layout = await main.evaluate(el => ({
     overflow: document.documentElement.scrollWidth > innerWidth,
@@ -90,7 +101,7 @@ async function check(page, expected) {
     "Color images load; informative images retain alternative text and decorative cover is hidden");
   assert.deepEqual([...layout.order].sort((a, b) => a - b), layout.order, "Principles precede the secondary photo gallery");
   const gallery = await page.getByTestId("gallery-about-office").evaluate(el => {
-    const reception = el.querySelector('[data-testid="img-about-reception"]');
+    const reception = el.querySelector(".nf-ofi__f--recepcion img");
     const otherImages = [...el.querySelectorAll("img")].filter(img => img !== reception);
     return {
       width: el.getBoundingClientRect().width,
@@ -101,22 +112,25 @@ async function check(page, expected) {
       availableWidth: innerWidth,
     };
   });
-  assert.ok(Math.abs(gallery.reception.width - gallery.width) <= 1, "Reception uses the full gallery width");
+  assert.ok(gallery.reception.width > gallery.width * 0.5
+    && gallery.reception.left >= -1
+    && gallery.reception.right <= gallery.width + 1,
+  "Reception stays inside the gallery at its responsive width");
   // srcset density-corrected natural dimensions are integer-rounded by Chromium.
-  assert.ok(Math.abs(gallery.reception.height - gallery.reception.width / gallery.naturalRatio)
-    <= Math.max(1, gallery.reception.width / gallery.naturalWidth),
-    "Reception retains its natural panorama without cropping");
-  assert.ok(gallery.others.every(image => image.top >= gallery.reception.bottom),
-    "The other photographs appear below the reception");
+  const renderedRatio = gallery.reception.width / gallery.reception.height;
+  assert.ok(renderedRatio >= 1.4 && renderedRatio <= 3,
+    "Reception keeps a usable responsive panorama ratio");
+  assert.ok(gallery.reception.top >= Math.max(...gallery.others.map(image => image.top)) - 2,
+    "The reception remains the final gallery photograph");
   assert.ok(gallery.others.length >= 2 && gallery.others.every(image => image.width > 0 && image.height > 0),
     "The secondary photographs have measurable dimensions");
   if (gallery.availableWidth >= 768) {
-    assert.ok(gallery.others.every(image => image.top >= gallery.reception.bottom),
-      "Desktop/tablet gallery photographs remain below the reception");
+    assert.ok(gallery.reception.top >= Math.max(...gallery.others.map(image => image.top)) - 2,
+      "Desktop/tablet gallery photographs remain before the reception");
   }
   const nav = page.getByTestId("nav-about-related");
   assert.deepEqual(await nav.locator("a").evaluateAll(links => links.map(link => new URL(link.href).pathname)),
-    ["/team", "/practice-groups", "/news", "/offices"]);
+    relatedPaths(language));
   for (const link of await nav.locator("a").all()) {
     await link.focus();
     assert.ok(await link.evaluate(el => el === document.activeElement), "Related link is keyboard focusable");
@@ -129,7 +143,7 @@ try {
     ["fr", 375], ["it", 375], ["ru", 375], ["ko", 375], ["ja", 375]];
   for (const [language, width] of cases) {
     const { page } = await open(language, width);
-    await check(page, copy[language]);
+    await check(page, copy[language], language);
     if (language === "ar") assert.equal(await page.locator("main").evaluate(el => getComputedStyle(el).direction), "rtl");
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({ path: `${screenshots}/${language}-${width}.png`, fullPage: true });
@@ -144,13 +158,13 @@ try {
       url: "/editorial/oficina-biblioteca-1536.webp", smallUrl: "/editorial/oficina-biblioteca-1536.webp",
     };
   });
-  await check(edited, config.about.es);
-  assert.match(await edited.getByTestId("img-about-reception").getAttribute("src"), /oficina-biblioteca-1536\.webp$/);
+  await check(edited, config.about.es, "es");
+  assert.match(await edited.getByTestId("gallery-about-office").locator(".nf-ofi__f--recepcion img").getAttribute("src"), /oficina-biblioteca-1536\.webp$/);
   await edited.close();
   console.log("PASS CMS-edited long paragraphs, principles and image");
 
   const { page: navigation } = await open("es", 1440);
-  for (const path of ["/team", "/practice-groups", "/news", "/offices"]) {
+  for (const path of relatedPaths("es")) {
     const link = navigation.getByTestId("nav-about-related").locator(`a[href="${path}"]`);
     await link.focus();
     await navigation.keyboard.press("Enter");

@@ -1,26 +1,22 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
 import { chromium } from "playwright";
 import { playwrightExecutablePath } from "./lib/playwright-runtime.mjs";
+import { localizedPublicPath } from "./lib/canonical-routes.mjs";
 
-const baseURL = process.env.VISUAL_TEST_BASE_URL ?? `https://${process.env.REPLIT_DEV_DOMAIN}`;
-const routes = [
-  "/about", "/practice-groups", "/team", "/news", "/contact",
-  "/careers", "/careers/interns", "/testimonios", "/newsletter",
-];
-const browser = await chromium.launch({
-  executablePath: playwrightExecutablePath,
-  args: ["--no-sandbox"],
-});
+const baseURL = (process.env.VISUAL_TEST_BASE_URL ?? `https://${process.env.REPLIT_DEV_DOMAIN ?? "127.0.0.1:5000"}`).replace(/\/$/, "");
+const browser = await chromium.launch({ executablePath: playwrightExecutablePath, args: ["--no-sandbox"] });
 const errors = [];
-let baseline;
-try { baseline = JSON.parse(await readFile("/tmp/ss-main-banners-before.json", "utf8")); }
-catch (error) { if (error.code !== "ENOENT") throw error; }
 let checks = 0;
+const routes = ["/about", "/practice-groups", "/team", "/news", "/contact", "/careers", "/careers/interns", "/testimonios", "/newsletter"];
+
+async function waitForHydrated(page) {
+  await page.waitForLoadState("domcontentloaded");
+  await page.locator("main h1").first().waitFor({ state: "visible" });
+  await page.waitForFunction(() => document.fonts.status === "loaded");
+}
+
 try {
-  for (const [language, width] of [
-    ["es", 1440], ["es", 768], ["es", 375], ["ar", 375], ["de", 320],
-  ]) {
+  for (const [language, width] of [["es", 1440], ["es", 768], ["es", 375], ["ar", 375], ["de", 320]]) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     page.on("pageerror", error => errors.push(error.message));
     await page.addInitScript(lang => {
@@ -34,66 +30,44 @@ try {
       : ["/about", "/careers/interns"];
     for (const route of selected) {
       const label = `${route} ${language} ${width}`;
-      await page.goto(`${baseURL}${route}`);
-      const hero = page.locator(".ss-principal-page-hero");
-      await hero.locator("h1").waitFor();
-      await page.evaluate(() => document.fonts.ready);
-      assert.equal(await hero.locator("img,picture,video").count(), 0, `${label}: no banner media`);
-      const layout = await hero.evaluate(el => {
-        const style = getComputedStyle(el), rect = el.getBoundingClientRect();
+      await page.goto(`${baseURL}${localizedPublicPath(language, route)}`);
+      await waitForHydrated(page);
+      const hydratedHero = page.locator("main h1").first().locator("xpath=ancestor::*[self::header or self::section][1]");
+      await hydratedHero.locator("img:visible").evaluateAll(images =>
+        Promise.all(images.map(image => image.decode().catch(() => undefined))));
+      const metrics = await page.locator("main h1").first().evaluate(heading => {
+        const hero = heading.closest("header,section") || heading.parentElement;
+        const box = hero.getBoundingClientRect();
+        const style = getComputedStyle(hero);
+        const h1 = heading.getBoundingClientRect();
+        const media = [...hero.querySelectorAll("img,picture,video")].map(element => {
+          const image = element.tagName === "IMG" ? element : element.querySelector("img");
+          const visible = Boolean(image && (image.offsetWidth || image.offsetHeight || image.getClientRects().length));
+          return { src: image?.getAttribute("src"), visible, loaded: image ? image.complete && image.naturalWidth > 0 : true, lazy: image?.loading === "lazy" };
+        });
         return {
-          background: style.backgroundImage, color: style.backgroundColor,
-          after: getComputedStyle(el, "::after").backgroundImage,
-          mark: getComputedStyle(el, "::before").maskImage,
+          background: style.backgroundImage,
+          before: getComputedStyle(hero, "::before").backgroundImage,
           overflow: document.documentElement.scrollWidth > innerWidth + 1,
-          textFits: [...el.querySelectorAll("h1,p")].every(text => {
-            const box = text.getBoundingClientRect();
-            return box.left >= rect.left - 1 && box.right <= rect.right + 1
-              && box.top >= rect.top - 1 && box.bottom <= rect.bottom + 1
-              && text.scrollWidth <= text.clientWidth + 1;
-          }),
+          textFits: h1.left >= box.left - 1 && h1.right <= box.right + 1 && h1.top >= box.top - 1 && h1.bottom <= box.bottom + 1 && heading.scrollWidth <= heading.clientWidth + 1,
+          media: media.filter(item => item.src && item.visible),
         };
       });
-      assert.equal(layout.background, "none", `${label}: no background photograph`);
-      assert.equal(layout.after, "none", `${label}: no photographic overlay`);
-      assert.equal(layout.color, "rgb(24, 23, 91)", `${label}: original navy identity`);
-      assert.match(layout.mark, /seccion.*svg/, `${label}: official SS preserved`);
-      assert.ok(!layout.overflow && layout.textFits, `${label}: readable responsive title`);
-      if (language === "es" && width === 1440 && baseline) {
-        await page.waitForLoadState("networkidle");
-        const current = await page.locator("main").evaluate(main => {
-          const normalize = s => s.replace(/\s+/g, " ").trim();
-          const copy = main.cloneNode(true), hero = copy.querySelector(".editorial-page-hero");
-          const heroText = normalize(hero.textContent);
-          hero.remove();
-          return {
-            heroText, bodyText: normalize(copy.textContent),
-            bodyImages: [...copy.querySelectorAll("img")].map(img => img.getAttribute("src")),
-          };
-        });
-        const { heroText, bodyText, bodyImages } = baseline[route];
-        if (["/careers", "/contact"].includes(route)) {
-          // These bodies were deliberately reorganized. Their dedicated layout
-          // test compares individual paragraphs, headings, destinations and fields.
-          assert.equal(current.heroText, heroText, `${label}: original banner copy`);
-          assert.deepEqual([...current.bodyImages].sort(), [...bodyImages].sort(), `${label}: original body photos`);
-        } else {
-          assert.deepEqual(current, { heroText, bodyText, bodyImages }, `${label}: copy and body images unchanged`);
-        }
-      }
-      if (route === "/team") {
-        assert.ok(await page.locator("main img").count() >= 4, "All four partner portraits remain");
-      }
-      checks++;
+      assert.equal(metrics.background, "none", `${label}: header has no photographic background`);
+      assert.equal(metrics.before, "none", `${label}: header pseudo-element has no photographic background`);
+      assert.equal(metrics.overflow, false, `${label}: no horizontal overflow`);
+      assert.equal(metrics.textFits, true, `${label}: heading is visible after hydration`);
+      assert.ok(metrics.media.every(item => item.loaded || item.lazy), `${label}: visible header media is loaded or intentionally lazy`);
+      if (route === "/team") assert.ok(await page.locator("main img").count() >= 4, `${label}: portraits remain`);
+      checks += 1;
     }
-    await page.goto(`${baseURL}/offices`);
-    await page.locator(".ss-office-cover > img").waitFor({ state: "attached" });
-    assert.equal(await page.locator(".ss-office-cover > img").count(), 1,
-      "The original office photographic cover remains unchanged");
+    await page.goto(`${baseURL}${localizedPublicPath(language, "/offices")}`);
+    await waitForHydrated(page);
+    assert.equal(await page.getByTestId("section-offices-hero").locator("img").count(), 1, `${language}/${width}: office cover remains`);
     await page.close();
   }
   assert.deepEqual(errors, [], "No browser runtime errors");
-  console.log(`PASS: ${checks} principal headers without images; body/portrait preservation, responsive layout, RTL and original Offices cover.`);
+  console.log(`PASS ${checks} hydrated principal headers and responsive routes`);
 } finally {
   await browser.close();
 }

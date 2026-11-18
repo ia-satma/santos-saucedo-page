@@ -57,9 +57,10 @@ export function usePracticeItems(lang: V3Lang): PracticeItem[] {
     const base = !isError && data && data.length
       ? [...data].filter((g) => g.published !== false).sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((g) => {
           const cmsItem = liveHome[language]?.practicas?.items?.find((item: { slug: string }) => item.slug === g.slug);
+          const catalogName = language === "es" ? g.nameEs : language === "en" ? g.name : undefined;
           return {
             slug: g.slug,
-            name: (cmsPracticeName(g.slug, language) || (lang === "es" ? g.nameEs || g.name : g.name)) || "",
+            name: (catalogName || cmsPracticeName(g.slug, language) || (lang === "es" ? g.nameEs || g.name : g.name)) || "",
             summary: (language !== "es" && language !== "en" ? cmsItem?.body : undefined) || (lang === "es" ? g.descriptionEs || g.description : g.description) || "",
           };
         })
