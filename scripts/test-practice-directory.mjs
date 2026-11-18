@@ -86,12 +86,7 @@ async function checkRows(page, language, items = groups) {
       { selector: imageSelector, expectedFamily },
     );
     assert.equal(await image.getAttribute("alt"), "", "Image doesn't repeat accessible link name");
-    assert.equal(imageFamily(await image.getAttribute("src")), imageFamily(`/editorial/practice-${({
-        "laboral-seguridad-social": "laboral",
-        "corporativo-contractual": "corporativo",
-        migratorio: "migratorio",
-        "litigio-contencioso": "litigio",
-      })[group.slug]}.webp`));
+    assert.equal(imageFamily(await image.getAttribute("src")), expectedFamily);
     assert.ok(await image.evaluate(img => {
       const rect = img.getBoundingClientRect();
       return (rect.width === 0 || rect.height === 0)
