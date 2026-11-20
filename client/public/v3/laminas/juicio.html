@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Esclusas del juicio laboral</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0C2340; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; outline: none; }
+  canvas:focus-visible { box-shadow: inset 0 0 0 2px #B2EB3E; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="motor.js?v=2"></script>
+<script>
+/* Lámina 4/7 · El juicio como una escalera de siete esclusas. Una barca (el asunto) baja de etapa en etapa:
+   la esclusa de abajo se llena hasta igualar el nivel, las compuertas en V se abren con sus vigas,
+   la barca pasa y el agua vuelve a bajar. Cada esclusa tiene a un costado una rampa que termina en un
+   estanque: la salida por convenio. En la etapa elegida, la compuerta del costado baja, el agua corre
+   por la rampa y el estanque se llena (lima). */
+(function () {
+  const N = 7, L = 1, AN = 1.15, PASO = 0.27, MURO = 0.09, BASE = -0.3;
+  const CANAL = 0.8, CAN_AN = 0.34, R = 0.35, VIGA = 0.32;
+  const TH = 0.24, HOJA = (AN / 2 - MURO) / Math.cos(TH) - 0.004;   // hojas de la compuerta en V
+  const BX = 0.4, LB = 0.62, AB = 0.44, HB = 0.13;                  // barca
+  const piso = (i) => (N - 1 - i) * PASO;
+  const nivel = (i) => piso(i) + 0.42;                 // nivel normal del agua
+  const borde = (i) => piso(i) + 0.42 + PASO + 0.05;   // corona: cabe el nivel de la esclusa de arriba
+  const lim = (v, a, b) => Math.max(a, Math.min(b, v));
+  const suave = (t) => t * t * (3 - 2 * t);
+  const FONDO = "#0C2340";
+
+  let barca = null;       // posición continua de la barca, en esclusas
+  const fluye = [];       // agua en cada salida (0–1)
+
+  Plano.figura({
+    id: "juicio", total: N, reposo: 0, ambiente: true, recorrido: [0, 4, 6, 0], pausa: 2100,
+    aria: "Escalera de siete esclusas con compuertas en V. Una barca baja de esclusa en esclusa; cada una tiene a un costado una rampa hacia un estanque, la salida por convenio, que se abre en la etapa elegida.",
+    caja: [[0, -0.42, borde(0) + 0.12], [0.9, -0.42, borde(0) + 0.12], [N * L + 0.32, 0, BASE], [N * L + 0.32, -0.1, borde(N - 1) + 0.12],
+      [0.24, AN + CANAL + 2 * R - 0.02, BASE], [N * L - 0.24, AN + CANAL + 2 * R - 0.02, BASE], [0, AN, borde(0)], [0, 0, BASE]],
+    margen: 0.04,
+    crear(g) { barca = g.resorte(0); for (let i = 0; i < N; i++) fluye.push(g.transito(i === 0 ? 1 : 0)); },
+    alElegir(i, previa, ahora) {
+      if (i < 0) return;
+      barca.meta = i;
+      fluye.forEach((f, k) => f.ir(k === i ? 1 : 0, ahora + (k === i ? 260 : 0), k === i ? 1100 : 500));
+    },
+    zonas(g) {
+      const z = [];
+      for (let i = 0; i < N; i++) {
+        const x0 = i * L, x1 = x0 + L;
+        z.push(g.zona([[x0, 0, borde(i)], [x1, 0, borde(i)], [x1, 0, BASE], [x1, AN, BASE], [x0, AN, BASE], [x0, AN, borde(i)]]));
+      }
+      for (let i = 0; i < N; i++) {
+        const xm = i * L + L / 2, y2 = AN + CANAL + 2 * R + 0.02;
+        z.push({ i, poly: g.zona([[xm - 0.36, AN, nivel(i)], [xm + 0.36, AN, nivel(i)], [xm + 0.36, y2, BASE], [xm - 0.36, y2, BASE]]) });
+      }
+      return z;
+    },
+    dibujar(g, est, dt, ahora) {
+      const t = est.t, ctx = g.ctx;
+      const pos = barca.paso(dt, 16, 8);
+      fluye.forEach((f) => f.paso(ahora));
+      // la esclusa de abajo se llena (iguala niveles) antes de que se abra la compuerta
+      const lleno = (j) => suave(lim((0.5 - Math.abs(pos - (j - 0.5))) / 0.18, 0, 1));
+      const nv = (j) => (j > 0 ? nivel(j) + (nivel(j - 1) - nivel(j)) * lleno(j) : nivel(0));
+      const abre = (b) => (b >= N - 1 ? 0 : suave(lim((0.4 - Math.abs(pos - (b + 0.5))) / 0.2, 0, 1)));
+      const kb = Math.round(lim(pos, 0, N - 1)), zb = nv(kb) + 0.008 * Math.sin(t * 1.7);
+
+      for (let i = 0; i < N; i++) {
+        const x0 = i * L, x1 = x0 + L, f = g.foco(i), zt = borde(i), w = nv(i);
+        // bloque de la esclusa
+        g.caja(x0, 0, BASE, L, AN, zt - BASE, { a: 0.55 + 0.45 * f, r: 3 });
+        // boca, agua y compuertas, recortadas a la boca
+        const boca = [[x0 + MURO, MURO, zt], [x1 - MURO, MURO, zt], [x1 - MURO, AN - MURO, zt], [x0 + MURO, AN - MURO, zt]];
+        ctx.save();
+        recorte(ctx, g.zona(boca));
+        ctx.fillStyle = "rgba(4,18,36,.55)"; ctx.fill();
+        g.poly([[x0 + MURO, MURO, w], [x1 - MURO, MURO, w], [x1 - MURO, AN - MURO, w], [x0 + MURO, AN - MURO, w]],
+          { relleno: g.rgba(g.RGB.agua, 0.2 + 0.1 * f), a: 0.4 + 0.4 * f, r: 2 });
+        for (let k = 0; k < 3; k++) {   // ondas: reloj lento
+          const u = ((t * 0.07 + k / 3 + i * 0.13) % 1);
+          const xx = x0 + MURO + 0.08 + u * (L - 2 * MURO - 0.5), yy = MURO + 0.2 + k * 0.32;
+          g.linea([[xx, yy, w], [xx + 0.14, yy, w]], { a: 0.2 + 0.3 * f, o: Math.sin(u * Math.PI) * 0.9 });
+        }
+        hojas(g, i, w, zt, abre(i), f);
+        ctx.restore();
+        g.poly(boca, { relleno: false, a: 0.45 + 0.4 * f, r: 2 });
+
+        // salida por convenio: compuerta en el costado, rampa y estanque en el suelo
+        const xm = x0 + L / 2, fl = fluye[i].v, hw = CAN_AN / 2;
+        const zA = nivel(i) - 0.04, zB = BASE + 0.12, y0 = AN, y1 = AN + CANAL, ey = y1 + R - 0.04;
+        g.cilindro(xm, ey, BASE, R, 0.13, { a: 0.4 + 0.55 * f, l: f });
+        g.anillo(xm, ey, BASE + 0.03 + 0.09 * fl, R - 0.06, { relleno: g.rgba(g.RGB.agua, 0.05 + 0.3 * fl), a: 0.2 + 0.6 * fl, l: f * fl });
+        g.poly([[xm - hw, y0, zA], [xm + hw, y0, zA], [xm + hw, y1, zB], [xm - hw, y1, zB]], { relleno: g.rgba(g.RGB.agua, 0.05 + 0.22 * fl), a: 0.35 + 0.55 * f, l: f, r: 1.5 });
+        g.linea([[xm - hw, y0, zA + 0.07], [xm - hw, y1, zB + 0.07]], { a: 0.35 + 0.55 * f, l: f });
+        g.linea([[xm + hw, y0, zA + 0.07], [xm + hw, y1, zB + 0.07]], { a: 0.35 + 0.55 * f, l: f });
+        if (fl > 0.02) for (let k = 0; k < 4; k++) {   // el agua corre por la rampa
+          const u = ((t * 0.6 + k / 4) % 1), u2 = Math.min(1, u + 0.14);
+          g.linea([[xm, y0 + u * CANAL, zA + (zB - zA) * u + 0.01], [xm, y0 + u2 * CANAL, zA + (zB - zA) * u2 + 0.01]], { l: 1, a: 1, o: fl * Math.sin(u * Math.PI) });
+        }
+        const cz = zA + 0.3 * (1 - fl);   // la compuerta del costado baja al abrirse la salida
+        g.poly([[xm - hw + 0.03, AN + 0.004, zA - 0.02], [xm + hw - 0.03, AN + 0.004, zA - 0.02], [xm + hw - 0.03, AN + 0.004, cz + 0.02], [xm - hw + 0.03, AN + 0.004, cz + 0.02]], { a: 0.5 + 0.5 * f, l: f, r: 1 });
+
+        // la parte de la barca que cae en esta esclusa, recortada a su boca (regla 06)
+        barcaParte(g, i, pos, zb);
+        // las vigas de la compuerta anterior van encima de esta esclusa, que es más baja
+        if (i > 0) vigas(g, i - 1, abre(i - 1), g.foco(i - 1));
+      }
+      vigas(g, N - 1, 0, g.foco(N - 1));
+      return Math.abs(barca.v) > 0.002 || Math.abs(barca.x - barca.meta) > 0.002;
+    },
+  });
+
+  function recorte(ctx, pts) {
+    ctx.beginPath(); pts.forEach((p, k) => (k ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath(); ctx.clip();
+  }
+
+  /* compuerta en V al final de la esclusa b: dos hojas que giran hacia la pared al abrirse */
+  function angulo(ab) { return TH + (Math.PI / 2 - TH) * ab; }
+  function hojas(g, b, w, zt, ab, f) {
+    const xg = (b + 1) * L - MURO - 0.02, th = angulo(ab), s = Math.sin(th), c = Math.cos(th);
+    const zb = w - 0.02, zz = zt - 0.004, op = { a: 0.6 + 0.4 * f, r: 1, w: 1.2 };
+    const hoja = (y0, dy) => {
+      const xa = xg - HOJA * s, ya = y0 + dy * HOJA * c;
+      g.poly([[xg, y0, zb], [xa, ya, zb], [xa, ya, zz], [xg, y0, zz]], op);
+    };
+    hoja(MURO + 0.01, 1);        // hoja del fondo primero
+    hoja(AN - MURO - 0.01, -1);  // hoja del frente después
+  }
+  /* vigas de balance sobre la corona: prolongan cada hoja hacia afuera y giran con ella */
+  function vigas(g, b, ab, f) {
+    const xg = (b + 1) * L - MURO - 0.02, zt = borde(b), th = angulo(ab), s = Math.sin(th), c = Math.cos(th);
+    viga(g, [xg, MURO * 0.5], [s, -c], zt, f);   // solo la del lado del fondo: la del frente estorba a la rampa
+  }
+  function viga(g, p, d, zt, f) {
+    const n = [-d[1], d[0]], hw = 0.022, z0 = zt + 0.035, z1 = zt + 0.075;
+    const a = [p[0] - d[0] * 0.05, p[1] - d[1] * 0.05], q = [p[0] + d[0] * VIGA, p[1] + d[1] * VIGA];
+    const pie = [[a[0] + n[0] * hw, a[1] + n[1] * hw], [q[0] + n[0] * hw, q[1] + n[1] * hw], [q[0] - n[0] * hw, q[1] - n[1] * hw], [a[0] - n[0] * hw, a[1] - n[1] * hw]];
+    g.linea([[p[0], p[1], zt], [p[0], p[1], z0]], { a: 0.5 + 0.5 * f, w: 1.1 });
+    prisma(g, pie, z0, z1, -1e9, 1e9, { a: 0.55 + 0.45 * f, p: 0.3 + 0.3 * f, w: 1.15 });
+  }
+
+  /* barca: casco de proa en punta y cabina. Se parte en el plano de la compuerta para que cada mitad
+     quede tapada por los muros de su propia esclusa. */
+  function barcaParte(g, i, pos, z) {
+    const bx = pos * L + BX, by = AN / 2, x0 = i * L, x1 = x0 + L;
+    if (bx + LB / 2 <= x0 || bx - LB / 2 >= x1) return;
+    const casco = [[-LB / 2, -AB / 2], [LB / 2 - 0.15, -AB / 2], [LB / 2, 0], [LB / 2 - 0.15, AB / 2], [-LB / 2, AB / 2]].map(([u, v]) => [bx + u, by + v]);
+    const cabina = [[bx - 0.23, by - 0.12], [bx + 0.03, by - 0.12], [bx + 0.03, by + 0.12], [bx - 0.23, by + 0.12]];
+    const ctx = g.ctx, zt = borde(i), base = [[x0 + MURO, MURO], [x1 - MURO, MURO], [x1 - MURO, AN - MURO], [x0 + MURO, AN - MURO]];
+    const pts = []; base.forEach(([x, y]) => { pts.push(g.P(x, y, zt)); pts.push(g.P(x, y, zt + 1.2)); });
+    ctx.save(); recorte(ctx, envolvente(pts));
+    prisma(g, casco, z - 0.012, z + HB, x0, x1, { a: 1, p: 0.55, w: 1.35 });
+    prisma(g, cabina, z + HB, z + HB + 0.15, x0, x1, { a: 1, p: 0.5, w: 1.25 });
+    ctx.restore();
+  }
+
+  /* prisma vertical de planta convexa, recortado entre xa y xb: silueta clara y tapa tenue;
+     las aristas del corte no se trazan */
+  function prisma(g, pie, za, zb, xa, xb, o) {
+    let q = pie.map((p) => [p[0], p[1], false]);
+    q = corta(q, (p) => p[0] - xa, xa);
+    q = corta(q, (p) => xb - p[0], xb);
+    if (q.length < 3) return;
+    const arriba = q.map((p) => { const s = g.P(p[0], p[1], zb); return [s[0], s[1], p[2]]; });
+    const abajo = q.map((p) => { const s = g.P(p[0], p[1], za); return [s[0], s[1], p[2]]; });
+    const env = envolvente(arriba.concat(abajo)), ctx = g.ctx;
+    ctx.beginPath(); env.forEach((p, k) => (k ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath();
+    ctx.fillStyle = FONDO; ctx.fill();
+    ctx.lineJoin = "round"; ctx.lineCap = "round";
+    const trazar = (pl, tinta, w) => {
+      ctx.beginPath();
+      for (let k = 0; k < pl.length; k++) { const a = pl[k], b = pl[(k + 1) % pl.length]; if (a[2] && b[2]) continue; ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); }
+      ctx.strokeStyle = tinta; ctx.lineWidth = w; ctx.stroke();
+    };
+    trazar(arriba, Plano.tinta(o.p, 0), 1.1);
+    trazar(env, Plano.tinta(o.a, 0), o.w);
+  }
+  function corta(pts, fn, xc) {
+    const out = [];
+    for (let k = 0; k < pts.length; k++) {
+      const a = pts[k], b = pts[(k + 1) % pts.length], fa = fn(a), fb = fn(b);
+      if (fa >= 0) out.push(a);
+      if ((fa >= 0) !== (fb >= 0)) { const u = fa / (fa - fb); out.push([xc, a[1] + (b[1] - a[1]) * u, true]); }
+    }
+    return out;
+  }
+  function envolvente(p) {
+    const s = p.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+    const lo = [], up = [];
+    for (const q of s) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+    for (let i = s.length - 1; i >= 0; i--) { const q = s[i]; while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+    return lo.slice(0, -1).concat(up.slice(0, -1));
+  }
+})();
+</script>
+</body>
+</html>

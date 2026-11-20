@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cribas de la prevención</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0C2340; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; outline: none; }
+  canvas:focus-visible { box-shadow: inset 0 0 0 2px #B2EB3E; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="motor.js?v=2"></script>
+<script>
+/* Lámina 3/7 · La prevención como una pila de siete cribas entre una tolva y una charola (el tribunal).
+   Cada criba tiene su malla y retiene su tipo de cuenta (de conflicto); casi nada llega abajo.
+   La variable del cursor es QUÉ criba se retira: sale deslizándose de lado, hasta su tope, y las cuentas que
+   retenía caen, atraviesan el hueco y las demás mallas, y se juntan en la charola, que se enciende.
+   Reloj lento: de vez en cuando cae una cuenta de la tolva; la retiene su criba o, si falta, llega a la charola. */
+(function () {
+  "use strict";
+  const PI = Math.PI, KX = 1.2247449, KY = 0.7071068, S2 = Math.SQRT1_2;
+  const N = 7;
+  // cribas: radio exterior, borde interior del labio, aro sobre la malla y faldón bajo ella, separación vertical
+  const R = 1.12, RI = R - 0.065, H = 0.13, HB = 0.075, S = 0.56;
+  // charola (el tribunal) y base
+  const ZT = 0, GAP = 0.86, RT = R + 0.16, RTI = RT - 0.06, HT = 0.17, HBT = 0.06;
+  const RB = R + 0.42, ZB1 = ZT - HBT, ZB0 = ZB1 - 0.15;
+  const zc = (k) => ZT + GAP + (N - 1 - k) * S;                 // altura de la malla de la criba k
+  // poste a la izquierda (opuesto a la salida) y tolva arriba
+  const RP = R + 0.27, PX = -RP * S2, PY = RP * S2, PR = 0.055;
+  const RS = 0.12, RH = 0.56, RHI = 0.51;
+  const ZS0 = zc(0) + 0.32, ZS1 = ZS0 + 0.1, ZR0 = ZS1 + 0.58, ZTOP = ZR0 + 0.06, ZPOSTE = ZTOP + 0.05;
+  // cuentas y física sencilla
+  const BR = 0.082, G = 11, REB = 0.36;
+  // salida: hacia la derecha de la pantalla, eje (1, -1)/√2, con tope
+  const UX = S2, UY = -S2, SALE = 2.05 * R, AJAR = 0.06;
+  const CUANTAS = [4, 5, 3, 6, 4, 5, 4];
+  const FONDO = "#0C2340";
+  const reducido = Plano.reducido;
+  const tinta = Plano.tinta;
+
+  let est = null, gg = null;
+  let inicial = false, arrancado = false;
+  const sale = [];                 // tránsito de salida de cada criba (0 en su sitio, 1 en el tope)
+  const ranuras = [];              // lugares de reposo de las cuentas en cada criba
+  let lugaresCharola = [];
+  let cuentas = [];
+  let encendida = 0;               // luz de la charola
+  let proximaGota = 0;
+  let zonasG = [];
+
+  /* azar con semilla: la pila se ve igual cada vez */
+  function azar(s) { return function () { s |= 0; s = (s + 0x6D2B79F5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+
+  /* ---------- geometría de pantalla a escala 1 (para elegir lugares visibles) ---------- */
+  const sx = (x, y) => (x - y) * 0.8660254;
+  const sy = (x, y, z) => (x + y) * 0.5 - z;
+  // borde frontal (en pantalla) de un círculo horizontal de radio r a la altura z: y en función de x
+  function frente(x, r, z) { const c = x / (KX * r); if (Math.abs(c) >= 1) return -Infinity; return -z + KY * r * Math.sqrt(1 - c * c); }
+
+  /* lugares visibles de una superficie: debajo del borde del objeto de arriba y encima de su propio labio */
+  function visibles(zSup, zOcl, rOcl, rLab, zLab, rMax) {
+    const out = [], rb = KX * BR;
+    for (let x = -rMax; x <= rMax; x += 0.035) for (let y = -rMax; y <= rMax; y += 0.035) {
+      if (Math.hypot(x, y) > rMax) continue;
+      const X = sx(x, y), Y = sy(x, y, zSup + BR);
+      const arriba = Math.max(frente(X, rOcl, zOcl), frente(X - rb * 0.8, rOcl, zOcl), frente(X + rb * 0.8, rOcl, zOcl));
+      if (Y - rb < arriba + 0.03) continue;                     // la tapa la criba de arriba
+      if (Y + rb * 0.15 > frente(X, rLab, zLab)) continue;       // la tapa su propio labio
+      out.push([x, y]);
+    }
+    return out;
+  }
+  function escoger(cands, n, sem, ocupados, dmin) {
+    // al azar con semilla y separación mínima; si no caben, otra semilla y luego un poco menos de separación
+    let mejor = [];
+    for (let d = dmin; d >= dmin * 0.8; d -= dmin * 0.05) for (let v = 0; v < 40; v++) {
+      const rnd = azar(sem + v * 7919), elegidos = [];
+      const lejos = (p, lista) => lista.every((q) => Math.hypot(p[0] - q[0], p[1] - q[1]) > d);
+      for (let intento = 0; intento < 1500 && elegidos.length < n; intento++) {
+        const p = cands[(rnd() * cands.length) | 0];
+        if (lejos(p, elegidos) && lejos(p, ocupados || [])) elegidos.push(p);
+      }
+      if (elegidos.length >= n) return elegidos;
+      if (elegidos.length > mejor.length) mejor = elegidos;
+    }
+    return mejor;
+  }
+
+  /* ---------- dibujo ---------- */
+  function E(x, y, z, r) { const p = gg.P(x, y, z); return [p[0], p[1], KX * r * gg.esc, KY * r * gg.esc]; }
+  function arco(e, a0, a1, ccw) { gg.ctx.ellipse(e[0], e[1], e[2], e[3], 0, a0, a1, !!ccw); }
+  function pinta(color, w) { const c = gg.ctx; c.strokeStyle = color; c.lineWidth = w || 1.25; c.lineJoin = "round"; c.lineCap = "round"; c.stroke(); }
+  function llena(color) { gg.ctx.fillStyle = color || FONDO; gg.ctx.fill(); }
+  function camino(pts, cerrar) { const c = gg.ctx; c.beginPath(); pts.forEach((p, i) => (i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]))); if (cerrar) c.closePath(); }
+  function seg(x0, y0, x1, y1, z) { const a = gg.P(x0, y0, z), b = gg.P(x1, y1, z); gg.ctx.moveTo(a[0], a[1]); gg.ctx.lineTo(b[0], b[1]); }
+  function circ(x, y, z, r) { const e = E(x, y, z, r); gg.ctx.moveTo(e[0] + e[2], e[1]); gg.ctx.ellipse(e[0], e[1], e[2], e[3], 0, 0, 2 * PI); }
+  function envolvente(p) {
+    const s = p.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+    const lo = [], up = [];
+    for (const q of s) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+    for (let i = s.length - 1; i >= 0; i--) { const q = s[i]; while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+    return lo.slice(0, -1).concat(up.slice(0, -1));
+  }
+  /* cilindro opaco: silueta clara (arco trasero de la tapa, costados, arco frontal de la base) y pliegue tenue */
+  function cil(x, y, z, r, h, t) {
+    const c = gg.ctx, top = E(x, y, z + h, r), bot = E(x, y, z, r);
+    c.beginPath(); arco(top, PI, 2 * PI); arco(bot, 0, PI); c.closePath(); llena(); pinta(t.sil, 1.25);
+    c.beginPath(); arco(top, 0.03, PI - 0.03); pinta(t.fold, 1.05);
+  }
+  /* placa plana (pestaña, ménsula): contorno local (u radial, v tangencial), con grosor */
+  function placa(cx, cy, ang, contorno, zTop, grueso, t) {
+    const ur = [Math.cos(ang), Math.sin(ang)], ut = [-Math.sin(ang), Math.cos(ang)];
+    const w = (u, v, z) => gg.P(cx + ur[0] * u + ut[0] * v, cy + ur[1] * u + ut[1] * v, z);
+    const top = contorno.map(([u, v]) => w(u, v, zTop)), bot = contorno.map(([u, v]) => w(u, v, zTop - grueso));
+    camino(envolvente(top.concat(bot)), true); llena(); pinta(t.sil, 1.2);
+    camino(top, true); pinta(t.fold, 1);
+    return w;
+  }
+
+  /* vasija de aro redondo (criba o charola): silueta, interior recortado, contenido, frente y labio */
+  function vasija(cx, cy, z, r, ri, h, hb, t, interior, contenido) {
+    const c = gg.ctx;
+    const top = E(cx, cy, z + h, r), bot = E(cx, cy, z - hb, r), lab = E(cx, cy, z + h, ri), pis = E(cx, cy, z, ri), fal = E(cx, cy, z, r);
+    c.beginPath(); arco(top, PI, 2 * PI); arco(bot, 0, PI); c.closePath(); llena(); pinta(t.sil, 1.3);
+    c.save();
+    c.beginPath(); arco(lab, 0, 2 * PI); c.clip();
+    c.beginPath(); arco(pis, 0, 2 * PI); c.clip();
+    if (interior) interior();
+    c.restore();
+    c.beginPath(); arco(pis, PI + 0.1, 2 * PI - 0.1); pinta(t.fold, 1);       // encuentro de la pared interior con el fondo
+    if (contenido) contenido();
+    // frente del aro: tapa lo que queda detrás de la pared delantera
+    c.beginPath(); arco(lab, 0, PI); c.lineTo(top[0] - top[2], top[1]); arco(bot, PI, 0, true); c.lineTo(top[0] + top[2], top[1]); c.closePath(); llena();
+    c.beginPath(); c.moveTo(top[0] - top[2], top[1]); arco(bot, PI, 0, true); c.lineTo(top[0] + top[2], top[1]); pinta(t.sil, 1.3);
+    c.beginPath(); arco(top, 0.04, PI - 0.04); pinta(t.fold, 1.05);              // pliegue: arista superior del frente
+    c.beginPath(); arco(fal, 0.18, PI - 0.18); pinta(t.faldon, 1);              // faldón: el aro tiene dos cuerpos
+    c.beginPath(); arco(lab, 0, 2 * PI); pinta(t.lab, 1.15);                    // labio interior
+  }
+
+  /* mallas: una por criba, todas en el plano de la malla */
+  const MALLAS = [
+    function cuadricula(cx, cy, z) { const s = 0.15; for (let i = -8; i <= 8; i++) { seg(cx + i * s, cy - R, cx + i * s, cy + R, z); seg(cx - R, cy + i * s, cx + R, cy + i * s, z); } },
+    function diagonal(cx, cy, z) { const s = 0.1; for (let i = -12; i <= 12; i++) seg(cx - R, cy + i * s, cx + R, cy + i * s, z); },
+    function radial(cx, cy, z) { for (let i = 0; i < 40; i++) { const a = (i * PI) / 20, c = Math.cos(a), s = Math.sin(a); seg(cx + 0.13 * c, cy + 0.13 * s, cx + R * c, cy + R * s, z); } circ(cx, cy, z, 0.13); circ(cx, cy, z, 0.62); },
+    function anillos(cx, cy, z) { for (let i = 1; i * 0.115 < RI; i++) circ(cx, cy, z, i * 0.115); },
+    function perforada(cx, cy, z) { const s = 0.125; for (let j = -9; j <= 9; j++) for (let i = -9; i <= 9; i++) { const x = (i + (j & 1 ? 0.5 : 0)) * s, y = j * s * 0.866; if (Math.hypot(x, y) < RI - 0.035) circ(cx + x, cy + y, z, 0.034); } },
+    function panal(cx, cy, z) {
+      const a = 0.078, dx = Math.sqrt(3) * a, dy = 1.5 * a;
+      for (let j = -10; j <= 10; j++) for (let i = -9; i <= 9; i++) {
+        const x = i * dx + (j & 1 ? dx / 2 : 0), y = j * dy; if (Math.hypot(x, y) > RI + 0.07) continue;
+        for (let k = 0; k <= 6; k++) { const an = PI / 6 + (k * PI) / 3, p = gg.P(cx + x + a * Math.cos(an), cy + y + a * Math.sin(an), z); k ? gg.ctx.lineTo(p[0], p[1]) : gg.ctx.moveTo(p[0], p[1]); }
+      }
+    },
+    function ranurada(cx, cy, z) {
+      const L = 0.085, w = 0.024;
+      for (let j = -11; j <= 11; j++) for (let i = -5; i <= 5; i++) {
+        const x = i * 0.25 + (j & 1 ? 0.125 : 0), y = j * 0.1; if (Math.hypot(x, y) > RI - 0.02) continue;
+        const pts = [];
+        for (let k = 0; k <= 6; k++) { const an = -PI / 2 + (k * PI) / 6; pts.push([x + L + w * Math.cos(an), y + w * Math.sin(an)]); }
+        for (let k = 0; k <= 6; k++) { const an = PI / 2 + (k * PI) / 6; pts.push([x - L + w * Math.cos(an), y + w * Math.sin(an)]); }
+        pts.forEach(([u, v], k) => { const p = gg.P(cx + u, cy + v, z); k ? gg.ctx.lineTo(p[0], p[1]) : gg.ctx.moveTo(p[0], p[1]); });
+        gg.ctx.closePath();
+      }
+    },
+  ];
+
+  const centro = (k) => { const d = SALE * sale[k].v; return [d * UX, d * UY]; };
+
+  function tintasCriba(f) {
+    return { sil: tinta(0.66, f), lab: tinta(0.44, f * 0.95), fold: tinta(0.2, f * 0.6, 0.9), faldon: tinta(0.08, f * 0.5, 0.8), malla: tinta(0.12, f, 0.55 + 0.25 * f) };
+  }
+
+  function dibujarCriba(k, dentro) {
+    const f = gg.foco(k), t = tintasCriba(f), c = centro(k), z = zc(k);
+    // pestaña para tirar de la criba, del lado de la salida
+    const u0 = R - 0.07, u1 = R + 0.075, w = 0.15, cont = [[u0, -w], [u1, -w]];
+    for (let i = 1; i < 10; i++) { const a = -PI / 2 + (PI * i) / 10; cont.push([u1 + w * Math.cos(a), w * Math.sin(a)]); }
+    cont.push([u1, w], [u0, w]);
+    const wp = placa(c[0], c[1], -PI / 4, cont, z + H - 0.004, 0.04, t);
+    const ag = []; const uc = R + 0.105, hr = 0.03, hl = 0.055;
+    for (let i = 0; i <= 8; i++) { const a = (PI * i) / 8; ag.push(wp(uc + hr * Math.cos(a), hl + hr * Math.sin(a), z + H - 0.004)); }
+    for (let i = 0; i <= 8; i++) { const a = PI + (PI * i) / 8; ag.push(wp(uc + hr * Math.cos(a), -hl + hr * Math.sin(a), z + H - 0.004)); }
+    camino(ag, true); pinta(t.lab, 1);
+    vasija(c[0], c[1], z, R, RI, H, HB, t,
+      () => { gg.ctx.fillStyle = gg.rgba(gg.RGB.agua, 0.07); gg.ctx.fillRect(0, 0, gg.W, gg.H); gg.ctx.beginPath(); MALLAS[k](c[0], c[1], z); pinta(t.malla, 1); },
+      () => dentro.forEach(dibujarCuenta));
+  }
+
+  /* ménsula del poste bajo cada criba: queda vacía cuando la criba sale */
+  function mensula(z, a, u0) {
+    const t = { sil: tinta(a), fold: tinta(a * 0.4, 0, 0.85) };
+    placa(0, 0, (3 * PI) / 4, [[u0 || R - 0.16, -0.06], [RP, -0.06], [RP, 0.06], [u0 || R - 0.16, 0.06]], z, 0.045, t);
+    cil(PX, PY, z - 0.075, 0.088, 0.085, t);
+  }
+
+  function dibujarCuenta(b) {
+    if (b.o <= 0.01) return;
+    const c = gg.ctx, p = gg.P(b.x, b.y, b.z), rr = KX * BR * gg.esc;
+    const l = b.tipo >= 0 ? gg.foco(b.tipo) : 0;
+    const a = b.tipo === -1 ? 0.4 : b.tipo < 0 ? 0.6 : b.gota && b.estado === "cae" ? 0.95 : 0.86;
+    c.beginPath(); c.arc(p[0], p[1], rr, 0, 2 * PI); c.fillStyle = gg.rgba(gg.RGB.fondo, b.o); c.fill(); pinta(tinta(a, l, b.o), 1.25);
+    c.beginPath(); c.ellipse(p[0], p[1], rr * 0.97, rr * 0.5, 0, 0.2, PI - 0.2); pinta(tinta(a * 0.35, l * 0.7, b.o * 0.9), 1);
+  }
+
+  function dibujarCharola(dentro) {
+    const L = encendida;
+    const t = { sil: tinta(0.6 + 0.4 * L, L), lab: tinta(0.42, L * 0.95), fold: tinta(0.2, L * 0.6, 0.9), faldon: tinta(0.08, L * 0.5, 0.8) };
+    vasija(0, 0, ZT, RT, RTI, HT, HBT, t,
+      () => { gg.ctx.fillStyle = gg.rgba(gg.RGB.agua, 0.05); gg.ctx.fillRect(0, 0, gg.W, gg.H); gg.ctx.beginPath(); circ(0, 0, ZT, RTI * 0.7); pinta(tinta(0.06, L * 0.4, 0.7), 1); },
+      () => dentro.forEach(dibujarCuenta));
+  }
+
+  function dibujarTolva(arriba) {
+    const c = gg.ctx, a = 0.62;
+    cil(0, 0, ZS0, RS, ZS1 - ZS0, { sil: tinta(a), fold: tinta(0.25, 0, 0.85) });
+    // tronco de cono: envolvente de las dos circunferencias
+    const pts = [];
+    for (let i = 0; i < 48; i++) { const an = (i / 48) * 2 * PI; pts.push(gg.P(RS * Math.cos(an), RS * Math.sin(an), ZS1)); pts.push(gg.P(RH * Math.cos(an), RH * Math.sin(an), ZR0)); }
+    camino(envolvente(pts), true); llena(); pinta(tinta(a), 1.3);
+    // aro superior con labio
+    const top = E(0, 0, ZTOP, RH), bot = E(0, 0, ZR0, RH), lab = E(0, 0, ZTOP, RHI);
+    c.beginPath(); arco(top, PI, 2 * PI); arco(bot, 0, PI); c.closePath(); llena(); pinta(tinta(a), 1.3);
+    c.beginPath(); arco(top, 0.04, PI - 0.04); pinta(tinta(0.25, 0, 0.9), 1.05);
+    // interior: boca de salida y cuentas en espera
+    c.save(); c.beginPath(); arco(lab, 0, 2 * PI); c.clip();
+    c.fillStyle = "rgba(4,18,36,.45)"; c.fill();
+    const boca = E(0, 0, ZS1, RS * 0.85); c.beginPath(); arco(boca, 0, 2 * PI); pinta(tinta(0.2, 0, 0.9), 1);
+    arriba.forEach(dibujarCuenta);
+    c.restore();
+    c.beginPath(); arco(lab, 0, 2 * PI); pinta(tinta(0.44), 1.15);
+  }
+
+  /* ---------- cuentas ---------- */
+  function nueva(tipo, casa, x, y, z, estado) { return { tipo, casa, x, y, z, tx: x, ty: y, vz: 0, estado, o: 1, gota: false, espera: false, rueda: false, nace: 0 }; }
+  const enEspera = [];   // cuentas quietas dentro de la tolva
+
+  function apoyada(b, k) { const c = centro(k); return Math.hypot(b.x - c[0], b.y - c[1]) < RI - BR * 0.6; }
+  function piso(b) {
+    const t = b.tipo;
+    if (t >= 0) { const z = zc(t) + BR; if (b.z >= z - 0.03 && apoyada(b, t)) return { z, criba: true }; }
+    return { z: ZT + BR, criba: false };
+  }
+  function rodar(b, dt) {
+    const dx = b.tx - b.x, dy = b.ty - b.y;
+    if (Math.abs(dx) + Math.abs(dy) < 0.002) { b.x = b.tx; b.y = b.ty; return false; }
+    const k = reducido ? 1 : 1 - Math.exp(-dt * 4.5);
+    b.x += dx * k; b.y += dy * k; return true;
+  }
+  function libreDe(t) {
+    const usadas = new Set(cuentas.filter((b) => b.tipo === t && b.casa >= 0).map((b) => b.casa));
+    for (let i = 0; i < ranuras[t].length; i++) if (!usadas.has(i)) return i;
+    return -1;
+  }
+  function lugarCharola() {
+    const ocup = cuentas.filter((b) => b.estado === "charola" || (b.estado === "cae" && b.tx != null)).map((b) => [b.tx, b.ty]);
+    const libres = lugaresCharola.filter((p) => ocup.every((q) => Math.hypot(p[0] - q[0], p[1] - q[1]) > BR * 2.4));
+    const lista = libres.length ? libres : lugaresCharola;
+    return lista[(Math.random() * lista.length) | 0];
+  }
+  function sobranEn(t) {
+    const casas = cuentas.filter((b) => b.tipo === t && b.casa >= 0 && b.estado !== "muere");
+    if (casas.length <= CUANTAS[t]) return;
+    const quietas = casas.filter((b) => b.estado === "fija" && !b.gota && !b.espera).sort((a, b) => a.nace - b.nace);
+    const v = quietas[0] || casas[0];
+    v.estado = "muere"; v.casa = -1;
+  }
+  function asentar(b) { b.gota = false; sobranEn(b.tipo); }
+  function aCasa(b) { b.enCharola = false; const s = ranuras[b.tipo][b.casa]; b.x = b.tx = s[0]; b.y = b.ty = s[1]; b.z = zc(b.tipo) + BR; b.vz = 0; }
+
+  function fisica(dt, ahora) {
+    let mov = false;
+    for (let n = cuentas.length - 1; n >= 0; n--) {
+      const b = cuentas[n];
+      if (b.estado === "muere") { b.o -= dt * (reducido ? 99 : 1.6); mov = true; if (b.o <= 0) cuentas.splice(n, 1); continue; }
+      if (b.estado === "vuelve") { b.o -= dt * (reducido ? 99 : 4.5); mov = true; if (b.o <= 0) { b.o = 0; aCasa(b); b.estado = "fija"; b.espera = true; } continue; }
+      if (b.estado === "fija") {
+        if (b.espera) { mov = true; if (sale[b.tipo].v < 0.3) { b.o = Math.min(1, b.o + dt * (reducido ? 99 : 2.6)); if (b.o >= 1) b.espera = false; } continue; }
+        if (!inicial && b.tipo >= 0 && !apoyada(b, b.tipo)) {
+          b.estado = "cae"; b.vz = 0; b.rueda = false;
+          if (!b.gota) { b.tx = b.x; b.ty = b.y; }
+        } else { if (rodar(b, dt)) mov = true; else if (b.gota) asentar(b); continue; }
+      }
+      if (b.estado === "cae") {
+        mov = true;
+        const p = piso(b);
+        if (reducido) { if (!p.criba && !b.enCharola) aterrizaCharola(b); b.z = p.z; b.vz = 0; b.x = b.tx; b.y = b.ty; b.estado = p.criba ? "fija" : "charola"; continue; }
+        b.vz -= G * dt; b.z += b.vz * dt;
+        if (b.rueda) rodar(b, dt);
+        if (b.z <= p.z) {
+          b.z = p.z;
+          if (!p.criba && !b.enCharola) aterrizaCharola(b);
+          if (b.vz < -1.1) { b.vz = -b.vz * REB; b.rueda = true; }
+          else { b.vz = 0; b.rueda = true; b.estado = p.criba ? "fija" : "charola"; if (!p.criba) llegaCharola(b); }
+        }
+        continue;
+      }
+      if (b.estado === "charola") { if (rodar(b, dt)) mov = true; }
+    }
+    return mov;
+  }
+  /* al tocar la charola la cuenta busca el lugar libre más cercano y rueda hasta él: se juntan sin encimarse */
+  function aterrizaCharola(b) {
+    b.enCharola = true;
+    const ocup = cuentas.filter((o) => o !== b && o.enCharola && o.estado !== "muere" && o.estado !== "vuelve").map((o) => [o.tx, o.ty]);
+    const px = b.x + (Math.random() - 0.5) * 0.14, py = b.y + (Math.random() - 0.5) * 0.14;
+    let mejor = null, dm = Infinity;
+    for (const c of lugaresCharola) {
+      if (ocup.some((q) => Math.hypot(c[0] - q[0], c[1] - q[1]) < BR * 2.35)) continue;
+      const d = Math.hypot(c[0] - px, c[1] - py); if (d < dm) { dm = d; mejor = c; }
+    }
+    if (mejor) { b.tx = mejor[0]; b.ty = mejor[1]; }
+  }
+  function llegaCharola(b) {
+    // la charola guarda lo que llega, sin desbordarse: las gotas más viejas se desvanecen
+    const sueltas = cuentas.filter((o) => o.estado === "charola" && o.casa < 0 && o.tipo >= 0).sort((a, c) => a.nace - c.nace);
+    while (sueltas.length > 5) { const v = sueltas.shift(); v.estado = "muere"; }
+  }
+
+  function gotear(ahora) {
+    const ret = !inicial && est.activa >= 0 ? est.activa : -1;
+    const libres = [];
+    for (let k = 0; k < N; k++) if (k !== ret && libreDe(k) >= 0) libres.push(k);
+    let t;
+    if (ret >= 0 && (Math.random() < 0.45 || !libres.length)) t = ret;
+    else if (libres.length) t = libres[(Math.random() * libres.length) | 0];
+    else return;
+    const b = nueva(t, -1, 0, 0, ZS0 - BR * 1.05, "cae");
+    b.gota = true; b.vz = -0.25; b.nace = ahora;
+    if (t !== ret) { b.casa = libreDe(t); const s = ranuras[t][b.casa]; b.tx = s[0]; b.ty = s[1]; }
+    else { const s = lugarCharola(); b.tx = s[0]; b.ty = s[1]; }
+    cuentas.push(b);
+  }
+
+  /* ---------- elegir: retirar una criba y devolver la anterior ---------- */
+  function retirar(i, previa, ahora) {
+    for (let k = 0; k < N; k++) {
+      if (k === i) sale[k].ir(1, ahora + (previa >= 0 ? 90 : 0));
+      else if (sale[k].a !== 0) sale[k].ir(0, ahora);
+    }
+    if (previa >= 0 && previa !== i) devolver(previa);
+    cuentas.forEach((b) => {
+      if (b.tipo !== i || !(b.estado === "vuelve" || b.espera)) return;
+      if (b.casa >= 0) { aCasa(b); b.estado = "fija"; b.espera = false; b.o = 1; } else b.estado = "muere";
+    });
+  }
+  function devolver(k) {
+    cuentas.forEach((b) => {
+      if (b.tipo !== k) return;
+      if (b.estado === "cae" || b.estado === "charola") b.estado = b.casa >= 0 ? "vuelve" : "muere";
+    });
+    sobranEn(k);
+  }
+  function retirarInicial() {
+    if (!inicial) return;
+    inicial = false;
+    retirar(0, -1, performance.now());
+    if (reducido) window.dispatchEvent(new Event("resize"));   // pide un cuadro: sin ambiente, el ciclo duerme
+  }
+  function puntoEn(p, poly) {
+    let d = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const xi = poly[i][0], yi = poly[i][1], xj = poly[j][0], yj = poly[j][1];
+      if ((yi > p[1]) !== (yj > p[1]) && p[0] < ((xj - xi) * (p[1] - yi)) / (yj - yi) + xi) d = !d;
+    }
+    return d;
+  }
+  function zonaEn(p) { for (let k = zonasG.length - 1; k >= 0; k--) if (puntoEn(p, zonasG[k].poly)) return zonasG[k].i; return -1; }
+
+  /* ---------- caja: extremos de todos los estados ---------- */
+  const caja = [
+    [RB * S2, RB * S2, ZB0], [-RB * S2, RB * S2, ZB0], [RB * S2, -RB * S2, ZB0],
+    [-RH * S2, -RH * S2, ZTOP], [PX, PY, ZPOSTE + 0.12],
+    [(SALE + R + 0.23) * UX, (SALE + R + 0.23) * UY, zc(3)],
+  ];
+  // el alto manda: el ancho que sobra en el cuadro 5:4 se reparte a la izquierda para que la pila quede casi al centro
+  (function () {
+    const X = caja.map(([x, y]) => sx(x, y)), Y = caja.map(([x, y, z]) => sy(x, y, z));
+    const izq = Math.max(...X) - 1.25 * (Math.max(...Y) - Math.min(...Y));
+    if (izq < Math.min(...X)) { const x = izq / (2 * 0.8660254); caja.push([x, -x, 0]); }
+  })();
+
+  Plano.figura({
+    id: "prevencion", total: N, reposo: 0, ambiente: true, recorrido: [0, 3, 6, 0], pausa: 2400,
+    aria: "Pila de siete cribas redondas entre una tolva y una charola. Cada criba retiene sus propias cuentas; al retirar una, sus cuentas caen por el hueco hasta la charola, que es el tribunal.",
+    caja, margen: 0.045,
+    crear(g, e) {
+      gg = g; est = e;
+      for (let k = 0; k < N; k++) sale.push(g.transito(0));
+      // lugares visibles de cada criba: los mismos para todas (la de arriba tapa igual a cada una)
+      const cands = visibles(0, S - HB, R, RI, H, RI - BR - 0.04);
+      for (let k = 0; k < N; k++) ranuras.push(escoger(cands, CUANTAS[k] + 1, 101 + k * 37, [], BR * 2.9));
+      lugaresCharola = visibles(ZT, GAP - HB, R, RTI, ZT + HT, RTI - BR - 0.05);
+      for (let k = 0; k < N; k++) for (let i = 0; i < CUANTAS[k]; i++) {
+        const s = ranuras[k][i], b = nueva(k, i, s[0], s[1], zc(k) + BR, "fija"); b.nace = -1000 + i; cuentas.push(b);
+      }
+      // una sola cuenta suelta en la charola: casi nada llega abajo
+      const sueltaLug = escoger(lugaresCharola.filter((p) => p[0] + p[1] < 0.35), 1, 7, [], 0)[0] || [0.1, 0.2];
+      const suelta = nueva(-1, -1, sueltaLug[0], sueltaLug[1], ZT + BR, "charola"); suelta.enCharola = true; cuentas.push(suelta);
+      // cuentas en espera dentro de la tolva
+      [[1.06 * PI, 0.22], [1.3 * PI, 0.23], [1.54 * PI, 0.22]].forEach(([an, rr]) => {
+        const zz = ZS1 + ((rr - RS) / (RH - RS)) * (ZR0 - ZS1) + BR * 1.15;
+        enEspera.push(nueva(-1, -1, rr * Math.cos(an), rr * Math.sin(an), zz, "fija"));
+      });
+      enEspera.forEach((b) => (b.tipo = -2));
+      proximaGota = performance.now() + 2600;
+    },
+    alElegir(i, previa, ahora) {
+      if (!arrancado) {          // reposo diseñado: la primera criba entreabierta y marcada, todo retenido
+        arrancado = true; inicial = true;
+        sale[0].de = sale[0].a = sale[0].v = AJAR; sale[0].dur = 0;
+        return;
+      }
+      const eraInicial = inicial; inicial = false;
+      retirar(i, eraInicial ? -1 : previa, ahora);         // i = -1: todas vuelven a su sitio
+    },
+    zonas(g) {
+      zonasG = [];
+      for (let k = N - 1; k >= 0; k--) {
+        const z = zc(k), pts = [];
+        for (let i = 0; i <= 24; i++) { const a = (3 * PI) / 4 + (PI * i) / 24; pts.push(g.P((R + 0.08) * Math.cos(a), (R + 0.08) * Math.sin(a), z + H + 0.02)); }
+        pts.push(g.P((R + 0.32) * UX, (R + 0.32) * UY, z + H));
+        for (let i = 0; i <= 24; i++) { const a = -PI / 4 + (PI * i) / 24; pts.push(g.P((R + 0.08) * Math.cos(a), (R + 0.08) * Math.sin(a), z - HB - 0.03)); }
+        pts.push(g.P(PX, PY, z - HB - 0.03), g.P(PX, PY, z + H));
+        zonasG.push({ i: k, poly: pts });
+      }
+      return zonasG;
+    },
+    mover(p, arrastrando, e) { if (inicial && (arrastrando || (e && e.pointerType === "mouse")) && zonaEn(p) === 0) retirarInicial(); },
+    presionar(p) { if (inicial && zonaEn(p) === 0) retirarInicial(); return false; },
+    dibujar(g, e, dt, ahora) {
+      let mov = false;
+      sale.forEach((s) => { s.paso(ahora); if (!s.listo(ahora)) mov = true; });
+      if (!reducido && ahora >= proximaGota) { gotear(ahora); proximaGota = ahora + 3700; }
+      if (fisica(dt, ahora)) mov = true;
+      const meta = !inicial && e.activa >= 0 && cuentas.some((b) => b.tipo === e.activa && b.enCharola && b.estado !== "vuelve" && b.estado !== "muere") ? 1 : 0;   // se enciende con el primer golpe
+      encendida += (meta - encendida) * (reducido ? 1 : 1 - Math.exp(-dt * 7));
+      if (Math.abs(meta - encendida) > 0.004) mov = true; else encendida = meta;
+
+      // reparto de las cuentas por capa: dentro de la charola, entre cribas o dentro de una criba
+      const enCharola = [], dentro = [], antes = [];
+      for (let k = 0; k <= N; k++) { dentro.push([]); antes.push([]); }
+      cuentas.forEach((b) => {
+        if (b.z < ZT + HT + BR * 0.6) { enCharola.push(b); return; }
+        for (let k = N - 1; k >= 0; k--) {
+          const z = zc(k);
+          if (b.z - BR * 0.2 > z + H) continue;                         // encima de esta criba
+          const c = centro(k), dx = b.x - c[0], dy = b.y - c[1];
+          if (b.z + BR < z - HB) { antes[k].push(b); return; }
+          if (Math.hypot(dx, dy) < R) { (b.z >= z ? dentro[k] : antes[k]).push(b); return; }
+          if (dx + dy > 0) continue;                                    // fuera del aro y por delante
+          antes[k].push(b); return;
+        }
+        antes[N].push(b);                                               // sobre la criba de arriba, bajo la tolva
+      });
+      const orden = (a, b) => a.x + a.y - (b.x + b.y) || a.z - b.z;
+      enCharola.sort(orden); dentro.forEach((l) => l.sort(orden)); antes.forEach((l) => l.sort(orden));
+
+      // de atrás hacia adelante: base, poste, charola, cribas de abajo arriba, tolva
+      cil(0, 0, ZB0, RB, ZB1 - ZB0, { sil: tinta(0.42), fold: tinta(0.16, 0, 0.85) });
+      cil(PX, PY, ZB1, PR, ZPOSTE - ZB1, { sil: tinta(0.48), fold: tinta(0.2, 0, 0.85) });
+      dibujarCharola(enCharola);
+      antes[N - 1].forEach(dibujarCuenta);
+      for (let k = N - 1; k >= 0; k--) {
+        mensula(zc(k) - HB - 0.004, 0.48);
+        dibujarCriba(k, dentro[k]);
+        (k > 0 ? antes[k - 1] : antes[N]).forEach(dibujarCuenta);
+      }
+      // brazo de la tolva y remate del poste
+      mensula(ZR0 + 0.01, 0.48, RH - 0.06);
+      dibujarTolva(enEspera);
+      g.punto(PX, PY, ZPOSTE + 0.07, KX * 0.065, { a: 0.48 });
+      return mov;
+    },
+  });
+
+  // la página puede pedir la primera criba mientras está entreabierta: el motor no avisa (ya es la activa)
+  window.addEventListener("message", (ev) => { const d = ev.data; if (d && d.lamina === "prevencion" && d.ir === 0) retirarInicial(); });
+  document.getElementById("c").addEventListener("keydown", (ev) => { if (inicial && (ev.key === "Enter" || ev.key === " " || ev.key === "Home")) { retirarInicial(); ev.preventDefault(); } });
+})();
+</script>
+</body>
+</html>

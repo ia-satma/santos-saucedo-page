@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Archivero corporativo</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0C2340; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; outline: none; }
+  canvas:focus-visible { box-shadow: inset 0 0 0 2px #B2EB3E; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="motor.js?v=2"></script>
+<script>
+/* Lámina 5/7 · Un archivero de cinco cajones junto a la plantilla de la empresa. Al abrir un cajón
+   sube una hoja, y de la hoja sale un hilo hasta las personas a las que ese documento toca:
+   1 el apoderado da un paso al frente; 2 un grupo queda en la plataforma de otra empresa, todavía
+   ligado a la suya; 3 el personal del prestador queda unido a la empresa; 4 toda la plantilla pasa
+   a la plataforma del nuevo patrón; 5 un cerco rodea a toda la plantilla. */
+(function () {
+  const K = 1.2247449;                 // radio en pantalla de una esfera en esta proyección
+  const FONDO_C = "#0C2340", HUECO_C = "#08192F";
+
+  /* archivero: fondo en x (el frente mira a +x), ancho en y, alto en z */
+  const D = 1.0, W = 0.92, H = 2.95, ZOC = 0.12, TAPA = 0.08, N = 5;
+  const Z0 = ZOC + 0.03, Z1 = H - TAPA - 0.11;
+  const PASO = (Z1 - Z0) / N, HUECO = 0.034, ALTO = PASO - HUECO;
+  const zb = (k) => Z1 - (k + 1) * PASO + HUECO / 2;
+  const zt = (k) => zb(k) + ALTO;
+  const LAT = 0.03, FR = 0.035, FONDO = 0.86;
+  const SAL = 0.72, TOPE = 0.78, VECINO = [0, 0.075, 0.025];
+  const CA = LAT + 0.03, CB = W - LAT - 0.03;       // costados del cuerpo del cajón
+
+  /* plantilla: tres filas de cuatro, al tresbolillo, sobre la plataforma A (con un proscenio al frente);
+     B es la plataforma de otra empresa, detrás y un poco a la izquierda */
+  const S = 0.47, M = 0.22, MF = 0.52, COLS = 4, FILAS = 3, HP = 0.08, DESF = S / 2;
+  const LX = 2 * M + (COLS - 1) * S + DESF;
+  const AX0 = 1.95, AX1 = AX0 + LX;
+  const AY1 = 0.12, AY0 = AY1 - (MF + (FILAS - 1) * S + M), LYA = AY1 - AY0;
+  const GAP = 0.2, BX0 = AX0 - 0.9, BX1 = BX0 + LX, BY1 = AY0 - GAP, LYB = 2 * M + (FILAS - 1) * S, BY0 = BY1 - LYB;
+  const lugarA = (f, c) => [AX0 + M + c * S + (f % 2) * DESF, AY1 - MF - f * S];
+  const lugarB = (f, c) => [BX0 + M + c * S + (f % 2) * DESF, BY1 - M - f * S];
+  const TX = BX0 - AX0, TY = lugarB(0, 0)[1] - lugarA(0, 0)[1];
+
+  /* persona: cápsula y esfera */
+  const RC = 0.105, HC = 0.25, RH = 0.085, CUELLO = 0.03;
+  const ZCAB = HC + (RC + RH) * K + CUELLO, ALTA = ZCAB + RH * K;
+
+  const lugar = [];
+  for (let f = 0; f < FILAS; f++) for (let c = 0; c < COLS; c++) lugar.push(lugarA(f, c));
+  const AP = 1;                                   // apoderado: fila del frente, segunda columna
+  const PASO_AP = 0.27;                           // su paso al frente (hacia quien mira), sobre el proscenio
+  const G2 = [8, 9, 10];                          // fila del fondo, columnas 1 a 3
+  const DEST2 = G2.map((j) => lugarB(0, (j % COLS) + 1)); // pasan a la fila del frente de B, hacia la derecha
+  const PREST = [0, 1, 2, 3].map((c) => lugarB(2, c)); // el personal del prestador: la fila del fondo de B
+  const CERCO = { x0: AX0 + 0.08, x1: AX1 - 0.08, y0: AY0 + 0.08, y1: AY1 - MF + 0.23, r: 0.2, h: 0.16 };
+
+  const ext = [], pend = [], hoja = [], hilo = [], efe = [], mov = [];
+  const lim = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  Plano.figura({
+    id: "corporativo", total: N, reposo: 0, recorrido: [0, 2, 3, 4, 0], pausa: 2600,
+    aria: "Archivero metálico de cinco cajones junto a la plantilla de una empresa, doce figuras sobre una plataforma. Al abrir un cajón sube una hoja y un hilo la une con las personas a las que ese documento afecta.",
+    caja: [
+      [0, 0, H + 0.02], [0, W + 0.04, H], [0, W + 0.04, 0], [D + 0.04, 0, H],
+      [D + TOPE + 0.08, W, zb(N - 1)], [D + TOPE + 0.08, 0, 0],
+      [AX1, AY1, 0], [AX1, AY0, 0], [BX1, BY0, 0], [BX0, BY0, HP + ALTA + 0.1], [BX0, BY1, 0]
+    ],
+    margen: 0.05,
+    crear(g) {
+      for (let k = 0; k < N; k++) {
+        const on = k === 0;
+        ext.push(g.resorte(on ? SAL : (VECINO[k] || 0)));
+        pend.push(null);
+        hoja.push(g.transito(on ? 1 : 0));
+        hilo.push(g.transito(on ? 1 : 0));
+        efe.push(g.transito(on ? 1 : 0));
+      }
+      mov.push([g.transito(1)]);
+      mov.push(G2.map(() => g.transito(0)));
+      mov.push(PREST.map(() => g.transito(0)));
+      mov.push(lugar.map(() => g.transito(0)));
+      mov.push([g.transito(0)]);
+    },
+    alElegir(i, previa, ahora) {
+      if (i < 0) return;
+      for (let k = 0; k < N; k++) {
+        const d = Math.abs(k - i), on = k === i;
+        pend[k] = { meta: on ? SAL : (VECINO[d] || 0), t: ahora + d * 45 };
+        hoja[k].ir(on ? 1 : 0, ahora + (on ? 170 : 0), on ? 760 : 420);
+        hilo[k].ir(on ? 1 : 0, ahora + (on ? 430 : 0), on ? 820 : 380);
+        efe[k].ir(on ? 1 : 0, ahora + (on ? 640 : 0), on ? 900 : 620);
+        mov[k].forEach((m, n) => {
+          // escalonado: en la fusión, primero la fila más cercana a la nueva plataforma
+          const orden = k === 3 ? (FILAS - 1 - Math.floor(n / COLS)) * 2 + (n % COLS) * 0.6 : n;
+          m.ir(on ? 1 : 0, ahora + (on ? 640 + orden * 55 : orden * 30), on ? 900 : 640);
+        });
+      }
+    },
+    zonas(g) {
+      const z = [];
+      for (let k = 0; k < N; k++) {
+        const hi = k === 0 ? H : zt(k) + HUECO / 2, lo = k === N - 1 ? 0 : zb(k) - HUECO / 2;
+        if (k === 0) z.push(g.zona([[0, W, hi], [0, 0, hi], [D, 0, hi], [D, 0, lo], [D, W, lo], [0, W, lo]]));
+        else z.push(g.zona([[0, W, hi], [D, W, hi], [D, 0, hi], [D, 0, lo], [D, W, lo], [0, W, lo]]));
+      }
+      return z;
+    },
+    dibujar(g, est, dt, ahora) {
+      let sigue = false;
+      for (let k = 0; k < N; k++) {
+        if (pend[k] && ahora >= pend[k].t) { ext[k].meta = pend[k].meta; pend[k] = null; }
+        if (pend[k]) sigue = true;
+        const r = ext[k];
+        r.paso(dt, 120, 11);
+        if (r.x > TOPE) { r.x = TOPE; r.v = -Math.abs(r.v) * 0.3; }      // tope del riel
+        if (r.x < 0) { r.x = 0; r.v = Math.abs(r.v) * 0.25; }              // el cajón choca al cerrar
+        if (Math.abs(r.v) > 0.002 || Math.abs(r.x - r.meta) > 0.001) sigue = true;
+        [hoja[k], hilo[k], efe[k]].forEach((t) => { t.paso(ahora); if (!t.listo(ahora)) sigue = true; });
+        mov[k].forEach((m) => { m.paso(ahora); if (!m.listo(ahora)) sigue = true; });
+      }
+
+      mueble(g);
+      for (let k = N - 1; k >= 0; k--) cajon(g, k);
+
+      // plataformas
+      const luzB = Math.max(efe[1].v, efe[2].v, efe[3].v);
+      plataforma(g, false, 0.02 + 0.55 * luzB, efe[3].v);
+      plataforma(g, true, 0.55 - 0.3 * efe[3].v, 0);
+
+      // figuras, de atrás hacia adelante; el cerco se pinta en dos mitades
+      const items = [];
+      lugar.forEach((_, j) => {
+        const p = posNuestra(j), n2 = G2.indexOf(j);
+        const l = Math.max(j === AP ? efe[0].v : 0, n2 >= 0 ? efe[1].v : 0, efe[3].v, efe[4].v);
+        items.push({ p, a: 0.72 + 0.2 * l, l });
+      });
+      PREST.forEach((_, n) => {
+        const u = mov[2][n].v; if (u < 0.01) return;
+        items.push({ p: posPrest(n), a: 0.8, l: efe[2].v, corte: u < 0.999 ? HP : null });
+      });
+      items.sort((u, v) => (u.p[0] + u.p[1]) - (v.p[0] + v.p[1]));
+      const hC = CERCO.h * efe[4].v;
+      const atras = items.filter((it) => it.p[1] < AY0), dentro = items.filter((it) => it.p[1] >= AY0 && it.p[1] <= CERCO.y1 + 0.02),
+        delante = items.filter((it) => it.p[1] > CERCO.y1 + 0.02);
+      atras.forEach((it) => persona(g, it));
+      if (hC > 0.004) cerco(g, hC, efe[4].v, false);
+      dentro.forEach((it) => persona(g, it));
+      if (hC > 0.004) cerco(g, hC, efe[4].v, true);
+      delante.forEach((it) => persona(g, it));
+
+      // hojas por encima del frente de su cajón, y los hilos
+      for (let k = 0; k < N; k++) if (hoja[k].v > 0.005) dibujarHoja(g, hojaGeo(k), zt(k), true);
+      for (let k = 0; k < N; k++) if (hilo[k].v > 0.004) dibujarHilo(g, k);
+      return sigue;
+    },
+  });
+
+  /* ---------- posiciones ---------- */
+  function posNuestra(j) {
+    let x = lugar[j][0], y = lugar[j][1], z = HP;
+    if (j === AP) { const u = mov[0][0].v; x += u * PASO_AP; y += u * PASO_AP; z += Math.sin(Math.PI * u) * 0.08; }
+    const n2 = G2.indexOf(j);
+    if (n2 >= 0) { const u = mov[1][n2].v; x += u * (DEST2[n2][0] - x); y += u * (DEST2[n2][1] - y); z += Math.sin(Math.PI * u) * 0.26; }
+    const u4 = mov[3][j].v; x += u4 * TX; y += u4 * TY;
+    return [x, y, z];
+  }
+  function posPrest(n) { const u = mov[2][n].v; return [PREST[n][0], PREST[n][1], HP - (1 - u) * (ALTA + 0.03)]; }
+  const cabeza = (p) => [p[0], p[1], p[2] + ZCAB + RH];
+
+  /* ---------- utilidades de trazo ---------- */
+  function trazar(ctx, pts) { pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath(); }
+  function horario(pts) {
+    let a = 0; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) a += (pts[j][0] - pts[i][0]) * (pts[j][1] + pts[i][1]);
+    return a < 0 ? pts.slice().reverse() : pts;
+  }
+  function circuloX(g, x, yc, zc, r, o) {
+    const pts = []; for (let i = 0; i <= 28; i++) { const a = (i / 28) * Math.PI * 2; pts.push([x, yc + r * Math.cos(a), zc + r * Math.sin(a)]); }
+    g.linea(pts, o);
+  }
+
+  /* ---------- archivero ---------- */
+  function mueble(g) {
+    g.caja(0.06, 0.06, 0, D - 0.1, W - 0.12, ZOC + 0.01, { a: 0.4, r: 2 });
+    g.caja(0, 0, ZOC, D, W, H - ZOC - TAPA, { a: 0.85, r: 3, pliegue: false });
+    // panel estampado del costado
+    g.poly([[0.13, W, ZOC + 0.2], [D - 0.13, W, ZOC + 0.2], [D - 0.13, W, H - TAPA - 0.2], [0.13, W, H - TAPA - 0.2]], { relleno: false, a: 0, r: 6 });
+    g.poly([[0.17, W, ZOC + 0.24], [D - 0.17, W, ZOC + 0.24], [D - 0.17, W, H - TAPA - 0.24], [0.17, W, H - TAPA - 0.24]], { relleno: false, trazo: Plano.tinta(0, 0, 0.45), r: 5 });
+    // cubierta con vuelo
+    g.caja(0, 0, H - TAPA, D + 0.035, W + 0.035, TAPA, { a: 0.95, r: 3 });
+    // chapa en la franja superior
+    const zc = (zt(0) + H - TAPA) / 2;
+    circuloX(g, D, 0.14, zc, 0.03, { a: 0.6 });
+    g.linea([[D, 0.14, zc - 0.014], [D, 0.14, zc + 0.014]], { a: 0.4 });
+  }
+
+  function cajon(g, k) {
+    const ctx = g.ctx, f = g.foco(k);
+    const o = Math.max(0, ext[k].x), b = zb(k), t = zt(k), F = D + o, xi = F - FR, canto = t - 0.075;
+    const atras = F - FONDO, mid = W / 2;
+    const aF = 0.5 + 0.5 * f, aT = 0.25 + 0.3 * f;
+    if (o > 0.003) {
+      const boca = g.zona([[D, LAT, t], [D, W - LAT, t], [D, W - LAT, b], [D, LAT, b]]);
+      const abre = g.zona([[D, CA, canto], [xi, CA, canto], [xi, CB, canto], [D, CB, canto]]);
+      ctx.save();
+      ctx.beginPath(); trazar(ctx, boca); ctx.fillStyle = HUECO_C; ctx.fill();
+      ctx.strokeStyle = Plano.tinta(0, 0, lim(o / 0.05, 0, 1) * 0.8); ctx.lineWidth = 1.1; ctx.stroke();
+      ctx.beginPath(); trazar(ctx, horario(boca)); if (xi > D) trazar(ctx, horario(abre)); ctx.clip();
+      // riel del mueble en la pared derecha, visible por la boca
+      g.linea([[D - 0.9, LAT + 0.004, b + 0.13], [D, LAT + 0.004, b + 0.13]], { trazo: Plano.tinta(0, 0, 0.7) });
+      // carpetas colgantes y la hoja, de atrás hacia adelante
+      const hg = hoja[k].v > 0.005 ? hojaGeo(k) : null;
+      let puesta = false;
+      for (let n = 0; n < 6; n++) {
+        const xf = atras + 0.1 + n * 0.12;
+        if (hg && !puesta && xf > hg.xs) { dibujarHoja(g, hg, -9, false); puesta = true; }
+        carpeta(g, xf, b, canto, n + k * 2, aT);
+      }
+      if (hg && !puesta) dibujarHoja(g, hg, -9, false);
+      ctx.restore();
+      if (xi > D + 0.002) {
+        // costado izquierdo de lo que salió, con el riel telescópico
+        g.poly([[D, CB, canto], [xi, CB, canto], [xi, CB, b + 0.012], [D, CB, b + 0.012]], { a: aT + 0.12, r: 1.5 });
+        g.linea([[D, CA, canto], [xi - 0.002, CA, canto]], { a: aT });
+        const r0 = b + 0.1, r1 = b + 0.17, yR = CB + 0.006;
+        g.poly([[D, yR, r1], [xi - 0.05, yR, r1], [xi - 0.05, yR, r0], [D, yR, r0]], { a: aT + 0.05, r: 1.2, w: 1.1 });
+        const xm = D + o * 0.5;
+        g.poly([[D, yR + 0.004, r1 - 0.016], [xm, yR + 0.004, r1 - 0.016], [xm, yR + 0.004, r0 + 0.016], [D, yR + 0.004, r0 + 0.016]], { a: aT, r: 1, w: 1.1 });
+        for (let n = 1; n <= 3; n++) { const xx = D + (xm - D) * (n / 4); if (xx > D + 0.04) g.punto(xx, yR + 0.006, (r0 + r1) / 2, 1.1, { px: true, a: aT + 0.1, w: 1 }); }
+      }
+    }
+    // frente con portaetiquetas y jaladera
+    g.caja(F - FR, LAT, b, FR, W - 2 * LAT, t - b, { a: aF, r: 2.5 });
+    g.poly([[F, mid - 0.13, t - 0.08], [F, mid + 0.13, t - 0.08], [F, mid + 0.13, t - 0.18], [F, mid - 0.13, t - 0.18]], { relleno: false, a: aF * 0.85, r: 1.5, w: 1.1 });
+    g.poly([[F, mid - 0.1, t - 0.1], [F, mid + 0.1, t - 0.1], [F, mid + 0.1, t - 0.16], [F, mid - 0.1, t - 0.16]], { relleno: false, trazo: Plano.tinta(0, 0, 0.6), r: 1, w: 1 });
+    const zh = b + 0.17;
+    g.linea([[F, mid + 0.16, zh], [F + 0.035, mid + 0.16, zh]], { a: aF });
+    g.caja(F + 0.025, mid - 0.2, zh - 0.022, 0.032, 0.4, 0.044, { a: aF, r: 2.5 });
+  }
+
+  function carpeta(g, xf, b, canto, n, a) {
+    const y0 = CA + 0.035, y1 = CB - 0.035, z0 = b + 0.05, z1 = canto - 0.03, tw = 0.16;
+    const ty = y0 + 0.04 + (((n * 0.381) % 1) * (y1 - y0 - tw - 0.08));
+    g.poly([[xf, y0, z0], [xf, y1, z0], [xf, y1, z1], [xf, ty + tw, z1], [xf, ty + tw - 0.02, z1 + 0.045], [xf, ty + 0.02, z1 + 0.045], [xf, ty, z1], [xf, y0, z1]],
+      { a, r: 1.2, w: 1.1 });
+  }
+
+  /* la hoja sube del cajón: plano paralelo al frente, con la esquina doblada y un ojillo para el hilo */
+  function hojaGeo(k) {
+    const o = Math.max(0, ext[k].x), r = hoja[k].v, xs = D + o - 0.3;
+    const top = zt(k) - 0.16 + r * 0.66;
+    return { xs, y0: 0.2, y1: 0.7, top, bot: top - 0.64, r, k };
+  }
+  function dibujarHoja(g, h, zcorte, arriba) {
+    const { xs, y0, y1, top } = h, bot = Math.max(h.bot, zcorte), dob = 0.1;
+    if (top <= bot + 0.004) return;
+    const ctx = g.ctx, a = 0.55 + 0.45 * h.r;
+    const pts = [[xs, y0, bot], [xs, y0, top], [xs, y1 - dob, top], [xs, y1, top - dob], [xs, y1, bot]].map((p) => [p[0], p[1], Math.max(bot, p[2])]);
+    const pp = g.zona(pts);
+    ctx.beginPath(); trazar(ctx, pp); ctx.fillStyle = FONDO_C; ctx.fill();
+    g.linea(arriba ? pts : pts.concat([pts[0]]), { a });
+    if (top - dob > bot) g.linea([[xs, y1 - dob, top], [xs, y1 - dob, top - dob], [xs, y1, top - dob]], { a: a * 0.5 });
+    for (let n = 0; n < 4; n++) {
+      const z = top - 0.2 - n * 0.08; if (z < bot + 0.03) break;
+      g.linea([[xs, y1 - 0.08, z], [xs, y0 + 0.1 + (n === 3 ? 0.18 : (n % 2) * 0.06), z]], { trazo: Plano.tinta(0, 0, 0.75 * h.r), w: 1 });
+    }
+    if (arriba && top - 0.065 > bot) g.punto(xs, y0 + 0.065, top - 0.065, 1.8, { px: true, trazo: Plano.tinta(0.5 + 0.5 * h.r, hilo[h.k].v), w: 1.1 });
+  }
+
+  /* ---------- plantilla ---------- */
+  function plataforma(g, propia, a, l) {
+    const x0 = propia ? AX0 : BX0, y0 = propia ? AY0 : BY0, ly = propia ? LYA : LYB, x1 = x0 + LX, e = 0.07;
+    g.caja(x0, y0, 0, LX, ly, HP, { a, l, r: 4 });
+    g.poly([[x0 + e, y0 + e, HP], [x1 - e, y0 + e, HP], [x1 - e, y0 + ly - e, HP], [x0 + e, y0 + ly - e, HP]],
+      { relleno: false, trazo: Plano.tinta(0, l * 0.7, 0.5 + 0.35 * l), r: 3 });
+    // huella de cada lugar
+    for (let f = 0; f < FILAS; f++) for (let c = 0; c < COLS; c++) {
+      const j = f * COLS + c, q = propia ? lugarA(f, c) : lugarB(f, c);
+      let lh = 0;
+      if (propia && G2.indexOf(j) >= 0) lh = efe[1].v;
+      if (!propia && f === 2) lh = efe[2].v;
+      g.anillo(q[0], q[1], HP, 0.13, { trazo: Plano.tinta(lh, lh, (propia ? 0.45 : 0.25 + 0.2 * a) + 0.55 * lh), w: 1, n: 32 });
+    }
+    // el lugar del apoderado al frente
+    if (propia && efe[0].v > 0.01) { const q = lugar[AP]; g.anillo(q[0] + PASO_AP, q[1] + PASO_AP, HP, 0.16, { trazo: Plano.tinta(1, 1, efe[0].v), w: 1.1, n: 36 }); }
+  }
+
+  function persona(g, it) {
+    const ctx = g.ctx, e = g.esc, [x, y, z] = it.p;
+    const rx = RC * K * e, ry = RC * 0.70711 * e;
+    const base = g.P(x, y, z), hom = g.P(x, y, z + HC), cab = g.P(x, y, z + ZCAB);
+    ctx.save();
+    if (it.corte != null) {
+      const c = g.P(x, y, it.corte), rr = rx * 1.08;
+      ctx.beginPath(); ctx.ellipse(c[0], c[1], rr, ry * 1.08, 0, 0, Math.PI); ctx.lineTo(c[0] - rr, -60); ctx.lineTo(c[0] + rr, -60); ctx.closePath(); ctx.clip();
+    }
+    ctx.lineJoin = "round"; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.ellipse(base[0], base[1], rx, ry, 0, 0, Math.PI); ctx.lineTo(hom[0] - rx, hom[1]); ctx.arc(hom[0], hom[1], rx, Math.PI, Math.PI * 2); ctx.closePath();
+    ctx.fillStyle = FONDO_C; ctx.fill(); ctx.strokeStyle = Plano.tinta(it.a, it.l); ctx.lineWidth = 1.3; ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(hom[0], hom[1], rx, ry, 0, 0.15, Math.PI - 0.15);
+    ctx.strokeStyle = Plano.tinta(it.a * 0.4, it.l * 0.6, 0.8); ctx.lineWidth = 1.1; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cab[0], cab[1], RH * K * e, 0, Math.PI * 2);
+    ctx.fillStyle = FONDO_C; ctx.fill(); ctx.strokeStyle = Plano.tinta(it.a, it.l); ctx.lineWidth = 1.3; ctx.stroke();
+    ctx.restore();
+  }
+
+  /* cerco: banda baja de esquinas redondas que sube alrededor de la plantilla; mitad trasera y delantera */
+  function contorno(z, delantera) {
+    const { x0, x1, y0, y1, r } = CERCO, pts = [];
+    const arco = (cx, cy, a0, a1) => { for (let i = 0; i <= 8; i++) { const a = a0 + ((a1 - a0) * i) / 8; pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a), z]); } };
+    const P = Math.PI;
+    if (delantera) { arco(x1 - r, y0 + r, -P / 4, 0); arco(x1 - r, y1 - r, 0, P / 2); arco(x0 + r, y1 - r, P / 2, (3 * P) / 4); }
+    else { arco(x0 + r, y1 - r, (3 * P) / 4, P); arco(x0 + r, y0 + r, P, (3 * P) / 2); arco(x1 - r, y0 + r, (3 * P) / 2, (7 * P) / 4); }
+    return pts;
+  }
+  function cerco(g, h, l, delantera) {
+    const arriba = contorno(HP + h, delantera), abajo = contorno(HP, delantera);
+    const ctx = g.ctx, pa = g.zona(arriba), pb = g.zona(abajo).reverse();
+    ctx.beginPath(); trazar(ctx, pa.concat(pb)); ctx.fillStyle = FONDO_C; ctx.fill();
+    g.linea(arriba, { a: 1, l });
+    g.linea(abajo, { a: 0.6, l: l * 0.8 });
+  }
+
+  /* ---------- hilos ---------- */
+  /* curva cuadrática: sale de la hoja casi en horizontal y cae sobre lo que toca */
+  function curva3(p0, p1, alza, avance, n) {
+    const c = [p0[0] + (p1[0] - p0[0]) * avance, p0[1] + (p1[1] - p0[1]) * avance, Math.max(p0[2], p1[2]) + alza], pts = [];
+    for (let i = 0; i <= n; i++) {
+      const t = i / n, u = 1 - t;
+      pts.push([u * u * p0[0] + 2 * u * t * c[0] + t * t * p1[0], u * u * p0[1] + 2 * u * t * c[1] + t * t * p1[1], u * u * p0[2] + 2 * u * t * c[2] + t * t * p1[2]]);
+    }
+    return pts;
+  }
+  function parcial(pts, p) {
+    if (p >= 1) return pts;
+    const m = p * (pts.length - 1), k = Math.floor(m), f = m - k, out = pts.slice(0, k + 1);
+    if (k < pts.length - 1) { const a = pts[k], b = pts[k + 1]; out.push([a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f]); }
+    return out;
+  }
+  function nudo(g, p, r) { g.punto(p[0], p[1], p[2], r, { px: true, relleno: Plano.tinta(1, 1), trazo: false }); }
+  function dibujarHilo(g, k) {
+    const h = hojaGeo(k), A = [h.xs, h.y0 + 0.065, h.top - 0.065], p = hilo[k].v, o = { l: 1, a: 1, w: 1.25 };
+    const tronco = (fin, pp, alza, avance) => { g.linea(parcial(curva3(A, fin, alza == null ? 0.22 : alza, avance || 0.72, 60), pp), o); if (pp > 0.98) nudo(g, fin, 2.3); };
+    if (k === 0) return tronco(cabeza(posNuestra(AP)), p);
+    if (k === 3) return tronco([BX0 + 0.5, BY1, HP * 0.5], p);
+    if (k === 4) return tronco([AX0 + 0.62, CERCO.y1, HP + CERCO.h * efe[4].v], p);
+    const pt = lim(p / 0.6, 0, 1), pr = lim((p - 0.55) / 0.45, 0, 1);
+    if (k === 1) {
+      // el hilo llega a los lugares que dejaron en su plataforma y de ahí sigue hasta cada uno, en la otra
+      tronco([lugar[G2[1]][0], lugar[G2[1]][1], HP], pt, 0.04, 0.42);
+      if (pr > 0) G2.forEach((j) => {
+        const q = posNuestra(j), de = [lugar[j][0], lugar[j][1], HP];
+        g.linea(parcial(curva3(de, [q[0], q[1], q[2] + 0.02], 0.12, 0.5, 20), pr), { l: 1, a: 1, w: 1.1 });
+        if (pr > 0.98) nudo(g, [q[0], q[1], q[2] + 0.02], 1.8);
+      });
+      return;
+    }
+    // prestador: del hilo cuelga cada persona de su plataforma
+    const nP = PREST.length, c = PREST.reduce((s, q) => [s[0] + q[0] / nP, s[1] + q[1] / nP], [0, 0]), J = [c[0], c[1], HP + 1.0];
+    tronco(J, pt);
+    if (pr > 0) PREST.forEach((_, n) => {
+      const q = cabeza(posPrest(n));
+      g.linea(parcial([J, q], pr), { l: 1, a: 1, w: 1.1 });
+      if (pr > 0.98) nudo(g, q, 1.8);
+    });
+  }
+})();
+</script>
+</body>
+</html>

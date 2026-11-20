@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tres discos con ranura</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0C2340; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; outline: none; }
+  canvas:focus-visible { box-shadow: inset 0 0 0 2px #B2EB3E; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="motor.js?v=2"></script>
+<script>
+/* Lámina 7/7 · Tres expedientes que tienen que coincidir. Tres discos gruesos en despiece sobre un eje vertical,
+   como los cilindros de una cerradura de combinación. Cada disco tiene una ranura del canto al eje y un rasgo propio
+   en el canto: dientes finos (el trabajador), estrías (la empresa) y perforaciones (la familia). Arriba descansa un
+   perno; abajo, una base con una puerta corrediza de dos hojas. Al elegir un disco, gira con resorte hasta dejar su
+   ranura bajo el perno, y el perno cae hasta el primer disco que aún lo detiene. Con las tres ranuras en línea, el
+   perno entra en la base y la puerta se abre. */
+(function () {
+  const TAU = Math.PI * 2, cos = Math.cos, sin = Math.sin;
+  // discos: radio, grosor, despiece
+  const R = 1.4, T = 0.32, G = 0.7, G0 = 0.4;
+  // ranura: media anchura y radio interior (del canto casi hasta el eje)
+  const HW = 0.17, RI = 0.5, ALFA = Math.asin(HW / R);
+  // base
+  const S = 2.8, HB = 0.66, SOCK = 0.07;
+  // perno: ángulo y radio de su línea, radios, cabeza y largo
+  const TH = (50 * Math.PI) / 180, RP = 0.95, PX = RP * cos(TH), PY = RP * sin(TH);
+  const PR = 0.085, PRH = 0.13, PHH = 0.1, PL = 1.4;
+  const zb = (k) => G0 + (2 - k) * (T + G), zt = (k) => zb(k) + T;   // k = 0 es el disco de arriba
+  const Z_UP = zt(0) + 0.004, Z_DOWN = SOCK - 0.56;
+  // reposo: tres ranuras a ángulos distintos, ninguna bajo el perno
+  const REPOSO = [TH + 2.6, TH - 1.25, TH + 1.05];
+  // puerta de dos hojas en la cara +y de la base
+  const DX0 = -0.58, DX1 = 0.58, DZ0 = -HB + 0.09, DZ1 = -0.09, WL = (DX1 - DX0) / 2, HONDO = 0.42;
+
+  const wrap = (a) => { a = (a + Math.PI) % TAU; if (a < 0) a += TAU; return a - Math.PI; };
+  const cerca = (meta, x) => meta + TAU * Math.round((x - meta) / TAU);
+  const FONDO = "rgba(12,35,64,1)", HUECO = "rgba(5,19,38,0.72)";
+
+  const ang = [], alineado = [false, false, false], pend = [null, null, null];
+  let pinT = null, puertaT = null, nivel = Z_UP, ultimoOrigen = "", iniciado = false;
+  let zonasObj = [], bloqueo = -1;
+
+  function puntoEn(p, poly) {
+    let d = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const xi = poly[i][0], yi = poly[i][1], xj = poly[j][0], yj = poly[j][1];
+      if ((yi > p[1]) !== (yj > p[1]) && p[0] < ((xj - xi) * (p[1] - yi)) / (yj - yi) + xi) d = !d;
+    }
+    return d;
+  }
+  /* la zona del disco que abrió queda como pieza 3 mientras el cursor siga sobre él: así no se reinicia sola */
+  const zonaDe = (k) => zonasObj.find((o) => o.k === k);
+  function soltarBloqueo() { if (bloqueo >= 0) { const o = zonaDe(bloqueo); if (o) o.i = bloqueo; bloqueo = -1; } }
+  function bloquear(k) { soltarBloqueo(); const o = zonaDe(k); if (o) { o.i = 3; bloqueo = k; } }
+
+  /* ---------- estados ----------
+     alineado[k]: el disco k va (o está) con su ranura bajo el perno. El perno cae solo hasta el primer disco,
+     de arriba abajo, que todavía no está alineado y quieto; con los tres, entra en la base y la puerta se abre. */
+  const todos = () => alineado[0] && alineado[1] && alineado[2];
+  function alinear(k, ahora, demora) {
+    if (alineado[k] && !pend[k] && Math.abs(ang[k].meta - cerca(TH, ang[k].meta)) < 1e-6) return;
+    alineado[k] = true; pend[k] = { t: ahora + (demora || 0), meta: TH, espera: false };
+  }
+  function reiniciar(i, ahora) {
+    for (let k = 0; k < 3; k++) {
+      if (k === i) { alinear(k, ahora, 0); continue; }
+      alineado[k] = false;
+      pend[k] = { t: ahora + 60 * Math.abs(k - i), meta: REPOSO[k], espera: true };
+    }
+  }
+  const quieto = (k) => alineado[k] && !pend[k] && Math.abs(ang[k].x - ang[k].meta) < 0.05 && Math.abs(ang[k].v) < 0.8;
+
+  const fig = Plano.figura({
+    id: "migratorio", total: 4, reposo: 0, recorrido: [0, 1, 2, 3], pausa: 1600,
+    aria: "Tres discos gruesos con una ranura cada uno, apilados en despiece sobre un eje, con un perno arriba y una base con puerta abajo. Al alinear las tres ranuras bajo el perno, el perno baja por ellas y la puerta se abre.",
+    caja: [
+      [R * cos(0.75 * Math.PI), R * sin(0.75 * Math.PI), zt(0)], [R * cos(1.25 * Math.PI), R * sin(1.25 * Math.PI), zt(0)], [R * cos(1.75 * Math.PI), R * sin(1.75 * Math.PI), zt(0)],
+      [-S / 2, -S / 2, 0], [S / 2, -S / 2, -HB], [-S / 2, S / 2, -HB], [S / 2, S / 2, -HB],
+      [PX, PY, Z_UP + PL + 0.05],
+    ],
+    margen: 0.05,
+    crear(g) {
+      for (let k = 0; k < 3; k++) ang.push(g.resorte(REPOSO[k]));
+      pinT = g.transito(Z_UP); puertaT = g.transito(0);
+    },
+    alElegir(i, previa, ahora, origen) {
+      if (!iniciado) { iniciado = true; return; }       // reposo: el disco 0 queda marcado, sin girar
+      if (i < 0) return;
+      if (i === 3) { for (let k = 0; k < 3; k++) alinear(k, ahora, (2 - k) * 70); return; }
+      soltarBloqueo();
+      ultimoOrigen = origen;
+      if (todos()) {
+        if (nivel !== Z_DOWN) return;                     // el perno todavía no entra: no se deshace
+        reiniciar(i, ahora); return;                      // abierto: el disco elegido queda, los otros dos se van
+      }
+      alinear(i, ahora, 0);
+    },
+    zonas(g) {
+      const z = [{ poly: g.zona([[-S / 2, -S / 2, 0], [S / 2, -S / 2, 0], [S / 2, -S / 2, -HB], [S / 2, S / 2, -HB], [-S / 2, S / 2, -HB], [-S / 2, S / 2, 0]]), i: 3, k: 3 }];
+      for (const k of [2, 1, 0]) z.push({ poly: silueta(g, k, R + 0.06), i: k, k });
+      zonasObj = z;
+      if (bloqueo >= 0) zonaDe(bloqueo).i = 3;
+      return z;
+    },
+    mover(p) { if (bloqueo >= 0 && !puntoEn(p, zonaDe(bloqueo).poly)) soltarBloqueo(); },
+    presionar() { soltarBloqueo(); return false; },
+    salir() { soltarBloqueo(); },
+    dibujar(g, est, dt, ahora) {
+      let sigue = false;
+      // giros pendientes: un disco solo se desalinea cuando el perno ya salió de su ranura
+      const zp0 = pinT.paso(ahora);
+      for (let k = 0; k < 3; k++) {
+        const q = pend[k];
+        if (q) { if (ahora >= q.t && (!q.espera || zp0 >= zt(k) - 0.02)) { ang[k].meta = cerca(q.meta, ang[k].x); pend[k] = null; } else sigue = true; }
+        ang[k].paso(dt, 120, 13);
+        if (Math.abs(ang[k].x - ang[k].meta) > 6e-4 || Math.abs(ang[k].v) > 6e-4) sigue = true;
+      }
+      // hasta dónde puede bajar el perno
+      let L = Z_UP;
+      if (quieto(0)) { L = zt(1); if (quieto(1)) { L = zt(2); if (quieto(2)) L = Z_DOWN; } }
+      if (L !== nivel) {
+        const deAbajo = nivel === Z_DOWN;
+        nivel = L;
+        if (L === Z_DOWN) {
+          pinT.ir(L, ahora, 700); puertaT.ir(1, ahora + 240, 800);
+          // la página se entera de que los tres coinciden
+          const a = est.activa;
+          if (a >= 0 && a < 3) { if (ultimoOrigen === "cursor") bloquear(a); est.elegir(3, "cursor"); }
+        } else if (deAbajo) { puertaT.ir(0, ahora, 460); pinT.ir(L, ahora + 120, 700); }
+        else pinT.ir(L, ahora, 700);
+      }
+      const zp = pinT.paso(ahora), d = puertaT.paso(ahora);
+
+      const f = [g.foco(0), g.foco(1), g.foco(2), g.foco(3)];
+      const T3 = (a) => g.tinta(a, f[3]);
+      dibujarBase(g, f[3], d);
+      const camino = (a, b) => { // la línea del perno, tenue, solo hasta el disco de arriba
+        const b2 = Math.min(b, zt(0));
+        if (b2 > a + 0.01) g.linea([[PX, PY, a], [PX, PY, b2]], { trazo: g.tinta(0.12, 0, 0.85), w: 1, guiones: [0.045, 0.06] });
+      };
+      const tramo = (a, b) => { camino(a, b); perno(g, a, b, zp, T3); };
+      tramo(SOCK, zb(2));
+      for (let k = 2; k >= 0; k--) {
+        const al = Math.max(0, 1 - Math.abs(wrap(ang[k].x - TH)) / 0.6), fk = f[k];
+        const tn = {
+          sil: g.tinta(0.5 + 0.4 * al + 0.1 * fk, fk),
+          int: g.tinta(0.28 + 0.4 * al + 0.2 * fk, fk * 0.9),
+          pl: g.tinta(0.22 + 0.35 * al + 0.1 * fk, fk * 0.7, 0.95),
+          ras: g.tinta(0.1 + 0.3 * al + 0.15 * fk, fk * 0.6, 0.85),
+        };
+        disco(g, k, ang[k].x, tn, () => tramo(zb(k), zt(k)));
+        if (k === 0) eje(g, tn);
+        tramo(zt(k), k > 0 ? zb(k - 1) : 99);
+      }
+      return sigue || !pinT.listo(ahora) || !puertaT.listo(ahora);
+    },
+  });
+  // el reposo marca el disco 0 (lima) sin girarlo; elegirlo después sí lo alinea
+  fig.est.activa = -1;
+
+  /* ---------- dibujo ---------- */
+  function trazar(ctx, pts, color, w, cerrar) {
+    ctx.beginPath(); pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
+    if (cerrar) ctx.closePath();
+    ctx.strokeStyle = color; ctx.lineWidth = w || 1.2; ctx.lineJoin = "round"; ctx.lineCap = "round"; ctx.stroke();
+  }
+  function silueta(g, k, r) {
+    const pts = [], n = 32;
+    for (let i = 0; i <= n; i++) { const t = 0.75 * Math.PI + (Math.PI * i) / n; pts.push(g.P(r * cos(t), r * sin(t), zt(k) + 0.02)); }
+    for (let i = 0; i <= n; i++) { const t = -0.25 * Math.PI + (Math.PI * i) / n; pts.push(g.P(r * cos(t), r * sin(t), zb(k) - 0.02)); }
+    return pts;
+  }
+
+  /* tramo vertical de cilindro: relleno opaco, costados; base y tapa solo si son extremos reales */
+  function tubo(g, cx, cy, za, zz, r, color, base, tapa) {
+    const ctx = g.ctx, P = g.P, n = 22, fr = [], bk = [], ft = [];
+    for (let i = 0; i <= n; i++) {
+      const t = -0.25 * Math.PI + (Math.PI * i) / n, t2 = 0.75 * Math.PI + (Math.PI * i) / n;
+      fr.push(P(cx + r * cos(t), cy + r * sin(t), za));
+      ft.push(P(cx + r * cos(t), cy + r * sin(t), zz));
+      bk.push(P(cx + r * cos(t2), cy + r * sin(t2), zz));
+    }
+    ctx.beginPath(); fr.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); bk.forEach((p) => ctx.lineTo(p[0], p[1])); ctx.closePath();
+    ctx.fillStyle = FONDO; ctx.fill();
+    trazar(ctx, [fr[0], bk[n]], color, 1.25); trazar(ctx, [fr[n], bk[0]], color, 1.25);
+    if (base) trazar(ctx, fr, color, 1.25);
+    if (tapa) { trazar(ctx, bk, color, 1.25); trazar(ctx, ft, color, 1.1); }
+  }
+
+  function perno(g, za, zz, zp, T3) {
+    const s1 = zp + PL - PHH, h1 = zp + PL, c = T3(0.95);
+    let a = Math.max(za, zp), b = Math.min(zz, s1);
+    if (b > a + 1e-4) tubo(g, PX, PY, a, b, PR, c, a === zp, false);
+    a = Math.max(za, s1); b = Math.min(zz, h1);
+    if (b > a + 1e-4) tubo(g, PX, PY, a, b, PRH, c, a === s1, b === h1);
+  }
+
+  /* disco k con su ranura al ángulo phi. Orden: caras interiores de la ranura, lo que pasa por dentro,
+     canto exterior visible con su rasgo y, al final, la cara de arriba */
+  function disco(g, k, phi, tn, dentro) {
+    const ctx = g.ctx, P = g.P, z0 = zb(k), z1 = zt(k);
+    const ux = cos(phi), uy = sin(phi), px = -uy, py = ux, rc = R * cos(ALFA);
+    const Ap = [ux * rc + px * HW, uy * rc + py * HW], Am = [ux * rc - px * HW, uy * rc - py * HW];
+    const Ip = [ux * RI + px * HW, uy * RI + py * HW], Im = [ux * RI - px * HW, uy * RI - py * HW];
+    const cara = (a, b) => g.poly([[a[0], a[1], z0], [b[0], b[1], z0], [b[0], b[1], z1], [a[0], a[1], z1]], { relleno: FONDO, trazo: tn.int, w: 1.1, r: 1 });
+    if (sin(phi) - cos(phi) > 0) cara(Ip, Ap);
+    if (cos(phi) - sin(phi) > 0) cara(Im, Am);
+    if (cos(phi) + sin(phi) > 0) cara(Im, Ip);
+    if (dentro) dentro();
+
+    // canto exterior: la mitad que mira al frente, sin el hueco de la ranura
+    const V0 = -0.25 * Math.PI, V1 = 0.75 * Math.PI, fn = 0.25 * Math.PI + wrap(phi - 0.25 * Math.PI);
+    const g0 = fn - ALFA, g1 = fn + ALFA, tramos = [];
+    if (g1 <= V0 || g0 >= V1) tramos.push([V0, V1, false, false]);
+    else { if (g0 > V0) tramos.push([V0, g0, false, true]); if (g1 < V1) tramos.push([g1, V1, true, false]); }
+    const enCanto = (t) => { t = V0 + (((t - V0) % TAU) + TAU) % TAU; return tramos.some(([a, b]) => t > a + 0.03 && t < b - 0.03) ? t : null; };
+    tramos.forEach(([a, b, ea, eb]) => {
+      const n = Math.max(2, Math.ceil((b - a) / 0.04)), top = [], bot = [];
+      for (let i = 0; i <= n; i++) { const t = a + ((b - a) * i) / n; top.push(P(R * cos(t), R * sin(t), z1)); bot.push(P(R * cos(t), R * sin(t), z0)); }
+      ctx.beginPath(); top.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); for (let i = n; i >= 0; i--) ctx.lineTo(bot[i][0], bot[i][1]); ctx.closePath();
+      ctx.fillStyle = FONDO; ctx.fill();
+      trazar(ctx, bot, tn.sil, 1.35);
+      trazar(ctx, [top[0], bot[0]], ea ? tn.int : tn.sil, ea ? 1.1 : 1.35);
+      trazar(ctx, [top[n], bot[n]], eb ? tn.int : tn.sil, eb ? 1.1 : 1.35);
+    });
+    // rasgo propio del canto: gira con el disco
+    if (k === 0) {            // dientes finos
+      for (let j = 1; j < 72; j++) { const t = enCanto(phi + (j * TAU) / 72); if (t == null) continue;
+        trazar(ctx, [P(R * cos(t), R * sin(t), z1 - 0.045), P(R * cos(t), R * sin(t), z0 + 0.045)], tn.ras, 1); }
+    } else if (k === 1) {     // estrías
+      tramos.forEach(([a, b]) => [0.34, 0.66].forEach((h) => {
+        const n = Math.max(2, Math.ceil((b - a) / 0.04)), pts = [];
+        for (let i = 0; i <= n; i++) { const t = a + ((b - a) * i) / n; pts.push(P(R * cos(t), R * sin(t), z0 + T * h)); }
+        trazar(ctx, pts, tn.ras, 1.05);
+      }));
+    } else {                  // perforaciones
+      for (let j = 0; j < 14; j++) {
+        const t = enCanto(phi + ((j + 0.5) * TAU) / 14); if (t == null || cos(t) + sin(t) < 0.3) continue;
+        const cx = R * cos(t), cy = R * sin(t), tx = -sin(t), ty = cos(t), zm = z0 + T / 2, rr = 0.065, pts = [];
+        for (let i = 0; i <= 16; i++) { const u = (i / 16) * TAU; pts.push(P(cx + rr * cos(u) * tx, cy + rr * cos(u) * ty, zm + rr * sin(u))); }
+        ctx.beginPath(); pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath();
+        ctx.fillStyle = HUECO; ctx.fill(); ctx.strokeStyle = tn.ras; ctx.lineWidth = 1; ctx.stroke();
+      }
+    }
+
+    // cara de arriba con el corte de la ranura
+    const n = 96, rim = [];
+    for (let i = 0; i <= n; i++) { const t = phi + ALFA + ((TAU - 2 * ALFA) * i) / n; rim.push([t, P(R * cos(t), R * sin(t), z1)]); }
+    const cut = [P(Im[0], Im[1], z1), P(Ip[0], Ip[1], z1)];
+    ctx.beginPath(); rim.forEach(([, p], i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); cut.forEach((p) => ctx.lineTo(p[0], p[1])); ctx.closePath();
+    ctx.fillStyle = FONDO; ctx.fill();
+    // borde: atrás es silueta (claro), al frente es pliegue (tenue)
+    let run = [rim[0][1]], frente = cos(rim[0][0]) + sin(rim[0][0]) > 0;
+    for (let i = 1; i <= n; i++) {
+      const tm = (rim[i - 1][0] + rim[i][0]) / 2, fr = cos(tm) + sin(tm) > 0;
+      if (fr !== frente) { trazar(ctx, run, frente ? tn.pl : tn.sil, frente ? 1.1 : 1.35); run = [rim[i - 1][1]]; frente = fr; }
+      run.push(rim[i][1]);
+    }
+    trazar(ctx, run, frente ? tn.pl : tn.sil, frente ? 1.1 : 1.35);
+    trazar(ctx, [rim[n][1], cut[0], cut[1], rim[0][1]], tn.int, 1.15);
+    // anillo de torneado, interrumpido por la ranura
+    const ra = R - 0.17, aa = Math.asin(HW / ra), giro = [];
+    for (let i = 0; i <= 80; i++) { const t = phi + aa + ((TAU - 2 * aa) * i) / 80; giro.push(P(ra * cos(t), ra * sin(t), z1)); }
+    trazar(ctx, giro, tn.ras, 1);
+  }
+
+  /* cubo y punta del eje sobre el disco de arriba */
+  function eje(g, tn) {
+    const z1 = zt(0);
+    g.anillo(0, 0, z1, 0.3, { trazo: tn.pl, w: 1.05 });
+    g.cilindro(0, 0, z1, 0.15, 0.13, { a: 0.75, w: 1.2 });
+  }
+
+  function dibujarBase(g, f3, d) {
+    const ctx = g.ctx;
+    g.caja(-S / 2, -S / 2, -HB, S, S, HB, { a: 0.5 + 0.15 * d, r: 4, w: 1.3 });
+    // huella del disco y tornillos de las esquinas
+    g.anillo(0, 0, 0, R + 0.12, { a: 0.05, w: 1 });
+    [[1, -1], [-1, 1], [1, 1]].forEach(([sx, sy]) => g.anillo(sx * (S / 2 - 0.22), sy * (S / 2 - 0.22), 0, 0.07, { a: 0.25, w: 1 }));
+    // boca del perno en la base
+    g.cilindro(PX, PY, 0, 0.21, SOCK, { trazo: g.tinta(0.55 + 0.35 * d, f3), w: 1.2 });
+    g.anillo(PX, PY, SOCK, 0.11, { relleno: HUECO, trazo: g.tinta(0.35 + 0.3 * d, f3 * 0.8), w: 1 });
+    // puerta de dos hojas que se abren hacia los lados, en la cara +y
+    const y = S / 2, c3 = g.tinta(0.55 + 0.4 * Math.max(d, f3), f3), ct = g.tinta(0.12 + 0.2 * d, f3 * 0.5, 0.9);
+    // carril: el recuadro por donde corren las hojas
+    g.poly([[DX0 - WL - 0.06, y, DZ0 - 0.05], [DX1 + WL + 0.06, y, DZ0 - 0.05], [DX1 + WL + 0.06, y, DZ1 + 0.05], [DX0 - WL - 0.06, y, DZ1 + 0.05]], { relleno: false, trazo: ct, w: 1, r: 2 });
+    const vano = [[DX0, y, DZ0], [DX1, y, DZ0], [DX1, y, DZ1], [DX0, y, DZ1]];
+    const vp = g.poly(vano, { relleno: HUECO, trazo: c3, w: 1.15, r: 1.5 });
+    // hondo del vano: piso y jamba izquierda
+    ctx.save(); ctx.beginPath(); vp.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath(); ctx.clip();
+    const ti = g.tinta(0.25, 0, 0.9);
+    g.linea([[DX0, y, DZ0], [DX0, y - HONDO, DZ0], [DX1 + 0.4, y - HONDO, DZ0]], { trazo: ti, w: 1 });
+    g.linea([[DX0, y - HONDO, DZ0], [DX0, y - HONDO, DZ1 + 0.3]], { trazo: ti, w: 1 });
+    ctx.restore();
+    const hoja = (x0, x1, asa) => {
+      g.poly([[x0, y + 0.012, DZ0 + 0.012], [x1, y + 0.012, DZ0 + 0.012], [x1, y + 0.012, DZ1 - 0.012], [x0, y + 0.012, DZ1 - 0.012]], { relleno: FONDO, trazo: c3, w: 1.2, r: 1.5 });
+      const zm = (DZ0 + DZ1) / 2;
+      g.linea([[asa, y + 0.012, zm - 0.07], [asa, y + 0.012, zm + 0.07]], { trazo: c3, w: 1.3 });
+    };
+    const corre = WL * 0.96 * d;
+    hoja(DX0 - corre, -corre, -corre - 0.1);
+    hoja(corre, DX1 + corre, corre + 0.1);
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendario de obligaciones</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0C2340; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; outline: none; }
+  canvas:focus-visible { box-shadow: inset 0 0 0 2px #B2EB3E; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="motor.js?v=2"></script>
+<script>
+/* Lámina 6/7 · El año como un fichero de doce hojas de mes, de pie sobre un tablero largo.
+   Cada hoja lleva la retícula de días (7 × 5, sin números) y, en la celda del día 17, las fichas
+   de lo que vence ese mes: redonda (cuotas del IMSS, cada mes), cuadrada (retiro e INFONAVIT,
+   meses impares), triangular (ICSOE y SISUB, enero, mayo y septiembre) y un rombo mayor
+   (prima de riesgo, febrero). Al recorrer la fila, la hoja elegida se levanta y se separa de sus
+   vecinas; sus fichas se desprenden y flotan al frente, y el cursor de «hoy» llega por el riel. */
+(function () {
+  const N = 12;
+  const D = 1.0;            // paso entre hojas
+  const WD = 2.0;           // ancho de la hoja (eje y)
+  const H = 3.0;            // alto de la hoja
+  const T = 0.05;           // grosor de la hoja
+  const TAB = 0.2, TABW = 0.56;
+  const LIFT = 0.78;        // cuánto sube la hoja elegida
+  const GF = 0.5, GB = 0.2; // cuánto se apartan las hojas de adelante y las de atrás
+  const BX0 = -1.0, BX1 = (N - 1) * D + T + 1.0, BY0 = -0.4, BY1 = WD + 1.2, BT = 0.24;
+  const MY = 0.14, GT = H - 0.62, GBAJO = 0.16, RH = (GT - GBAJO) / 5, CW = (WD - 2 * MY) / 7;
+  const RY0 = WD + 0.45, RY1 = WD + 0.69;  // ranura del riel
+  const X = (k) => k * D;
+  const celda = (r, c) => [WD - MY - (c + 0.5) * CW, GT - (r + 0.5) * RH];
+  const C17 = celda(2, 2);
+  const lim = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  // fichas de cada mes, de abajo arriba: de la más frecuente a la más rara
+  function fichas(m) {
+    const f = ["redonda"];
+    if (m % 2 === 0) f.push("cuadrada");
+    if (m === 0 || m === 4 || m === 8) f.push("triangular");
+    if (m === 1) f.push("rombo");
+    return f;
+  }
+  const FICHAS = []; for (let m = 0; m < N; m++) FICHAS.push(fichas(m));
+
+  // contorno 2D de cada ficha (u hacia la derecha de la cara, v hacia arriba)
+  function forma(tipo, s) {
+    const p = [];
+    if (tipo === "redonda") { const r = 0.14 * s; for (let i = 0; i < 28; i++) { const a = (i / 28) * Math.PI * 2; p.push([r * Math.cos(a), r * Math.sin(a)]); } }
+    else if (tipo === "cuadrada") { const h = 0.125 * s; p.push([-h, -h], [h, -h], [h, h], [-h, h]); }
+    else if (tipo === "triangular") { const r = 0.17 * s; [90, 210, 330].forEach((a) => p.push([r * Math.cos(a * Math.PI / 180), r * Math.sin(a * Math.PI / 180) - 0.02 * s])); }
+    else { const w = 0.2 * s, h = 0.29 * s; p.push([0, -h], [w, 0], [0, h], [-w, 0]); }
+    return p;
+  }
+
+  let alza = [], corre = [], suelta = [], cursor = null, iniciado = false;
+
+  // contorno de la hoja con su pestaña (en y, z), de abajo-cerca en sentido de la silueta
+  function contornoHoja(k) {
+    const pos = k % 3;
+    const t1 = WD - 0.14 - pos * ((WD - 0.28 - TABW) / 2);   // borde cercano de la pestaña
+    const t0 = t1 - TABW;
+    return [[WD, 0], [0, 0], [0, H], [t0, H], [t0 + 0.07, H + TAB], [t1 - 0.07, H + TAB], [t1, H], [WD, H]];
+  }
+
+  Plano.figura({
+    id: "seguridad", total: N, reposo: 0, recorrido: [0, 1, 4, 3, 0], pausa: 1700,
+    aria: "Fichero de doce hojas de mes sobre un tablero con un riel. En el día 17 de cada hoja hay fichas: redonda cada mes, cuadrada en los meses impares, triangular en enero, mayo y septiembre, y un rombo mayor en febrero. La hoja elegida se levanta y sus fichas flotan al frente.",
+    caja: [
+      [BX0, BY0, 0], [BX1, BY0, 0], [BX0, BY1, -BT], [BX1, BY1, -BT],
+      [X(0) - GB, 0, H + LIFT + TAB + 0.05], [X(0) - GB, WD, H + LIFT + TAB + 0.05],
+      [X(N - 1) + GF + T, 0, H + LIFT + TAB + 0.05],
+    ],
+    margen: 0.045,
+    crear(g) {
+      for (let k = 0; k < N; k++) { alza.push(g.transito(0)); corre.push(g.transito(0)); suelta.push(g.transito(0)); }
+      cursor = g.resorte(0);
+    },
+    alElegir(i, previa, ahora) {
+      const caidaA = [1, 0.3, 0.1, 0.03];
+      for (let k = 0; k < N; k++) {
+        const d = i < 0 ? 99 : Math.abs(k - i);
+        const a = d < caidaA.length ? LIFT * caidaA[d] : 0;
+        const c = i < 0 ? 0 : k < i ? -GB : k > i ? GF : 0;
+        const s = k === i ? 1 : 0;
+        if (!iniciado) { [[alza, a], [corre, c], [suelta, s]].forEach(([tr, v]) => { tr[k].v = tr[k].a = tr[k].de = v; tr[k].dur = 0; }); continue; }
+        const ret = Plano.reducido ? 0 : d * 40;
+        alza[k].ir(a, ahora); alza[k].t0 = ahora + ret;
+        corre[k].ir(c, ahora); corre[k].t0 = ahora + ret;
+        if (s) { suelta[k].ir(1, ahora, 760); suelta[k].t0 = ahora + (Plano.reducido ? 0 : 140); }
+        else suelta[k].ir(0, ahora, 520);
+      }
+      if (i >= 0) { cursor.meta = X(i) + T / 2; if (!iniciado) { cursor.x = cursor.meta; cursor.v = 0; } }
+      iniciado = true;
+    },
+    zonas(g) {
+      const z = [];
+      const top = H + LIFT + TAB + 2;
+      // suelo (tablero y riel): una franja por mes, sin huecos
+      for (let k = 0; k < N; k++) {
+        const a = k === 0 ? BX0 : X(k) - D / 2 + T / 2, b = k === N - 1 ? BX1 : X(k) + D / 2 + T / 2;
+        z.push({ i: k, poly: g.zona([[a, BY0, 0], [b, BY0, 0], [b, BY1, 0], [a, BY1, 0]]) });
+      }
+      // caras de las hojas en reposo, de atrás adelante (la de adelante gana)
+      for (let k = 0; k < N; k++) {
+        const x = X(k) + T;
+        z.push({ i: k, poly: g.zona([[x, 0, top], [x, WD, top], [x, WD, 0], [x, 0, 0]]) });
+      }
+      return z;
+    },
+    dibujar(g, est, dt, ahora) {
+      let mueve = false;
+      for (let k = 0; k < N; k++) {
+        alza[k].paso(ahora); corre[k].paso(ahora); suelta[k].paso(ahora);
+        if (!alza[k].listo(ahora) || !corre[k].listo(ahora) || !suelta[k].listo(ahora)) mueve = true;
+      }
+      const cx = lim(cursor.paso(dt, 130, 16), X(0) + T / 2, X(N - 1) + T / 2);
+      if (Math.abs(cursor.v) > 0.003 || Math.abs(cursor.x - cursor.meta) > 0.002) mueve = true;
+
+      // tablero con su canto
+      g.caja(BX0, BY0, -BT, BX1 - BX0, BY1 - BY0, BT, { a: 0.62, r: 5 });
+      g.poly([[BX0 + 0.12, BY0 + 0.12, 0], [BX1 - 0.12, BY0 + 0.12, 0], [BX1 - 0.12, BY1 - 0.12, 0], [BX0 + 0.12, BY1 - 0.12, 0]], { relleno: false, a: 0.08, r: 3 });
+
+      // canal donde se insertan las hojas: pared trasera, hojas, pared delantera
+      const cx0 = X(0) - GB - 0.3, cx1 = X(N - 1) + GF + T + 0.3;
+      g.caja(cx0, -0.16, 0, cx1 - cx0, 0.1, 0.09, { a: 0.4, r: 2 });
+      for (let k = 0; k < N; k++) dibujarHoja(g, k);
+      g.caja(cx0, WD + 0.05, 0, cx1 - cx0, 0.1, 0.09, { a: 0.5, r: 2 });
+
+      // riel: ranura, marcas de regla y cursor de «hoy»
+      const rx0 = X(0) - 0.35, rx1 = X(N - 1) + T + 0.35;
+      g.poly([[rx0, RY0, 0], [rx1, RY0, 0], [rx1, RY1, 0], [rx0, RY1, 0]], { relleno: "rgba(4,18,36,.55)", a: 0.45, r: 4 });
+      g.linea([[rx0 + 0.1, RY0 + 0.07, 0], [rx1 - 0.1, RY0 + 0.07, 0]], { a: 0.12 });
+      for (let k = 0; k < N; k++) {
+        const x = X(k) + T / 2, f = g.foco(k);
+        g.linea([[x, RY1 + 0.1, 0], [x, RY1 + 0.3, 0]], { a: 0.35 + 0.65 * f, w: 1.2 });
+        if (k < N - 1) for (let q = 1; q < 4; q++) { const xq = x + (q * D) / 4; g.linea([[xq, RY1 + 0.1, 0], [xq, RY1 + 0.18, 0]], { a: 0.12 }); }
+      }
+      // cursor de «hoy»: corredera de regla, con ventana e hilo sobre la marca del mes
+      const ch = 0.11, cw = 0.25;
+      g.caja(cx - cw, RY0 - 0.1, 0, 2 * cw, RY1 - RY0 + 0.5, ch, { l: 1, a: 1, r: 3 });
+      g.poly([[cx - cw + 0.07, RY1 + 0.05, ch], [cx + cw - 0.07, RY1 + 0.05, ch], [cx + cw - 0.07, RY1 + 0.33, ch], [cx - cw + 0.07, RY1 + 0.33, ch]], { relleno: "rgba(4,18,36,.6)", trazo: Plano.tinta(0.6, 0.7, 0.8), r: 1.5, w: 1.1 });
+      g.linea([[cx, RY1 + 0.08, ch], [cx, RY1 + 0.3, ch]], { l: 1, a: 1, w: 1.3 });
+      g.linea([[cx - cw + 0.08, RY0 + 0.02, ch], [cx + cw - 0.08, RY0 + 0.02, ch]], { trazo: Plano.tinta(0.5, 0.6, 0.7), w: 1 });
+
+      return mueve;
+    },
+  });
+
+  function dibujarHoja(g, k) {
+    const f = g.foco(k), x = X(k) + corre[k].v, z = alza[k].v, s = suelta[k].v;
+    const ap = 0.5 + 0.5 * Math.max(f, (z / LIFT) * 0.6);
+    const cont = contornoHoja(k);
+    const en = (xx) => cont.map(([y, zz]) => [xx, y, z + zz]);
+    // la hoja con grosor: cara trasera (asoma arriba y a la izquierda) y cara delantera
+    g.poly(en(x), { a: ap, r: 3 });
+    g.poly(en(x + T), { trazo: Plano.tinta(ap * 0.8, 0, 0.9), r: 3 });
+    const xf = x + T + 0.002;
+    // ventanita de etiqueta en la pestaña
+    const tb = cont[3][0], tb1 = cont[6][0];
+    g.poly([[xf, tb1 - 0.13, z + H + 0.05], [xf, tb + 0.13, z + H + 0.05], [xf, tb + 0.13, z + H + TAB - 0.06], [xf, tb1 - 0.13, z + H + TAB - 0.06]], { relleno: false, a: 0.1 + 0.25 * f, r: 1, w: 1 });
+    // cabecera
+    g.linea([[xf, WD - MY, z + GT + 0.16], [xf, MY, z + GT + 0.16]], { a: 0.12 + 0.2 * f });
+    // retícula de días
+    const m = 0.05;
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 7; c++) {
+      if (r === 2 && c === 2) continue;
+      const [y, zz] = celda(r, c);
+      g.poly([[xf, y + m, z + zz - m], [xf, y - m, z + zz - m], [xf, y - m, z + zz + m], [xf, y + m, z + zz + m]], { relleno: false, a: 0.1 + 0.22 * f, r: 0.8, w: 1 });
+    }
+    // celda del día 17: el hueco donde van pegadas las fichas
+    const q = 0.1;
+    g.poly([[xf, C17[0] + q, z + C17[1] - q], [xf, C17[0] - q, z + C17[1] - q], [xf, C17[0] - q, z + C17[1] + q], [xf, C17[0] + q, z + C17[1] + q]], { relleno: false, a: 0.25 + 0.35 * f, r: 1.2, w: 1.1 });
+
+    // fichas: pegadas en el 17 (pila apretada) o desprendidas al frente (columna abierta)
+    const lista = FICHAS[k];
+    lista.forEach((tipo, j) => {
+      const sj = lim(s * 1.15 - j * 0.07, 0, 1);
+      const e = g.curva(sj);
+      const big = tipo === "rombo" ? 0.1 : 0;
+      const vR = j * 0.25 + big * 0.6, vF = 0.06 + j * 0.47 + big * 1.2;
+      const u = -0.1 * e, v = vR + (vF - vR) * e;
+      const ff = 0.5 * e;
+      const xx = xf + 0.004 + ff;
+      const esc = 0.78 + 0.5 * e;
+      const yy = C17[0] - u, zz = z + C17[1] + v;
+      dibujarFicha(g, tipo, xx, yy, zz, esc, 0.62 + 0.38 * Math.max(f, e), e);
+    });
+  }
+
+  /* ficha con grosor: pegada, yace en el plano de la hoja; al desprenderse (gi → 1) gira hasta mirar al frente */
+  function dibujarFicha(g, tipo, x, y, zc, esc, a, l) {
+    const p2 = forma(tipo, esc);
+    const gi = l, E = g.esc, C = Math.cos(Math.PI / 6);
+    const c = g.P(x, y, zc);
+    const tc = 0.045 * E * (1 - 0.55 * gi);
+    const o = p2.map(([u, v]) => [c[0] + (u * C * (1 - gi) + u * 0.95 * gi) * E, c[1] + ((-u / 2 - v) * (1 - gi) - v * 0.95 * gi) * E]);
+    const fr = o.map((q) => [q[0] + C * tc, q[1] + 0.5 * tc]);
+    const tr = o;
+    const env = envolvente(fr.concat(tr));
+    const ctx = g.ctx;
+    const rr = tipo === "redonda" ? 0 : 1.6;
+    trazar(ctx, env, true, rr);
+    ctx.fillStyle = "#0C2340"; ctx.fill();
+    ctx.strokeStyle = Plano.tinta(a, l); ctx.lineWidth = 1.3; ctx.lineJoin = "round"; ctx.stroke();
+    trazar(ctx, fr, true, rr);
+    ctx.strokeStyle = Plano.tinta(a * 0.5, l * 0.6, 0.85); ctx.lineWidth = 1.05; ctx.stroke();
+  }
+
+  function trazar(ctx, pts, cerrar, r) {
+    ctx.beginPath();
+    const n = pts.length;
+    if (!r || n < 3) { pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); if (cerrar) ctx.closePath(); return; }
+    const ini = [(pts[n - 1][0] + pts[0][0]) / 2, (pts[n - 1][1] + pts[0][1]) / 2];
+    ctx.moveTo(ini[0], ini[1]);
+    for (let i = 0; i < n; i++) { const p = pts[i], q = pts[(i + 1) % n]; ctx.arcTo(p[0], p[1], q[0], q[1], r); }
+    ctx.closePath();
+  }
+  function envolvente(p) {
+    const s = p.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+    const lo = [], up = [];
+    for (const q of s) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+    for (let i = s.length - 1; i >= 0; i--) { const q = s[i]; while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+    return lo.slice(0, -1).concat(up.slice(0, -1));
+  }
+})();
+</script>
+</body>
+</html>

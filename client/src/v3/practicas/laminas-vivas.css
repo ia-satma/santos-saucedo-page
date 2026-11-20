@@ -1,0 +1,86 @@
+/* Láminas vivas de las prácticas (3/7 a 7/7): la apariencia de la demo del 9-11-2026 con las fuentes y los
+   colores del sitio. Azul noche con retícula fina y marco interior; figura a la izquierda (fija al bajar),
+   texto a la derecha. En el teléfono la figura queda fija arriba y el detalle se abre bajo su renglón. */
+.v3 .lv{
+  --lv-sobre: #F3F1EA; --lv-sobre-2: rgba(243,241,234,.74); --lv-sobre-3: rgba(243,241,234,.5);
+  --lv-filete: rgba(243,241,234,.16); --lv-ret: rgba(243,241,234,.055); --lv-lima: #B2EB3E; --lv-noche: #0C2340;
+  position: relative; color: var(--lv-sobre); background-color: var(--lv-noche);
+  background-image: linear-gradient(var(--lv-ret) 1px, transparent 1px), linear-gradient(90deg, var(--lv-ret) 1px, transparent 1px);
+  background-size: 48px 48px; background-position: -1px -1px;
+}
+.v3 .lv::before{ content: ""; position: absolute; inset: 14px; border: 1px solid var(--lv-filete); pointer-events: none }
+.v3 .lv-in{
+  position: relative; max-width: 1360px; margin: 0 auto;
+  display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); grid-template-rows: auto 1fr;
+  grid-template-areas: "fig cab" "fig cuerpo"; column-gap: clamp(28px, 4vw, 64px); row-gap: 0;
+  padding: clamp(40px, 5vw, 80px) clamp(28px, 5vw, 72px) clamp(72px, 7vw, 96px);
+}
+.v3 .lv-figura{ grid-area: fig; position: relative; min-width: 0; align-self: start }
+.v3 .lv-cabeza{ grid-area: cab; min-width: 0 }
+@media (min-width: 901px){
+  .v3 .lv-figura{ position: sticky; top: calc(var(--ss-header-h, 80px) + 24px) }
+}
+.v3 .lv-marco{ position: relative; aspect-ratio: 5 / 4; width: 100%; background: var(--lv-noche); border: 1px solid var(--lv-filete) }
+.v3 .lv-marco iframe{ position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: transparent; color-scheme: light }
+.v3 .lv-espera{ position: absolute; inset: 0; display: grid; place-items: center; margin: 0; color: var(--lv-sobre-3); font-size: 14px; text-align: center !important; padding: 24px }
+.v3 .lv-pie{ display: flex; justify-content: space-between; gap: 12px; margin-top: 12px; font: 500 12px/1.4 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--lv-sobre-3) }
+.v3 .lv-aria{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; margin: 0 }
+
+.v3 .lv-texto{ grid-area: cuerpo; min-width: 0; display: flex; flex-direction: column }
+.v3 .lv-cap{ font: 600 12px/1.4 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--lv-sobre-2); margin: 0 0 14px; text-align: left }
+.v3 .lv-h{ font: 300 clamp(1.8rem, 1.2rem + 1.7vw, 2.6rem)/1.08 var(--serif); letter-spacing: -.015em; margin: 0 0 16px; color: var(--lv-sobre); text-wrap: balance }
+.v3 .lv-entrada{ font: 300 1.12rem/1.5 var(--serif); color: var(--lv-sobre); margin: 0 0 22px }
+@media (min-width: 901px){ .v3 .lv-cabeza{ align-self: start } }
+.v3 .lv-instr{ font: 500 12px/1.4 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--lv-sobre-3); margin: 0 0 10px; text-align: left }
+.v3 .lv-piezas{ list-style: none; margin: 0 0 18px; padding: 0; border-top: 1px solid var(--lv-filete) }
+.v3 .lv-piezas > li{ border-bottom: 1px solid var(--lv-filete) }
+.v3 .lv-pieza{
+  all: unset; box-sizing: border-box; display: grid; grid-template-columns: 3.2em 1fr; align-items: baseline;
+  width: 100%; min-height: 40px; padding: 9px 0; cursor: pointer; color: var(--lv-sobre-2);
+  font: 400 15px/1.35 var(--sans); transition: color .4s var(--ease-out, cubic-bezier(.16,1,.3,1));
+}
+.v3 .lv-n{ font: 500 11px/1 var(--sans); letter-spacing: .08em; color: var(--lv-sobre-3); font-variant-numeric: tabular-nums }
+.v3 .lv-pieza:hover, .v3 .lv-pieza[aria-pressed="true"]{ color: var(--lv-sobre) }
+.v3 .lv-pieza:focus-visible{ outline: 2px solid var(--lv-lima); outline-offset: 3px }
+.v3 .lv-pieza[aria-pressed="true"] .lv-n{ color: var(--lv-lima) }
+.v3 .lv-pieza[aria-pressed="true"] .lv-nom{ box-shadow: inset 0 -1px 0 var(--lv-lima) }
+.v3 .lv-piezas--meses{ display: grid; grid-auto-flow: column; grid-template-rows: repeat(6, auto); column-gap: 28px }
+
+.v3 .lv-detalle{ border: 1px solid var(--lv-filete); padding: 18px 20px; background: rgba(12,35,64,.86) }
+.v3 .lv-detalle--caja, .v3 .lv-detalle--meses{ min-height: 9.5em }
+.v3 .lv-detalle--fila{ display: none }
+.v3 .lv-detalle h3{ font: 400 1.18rem/1.25 var(--serif); margin: 0 0 10px; color: var(--lv-sobre) }
+.v3 .lv-detalle dl{ margin: 0; display: grid; gap: 10px }
+.v3 .lv-detalle dt{ font: 600 11px/1.3 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--lv-sobre-3) }
+.v3 .lv-detalle dd{ margin: 3px 0 0; font: 300 15px/1.5 var(--sans); color: var(--lv-sobre) }
+.v3 .lv-detalle ul{ margin: 4px 0 0; padding: 0; list-style: none; display: grid; gap: 8px }
+.v3 .lv-detalle li{ font: 300 15px/1.45 var(--sans); padding-left: 14px; position: relative }
+.v3 .lv-detalle li::before{ content: ""; position: absolute; left: 0; top: .62em; width: 6px; height: 1px; background: var(--lv-lima) }
+.v3 .lv-ley{ display: block; color: var(--lv-sobre-3); font-size: 13px; margin-top: 2px }
+.v3 .lv-anio{ margin-top: 12px !important }
+.v3 .lv-cierre{ margin: 20px 0 0; padding-top: 16px; border-top: 1px solid var(--lv-filete); font: 400 1.02rem/1.5 var(--serif); color: var(--lv-sobre) }
+.v3 .lv-fuente{ margin: 10px 0 0; font-size: 12px; line-height: 1.5; color: var(--lv-sobre-3) }
+
+.v3 .lv-cajetin{ position: absolute; right: 14px; bottom: 14px; display: flex; align-items: stretch; border-left: 1px solid var(--lv-filete); border-top: 1px solid var(--lv-filete); background: var(--lv-noche) }
+.v3 .lv-cajetin img{ height: 12px; width: auto; margin: 10px 12px; display: block }
+.v3 .lv-cajetin span{ font: 600 10px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--lv-sobre-2); padding: 11px 12px; border-left: 1px solid var(--lv-filete); white-space: nowrap }
+
+/* Varias láminas seguidas (Laboral): una franja de piedra entre una y otra */
+.v3 .pd-laminas + .pd-laminas .lv{ margin-top: 0 }
+.v3 .pd-laminas--viva + .pd-laminas--viva{ border-top: 28px solid var(--piedra, #E4E2DC) }
+
+@media (max-width: 900px){
+  .v3 .lv-in{ grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: "cab" "fig" "cuerpo"; padding-inline: clamp(20px, 5vw, 40px) }
+  /* la figura fija arriba, el texto corre debajo */
+  .v3 .lv-figura{ position: sticky; top: var(--ss-header-h, 68px); z-index: 2; background: var(--lv-noche); padding-bottom: 8px; margin-inline: calc(-1 * clamp(20px, 5vw, 40px)); padding-inline: clamp(20px, 5vw, 40px) }
+  .v3 .lv-marco{ aspect-ratio: auto; height: min(38vh, 72vw) }
+  .v3 .lv-pie{ display: none }
+  .v3 .lv-texto{ padding-top: 14px }
+  .v3 .lv-detalle--caja{ display: none }
+  .v3 .lv-detalle--fila{ display: block; margin: 2px 0 12px }
+}
+@media (max-width: 520px){
+  .v3 .lv-cajetin span:last-child{ display: none }
+  .v3 .lv-piezas--meses{ grid-auto-flow: row; grid-template-columns: 1fr 1fr; grid-template-rows: none }
+}
+@media (prefers-reduced-motion: reduce){ .v3 .lv-pieza{ transition: none } }
