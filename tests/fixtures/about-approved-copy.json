@@ -12,8 +12,8 @@
       { "title": "Consistencia", "text": "El mismo criterio en todos los centros de trabajo de un cliente, en cualquier ciudad del país." }
     ],
     "stats": [
-      { "value": "40+", "label": "Años de experiencia" },
-      { "value": "72+", "label": "Ciudades en nuestra red de alianzas" }
+      { "value": "16+", "label": "Años en el mercado" },
+      { "value": "120+", "label": "Ciudades con presencia" }
     ]
   },
   "en": {
@@ -29,8 +29,8 @@
       { "title": "Consistency", "text": "The same judgment across all of a client’s workplaces, in any city in the country." }
     ],
     "stats": [
-      { "value": "40+", "label": "Years of Experience" },
-      { "value": "72+", "label": "Cities in our alliance network" }
+      { "value": "16+", "label": "Years in the market" },
+      { "value": "120+", "label": "Cities where we are present" }
     ]
   }
 }

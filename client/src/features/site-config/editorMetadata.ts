@@ -84,7 +84,7 @@ export const cmsEditorPages: CmsEditorPage[] = [
     group: "Contenido del sitio",
     path: "/industries",
     aliases: ["/industrias", "/industry-groups", "/industry-groups/:slug"],
-    blocks: ["Hero", "Introducción", "Buscador y filtros", "Listado de industrias", "Animación y mapa", "Navegación siguiente", "SEO"],
+    blocks: ["Hero", "Introducción", "Buscador y filtros", "Listado de industrias", "Textos de cada industria", "Animación y mapa", "Navegación siguiente", "SEO"],
     description: "Edita la portada de Industrias y el catálogo de grupos que aparece en el sitio.",
     impact: "Afecta la portada y las fichas de industrias",
     manualId: "industrias",

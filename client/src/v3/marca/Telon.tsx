@@ -1,9 +1,10 @@
 /* Portada «telón» del Inicio (demo v3, módulo marca, pieza «portada»; aprobada el 5-11-2026).
    La § oficial es una ventana al video del dron; con el scroll crece y abre la escena como un telón.
-   Abierta, la § queda como marca de agua al 12 % y llegan el logo, la frase que rota, «San Pedro
-   Garza García · Desde…» y la firma abajo a la izquierda. Botón de pausa (video y frase).
-   Textos y medios del panel donde el sitio ya los tenía: logo, video, póster, frase y lugar
-   (home.hero), etiquetas del botón (chrome.heroVideo). Comportamiento: ./escenaTelon.ts (sin el nombre telon.ts, que en la Mac choca con Telon.tsx). */
+   Abierta, la § queda como marca de agua al 12 % y llegan el logo, la frase que rota, la línea de
+   apoyo («Un ecosistema para la debida administración del capital humano»; antes «San Pedro Garza
+   García · Desde 2010») y la firma abajo a la izquierda. Botón de pausa (video y frase).
+   Textos y medios del panel donde el sitio ya los tenía: logo, video, póster, frase, palabras que
+   rotan y línea de apoyo (home.hero), etiquetas del botón (chrome.heroVideo). Comportamiento: ./escenaTelon.ts (sin el nombre telon.ts, que en la Mac choca con Telon.tsx). */
 import "@/v3/shared";
 import "./telon.css";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
@@ -21,16 +22,19 @@ import { getVideoEmbedUrl } from "@/lib/videoSource";
 const TXT = {
   es: {
     firma: "Al lado de las empresas en cada decisión que involucra a su personal.",
-    // La frase del panel («Derecho laboral para empresas») deja fijo «Derecho laboral» y hace rotar a
-    // quién sirve la firma. Antes rotaba entre las prácticas (laboral, migratorio, corporativo,
-    // contractual) y en la junta del 6-11-2026 Mario dijo: «Yo no quisiera venderme como un despacho
-    // multimateria»; «este es un despacho laboral». Lo laboral queda fijo; lo amplio son sus clientes.
-    words: ["empresas", "la industria", "multinacionales"],
+    // Junta del 13-11-2026 (aprobado por Mario): primer renglón «Servicios legales» + la práctica que
+    // rota (laborales, migratorios, corporativos, penales; sin «contractuales»); segundo renglón
+    // «para» + a quién se sirve, que también rota: «para multinacionales, para empresas y para
+    // pymes». Antes: «Derecho laboral» fijo y «para empresas / la industria / multinacionales».
+    // Respaldo: el panel (home.hero.words y home.hero.practiceWords) manda en español e inglés.
+    words: ["multinacionales", "empresas", "pymes"],
+    practiceWords: ["laborales", "migratorios", "corporativos", "penales"],
     and: "y",
   },
   en: {
     firma: "Alongside companies in every decision that involves their people.",
-    words: ["companies", "industry", "multinationals"],
+    words: ["multinationals", "companies", "SMEs"],
+    practiceWords: ["labor", "immigration", "corporate", "criminal"],
     and: "and",
   },
   de: { firma: "An der Seite von Unternehmen bei jeder Entscheidung, die ihre Mitarbeiter betrifft.", words: ["Unternehmen", "Industrie", "multinationale Unternehmen"], and: "und" },
@@ -90,10 +94,17 @@ export default function Telon({ lang }: { lang: V3Lang }) {
   const liveChrome = useCmsContent("chrome", chrome26);
   const hero = liveHome[lang].hero;
   const labels = liveChrome[lang].heroVideo;
-  const sourceTxt = TXT[language] ?? TXT.en;
+  const sourceTxt: { firma: string; words: readonly string[]; practiceWords?: readonly string[]; and: string } = TXT[language] ?? TXT.en;
+  // Palabras del panel solo en español e inglés: los demás idiomas parten de la forma del inglés y
+  // mezclarían palabras en inglés con su frase; conservan las suyas (TXT), como antes.
+  const panelWords = language === "es" || language === "en";
+  const clean = (list: readonly string[] | undefined) => (list || []).map((w) => (w || "").trim()).filter(Boolean);
+  const heroWords = clean((hero as typeof hero & { words?: readonly string[] }).words);
+  const heroPractice = clean((hero as typeof hero & { practiceWords?: readonly string[] }).practiceWords);
   const txt = {
     firma: (hero as typeof hero & { firma?: string }).firma || sourceTxt.firma,
-    words: (hero as typeof hero & { words?: readonly string[] }).words || sourceTxt.words,
+    words: panelWords && heroWords.length ? heroWords : [...sourceTxt.words],
+    practiceWords: panelWords ? heroPractice : clean(sourceTxt.practiceWords),
     and: (hero as typeof hero & { and?: string }).and || sourceTxt.and,
   };
 
@@ -101,10 +112,14 @@ export default function Telon({ lang }: { lang: V3Lang }) {
   const parts = useMemo(() => splitFinal(tagline, txt.words[0]), [tagline, txt]);
   const words = parts ? [...txt.words] : null;
   const wordsKey = words ? words.join("|") : "";
+  // Práctica que rota al final del primer renglón (solo si la frase también rota)
+  const practice = parts && txt.practiceWords.length ? txt.practiceWords : null;
+  const practiceKey = practice ? practice.join("|") : "";
+  const enumera = (list: readonly string[]) =>
+    list.length > 1 ? `${list.slice(0, -1).join(", ")} ${txt.and} ${list[list.length - 1]}` : list[0] || "";
   const srTag = parts
     ? (() => {
-        const list = `${txt.words.slice(0, -1).join(", ")} ${txt.and} ${txt.words[txt.words.length - 1]}`;
-        const s = [parts.l1, parts.pre2, list].filter(Boolean).join(" ");
+        const s = [parts.l1, practice ? enumera(practice) : "", parts.pre2, enumera(txt.words)].filter(Boolean).join(" ");
         return s.charAt(0).toUpperCase() + s.slice(1);
       })()
     : tagline;
@@ -165,18 +180,23 @@ export default function Telon({ lang }: { lang: V3Lang }) {
   // El módulo se monta una vez (y otra solo si la frase pasa de rotar a fija o al revés: cambia su
   // marcado). Un cambio de idioma o de la frase del panel solo cambia las palabras (efecto de abajo):
   // la portada no se cierra ni repite su entrada.
-  const rota = !!parts;
+  // 0: frase fija; 1: rota a quién se sirve; 2: además rota la práctica (cambia el marcado)
+  const rota = parts ? (practice ? 2 : 1) : 0;
   const wordsRef = useRef(wordsKey);
   wordsRef.current = wordsKey;
+  const practiceRef = useRef(practiceKey);
+  practiceRef.current = practiceKey;
   useEffect(() => {
     const el = rootRef.current;
     if (!el) return;
-    const k = wordsRef.current;
-    const a = initTelon(el, { words: k ? k.split("|") : null, paused: pausedRef.current, onBlocked });
+    const k = wordsRef.current, p = practiceRef.current;
+    const a = initTelon(el, { words: k ? k.split("|") : null, practiceWords: p ? p.split("|") : null, paused: pausedRef.current, onBlocked });
     api.current = a;
     return () => { a.destroy(); if (api.current === a) api.current = null; };
   }, [rota, onBlocked]);
-  useEffect(() => { api.current?.palabras(wordsKey ? wordsKey.split("|") : null); }, [wordsKey, tagline]);
+  useEffect(() => {
+    api.current?.palabras(wordsKey ? wordsKey.split("|") : null, practiceKey ? practiceKey.split("|") : null);
+  }, [wordsKey, practiceKey, tagline]);
   useEffect(() => { api.current?.pausa(paused); }, [paused]);
   useEffect(() => { api.current?.video(); }, [videoSrc]);
 
@@ -196,6 +216,7 @@ export default function Telon({ lang }: { lang: V3Lang }) {
   const rootStyle = { "--mk-art": `url("${import.meta.env.BASE_URL}v3/seccion-blanca.png")` } as CSSProperties;
   const logoSrc = media.brand.logoLight || logoBlancoLima;
   const firmName = media.brand.name || "Santos & Saucedo";
+  const lugar = (Array.isArray(hero.place) ? (hero.place as readonly string[]) : []).map((t) => (t || "").trim()).filter(Boolean);
 
   return (
     <div ref={rootRef} className="v3 mk-raiz" data-vista="inicio" style={rootStyle} {...attrs}>
@@ -248,22 +269,31 @@ export default function Telon({ lang }: { lang: V3Lang }) {
               </h1>
               {parts ? (
                 <p className="sh-tag" aria-hidden="true" data-frase="a">
-                  <span className="sh-tag__l1">{parts.l1}</span>
+                  <span className={practice ? "sh-tag__l1 sh-tag__l1--practica" : "sh-tag__l1"}>
+                    <span className="sh-tag__pre">{parts.l1}</span>
+                    {/* Las palabras las escribe el módulo (rotan, cada una con su reloj); React no las toca */}
+                    {practice ? <span className="sh-tag__slot" data-rota="practica"><b className="sh-tag__w" /></span> : null}
+                  </span>
                   <span className="sh-tag__l1">
                     <span className="sh-tag__pre">{parts.pre2}</span>
-                    {/* La palabra la escribe el módulo (rota); React no la toca */}
-                    <span className="sh-tag__slot"><b className="sh-tag__w" /></span>
+                    <span className="sh-tag__slot" data-rota="publico"><b className="sh-tag__w" /></span>
                   </span>
                 </p>
               ) : (
                 <p className="sh-tag">{tagline}</p>
               )}
               {parts ? <p className="sh-sr">{srTag}</p> : null}
-              <p className="sh-portada__lugar">
-                <span className="mk-lugar">{hero.place[0]}</span>{" "}
-                <span className="mk-lugar__punto" aria-hidden="true">·</span>{" "}
-                <span className="mk-lugar">{hero.place[1]}</span>
-              </p>
+              {/* Línea de apoyo (home.hero.place): con dos partes, «lugar · año» como antes; con una
+                  sola (el segundo campo vacío), una frase que puede ocupar dos renglones. */}
+              {lugar.length > 1 ? (
+                <p className="sh-portada__lugar">
+                  <span className="mk-lugar">{lugar[0]}</span>{" "}
+                  <span className="mk-lugar__punto" aria-hidden="true">·</span>{" "}
+                  <span className="mk-lugar">{lugar[1]}</span>
+                </p>
+              ) : lugar.length ? (
+                <p className="sh-portada__lugar sh-portada__lugar--frase">{lugar[0]}</p>
+              ) : null}
             </div>
             <p className="mk-telon__firma">{txt.firma}</p>
             {(videoEnabled || parts) && (

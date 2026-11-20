@@ -10,7 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { industries as industriesDefaults } from "@shared/cms-defaults.json";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { layoutDefaults } from "@/lib/cmsLightDefaults";
-import { pageVisibility } from "@/lib/pageVisibility";
+import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
 import { useQuery } from "@tanstack/react-query";
 import type { IndustryGroup } from "@shared/schema";
 import { V3Main, V3NextPage, V3PageHeader, useV3Lang } from "@/v3/shared";
@@ -91,7 +91,7 @@ export default function Industries() {
           >
             <p>{t.cab.text}</p>
           </V3PageHeader>
-          <Sectores t={t} headingId={H1} />
+          <Sectores t={t} headingId={H1} showTexts={blockVisible(layout, "industries", "textos")} />
           <V3NextPage href="/team" label={t.sigue.label} title={t.sigue.title} ariaLabel={t.sigue.aria} />
         </div>
       </V3Main>

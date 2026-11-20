@@ -10,23 +10,29 @@
         "titleSecond": "Saucedo",
         "primaryCta": "Conozca la firma",
         "secondaryCta": "Hable con nosotros",
-        "tagline": "Derecho laboral para empresas",
+        "tagline": "Servicios legales para multinacionales",
         "place": [
-          "San Pedro Garza García",
-          "Desde 2010"
+          "Un ecosistema para la debida administración del capital humano",
+          ""
         ],
         "firma": "Al lado de las empresas en cada decisión que involucra a su personal.",
         "words": [
+          "multinacionales",
           "empresas",
-          "la industria",
-          "multinacionales"
+          "pymes"
+        ],
+        "practiceWords": [
+          "laborales",
+          "migratorios",
+          "corporativos",
+          "penales"
         ],
         "and": "y"
       },
       "firma": {
-        "title": "Nuestra firma",
+        "title": "Decisiones laborales con visión empresarial.",
         "body": [
-          "Desde San Pedro Garza García, Santos & Saucedo asesora a grupos industriales mexicanos, a multinacionales y a empresas de capital asiático en las decisiones que involucran a su personal."
+          "Desde Monterrey, México, Santos & Saucedo brinda asesoría jurídica laboral estratégica a grupos industriales mexicanos, empresas multinacionales y compañías de capital asiático, acompañándolos en la gestión de sus recursos humanos y relaciones laborales."
         ],
         "caption": "Río Tamazunchale 205 Norte, San Pedro Garza García. En el cristal, el Cerro de la Silla.",
         "alt": "Fachada de cristal de las oficinas de Santos & Saucedo con el Cerro de la Silla reflejado"
@@ -39,14 +45,14 @@
         ]
       },
       "practicas": {
-        "title": "Nuestras prácticas",
+        "title": "Nuestras áreas de especialidad",
         "entrada": "La práctica laboral es el centro de la firma; las demás la acompañan.",
         "ver": "Ver la práctica",
         "items": [
           {
             "slug": "laboral-seguridad-social",
-            "title": "Laboral y seguridad social",
-            "body": "Auditorías, inspecciones, documentación laboral, relaciones colectivas y litigio ante los Centros de Conciliación y los Tribunales Laborales. Es la práctica central de la firma y la que da sentido a las demás."
+            "title": "Laboral y Seguridad Social",
+            "body": "Nuestra práctica laboral y de seguridad social es el eje de Santos & Saucedo. Desde ahí acompañamos a las empresas en cada decisión que involucra a su gente, anticipando riesgos, fortaleciendo relaciones laborales y construyendo estabilidad para el crecimiento del negocio."
           },
           {
             "slug": "corporativo-contractual",
@@ -93,10 +99,10 @@
       "intro": {
         "boton": "Conozca la firma",
         "cifras": {
-          "anos": "Años de experiencia",
+          "anos": "Años en el mercado",
           "ciudades": "Ciudades con presencia",
           "entidades": "Entidades federativas",
-          "areas": "Áreas de práctica"
+          "areas": "Áreas de práctica de especialidad"
         }
       },
       "industrias": {
@@ -124,23 +130,29 @@
         "titleSecond": "Saucedo",
         "primaryCta": "Discover the firm",
         "secondaryCta": "Talk to our team",
-        "tagline": "Labor law for companies",
+        "tagline": "Legal services for multinationals",
         "place": [
-          "San Pedro Garza García",
-          "Since 2010"
+          "An ecosystem for the sound management of human capital",
+          ""
         ],
         "firma": "Alongside companies in every decision that involves their people.",
         "words": [
+          "multinationals",
           "companies",
-          "industry",
-          "multinationals"
+          "SMEs"
+        ],
+        "practiceWords": [
+          "labor",
+          "immigration",
+          "corporate",
+          "criminal"
         ],
         "and": "and"
       },
       "firma": {
-        "title": "Our firm",
+        "title": "Labor decisions with a business perspective.",
         "body": [
-          "From San Pedro Garza García, Santos & Saucedo advises Mexican industrial groups, multinationals and Asian-owned companies on the decisions that involve their people."
+          "From Monterrey, Mexico, Santos & Saucedo provides strategic labor law advice to Mexican industrial groups, multinational companies and Asian-owned companies, supporting them in managing their human resources and labor relations."
         ],
         "caption": "Río Tamazunchale 205 Norte, San Pedro Garza García. In the glass, the Cerro de la Silla.",
         "alt": "Glass facade of the Santos & Saucedo offices reflecting the Cerro de la Silla"
@@ -153,14 +165,14 @@
         ]
       },
       "practicas": {
-        "title": "Our practices",
+        "title": "Our areas of specialization",
         "entrada": "Labor law is the core of the firm; the other practices support it.",
         "ver": "View the practice",
         "items": [
           {
             "slug": "laboral-seguridad-social",
-            "title": "Labor and social security",
-            "body": "Audits, inspections, employment documentation, collective relations and litigation before the Conciliation Centers and Labor Courts. It is the firm’s core practice and gives meaning to the others."
+            "title": "Labor and Social Security",
+            "body": "Our labor and social security practice is the core of Santos & Saucedo. From there we support companies in every decision that involves their people, anticipating risks, strengthening labor relations and building stability for business growth."
           },
           {
             "slug": "corporativo-contractual",
@@ -207,10 +219,10 @@
       "intro": {
         "boton": "About the firm",
         "cifras": {
-          "anos": "Years of experience",
-          "ciudades": "Cities in our alliance network",
+          "anos": "Years in the market",
+          "ciudades": "Cities where we are present",
           "entidades": "States and Mexico City",
-          "areas": "Practice areas"
+          "areas": "Specialized practice areas"
         }
       },
       "industrias": {
@@ -1969,7 +1981,7 @@
     "home": {
       "title": {
         "en": "Santos & Saucedo | Law firm for companies in San Pedro Garza García",
-        "es": "Santos & Saucedo | Abogados para empresas en San Pedro Garza García",
+        "es": "Abogados laborales para empresas en Monterrey | Santos & Saucedo",
         "de": "Santos & Saucedo | Kanzlei für Unternehmen in San Pedro Garza García",
         "zh": "Santos & Saucedo | 圣佩德罗加尔萨加西亚的企业律师事务所",
         "ko": "Santos & Saucedo | 산페드로가르사가르시아의 기업 법률사무소",
@@ -2428,12 +2440,12 @@
       ],
       "stats": [
         {
-          "value": "40+",
-          "label": "Years of Experience"
+          "value": "16+",
+          "label": "Years in the market"
         },
         {
-          "value": "72+",
-          "label": "Cities in our alliance network"
+          "value": "120+",
+          "label": "Cities where we are present"
         }
       ],
       "heroLead": "Santos & Saucedo was founded in San Pedro Garza García with a practice devoted to employers. Since then it has advised Mexican industrial groups, multinational companies and Asian-owned businesses on the decisions that involve their workforce.",
@@ -2573,12 +2585,12 @@
       ],
       "stats": [
         {
-          "value": "40+",
-          "label": "Años de experiencia"
+          "value": "16+",
+          "label": "Años en el mercado"
         },
         {
-          "value": "72+",
-          "label": "Ciudades en nuestra red de alianzas"
+          "value": "120+",
+          "label": "Ciudades con presencia"
         }
       ],
       "heroLead": "Santos & Saucedo nació en San Pedro Garza García con una práctica dedicada a las empresas. Desde entonces asesora a grupos industriales mexicanos, a multinacionales y a empresas de capital asiático en las decisiones que involucran a su personal.",
@@ -2718,11 +2730,11 @@
       ],
       "stats": [
         {
-          "value": "40+",
+          "value": "16+",
           "label": "Jahre Erfahrung"
         },
         {
-          "value": "72+",
+          "value": "120+",
           "label": "Städte mit Präsenz"
         }
       ],
@@ -2863,11 +2875,11 @@
       ],
       "stats": [
         {
-          "value": "40+",
+          "value": "16+",
           "label": "年经验"
         },
         {
-          "value": "72+",
+          "value": "120+",
           "label": "覆盖城市"
         }
       ],
@@ -3008,11 +3020,11 @@
       ],
       "stats": [
         {
-          "value": "40+",
+          "value": "16+",
           "label": "년의 경험"
         },
         {
-          "value": "72+",
+          "value": "120+",
           "label": "진출 도시"
         }
       ],
@@ -3153,11 +3165,11 @@
       ],
       "stats": [
         {
-          "value": "40+",
+          "value": "16+",
           "label": "年の経験"
         },
         {
-          "value": "72+",
+          "value": "120+",
           "label": "展開都市"
         }
       ],
@@ -3298,11 +3310,11 @@
       ],
       "stats": [
         {
-          "value": "40+",
+          "value": "16+",
           "label": "سنوات من الخبرة"
         },
         {
-          "value": "72+",
+          "value": "120+",
           "label": "مدينة نتواجد فيها"
         }
       ],
@@ -3443,11 +3455,11 @@
       ],
       "stats": [
         {
-          "value": "40+",
+          "value": "16+",
           "label": "Лет опыта"
         },
         {
-          "value": "72+",
+          "value": "120+",
           "label": "Городов присутствия"
         }
       ],
@@ -3588,11 +3600,11 @@
       ],
       "stats": [
         {
-          "value": "40+",
+          "value": "16+",
           "label": "Années d'expérience"
         },
         {
-          "value": "72+",
+          "value": "120+",
           "label": "Villes de présence"
         }
       ],
@@ -3733,11 +3745,11 @@
       ],
       "stats": [
         {
-          "value": "40+",
+          "value": "16+",
           "label": "Anni di esperienza"
         },
         {
-          "value": "72+",
+          "value": "120+",
           "label": "Città con presenza"
         }
       ],
@@ -9818,7 +9830,8 @@
         "blocks": {
           "hero": true,
           "lista": true,
-          "animacion": true
+          "animacion": true,
+          "textos": false
         }
       },
       "team": {
@@ -10163,8 +10176,8 @@
   },
   "practice-names": {
     "laboral-seguridad-social": {
-      "es": "Laboral y seguridad social",
-      "en": "Labor and social security",
+      "es": "Laboral y Seguridad Social",
+      "en": "Labor and Social Security",
       "de": "Arbeits- und Sozialversicherungsrecht",
       "zh": "劳动与社会保障",
       "ko": "노동 및 사회보장",
@@ -10922,20 +10935,20 @@
   },
   "practice-services": {
     "es": {
-      "title": "Qué hacemos",
+      "title": "¿Qué hacemos?",
       "items": {
         "laboral-seguridad-social": [
-          "Auditorías laborales de contratos, expedientes, nómina y prestaciones",
-          "Contratos, reglamentos interiores, políticas y protocolos, incluidos los de la NOM-035",
-          "Preparación y acompañamiento en inspecciones de las autoridades del trabajo",
-          "Revisión de proveedores de servicios especializados ante el REPSE y el IMSS",
-          "Planeación laboral: plantillas, turnos, jornada de 40 horas, cajas y fondos de ahorro",
-          "Revisiones contractuales y salariales, y consultas para contratos colectivos",
-          "Aspectos laborales de adquisiciones, fusiones, escisiones y reestructuras",
-          "Terminaciones individuales y colectivas, y convenios ante la autoridad",
-          "Conciliación prejudicial y juicios ante los Tribunales Laborales",
-          "Investigaciones internas por acoso, hostigamiento o faltas graves",
-          "Cumplimiento ante el IMSS y el Infonavit"
+          "Integración de expedientes, nóminas, prestaciones (incluidas cajas y fondos de ahorro) y formatos laborales",
+          "Contratos, políticas y correctivos",
+          "Atención de inspecciones locales y federales y cumplimiento de normas laborales",
+          "Revisión de proveedores, incluidos los de servicios especializados (REPSE)",
+          "Ingeniería y planeación laboral: turnos, jornadas laborales y estructuras, entre otras",
+          "Negociación y revisión de contratos colectivos, tanto contractuales como salariales, y atención de asuntos sindicales",
+          "Due diligence: aspectos laborales en adquisiciones, fusiones, escisiones y reestructuras",
+          "Terminaciones individuales y colectivas",
+          "Atención de procedimientos de conciliación prejudicial y de juicios ante las autoridades laborales (juntas y tribunales)",
+          "Investigaciones internas por faltas graves para procesos de rescisión",
+          "Asesoría y cumplimiento de obligaciones ante el IMSS y el Infonavit"
         ],
         "corporativo-contractual": [
           "Constitución de sociedades mercantiles y civiles",
@@ -10967,17 +10980,17 @@
       "title": "What we do",
       "items": {
         "laboral-seguridad-social": [
-          "Labor audits of contracts, personnel files, payroll and benefits",
-          "Contracts, internal work rules, policies and protocols, including NOM-035",
-          "Preparation for and support during labor authority inspections",
-          "Review of specialized service providers under REPSE and IMSS",
-          "Labor planning: headcount, shifts, the 40-hour week, savings funds",
-          "Collective bargaining reviews and worker consultations for collective agreements",
-          "Labor aspects of acquisitions, mergers, spin-offs and restructurings",
-          "Individual and collective terminations, and settlements before the authority",
-          "Pre-judicial conciliation and trials before the Labor Courts",
-          "Internal investigations of harassment or serious misconduct",
-          "Compliance with IMSS and Infonavit"
+          "Preparation of personnel files, payroll, benefits (including savings funds and savings plans) and labor forms",
+          "Contracts, policies and disciplinary measures",
+          "Handling of local and federal inspections and compliance with labor standards",
+          "Review of suppliers, including specialized service providers (REPSE)",
+          "Labor engineering and planning: shifts, working hours and structures, among others",
+          "Negotiation and review of collective bargaining agreements, both contractual and wage reviews, and handling of union matters",
+          "Due diligence: labor aspects of acquisitions, mergers, spin-offs and restructurings",
+          "Individual and collective terminations",
+          "Pre-judicial conciliation procedures and trials before the labor authorities (boards and courts)",
+          "Internal investigations of serious misconduct for termination proceedings",
+          "Advice on and compliance with obligations before the IMSS and Infonavit"
         ],
         "corporativo-contractual": [
           "Incorporation of commercial and civil companies",

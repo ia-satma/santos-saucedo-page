@@ -62,3 +62,18 @@ html.mk-js .v3 .mk-telon:not(.is-cubre) .sh-pausa, .v3 .mk-js .mk-telon:not(.is-
 .v3 .mk-telon__escena{
   background:linear-gradient(180deg, rgb(var(--ss-navy-rgb, 12 35 64)) 0, rgb(var(--ss-navy-rgb, 12 35 64)) var(--ss-header-h, 72px), #0F3F6B 62%, #145487 100%);
 }
+
+/* Frase de la junta del 13-11-2026: «Servicios legales» + práctica que rota y «para» + a quién se
+   sirve. En el teléfono (la frase ya va en columna) la práctica baja a su propio renglón: con
+   «migratorios» el primero no cabe a 360 px. Así quedan tres renglones centrados. */
+@media (max-width:560px){
+  .v3 .sh-tag__l1--practica{flex-direction:column;align-items:center;row-gap:.2em}
+}
+
+/* Línea de apoyo de una sola parte («Un ecosistema para la debida administración del capital
+   humano», antes «San Pedro Garza García · Desde 2010»): puede ocupar dos renglones equilibrados
+   y nunca pasa del ancho de la pantalla. */
+.v3 .sh-portada__lugar--frase{
+  max-width:min(46em, calc(100vw - 36px)); margin-inline:auto;
+  white-space:normal; text-wrap:balance; line-height:1.6;
+}

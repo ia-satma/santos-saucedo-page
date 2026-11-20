@@ -27,7 +27,7 @@ type Previous = Record<string, Record<string, string[]>>;
 // Huellas de los valores anteriores, por slug y campo
 const PREVIOUS_PRACTICE: Previous = {
   "corporativo-contractual": { description: ["6ecfadb6b642e0a3cab9df0d"], descriptionEs: ["aeed60e875e6c02bca866640"], fullDescription: ["aee4bb13448b92bb9e5fdfd5", "c073c12955febabcf3cdb72c"], fullDescriptionEs: ["06ac44b6d0a697e1768aed3c"], name: ["588f72bea4604fe825bdbaad"], nameEs: ["0d63bb033cce38234e4481e1"] },
-  "laboral-seguridad-social": { description: ["0e9abb97bbecfe1c60086848", "ba8987a0abe773ca9f3e126f"], descriptionEs: ["344c60f57655380f23da8e24"], fullDescription: ["43df8a1b0f0c5cf92928c7cb", "ad1789ccd979746a2de82d81", "f1e5f2fd72a8ec546f8630e2", "89477c6100cf4c5844f042d8"], fullDescriptionEs: ["04203acf8b78d0347411d24c", "66bdca7dd48be0e68f4d549d", "64e5113da935ae6cd1940627"], name: ["0eef421b01aeb4afa1fa2621"], nameEs: ["ba656cd49b532dd3abc3d8d3"] },
+  "laboral-seguridad-social": { description: ["0e9abb97bbecfe1c60086848", "ba8987a0abe773ca9f3e126f", "46904deb5dbc8092fe441d81"], descriptionEs: ["344c60f57655380f23da8e24", "7e34214f26c1a5e9b005c3ae"], fullDescription: ["43df8a1b0f0c5cf92928c7cb", "ad1789ccd979746a2de82d81", "f1e5f2fd72a8ec546f8630e2", "89477c6100cf4c5844f042d8", "99df4d169975e6e2d5037296"], fullDescriptionEs: ["04203acf8b78d0347411d24c", "66bdca7dd48be0e68f4d549d", "64e5113da935ae6cd1940627", "4e1005b8452d41d347d9918e"], name: ["0eef421b01aeb4afa1fa2621", "b74f7b82a49f18b8c8c7c26a"], nameEs: ["ba656cd49b532dd3abc3d8d3", "8714673f6514d7f967972cfb"] },
   "litigio-contencioso": { description: ["8c4b6f9d9c96c54ab180927f", "213edd48f62531e50c7cab7c"], descriptionEs: ["5da8a2bb6271ff669e770e83", "c6e54aaa26bbfa964a114b3b"], fullDescription: ["0d0e28ff72cb8483c4164e71", "a157657b56b54d9989250ccf"], fullDescriptionEs: ["1ea643b8694654db60a3f714"], name: ["15f54774ddd33839214acad6", "ad0bbbe2be4164b4416cf26f", "f0a2a3136bc5606b667dd368"], nameEs: ["59344dc35239215a4669d412", "feb99a4bab4897344c2bde7c", "33e3143f444ba541508b1011"] },
   "migratorio": { description: ["49c43d16e80425924efaea6e", "fa7d6624484a60acb12ef648"], descriptionEs: ["73b15d50cbd9cc6a280cedb6"], fullDescription: ["480e57f2820ff11059f90ac7", "893edeb375ff2e346a4ec554", "5e9ce6a02b7a4ec31053eb3f"], fullDescriptionEs: ["23fc800ea2aaaa003bcf6339", "8b70ce95436fe8c9618f7163"] },
 };
@@ -69,6 +69,33 @@ const PREVIOUS_NEWS: Previous = {
 // Contenido editable (cms-defaults.json): huellas del texto predeterminado anterior, por sección
 // y ruta dentro de la sección (los índices de listas como números)
 const PREVIOUS_CMS: Previous = {
+  // «¿Qué hacemos?» de Laboral: lista aprobada por Mario en la junta del 13-11-2026 (de lo más
+  // básico a lo más complejo; sin «40 horas» ni NOM-035 por nombre). Un texto del panel se respeta.
+  "practice-services": {
+    "es.title": ["d9ec7af51a0ffa13742addbf"],
+    "es.items.laboral-seguridad-social.0": ["8d61d7dcb5b56cef3f9a44f6"],
+    "es.items.laboral-seguridad-social.1": ["2e1b097f69d917e7b8a55583"],
+    "es.items.laboral-seguridad-social.2": ["ca8bdc1f0fb91f9e2fa5c0d4"],
+    "es.items.laboral-seguridad-social.3": ["d27e52793ede00f806b2ba5c"],
+    "es.items.laboral-seguridad-social.4": ["d208a573e1a204838770abb9"],
+    "es.items.laboral-seguridad-social.5": ["2da146b0b43c243496370661"],
+    "es.items.laboral-seguridad-social.6": ["8c509f67ccb571285523c2b4"],
+    "es.items.laboral-seguridad-social.7": ["5d23d471c99e0e29f29d5342"],
+    "es.items.laboral-seguridad-social.8": ["756030ac066b670b93e03202"],
+    "es.items.laboral-seguridad-social.9": ["2b44bb6db37d2d9aa2150499"],
+    "es.items.laboral-seguridad-social.10": ["0ecd0f82ba8f55bd6358400f"],
+    "en.items.laboral-seguridad-social.0": ["fd125237731d857f14f77120"],
+    "en.items.laboral-seguridad-social.1": ["f275bdafba22c39506116493"],
+    "en.items.laboral-seguridad-social.2": ["c2ec08010f1eef5b22185df9"],
+    "en.items.laboral-seguridad-social.3": ["959bbd4cb626d627bb673d5f"],
+    "en.items.laboral-seguridad-social.4": ["0ea22e2f1b1557e1d6fae2f7"],
+    "en.items.laboral-seguridad-social.5": ["401ee8c7b802dee2e7113330"],
+    "en.items.laboral-seguridad-social.6": ["4b97e1eb4115c41dd8e13be9"],
+    "en.items.laboral-seguridad-social.7": ["201f0a4e42018f668a92923c"],
+    "en.items.laboral-seguridad-social.8": ["58c7eb5d9f1ad916030ee92b"],
+    "en.items.laboral-seguridad-social.9": ["8bab65deec5357aae64e8632"],
+    "en.items.laboral-seguridad-social.10": ["e7a32a224db0b595f883d0b5"],
+  },
   // Azules anteriores (índigo); desde la demo v3 (junta del 5-11-2026): azul noche #0C2340 y
   // azul de la junta #0F3F6B. Un color elegido en el panel se respeta.
   "theme": {
@@ -76,6 +103,9 @@ const PREVIOUS_CMS: Previous = {
     "marino": ["ddb51e3d21c6e3690a765f3d", "e013aaba13a6187d558e5a06"],
   },
   "seo": {
+    // Título del Inicio (junta del 13-11-2026); antes «Santos & Saucedo | Abogados para empresas en
+    // San Pedro Garza García»
+    "home.title.es": ["887ccab566edead33ba4cb28"],
     "home.description.en": ["0c24ab9c819464f6549a97f3"],
     "home.description.es": ["a9ea4afcf2a1c65835c6bc05"],
     "home.description.de": ["a926d2696f5d7378f2560e24"],
@@ -120,60 +150,60 @@ const PREVIOUS_CMS: Previous = {
   },
   "about": {
     "en.historyText1": ["8192f4823e700c913778323f"],
-    "en.stats.0.value": ["48f1733c2419f920df340e58"],
+    "en.stats.0.value": ["48f1733c2419f920df340e58", "5ed88990b5f019572d418d40"],
     "en.stats.0.label": ["dfa80a281c6c02340f2d41ff"],
     "en.stats.1.value": ["a3e7273c1bc9a76f3d2aeb06"],
-    "en.stats.1.label": ["1624c1099c818d01e99ceeb4"],
+    "en.stats.1.label": ["1624c1099c818d01e99ceeb4", "02f8782490dcbe38ce7fb5bd"],
     "es.historyText1": ["3dd55a45c637e892adb66cb6"],
-    "es.stats.0.value": ["48f1733c2419f920df340e58"],
+    "es.stats.0.value": ["48f1733c2419f920df340e58", "5ed88990b5f019572d418d40"],
     "es.stats.0.label": ["b4ade80ad9e7ed9994e91986"],
     "es.stats.1.value": ["a3e7273c1bc9a76f3d2aeb06"],
-    "es.stats.1.label": ["736b9cc8f26ab730ad111624"],
+    "es.stats.1.label": ["736b9cc8f26ab730ad111624", "f3b9caf6ac84220764735998"],
     "de.subtitle": ["fcc98672b99a6e5c1ebc8628"],
     "de.historyText1": ["f71daee648a0c3f3468f3e39"],
-    "de.stats.0.value": ["48f1733c2419f920df340e58"],
+    "de.stats.0.value": ["48f1733c2419f920df340e58", "5ed88990b5f019572d418d40"],
     "de.stats.0.label": ["0c1e088052d5a8c7af4a1334"],
     "de.stats.1.value": ["a3e7273c1bc9a76f3d2aeb06"],
     "de.stats.1.label": ["d0d72ba631e75e0b78101e4d"],
     "zh.subtitle": ["d30c1ee9956c3cdd6b09b0d7"],
     "zh.historyText1": ["686d5493cbc2f3148c3bc616"],
-    "zh.stats.0.value": ["48f1733c2419f920df340e58"],
+    "zh.stats.0.value": ["48f1733c2419f920df340e58", "5ed88990b5f019572d418d40"],
     "zh.stats.0.label": ["fcc415cfac4dda07ca84a884"],
     "zh.stats.1.value": ["a3e7273c1bc9a76f3d2aeb06"],
     "zh.stats.1.label": ["08da52f5b2e753c1b5bf280c"],
     "ko.subtitle": ["0bc95cda6b72397e530c4e8d"],
     "ko.historyText1": ["f5fd81b1e84dd0a864427ce0"],
-    "ko.stats.0.value": ["48f1733c2419f920df340e58"],
+    "ko.stats.0.value": ["48f1733c2419f920df340e58", "5ed88990b5f019572d418d40"],
     "ko.stats.0.label": ["a548146493ed7a8993422e7a"],
     "ko.stats.1.value": ["a3e7273c1bc9a76f3d2aeb06"],
     "ko.stats.1.label": ["847a5e0d8b8d06e97fb42026"],
     "ja.subtitle": ["6b85007a68fb37b25debb497"],
     "ja.historyText1": ["8e8fd2b0c36ab744a49fe5ed"],
-    "ja.stats.0.value": ["48f1733c2419f920df340e58"],
+    "ja.stats.0.value": ["48f1733c2419f920df340e58", "5ed88990b5f019572d418d40"],
     "ja.stats.0.label": ["4b0292b33e24d17c385aea37"],
     "ja.stats.1.value": ["a3e7273c1bc9a76f3d2aeb06"],
     "ja.stats.1.label": ["510a608f071fe180c26f92e1"],
     "ar.subtitle": ["aa2725e6d6052083be7d7c67"],
     "ar.historyText1": ["207b47b5e2c956de652384ea"],
-    "ar.stats.0.value": ["48f1733c2419f920df340e58"],
+    "ar.stats.0.value": ["48f1733c2419f920df340e58", "5ed88990b5f019572d418d40"],
     "ar.stats.0.label": ["c8105feda294bfe5ad177a5e"],
     "ar.stats.1.value": ["a3e7273c1bc9a76f3d2aeb06"],
     "ar.stats.1.label": ["4d70ce0f3a1903bf6407cd37"],
     "ru.subtitle": ["325fa5407f2683823a8890e2"],
     "ru.historyText1": ["009ed3acca1b258fdf83c208"],
-    "ru.stats.0.value": ["48f1733c2419f920df340e58"],
+    "ru.stats.0.value": ["48f1733c2419f920df340e58", "5ed88990b5f019572d418d40"],
     "ru.stats.0.label": ["24081ded2eab5075af55e30b"],
     "ru.stats.1.value": ["a3e7273c1bc9a76f3d2aeb06"],
     "ru.stats.1.label": ["4e40e02b09bf5cf4c24b16c2"],
     "fr.subtitle": ["9a4d907c6e2d6c8265a092c3"],
     "fr.historyText1": ["1d6acc6c0e8368d3e8b5469b"],
-    "fr.stats.0.value": ["48f1733c2419f920df340e58"],
+    "fr.stats.0.value": ["48f1733c2419f920df340e58", "5ed88990b5f019572d418d40"],
     "fr.stats.0.label": ["102dff3e2a1fb0e0f67ea938"],
     "fr.stats.1.value": ["a3e7273c1bc9a76f3d2aeb06"],
     "fr.stats.1.label": ["c6e4a68f4970c535f24c7afd"],
     "it.subtitle": ["85c62f53578f24ea1629b9d1"],
     "it.historyText1": ["2e451cfddfb5b396c8992a71"],
-    "it.stats.0.value": ["48f1733c2419f920df340e58"],
+    "it.stats.0.value": ["48f1733c2419f920df340e58", "5ed88990b5f019572d418d40"],
     "it.stats.0.label": ["6458106f626f22c0f113b3c5"],
     "it.stats.1.value": ["a3e7273c1bc9a76f3d2aeb06"],
     "it.stats.1.label": ["af3f36d12d6db75831e37527"],
@@ -213,6 +243,9 @@ const PREVIOUS_CMS: Previous = {
     "litigio-contencioso.ru": ["b94a3c08b20519c7fc1d6fbd"],
     "litigio-contencioso.fr": ["ee2f884c4dee21536a8367a3"],
     "litigio-contencioso.it": ["cf9fba883b3d63994a0ad000"],
+    // Junta del 13-11-2026 (bloques del Inicio tras la portada)
+    "laboral-seguridad-social.en": ["b74f7b82a49f18b8c8c7c26a"],
+    "laboral-seguridad-social.es": ["8714673f6514d7f967972cfb"],
   },
   // /team v3: «El equipo» y la etiqueta del muro de retratos con la redacción de la demo
   "team": {
@@ -248,25 +281,54 @@ const PREVIOUS_CMS: Previous = {
   // creemos» la filosofía de la preparación para juicio y los títulos, «Nuestras prácticas» y
   // «Nuestros socios». Los párrafos sobrantes del texto anterior
   // (body.1) se quitan: el nuevo predeterminado tiene uno solo.
+  // Junta del 13-11-2026: titular y párrafo de la firma («Decisiones laborales con visión
+  // empresarial.»), etiquetas de las cifras, «Nuestras áreas de especialidad» y el nombre y resumen
+  // de «Laboral y Seguridad Social»; las cifras de about.stats pasan a 16+ y 120+.
   "home": {
-    "es.firma.title": ["4c338914ae1d3c7546e49815"],
-    "es.firma.body.0": ["ad104adac365c755e387b584"],
+    // Portada del Inicio (junta del 13-11-2026): «Servicios legales» + práctica que rota y «para» +
+    // multinacionales / empresas / pymes; la línea «San Pedro Garza García · Desde 2010» pasa a «Un
+    // ecosistema para la debida administración del capital humano» (el segundo campo queda vacío).
+    // Antes: «Derecho laboral para empresas» con empresas / la industria / multinacionales.
+    "es.hero.tagline": ["1929c72b970610faace75f8e"],
+    "es.hero.words.0": ["df51a73104425a45608089d4"],
+    "es.hero.words.1": ["7f97f4ddc46c4750ddbebed3"],
+    "es.hero.words.2": ["50557facef4568afe0476eca"],
+    "es.hero.place.0": ["2fde2130ce2f35b5684f4a98"],
+    "es.hero.place.1": ["f7da6b852497ed21cea07d92"],
+    "en.hero.tagline": ["e069b0e0f1b5e3021e301c5a"],
+    "en.hero.words.0": ["1701cfb023a18b1534d60983"],
+    "en.hero.words.1": ["14d24f98ae39d2990b2777a4"],
+    "en.hero.words.2": ["222c4f98e9d653373425046e"],
+    "en.hero.place.0": ["2fde2130ce2f35b5684f4a98"],
+    "en.hero.place.1": ["1d3009abb21e9529515c5ef4"],
+    "es.firma.title": ["4c338914ae1d3c7546e49815", "e13bc80161d94639904ecdc6"],
+    "es.firma.body.0": ["ad104adac365c755e387b584", "98166ef6f5ad3db70d111ddf"],
     "es.firma.body.1": ["99ab70b4acf417c1f33e69ad"],
     "es.creemos.label": ["757a723701a61d736efd370c"],
     "es.creemos.quote": ["68f4db8a99ba84b23fc408a1"],
     "es.creemos.body.0": ["69411a228c4e08cb39f90fc0"],
     "es.creemos.body.1": ["aa6e19d8c9c1ea77fa80fb74"],
-    "en.firma.title": ["4b4c853f5b5e71278689a271"],
-    "en.firma.body.0": ["7b4f57ede3276fe39d371c30"],
+    "en.firma.title": ["4b4c853f5b5e71278689a271", "9fdf4263e9a48ad687629d44"],
+    "en.firma.body.0": ["7b4f57ede3276fe39d371c30", "04d7acae0eed179d2f47c7cf"],
     "en.firma.body.1": ["af80e9e094dc417ab1684922"],
     "en.creemos.label": ["0e1aadb565a5fdf961b977dc"],
     "en.creemos.quote": ["9e547b7b8dbf14d9121bfef8"],
     "en.creemos.body.0": ["c7a66f6e849c1219fac1e18f"],
     "en.creemos.body.1": ["f68e3012a9be60b0c6c79f1e"],
-    "es.practicas.title": ["aa456b778d7e9e3227b0f4e9"],
-    "en.practicas.title": ["cdb7fb6d04abc5e38a7a10b9"],
+    "es.practicas.title": ["aa456b778d7e9e3227b0f4e9", "bf33ea4b8131c0038ec428c3"],
+    "en.practicas.title": ["cdb7fb6d04abc5e38a7a10b9", "0077e17b022d69ddead136de"],
     "es.socios.title": ["01d596a28575c75abeb44632"],
     "en.socios.title": ["5dab502bfba3c3dfc2c9308a"],
+    // Junta del 13-11-2026 (bloques del Inicio tras la portada)
+    "en.intro.cifras.anos": ["29eb74e4077817153499c6d3"],
+    "en.intro.cifras.areas": ["85bcf91266b7148d2e284795"],
+    "en.intro.cifras.ciudades": ["02f8782490dcbe38ce7fb5bd"],
+    "en.practicas.items.0.body": ["46904deb5dbc8092fe441d81"],
+    "en.practicas.items.0.title": ["d46891924512933b8a68df7c"],
+    "es.intro.cifras.anos": ["b4ade80ad9e7ed9994e91986"],
+    "es.intro.cifras.areas": ["32b26c4ccf4e9e2047c03ed3"],
+    "es.practicas.items.0.body": ["7e34214f26c1a5e9b005c3ae"],
+    "es.practicas.items.0.title": ["b1deb7d7385b1813f6155101"],
   },
   // Junta del 5-11-2026: el correo general info@ se retira; el nuevo es administracion@. Y la
   // «Empresa» del formulario de contacto pasa a ser obligatoria: su etiqueta pierde el «(opcional)».

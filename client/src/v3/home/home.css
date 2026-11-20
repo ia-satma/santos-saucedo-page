@@ -6,6 +6,21 @@
    entre bandas bajo 760 px. */
 .hm-page .hm-band.v3{ padding-bottom: 0 }
 
+/* ---- La firma (junta del 13-11-2026) ----
+   El titular del panel se ve con la voz serif de la frase; el párrafo, más largo, va debajo en el
+   cuerpo de texto. En las cifras va primero la etiqueta y debajo el número; los números quedan
+   alineados al pie de cada columna aunque una etiqueta ocupe dos renglones. */
+.v3 .sh-intro__texto{ display: grid; gap: clamp(18px, 2vw, 28px); min-width: 0 }
+.v3 .sh-intro__cuerpo{
+  margin: 0; max-width: 40em;
+  font-family: var(--sans); font-size: clamp(1.02rem, .98rem + .2vw, 1.14rem); line-height: 1.6;
+  color: var(--gris); text-wrap: pretty;
+}
+.v3 .sh-cifras.sh-cifras--etiqueta-arriba > div{ flex-direction: column; justify-content: space-between }
+/* Pedido del 20-11-2026: las columnas alternan. 1.ª y 3.ª: número grande y debajo la etiqueta;
+   2.ª y 4.ª: la etiqueta arriba y debajo el número grande (en el HTML va siempre etiqueta + número). */
+.v3 .sh-cifras.sh-cifras--etiqueta-arriba > div:nth-child(odd){ flex-direction: column-reverse; justify-content: flex-end }
+
 /* ---- Nuestras prácticas: la foto de cada cuadro en el teléfono y con toque ----
    demo.css la pinta como fondo CSS (no se difiere: ~1.5 MB al cargar la página). Aquí es una <img>
    diferida dentro del cuadro, con el mismo encuadre (cover, 50% 50%) y debajo del mismo velo

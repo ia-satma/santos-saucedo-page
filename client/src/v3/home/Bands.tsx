@@ -17,16 +17,16 @@ import "./home.css";
 import { v3Asset } from "../asset";
 
 const ABOUT_STATS_FALLBACK = {
-  es: { stats: [{ value: "40+" }, { value: "72+" }] },
-  en: { stats: [{ value: "40+" }, { value: "72+" }] },
-  de: { stats: [{ value: "40+" }, { value: "72+" }] },
-  zh: { stats: [{ value: "40+" }, { value: "72+" }] },
-  ko: { stats: [{ value: "40+" }, { value: "72+" }] },
-  ja: { stats: [{ value: "40+" }, { value: "72+" }] },
-  ar: { stats: [{ value: "40+" }, { value: "72+" }] },
-  ru: { stats: [{ value: "40+" }, { value: "72+" }] },
-  fr: { stats: [{ value: "40+" }, { value: "72+" }] },
-  it: { stats: [{ value: "40+" }, { value: "72+" }] },
+  es: { stats: [{ value: "16+" }, { value: "120+" }] },
+  en: { stats: [{ value: "16+" }, { value: "120+" }] },
+  de: { stats: [{ value: "16+" }, { value: "120+" }] },
+  zh: { stats: [{ value: "16+" }, { value: "120+" }] },
+  ko: { stats: [{ value: "16+" }, { value: "120+" }] },
+  ja: { stats: [{ value: "16+" }, { value: "120+" }] },
+  ar: { stats: [{ value: "16+" }, { value: "120+" }] },
+  ru: { stats: [{ value: "16+" }, { value: "120+" }] },
+  fr: { stats: [{ value: "16+" }, { value: "120+" }] },
+  it: { stats: [{ value: "16+" }, { value: "120+" }] },
 } as const;
 
 const INDUSTRIES_CMS_FALLBACK = Object.fromEntries(
@@ -51,9 +51,11 @@ export function Band({ start, end = start, name, children }: { start: Tone; end?
     como la demo escribía «a&nbsp;su&nbsp;personal» y «a&nbsp;juicio». */
 const sinViuda = (s: string) => s.replace(/\s+(\S+)\s*$/, "\u00a0$1");
 
-/** La firma en una frase, «Conozca la firma» a su lado y las cifras sobre la línea de cota.
-    Título (oculto) y frase del panel (home.firma); años y ciudades, de las cifras de «La firma»
-    (about.stats); el botón y las etiquetas, de copy.ts. */
+/** La firma: su titular y su párrafo, «Conozca la firma» a su lado y las cifras sobre la línea de cota.
+    Titular y párrafo del panel (home.firma: title y body[0]); años y ciudades, de las cifras de «La
+    firma» (about.stats); el botón y las etiquetas, del panel (home.intro) o de copy.ts.
+    Junta del 13-11-2026: el titular se ve («Decisiones laborales con visión empresarial.») y en cada
+    cifra va primero la etiqueta y debajo el número (Mario: «primero el subtítulo y después el número»). */
 export function IntroBand({ lang, areas }: { lang: V3Lang; areas: number }) {
   const { language } = useLanguage();
   const liveHome = useCmsContent("home", home26) as any;
@@ -61,15 +63,17 @@ export function IntroBand({ lang, areas }: { lang: V3Lang; areas: number }) {
   const t = current.intro ?? homeCopyFor(language).intro;
   const f = current.firma;
   const stats = useCmsContent("about", ABOUT_STATS_FALLBACK)[lang]?.stats;
-  const anos = stats?.[0]?.value?.trim() || "40+";
-  const ciudades = stats?.[1]?.value?.trim() || "72+";
+  const anos = stats?.[0]?.value?.trim() || "16+";
+  const ciudades = stats?.[1]?.value?.trim() || "120+";
   return (
     <section className="sh-intro" id="firma-intro" aria-labelledby="intro-h">
       <div className="sh-wrap sh-intro__in">
-        <h2 id="intro-h" className="sh-sr">{f.title}</h2>
-        <p className="sh-intro__frase">{keepFirmName(sinViuda(f.body[0] ?? ""))}</p>
+        <div className="sh-intro__texto">
+          <h2 id="intro-h" className="sh-intro__frase">{sinViuda(f.title ?? "")}</h2>
+          {f.body?.[0] ? <p className="sh-intro__cuerpo">{keepFirmName(sinViuda(f.body[0]))}</p> : null}
+        </div>
         <Link className="sh-boton sh-intro__boton" href="/about">{t.boton}</Link>
-        <dl className="sh-cifras">
+        <dl className="sh-cifras sh-cifras--etiqueta-arriba">
           <div><dt>{t.cifras.anos}</dt><dd>{anos}</dd></div>
           <div><dt>{t.cifras.ciudades}</dt><dd>{ciudades}</dd></div>
           <div><dt>{t.cifras.entidades}</dt><dd>32</dd></div>
@@ -84,7 +88,9 @@ export function IntroBand({ lang, areas }: { lang: V3Lang; areas: number }) {
     una tira de su foto bajo el velo Azul noche; la que se señala (mouse, teclado o toque) se abre,
     muestra la foto y su línea, y lleva a su apartado en «Industrias». Siempre hay una abierta: el
     bloque nunca queda plano. Nombres, líneas y fotos son los de la página «Industrias». */
-export function IndustriasBand({ lang }: { lang: V3Lang }) {
+// showTexts: interruptor «Textos de cada industria» (layout.pages.industries.blocks.textos), compartido
+// con la página «Industrias». Apagado por acuerdo con Mario (13-11-2026): quedan nombres y fotos.
+export function IndustriasBand({ lang, showTexts = true }: { lang: V3Lang; showTexts?: boolean }) {
   const { language } = useLanguage();
   const liveHome = useCmsContent("home", home26) as any;
   const industriesCms = useCmsContent("industries", INDUSTRIES_CMS_FALLBACK) as any;
@@ -130,10 +136,14 @@ export function IndustriasBand({ lang }: { lang: V3Lang }) {
                   <span className="hm-acord__signo" aria-hidden="true" />
                 </button>
                 <div className="hm-acord__panel" id={panel} hidden={!on}>
-                  <p className="hm-acord__linea">{it.linea}</p>
-                  <ul className="hm-acord__asuntos" role="list">
-                    {it.lista.slice(0, 3).map((x: string) => <li key={x}>{x}</li>)}
-                  </ul>
+                  {showTexts ? (
+                    <>
+                      <p className="hm-acord__linea">{it.linea}</p>
+                      <ul className="hm-acord__asuntos" role="list">
+                        {it.lista.slice(0, 3).map((x: string) => <li key={x}>{x}</li>)}
+                      </ul>
+                    </>
+                  ) : null}
                   <Link className="hm-acord__ir" href={`/industries#in-${it.id}`} tabIndex={on ? 0 : -1}>{t.ver}</Link>
                 </div>
               </li>

@@ -1,19 +1,19 @@
 {
   "es": {
-    "title": "Qué hacemos",
+    "title": "¿Qué hacemos?",
     "items": {
       "laboral-seguridad-social": [
-        "Auditorías laborales de contratos, expedientes, nómina y prestaciones",
-        "Contratos, reglamentos interiores, políticas y protocolos, incluidos los de la NOM-035",
-        "Preparación y acompañamiento en inspecciones de las autoridades del trabajo",
-        "Revisión de proveedores de servicios especializados ante el REPSE y el IMSS",
-        "Planeación laboral: plantillas, turnos, jornada de 40 horas, cajas y fondos de ahorro",
-        "Revisiones contractuales y salariales, y consultas para contratos colectivos",
-        "Aspectos laborales de adquisiciones, fusiones, escisiones y reestructuras",
-        "Terminaciones individuales y colectivas, y convenios ante la autoridad",
-        "Conciliación prejudicial y juicios ante los Tribunales Laborales",
-        "Investigaciones internas por acoso, hostigamiento o faltas graves",
-        "Cumplimiento ante el IMSS y el Infonavit"
+        "Integración de expedientes, nóminas, prestaciones (incluidas cajas y fondos de ahorro) y formatos laborales",
+        "Contratos, políticas y correctivos",
+        "Atención de inspecciones locales y federales y cumplimiento de normas laborales",
+        "Revisión de proveedores, incluidos los de servicios especializados (REPSE)",
+        "Ingeniería y planeación laboral: turnos, jornadas laborales y estructuras, entre otras",
+        "Negociación y revisión de contratos colectivos, tanto contractuales como salariales, y atención de asuntos sindicales",
+        "Due diligence: aspectos laborales en adquisiciones, fusiones, escisiones y reestructuras",
+        "Terminaciones individuales y colectivas",
+        "Atención de procedimientos de conciliación prejudicial y de juicios ante las autoridades laborales (juntas y tribunales)",
+        "Investigaciones internas por faltas graves para procesos de rescisión",
+        "Asesoría y cumplimiento de obligaciones ante el IMSS y el Infonavit"
       ],
       "corporativo-contractual": [
         "Constitución de sociedades mercantiles y civiles",
@@ -45,17 +45,17 @@
     "title": "What we do",
     "items": {
       "laboral-seguridad-social": [
-        "Labor audits of contracts, personnel files, payroll and benefits",
-        "Contracts, internal work rules, policies and protocols, including NOM-035",
-        "Preparation for and support during labor authority inspections",
-        "Review of specialized service providers under REPSE and IMSS",
-        "Labor planning: headcount, shifts, the 40-hour week, savings funds",
-        "Collective bargaining reviews and worker consultations for collective agreements",
-        "Labor aspects of acquisitions, mergers, spin-offs and restructurings",
-        "Individual and collective terminations, and settlements before the authority",
-        "Pre-judicial conciliation and trials before the Labor Courts",
-        "Internal investigations of harassment or serious misconduct",
-        "Compliance with IMSS and Infonavit"
+        "Preparation of personnel files, payroll, benefits (including savings funds and savings plans) and labor forms",
+        "Contracts, policies and disciplinary measures",
+        "Handling of local and federal inspections and compliance with labor standards",
+        "Review of suppliers, including specialized service providers (REPSE)",
+        "Labor engineering and planning: shifts, working hours and structures, among others",
+        "Negotiation and review of collective bargaining agreements, both contractual and wage reviews, and handling of union matters",
+        "Due diligence: labor aspects of acquisitions, mergers, spin-offs and restructurings",
+        "Individual and collective terminations",
+        "Pre-judicial conciliation procedures and trials before the labor authorities (boards and courts)",
+        "Internal investigations of serious misconduct for termination proceedings",
+        "Advice on and compliance with obligations before the IMSS and Infonavit"
       ],
       "corporativo-contractual": [
         "Incorporation of commercial and civil companies",

@@ -70,7 +70,7 @@ async function check(page, expected, language) {
       assert.ok(text.includes(normalize(phrase)), `Approved content is complete: ${phrase.slice(0, 45)}`);
     }
   }
-  assert.deepEqual(await page.getByTestId("section-stats").locator("dd").allTextContents(), ["40+", "72+"]);
+  assert.deepEqual(await page.getByTestId("section-stats").locator("dd").allTextContents(), ["16+", "120+"]);
   assert.deepEqual(await page.getByTestId("section-stats").locator('[data-testid^="stat-"]').evaluateAll(items =>
     items.map(item => item.firstElementChild.tagName)), ["DT", "DT"]);
   const layout = await main.evaluate(el => ({

@@ -6,7 +6,8 @@
    - Un solo requestAnimationFrame; lee getBoundingClientRect y escribe solo transform. Duerme fuera
      de pantalla, sin scroll o con la pestaña oculta.
    - Modo Mario (html.rm): el mismo guion por fundidos, sin acercamiento, sin video y sin frase que
-     cambie sola. El envoltorio .mk-js lleva también .rm (demo.css lo espera dentro de .v3).
+     cambie sola (se ven las primeras palabras, fijas). El envoltorio .mk-js lleva también .rm
+     (demo.css lo espera dentro de .v3).
    initTelon(raíz) → api; api.destroy() deshace todo (listeners, observadores, rAF, relojes). */
 
 const NAT_W = 1409, NAT_H = 2160;
@@ -42,6 +43,10 @@ const R_ON = 0.14, R_OFF = 0.08, R_F_ON = 0.42, R_F_OFF = 0.36;
 
 /* Frase que rota: tiempos de la demo */
 const FRASE_PRIMERA = 2500, FRASE_PASO = 3200, FRASE_VUELTAS = 3;
+/* Práctica que rota en el primer renglón (junta del 13-11-2026, Mario): la primera palabra
+   («laborales», la práctica insignia) queda 5 s en pantalla; las demás, 3 s cada una. Fijos aquí
+   (no en el panel): si se cambia el orden en el panel, la primera palabra es la que dura más. */
+const PRACTICA_PRIMERA = 5000, PRACTICA_PASO = 3000;
 const EASE = { out: "cubic-bezier(.16,1,.3,1)", inout: "cubic-bezier(.65,0,.35,1)", in: "cubic-bezier(.7,0,.84,0)" };
 
 const clamp = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
@@ -56,6 +61,8 @@ function sigue(actual: number, meta: number, dt: number, tau: number) {
 export interface TelonOptions {
   /** Palabras que rotan en la frase (la primera es la que trae el texto del panel). null: frase fija. */
   words: string[] | null;
+  /** Prácticas que rotan al final del primer renglón (junta del 13-11-2026). null: sin ese hueco. */
+  practiceWords?: string[] | null;
   /** Empieza en pausa (el visitante lo pausó en otra visita, o ahorra datos). */
   paused?: boolean;
   /** El navegador rechazó reproducir el video (no por una pausa): el botón pasa a «Reproducir». */
@@ -67,7 +74,7 @@ export interface TelonApi {
   pausa(on: boolean): void;
   /** Cambia las palabras que rotan (cambio de idioma o de la frase del panel) sin rehacer el telón:
       la portada se queda como está y la frase vuelve a empezar por la primera palabra. */
-  palabras(nuevas: string[] | null): void;
+  palabras(nuevas: string[] | null, practicas?: string[] | null): void;
   /** El video recibió (o cambió) su fuente: se reproduce si toca. */
   video(): void;
   destroy(): void;
@@ -315,7 +322,7 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
     envoltorio.classList.toggle("rm", si);
     modo(si);
     videoSegunRM();
-    if (rm) detener(); else { vueltas = 0; arrancar(true); }
+    if (rm) detener(); else { reiniciar(); arrancar(true); }
     let destino = Y, dentro = false;
     if (antes) {
       const nuevo = sec!.offsetHeight;
@@ -347,105 +354,154 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
   /* =====================================================================
      Frase que alterna (shell.js de la demo): solo con la portada abierta y a la vista,
      tres vueltas y descansa en la primera palabra. En modo Mario no cambia sola.
+     Junta del 13-11-2026: dos palabras que rotan, cada una con su propio reloj y el mismo rodillo:
+     la práctica al final del primer renglón («Servicios legales» + laborales, migratorios…;
+     data-rota="practica") y a quién se sirve en el segundo («para» + multinacionales, empresas,
+     pymes; data-rota="publico").
      ===================================================================== */
   const tag = sec.querySelector<HTMLElement>(".sh-tag[data-frase]");
-  const slot = tag?.querySelector<HTMLElement>(".sh-tag__slot") || null;
-  const pal = tag?.querySelector<HTMLElement>(".sh-tag__w") || null;
-  let words = opts.words && opts.words.length ? opts.words : null;
-  let W: number[] = [], idx = 0, vueltas = 0, timer = 0, enVista = false, corriendo = false, portadaVista = true;
-  const animaciones = new Set<Animation>();
-  function anima(el: HTMLElement, k: Keyframe[], o: KeyframeAnimationOptions) {
-    const a = el.animate(k, o);
-    animaciones.add(a);
-    return a.finished.then(() => { animaciones.delete(a); });
+  let enVista = false, portadaVista = true;
+
+  interface Rotador {
+    medir(): void;
+    arrancar(primera?: boolean): void;
+    detener(): void;
+    /** Nueva ronda de vueltas (al reanudar o al salir del modo Mario) */
+    reiniciar(): void;
+    cambiar(nuevas: string[] | null): void;
+    limpiar(): void;
+    activo(): boolean;
   }
-  function medirFrase() {
-    if (!tag || !slot || !words) return;
-    const m = d.createElement("b");
-    m.className = "sh-tag__w"; m.style.cssText = "position:absolute;visibility:hidden;left:-9999px;translate:none";
-    tag.appendChild(m);
-    W = words.map((t) => { m.textContent = t; return Math.ceil(m.getBoundingClientRect().width) + 2; });
-    m.remove();
-    slot.style.width = W[idx] + "px";
-  }
-  /* Al terminar un cambio se retiran sus animaciones: la palabra vuelve a sus estilos de siempre
-     (la demo dejaba fijo el espaciado final de .3em, más ancho que el de la tipografía actual,
-     .26em, y la palabra se salía de su hueco y tocaba la siguiente). */
-  function retirar(...as: Animation[]) { as.forEach((a) => { a.cancel(); animaciones.delete(a); }); }
-  /* Cambio de palabra sin hueco: la palabra que sale y la que entra se cruzan (la nueva sube
-     mientras la anterior se va) y el ancho del espacio se ajusta al mismo tiempo. Antes la
-     palabra se apagaba, el espacio cambiaba de ancho vacío y luego aparecía la nueva:
-     medio segundo sin palabra en cada cambio. En modo Mario solo se funden, sin moverse. */
-  let entrante: HTMLElement | null = null;
-  function quitarEntrante() { if (entrante) { entrante.remove(); entrante = null; } if (slot) slot.style.clipPath = ""; }
-  function swap(i: number): Promise<void> {
-    const txt = words![i];
-    if (!pal || !slot || !tag) return Promise.resolve();
-    if (!pal.animate) { pal.textContent = txt; slot.style.width = W[i] + "px"; return Promise.resolve(); }
-    quitarEntrante();
-    const nuevo = pal.cloneNode(false) as HTMLElement;
-    nuevo.textContent = txt;
-    nuevo.setAttribute("aria-hidden", "true");
-    slot.appendChild(nuevo);
-    entrante = nuevo;
-    /* Rodillo: la palabra que sale sube y la nueva entra desde abajo; el espacio recorta solo
-       arriba y abajo, así nunca se ven dos palabras encimadas. El ancho se adelanta cuando la
-       nueva es más larga y espera a que salga la anterior cuando es más corta, para que ninguna
-       toque «Derecho» ni «para empresas». */
-    const D = rm ? 560 : 760, dy = rm ? "0em" : "1em", crece = W[i] >= (parseFloat(slot.style.width) || 0);
-    if (!rm) slot.style.clipPath = "inset(0 -100vw 0 -100vw)";
-    const desde = slot.style.width;
-    slot.style.width = W[i] + "px"; // el ancho final queda puesto; la animación solo cubre el trayecto
-    const aw = slot.animate([{ width: desde }, { width: W[i] + "px" }],
-      { duration: D * 0.62, delay: crece ? D * 0.06 : D * 0.3, easing: EASE.inout, fill: "backwards" });
-    const aOut = pal.animate([{ opacity: 1, transform: "translateY(0)" }, { opacity: 0, transform: "translateY(-" + dy + ")" }],
-      { duration: D * 0.5, easing: EASE.in, fill: "forwards" });
-    const aIn = nuevo.animate([{ opacity: 0, transform: "translateY(" + dy + ")" }, { opacity: 1, transform: "translateY(0)" }],
-      { duration: D * 0.68, delay: D * 0.32, easing: EASE.out, fill: "both" });
-    [aw, aOut, aIn].forEach((a) => animaciones.add(a));
-    return Promise.all([aw.finished, aOut.finished, aIn.finished]).then(() => {
-      slot.style.width = W[i] + "px";
-      pal.textContent = txt;
-      retirar(aw, aOut, aIn);
+
+  /** Una palabra que rota dentro de su hueco. espera(i, primera): ms que la palabra i queda en
+      pantalla antes de cambiar (primera: al abrir la portada o volver a verla). */
+  function crearRotador(slot: HTMLElement | null, inicial: string[] | null, espera: (i: number, primera: boolean) => number): Rotador {
+    const pal = slot?.querySelector<HTMLElement>(".sh-tag__w") || null;
+    let words = inicial && inicial.length ? inicial : null;
+    let W: number[] = [], idx = 0, vueltas = 0, timer = 0, corriendo = false;
+    const animaciones = new Set<Animation>();
+    function medirFrase() {
+      if (!tag || !slot || !words) return;
+      const m = d.createElement("b");
+      m.className = "sh-tag__w"; m.style.cssText = "position:absolute;visibility:hidden;left:-9999px;translate:none";
+      tag.appendChild(m);
+      W = words.map((t) => { m.textContent = t; return Math.ceil(m.getBoundingClientRect().width) + 2; });
+      m.remove();
+      slot.style.width = W[idx] + "px";
+    }
+    /* Al terminar un cambio se retiran sus animaciones: la palabra vuelve a sus estilos de siempre
+       (la demo dejaba fijo el espaciado final de .3em, más ancho que el de la tipografía actual,
+       .26em, y la palabra se salía de su hueco y tocaba la siguiente). */
+    function retirar(...as: Animation[]) { as.forEach((a) => { a.cancel(); animaciones.delete(a); }); }
+    /* Cambio de palabra sin hueco: la palabra que sale y la que entra se cruzan (la nueva sube
+       mientras la anterior se va) y el ancho del espacio se ajusta al mismo tiempo. Antes la
+       palabra se apagaba, el espacio cambiaba de ancho vacío y luego aparecía la nueva:
+       medio segundo sin palabra en cada cambio. En modo Mario solo se funden, sin moverse. */
+    let entrante: HTMLElement | null = null;
+    function quitarEntrante() { if (entrante) { entrante.remove(); entrante = null; } if (slot) slot.style.clipPath = ""; }
+    function swap(i: number): Promise<void> {
+      const txt = words![i];
+      if (!pal || !slot || !tag) return Promise.resolve();
+      if (!pal.animate) { pal.textContent = txt; slot.style.width = W[i] + "px"; return Promise.resolve(); }
       quitarEntrante();
-    });
+      const nuevo = pal.cloneNode(false) as HTMLElement;
+      nuevo.textContent = txt;
+      nuevo.setAttribute("aria-hidden", "true");
+      slot.appendChild(nuevo);
+      entrante = nuevo;
+      /* Rodillo: la palabra que sale sube y la nueva entra desde abajo; el espacio recorta solo
+         arriba y abajo, así nunca se ven dos palabras encimadas. El ancho se adelanta cuando la
+         nueva es más larga y espera a que salga la anterior cuando es más corta, para que ninguna
+         toque las palabras vecinas. */
+      const D = rm ? 560 : 760, dy = rm ? "0em" : "1em", crece = W[i] >= (parseFloat(slot.style.width) || 0);
+      if (!rm) slot.style.clipPath = "inset(0 -100vw 0 -100vw)";
+      const desde = slot.style.width;
+      slot.style.width = W[i] + "px"; // el ancho final queda puesto; la animación solo cubre el trayecto
+      const aw = slot.animate([{ width: desde }, { width: W[i] + "px" }],
+        { duration: D * 0.62, delay: crece ? D * 0.06 : D * 0.3, easing: EASE.inout, fill: "backwards" });
+      const aOut = pal.animate([{ opacity: 1, transform: "translateY(0)" }, { opacity: 0, transform: "translateY(-" + dy + ")" }],
+        { duration: D * 0.5, easing: EASE.in, fill: "forwards" });
+      const aIn = nuevo.animate([{ opacity: 0, transform: "translateY(" + dy + ")" }, { opacity: 1, transform: "translateY(0)" }],
+        { duration: D * 0.68, delay: D * 0.32, easing: EASE.out, fill: "both" });
+      [aw, aOut, aIn].forEach((a) => animaciones.add(a));
+      return Promise.all([aw.finished, aOut.finished, aIn.finished]).then(() => {
+        slot.style.width = W[i] + "px";
+        pal.textContent = txt;
+        retirar(aw, aOut, aIn);
+        quitarEntrante();
+      });
+    }
+    function paso() {
+      if (!vivo || !words) return;
+      if (!enVista || pausado) { corriendo = false; return; }
+      const sig = (idx + 1) % words.length;
+      if (sig === 0) vueltas++;
+      swap(sig).then(() => {
+        if (!vivo) return;
+        idx = sig;
+        if (vueltas >= FRASE_VUELTAS && idx === 0) { corriendo = false; return; }
+        timer = w.setTimeout(paso, espera(idx, false));
+      }, () => {});
+    }
+    function arrancar(primera?: boolean) {
+      if (!words || words.length < 2 || !pal || corriendo || pausado || !enVista || rm) return;
+      corriendo = true; w.clearTimeout(timer); timer = w.setTimeout(paso, espera(idx, !!primera));
+    }
+    function detener() {
+      w.clearTimeout(timer); corriendo = false;
+      // Un cambio a medias se corta: la palabra vuelve entera a la primera
+      animaciones.forEach((a) => a.cancel()); animaciones.clear(); quitarEntrante();
+      if (words && pal && slot && (idx !== 0 || pal.textContent !== words[0])) { idx = 0; pal.textContent = words[0]; slot.style.width = W[0] + "px"; }
+    }
+    if (words && pal) { pal.textContent = words[0]; medirFrase(); }
+    return {
+      medir: medirFrase,
+      arrancar,
+      detener,
+      reiniciar() { vueltas = 0; },
+      cambiar(nuevas) {
+        if (!pal || !slot) return;
+        const lista = nuevas && nuevas.length ? nuevas : null;
+        if ((lista ? lista.join("|") : "") === (words ? words.join("|") : "")) return;
+        detener();
+        words = lista;
+        idx = 0; vueltas = 0;
+        if (!words) return;
+        pal.textContent = words[0];
+        medirFrase();
+        if (enVista) arrancar(true);
+      },
+      limpiar() {
+        w.clearTimeout(timer);
+        animaciones.forEach((a) => a.cancel());
+        animaciones.clear();
+        quitarEntrante();
+      },
+      activo: () => !!(words && pal),
+    };
   }
-  function paso() {
-    if (!vivo || !words) return;
-    if (!enVista || pausado) { corriendo = false; return; }
-    const sig = (idx + 1) % words.length;
-    if (sig === 0) vueltas++;
-    swap(sig).then(() => {
-      if (!vivo) return;
-      idx = sig;
-      if (vueltas >= FRASE_VUELTAS && idx === 0) { corriendo = false; return; }
-      timer = w.setTimeout(paso, FRASE_PASO);
-    }, () => {});
-  }
-  function arrancar(primera?: boolean) {
-    if (!words || corriendo || pausado || !enVista || rm) return;
-    corriendo = true; w.clearTimeout(timer); timer = w.setTimeout(paso, primera ? FRASE_PRIMERA : FRASE_PASO);
-  }
-  function detener() {
-    w.clearTimeout(timer); corriendo = false;
-    // Un cambio a medias se corta: la palabra vuelve entera a la primera
-    animaciones.forEach((a) => a.cancel()); animaciones.clear(); quitarEntrante();
-    if (words && pal && slot && (idx !== 0 || pal.textContent !== words[0])) { idx = 0; pal.textContent = words[0]; slot.style.width = W[0] + "px"; }
-  }
+
+  const huecoPractica = tag?.querySelector<HTMLElement>('.sh-tag__slot[data-rota="practica"]') || null;
+  const huecoPublico = tag?.querySelector<HTMLElement>('.sh-tag__slot[data-rota="publico"]')
+    || tag?.querySelector<HTMLElement>(".sh-tag__slot") || null;
+  // Práctica: la primera (laborales) 5 s en pantalla y las demás 3 s cada una (junta del 13-11-2026).
+  // A quién se sirve: los tiempos de la demo.
+  const rotadores = [
+    crearRotador(huecoPractica, huecoPractica ? opts.practiceWords ?? null : null, (i) => (i === 0 ? PRACTICA_PRIMERA : PRACTICA_PASO)),
+    crearRotador(huecoPublico, opts.words, (_i, primera) => (primera ? FRASE_PRIMERA : FRASE_PASO)),
+  ] as const;
+  const [rotPractica, rotPublico] = rotadores;
+  const medirFrase = () => rotadores.forEach((r) => r.medir());
+  const arrancar = (primera?: boolean) => rotadores.forEach((r) => r.arrancar(primera));
+  const detener = () => rotadores.forEach((r) => r.detener());
+  const reiniciar = () => rotadores.forEach((r) => r.reiniciar());
   function revisarVista() {
     const antes = enVista;
     enVista = portadaVista && abierta;
-    if (enVista && !antes) { vueltas = 0; arrancar(true); } else if (!enVista && antes) detener();
+    if (enVista && !antes) { reiniciar(); arrancar(true); } else if (!enVista && antes) detener();
   }
-  limpiar.push(() => {
-    w.clearTimeout(timer);
-    animaciones.forEach((a) => a.cancel());
-    animaciones.clear();
-    quitarEntrante();
-  });
-  if (words && pal) {
-    pal.textContent = words[0];
-    medirFrase();
+  limpiar.push(() => rotadores.forEach((r) => r.limpiar()));
+  if (tag && (rotPractica.activo() || rotPublico.activo())) {
     if (d.fonts && d.fonts.ready) d.fonts.ready.then(() => { if (vivo) { medirFrase(); arrancar(true); } });
     if ("IntersectionObserver" in w) {
       const io = new IntersectionObserver((es) => {
@@ -461,7 +517,7 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
     pausado = si;
     sec!.setAttribute("data-pausa", si ? "1" : "0");
     if (si) { if (video && !video.paused) video.pause(); if (frame) frameCommand("pause"); detener(); }
-    else { reproducir(visible); vueltas = 0; arrancar(); }
+    else { reproducir(visible); reiniciar(); arrancar(); }
   }
   /* En modo Mario el video queda quieto (oculto; se ve la foto fija): nada se mueve solo. */
   function videoSegunRM() {
@@ -515,17 +571,10 @@ export function initTelon(root: HTMLElement, opts: TelonOptions): TelonApi {
 
   return {
     pausa(si: boolean) { if (vivo && si !== pausado) setPausa(si); },
-    palabras(nuevas: string[] | null) {
-      if (!vivo || !pal || !slot) return;
-      const lista = nuevas && nuevas.length ? nuevas : null;
-      if ((lista ? lista.join("|") : "") === (words ? words.join("|") : "")) return;
-      detener();
-      words = lista;
-      idx = 0; vueltas = 0;
-      if (!words) return;
-      pal.textContent = words[0];
-      medirFrase();
-      if (enVista) arrancar(true);
+    palabras(nuevas: string[] | null, practicas?: string[] | null) {
+      if (!vivo) return;
+      rotPublico.cambiar(nuevas);
+      if (practicas !== undefined) rotPractica.cambiar(practicas);
     },
     video() { if (vivo) reproducir(visible); },
     destroy() {

@@ -3,9 +3,9 @@
    la firma (home.firma: title y body[0]), la banda de la filosofía (home.creemos: quote, body[0] y label),
    los titulares de las prácticas y de los socios (home.practicas.title, home.socios.title),
    los nombres y resúmenes de las prácticas y los cargos de los socios (/api/practice-groups, /api/team).
-   Cifras: las que el sitio ya afirma (about.stats del panel: más de 40 años de experiencia de los socios,
-   más de 72 ciudades en la red de despachos aliados) más las 32 entidades de esa red y las cuatro áreas.
-   Sin año de fundación: el sitio dice 2009 en «La firma» y «Desde 2010» en la portada. */
+   Cifras (junta del 13-11-2026, Mario): más de 16 años en el mercado y presencia en más de 120 ciudades
+   (about.stats del panel), las 32 entidades federativas y las cuatro áreas de práctica de especialidad.
+   Cada cifra muestra primero la etiqueta y debajo el número. */
 import { v3Asset } from "../asset";
 
 export const homeCopy = {
@@ -13,10 +13,10 @@ export const homeCopy = {
     intro: {
       boton: "Conozca la firma",
       cifras: {
-        anos: "Años de experiencia",
+        anos: "Años en el mercado",
         ciudades: "Ciudades con presencia",
         entidades: "Entidades federativas",
-        areas: "Áreas de práctica",
+        areas: "Áreas de práctica de especialidad",
       },
     },
     practicas: {
@@ -36,10 +36,10 @@ export const homeCopy = {
     intro: {
       boton: "About the firm",
       cifras: {
-        anos: "Years of experience",
-        ciudades: "Cities in our alliance network",
+        anos: "Years in the market",
+        ciudades: "Cities where we are present",
         entidades: "States and Mexico City",
-        areas: "Practice areas",
+        areas: "Specialized practice areas",
       },
     },
     practicas: {

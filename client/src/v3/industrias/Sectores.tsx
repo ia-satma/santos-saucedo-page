@@ -11,7 +11,9 @@ import { initIndustrias } from "./initIndustrias";
 import type { IndustriasTexts } from "./texts";
 import { v3SrcSet } from "../shared";
 
-export function Sectores({ t, headingId }: { t: IndustriasTexts; headingId: string }) {
+// showTexts: interruptor «Textos de cada industria» (layout.pages.industries.blocks.textos). Apagado
+// por acuerdo con Mario (junta del 13-11-2026): quedan el nombre y la foto de cada industria.
+export function Sectores({ t, headingId, showTexts = true }: { t: IndustriasTexts; headingId: string; showTexts?: boolean }) {
   const ref = useRef<HTMLElement>(null);
   useLayoutEffect(() => {
     const el = ref.current;
@@ -53,10 +55,14 @@ export function Sectores({ t, headingId }: { t: IndustriasTexts; headingId: stri
                 <img src={ind.img} srcSet={v3SrcSet(ind.img, ind.w)} sizes="100vw" alt="" width={ind.w} height={ind.h} decoding="async" loading="lazy" style={{ objectPosition: ind.pos }} />
               </figure>
               <h2 className="in-nombre" id={`in-${ind.id}-h`}>{ind.nombre}</h2>
-              <p className="in-linea">{ind.linea}</p>
-              <ul className="in-lista" role="list">
-                {ind.lista.map((item) => <li key={item}>{item}</li>)}
-              </ul>
+              {showTexts ? (
+                <>
+                  <p className="in-linea">{ind.linea}</p>
+                  <ul className="in-lista" role="list">
+                    {ind.lista.map((item) => <li key={item}>{item}</li>)}
+                  </ul>
+                </>
+              ) : null}
             </article>
           ))}
         </div>

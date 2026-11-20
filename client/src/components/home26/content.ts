@@ -26,17 +26,23 @@ const home26Source = {
       eyebrow: "Firma legal empresarial",
       titleFirst: "Santos",
       titleSecond: "Saucedo",
-      tagline: "Derecho laboral para empresas",
-      place: ["San Pedro Garza García", "Desde 2010"],
+      // Junta del 13-11-2026: «Servicios legales» + práctica que rota (practiceWords) y «para» + a
+      // quién se sirve, que también rota (words; la primera es la palabra final de la frase).
+      // place: una sola línea bajo la frase (el segundo campo vacío quita el punto «·»).
+      tagline: "Servicios legales para multinacionales",
+      words: ["multinacionales", "empresas", "pymes"] as string[],
+      practiceWords: ["laborales", "migratorios", "corporativos", "penales"] as string[],
+      and: "y",
+      place: ["Un ecosistema para la debida administración del capital humano", ""],
       primaryCta: "Conozca la firma",
       secondaryCta: "Hable con nosotros",
     },
     firma: {
       // Inicio v3 (demo aprobada): título (h2 oculto) y la frase de la firma sobre sus cifras.
       // Los mismos valores que shared/cms-defaults.json (home.es.firma).
-      title: "Nuestra firma",
+      title: "Decisiones laborales con visión empresarial.",
       body: [
-        "Desde San Pedro Garza García, Santos & Saucedo asesora a grupos industriales mexicanos, a multinacionales y a empresas de capital asiático en las decisiones que involucran a su personal.",
+        "Desde Monterrey, México, Santos & Saucedo brinda asesoría jurídica laboral estratégica a grupos industriales mexicanos, empresas multinacionales y compañías de capital asiático, acompañándolos en la gestión de sus recursos humanos y relaciones laborales.",
       ],
       caption: "Río Tamazunchale 205 Norte, San Pedro Garza García. En el cristal, el Cerro de la Silla.",
       alt: "Fachada de cristal de las oficinas de Santos & Saucedo con el Cerro de la Silla reflejado",
@@ -51,13 +57,13 @@ const home26Source = {
     },
     practicas: {
       // h2 del bloque de prácticas del Inicio v3 (el mismo valor que shared/cms-defaults.json)
-      title: "Nuestras prácticas",
+      title: "Nuestras áreas de especialidad",
       // slug: el de la base; la fila enlaza a /practice-groups/<slug>
       items: [
         {
           slug: "laboral-seguridad-social",
-          title: "Laboral y\u00a0seguridad social",
-          body: "Auditorías, inspecciones, documentación laboral, relaciones colectivas y litigio ante los Centros de Conciliación y los Tribunales Laborales. Es la práctica central de la firma y la que da sentido a las demás.",
+          title: "Laboral y\u00a0Seguridad Social",
+          body: "Nuestra práctica laboral y de seguridad social es el eje de Santos & Saucedo. Desde ahí acompañamos a las empresas en cada decisión que involucra a su gente, anticipando riesgos, fortaleciendo relaciones laborales y construyendo estabilidad para el crecimiento del negocio.",
         },
         {
           slug: "corporativo-contractual",
@@ -120,15 +126,18 @@ const home26Source = {
       eyebrow: "Business law firm",
       titleFirst: "Santos",
       titleSecond: "Saucedo",
-      tagline: "Labor law for companies",
-      place: ["San Pedro Garza García", "Since 2010"],
+      tagline: "Legal services for multinationals",
+      words: ["multinationals", "companies", "SMEs"] as string[],
+      practiceWords: ["labor", "immigration", "corporate", "criminal"] as string[],
+      and: "and",
+      place: ["An ecosystem for the sound management of human capital", ""],
       primaryCta: "Discover the firm",
       secondaryCta: "Talk to our team",
     },
     firma: {
-      title: "Our firm",
+      title: "Labor decisions with a business perspective.",
       body: [
-        "From San Pedro Garza García, Santos & Saucedo advises Mexican industrial groups, multinationals and Asian-owned companies on the decisions that involve their people.",
+        "From Monterrey, Mexico, Santos & Saucedo provides strategic labor law advice to Mexican industrial groups, multinational companies and Asian-owned companies, supporting them in managing their human resources and labor relations.",
       ],
       caption: "Río Tamazunchale 205 Norte, San Pedro Garza García. In the glass, the Cerro de la Silla.",
       alt: "Glass facade of the Santos & Saucedo offices reflecting the Cerro de la Silla",
@@ -141,12 +150,12 @@ const home26Source = {
       ],
     },
     practicas: {
-      title: "Our practices",
+      title: "Our areas of specialization",
       items: [
         {
           slug: "laboral-seguridad-social",
-          title: "Labor and\u00a0social security",
-          body: "Audits, inspections, employment documentation, collective relations and litigation before the Conciliation Centers and Labor Courts. It is the firm’s core practice and gives meaning to the others.",
+          title: "Labor and\u00a0Social Security",
+          body: "Our labor and social security practice is the core of Santos & Saucedo. From there we support companies in every decision that involves their people, anticipating risks, strengthening labor relations and building stability for business growth.",
         },
         {
           slug: "corporativo-contractual",

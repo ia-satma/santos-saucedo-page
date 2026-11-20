@@ -26,8 +26,8 @@ import { about as aboutDefaults } from "@shared/cms-defaults.json";
 import { layoutDefaults } from "@/lib/cmsLightDefaults";
 import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
 
-// Cifras de /about: "40+" (sin tocar) y "72+" ciudades con presencia, la forma en cifras de
-// "más de 72" (redacción aprobada de la portada: "Ciudades en nuestra red de alianzas"). Fuera el conteo de
+// Cifras de /about (las mismas del Inicio, about.stats): junta del 13-11-2026, "16+" años en el
+// mercado y "120+" ciudades con presencia. Fuera el conteo de
 // integrantes, el número de prácticas y "1 oficina".
 const citiesLabel: Record<LanguageCode, string> = {
   es: "Ciudades en nuestra red de alianzas",
@@ -101,12 +101,12 @@ export default function About() {
     ],
     "stats": [
       {
-        "value": "40+",
-        "label": "Years of Experience"
+        "value": "16+",
+        "label": "Years in the market"
       },
       {
-        "value": "72+",
-        "label": "Cities in our alliance network"
+        "value": "120+",
+        "label": "Cities where we are present"
       }
     ]
   },
@@ -136,12 +136,12 @@ export default function About() {
     ],
     "stats": [
       {
-        "value": "40+",
-        "label": "Años de experiencia"
+        "value": "16+",
+        "label": "Años en el mercado"
       },
       {
-        "value": "72+",
-        "label": "Ciudades en nuestra red de alianzas"
+        "value": "120+",
+        "label": "Ciudades con presencia"
       }
     ]
   },
@@ -171,11 +171,11 @@ export default function About() {
     ],
     "stats": [
       {
-        "value": "40+",
+        "value": "16+",
         "label": "Jahre Erfahrung"
       },
       {
-        "value": "72+",
+        "value": "120+",
         "label": "Städte in unserem Allianznetzwerk"
       }
     ]
@@ -206,11 +206,11 @@ export default function About() {
     ],
     "stats": [
       {
-        "value": "40+",
+        "value": "16+",
         "label": "年经验"
       },
       {
-        "value": "72+",
+        "value": "120+",
         "label": "合作网络覆盖城市"
       }
     ]
@@ -241,11 +241,11 @@ export default function About() {
     ],
     "stats": [
       {
-        "value": "40+",
+        "value": "16+",
         "label": "년의 경험"
       },
       {
-        "value": "72+",
+        "value": "120+",
         "label": "제휴 네트워크 도시"
       }
     ]
@@ -276,11 +276,11 @@ export default function About() {
     ],
     "stats": [
       {
-        "value": "40+",
+        "value": "16+",
         "label": "年の経験"
       },
       {
-        "value": "72+",
+        "value": "120+",
         "label": "提携ネットワークの都市"
       }
     ]
@@ -311,11 +311,11 @@ export default function About() {
     ],
     "stats": [
       {
-        "value": "40+",
+        "value": "16+",
         "label": "سنوات من الخبرة"
       },
       {
-        "value": "72+",
+        "value": "120+",
         "label": "مدينة في شبكة تحالفاتنا"
       }
     ]
@@ -346,11 +346,11 @@ export default function About() {
     ],
     "stats": [
       {
-        "value": "40+",
+        "value": "16+",
         "label": "Лет опыта"
       },
       {
-        "value": "72+",
+        "value": "120+",
         "label": "Городов в нашей партнёрской сети"
       }
     ]
@@ -381,11 +381,11 @@ export default function About() {
     ],
     "stats": [
       {
-        "value": "40+",
+        "value": "16+",
         "label": "Années d'expérience"
       },
       {
-        "value": "72+",
+        "value": "120+",
         "label": "Villes de notre réseau d’alliances"
       }
     ]
@@ -416,11 +416,11 @@ export default function About() {
     ],
     "stats": [
       {
-        "value": "40+",
+        "value": "16+",
         "label": "Anni di esperienza"
       },
       {
-        "value": "72+",
+        "value": "120+",
         "label": "Città della nostra rete di alleanze"
       }
     ]

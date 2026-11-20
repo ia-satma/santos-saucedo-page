@@ -46,6 +46,7 @@ const blockLabels: Record<string, string> = {
   laminaReaccion: "Lámina Capacidad de reacción",
   industries: "Industrias relacionadas",
   animacion: "Animación y mapa",
+  textos: "Textos de cada industria (portada e Industrias)",
   carrusel: "Carrusel del equipo",
   perfiles: "Perfiles",
   filtros: "Filtros y estados",

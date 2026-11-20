@@ -86,12 +86,13 @@ function HomeFields({ value, onChange }: ExplicitPageFieldsProps) {
   return <div className="cms-explicit-page-fields">
     <Block title="Hero" pageId="home" blockKey="hero" description="Todo lo que aparece en la primera pantalla de Inicio. El texto cambia por idioma y los medios se seleccionan desde la Biblioteca.">
       <TextField label="Frase principal" value={hero.tagline} onChange={(next) => setNested('hero', hero, 'tagline', next)} hint="La palabra final debe coincidir con la primera palabra animada para mostrar la rotación." />
-      <StringList label="Palabras que cambian" values={hero.words} onChange={(next) => setNested('hero', hero, 'words', next)} addLabel="Añadir palabra" itemLabel="Palabra" />
+      <StringList label="Prácticas que cambian (primer renglón)" values={hero.practiceWords} onChange={(next) => setNested('hero', hero, 'practiceWords', next)} addLabel="Añadir práctica" itemLabel="Práctica" />
+      <StringList label="Palabras que cambian (después de «para»)" values={hero.words} onChange={(next) => setNested('hero', hero, 'words', next)} addLabel="Añadir palabra" itemLabel="Palabra" />
       <TextField label="Conector de la frase" value={hero.and} onChange={(next) => setNested('hero', hero, 'and', next)} />
       <TextField label="Frase de apoyo" value={hero.firma} onChange={(next) => setNested('hero', hero, 'firma', next)} multiline />
       <div className="cms-explicit-grid">
-        <TextField label="Lugar" value={place[0]} onChange={(next) => setNested('hero', hero, 'place', [next, place[1]])} />
-        <TextField label="Año o referencia" value={place[1]} onChange={(next) => setNested('hero', hero, 'place', [place[0], next])} />
+        <TextField label="Línea bajo la frase" value={place[0]} onChange={(next) => setNested('hero', hero, 'place', [next, place[1]])} />
+        <TextField label="Segunda parte (opcional, tras «·»)" value={place[1]} onChange={(next) => setNested('hero', hero, 'place', [place[0], next])} />
       </div>
       <p className="cms-explicit-shared">El video, el póster, el logo y las etiquetas de pausa se editan en los bloques de medios compartidos de esta página.</p>
     </Block>
