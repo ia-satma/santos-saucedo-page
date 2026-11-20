@@ -11,3 +11,13 @@
 @media screen and (max-width: 639px){
   .v3 :where(p, span, li, td, th, label){ font-size: inherit }
 }
+
+/* Pedido de Mario (junta del 13-11-2026): los párrafos de texto corrido van justificados, con
+   división silábica en español para no abrir huecos en el teléfono. :where() deja la especificidad
+   en cero: cualquier regla que centre un texto (portada, botones) sigue mandando. */
+:where(.v3) p{
+  text-align: justify;
+  -webkit-hyphens: auto; hyphens: auto;
+  hyphenate-limit-chars: 7 3 3;
+}
+:where(.v3) :is(nav, footer, .mk-telon, [class*="centro"]) p{ text-align: inherit; hyphens: manual }

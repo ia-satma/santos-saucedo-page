@@ -88,7 +88,7 @@ export function IntroBand({ lang, areas }: { lang: V3Lang; areas: number }) {
     una tira de su foto bajo el velo Azul noche; la que se señala (mouse, teclado o toque) se abre,
     muestra la foto y su línea, y lleva a su apartado en «Industrias». Siempre hay una abierta: el
     bloque nunca queda plano. Nombres, líneas y fotos son los de la página «Industrias». */
-// showTexts: interruptor «Textos de cada industria» (layout.pages.industries.blocks.textos), compartido
+// showTexts: interruptor «Textos de cada industria en la portada» (layout.pages.industries.blocks.textos); la página Industrias conserva sus textos. Antes compartido
 // con la página «Industrias». Apagado por acuerdo con Mario (13-11-2026): quedan nombres y fotos.
 export function IndustriasBand({ lang, showTexts = true }: { lang: V3Lang; showTexts?: boolean }) {
   const { language } = useLanguage();
