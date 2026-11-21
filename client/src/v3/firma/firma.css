@@ -212,3 +212,12 @@
   }
   .v3 .fi-lamina.fi-carnero .fi-nota { margin: 4px 6px 0; }
 }
+
+/* «Siempre hacia adelante» con la foto de la Huasteca (junta del 13-11-2026), en lugar del borrego:
+   la banda sh-filo del Inicio; la foto se encuadra en las paredes de caliza. */
+.v3 .fi-huasteca .sh-filo__foto img { object-position: 66% 60%; }
+@media (max-width: 820px) {
+  .v3 .fi-huasteca .sh-filo__foto img { object-position: 64% 55%; }
+}
+/* La dirección de la oficina no se justifica: en el teléfono abría huecos entre palabras */
+.v3 .nf-oficina__lead { text-align: left; hyphens: manual; }

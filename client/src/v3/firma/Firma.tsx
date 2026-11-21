@@ -5,7 +5,7 @@
 import "./firma.css";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "wouter";
-import { useV3Module } from "@/v3/shared";
+import { useV3Module, v3SrcSet } from "@/v3/shared";
 import { v3Asset } from "@/v3/asset";
 import reaccionDatos from "./reaccion-datos.json";
 import { initFilosofia, type ReaccionDatos } from "./filosofia";
@@ -249,6 +249,41 @@ export function LaminaCarnero({ t, attrs, logo, lang }: { t: FirmaTextos; attrs:
           {C.nota ? <p className="fi-nota">{C.nota}</p> : null}
         </div>
         <Cajetin lamina="1/7" titulo={C.cajetin} t={t} logo={logo} />
+      </div>
+    </section>
+  );
+}
+
+/** «Siempre hacia adelante» con una foto de la Huasteca (Santa Catarina, Nuevo León), en lugar de la
+    lámina del borrego: pedido de Mario en la junta del 13-11-2026 («quito el borrego y dejamos una foto
+    de la Huasteca»). Es la banda «sh-filo» del Inicio: foto a la derecha que se funde en el azul, texto a
+    la izquierda. El texto sigue siendo el de la filosofía de la firma. La foto se acerca una vez al entrar. */
+const HUASTECA_ALT = {
+  es: "Paredes de roca de la Huasteca, en Santa Catarina, Nuevo León",
+  en: "Rock walls of La Huasteca, in Santa Catarina, Nuevo León",
+};
+export function SiempreAdelante({ t, attrs, lang }: { t: FirmaTextos; attrs: LangAttrs; lang: "es" | "en" }) {
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") { el?.classList.add("is-visto"); return; }
+    const io = new IntersectionObserver((es) => {
+      if (es.some((e) => e.isIntersecting)) { el.classList.add("is-visto"); io.disconnect(); }
+    }, { threshold: 0.2 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const C = t.carnero;
+  const foto = v3Asset("/v3/c-huasteca.webp");
+  return (
+    <section ref={ref} className="sh-filo sobre-azul fi-huasteca" id="carnero" aria-labelledby="carnero-t" {...attrs}>
+      <figure className="sh-filo__foto">
+        <img src={foto} srcSet={v3SrcSet(foto, 2400)} sizes="(max-width: 820px) 100vw, 60vw" alt={HUASTECA_ALT[lang]}
+          width={2400} height={1320} loading="lazy" decoding="async" />
+      </figure>
+      <div className="sh-wrap sh-filo__in">
+        <h2 id="carnero-t" className="sh-filo__frase">{C.h}</h2>
+        {C.p.map((p, i) => <p key={i} className="sh-filo__p">{p}</p>)}
       </div>
     </section>
   );

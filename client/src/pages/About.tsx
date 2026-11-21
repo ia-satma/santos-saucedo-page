@@ -17,7 +17,7 @@ import { useOfficeLabel } from "@/lib/officeLabel";
 import { practiceName, usePracticeNames } from "@/lib/practiceNames";
 import type { LanguageCode, PracticeGroup } from "@shared/schema";
 import { V3Main, V3NextPage, V3PageHeader, useV3Lang } from "@/v3/shared";
-import { FirmaRaiz, FirmaTexto, LaminaCarnero, Oficina, Prioridad, Principios } from "@/v3/firma/Firma";
+import { FirmaRaiz, FirmaTexto, Oficina, Prioridad, Principios, SiempreAdelante } from "@/v3/firma/Firma";
 import type { FirmaTextos } from "@/v3/firma/textos";
 import { HOME_FIRMA } from "@/v3/firma/textos";
 import { v3Asset } from "@/v3/asset";
@@ -513,9 +513,9 @@ export default function About() {
 
           {blockVisible(layout, "about", "prioridad") && <Prioridad t={T} attrs={attrs} />}
 
-          {/* El carnero, la filosofía de la firma. El avión (lámina 2/7, la capacidad de reacción) va en
-              la página de Prácticas, que es la que sigue en el recorrido */}
-          {blockVisible(layout, "about", "laminas") && <LaminaCarnero t={T} attrs={attrs} logo={media.brand.logoLight} lang={lang} />}
+          {/* La filosofía de la firma, «Siempre hacia adelante», con la foto de la Huasteca en lugar de la
+              lámina del borrego (junta del 13-11-2026). El avión (2/7) va en la página de Prácticas. */}
+          {blockVisible(layout, "about", "laminas") && <SiempreAdelante t={T} attrs={attrs} lang={lang} />}
 
           {blockVisible(layout, "about", "oficina") && <Oficina
             titulo={officeNameFor(language)}
