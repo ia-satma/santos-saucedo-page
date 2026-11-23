@@ -16,6 +16,7 @@ import { useCmsContent } from "@/hooks/useCmsContent";
 import { layoutDefaults } from "@/lib/cmsLightDefaults";
 import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
 import { useCmsMedia } from "@/lib/cmsMedia";
+import { teamMosaicForPublic } from "@/lib/teamMosaic";
 import { isNamedOnTeamPage } from "@/lib/teamPhotoSources";
 import { chrome26 } from "@/components/home26/chrome26";
 import { keepFirmName } from "@/lib/firmName";
@@ -52,7 +53,8 @@ const editedInPanel = (value: string | undefined, ...defaultValues: (string | un
 const keepInMemoriam = (text: string) => text.replace(/\((in)\s+(memoriam)\)/gi, "($1\u00a0$2)");
 
 export default function Team() {
-  const { teamMosaic: equipoPhotos } = useCmsMedia();
+  const media = useCmsMedia();
+  const equipoPhotos = teamMosaicForPublic((media as { teamMosaic?: unknown }).teamMosaic);
   const cmsChrome = useCmsContent("chrome", chrome26);
   const cmsLinks = useCmsContent("links", linksDefaults);
   const cmsIndustries = useCmsContent("industries", industriesDefaults);
@@ -265,11 +267,9 @@ export default function Team() {
       if (orderA !== orderB) return orderA - orderB;
       return a.name.localeCompare(b.name);
     };
-    // Los cuatro socios SIEMPRE, en el orden de la firma (regla del cliente; v3/socios/partners):
-    // de /api/team cuando llega y, si falta alguno (el panel lo oculta, la API falla o aún no
-    // responde), con los datos de respaldo de la banda del inicio. Los demás socios y los Of Counsel
-    // siguen la visibilidad del panel (isNamedOnTeamPage, shared/teamVisibility). Los asociados van
-    // en el muro, sin nombres.
+    // Los socios confirmados conservan el orden editorial cuando la API los entrega. Una entrada
+    // desactivada por el CMS no se reincorpora desde defaults ni desde fallbacks. Los demás socios
+    // y los Of Counsel siguen la visibilidad del panel (isNamedOnTeamPage, shared/teamVisibility).
     const members = errorAll ? [] : allTeamMembers;
     const partners = firmPartners(members);
     const ofCounsel = (members ?? []).filter(m => !m.isPartner && isNamedOnTeamPage(m)).sort(byConfiguredOrder);
@@ -289,10 +289,8 @@ export default function Team() {
       <Header />
 
       <V3Main vista="socios">
-        {/* Los cuatro socios desde el primer momento (con los datos de respaldo mientras llega
-            /api/team: los mismos nombres, cargos y retratos, así que el Lienzo no se vuelve a montar
-            al llegar). Los Of Counsel, cuando responde la API. */}
-        {blockVisible(layout, "team", "hero") && blockVisible(layout, "team", "carrusel") && <SociosLienzo
+        {/* Los socios y Of Counsel proceden de la API pública, que ya aplica la visibilidad editorial. */}
+        {blockVisible(layout, "team", "hero") && blockVisible(layout, "team", "socios") && <SociosLienzo
           key={lienzoKey}
           partners={partners}
           t={tv}
@@ -308,8 +306,7 @@ export default function Team() {
 
         {/* El equipo: muro de retratos sin nombres (mosaico del CMS), fuera de la carga: las fotos son
             estáticas y el bloque ocupa su sitio desde el principio */}
-        {blockVisible(layout, "team", "perfiles") && <>
-        <EquipoMuro
+        {blockVisible(layout, "team", "colaboradores") && <EquipoMuro
           photos={equipoPhotos}
           title={teamTitle}
           lead={tv.teamLead}
@@ -317,15 +314,15 @@ export default function Team() {
           wallLabel={wallLabel}
           careersLabel={careersLabel}
           careersHref={internal(cmsLinks.interns, "/careers/interns")}
+          language={language}
           // «Pasantías S&S» es el nombre del programa: no se traduce y fuera del español se marca lang="es"
           careersNameLang={language !== "es" ? "es" : undefined}
-        />
+        />}
 
         {/* Presencia nacional: el mapa interactivo de la red, después del equipo */}
-        <div {...attrs}>
+        {blockVisible(layout, "team", "mapa") && <div {...attrs}>
           <Mapa t={mapaTextos} address={sede} />
-        </div>
-        </>}
+        </div>}
 
         <div {...attrs}>
           <V3NextPage

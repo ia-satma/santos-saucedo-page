@@ -9838,6 +9838,9 @@
         "enabled": true,
         "blocks": {
           "hero": true,
+          "socios": true,
+          "colaboradores": true,
+          "mapa": true,
           "carrusel": true,
           "perfiles": true
         }

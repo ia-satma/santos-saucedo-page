@@ -463,11 +463,12 @@ export async function registerRoutes(
   // /team_photos (J1): solo los retratos de quien el sitio nombra (isNamedOnTeamPage: socios
   // confirmados y Of Counsel); los de asociados, staff y socios sin confirmar dan 404, igual que
   // en el build estático (script/generate-static-api.ts no los copia). La lista sale de la base
-  // (caché de 60 s); si la base falla, del seed. Archivos: "<slug>.<png|jpg|jpeg>" y sus tamaños
+  // (caché breve, invalidado al guardar); si la base falla, del seed. Archivos: "<slug>.<png|jpg|jpeg>" y sus tamaños
   // "<slug>-128.webp", "<slug>-360.webp", "<slug>-652.webp"; cualquier otro nombre, 404.
   const TEAM_PHOTO_FILE = /^\/([a-z0-9-]+?)(?:\.(?:png|jpe?g)|-(?:128|360|652)\.webp)$/i;
   const NAMED_PHOTO_TTL_MS = 60_000;
   let namedPhotoSlugs: { slugs: Set<string>; loadedAt: number } | null = null;
+  const invalidateNamedPhotoCache = () => { namedPhotoSlugs = null; };
   const getNamedPhotoSlugs = async (): Promise<Set<string>> => {
     if (namedPhotoSlugs && Date.now() - namedPhotoSlugs.loadedAt < NAMED_PHOTO_TTL_MS) {
       return namedPhotoSlugs.slugs;
@@ -487,14 +488,16 @@ export async function registerRoutes(
     if (!match) return res.status(404).end();
     const slugs = await getNamedPhotoSlugs();
     if (!slugs.has(teamPhotoOwner(match[1].toLowerCase()))) return res.status(404).end();
+    // Visibility is editorial state. Do not let a browser or an intermediary retain a
+    // portrait after its profile is hidden.
+    res.set('Cache-Control', 'no-store');
     try { const target=(await getBundledMediaMap())[req.originalUrl.split('?')[0]];if(target)return res.redirect(302,target); }catch{}
     next();
   });
 
   // Serve Santos & Saucedo team photos from attached_assets/team_photos
   app.use('/team_photos', express.static(path.join(process.cwd(), 'attached_assets', 'team_photos'), {
-    maxAge: '7d',
-    immutable: true,
+    maxAge: 0,
   }));
   
   // Portadas que genera el proceso de notas (SmartImageGenerator: "article-<id>-gemini-<ms>.png").
@@ -736,7 +739,9 @@ export async function registerRoutes(
   app.get("/api/team", async (_req, res) => {
     try {
       const members = await storage.getTeamMembers();
-      res.set("Cache-Control", "public, max-age=60");
+      // La visibilidad de perfiles cambia desde el CMS. Revalidar cada solicitud evita que un
+      // socio recién oculto permanezca visible por el caché público durante un minuto.
+      res.set("Cache-Control", "no-store");
       res.json(members.filter((m) => isNamedOnTeamPage(m)).map(toPublicTeamMember));
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch team members" });
@@ -746,7 +751,7 @@ export async function registerRoutes(
   app.get("/api/team/partners", async (_req, res) => {
     try {
       const partners = await storage.getPartners();
-      res.set("Cache-Control", "public, max-age=60");
+      res.set("Cache-Control", "no-store");
       res.json(partners.filter((m) => isNamedOnTeamPage(m)).map(toPublicTeamMember));
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch partners" });
@@ -1954,6 +1959,7 @@ Sitemap: ${publicSiteUrl}/sitemap.xml
   app.post("/api/admin/team", authMiddleware, requireRole("editor", "admin"), async (req: Request, res: Response) => {
     try {
       const member = await saveTeamMember(req.body);
+      invalidateNamedPhotoCache();
       auditLog("create", "team", member!.id, (req as any).adminUser?.id || "unknown");
       res.status(201).json(member);
     } catch (error) {
@@ -1973,6 +1979,7 @@ Sitemap: ${publicSiteUrl}/sitemap.xml
       if (!member) {
         return apiError(res, 404, "Team member not found");
       }
+      invalidateNamedPhotoCache();
       auditLog("update", "team", req.params.id, (req as any).adminUser?.id || "unknown");
       res.json(member);
     } catch (error) {
@@ -1992,6 +1999,7 @@ Sitemap: ${publicSiteUrl}/sitemap.xml
       if (!deleted) {
         return apiError(res, 404, "Team member not found");
       }
+      invalidateNamedPhotoCache();
       auditLog("delete", "team", req.params.id, (req as any).adminUser?.id || "unknown");
       res.json({ success: true });
     } catch (error) {

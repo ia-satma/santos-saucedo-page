@@ -29,7 +29,7 @@ import { links as linksDefaults } from "@shared/cms-defaults.json";
 import type { TeamMember, PracticeGroup, IndustryGroup, Education, Affiliation, Ranking, Publication, RepresentativeMatter, BarAdmission, News, LanguageCode } from "@shared/schema";
 import { V3Main, V3NextPage, useV3Lang } from "@/v3/shared";
 import { useV3Content } from "@/v3/useV3Content";
-import { firmPartnerFallback, firmPartners } from "@/v3/socios/partners";
+import { firmPartners } from "@/v3/socios/partners";
 import "@/v3/socios/perfil.css";
 
 // Vista 404 del sitio (la misma carga diferida que usa App): fichas que no existen y personas
@@ -517,9 +517,9 @@ export default function TeamMemberDetail() {
   const slug = params.slug;
 
   const { data: memberData, isLoading, error } = useContentEntity<TeamMember>("team",slug);
-  // Los cuatro socios siempre tienen ficha (regla del cliente, como en /team): si la API no da a uno
-  // (el panel lo marcó como no público), su ficha con nombre, cargo y retrato de respaldo
-  const member = memberData ?? (error ? firmPartnerFallback(slug) : undefined);
+  // Una ficha oculta por el CMS no se reconstruye desde un fallback local. La vista previa privada
+  // recibe el registro mediante su endpoint autorizado y puede seguir revisándolo.
+  const member = memberData;
 
   const { data: practiceGroups } = useQuery<PracticeGroup[]>({
     queryKey: ["/api/practice-groups"],

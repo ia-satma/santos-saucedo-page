@@ -56,8 +56,10 @@ function pageKeyForHref(href: string) {
   if (path === "/news" || path.startsWith("/news/") || path === "/monitor-laboral" || path.startsWith("/monitor-laboral/")) return "news";
   if (path === "/careers/interns" || path === "/pasantias" || path === "/interns") return "interns";
   if (path.includes("career") || path.includes("carrera")) return "careers";
+  if (path === "/newsletter" || path === "/boletin" || path === "/newsletter/unsubscribe" || path === "/boletin/unsubscribe") return "newsletter";
   if (path === "/contact" || path === "/contacto") return "contact";
   if (path.includes("testimon")) return "testimonials";
+  if (path === "/testimonios/escribir") return "testimonials";
   if (path.includes("office") || path.includes("oficina")) return "offices";
   if (path.includes("privacy") || path.includes("privacidad")) return "privacy";
   if (path.includes("term") || path.includes("termin")) return "terms";

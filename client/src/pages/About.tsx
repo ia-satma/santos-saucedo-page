@@ -64,6 +64,7 @@ export default function About() {
   const layout = useCmsContent("layout", layoutDefaults);
   const visibility = pageVisibility(layout, "about");
   const { locale: v3 } = useV3Content();
+  const aboutHero = v3.media?.about?.hero || v3Asset("/v3/c-cerro-luna.webp");
 
   const content: Record<LanguageCode, {
     title: string;
@@ -486,7 +487,7 @@ export default function About() {
         <FirmaRaiz>
           {blockVisible(layout, "about", "hero") && <V3PageHeader
             id="cab-firma-h"
-            img={v3Asset("/v3/c-cerro-luna.webp")}
+            img={aboutHero}
             alt={T.cabAlt}
             imgAttrs={attrs}
             width={2400}

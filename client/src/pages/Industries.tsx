@@ -18,12 +18,14 @@ import { Sectores } from "@/v3/industrias/Sectores";
 import { INDUSTRIAS_TEXTS } from "@/v3/industrias/texts";
 import type { IndustriasTexts } from "@/v3/industrias/texts";
 import { v3Asset } from "@/v3/asset";
+import { useV3Content } from "@/v3/useV3Content";
 
 const H1 = "cab-industrias-h";
 
 export default function Industries() {
   const { language } = useLanguage();
   const { lang, attrs } = useV3Lang();
+  const { locale: v3 } = useV3Content();
   const selectedLang = language in INDUSTRIAS_TEXTS ? language : lang;
   const base = INDUSTRIAS_TEXTS[selectedLang];
   const layout = useCmsContent("layout", layoutDefaults);
@@ -46,7 +48,7 @@ export default function Industries() {
             _catalogOrder: group.order ?? index,
             nombre: selectedLang === "es" ? group.nameEs : selectedLang === "en" ? group.name : item.nombre,
             linea: selectedLang === "es" ? group.descriptionEs : selectedLang === "en" ? group.description : item.linea,
-            img: group.imageUrl || item.img,
+            img: group.imageUrl || v3.media?.industries?.items?.[item.id as keyof typeof v3.media.industries.items] || item.img,
           }
         : { ...item, _catalogOrder: index };
     });
@@ -55,7 +57,7 @@ export default function Industries() {
     .map((group) => ({
       id: group.slug,
       _catalogOrder: group.order ?? Number.MAX_SAFE_INTEGER,
-      img: group.imageUrl || editorial.industrias[0]?.img || "",
+      img: group.imageUrl || v3.media?.industries?.items?.[group.slug as keyof typeof v3.media.industries.items] || editorial.industrias[0]?.img || "",
       w: 2000,
       h: 1333,
       pos: "50% 50%",
@@ -80,7 +82,7 @@ export default function Industries() {
         <div {...localizedAttrs}>
           <V3PageHeader
             id={H1}
-            img={v3Asset("/v3/c-atardecer.webp")}
+            img={v3.media?.industries?.hero || v3Asset("/v3/c-atardecer.webp")}
             alt={t.cab.alt}
             imgAttrs={localizedAttrs}
             width={1800}

@@ -85,5 +85,5 @@ No se debe usar un snapshot de Pages para probar persistencia del CMS de Replit.
 ## Estado actual conocido
 
 - El registro de páginas y bloques ya está centralizado.
-- Portada y Nuestra firma tienen formularios explícitos. Parte de las páginas restantes todavía utiliza campos heredados agrupados técnicamente. Esa migración es deuda registrada y no debe ampliarse sin actualizar el inventario.
+- Portada, Nuestra firma y el mosaico de colaboradores de Socios y equipo tienen formularios explícitos. Parte de las páginas restantes todavía utiliza campos heredados agrupados técnicamente. Esa migración es deuda registrada y no debe ampliarse sin actualizar el inventario.
 - Algunas claves de visibilidad de bloque de páginas legales, Pasantías y Boletín todavía requieren cobertura pública completa. Cada nueva implementación debe agregar el gate y su prueba.

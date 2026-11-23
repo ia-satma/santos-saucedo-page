@@ -10,7 +10,7 @@ La fuente de este inventario es `client/src/features/site-config/editorMetadata.
 | `about` | `/about` | `/nuestra-firma` | `/nuestra-firma` | Encabezado, historia, cifras, valores, prioridad, láminas, oficina y SEO |
 | `practices` | `/practice-groups` | `/practicas` | `/practicas` | Hero, introducción, listado, servicios, lámina y SEO |
 | `industries` | `/industries` | `/industrias` | `/industrias`, `/industry-groups`, fichas legacy | Hero, introducción, filtros, listado, animación, navegación y SEO |
-| `team` | `/team` | `/socios` | `/socios` | Hero, introducción, mosaico, perfiles, presencia y SEO |
+| `team` | `/team` | `/socios` | `/socios` | Hero, introducción, socios, colaboradores, presencia y SEO |
 | `news` | `/news` | `/monitor-laboral` | `/monitor-laboral`, `/articles`, `/events` | Hero, filtros, búsqueda, notas, paginación, suscripción y SEO |
 | `contact` | `/contact` | `/contacto` | `/contacto` | Hero, datos, mapa, fotos, formulario, consentimiento y respuestas |
 | `careers` | `/careers` | `/carreras` | `/carreras` | Hero, cultura, pasantías, vacantes, postulación y formulario |
@@ -63,3 +63,14 @@ Cada página nueva debe tener:
 - prueba en español e inglés como mínimo
 
 Cada bloque nuevo debe tener una clave estable, una fuente CMS, una prueba de render y una prueba de ocultar y mostrar si admite visibilidad.
+
+### Socios y equipo
+
+La página separa sus bloques editables para que cada control tenga un efecto independiente:
+
+- `socios` controla el lienzo y el listado de perfiles nombrados.
+- `colaboradores` controla el mosaico de fotografías anónimas.
+- `mapa` controla la presencia y el mapa.
+- `hero` controla el encabezado de la página.
+
+En `Socios y equipo → Colaboradores` cada fotografía se edita en línea. El formulario permite elegir o cargar el medio, cambiar el orden, ocultar una sola fotografía, editar el texto alternativo por idioma, ajustar el punto focal y quitar o añadir elementos. Las listas antiguas de rutas siguen siendo válidas durante la migración y se normalizan a objetos estructurados al guardar.

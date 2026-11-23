@@ -19,6 +19,7 @@ import {
 } from "../shared/schema";
 import { hashPassword, hashSessionToken } from "../server/auth";
 import { appStorageObjectKeyFromPath } from "../server/replitStorage";
+import { initializeAgents } from "../server/agents";
 assert(
   ["localhost", "127.0.0.1", "[::1]"].includes(
     new URL(process.env.DATABASE_URL!).hostname,
@@ -66,6 +67,7 @@ async function call(
 }
 try {
   await registerRoutes(server, app);
+  await initializeAgents();
   app.use((e: any, _req: any, res: any, _next: any) =>
     res.status(400).json({ error: e.message }),
   );

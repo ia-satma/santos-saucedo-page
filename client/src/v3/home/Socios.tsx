@@ -1,8 +1,6 @@
 /* «Nuestros socios» (demo v3, sh-socini): los nombres en grande como índice y, a la izquierda, el
-   retrato del socio activo, que cambia solo cada 4.2 s con la línea de turno; se detiene con el cursor
-   o el foco en la lista y en modo Mario. Siempre los cuatro, en el orden de la firma. Nombres, cargos y
-   retratos de la base (/api/team) con los recortes WebP del sitio (teamPhotoSources); Mario Saucedo
-   Rodríguez con el trato del sitio: «Socio fundador (in memoriam)» sin partirse y su retrato a color. */
+   retrato del socio activo, que cambia solo cada 4.2 s con la línea de turno. La API pública entrega
+   únicamente los perfiles que el CMS mantiene visibles. */
 import { useMemo, useRef } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -10,9 +8,10 @@ import type { TeamMember } from "@shared/schema";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { home26 } from "@/components/home26/content";
-import { CONFIRMED_PARTNER_SLUGS, fallbackToOriginalSrc, getTeamPhotoSrcSet } from "@/lib/teamPhotoSources";
+import { fallbackToOriginalSrc, getTeamPhotoSrcSet } from "@/lib/teamPhotoSources";
 import { useV3Module, type V3Lang } from "@/v3/shared";
-import { homeCopyFor, PARTNERS_FALLBACK } from "./copy";
+import { homeCopyFor } from "./copy";
+import { firmPartners } from "@/v3/socios/partners";
 import { initSocini } from "./scripts";
 
 type Partner = { slug: string; name: string; role: string; imageUrl: string };
@@ -22,11 +21,10 @@ const memoriam = (r: string) => r.replace(/\((in)\s+(memoriam)\)/gi, "($1 $2)")
 function usePartners(lang: V3Lang): Partner[] {
   const { data, isError } = useQuery<TeamMember[]>({ queryKey: ["/api/team"] });
   return useMemo(() => {
-    const bySlug = new Map((!isError && data ? data : []).map((m) => [m.slug, m]));
-    return PARTNERS_FALLBACK.filter((p) => CONFIRMED_PARTNER_SLUGS.has(p.slug)).map((p) => {
-      const m = bySlug.get(p.slug);
-      const role = (lang === "es" ? m?.titleEs || m?.title : m?.title) || p[lang];
-      return { slug: p.slug, name: m?.name || p.name, role: memoriam(role), imageUrl: m?.imageUrl || p.imageUrl };
+    if (isError || !data) return [];
+    return firmPartners(data).map((member) => {
+      const role = lang === "es" ? member.titleEs || member.title : member.title;
+      return { slug: member.slug, name: member.name, role: memoriam(role || ""), imageUrl: member.imageUrl || "" };
     });
   }, [data, isError, lang]);
 }

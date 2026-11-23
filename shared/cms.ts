@@ -353,6 +353,25 @@ export function validateCmsValue(
           errors.push(`${label}: esta lista se administra en su catálogo.`);
           break;
         }
+        if (section === "media" && parts.at(-1) === "teamMosaic" && item[i] && typeof item[i] === "object" && !Array.isArray(item[i])) {
+          const photo = item[i] as Record<string, unknown>;
+          for (const key of Object.keys(photo)) if (!["id", "mediaPath", "url", "src", "enabled", "order", "altByLanguage", "focalPoint"].includes(key)) errors.push(`${label}.${i}.${key}: campo no permitido.`);
+          if (typeof photo.id !== "string" || !photo.id) errors.push(`${label}.${i}.id: identificador requerido.`);
+          const mediaPath = photo.mediaPath ?? photo.url ?? photo.src;
+          if (typeof mediaPath !== "string" || !/^(\/(?!\/)|https:\/\/)/i.test(mediaPath) || /[<>"'\\\s\u0000-\u001f]/.test(mediaPath)) errors.push(`${label}.${i}.mediaPath: use una ruta del sitio o una URL HTTPS.`);
+          if (typeof photo.enabled !== "boolean") errors.push(`${label}.${i}.enabled: debe ser booleano.`);
+          if (typeof photo.order !== "number" || !Number.isFinite(photo.order) || photo.order < 0 || photo.order > 10000) errors.push(`${label}.${i}.order: número fuera de rango.`);
+          if (photo.altByLanguage !== undefined) {
+            if (!photo.altByLanguage || typeof photo.altByLanguage !== "object" || Array.isArray(photo.altByLanguage)) errors.push(`${label}.${i}.altByLanguage: objeto inválido.`);
+            else for (const [language, alt] of Object.entries(photo.altByLanguage as Record<string, unknown>)) if (!/^(es|en|de|zh|ko|ja|ar|ru|fr|it)$/.test(language) || typeof alt !== "string" || alt.length > 1000) errors.push(`${label}.${i}.altByLanguage.${language}: texto inválido.`);
+          }
+          if (photo.focalPoint !== undefined) {
+            const focal = photo.focalPoint;
+            if (!focal || typeof focal !== "object" || Array.isArray(focal)) errors.push(`${label}.${i}.focalPoint: objeto inválido.`);
+            else for (const axis of ["x", "y"]) { const point = (focal as Record<string, unknown>)[axis]; if (typeof point !== "number" || !Number.isFinite(point) || point < 0 || point > 100) errors.push(`${label}.${i}.focalPoint.${axis}: debe estar entre 0 y 100.`); }
+          }
+          continue;
+        }
         check(template[i] ?? template[0], item[i], [...parts, String(i)]);
       }
       return;

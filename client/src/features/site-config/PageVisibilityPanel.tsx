@@ -3,10 +3,24 @@ import { adminApiRequest } from "@/lib/adminAuth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { layoutDefaults } from "@/lib/cmsLightDefaults";
+import { notifyCmsSaved } from "@/hooks/useCmsContent";
 
 type PageState = { enabled: boolean; blocks: Record<string, boolean> };
 type LayoutState = { pages?: Record<string, PageState>; [key: string]: unknown };
 type LayoutResponse = { content: LayoutState; revision: string };
+
+function defaultPage(pageId: string): PageState {
+  const page = (layoutDefaults.pages as Record<string, PageState>)[pageId];
+  return page ? { enabled: page.enabled, blocks: { ...page.blocks } } : { enabled: true, blocks: {} };
+}
+
+const legacyBlockAliases: Record<string, Set<string>> = {
+  team: new Set(["carrusel", "perfiles"]),
+};
+const canonicalToLegacy: Record<string, Record<string, string>> = {
+  team: { socios: "carrusel", colaboradores: "perfiles" },
+};
 
 const pageLabels: Record<string, string> = {
   home: "Portada",
@@ -87,11 +101,23 @@ export function PageVisibilityPanel({ pageId }: { pageId: string }) {
     setRevision(query.data.revision);
   }, [query.data]);
 
-  const current = useMemo(() => draft?.pages?.[pageId], [draft, pageId]);
+  const current = useMemo(() => {
+    if (!draft) return undefined;
+    const fallback = defaultPage(pageId);
+    const stored = draft.pages?.[pageId];
+    return stored ? { ...fallback, ...stored, blocks: { ...fallback.blocks, ...(stored.blocks ?? {}) } } : fallback;
+  }, [draft, pageId]);
   const update = (next: PageState) => {
     if (!draft) return;
     setDraft({ ...draft, pages: { ...(draft.pages ?? {}), [pageId]: next } });
     setSaved("");
+  };
+  const updateBlock = (blockKey: string, enabled: boolean) => {
+    if (!current) return;
+    const blocks = { ...current.blocks, [blockKey]: enabled };
+    const legacyKey = canonicalToLegacy[pageId]?.[blockKey];
+    if (legacyKey) blocks[legacyKey] = enabled;
+    update({ ...current, blocks });
   };
   const save = useMutation({
     mutationFn: async () => {
@@ -104,6 +130,7 @@ export function PageVisibilityPanel({ pageId }: { pageId: string }) {
       setDraft(data.content);
       setRevision(data.revision);
       queryClient.setQueryData(["/api/admin/site-config", "layout", "visibility"], data);
+      notifyCmsSaved();
       setSaved("Visibilidad guardada");
     },
   });
@@ -125,10 +152,10 @@ export function PageVisibilityPanel({ pageId }: { pageId: string }) {
         </div>
       </div>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        {Object.entries(current.blocks).map(([key, enabled]) => (
+        {Object.entries(current.blocks).filter(([key]) => !legacyBlockAliases[pageId]?.has(key)).map(([key, enabled]) => (
           <label key={key} className="flex items-center justify-between gap-4 rounded-lg border p-3">
             <span className="text-sm font-medium">{labelFor(key)}</span>
-            <Switch checked={enabled} onCheckedChange={(next) => update({ ...current, blocks: { ...current.blocks, [key]: next } })} aria-label={`Visible: ${labelFor(key)}`} />
+            <Switch checked={enabled} onCheckedChange={(next) => updateBlock(key, next)} aria-label={`Visible: ${labelFor(key)}`} />
           </label>
         ))}
       </div>

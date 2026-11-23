@@ -7,7 +7,7 @@ export const layoutDefaults = {
     about: { enabled: true, blocks: { hero: true, historia: true, cifras: true, valores: true, prioridad: true, laminas: true, oficina: true } },
     practices: { enabled: true, blocks: { hero: true, lista: true, servicios: true, laminaReaccion: true, industries: true } },
     industries: { enabled: true, blocks: { hero: true, lista: true, animacion: true, textos: false } },
-    team: { enabled: true, blocks: { hero: true, carrusel: true, perfiles: true } },
+    team: { enabled: true, blocks: { hero: true, socios: true, colaboradores: true, mapa: true, carrusel: true, perfiles: true } },
     news: { enabled: true, blocks: { hero: true, filtros: true, publicaciones: true, suscripcion: true } },
     contact: { enabled: true, blocks: { hero: true, datos: true, formulario: true } },
     careers: { enabled: true, blocks: { hero: true, informacion: true, vacantes: true, formulario: true } },

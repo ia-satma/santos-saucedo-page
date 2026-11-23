@@ -13,7 +13,13 @@ export const CONFIRMED_PARTNER_SLUGS = new Set([
   "mario-saucedo-rodriguez",
 ]);
 
-type VisibilityFields = { slug: string; isPartner?: boolean | null; title?: string | null; isPublic?: boolean | null };
+type VisibilityFields = {
+  slug: string;
+  isPartner?: boolean | null;
+  title?: string | null;
+  isPublic?: boolean | null;
+  published?: boolean | null;
+};
 
 export function isOfCounselMember(member: Pick<VisibilityFields, "title">): boolean {
   return member.title?.toLowerCase() === "of counsel";
@@ -24,7 +30,11 @@ export function isOfCounselMember(member: Pick<VisibilityFields, "title">): bool
  * Los demás integrantes pueden aparecer en el mosaico sin nombre.
  */
 export function isNamedOnTeamPage(member: VisibilityFields): boolean {
-  // Los cuatro socios salen siempre (regla del cliente), aunque el panel los marque como no públicos
+  // Una desactivación editorial explícita tiene prioridad sobre cualquier fallback histórico.
+  // Esto evita que los socios confirmados vuelvan a aparecer cuando el CMS los oculta.
+  if (member.isPublic === false || member.published === false) return false;
+  // Los cuatro socios confirmados conservan su visibilidad por defecto cuando no hay una
+  // desactivación explícita en el registro.
   if (CONFIRMED_PARTNER_SLUGS.has(member.slug)) return true;
   if (typeof member.isPublic === "boolean") return member.isPublic;
   if (member.isPartner) return CONFIRMED_PARTNER_SLUGS.has(member.slug);

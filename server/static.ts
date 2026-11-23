@@ -56,8 +56,11 @@ export function serveStatic(app: Express) {
   const portadaInicial = async () => {
     try {
       const cms = await getCmsOverrides();
-      const layout = (cms.layout || {}) as { home?: { hero?: boolean } };
-      if (layout.home?.hero === false) return null;
+      const layout = (cms.layout || {}) as {
+        home?: { hero?: boolean };
+        pages?: { home?: { enabled?: boolean; blocks?: { hero?: boolean } } };
+      };
+      if (layout.home?.hero === false || layout.pages?.home?.enabled === false || layout.pages?.home?.blocks?.hero === false) return null;
       const media = (cms.media || {}) as { hero?: { poster?: string }; brand?: { logoLight?: string } };
       const defaults = await readStaticCmsSection("media", "es") as { hero?: { poster?: string }; brand?: { logoLight?: string } } | undefined;
       const poster = media.hero?.poster ?? defaults?.hero?.poster ?? "";

@@ -20,6 +20,7 @@ import {
   ensurePrivateUploadDirectories,
   privateCvDir,
 } from "../server/security/uploads";
+import { initializeAgents } from "../server/agents";
 assert(
   ["localhost", "127.0.0.1", "[::1]"].includes(
     new URL(process.env.DATABASE_URL!).hostname,
@@ -81,6 +82,7 @@ const bodyOf = (u: any, changes = {}) => ({
 });
 try {
   await registerRoutes(server, app);
+  await initializeAgents();
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
   base = `http://127.0.0.1:${(server.address() as any).port}`;
   for (const [actor, role] of Object.entries({

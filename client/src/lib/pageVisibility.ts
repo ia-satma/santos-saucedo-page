@@ -2,6 +2,10 @@ import type { CmsValue } from "@shared/cms";
 
 export type PageVisibility = { enabled: boolean; blocks: Record<string, boolean> };
 
+const blockAliases: Record<string, Record<string, string>> = {
+  team: { carrusel: "socios", perfiles: "colaboradores" },
+};
+
 export function withPreviewPageVisibility(layout: unknown, authorized: boolean): unknown {
   if (!authorized || !layout || typeof layout !== "object" || Array.isArray(layout)) return layout;
   const record = layout as Record<string, unknown>;
@@ -27,6 +31,16 @@ export function pageVisibility(layout: unknown, page: string): PageVisibility {
   const blocks = record.blocks && typeof record.blocks === "object" && !Array.isArray(record.blocks)
     ? Object.fromEntries(Object.entries(record.blocks).map(([key, enabled]) => [key, enabled !== false]))
     : {};
+  const aliases = blockAliases[page] ?? {};
+  for (const [legacy, canonical] of Object.entries(aliases)) {
+    // Los layouts guardados antes de la migración contienen la clave antigua y reciben
+    // las claves canónicas desde defaults. Un estado antiguo oculto conserva prioridad.
+    if (blocks[legacy] === false) {
+      blocks[canonical] = false;
+    } else if (!Object.prototype.hasOwnProperty.call(blocks, canonical) && Object.prototype.hasOwnProperty.call(blocks, legacy)) {
+      blocks[canonical] = blocks[legacy];
+    }
+  }
   return { enabled: record.enabled !== false, blocks };
 }
 

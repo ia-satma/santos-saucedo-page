@@ -5,7 +5,15 @@ export function mergeCms<T>(base: T, override: unknown): T {
   if (Array.isArray(base)) {
     if (!Array.isArray(override)) return base;
     if (!base.length) return structuredClone(override) as T;
-    return override.map((value, i) => mergeCms(base[i] ?? base[0], value)) as T;
+    return override.map((value, i) => {
+      const template = base[i] ?? base[0];
+      // teamMosaic historically stored strings. Preserve structured photo objects
+      // during the additive migration instead of reducing them to the legacy string.
+      if (typeof template === "string" && value && typeof value === "object" && !Array.isArray(value)) {
+        return structuredClone(value);
+      }
+      return mergeCms(template, value);
+    }) as T;
   }
   if (base !== null && typeof base === "object") {
     if (!override || typeof override !== "object" || Array.isArray(override)) return base;

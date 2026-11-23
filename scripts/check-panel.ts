@@ -166,7 +166,7 @@ try {
       section.key,
     );
   const status = ok(await call("GET", "/api/agents/status"));
-  assert.equal(status.orchestrator.registeredAgents.length, 14);
+  assert.equal(status.orchestrator.registeredAgents.length, 16);
   assert.deepEqual(AI_MODULE_DEFINITIONS.map((module) => module.id), ["social_studio", "letterhead_documents"]);
   for (const module of AI_MODULE_DEFINITIONS) {
     assert.match(module.href, /^\/admin\//);
@@ -553,7 +553,7 @@ try {
     "history immutable",
   );
   console.log(
-    `PANEL ACCEPTANCE PASSED: ${count} HTTP checks, ${reads.length} private read endpoints, ${(await import("../shared/cms")).cmsSections.length} config sections, 14 agent contracts, ${AI_MODULE_DEFINITIONS.length} AI CMS modules, 12 catalog CRUD flows, knowledge approval, copy archive/restore, private document upload and PPTX/PDF/PNG generation/download. No external AI call.`,
+    `PANEL ACCEPTANCE PASSED: ${count} HTTP checks, ${reads.length} private read endpoints, ${(await import("../shared/cms")).cmsSections.length} config sections, 16 agent contracts, ${AI_MODULE_DEFINITIONS.length} AI CMS modules, 12 catalog CRUD flows, knowledge approval, copy archive/restore, private document upload and PPTX/PDF/PNG generation/download. No external AI call.`,
   );
 } catch (error) {
   console.error(error);

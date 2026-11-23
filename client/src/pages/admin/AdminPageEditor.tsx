@@ -7,6 +7,7 @@ import { ExplicitAboutFields, ExplicitHomeFields } from "@/features/site-config/
 import { PageVisibilityPanel } from "@/features/site-config/PageVisibilityPanel";
 import { BlockVisibilityToggle } from "@/features/site-config/BlockVisibilityToggle";
 import { InlineCatalogFields } from "@/features/site-config/InlineCatalogFields";
+import { TeamMosaicFields } from "@/features/site-config/TeamMosaicFields";
 import { AdminPageHelp } from "@/components/admin/AdminPageHelp";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAdminAuth, adminApiRequest } from "@/lib/adminAuth";
@@ -36,7 +37,7 @@ const tabBlockKeys: Record<string, Record<string, string>> = {
   about: { "Historia y valores": "historia", "Láminas visuales": "laminas" },
   practices: { Portada: "hero", Servicios: "servicios", Fichas: "lista", Idiomas: "lista" },
   industries: { Portada: "hero", Fichas: "lista" },
-  team: { Portada: "hero", Perfiles: "perfiles", Medios: "carrusel" },
+  team: { Portada: "hero", Colaboradores: "colaboradores" },
   news: { Introducción: "hero", "Filtros y estados": "filtros", Suscripción: "suscripcion", Notas: "publicaciones" },
   contact: { Contenido: "hero", "Datos del despacho": "datos", "Consentimiento": "formulario", Respuestas: "formulario", "Controles del formulario": "formulario" },
   offices: { "Nombre de la página": "hero", Contenido: "datos", Medios: "galeria", "Datos del despacho": "datos" },
@@ -186,7 +187,9 @@ export default function AdminPageEditor() {
                 ? <ExplicitHomeFields value={current} onChange={update} />
                 : tab.section === "about"
                   ? <ExplicitAboutFields value={current} onChange={update} />
-                  : <ConfigFields value={current} onChange={update} path={localized ? [lang] : []} media={tab.section === "media" || tab.section === "v3"} />;
+                  : tab.section === "media" && page.id === "team"
+                    ? <><TeamMosaicFields value={current} onChange={update} language={lang} /><ConfigFields value={current} onChange={update} path={localized ? [lang] : []} media excludeKeys={["teamMosaic"]} /></>
+                    : <ConfigFields value={current} onChange={update} path={localized ? [lang] : []} media={tab.section === "media" || tab.section === "v3"} />;
               const blockKey = tabBlockKeys[page.id]?.[tab.label];
               return <section id={`page-block-${index}`} key={`${tab.section}-${index}`} className="cms-editor-card mb-5 scroll-mt-6"><div className="cms-editor-section-intro"><div><h2>{tab.label}</h2><p>{tab.description}</p></div><div className="flex items-center gap-4"><span className="text-xs text-muted-foreground">Bloque {index + 1} de {page.tabs.length}</span>{blockKey && <BlockVisibilityToggle pageId={page.id} blockKey={blockKey} label={tab.label} />}</div></div>{fields}</section>;
             })}

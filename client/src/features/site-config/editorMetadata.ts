@@ -109,7 +109,7 @@ export const cmsEditorPages: CmsEditorPage[] = [
       tab("team", "Portada", "Introducción y títulos del directorio"),
       tab("profile", "Perfiles", "Biografía, formación y contacto"),
       tab("layout", "Visibilidad", "Bloques visibles de Socios y equipo"),
-      tab("media", "Medios", "Mosaico y fotografías compartidas"),
+      tab("media", "Colaboradores", "Fotografías, orden, visibilidad y textos alternativos del mosaico"),
       tab("seo", "SEO", "Título y descripción para buscadores"),
     ],
   },

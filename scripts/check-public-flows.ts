@@ -22,6 +22,7 @@ import { resolvePrivateCvStoragePath } from "../server/security/uploads";
 import { createNewsletterUnsubscribeToken } from "../server/security/newsletterUnsubscribe";
 import { injectSiteMetadata } from "../server/seo/htmlMetadata";
 import { cmsDefaults, mergeCms, type CmsSection } from "../shared/cms";
+import { initializeAgents } from "../server/agents";
 assert(
   ["localhost", "127.0.0.1", "[::1]"].includes(
     new URL(process.env.DATABASE_URL!).hostname,
@@ -155,6 +156,7 @@ async function career(bytes: Uint8Array, extra: Record<string, string> = {}) {
 }
 try {
   await registerRoutes(server, app);
+  await initializeAgents();
   await db.execute(sql`DELETE FROM site_config WHERE key LIKE '__rate_limit__:%'`);
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
   base = `http://127.0.0.1:${(server.address() as any).port}`;

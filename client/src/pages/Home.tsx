@@ -36,7 +36,7 @@ export default function Home() {
       <JsonLdSchema language={language} />
 
       {/* Transparente sobre el video del héroe hasta que se hace scroll */}
-      <Header26 localized overlay={layout.home.hero} />
+      <Header26 localized overlay={visibility.blocks.hero !== false} />
 
       {/* Inicio v3 (demo aprobada el 5-11-2026): tras el telón, bandas que alternan papel y azul.
           Cada banda v3 va en su envoltura .v3 (demo.css) y las piezas del sitio que se conservan
@@ -45,10 +45,10 @@ export default function Home() {
           cifras; creemos = la filosofía; practicas = el bloque de Baker y, tras él, las industrias;
           socios = los cuatro socios. data-start/data-end: tono de cada banda (uniones en home.css). */}
       <main id="main-content">
-        {layout.home.hero&&blockVisible(layout, "home", "hero")&&<Telon lang={lang} />}
-        {layout.homeOrder.map(key=>{
+        {blockVisible(layout, "home", "hero")&&<Telon lang={lang} />}
+        {(Array.isArray(layout.homeOrder) ? layout.homeOrder : layoutDefaults.homeOrder).map(key=>{
           const linkedPage = homeLinkedPages[key];
-          if(!layout.home[key as keyof typeof layout.home] || !blockVisible(layout, "home", key) || (linkedPage && !pageVisibility(layout, linkedPage).enabled))return null;
+          if(!blockVisible(layout, "home", key) || (linkedPage && !pageVisibility(layout, linkedPage).enabled))return null;
           switch(key){
             case 'firma':return <Band key={key} name="intro" start="light"><IntroBand lang={lang} areas={practices.length||4}/></Band>;
             case 'creemos':return <Band key={key} name="filosofia" start="dark"><FilosofiaBand lang={lang}/></Band>;

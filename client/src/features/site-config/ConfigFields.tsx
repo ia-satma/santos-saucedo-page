@@ -27,7 +27,7 @@ function emptyArrayItem(key: string, value: CmsValue[]): CmsValue {
   if (key === 'people') return { name: '', photo: '', role: '' };
   return '';
 }
-export function ConfigFields({ value, onChange, path = [], media = false }: { value: CmsValue; onChange: (v: CmsValue) => void; path?: string[]; media?: boolean }) {
+export function ConfigFields({ value, onChange, path = [], media = false, excludeKeys = [] }: { value: CmsValue; onChange: (v: CmsValue) => void; path?: string[]; media?: boolean; excludeKeys?: string[] }) {
   const key = path.at(-1) || '';
   const label = fieldLabel(key);
   const id = `cms-${path.join('-')}`;
@@ -47,7 +47,7 @@ export function ConfigFields({ value, onChange, path = [], media = false }: { va
       {!fixed && !fixedSize && <Button type="button" variant="outline" size="sm" onClick={()=>onChange([...value,emptyArrayItem(key,value)])}>Añadir {label.toLowerCase()}</Button>}
     </fieldset>;
   }
-  if (value !== null && typeof value==='object') return <div className="space-y-5">{Object.entries(value).filter(([k])=>!locked.has(k)).map(([k,v])=>{
+  if (value !== null && typeof value==='object') return <div className="space-y-5">{Object.entries(value).filter(([k])=>!locked.has(k) && !excludeKeys.includes(k)).map(([k,v])=>{
     const nested = v!==null && typeof v==='object';
     const update = (next: CmsValue) => onChange({ ...value, [k]:next, ...(media && k==='url' && 'smallUrl' in value ? { smallUrl:next } : {}) });
     return nested ? <fieldset key={k} className="space-y-5 rounded-xl border border-[var(--admin-line,#e3e8e7)] p-5"><legend className="px-2 text-base font-semibold text-[var(--admin-ink,#172b39)]">{fieldLabel(k)}</legend><ConfigFields value={v} onChange={update} path={[...path,k]} media={media}/></fieldset> : <ConfigFields key={k} value={v} onChange={update} path={[...path,k]} media={media}/>;

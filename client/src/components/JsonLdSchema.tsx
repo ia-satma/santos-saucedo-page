@@ -1,7 +1,6 @@
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { integrationsDefaults } from "@/lib/cmsLightDefaults";
 import type { LanguageCode } from "@shared/schema";
-import { CONFIRMED_PARTNER_SLUGS } from "@shared/teamVisibility";
 
 // Datos estructurados sin datos no confirmados: fuera rango de precios, monedas y medios de
 // pago, coordenadas, horario, "Latin America", la foto de oficina sin archivo y la búsqueda
@@ -133,8 +132,9 @@ export function PersonJsonLd({
   language?: LanguageCode;
 }) {
   // D17: sin datos estructurados de quien /team no nombra (socios sin confirmar, asociados)
-  const slug = url.replace(/\/+$/, "").split("/").pop() ?? "";
-  const isNamed = named ?? (CONFIRMED_PARTNER_SLUGS.has(slug) || jobTitle.trim().toLowerCase() === "of counsel");
+  // El llamador debe pasar `named` después de aplicar la visibilidad del CMS. El cargo Of Counsel
+  // conserva el fallback histórico para integraciones que todavía no conocen el catálogo.
+  const isNamed = named ?? jobTitle.trim().toLowerCase() === "of counsel";
   if (!isNamed) return null;
 
   const sameAs = [];

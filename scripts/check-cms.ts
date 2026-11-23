@@ -16,6 +16,7 @@ import { cmsDefaults, validateCmsValue, mergeCms } from "../shared/cms";
 import { hashPassword, hashSessionToken } from "../server/auth";
 import { isNamedOnTeamPage } from "../shared/teamVisibility";
 import { isPublicMediaKey } from "../server/replitStorage";
+import { initializeAgents } from "../server/agents";
 
 // This test touches only the developer's local database and restores every config row.
 assert(
@@ -80,7 +81,7 @@ try {
       isPartner: true,
       isPublic: false,
     }),
-    true,
+    false,
   );
   assert.deepEqual(
     mergeCms(
@@ -90,6 +91,10 @@ try {
     "edited",
   );
   await registerRoutes(http, app);
+  // The production bootstrap registers agents before CMS writes enqueue audits.
+  // Mirror that order here so the integration test exercises the real queue path
+  // and does not turn expected registrations into noisy warning output.
+  await initializeAgents();
   app.use((e: any, _req: any, res: any, _next: any) =>
     res.status(400).json({ error: e.message }),
   );
