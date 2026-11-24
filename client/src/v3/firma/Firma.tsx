@@ -167,7 +167,7 @@ function Lista({ n, L, activa, elegir }: { n: string; L: Lamina; activa?: number
                 onFocus={viva ? () => elegir(i) : undefined}
                 onClick={viva ? () => elegir(i) : undefined}
               >
-                <span className="fi-n">{`${n}.${p}`}</span>
+                <span className="fi-n">{n ? `${n}.${p}` : p.padStart(2, "0")}</span>
                 <span className="fi-nom">{pz.nom}</span>
               </button>
               <p className="fi-desc"><span className="fi-parte">{pz.parte}</span> {pz.desc}</p>
@@ -186,7 +186,7 @@ function Cajetin({ lamina, titulo, t, logo }: { lamina: string; titulo: string; 
   return (
     <div className="fi-cajetin" aria-hidden="true">
       <div className="fi-caj-cell fi-caj-logo"><img src={logo} alt="" width={128} height={21} /></div>
-      <div className="fi-caj-cell"><span className="fi-caj-k">{t.lamina}</span> <span className="fi-caj-n">{lamina}</span></div>
+      {lamina ? <div className="fi-caj-cell"><span className="fi-caj-k">{t.lamina}</span> <span className="fi-caj-n">{lamina}</span></div> : null}
       <div className="fi-caj-cell fi-caj-title">{titulo}</div>
       <div className="fi-caj-cell fi-caj-lugar">{t.lugar}</div>
     </div>
@@ -233,14 +233,14 @@ export function LaminaCarnero({ t, attrs, logo, lang }: { t: FirmaTextos; attrs:
   // otro idioma = otro documento: la figura vuelve a empezar abajo
   useEffect(() => { setActiva(0); }, [src]);
   return (
-    <section ref={seccion} className="fi-lamina fi-carnero sobre-azul" id="carnero" data-fi-lamina="1/7" data-fi-lean="5" data-foco="" aria-labelledby="carnero-t" {...attrs}>
+    <section ref={seccion} className="fi-lamina fi-carnero sobre-azul" id="carnero" data-fi-lean="5" data-foco="" aria-labelledby="carnero-t" {...attrs}>
       <div className="fi-escena">
         <div className="fi-marco" aria-hidden="true" />
         <div className="fi-texto">
           <h2 className="fi-h" id="carnero-t">{C.h}</h2>
           {C.p.map((p, i) => <p key={i} className="fi-p">{p}</p>)}
           {C.instr ? <p className="fi-instr">{C.instr}</p> : null}
-          <Lista n="1" L={C} activa={activa} elegir={elegir} />
+          <Lista n="" L={C} activa={activa} elegir={elegir} />
         </div>
         <div className="fi-plano">
           <div className="fi-lienzo fi-lienzo--vivo">
@@ -248,7 +248,7 @@ export function LaminaCarnero({ t, attrs, logo, lang }: { t: FirmaTextos; attrs:
           </div>
           {C.nota ? <p className="fi-nota">{C.nota}</p> : null}
         </div>
-        <Cajetin lamina="1/7" titulo={C.cajetin} t={t} logo={logo} />
+        <Cajetin lamina="" titulo={C.cajetin} t={t} logo={logo} />
       </div>
     </section>
   );
@@ -310,25 +310,25 @@ export function LaminaReaccion({ t, attrs, logo }: { t: FirmaTextos; attrs: Lang
   }, [reaccion]);
   const R = t.reaccion;
   return (
-    <section ref={ref} className="fi-lamina fi-reaccion sobre-azul" id="reaccion" data-fi-lamina="2/7" aria-labelledby="reaccion-t" {...attrs}>
+    <section ref={ref} className="fi-lamina fi-reaccion sobre-azul" id="reaccion" aria-labelledby="reaccion-t" {...attrs}>
       <div className="fi-escena">
         <div className="fi-marco" aria-hidden="true" />
         <div className="fi-texto">
           <h2 className="fi-h" id="reaccion-t">{R.h}</h2>
           {R.p.map((p, i) => <p key={i} className="fi-p">{p}</p>)}
-          <Lista n="2" L={R} />
+          <Lista n="" L={R} />
         </div>
         <div className="fi-plano">
           <svg className="fi-fig" viewBox="-240.4 -211.9 970.1 578.1" preserveAspectRatio="xMidYMid meet" role="img" aria-label={R.svgLabel} focusable="false" dangerouslySetInnerHTML={reaccion ?? undefined} />
           <div className="fi-tags" aria-hidden="true">
             {R.piezas.map((pz, i) => (
               <span key={i} className="fi-tag" data-p={String(i + 1)}>
-                <span className="fi-tag-n">{`2.${i + 1}`}</span><span className="fi-tag-t">{pz.tag}</span>
+                <span className="fi-tag-n">{String(i + 1).padStart(2, "0")}</span><span className="fi-tag-t">{pz.tag}</span>
               </span>
             ))}
           </div>
         </div>
-        <Cajetin lamina="2/7" titulo={R.cajetin} t={t} logo={logo} />
+        <Cajetin lamina="" titulo={R.cajetin} t={t} logo={logo} />
       </div>
     </section>
   );

@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Revisión antes de la compra</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0C2340; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; outline: none; }
+  canvas:focus-visible { box-shadow: inset 0 0 0 2px #B2EB3E; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="motor.js?v=2"></script>
+<script>
+/* Lámina comercial · La compra de una empresa. A la izquierda, la nave de la empresa que se compra y su
+   patio cercado con seis cajas: los pasivos laborales que trae. A la derecha, la torre del comprador, con
+   su puerta lateral de cara al patio. Entre las dos corre una banda recta y, a la mitad, un arco de
+   revisión: la auditoría laboral antes de firmar. La caja elegida se alza, sube a la banda, viaja con la
+   curva de 700 ms y se detiene dentro del arco, retenida (lima); la que estaba ahí vuelve a su lugar con
+   resorte. La puerta del comprador nunca se abre.
+   La puerta mira a la empresa que se compra, así que el patio queda al frente y la torre al fondo: una cara
+   que mira hacia atrás no se ve en isométrico. */
+(function () {
+  "use strict";
+  const FONDO = "#0C2340";
+  const tinta = Plano.tinta, reducido = Plano.reducido;
+  const lim = (v, a, b) => Math.max(a, Math.min(b, v));
+  const suave = (t) => t * t * (3 - 2 * t);
+
+  /* la compra corre en -y: del patio (abajo a la izquierda) a la puerta del comprador (arriba a la derecha) */
+  const BA = 0.4, HB = 0.1;                      // banda: media anchura y alto
+  const PX = 1.3, PY0 = 0, PY1 = 2.75;           // patio cercado: x ∈ [-PX, PX], y ∈ [PY0, PY1]
+  const BY1 = 2.55;                              // la banda nace dentro del patio, entre las dos filas
+  const YC = -2.9;                               // fachada lateral del comprador: ahí termina la banda
+  const YG = (PY0 + YC) / 2;                     // el arco de revisión, a la mitad del camino
+  const AE = 0.66, AI = 0.52, AF = 0.2, HI = 1.17, HT = 1.33;   // arco: borde, claro, medio fondo y alturas; HI deja ver la tapa de la caja retenida
+  const E = { x0: -2.42, x1: -1.38, y0: -0.14, y1: 2.08, h: 0.72, cumbre: 1.04 }; // nave que se compra
+  const T = { x0: -0.85, x1: 0.95, y0: YC - 1.3, y1: YC, h: 2.0 };                 // torre del comprador
+  const PU = { a: 0.37, z0: HB + 0.01, z1: HB + 0.86 };                             // puerta lateral
+  const ALZA = 0.07, RF = 0.3, SUBE = 200, PASA = 190, VIAJE = 700;
+
+  /* cajas: ancho (x), fondo (y), alto; lado de la banda y fila del patio */
+  const FILAS = [0.55, 1.35, 2.15];
+  const CAJAS = [
+    { w: 0.44, d: 0.44, h: 0.42, lado: 1, fila: 0 },             // 0 juicios pendientes: cubo mediano
+    { w: 0.66, d: 0.46, h: 0.18, lado: -1, fila: 2 },            // 1 cuotas IMSS e INFONAVIT: plana y ancha
+    { w: 0.3, d: 0.3, h: 0.66, lado: -1, fila: 0 },              // 2 contrato colectivo: alta y angosta
+    { w: 0.57, d: 0.26, h: 0.24, lado: 1, fila: 1, par: 0.05 },  // 3 subcontratación sin REPSE: dos con cincho
+    { w: 0.66, d: 0.6, h: 0.54, lado: -1, fila: 1 },             // 4 antigüedad y pasivo acumulado: la más pesada
+    { w: 0.28, d: 0.28, h: 0.26, lado: 1, fila: 2 },             // 5 prestaciones de costumbre: chica
+  ];
+  const N = CAJAS.length;
+  // ruta de cada caja: de su lugar hacia la banda, una curva, y por la banda hasta el arco
+  CAJAS.forEach((c) => {
+    c.cx = c.lado * (0.5 + c.w / 2); c.cy = FILAS[c.fila];
+    c.L1 = Math.abs(c.cx) - RF; c.Llat = c.L1 + (Math.PI * RF) / 2; c.L = c.Llat + (c.cy - RF - YG);
+  });
+  function enRuta(c, s) {
+    const sg = c.lado;
+    if (s <= c.L1) return [c.cx - sg * s, c.cy];
+    if (s <= c.Llat) { const th = (s - c.L1) / RF; return [sg * RF * (1 - Math.sin(th)), c.cy - RF + RF * Math.cos(th)]; }
+    return [0, c.cy - RF - (s - c.Llat)];
+  }
+  // altura del piso bajo la caja: el patio (0) o la banda (HB), que alcanza antes de pisarla
+  const piso = (s) => HB * suave(lim(s / 0.14, 0, 1));
+
+  const st = [];
+  let arrancado = false, gg = null;
+
+  Plano.figura({
+    id: "compra", total: N, reposo: 0, recorrido: [0, 2, 4, 0], pausa: 2400,
+    aria: "Dos empresas unidas por una banda. En el patio cercado de la empresa que se compra esperan seis cajas, sus pasivos laborales; a la mitad de la banda, un arco de revisión retiene la caja elegida antes de que llegue a la puerta del comprador, que sigue cerrada.",
+    caja: [
+      [E.x0, E.y1, 0], [E.x0, E.y0, E.h], [(E.x0 + E.x1) / 2, E.y0, E.cumbre],
+      [-PX, PY1, 0], [PX, PY1, 0], [PX, PY0, 0],
+      [T.x1, T.y0, 0], [T.x0, T.y0, T.h], [T.x1, T.y1, 0], [-AE, YG - AF, HT],
+    ],
+    margen: 0.05,
+    crear(g) {
+      gg = g;
+      for (let k = 0; k < N; k++) st.push({ s: 0, modo: "casa", alza: g.transito(0), r: g.resorte(0), fase: null, tv: 0, baja: false });
+    },
+    alElegir(i, previa, ahora) {
+      if (!arrancado) {            // reposo diseñado: la primera caja ya está retenida en el arco
+        arrancado = true;
+        if (i >= 0) { st[i].s = CAJAS[i].L; st[i].modo = "retenida"; }
+        return;
+      }
+      let vuelve = false;
+      st.forEach((e, k) => {
+        if (k === i || e.modo === "casa") return;
+        if (e.modo === "sube") { e.modo = "casa"; e.alza.ir(0, ahora, 220); return; }   // no había salido: se posa
+        vuelve = true;
+        e.modo = "vuelve"; e.r.x = e.s; e.r.v = 0; e.r.meta = 0;
+        const arriba = e.alza.a === 1 && e.alza.listo(ahora);
+        if (e.alza.a !== 1) e.alza.ir(1, ahora, 150);
+        e.tv = ahora + (arriba || reducido ? 0 : 130);   // primero se despega de la banda
+      });
+      if (i < 0) return;
+      const e = st[i];
+      if (e.modo === "casa" || e.modo === "vuelve") {
+        e.modo = "sube";
+        if (e.alza.a !== 1) e.alza.ir(1, ahora + (vuelve && !reducido ? 90 : 0), SUBE);
+      }
+    },
+    zonas(g) {
+      // el lugar de reposo de cada caja en el patio (regla 01), de atrás hacia adelante
+      return CAJAS.map((c, i) => ({ c, i })).sort((a, b) => a.c.cx + a.c.cy - (b.c.cx + b.c.cy)).map(({ c, i }) => {
+        const m = 0.07, x0 = c.cx - c.w / 2 - m, x1 = c.cx + c.w / 2 + m, y0 = c.cy - c.d / 2 - m, y1 = c.cy + c.d / 2 + m, z1 = c.h + m;
+        return { i, poly: g.zona([[x0, y0, z1], [x1, y0, z1], [x1, y0, 0], [x1, y1, 0], [x0, y1, 0], [x0, y1, z1]]) };
+      });
+    },
+    dibujar(g, est, dt, ahora) {
+      let sigue = false;
+      for (let k = 0; k < N; k++) if (mover(k, dt, ahora)) sigue = true;
+
+      // el arco se enciende con la caja que retiene; la banda corre con lo que lleva encima
+      let luz = 0, corre = 0;
+      st.forEach((e, k) => { const c = CAJAS[k]; luz = Math.max(luz, suave(lim(1 - (c.L - e.s) / 0.55, 0, 1))); corre += Math.max(0, e.s - c.Llat); });
+
+      huellas(g);
+      const items = [
+        { b: [E.x0, E.x1, E.y0, E.y1, 0, E.cumbre], pinta: () => nave(g) },
+        { b: [T.x0, T.x1, T.y0, T.y1, 0, T.h], pinta: () => torre(g) },
+        { b: [E.x1, -BA - 0.12, PY0 - 0.01, PY0 + 0.01, 0, 0.4], pinta: () => cerca(g, [[-BA - 0.12, PY0], [E.x1, PY0]], 0, true) },
+        { b: [BA + 0.12, PX, PY0 - 0.01, PY0 + 0.01, 0, 0.4], pinta: () => cerca(g, [[BA + 0.12, PY0], [PX, PY0]], 0) },
+        { b: [-PX - 0.01, -PX + 0.01, E.y1 - 0.08, PY1, 0, 0.3], pinta: () => cerca(g, [[-PX, E.y1 - 0.08], [-PX, PY1]]) },
+        { b: [-AE, -AI, YG - AF, YG + AF, 0, HI], pinta: () => poste(g, -AE, luz) },
+        { b: [-BA, BA, YC, BY1, 0, HB], pinta: () => banda(g, corre) },
+        { b: [AI, AE, YG - AF, YG + AF, 0, HI], pinta: () => poste(g, AI, luz) },
+        { b: [-AE, AE, YG - AF, YG + AF, HI, HT], pinta: () => dintel(g, luz) },
+        { b: [PX - 0.01, PX + 0.01, PY0, PY1, 0, 0.3], pinta: () => cerca(g, [[PX, PY0], [PX, PY1]]) },
+        { b: [-PX, PX, PY1 - 0.01, PY1 + 0.01, 0, 0.3], pinta: () => cerca(g, [[PX, PY1], [-PX, PY1]]) },
+      ];
+      for (let k = 0; k < N; k++) {
+        const c = CAJAS[k], e = st[k], p = enRuta(c, e.s), z = piso(e.s) + ALZA * e.alza.v, m = k === 4 ? 0.02 : 0;
+        items.push({ b: [p[0] - c.w / 2 - m, p[0] + c.w / 2 + m, p[1] - c.d / 2 - m, p[1] + c.d / 2 + m, z, z + c.h], pinta: () => cajon(g, k, p[0], p[1], z, g.foco(k)) });
+      }
+      ordenar(items).forEach((it) => it.pinta());
+      return sigue;
+    },
+  });
+
+  /* ---------- movimiento de cada caja ----------
+     casa → sube (se alza en su lugar) → va (paso corto a la banda) → espera → va (viaje de 700 ms) → retenida;
+     la que deja de ser la activa vuelve con resorte. Por la banda pasa una sola caja a la vez. */
+  function mover(k, dt, ahora) {
+    const e = st[k], c = CAJAS[k];
+    e.alza.paso(ahora, gg.suave);
+    let sigue = !e.alza.listo(ahora);
+    if (e.modo === "sube") {
+      // alzada en su lugar: pisa la banda cuando nadie va a pasar por ese tramo
+      sigue = true;
+      if (e.alza.listo(ahora)) {
+        if (e.s >= c.Llat - 1e-3) e.modo = "espera";
+        else if (libre(k, c.cy - c.d / 2 - 0.05, c.cy + c.d / 2 + 0.05)) {
+          e.modo = "va"; e.baja = false;
+          e.fase = { lat: true, t0: ahora, s0: e.s, s1: c.Llat, dur: reducido ? 0 : 90 + PASA * (c.Llat - e.s) / c.Llat, curva: gg.suave };
+        }
+      }
+    }
+    if (e.modo === "va") {
+      sigue = true;
+      const f = e.fase, t = f.dur ? lim((ahora - f.t0) / f.dur, 0, 1) : 1;
+      e.s = f.s0 + (f.s1 - f.s0) * f.curva(t);
+      if (!f.lat && !e.baja && t > 0.5) { e.baja = true; e.alza.ir(0, ahora, 320); }   // se posa dentro del arco
+      if (t >= 1) e.modo = f.lat ? "espera" : "retenida";
+    }
+    if (e.modo === "espera") {
+      // ya en la banda: viaja cuando el tramo hasta el arco queda libre
+      sigue = true;
+      if (libre(k, YG - 0.5, c.cy + c.d / 2 + 0.05)) {
+        e.modo = "va"; e.baja = false;
+        e.fase = { lat: false, t0: ahora + (reducido ? 0 : 40), s0: e.s, s1: c.L, dur: reducido ? 0 : VIAJE, curva: Plano.curva };
+      }
+    }
+    if (e.modo === "vuelve") {
+      sigue = true;
+      if (ahora >= e.tv) { e.r.paso(dt, 70, 13.5); e.s = e.r.x; }
+      if (Math.abs(e.s) < 0.003 && Math.abs(e.r.v) < 0.03) { e.s = 0; e.r.x = 0; e.r.v = 0; e.modo = "casa"; e.alza.ir(0, ahora, 240); }
+    }
+    return sigue || !e.alza.listo(ahora);
+  }
+  /* ¿queda libre el tramo [ya, yb] de la banda? Cuenta lo que otra caja ocupa ahora y lo que barrerá
+     en la banda al volver a su fila */
+  function libre(k, ya, yb) {
+    for (let j = 0; j < N; j++) {
+      if (j === k) continue;
+      const q = CAJAS[j], p = enRuta(q, st[j].s);
+      if (Math.abs(p[0]) - q.w / 2 >= BA + 0.05) continue;
+      const y0 = Math.min(p[1], q.cy) - q.d / 2, y1 = Math.max(p[1], q.cy) + q.d / 2;
+      if (y1 > ya && y0 < yb) return false;
+    }
+    return true;
+  }
+
+  /* ---------- orden de pintado: cajas alineadas a los ejes, de atrás hacia adelante (regla 06) ---------- */
+  function solapan(a, b) {   // en isométrico, dos cajas se enciman si se enciman sus rangos de x−y, x−z y y−z
+    return a[0] - a[3] < b[1] - b[2] && b[0] - b[3] < a[1] - a[2] &&
+      a[0] - a[5] < b[1] - b[4] && b[0] - b[5] < a[1] - a[4] &&
+      a[2] - a[5] < b[3] - b[4] && b[2] - b[5] < a[3] - a[4];
+  }
+  function detras(a, b) {
+    const e = 1e-6;
+    if (a[1] <= b[0] + e) return true; if (b[1] <= a[0] + e) return false;
+    if (a[3] <= b[2] + e) return true; if (b[3] <= a[2] + e) return false;
+    if (a[5] <= b[4] + e) return true; if (b[5] <= a[4] + e) return false;
+    return a[0] + a[1] + a[2] + a[3] + a[4] + a[5] < b[0] + b[1] + b[2] + b[3] + b[4] + b[5];
+  }
+  function ordenar(items) {
+    const n = items.length, antes = items.map(() => []);
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+      const a = items[i].b, b = items[j].b;
+      if (!solapan(a, b)) continue;
+      if (detras(a, b)) antes[j].push(i); else antes[i].push(j);
+    }
+    const out = [], marca = new Array(n).fill(0);
+    const visita = (i) => { if (marca[i]) return; marca[i] = 1; antes[i].forEach(visita); out.push(items[i]); };
+    for (let i = 0; i < n; i++) visita(i);
+    return out;
+  }
+
+  /* ---------- utilidades ---------- */
+  function ruta(ctx, pts, r) {   // polígono cerrado con esquinas redondas (en pantalla)
+    const n = pts.length, m = [(pts[n - 1][0] + pts[0][0]) / 2, (pts[n - 1][1] + pts[0][1]) / 2];
+    ctx.beginPath(); ctx.moveTo(m[0], m[1]);
+    for (let i = 0; i < n; i++) { const p = pts[i], q = pts[(i + 1) % n]; ctx.arcTo(p[0], p[1], q[0], q[1], r); }
+    ctx.closePath();
+  }
+  function envolvente(p) {
+    const s = p.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+    const lo = [], up = [];
+    for (const q of s) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+    for (let i = s.length - 1; i >= 0; i--) { const q = s[i]; while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+    return lo.slice(0, -1).concat(up.slice(0, -1));
+  }
+  function trazar(ctx, color, w) { ctx.strokeStyle = color; ctx.lineWidth = w || 1.25; ctx.lineJoin = "round"; ctx.lineCap = "round"; ctx.stroke(); }
+  /* caja sólida solo rellena (para piezas cuyo trazo se dibuja a mano) */
+  function relleno(g, x0, x1, y0, y1, z0, z1) {
+    const pts = [[x0, y0, z1], [x1, y0, z1], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0], [x0, y1, z1]].map((p) => g.P(p[0], p[1], p[2]));
+    ruta(g.ctx, pts, 2.5); g.ctx.fillStyle = FONDO; g.ctx.fill();
+  }
+  const rect = (g, pts, t, w, r) => g.poly(pts, { relleno: false, trazo: t, w: w || 1, r: r == null ? 1.5 : r });
+
+  /* ---------- suelo: la huella de cada caja en el patio, visible cuando la caja salió ---------- */
+  function huellas(g) {
+    g.poly([[-PX, PY0, 0], [PX, PY0, 0], [PX, PY1, 0], [-PX, PY1, 0]], { relleno: g.rgba(g.RGB.agua, 0.06), trazo: false, r: 0 });
+    CAJAS.forEach((c, k) => {
+      const f = g.foco(k), e = 0.03, x0 = c.cx - c.w / 2 + e, x1 = c.cx + c.w / 2 - e, y0 = c.cy - c.d / 2 + e, y1 = c.cy + c.d / 2 - e;
+      rect(g, [[x0, y0, 0], [x1, y0, 0], [x1, y1, 0], [x0, y1, 0]], tinta(0.1 + 0.2 * f, 0.45 * f, 0.55 + 0.3 * f), 1, 2);
+    });
+  }
+
+  /* ---------- la empresa que se compra: nave de dos aguas, de cara al patio ---------- */
+  function nave(g) {
+    const { x0, x1, y0, y1, h, cumbre } = E, xm = (x0 + x1) / 2, ctx = g.ctx;
+    const perfil = [[x0, 0], [x1, 0], [x1, h], [xm, cumbre], [x0, h]], pts = [];
+    perfil.forEach(([x, z]) => { pts.push(g.P(x, y0, z)); pts.push(g.P(x, y1, z)); });
+    ruta(ctx, envolvente(pts), 2.5); ctx.fillStyle = FONDO; ctx.fill(); trazar(ctx, tinta(0.46), 1.25);
+    const pl = { trazo: tinta(0.12, 0, 0.85), w: 1.1 };
+    g.linea([[x1, y0, h], [x1, y1, h], [xm, y1, cumbre], [x0, y1, h]], pl);   // alero y frontón
+    g.linea([[xm, y0, cumbre], [xm, y1, cumbre]], pl);                         // cumbrera
+    const fino = tinta(0, 0, 0.55);
+    // ventanas altas hacia el patio
+    for (let n = 0; n < 3; n++) {
+      const ya = y0 + 0.32 + n * 0.62;
+      rect(g, [[x1, ya, h - 0.12], [x1, ya + 0.34, h - 0.12], [x1, ya + 0.34, h - 0.24], [x1, ya, h - 0.24]], fino);
+    }
+    // frontón: puerta de servicio y respiradero
+    rect(g, [[x1 - 0.5, y1, 0], [x1 - 0.22, y1, 0], [x1 - 0.22, y1, 0.44], [x1 - 0.5, y1, 0.44]], fino);
+    const ojo = []; for (let i = 0; i <= 28; i++) { const a = (i / 28) * Math.PI * 2; ojo.push([xm + 0.09 * Math.cos(a), y1, h + 0.03 + 0.09 * Math.sin(a)]); }
+    g.linea(ojo, { trazo: fino, w: 1 });
+  }
+
+  /* ---------- el comprador: torre limpia, con la puerta lateral cerrada ---------- */
+  function torre(g) {
+    const { x0, x1, y0, y1, h } = T;
+    g.caja(x0, y0, 0, x1 - x0, y1 - y0, h, { a: 0.56, r: 3 });
+    const fino = tinta(0, 0, 0.55), e = 0.07;
+    rect(g, [[x0 + e, y0 + e, h], [x1 - e, y0 + e, h], [x1 - e, y1 - e, h], [x0 + e, y1 - e, h]], fino, 1, 2);   // pretil
+    for (const zv of [1.2, 1.47, 1.74]) {   // ventanas corridas
+      rect(g, [[x1, y0 + 0.14, zv + 0.14], [x1, y1 - 0.14, zv + 0.14], [x1, y1 - 0.14, zv], [x1, y0 + 0.14, zv]], fino);
+      rect(g, [[x0 + 0.14, y1, zv + 0.14], [x1 - 0.14, y1, zv + 0.14], [x1 - 0.14, y1, zv], [x0 + 0.14, y1, zv]], fino);
+    }
+    rect(g, [[x1, y0 + 0.14, 0.9], [x1, y1 - 0.14, 0.9], [x1, y1 - 0.14, 0.12], [x1, y0 + 0.14, 0.12]], fino);   // vestíbulo
+    // puerta lateral: cortina cerrada, con su marquesina
+    const a = PU.a, z0 = PU.z0, z1 = PU.z1;
+    rect(g, [[-a, y1, z0], [a, y1, z0], [a, y1, z1], [-a, y1, z1]], tinta(0.55), 1.2, 2);
+    for (let n = 1; n < 5; n++) { const z = z0 + ((z1 - z0) * n) / 5; g.linea([[-a + 0.05, y1, z], [a - 0.05, y1, z]], { trazo: fino, w: 1 }); }
+    g.caja(-a - 0.07, y1, z1 + 0.07, 2 * a + 0.14, 0.13, 0.045, { a: 0.55, r: 1.5 });
+  }
+
+  /* ---------- cerca del patio: paños de malla (velo claro), travesaño arriba y postes espaciados ---------- */
+  const HCE = 0.26;
+  function cerca(g, [p, q], quicio, sinFin) {   // quicio: el poste que flanquea el paso de la banda; sinFin: el último lo pone la nave
+    const ctx = g.ctx, largo = Math.hypot(q[0] - p[0], q[1] - p[1]), n = Math.max(1, Math.round(largo / 0.62));
+    const pano = [g.P(p[0], p[1], 0), g.P(q[0], q[1], 0), g.P(q[0], q[1], HCE), g.P(p[0], p[1], HCE)];
+    ctx.beginPath(); pano.forEach((v, i) => (i ? ctx.lineTo(v[0], v[1]) : ctx.moveTo(v[0], v[1]))); ctx.closePath();
+    ctx.fillStyle = g.rgba(g.RGB.claro, 0.035); ctx.fill();
+    g.linea([[p[0], p[1], HCE], [q[0], q[1], HCE]], { trazo: tinta(0.22), w: 1.1 });
+    g.linea([[p[0], p[1], 0], [q[0], q[1], 0]], { trazo: tinta(0, 0, 0.4), w: 1 });
+    for (let i = 0; i <= (sinFin ? n - 1 : n); i++) {
+      const u = i / n, x = p[0] + (q[0] - p[0]) * u, y = p[1] + (q[1] - p[1]) * u;
+      const alto = quicio != null && i === quicio ? HCE + 0.1 : HCE + 0.03;   // el quicio del portón, más alto
+      g.linea([[x, y, 0], [x, y, alto]], { trazo: tinta(0.26), w: 1.2 });
+    }
+  }
+
+  /* ---------- banda: cuerpo bajo y franjas que corren con la carga ---------- */
+  function banda(g, corre) {
+    g.caja(-BA, YC, 0, 2 * BA, BY1 - YC, HB, { a: 0.42, r: 2 });
+    const t = tinta(0, 0, 0.5), y0 = YC + 0.08, y1 = BY1 - 0.08, L = y1 - y0, n = Math.round(L / 0.24);
+    for (let i = 0; i < n; i++) {
+      const yy = y0 + ((((i * L) / n - corre) % L) + L) % L;
+      g.linea([[-BA + 0.06, yy, HB], [BA - 0.06, yy, HB]], { trazo: t, w: 1 });
+    }
+  }
+
+  /* ---------- arco de revisión: dos postes y un dintel, sin costuras entre ellos ---------- */
+  function poste(g, x0, luz) {
+    const x1 = x0 + (AE - AI), y0 = YG - AF, y1 = YG + AF, ctx = g.ctx, a = 0.5 + 0.5 * luz;
+    relleno(g, x0, x1, y0, y1, 0, HI);
+    const P = (x, y, z) => g.P(x, y, z);
+    ctx.beginPath();
+    const s = [P(x0, y1, HI), P(x0, y1, 0), P(x1, y1, 0), P(x1, y0, 0), P(x1, y0, HI)];
+    s.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
+    trazar(ctx, tinta(a), 1.3);
+    // pliegue: canto entre la cara del arco y la cara interior
+    g.linea([[x1, y1, 0.02], [x1, y1, HI]], { trazo: tinta(a * 0.35, 0, 0.85), w: 1.1 });
+    // en la cara interior del poste del fondo, los emisores de la revisión: se aclaran al retener una caja
+    if (x0 < 0) for (const z of [0.4, 0.7]) g.linea([[x1, y0 + 0.07, z], [x1, y1 - 0.07, z]], { trazo: tinta(0.12 + 0.45 * luz, 0, 0.6 + 0.4 * luz), w: 1.2 });
+  }
+  function dintel(g, luz) {
+    const x0 = -AE, x1 = AE, y0 = YG - AF, y1 = YG + AF, z0 = HI, z1 = HT, ctx = g.ctx, a = 0.5 + 0.5 * luz;
+    relleno(g, x0, x1, y0, y1, z0, z1);
+    const P = (x, y, z) => g.P(x, y, z), linea = (pts) => { ctx.beginPath(); pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); trazar(ctx, tinta(a), 1.3); };
+    linea([P(x0, y1, z0), P(x0, y1, z1), P(x0, y0, z1), P(x1, y0, z1), P(x1, y0, z0)]);   // silueta exterior
+    linea([P(-AI, y1, z0), P(AI, y1, z0)]);                                              // boca del arco
+    g.linea([[x1, y0, z1], [x1, y1, z1], [x0, y1, z1]], { trazo: tinta(a * 0.4, 0, 0.85), w: 1.1 });
+  }
+
+  /* ---------- las cajas ---------- */
+  function cajon(g, k, x, y, z, f) {
+    const c = CAJAS[k], a = 0.62 + 0.38 * f, o = { a, l: f, r: 2.5 };
+    const det = { trazo: tinta(0.16 + 0.3 * f, f, 0.85), w: 1 };
+    const x0 = x - c.w / 2, y0 = y - c.d / 2, x1 = x0 + c.w, y1 = y0 + c.d, z1 = z + c.h;
+    const cincho = (zb, xa, ya, xb, yb) => g.linea([[xb, ya + 0.025, zb], [xb, yb, zb], [xa + 0.025, yb, zb]], det);
+    const tapa = (xa, ya, xb, yb, zt, e) => rect(g, [[xa + e, ya + e, zt], [xb - e, ya + e, zt], [xb - e, yb - e, zt], [xa + e, yb - e, zt]], det.trazo, 1, 1.5);
+    if (k === 0) {            // cubo mediano: tapa embutida y un cincho
+      g.caja(x0, y0, z, c.w, c.d, c.h, o);
+      tapa(x0, y0, x1, y1, z1, 0.06);
+      cincho(z + c.h * 0.42, x0, y0, x1, y1);
+    } else if (k === 1) {     // plana y ancha: tablas en la tapa
+      g.caja(x0, y0, z, c.w, c.d, c.h, o);
+      for (const u of [1 / 3, 2 / 3]) g.linea([[x0 + 0.05, y0 + c.d * u, z1], [x1 - 0.05, y0 + c.d * u, z1]], det);
+    } else if (k === 2) {     // alta y angosta: dos cinchos
+      g.caja(x0, y0, z, c.w, c.d, c.h, o);
+      cincho(z + c.h * 0.3, x0, y0, x1, y1);
+      cincho(z + c.h * 0.66, x0, y0, x1, y1);
+    } else if (k === 3) {     // dos cajas chicas, lado a lado, unidas por un cincho que les da la vuelta
+      const s = (c.w - c.par) / 2;
+      g.caja(x0, y0, z, s, c.d, c.h, o);
+      g.caja(x1 - s, y0, z, s, c.d, c.h, o);
+      const ym = y0 + c.d / 2, t = { trazo: tinta(0.7 + 0.3 * f, f), w: 1.6 };
+      g.linea([[x0 + 0.03, ym, z1 + 0.004], [x1, ym, z1 + 0.004], [x1, ym, z + 0.03]], t);
+      g.linea([[x1, y0 + 0.03, z + c.h * 0.5], [x1, y1, z + c.h * 0.5], [x0 + 0.03, y1, z + c.h * 0.5]], { trazo: t.trazo, w: 1.5 });
+    } else if (k === 4) {     // la más grande: patines, cuerpo y tapa con vuelo
+      const hp = 0.06, ht = 0.07;
+      g.caja(x0 + 0.08, y0 + 0.02, z, 0.11, c.d - 0.04, hp, { a: a * 0.85, l: f, r: 1.5 });
+      g.caja(x1 - 0.19, y0 + 0.02, z, 0.11, c.d - 0.04, hp, { a: a * 0.85, l: f, r: 1.5 });
+      g.caja(x0, y0, z + hp, c.w, c.d, c.h - hp - ht, o);
+      cincho(z + hp + (c.h - hp - ht) * 0.5, x0, y0, x1, y1);
+      g.caja(x0 - 0.02, y0 - 0.02, z1 - ht, c.w + 0.04, c.d + 0.04, ht, o);
+    } else {                  // chica: solo la ceja de la tapa
+      g.caja(x0, y0, z, c.w, c.d, c.h, o);
+      cincho(z1 - 0.06, x0, y0, x1, y1);
+    }
+  }
+})();
+</script>
+</body>
+</html>

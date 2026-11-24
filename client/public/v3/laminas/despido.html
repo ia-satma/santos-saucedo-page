@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lo que cuesta un despido</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0C2340; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; outline: none; }
+  canvas:focus-visible { box-shadow: inset 0 0 0 2px #B2EB3E; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="motor.js?v=2"></script>
+<script>
+/* Lámina de Laboral · Lo que cuesta un despido que no se puede probar, mes a mes de juicio. Una pila de hojas
+   sobre un zócalo: cada hoja completa es un mes del sueldo del trabajador despedido. Abajo, un bloque macizo
+   de tres hojas (la indemnización constitucional) y encima una losa delgada (la prima de antigüedad, que
+   manda la página). Luego una hoja por cada mes de salarios vencidos, hasta doce; ahí está el tope, un marco
+   delgado alrededor de la pila, como el de un medidor de nivel. Arriba del marco ya no hay hojas de sueldo
+   sino rebanadas más delgadas y de canto punteado: los intereses (0.3 meses por cada mes después del doce).
+   Al frente, en el suelo, un riel de 0 a 36 meses con siete postes a escala; una corredera va al poste
+   elegido y la pila crece o se vacía con resorte, hoja por hoja. Del poste del mes 1.5 (la conciliación
+   prejudicial) sale un ramal a un estanque redondo: la salida barata.
+     {lamina:"despido", ir:i}     → la corredera va al poste i (meses 0, 1.5, 6, 12, 18, 24 y 36);
+     {lamina:"despido", prima:x}  → grosor de la losa de la prima de antigüedad, en meses de sueldo (0 a 6).
+   La figura avisa {lamina:"despido", activa:i} (lo hace el motor). */
+(function () {
+  "use strict";
+  const ID = "despido";
+  const MESES = [0, 1.5, 6, 12, 18, 24, 36], N = MESES.length;
+  const lim = (v, a, b) => Math.max(a, Math.min(b, v));
+  const suave = (t) => t * t * (3 - 2 * t);
+  const tinta = Plano.tinta, reducido = Plano.reducido;
+  const FONDO = "#0C2340";
+  const VER_ZONAS = /[?&]zonas=1\b/.test(location.search);
+
+  // riel del tiempo, en el suelo, a lo largo de x; los postes van detrás y el ramal sale hacia el frente
+  const MES = 0.18, X = (m) => m * MES;
+  const RW = 0.11, RH = 0.05, RX0 = -0.36, RX1 = X(MESES[N - 1]) + 0.36;
+  const PY = -RW - 0.1, PR = 0.06, PH = 0.24;
+  const X1 = X(MESES[1]), RAMA = 0.42, PLR = 0.36, PLY = RW + RAMA + PLR;
+  // la pila: hoja de SX × SY, un mes de sueldo de grosor T, detrás del riel. El peor caso (mes 36 y seis
+  // meses de prima: 3 + 6 + 12 + 7.2 = 28.2 meses) cabe en la caja; con la prima de siempre sobra aire.
+  const T = 0.085, SX = 2.3, SY = 1.65;
+  const MZ = 0.24, ZP = 0.12;                                  // zócalo: margen y alto
+  const x0 = 4.1 - SX / 2, y1 = -0.5 - MZ, x1 = x0 + SX, y0 = y1 - SY;
+  const BASE = 3, PRIMA0 = 1.26, PRIMA_MAX = 6, TOPE = 12;
+  const REB = 0.6;                                             // rebanada de interés: dos meses de juicio
+  const NREB = Math.round((0.3 * (MESES[N - 1] - TOPE)) / REB);
+  const CAIDA = 0.26;                                          // altura desde la que llega cada hoja
+  const G = 0.095, BW = 0.065, HC = 0.06;                      // marco del tope: holgura, ancho y canto
+  const RET = 0.035;                                           // las rebanadas van un poco metidas
+  // con tres rebanadas encima (mes 18) la orilla de atrás del marco ya queda tapada: G < 3·REB·T − RET
+  const ZMAX = ZP + (BASE + PRIMA_MAX + TOPE + NREB * REB) * T;
+
+  /* hojas y rebanadas, de abajo arriba; cada hoja con un leve descuadre (con semilla) para que se lean sueltas */
+  function azar(s) { return function () { s |= 0; s = (s + 0x6D2B79F5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  const rnd = azar(23);
+  const items = [];
+  for (let k = 0; k < TOPE; k++) items.push({ reb: false, k, dx: (rnd() - 0.5) * 0.014, dy: (rnd() - 0.5) * 0.014 });
+  for (let j = 0; j < NREB; j++) items.push({ reb: true, k: j, dx: 0, dy: 0 });
+  // pieza que enciende cada una: hojas nuevas entre 1.5 y 6 meses (pieza 2); rebanadas por tramo (4, 5, 6)
+  items.forEach((it) => {
+    if (!it.reb) { it.pieza = it.k >= Math.ceil(MESES[1]) && it.k < MESES[2] ? 2 : -1; return; }
+    const fin = TOPE + ((it.k + 1) * REB) / 0.3;
+    it.pieza = MESES.findIndex((m) => m >= fin - 1e-6);
+  });
+  // lo que hay en la pila al mes m: hojas presentes, ancho de cada una y rebanadas presentes
+  const hojasEn = (m) => Math.ceil(Math.min(m, TOPE) - 1e-6);
+  const rebanadasEn = (m) => Math.round((0.3 * Math.max(0, m - TOPE)) / REB);
+  const meta = (it, m) => (it.reb ? (it.k < rebanadasEn(m) ? 1 : 0) : it.k < hojasEn(m) ? 1 : 0);
+
+  let prima = null, corredera = null, estanque = null, iniciado = false;
+  let zonasVistas = [];
+
+  Plano.figura({
+    id: ID, total: N, reposo: 0, recorrido: [0, 1, 3, 6], pausa: 2300,
+    aria: "Pila de hojas sobre un zócalo: cada hoja es un mes del sueldo del trabajador despedido. Abajo, un bloque de tres meses (la indemnización) y una losa delgada (la prima de antigüedad); encima, una hoja por mes de juicio hasta un marco, el tope de doce meses, y sobre él rebanadas delgadas de intereses. Al frente, un riel de 0 a 36 meses con siete postes; del poste del mes uno y medio sale un ramal a un estanque, la conciliación.",
+    caja: [
+      [RX0, -RW, 0], [RX0, RW + 0.2, 0], [RX1, RW + 0.2, 0], [RX1, -RW, 0],
+      [X1 - PLR, PLY + PLR * 0.7, 0], [X1 - PLR * 0.71, PLY + PLR * 0.71, 0], [X1, PLY + PLR, 0],
+      [x0 - MZ, y0 - MZ, 0], [x1 + MZ, y0 - MZ, 0], [x0 - MZ, y1 + MZ, 0],
+      [x0 - 0.04, y0 - 0.04, ZMAX + CAIDA], [x1 + G, y0 - G, ZMAX], [x0 - G, y1 + G, ZMAX],
+    ],
+    margen: 0.045,
+    crear(g) {
+      prima = g.resorte(PRIMA0);
+      corredera = g.transito(0);
+      estanque = g.transito(0);
+      items.forEach((it) => { it.p = g.resorte(0); it.meta = 0; it.cuando = 0; it.ancho = g.transito(1); });
+    },
+    alElegir(i, previa, ahora) {
+      if (i < 0) return;
+      const m = MESES[i];
+      corredera.ir(m, ahora);
+      estanque.ir(i === 1 ? 1 : 0, ahora + (i === 1 ? 260 : 0), i === 1 ? 1100 : 500);
+      if (!iniciado) {      // reposo: todo en su sitio, sin animar
+        iniciado = true;
+        corredera.v = corredera.de = m; corredera.dur = 0;
+        items.forEach((it) => { it.meta = meta(it, m); it.p.x = it.p.meta = it.meta; if (!it.reb) { const a = lim(m - it.k, 0, 1) || 1; it.ancho.v = it.ancho.de = it.ancho.a = a; it.ancho.dur = 0; } });
+        return;
+      }
+      // llegan de abajo arriba y se van desde arriba, una tras otra
+      const suben = [], bajan = [];
+      items.forEach((it) => { const v = meta(it, m); if (v !== it.meta) (v ? suben : bajan).push(it); });
+      bajan.reverse();
+      const paso = reducido ? 0 : lim(900 / Math.max(1, suben.length + bajan.length), 40, 90);
+      suben.concat(bajan).forEach((it, r) => { it.meta = meta(it, m); it.cuando = ahora + r * paso; });
+      // la hoja del mes partido (1.5) es media hoja: se completa o se parte después de que pasan las demás
+      const tarde = ahora + bajan.length * paso;
+      items.forEach((it) => {
+        if (it.reb || !meta(it, m)) return;
+        const a = lim(m - it.k, 0, 1);
+        if (Math.abs(a - it.ancho.a) < 1e-3) return;
+        if (it.p.x < 0.02) { it.ancho.v = it.ancho.de = it.ancho.a = a; it.ancho.dur = 0; }   // llega ya con su ancho
+        else { it.ancho.ir(a, ahora); it.ancho.t0 = a < it.ancho.v ? tarde : ahora; }
+      });
+    },
+    zonas(g) {
+      const z = [];
+      // franjas del riel alrededor de cada poste: de la mitad al poste anterior a la mitad al siguiente
+      for (let k = 0; k < N; k++) {
+        const a = k ? X((MESES[k - 1] + MESES[k]) / 2) : RX0 - 0.3, b = k < N - 1 ? X((MESES[k] + MESES[k + 1]) / 2) : RX1 + 0.3;
+        z.push({ i: k, poly: g.zona([[a, y1 + MZ + 0.02, 0], [b, y1 + MZ + 0.02, 0], [b, RW + 0.42, 0], [a, RW + 0.42, 0]]) });
+      }
+      // ramal y estanque de la conciliación
+      z.push({ i: 1, poly: g.zona([[X1 - 0.3, RW + 0.05, 0], [X1 + 0.3, RW + 0.05, 0], [X1 + PLR + 0.14, PLY, 0], [X1 + PLR + 0.14, PLY + PLR + 0.14, 0], [X1 - PLR - 0.14, PLY + PLR + 0.14, 0], [X1 - PLR - 0.14, PLY, 0]]) });
+      // zócalo y bloque de la indemnización (no se mueven)
+      const zt = ZP + BASE * T, xa = x0 - MZ, xb = x1 + MZ, ya = y0 - MZ, yb = y1 + MZ;
+      z.push({ i: 0, poly: g.zona([[xa, ya, zt], [xb, ya, zt], [xb, ya, 0], [xb, yb, 0], [xa, yb, 0], [xa, yb, zt]]) });
+      return (zonasVistas = z);
+    },
+    dibujar(g, est, dt, ahora) {
+      const ctx = g.ctx;
+      let mueve = false;
+      const pr = lim(prima.paso(dt, 70, 15), 0, PRIMA_MAX);
+      if (Math.abs(prima.v) > 0.002 || Math.abs(prima.x - prima.meta) > 0.002) mueve = true;
+      const xm = X(corredera.paso(ahora)); if (!corredera.listo(ahora)) mueve = true;
+      const fl = estanque.paso(ahora); if (!estanque.listo(ahora)) mueve = true;
+      items.forEach((it) => {
+        if (ahora >= it.cuando) it.p.meta = it.meta; else mueve = true;
+        it.p.paso(dt, 150, 21);
+        if (Math.abs(it.p.v) > 0.002 || Math.abs(it.p.x - it.p.meta) > 0.002) mueve = true;
+        if (!it.reb) { it.ancho.paso(ahora); if (!it.ancho.listo(ahora)) mueve = true; }
+      });
+
+      /* ---------- la pila ---------- */
+      const zPrima = ZP + BASE * T, z0 = zPrima + pr * T, zTope = z0 + TOPE * T;
+      const lleno = lim(items[TOPE - 1].p.x, 0, 1);                         // el marco se aprieta cuando llega la hoja doce
+      const fT = g.foco(3);
+      const tMarco = { a: 0.1 + 0.62 * lleno + 0.28 * fT, l: fT, o: 0.55 + 0.45 * Math.max(lleno, fT) };
+      // zócalo
+      g.caja(x0 - MZ, y0 - MZ, 0, SX + 2 * MZ, SY + 2 * MZ, ZP, { a: 0.42, r: 4 });
+      // marco: la mitad de atrás, antes de la pila
+      marco(g, zTope, false, tMarco);
+      // bloque de la indemnización: tres meses en un solo cuerpo
+      const f0 = g.foco(0);
+      g.caja(x0, y0, ZP, SX, SY, BASE * T, { a: 0.6 + 0.4 * f0, l: f0, r: 2.5 });
+      // losa de la prima de antigüedad, un poco metida
+      if (pr * T * g.esc > 0.8) g.caja(x0 + 0.07, y0 + 0.07, zPrima, SX - 0.14, SY - 0.14, pr * T, { a: 0.55, r: Math.min(2, (pr * T * g.esc) / 2.5) });
+      // hojas de sueldo y rebanadas de interés
+      let tope = -1;
+      items.forEach((it, n) => { if (it.p.x > 0.5) tope = n; });
+      items.forEach((it, n) => {
+        const p = lim(it.p.x, 0, 1);
+        if (p < 0.01) return;
+        const f = it.pieza >= 0 ? g.foco(it.pieza) : 0;
+        const caer = (1 - suave(p)) * CAIDA;
+        if (!it.reb) {
+          const w = SX * it.ancho.v;
+          lamina(g, x0 + it.dx, y0 + it.dy, z0 + it.k * T + caer, w, SY, T, { p, f, tapa: n === tope });
+        } else {
+          const e = RET;
+          lamina(g, x0 + e + it.dx, y0 + e + it.dy, zTope + it.k * REB * T + caer, SX - 2 * e, SY - 2 * e, REB * T, { p, f, reb: true, tapa: n === tope });
+        }
+      });
+      // marco: la mitad del frente, que tapa el canto de las hojas de abajo
+      marco(g, zTope, true, tMarco);
+
+      /* ---------- el riel ---------- */
+      for (let k = 0; k < N; k++) {
+        const f = g.foco(k);
+        g.cilindro(X(MESES[k]), PY, 0, PR, PH, { a: 0.42 + 0.58 * f, l: f });
+      }
+      g.caja(RX0, -RW, 0, RX1 - RX0, 2 * RW, RH, { a: 0.5, r: 3 });
+      g.linea([[RX0 + 0.12, 0, RH], [RX1 - 0.12, 0, RH]], { a: 0.1, o: 0.8 });
+      for (let m = 0; m <= MESES[N - 1]; m++) {
+        const largo = m % 6 ? 0.07 : 0.14;
+        g.linea([[X(m), RW + 0.06, 0], [X(m), RW + 0.06 + largo, 0]], { a: m % 6 ? 0 : 0.12, o: m % 6 ? 0.55 : 0.8 });
+      }
+      // ramal a la conciliación
+      const f1 = g.foco(1);
+      g.caja(X1 - 0.075, RW - 0.01, 0, 0.15, RAMA + 0.12, 0.03, { a: 0.42 + 0.3 * f1, r: 2 });
+      g.linea([[X1, RW + 0.04, 0.03], [X1, PLY - PLR, 0.03]], { a: 0.08 + 0.2 * f1, o: 0.8 });
+      // corredera: va al poste con la curva del sitio
+      g.caja(xm - 0.15, -RW - 0.06, 0.015, 0.3, 2 * RW + 0.12, 0.1, { a: 1, r: 3 });
+      g.linea([[xm, -RW - 0.01, 0.115], [xm, RW + 0.01, 0.115]], { a: 0.45, w: 1.1 });
+      // estanque: se llena y se enciende con la pieza 1
+      g.cilindro(X1, PLY, 0, PLR, 0.11, { a: 0.45 + 0.55 * f1, l: f1 });
+      g.anillo(X1, PLY, 0.03 + 0.07 * fl, PLR - 0.06, { relleno: g.rgba(g.RGB.agua, 0.06 + 0.28 * fl), a: 0.15 + 0.6 * fl, l: f1 * fl });
+
+      if (VER_ZONAS) zonasVistas.forEach((z) => { ctx.beginPath(); z.poly.forEach((q, i) => (i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]))); ctx.closePath(); ctx.strokeStyle = ["#f55", "#fb3", "#5df", "#c6f", "#7f7", "#f7c", "#fff"][z.i]; ctx.lineWidth = 1; ctx.stroke(); });
+      return mueve;
+    },
+  });
+
+  /* hoja (o rebanada) delgada y opaca: silueta clara, costura de abajo tenue (punteada en las rebanadas),
+     tapa con pliegue. La que va cayendo trae su costura clara: todavía no se asienta. */
+  function lamina(g, xa, ya, za, w, d, h, o) {
+    const ctx = g.ctx, P = g.P, xb = xa + w, yb = ya + d, zb = za + h, f = o.f;
+    const A = P(xa, ya, zb), B = P(xb, ya, zb), C = P(xb, ya, za), D = P(xb, yb, za), E = P(xa, yb, za), F = P(xa, yb, zb), Q = P(xb, yb, zb);
+    ctx.save();
+    ctx.globalAlpha = lim(o.p * 2.6, 0, 1);
+    ruta(ctx, [A, B, C, D, E, F], true); ctx.fillStyle = FONDO; ctx.fill();
+    const sil = tinta(0.78 + 0.22 * f, f), asentada = suave(lim((o.p - 0.75) / 0.25, 0, 1));
+    // costura con lo de abajo
+    ruta(ctx, [C, D, E], false);
+    if (o.reb) ctx.setLineDash([1.6, 2.4]);
+    pinta(ctx, tinta(0.78 - 0.66 * asentada + 0.25 * f, f, o.reb ? 1 : 0.9), 1);
+    ctx.setLineDash([]);
+    // costados y borde trasero de la tapa
+    ruta(ctx, [C, B, A, F, E], false); pinta(ctx, sil, 1.2);
+    // pliegue de la tapa (solo se ve en la de arriba o mientras la siguiente va cayendo)
+    ruta(ctx, [B, Q, F], false); pinta(ctx, tinta(o.tapa ? 0.32 + 0.3 * f : 0.15, f * 0.7, 0.85), 1);
+    // la hoja de arriba lleva un filete, como un recibo; la rebanada, solo su pliegue
+    if (o.tapa && !o.reb && w > 0.4) {
+      const m = 0.16, z = zb;
+      ruta(ctx, [P(xa + m, ya + m, z), P(xb - m, ya + m, z), P(xb - m, yb - m, z), P(xa + m, yb - m, z)], true);
+      pinta(ctx, tinta(0.06 + 0.2 * f, f * 0.8, 0.6), 1);
+    }
+    ctx.restore();
+  }
+
+  /* marco del tope: un collar delgado alrededor de la pila, con la cara de arriba al ras de la hoja doce.
+     La L de atrás (cara de arriba y canto de adentro) va antes de la pila; la del frente (cara de arriba y
+     canto de afuera) va después. No se trazan los cortes de las esquinas, donde se juntan las dos L. */
+  function marco(g, z, frente, t) {
+    const ctx = g.ctx, P = g.P, zb = z - HC;
+    const xa = x0 - G, xb = x1 + G, ya = y0 - G, yb = y1 + G, xi = xa + BW, xj = xb - BW, yi = ya + BW, yj = yb - BW;
+    const sil = tinta(t.a, t.l, t.o), pli = tinta(t.a * 0.45, t.l * 0.75, t.o * 0.85);
+    if (!frente) {
+      const fuera = [P(xa, yb, z), P(xa, ya, z), P(xb, ya, z)], dentro = [P(xi, yj, z), P(xi, yi, z), P(xj, yi, z)];
+      const canto = [P(xi, yj, zb), P(xi, yi, zb), P(xj, yi, zb)];
+      ruta(ctx, fuera.concat(dentro.slice().reverse()), true); ctx.fillStyle = FONDO; ctx.fill();
+      ruta(ctx, dentro.concat(canto.slice().reverse()), true); ctx.fill();
+      ruta(ctx, fuera, false); pinta(ctx, sil, 1.2);
+      ruta(ctx, dentro, false); pinta(ctx, pli, 1);
+      ruta(ctx, canto, false); pinta(ctx, pli, 1);
+      return;
+    }
+    const arriba = [P(xa, yb, z), P(xb, yb, z), P(xb, ya, z)], abajo = [P(xa, yb, zb), P(xb, yb, zb), P(xb, ya, zb)];
+    const dentro = [P(xi, yj, z), P(xj, yj, z), P(xj, yi, z)];
+    ruta(ctx, dentro.concat([arriba[2], abajo[2], abajo[1], abajo[0], arriba[0]]), true); ctx.fillStyle = FONDO; ctx.fill();
+    ruta(ctx, [arriba[0]].concat(abajo, [arriba[2]]), false); pinta(ctx, sil, 1.25);
+    ruta(ctx, dentro, false); pinta(ctx, sil, 1.2);
+    ruta(ctx, arriba, false); pinta(ctx, pli, 1);
+  }
+
+  function ruta(ctx, pts, cerrar) {
+    ctx.beginPath(); pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); if (cerrar) ctx.closePath();
+  }
+  function pinta(ctx, color, w) { ctx.strokeStyle = color; ctx.lineWidth = w; ctx.lineJoin = "round"; ctx.lineCap = "round"; ctx.stroke(); }
+
+  // la página manda la prima de antigüedad en meses de sueldo
+  window.addEventListener("message", (e) => {
+    const d = e.data;
+    if (!d || d.lamina !== ID || d.prima == null || !prima) return;
+    const x = Number(d.prima);
+    if (!Number.isFinite(x)) return;
+    prima.meta = lim(x, 0, PRIMA_MAX);
+    window.dispatchEvent(new Event("resize"));   // pide un cuadro: sin ambiente, el ciclo duerme
+  });
+})();
+</script>
+</body>
+</html>
