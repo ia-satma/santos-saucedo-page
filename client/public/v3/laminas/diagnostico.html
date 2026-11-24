@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dique de la prevención</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0C2340; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; outline: none; }
+  canvas:focus-visible { box-shadow: inset 0 0 0 2px #B2EB3E; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="motor.js?v=2"></script>
+<script>
+/* Lámina de Laboral · Autodiagnóstico preventivo. Un dique de siete bloques entre un embalse (los conflictos
+   que toda empresa con personal tiene arriba) y una charola abajo (el tribunal). Cada bloque es una situación
+   del negocio. La página le dice a la figura cuáles tiene cubiertas la empresa:
+     {lamina:"diagnostico", marcadas:[i,...]}  → esos bloques suben y cierran el paso;
+     {lamina:"diagnostico", ir:i}              → el bloque i queda en lima.
+   Por cada bloque abierto corre un hilo de cuentas por encima del muro hasta la charola, y en la charola se
+   juntan las que ya llegaron. La figura avisa {lamina:"diagnostico", activa:i} (lo hace el motor). */
+(function () {
+  const N = 7, B = 0.9, SEP = 0.035, D = 0.55, HF = 0.95, HL = 0.16;
+  const Y_EMB = -1.5, NIVEL = 0.62, Y_CH0 = D + 0.85, Y_CH1 = D + 1.75, BORDE = 0.14;
+  const X = (k) => k * (B + SEP), XC = (k) => X(k) + B / 2, ANCHO = N * (B + SEP) - SEP;
+  const CUENTAS = 4;
+  const alto = [];
+
+  const F = Plano.figura({
+    id: "diagnostico", total: N, reposo: 0, ambiente: true, recorrido: [0, 3, 6, 0], pausa: 2000,
+    aria: "Dique de siete bloques entre un embalse y una charola. Los bloques que la empresa tiene cubiertos suben y cierran el paso; por cada bloque abierto corre un hilo de cuentas por encima del muro hasta la charola de abajo, que es el tribunal.",
+    caja: [[0, Y_EMB, NIVEL], [ANCHO, Y_EMB, NIVEL], [0, Y_CH1, 0], [ANCHO, Y_CH1, 0], [0, 0, HF + 0.1], [ANCHO, D, HF + 0.1]],
+    margen: 0.05,
+    crear(g) { for (let k = 0; k < N; k++) alto.push(g.transito(HL)); },
+    // zonas fijas: cada bloque a su altura completa, aunque esté abajo (regla 01)
+    zonas(g) {
+      return Array.from({ length: N }, (_, k) => {
+        const x0 = X(k), x1 = x0 + B;
+        return g.zona([[x0, 0, HF], [x1, 0, HF], [x1, 0, 0], [x1, D, 0], [x0, D, 0], [x0, D, HF]]);
+      });
+    },
+    dibujar(g, est, dt, ahora) {
+      const t = est.t;
+      let mueve = false;
+      alto.forEach((a) => { a.paso(ahora); if (!a.listo(ahora)) mueve = true; });
+
+      // embalse: la superficie del agua detrás del dique, con unas cuantas cuentas quietas
+      g.poly([[-0.2, Y_EMB, NIVEL], [ANCHO + 0.2, Y_EMB, NIVEL], [ANCHO + 0.2, -0.02, NIVEL], [-0.2, -0.02, NIVEL]], { a: 0.15, r: 4 });
+      for (let j = 0; j < 9; j++) g.punto(0.4 + ((j * 0.83) % ANCHO), Y_EMB + 0.25 + ((j * 0.37) % 1.1), NIVEL, 0.035, { a: 0.45 });
+
+      const abiertos = [];
+      for (let k = 0; k < N; k++) if (alto[k].v < HF * 0.6) abiertos.push(k);
+      // embalse → corona del bloque → frente del muro → charola
+      const pos = (k, u, h) => {
+        if (u < 0.3) { const s = u / 0.3; return [XC(k), -0.9 + 0.9 * s, NIVEL + (h + 0.06 - NIVEL) * s]; }
+        if (u < 0.5) { const s = (u - 0.3) / 0.2; return [XC(k), D * s, h + 0.06]; }
+        const s = (u - 0.5) / 0.5;
+        return [XC(k) + (k - 3) * 0.04 * s, D + (Y_CH0 + 0.3 - D) * s, (h + 0.06) * (1 - s) * (1 - s) + BORDE + 0.05];
+      };
+      const cuentasDe = (k, desde, hasta) => {
+        for (let j = 0; j < CUENTAS; j++) {
+          const u = (t * 0.28 + j / CUENTAS + k * 0.13) % 1;
+          if (u >= desde && u < hasta) { const p = pos(k, u, alto[k].v); g.punto(p[0], p[1], p[2], 0.065, { a: 1 }); }
+        }
+      };
+      // tramo antes del muro: queda detrás de los bloques
+      abiertos.forEach((k) => cuentasDe(k, 0, 0.3));
+
+      // el dique, de atrás hacia adelante; cada bloque abierto lleva encima su tramo de hilo
+      for (let k = 0; k < N; k++) {
+        const f = g.foco(k), h = alto[k].v, cubierto = h > HF * 0.6;
+        g.caja(X(k), 0, 0, B, D, h, { a: cubierto ? 0.75 + 0.25 * f : 0.4 + 0.6 * f, l: f, r: 2.5 });
+        if (!cubierto) cuentasDe(k, 0.3, 0.5);
+      }
+
+      // charola: el tribunal, una caja baja y opaca; lo que llega queda sobre ella
+      g.caja(-0.1, Y_CH0, 0, ANCHO + 0.2, Y_CH1 - Y_CH0, BORDE, { a: 0.6, r: 4 });
+      abiertos.forEach((k) => cuentasDe(k, 0.5, 1));
+      const llegadas = abiertos.length * 3;
+      for (let j = 0; j < llegadas; j++) g.punto(0.3 + ((j * 0.71) % (ANCHO - 0.4)), Y_CH0 + 0.2 + ((j * 0.29) % 0.6), BORDE + 0.02, 0.06, { a: 0.75 });
+
+      return mueve || abiertos.length > 0;
+    },
+  });
+
+  window.addEventListener("message", (e) => {
+    const d = e.data;
+    if (!d || d.lamina !== "diagnostico" || !Array.isArray(d.marcadas)) return;
+    const marcadas = new Set(d.marcadas.filter((i) => Number.isInteger(i) && i >= 0 && i < N));
+    const ahora = performance.now(), desde = Math.max(0, F.est.activa);
+    for (let k = 0; k < N; k++) {
+      const meta = marcadas.has(k) ? HF : HL;
+      if (alto[k].a !== meta) alto[k].ir(meta, ahora + Math.abs(k - desde) * 45);
+    }
+    // la figura es «ambiente»: su ciclo sigue mientras está a la vista, así que el cambio se pinta solo
+  });
+})();
+</script>
+</body>
+</html>

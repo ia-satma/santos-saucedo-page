@@ -3,8 +3,10 @@
    a la derecha, el texto que cambia con lo que hace el visitante. Textos de la demo; inglés propio.
    Otros idiomas usan el inglés hasta que tengan traducción. */
 import type { LanguageCode } from "@shared/constants";
+import { EN_COMERCIALES, ES_COMERCIALES, type ComercialId, type TextosDespido, type TextosDiagnostico } from "./comerciales";
 
-export type VivaId = "prevencion" | "juicio" | "corporativo" | "seguridad" | "migratorio";
+/** Las cinco de la demo del 9-11 (fuera del sitio desde el 24-11, se guardan) y las comerciales del 24-11 */
+export type VivaId = "prevencion" | "juicio" | "corporativo" | "seguridad" | "migratorio" | ComercialId;
 
 export interface VivaTexto {
   titulo: string;
@@ -20,6 +22,12 @@ export interface VivaTexto {
   fuente?: string;
   /** lo que la figura dibuja, para quien no la ve */
   aria: string;
+  /** láminas comerciales: el rótulo sobre el título (en lugar de «Lámina n/7») */
+  cap?: string;
+  /** diagnóstico: renglones que se marcan (varios a la vez) y un resultado */
+  diagnostico?: TextosDiagnostico;
+  /** despido: sueldo y antigüedad, y la cuenta en cada parada */
+  despido?: TextosDespido;
 }
 
 export interface VivasComun {
@@ -31,10 +39,13 @@ export interface VivasComun {
   todoElAnio: string;
   idse: [string, string];
   obligaciones: { cuotas: [string, string]; bimestre: [string, string]; repse: [string, string]; prima: [string, string] };
+  /** enlace discreto a Contacto al final de las láminas comerciales */
+  cta: string;
 }
 
 const ES_COMUN: VivasComun = {
   lamina: "Lámina",
+  cta: "Revisemos su caso",
   lugar: "San Pedro Garza García",
   espera: "Cargando la figura…",
   figura: "figura interactiva",
@@ -51,6 +62,7 @@ const ES_COMUN: VivasComun = {
 
 const EN_COMUN: VivasComun = {
   lamina: "Plate",
+  cta: "Let us review your case",
   lugar: "San Pedro Garza García",
   espera: "Loading the figure…",
   figura: "interactive figure",
@@ -66,6 +78,7 @@ const EN_COMUN: VivasComun = {
 };
 
 const ES: Record<VivaId, VivaTexto> = {
+  ...ES_COMERCIALES,
   prevencion: {
     titulo: "Lo que se previene no llega al tribunal",
     entrada: "Cada documento en orden detiene un tipo de conflicto antes de que se convierta en demanda. Retire una capa y vea qué se cuela hasta abajo.",
@@ -146,6 +159,7 @@ const ES: Record<VivaId, VivaTexto> = {
 };
 
 const EN: Record<VivaId, VivaTexto> = {
+  ...EN_COMERCIALES,
   prevencion: {
     titulo: "What is prevented never reaches the court",
     entrada: "Each document kept in order stops one kind of dispute before it turns into a lawsuit. Pull out a layer and see what falls through to the bottom.",

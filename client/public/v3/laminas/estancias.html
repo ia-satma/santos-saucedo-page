@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Puertas de la estancia</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0C2340; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; outline: none; }
+  canvas:focus-visible { box-shadow: inset 0 0 0 2px #B2EB3E; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="motor.js?v=2"></script>
+<script>
+/* Lámina de estancias · Cada persona que trae la planta necesita la estancia que corresponde a lo que viene
+   a hacer, y cada estancia es una puerta distinta. Un edificio largo, visto de esquina, con cinco puertas en fila
+   que crecen en tamaño y en firmeza: una angosta (visita de negocios), una normal con alero (trabajo de unos meses
+   con oferta), una doble grande (dirigir la operación de uno a cuatro años), una mediana con otra chica al lado
+   (la familia) y un portal hondo con escalón (residencia permanente). Al frente, una plaza: el camino entra por la
+   izquierda, corre a lo largo de la fachada y se ramifica hacia cada puerta. Al elegir una, la persona anterior se
+   desvanece, otra aparece en la entrada y camina por su rama; al llegar, la hoja se abre y el marco queda en lima. */
+(function () {
+  "use strict";
+  const PI = Math.PI, KX = 1.2247449;
+  const FONDO = "#0C2340", HUECO = "rgba(4,18,36,.62)";
+  const lim = (v, a, b) => Math.max(a, Math.min(b, v));
+  const liso = (t) => t * t * (3 - 2 * t);
+
+  // edificio: largo en x, fachada en y = 0 mirando a la plaza (+y); MURO es el grueso del muro en los vanos
+  const L = 7.96, FD = 0.5, HM = 1.86, CORONA = 0.07, MURO = 0.16;
+  // plaza: losa delante del edificio. El camino entra por el frente izquierdo, corre a lo largo (tronco) y se ramifica
+  const XP = -0.52, YP = 1.62, LOSA = 0.1, YT = 1.12, TR = 0.16, XE = XP + 0.15;
+  const BOLARDOS = [[XP + 0.12, YT - TR - 0.17], [XP + 0.12, YT + TR + 0.17]];   // la entrada: dos bolardos al borde
+  // escalón del portal
+  const ESC = { x0: 5.96, x1: 7.66, y1: 0.5, h: 0.08 };
+  // gente: radio y alto del cuerpo, radio de la cabeza
+  const ADULTO = { r: 0.09, h: 0.38, rh: 0.078 }, NINO = { r: 0.07, h: 0.22, rh: 0.064 };
+
+  /* puertas: sus vanos (hueco, marco y hojas), la rama del camino que llega a ellas y quién camina hasta ahí.
+     Hoja: bis -1 gira sobre el lado izquierdo y +1 sobre el derecho; fuera abre hacia la plaza; max en grados. */
+  const PUERTAS = [
+    { // 0 · visita de negocios: puerta angosta y sencilla
+      vanos: [{ xa: 0.41, xb: 0.81, z0: 0, zh: 0.92, fw: 0.06, fh: 0.07, fd: 0.05, hojas: [{ bis: -1, fuera: true, max: 80 }] }],
+      rama: { x: 0.61, a: 0.12, y0: 0 },
+      gente: [{ ...ADULTO, via: 0.61, fin: [0.68, 0.25] }],
+    },
+    { // 1 · trabajo remunerado de unos meses, con oferta: puerta normal con alero
+      vanos: [{ xa: 1.435, xb: 1.995, z0: 0, zh: 1.02, fw: 0.065, fh: 0.07, fd: 0.05, hojas: [{ bis: -1, fuera: true, max: 74 }] }],
+      alero: { x0: 1.27, x1: 2.16, y1: 0.34, z: 1.15, h: 0.055 },
+      rama: { x: 1.715, a: 0.14, y0: 0 },
+      gente: [{ ...ADULTO, via: 1.715, fin: [1.8, 0.26] }],
+    },
+    { // 2 · dirigir la operación de uno a cuatro años: puerta doble grande
+      vanos: [{ xa: 2.635, xb: 3.635, z0: 0, zh: 1.18, fw: 0.075, fh: 0.08, fd: 0.055,
+        hojas: [{ bis: -1, fuera: true, max: 72, x1: 3.135 }, { bis: 1, fuera: true, max: 72, x0: 3.135 }] }],
+      rama: { x: 3.135, a: 0.19, y0: 0 },
+      gente: [{ ...ADULTO, via: 3.135, fin: [3.04, 0.27] }],
+    },
+    { // 3 · la familia que acompaña: puerta mediana con otra más chica al lado
+      vanos: [
+        { xa: 4.27, xb: 4.87, z0: 0, zh: 1.16, fw: 0.06, fh: 0.07, fd: 0.05, hojas: [{ bis: -1, fuera: true, max: 72 }] },
+        { xa: 5.04, xb: 5.4, z0: 0, zh: 0.8, fw: 0.06, fh: 0.07, fd: 0.05, hojas: [{ bis: -1, fuera: true, max: 60 }] },
+      ],
+      rama: { x: 4.84, a: 0.23, y0: 0 },
+      gente: [
+        { ...ADULTO, via: 4.7, fin: [4.62, 0.26], dy: -0.05 },
+        { ...NINO, via: 4.98, fin: [5.3, 0.24], dy: 0.05, retraso: 170 },
+        { ...ADULTO, via: 4.86, fin: [4.98, 0.39], retraso: 340 },
+      ],
+    },
+    { // 4 · residencia permanente: el portal más grande, de marco hondo y con escalón; la hoja abre hacia adentro
+      vanos: [{ xa: 6.25, xb: 7.37, z0: ESC.h, zh: ESC.h + 1.42, fw: 0.17, fh: 0.2, fd: 0.22, hojas: [{ bis: 1, fuera: false, max: 70, tableros: true }] }],
+      escalon: ESC,
+      rama: { x: 6.81, a: 0.25, y0: ESC.y1 },
+      gente: [{ ...ADULTO, via: 6.81, fin: [6.91, 0.36] }],
+    },
+  ];
+  const N = PUERTAS.length;
+  // límites de las zonas de reposo: a medio camino entre una puerta y la siguiente
+  const CORTES = [XP, 1.07, 2.36, 3.96, 5.71, L];
+
+  const abre = PUERTAS.map((P) => P.vanos.map(() => Plano.transito(0)));   // apertura de cada vano (0–1)
+  let gente = [];                                                          // quienes caminan o esperan
+  let arrancado = false;
+  let contorno = null;                                                     // borde del camino, por tramos
+
+  /* ---------- rutas: polilínea con esquinas redondas, recorrida por longitud ---------- */
+  const dist = (a, b) => Math.hypot(b[0] - a[0], b[1] - a[1]);
+  const hacia = (a, b, r) => { const d = dist(a, b) || 1; return [a[0] + ((b[0] - a[0]) * r) / d, a[1] + ((b[1] - a[1]) * r) / d]; };
+  function curvaEn(a, b, c, n, out) {   // esquina b redondeada entre a y c: bezier cuadrática
+    for (let j = 0; j <= n; j++) { const t = j / n, m = 1 - t; out.push([m * m * a[0] + 2 * m * t * b[0] + t * t * c[0], m * m * a[1] + 2 * m * t * b[1] + t * t * c[1]]); }
+  }
+  function ruta(pts, radio) {
+    const p = [pts[0]];
+    for (let k = 1; k < pts.length - 1; k++) {
+      const a = pts[k - 1], b = pts[k], c = pts[k + 1], r = Math.min(radio, dist(a, b) / 2, dist(b, c) / 2);
+      curvaEn(hacia(b, a, r), b, hacia(b, c, r), 10, p);
+    }
+    p.push(pts[pts.length - 1]);
+    const s = [0];
+    for (let k = 1; k < p.length; k++) s.push(s[k - 1] + dist(p[k - 1], p[k]));
+    return { p, s, largo: s[s.length - 1] };
+  }
+  function en(r, u) {
+    const d = lim(u, 0, 1) * r.largo;
+    let k = 1; while (k < r.s.length - 1 && r.s[k] < d) k++;
+    const t = (d - r.s[k - 1]) / (r.s[k] - r.s[k - 1] || 1), a = r.p[k - 1], b = r.p[k];
+    return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+  }
+  // la persona del portal sube el escalón sin brincar
+  function suelo(x, y) {
+    if (x < ESC.x0 || x > ESC.x1) return 0;
+    return ESC.h * liso(lim((ESC.y1 + 0.07 - y) / 0.14, 0, 1));
+  }
+
+  /* ---------- elegir: la gente anterior se desvanece, la nueva entra y camina; la puerta abre al llegar ---------- */
+  const fijo = (t, v) => { t.de = t.a = t.v = v; t.dur = 0; };
+  function llegar(i, ahora, ya) {
+    const P = PUERTAS[i];
+    let abreEn = ahora;
+    P.gente.forEach((q, k) => {
+      const dy = q.dy || 0;
+      const r = ruta([[XE, YT + dy], [q.via, YT + dy], [q.via, q.fin[1] + 0.32], q.fin], 0.3);
+      const p = { i, ruta: r, u: Plano.transito(0), o: Plano.transito(0), r: q.r, h: q.h, rh: q.rh, sale: false };
+      const dur = 520 + 150 * r.largo, t0 = ahora + 90 + (q.retraso || 0);
+      if (ya) { fijo(p.u, 1); fijo(p.o, 1); }
+      else { p.u.ir(1, t0, dur); p.o.ir(1, t0, 300); }
+      if (k === 0) abreEn = t0 + dur - 140;
+      gente.push(p);
+    });
+    abre[i].forEach((a, k) => { if (ya) fijo(a, 1); else a.ir(1, abreEn + k * 240, 820); });
+  }
+
+  Plano.figura({
+    id: "estancias", total: N, reposo: 0, recorrido: [0, 2, 3, 0], pausa: 2700,
+    aria: "Edificio largo con cinco puertas en fila, de una angosta a un portal hondo con escalón; al frente, una plaza con un camino que entra por la izquierda y se ramifica hacia cada puerta. Al elegir una puerta, una persona (o una familia, en la cuarta) camina por su rama, la puerta se abre y su marco se enciende.",
+    caja: [[XP, YP, -LOSA], [L, YP, -LOSA], [L + 0.03, -FD - 0.03, HM + CORONA], [-0.03, -FD - 0.03, HM + CORONA], [XP, -FD, -LOSA]],
+    get margen() { return window.innerHeight < 420 ? 0.03 : 0.05; },
+    crear() { contorno = peine(); },
+    alElegir(i, previa, ahora) {
+      if (!arrancado) { arrancado = true; if (i >= 0) llegar(i, ahora, true); return; }   // reposo: ya llegó y está abierta
+      gente.forEach((p) => { if (!p.sale) { p.sale = true; p.o.ir(0, ahora, 420); } });
+      abre.forEach((vs, k) => { if (k !== i) vs.forEach((a) => { if (a.a !== 0) a.ir(0, ahora + 320, 650); }); });
+      if (i >= 0) llegar(i, ahora, false);
+    },
+    zonas(g) {
+      // cada puerta con su rama, en la pose de reposo: la franja de fachada y la franja de plaza delante de ella
+      return PUERTAS.map((P, i) => {
+        const a = CORTES[i], b = CORTES[i + 1];
+        return g.zona([[a, 0, HM + CORONA], [b, 0, HM + CORONA], [b, 0, 0], [b, YP, 0], [a, YP, 0], [a, 0, 0]]);
+      });
+    },
+    dibujar(g, est, dt, ahora) {
+      let mov = false;
+      abre.forEach((vs) => vs.forEach((a) => { a.paso(ahora, g.suave); if (!a.listo(ahora)) mov = true; }));
+      gente.forEach((p) => { p.u.paso(ahora, g.suave); p.o.paso(ahora); if (!p.u.listo(ahora) || !p.o.listo(ahora)) mov = true; });
+      gente = gente.filter((p) => !(p.sale && p.o.listo(ahora)));
+
+      // de atrás hacia adelante: losa, camino, edificio, cada puerta, y lo que está suelto en la plaza
+      g.caja(XP, -FD, -LOSA, L - XP, FD + YP, LOSA, { a: 0.42, r: 3 });
+      camino(g);
+      g.caja(0, -FD, 0, L, FD, HM, { a: 0.6, r: 3 });
+      g.caja(-0.03, -FD - 0.03, HM, L + 0.06, FD + 0.06, CORONA, { a: 0.6, r: 2 });
+      for (let i = 0; i < N; i++) unidad(g, i, g.foco(i));
+
+      const libres = [];
+      PUERTAS.forEach((P, i) => P.vanos.forEach((v, k) => v.hojas.forEach((h) => {
+        const ab = abre[i][k].v;
+        if (delante(h, ab)) libres.push({ k: v.xa + v.fd + 0.3 * anchoHoja(v, h), f: () => hoja(g, v, h, ab) });
+      })));
+      gente.forEach((p) => { const q = en(p.ruta, p.u.v); libres.push({ k: q[0] + q[1], f: () => persona(g, p, q) }); });
+      BOLARDOS.forEach(([x, y]) => libres.push({ k: x + y, f: () => g.cilindro(x, y, 0, 0.05, 0.2, { a: 0.5 }) }));
+      libres.sort((a, b) => a.k - b.k).forEach((o) => o.f());
+      return mov;
+    },
+  });
+
+  /* ---------- camino: tronco y cinco ramas en un solo contorno. Se aclara el recorrido completo de la entrada a la
+     puerta elegida: su rama (dueño i) y los tramos del tronco que llevan a ella (dueño 10 + k, de la rama k − 1 a la k) */
+  function peine() {
+    // vértices del borde con su radio, el dueño de su esquina (e) y el del tramo que sale de él (d); null no se traza
+    const v = [{ p: [XP, YT - TR], r: 0, e: 10, d: 10 }];
+    PUERTAS.forEach((P, i) => {
+      const { x, a, y0 } = P.rama, rp = y0 > 0 ? 0.05 : 0;
+      v.push({ p: [x - a, YT - TR], r: 0.08, e: i, d: i }, { p: [x - a, y0], r: rp, e: i, d: i }, { p: [x + a, y0], r: rp, e: i, d: i });
+      if (i < N - 1) v.push({ p: [x + a, YT - TR], r: 0.08, e: i, d: 11 + i });
+      else v.push({ p: [x + a, YT - TR], r: 0, e: i, d: i }, { p: [x + a, YT + TR], r: 0.1, e: i, d: i });
+    });
+    // borde de enfrente, de derecha a izquierda, partido frente al lado derecho de cada rama
+    for (let k = N - 2; k >= 0; k--) { const { x, a } = PUERTAS[k].rama; v.push({ p: [x + a, YT + TR], r: 0, e: 10 + k, d: 10 + k }); }
+    v.push({ p: [XP, YT + TR], r: 0, e: null, d: null });
+    const pts = [], dueno = [], n = v.length;
+    v.forEach((q, k) => {
+      const a = v[(k - 1 + n) % n].p, b = q.p, c = v[(k + 1) % n].p;
+      if (q.r > 0) {
+        const r = Math.min(q.r, dist(a, b) / 2, dist(b, c) / 2), arco = [];
+        curvaEn(hacia(b, a, r), b, hacia(b, c, r), 6, arco);
+        arco.forEach((p, j) => { pts.push(p); dueno.push(j < arco.length - 1 ? q.e : q.d); });
+      } else { pts.push(b); dueno.push(q.d); }
+    });
+    return { pts, dueno };
+  }
+  function camino(g) {
+    const ctx = g.ctx, Z = 0.004, s = contorno.pts.map(([x, y]) => g.P(x, y, Z));
+    ctx.beginPath(); s.forEach((p, k) => (k ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath();
+    ctx.fillStyle = g.rgba(g.RGB.agua, 0.09); ctx.fill();
+    // luz de cada dueño: la rama con su puerta; un tramo del tronco con la puerta más lejana a la que lleva
+    const luz = (d) => { if (d < 10) return g.foco(d); let m = 0; for (let j = d - 10; j < N; j++) m = Math.max(m, g.foco(j)); return m; };
+    // trazo por tramos: los del mismo dueño van juntos
+    ctx.lineJoin = "round"; ctx.lineCap = "round"; ctx.lineWidth = 1.15;
+    const n = s.length;
+    let k = 0;
+    while (k < n) {
+      const d = contorno.dueno[k];
+      let j = k; while (j + 1 < n && contorno.dueno[j + 1] === d) j++;
+      if (d !== null) {
+        ctx.beginPath(); ctx.moveTo(s[k][0], s[k][1]);
+        for (let m = k + 1; m <= j + 1; m++) { const p = s[m % n]; ctx.lineTo(p[0], p[1]); }
+        ctx.strokeStyle = Plano.tinta(0.28 + 0.62 * luz(d)); ctx.stroke();
+      }
+      k = j + 1;
+    }
+  }
+
+  /* ---------- una puerta: escalón, hueco, hojas de atrás, marco y alero ---------- */
+  function tintas(f) { return { sil: Plano.tinta(0.55 + 0.45 * f, f), fold: Plano.tinta(0.2 + 0.25 * f, 0.6 * f, 0.85) }; }
+  // la hoja que gira sobre su lado izquierdo hacia la plaza pasa delante de su marco cuando ya va más allá de 45°
+  const delante = (h, ab) => h.fuera && h.bis < 0 && h.max * ab > 45;
+  const anchoHoja = (v, h) => (h.x1 == null ? v.xb : h.x1) - (h.x0 == null ? v.xa : h.x0);
+
+  function unidad(g, i, f) {
+    const P = PUERTAS[i], t = tintas(f);
+    if (P.escalon) { const e = P.escalon; g.caja(e.x0, 0, 0, e.x1 - e.x0, e.y1, e.h, { trazo: t.sil, trazoPliegue: t.fold, r: 2 }); }
+    P.vanos.forEach((v, k) => {
+      const ab = abre[i][k].v;
+      hueco(g, v, () => v.hojas.forEach((h) => { if (!h.fuera) hoja(g, v, h, ab); }));
+      v.hojas.forEach((h) => { if (h.fuera && !delante(h, ab)) hoja(g, v, h, ab); });
+      marco(g, v, t);
+    });
+    if (P.alero) { const a = P.alero; g.caja(a.x0, 0, a.z, a.x1 - a.x0, a.y1, a.h, { trazo: t.sil, trazoPliegue: t.fold, r: 1.5 }); }
+  }
+
+  /* hueco del vano: oscuro, con el derrame izquierdo y el piso del grueso del muro; las hojas que abren hacia
+     adentro se dibujan recortadas a la boca (lo que tapa el marco hondo queda oculto) */
+  function hueco(g, v, dentro) {
+    const { xa, xb, z0, zh, fd } = v, ctx = g.ctx, yb = -MURO - 0.02;
+    const boca = g.zona([[xa, fd, z0], [xb, fd, z0], [xb, fd, zh], [xa, fd, zh]]);
+    ctx.save();
+    ctx.beginPath(); boca.forEach((p, k) => (k ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath();
+    ctx.fillStyle = FONDO; ctx.fill(); ctx.fillStyle = HUECO; ctx.fill(); ctx.clip();
+    g.poly([[xa, fd, z0], [xa, yb, z0], [xa, yb, zh], [xa, fd, zh]], { relleno: g.rgba(g.RGB.agua, 0.1), a: 0.1, r: 0, w: 1 });
+    g.poly([[xa, fd, z0], [xb, fd, z0], [xb, yb, z0], [xa, yb, z0]], { relleno: g.rgba(g.RGB.agua, 0.06), a: 0.1, r: 0, w: 1 });
+    dentro();
+    ctx.restore();
+  }
+
+  /* marco en U: silueta del frente con el canto superior y el costado derecho; pliegue en la arista de arriba */
+  function marco(g, v, t) {
+    const { xa, xb, z0, zh, fw, fh, fd } = v, zt = zh + fh, X0 = xa - fw, X1 = xb + fw;
+    g.poly([[X0, fd, z0], [X0, fd, zt], [X0, 0, zt], [X1, 0, zt], [X1, 0, z0], [X1, fd, z0], [xb, fd, z0], [xb, fd, zh], [xa, fd, zh], [xa, fd, z0]],
+      { trazo: t.sil, w: 1.3, r: 1.5 });
+    g.linea([[X0 + 0.01, fd, zt], [X1, fd, zt]], { trazo: t.fold, w: 1 });
+  }
+
+  /* hoja: tablero con grueso que gira sobre su bisagra; manija (y tableros, en el portal) en la cara que se ve */
+  function hoja(g, v, h, ab) {
+    const th = (h.max * ab * PI) / 180, c = Math.cos(th), s = Math.sin(th);
+    const sx = h.bis < 0 ? 1 : -1, sy = h.fuera ? 1 : -1, w = anchoHoja(v, h), T = 0.035;
+    const x0 = h.x0 == null ? v.xa : h.x0, x1 = h.x1 == null ? v.xb : h.x1;
+    const H = [h.bis < 0 ? x0 : x1, h.fuera ? v.fd : 0];
+    const d = [sx * c, sy * s], nb = [sx * sy * s, -c];
+    const at = (u, e) => [H[0] + d[0] * u + nb[0] * e, H[1] + d[1] * u + nb[1] * e];
+    const za = v.z0, zb = v.zh;
+    const tl = Plano.tinta(0.46 + 0.3 * ab), tf = Plano.tinta(0.16 + 0.1 * ab, 0, 0.85);
+    prisma(g, [at(0, 0), at(w, 0), at(w, T), at(0, T)], za, zb, tl);
+    const e = c > sx * sy * s ? -0.004 : T + 0.004;   // cara de afuera mientras no pase de canto; luego la de adentro
+    const zc = za + (zb - za) * 0.47, um = w - 0.075;
+    if (h.tableros) {
+      const m = 0.14, zm = za + (zb - za) * 0.58;
+      [[za + m, zm - 0.05], [zm + 0.05, zb - m]].forEach(([q0, q1]) =>
+        g.poly([[...at(m, e), q0], [...at(w - m, e), q0], [...at(w - m, e), q1], [...at(m, e), q1]], { relleno: false, trazo: tf, r: 1.5, w: 1 }));
+    }
+    g.linea([[...at(um, e), zc - 0.065], [...at(um, e), zc + 0.065]], { trazo: tl, w: 1.4 });
+  }
+
+  /* prisma vertical de planta convexa: envolvente opaca con silueta clara */
+  function prisma(g, pie, za, zb, trazo) {
+    const pts = [];
+    pie.forEach(([x, y]) => pts.push(g.P(x, y, za), g.P(x, y, zb)));
+    const env = envolvente(pts), ctx = g.ctx;
+    redondo(ctx, env, 1.2);
+    ctx.fillStyle = FONDO; ctx.fill();
+    ctx.strokeStyle = trazo; ctx.lineWidth = 1.2; ctx.lineJoin = "round"; ctx.stroke();
+  }
+
+  /* persona: cuerpo cilíndrico opaco y cabeza esférica; o = opacidad al aparecer y al irse */
+  function persona(g, p, q) {
+    const o = p.o.v; if (o <= 0.01) return;
+    const [x, y] = q, z = suelo(x, y), ctx = g.ctx;
+    const sil = Plano.tinta(0.95, 0, o), rel = g.rgba(g.RGB.fondo, o);
+    g.cilindro(x, y, z, p.r, p.h, { relleno: rel, trazo: sil, trazoPliegue: Plano.tinta(0.3, 0, 0.85 * o), w: 1.25 });
+    const c = g.P(x, y, z + p.h + p.rh + 0.025), rr = KX * p.rh * g.esc;
+    ctx.beginPath(); ctx.arc(c[0], c[1], rr, 0, 2 * PI);
+    ctx.fillStyle = rel; ctx.fill(); ctx.strokeStyle = sil; ctx.lineWidth = 1.25; ctx.stroke();
+  }
+
+  function redondo(ctx, pts, r) {
+    const n = pts.length, m = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], ini = m(pts[n - 1], pts[0]);
+    ctx.beginPath(); ctx.moveTo(ini[0], ini[1]);
+    for (let i = 0; i < n; i++) { const p = pts[i], q = pts[(i + 1) % n]; ctx.arcTo(p[0], p[1], q[0], q[1], r); }
+    ctx.closePath();
+  }
+  function envolvente(p) {
+    const s = p.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+    const lo = [], up = [];
+    for (const q of s) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+    for (let i = s.length - 1; i >= 0; i--) { const q = s[i]; while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+    return lo.slice(0, -1).concat(up.slice(0, -1));
+  }
+})();
+</script>
+</body>
+</html>

@@ -37,7 +37,7 @@ export const LAMINA_N: Record<SheetId | FgArea, number> = { orden: 3, solucion: 
 /** «viva»: las láminas interactivas de la demo del 9-11-2026 (figura que responde y texto al lado), que
     reemplazan a la anatomía (3/7 y 4/7) y a las figuras dibujadas (5/7, 6/7 y 7/7). */
 export type Plate = { kind: "anatomia"; sheets: SheetId[] } | { kind: "figura"; area: FgArea } | { kind: "viva"; id: VivaId };
-export const VIVA_N: Record<VivaId, number> = { prevencion: 3, juicio: 4, corporativo: 5, seguridad: 6, migratorio: 7 };
+export const VIVA_N: Record<VivaId, number> = { prevencion: 3, juicio: 4, corporativo: 5, seguridad: 6, migratorio: 7, diagnostico: 3, despido: 4, compra: 5, estancias: 6 };
 
 /** Banda azul con foto de la oficina (de las fotos del panel, cmsMedia «photos») para los servicios
     de una práctica sin lámina */
@@ -61,10 +61,11 @@ export const PRACTICE_V3: Record<string, PracticeV3> = {
         de: "Eine Bergstraße windet sich von oben gesehen in Kurven den Hang hinauf", zh: "从高处看，一条山路沿山坡蜿蜒上升", ko: "산길이 위에서 보았을 때 비탈을 굽이굽이 올라갑니다", ja: "山道が上空から見て斜面を曲がりながら上っています", ar: "طريق جبلي يصعد منحدرًا في منعطفات، من الأعلى", ru: "Горная дорога извивается по склону, вид сверху", fr: "Une route de montagne monte en lacets sur le versant, vue d’en haut", it: "Una strada di montagna sale a tornanti sul pendio, vista dall’alto",
       },
     },
+    // Láminas comerciales (24-11-2026): el diagnóstico de la empresa y lo que cuesta un despido mal
+    // resuelto. Las de la demo del 9-11 (prevencion, juicio, seguridad) quedan guardadas en vivas.ts.
     plates: [
-      { kind: "viva", id: "prevencion" },
-      { kind: "viva", id: "juicio" },
-      { kind: "viva", id: "seguridad" },
+      { kind: "viva", id: "diagnostico" },
+      { kind: "viva", id: "despido" },
     ],
   },
   "corporativo-contractual": {
@@ -76,7 +77,7 @@ export const PRACTICE_V3: Record<string, PracticeV3> = {
         de: "Nachts beleuchtete Stahlträger, diagonal gekreuzt", zh: "夜间照亮的钢梁交叉成对角线", ko: "밤에 조명을 받은 강철 빔이 대각선으로 교차합니다", ja: "夜に照らされた鉄骨が斜めに交差しています", ar: "عوارض فولاذية مضاءة ليلًا تتقاطع قطريًا", ru: "Стальные балки, освещённые ночью и пересекающиеся по диагонали", fr: "Des poutres d’acier éclairées la nuit se croisent en diagonale", it: "Travi d’acciaio illuminate di notte, incrociate in diagonale",
       },
     },
-    plates: [{ kind: "viva", id: "corporativo" }],
+    plates: [{ kind: "viva", id: "compra" }], // comercial (24-11-2026); la de la demo («corporativo») queda guardada
   },
   migratorio: {
     vista: "migratorio",
@@ -87,7 +88,7 @@ export const PRACTICE_V3: Record<string, PracticeV3> = {
         de: "Türme von San Pedro Garza García mit dem Cerro de la Silla im Hintergrund, aus einer Drohne gesehen", zh: "从无人机俯瞰圣佩德罗加尔萨加西亚的高楼，背景是塞拉德拉西利亚山", ko: "드론으로 본 산페드로 가르사 가르시아의 타워와 뒤편의 세로 데 라 시야", ja: "ドローンから見たサン・ペドロ・ガルサ・ガルシアの高層ビルと背後のセロ・デ・ラ・シヤ", ar: "أبراج سان بيدرو غارسا غارسيا وجبل سيرو دي لا سيّا في الخلفية، من طائرة مسيّرة", ru: "Башни Сан-Педро-Гарса-Гарсия с Серро-де-ла-Силья на заднем плане, вид с дрона", fr: "Les tours de San Pedro Garza García avec le Cerro de la Silla en arrière-plan, vues depuis un drone", it: "Le torri di San Pedro Garza García con il Cerro de la Silla sullo sfondo, viste da un drone",
       },
     },
-    plates: [{ kind: "viva", id: "migratorio" }],
+    plates: [{ kind: "viva", id: "estancias" }], // comercial (24-11-2026); la de la demo («migratorio») queda guardada
   },
   "litigio-contencioso": {
     vista: "litigio",
