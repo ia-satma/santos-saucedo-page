@@ -56,20 +56,17 @@ const sinViuda = (s: string) => s.replace(/\s+(\S+)\s*$/, "\u00a0$1");
     firma» (about.stats); el botón y las etiquetas, del panel (home.intro) o de copy.ts.
     Junta del 13-11-2026: el titular se ve («Decisiones laborales con visión empresarial.») y en cada
     cifra va primero la etiqueta y debajo el número (Mario: «primero el subtítulo y después el número»). */
-export type IntroBandPreview = { title?: string; body?: string[]; stats?: Array<{ value?: string; label?: string }> };
-
-export function IntroBand({ lang, areas, preview }: { lang: V3Lang; areas: number; preview?: IntroBandPreview }) {
+export function IntroBand({ lang, areas }: { lang: V3Lang; areas: number }) {
   const { language } = useLanguage();
   const liveHome = useCmsContent("home", home26) as any;
   const current = liveHome[language] ?? liveHome[lang] ?? liveHome.en;
   const t = current.intro ?? homeCopyFor(language).intro;
   const f = current.firma;
   const stats = useCmsContent("about", ABOUT_STATS_FALLBACK)[lang]?.stats;
-  const previewStats = preview?.stats;
-  const anos = previewStats?.[0]?.value?.trim() || stats?.[0]?.value?.trim() || "16+";
-  const ciudades = previewStats?.[1]?.value?.trim() || stats?.[1]?.value?.trim() || "120+";
-  const title = preview?.title || f.title;
-  const body = preview?.body?.filter(Boolean) || f.body;
+  const anos = stats?.[0]?.value?.trim() || "16+";
+  const ciudades = stats?.[1]?.value?.trim() || "120+";
+  const title = f.title;
+  const body = f.body;
   return (
     <section className="sh-intro" id="firma-intro" aria-labelledby="intro-h">
       <div className="sh-wrap sh-intro__in">
@@ -162,17 +159,15 @@ export function IndustriasBand({ lang, showTexts = true }: { lang: V3Lang; showT
 
 /** Filosofía: la turbina de la capacidad de reacción, con la frase de la preparación para juicio.
     Textos del panel (home.creemos): quote = titular, body[0] = párrafo, label = botón. */
-export type FilosofiaBandPreview = { quote?: string; body?: string[]; label?: string };
-
-export function FilosofiaBand({ lang, preview }: { lang: V3Lang; preview?: FilosofiaBandPreview }) {
+export function FilosofiaBand({ lang }: { lang: V3Lang }) {
   const ref = useRef<HTMLElement>(null);
   const { language } = useLanguage();
   const liveHome = useCmsContent("home", home26) as any;
   const current = liveHome[language] ?? liveHome[lang] ?? liveHome.en;
   const c = current.creemos;
-  const quote = preview?.quote || c.quote;
-  const body = preview?.body || c.body;
-  const label = preview?.label || c.label;
+  const quote = c.quote;
+  const body = c.body;
+  const label = c.label;
   const media = current.media ?? {};
   useV3Module(ref, initFilo);
   const fotos = useFotosDiferidas();

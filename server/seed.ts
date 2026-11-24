@@ -78,7 +78,6 @@ export const practiceGroupsData = [
 
 // Catálogo público de Industrias. La página /industries y el panel de contenido
 // comparten estas filas, para que el catálogo no quede vacío mientras el contenido
-// visual se mantiene editable desde el CMS.
 export const industryGroupsData = [
   { name: "Soft drinks and beverages", nameEs: "Refresqueras y bebidas", slug: "bebidas", description: "Collective bargaining agreements, distribution centers and delivery personnel in continuous operation.", descriptionEs: "Contratos colectivos, centros de distribución y personal de reparto en operación continua.", fullDescription: "Collective bargaining agreements, distribution centers and delivery personnel in continuous operation.", fullDescriptionEs: "Contratos colectivos, centros de distribución y personal de reparto en operación continua.", iconName: "factory", imageUrl: "/v3/c-ind-bebidas.webp", order: 1, published: true },
   { name: "Automotive and manufacturing", nameEs: "Automotriz y manufactura", slug: "automotriz", description: "Collective labor relations, inspections and compliance at plants that run several shifts.", descriptionEs: "Relaciones colectivas, inspecciones y cumplimiento en plantas con varios turnos.", fullDescription: "Collective labor relations, inspections and compliance at plants that run several shifts.", fullDescriptionEs: "Relaciones colectivas, inspecciones y cumplimiento en plantas con varios turnos.", iconName: "car-front", imageUrl: "/v3/c-ind-automotriz.webp", order: 2, published: true },

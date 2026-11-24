@@ -15,12 +15,6 @@
    en que la demo pasaba su barra a blanco). */
 .v3 .mk-telon__barra{display:none}
 
-/* El constructor visual muestra el estado abierto para que los campos del Hero se puedan
-   revisar a primera vista. El sitio público conserva la secuencia de entrada original. */
-.v3 .visual-preview-open .mk-telon .sh-portada__velo{opacity:1 !important}
-.v3 .visual-preview-open .mk-telon .mk-portada{opacity:1 !important;visibility:visible !important}
-.v3 .visual-preview-open .mk-telon .sh-portada__centro > *,
-.v3 .visual-preview-open .mk-telon .mk-telon__firma{opacity:1 !important;transform:none !important;visibility:visible !important}
 .ss26:has(> .ss-header) .v3 .mk-telon__barra{
   display:block; position:absolute; left:0; right:0; top:0; z-index:5;
   height:var(--ss-header-h);

@@ -1,7 +1,6 @@
 import { spawnSync } from "node:child_process";
 
 const root = process.cwd();
-const requireAdminVisual = process.env.CMS_BATTERY_REQUIRE_AUTH === "true";
 
 const commands = [
   ["TypeScript", "npm", ["run", "check"]],
@@ -25,10 +24,6 @@ const commands = [
   ["Dependency audit", "npm", ["audit", "--audit-level=moderate"]],
 ];
 
-if (process.env.ADMIN_VISUAL_TOKEN || requireAdminVisual) {
-  commands.push(["Authenticated admin visual matrix", "npm", ["run", "test:visual:admin"]]);
-}
-
 const failures = [];
 for (const [label, command, args] of commands) {
   process.stdout.write(`\n=== ${label} ===\n`);
@@ -38,10 +33,6 @@ for (const [label, command, args] of commands) {
     stdio: "inherit",
   });
   if (result.status !== 0) failures.push(label);
-}
-
-if (requireAdminVisual && !process.env.ADMIN_VISUAL_TOKEN) {
-  failures.push("Authenticated admin visual matrix missing ADMIN_VISUAL_TOKEN");
 }
 
 if (failures.length) {

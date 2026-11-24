@@ -3,6 +3,7 @@ import { Switch } from "@/components/ui/switch";
 import { adminApiRequest } from "@/lib/adminAuth";
 import { pageVisibility } from "@/lib/pageVisibility";
 import { notifyCmsSaved } from "@/hooks/useCmsContent";
+import { VisibilityHelp } from "./VisibilityHelp";
 
 type LayoutState = { pages?: Record<string, { enabled?: boolean; blocks?: Record<string, boolean> }>; [key: string]: unknown };
 type LayoutResponse = { content: LayoutState; revision: string };
@@ -51,6 +52,7 @@ export function BlockVisibilityToggle({ pageId, blockKey, label }: { pageId: str
   return (
     <label className="inline-flex items-center gap-2 text-sm text-muted-foreground" title={`Controlar la visibilidad de ${label} en todos los idiomas`}>
       <span>{enabled ? "Visible" : "Oculto"}</span>
+      <VisibilityHelp title={label}>Este interruptor controla la visibilidad de {label} en todos los idiomas. Al apagarlo, la sección se retira del contenido público y el dato permanece guardado para volver a mostrarlo después.</VisibilityHelp>
       <Switch
         checked={enabled}
         disabled={query.isLoading || query.isError || toggle.isPending}

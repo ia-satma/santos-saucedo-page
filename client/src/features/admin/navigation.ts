@@ -8,7 +8,6 @@ import {
   EnvelopeClosedIcon,
   GearIcon,
   LayersIcon,
-  Component2Icon,
   MixerHorizontalIcon,
   GlobeIcon,
   QuestionMarkCircledIcon,
@@ -19,6 +18,7 @@ import {
   VideoIcon,
   CookieIcon,
   ChatBubbleIcon,
+  Component2Icon,
 } from "@radix-ui/react-icons";
 export const adminNavigation = [
   {
@@ -48,12 +48,6 @@ export const adminNavigation = [
     description:
       "Edita las páginas, los perfiles y las publicaciones de Santos & Saucedo.",
     items: [
-      {
-        href: "/admin/visual-editor",
-        label: "Editor visual",
-        hint: "Construir y reordenar páginas visualmente",
-        icon: Component2Icon,
-      },
       {
         href: "/admin/site-config/home",
         label: "Portada",

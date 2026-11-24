@@ -64,10 +64,6 @@ Cada página nueva debe tener:
 
 Cada bloque nuevo debe tener una clave estable, una fuente CMS, una prueba de render y una prueba de ocultar y mostrar si admite visibilidad.
 
-### Constructor visual
-
-El constructor visual se abre dentro de cada `/admin/page/:pageId` y conserva el editor largo como respaldo. Sus composiciones versionadas viven en `site_config` con claves `visual.<pageId>.<language>`. La bandera `layout.pages[page].blocks.visual` controla si una composición publicada reemplaza el contenido principal público. Puck solo se carga en el panel administrativo y el frontend público usa un adaptador de lectura sin la dependencia del editor.
-
 ### Socios y equipo
 
 La página separa sus bloques editables para que cada control tenga un efecto independiente:

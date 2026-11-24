@@ -86,25 +86,13 @@ function splitFinal(tagline: string, first: string) {
   return { l1: before.join(" "), pre2 };
 }
 
-export type TelonPreview = {
-  tagline?: string;
-  firma?: string;
-  poster?: string;
-  place?: string[];
-  videoDesktop?: string;
-  videoMobile?: string;
-  videoEnabled?: boolean;
-  words?: string[];
-  practiceWords?: string[];
-};
-
-export default function Telon({ lang, preview }: { lang: V3Lang; preview?: TelonPreview }) {
+export default function Telon({ lang }: { lang: V3Lang }) {
   const { attrs } = useV3Lang();
   const { language } = useLanguage();
   const media = useCmsMedia();
   const liveHome = useCmsContent("home", home26);
   const liveChrome = useCmsContent("chrome", chrome26);
-  const hero = preview ? { ...liveHome[lang].hero, ...preview } : liveHome[lang].hero;
+  const hero = liveHome[lang].hero;
   const labels = liveChrome[lang].heroVideo;
   const sourceTxt: { firma: string; words: readonly string[]; practiceWords?: readonly string[]; and: string } = TXT[language] ?? TXT.en;
   // Palabras del panel solo en español e inglés: los demás idiomas parten de la forma del inglés y
@@ -142,9 +130,9 @@ export default function Telon({ lang, preview }: { lang: V3Lang; preview?: Telon
   const [paused, setPaused] = useState(startPaused);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
-  const videoEnabled = preview?.videoEnabled ?? media.hero.videoEnabled !== false;
-  const videoDesktop = preview?.videoDesktop || media.hero.videoDesktop;
-  const videoMobile = preview?.videoMobile || media.hero.videoMobile;
+  const videoEnabled = media.hero.videoEnabled !== false;
+  const videoDesktop = media.hero.videoDesktop;
+  const videoMobile = media.hero.videoMobile;
   useEffect(() => setFailed(false), [videoDesktop, videoMobile]);
   useEffect(() => {
     if (ready || startPaused || paused || !videoEnabled || savesData()) return;
@@ -170,7 +158,7 @@ export default function Telon({ lang, preview }: { lang: V3Lang; preview?: Telon
     return configured ? heroVideoSource(configured) : undefined;
   }, [ready, failed, videoEnabled, videoDesktop, videoMobile]);
   const externalVideoSrc = videoSrc ? getVideoEmbedUrl(videoSrc, !paused) : null;
-  const poster = preview?.poster || media.hero.poster;
+  const poster = media.hero.poster;
   // El póster oficial conserva su edición del CMS, pero se sirve en WebP para que el LCP no cargue el JPG histórico.
   const posterSrc = poster && /(?:^|[/-])portada-color-poster\.jpg$/.test(poster)
     ? `${import.meta.env.BASE_URL}video/portada-color-poster-1600.webp`
@@ -233,7 +221,7 @@ export default function Telon({ lang, preview }: { lang: V3Lang; preview?: Telon
   const lugar = (Array.isArray(hero.place) ? (hero.place as readonly string[]) : []).map((t) => (t || "").trim()).filter(Boolean);
 
   return (
-    <div ref={rootRef} className={`v3 mk-raiz${preview ? " visual-preview-open" : ""}`} data-vista="inicio" style={rootStyle} {...attrs}>
+    <div ref={rootRef} className="v3 mk-raiz" data-vista="inicio" style={rootStyle} {...attrs}>
       <div className={wrapClass}>
         <section className="mk-telon sobre-azul" id="portada" aria-labelledby="portada-h">
           <div className="mk-telon__escena">

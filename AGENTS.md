@@ -56,16 +56,3 @@ Antes de cerrar un cambio que afecte al sitio o al CMS:
 9. Actualiza el inventario y la documentación si cambió una ruta, bloque, fuente o flujo.
 
 No declares una tarea completa por haber compilado. El cambio debe aparecer en el flujo normal del usuario.
-
-## Constructor visual
-
-- Puck se usa como editor visual administrativo y nunca como fuente independiente de fichas, traducciones, medios o SEO.
-- Cada componente visual debe tener una lista permitida de propiedades, un adaptador público y una prueba de guardado y publicación.
-- El documento visual conserva `schemaVersion`, borrador, publicado, versión anterior e idioma.
-- La bandera `layout.pages.<pageId>.blocks.visual` controla si la composición publicada reemplaza el contenido principal de una página.
-- El editor visual se carga de forma diferida y no puede entrar en el bundle público inicial.
-- No se acepta JSX, HTML, JavaScript, CSS arbitrario, handlers de eventos ni URLs de medios externas sin validación.
-- Las fichas de prácticas, industrias, equipo, Monitor y vacantes se guardan como referencias por ID o slug.
-- La publicación visual conserva el mismo flujo de revisión, CAS, RBAC, preview privada, auditoría y rollback del CMS.
-- Cuando un bloque visual represente un campo editorial existente, usa `sourceMap` con rutas de secciones declaradas para sincronizar el borrador y la publicación con la fuente CMS.
-- Los componentes visuales nuevos deben usar referencias de catálogo y no copiar contenido editable de fichas.

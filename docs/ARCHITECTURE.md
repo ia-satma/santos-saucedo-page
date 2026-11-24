@@ -82,10 +82,6 @@ Una página desactivada debe desaparecer de rutas públicas, menú principal, su
 
 No se debe usar un snapshot de Pages para probar persistencia del CMS de Replit.
 
-## Constructor visual
-
-Puck se carga únicamente dentro del editor administrativo como una capa visual sobre las fuentes CMS existentes. El documento visual se guarda por página e idioma, con borrador, publicación, restauración y control CAS. Las fichas y medios permanecen en sus catálogos y la bandera `layout.pages[page].blocks.visual` decide si la composición publicada se usa en el frontend. El renderer público no importa Puck.
-
 ## Estado actual conocido
 
 - El registro de páginas y bloques ya está centralizado.

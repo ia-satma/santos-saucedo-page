@@ -9800,8 +9800,7 @@
           "industrias": true,
           "socios": true,
           "extranjeras": true,
-          "monitor": true,
-          "visual": false
+          "monitor": true
         }
       },
       "about": {
@@ -9813,8 +9812,7 @@
           "valores": true,
           "prioridad": true,
           "laminas": true,
-          "oficina": true,
-          "visual": false
+          "oficina": true
         }
       },
       "practices": {
@@ -9824,8 +9822,7 @@
           "lista": true,
           "servicios": true,
           "laminaReaccion": true,
-          "industries": true,
-          "visual": false
+          "industries": true
         }
       },
       "industries": {
@@ -9834,8 +9831,7 @@
           "hero": true,
           "lista": true,
           "animacion": true,
-          "textos": false,
-          "visual": false
+          "textos": false
         }
       },
       "team": {
@@ -9846,8 +9842,7 @@
           "colaboradores": true,
           "mapa": true,
           "carrusel": true,
-          "perfiles": true,
-          "visual": false
+          "perfiles": true
         }
       },
       "news": {
@@ -9856,8 +9851,7 @@
           "hero": true,
           "filtros": true,
           "publicaciones": true,
-          "suscripcion": true,
-          "visual": false
+          "suscripcion": true
         }
       },
       "contact": {
@@ -9865,8 +9859,7 @@
         "blocks": {
           "hero": true,
           "datos": true,
-          "formulario": true,
-          "visual": false
+          "formulario": true
         }
       },
       "careers": {
@@ -9875,8 +9868,7 @@
           "hero": true,
           "informacion": true,
           "vacantes": true,
-          "formulario": true,
-          "visual": false
+          "formulario": true
         }
       },
       "offices": {
@@ -9885,8 +9877,7 @@
           "hero": true,
           "datos": true,
           "galeria": true,
-          "horario": true,
-          "visual": false
+          "horario": true
         }
       },
       "testimonials": {
@@ -9894,16 +9885,14 @@
         "blocks": {
           "hero": true,
           "lista": true,
-          "estrellas": true,
-          "visual": false
+          "estrellas": true
         }
       },
       "interns": {
         "enabled": true,
         "blocks": {
           "hero": true,
-          "formulario": true,
-          "visual": false
+          "formulario": true
         }
       },
       "newsletter": {
@@ -9911,8 +9900,7 @@
         "blocks": {
           "hero": true,
           "formulario": true,
-          "relacionadas": true,
-          "visual": false
+          "relacionadas": true
         }
       },
       "privacy": {
@@ -9920,8 +9908,7 @@
         "blocks": {
           "hero": true,
           "legal": true,
-          "contacto": true,
-          "visual": false
+          "contacto": true
         }
       },
       "terms": {
@@ -9929,15 +9916,13 @@
         "blocks": {
           "hero": true,
           "legal": true,
-          "contacto": true,
-          "visual": false
+          "contacto": true
         }
       },
       "not-found": {
         "enabled": true,
         "blocks": {
-          "contenido": true,
-          "visual": false
+          "contenido": true
         }
       }
     }

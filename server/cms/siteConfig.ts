@@ -14,7 +14,6 @@ import { SUPPORTED_LANGUAGES } from '@shared/constants';
 import { readStaticCmsSection } from '../localization/staticSnapshots';
 import { getCmsSectionSource } from './cmsTranslationAgent';
 import { reviewTranslation } from '../services/translationQa';
-import { registerVisualPageRoutes } from './visualPages';
 
 const prefix = 'editorial.';
 type Stored = { content: CmsValue; draft?: CmsValue; previous?: CmsValue };
@@ -58,6 +57,35 @@ function flattenCms(value: CmsValue, path: string[] = [], out: { path: string[];
 function decode(raw: string | null | undefined): Stored | undefined {
   if (!raw) return;
   try { return JSON.parse(raw) as Stored; } catch { return; }
+}
+
+async function removeLegacyVisualBuilderData() {
+  const markerKey = "cms.migration.puck_removed_v1";
+  const [marker] = await db.select({ value: siteConfig.value }).from(siteConfig).where(eq(siteConfig.key, markerKey)).limit(1);
+  if (marker) return;
+
+  await db.delete(siteConfig).where(sql`key LIKE 'visual.%'`);
+  const [layoutRow] = await db.select({ value: siteConfig.value }).from(siteConfig).where(eq(siteConfig.key, `${prefix}layout`)).limit(1);
+  if (layoutRow?.value) {
+    const stored = decode(layoutRow.value);
+    let changed = false;
+    for (const snapshot of [stored?.content, stored?.draft, stored?.previous]) {
+      if (!snapshot || typeof snapshot !== "object" || Array.isArray(snapshot)) continue;
+      const pages = (snapshot as Record<string, unknown>).pages;
+      if (!pages || typeof pages !== "object" || Array.isArray(pages)) continue;
+      for (const page of Object.values(pages)) {
+        if (!page || typeof page !== "object" || Array.isArray(page)) continue;
+        const blocks = (page as Record<string, unknown>).blocks;
+        if (!blocks || typeof blocks !== "object" || Array.isArray(blocks)) continue;
+        if (Object.prototype.hasOwnProperty.call(blocks, "visual")) {
+          delete (blocks as Record<string, unknown>).visual;
+          changed = true;
+        }
+      }
+    }
+    if (changed) await db.update(siteConfig).set({ value: JSON.stringify(stored), updatedAt: new Date() }).where(eq(siteConfig.key, `${prefix}layout`));
+  }
+  await db.insert(siteConfig).values({ key: markerKey, value: "applied", type: "text", category: "migration", updatedAt: new Date() }).onConflictDoNothing();
 }
 
 // Idempotent compatibility migration. It adds no content and never changes existing rows.
@@ -161,6 +189,7 @@ export async function ensureCmsSchema() {
   await db.execute(sql`ALTER TABLE news ADD COLUMN IF NOT EXISTS document_url text, ADD COLUMN IF NOT EXISTS document_url_es text, ADD COLUMN IF NOT EXISTS source_url text, ADD COLUMN IF NOT EXISTS tags jsonb, ADD COLUMN IF NOT EXISTS featured_home boolean DEFAULT false, ADD COLUMN IF NOT EXISTS ai_classification jsonb`);
   await db.execute(sql`ALTER TABLE news_translations ADD COLUMN IF NOT EXISTS is_approved boolean NOT NULL DEFAULT true`);
   await ensureTestimonialSchema();
+  await removeLegacyVisualBuilderData();
 }
 
 export async function getCmsOverrides(): Promise<Record<string, CmsValue>> {
@@ -201,7 +230,6 @@ export async function getCmsContact() {
 }
 
 export function registerCmsRoutes(app: Express) {
-  registerVisualPageRoutes(app);
   app.get('/api/admin/storage/status', authMiddleware, requireRole('editor', 'admin'), async (_req,res) => {
     try { res.setHeader('Cache-Control','no-store');res.json({configured:!!storageBucketId(), migration:await savedMediaImportStatus()}); }
     catch { res.status(503).json({error:'No se pudo consultar App Storage.'}); }

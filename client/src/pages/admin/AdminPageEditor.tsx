@@ -8,7 +8,6 @@ import { PageVisibilityPanel } from "@/features/site-config/PageVisibilityPanel"
 import { BlockVisibilityToggle } from "@/features/site-config/BlockVisibilityToggle";
 import { InlineCatalogFields } from "@/features/site-config/InlineCatalogFields";
 import { TeamMosaicFields } from "@/features/site-config/TeamMosaicFields";
-import { VisualPageEditor } from "@/features/visual-builder/VisualPageEditor";
 import { AdminPageHelp } from "@/components/admin/AdminPageHelp";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAdminAuth, adminApiRequest } from "@/lib/adminAuth";
@@ -68,7 +67,6 @@ export default function AdminPageEditor() {
   const [lang, setLang] = useState(language === "es" ? "es" : language);
   const [showPreview, setShowPreview] = useState(false);
   const [previewSrc, setPreviewSrc] = useState<string>();
-  const [visualMode, setVisualMode] = useState(false);
 
   useEffect(() => { requireAuth(); }, [requireAuth]);
   const sections = useMemo(() => page.tabs.map((tab) => tab.section), [page]);
@@ -163,7 +161,7 @@ export default function AdminPageEditor() {
       <header className="cms-editor-header"><div className="cms-editor-header-inner">
         <div className="cms-editor-breadcrumb" aria-label="Ruta del editor"><Link href="/admin/dashboard">Inicio</Link><span aria-hidden="true">›</span><span>Contenido del sitio</span><span aria-hidden="true">›</span><strong>{page.label}</strong></div>
         <div className="cms-editor-heading-row"><div><h1>{page.label}</h1><p>{page.description}</p><span className="cms-editor-impact">{page.impact}</span></div><span className="cms-editor-status" role="status">{dirty ? "Borrador sin guardar" : "Cambios guardados"}</span></div>
-        <div className="flex flex-wrap gap-3 mt-5"><a href={publicPath} target="_blank" rel="noopener noreferrer" className="admin-subtle-link">Ver página pública ↗</a><Link href={`/admin/visual-editor/${page.id}`} className="admin-subtle-link">Abrir Editor visual ↗</Link><Button variant={visualMode ? "default" : "outline"} onClick={() => setVisualMode((current) => !current)}>{visualMode ? "Editar con formularios" : "Editar visualmente"}</Button>{!visualMode && <><Button variant="outline" onClick={() => setShowPreview((current) => !current)}>{showPreview ? "Cerrar vista previa" : "Ver vista previa"}</Button><Button disabled={!dirty || save.isPending} onClick={() => save.mutate()}>{save.isPending ? "Guardando…" : "Guardar borrador"}</Button><Button variant="outline" disabled={publish.isPending || dirty} onClick={() => publish.mutate()}>{publish.isPending ? "Publicando…" : "Publicar cambios"}</Button></>}<Link href={`/admin/site-config/${page.tabs[0].section}`} className="admin-subtle-link">Directorio técnico</Link></div>
+        <div className="flex flex-wrap gap-3 mt-5"><a href={publicPath} target="_blank" rel="noopener noreferrer" className="admin-subtle-link">Ver página pública ↗</a><Button variant="outline" onClick={() => setShowPreview((current) => !current)}>{showPreview ? "Cerrar vista previa" : "Ver vista previa"}</Button><Button disabled={!dirty || save.isPending} onClick={() => save.mutate()}>{save.isPending ? "Guardando…" : "Guardar borrador"}</Button><Button variant="outline" disabled={publish.isPending || dirty} onClick={() => publish.mutate()}>{publish.isPending ? "Publicando…" : "Publicar cambios"}</Button><Link href={`/admin/site-config/${page.tabs[0].section}`} className="admin-subtle-link">Directorio técnico</Link></div>
       </div></header>
       <main className="cms-editor-main">
         <AdminPageHelp pageId={`page-${page.id}`} manualSectionId={page.manualId}>Edita esta página de arriba abajo. Cada bloque conserva sus textos, medios, enlaces, visibilidad y orden. Los campos compartidos indican dónde más aparecen.</AdminPageHelp>
@@ -177,10 +175,9 @@ export default function AdminPageEditor() {
             {page.id === "team" && <InlineCatalogFields kind="team" />}
             {page.id === "news" && <InlineCatalogFields kind="news" />}
             {page.id === "careers" && <InlineCatalogFields kind="job" />}
-            {visualMode && <VisualPageEditor pageId={page.id} language={lang} pageLabel={page.label} sections={drafts} />}
-            {!visualMode && query.isLoading && <p role="status">Cargando bloques…</p>}
-            {!visualMode && query.isError && <p role="alert">{query.error.message}</p>}
-            {!visualMode && page.tabs.map((tab, index) => {
+            {query.isLoading && <p role="status">Cargando bloques…</p>}
+            {query.isError && <p role="alert">{query.error.message}</p>}
+            {page.tabs.map((tab, index) => {
               const content = drafts[tab.section];
               if (content === undefined) return null;
               const localized = isLanguageMap(content) && content[lang] !== undefined;

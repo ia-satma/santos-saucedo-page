@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { layoutDefaults } from "@/lib/cmsLightDefaults";
 import { notifyCmsSaved } from "@/hooks/useCmsContent";
+import { VisibilityHelp } from "./VisibilityHelp";
 
 type PageState = { enabled: boolean; blocks: Record<string, boolean> };
 type LayoutState = { pages?: Record<string, PageState>; [key: string]: unknown };
@@ -73,7 +74,6 @@ const blockLabels: Record<string, string> = {
   galeria: "Galería",
   horario: "Horario",
   estrellas: "Estrellas",
-  visual: "Constructor visual publicado",
 };
 
 function labelFor(value: string) {
@@ -144,7 +144,10 @@ export function PageVisibilityPanel({ pageId }: { pageId: string }) {
     <section className="cms-editor-card mb-5" aria-labelledby="cms-visibility-title">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h3 id="cms-visibility-title" className="font-semibold">Visibilidad de {pageLabels[pageId] ?? pageId}</h3>
+          <div className="flex items-center gap-2">
+            <h3 id="cms-visibility-title" className="font-semibold">Visibilidad de {pageLabels[pageId] ?? pageId}</h3>
+            <VisibilityHelp title="Página visible">Al apagarlo, la página deja de aparecer en el menú, el pie y el contenido público en todos los idiomas. Su contenido queda guardado para que puedas seguir editándolo y revisarlo en la vista previa privada.</VisibilityHelp>
+          </div>
           <p className="mt-1 text-sm text-muted-foreground">Control global para todos los idiomas. Al ocultar un bloque, desaparece del menú o del contenido público según corresponda.</p>
         </div>
         <div className="flex items-center gap-3">
@@ -153,9 +156,9 @@ export function PageVisibilityPanel({ pageId }: { pageId: string }) {
         </div>
       </div>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        {Object.entries(current.blocks).filter(([key]) => !legacyBlockAliases[pageId]?.has(key)).map(([key, enabled]) => (
+        {Object.entries(current.blocks).filter(([key]) => key !== "visual" && !legacyBlockAliases[pageId]?.has(key)).map(([key, enabled]) => (
           <label key={key} className="flex items-center justify-between gap-4 rounded-lg border p-3">
-            <span className="text-sm font-medium">{labelFor(key)}</span>
+            <span className="flex items-center gap-2 text-sm font-medium"><span>{labelFor(key)}</span><VisibilityHelp title={labelFor(key)}>Al apagar este bloque, se oculta únicamente esta parte de la página en todos los idiomas. El resto de la página y el contenido guardado permanecen disponibles para edición.</VisibilityHelp></span>
             <Switch checked={enabled} onCheckedChange={(next) => updateBlock(key, next)} aria-label={`Visible: ${labelFor(key)}`} />
           </label>
         ))}
