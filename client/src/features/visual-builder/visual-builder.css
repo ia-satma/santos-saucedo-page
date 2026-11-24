@@ -7,6 +7,7 @@
 .visual-builder-loading { padding:2rem; color:hsl(var(--muted-foreground)); }
 .visual-builder-error { margin:1rem 1.25rem; color:hsl(var(--destructive)); font-size:.875rem; }
 .visual-builder-root { min-height:100%; background:#f6f7f9; }
+.visual-builder-live-page { min-height:100%; background:#fff; overflow:hidden; }
 .visual-builder-surface { padding:2rem; }
 .visual-builder-surface--navy { color:#fff; background:#102b4e; }
 .visual-builder-surface--paper { color:#172b44; background:#f5f1e9; }

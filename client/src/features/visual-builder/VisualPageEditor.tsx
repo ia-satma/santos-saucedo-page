@@ -66,17 +66,23 @@ export function VisualPageEditor({ pageId, language, pageLabel, sections }: Visu
     return () => { active = false; };
   }, [endpoint, pageId, sections]);
 
+  const persistDraft = async () => {
+    const response = await adminApiRequest("PUT", endpoint, { draftData: data, schemaVersion: SCHEMA_VERSION, revision });
+    const payload = await response.json() as VisualResponse & { error?: string };
+    if (!response.ok) throw new Error(payload.error || "No se pudo guardar el borrador visual.");
+    const nextRevision = payload.revision || revision;
+    setRevision(nextRevision);
+    setDirty(false);
+    notifyCmsSaved();
+    return { nextRevision, syncedSections: payload.syncedSections ?? [] };
+  };
+
   const saveDraft = async () => {
     setSaving(true);
     setError(undefined);
     try {
-      const response = await adminApiRequest("PUT", endpoint, { draftData: data, schemaVersion: SCHEMA_VERSION, revision });
-      const payload = await response.json() as VisualResponse & { error?: string };
-      if (!response.ok) throw new Error(payload.error || "No se pudo guardar el borrador visual.");
-      setRevision(payload.revision || revision);
-      setDirty(false);
-      notifyCmsSaved();
-      toast({ title: payload.syncedSections?.length ? "Borrador visual y CMS sincronizados" : "Borrador visual guardado" });
+      const result = await persistDraft();
+      toast({ title: result.syncedSections.length ? "Borrador visual y CMS sincronizados" : "Borrador visual guardado" });
     } catch (saveError) {
       setError(saveError instanceof Error ? saveError.message : "No se pudo guardar el borrador visual.");
     } finally {
@@ -88,13 +94,20 @@ export function VisualPageEditor({ pageId, language, pageLabel, sections }: Visu
     setPublishing(true);
     setError(undefined);
     try {
-      const response = await adminApiRequest("POST", `${endpoint}/publish`, { revision });
+      let publishRevision = revision;
+      let syncedSections: string[] = [];
+      if (dirty || revision === "initial") {
+        const saved = await persistDraft();
+        publishRevision = saved.nextRevision;
+        syncedSections = saved.syncedSections;
+      }
+      const response = await adminApiRequest("POST", `${endpoint}/publish`, { revision: publishRevision });
       const payload = await response.json() as VisualResponse & { error?: string };
       if (!response.ok) throw new Error(payload.error || "No se pudo publicar el diseño visual.");
       setRevision(payload.revision || revision);
       setDirty(false);
       notifyCmsSaved();
-      toast({ title: payload.syncedSections?.length ? "Diseño visual y CMS publicados" : "Diseño visual publicado" });
+      toast({ title: (payload.syncedSections?.length || syncedSections.length) ? "Diseño visual y CMS publicados" : "Diseño visual publicado" });
     } catch (publishError) {
       setError(publishError instanceof Error ? publishError.message : "No se pudo publicar el diseño visual.");
     } finally {

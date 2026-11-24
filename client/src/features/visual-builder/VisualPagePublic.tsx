@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import type { VisualComponent, VisualPageData } from "@shared/visualPages";
-import { HomeCatalogPreview, HomeHeroPreview, HomeIntroPreview, HomeQuotePreview, VisualBuilderPreviewContext, VisualFallback } from "./visualLiveBlocks";
+import { HomeCatalogPreview, HomeHeroPreview, HomeIntroPreview, HomeQuotePreview, PageSectionPreview, VisualBuilderPreviewContext } from "./visualLiveBlocks";
 import "./visual-builder.css";
 
 type VisualPagePublicProps = { pageId: string; language: string; fallback: ReactNode };
@@ -56,7 +56,7 @@ function renderComponent(component: VisualComponent, index: number, catalogs: Ca
       return pageId === "home" ? null : <section key={id} className="visual-builder-surface visual-builder-surface--paper"><div className="visual-builder-stats"><h2>{text(props.title, "Cifras")}</h2><div>{items.map((item, itemIndex) => { const record = item && typeof item === "object" ? item as Record<string, unknown> : {}; return <article key={`${text(record.value)}-${itemIndex}`}><strong>{text(record.value)}</strong><span>{text(record.label)}</span></article>; })}</div></div></section>;
     }
     case "SectionBlock":
-      return <section key={id} className="visual-builder-surface visual-builder-surface--paper"><div className="visual-builder-reference"><span>Fuente CMS · {text(props.sectionId)}</span><h2>{text(props.title)}</h2><p>{text(props.description)}</p></div></section>;
+      return <PageSectionPreview key={id} sectionId={text(props.sectionId)} title={text(props.title)} description={text(props.description)} />;
     case "MediaBlock":
       return <section key={id} className="visual-builder-surface visual-builder-surface--paper"><figure className="visual-builder-media"><div className="visual-builder-media-frame">{internalMedia(props.mediaPath) && <img src={internalMedia(props.mediaPath)} alt={text(props.alt)} width="1200" height="800" loading="lazy" />}</div>{text(props.caption) && <figcaption>{text(props.caption)}</figcaption>}</figure></section>;
     case "VideoBlock": {

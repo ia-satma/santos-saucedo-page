@@ -6,6 +6,20 @@ import { SociosBand } from "@/v3/home/Socios";
 import { Monitor26, Extranjeras26 } from "@/components/home26/Sections26";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { V3Lang } from "@/v3/shared";
+import About from "@/pages/About";
+import PracticeGroups from "@/pages/PracticeGroups";
+import Industries from "@/pages/Industries";
+import Team from "@/pages/Team";
+import NewsPage from "@/pages/News";
+import Contact from "@/pages/Contact";
+import Offices from "@/pages/Offices";
+import Careers from "@/pages/Careers";
+import Interns from "@/pages/Interns";
+import Newsletter from "@/pages/Newsletter";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import Terms from "@/pages/Terms";
+import Testimonials from "@/pages/Testimonials";
+import NotFound from "@/pages/not-found";
 
 type PreviewContextValue = { pageId: string; language: string };
 
@@ -14,6 +28,54 @@ export const VisualBuilderPreviewContext = createContext<PreviewContextValue>({ 
 export function VisualFallback({ children }: { children: ReactNode }) {
   const { pageId } = useContext(VisualBuilderPreviewContext);
   return pageId === "home" ? null : <>{children}</>;
+}
+
+const primarySectionForPage: Record<string, RegExp> = {
+  about: /^about$/,
+  practices: /^practices?$/,
+  industries: /^industries?$/,
+  team: /^team$/,
+  news: /^news/,
+  contact: /^contact/,
+  offices: /^offices?$/,
+  careers: /^careers?$/,
+  interns: /^interns?$/,
+  newsletter: /^newsletter$/,
+  privacy: /^privacy/,
+  terms: /^terms/,
+  testimonials: /^testimonials?$/,
+  "not-found": /^not-found$/,
+};
+
+function isPrimarySection(pageId: string, sectionId: string) {
+  return primarySectionForPage[pageId]?.test(sectionId) === true;
+}
+
+function pageComponent(pageId: string) {
+  switch (pageId) {
+    case "about": return <About />;
+    case "practices": return <PracticeGroups />;
+    case "industries": return <Industries />;
+    case "team": return <Team />;
+    case "news": return <NewsPage />;
+    case "contact": return <Contact />;
+    case "offices": return <Offices />;
+    case "careers": return <Careers />;
+    case "interns": return <Interns />;
+    case "newsletter": return <Newsletter />;
+    case "privacy": return <PrivacyPolicy />;
+    case "terms": return <Terms />;
+    case "testimonials": return <Testimonials />;
+    case "not-found": return <NotFound />;
+    default: return null;
+  }
+}
+
+export function PageSectionPreview({ sectionId, title, description }: { sectionId?: string; title?: string; description?: string }) {
+  const { pageId } = useContext(VisualBuilderPreviewContext);
+  if (pageId === "home") return <section className="visual-builder-surface visual-builder-surface--paper"><div className="visual-builder-reference"><span>Fuente CMS · {sectionId || "contenido"}</span><h2>{title || sectionId}</h2><p>{description || "Bloque conectado a la fuente editorial actual."}</p></div></section>;
+  if (!isPrimarySection(pageId, sectionId || "")) return null;
+  return <div className="visual-builder-live-page" data-visual-live-page={pageId}>{pageComponent(pageId)}</div>;
 }
 
 function visualLanguage(language: string): V3Lang {

@@ -10,6 +10,7 @@ import {
   HomePracticesPreview,
   HomeQuotePreview,
   HomeTeamPreview,
+  PageSectionPreview,
   VisualFallback,
 } from "./visualLiveBlocks";
 
@@ -106,7 +107,7 @@ export const visualBuilderConfig: Config = {
       label: "Sección existente",
       fields: { sectionId: { type: "text", label: "Referencia CMS" }, title: { type: "text", label: "Nombre visible" }, description: { type: "textarea", label: "Descripción" } },
       defaultProps: { sectionId: "home", title: "Sección existente", description: "Este bloque conserva su fuente editorial actual." },
-      render: ({ sectionId, title, description }: Record<string, string>) => <Surface tone="paper"><div className="visual-builder-reference"><span>Fuente CMS · {sectionId}</span><h2>{title}</h2><p>{description}</p></div></Surface>,
+      render: ({ sectionId, title, description }: Record<string, string>) => <PageSectionPreview sectionId={sectionId} title={title} description={description} />,
     },
     MediaBlock: {
       label: "Imagen o video",
