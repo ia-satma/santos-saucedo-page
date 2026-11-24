@@ -49,6 +49,12 @@ export const adminNavigation = [
       "Edita las páginas, los perfiles y las publicaciones de Santos & Saucedo.",
     items: [
       {
+        href: "/admin/visual-editor",
+        label: "Editor visual",
+        hint: "Construir y reordenar páginas visualmente",
+        icon: Component2Icon,
+      },
+      {
         href: "/admin/site-config/home",
         label: "Portada",
         hint: "Textos de Inicio",

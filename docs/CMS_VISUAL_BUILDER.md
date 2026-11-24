@@ -2,7 +2,9 @@
 
 ## Estado
 
-El CMS incorpora Puck como modo visual adicional dentro de cada editor de página. El editor largo existente sigue siendo la ruta principal de respaldo. Puck se carga de forma diferida dentro de la sección administrativa y sus estilos no forman parte del HTML inicial de las páginas públicas.
+El CMS incorpora Puck como un apartado independiente en `/admin/visual-editor` y como modo visual adicional dentro de cada editor de página. El editor largo existente sigue disponible para campos detallados. Puck se carga de forma diferida dentro de la sección administrativa y sus estilos no forman parte del HTML inicial de las páginas públicas.
+
+El apartado «Editor visual» organiza las páginas en una navegación lateral, ofrece selector de idioma, enlace público, visibilidad global y acceso al editor detallado. El lienzo central conserva la paleta e inspector de Puck, con reordenamiento, duplicado, eliminación e inserción de componentes permitidos.
 
 La bandera `layout.pages.<pageId>.blocks.visual` controla la publicación visual de cada página. Está apagada por defecto para evitar cambios públicos accidentales. El editor puede preparar un borrador visual aunque la bandera esté apagada. La página pública solo consulta una composición publicada cuando la bandera está activa.
 
