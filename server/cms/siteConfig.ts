@@ -14,6 +14,7 @@ import { SUPPORTED_LANGUAGES } from '@shared/constants';
 import { readStaticCmsSection } from '../localization/staticSnapshots';
 import { getCmsSectionSource } from './cmsTranslationAgent';
 import { reviewTranslation } from '../services/translationQa';
+import { registerVisualPageRoutes } from './visualPages';
 
 const prefix = 'editorial.';
 type Stored = { content: CmsValue; draft?: CmsValue; previous?: CmsValue };
@@ -200,6 +201,7 @@ export async function getCmsContact() {
 }
 
 export function registerCmsRoutes(app: Express) {
+  registerVisualPageRoutes(app);
   app.get('/api/admin/storage/status', authMiddleware, requireRole('editor', 'admin'), async (_req,res) => {
     try { res.setHeader('Cache-Control','no-store');res.json({configured:!!storageBucketId(), migration:await savedMediaImportStatus()}); }
     catch { res.status(503).json({error:'No se pudo consultar App Storage.'}); }

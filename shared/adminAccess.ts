@@ -170,7 +170,7 @@ export function adminPermissionForPath(
     return route.startsWith("preview/news/") ? "editorial" : "content";
   if (/^(media|media-archive|storage|office-images|gallery|signatures)(\/|$)/.test(route))
     return "media";
-  if (/^(content|site-config|navigation|integrations|cookie-consent)(\/|$)/.test(route)) return "config";
+  if (/^(content|site-config|visual-pages|navigation|integrations|cookie-consent)(\/|$)/.test(route)) return "config";
   if (
     /^(team|practice-groups|industry-groups|clients|testimonials|rankings|awards|desks|alliances|offices)(\/|$)/.test(
       route,
