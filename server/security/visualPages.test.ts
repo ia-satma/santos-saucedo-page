@@ -9,7 +9,7 @@ import {
 
 test("visual page validation accepts a controlled internal component", () => {
   const data = {
-    content: [{ type: "Hero", props: { title: "Capacidad de reacción", image: "/editorial/hero.webp", href: "/es/about" } }],
+    content: [{ type: "HeroBlock", props: { title: "Capacidad de reacción", image: "/editorial/hero.webp", href: "/es/about" } }],
     root: { maxWidth: "site" },
   };
   assert.deepEqual(normalizeVisualPageData(data), data);
@@ -21,7 +21,7 @@ test("visual page validation rejects unknown components and executable content",
     content: [
       { type: "Unknown", props: {} },
       { type: "Text", props: { children: "<script>alert(1)</script>" } },
-      { type: "Media", props: { image: "https://cdn.example.com/file.webp" } },
+      { type: "MediaBlock", props: { image: "https://cdn.example.com/file.webp" } },
     ],
   });
   assert.ok(errors.some((error) => error.includes("no está permitido")));

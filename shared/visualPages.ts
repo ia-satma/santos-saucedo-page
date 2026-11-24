@@ -9,8 +9,8 @@ export const VISUAL_PAGE_IDS = [
 export type VisualPageId = typeof VISUAL_PAGE_IDS[number];
 
 export const VISUAL_COMPONENT_TYPES = [
-  "Hero", "Video", "Text", "Quote", "Stats", "PracticesGrid", "IndustriesGrid", "TeamGrid",
-  "NewsFeed", "Media", "Gallery", "Map", "Form", "VisualSheet", "Navigation", "Footer", "Spacer",
+  "HeroBlock", "VideoBlock", "TextBlock", "QuoteBlock", "StatsBlock", "PracticesGrid", "IndustriesGrid", "TeamGrid",
+  "NewsFeed", "MediaBlock", "Gallery", "Map", "Form", "VisualSheet", "Navigation", "Footer", "SectionBlock", "Spacer",
 ] as const;
 export type VisualComponentType = typeof VISUAL_COMPONENT_TYPES[number];
 
