@@ -37,6 +37,26 @@ const MAX_COMPONENTS = 100;
 const UNSAFE_KEY = /^(?:__proto__|prototype|constructor|dangerouslySetInnerHTML|on[a-z])/i;
 const UNSAFE_VALUE = /(?:<\/?script\b|javascript\s*:|vbscript\s*:|data\s*:\s*text\/html|on[a-z]+\s*=)/i;
 const MEDIA_KEY = /^(?:image|video|poster|media|asset|photo|logo|icon|background|src)(?:[A-Z_]|$)/i;
+const VISUAL_PROP_KEYS: Record<string, readonly string[]> = {
+  HeroBlock: ["id", "eyebrow", "title", "description", "mediaPath", "tone"],
+  VideoBlock: ["id", "videoPath", "posterPath", "alt", "tone"],
+  TextBlock: ["id", "title", "body", "tone"],
+  QuoteBlock: ["id", "quote", "author"],
+  StatsBlock: ["id", "title", "items"],
+  PracticesGrid: ["id", "source", "limit", "tone"],
+  IndustriesGrid: ["id", "source", "limit", "tone"],
+  TeamGrid: ["id", "source", "limit", "tone"],
+  NewsFeed: ["id", "source", "limit", "tone"],
+  MediaBlock: ["id", "mediaPath", "alt", "caption"],
+  Gallery: ["id", "source", "limit", "tone"],
+  Map: ["id", "source", "tone"],
+  Form: ["id", "formId", "tone"],
+  VisualSheet: ["id", "sheetId", "tone"],
+  Navigation: ["id", "source", "tone"],
+  Footer: ["id", "source", "tone"],
+  SectionBlock: ["id", "sectionId", "title", "description"],
+  Spacer: ["id", "size"],
+};
 
 export function isVisualPageId(value: string): value is VisualPageId {
   return (VISUAL_PAGE_IDS as readonly string[]).includes(value);
@@ -76,8 +96,15 @@ export function validateVisualPageData(value: unknown): string[] {
   if (Array.isArray(value.content) && value.content.length > MAX_COMPONENTS) errors.push(`La configuración visual no puede superar ${MAX_COMPONENTS} componentes.`);
   if (Array.isArray(value.content)) value.content.forEach((component, index) => {
     if (!isRecord(component)) { errors.push(`El componente ${index + 1} no es válido.`); return; }
-    if (!(VISUAL_COMPONENT_TYPES as readonly string[]).includes(String(component.type))) errors.push(`El componente ${index + 1} no está permitido.`);
+    const componentType = String(component.type);
+    if (!(VISUAL_COMPONENT_TYPES as readonly string[]).includes(componentType)) errors.push(`El componente ${index + 1} no está permitido.`);
     if (!isRecord(component.props)) errors.push(`El componente ${index + 1} debe incluir propiedades válidas.`);
+    const allowedProps = VISUAL_PROP_KEYS[componentType];
+    if (allowedProps && isRecord(component.props)) {
+      for (const key of Object.keys(component.props)) {
+        if (!allowedProps.includes(key)) errors.push(`La propiedad ${key} del componente ${index + 1} no está permitida.`);
+      }
+    }
   });
   walk(value, 0, [], errors);
   if (errors.length === 0 && byteLength(value) > MAX_BYTES) errors.push(`La configuración visual no puede superar ${MAX_BYTES} bytes.`);
