@@ -1,6 +1,17 @@
 import type { Config, Data } from "@puckeditor/core";
 import type { ReactNode } from "react";
 import { MediaField } from "@/features/site-config/MediaField";
+import {
+  HomeCatalogPreview,
+  HomeHeroPreview,
+  HomeIndustriesPreview,
+  HomeIntroPreview,
+  HomeMonitorPreview,
+  HomePracticesPreview,
+  HomeQuotePreview,
+  HomeTeamPreview,
+  VisualFallback,
+} from "./visualLiveBlocks";
 
 type Tone = "navy" | "paper" | "lime";
 
@@ -37,7 +48,7 @@ function referenceComponent(label: string, defaultSource: string) {
       tone: { type: "select", label: "Fondo", options: toneOptions },
     },
     defaultProps: { source: defaultSource, limit: 6, tone: "paper" },
-    render: ({ source, tone }: Record<string, string>) => <ReferenceSurface label={label} source={source} tone={(tone as Tone) || "paper"} />,
+    render: ({ source, limit, tone }: Record<string, string>) => <><HomeCatalogPreview source={source} limit={Number(limit) || 6} /><VisualFallback><ReferenceSurface label={label} source={source} tone={(tone as Tone) || "paper"} /></VisualFallback></>,
   };
 }
 
@@ -67,7 +78,7 @@ export const visualBuilderConfig: Config = {
         tone: { type: "select", label: "Fondo", options: [{ label: "Azul", value: "navy" }, { label: "Papel", value: "paper" }, { label: "Lima", value: "lime" }] },
       },
       defaultProps: { eyebrow: "Santos & Saucedo", title: "Al lado de las empresas", description: "Edita este bloque desde el constructor visual.", mediaPath: "", tone: "navy" },
-      render: ({ eyebrow, title, description, mediaPath, tone }: Record<string, string>) => <Surface tone={(tone as Tone) || "navy"}><div className="visual-builder-hero"><div><p className="visual-builder-eyebrow">{eyebrow}</p><h1>{title}</h1><p>{description}</p></div>{mediaPath ? <img src={mediaPath} alt="" width="1200" height="700" loading="lazy" /> : <div className="visual-builder-media-placeholder">Selecciona un medio desde la Biblioteca</div>}</div></Surface>,
+      render: ({ eyebrow, title, description, mediaPath, tone }: Record<string, string>) => <><HomeHeroPreview title={title} description={description} mediaPath={mediaPath} /><VisualFallback><Surface tone={(tone as Tone) || "navy"}><div className="visual-builder-hero"><div><p className="visual-builder-eyebrow">{eyebrow}</p><h1>{title}</h1><p>{description}</p></div>{mediaPath ? <img src={mediaPath} alt="" width="1200" height="700" loading="lazy" /> : <div className="visual-builder-media-placeholder">Selecciona un medio desde la Biblioteca</div>}</div></Surface></VisualFallback></>,
     },
     TextBlock: {
       label: "Texto",
@@ -77,19 +88,19 @@ export const visualBuilderConfig: Config = {
         tone: { type: "select", label: "Fondo", options: [{ label: "Papel", value: "paper" }, { label: "Azul", value: "navy" }, { label: "Lima", value: "lime" }] },
       },
       defaultProps: { title: "Título del bloque", body: "Texto editable del bloque.", tone: "paper" },
-      render: ({ title, body, tone }: Record<string, string>) => <Surface tone={(tone as Tone) || "paper"}><div className="visual-builder-copy"><h2>{title}</h2><p>{body}</p></div></Surface>,
+      render: ({ title, body, tone }: Record<string, string>) => <><HomeIntroPreview title={title} body={body} /><VisualFallback><Surface tone={(tone as Tone) || "paper"}><div className="visual-builder-copy"><h2>{title}</h2><p>{body}</p></div></Surface></VisualFallback></>,
     },
     QuoteBlock: {
       label: "Cita",
       fields: { quote: { type: "textarea", label: "Cita" }, author: { type: "text", label: "Autor" } },
       defaultProps: { quote: "Una cita editorial del sitio.", author: "Santos & Saucedo" },
-      render: ({ quote, author }: Record<string, string>) => <Surface tone="navy"><figure className="visual-builder-quote"><blockquote>“{quote}”</blockquote><figcaption>{author}</figcaption></figure></Surface>,
+      render: ({ quote, author }: Record<string, string>) => <><HomeQuotePreview quote={quote} author={author} /><VisualFallback><Surface tone="navy"><figure className="visual-builder-quote"><blockquote>“{quote}”</blockquote><figcaption>{author}</figcaption></figure></Surface></VisualFallback></>,
     },
     StatsBlock: {
       label: "Cifras",
       fields: { title: { type: "text", label: "Título" }, items: { type: "array", label: "Cifras", arrayFields: { value: { type: "text", label: "Cifra" }, label: { type: "text", label: "Descripción" } } } },
       defaultProps: { title: "Cifras", items: [{ value: "32", label: "Años de experiencia" }] },
-      render: ({ title, items }: Record<string, any>) => <Surface tone="paper"><div className="visual-builder-stats"><h2>{title}</h2><div>{(items || []).map((item: any, index: number) => <article key={`${item.value}-${index}`}><strong>{item.value}</strong><span>{item.label}</span></article>)}</div></div></Surface>,
+      render: ({ title, items }: Record<string, any>) => <VisualFallback><Surface tone="paper"><div className="visual-builder-stats"><h2>{title}</h2><div>{(items || []).map((item: any, index: number) => <article key={`${item.value}-${index}`}><strong>{item.value}</strong><span>{item.label}</span></article>)}</div></div></Surface></VisualFallback>,
     },
     SectionBlock: {
       label: "Sección existente",

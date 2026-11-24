@@ -56,21 +56,26 @@ const sinViuda = (s: string) => s.replace(/\s+(\S+)\s*$/, "\u00a0$1");
     firma» (about.stats); el botón y las etiquetas, del panel (home.intro) o de copy.ts.
     Junta del 13-11-2026: el titular se ve («Decisiones laborales con visión empresarial.») y en cada
     cifra va primero la etiqueta y debajo el número (Mario: «primero el subtítulo y después el número»). */
-export function IntroBand({ lang, areas }: { lang: V3Lang; areas: number }) {
+export type IntroBandPreview = { title?: string; body?: string[]; stats?: Array<{ value?: string; label?: string }> };
+
+export function IntroBand({ lang, areas, preview }: { lang: V3Lang; areas: number; preview?: IntroBandPreview }) {
   const { language } = useLanguage();
   const liveHome = useCmsContent("home", home26) as any;
   const current = liveHome[language] ?? liveHome[lang] ?? liveHome.en;
   const t = current.intro ?? homeCopyFor(language).intro;
   const f = current.firma;
   const stats = useCmsContent("about", ABOUT_STATS_FALLBACK)[lang]?.stats;
-  const anos = stats?.[0]?.value?.trim() || "16+";
-  const ciudades = stats?.[1]?.value?.trim() || "120+";
+  const previewStats = preview?.stats;
+  const anos = previewStats?.[0]?.value?.trim() || stats?.[0]?.value?.trim() || "16+";
+  const ciudades = previewStats?.[1]?.value?.trim() || stats?.[1]?.value?.trim() || "120+";
+  const title = preview?.title || f.title;
+  const body = preview?.body?.filter(Boolean) || f.body;
   return (
     <section className="sh-intro" id="firma-intro" aria-labelledby="intro-h">
       <div className="sh-wrap sh-intro__in">
         <div className="sh-intro__texto">
-          <h2 id="intro-h" className="sh-intro__frase">{sinViuda(f.title ?? "")}</h2>
-          {f.body?.[0] ? <p className="sh-intro__cuerpo">{keepFirmName(sinViuda(f.body[0]))}</p> : null}
+          <h2 id="intro-h" className="sh-intro__frase">{sinViuda(title ?? "")}</h2>
+          {body?.[0] ? <p className="sh-intro__cuerpo">{keepFirmName(sinViuda(body[0]))}</p> : null}
         </div>
         <Link className="sh-boton sh-intro__boton" href="/about">{t.boton}</Link>
         <dl className="sh-cifras sh-cifras--etiqueta-arriba">
@@ -157,12 +162,17 @@ export function IndustriasBand({ lang, showTexts = true }: { lang: V3Lang; showT
 
 /** Filosofía: la turbina de la capacidad de reacción, con la frase de la preparación para juicio.
     Textos del panel (home.creemos): quote = titular, body[0] = párrafo, label = botón. */
-export function FilosofiaBand({ lang }: { lang: V3Lang }) {
+export type FilosofiaBandPreview = { quote?: string; body?: string[]; label?: string };
+
+export function FilosofiaBand({ lang, preview }: { lang: V3Lang; preview?: FilosofiaBandPreview }) {
   const ref = useRef<HTMLElement>(null);
   const { language } = useLanguage();
   const liveHome = useCmsContent("home", home26) as any;
   const current = liveHome[language] ?? liveHome[lang] ?? liveHome.en;
   const c = current.creemos;
+  const quote = preview?.quote || c.quote;
+  const body = preview?.body || c.body;
+  const label = preview?.label || c.label;
   const media = current.media ?? {};
   useV3Module(ref, initFilo);
   const fotos = useFotosDiferidas();
@@ -172,9 +182,9 @@ export function FilosofiaBand({ lang }: { lang: V3Lang }) {
         <img data-no-parallax="" src={fotos ? media.filosofia ?? v3Asset("/v3/c-reaccion.webp") : undefined} alt="" width={2400} height={1600} loading="lazy" decoding="async" />
       </figure>
       <div className="sh-wrap sh-filo__in">
-        <h2 id="ini-filo-h" className="sh-filo__frase">{sinViuda(c.quote)}</h2>
-        {c.body[0] ? <p className="sh-filo__p">{c.body[0]}</p> : null}
-        <Link className="sh-boton" href="/about">{c.label}</Link>
+        <h2 id="ini-filo-h" className="sh-filo__frase">{sinViuda(quote)}</h2>
+        {body?.[0] ? <p className="sh-filo__p">{body[0]}</p> : null}
+        <Link className="sh-boton" href="/about">{label}</Link>
       </div>
     </section>
   );

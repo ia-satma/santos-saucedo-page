@@ -86,13 +86,25 @@ function splitFinal(tagline: string, first: string) {
   return { l1: before.join(" "), pre2 };
 }
 
-export default function Telon({ lang }: { lang: V3Lang }) {
+export type TelonPreview = {
+  tagline?: string;
+  firma?: string;
+  poster?: string;
+  place?: string[];
+  videoDesktop?: string;
+  videoMobile?: string;
+  videoEnabled?: boolean;
+  words?: string[];
+  practiceWords?: string[];
+};
+
+export default function Telon({ lang, preview }: { lang: V3Lang; preview?: TelonPreview }) {
   const { attrs } = useV3Lang();
   const { language } = useLanguage();
   const media = useCmsMedia();
   const liveHome = useCmsContent("home", home26);
   const liveChrome = useCmsContent("chrome", chrome26);
-  const hero = liveHome[lang].hero;
+  const hero = preview ? { ...liveHome[lang].hero, ...preview } : liveHome[lang].hero;
   const labels = liveChrome[lang].heroVideo;
   const sourceTxt: { firma: string; words: readonly string[]; practiceWords?: readonly string[]; and: string } = TXT[language] ?? TXT.en;
   // Palabras del panel solo en español e inglés: los demás idiomas parten de la forma del inglés y
@@ -130,8 +142,10 @@ export default function Telon({ lang }: { lang: V3Lang }) {
   const [paused, setPaused] = useState(startPaused);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
-  const videoEnabled = media.hero.videoEnabled !== false;
-  useEffect(() => setFailed(false), [media.hero.videoDesktop, media.hero.videoMobile]);
+  const videoEnabled = preview?.videoEnabled ?? media.hero.videoEnabled !== false;
+  const videoDesktop = preview?.videoDesktop || media.hero.videoDesktop;
+  const videoMobile = preview?.videoMobile || media.hero.videoMobile;
+  useEffect(() => setFailed(false), [videoDesktop, videoMobile]);
   useEffect(() => {
     if (ready || startPaused || paused || !videoEnabled || savesData()) return;
     let cancelled = false, idleReady = false, delayReady = false;
@@ -152,11 +166,11 @@ export default function Telon({ lang }: { lang: V3Lang }) {
   const videoSrc = useMemo(() => {
     if (!ready || failed || !videoEnabled || typeof window === "undefined") return undefined;
     const small = window.matchMedia(SMALL_SCREEN).matches;
-    const configured = (small ? media.hero.videoMobile || media.hero.videoDesktop : media.hero.videoDesktop || media.hero.videoMobile) || "";
+    const configured = (small ? videoMobile || videoDesktop : videoDesktop || videoMobile) || "";
     return configured ? heroVideoSource(configured) : undefined;
-  }, [ready, failed, videoEnabled, media.hero.videoDesktop, media.hero.videoMobile]);
+  }, [ready, failed, videoEnabled, videoDesktop, videoMobile]);
   const externalVideoSrc = videoSrc ? getVideoEmbedUrl(videoSrc, !paused) : null;
-  const poster = media.hero.poster;
+  const poster = preview?.poster || media.hero.poster;
   // El póster oficial conserva su edición del CMS, pero se sirve en WebP para que el LCP no cargue el JPG histórico.
   const posterSrc = poster && /(?:^|[/-])portada-color-poster\.jpg$/.test(poster)
     ? `${import.meta.env.BASE_URL}video/portada-color-poster-1600.webp`

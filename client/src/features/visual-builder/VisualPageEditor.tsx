@@ -5,12 +5,18 @@ import { notifyCmsSaved } from "@/hooks/useCmsContent";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { createInitialVisualData, visualBuilderConfig } from "./visualConfig";
+import { VisualBuilderPreviewContext } from "./visualLiveBlocks";
 import "@puckeditor/core/puck.css";
 import "./visual-builder.css";
 
 const PuckEditor = lazy(() => import("@puckeditor/core").then((module) => ({ default: module.Puck })));
 const SCHEMA_VERSION = 1;
 type VisualResponse = { data?: Data; draftData?: Data; previousData?: Data | null; revision?: string; schemaVersion?: number; syncedSections?: string[] };
+
+const visualViewports = [
+  { width: "100%" as const, height: "auto" as const, label: "Escritorio", icon: "Monitor" },
+  { width: 390, height: 844, label: "Móvil", icon: "Smartphone" },
+];
 
 function hasVisualContent(value: Data | undefined): value is Data {
   return Boolean(value && Array.isArray(value.content) && value.content.length > 0);
@@ -126,7 +132,7 @@ export function VisualPageEditor({ pageId, language, pageLabel, sections }: Visu
     </div>
     {error && <p className="visual-builder-error" role="alert">{error}</p>}
     <Suspense fallback={<div className="visual-builder-loading" role="status">Cargando herramientas visuales…</div>}>
-      <PuckEditor config={visualBuilderConfig} data={data} onChange={(nextData) => { setData(nextData); setDirty(true); }} onPublish={(nextData) => { setData(nextData); setDirty(true); }} permissions={permissions} headerTitle={`Editar ${pageLabel}`} viewports={[{ width: "100%", height: "auto", label: "Escritorio", icon: "Monitor" }, { width: 390, height: 844, label: "Móvil", icon: "Smartphone" }]} />
+      <VisualBuilderPreviewContext.Provider value={{ pageId, language }}><PuckEditor config={visualBuilderConfig} data={data} onChange={(nextData) => { setData(nextData); setDirty(true); }} onPublish={(nextData) => { setData(nextData); setDirty(true); }} permissions={permissions} headerTitle={`Editar ${pageLabel}`} viewports={visualViewports} ui={{ viewports: { current: visualViewports[0], controlsVisible: true, options: visualViewports } }} /></VisualBuilderPreviewContext.Provider>
     </Suspense>
   </section>;
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import type { VisualComponent, VisualPageData } from "@shared/visualPages";
+import { HomeCatalogPreview, HomeHeroPreview, HomeIntroPreview, HomeQuotePreview, VisualBuilderPreviewContext, VisualFallback } from "./visualLiveBlocks";
 import "./visual-builder.css";
 
 type VisualPagePublicProps = { pageId: string; language: string; fallback: ReactNode };
@@ -40,19 +41,19 @@ function catalogBlock(id: string, label: string, source: unknown, items: Catalog
   })}</div>}</div></section>;
 }
 
-function renderComponent(component: VisualComponent, index: number, catalogs: CatalogData | undefined, language: string) {
+function renderComponent(component: VisualComponent, index: number, catalogs: CatalogData | undefined, language: string, pageId: string) {
   const props = component.props as Record<string, unknown>;
   const id = typeof props.id === "string" ? props.id : `${component.type}-${index}`;
   switch (component.type) {
     case "HeroBlock":
-      return <section key={id} className={`visual-builder-surface visual-builder-surface--${tone(props.tone, "navy")}`}><div className="visual-builder-hero"><div><p className="visual-builder-eyebrow">{text(props.eyebrow, "Santos & Saucedo")}</p><h1>{text(props.title)}</h1><p>{text(props.description)}</p></div>{internalMedia(props.mediaPath) && <img src={internalMedia(props.mediaPath)} alt="" width="1200" height="700" loading="eager" fetchPriority="high" />}</div></section>;
+      return pageId === "home" ? <HomeHeroPreview key={id} title={text(props.title)} description={text(props.description)} mediaPath={internalMedia(props.mediaPath)} /> : <section key={id} className={`visual-builder-surface visual-builder-surface--${tone(props.tone, "navy")}`}><div className="visual-builder-hero"><div><p className="visual-builder-eyebrow">{text(props.eyebrow, "Santos & Saucedo")}</p><h1>{text(props.title)}</h1><p>{text(props.description)}</p></div>{internalMedia(props.mediaPath) && <img src={internalMedia(props.mediaPath)} alt="" width="1200" height="700" loading="eager" fetchPriority="high" />}</div></section>;
     case "TextBlock":
-      return <section key={id} className={`visual-builder-surface visual-builder-surface--${tone(props.tone)}`}><div className="visual-builder-copy"><h2>{text(props.title)}</h2><p>{text(props.body)}</p></div></section>;
+      return pageId === "home" ? <HomeIntroPreview key={id} title={text(props.title)} body={text(props.body)} /> : <section key={id} className={`visual-builder-surface visual-builder-surface--${tone(props.tone)}`}><div className="visual-builder-copy"><h2>{text(props.title)}</h2><p>{text(props.body)}</p></div></section>;
     case "QuoteBlock":
-      return <section key={id} className="visual-builder-surface visual-builder-surface--navy"><figure className="visual-builder-quote"><blockquote>“{text(props.quote)}”</blockquote><figcaption>{text(props.author)}</figcaption></figure></section>;
+      return pageId === "home" ? <HomeQuotePreview key={id} quote={text(props.quote)} author={text(props.author)} /> : <section key={id} className="visual-builder-surface visual-builder-surface--navy"><figure className="visual-builder-quote"><blockquote>“{text(props.quote)}”</blockquote><figcaption>{text(props.author)}</figcaption></figure></section>;
     case "StatsBlock": {
       const items = Array.isArray(props.items) ? props.items : [];
-      return <section key={id} className="visual-builder-surface visual-builder-surface--paper"><div className="visual-builder-stats"><h2>{text(props.title, "Cifras")}</h2><div>{items.map((item, itemIndex) => { const record = item && typeof item === "object" ? item as Record<string, unknown> : {}; return <article key={`${text(record.value)}-${itemIndex}`}><strong>{text(record.value)}</strong><span>{text(record.label)}</span></article>; })}</div></div></section>;
+      return pageId === "home" ? null : <section key={id} className="visual-builder-surface visual-builder-surface--paper"><div className="visual-builder-stats"><h2>{text(props.title, "Cifras")}</h2><div>{items.map((item, itemIndex) => { const record = item && typeof item === "object" ? item as Record<string, unknown> : {}; return <article key={`${text(record.value)}-${itemIndex}`}><strong>{text(record.value)}</strong><span>{text(record.label)}</span></article>; })}</div></div></section>;
     }
     case "SectionBlock":
       return <section key={id} className="visual-builder-surface visual-builder-surface--paper"><div className="visual-builder-reference"><span>Fuente CMS · {text(props.sectionId)}</span><h2>{text(props.title)}</h2><p>{text(props.description)}</p></div></section>;
@@ -64,13 +65,13 @@ function renderComponent(component: VisualComponent, index: number, catalogs: Ca
       return <section key={id} className={`visual-builder-surface visual-builder-surface--${tone(props.tone)}`}><figure className="visual-builder-media"><div className="visual-builder-media-frame">{videoPath ? <video controls playsInline muted preload="metadata" poster={posterPath || undefined} aria-label={text(props.alt) || undefined} width="1200" height="675"><source src={videoPath} /></video> : <span>Video conectado a la Biblioteca de medios</span>}</div></figure></section>;
     }
     case "PracticesGrid":
-      return catalogBlock(id, "Prácticas", props.source, catalogs?.practices, props.limit, language, "/practice-groups", tone(props.tone));
+      return pageId === "home" ? <HomeCatalogPreview key={id} source="practices" limit={number(props.limit, 6)} /> : catalogBlock(id, "Prácticas", props.source, catalogs?.practices, props.limit, language, "/practice-groups", tone(props.tone));
     case "IndustriesGrid":
-      return catalogBlock(id, "Industrias", props.source, catalogs?.industries, props.limit, language, "/industry-groups", tone(props.tone));
+      return pageId === "home" ? <HomeCatalogPreview key={id} source="industries" limit={number(props.limit, 6)} /> : catalogBlock(id, "Industrias", props.source, catalogs?.industries, props.limit, language, "/industry-groups", tone(props.tone));
     case "TeamGrid":
-      return catalogBlock(id, "Socios y equipo", props.source, catalogs?.team, props.limit, language, "/team", tone(props.tone));
+      return pageId === "home" ? <HomeCatalogPreview key={id} source="team" limit={number(props.limit, 6)} /> : catalogBlock(id, "Socios y equipo", props.source, catalogs?.team, props.limit, language, "/team", tone(props.tone));
     case "NewsFeed":
-      return catalogBlock(id, "Monitor Laboral", props.source, catalogs?.news, props.limit, language, "/news", tone(props.tone));
+      return pageId === "home" ? <HomeCatalogPreview key={id} source="news" limit={number(props.limit, 3)} /> : catalogBlock(id, "Monitor Laboral", props.source, catalogs?.news, props.limit, language, "/news", tone(props.tone));
     case "Gallery":
       return referenceBlock(id, "Galería", props.source, tone(props.tone));
     case "Map":
@@ -121,5 +122,5 @@ export function VisualPagePublic({ pageId, language, fallback }: VisualPagePubli
     return () => { active = false; };
   }, [data]);
   if (!data?.content?.length) return <>{fallback}</>;
-  return <div className="visual-builder-public" data-testid={`visual-page-${pageId}`}>{data.content.map((component, index) => renderComponent(component, index, catalogs, language))}</div>;
+  return <VisualBuilderPreviewContext.Provider value={{ pageId, language }}><div className="visual-builder-public" data-testid={`visual-page-${pageId}`}>{data.content.map((component, index) => renderComponent(component, index, catalogs, language, pageId))}</div></VisualBuilderPreviewContext.Provider>;
 }
