@@ -233,7 +233,7 @@ export default function Telon({ lang, preview }: { lang: V3Lang; preview?: Telon
   const lugar = (Array.isArray(hero.place) ? (hero.place as readonly string[]) : []).map((t) => (t || "").trim()).filter(Boolean);
 
   return (
-    <div ref={rootRef} className="v3 mk-raiz" data-vista="inicio" style={rootStyle} {...attrs}>
+    <div ref={rootRef} className={`v3 mk-raiz${preview ? " visual-preview-open" : ""}`} data-vista="inicio" style={rootStyle} {...attrs}>
       <div className={wrapClass}>
         <section className="mk-telon sobre-azul" id="portada" aria-labelledby="portada-h">
           <div className="mk-telon__escena">
