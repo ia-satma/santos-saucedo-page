@@ -71,7 +71,17 @@ export function AdminShell({ children }: { children: ReactNode }) {
     try {
       localStorage.setItem("ss-admin-sidebar-collapsed", String(sidebarCollapsed));
     } catch {}
+    window.dispatchEvent(
+      new CustomEvent("ss:admin-sidebar-state", {
+        detail: { collapsed: sidebarCollapsed },
+      }),
+    );
   }, [sidebarCollapsed]);
+  useEffect(() => {
+    const toggle = () => setSidebarCollapsed((value) => !value);
+    window.addEventListener("ss:toggle-admin-sidebar", toggle);
+    return () => window.removeEventListener("ss:toggle-admin-sidebar", toggle);
+  }, []);
   const [expanded, setExpanded] = useState<Set<string>>(() => {
     const everyGroup = [...adminNavigation, ...careersAdminNavigation].map(
       (g) => g.id,

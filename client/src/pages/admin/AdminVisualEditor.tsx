@@ -18,11 +18,31 @@ export default function AdminVisualEditor() {
   const params = useParams<{ pageId?: string }>();
   const [pageId, setPageId] = useState(params.pageId && getCmsPage(params.pageId) ? params.pageId : "home");
   const [editingLanguage, setEditingLanguage] = useState(language === "es" ? "es" : language);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem("ss-admin-sidebar-collapsed") === "true";
+    } catch {
+      return false;
+    }
+  });
   const page = getCmsPage(pageId) ?? cmsEditorPages[0];
   const sections = useMemo(() => page.tabs.map((tab) => tab.section), [page]);
 
   useEffect(() => { requireAuth(); }, [requireAuth]);
   useEffect(() => { if (params.pageId && getCmsPage(params.pageId)) setPageId(params.pageId); }, [params.pageId]);
+  useEffect(() => {
+    const onState = (event: Event) => {
+      const detail = (event as CustomEvent<{ collapsed?: boolean }>).detail;
+      if (typeof detail?.collapsed === "boolean") setSidebarCollapsed(detail.collapsed);
+    };
+    window.addEventListener("ss:admin-sidebar-state", onState);
+    return () => window.removeEventListener("ss:admin-sidebar-state", onState);
+  }, []);
+
+  const toggleAdminSidebar = () => {
+    window.dispatchEvent(new Event("ss:toggle-admin-sidebar"));
+    setSidebarCollapsed((value) => !value);
+  };
 
   const query = useQuery<SectionResponse[]>({
     queryKey: ["/api/admin/visual-editor", page.id, sections.join(",")],
@@ -43,7 +63,7 @@ export default function AdminVisualEditor() {
   return <div className="visual-editor-workspace">
     <header className="visual-editor-workspace-header">
       <div><div className="visual-editor-breadcrumb"><Link href="/admin/dashboard">Inicio</Link><span aria-hidden="true">›</span><strong>Editor visual</strong></div><h1>Editor visual</h1><p>Construye la composición de cada página con bloques controlados. Arrastra, duplica, edita y revisa el resultado antes de publicar.</p></div>
-      <div className="visual-editor-header-actions"><a href={page.path || "/"} target="_blank" rel="noopener noreferrer" className="visual-editor-link">Ver página pública ↗</a><Link href={`/admin/page/${page.id}`} className="visual-editor-link">Editor detallado ↗</Link></div>
+      <div className="visual-editor-header-actions"><button type="button" className="visual-editor-link visual-editor-sidebar-button" onClick={toggleAdminSidebar} aria-expanded={!sidebarCollapsed} aria-label={sidebarCollapsed ? "Mostrar menú lateral del CMS" : "Ocultar menú lateral del CMS"}>{sidebarCollapsed ? "Mostrar menú" : "Ocultar menú"}</button><a href={page.path || "/"} target="_blank" rel="noopener noreferrer" className="visual-editor-link">Ver página pública ↗</a><Link href={`/admin/page/${page.id}`} className="visual-editor-link">Editor detallado ↗</Link></div>
     </header>
     <div className="visual-editor-layout">
       <aside className="visual-editor-page-list" aria-label="Páginas para editar visualmente"><div className="visual-editor-panel-heading"><span>Páginas</span><small>{pages.length}</small></div>{pages.map((item) => <button key={item.id} type="button" className={item.id === page.id ? "is-active" : ""} onClick={() => setPageId(item.id)}><span>{item.label}</span><small>{item.path || "/"}</small></button>)}</aside>

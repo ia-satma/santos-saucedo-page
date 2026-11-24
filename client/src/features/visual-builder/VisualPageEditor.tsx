@@ -12,6 +12,10 @@ const PuckEditor = lazy(() => import("@puckeditor/core").then((module) => ({ def
 const SCHEMA_VERSION = 1;
 type VisualResponse = { data?: Data; draftData?: Data; previousData?: Data | null; revision?: string; schemaVersion?: number; syncedSections?: string[] };
 
+function hasVisualContent(value: Data | undefined): value is Data {
+  return Boolean(value && Array.isArray(value.content) && value.content.length > 0);
+}
+
 type VisualPageEditorProps = { pageId: string; language: string; pageLabel: string; sections: Record<string, unknown> };
 
 export function VisualPageEditor({ pageId, language, pageLabel, sections }: VisualPageEditorProps) {
@@ -36,7 +40,8 @@ export function VisualPageEditor({ pageId, language, pageLabel, sections }: Visu
       if (!response.ok && response.status !== 404) throw new Error(payload.error || "No se pudo cargar el lienzo visual.");
       if (!active) return;
       if (response.ok && (payload.draftData || payload.data)) {
-        setData(payload.draftData || payload.data || createInitialVisualData(pageId, sections, language));
+        const loadedData = payload.draftData || payload.data;
+        setData(hasVisualContent(loadedData) ? loadedData : createInitialVisualData(pageId, sections, language));
         setRevision(payload.revision || "initial");
         setHasPrevious(Boolean(payload.previousData));
         setDirty(false);
@@ -121,7 +126,7 @@ export function VisualPageEditor({ pageId, language, pageLabel, sections }: Visu
     </div>
     {error && <p className="visual-builder-error" role="alert">{error}</p>}
     <Suspense fallback={<div className="visual-builder-loading" role="status">Cargando herramientas visuales…</div>}>
-      <PuckEditor config={visualBuilderConfig} data={data} onChange={(nextData) => { setData(nextData); setDirty(true); }} onPublish={(nextData) => { setData(nextData); setDirty(true); }} permissions={permissions} headerTitle={`Editar ${pageLabel}`} viewports={[{ width: 1440, height: 900, label: "Escritorio" }, { width: 390, height: 844, label: "Móvil" }]} />
+      <PuckEditor config={visualBuilderConfig} data={data} onChange={(nextData) => { setData(nextData); setDirty(true); }} onPublish={(nextData) => { setData(nextData); setDirty(true); }} permissions={permissions} headerTitle={`Editar ${pageLabel}`} viewports={[{ width: "100%", height: "auto", label: "Escritorio", icon: "Monitor" }, { width: 390, height: 844, label: "Móvil", icon: "Smartphone" }]} />
     </Suspense>
   </section>;
 }
