@@ -197,6 +197,53 @@ try {
     401,
   );
   assert.equal((await call("GET", "/api/jobs")).status, 200);
+  const visualKey = "visual.home.es";
+  const [visualOld] = await db.select().from(siteConfig).where(eq(siteConfig.key, visualKey));
+  backup.set(visualKey, visualOld);
+  const visualRead = await call("GET", "/api/admin/visual-pages/home/es", undefined, "editor");
+  assert.equal(visualRead.status, 200);
+  const visualDraft = {
+    content: [
+      { type: "HeroBlock", props: { id: "hero", eyebrow: "Prueba", title: "Constructor visual", description: "Borrador visual de prueba.", mediaPath: "/editorial/test.webp", tone: "navy", sourceMap: { title: "home.hero.tagline", description: "home.hero.firma" } } },
+      { type: "TextBlock", props: { id: "text", title: "Texto", body: "Contenido de prueba.", tone: "paper", sourceMap: { title: "home.firma.title", body: "home.firma.body" } } },
+    ],
+    root: { props: { pageTitle: "Portada" } },
+  };
+  const visualSaved = await call("PUT", "/api/admin/visual-pages/home/es", { draftData: visualDraft, revision: visualRead.body.revision }, "editor");
+  assert.equal(visualSaved.status, 200, JSON.stringify(visualSaved.body));
+  assert.deepEqual(visualSaved.body.syncedSections, ["home"]);
+  const syncedHome = await call("GET", "/api/admin/site-config/home", undefined, "editor");
+  assert.equal(syncedHome.body.content.es.hero.tagline, "Constructor visual");
+  assert.equal(syncedHome.body.content.es.firma.title, "Texto");
+  assert.deepEqual(syncedHome.body.content.es.firma.body, ["Contenido de prueba."]);
+  assert.equal((await call("GET", "/api/admin/visual-pages/home/es", undefined, "editor")).body.draftData.content[0].type, "HeroBlock");
+  assert.equal((await call("PUT", "/api/admin/visual-pages/home/es", { draftData: visualDraft, revision: visualRead.body.revision }, "editor")).status, 409);
+  const visualPublished = await call("POST", "/api/admin/visual-pages/home/es/publish", { revision: visualSaved.body.revision }, "editor");
+  assert.equal(visualPublished.status, 200, JSON.stringify(visualPublished.body));
+  const publicVisual = await call("GET", "/api/visual-pages/home/es");
+  assert.equal(publicVisual.status, 200);
+  assert.equal(publicVisual.body.data, null, "La composición visual no debe exponerse con el bloque visual apagado");
+  const layoutKey = "editorial.layout";
+  const [layoutOld] = await db.select().from(siteConfig).where(eq(siteConfig.key, layoutKey));
+  backup.set(layoutKey, layoutOld);
+  const layoutRead = await call("GET", "/api/admin/site-config/layout", undefined, "editor");
+  assert.equal(layoutRead.status, 200);
+  const layoutDraft = structuredClone(layoutRead.body.content);
+  layoutDraft.pages.home.blocks.visual = true;
+  const layoutSaved = await call("PUT", "/api/admin/site-config/layout", { content: layoutDraft, revision: layoutRead.body.revision }, "editor");
+  assert.equal(layoutSaved.status, 200, JSON.stringify(layoutSaved.body));
+  const publicVisualEnabled = await call("GET", "/api/visual-pages/home/es");
+  assert.equal(publicVisualEnabled.status, 200);
+  assert.equal(publicVisualEnabled.body.data.content[0].type, "HeroBlock");
+  const hiddenLayout = structuredClone(layoutSaved.body.content);
+  hiddenLayout.pages.home.enabled = false;
+  const hiddenLayoutSaved = await call("PUT", "/api/admin/site-config/layout", { content: hiddenLayout, revision: layoutSaved.body.revision }, "editor");
+  assert.equal(hiddenLayoutSaved.status, 200, JSON.stringify(hiddenLayoutSaved.body));
+  const publicVisualHiddenPage = await call("GET", "/api/visual-pages/home/es");
+  assert.equal(publicVisualHiddenPage.status, 200);
+  assert.equal(publicVisualHiddenPage.body.data, null, "Una página pública desactivada no debe exponer su composición visual");
+  const visualRestored = await call("POST", "/api/admin/visual-pages/home/es/restore", { revision: visualPublished.body.revision }, "editor");
+  assert.equal(visualRestored.status, 200, JSON.stringify(visualRestored.body));
   // A real image traverses multipart upload, local storage, media row and public serving.
   const image = await import("node:fs/promises").then((fs) =>
     fs.readFile("client/public/favicon.png"),
@@ -269,8 +316,8 @@ try {
     undefined,
     "editor",
   );
-  assert.equal(again.body.revision, saved.body.revision);
-  assert.deepEqual(again.body.previous, before.body.content);
+  assert.notEqual(again.body.revision, saved.body.revision, "La sincronización visual debe crear una revisión CMS nueva");
+  assert.equal(typeof again.body.content.es.hero.tagline, "string");
   console.log(
     "CMS integration: defaults, RBAC, persistence, conflicts, validation, multipart media, integrity, video ranges, private inbox and public jobs passed.",
   );

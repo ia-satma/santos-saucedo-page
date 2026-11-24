@@ -37,25 +37,26 @@ const MAX_COMPONENTS = 100;
 const UNSAFE_KEY = /^(?:__proto__|prototype|constructor|dangerouslySetInnerHTML|on[a-z])/i;
 const UNSAFE_VALUE = /(?:<\/?script\b|javascript\s*:|vbscript\s*:|data\s*:\s*text\/html|on[a-z]+\s*=)/i;
 const MEDIA_KEY = /^(?:image|video|poster|media|asset|photo|logo|icon|background|src)(?:[A-Z_]|$)/i;
+const SOURCE_REF = /^[A-Za-z][A-Za-z0-9_-]{0,80}\.[A-Za-z][A-Za-z0-9_-]*(?:\.[A-Za-z][A-Za-z0-9_-]*){0,5}$/;
 const VISUAL_PROP_KEYS: Record<string, readonly string[]> = {
-  HeroBlock: ["id", "eyebrow", "title", "description", "mediaPath", "tone"],
-  VideoBlock: ["id", "videoPath", "posterPath", "alt", "tone"],
-  TextBlock: ["id", "title", "body", "tone"],
-  QuoteBlock: ["id", "quote", "author"],
-  StatsBlock: ["id", "title", "items"],
-  PracticesGrid: ["id", "source", "limit", "tone"],
-  IndustriesGrid: ["id", "source", "limit", "tone"],
-  TeamGrid: ["id", "source", "limit", "tone"],
-  NewsFeed: ["id", "source", "limit", "tone"],
-  MediaBlock: ["id", "mediaPath", "alt", "caption"],
-  Gallery: ["id", "source", "limit", "tone"],
-  Map: ["id", "source", "tone"],
-  Form: ["id", "formId", "tone"],
-  VisualSheet: ["id", "sheetId", "tone"],
-  Navigation: ["id", "source", "tone"],
-  Footer: ["id", "source", "tone"],
-  SectionBlock: ["id", "sectionId", "title", "description"],
-  Spacer: ["id", "size"],
+  HeroBlock: ["id", "eyebrow", "title", "description", "mediaPath", "tone", "sourceMap"],
+  VideoBlock: ["id", "videoPath", "posterPath", "alt", "tone", "sourceMap"],
+  TextBlock: ["id", "title", "body", "tone", "sourceMap"],
+  QuoteBlock: ["id", "quote", "author", "sourceMap"],
+  StatsBlock: ["id", "title", "items", "sourceMap"],
+  PracticesGrid: ["id", "source", "limit", "tone", "sourceMap"],
+  IndustriesGrid: ["id", "source", "limit", "tone", "sourceMap"],
+  TeamGrid: ["id", "source", "limit", "tone", "sourceMap"],
+  NewsFeed: ["id", "source", "limit", "tone", "sourceMap"],
+  MediaBlock: ["id", "mediaPath", "alt", "caption", "sourceMap"],
+  Gallery: ["id", "source", "limit", "tone", "sourceMap"],
+  Map: ["id", "source", "tone", "sourceMap"],
+  Form: ["id", "formId", "tone", "sourceMap"],
+  VisualSheet: ["id", "sheetId", "tone", "sourceMap"],
+  Navigation: ["id", "source", "tone", "sourceMap"],
+  Footer: ["id", "source", "tone", "sourceMap"],
+  SectionBlock: ["id", "sectionId", "title", "description", "sourceMap"],
+  Spacer: ["id", "size", "sourceMap"],
 };
 
 export function isVisualPageId(value: string): value is VisualPageId {
@@ -104,6 +105,15 @@ export function validateVisualPageData(value: unknown): string[] {
       for (const key of Object.keys(component.props)) {
         if (!allowedProps.includes(key)) errors.push(`La propiedad ${key} del componente ${index + 1} no está permitida.`);
       }
+      const sourceMap = component.props.sourceMap;
+      if (sourceMap !== undefined) {
+        if (!isRecord(sourceMap)) errors.push(`El mapa CMS del componente ${index + 1} no es válido.`);
+        else for (const [field, path] of Object.entries(sourceMap)) {
+          if (!/^[A-Za-z][A-Za-z0-9_-]{0,40}$/.test(field) || typeof path !== "string" || !SOURCE_REF.test(path)) {
+            errors.push(`La referencia CMS ${field} del componente ${index + 1} no es válida.`);
+          }
+        }
+      }
     }
   });
   walk(value, 0, [], errors);
@@ -115,6 +125,21 @@ export function normalizeVisualPageData(value: unknown): VisualPageData {
   if (errors.length) throw new Error(errors.join(" "));
   const data = value as VisualPageData;
   return { content: data.content.map((component) => ({ type: component.type, props: { ...component.props } })), root: data.root ? { ...data.root } : {} };
+}
+/**
+ * Normalizes a visual document while keeping an explicit migration boundary.
+ * Version zero was the pre-release shape and used the same component payload,
+ * so it can be upgraded without rewriting the document. Future versions are
+ * rejected until a migration is added deliberately.
+ */
+export function migrateVisualPageData(value: unknown, fromVersion = VISUAL_SCHEMA_VERSION): VisualPageData {
+  if (!Number.isInteger(fromVersion) || fromVersion < 0) {
+    throw new Error("La versión de la configuración visual no es válida.");
+  }
+  if (fromVersion > VISUAL_SCHEMA_VERSION) {
+    throw new Error(`La configuración visual usa una versión futura (${fromVersion}).`);
+  }
+  return normalizeVisualPageData(value);
 }
 export function visualPageKey(pageId: VisualPageId, language: LanguageCode) { return `visual.${pageId}.${language}`; }
 export const visualPageLimits = { maxBytes: MAX_BYTES, maxDepth: MAX_DEPTH, maxComponents: MAX_COMPONENTS } as const;

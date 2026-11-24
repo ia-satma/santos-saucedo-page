@@ -8,7 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { setToken } from "@/lib/adminAuth";
 import { passkeysSupported, signInWithPasskey } from "@/lib/passkeys";
 import { careersOnlyLanding, isCareersOnlyAdmin } from "@shared/adminAccess";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -292,7 +292,7 @@ export default function AdminLogin() {
     <div className="admin-login-page">
       <aside className="admin-login-aside" aria-label="Santos & Saucedo">
         <a href="/" className="admin-login-brand" aria-label="Santos & Saucedo">
-          <img src="/editorial/logo-login-blanco.png" alt="Santos & Saucedo" />
+          <img src="/editorial/logo-login-blanco.png" alt="Santos & Saucedo" width="800" height="222" />
         </a>
         <div className="admin-login-aside-copy">
           <span className="admin-login-eyebrow">Santos &amp; Saucedo</span>
@@ -307,9 +307,9 @@ export default function AdminLogin() {
         <Card className="admin-login-card">
           <CardHeader className="admin-login-card-header">
             <span className="admin-login-eyebrow">Acceso privado</span>
-            <CardTitle className="admin-login-title" data-testid="text-login-title">
+            <h1 className="admin-login-title" data-testid="text-login-title">
               {t.title}
-            </CardTitle>
+            </h1>
             <CardDescription className="admin-login-description" data-testid="text-login-description">
               {t.description}
             </CardDescription>
@@ -322,10 +322,11 @@ export default function AdminLogin() {
                 name="username"
                 render={({ field }) => (
                   <FormItem className="admin-login-field">
-                    <FormLabel>{t.username}</FormLabel>
+                    <FormLabel htmlFor="admin-login-username">{t.username}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
+                        id="admin-login-username"
                         className="admin-login-input"
                         placeholder={t.usernamePlaceholder}
                         autoComplete="username"
@@ -342,11 +343,12 @@ export default function AdminLogin() {
                 name="password"
                 render={({ field }) => (
                   <FormItem className="admin-login-field">
-                    <FormLabel>{t.password}</FormLabel>
+                    <FormLabel htmlFor="admin-login-password">{t.password}</FormLabel>
                     <FormControl>
                       <div className="admin-login-password-control">
                         <Input
                           {...field}
+                          id="admin-login-password"
                           className="admin-login-input"
                           type={showPassword ? "text" : "password"}
                           placeholder={t.passwordPlaceholder}

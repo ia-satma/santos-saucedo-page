@@ -73,6 +73,7 @@ const blockLabels: Record<string, string> = {
   galeria: "Galería",
   horario: "Horario",
   estrellas: "Estrellas",
+  visual: "Constructor visual publicado",
 };
 
 function labelFor(value: string) {

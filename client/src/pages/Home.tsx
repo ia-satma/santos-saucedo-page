@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { useCmsContent } from "@/hooks/useCmsContent";
 import { layoutDefaults } from "@/lib/cmsLightDefaults";
 import Header26 from "@/components/home26/Header26";
@@ -11,6 +12,8 @@ import JsonLdSchema from "@/components/JsonLdSchema";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { blockVisible, pageVisibility } from "@/lib/pageVisibility";
+
+const VisualPagePublic = lazy(() => import("@/features/visual-builder/VisualPagePublic").then((module) => ({ default: module.VisualPagePublic })));
 
 export default function Home() {
   const { language, displayLanguage } = useLanguage();
@@ -29,6 +32,29 @@ export default function Home() {
 
   if (!visibility.enabled) return <div data-testid="page-hidden" aria-hidden="true" />;
 
+  const legacyHomeContent = <>
+    {blockVisible(layout, "home", "hero")&&<Telon lang={lang} />}
+    {(Array.isArray(layout.homeOrder) ? layout.homeOrder : layoutDefaults.homeOrder).map(key=>{
+      const linkedPage = homeLinkedPages[key];
+      if(!blockVisible(layout, "home", key) || (linkedPage && !pageVisibility(layout, linkedPage).enabled))return null;
+      switch(key){
+        case 'firma':return <Band key={key} name="intro" start="light"><IntroBand lang={lang} areas={practices.length||4}/></Band>;
+        case 'creemos':return <Band key={key} name="filosofia" start="dark"><FilosofiaBand lang={lang}/></Band>;
+        case 'practicas':return (
+          <Band key={key} name="practicas" start="dark" end="light">
+            <PracticasBaker lang={lang} items={practices}/>
+            {blockVisible(layout, "home", "industrias") && pageVisibility(layout, "industries").enabled && <IndustriasBand lang={lang} showTexts={blockVisible(layout, "industries", "textos")}/>}
+          </Band>
+        );
+        case 'extranjeras':return <div key={key} className="hm-legacy" data-start="dark" data-end="dark"><Extranjeras26 lang={lang}/></div>;
+        case 'socios':return <Band key={key} name="socios" start="light"><SociosBand lang={lang}/></Band>;
+        case 'monitor':return <Monitor26 key={key} lang={lang} limit={layout.monitorLimit}/>;
+        default:return null;
+      }
+    })}
+  </>;
+  const visualEnabled = blockVisible(layout, "home", "visual");
+
   return (
     <div className="ss26 hm-page min-h-screen" data-testid="page-home">
       {/* SEO, JSON-LD y el árbol accesible siguen el idioma de la ruta /<lang>/. */}
@@ -45,25 +71,7 @@ export default function Home() {
           cifras; creemos = la filosofía; practicas = el bloque de Baker y, tras él, las industrias;
           socios = los cuatro socios. data-start/data-end: tono de cada banda (uniones en home.css). */}
       <main id="main-content">
-        {blockVisible(layout, "home", "hero")&&<Telon lang={lang} />}
-        {(Array.isArray(layout.homeOrder) ? layout.homeOrder : layoutDefaults.homeOrder).map(key=>{
-          const linkedPage = homeLinkedPages[key];
-          if(!blockVisible(layout, "home", key) || (linkedPage && !pageVisibility(layout, linkedPage).enabled))return null;
-          switch(key){
-            case 'firma':return <Band key={key} name="intro" start="light"><IntroBand lang={lang} areas={practices.length||4}/></Band>;
-            case 'creemos':return <Band key={key} name="filosofia" start="dark"><FilosofiaBand lang={lang}/></Band>;
-            case 'practicas':return (
-              <Band key={key} name="practicas" start="dark" end="light">
-                <PracticasBaker lang={lang} items={practices}/>
-                {blockVisible(layout, "home", "industrias") && pageVisibility(layout, "industries").enabled && <IndustriasBand lang={lang} showTexts={blockVisible(layout, "industries", "textos")}/>}
-              </Band>
-            );
-            case 'extranjeras':return <div key={key} className="hm-legacy" data-start="dark" data-end="dark"><Extranjeras26 lang={lang}/></div>;
-            case 'socios':return <Band key={key} name="socios" start="light"><SociosBand lang={lang}/></Band>;
-            case 'monitor':return <Monitor26 key={key} lang={lang} limit={layout.monitorLimit}/>;
-            default:return null;
-          }
-        })}
+        {visualEnabled ? <Suspense fallback={legacyHomeContent}><VisualPagePublic pageId="home" language={language} fallback={legacyHomeContent} /></Suspense> : legacyHomeContent}
       </main>
 
       <Footer26 localized />

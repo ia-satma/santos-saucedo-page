@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   emptyVisualPageData,
+  migrateVisualPageData,
   normalizeVisualPageData,
   validateVisualPageData,
   visualPageKey,
@@ -30,6 +31,15 @@ test("visual page validation rejects unknown components and executable content",
   assert.ok(errors.some((error) => error.includes("propiedad style")));
 });
 
+test("visual page bindings accept declared CMS paths and reject prototype paths", () => {
+  assert.deepEqual(validateVisualPageData({
+    content: [{ type: "TextBlock", props: { title: "Texto", sourceMap: { title: "home.firma.title" } } }],
+  }), []);
+  assert.ok(validateVisualPageData({
+    content: [{ type: "TextBlock", props: { title: "Texto", sourceMap: { title: "home.__proto__.polluted" } } }],
+  }).some((error) => error.includes("referencia CMS")));
+});
+
 test("visual page validation enforces component and nesting limits", () => {
   const tooMany = { content: Array.from({ length: 101 }, () => ({ type: "Spacer", props: {} })) };
   assert.ok(validateVisualPageData(tooMany).some((error) => error.includes("100 componentes")));
@@ -39,4 +49,10 @@ test("visual page validation enforces component and nesting limits", () => {
 
 test("empty visual page data is a safe starting document", () => {
   assert.deepEqual(emptyVisualPageData(), { content: [], root: {} });
+});
+
+test("visual page migration accepts the pre-release shape and rejects future versions", () => {
+  const data = { content: [{ type: "Spacer", props: { size: "small" } }] };
+  assert.deepEqual(migrateVisualPageData(data, 0), { content: data.content, root: {} });
+  assert.throws(() => migrateVisualPageData(data, 2), /versión futura/);
 });
