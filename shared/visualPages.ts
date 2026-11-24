@@ -36,7 +36,7 @@ const MAX_DEPTH = 12;
 const MAX_COMPONENTS = 100;
 const UNSAFE_KEY = /^(?:__proto__|prototype|constructor|dangerouslySetInnerHTML|on[a-z])/i;
 const UNSAFE_VALUE = /(?:<\/?script\b|javascript\s*:|vbscript\s*:|data\s*:\s*text\/html|on[a-z]+\s*=)/i;
-const MEDIA_KEY = /(?:^|_)(?:image|video|poster|media|asset|photo|logo|icon|background|src)(?:$|_)/i;
+const MEDIA_KEY = /^(?:image|video|poster|media|asset|photo|logo|icon|background|src)(?:[A-Z_]|$)/i;
 
 export function isVisualPageId(value: string): value is VisualPageId {
   return (VISUAL_PAGE_IDS as readonly string[]).includes(value);
