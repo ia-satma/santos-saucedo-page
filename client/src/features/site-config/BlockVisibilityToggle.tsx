@@ -11,6 +11,7 @@ type LayoutResponse = { content: LayoutState; revision: string };
 const visibilityQueryKey = ["/api/admin/site-config", "layout", "visibility"];
 const legacyBlockAliases: Record<string, Record<string, string>> = {
   team: { socios: "carrusel", colaboradores: "perfiles" },
+  about: { laminaSiempreAdelante: "laminas" },
 };
 
 async function loadLayout(): Promise<LayoutResponse> {
@@ -59,6 +60,7 @@ export function BlockVisibilityToggle({ pageId, blockKey, label }: { pageId: str
         onCheckedChange={(next) => toggle.mutate(next)}
         aria-label={`${enabled ? "Ocultar" : "Mostrar"} ${label}`}
       />
+      {toggle.isError && <span role="alert" className="text-xs text-red-700">No se pudo guardar</span>}
     </label>
   );
 }

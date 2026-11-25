@@ -35,7 +35,7 @@ export default function Home() {
       const linkedPage = homeLinkedPages[key];
       if(!blockVisible(layout, "home", key) || (linkedPage && !pageVisibility(layout, linkedPage).enabled))return null;
       switch(key){
-        case 'firma':return <Band key={key} name="intro" start="light"><IntroBand lang={lang} areas={practices.length||4}/></Band>;
+        case 'firma':return <Band key={key} name="intro" start="light"><IntroBand lang={lang} areas={practices.length||4} showStats={blockVisible(layout, "home", "cifras")}/></Band>;
         case 'creemos':return <Band key={key} name="filosofia" start="dark"><FilosofiaBand lang={lang}/></Band>;
         case 'practicas':return (
           <Band key={key} name="practicas" start="dark" end="light">

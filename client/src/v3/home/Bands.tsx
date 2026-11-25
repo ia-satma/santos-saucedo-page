@@ -56,7 +56,7 @@ const sinViuda = (s: string) => s.replace(/\s+(\S+)\s*$/, "\u00a0$1");
     firma» (about.stats); el botón y las etiquetas, del panel (home.intro) o de copy.ts.
     Junta del 13-11-2026: el titular se ve («Decisiones laborales con visión empresarial.») y en cada
     cifra va primero la etiqueta y debajo el número (Mario: «primero el subtítulo y después el número»). */
-export function IntroBand({ lang, areas }: { lang: V3Lang; areas: number }) {
+export function IntroBand({ lang, areas, showStats = true }: { lang: V3Lang; areas: number; showStats?: boolean }) {
   const { language } = useLanguage();
   const liveHome = useCmsContent("home", home26) as any;
   const current = liveHome[language] ?? liveHome[lang] ?? liveHome.en;
@@ -75,12 +75,12 @@ export function IntroBand({ lang, areas }: { lang: V3Lang; areas: number }) {
           {body?.[0] ? <p className="sh-intro__cuerpo">{keepFirmName(sinViuda(body[0]))}</p> : null}
         </div>
         <Link className="sh-boton sh-intro__boton" href="/about">{t.boton}</Link>
-        <dl className="sh-cifras sh-cifras--etiqueta-arriba">
+        {showStats && <dl className="sh-cifras sh-cifras--etiqueta-arriba">
           <div><dt>{t.cifras.anos}</dt><dd>{anos}</dd></div>
           <div><dt>{t.cifras.ciudades}</dt><dd>{ciudades}</dd></div>
           <div><dt>{t.cifras.entidades}</dt><dd>32</dd></div>
           <div><dt>{t.cifras.areas}</dt><dd>{areas}</dd></div>
-        </dl>
+        </dl>}
       </div>
     </section>
   );

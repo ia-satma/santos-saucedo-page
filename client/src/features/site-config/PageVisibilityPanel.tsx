@@ -6,6 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { layoutDefaults } from "@/lib/cmsLightDefaults";
 import { notifyCmsSaved } from "@/hooks/useCmsContent";
 import { VisibilityHelp } from "./VisibilityHelp";
+import { getPageBlockMeta } from "./pageBlockCatalog";
 
 type PageState = { enabled: boolean; blocks: Record<string, boolean> };
 type LayoutState = { pages?: Record<string, PageState>; [key: string]: unknown };
@@ -18,9 +19,11 @@ function defaultPage(pageId: string): PageState {
 
 const legacyBlockAliases: Record<string, Set<string>> = {
   team: new Set(["carrusel", "perfiles"]),
+  about: new Set(["laminas"]),
 };
 const canonicalToLegacy: Record<string, Record<string, string>> = {
   team: { socios: "carrusel", colaboradores: "perfiles" },
+  about: { laminaSiempreAdelante: "laminas" },
 };
 
 const pageLabels: Record<string, string> = {
@@ -106,12 +109,18 @@ export function PageVisibilityPanel({ pageId }: { pageId: string }) {
     if (!draft) return undefined;
     const fallback = defaultPage(pageId);
     const stored = draft.pages?.[pageId];
-    return stored ? { ...fallback, ...stored, blocks: { ...fallback.blocks, ...(stored.blocks ?? {}) } } : fallback;
+    if (!stored) return fallback;
+    const storedBlocks = stored.blocks ?? {};
+    const blocks = { ...fallback.blocks, ...storedBlocks };
+    for (const [canonical, legacy] of Object.entries(canonicalToLegacy[pageId] ?? {})) {
+      if (storedBlocks[legacy] === false) blocks[canonical] = false;
+    }
+    return { ...fallback, ...stored, blocks };
   }, [draft, pageId]);
   const update = (next: PageState) => {
     if (!draft) return;
     setDraft({ ...draft, pages: { ...(draft.pages ?? {}), [pageId]: next } });
-    setSaved("");
+    setSaved("Cambios pendientes de guardar");
   };
   const updateBlock = (blockKey: string, enabled: boolean) => {
     if (!current) return;
@@ -145,10 +154,10 @@ export function PageVisibilityPanel({ pageId }: { pageId: string }) {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h3 id="cms-visibility-title" className="font-semibold">Visibilidad de {pageLabels[pageId] ?? pageId}</h3>
+            <h3 id="cms-visibility-title" className="font-semibold">Qué se muestra en {pageLabels[pageId] ?? pageId}</h3>
             <VisibilityHelp title="Página visible">Al apagarlo, la página deja de aparecer en el menú, el pie y el contenido público en todos los idiomas. Su contenido queda guardado para que puedas seguir editándolo y revisarlo en la vista previa privada.</VisibilityHelp>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">Control global para todos los idiomas. Al ocultar un bloque, desaparece del menú o del contenido público según corresponda.</p>
+      <p className="mt-1 text-sm text-muted-foreground">Este es el único lugar para mostrar u ocultar la página y sus bloques. Los cambios aplican a todos los idiomas y se activan al pulsar «Guardar visibilidad».</p>
         </div>
         <div className="flex items-center gap-3">
           <label htmlFor={`page-visible-${pageId}`} className="text-sm font-medium">Página visible</label>
@@ -156,12 +165,18 @@ export function PageVisibilityPanel({ pageId }: { pageId: string }) {
         </div>
       </div>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        {Object.entries(current.blocks).filter(([key]) => key !== "visual" && !legacyBlockAliases[pageId]?.has(key)).map(([key, enabled]) => (
+        {Object.entries(current.blocks).filter(([key]) => key !== "visual" && !legacyBlockAliases[pageId]?.has(key)).map(([key, enabled]) => {
+          const meta = getPageBlockMeta(pageId, key);
+          return (
           <label key={key} className="flex items-center justify-between gap-4 rounded-lg border p-3">
-            <span className="flex items-center gap-2 text-sm font-medium"><span>{labelFor(key)}</span><VisibilityHelp title={labelFor(key)}>Al apagar este bloque, se oculta únicamente esta parte de la página en todos los idiomas. El resto de la página y el contenido guardado permanecen disponibles para edición.</VisibilityHelp></span>
-            <Switch checked={enabled} onCheckedChange={(next) => updateBlock(key, next)} aria-label={`Visible: ${labelFor(key)}`} />
+            <span className="min-w-0 flex-1">
+              <span className="flex items-center gap-2 text-sm font-medium"><span>{meta.label || labelFor(key)}</span><VisibilityHelp title={meta.label}>Al apagar este bloque, se oculta únicamente esta parte de la página en todos los idiomas. El contenido queda guardado para editarlo y volverlo a mostrar después.</VisibilityHelp></span>
+              <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">Aparece en {meta.where}. {meta.description}</span>
+            </span>
+            <Switch checked={enabled} onCheckedChange={(next) => updateBlock(key, next)} aria-label={`Visible: ${meta.label || labelFor(key)}`} />
           </label>
-        ))}
+          );
+        })}
       </div>
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <Button type="button" disabled={save.isPending} onClick={() => save.mutate()}>{save.isPending ? "Guardando…" : "Guardar visibilidad"}</Button>

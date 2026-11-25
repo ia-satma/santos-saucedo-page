@@ -10,7 +10,7 @@ test("visibilidad CMS conserva el estado activo por defecto y aplica apagados gl
   };
   assert.deepEqual(pageVisibility(layout, "about"), {
     enabled: false,
-    blocks: { laminas: false, historia: true },
+    blocks: { laminas: false, historia: true, laminaSiempreAdelante: false },
   });
   assert.equal(blockVisible(layout, "about", "historia"), false);
   assert.equal(blockVisible(layout, "about", "laminas"), false);
@@ -21,4 +21,16 @@ test("la vista previa autenticada puede abrir una página globalmente oculta", (
   const layout = { pages: { industries: { enabled: false, blocks: { hero: true } } } };
   assert.equal((withPreviewPageVisibility(layout, false) as typeof layout).pages.industries.enabled, false);
   assert.equal((withPreviewPageVisibility(layout, true) as typeof layout).pages.industries.enabled, true);
+});
+
+test("los nombres antiguos de visibilidad siguen controlando sus bloques canónicos", () => {
+  const layout = {
+    pages: {
+      about: { enabled: true, blocks: { laminas: false } },
+      team: { enabled: true, blocks: { carrusel: false, perfiles: true } },
+    },
+  };
+  assert.equal(blockVisible(layout, "about", "laminaSiempreAdelante"), false);
+  assert.equal(blockVisible(layout, "team", "socios"), false);
+  assert.equal(blockVisible(layout, "team", "colaboradores"), true);
 });

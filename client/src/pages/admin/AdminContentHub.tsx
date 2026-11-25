@@ -5,70 +5,43 @@ import { useQuery } from "@tanstack/react-query";
 import { cmsSections, type CmsSection } from "@shared/cms";
 import { adminApiRequest } from "@/lib/adminAuth";
 import { adminHrefForCmsSection, canonicalPageOrder, cmsEditorPages, getCmsEditorPage } from "@/features/site-config/editorMetadata";
+import { AdminPageHelp } from "@/components/admin/AdminPageHelp";
 const groups = [
   {
-    label: "Páginas principales",
-    keys: [
-      "home",
-      "v3",
-      "about",
-      "offices",
-      "officeLabels",
-      "team",
-      "profile",
-      "practices",
-      "practice-detail",
-      "careers",
-      "interns",
-      "contact",
-      "newsletter",
-    ],
+    label: "Contenido compartido",
+    keys: ["chrome", "contactData", "links", "forms"],
   },
   {
-    label: "Monitor Laboral",
-    keys: ["news-intro", "news-detail", "monitor-ui", "monitor-subscribe"],
+    label: "Biblioteca y medios",
+    keys: ["media"],
   },
   {
-    label: "Identidad y estructura",
-    keys: [
-      "media",
-      "layout",
-      "chrome",
-      "contactData",
-      "practice-names",
-      "practice-short-names",
-    ],
-  },
-  {
-    label: "Textos legales, formularios y buscadores",
-    keys: [
-      "privacy",
-      "terms",
-      "cookies",
-      "contact-consent",
-      "contact-feedback",
-      "privacy-contact",
-      "terms-contact",
-      "seo",
-      "industries",
-      "industry-detail",
-      "not-found",
-    ],
+    label: "Configuración del sitio",
+    keys: ["navigation", "consent", "integrations", "theme", "voice"],
   },
 ];
+const sharedSectionKeys = new Set(groups.flatMap((group) => group.keys));
 export default function AdminContentHub() {
   const [search, setSearch] = useState("");
   const normalized = search
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
-  const matches = cmsSections.filter((s) =>
+  const matches = cmsSections.filter((s) => sharedSectionKeys.has(s.key) &&
     `${s.label} ${s.help}`
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase()
       .includes(normalized),
   );
+  const pageMatches = canonicalPageOrder
+    .map((id) => cmsEditorPages.find((page) => page.id === id))
+    .filter((page): page is (typeof cmsEditorPages)[number] => Boolean(page))
+    .filter((page) => !normalized || `${page.label} ${page.description} ${page.blocks.join(" ")} ${page.path}`
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .includes(normalized));
   const contentSearch = useQuery<{ query: string; results: { section: string; label: string; path: string; publicPath: string; field: string; value: string; language?: string }[] }>({
     queryKey: ["/api/admin/content/search", normalized],
     enabled: normalized.length >= 2,
@@ -85,9 +58,14 @@ export default function AdminContentHub() {
       <p className="admin-page-kicker">Contenido del sitio</p>
       <h1>Páginas y textos</h1>
       <p className="admin-page-description">
-        Encuentre cada sección por su nombre. Los abogados, las prácticas y las
-        publicaciones tienen sus propios catálogos en el menú.
+        Elige primero la página que ves en el sitio. Dentro encontrarás sus
+        bloques, medios, botones, idioma y visibilidad en un mismo recorrido.
       </p>
+      <AdminPageHelp pageId="content-hub" manualSectionId="primeros-pasos">
+        Si buscas una foto, video o perfil, entra a la página donde aparece. El
+        editor te dirá si el contenido vive en un catálogo compartido y te llevará
+        al lugar correcto para cambiarlo.
+      </AdminPageHelp>
       <label htmlFor="content-search" className="sr-only">
         Buscar página o texto
       </label>
@@ -99,9 +77,9 @@ export default function AdminContentHub() {
         placeholder="Buscar: portada, oficina, privacidad…"
       />
       <section className="admin-content-group">
-        <h2>Páginas y bloques</h2>
+        <h2>Elige una página para editar</h2>
         <div className="admin-content-items">
-        {canonicalPageOrder.map((id) => cmsEditorPages.find((page) => page.id === id)).filter(Boolean).map((page) => (
+        {pageMatches.map((page) => (
             <Link key={page!.id} href={`/admin/page/${page!.id}`}>
               <div>
                 <strong>{page!.label}</strong>
@@ -112,6 +90,7 @@ export default function AdminContentHub() {
             </Link>
           ))}
         </div>
+        {!pageMatches.length && <p className="admin-empty">No hay una página que coincida con esa búsqueda.</p>}
       </section>
       {normalized.length >= 2 && (
         <section className="admin-content-group" aria-live="polite">
@@ -155,7 +134,7 @@ export default function AdminContentHub() {
           )
         );
       })}
-      {!matches.length && (
+      {!matches.length && !pageMatches.length && normalized.length > 0 && (
         <p className="admin-empty">
           No hay secciones con esa búsqueda. Pruebe con otra palabra.
         </p>

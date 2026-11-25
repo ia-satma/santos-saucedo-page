@@ -74,6 +74,7 @@ export const cmsEditorPages: CmsEditorPage[] = [
       tab("practice-services", "Servicios", "Qué hacemos en cada área"),
       tab("practice-detail", "Fichas", "Etiquetas y textos de detalle"),
       tab("practice-names", "Idiomas", "Nombres por idioma"),
+      tab("v3", "Lámina Capacidad de reacción", "Contenido compartido con Nuestra firma; aparece al final de Prácticas"),
       tab("layout", "Visibilidad", "Bloques visibles de Prácticas"),
       tab("seo", "SEO", "Título y descripción para buscadores"),
     ],

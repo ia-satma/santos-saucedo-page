@@ -2,8 +2,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { MediaField } from '@/features/site-config/MediaField';
-import { BlockVisibilityToggle } from '@/features/site-config/BlockVisibilityToggle';
 import type { CmsValue } from '@shared/cms';
+import { Link } from 'wouter';
 
 type RecordValue = Record<string, any>;
 
@@ -11,6 +11,7 @@ type ExplicitPageFieldsProps = {
   value: CmsValue;
   onChange: (value: CmsValue) => void;
   media?: boolean;
+  onlyLamina?: boolean;
 };
 
 function asRecord(value: CmsValue): RecordValue {
@@ -21,14 +22,14 @@ function updateRecord(record: RecordValue, key: string, next: unknown): RecordVa
   return { ...record, [key]: next };
 }
 
-function Block({ title, description, pageId, blockKey, children }: { title: string; description?: string; pageId?: string; blockKey?: string; children: React.ReactNode }) {
+function Block({ title, description, pageId, blockKey, relatedPage, children }: { title: string; description?: string; pageId?: string; blockKey?: string; relatedPage?: { href: string; label: string }; children: React.ReactNode }) {
   return <section className="cms-explicit-block" aria-labelledby={`cms-block-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
     <div className="cms-explicit-block-heading">
       <div>
         <h3 id={`cms-block-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{title}</h3>
         {description && <p>{description}</p>}
+        {relatedPage && <Link className="cms-explicit-block-related" href={relatedPage.href}>{relatedPage.label} ↗</Link>}
       </div>
-      {pageId && blockKey && <BlockVisibilityToggle pageId={pageId} blockKey={blockKey} label={title} />}
     </div>
     <div className="cms-explicit-block-fields">{children}</div>
   </section>;
@@ -156,7 +157,7 @@ function HomeFields({ value, onChange }: ExplicitPageFieldsProps) {
       <TextField label="Introducción" value={monitor.intro} onChange={(next) => set('monitor', updateRecord(monitor, 'intro', next))} multiline />
     </Block>
 
-    <Block title="Cifras de la portada" pageId="home" blockKey="firma" description="Etiquetas de las cifras que aparecen junto a la firma. Los valores se calculan desde las fuentes indicadas.">
+    <Block title="Cifras de la portada" pageId="home" blockKey="cifras" description="Etiquetas de las cifras que aparecen junto a la firma. Los valores se calculan desde las fuentes indicadas.">
       <TextField label="Etiqueta de años" value={asRecord(intro.cifras as CmsValue).anos} onChange={(next) => set('intro', updateRecord(intro, 'cifras', updateRecord(asRecord(intro.cifras as CmsValue), 'anos', next)))} />
       <TextField label="Etiqueta de ciudades" value={asRecord(intro.cifras as CmsValue).ciudades} onChange={(next) => set('intro', updateRecord(intro, 'cifras', updateRecord(asRecord(intro.cifras as CmsValue), 'ciudades', next)))} />
       <TextField label="Etiqueta de entidades" value={asRecord(intro.cifras as CmsValue).entidades} onChange={(next) => set('intro', updateRecord(intro, 'cifras', updateRecord(asRecord(intro.cifras as CmsValue), 'entidades', next)))} />
@@ -166,7 +167,7 @@ function HomeFields({ value, onChange }: ExplicitPageFieldsProps) {
   </div>;
 }
 
-function AboutFields({ value, onChange }: ExplicitPageFieldsProps) {
+function AboutFields({ value, onChange, onlyLamina = false }: ExplicitPageFieldsProps) {
   const current = asRecord(value);
   const set = (key: string, next: unknown) => onChange(updateRecord(current, key, next) as CmsValue);
   const stats = Array.isArray(current.stats) ? current.stats : [];
@@ -177,7 +178,9 @@ function AboutFields({ value, onChange }: ExplicitPageFieldsProps) {
     const lamina = asRecord(current[key] as CmsValue);
     const paragraphs = Array.isArray(lamina.p) ? lamina.p : [];
     const pieces = Array.isArray(lamina.piezas) ? lamina.piezas : [];
-    return <Block title={title} pageId="about" blockKey="laminas" description="Cada texto y etapa aparece en la lámina pública y conserva su orden.">
+    const pageId = key === 'bighorn' ? 'about' : 'practices';
+    const blockKey = key === 'bighorn' ? 'laminaSiempreAdelante' : 'laminaReaccion';
+    return <Block title={title} pageId={pageId} blockKey={blockKey} relatedPage={key === 'response' && !onlyLamina ? { href: '/admin/page/practices', label: 'Configurar visibilidad en Prácticas' } : undefined} description={key === 'bighorn' ? "Aparece en Nuestra firma. Cada texto y etapa conserva su orden." : "Aparece al final de Prácticas. Cada texto y etapa conserva su orden."}>
       <TextField label="Título" value={lamina.h} onChange={(next) => set(key, updateRecord(lamina, 'h', next))} />
       <StringList label="Párrafos" values={paragraphs} onChange={(next) => set(key, updateRecord(lamina, 'p', next))} addLabel="Añadir párrafo" itemLabel="Párrafo" />
       <TextField label="Etiqueta de la lista" value={lamina.listaLabel} onChange={(next) => set(key, updateRecord(lamina, 'listaLabel', next))} />
@@ -196,6 +199,7 @@ function AboutFields({ value, onChange }: ExplicitPageFieldsProps) {
       </div>
     </Block>;
   };
+  if (onlyLamina) return <div className="cms-explicit-page-fields">{renderLamina('response', 'Lámina Capacidad de reacción')}</div>;
   return <div className="cms-explicit-page-fields">
     <Block title="Encabezado" pageId="about" blockKey="hero" description="Contenido que aparece al entrar a Nuestra firma.">
       <TextField label="Título" value={current.title} onChange={(next) => set('title', next)} />
@@ -247,7 +251,7 @@ function AboutFields({ value, onChange }: ExplicitPageFieldsProps) {
     </Block>
 
     {renderLamina('bighorn', 'Lámina Siempre hacia adelante')}
-    {renderLamina('response', 'Lámina Capacidad de reacción')}
+    <p className="cms-explicit-shared">La lámina Capacidad de reacción se edita desde Prácticas porque aparece al final de esa página. El mismo contenido se conserva como fuente compartida.</p>
 
     <Block title="Navegación y SEO" description="Textos de los enlaces de salida y accesibilidad.">
       <TextField label="Etiqueta de siguiente página" value={current.nextLabel} onChange={(next) => set('nextLabel', next)} />
@@ -262,4 +266,8 @@ export function ExplicitHomeFields(props: ExplicitPageFieldsProps) {
 
 export function ExplicitAboutFields(props: ExplicitPageFieldsProps) {
   return <AboutFields {...props} />;
+}
+
+export function ExplicitPracticeFields(props: ExplicitPageFieldsProps) {
+  return <AboutFields {...props} onlyLamina />;
 }

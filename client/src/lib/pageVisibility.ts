@@ -4,6 +4,7 @@ export type PageVisibility = { enabled: boolean; blocks: Record<string, boolean>
 
 const blockAliases: Record<string, Record<string, string>> = {
   team: { carrusel: "socios", perfiles: "colaboradores" },
+  about: { laminas: "laminaSiempreAdelante" },
 };
 
 export function withPreviewPageVisibility(layout: unknown, authorized: boolean): unknown {

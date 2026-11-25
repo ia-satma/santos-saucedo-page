@@ -3,8 +3,8 @@ export const layoutDefaults = {
   monitorLimit: 3,
   homeOrder: ["firma", "practicas", "creemos", "socios", "extranjeras", "monitor"],
   pages: {
-    home: { enabled: true, blocks: { hero: true, firma: true, creemos: true, practicas: true, industrias: true, socios: true, extranjeras: true, monitor: true } },
-    about: { enabled: true, blocks: { hero: true, historia: true, cifras: true, valores: true, prioridad: true, laminas: true, oficina: true } },
+    home: { enabled: true, blocks: { hero: true, firma: true, cifras: true, creemos: true, practicas: true, industrias: true, socios: true, extranjeras: true, monitor: true } },
+    about: { enabled: true, blocks: { hero: true, historia: true, cifras: true, valores: true, prioridad: true, laminaSiempreAdelante: true, laminas: true, oficina: true } },
     practices: { enabled: true, blocks: { hero: true, lista: true, servicios: true, laminaReaccion: true, industries: true } },
     industries: { enabled: true, blocks: { hero: true, lista: true, animacion: true, textos: false } },
     team: { enabled: true, blocks: { hero: true, socios: true, colaboradores: true, mapa: true, carrusel: true, perfiles: true } },

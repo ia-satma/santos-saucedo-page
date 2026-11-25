@@ -516,7 +516,7 @@ export default function About() {
 
           {/* La filosofía de la firma, «Siempre hacia adelante», con la foto de la Huasteca en lugar de la
               lámina del borrego (junta del 13-11-2026). El avión (2/7) va en la página de Prácticas. */}
-          {blockVisible(layout, "about", "laminas") && <SiempreAdelante t={T} attrs={attrs} lang={lang} />}
+          {blockVisible(layout, "about", "laminaSiempreAdelante") && <SiempreAdelante t={T} attrs={attrs} lang={lang} />}
 
           {blockVisible(layout, "about", "oficina") && <Oficina
             titulo={officeNameFor(language)}
