@@ -187,12 +187,13 @@ function absoluteLink(value: string) {
   return /^https?:\/\//i.test(value) ? value : `https://${value}`;
 }
 function gmailLinks(data: SignatureData) {
+  const linkStyle = "color:#0b2850;text-decoration:underline;text-underline-offset:2px;";
   const links = [
-    data.phone && `<a href="tel:${escapeHtml(data.phone.replace(/[^\d+]/g, ""))}" style="color:#0b2850;text-decoration:none;">${escapeHtml(data.phone)}</a>`,
-    data.email && `<a href="mailto:${escapeHtml(data.email)}" style="color:#0b2850;text-decoration:none;">${escapeHtml(data.email)}</a>`,
-    data.linkedin && `<a href="${escapeHtml(absoluteLink(data.linkedin))}" style="color:#0b2850;text-decoration:none;">LinkedIn</a>`,
-    data.facebook && `<a href="${escapeHtml(absoluteLink(data.facebook))}" style="color:#0b2850;text-decoration:none;">Facebook</a>`,
-    data.web && `<a href="${escapeHtml(absoluteLink(data.web))}" style="color:#0b2850;text-decoration:none;">Sitio web</a>`,
+    data.phone && `<a href="tel:${escapeHtml(data.phone.replace(/[^\d+]/g, ""))}" style="${linkStyle}">${escapeHtml(data.phone)}</a>`,
+    data.email && `<a href="mailto:${escapeHtml(data.email)}" style="${linkStyle}">${escapeHtml(data.email)}</a>`,
+    data.linkedin && `<a href="${escapeHtml(absoluteLink(data.linkedin))}" style="${linkStyle}">LinkedIn</a>`,
+    data.facebook && `<a href="${escapeHtml(absoluteLink(data.facebook))}" style="${linkStyle}">Facebook</a>`,
+    data.web && `<a href="${escapeHtml(absoluteLink(data.web))}" style="${linkStyle}">Sitio web</a>`,
   ].filter(Boolean);
   return links.join(" <span style=\"color:#9aa7b8;\">·</span> ");
 }
