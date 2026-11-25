@@ -31,6 +31,21 @@ export function serveStatic(app: Express) {
     }
   }
 
+  // Las firmas se pegan en Gmail desde un origen externo al editor. Sus imágenes deben
+  // ser públicas, cacheables y mostrarse inline sin depender de sesión ni cookies.
+  const signatureAssetsPath = path.join(distPath, "signatures", "assets");
+  if (fs.existsSync(signatureAssetsPath)) {
+    app.use("/signatures/assets", express.static(signatureAssetsPath, {
+      index: false,
+      maxAge: "1d",
+      setHeaders: (res) => {
+        res.setHeader("Content-Disposition", "inline");
+        res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+        res.setHeader("X-Content-Type-Options", "nosniff");
+      },
+    }));
+  }
+
   app.use(express.static(distPath,{index:false}));
 
   // Portada del Inicio pintada desde el HTML, sin esperar al JS (en el teléfono el programa tarda segundos).
