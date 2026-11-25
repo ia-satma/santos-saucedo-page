@@ -61,15 +61,15 @@ export const adminNavigation = [
         icon: LayersIcon,
       },
       {
-        href: "/admin/team",
+        href: "/admin/page/team",
         label: "Socios y equipo",
-        hint: "Crear, editar y ordenar abogados",
+        hint: "Página, carrusel y visibilidad",
         icon: PersonIcon,
       },
       {
-        href: "/admin/site-config/team",
-        label: "Portada de socios y equipo",
-        hint: "Textos del directorio y perfiles",
+        href: "/admin/team",
+        label: "Perfiles de socios y equipo",
+        hint: "Biografías, cargos y fotografías de cada persona",
         icon: PersonIcon,
       },
       {

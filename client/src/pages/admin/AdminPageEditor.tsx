@@ -26,7 +26,10 @@ const PREVIEW_STORAGE_KEY = "santos-cms-preview-content";
 const catalogLinks: Record<string, { label: string; href: string }[]> = {
   practices: [{ label: "Administrar fichas de prácticas", href: "/admin/practice-groups" }],
   industries: [{ label: "Administrar fichas de industrias", href: "/admin/industry-groups" }],
-  team: [{ label: "Administrar perfiles de socios y equipo", href: "/admin/team" }],
+  team: [
+    { label: "Editar carrusel de colaboradores", href: "/admin/page/team#page-block-3" },
+    { label: "Administrar perfiles de socios y equipo", href: "/admin/team" },
+  ],
   news: [{ label: "Administrar notas del Monitor", href: "/admin/news" }, { label: "Administrar categorías", href: "/admin/categories" }],
   careers: [{ label: "Administrar vacantes", href: "/admin/jobs" }],
   testimonials: [{ label: "Revisar testimonios", href: "/admin/testimonials" }],
@@ -45,7 +48,7 @@ const tabBlockKeys: Record<string, Record<string, string>> = {
   about: { "Historia y valores": "historia", "Láminas visuales": "laminas" },
   practices: { Portada: "hero", Servicios: "servicios", Fichas: "lista", Idiomas: "lista", "Lámina Capacidad de reacción": "laminaReaccion" },
   industries: { Portada: "hero", Fichas: "lista" },
-  team: { Portada: "hero", Colaboradores: "colaboradores" },
+  team: { Portada: "hero", "Carrusel de colaboradores": "colaboradores" },
   news: { Introducción: "hero", "Filtros y estados": "filtros", Suscripción: "suscripcion", Notas: "publicaciones" },
   contact: { Contenido: "hero", "Datos del despacho": "datos", "Consentimiento": "formulario", Respuestas: "formulario", "Controles del formulario": "formulario" },
   offices: { "Nombre de la página": "hero", Contenido: "datos", Medios: "galeria", "Datos del despacho": "datos" },
