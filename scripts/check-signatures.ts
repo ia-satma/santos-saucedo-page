@@ -38,6 +38,11 @@ for (const id of activeSignatureIds) {
   assert.match(body, /mailto:prueba@example\.test/);
   assert.match(body, /tel:\+528183352086/);
   assert.match(body, /https:\/\/cms\.example\.test\/signatures\/assets\//);
+  if (id === "11") {
+    assert.match(body, /1fmix7k1b1c\.png/);
+    assert.match(body, /1xhtwt3k3t\.png/);
+    assert.match(body, /1i1keubirs\.png/);
+  }
 }
 const photoGenerator = createSignatureGenerator({ assetsUrl: "https://cms.example.test/signatures/assets/", photo: "/media/public/media/qa-photo.png" });
 const photoBoxes: Record<string, [number, number]> = { "02": [99, 135], "05": [113, 135], "06": [113, 142], "07": [113, 192], "08": [113, 145], "10": [99, 141], "12": [170, 170] };
