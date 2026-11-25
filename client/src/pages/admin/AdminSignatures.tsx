@@ -23,7 +23,36 @@ const groups = [
   { label: "Redes sociales", keys: ["linkedin", "facebook", "web", "instagram"] as Array<keyof SignatureData> },
 ];
 function downloadBlob(html: string, name: string) { const url = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" })); const anchor = document.createElement("a"); anchor.href = url; anchor.download = name; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); }
-async function copyRich(html: string) { const body = html.match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1] || html; if (navigator.clipboard && "ClipboardItem" in window) await navigator.clipboard.write([new ClipboardItem({ "text/html": new Blob([body], { type: "text/html" }), "text/plain": new Blob([body.replace(/<[^>]+>/g, " ")], { type: "text/plain" }) })]); else await navigator.clipboard.writeText(body); }
+async function copyRich(html: string) {
+  const body = html.match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1] || html;
+  const text = new DOMParser().parseFromString(body, "text/html").body.textContent?.replace(/\s+/g, " ").trim() || "Firma de correo";
+  if (navigator.clipboard && "ClipboardItem" in window) {
+    try {
+      await navigator.clipboard.write([new ClipboardItem({
+        "text/html": new Blob([body], { type: "text/html" }),
+        "text/plain": new Blob([text], { type: "text/plain" }),
+      })]);
+      return;
+    } catch {
+      // Algunos navegadores bloquean ClipboardItem aunque la copia por selección siga permitida.
+    }
+  }
+  const container = document.createElement("div");
+  container.contentEditable = "true";
+  container.setAttribute("aria-hidden", "true");
+  container.style.cssText = "position:fixed;left:-100000px;top:0;width:600px;opacity:0;pointer-events:none;";
+  container.innerHTML = body;
+  document.body.appendChild(container);
+  const selection = window.getSelection();
+  const range = document.createRange();
+  range.selectNodeContents(container);
+  selection?.removeAllRanges();
+  selection?.addRange(range);
+  const copied = document.execCommand("copy");
+  selection?.removeAllRanges();
+  container.remove();
+  if (!copied) throw new Error("No se pudo copiar la firma enriquecida. Usa un navegador con permisos de portapapeles.");
+}
 function blobAsDataUrl(blob: Blob) {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
@@ -132,7 +161,7 @@ export default function AdminSignatures() {
   const edit = (item: SavedSignature) => { setEditingId(item.id); setForm({ label: item.label, templateId: item.templateId, data: { ...signatureDefaults, ...item.data }, photoUrl: item.photoUrl }); setNotice(""); setError(""); window.scrollTo({ top: 0, behavior: "smooth" }); };
   const save = async () => {
     setBusy(true); setError(""); setNotice("");
-    try { const method = editingId ? "PUT" : "POST"; const url = editingId ? `/api/admin/signatures/${editingId}` : "/api/admin/signatures"; const saved = await readAdminJson<SavedSignature>(await adminApiRequest(method, url, form), "No se pudo guardar la firma."); setEditingId(saved.id); setNotice(`Firma guardada. El catálogo activo usa las variantes 03 y 11. Descarga actual: Firma ${saved.templateId}.`); await queryClient.invalidateQueries({ queryKey: ["/api/admin/signatures"] }); }
+    try { const method = editingId ? "PUT" : "POST"; const url = editingId ? `/api/admin/signatures/${editingId}` : "/api/admin/signatures"; const saved = await readAdminJson<SavedSignature>(await adminApiRequest(method, url, form), "No se pudo guardar la firma."); setEditingId(saved.id); setNotice(`Firma guardada. Hay 11 diseños disponibles. Descarga actual: Firma ${saved.templateId}.`); await queryClient.invalidateQueries({ queryKey: ["/api/admin/signatures"] }); }
     catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   };
   const remove = async (id: string) => {
@@ -159,8 +188,8 @@ export default function AdminSignatures() {
   };
   const actionFor = (id: string, action: "html" | "rich" | "download" | "image") => {
     const sourceDocument = generator.build(id);
-    if (action === "html") void navigator.clipboard.writeText(sourceDocument).then(() => setNotice(`HTML de la firma ${id} copiado.`));
-    if (action === "rich") void copyRich(sourceDocument).then(() => setNotice(`Firma ${id} copiada.`));
+    if (action === "html") void navigator.clipboard.writeText(sourceDocument).then(() => setNotice(`Código fuente de la firma ${id} copiado.`)).catch((error: Error) => setError(error.message));
+    if (action === "rich") void copyRich(sourceDocument).then(() => setNotice(`Firma ${id} copiada para Gmail.`)).catch((error: Error) => setError(error.message));
     if (action === "download") downloadBlob(sourceDocument, `firma-${id}.html`);
     if (action === "image") void downloadSignaturePng(sourceDocument, `firma-${id}.png`, id === "12" ? 640 : 600, id === "12" ? 370 : 250).then(() => setNotice(`Imagen PNG de la firma ${id} descargada.`)).catch((error: Error) => setError(error.message));
   };
@@ -172,7 +201,7 @@ export default function AdminSignatures() {
         <div className="signature-sidebar-heading">
           <p className="signature-kicker">Santos Saucedo · Firmas</p>
           <h1>Datos de la firma</h1>
-          <p>El catálogo activo conserva las firmas 03 y 11.</p>
+          <p>El catálogo activo ofrece 11 diseños listos para usar.</p>
         </div>
         <div className="signature-sidebar-scroll">
           {groups.map((group) => (
@@ -201,7 +230,7 @@ export default function AdminSignatures() {
 
       <section className="signature-editor-catalog">
         <header className="signature-catalog-header">
-          <div><p className="signature-catalog-eyebrow">Editor de firmas</p><h2>{form.data.name || "Nueva firma"}</h2><p>2 plantillas activas · 600 × 250 px · imágenes a 2x</p><p className="signature-catalog-save-help">Elige Firma 03 o Firma 11 para editarla, copiarla o descargarla.</p></div>
+          <div><p className="signature-catalog-eyebrow">Editor de firmas</p><h2>{form.data.name || "Nueva firma"}</h2><p>11 plantillas activas · 600 × 250 px · imágenes a 2x</p><p className="signature-catalog-save-help">Elige un diseño para editarlo. Para Gmail usa «Copiar firma para Gmail». «Copiar código fuente» sirve para desarrollo.</p></div>
           <div className="signature-catalog-actions"><button type="button" className="signature-outline-action" onClick={reset}><PlusIcon /> Nueva</button><button type="button" className="signature-save-action" disabled={busy} onClick={() => void save()}>{busy ? "Guardando…" : editingId ? "Actualizar firma" : "Guardar firma"}</button></div>
         </header>
         {notice && <div role="status" className="signature-notice">{notice}</div>}
@@ -215,7 +244,7 @@ export default function AdminSignatures() {
             return <article className={`signature-template-card ${isSelected ? "is-selected" : ""}`} key={id}>
               <header className="signature-template-card-header"><button type="button" className="signature-template-title" aria-pressed={isSelected} onClick={() => setForm((old) => ({ ...old, templateId: id }))}><span>Firma {id}</span><small>{activeSignatureDescriptions[id]}</small>{isSelected && <em>Seleccionada para guardar y descargar</em>}</button><button type="button" className="signature-open-template" onClick={() => setForm((old) => ({ ...old, templateId: id }))}>Abrir <ArrowTopRightIcon /></button></header>
               <div className="signature-template-preview"><iframe title={`Vista previa de Firma ${id}`} sandbox="allow-same-origin" srcDoc={templateHtml} className={Number(id) === 12 ? "signature-iframe signature-iframe-tall" : "signature-iframe"} /></div>
-              <footer className="signature-template-card-footer"><button type="button" className="signature-copy-html" onClick={() => actionFor(id, "html")}><CodeIcon /> Copiar código HTML</button><button type="button" className="signature-copy-rich" onClick={() => actionFor(id, "rich")}><CopyIcon /> Copiar firma</button><button type="button" className="signature-download" onClick={() => actionFor(id, "download")}><DownloadIcon /> Descargar .html</button><button type="button" className="signature-download signature-image-download" onClick={() => actionFor(id, "image")}><ImageIcon /> Descargar PNG</button><button type="button" className="signature-view-code" onClick={() => setCodeOpen(isCodeOpen ? null : id)}>{isCodeOpen ? "Ocultar código" : "Ver código"}</button></footer>
+              <footer className="signature-template-card-footer"><button type="button" className="signature-copy-rich" onClick={() => actionFor(id, "rich")}><CopyIcon /> Copiar firma para Gmail</button><button type="button" className="signature-copy-html" onClick={() => actionFor(id, "html")}><CodeIcon /> Copiar código fuente</button><button type="button" className="signature-download" onClick={() => actionFor(id, "download")}><DownloadIcon /> Descargar .html</button><button type="button" className="signature-download signature-image-download" onClick={() => actionFor(id, "image")}><ImageIcon /> Descargar PNG</button><button type="button" className="signature-view-code" onClick={() => setCodeOpen(isCodeOpen ? null : id)}>{isCodeOpen ? "Ocultar código" : "Ver código"}</button></footer>
               {isCodeOpen && <pre className="signature-code-block"><code>{templateHtml}</code></pre>}
             </article>;
           })}

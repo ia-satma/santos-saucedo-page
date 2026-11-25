@@ -14,12 +14,20 @@ export const signatureDescriptions = [
   "Navy · § · barra verde completa",
   "Premium · foto a color · iconos",
 ] as const;
-// Catálogo editorial vigente. Las plantillas históricas siguen disponibles para abrir archivos
-// guardados, pero el editor solo ofrece las dos variantes aprobadas por el despacho.
-export const activeSignatureIds = ["03", "11"] as const;
+// Las 11 variantes aprobadas siguen usando las plantillas originales para conservar sus diseños.
+export const activeSignatureIds = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"] as const;
 export const activeSignatureDescriptions = {
-  "03": "Blanca · columna navy · iconos",
-  "11": "Navy · § · barra verde completa",
+  "01": signatureDescriptions[0],
+  "02": signatureDescriptions[1],
+  "03": signatureDescriptions[2],
+  "04": signatureDescriptions[3],
+  "05": signatureDescriptions[4],
+  "06": signatureDescriptions[5],
+  "07": signatureDescriptions[6],
+  "08": signatureDescriptions[7],
+  "09": signatureDescriptions[8],
+  "10": signatureDescriptions[9],
+  "11": signatureDescriptions[10],
 } as const;
 
 export const signatureDefaults = {

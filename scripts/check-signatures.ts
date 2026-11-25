@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { createSignatureGenerator, signatureIds } from "../shared/signatureGenerator";
+import { activeSignatureIds, createSignatureGenerator, signatureIds } from "../shared/signatureGenerator";
 
 assert.deepEqual(signatureIds, ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]);
+assert.deepEqual(activeSignatureIds, ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"]);
 const generator = createSignatureGenerator({
   assetsUrl: "https://cms.example.test/signatures/assets/",
   data: {
