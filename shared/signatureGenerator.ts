@@ -124,7 +124,8 @@ export function createSignatureGenerator(options: { assetsUrl?: string; data?: P
     const imageByAlt = (alt: string) => source.match(new RegExp(`<img src="([^"]+)"[^>]*alt="${reEsc(alt)}"`, "i"))?.[1] || "";
     const logo = imageByAlt("Santos Saucedo") || `${base}1i1keubirs.png`;
     const photo = source.match(/<img src="([^"]+)"[^>]*data-signature-photo="true"/i)?.[1]
-      || (["02", "05", "06", "07", "08", "10"].includes(id) ? imageByAlt(d.name) : "");
+      || (["02", "05", "06", "07", "08", "10"].includes(id) ? imageByAlt(d.name) : "")
+      || (id === "09" ? source.match(/<img src="([^"]*1drcwf7175a\.png)"/i)?.[1] || "" : "");
     const linkedinIcon = imageByAlt("LinkedIn");
     const facebookIcon = imageByAlt("Facebook");
     const dark = ["07", "08", "09", "10", "11"].includes(id);
