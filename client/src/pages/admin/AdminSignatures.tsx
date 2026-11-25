@@ -23,9 +23,13 @@ const groups = [
   { label: "Redes sociales", keys: ["linkedin", "facebook", "web", "instagram"] as Array<keyof SignatureData> },
 ];
 function downloadBlob(html: string, name: string) { const url = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" })); const anchor = document.createElement("a"); anchor.href = url; anchor.download = name; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); }
-async function copyRich(html: string) {
+function richClipboardPayload(html: string) {
   const body = html.match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1] || html;
   const text = new DOMParser().parseFromString(body, "text/html").body.textContent?.replace(/\s+/g, " ").trim() || "Firma de correo";
+  return { body, text };
+}
+async function copyRich(html: string) {
+  const { body, text } = richClipboardPayload(html);
   if (navigator.clipboard && "ClipboardItem" in window) {
     try {
       const write = navigator.clipboard.write([new ClipboardItem({
@@ -56,6 +60,29 @@ async function copyRich(html: string) {
   selection?.removeAllRanges();
   container.remove();
   if (!copied) throw new Error("No se pudo copiar la firma enriquecida. Usa un navegador con permisos de portapapeles.");
+}
+async function copyRichDeferred(htmlPromise: Promise<string>) {
+  if (navigator.clipboard && "ClipboardItem" in window) {
+    const payloadPromise = htmlPromise.then(richClipboardPayload);
+    try {
+      const item = new ClipboardItem({
+        "text/html": payloadPromise.then(({ body }) => new Blob([body], { type: "text/html" })),
+        "text/plain": payloadPromise.then(({ text }) => new Blob([text], { type: "text/plain" })),
+      });
+      const write = navigator.clipboard.write([item]);
+      await Promise.race([
+        write,
+        new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("El portapapeles enriquecido no respondió.")), 30000)),
+      ]);
+      return;
+    } catch {
+      // Si el navegador no acepta blobs diferidos, se intenta la selección HTML cuando termina el render.
+    }
+    const prepared = await payloadPromise;
+    await copyRich(`<body>${prepared.body}</body>`);
+    return;
+  }
+  await copyRich(await htmlPromise);
 }
 function blobAsDataUrl(blob: Blob) {
   return new Promise<string>((resolve, reject) => {
@@ -205,13 +232,17 @@ async function copyExactSignatureForGmail(html: string, id: string, data: Signat
   const width = id === "12" ? 640 : 600;
   const height = id === "12" ? 370 : 250;
   let imageUrl = gmailImageCache.get(html);
-  if (!imageUrl) {
+  if (imageUrl) {
+    await copyRich(gmailImageMarkup(imageUrl, width, height, data));
+    return;
+  }
+  await copyRichDeferred((async () => {
     const png = await renderSignaturePng(html, width, height);
     const media = await uploadAdminMedia(new File([png], `firma-${id}-gmail.png`, { type: "image/png" }));
     imageUrl = new URL(media.path, window.location.origin).toString();
     gmailImageCache.set(html, imageUrl);
-  }
-  await copyRich(gmailImageMarkup(imageUrl, width, height, data));
+    return gmailImageMarkup(imageUrl, width, height, data);
+  })());
 }
 
 export default function AdminSignatures() {
