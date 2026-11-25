@@ -1601,6 +1601,10 @@
 .signature-notice, .signature-error { margin: -9px 0 18px; padding: 10px 12px; border-radius: 5px; font-size: 12px; }
 .signature-notice { border: 1px solid #c9e7a0; background: #f3fbe9; color: #426517; }
 .signature-error { border: 1px solid #edc7c7; background: #fff3f3; color: #9c3434; }
+.signature-rendering-status { display: flex; align-items: center; gap: 8px; margin: -9px 0 18px; padding: 10px 12px; border: 1px solid #c9e7a0; border-radius: 5px; background: #f3fbe9; color: #426517; font-size: 12px; }
+.signature-rendering-spinner { width: 12px; height: 12px; flex: 0 0 12px; border: 2px solid #b8d889; border-top-color: #426517; border-radius: 50%; animation: signature-rendering-spin .75s linear infinite; }
+@keyframes signature-rendering-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .signature-rendering-spinner { animation: none; } }
 .signature-saved-strip { margin-bottom: 22px; padding: 17px 18px; border: 1px solid var(--signature-line); border-radius: 8px; background: #fff; }
 .signature-section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 10px; }
 .signature-section-heading h3 { margin: 4px 0 0; color: var(--signature-ink); font-size: 17px; font-weight: 600; }

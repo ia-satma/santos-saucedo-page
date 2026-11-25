@@ -228,19 +228,23 @@ function gmailImageMarkup(imageUrl: string, width: number, height: number, data:
   const links = gmailLinks(data);
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="${width}" style="width:${width}px;border-collapse:collapse;font-family:Arial,sans-serif;"><tr><td style="padding:0;line-height:0;"><img src="${escapeHtml(imageUrl)}" alt="Firma de ${escapeHtml(data.name)}" width="${width}" height="${height}" style="display:block;width:${width}px;height:${height}px;border:0;"></td></tr><tr><td style="padding:5px 0 0;font-size:11px;line-height:16px;color:#0b2850;">${links}</td></tr></table>`;
 }
-async function copyExactSignatureForGmail(html: string, id: string, data: SignatureData) {
+async function copyExactSignatureForGmail(html: string, id: string, data: SignatureData, onStage?: (stage: string) => void) {
   const width = id === "12" ? 640 : 600;
   const height = id === "12" ? 370 : 250;
   let imageUrl = gmailImageCache.get(html);
   if (imageUrl) {
+    onStage?.("Copiando la firma y sus enlaces…");
     await copyRich(gmailImageMarkup(imageUrl, width, height, data));
     return;
   }
   await copyRichDeferred((async () => {
+    onStage?.("Renderizando el diseño original…");
     const png = await renderSignaturePng(html, width, height);
+    onStage?.("Subiendo la imagen para Gmail…");
     const media = await uploadAdminMedia(new File([png], `firma-${id}-gmail.png`, { type: "image/png" }));
     imageUrl = new URL(media.path, window.location.origin).toString();
     gmailImageCache.set(html, imageUrl);
+    onStage?.("Copiando la firma y sus enlaces…");
     return gmailImageMarkup(imageUrl, width, height, data);
   })());
 }
@@ -251,6 +255,7 @@ export default function AdminSignatures() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
+  const [gmailStage, setGmailStage] = useState("");
   const [busy, setBusy] = useState(false);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [photoUploadProgress, setPhotoUploadProgress] = useState<number | null>(null);
@@ -295,11 +300,11 @@ export default function AdminSignatures() {
     const sourceDocument = generator.build(id);
     if (action === "html") void navigator.clipboard.writeText(sourceDocument).then(() => setNotice(`Código fuente de la firma ${id} copiado.`)).catch((error: Error) => setError(error.message));
     if (action === "rich") {
-      setBusy(true); setError(""); setNotice("Generando el diseño original para Gmail…");
-      void copyExactSignatureForGmail(sourceDocument, id, form.data)
+      setBusy(true); setError(""); setNotice(""); setGmailStage("Preparando la firma para Gmail…");
+      void copyExactSignatureForGmail(sourceDocument, id, form.data, setGmailStage)
         .then(() => setNotice(`Firma ${id} copiada para Gmail con sus medidas, colores y degradados originales.`))
         .catch((error: Error) => setError(error.message))
-        .finally(() => setBusy(false));
+        .finally(() => { setBusy(false); setGmailStage(""); });
     }
     if (action === "download") downloadBlob(sourceDocument, `firma-${id}.html`);
     if (action === "image") void downloadSignaturePng(sourceDocument, `firma-${id}.png`, id === "12" ? 640 : 600, id === "12" ? 370 : 250).then(() => setNotice(`Imagen PNG de la firma ${id} descargada.`)).catch((error: Error) => setError(error.message));
@@ -344,6 +349,7 @@ export default function AdminSignatures() {
           <div><p className="signature-catalog-eyebrow">Editor de firmas</p><h2>{form.data.name || "Nueva firma"}</h2><p>11 plantillas activas · 600 × 250 px · imágenes a 2x</p><p className="signature-catalog-save-help">Elige un diseño para editarlo. Para Gmail usa «Copiar firma para Gmail»: conserva el diseño original y sus enlaces. «Copiar código fuente» y «Descargar .html» sirven para abrir el archivo en un navegador; Gmail no permite subir un archivo HTML directamente.</p></div>
           <div className="signature-catalog-actions"><button type="button" className="signature-outline-action" onClick={reset}><PlusIcon /> Nueva</button><button type="button" className="signature-save-action" disabled={busy} onClick={() => void save()}>{busy ? "Guardando…" : editingId ? "Actualizar firma" : "Guardar firma"}</button></div>
         </header>
+        {gmailStage && <div role="status" aria-live="polite" className="signature-rendering-status"><span className="signature-rendering-spinner" aria-hidden="true" /> <span>{gmailStage}</span></div>}
         {notice && <div role="status" className="signature-notice">{notice}</div>}
         {error && <div role="alert" className="signature-error">{error}</div>}
         {(query.data || []).length > 0 && <section className="signature-saved-strip" aria-label="Firmas guardadas"><div className="signature-section-heading"><div><p className="signature-catalog-eyebrow">Versiones guardadas</p><h3>Firmas listas para usar</h3></div><span>{query.data?.length} guardadas</span></div><div className="signature-version-list">{(query.data || []).map((item) => <div className={`signature-version-row ${editingId === item.id ? "is-active" : ""}`} key={item.id}><button type="button" aria-label={`Editar ${item.label}`} title={`Editar ${item.label}`} onClick={() => edit(item)}><strong>{item.label}</strong><span>Editar datos comunes · descarga Firma {item.templateId} · {item.updatedAt ? new Date(item.updatedAt).toLocaleDateString("es-MX") : ""}</span></button><button type="button" aria-label={`Descargar ${item.label}`} onClick={async () => { const response = await adminApiRequest("GET", item.downloadUrl); if (!response.ok) return setError("No se pudo descargar la firma."); downloadBlob(await response.text(), `${item.label.replace(/[^a-z0-9]+/gi, "-")}.html`); }}><DownloadIcon /></button><button type="button" aria-label={`Eliminar ${item.label}`} onClick={() => void remove(item.id)}><TrashIcon /></button></div>)}</div></section>}
