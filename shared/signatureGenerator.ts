@@ -116,6 +116,31 @@ export function createSignatureGenerator(options: { assetsUrl?: string; data?: P
     const base = String(assets || "/signatures/assets/").replace(/\/$/, "") + "/";
     return html.split('src="assets/').join(`src="${base}`);
   };
+  const gmailBody = (id: string) => {
+    const source = build(id);
+    if (!source) return "";
+    const d = data;
+    const base = String(assets || "/signatures/assets/").replace(/\/$/, "") + "/";
+    const imageByAlt = (alt: string) => source.match(new RegExp(`<img src="([^"]+)"[^>]*alt="${reEsc(alt)}"`, "i"))?.[1] || "";
+    const logo = imageByAlt("Santos Saucedo") || `${base}1i1keubirs.png`;
+    const photo = source.match(/<img src="([^"]+)"[^>]*data-signature-photo="true"/i)?.[1]
+      || (["02", "05", "06", "07", "08", "10"].includes(id) ? imageByAlt(d.name) : "");
+    const linkedinIcon = imageByAlt("LinkedIn");
+    const facebookIcon = imageByAlt("Facebook");
+    const dark = ["07", "08", "09", "10", "11"].includes(id);
+    const navy = "#0b2850";
+    const text = dark ? "#ffffff" : navy;
+    const muted = dark ? "#cecfc1" : "#5b6675";
+    const visual = photo
+      ? `<img src="${esc(photo)}" alt="${esc(d.name)}" width="116" height="145" style="display:block;width:116px;height:145px;border:0;object-fit:cover;">`
+      : `<img src="${esc(logo)}" alt="Santos Saucedo" width="160" height="45" style="display:block;width:160px;height:45px;border:0;">`;
+    const social = [
+      d.linkedin && linkedinIcon ? `<a href="${esc(full(d.linkedin))}" target="_blank" style="display:inline-block;margin-right:8px"><img src="${esc(linkedinIcon)}" alt="LinkedIn" width="18" height="16" style="display:block;border:0;width:18px;height:16px;"></a>` : "",
+      d.facebook && facebookIcon ? `<a href="${esc(full(d.facebook))}" target="_blank" style="display:inline-block"><img src="${esc(facebookIcon)}" alt="Facebook" width="16" height="16" style="display:block;border:0;width:16px;height:16px;"></a>` : "",
+    ].join("");
+    const phone = (d.phone || "").replace(/[^\d+]/g, "");
+    return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;border-collapse:collapse;background-color:${dark ? navy : "#ffffff"};font-family:Arial,sans-serif;color:${text};"><tr><td colspan="2" style="height:6px;line-height:6px;font-size:0;background-color:#bbf741;">&nbsp;</td></tr><tr><td width="150" valign="top" style="width:150px;padding:24px 16px 18px 24px;background-color:${dark ? navy : "#ffffff"};">${visual}<div style="height:18px;line-height:18px;font-size:0;">&nbsp;</div>${social}</td><td valign="top" style="padding:24px 22px 18px 8px;background-color:${dark ? navy : "#ffffff"};"><div style="font-family:Georgia,serif;font-size:21px;line-height:25px;color:${text};">${esc(d.name)}</div><div style="font-size:12px;line-height:18px;color:${muted};">${esc(d.role)}</div><div style="height:15px;line-height:15px;font-size:0;">&nbsp;</div><div style="font-size:11px;line-height:18px;color:${muted};">Teléfono</div><a href="tel:${esc(phone)}" style="font-size:12px;line-height:18px;color:${text};text-decoration:none;">${esc(d.phone)}</a><div style="font-size:11px;line-height:18px;color:${muted};">E-mail</div><a href="mailto:${esc(d.email)}" style="font-size:12px;line-height:18px;color:${text};text-decoration:none;">${esc(d.email)}</a><div style="font-size:11px;line-height:18px;color:${muted};">Dirección</div><div style="font-size:12px;line-height:17px;color:${text};">${esc(d.addr1)}<br>${esc(d.addr2)}</div></td></tr><tr><td colspan="2" style="padding:7px 24px;background-color:#bbf741;font-family:Georgia,serif;font-size:10px;line-height:14px;color:${navy};letter-spacing:.5px;"><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;"><tr><td style="font-family:Georgia,serif;font-size:10px;line-height:14px;color:${navy};letter-spacing:.5px;">${esc(d.tagline)}</td><td align="right" style="font-family:Georgia,serif;font-size:10px;line-height:14px;color:${navy};letter-spacing:0;">${esc(d.since)}</td></tr></table></td></tr></table>`;
+  };
   return {
     ids: signatureIds,
     descriptions: signatureDescriptions,
@@ -127,6 +152,7 @@ export function createSignatureGenerator(options: { assetsUrl?: string; data?: P
     getPhoto: () => photo,
     setAssetsUrl: (value: string) => { assets = value; },
     build,
+    gmailBody,
     body: (id: string) => build(id).match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1].trim() || "",
   };
 }

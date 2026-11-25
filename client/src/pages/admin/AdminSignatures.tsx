@@ -189,7 +189,7 @@ export default function AdminSignatures() {
   const actionFor = (id: string, action: "html" | "rich" | "download" | "image") => {
     const sourceDocument = generator.build(id);
     if (action === "html") void navigator.clipboard.writeText(sourceDocument).then(() => setNotice(`Código fuente de la firma ${id} copiado.`)).catch((error: Error) => setError(error.message));
-    if (action === "rich") void copyRich(sourceDocument).then(() => setNotice(`Firma ${id} copiada para Gmail.`)).catch((error: Error) => setError(error.message));
+    if (action === "rich") void copyRich(generator.gmailBody(id)).then(() => setNotice(`Firma ${id} copiada para Gmail.`)).catch((error: Error) => setError(error.message));
     if (action === "download") downloadBlob(sourceDocument, `firma-${id}.html`);
     if (action === "image") void downloadSignaturePng(sourceDocument, `firma-${id}.png`, id === "12" ? 640 : 600, id === "12" ? 370 : 250).then(() => setNotice(`Imagen PNG de la firma ${id} descargada.`)).catch((error: Error) => setError(error.message));
   };

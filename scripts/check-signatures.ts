@@ -31,6 +31,14 @@ for (const id of signatureIds) {
     assert.match(html, /href="https:\/\/qa\.example\.test"/);
   }
 }
+for (const id of activeSignatureIds) {
+  const body = generator.gmailBody(id);
+  assert.match(body, /<table[^>]*role="presentation"/);
+  assert.doesNotMatch(body, /position:absolute|<!DOCTYPE html>|<head/i);
+  assert.match(body, /mailto:prueba@example\.test/);
+  assert.match(body, /tel:\+528183352086/);
+  assert.match(body, /https:\/\/cms\.example\.test\/signatures\/assets\//);
+}
 const photoGenerator = createSignatureGenerator({ assetsUrl: "https://cms.example.test/signatures/assets/", photo: "/media/public/media/qa-photo.png" });
 const photoBoxes: Record<string, [number, number]> = { "02": [99, 135], "05": [113, 135], "06": [113, 142], "07": [113, 192], "08": [113, 145], "10": [99, 141], "12": [170, 170] };
 for (const id of Object.keys(photoBoxes)) {
