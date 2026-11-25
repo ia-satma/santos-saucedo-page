@@ -27,6 +27,13 @@ interface Overview {
   news: { total: number; visible: number };
   media: { total: number };
   unread: number;
+  notifications: {
+    id: string;
+    label: string;
+    count: number;
+    hint: string;
+    href: string;
+  }[];
   recent: {
     id: string;
     title: string;
@@ -77,6 +84,7 @@ export default function AdminOverview() {
       if (!r.ok) throw new Error(d.error);
       return d;
     },
+    refetchInterval: 30000,
   });
   const d = query.data;
   const metrics = [
@@ -122,6 +130,23 @@ export default function AdminOverview() {
         la sección que quiere editar. Guardar un cambio actualiza el sitio sin
         necesidad de modificar código.
       </AdminPageHelp>
+      <section className="admin-notifications" aria-labelledby="admin-notifications-title">
+        <div className="admin-notifications-heading">
+          <div>
+            <p className="admin-page-kicker">Avisos del panel</p>
+            <h2 id="admin-notifications-title">Formularios recibidos</h2>
+            <p>Estas tarjetas se actualizan automáticamente. Abra una para revisar el registro correspondiente.</p>
+          </div>
+          {query.isLoading ? <Skeleton className="h-8 w-24" /> : <strong>{(d?.notifications ?? []).reduce((sum, item) => sum + item.count, 0)} nuevos</strong>}
+        </div>
+        <div className="admin-notifications-grid">
+          {query.isLoading ? [0, 1, 2].map((item) => <Skeleton key={item} className="h-24" />) : d?.notifications?.length ? d.notifications.map((item) => <Link key={item.id} href={item.href} className="admin-notification-card" data-state={item.count ? "new" : "clear"}>
+            <span className="admin-notification-count">{item.count}</span>
+            <span><strong>{item.label}</strong><small>{item.count ? item.hint : "No hay avisos nuevos"}</small></span>
+            <ChevronRightIcon />
+          </Link>) : <p className="admin-notifications-empty">No hay registros pendientes para su perfil.</p>}
+        </div>
+      </section>
       {query.isError && (
         <div className="admin-error mt-6" role="alert">
           {query.error.message}{" "}

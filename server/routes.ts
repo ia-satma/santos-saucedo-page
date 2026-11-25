@@ -92,6 +92,8 @@ import {
   insertSpecializedDeskSchema,
   insertOfficeImageSchema,
   newsletterSubscribers,
+  contactSubmissions,
+  careerApplications,
   mediaItems,
   events as eventsTable,
 } from "@shared/schema";
@@ -259,9 +261,28 @@ export async function registerRoutes(
   registerContentPreview(app);
   app.get('/api/admin/overview',authMiddleware,async(_req,res)=>{
     try {
-      const [people,practices,notes,media,contacts]=await Promise.all([storage.getTeamMembers(),storage.getAllPracticeGroups(),storage.getNews(),mediaInventory(),storage.getContactSubmissions()]);
+      const [people,practices,notes,media,contacts,applications,subscribers]=await Promise.all([
+        storage.getTeamMembers(),
+        storage.getAllPracticeGroups(),
+        storage.getNews(),
+        mediaInventory(),
+        db.select({ read: contactSubmissions.read }).from(contactSubmissions),
+        db.select({ read: careerApplications.read, archivedAt: careerApplications.archivedAt }).from(careerApplications),
+        db.select({ subscribedAt: newsletterSubscribers.subscribedAt }).from(newsletterSubscribers),
+      ]);
       res.set('Cache-Control','private, no-store');
-      res.json({team:{total:people.length,visible:people.filter(isNamedOnTeamPage).length},practices:{total:practices.length,visible:practices.filter(g=>g.published!==false).length},news:{total:notes.length,visible:notes.filter(n=>isPublicNews(n)).length},media:{total:media.length},unread:hasAdminPermission(_req.adminUser,"inbox")?contacts.filter(c=>!c.read).length:0,recent:hasAdminPermission(_req.adminUser,"editorial")?notes.slice(0,5).map(n=>({id:n.id,title:n.titleEs||n.title,category:n.categoryEs||n.category,date:n.date,visible:isPublicNews(n)})):[]});
+      const canInbox = hasAdminPermission(_req.adminUser,"inbox");
+      const canApplications = hasAdminPermission(_req.adminUser,"applications");
+      const recentCutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+      const contactUnread = canInbox ? contacts.filter((item) => !item.read).length : 0;
+      const applicationUnread = canApplications ? applications.filter((item) => !item.read && !item.archivedAt).length : 0;
+      const recentSubscriptions = canInbox ? subscribers.filter((item) => item.subscribedAt && item.subscribedAt.getTime() >= recentCutoff).length : 0;
+      const notifications = [
+        { id: "contact", label: "Mensajes de contacto", count: contactUnread, hint: "Mensajes que todavía no se han leído", href: "/admin/inbox" },
+        { id: "applications", label: "Solicitudes de empleo", count: applicationUnread, hint: "Candidaturas pendientes de revisar", href: "/admin/applications" },
+        { id: "newsletter", label: "Nuevas suscripciones", count: recentSubscriptions, hint: "Altas recibidas en los últimos 7 días", href: "/admin/inbox" },
+      ].filter((item) => item.id !== "applications" || canApplications).filter((item) => item.id === "applications" || canInbox);
+      res.json({team:{total:people.length,visible:people.filter(isNamedOnTeamPage).length},practices:{total:practices.length,visible:practices.filter(g=>g.published!==false).length},news:{total:notes.length,visible:notes.filter(n=>isPublicNews(n)).length},media:{total:media.length},unread:contactUnread,notifications,recent:hasAdminPermission(_req.adminUser,"editorial")?notes.slice(0,5).map(n=>({id:n.id,title:n.titleEs||n.title,category:n.categoryEs||n.category,date:n.date,visible:isPublicNews(n)})):[]});
     }catch{res.status(503).json({error:'No se pudo cargar el resumen del sitio.'});}
   });
   // Existing public asset URLs retain compatibility while bytes live in App Storage.

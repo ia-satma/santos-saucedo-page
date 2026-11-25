@@ -10,6 +10,28 @@
   background: var(--admin-surface, #fff);
 }
 
+.admin-notifications {
+  margin: 22px 0 28px;
+  padding: 24px 26px;
+  border: 1px solid #cfe0e2;
+  border-radius: 18px;
+  background: #f4fafb;
+}
+
+.admin-notifications-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.admin-notifications-heading h2 { margin: 0; font-size: clamp(1.25rem, 1.8vw, 1.65rem); letter-spacing: -0.025em; }
+.admin-notifications-heading p:not(.admin-page-kicker) { margin: 6px 0 0; color: var(--admin-muted, #66747a); font-size: .86rem; line-height: 1.55; }
+.admin-notifications-heading > strong { flex: 0 0 auto; padding: 8px 12px; border-radius: 999px; background: #fff; color: var(--admin-accent, #174957); font-size: .82rem; }
+.admin-notifications-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+.admin-notification-card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 76px; padding: 14px; border: 1px solid #b8d2d5; border-radius: 12px; background: #fff; color: var(--admin-ink, #172b39); text-decoration: none; }
+.admin-notification-card:hover { border-color: var(--admin-accent, #174957); }
+.admin-notification-card[data-state="new"] { border-color: #8cc63f; box-shadow: 0 0 0 2px rgba(140, 198, 63, .12); }
+.admin-notification-count { display: grid; place-items: center; min-width: 32px; height: 32px; padding: 0 8px; border-radius: 999px; background: #edf7f8; color: var(--admin-accent, #174957); font-weight: 750; }
+.admin-notification-card[data-state="new"] .admin-notification-count { background: #e9f6d9; color: #3d6512; }
+.admin-notification-card strong, .admin-notification-card small { display: block; }
+.admin-notification-card small { margin-top: 3px; color: var(--admin-muted, #66747a); font-size: .78rem; line-height: 1.35; }
+.admin-notifications-empty { margin: 18px 0 0; color: var(--admin-muted, #66747a); }
+
 .admin-overview-guide h2 {
   margin: 0;
   font-size: clamp(1.25rem, 1.8vw, 1.65rem);
@@ -67,6 +89,7 @@
   .admin-overview-guide {
     grid-template-columns: 1fr;
   }
+  .admin-notifications-grid { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {
