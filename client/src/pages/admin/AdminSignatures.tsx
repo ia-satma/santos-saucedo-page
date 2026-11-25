@@ -114,9 +114,27 @@ async function cropSignaturePhotos(root: HTMLElement) {
     }
   }));
 }
-async function downloadSignaturePng(html: string, name: string, width: number, height: number) {
+async function loadSignatureFonts(html: string) {
+  const parsed = new DOMParser().parseFromString(html, "text/html");
+  const links = Array.from(parsed.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]'));
+  for (const link of links) {
+    const href = link.href || link.getAttribute("href");
+    if (!href || Array.from(document.head.querySelectorAll<HTMLLinkElement>("link[data-signature-font]")).some((loaded) => loaded.dataset.signatureFont === href)) continue;
+    const fontLink = document.createElement("link");
+    fontLink.rel = "stylesheet";
+    fontLink.href = href;
+    fontLink.dataset.signatureFont = href;
+    document.head.appendChild(fontLink);
+  }
+  await Promise.all([
+    document.fonts.load("18px Lora"),
+    document.fonts.load("10px 'DM Sans'"),
+  ]);
+}
+async function renderSignaturePng(html: string, width: number, height: number) {
   const body = html.match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1] || html;
   const bodyWithImages = await inlineSignatureImages(body);
+  await loadSignatureFonts(html);
   const host = document.createElement("div");
   host.style.cssText = `position:fixed;left:-100000px;top:0;width:${width}px;height:${height}px;overflow:hidden;background:#fff;pointer-events:none;`;
   host.innerHTML = bodyWithImages;
@@ -129,15 +147,53 @@ async function downloadSignaturePng(html: string, name: string, width: number, h
     const canvas = await html2canvas(target, { backgroundColor: "#fff", width, height, scale: 2, useCORS: true, allowTaint: false, imageTimeout: 15000, logging: false });
     const png = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
     if (!png) throw new Error("No se pudo generar el PNG.");
-    const downloadUrl = URL.createObjectURL(png);
-    const anchor = document.createElement("a");
-    anchor.href = downloadUrl;
-    anchor.download = name;
-    anchor.click();
-    setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+    return png;
   } finally {
     host.remove();
   }
+}
+async function downloadSignaturePng(html: string, name: string, width: number, height: number) {
+  const png = await renderSignaturePng(html, width, height);
+  const downloadUrl = URL.createObjectURL(png);
+  const anchor = document.createElement("a");
+  anchor.href = downloadUrl;
+  anchor.download = name;
+  anchor.click();
+  setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+}
+
+const gmailImageCache = new Map<string, string>();
+function escapeHtml(value: string) {
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
+}
+function absoluteLink(value: string) {
+  return /^https?:\/\//i.test(value) ? value : `https://${value}`;
+}
+function gmailLinks(data: SignatureData) {
+  const links = [
+    data.phone && `<a href="tel:${escapeHtml(data.phone.replace(/[^\d+]/g, ""))}" style="color:#0b2850;text-decoration:none;">${escapeHtml(data.phone)}</a>`,
+    data.email && `<a href="mailto:${escapeHtml(data.email)}" style="color:#0b2850;text-decoration:none;">${escapeHtml(data.email)}</a>`,
+    data.linkedin && `<a href="${escapeHtml(absoluteLink(data.linkedin))}" style="color:#0b2850;text-decoration:none;">LinkedIn</a>`,
+    data.facebook && `<a href="${escapeHtml(absoluteLink(data.facebook))}" style="color:#0b2850;text-decoration:none;">Facebook</a>`,
+    data.web && `<a href="${escapeHtml(absoluteLink(data.web))}" style="color:#0b2850;text-decoration:none;">Sitio web</a>`,
+  ].filter(Boolean);
+  return links.join(" <span style=\"color:#9aa7b8;\">·</span> ");
+}
+function gmailImageMarkup(imageUrl: string, width: number, height: number, data: SignatureData) {
+  const links = gmailLinks(data);
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="${width}" style="width:${width}px;border-collapse:collapse;font-family:Arial,sans-serif;"><tr><td style="padding:0;line-height:0;"><img src="${escapeHtml(imageUrl)}" alt="Firma de ${escapeHtml(data.name)}" width="${width}" height="${height}" style="display:block;width:${width}px;height:${height}px;border:0;"></td></tr><tr><td style="padding:5px 0 0;font-size:11px;line-height:16px;color:#0b2850;">${links}</td></tr></table>`;
+}
+async function copyExactSignatureForGmail(html: string, id: string, data: SignatureData) {
+  const width = id === "12" ? 640 : 600;
+  const height = id === "12" ? 370 : 250;
+  let imageUrl = gmailImageCache.get(html);
+  if (!imageUrl) {
+    const png = await renderSignaturePng(html, width, height);
+    const media = await uploadAdminMedia(new File([png], `firma-${id}-gmail.png`, { type: "image/png" }));
+    imageUrl = new URL(media.path, window.location.origin).toString();
+    gmailImageCache.set(html, imageUrl);
+  }
+  await copyRich(gmailImageMarkup(imageUrl, width, height, data));
 }
 
 export default function AdminSignatures() {
@@ -189,7 +245,13 @@ export default function AdminSignatures() {
   const actionFor = (id: string, action: "html" | "rich" | "download" | "image") => {
     const sourceDocument = generator.build(id);
     if (action === "html") void navigator.clipboard.writeText(sourceDocument).then(() => setNotice(`Código fuente de la firma ${id} copiado.`)).catch((error: Error) => setError(error.message));
-    if (action === "rich") void copyRich(generator.gmailBody(id)).then(() => setNotice(`Firma ${id} copiada para Gmail.`)).catch((error: Error) => setError(error.message));
+    if (action === "rich") {
+      setBusy(true); setError(""); setNotice("Generando el diseño original para Gmail…");
+      void copyExactSignatureForGmail(sourceDocument, id, form.data)
+        .then(() => setNotice(`Firma ${id} copiada para Gmail con sus medidas, colores y degradados originales.`))
+        .catch((error: Error) => setError(error.message))
+        .finally(() => setBusy(false));
+    }
     if (action === "download") downloadBlob(sourceDocument, `firma-${id}.html`);
     if (action === "image") void downloadSignaturePng(sourceDocument, `firma-${id}.png`, id === "12" ? 640 : 600, id === "12" ? 370 : 250).then(() => setNotice(`Imagen PNG de la firma ${id} descargada.`)).catch((error: Error) => setError(error.message));
   };
@@ -230,7 +292,7 @@ export default function AdminSignatures() {
 
       <section className="signature-editor-catalog">
         <header className="signature-catalog-header">
-          <div><p className="signature-catalog-eyebrow">Editor de firmas</p><h2>{form.data.name || "Nueva firma"}</h2><p>11 plantillas activas · 600 × 250 px · imágenes a 2x</p><p className="signature-catalog-save-help">Elige un diseño para editarlo. Para Gmail usa «Copiar firma para Gmail». «Copiar código fuente» sirve para desarrollo.</p></div>
+          <div><p className="signature-catalog-eyebrow">Editor de firmas</p><h2>{form.data.name || "Nueva firma"}</h2><p>11 plantillas activas · 600 × 250 px · imágenes a 2x</p><p className="signature-catalog-save-help">Elige un diseño para editarlo. Para Gmail usa «Copiar firma para Gmail»: conserva el diseño original y sus enlaces. «Copiar código fuente» y «Descargar .html» sirven para abrir el archivo en un navegador; Gmail no permite subir un archivo HTML directamente.</p></div>
           <div className="signature-catalog-actions"><button type="button" className="signature-outline-action" onClick={reset}><PlusIcon /> Nueva</button><button type="button" className="signature-save-action" disabled={busy} onClick={() => void save()}>{busy ? "Guardando…" : editingId ? "Actualizar firma" : "Guardar firma"}</button></div>
         </header>
         {notice && <div role="status" className="signature-notice">{notice}</div>}
@@ -244,7 +306,7 @@ export default function AdminSignatures() {
             return <article className={`signature-template-card ${isSelected ? "is-selected" : ""}`} key={id}>
               <header className="signature-template-card-header"><button type="button" className="signature-template-title" aria-pressed={isSelected} onClick={() => setForm((old) => ({ ...old, templateId: id }))}><span>Firma {id}</span><small>{activeSignatureDescriptions[id]}</small>{isSelected && <em>Seleccionada para guardar y descargar</em>}</button><button type="button" className="signature-open-template" onClick={() => setForm((old) => ({ ...old, templateId: id }))}>Abrir <ArrowTopRightIcon /></button></header>
               <div className="signature-template-preview"><iframe title={`Vista previa de Firma ${id}`} sandbox="allow-same-origin" srcDoc={templateHtml} className={Number(id) === 12 ? "signature-iframe signature-iframe-tall" : "signature-iframe"} /></div>
-              <footer className="signature-template-card-footer"><button type="button" className="signature-copy-rich" onClick={() => actionFor(id, "rich")}><CopyIcon /> Copiar firma para Gmail</button><button type="button" className="signature-copy-html" onClick={() => actionFor(id, "html")}><CodeIcon /> Copiar código fuente</button><button type="button" className="signature-download" onClick={() => actionFor(id, "download")}><DownloadIcon /> Descargar .html</button><button type="button" className="signature-download signature-image-download" onClick={() => actionFor(id, "image")}><ImageIcon /> Descargar PNG</button><button type="button" className="signature-view-code" onClick={() => setCodeOpen(isCodeOpen ? null : id)}>{isCodeOpen ? "Ocultar código" : "Ver código"}</button></footer>
+              <footer className="signature-template-card-footer"><button type="button" className="signature-copy-rich" disabled={busy} onClick={() => actionFor(id, "rich")}><CopyIcon /> Copiar firma para Gmail</button><button type="button" className="signature-copy-html" onClick={() => actionFor(id, "html")}><CodeIcon /> Copiar código fuente</button><button type="button" className="signature-download" onClick={() => actionFor(id, "download")}><DownloadIcon /> Descargar .html</button><button type="button" className="signature-download signature-image-download" onClick={() => actionFor(id, "image")}><ImageIcon /> Descargar PNG</button><button type="button" className="signature-view-code" onClick={() => setCodeOpen(isCodeOpen ? null : id)}>{isCodeOpen ? "Ocultar código" : "Ver código"}</button></footer>
               {isCodeOpen && <pre className="signature-code-block"><code>{templateHtml}</code></pre>}
             </article>;
           })}
