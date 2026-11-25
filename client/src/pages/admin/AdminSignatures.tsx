@@ -68,7 +68,14 @@ async function inlineSignatureImages(bodyHtml: string) {
     const source = image.getAttribute("src");
     if (!source || source.startsWith("data:")) return;
     try {
-      const response = await fetch(new URL(source, window.location.href));
+      const controller = new AbortController();
+      const timer = window.setTimeout(() => controller.abort(), 5000);
+      let response: Response;
+      try {
+        response = await fetch(new URL(source, window.location.href), { signal: controller.signal });
+      } finally {
+        window.clearTimeout(timer);
+      }
       if (response.ok) image.setAttribute("src", await blobAsDataUrl(await response.blob()));
     } catch {
       // Keep the source URL when an optional image cannot be fetched.
@@ -126,9 +133,12 @@ async function loadSignatureFonts(html: string) {
     fontLink.dataset.signatureFont = href;
     document.head.appendChild(fontLink);
   }
-  await Promise.all([
-    document.fonts.load("18px Lora"),
-    document.fonts.load("10px 'DM Sans'"),
+  await Promise.race([
+    Promise.all([
+      document.fonts.load("18px Lora"),
+      document.fonts.load("10px 'DM Sans'"),
+    ]),
+    new Promise<void>((resolve) => window.setTimeout(resolve, 3000)),
   ]);
 }
 async function renderSignaturePng(html: string, width: number, height: number) {
@@ -144,7 +154,10 @@ async function renderSignaturePng(html: string, width: number, height: number) {
     if (!target) throw new Error("No se pudo preparar la firma para exportación.");
     await cropSignaturePhotos(target);
     await document.fonts?.ready;
-    const canvas = await html2canvas(target, { backgroundColor: "#fff", width, height, scale: 2, useCORS: true, allowTaint: false, imageTimeout: 15000, logging: false });
+    const canvas = await Promise.race([
+      html2canvas(target, { backgroundColor: "#fff", width, height, scale: 2, useCORS: true, allowTaint: false, imageTimeout: 10000, logging: false }),
+      new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("La captura de la firma tardó demasiado. Descarga el PNG e inténtalo de nuevo.")), 20000)),
+    ]);
     const png = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
     if (!png) throw new Error("No se pudo generar el PNG.");
     return png;
