@@ -182,15 +182,18 @@ export default function AdminPageEditor() {
         <div className="cms-page-layout">
           <aside className="cms-page-index" aria-label={`Índice de ${page.label}`}><p className="cms-page-index-title">En esta página</p>{page.tabs.map((tab, index) => <a key={`${tab.section}-${index}`} href={`#page-block-${index}`}>{tab.label}</a>)}{links.map((link) => <Link key={link.href} href={link.href}>{link.label} ↗</Link>)}</aside>
           <div className="cms-page-content">
+            <section className="cms-quick-actions" aria-labelledby="cms-quick-actions-title">
+              <div>
+                <h2 id="cms-quick-actions-title">¿Qué quieres cambiar?</h2>
+                <p>Elige una opción para ir directamente al lugar correcto. Los nombres indican qué parte de la página se modifica.</p>
+              </div>
+              <div className="cms-quick-actions-list">
+                {page.tabs.map((tab, index) => <a key={`jump-${tab.section}-${index}`} href={`#page-block-${index}`}>{tab.label}</a>)}
+                {links.map((link) => <Link key={`quick-${link.href}`} href={link.href}>{link.label} ↗</Link>)}
+              </div>
+            </section>
             <div className="cms-editor-card mb-5 flex flex-wrap items-center gap-3"><label htmlFor="cms-page-language" className="text-sm font-semibold">Idioma que estás editando</label><select id="cms-page-language" className="border rounded-md p-2 bg-background" value={lang} onChange={(event) => setLang(event.target.value)}>{SUPPORTED_LANGUAGES.map((item) => <option key={item.code} value={item.code}>{item.nameNative}</option>)}</select></div>
             <PageVisibilityPanel pageId={page.id} />
-            {links.length > 0 && <section className="cms-related-card" aria-labelledby="cms-related-title">
-              <div>
-                <h2 id="cms-related-title">Contenido relacionado</h2>
-                <p>Esta página usa catálogos compartidos. Edita aquí los textos de la página y entra a cada catálogo para cambiar sus fichas.</p>
-              </div>
-              <div className="cms-related-links">{links.map((link) => <Link key={link.href} href={link.href}>{link.label} ↗</Link>)}</div>
-            </section>}
             {sharedLinks.length > 0 && <section className="cms-related-card" aria-labelledby="cms-shared-title">
               <div>
                 <h2 id="cms-shared-title">Contenido compartido</h2>
