@@ -28,10 +28,14 @@ async function copyRich(html: string) {
   const text = new DOMParser().parseFromString(body, "text/html").body.textContent?.replace(/\s+/g, " ").trim() || "Firma de correo";
   if (navigator.clipboard && "ClipboardItem" in window) {
     try {
-      await navigator.clipboard.write([new ClipboardItem({
-        "text/html": new Blob([body], { type: "text/html" }),
-        "text/plain": new Blob([text], { type: "text/plain" }),
-      })]);
+      const write = navigator.clipboard.write([new ClipboardItem({
+          "text/html": new Blob([body], { type: "text/html" }),
+          "text/plain": new Blob([text], { type: "text/plain" }),
+        })]);
+      await Promise.race([
+        write,
+        new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("El portapapeles enriquecido no respondió.")), 3000)),
+      ]);
       return;
     } catch {
       // Algunos navegadores bloquean ClipboardItem aunque la copia por selección siga permitida.
