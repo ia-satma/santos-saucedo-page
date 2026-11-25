@@ -10,7 +10,7 @@
    - despido: sueldo y antigüedad del caso, y la cuenta en cada parada del juicio.
    Las comerciales cierran con un enlace discreto a Contacto. */
 import "./laminas-vivas.css";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { Link } from "wouter";
 import logoBlancoLima from "@assets/ss26/logo-blanco-lima.svg";
 import type { LanguageCode } from "@shared/constants";
@@ -88,12 +88,15 @@ function Resultado({ L, marcadas, tocado }: { L: VivaTexto; marcadas: boolean[];
   );
 }
 
-export function LaminaViva({ id, n, total, lang, attrs }: {
+export function LaminaViva({ id, n, total, lang, attrs, pestanas, oculta }: {
   id: VivaId;
   n: number;
   total: number;
   lang: LanguageCode;
   attrs: { lang?: string; dir?: "ltr" | "rtl" };
+  /** varias láminas en una sola sección: la barra de pestañas va arriba y las demás quedan ocultas */
+  pestanas?: ReactNode;
+  oculta?: boolean;
 }) {
   const { L: textos, C, lang: idioma } = vivasTexto(lang);
   const L = textos[id];
@@ -152,7 +155,9 @@ export function LaminaViva({ id, n, total, lang, attrs }: {
   const claseLista = L.meses ? "lv-piezas lv-piezas--meses" : D ? "lv-piezas lv-piezas--marcas" : "lv-piezas";
 
   return (
-    <section className="lv sobre-azul" id={`lamina-${id}`} data-lv={id} aria-labelledby={h} {...atributos}>
+    <section className={pestanas ? "lv lv--grupo sobre-azul" : "lv sobre-azul"} id={`lamina-${id}`} data-lv={id} aria-labelledby={h}
+      role={pestanas ? "tabpanel" : undefined} hidden={oculta} {...atributos}>
+      {pestanas}
       <div className="lv-in">
         <div className="lv-cabeza">
           <p className="lv-cap">{rotulo}</p>
@@ -236,5 +241,53 @@ export function LaminaViva({ id, n, total, lang, attrs }: {
         <span>{C.lugar}</span>
       </div>
     </section>
+  );
+}
+
+/** Dos o más láminas en una sola sección, con pestañas arriba (Laboral: el diagnóstico y lo que cuesta un
+    despido), para que no queden una encima de otra. Las dos se quedan montadas: al volver a una pestaña,
+    conserva lo que el visitante marcó o escribió. */
+export function LaminasPestanas({ ids, total, lang, attrs, numeros }: {
+  ids: VivaId[];
+  total: number;
+  lang: LanguageCode;
+  attrs: { lang?: string; dir?: "ltr" | "rtl" };
+  numeros: Record<VivaId, number>;
+}) {
+  const { L: textos, lang: idioma } = vivasTexto(lang);
+  const [actual, setActual] = useState(0);
+  const [moverFoco, setMoverFoco] = useState(false);
+  const base = useId();
+  const tab = (panel: number, i: number) => `${base}-p${panel}-t${i}`;
+  // la barra visible es la del panel activo: el foco pasa a su pestaña al cambiar con el teclado o el clic
+  useEffect(() => {
+    if (!moverFoco) return;
+    document.getElementById(tab(actual, actual))?.focus();
+    setMoverFoco(false);
+  }, [actual, moverFoco]); // eslint-disable-line react-hooks/exhaustive-deps
+  const ir = (i: number) => { setActual(((i % ids.length) + ids.length) % ids.length); setMoverFoco(true); };
+  const teclas = (e: KeyboardEvent, i: number) => {
+    if (e.key === "ArrowRight") { ir(i + 1); e.preventDefault(); }
+    else if (e.key === "ArrowLeft") { ir(i - 1); e.preventDefault(); }
+    else if (e.key === "Home") { ir(0); e.preventDefault(); }
+    else if (e.key === "End") { ir(ids.length - 1); e.preventDefault(); }
+  };
+  const barra = (panel: number) => (
+    <div className="lv-pestanas" role="tablist" aria-label={idioma === "es" ? "Herramientas de esta práctica" : "Tools for this practice"}>
+      {ids.map((id, i) => (
+        <button key={id} type="button" role="tab" id={tab(panel, i)} aria-selected={i === actual} aria-controls={`lamina-${id}`}
+          tabIndex={i === actual ? 0 : -1} onClick={() => ir(i)} onKeyDown={(e) => teclas(e, i)}>
+          <span className="lv-pestana__n">{String(i + 1).padStart(2, "0")}</span>
+          <span>{textos[id].cap}</span>
+        </button>
+      ))}
+    </div>
+  );
+  return (
+    <>
+      {ids.map((id, i) => (
+        <LaminaViva key={id} id={id} n={numeros[id]} total={total} lang={lang} attrs={attrs} pestanas={barra(i)} oculta={i !== actual} />
+      ))}
+    </>
   );
 }

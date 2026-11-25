@@ -36,7 +36,8 @@ export const LAMINA_N: Record<SheetId | FgArea, number> = { orden: 3, solucion: 
 
 /** «viva»: las láminas interactivas de la demo del 9-11-2026 (figura que responde y texto al lado), que
     reemplazan a la anatomía (3/7 y 4/7) y a las figuras dibujadas (5/7, 6/7 y 7/7). */
-export type Plate = { kind: "anatomia"; sheets: SheetId[] } | { kind: "figura"; area: FgArea } | { kind: "viva"; id: VivaId };
+/** «vivas»: varias láminas vivas en una sola sección, con pestañas (para que no queden una sobre otra) */
+export type Plate = { kind: "anatomia"; sheets: SheetId[] } | { kind: "figura"; area: FgArea } | { kind: "viva"; id: VivaId } | { kind: "vivas"; ids: VivaId[] };
 export const VIVA_N: Record<VivaId, number> = { prevencion: 3, juicio: 4, corporativo: 5, seguridad: 6, migratorio: 7, diagnostico: 3, despido: 4, compra: 5, estancias: 6 };
 
 /** Banda azul con foto de la oficina (de las fotos del panel, cmsMedia «photos») para los servicios
@@ -63,10 +64,8 @@ export const PRACTICE_V3: Record<string, PracticeV3> = {
     },
     // Láminas comerciales (24-11-2026): el diagnóstico de la empresa y lo que cuesta un despido mal
     // resuelto. Las de la demo del 9-11 (prevencion, juicio, seguridad) quedan guardadas en vivas.ts.
-    plates: [
-      { kind: "viva", id: "diagnostico" },
-      { kind: "viva", id: "despido" },
-    ],
+    // en una sola sección con dos pestañas (25-11-2026: una encima de otra se veían mal)
+    plates: [{ kind: "vivas", ids: ["diagnostico", "despido"] }],
   },
   "corporativo-contractual": {
     vista: "corporativo",

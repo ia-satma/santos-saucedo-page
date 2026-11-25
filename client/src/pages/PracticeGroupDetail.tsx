@@ -32,7 +32,7 @@ import { Figura } from "@/v3/practicas/Figura";
 import { Destacado } from "@/v3/practicas/Destacado";
 import { SiguientePractica } from "@/v3/practicas/Siguiente";
 import { LAMINAS_TOTAL, LAMINA_N, LEGACY_SLUGS, PRACTICE_V3, VIVA_N, type Plate, type PracticeV3 } from "@/v3/practicas/config";
-import { LaminaViva } from "@/v3/practicas/LaminaViva";
+import { LaminaViva, LaminasPestanas } from "@/v3/practicas/LaminaViva";
 import { type SheetId } from "@/v3/practicas/textos";
 import { useV3Content } from "@/v3/useV3Content";
 import "@/v3/practicas/practicas.css";
@@ -185,6 +185,13 @@ function TranslatedMatterCard({ matter, language, t }: TranslatedMatterCardProps
 /** Una lámina de la página, con su número de la demo (n/7: anatomía 3 y 4, figuras 5, 6 y 7). La clave
     lleva la práctica, la lámina y el idioma: al pasar de una práctica a otra la lámina arranca de nuevo. */
 function Lamina({ plate, slug, lang, attrs }: { plate: Plate; slug: string; lang: LanguageCode; attrs: { lang?: string; dir?: "ltr" | "rtl" } }) {
+  if (plate.kind === "vivas") {
+    return (
+      <div className="pd-laminas pd-laminas--viva">
+        <LaminasPestanas key={`lvs-${slug}-${plate.ids.join("+")}-${lang}`} ids={plate.ids} numeros={VIVA_N} total={LAMINAS_TOTAL} lang={lang} attrs={attrs} />
+      </div>
+    );
+  }
   if (plate.kind === "viva") {
     return (
       <div className="pd-laminas pd-laminas--viva">

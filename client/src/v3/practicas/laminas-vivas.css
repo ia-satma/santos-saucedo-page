@@ -65,6 +65,28 @@
 .v3 .lv-cajetin img{ height: 12px; width: auto; margin: 10px 12px; display: block }
 .v3 .lv-cajetin span{ font: 600 10px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--lv-sobre-2); padding: 11px 12px; border-left: 1px solid var(--lv-filete); white-space: nowrap }
 
+/* Varias láminas en una sola sección (Laboral): pestañas arriba, a todo lo ancho */
+.v3 .lv-pestanas{
+  position: relative; max-width: 1360px; margin: 0 auto; display: flex; flex-wrap: wrap; column-gap: clamp(20px, 3vw, 40px);
+  padding: clamp(36px, 4.5vw, 64px) clamp(28px, 5vw, 72px) 0;
+}
+.v3 .lv-pestanas button{
+  all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: baseline; gap: 12px; padding: 12px 4px 12px 0;
+  border-bottom: 1px solid var(--lv-filete); font: 600 12px/1.4 var(--sans); letter-spacing: .14em; text-transform: uppercase;
+  color: var(--lv-sobre-3); transition: color .3s, border-color .3s;
+}
+.v3 .lv-pestanas button:hover{ color: var(--lv-sobre) }
+.v3 .lv-pestanas button[aria-selected="true"]{ color: var(--lv-sobre); border-bottom-color: var(--lv-lima) }
+.v3 .lv-pestanas button:focus-visible{ outline: 2px solid var(--lv-lima); outline-offset: 4px }
+.v3 .lv-pestana__n{ font: 500 11px/1 var(--sans); letter-spacing: .08em; color: var(--lv-sobre-3); font-variant-numeric: tabular-nums }
+.v3 .lv-pestanas button[aria-selected="true"] .lv-pestana__n{ color: var(--lv-lima) }
+.v3 .lv--grupo .lv-in{ padding-top: clamp(28px, 3.5vw, 48px) }
+.v3 .lv--grupo .lv-cap{ display: none }
+@media (max-width: 900px){
+  .v3 .lv-pestanas{ padding-inline: clamp(20px, 5vw, 40px); column-gap: 18px; flex-wrap: nowrap }
+  .v3 .lv-pestanas button{ flex: 1 1 0; min-width: 0; letter-spacing: .1em; font-size: 11px; align-items: flex-start }
+}
+
 /* Varias láminas seguidas (Laboral): una franja de piedra entre una y otra */
 .v3 .pd-laminas + .pd-laminas .lv{ margin-top: 0 }
 .v3 .pd-laminas--viva + .pd-laminas--viva{ border-top: 28px solid var(--piedra, #E4E2DC) }
